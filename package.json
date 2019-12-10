@@ -10,7 +10,7 @@
     "server": "export NODE_ENV=production && export PORT=80 && node server",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+    "postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client && npm run server"
   },
   "author": "Burhanuddin sarangpurwala",
   "license": "MIT",
