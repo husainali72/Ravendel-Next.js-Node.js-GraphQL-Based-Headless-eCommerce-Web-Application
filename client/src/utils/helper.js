@@ -11,4 +11,4 @@ if (process.env.NODE_ENV === "production") {
   baseURL = "http://localhost:8000";
 }*/
 
-export const baseUrl = "http://localhost";
+export const baseUrl = "http://159.89.170.199";
