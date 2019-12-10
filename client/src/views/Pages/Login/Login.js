@@ -36,7 +36,7 @@ const Login = props => {
             <CardGroup>
               <Card className="p-4">
                 <CardBody>
-                  {props.login_loading && "Loding..........."}
+                  {props.login_loading && "Loading..........."}
                   <Form>
                     <h1>Login</h1>
                     <p className="text-muted">Sign In to your account</p>
