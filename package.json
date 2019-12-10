@@ -10,7 +10,7 @@
     "server": "nodemon server",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+    "postbuild": "NPM_CONFIG_PRODUCTION=false NODE_ENV=production PORT=80 npm install --prefix client && npm run build --prefix client"
   },
   "author": "Burhanuddin sarangpurwala",
   "license": "MIT",
@@ -30,5 +30,9 @@
     "node-pre-gyp": "^0.14.0",
     "nodemon": "^2.0.0",
     "validator": "^12.1.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   }
 }
