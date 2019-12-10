@@ -27,7 +27,7 @@ const App = props => {
     <BrowserRouter ref={registerNav}>
       <React.Suspense fallback={loading()}>
         <Switch>
-          {!isEmpty(props.login.user_token) && [
+          {!isEmpty(props.login.user_token) && (
             <React.Fragment>
               <Redirect from="*" to="/" />
               <Route
@@ -39,7 +39,7 @@ const App = props => {
               <Route exact path="/500" name="Page 500" component={Register} />
               <Route path="/" name="Home" component={DefaultLayout} />
             </React.Fragment>
-          ]}
+          )}
           <React.Fragment>
             <Redirect from="*" to="/login" />
             <Route exact path="/login" name="Login Page" component={Login} />

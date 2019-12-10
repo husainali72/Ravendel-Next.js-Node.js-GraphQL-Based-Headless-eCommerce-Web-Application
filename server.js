@@ -13,7 +13,6 @@ connectDB();
 //middleware
 const app = express();
 app.use(cors());
-const port = 8000;
 
 const server = new ApolloServer({ typeDefs, resolvers, context });
 server.applyMiddleware({ app });
@@ -24,7 +23,16 @@ app.use(express.json({ extended: false }));
 //routes
 app.use("/api/users", require("./routes/api/users"));
 
-//running
-app.get("/", (req, res) => res.send("Mern E-commerce is running....here "));
+// Server static assets if in production
+if (process.env.NODE_ENV === "production") {
+  // Set static folder
+  app.use(express.static("client/build"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => res.send("api is running"));
+}
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => console.log(`server started on port ${PORT}`));

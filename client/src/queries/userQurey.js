@@ -1,11 +1,20 @@
 import gql from "graphql-tag";
 const GET_USERS = gql`
   {
-    books {
+    users {
       id
       name
     }
   }
 `;
 
-export { GET_USERS };
+const GET_USER = gql`
+  query getbook($id: ID!) {
+    user(id: $id) {
+      id
+      name
+    }
+  }
+`;
+
+export { GET_USERS, GET_USER };

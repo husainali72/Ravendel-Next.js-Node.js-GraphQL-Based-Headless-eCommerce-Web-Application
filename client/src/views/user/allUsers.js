@@ -10,10 +10,14 @@ import {
 } from "reactstrap";
 import { connect } from "react-redux";
 import { useQuery } from "@apollo/react-hooks";
-import { GET_USERS } from "../../queries/userQurey";
+import { GET_USERS, GET_USER } from "../../queries/userQurey";
 
 const AllUsers = () => {
   const { loading, error, data } = useQuery(GET_USERS);
+
+  // const { loading, error, data } = useQuery(GET_USER, {
+  //   variables: { id: "5dd7f43b8963812b1c9da478" }
+  // });
 
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
@@ -47,8 +51,8 @@ const AllUsers = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.books.map(book => (
-                    <tr key={book.id}>
+                  {data.users.map(user => (
+                    <tr key={user.id}>
                       <td className="text-center">
                         <div className="avatar">
                           <img
@@ -60,7 +64,7 @@ const AllUsers = () => {
                       </td>
 
                       <td>
-                        <div>{book.name}</div>
+                        <div>{user.name}</div>
                       </td>
                       <td>
                         <div>John Doe</div>
