@@ -9,7 +9,8 @@
     "start": "node server",
     "server": "export NODE_ENV=production && export PORT=80 && node server",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "concurrently \"npm start\" \"npm run client\"",
+    "localbuild": "npm install && npm install --prefix client && npm run build --prefix client && npm run server",
     "postbuild": "npm install && NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client && npm run server"
   },
   "author": "Burhanuddin sarangpurwala",

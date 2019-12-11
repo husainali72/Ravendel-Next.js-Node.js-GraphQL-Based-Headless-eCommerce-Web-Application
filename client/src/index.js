@@ -39,7 +39,7 @@ const APclient = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-console.log(process.env.BASEURL);
+console.log(process.env.BASE_URL);
 
 ReactDOM.render(
   <Provider store={store}>
