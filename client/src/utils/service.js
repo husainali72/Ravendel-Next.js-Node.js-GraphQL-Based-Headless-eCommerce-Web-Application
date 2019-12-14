@@ -1,7 +1,68 @@
 import Auth from "./auth";
-import jumpTo from "./navigation";
+import jumpTo, { go } from "./navigation";
 import axios from "axios";
-import { isEmpty, baseUrl } from "./helper";
+import { isEmpty } from "./helper";
+import APclient from "../APclient";
+
+export const mutation = (query, variables) => {
+  return APclient.mutate({
+    mutation: query,
+    variables
+  })
+    .then(response => {
+      return Promise.resolve(response);
+    })
+    .catch(error => {
+      const errors = JSON.parse(JSON.stringify(error));
+      console.log(error);
+      if (
+        errors.graphQLErrors.length &&
+        !isEmpty(errors.graphQLErrors[0].message)
+      ) {
+        return Promise.reject(errors.graphQLErrors[0].message);
+      }
+
+      if (
+        !isEmpty(errors.networkError) &&
+        errors.networkError.statusCode == 400
+      ) {
+        Auth.logout();
+        go("/login");
+        return Promise.reject(errors.message);
+      }
+      return Promise.reject("Something went wrong");
+    });
+};
+
+export const query = (query, variables) => {
+  return APclient.query({
+    query: query,
+    variables
+  })
+    .then(response => {
+      return Promise.resolve(response);
+    })
+    .catch(error => {
+      const errors = JSON.parse(JSON.stringify(error));
+      console.log(error);
+      if (
+        errors.graphQLErrors.length &&
+        !isEmpty(errors.graphQLErrors[0].message)
+      ) {
+        return Promise.reject(errors.graphQLErrors[0].message);
+      }
+
+      if (
+        !isEmpty(errors.networkError) &&
+        errors.networkError.statusCode == 400
+      ) {
+        //Auth.logout();
+        //go("/login");
+        return Promise.reject(errors.message);
+      }
+      return Promise.reject("Something went wrong");
+    });
+};
 
 const service = config => {
   //header authorization
@@ -32,7 +93,7 @@ const service = config => {
       return Promise.reject(error);
     }
   );
-  config.baseURL = baseUrl;
+  //config.baseURL = baseUrl;
   return axios(config);
 };
 export default service;

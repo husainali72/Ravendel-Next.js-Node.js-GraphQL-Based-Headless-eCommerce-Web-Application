@@ -9,37 +9,8 @@ import App from "./App";
 //import * as serviceWorker from "./serviceWorker";
 import store from "./store";
 import { Provider } from "react-redux";
-import {
-  ApolloClient,
-  ApolloLink,
-  InMemoryCache,
-  HttpLink
-} from "apollo-boost";
 import { ApolloProvider } from "@apollo/react-hooks";
-import cookie from "react-cookies";
-import { baseUrl } from "./utils/helper";
-
-const httpLink = new HttpLink({ uri: `${baseUrl}/graphql` });
-
-const authLink = new ApolloLink((operation, forward) => {
-  // Retrieve the authorization token from local storage.
-  const token = cookie.load("auth").token;
-  // Use the setContext method to set the HTTP headers.
-  operation.setContext({
-    headers: {
-      authorization: token || ""
-    }
-  });
-  // Call the next link in the middleware chain.
-  return forward(operation);
-});
-
-const APclient = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache()
-});
-
-console.log(process.env.BASE_URL);
+import APclient from "./APclient";
 
 ReactDOM.render(
   <Provider store={store}>

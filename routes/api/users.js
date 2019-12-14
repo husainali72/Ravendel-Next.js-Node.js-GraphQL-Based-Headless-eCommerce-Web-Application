@@ -89,7 +89,7 @@ router.post("/login", (req, res) => {
 // @desc    Return current user
 // @access  Private
 router.get("/current", auth, (req, res) => {
-  console.log(req.user);
+  //console.log(req.user);
   res.json({
     id: req.user.id,
     name: req.user.name

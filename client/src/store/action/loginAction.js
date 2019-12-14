@@ -1,5 +1,7 @@
 import { login } from "../../utils/service";
 import cookie from "react-cookies";
+//import jumpTo, { go } from "../../utils/navigation";
+
 export const LoginAction = (email, password) => dispatch => {
   dispatch({
     type: POST_TOKEN_BEGIN

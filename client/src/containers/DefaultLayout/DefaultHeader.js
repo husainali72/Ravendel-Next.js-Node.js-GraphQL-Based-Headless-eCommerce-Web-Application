@@ -45,7 +45,7 @@ const DefaultHeader = props => {
             </DropdownItem>
 
             <DropdownItem onClick={props.logoutAction}>
-              <i className="fa fa-lock"></i> Logout test
+              <i className="fa fa-lock"></i> Logout
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>

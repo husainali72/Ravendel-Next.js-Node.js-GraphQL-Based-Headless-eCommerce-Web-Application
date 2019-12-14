@@ -1,6 +1,8 @@
 let history;
 export const registerNav = ref => {
-  history = ref.history;
+  if (ref && ref.history) {
+    history = ref.history;
+  }
 };
 
 const jumpTo = uri => {

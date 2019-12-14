@@ -19,6 +19,7 @@ const Page404 = React.lazy(() => import("./views/Pages/Page404"));
 const Page500 = React.lazy(() => import("./views/Pages/Page500"));
 
 const App = props => {
+  //const [isLogin, SetisLogin] = useState(false);
   useEffect(() => {
     props.insertToken();
   }, []);

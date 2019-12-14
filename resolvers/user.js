@@ -78,7 +78,8 @@ module.exports = {
 
           newUser.password = await bcrypt.hash(args.password, 10);
           const user = await newUser.save();
-          return user;
+          //return user;
+          return await User.find({});
         }
       } catch (error) {
         error = checkError(error);
@@ -116,22 +117,29 @@ module.exports = {
             }
           }
 
-          return await user.save();
+          await user.save();
+          return await User.find({});
         } else {
           throw putError("User not exist");
         }
       } catch (error) {
-        console.log(error);
+        //console.log(error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
     deleteUser: async (root, args) => {
-      const user = await User.findByIdAndRemove(args.id);
-      if (user) {
-        return true;
+      try {
+        const user = await User.findByIdAndRemove(args.id);
+        if (user) {
+          //return true;
+          return await User.find({});
+        }
+        throw putError("User not exist");
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
       }
-      return false;
     }
   }
 };

@@ -49,9 +49,7 @@
     "suneditor-react": "^2.1.6"
   },
   "devDependencies": {
-    "react-scripts": "^3.0.1",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "react-scripts": "^3.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -84,6 +82,5 @@
   "engines": {
     "node": ">=8.10",
     "npm": ">=6"
-  },
-  "proxy": "http://localhost:8000"
+  }
 }

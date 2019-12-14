@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Card,
   CardBody,
@@ -9,18 +9,13 @@ import {
   Progress
 } from "reactstrap";
 import { connect } from "react-redux";
-import { useQuery } from "@apollo/react-hooks";
-import { GET_USERS, GET_USER } from "../../queries/userQurey";
+import { usersAction, userDeleteAction } from "../../store/action/";
+import jumpTo from "../../utils/navigation";
 
-const AllUsers = () => {
-  const { loading, error, data } = useQuery(GET_USERS);
-
-  // const { loading, error, data } = useQuery(GET_USER, {
-  //   variables: { id: "5dd7f43b8963812b1c9da478" }
-  // });
-
-  if (loading) return "Loading...";
-  if (error) return `Error! ${error.message}`;
+const AllUsers = props => {
+  useEffect(() => {
+    props.usersAction();
+  }, []);
 
   return (
     <Fragment>
@@ -30,6 +25,8 @@ const AllUsers = () => {
             <CardHeader>
               <strong>
                 <i className="icon-user pr-1"></i>All Users
+                {props.users.loading && " loading......"}
+                {props.users.error}
               </strong>
             </CardHeader>
             <CardBody>
@@ -44,14 +41,13 @@ const AllUsers = () => {
                       <i className="icon-people"></i>
                     </th>
                     <th>Username</th>
-                    <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {data.users.map(user => (
+                  {props.users.users.map(user => (
                     <tr key={user.id}>
                       <td className="text-center">
                         <div className="avatar">
@@ -66,31 +62,32 @@ const AllUsers = () => {
                       <td>
                         <div>{user.name}</div>
                       </td>
+
                       <td>
-                        <div>John Doe</div>
+                        <div>{user.email}</div>
                       </td>
                       <td>
-                        <div>john@ymail.com</div>
-                      </td>
-                      <td>
-                        <div>Customer</div>
+                        <div>{user.role}</div>
                       </td>
                       <td>
                         <button
                           type="button"
                           className="btn btn-pill btn-primary mr-2"
+                          onClick={() => jumpTo(`edit-user/${user.id}`)}
                         >
                           Edit
                         </button>
                         <button
                           type="button"
                           className="btn btn-pill btn-danger mr-2"
+                          onClick={() => props.userDeleteAction(user.id)}
                         >
                           Delete
                         </button>
                         <button
                           type="button"
                           className="btn btn-pill btn-primary"
+                          disabled
                         >
                           View
                         </button>
@@ -106,8 +103,14 @@ const AllUsers = () => {
     </Fragment>
   );
 };
-const mapStateToProps = state => ({});
+const mapStateToProps = state => {
+  //console.log(state);
+  return { users: state.users };
+};
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  usersAction,
+  userDeleteAction
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllUsers);

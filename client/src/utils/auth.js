@@ -15,6 +15,7 @@ const setUserToken = new_token => {
 
 const logout = () => {
   //localStorage.removeItem("auth");
+  cookie.remove("auth");
 };
 
 export default {
