@@ -90,13 +90,19 @@ module.exports = {
       try {
         const user = await User.findById({ _id: args.id });
         if (user) {
+          // Check Validation
+          const errors = validate("updateUser", args);
+          if (!isEmpty(errors)) {
+            throw putError(errors);
+          }
+
           if (!isEmpty(args.password)) {
             user.password = await bcrypt.hash(args.password, 10);
           }
 
-          user.name = args.name || user.name;
-          user.email = args.email || user.email;
-          user.role = args.role || user.role;
+          user.name = args.name;
+          user.email = args.email;
+          user.role = args.role;
           user.updated = Date.now();
           let metArra = {};
 

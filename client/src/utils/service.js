@@ -26,8 +26,9 @@ export const mutation = (query, variables) => {
         !isEmpty(errors.networkError) &&
         errors.networkError.statusCode == 400
       ) {
-        Auth.logout();
-        go("/login");
+        //Auth.logout();
+        //go("/login");
+        console.log(errors);
         return Promise.reject(errors.message);
       }
       return Promise.reject("Something went wrong");

@@ -39,7 +39,6 @@ export const insertToken = () => dispatch => {
 };
 
 export const logoutAction = () => dispatch => {
-  //localStorage.removeItem("auth");
   cookie.remove("auth");
   dispatch({
     type: LOGOUT_SUCCESS

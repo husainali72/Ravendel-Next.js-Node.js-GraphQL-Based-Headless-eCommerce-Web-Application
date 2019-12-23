@@ -6,27 +6,39 @@ import {
   Col,
   Row,
   Table,
-  Progress
+  Spinner,
+  Toast,
+  ToastBody,
+  ToastHeader
 } from "reactstrap";
 import { connect } from "react-redux";
 import { usersAction, userDeleteAction } from "../../store/action/";
 import jumpTo from "../../utils/navigation";
+import { isEmpty } from "../../utils/helper";
+import Alert from "../utils/Alert";
 
 const AllUsers = props => {
   useEffect(() => {
-    props.usersAction();
+    if (isEmpty(props.users.users)) {
+      props.usersAction();
+    }
   }, []);
 
   return (
     <Fragment>
+      <Alert />
       <Row>
         <Col>
           <Card>
             <CardHeader>
               <strong>
                 <i className="icon-user pr-1"></i>All Users
-                {props.users.loading && " loading......"}
-                {props.users.error}
+                {props.users.loading && (
+                  <Spinner
+                    style={{ width: "3rem", height: "3rem" }}
+                    color="info"
+                  />
+                )}
               </strong>
             </CardHeader>
             <CardBody>
@@ -104,7 +116,6 @@ const AllUsers = props => {
   );
 };
 const mapStateToProps = state => {
-  //console.log(state);
   return { users: state.users };
 };
 

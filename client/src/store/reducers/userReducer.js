@@ -8,8 +8,7 @@ import {
 const initialState = {
   users: [],
   user: {},
-  loading: false,
-  error: ""
+  loading: false
 };
 
 export default (state = initialState, action) => {
@@ -17,28 +16,24 @@ export default (state = initialState, action) => {
     case USER_LOADING:
       return {
         ...state,
-        loading: true,
-        error: ""
+        loading: true
       };
     case USERS_SUCCESS:
       return {
         ...state,
         users: action.payload,
-        loading: false,
-        error: ""
+        loading: false
       };
     case USER_SUCCESS:
       return {
         ...state,
         user: action.payload,
-        loading: false,
-        error: ""
+        loading: false
       };
     case USER_FAIL:
       return {
         ...state,
-        loading: false,
-        error: action.payload
+        loading: false
       };
     default:
       return state;

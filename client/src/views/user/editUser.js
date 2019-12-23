@@ -14,20 +14,25 @@ import {
 import { connect } from "react-redux";
 import { userUpdateAction } from "../../store/action/";
 import jumpTo from "../../utils/navigation";
+import Alert from "../utils/Alert";
 
 const EditUser = props => {
-  const [user, setuser] = useState({});
-
+  const [user, setuser] = useState({
+    id: "",
+    name: "",
+    email: "",
+    role: "",
+    password: ""
+  });
   const updateUser = e => {
     e.preventDefault();
     props.userUpdateAction(user);
-    jumpTo("/all-users");
   };
 
   useEffect(() => {
-    props.users.users.map(user => {
-      if (user.id == props.match.params.id) {
-        setuser(user);
+    props.users.users.map(edituser => {
+      if (edituser.id == props.match.params.id) {
+        setuser({ ...edituser });
       }
     });
   }, []);
@@ -38,6 +43,7 @@ const EditUser = props => {
 
   return (
     <Fragment>
+      <Alert />
       <Card>
         <CardHeader>
           <strong>
@@ -81,7 +87,7 @@ const EditUser = props => {
                     onChange={handleChange}
                     multiple={false}
                   >
-                    <option>Choose...</option>
+                    <option value="">Choose...</option>
                     <option value="Subscriber">Subscriber</option>
                     <option value="Manager">Manager</option>
                     <option value="Editor">Editor</option>

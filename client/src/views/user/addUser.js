@@ -13,16 +13,19 @@ import {
 } from "reactstrap";
 import { connect } from "react-redux";
 import { userAddAction } from "../../store/action/";
-import jumpTo from "../../utils/navigation";
-
+import jumpTo, { go } from "../../utils/navigation";
+import Alert from "../utils/Alert";
 const AddUser = props => {
   const [user, setuser] = useState({});
 
+  useEffect(() => {
+    document.forms[0].reset();
+    setuser({});
+  }, [props.users.users]);
+
   const addUser = e => {
     e.preventDefault();
-    console.log(user);
     props.userAddAction(user);
-    jumpTo("/all-users");
   };
 
   const handleChange = e => {
@@ -31,6 +34,7 @@ const AddUser = props => {
 
   return (
     <Fragment>
+      <Alert />
       <Card>
         <CardHeader>
           <strong>

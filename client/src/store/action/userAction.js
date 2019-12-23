@@ -1,3 +1,4 @@
+import React from "react";
 import {
   GET_USERS,
   GET_USER,
@@ -5,7 +6,10 @@ import {
   UPDATE_USER,
   DELETE_USER
 } from "../../queries/userQurey";
+
+import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
+import jumpTo from "../../utils/navigation";
 
 export const usersAction = () => dispatch => {
   dispatch({
@@ -21,9 +25,12 @@ export const usersAction = () => dispatch => {
       }
     })
     .catch(error => {
+      dispatch({
+        type: USER_FAIL
+      });
       return dispatch({
-        type: USER_FAIL,
-        payload: error
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error }
       });
     });
 };
@@ -42,9 +49,12 @@ export const userAction = id => dispatch => {
       }
     })
     .catch(error => {
+      dispatch({
+        type: USER_FAIL
+      });
       return dispatch({
-        type: USER_FAIL,
-        payload: error
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error }
       });
     });
 };
@@ -56,16 +66,24 @@ export const userAddAction = object => dispatch => {
   mutation(ADD_USER, object)
     .then(response => {
       if (response) {
-        return dispatch({
+        dispatch({
           type: USERS_SUCCESS,
           payload: response.data.addUser
+        });
+
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: "User added successfully" }
         });
       }
     })
     .catch(error => {
+      dispatch({
+        type: USER_FAIL
+      });
       return dispatch({
-        type: USER_FAIL,
-        payload: error
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error }
       });
     });
 };
@@ -77,16 +95,27 @@ export const userUpdateAction = object => dispatch => {
   mutation(UPDATE_USER, object)
     .then(response => {
       if (response) {
-        return dispatch({
+        dispatch({
           type: USERS_SUCCESS,
           payload: response.data.updateUser
         });
+
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: "User updated successfully" }
+        });
+
+        jumpTo("/all-users");
+        return;
       }
     })
     .catch(error => {
+      dispatch({
+        type: USER_FAIL
+      });
       return dispatch({
-        type: USER_FAIL,
-        payload: error
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error }
       });
     });
 };
@@ -98,16 +127,23 @@ export const userDeleteAction = id => dispatch => {
   mutation(DELETE_USER, { id })
     .then(response => {
       if (response) {
-        return dispatch({
+        dispatch({
           type: USERS_SUCCESS,
           payload: response.data.deleteUser
+        });
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: "User deleted successfully" }
         });
       }
     })
     .catch(error => {
+      dispatch({
+        type: USER_FAIL
+      });
       return dispatch({
-        type: USER_FAIL,
-        payload: error
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error }
       });
     });
 };

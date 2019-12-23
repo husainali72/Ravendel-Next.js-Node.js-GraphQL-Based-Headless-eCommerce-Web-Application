@@ -12,7 +12,8 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-  Row
+  Row,
+  Spinner
 } from "reactstrap";
 import { connect } from "react-redux";
 import { LoginAction } from "../../../store/action";
@@ -36,7 +37,12 @@ const Login = props => {
             <CardGroup>
               <Card className="p-4">
                 <CardBody>
-                  {props.login_loading && "Loading..........."}
+                  {props.login_loading && (
+                    <Spinner
+                      style={{ width: "3rem", height: "3rem" }}
+                      color="info"
+                    />
+                  )}
                   <Form>
                     <h1>Login</h1>
                     <p className="text-muted">Sign In to your account</p>
