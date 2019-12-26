@@ -1,25 +1,28 @@
 import { login } from "../../utils/service";
 import cookie from "react-cookies";
 //import jumpTo, { go } from "../../utils/navigation";
-
+import { ALERT_SUCCESS } from "../reducers/alertReducer";
 export const LoginAction = (email, password) => dispatch => {
   dispatch({
     type: POST_TOKEN_BEGIN
   });
   return login(email, password)
     .then(res => {
-      dispatch({
+      return dispatch({
         type: POST_TOKEN_SUCCESS,
         payload: res
       });
-      return res;
+      //return res;
     })
     .catch(error => {
       dispatch({
-        type: POST_TOKEN_FAIL,
-        payload: { error }
+        type: POST_TOKEN_FAIL
       });
-      throw error;
+      //throw error;
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error.response.data }
+      });
     });
 };
 

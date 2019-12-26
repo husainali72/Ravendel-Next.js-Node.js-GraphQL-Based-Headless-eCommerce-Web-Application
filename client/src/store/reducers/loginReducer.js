@@ -31,8 +31,7 @@ export default (state = initialState, action) => {
     case POST_TOKEN_FAIL:
       return {
         ...state,
-        token_loading: false,
-        error: action.payload.error.response.data
+        token_loading: false
       };
     case INSERT_TOKEN_SUCCESS:
       return {

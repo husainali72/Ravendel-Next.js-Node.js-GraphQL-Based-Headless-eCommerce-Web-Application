@@ -41,6 +41,11 @@ const EditUser = props => {
     setuser({ ...user, [e.target.name]: e.target.value });
   };
 
+  const fileChange = e => {
+    setuser({ ...user, [e.target.name]: e.target.files[0] });
+    console.log(e.target.files);
+  };
+
   return (
     <Fragment>
       <Alert />
@@ -109,12 +114,22 @@ const EditUser = props => {
                   />
                 </FormGroup>
               </Col>
-              {/* <Col md={3}>
+              <Col md={3}>
+                <div className="avatar">
+                  <img
+                    src={user.image && user.image.thumbnail}
+                    className="img-avatar"
+                  />
+                </div>
                 <FormGroup>
                   <Label for="featured-image">Featured image</Label>
-                  <Input type="file" onChange={handleChange("featuredimage")} />
+                  <Input
+                    type="file"
+                    name="updatedImage"
+                    onChange={fileChange}
+                  />
                 </FormGroup>
-              </Col> */}
+              </Col>
             </Row>
             <Row className="mt-2">
               <Col md={12}>

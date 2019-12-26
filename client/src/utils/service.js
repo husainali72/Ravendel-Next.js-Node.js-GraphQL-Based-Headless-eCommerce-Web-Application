@@ -2,7 +2,7 @@ import Auth from "./auth";
 import jumpTo, { go } from "./navigation";
 import axios from "axios";
 import { isEmpty } from "./helper";
-import APclient from "../APclient";
+import APclient from "../Client";
 
 export const mutation = (query, variables) => {
   return APclient.mutate({
@@ -14,7 +14,7 @@ export const mutation = (query, variables) => {
     })
     .catch(error => {
       const errors = JSON.parse(JSON.stringify(error));
-      console.log(error);
+      console.log(errors);
       if (
         errors.graphQLErrors.length &&
         !isEmpty(errors.graphQLErrors[0].message)
@@ -28,7 +28,6 @@ export const mutation = (query, variables) => {
       ) {
         //Auth.logout();
         //go("/login");
-        console.log(errors);
         return Promise.reject(errors.message);
       }
       return Promise.reject("Something went wrong");

@@ -10,7 +10,8 @@ import App from "./App";
 import store from "./store";
 import { Provider } from "react-redux";
 import { ApolloProvider } from "@apollo/react-hooks";
-import APclient from "./APclient";
+//import APclient from "./APclient";
+import APclient from "./Client";
 
 ReactDOM.render(
   <Provider store={store}>

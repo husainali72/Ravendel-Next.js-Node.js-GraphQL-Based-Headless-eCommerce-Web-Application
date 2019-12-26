@@ -1,11 +1,12 @@
 const { gql } = require("apollo-server-express");
 module.exports = gql`
   type User {
+    id: ID
     email: String
     name: String
     role: String
-    id: ID
     password: String
+    image: customObject
     meta: userMeta
     date: Date
     updated: Date
@@ -22,13 +23,20 @@ module.exports = gql`
   }
 
   extend type Mutation {
-    addUser(name: String, email: String, role: String, password: String): [User]
+    addUser(
+      name: String
+      email: String
+      role: String
+      password: String
+      image: Upload
+    ): [User]
     updateUser(
       id: ID!
       name: String
       email: String
       role: String
       password: String
+      updatedImage: Upload
       meta: [Meta]
     ): [User]
     deleteUser(id: ID!): [User]

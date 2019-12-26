@@ -12,6 +12,12 @@ const linkSchema = gql`
   scalar metaKeyValueArray
   scalar customObject
 
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+  }
+
   input Meta {
     key: String
     value: String

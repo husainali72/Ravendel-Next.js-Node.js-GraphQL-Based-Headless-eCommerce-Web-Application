@@ -6,6 +6,7 @@ const GET_USERS = gql`
       name
       email
       role
+      image
     }
   }
 `;
@@ -22,12 +23,25 @@ const GET_USER = gql`
 `;
 
 const ADD_USER = gql`
-  mutation($name: String, $email: String, $password: String, $role: String) {
-    addUser(name: $name, email: $email, password: $password, role: $role) {
+  mutation(
+    $name: String
+    $email: String
+    $password: String
+    $role: String
+    $image: Upload
+  ) {
+    addUser(
+      name: $name
+      email: $email
+      password: $password
+      role: $role
+      image: $image
+    ) {
       name
       email
       role
       id
+      image
     }
   }
 `;
@@ -39,6 +53,7 @@ const UPDATE_USER = gql`
     $email: String
     $password: String
     $role: String
+    $updatedImage: Upload
   ) {
     updateUser(
       id: $id
@@ -46,11 +61,13 @@ const UPDATE_USER = gql`
       email: $email
       password: $password
       role: $role
+      updatedImage: $updatedImage
     ) {
       name
       email
       role
       id
+      image
     }
   }
 `;
@@ -62,6 +79,7 @@ const DELETE_USER = gql`
       email
       role
       id
+      image
     }
   }
 `;

@@ -64,9 +64,8 @@ const AllUsers = props => {
                       <td className="text-center">
                         <div className="avatar">
                           <img
-                            src={"assets/img/avatars/1.jpg"}
+                            src={user.image && user.image.thumbnail}
                             className="img-avatar"
-                            alt="admin@bootstrapmaster.com"
                           />
                         </div>
                       </td>

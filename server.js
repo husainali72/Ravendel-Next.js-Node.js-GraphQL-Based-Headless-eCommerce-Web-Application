@@ -7,6 +7,7 @@ const typeDefs = require("./gqschema");
 const resolvers = require("./resolvers");
 const context = require("./context");
 const path = require("path");
+
 //connect db
 connectDB();
 
@@ -22,6 +23,9 @@ app.use(express.json({ extended: false }));
 
 //routes
 app.use("/api/users", require("./routes/api/users"));
+
+//app.use(express.static("public"));
+app.use("/assets", express.static(__dirname + "/assets"));
 
 // Server static assets if in production
 if (process.env.NODE_ENV === "production") {

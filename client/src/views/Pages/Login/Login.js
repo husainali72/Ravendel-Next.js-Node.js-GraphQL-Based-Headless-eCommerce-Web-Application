@@ -18,7 +18,7 @@ import {
 import { connect } from "react-redux";
 import { LoginAction } from "../../../store/action";
 import jumpTo from "../../../utils/navigation";
-
+import Alert from "../../utils/Alert";
 const Login = props => {
   const [values, setValues] = useState({
     email: "SirCumference@doe.com",
@@ -32,6 +32,7 @@ const Login = props => {
   return (
     <div className="app flex-row align-items-center">
       <Container>
+        <Alert />
         <Row className="justify-content-center">
           <Col md="8">
             <CardGroup>

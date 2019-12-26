@@ -9,7 +9,8 @@ import {
   Form,
   FormGroup,
   Label,
-  Input
+  Input,
+  Spinner
 } from "reactstrap";
 import { connect } from "react-redux";
 import { userAddAction } from "../../store/action/";
@@ -30,6 +31,10 @@ const AddUser = props => {
 
   const handleChange = e => {
     setuser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const fileChange = e => {
+    setuser({ ...user, [e.target.name]: e.target.files[0] });
   };
 
   return (
@@ -97,12 +102,12 @@ const AddUser = props => {
                   />
                 </FormGroup>
               </Col>
-              {/* <Col md={3}>
+              <Col md={3}>
                 <FormGroup>
                   <Label for="featured-image">Featured image</Label>
-                  <Input type="file" onChange={handleChange("featuredimage")} />
+                  <Input type="file" name="image" onChange={fileChange} />
                 </FormGroup>
-              </Col> */}
+              </Col>
             </Row>
             <Row className="mt-2">
               <Col md={12}>
@@ -110,6 +115,12 @@ const AddUser = props => {
                   Add
                 </Button>
                 <Button onClick={() => jumpTo("/all-users")}>Cancel</Button>
+                {props.users.loading && (
+                  <Spinner
+                    style={{ width: "3rem", height: "3rem" }}
+                    color="info"
+                  />
+                )}
               </Col>
             </Row>
           </Form>
