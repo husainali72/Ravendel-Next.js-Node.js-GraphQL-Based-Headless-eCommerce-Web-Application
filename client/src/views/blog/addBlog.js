@@ -14,8 +14,8 @@ import {
 /* import SunEditor from "suneditor-react";
 import "suneditor/dist/css/suneditor.min.css"; */
 
-/* import CKEditor from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic"; */
+import CKEditor from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const AddBlog = () => {
   const [blog, setBlog] = useState({

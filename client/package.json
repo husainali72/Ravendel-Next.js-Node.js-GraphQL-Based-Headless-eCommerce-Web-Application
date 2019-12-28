@@ -47,8 +47,7 @@
     "reactstrap": "^8.0.0",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
-    "simple-line-icons": "^2.4.1",
-    "suneditor-react": "^2.1.6"
+    "simple-line-icons": "^2.4.1"
   },
   "devDependencies": {
     "react-scripts": "^3.0.1",
