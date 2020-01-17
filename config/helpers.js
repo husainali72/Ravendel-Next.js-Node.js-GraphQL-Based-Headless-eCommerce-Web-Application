@@ -34,50 +34,104 @@ const sizes = {
   large: [1024, 1024]
 };
 
-const imageUpload = async (upload, uploadPath) => {
-  let { filename, mimetype, encoding, createReadStream } = await upload;
-  let stream = createReadStream();
-
-  filename = slugify(filename, { lower: true, replacement: "-" });
-  filename = Date.now() + "-" + filename;
-
-  let original = uploadPath + "original/" + filename;
-  let large = uploadPath + "large/" + filename;
-  let medium = uploadPath + "medium/" + filename;
-  let thumbnail = uploadPath + "thumbnail/" + filename;
-
-  let path = "." + original;
-
-  return new Promise((resolve, reject) =>
-    stream
-      .on("error", error => {
-        if (stream.truncated)
-          // Delete the truncated file
-          fs.unlinkSync(path);
-        reject(error);
-      })
-      .pipe(fs.createWriteStream(path))
-      // .on('error', error => reject(error))
-      .on("finish", () => {
-        for (let i in sizes) {
-          Jimp.read(path, (err, image) => {
-            if (err) throw err;
-            image
-              .resize(sizes[i][0], sizes[i][1]) // resize
-              .quality(70) // set JPEG quality
-              //.greyscale() // set greyscale
-              .write("." + uploadPath + i + "/" + filename); // save
-          });
+const jimpResize = (path, i, uploadPath, filename) => {
+  return new Promise((resolve, reject) => {
+    try {
+      Jimp.read(path, (err, image) => {
+        if (err) {
+          //throw err;
+          console.log("jimp", err);
+          return resolve(false);
         }
 
-        resolve({
-          original,
-          large,
-          medium,
-          thumbnail
+        image
+          .resize(sizes[i][0], sizes[i][1]) // resize
+          .quality(70) // set JPEG quality
+          .write("." + uploadPath + i + "/" + filename); // save
+
+        return resolve(true);
+      });
+    } catch (error) {
+      return resolve(false);
+    }
+  });
+};
+
+const imageUpload = async (upload, uploadPath) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let { filename, mimetype, encoding, createReadStream } = await upload;
+
+      const extensions = ["gif", "jpeg", "jpg", "png"];
+      const ext = filename.split(".");
+      if (!~extensions.indexOf(ext.pop())) {
+        return resolve({
+          success: false,
+          message: "This image can't be upload"
         });
-      })
-  );
+      }
+
+      let stream = createReadStream();
+
+      filename = slugify(filename, { lower: true, replacement: "-" });
+      filename = Date.now() + "-" + filename;
+
+      let original = uploadPath + "original/" + filename;
+      let large = uploadPath + "large/" + filename;
+      let medium = uploadPath + "medium/" + filename;
+      let thumbnail = uploadPath + "thumbnail/" + filename;
+      let path = "." + original;
+
+      stream
+        .on("error", error => {
+          console.log(JSON.stringify(error));
+
+          fs.unlink(path, function(err) {
+            if (err) console.log(err);
+          });
+          return resolve({
+            success: false,
+            message: "This image can't be upload"
+          });
+        })
+
+        .pipe(fs.createWriteStream(path))
+
+        .on("finish", async () => {
+          for (let i in sizes) {
+            let resized = await jimpResize(path, i, uploadPath, filename);
+
+            if (resized) {
+              continue;
+            } else {
+              //fs.unlinkSync(path);
+              fs.unlink(path, function(err) {
+                if (err) console.log(err);
+              });
+              return resolve({
+                success: false,
+                message: "This image can't be upload"
+              });
+            }
+          }
+
+          return resolve({
+            success: true,
+            data: {
+              original,
+              large,
+              medium,
+              thumbnail
+            }
+          });
+        });
+    } catch (error) {
+      return resolve({
+        success: false,
+        message: "This image can't be upload"
+      });
+    }
+  });
 };
 
 module.exports.imageUpload = imageUpload;

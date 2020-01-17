@@ -1,4 +1,5 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import TinymceEditor from "./TinymceEditor.js";
 import {
   Button,
   Row,
@@ -12,30 +13,48 @@ import {
   Input
 } from "reactstrap";
 
-const AddBlog = () => {
+import { connect } from "react-redux";
+import { blogAddAction } from "../../store/action/";
+import jumpTo, { go } from "../../utils/navigation";
+import Alert from "../utils/Alert";
+
+const AddBlog = props => {
   const [blog, setBlog] = useState({
-    title: "",
-    description: "",
-    category: "",
-    tag: "",
-    featuredimage: "",
-    categories: ["cat 1", "cat 2", "cat 3", "cat 4"],
-    tags: ["tag 1", "tag 2", "tag 3", "tag 4"],
-    authors: ["author1", "author2", "author3"]
+    status: "Publish"
   });
 
-  const handleChange = prop => event => {
-    setBlog({ ...blog, [prop]: event.target.value });
-  };
+  useEffect(() => {
+    if (props.blogs.success) {
+      document.forms[0].reset();
+      setBlog({
+        status: "Publish"
+      });
+    }
+  }, [props.blogs.success]);
+
+  useEffect(() => {
+    if (props.blogs.blog.content != undefined) {
+      setBlog({ ...blog, content: props.blogs.blog.content });
+    }
+  }, [props.blogs.blog.content]);
 
   const addBlog = e => {
     e.preventDefault();
-    console.log("blog", blog);
-    console.log("blog", blog.description);
+    props.blogAddAction(blog);
+  };
+
+  const handleChange = e => {
+    setBlog({ ...blog, [e.target.name]: e.target.value });
+  };
+
+  const fileChange = e => {
+    console.log(e.target.files[0]);
+    setBlog({ ...blog, [e.target.name]: e.target.files[0] });
   };
 
   return (
     <Fragment>
+      <Alert />
       <Card>
         <CardHeader>
           <strong>
@@ -45,91 +64,55 @@ const AddBlog = () => {
         <CardBody>
           <Form>
             <Row>
-              <Col md={4}>
+              <Col md={12}>
                 <FormGroup>
                   <Label for="title">Title</Label>
                   <Input
                     type="text"
                     placeholder="Title"
-                    value={blog.title}
-                    onChange={handleChange("title")}
+                    name="title"
+                    onChange={handleChange}
                   />
-                </FormGroup>
-              </Col>
-              <Col md={4}>
-                <FormGroup>
-                  <Label for="categories">Categories</Label>
-                  <Input
-                    type="select"
-                    value={blog.category}
-                    onChange={handleChange("category")}
-                    multiple={false}
-                  >
-                    <option>Choose...</option>
-                    {blog.categories.map((category, index) => (
-                      <option key={index} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </Input>
-                </FormGroup>
-              </Col>
-              <Col md={4}>
-                <FormGroup>
-                  <Label for="tags">Tags</Label>
-                  <Input
-                    type="select"
-                    value={blog.tag}
-                    onChange={handleChange("tag")}
-                    multiple={false}
-                  >
-                    <option>Choose...</option>
-                    {blog.tags.map((tag, index) => (
-                      <option key={index} value={tag}>
-                        {tag}
-                      </option>
-                    ))}
-                  </Input>
                 </FormGroup>
               </Col>
             </Row>
             <Row>
               <Col md={12}>
-                <Label for="description">Description</Label>
+                <Label for="content">Content</Label>
+                <TinymceEditor />
               </Col>
             </Row>
             <Row className="mt-3">
               <Col md={3}>
                 <FormGroup>
-                  <Label for="author">Author</Label>
+                  <Label for="featured-image">Featured image</Label>
                   <Input
-                    type="select"
-                    value={blog.authors}
-                    onChange={handleChange("author")}
-                    multiple={false}
-                  >
-                    <option>Choose...</option>
-                    {blog.authors.map((author, index) => (
-                      <option key={index} value={author}>
-                        {author}
-                      </option>
-                    ))}
-                  </Input>
+                    type="file"
+                    name="feature_image"
+                    onChange={fileChange}
+                  />
                 </FormGroup>
               </Col>
               <Col md={3}>
                 <FormGroup>
-                  <Label for="featured-image">Featured image</Label>
-                  <Input type="file" onChange={handleChange("featuredimage")} />
+                  <Label for="role">Status</Label>
+                  <Input
+                    type="select"
+                    name="status"
+                    onChange={handleChange}
+                    multiple={false}
+                  >
+                    <option value="Publish">Publish</option>
+                    <option value="Draft">Draft</option>
+                  </Input>
                 </FormGroup>
               </Col>
             </Row>
             <Row className="mt-2">
               <Col md={12}>
                 <Button color="primary" className="mr-2" onClick={addBlog}>
-                  Publish
+                  Save
                 </Button>
-                <Button>Draft</Button>
               </Col>
             </Row>
           </Form>
@@ -139,4 +122,12 @@ const AddBlog = () => {
   );
 };
 
-export default AddBlog;
+const mapStateToProps = state => {
+  return { blogs: state.blogs };
+};
+
+const mapDispatchToProps = {
+  blogAddAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddBlog);

@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
+import TinymceEditor from "./TinymceEditor.js";
 import {
   Button,
   Row,
@@ -12,149 +13,132 @@ import {
   Input
 } from "reactstrap";
 
-const EditBlog = props => {
-  useEffect(() => {
-    if (props.location.state) {
-      if (props.location.state.blog && props.location.state.editMode) {
-        var blog = props.location.state.blog;
-        var editMode = props.location.state.editMode;
-        setBlog({ ...blog, blog });
-        setEditMode(editMode);
-      }
-    }
-  }, []);
+import { connect } from "react-redux";
+import { blogUpdateAction } from "../../store/action/";
+import jumpTo, { go } from "../../utils/navigation";
+import Alert from "../utils/Alert";
 
+const EditBlog = props => {
   const [blog, setBlog] = useState({
     title: "",
-    description: "",
-    categories: [],
-    tags: [],
-    authors: [],
-    featuredimage: ""
+    content: "",
+    status: "Publish",
+    feature_image: ""
   });
 
-  const [editMode, setEditMode] = useState(false);
-
-  const handleChange = prop => event => {
-    setBlog({ ...blog, [prop]: event.target.value });
+  const updateBlog = e => {
+    e.preventDefault();
+    console.log(blog);
+    props.blogUpdateAction(blog);
   };
 
-  const saveBlog = e => {
-    e.preventDefault();
-    console.log("blog", blog);
-    console.log("blog", blog.description);
+  useEffect(() => {
+    props.blogs.blogs.map(editblog => {
+      if (editblog.id == props.match.params.id) {
+        setBlog({ ...editblog });
+      }
+    });
+  }, [props.blogs.blogs]);
+
+  useEffect(() => {
+    if (props.blogs.blog.content != undefined) {
+      setBlog({ ...blog, content: props.blogs.blog.content });
+    }
+  }, [props.blogs.blog.content]);
+
+  const handleChange = e => {
+    setBlog({ ...blog, [e.target.name]: e.target.value });
+  };
+
+  const fileChange = e => {
+    setBlog({ ...blog, [e.target.name]: e.target.files[0] });
   };
 
   return (
     <Fragment>
-      {editMode === true ? (
-        <Card>
-          <CardHeader>
-            <strong>
-              <i className="icon-plus pr-1"></i>&nbsp; Edit Blog
-            </strong>
-          </CardHeader>
-          <CardBody>
-            <Form>
-              <Row>
-                <Col md={4}>
-                  <FormGroup>
-                    <Label for="title">Title</Label>
-                    <Input
-                      type="text"
-                      placeholder="Title"
-                      value={blog.title}
-                      onChange={handleChange("title")}
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md={4}>
-                  <FormGroup>
-                    <Label for="categories">Categories</Label>
-                    <Input
-                      type="select"
-                      value={blog.categories}
-                      onChange={handleChange("category")}
-                      multiple={false}
-                    >
-                      <option>Choose...</option>
-                      {blog.categories.map((category, index) => (
-                        <option key={index} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={4}>
-                  <FormGroup>
-                    <Label for="tags">Tags</Label>
-                    <Input
-                      type="select"
-                      value={blog.tags}
-                      onChange={handleChange("tag")}
-                      multiple={false}
-                    >
-                      <option>Choose...</option>
-                      {blog.tags.map((tag, index) => (
-                        <option key={index} value={tag}>
-                          {tag}
-                        </option>
-                      ))}
-                    </Input>
-                  </FormGroup>
-                </Col>
-              </Row>
-              <Row>
-                <Col md={12}>
-                  <Label for="description">Description</Label>
-                </Col>
-              </Row>
-              <Row className="mt-3">
-                <Col md={3}>
-                  <FormGroup>
-                    <Label for="author">Author</Label>
-                    <Input
-                      type="select"
-                      value={blog.authors}
-                      onChange={handleChange("author")}
-                      multiple={false}
-                    >
-                      <option>Choose...</option>
-                      {blog.authors.map((author, index) => (
-                        <option key={index} value={author}>
-                          {author}
-                        </option>
-                      ))}
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label for="featured-image">Featured image</Label>
-                    <Input
-                      type="file"
-                      onChange={handleChange("featuredimage")}
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
-              <Row className="mt-2">
-                <Col md={12}>
-                  <Button color="primary" className="mr-2" onClick={saveBlog}>
-                    Save
-                  </Button>
-                  <Button onClick={() => props.history.push("/all-blogs")}>
-                    Cancel
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </CardBody>
-        </Card>
-      ) : null}
+      <Alert />
+      <Card>
+        <CardHeader>
+          <strong>
+            <i className="icon-plus pr-1"></i>&nbsp; Edit Blog
+          </strong>
+        </CardHeader>
+        <CardBody>
+          <Form>
+            <Row>
+              <Col md={12}>
+                <FormGroup>
+                  <Label for="title">Title</Label>
+                  <Input
+                    type="text"
+                    placeholder="Title"
+                    name="title"
+                    value={blog.title}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={12}>
+                <Label for="content">Content</Label>
+                <TinymceEditor value={blog.content} />
+              </Col>
+            </Row>
+            <Row className="mt-3">
+              <Col md={3}>
+                <div className="avatar">
+                  <img
+                    src={blog.feature_image && blog.feature_image.thumbnail}
+                    className="img-avatar"
+                  />
+                </div>
+                <FormGroup>
+                  <Label for="featured-image">Featured image</Label>
+                  <Input
+                    type="file"
+                    name="updatedImage"
+                    onChange={fileChange}
+                  />
+                </FormGroup>
+              </Col>
+              <Col md={3}>
+                <FormGroup>
+                  <Label for="role">Status</Label>
+                  <Input
+                    type="select"
+                    name="status"
+                    value={blog.status}
+                    onChange={handleChange}
+                    multiple={false}
+                  >
+                    <option value="Publish">Publish</option>
+                    <option value="Draft">Draft</option>
+                  </Input>
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row className="mt-2">
+              <Col md={12}>
+                <Button color="primary" className="mr-2" onClick={updateBlog}>
+                  Save
+                </Button>
+                <Button onClick={() => jumpTo("/all-blogs")}>Cancel</Button>
+              </Col>
+            </Row>
+          </Form>
+        </CardBody>
+      </Card>
     </Fragment>
   );
 };
 
-export default EditBlog;
+const mapStateToProps = state => {
+  return { blogs: state.blogs };
+};
+
+const mapDispatchToProps = {
+  blogUpdateAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditBlog);

@@ -3,12 +3,14 @@ import { combineReducers } from "redux";
 import login from "./loginReducer";
 import users from "./userReducer";
 import alert from "./alertReducer";
+import blogs from "./blogReducer";
 
 // Combine Reducers
 const MasterReducer = combineReducers({
   login,
   users,
-  alert
+  alert,
+  blogs
 });
 
 export default MasterReducer;

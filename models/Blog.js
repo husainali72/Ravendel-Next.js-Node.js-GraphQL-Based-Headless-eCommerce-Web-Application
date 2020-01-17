@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const BlogSchema = new Schema({
-  name: {
+  title: {
     type: String,
     required: true
   },
-  description: {
+  content: {
     type: String
   },
   status: {
@@ -16,6 +16,11 @@ const BlogSchema = new Schema({
   },
   slug: {
     type: String
+  },
+  feature_image: {},
+  author: {
+    type: Schema.ObjectId,
+    default: null
   },
   meta: [
     {

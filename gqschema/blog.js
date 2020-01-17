@@ -1,11 +1,12 @@
 const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Blog {
-    name: String
-    description: String
+    id: ID
+    title: String
+    content: String
     status: String
     slug: String
-    id: ID
+    feature_image: customObject
     meta: blogMeta
     date: Date
     updated: Date
@@ -21,15 +22,20 @@ module.exports = gql`
     blogsbyMeta(key: String, value: String): [Blog]
   }
   extend type Mutation {
-    addBlog(name: String, description: String, status: String): Blog
+    addBlog(
+      title: String
+      content: String
+      status: String
+      feature_image: Upload
+    ): [Blog]
     updateBlog(
       id: ID!
-      name: String
-      description: String
+      title: String
+      content: String
       status: String
-      slug: String
+      updatedImage: Upload
       meta: [Meta]
-    ): Blog
-    deleteBlog(id: ID!): Boolean!
+    ): [Blog]
+    deleteBlog(id: ID!): [Blog]
   }
 `;

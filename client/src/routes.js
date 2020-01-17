@@ -1,6 +1,6 @@
 import React from "react";
 import { AllUsers, AddUser, EditUser } from "./views/user";
-import { AddBlog, AllBlog, EditBlog, Categories } from "./views/blog";
+import { AddBlog, AllBlog, EditBlog } from "./views/blog";
 
 //const Dashboard = React.lazy(() => import("./views/Dashboard"));
 
@@ -22,12 +22,6 @@ const routes = [
     exact: true,
     name: "Edit User",
     component: EditUser
-  },
-  {
-    path: "/categories",
-    exact: true,
-    name: "Categories",
-    component: Categories
   }
 ];
 

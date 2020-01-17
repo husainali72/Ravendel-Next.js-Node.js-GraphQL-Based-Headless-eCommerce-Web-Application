@@ -1,12 +1,20 @@
 const Blog = require("../models/Blog");
-const { isEmpty, putError, checkError } = require("../config/helpers");
+const {
+  isEmpty,
+  putError,
+  checkError,
+  imageUpload,
+  imageUnlink
+} = require("../config/helpers");
 const validate = require("../validations/blog");
+const sanitizeHtml = require("sanitize-html");
 
 module.exports = {
   Query: {
     blogs: async (root, args) => {
       try {
-        return await Blog.find({});
+        const blogs = await Blog.find({});
+        return blogs || [];
       } catch (error) {
         throw new Error("Something went wrong.");
       }
@@ -22,43 +30,10 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    },
-    blogsbyMeta: async (root, args) => {
-      try {
-        const blog = await Blog.find({
-          "meta.key": args.key,
-          "meta.value": args.value
-        });
-        if (!blog) {
-          throw putError("Blog not found");
-        }
-        return blog;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    }
-  },
-  blogMeta: {
-    meta: async (root, args) => {
-      try {
-        if (isEmpty(args)) {
-          return root;
-        }
-        for (let i in root) {
-          if (root[i].key == args.key && root[i].value == args.value) {
-            return root[i];
-          }
-        }
-        return [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
     }
   },
   Mutation: {
-    addBlog: async (root, args) => {
+    addBlog: async (root, args, user) => {
       try {
         // Check Validation
         const errors = validate("addBlog", args);
@@ -66,20 +41,35 @@ module.exports = {
           throw putError(errors);
         }
 
-        const blog = await Blog.findOne({ name: args.name });
+        const blog = await Blog.findOne({ title: args.title });
         if (blog) {
-          throw putError("Name already exist.");
+          throw putError("Title already exist.");
         } else {
+          let imgObject = "";
+          if (args.feature_image) {
+            imgObject = await imageUpload(
+              args.feature_image,
+              "/assets/images/blog/feature/"
+            );
+
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            }
+          }
+
           const newBlog = new Blog({
-            name: args.name,
-            description: args.description,
-            status: args.status
+            title: args.title,
+            content: args.content || "",
+            status: args.status,
+            feature_image: imgObject.data || imgObject,
+            author: user.id
           });
 
-          return await newBlog.save();
+          await newBlog.save();
+          return await Blog.find({});
         }
       } catch (error) {
-        //console.log("here comes", error);
+        console.log("here comes", error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
@@ -88,13 +78,25 @@ module.exports = {
       try {
         const blog = await Blog.findById({ _id: args.id });
         if (blog) {
-          blog.name = args.name || blog.name;
-          blog.description = args.description || blog.description;
+          if (args.updatedImage) {
+            let imgObject = await imageUpload(
+              args.updatedImage,
+              "/assets/images/blog/feature/"
+            );
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            } else {
+              imageUnlink(blog.feature_image);
+              blog.feature_image = imgObject.data;
+            }
+          }
+
+          blog.title = args.title || blog.title;
+          blog.content = args.content || blog.content;
           blog.status = args.status || blog.status;
           blog.updated = Date.now();
 
-          let metArra = {};
-
+          /* let metArra = {};
           for (let i in args.meta) {
             metArra[args.meta[i].key] = args.meta[i];
           }
@@ -110,9 +112,10 @@ module.exports = {
             for (let i in metArra) {
               blog.meta.unshift(metArra[i]);
             }
-          }
+          } */
 
-          return await blog.save();
+          await blog.save();
+          return await Blog.find({});
         } else {
           throw putError("Blog not exist");
         }
@@ -122,11 +125,18 @@ module.exports = {
       }
     },
     deleteBlog: async (root, args) => {
-      const blog = await Blog.findByIdAndRemove(args.id);
-      if (blog) {
-        return true;
+      try {
+        const blog = await Blog.findByIdAndRemove(args.id);
+        if (blog) {
+          //return true;
+          imageUnlink(blog.feature_image);
+          return await Blog.find({});
+        }
+        throw putError("Blog not exist");
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
       }
-      return false;
     }
   }
 };

@@ -7,11 +7,22 @@ import {
   userAddAction
 } from "./userAction";
 
+import {
+  blogsAction,
+  blogUpdateAction,
+  blogDeleteAction,
+  blogAddAction
+} from "./blogAction";
+
 export {
   LoginAction,
   usersAction,
   userAction,
   userUpdateAction,
   userDeleteAction,
-  userAddAction
+  userAddAction,
+  blogsAction,
+  blogUpdateAction,
+  blogDeleteAction,
+  blogAddAction
 };
