@@ -35,6 +35,8 @@ const ProductSchema = new Schema({
       }
     }
   ],
+  feature_image: {},
+  gallery_image: [],
   status: {
     type: String,
     default: "active"

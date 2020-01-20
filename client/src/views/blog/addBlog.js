@@ -40,6 +40,7 @@ const AddBlog = props => {
 
   const addBlog = e => {
     e.preventDefault();
+    console.log(blog);
     props.blogAddAction(blog);
   };
 
@@ -48,7 +49,7 @@ const AddBlog = props => {
   };
 
   const fileChange = e => {
-    console.log(e.target.files[0]);
+    //console.log(e.target.files[0]);
     setBlog({ ...blog, [e.target.name]: e.target.files[0] });
   };
 

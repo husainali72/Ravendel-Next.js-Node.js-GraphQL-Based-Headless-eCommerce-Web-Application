@@ -47,6 +47,11 @@ export const blogAddAction = object => dispatch => {
           payload: response.data.addBlog
         });
 
+        dispatch({
+          type: TINYMCE_NULL,
+          payload: {}
+        });
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: "Blog added successfully" }
@@ -57,6 +62,12 @@ export const blogAddAction = object => dispatch => {
       dispatch({
         type: BLOG_FAIL
       });
+
+      dispatch({
+        type: TINYMCE_NULL,
+        payload: {}
+      });
+
       return dispatch({
         type: ALERT_SUCCESS,
         payload: { boolean: true, message: error }
@@ -77,6 +88,11 @@ export const blogUpdateAction = object => dispatch => {
         });
 
         dispatch({
+          type: TINYMCE_NULL,
+          payload: {}
+        });
+
+        dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: "Blog updated successfully" }
         });
@@ -89,6 +105,12 @@ export const blogUpdateAction = object => dispatch => {
       dispatch({
         type: BLOG_FAIL
       });
+
+      dispatch({
+        type: TINYMCE_NULL,
+        payload: {}
+      });
+
       return dispatch({
         type: ALERT_SUCCESS,
         payload: { boolean: true, message: error }
@@ -128,3 +150,5 @@ export const BLOG_LOADING = "BLOG_LOADING";
 export const BLOGS_SUCCESS = "BLOGS_SUCCESS";
 export const BLOG_SUCCESS = "BLOG_SUCCESS";
 export const BLOG_FAIL = "BLOG_FAIL";
+export const TINYMCE_SUCCESS = "TINYMCE_SUCCESS";
+export const TINYMCE_NULL = "TINYMCE_NULL";

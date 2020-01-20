@@ -17,6 +17,7 @@ import { connect } from "react-redux";
 import { blogUpdateAction } from "../../store/action/";
 import jumpTo, { go } from "../../utils/navigation";
 import Alert from "../utils/Alert";
+import { isEmpty } from "../../utils/helper";
 
 const EditBlog = props => {
   const [blog, setBlog] = useState({
@@ -38,10 +39,10 @@ const EditBlog = props => {
         setBlog({ ...editblog });
       }
     });
-  }, [props.blogs.blogs]);
+  }, []);
 
   useEffect(() => {
-    if (props.blogs.blog.content != undefined) {
+    if (!isEmpty(props.blogs.blog.content)) {
       setBlog({ ...blog, content: props.blogs.blog.content });
     }
   }, [props.blogs.blog.content]);

@@ -11,6 +11,7 @@ const linkSchema = gql`
   scalar Date
   scalar metaKeyValueArray
   scalar customObject
+  scalar customArray
 
   type File {
     filename: String!

@@ -13,14 +13,16 @@ module.exports = gql`
   type Product {
     id: ID
     name: String
-    categoryId: metaKeyValueArray
+    categoryId: customArray
     sku: String
     description: String
     shippingDetails: customObject
     manufactureDetails: customObject
-    quantity: Int
+    quantity: String
     pricing: customObject
     slug: String
+    feature_image: customObject
+    gallery_image: customObject
     meta: productMeta
     status: String
     date: Date
@@ -39,27 +41,39 @@ module.exports = gql`
     product(id: ID!): Product
   }
   extend type Mutation {
-    addProductCategory(name: String, parentId: ID): productCategory
-    updateProductCategory(id: ID!, name: String, parentId: ID): productCategory
-    deleteProductCategory(id: ID!): Boolean!
+    addProductCategory(name: String, parentId: ID): [productCategory]
+    updateProductCategory(
+      id: ID!
+      name: String
+      parentId: ID
+    ): [productCategory]
+    deleteProductCategory(id: ID!): [productCategory]
     addTree(name: String, parentname: String): productCategory
     addProduct(
       name: String
-      categoryId: metaKeyValueArray
-      sku: String
+      categoryId: customArray
+      slug: String
       description: String
-      quantity: Int
+      sku: String
+      quantity: String
       pricing: customObject
-    ): Product
+      feature_image: Upload
+      gallery_image: Upload
+      status: String
+    ): [Product]
     updateProduct(
       id: ID
       name: String
-      categoryId: metaKeyValueArray
-      sku: String
+      categoryId: customArray
+      slug: String
       description: String
-      quantity: Int
+      sku: String
+      quantity: String
       pricing: customObject
-    ): Product
-    deleteProduct(id: ID!): Boolean!
+      feature_image: Upload
+      gallery_image: Upload
+      status: String
+    ): [Product]
+    deleteProduct(id: ID!): [Product]
   }
 `;

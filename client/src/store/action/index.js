@@ -14,6 +14,15 @@ import {
   blogAddAction
 } from "./blogAction";
 
+import {
+  categoriesAction,
+  categoryAddAction,
+  categoryUpdateAction,
+  categoryDeleteAction,
+  productsAction,
+  productAddAction
+} from "./productAction";
+
 export {
   LoginAction,
   usersAction,
@@ -24,5 +33,11 @@ export {
   blogsAction,
   blogUpdateAction,
   blogDeleteAction,
-  blogAddAction
+  blogAddAction,
+  categoriesAction,
+  categoryAddAction,
+  categoryUpdateAction,
+  categoryDeleteAction,
+  productsAction,
+  productAddAction
 };

@@ -13,7 +13,8 @@ module.exports = {
   Query: {
     users: async (root, args) => {
       try {
-        return await User.find({});
+        const users = await User.find({});
+        return users || [];
       } catch (error) {
         throw new Error("Something went wrong.");
       }
@@ -80,13 +81,16 @@ module.exports = {
           let imgObject = "";
           if (args.image) {
             imgObject = await imageUpload(args.image, "/assets/images/user/");
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            }
           }
           const newUser = new User({
             name: args.name,
             email: args.email,
             password: args.password,
             role: args.role,
-            image: imgObject.original ? imgObject : {}
+            image: imgObject.data || imgObject
           });
 
           newUser.password = await bcrypt.hash(args.password, 10);
@@ -119,9 +123,12 @@ module.exports = {
               args.updatedImage,
               "/assets/images/user/"
             );
-            if (imgObject.original) {
+
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            } else {
               imageUnlink(user.image);
-              user.image = imgObject;
+              user.image = imgObject.data;
             }
           }
 
@@ -165,7 +172,8 @@ module.exports = {
         if (user) {
           //return true;
           imageUnlink(user.image);
-          return await User.find({});
+          const users = await User.find({});
+          return users || [];
         }
         throw putError("User not exist");
       } catch (error) {

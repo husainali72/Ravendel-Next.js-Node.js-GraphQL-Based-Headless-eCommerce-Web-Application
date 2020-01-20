@@ -16,6 +16,10 @@ const metaKeyValueArray = {
   metaKeyValueArray: []
 };
 
+const customArray = {
+  customArray: []
+};
+
 const customObject = {
   customObject: {}
 };

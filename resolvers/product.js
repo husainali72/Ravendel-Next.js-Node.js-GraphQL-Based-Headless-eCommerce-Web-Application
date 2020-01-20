@@ -1,10 +1,16 @@
 const ProductCat = require("../models/ProductCat");
 const CatTree = require("../models/CatTree");
 const Product = require("../models/Product");
-const { isEmpty, putError, checkError } = require("../config/helpers");
+const {
+  isEmpty,
+  putError,
+  checkError,
+  imageUpload,
+  imageUnlink
+} = require("../config/helpers");
 const validate = require("../validations/product");
 
-var categories = [];
+/* var categories = [];
 const getCategories = async id => {
   const cats = await ProductCat.find({ parentId: id });
 
@@ -14,37 +20,14 @@ const getCategories = async id => {
     categories.push(cats[i]);
   }
   return cats;
-};
+}; */
 
 module.exports = {
   Query: {
     productCategories: async (root, args) => {
       try {
-        categories = [];
-        await getCategories(null);
-        return categories;
-
-        // var descendants = [];
-        // var stack = [];
-        // var item = ProductCat.findOne({ _id: "5de0e1d9f6b51a148cf3b53d" });
-        // stack.push(item);
-        // while (stack.length > 0) {
-        //   var currentnode = stack.pop();
-        //   var children = ProductCat.find({ parent: currentnode._id });
-        //   children.hasNext = function hasNext() {
-        //     const r = this.next();
-        //     this.current = r.value;
-        //     return !r.done;
-        //   };
-        //   while (true === children.hasNext()) {
-        //     var child = children.next();
-        //     descendants.push(child._id);
-        //     stack.push(child);
-        //   }
-        // }
-
-        // descendants.join(",");
-        // console.log(descendants);
+        const cats = await ProductCat.find({});
+        return cats || [];
       } catch (error) {
         console.log(error);
         throw new Error("Something went wrong.");
@@ -69,7 +52,8 @@ module.exports = {
     },
     products: async (root, args) => {
       try {
-        return await Product.find({});
+        const products = await Product.find({});
+        return products || [];
       } catch (error) {
         throw new Error("Something went wrong.");
       }
@@ -93,6 +77,7 @@ module.exports = {
         // Check Validation
         const errors = validate("addProductCategory", args);
         if (!isEmpty(errors)) {
+          console.log("validation", errors);
           throw putError(errors);
         }
 
@@ -105,10 +90,11 @@ module.exports = {
             parentId: args.parentId || null
           });
 
-          return await newCat.save();
+          await newCat.save();
+          return await ProductCat.find({});
         }
       } catch (error) {
-        //console.log("here comes", error);
+        console.log("here comes", error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
@@ -131,11 +117,17 @@ module.exports = {
       }
     },
     deleteProductCategory: async (root, args) => {
-      const cat = await ProductCat.findByIdAndRemove(args.id);
-      if (cat) {
-        return true;
+      try {
+        const cat = await ProductCat.findByIdAndRemove(args.id);
+        if (cat) {
+          const cats = await ProductCat.find({});
+          return cats || [];
+        }
+        throw putError("Category not exist");
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
       }
-      return false;
     },
     addTree: async (root, args) => {
       try {
@@ -170,15 +162,38 @@ module.exports = {
             throw putError(errors);
           }
 
+          let pricing = {};
+          if (args.sellprice) {
+            pricing.sellprice = args.sellprice;
+          }
+          console.log(args.feature_image);
+          let imgObject = "";
+          if (args.feature_image) {
+            imgObject = await imageUpload(
+              args.feature_image[0],
+              "/assets/images/product/feature/"
+            );
+
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            }
+          }
+
           const newProduct = new Product({
             name: args.name,
+            slug: args.slug,
             categoryId: args.categoryId,
-            sku: args.sku,
             description: args.description,
+            sku: args.sku,
             quantity: args.quantity,
-            pricing: args.pricing
+            pricing: pricing,
+            feature_image: imgObject.data || imgObject,
+            status: args.status
           });
-          return await newProduct.save();
+
+          await newProduct.save();
+          const products = await Product.find({});
+          return products || [];
         }
       } catch (error) {
         console.log("here comes", error);

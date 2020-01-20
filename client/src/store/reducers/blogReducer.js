@@ -2,9 +2,10 @@ import {
   BLOG_LOADING,
   BLOGS_SUCCESS,
   BLOG_FAIL,
-  BLOG_SUCCESS
+  BLOG_SUCCESS,
+  TINYMCE_SUCCESS,
+  TINYMCE_NULL
 } from "../action/blogAction";
-export const TINYMCE_SUCCESS = "TINYMCE_SUCCESS";
 
 const initialState = {
   blogs: [],
@@ -42,6 +43,14 @@ export default (state = initialState, action) => {
         success: false
       };
     case TINYMCE_SUCCESS:
+      return {
+        ...state,
+        blog: {
+          ...state.blog,
+          content: action.payload.content
+        }
+      };
+    case TINYMCE_NULL:
       return {
         ...state,
         blog: {

@@ -38,6 +38,33 @@ export default {
           icon: "icon-pin"
         }
       ]
+    },
+    {
+      name: "Products",
+      url: "",
+      icon: "icon-pin",
+      children: [
+        {
+          name: "All Products",
+          url: "/all-products",
+          icon: "icon-pin"
+        },
+        {
+          name: "Add Product",
+          url: "/add-product",
+          icon: "icon-plus"
+        },
+        {
+          name: "Categories",
+          url: "/all-categories",
+          icon: "icon-pin"
+        },
+        {
+          name: "Add Category",
+          url: "/add-category",
+          icon: "icon-plus"
+        }
+      ]
     }
   ]
 };

@@ -130,7 +130,8 @@ module.exports = {
         if (blog) {
           //return true;
           imageUnlink(blog.feature_image);
-          return await Blog.find({});
+          const blogs = await Blog.find({});
+          return blogs || [];
         }
         throw putError("Blog not exist");
       } catch (error) {
