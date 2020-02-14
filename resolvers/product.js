@@ -162,11 +162,6 @@ module.exports = {
             throw putError(errors);
           }
 
-          let pricing = {};
-          if (args.sellprice) {
-            pricing.sellprice = args.sellprice;
-          }
-          console.log(args.feature_image);
           let imgObject = "";
           if (args.feature_image) {
             imgObject = await imageUpload(
@@ -179,6 +174,21 @@ module.exports = {
             }
           }
 
+          let imgArray = [];
+          if (args.gallery_image) {
+            let galleryObject = "";
+            for (let i in args.gallery_image) {
+              galleryObject = await imageUpload(
+                args.gallery_image[i],
+                "/assets/images/product/gallery/"
+              );
+
+              if (galleryObject.success) {
+                imgArray.push(galleryObject.data);
+              }
+            }
+          }
+
           const newProduct = new Product({
             name: args.name,
             slug: args.slug,
@@ -186,8 +196,9 @@ module.exports = {
             description: args.description,
             sku: args.sku,
             quantity: args.quantity,
-            pricing: pricing,
+            pricing: args.pricing,
             feature_image: imgObject.data || imgObject,
+            gallery_image: imgArray,
             status: args.status
           });
 
@@ -224,11 +235,22 @@ module.exports = {
     },
     deleteProduct: async (root, args) => {
       try {
-        const cat = await Product.findByIdAndRemove(args.id);
-        if (cat) {
-          return true;
+        const product = await Product.findByIdAndRemove(args.id);
+        if (product) {
+          if (product.feature_image) {
+            imageUnlink(product.feature_image);
+          }
+
+          if (product.gallery_image) {
+            for (let i in product.gallery_image) {
+              imageUnlink(product.gallery_image[i]);
+            }
+          }
+
+          const products = await Product.find({});
+          return products || [];
         }
-        return false;
+        throw putError("Product not exist");
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);

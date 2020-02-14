@@ -64,6 +64,15 @@ const GET_PRODUCTS = gql`
     products {
       id
       name
+      slug
+      categoryId
+      description
+      sku
+      quantity
+      pricing
+      feature_image
+      gallery_image
+      status
       date
     }
   }
@@ -96,13 +105,16 @@ const ADD_PRODUCT = gql`
     ) {
       id
       name
+      slug
       categoryId
-      sku
       description
+      sku
       quantity
       pricing
-      slug
+      feature_image
+      gallery_image
       status
+      date
     }
   }
 `;
@@ -136,13 +148,16 @@ const UPDATE_PRODUCT = gql`
     ) {
       id
       name
+      slug
       categoryId
-      sku
       description
+      sku
       quantity
       pricing
-      slug
+      feature_image
+      gallery_image
       status
+      date
     }
   }
 `;
@@ -152,13 +167,16 @@ const DELETE_PRODUCT = gql`
     deleteProduct(id: $id) {
       id
       name
+      slug
       categoryId
-      sku
       description
+      sku
       quantity
       pricing
-      slug
+      feature_image
+      gallery_image
       status
+      date
     }
   }
 `;

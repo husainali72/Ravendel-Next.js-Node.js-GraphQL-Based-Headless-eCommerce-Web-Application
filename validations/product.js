@@ -10,17 +10,17 @@ module.exports = function validate(method, args) {
       if (Validator.isEmpty(args.name)) {
         return (errors = "Name field is required");
       }
-      return;
+      break;
     }
     case "addProduct": {
       let errors = "";
       args.name = args.name || "";
-      args.categoryId = isEmpty(args.categoryId) || [];
+      //args.categoryId = isEmpty(args.categoryId) || [];
       args.slug = args.slug || "";
       args.sku = args.sku || "";
       //args.description = args.description || "";
       args.quantity = args.quantity || "";
-      //args.pricing = args.pricing || {};
+      args.pricing = args.pricing || {};
 
       if (Validator.isEmpty(args.name)) {
         return (errors = "Name field is required");
@@ -42,14 +42,14 @@ module.exports = function validate(method, args) {
         return (errors = "Quantity field is required");
       }
 
-      /* if (
+      if (
         typeof args.pricing != "object" &&
         Object.keys(args.pricing).length != 0
       ) {
         return (errors = "Pricing field is required");
-      } */
+      }
 
-      return;
+      break;
     }
   }
 };

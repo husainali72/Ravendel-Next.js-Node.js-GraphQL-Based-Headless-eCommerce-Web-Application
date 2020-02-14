@@ -11,7 +11,7 @@ import {
 } from "reactstrap";
 
 import { connect } from "react-redux";
-import { productsAction } from "../../store/action/";
+import { productsAction, productDeleteAction } from "../../store/action/";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
 import Alert from "../utils/Alert";
@@ -48,9 +48,6 @@ const AllProduct = props => {
               >
                 <thead className="thead-light">
                   <tr>
-                    <th className="text-center">
-                      <i className="icon-pin"></i>
-                    </th>
                     <th>Name</th>
                     <th>Date</th>
                     <th>Actions</th>
@@ -69,15 +66,14 @@ const AllProduct = props => {
                         <button
                           type="button"
                           className="btn btn-pill btn-primary mr-2"
-                          onClick={() => jumpTo(`edit-category/${product.id}`)}
-                          disabled
+                          onClick={() => jumpTo(`edit-product/${product.id}`)}
                         >
                           Edit
                         </button>
                         <button
                           type="button"
                           className="btn btn-pill btn-danger mr-2"
-                          onClick={() => props.categoryDeleteAction(product.id)}
+                          onClick={() => props.productDeleteAction(product.id)}
                         >
                           Delete
                         </button>
@@ -106,8 +102,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  productsAction
-  //categoryDeleteAction
+  productsAction,
+  productDeleteAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllProduct);

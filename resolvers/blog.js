@@ -129,7 +129,9 @@ module.exports = {
         const blog = await Blog.findByIdAndRemove(args.id);
         if (blog) {
           //return true;
-          imageUnlink(blog.feature_image);
+          if (blog.feature_image) {
+            imageUnlink(blog.feature_image);
+          }
           const blogs = await Blog.find({});
           return blogs || [];
         }

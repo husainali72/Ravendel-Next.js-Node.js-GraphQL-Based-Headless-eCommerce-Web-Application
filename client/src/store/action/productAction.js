@@ -195,6 +195,68 @@ export const productAddAction = object => dispatch => {
     });
 };
 
+export const productUpdateAction = object => dispatch => {
+  dispatch({
+    type: PRODUCT_LOADING
+  });
+  mutation(UPDATE_PRODUCT, object)
+    .then(response => {
+      if (response) {
+        dispatch({
+          type: PRODUCTS_SUCCESS,
+          payload: response.data.updateProduct
+        });
+
+        jumpTo("/all-products");
+
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: "Product updated successfully" }
+        });
+
+        return;
+      }
+    })
+    .catch(error => {
+      dispatch({
+        type: PRODUCT_FAIL
+      });
+
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error }
+      });
+    });
+};
+
+export const productDeleteAction = id => dispatch => {
+  dispatch({
+    type: PRODUCT_LOADING
+  });
+  mutation(DELETE_PRODUCT, { id })
+    .then(response => {
+      if (response) {
+        dispatch({
+          type: PRODUCTS_SUCCESS,
+          payload: response.data.deleteProduct
+        });
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: "Product deleted successfully" }
+        });
+      }
+    })
+    .catch(error => {
+      dispatch({
+        type: PRODUCT_FAIL
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error }
+      });
+    });
+};
+
 export const PRODUCT_LOADING = "PRODUCT_LOADING";
 export const PRODUCTS_SUCCESS = "PRODUCTS_SUCCESS";
 export const PRODUCT_SUCCESS = "PRODUCT_SUCCESS";

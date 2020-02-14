@@ -20,7 +20,9 @@ import {
   categoryUpdateAction,
   categoryDeleteAction,
   productsAction,
-  productAddAction
+  productAddAction,
+  productDeleteAction,
+  productUpdateAction
 } from "./productAction";
 
 export {
@@ -39,5 +41,7 @@ export {
   categoryUpdateAction,
   categoryDeleteAction,
   productsAction,
-  productAddAction
+  productAddAction,
+  productDeleteAction,
+  productUpdateAction
 };

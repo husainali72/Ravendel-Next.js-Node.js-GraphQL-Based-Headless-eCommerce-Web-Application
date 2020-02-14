@@ -29,7 +29,6 @@ const EditBlog = props => {
 
   const updateBlog = e => {
     e.preventDefault();
-    console.log(blog);
     props.blogUpdateAction(blog);
   };
 
@@ -122,7 +121,7 @@ const EditBlog = props => {
             <Row className="mt-2">
               <Col md={12}>
                 <Button color="primary" className="mr-2" onClick={updateBlog}>
-                  Save
+                  Update
                 </Button>
                 <Button onClick={() => jumpTo("/all-blogs")}>Cancel</Button>
               </Col>

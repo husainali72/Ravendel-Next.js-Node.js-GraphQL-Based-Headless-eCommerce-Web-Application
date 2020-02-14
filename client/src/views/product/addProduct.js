@@ -43,6 +43,8 @@ const AddProduct = props => {
 
   const addProduct = e => {
     e.preventDefault();
+    product.pricing = {};
+    product.pricing.sellprice = product.sellprice;
     console.log(product);
     props.productAddAction(product);
   };

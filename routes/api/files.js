@@ -15,11 +15,10 @@ router.post("/upload", (req, res) => {
     file.path = "./assets/images/blog/content/" + filename;
   });
   form.on("file", function(name, file) {
-    console.log("Uploaded " + file.name);
     res.json({ location: file.path.substr(1) });
   });
   form.on("error", function(err) {
-    //console.log(err);
+    console.log(err);
     res.status(404).send("Invalid image");
   });
 });

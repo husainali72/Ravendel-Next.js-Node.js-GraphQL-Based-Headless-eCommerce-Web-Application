@@ -59,7 +59,8 @@ const DefaultLayout = props => {
                       path={route.path}
                       exact={route.exact}
                       name={route.name}
-                      render={props => <route.component {...props} />}
+                      //render={props => <route.component {...props} />}
+                      component={route.component}
                     />
                   ) : null;
                 })}
