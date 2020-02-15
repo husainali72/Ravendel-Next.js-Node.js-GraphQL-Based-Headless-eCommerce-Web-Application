@@ -1,4 +1,12 @@
 const { gql } = require("apollo-server-express");
+
+/* type cattree {
+  _id: String
+  tree: metaKeyValueArray
+  parent: String
+  child: metaKeyValueArray
+} */
+
 module.exports = gql`
   type productCategory {
     id: ID
@@ -8,6 +16,13 @@ module.exports = gql`
     ancestors: metaKeyValueArray
     date: Date
     updated: Date
+  }
+
+  type cattree {
+    _id: ID
+    name: String
+    parentId: ID
+    children: customArray
   }
 
   type Product {
@@ -36,7 +51,7 @@ module.exports = gql`
   extend type Query {
     productCategories: [productCategory]
     productCategory(id: ID!): productCategory
-    getTree: [productCategory]
+    getTree: [cattree]
     products: [Product]
     product(id: ID!): Product
   }

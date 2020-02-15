@@ -10,16 +10,35 @@ const {
 } = require("../config/helpers");
 const validate = require("../validations/product");
 
-/* var categories = [];
-const getCategories = async id => {
-  const cats = await ProductCat.find({ parentId: id });
-
-  for (let i in cats) {
-    cats[i].child = await getCategories(cats[i].id);
-
-    categories.push(cats[i]);
+/*const Tree = [
+  {
+    _id: "electronics",
+    child: ""
+  },
+  {
+    _id: "cases",
+    child: ""
   }
-  return cats;
+];
+var childs;
+var count = 0;
+var promises = [];
+const getTree = async treeReference => {
+  for (let i in treeReference) {
+    let subcat = await CatTree.find({ parent: treeReference[i]._id }).select(
+      "_id"
+    );
+    if (subcat && subcat.length) {
+      treeReference[i].child = subcat;
+      childs = subcat;
+      getTree(treeReference[i].child);
+      if (childs[0]._id == "yellow") {
+        console.log("subcat", treeReference[i].child);
+        console.log(Tree[1].child[1].child[0]._id);
+        return resolve(Tree);
+      }
+    }
+  }
 }; */
 
 module.exports = {
@@ -47,8 +66,11 @@ module.exports = {
     },
     getTree: async (root, args) => {
       try {
-        return await CatTree.find({});
-      } catch (error) {}
+        /* const cats = await ProductCat.find({}).select("_id parentId name");
+        return unflatten(cats); */
+      } catch (error) {
+        console.log(error);
+      }
     },
     products: async (root, args) => {
       try {

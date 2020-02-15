@@ -3,11 +3,15 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const CatTreeSchema = new Schema({
-  name: {
+  _id: {
     type: String,
     required: true
   },
-  ancestors: [],
+  tree: [],
+  parent: {
+    type: String,
+    required: true
+  },
   date: {
     type: Date,
     default: Date.now
