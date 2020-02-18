@@ -25,6 +25,8 @@ import {
   productUpdateAction
 } from "./productAction";
 
+import { ordersAction, orderAction, orderDeleteAction } from "./orderAction";
+
 export {
   LoginAction,
   usersAction,
@@ -43,5 +45,8 @@ export {
   productsAction,
   productAddAction,
   productDeleteAction,
-  productUpdateAction
+  productUpdateAction,
+  ordersAction,
+  orderAction,
+  orderDeleteAction
 };

@@ -66,8 +66,9 @@ module.exports = {
     },
     getTree: async (root, args) => {
       try {
-        /* const cats = await ProductCat.find({}).select("_id parentId name");
-        return unflatten(cats); */
+        const cats = await CatTree.find({});
+        //return unflatten(cats);
+        return cats;
       } catch (error) {
         console.log(error);
       }

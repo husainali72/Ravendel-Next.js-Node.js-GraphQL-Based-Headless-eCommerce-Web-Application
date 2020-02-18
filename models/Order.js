@@ -7,11 +7,30 @@ const OrderSchema = new Schema({
     type: Schema.ObjectId,
     required: true
   },
-  shipping: {
-    type: Object
-  },
   billing: {
-    type: Object
+    firstname: String,
+    lastname: String,
+    comapny: String,
+    address: String,
+    city: String,
+    zip: String,
+    country: String,
+    state: String,
+    email: String,
+    phone: String,
+    payment_method: String,
+    transaction_id: String
+  },
+  shipping: {
+    firstname: String,
+    lastname: String,
+    comapny: String,
+    address: String,
+    city: String,
+    zip: String,
+    country: String,
+    state: String,
+    notes: String
   },
   products: [
     {
@@ -19,20 +38,20 @@ const OrderSchema = new Schema({
         type: Schema.ObjectId,
         required: true
       },
-      qty: {
+      name: {
+        type: String,
+        required: true
+      },
+      cost: {
         type: Number,
         required: true
       },
-      total: {
+      qty: {
         type: Number,
         required: true
       }
     }
   ],
-  total: {
-    type: Number,
-    required: true
-  },
   status: {
     type: String,
     default: "active"

@@ -3,6 +3,7 @@ import { AllUsers, AddUser, EditUser } from "./views/user";
 import { AddBlog, AllBlog, EditBlog } from "./views/blog";
 import { AllCategory, AddCategory } from "./views/product";
 import { AddProduct, AllProduct, EditProduct } from "./views/product";
+import { AllOrder, ViewOrder } from "./views/order";
 
 //const Dashboard = React.lazy(() => import("./views/Dashboard"));
 
@@ -54,6 +55,18 @@ const routes = [
     exact: true,
     name: "Edit Product",
     component: EditProduct
+  },
+  {
+    path: "/all-orders",
+    exact: true,
+    name: "Orders",
+    component: AllOrder
+  },
+  {
+    path: "/view-order/:id",
+    exact: true,
+    name: "View Order",
+    component: ViewOrder
   }
 ];
 

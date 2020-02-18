@@ -29,6 +29,7 @@ const EditBlog = props => {
 
   const updateBlog = e => {
     e.preventDefault();
+    console.log(blog);
     props.blogUpdateAction(blog);
   };
 

@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const { isEmpty, putError, checkError } = require("../config/helpers");
+//const validate = require("../validations/product");
 
 module.exports = {
   Query: {
@@ -40,22 +41,29 @@ module.exports = {
       try {
         const newOrder = new Order({
           user_id: args.user_id,
-          total: args.total,
-          products: args.products
+          billing: args.billing,
+          shipping: args.shipping,
+          status: args.status
         });
 
-        return await newOrder.save();
+        newOrder.products = [...args.products];
+
+        await newOrder.save();
+        return await Order.find({});
       } catch (error) {
+        console.log(error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
     deleteOrder: async (root, args) => {
-      const order = await Order.findByIdAndRemove(args.id);
-      if (order) {
-        return true;
+      try {
+        await Order.findByIdAndRemove(args.id);
+        return await Order.find({});
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
       }
-      return false;
     }
   }
 };

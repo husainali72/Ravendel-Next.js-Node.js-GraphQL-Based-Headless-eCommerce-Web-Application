@@ -63,8 +63,10 @@ const imageUpload = async (upload, uploadPath) => {
       let { filename, mimetype, encoding, createReadStream } = await upload;
 
       const extensions = ["gif", "jpeg", "jpg", "png"];
-      const ext = filename.split(".");
-      if (!~extensions.indexOf(ext.pop())) {
+      let ext = filename.split(".");
+      ext = ext.pop();
+      ext = ext.toLowerCase();
+      if (!~extensions.indexOf(ext)) {
         return resolve({
           success: false,
           message: "This image can't be upload"

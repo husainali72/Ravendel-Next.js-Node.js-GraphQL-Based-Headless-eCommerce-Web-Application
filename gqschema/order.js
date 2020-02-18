@@ -4,10 +4,9 @@ module.exports = gql`
     id: ID
     user_id: ID
     status: String
-    total: Float
     shipping: customObject
     billing: customObject
-    products: metaKeyValueArray
+    products: customArray
     date: Date
     updated: Date
   }
@@ -15,7 +14,6 @@ module.exports = gql`
   input orderProduct {
     product_id: ID
     qty: Int
-    total: Float
   }
 
   extend type Query {
@@ -25,7 +23,13 @@ module.exports = gql`
   }
 
   extend type Mutation {
-    addOrder(user_id: ID, total: Float, products: [orderProduct]): Order
-    deleteOrder(id: ID!): Boolean!
+    addOrder(
+      user_id: ID
+      billing: customObject
+      shipping: customObject
+      products: customArray
+      status: String
+    ): [Order]
+    deleteOrder(id: ID!): [Order]
   }
 `;

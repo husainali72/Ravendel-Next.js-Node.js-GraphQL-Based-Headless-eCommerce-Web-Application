@@ -65,6 +65,18 @@ export default {
           icon: "icon-plus"
         }
       ]
+    },
+    {
+      name: "Orders",
+      url: "",
+      icon: "icon-pin",
+      children: [
+        {
+          name: "All Orders",
+          url: "/all-orders",
+          icon: "icon-pin"
+        }
+      ]
     }
   ]
 };
