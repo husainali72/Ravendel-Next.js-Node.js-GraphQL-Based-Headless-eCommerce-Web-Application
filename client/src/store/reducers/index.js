@@ -5,7 +5,6 @@ import users from "./userReducer";
 import alert from "./alertReducer";
 import blogs from "./blogReducer";
 import products from "./productReducer";
-import orders from "./orderReducer";
 
 // Combine Reducers
 const MasterReducer = combineReducers({
@@ -13,8 +12,7 @@ const MasterReducer = combineReducers({
   users,
   alert,
   blogs,
-  products,
-  orders
+  products
 });
 
 export default MasterReducer;

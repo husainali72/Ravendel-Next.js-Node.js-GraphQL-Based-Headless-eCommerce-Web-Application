@@ -1,5 +1,10 @@
 const Checkout = require("../models/Checkout");
-const { isEmpty, putError, checkError } = require("../config/helpers");
+const {
+  isEmpty,
+  putError,
+  checkError,
+  checkToken
+} = require("../config/helpers");
 //const validate = require("../validations/cart");
 
 module.exports = {
@@ -37,7 +42,8 @@ module.exports = {
     }
   },
   Mutation: {
-    addCheckout: async (root, args) => {
+    addCheckout: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const newCheckout = new Checkout({
           user_id: args.user_id,
@@ -51,7 +57,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    deleteCheckout: async (root, args) => {
+    deleteCheckout: async (root, args, { id }) => {
+      checkToken(id);
       const checkout = await Checkout.findByIdAndRemove(args.id);
       if (checkout) {
         return true;

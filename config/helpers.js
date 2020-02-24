@@ -15,6 +15,7 @@ const putError = value => {
 module.exports.putError = putError;
 /*-------------------------------------------------------------------------------------------------------*/
 const checkError = error => {
+  console.log(error);
   if (isEmpty(error.custom_message)) {
     error = {};
     error.custom_message = "something went wrong";
@@ -23,6 +24,20 @@ const checkError = error => {
 };
 
 module.exports.checkError = checkError;
+/*-------------------------------------------------------------------------------------------------------*/
+
+const { AuthenticationError } = require("apollo-server-express");
+
+const checkToken = token => {
+  if (token === false) {
+    throw new AuthenticationError(
+      "Authentication token is invalid, please log in"
+    );
+  }
+  return;
+};
+
+module.exports.checkToken = checkToken;
 /*-------------------------------------------------------------------------------------------------------*/
 const slugify = require("slugify");
 const fs = require("fs");

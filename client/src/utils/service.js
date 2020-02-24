@@ -1,5 +1,5 @@
 import Auth from "./auth";
-import jumpTo, { go } from "./navigation";
+import jumpTo from "./navigation";
 import axios from "axios";
 import { isEmpty } from "./helper";
 import APclient from "../Client";
@@ -24,10 +24,8 @@ export const mutation = (query, variables) => {
 
       if (
         !isEmpty(errors.networkError) &&
-        errors.networkError.statusCode == 400
+        errors.networkError.statusCode === 400
       ) {
-        //Auth.logout();
-        //go("/login");
         return Promise.reject(errors.message);
       }
       return Promise.reject("Something went wrong");
@@ -54,10 +52,8 @@ export const query = (query, variables) => {
 
       if (
         !isEmpty(errors.networkError) &&
-        errors.networkError.statusCode == 400
+        errors.networkError.statusCode === 400
       ) {
-        //Auth.logout();
-        //go("/login");
         return Promise.reject(errors.message);
       }
       return Promise.reject("Something went wrong");

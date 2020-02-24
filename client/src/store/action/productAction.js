@@ -1,7 +1,5 @@
-import React from "react";
 import {
   GET_CATEGORIES,
-  GET_CATEGORY,
   ADD_CATEGORY,
   UPDATE_CATEGORY,
   DELETE_CATEGORY,

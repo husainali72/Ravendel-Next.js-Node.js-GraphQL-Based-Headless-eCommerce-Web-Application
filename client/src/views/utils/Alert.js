@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Toast, ToastBody, ToastHeader } from "reactstrap";
+import Snackbar from '@material-ui/core/Snackbar';
+
 import { connect } from "react-redux";
 const Alert = props => {
   const [isOpen, setisOpen] = useState(false);
@@ -12,16 +13,29 @@ const Alert = props => {
           type: "ALERT_SUCCESS",
           payload: { boolean: false, message: "" }
         });
-      }, 3000);
+      }, 6000);
     }
   }, [props.alert.success]);
 
   return (
     <Fragment>
-      <Toast isOpen={isOpen}>
+      {/* <Toast isOpen={isOpen}>
         <ToastHeader>Alert</ToastHeader>
         <ToastBody>{props.alert.message}</ToastBody>
-      </Toast>
+      </Toast> */}
+
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        autoHideDuration={6000}
+        open={isOpen}
+        ContentProps={{
+          'aria-describedby': 'message-id',
+        }}
+        message={<span id="message-id">{props.alert.message}</span>}
+      />
     </Fragment>
   );
 };

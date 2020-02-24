@@ -12,6 +12,7 @@
 # production
 /build
 /assets
+/client-old
 
 # misc
 .DS_Store

@@ -26,6 +26,7 @@ const customObject = {
 module.exports = [
   customScalarResolver,
   metaKeyValueArray,
+  customArray,
   customObject,
   userResolvers,
   pageResolvers,

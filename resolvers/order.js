@@ -1,6 +1,11 @@
 const Order = require("../models/Order");
-const { isEmpty, putError, checkError } = require("../config/helpers");
-//const validate = require("../validations/product");
+const {
+  isEmpty,
+  putError,
+  checkError,
+  checkToken
+} = require("../config/helpers");
+const validate = require("../validations/order");
 
 module.exports = {
   Query: {
@@ -37,7 +42,8 @@ module.exports = {
     }
   },
   Mutation: {
-    addOrder: async (root, args) => {
+    addOrder: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const newOrder = new Order({
           user_id: args.user_id,
@@ -51,12 +57,37 @@ module.exports = {
         await newOrder.save();
         return await Order.find({});
       } catch (error) {
-        console.log(error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
-    deleteOrder: async (root, args) => {
+    updateOrder: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        // Check Validation
+        const errors = validate("updateOrder", args);
+        if (!isEmpty(errors)) {
+          throw putError(errors);
+        }
+
+        const order = await Order.findById(args.id);
+        if (!order) {
+          throw putError("not found");
+        }
+
+        order.status = args.status;
+        order.billing = args.billing;
+        order.shipping = args.shipping;
+        await order.save();
+
+        return await Order.find({});
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    deleteOrder: async (root, args, { id }) => {
+      checkToken(id);
       try {
         await Order.findByIdAndRemove(args.id);
         return await Order.find({});

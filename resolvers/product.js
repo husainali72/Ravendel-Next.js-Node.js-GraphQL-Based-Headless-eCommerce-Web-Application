@@ -6,7 +6,8 @@ const {
   putError,
   checkError,
   imageUpload,
-  imageUnlink
+  imageUnlink,
+  checkToken
 } = require("../config/helpers");
 const validate = require("../validations/product");
 
@@ -73,12 +74,13 @@ module.exports = {
         console.log(error);
       }
     },
-    products: async (root, args) => {
+    products: async (root, args, { id }) => {
       try {
         const products = await Product.find({});
         return products || [];
       } catch (error) {
-        throw new Error("Something went wrong.");
+        error = checkError(error);
+        throw new Error(error.custom_message);
       }
     },
     product: async (root, args) => {
@@ -95,18 +97,22 @@ module.exports = {
     }
   },
   Mutation: {
-    addProductCategory: async (root, args) => {
+    addProductCategory: async (root, args, { id }) => {
+      checkToken(id);
       try {
         // Check Validation
         const errors = validate("addProductCategory", args);
         if (!isEmpty(errors)) {
-          console.log("validation", errors);
           throw putError(errors);
         }
 
-        const cat = await ProductCat.findOne({ name: args.name });
+        const cat = await ProductCat.findOne({
+          name: args.name,
+          parentId: args.parentId
+        });
+
         if (cat) {
-          throw putError("Name already exist.");
+          throw putError("This category is already exist.");
         } else {
           const newCat = new ProductCat({
             name: args.name,
@@ -117,12 +123,12 @@ module.exports = {
           return await ProductCat.find({});
         }
       } catch (error) {
-        console.log("here comes", error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
-    updateProductCategory: async (root, args) => {
+    updateProductCategory: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const cat = await ProductCat.findById({ _id: args.id });
         if (cat) {
@@ -139,7 +145,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    deleteProductCategory: async (root, args) => {
+    deleteProductCategory: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const cat = await ProductCat.findByIdAndRemove(args.id);
         if (cat) {
@@ -152,7 +159,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    addTree: async (root, args) => {
+    addTree: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const cat = await CatTree.findOne({ name: args.name });
         if (cat) {
@@ -169,12 +177,12 @@ module.exports = {
           return await newCat.save();
         }
       } catch (error) {
-        //console.log("here comes", error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
-    addProduct: async (root, args) => {
+    addProduct: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const product = await Product.findOne({ name: args.name });
         if (product) {
@@ -230,12 +238,12 @@ module.exports = {
           return products || [];
         }
       } catch (error) {
-        console.log("here comes", error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
-    updateProduct: async (root, args) => {
+    updateProduct: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const product = await Product.findById({ _id: args.id });
         if (product) {
@@ -256,7 +264,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    deleteProduct: async (root, args) => {
+    deleteProduct: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const product = await Product.findByIdAndRemove(args.id);
         if (product) {

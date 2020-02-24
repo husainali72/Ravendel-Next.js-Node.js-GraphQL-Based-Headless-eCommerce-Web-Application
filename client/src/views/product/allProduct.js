@@ -1,22 +1,65 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import {
+  Grid,
   Card,
-  CardBody,
   CardHeader,
-  Col,
-  Spinner,
-  Row,
+  CardContent,
+  Divider,
   Table,
-  Button
-} from "reactstrap";
-
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableContainer,
+  IconButton,
+  Avatar,
+  Button,
+  Backdrop,
+  CircularProgress
+} from "@material-ui/core";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { productsAction, productDeleteAction } from "../../store/action/";
+import { productsAction, productDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
 import Alert from "../utils/Alert";
+import PeopleIcon from "@material-ui/icons/People";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import palette from "../../theme/palette";
+import { makeStyles } from "@material-ui/styles";
+
+const useStyles = makeStyles(theme => ({
+  mainrow: {
+    padding: theme.spacing(4)
+  },
+  deleteicon: {
+    color: palette.error.dark
+  },
+  avatar: {
+    width: "50px",
+    height: "50px",
+    borderRadius: "100%"
+  },
+  addUserBtn: {
+    background: palette.success.main,
+    color: "#fff"
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff"
+  },
+  avtarTd: {
+    width: "50px"
+  },
+  container: {
+    maxHeight: 440
+  }
+}));
 
 const AllProduct = props => {
+  const classes = useStyles();
+
   useEffect(() => {
     if (isEmpty(props.products.products)) {
       props.productsAction();
@@ -26,77 +69,87 @@ const AllProduct = props => {
   return (
     <Fragment>
       <Alert />
-      <Row>
-        <Col>
+      <Grid container spacing={4} className={classes.mainrow}>
+        <Grid item lg={12}>
           <Card>
-            <CardHeader>
-              <strong>
-                <i className="icon-pin pr-1"></i>&nbsp; All Products
-                {props.products.loading && (
-                  <Spinner
-                    style={{ width: "3rem", height: "3rem" }}
-                    color="info"
-                  />
-                )}
-              </strong>
-            </CardHeader>
-            <CardBody>
-              <Table
-                hover
-                responsive
-                className="table-outline mb-0 d-none d-sm-table"
-              >
-                <thead className="thead-light">
-                  <tr>
-                    <th>Name</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {props.products.products.map((product, index) => (
-                    <tr key={index}>
-                      <td>
-                        <div>{product.name}</div>
-                      </td>
-                      <td>
-                        <div>{product.date}</div>
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn-pill btn-primary mr-2"
-                          onClick={() => jumpTo(`edit-product/${product.id}`)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-pill btn-danger mr-2"
-                          onClick={() => props.productDeleteAction(product.id)}
-                        >
-                          Delete
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-pill btn-primary"
-                          disabled
-                        >
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </CardBody>
+            {props.products.loading && (
+              <Backdrop className={classes.backdrop} open={true}>
+                <CircularProgress color="inherit" /> Loading
+              </Backdrop>
+            )}
+
+            <CardHeader
+              action={
+                <Link to="/add-product">
+                  <Button
+                    color="primary"
+                    className={classes.addUserBtn}
+                    size="small"
+                    variant="contained"
+                  >
+                    Add Product
+                  </Button>
+                </Link>
+              }
+              title="All Blogs"
+            />
+            <Divider />
+            <CardContent>
+              <TableContainer className={classes.container}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell className={classes.avtarTd}>
+                        <PeopleIcon />
+                      </TableCell>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Date</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {props.products.products.map(product => (
+                      <TableRow key={product.id}>
+                        <TableCell>
+                          <Avatar
+                            alt={product.name}
+                            src={
+                              product.feature_image &&
+                              product.feature_image.thumbnail
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>{product.name}</TableCell>
+                        <TableCell>{product.date}</TableCell>
+                        <TableCell>
+                          <IconButton
+                            aria-label="Edit"
+                            onClick={() => jumpTo(`edit-product/${product.id}`)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            aria-label="Delete"
+                            className={classes.deleteicon}
+                            onClick={() =>
+                              props.productDeleteAction(product.id)
+                            }
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </CardContent>
           </Card>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
     </Fragment>
   );
 };
-
 const mapStateToProps = state => {
   return { products: state.products };
 };

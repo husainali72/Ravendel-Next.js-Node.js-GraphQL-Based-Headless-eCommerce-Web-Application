@@ -4,7 +4,8 @@ const {
   putError,
   checkError,
   imageUpload,
-  imageUnlink
+  imageUnlink,
+  checkToken
 } = require("../config/helpers");
 const validate = require("../validations/user");
 const bcrypt = require("bcryptjs");
@@ -65,7 +66,8 @@ module.exports = {
     }
   },
   Mutation: {
-    addUser: async (root, args) => {
+    addUser: async (root, args, { id }) => {
+      checkToken(id);
       try {
         // Check Validation
         const errors = validate("addUser", args);
@@ -104,7 +106,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    updateUser: async (root, args) => {
+    updateUser: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const user = await User.findById({ _id: args.id });
         if (user) {
@@ -161,12 +164,12 @@ module.exports = {
           throw putError("User not exist");
         }
       } catch (error) {
-        console.log(error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
-    deleteUser: async (root, args) => {
+    deleteUser: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const user = await User.findByIdAndRemove(args.id);
         if (user) {

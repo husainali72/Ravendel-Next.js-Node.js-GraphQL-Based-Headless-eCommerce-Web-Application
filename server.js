@@ -30,7 +30,7 @@ const server = new ApolloServer({
     maxFiles: 20
   }
 });
-server.applyMiddleware({ app });
+server.applyMiddleware({ app, path: "/graphql" });
 
 // Init Middleware
 app.use(express.json({ extended: false }));

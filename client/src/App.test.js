@@ -1,9 +1,9 @@
 import React from 'react';
-import {shallow} from 'enzyme/build';
+import { render } from '@testing-library/react';
 import App from './App';
 
-
-it('mounts without crashing', () => {
-  const wrapper = shallow(<App />);
-  wrapper.unmount()
+test('renders learn react link', () => {
+  const { getByText } = render(<App />);
+  const linkElement = getByText(/learn react/i);
+  expect(linkElement).toBeInTheDocument();
 });

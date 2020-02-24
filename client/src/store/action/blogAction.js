@@ -1,7 +1,5 @@
-import React from "react";
 import {
   GET_BLOGS,
-  GET_BLOG,
   ADD_BLOG,
   UPDATE_BLOG,
   DELETE_BLOG

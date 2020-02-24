@@ -1,5 +1,10 @@
 const Cart = require("../models/Cart");
-const { isEmpty, putError, checkError } = require("../config/helpers");
+const {
+  isEmpty,
+  putError,
+  checkError,
+  checkToken
+} = require("../config/helpers");
 const validate = require("../validations/cart");
 
 module.exports = {
@@ -37,7 +42,8 @@ module.exports = {
     }
   },
   Mutation: {
-    addCart: async (root, args) => {
+    addCart: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const cart = await Cart.findOne({ user_id: args.user_id });
         if (cart) {
@@ -60,7 +66,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    updateCart: async (root, args) => {
+    updateCart: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const cart = await Cart.findById({ _id: args.id });
         if (cart) {
@@ -76,14 +83,16 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    deleteCart: async (root, args) => {
+    deleteCart: async (root, args, { id }) => {
+      checkToken(id);
       const cart = await Cart.findByIdAndRemove(args.id);
       if (cart) {
         return true;
       }
       return false;
     },
-    deleteCartProduct: async (root, args) => {
+    deleteCartProduct: async (root, args, { id }) => {
+      checkToken(id);
       const cart = await Cart.findById(args.id);
       if (cart) {
         for (let i in cart.products) {

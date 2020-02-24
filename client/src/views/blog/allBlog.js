@@ -1,22 +1,65 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import {
+  Grid,
   Card,
-  CardBody,
   CardHeader,
-  Col,
-  Spinner,
-  Row,
+  CardContent,
+  Divider,
   Table,
-  Button
-} from "reactstrap";
-
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableContainer,
+  IconButton,
+  Avatar,
+  Button,
+  Backdrop,
+  CircularProgress
+} from "@material-ui/core";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { blogsAction, blogDeleteAction } from "../../store/action/";
+import { blogsAction, blogDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
 import Alert from "../utils/Alert";
+import PeopleIcon from "@material-ui/icons/People";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import palette from "../../theme/palette";
+import { makeStyles } from "@material-ui/styles";
 
-const AllBlogs = props => {
+const useStyles = makeStyles(theme => ({
+  mainrow: {
+    padding: theme.spacing(4)
+  },
+  deleteicon: {
+    color: palette.error.dark
+  },
+  avatar: {
+    width: "50px",
+    height: "50px",
+    borderRadius: "100%"
+  },
+  addUserBtn: {
+    background: palette.success.main,
+    color: "#fff"
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff"
+  },
+  avtarTd: {
+    width: "50px"
+  },
+  container: {
+    maxHeight: 440
+  }
+}));
+
+const AllBlog = props => {
+  const classes = useStyles();
+
   useEffect(() => {
     if (isEmpty(props.blogs.blogs)) {
       props.blogsAction();
@@ -26,86 +69,81 @@ const AllBlogs = props => {
   return (
     <Fragment>
       <Alert />
-      <Row>
-        <Col>
+      <Grid container spacing={4} className={classes.mainrow}>
+        <Grid item lg={12}>
           <Card>
-            <CardHeader>
-              <strong>
-                <i className="icon-pin pr-1"></i>&nbsp; All Blogs
-                {props.blogs.loading && (
-                  <Spinner
-                    style={{ width: "3rem", height: "3rem" }}
-                    color="info"
-                  />
-                )}
-              </strong>
-            </CardHeader>
-            <CardBody>
-              <Table
-                hover
-                responsive
-                className="table-outline mb-0 d-none d-sm-table"
-              >
-                <thead className="thead-light">
-                  <tr>
-                    <th className="text-center">
-                      <i className="icon-pin"></i>
-                    </th>
-                    <th>Title</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {props.blogs.blogs.map((blog, index) => (
-                    <tr key={index}>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img
+            {props.blogs.loading && (
+              <Backdrop className={classes.backdrop} open={true}>
+                <CircularProgress color="inherit" /> Loading
+              </Backdrop>
+            )}
+
+            <CardHeader
+              action={
+                <Link to="/add-blog">
+                  <Button
+                    color="primary"
+                    className={classes.addUserBtn}
+                    size="small"
+                    variant="contained"
+                  >
+                    Add Blog
+                  </Button>
+                </Link>
+              }
+              title="All Blogs"
+            />
+            <Divider />
+            <CardContent>
+              <TableContainer className={classes.container}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell className={classes.avtarTd}>
+                        <PeopleIcon />
+                      </TableCell>
+                      <TableCell>Title</TableCell>
+                      <TableCell>Date</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {props.blogs.blogs.map(blog => (
+                      <TableRow key={blog.id}>
+                        <TableCell>
+                          <Avatar
+                            alt={blog.name}
                             src={
                               blog.feature_image && blog.feature_image.thumbnail
                             }
-                            className="img-avatar"
                           />
-                        </div>
-                      </td>
-                      <td>
-                        <div>{blog.title}</div>
-                      </td>
-                      <td>
-                        <div>{blog.date}</div>
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn-pill btn-primary mr-2"
-                          onClick={() => jumpTo(`edit-blog/${blog.id}`)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-pill btn-danger mr-2"
-                          onClick={() => props.blogDeleteAction(blog.id)}
-                        >
-                          Delete
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-pill btn-primary"
-                          disabled
-                        >
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </CardBody>
+                        </TableCell>
+                        <TableCell>{blog.title}</TableCell>
+                        <TableCell>{blog.date}</TableCell>
+                        <TableCell>
+                          <IconButton
+                            aria-label="Edit"
+                            onClick={() => jumpTo(`edit-blog/${blog.id}`)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            aria-label="Delete"
+                            className={classes.deleteicon}
+                            onClick={() => props.blogDeleteAction(blog.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </CardContent>
           </Card>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
     </Fragment>
   );
 };
@@ -119,4 +157,4 @@ const mapDispatchToProps = {
   blogDeleteAction
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AllBlogs);
+export default connect(mapStateToProps, mapDispatchToProps)(AllBlog);

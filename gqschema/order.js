@@ -30,6 +30,12 @@ module.exports = gql`
       products: customArray
       status: String
     ): [Order]
+    updateOrder(
+      id: ID
+      billing: customObject
+      shipping: customObject
+      status: String
+    ): [Order]
     deleteOrder(id: ID!): [Order]
   }
 `;

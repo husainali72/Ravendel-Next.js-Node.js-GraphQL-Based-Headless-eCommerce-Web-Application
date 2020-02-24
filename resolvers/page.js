@@ -1,5 +1,10 @@
 const Page = require("../models/Page");
-const { isEmpty, putError, checkError } = require("../config/helpers");
+const {
+  isEmpty,
+  putError,
+  checkError,
+  checkToken
+} = require("../config/helpers");
 const validate = require("../validations/page");
 
 module.exports = {
@@ -58,7 +63,8 @@ module.exports = {
     }
   },
   Mutation: {
-    addPage: async (root, args) => {
+    addPage: async (root, args, { id }) => {
+      checkToken(id);
       try {
         // Check Validation
         const errors = validate("addPage", args);
@@ -84,7 +90,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    updatePage: async (root, args) => {
+    updatePage: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const page = await Page.findById({ _id: args.id });
         if (page) {
@@ -121,7 +128,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    deletePage: async (root, args) => {
+    deletePage: async (root, args, { id }) => {
+      checkToken(id);
       const page = await Page.findByIdAndRemove(args.id);
       if (page) {
         return true;

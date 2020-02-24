@@ -4,7 +4,8 @@ const {
   putError,
   checkError,
   imageUpload,
-  imageUnlink
+  imageUnlink,
+  checkToken
 } = require("../config/helpers");
 const validate = require("../validations/blog");
 const sanitizeHtml = require("sanitize-html");
@@ -34,6 +35,7 @@ module.exports = {
   },
   Mutation: {
     addBlog: async (root, args, user) => {
+      checkToken(user.id);
       try {
         // Check Validation
         const errors = validate("addBlog", args);
@@ -74,7 +76,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    updateBlog: async (root, args) => {
+    updateBlog: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const blog = await Blog.findById({ _id: args.id });
         if (blog) {
@@ -124,7 +127,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    deleteBlog: async (root, args) => {
+    deleteBlog: async (root, args, { id }) => {
+      checkToken(id);
       try {
         const blog = await Blog.findByIdAndRemove(args.id);
         if (blog) {
