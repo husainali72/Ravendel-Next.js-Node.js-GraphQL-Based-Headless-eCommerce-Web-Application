@@ -18,7 +18,7 @@ export const blogsAction = () => dispatch => {
       if (response) {
         return dispatch({
           type: BLOGS_SUCCESS,
-          payload: response.data.blogs
+          payload: response.data.blogs,
         });
       }
     })
@@ -28,7 +28,7 @@ export const blogsAction = () => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -52,7 +52,7 @@ export const blogAddAction = object => dispatch => {
 
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Blog added successfully" }
+          payload: { boolean: true, message: "Blog added successfully", error: false }
         });
       }
     })
@@ -68,7 +68,7 @@ export const blogAddAction = object => dispatch => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -90,12 +90,17 @@ export const blogUpdateAction = object => dispatch => {
           payload: {}
         });
 
+        jumpTo("/all-blogs");
+
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Blog updated successfully" }
+          payload: {
+            boolean: true,
+            message: "Blog updated successfully",
+            error: false
+          }
         });
 
-        jumpTo("/all-blogs");
         return;
       }
     })
@@ -111,7 +116,7 @@ export const blogUpdateAction = object => dispatch => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -129,7 +134,7 @@ export const blogDeleteAction = id => dispatch => {
         });
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Blog deleted successfully" }
+          payload: { boolean: true, message: "Blog deleted successfully", error: false }
         });
       }
     })
@@ -139,7 +144,7 @@ export const blogDeleteAction = id => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };

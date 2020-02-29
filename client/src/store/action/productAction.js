@@ -32,7 +32,7 @@ export const categoriesAction = () => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -51,7 +51,11 @@ export const categoryAddAction = object => dispatch => {
 
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Category added successfully" }
+          payload: {
+            boolean: true,
+            message: "Category added successfully",
+            error: false
+          }
         });
       }
     })
@@ -62,7 +66,7 @@ export const categoryAddAction = object => dispatch => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: false }
       });
     });
 };
@@ -79,11 +83,15 @@ export const categoryUpdateAction = object => dispatch => {
           payload: response.data.updateProductCategory
         });
 
-        jumpTo("/all-blogs");
+        //jumpTo("/all-blogs");
 
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Category updated successfully" }
+          payload: {
+            boolean: true,
+            message: "Category updated successfully",
+            error: false
+          }
         });
 
         return;
@@ -96,7 +104,7 @@ export const categoryUpdateAction = object => dispatch => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -114,7 +122,11 @@ export const categoryDeleteAction = id => dispatch => {
         });
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Category deleted successfully" }
+          payload: {
+            boolean: true,
+            message: "Category deleted successfully",
+            error: false
+          }
         });
       }
     })
@@ -124,7 +136,7 @@ export const categoryDeleteAction = id => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -148,7 +160,7 @@ export const productsAction = () => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -170,9 +182,15 @@ export const productAddAction = object => dispatch => {
           payload: {}
         });
 
+        jumpTo("/all-products");
+
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Product added successfully" }
+          payload: {
+            boolean: true,
+            message: "Product added successfully",
+            error: false
+          }
         });
       }
     })
@@ -188,7 +206,7 @@ export const productAddAction = object => dispatch => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -209,7 +227,11 @@ export const productUpdateAction = object => dispatch => {
 
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Product updated successfully" }
+          payload: {
+            boolean: true,
+            message: "Product updated successfully",
+            error: false
+          }
         });
 
         return;
@@ -222,7 +244,7 @@ export const productUpdateAction = object => dispatch => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -240,7 +262,11 @@ export const productDeleteAction = id => dispatch => {
         });
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Product deleted successfully" }
+          payload: {
+            boolean: true,
+            message: "Product deleted successfully",
+            error: false
+          }
         });
       }
     })
@@ -250,7 +276,7 @@ export const productDeleteAction = id => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };

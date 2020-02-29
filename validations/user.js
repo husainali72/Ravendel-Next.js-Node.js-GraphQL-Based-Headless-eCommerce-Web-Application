@@ -29,6 +29,7 @@ module.exports = function validate(method, args) {
       if (Validator.isEmpty(args.role)) {
         return (errors = "Role field is required");
       }
+      break;
     }
     case "updateUser": {
       let errors = "";
@@ -51,6 +52,7 @@ module.exports = function validate(method, args) {
       if (Validator.isEmpty(args.role)) {
         return (errors = "Role field is required");
       }
+      break;
     }
   }
 };

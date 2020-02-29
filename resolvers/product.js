@@ -132,11 +132,12 @@ module.exports = {
       try {
         const cat = await ProductCat.findById({ _id: args.id });
         if (cat) {
-          cat.name = args.name || cat.name;
-          cat.parentId = args.parentId || cat.parentId;
+          cat.name = args.name;
+          cat.parentId = args.parentId;
           cat.updated = Date.now();
 
-          return await cat.save();
+          await cat.save();
+          return await ProductCat.find({});
         } else {
           throw putError("Category not exist");
         }

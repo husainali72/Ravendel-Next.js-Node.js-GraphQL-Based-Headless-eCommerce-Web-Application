@@ -47,16 +47,35 @@ export const unflatten = arr => {
 
 /*----------------------------------------------------------------------------------------------------------------------------------------- */
 //print tree array with html
+// export var categoriesPrint = "";
+// export const printTree = tree => {
+//   categoriesPrint += "<ul>";
+
+//   for (let i in tree) {
+//     categoriesPrint += "<li>" + tree[i].name;
+//     if (tree[i].children && tree[i].children.length) {
+//       printTree(tree[i].children);
+//     }
+//     categoriesPrint += "</li>";
+//   }
+
+//   categoriesPrint += "</ul>";
+// };
+
 export var categoriesPrint = "";
 export const printTree = tree => {
-  categoriesPrint += "<ul>";
+  categoriesPrint += "<ul className='category-dropdown'>";
 
   for (let i in tree) {
-    categoriesPrint += "<li>" + tree[i].name + "</li>";
-
+    categoriesPrint += `<li className="${tree[i].children && tree[i].children.length ? 'has-submenu' : ''}">                               
+                        <label for="${tree[i].name}" className="checkmark-container">${tree[i].name}
+                          <input type='checkbox' name="abc" id="${tree[i].name}">
+                          <span className="checkmark"></span>
+                        </label>`;
     if (tree[i].children && tree[i].children.length) {
       printTree(tree[i].children);
     }
+    categoriesPrint += "</li>";
   }
 
   categoriesPrint += "</ul>";

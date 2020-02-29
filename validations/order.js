@@ -31,7 +31,7 @@ module.exports = function validate(method, args) {
         return (errors = "Billing's Last Name field is required");
       }
 
-      if (!args.billing.comapny && Validator.isEmpty(args.billing.comapny)) {
+      if (!args.billing.company && Validator.isEmpty(args.billing.company)) {
         return (errors = "Billing's Company field is required");
       }
 
@@ -95,7 +95,7 @@ module.exports = function validate(method, args) {
         return (errors = "Shipping's Last Name field is required");
       }
 
-      if (!args.shipping.comapny && Validator.isEmpty(args.shipping.comapny)) {
+      if (!args.shipping.company && Validator.isEmpty(args.shipping.company)) {
         return (errors = "Shipping's Company field is required");
       }
 

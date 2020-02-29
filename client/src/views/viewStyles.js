@@ -1,0 +1,163 @@
+import palette from "../theme/palette";
+import { makeStyles } from "@material-ui/styles";
+
+const viewStyles = makeStyles(theme => ({
+  mainrow: {
+    padding: theme.spacing(4)
+  },
+  secondmainrow: {
+    padding: theme.spacing(4),
+    marginTop: 40
+  },
+  deleteicon: {
+    color: palette.error.dark
+  },
+  avatar: {
+    width: "50px",
+    height: "50px",
+    borderRadius: "100%"
+  },
+  addUserBtn: {
+    background: palette.success.main,
+    color: "#fff"
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff"
+  },
+  avtarTd: {
+    width: "50px"
+  },
+  container: {
+    maxHeight: 600
+  },
+  cancelBtn: {
+    background: palette.error.dark,
+    color: "#fff",
+    marginLeft: theme.spacing(2)
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2)
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    width: "100%"
+  },
+  width100: {
+    width: "100%"
+  },
+  formbottom: {
+    marginTop: theme.spacing(3)
+  },
+  secondRow: {
+    marginTop: theme.spacing(3)
+  },
+  marginBottom: {
+    marginBottom: theme.spacing(3)
+  },
+  feautedImage: {
+    color: "#0073aa",
+    textDecoration: "underline",
+    display: "flex",
+    cursor: "pointer"
+  },
+  feautedImageBox: {
+    background: "rgb(240,240,240)",
+    height: "250px",
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: theme.spacing(2)
+  },
+  feautedImageBoxPreview: {
+    maxWidth: "90%",
+    maxHeight: "90%"
+  },
+  galleryImgOuterBox: {
+    display: "flex",
+    justifyContent: "flex-start",
+    flexWrap: "wrap",
+    marginBottom: 5
+  },
+  galleryImgBox: {
+    margin: 5,
+    width: 60,
+    height: 60,
+    position: "relative",
+    background: "#ddd",
+    padding: 5
+  },
+  galleryImgRemove: {
+    position: "absolute",
+    top: "-5px",
+    right: "-5px",
+    background: "#d80e0e",
+    borderRadius: "100%",
+    color: "#fff",
+    width: 20,
+    height: 20,
+    display: "flex",
+    justifyContent: "center",
+    cursor: "pointer",
+    fontSize: 12,
+    fontWeight: "bold"
+  },
+  galleryImg: { width: "100%", height: "100%" },
+  editpermalinkInput: {
+    padding: "5px !important",
+    height: "25px",
+    marginLeft: 10
+  },
+  editpermalinkInputBtn: {
+    height: "25px",
+    fontSize: "10px",
+    padding: 0,
+    marginLeft: 10
+  },
+  taxSelect: {
+    width: 300,
+    marginTop: 20
+  },
+  infopopover: {
+    pointerEvents: "none"
+  },
+  infopopoverpaper: {
+    padding: theme.spacing(1)
+  },
+  infopopoverhelp: {
+    cursor: "pointer"
+  },
+  floatRight: {
+    float: "right"
+  },
+  flex1: {
+    flex: 1
+  },
+  pl2: {
+    paddingLeft: theme.spacing(2)
+  },
+  logoImageBox: {
+    width: 50,
+    height: 50,
+    borderRadius: "50%",
+    margin: "0px 10px",
+    overflow: "hidden",
+    border: "2px solid #ddd"
+  },
+  logoImagePreview: {
+    width: "100%",
+    height: "100%"
+  },
+  selectCatLabel: {
+    position: "absolute",
+    top: "-9px",
+    background: "#fff",
+    padding: "0 5px",
+    left: "7px",
+    zIndex: 1,
+    fontSize: 12
+  }
+}));
+
+export default viewStyles;

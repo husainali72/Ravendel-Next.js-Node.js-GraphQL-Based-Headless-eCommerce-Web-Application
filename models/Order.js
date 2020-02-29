@@ -10,7 +10,7 @@ const OrderSchema = new Schema({
   billing: {
     firstname: String,
     lastname: String,
-    comapny: String,
+    company: String,
     address: String,
     city: String,
     zip: String,
@@ -24,7 +24,7 @@ const OrderSchema = new Schema({
   shipping: {
     firstname: String,
     lastname: String,
-    comapny: String,
+    company: String,
     address: String,
     city: String,
     zip: String,
@@ -53,8 +53,7 @@ const OrderSchema = new Schema({
     }
   ],
   status: {
-    type: String,
-    default: "active"
+    type: String
   },
   date: {
     type: Date,

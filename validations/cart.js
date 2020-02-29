@@ -37,6 +37,7 @@ module.exports = function validate(method, args) {
       ) {
         return (errors = "Pricing field is required");
       }
+      break;
     }
   }
 };

@@ -20,6 +20,7 @@ module.exports = function validate(method, args) {
       if (Validator.isEmpty(args.status)) {
         return (errors = "Status field is required");
       } */
+      break;
     }
   }
 };

@@ -21,7 +21,7 @@ export const LoginAction = (email, password) => dispatch => {
       //throw error;
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error.response.data }
+        payload: { boolean: true, message: error.response.data, error: false }
       });
     });
 };

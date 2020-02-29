@@ -7,20 +7,24 @@ import { insertToken } from "./store/action/loginAction";
 import MainLayout from './main-layout';
 import Login from './views/login';
 import './assets/scss/index.css';
+import './App.css';
 
 const App = props => {
+
   useEffect(() => {
     props.insertToken();
   }, []);
-
+ 
   return (
     <Fragment>
-        <BrowserRouter ref={registerNav}>
+        <BrowserRouter ref={registerNav}>  
             <Switch>
               {!isEmpty(props.login.user_token) && (
               <React.Fragment>
+                
                 <Redirect from="*" to="/" />
                 <Route path="/" name="Home" component={MainLayout} />
+               
               </React.Fragment>
             )}
             <React.Fragment>

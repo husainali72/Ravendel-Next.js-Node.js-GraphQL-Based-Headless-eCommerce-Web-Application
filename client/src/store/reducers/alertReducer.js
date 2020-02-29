@@ -2,7 +2,8 @@ export const ALERT_SUCCESS = "ALERT_SUCCESS";
 
 const initialState = {
   success: false,
-  message: ""
+  message: "",
+  error: false
 };
 
 export default (state = initialState, action) => {
@@ -10,7 +11,8 @@ export default (state = initialState, action) => {
     case ALERT_SUCCESS:
       return {
         success: action.payload.boolean,
-        message: action.payload.message
+        message: action.payload.message,
+        error: action.payload.error || false
       };
     default:
       return state;

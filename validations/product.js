@@ -26,7 +26,7 @@ module.exports = function validate(method, args) {
         return (errors = "Name field is required");
       }
 
-      if (!Array.isArray(args.categoryId)) {
+      if (!Array.isArray(args.categoryId) && args.categoryId.length) {
         return (errors = "Category field is required");
       }
 

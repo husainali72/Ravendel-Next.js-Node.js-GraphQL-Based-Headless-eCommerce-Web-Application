@@ -4,7 +4,7 @@ import {
   ADD_USER,
   UPDATE_USER,
   DELETE_USER
-} from "../../queries/userQurey";
+} from "../../queries/userQuery";
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
@@ -29,7 +29,7 @@ export const usersAction = () => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -53,7 +53,7 @@ export const userAction = id => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -72,7 +72,11 @@ export const userAddAction = object => dispatch => {
 
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "User added successfully" }
+          payload: {
+            boolean: true,
+            message: "User added successfully",
+            error: false
+          }
         });
       }
     })
@@ -82,7 +86,7 @@ export const userAddAction = object => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -101,7 +105,11 @@ export const userUpdateAction = object => dispatch => {
 
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "User updated successfully" }
+          payload: {
+            boolean: true,
+            message: "User updated successfully",
+            error: false
+          }
         });
 
         jumpTo("/all-users");
@@ -114,7 +122,7 @@ export const userUpdateAction = object => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };
@@ -132,7 +140,11 @@ export const userDeleteAction = id => dispatch => {
         });
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "User deleted successfully" }
+          payload: {
+            boolean: true,
+            message: "User deleted successfully",
+            error: false
+          }
         });
       }
     })
@@ -142,7 +154,7 @@ export const userDeleteAction = id => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error }
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };

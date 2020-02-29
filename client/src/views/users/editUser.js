@@ -84,7 +84,7 @@ const EditUser = props => {
     props.users.users.map(edituser => {
       if (edituser.id === props.match.params.id) {
         setuser({ ...edituser });
-        if (edituser.image.original) {
+        if (edituser.image && edituser.image.original) {
           setfeatureImage(edituser.image.original);
         }
       }

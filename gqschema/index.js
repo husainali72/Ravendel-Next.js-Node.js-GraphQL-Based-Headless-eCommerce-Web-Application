@@ -6,6 +6,7 @@ const productSchema = require("./product");
 const cartSchema = require("./cart");
 const checkoutSchema = require("./checkout");
 const orderSchema = require("./order");
+const customerSchema = require("./customer");
 
 const linkSchema = gql`
   scalar Date
@@ -45,5 +46,6 @@ module.exports = [
   productSchema,
   cartSchema,
   checkoutSchema,
-  orderSchema
+  orderSchema,
+  customerSchema
 ];

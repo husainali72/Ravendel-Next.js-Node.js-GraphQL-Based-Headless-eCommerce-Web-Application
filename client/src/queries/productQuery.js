@@ -36,7 +36,7 @@ const ADD_CATEGORY = gql`
 `;
 
 const UPDATE_CATEGORY = gql`
-  mutation($id: ID!, $name: String, $parentId: String) {
+  mutation($id: ID!, $name: String, $parentId: ID) {
     updateProductCategory(id: $id, name: $name, parentId: $parentId) {
       id
       name

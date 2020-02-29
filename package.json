@@ -16,6 +16,7 @@
   "author": "Burhanuddin sarangpurwala",
   "license": "MIT",
   "dependencies": {
+    "@material-ui/lab": "^4.0.0-alpha.44",
     "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.6.8",
     "apollo-link": "^1.2.13",

@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
       boxShadow: 'none',
       minHeight: '50px !important',
       maxHeight: '50px !important',
+      zIndex: 1100,
     },
     flexGrow: {
       flexGrow: 1
