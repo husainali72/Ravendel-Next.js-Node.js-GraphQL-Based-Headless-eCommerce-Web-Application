@@ -17,7 +17,6 @@ import {
 import { connect } from "react-redux";
 import { customerAddAction } from "../../store/action/";
 import Alert from "../utils/Alert";
-import { makeStyles } from "@material-ui/styles";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { Link } from "react-router-dom";
 import Visibility from "@material-ui/icons/Visibility";

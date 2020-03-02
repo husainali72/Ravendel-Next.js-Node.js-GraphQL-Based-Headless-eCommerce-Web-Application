@@ -184,6 +184,7 @@ module.exports = {
 
         for (let i in customer_address_book) {
           if (customer_address_book[i]._id == args._id) {
+            customer.address_book = [];
             delete customer_address_book[i];
             customer.address_book = customer_address_book;
             break;

@@ -13,10 +13,8 @@ import {
   TableContainer,
   TablePagination,
   IconButton,
-  Avatar,
   Button,
-  Backdrop,
-  CircularProgress
+  Tooltip
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -24,12 +22,12 @@ import { blogsAction, blogDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
 import Alert from "../utils/Alert";
-import PeopleIcon from "@material-ui/icons/People";
+import Loading from "../utils/loading";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 
-const AllBlog = props => {
+const AllCoupons = props => {
   const classes = viewStyles();
 
   useEffect(() => {
@@ -56,26 +54,22 @@ const AllBlog = props => {
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.blogs.loading && (
-              <Backdrop className={classes.backdrop} open={true}>
-                <CircularProgress color="inherit" /> Loading
-              </Backdrop>
-            )}
+            {props.blogs.loading && <Loading />}
 
             <CardHeader
               action={
-                <Link to="/add-blog">
+                <Link to="/add-coupon">
                   <Button
                     color="primary"
                     className={classes.addUserBtn}
                     size="small"
                     variant="contained"
                   >
-                    Add Blog
+                    Add Coupon
                   </Button>
                 </Link>
               }
-              title="All Blogs"
+              title="All Coupons"
             />
             <Divider />
             <CardContent>
@@ -87,12 +81,13 @@ const AllBlog = props => {
                 >
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.avtarTd}>
-                        <PeopleIcon />
-                      </TableCell>
-                      <TableCell>Title</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell>Code</TableCell>
+                      <TableCell>Coupon type</TableCell>
+                      <TableCell>Coupon Amount</TableCell>
+                      <TableCell>Description</TableCell>
+                      <TableCell>Usage / Limit</TableCell>
+                      <TableCell>Expiry date</TableCell>
+                      <TableCell>Action</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -103,31 +98,36 @@ const AllBlog = props => {
                       )
                       .map(blog => (
                         <TableRow key={blog.id} hover>
-                          <TableCell>
-                            <Avatar
-                              alt={blog.name}
-                              src={
-                                blog.feature_image &&
-                                blog.feature_image.thumbnail
-                              }
-                            />
-                          </TableCell>
+                          <TableCell>{blog.title}</TableCell>
+                          <TableCell>{blog.date}</TableCell>
+                          <TableCell>{blog.title}</TableCell>
+                          <TableCell>{blog.date}</TableCell>
                           <TableCell>{blog.title}</TableCell>
                           <TableCell>{blog.date}</TableCell>
                           <TableCell>
-                            <IconButton
-                              aria-label="Edit"
-                              onClick={() => jumpTo(`edit-blog/${blog.id}`)}
+                            <Tooltip
+                              title="Edit Coupon"
+                              aria-label="edit-coupon"
                             >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              aria-label="Delete"
-                              className={classes.deleteicon}
-                              onClick={() => props.blogDeleteAction(blog.id)}
+                              <IconButton
+                                aria-label="Edit"
+                                onClick={() => jumpTo(`edit-coupon/${blog.id}`)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip
+                              title="Delete Coupon"
+                              aria-label="delete-coupon"
                             >
-                              <DeleteIcon />
-                            </IconButton>
+                              <IconButton
+                                aria-label="Delete"
+                                className={classes.deleteicon}
+                                onClick={() => props.blogDeleteAction(blog.id)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -160,4 +160,4 @@ const mapDispatchToProps = {
   blogDeleteAction
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AllBlog);
+export default connect(mapStateToProps, mapDispatchToProps)(AllCoupons);

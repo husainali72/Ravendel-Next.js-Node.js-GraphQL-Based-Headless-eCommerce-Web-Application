@@ -16,7 +16,6 @@ import {
   Divider,
   OutlinedInput,
   InputAdornment,
-  Avatar,
   Box,
   Input
 } from "@material-ui/core";

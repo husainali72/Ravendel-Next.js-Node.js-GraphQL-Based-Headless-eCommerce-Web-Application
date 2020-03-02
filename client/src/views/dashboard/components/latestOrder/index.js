@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles';
+import React from "react";
+import clsx from "clsx";
+import PropTypes from "prop-types";
 import {
   Card,
   CardActions,
@@ -15,113 +14,85 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  TableSortLabel
-} from '@material-ui/core';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-
-import mockData from './data';
-
-const useStyles = makeStyles(theme => ({
-  root: {},
-  content: {
-    padding: 0
-  },
-  inner: {
-    minWidth: 800
-  },
-  statusContainer: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  status: {
-    marginRight: theme.spacing(1)
-  },
-  actions: {
-    justifyContent: 'flex-end'
-  }
-}));
-
-// const statusColors = {
-//   delivered: 'success',
-//   pending: 'info',
-//   refunded: 'danger'
-// };
+  TableSortLabel,
+  CircularProgress,
+  IconButton
+} from "@material-ui/core";
+import ArrowRightIcon from "@material-ui/icons/ArrowRight";
+import { Link } from "react-router-dom";
+import EditIcon from "@material-ui/icons/Edit";
+import viewStyles from "../../../viewStyles";
+import jumpTo from "../../../../utils/navigation";
 
 const LatestOrders = props => {
   const { className, ...rest } = props;
 
-  const classes = useStyles();
-
-  const [orders] = useState(mockData);
+  const classes = viewStyles();
 
   return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
-      <CardHeader
-        title="Latest Orders"
-      />
+    <Card {...rest} className={clsx(classes.root, className)}>
+      <CardHeader title="Latest Orders" />
       <Divider />
       <CardContent className={classes.content}>
-          <div className={classes.inner}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Order Ref</TableCell>
-                  <TableCell>Customer</TableCell>
-                  <TableCell sortDirection="desc">
-                    <Tooltip
-                      enterDelay={300}
-                      title="Sort"
-                    >
-                      <TableSortLabel
-                        active
-                        direction="desc"
-                      >
-                        Date
-                      </TableSortLabel>
-                    </Tooltip>
+        <div className={classes.inner}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell sortDirection="desc">
+                  <Tooltip enterDelay={300} title="Sort">
+                    <TableSortLabel active direction="desc">
+                      Date
+                    </TableSortLabel>
+                  </Tooltip>
+                </TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {!props.orders ? (
+                <TableRow className="text-center">
+                  <TableCell>
+                    <CircularProgress />
                   </TableCell>
-                  <TableCell>Status</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {orders.map(order => (
-                  <TableRow
-                    hover
-                    key={order.id}
-                  >
-                    <TableCell>{order.ref}</TableCell>
-                    <TableCell>{order.customer.name}</TableCell>
+              ) : (
+                props.orders.slice(0, 2).map(order => (
+                  <TableRow hover key={order.id}>
                     <TableCell>
-                      01/01/2019   
+                      {order.shipping.firstname + " " + order.shipping.lastname}
+                    </TableCell>
+                    <TableCell>{order.date}</TableCell>
+                    <TableCell>
+                      <span className={"product-status-chip " + order.status}>
+                        {order.status}
+                      </span>
                     </TableCell>
                     <TableCell>
-                      <div className={classes.statusContainer}>
-                        {/* <StatusBullet
-                          className={classes.status}
-                          color={statusColors[order.status]}
-                          size="sm"
-                        /> */}
-                        {order.status}
-                      </div>
+                      <Tooltip title="Edit Order" aria-label="edit">
+                        <IconButton
+                          aria-label="Edit"
+                          onClick={() => jumpTo(`view-order/${order.id}`)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
       <Divider />
-      <CardActions className={classes.actions}>
-        <Button
-          color="primary"
-          size="small"
-          variant="text"
-        >
-          View all <ArrowRightIcon />
-        </Button>
+      <CardActions className="flex-end">
+        <Link to="/all-orders">
+          <Button color="primary" size="small" variant="text">
+            View all <ArrowRightIcon />
+          </Button>
+        </Link>
       </CardActions>
     </Card>
   );

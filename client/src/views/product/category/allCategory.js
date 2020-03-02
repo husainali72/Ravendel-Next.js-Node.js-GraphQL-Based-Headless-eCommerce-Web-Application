@@ -4,7 +4,6 @@ import {
   Card,
   CardHeader,
   CardContent,
-  CardActionArea,
   Divider,
   Table,
   TableBody,
@@ -17,7 +16,10 @@ import {
   TextField,
   CardActions,
   FormControl,
-  Select
+  Select,
+  Tooltip,
+  Box,
+  TablePagination
 } from "@material-ui/core";
 import Alert from "../../utils/Alert";
 import Loading from "../../utils/loading";
@@ -34,14 +36,31 @@ import { isEmpty } from "../../../utils/helper";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 
+var categoryObject = {
+  name: "",
+  parentId: null,
+  metadescription: "",
+  metakeyword: "",
+  metatitle: "",
+  url: ""
+};
 const AllCategory = props => {
   const classes = viewStyles();
   const [categories, setCategories] = useState([]);
-  const [singlecategory, setSingleCategory] = useState({
-    name: "",
-    parentId: null
-  });
+  const [singlecategory, setSingleCategory] = useState(categoryObject);
   const [editMode, setEditmode] = useState(false);
+  const [featuredImage, setfeaturedImage] = useState(null);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   useEffect(() => {
     if (isEmpty(props.products.categories)) {
@@ -55,8 +74,7 @@ const AllCategory = props => {
 
   const editCategory = cat => {
     setEditmode(true);
-    console.log(cat);
-    setSingleCategory(cat);
+    setSingleCategory({ ...singlecategory, ...cat });
   };
 
   const handleChange = e => {
@@ -68,23 +86,26 @@ const AllCategory = props => {
   };
 
   const updateCat = () => {
-    console.log("update", singlecategory);
     props.categoryUpdateAction(singlecategory);
     setEditmode(false);
-    setSingleCategory({ name: "", parentId: null });
+    setSingleCategory(categoryObject);
   };
 
   const addCat = () => {
-    console.log("Add", singlecategory);
     props.categoryAddAction(singlecategory);
-    setSingleCategory({ name: "", parentId: null });
-    document.forms[0].reset();
+    setSingleCategory(categoryObject);
   };
 
   const cancelCat = () => {
     document.forms[0].reset();
     setEditmode(false);
-    setSingleCategory({ name: "", parentId: null });
+    setSingleCategory(categoryObject);
+  };
+
+  const fileChange = e => {
+    setfeaturedImage(null);
+    setfeaturedImage(URL.createObjectURL(e.target.files[0]));
+    setSingleCategory({ ...singlecategory, [e.target.name]: e.target.files });
   };
 
   return (
@@ -97,7 +118,11 @@ const AllCategory = props => {
             <CardHeader title="All Categories" />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table>
+                <Table
+                  stickyHeader
+                  aria-label="sticky table and Dense Table"
+                  size="small"
+                >
                   <TableHead>
                     <TableRow>
                       <TableCell>Name</TableCell>
@@ -107,30 +132,53 @@ const AllCategory = props => {
                   </TableHead>
                   <TableBody>
                     {categories &&
-                      categories.map(cat => (
-                        <TableRow key={cat.id}>
-                          <TableCell>{cat.name}</TableCell>
-                          <TableCell>{cat.date}</TableCell>
-                          <TableCell>
-                            <IconButton
-                              aria-label="Edit"
-                              onClick={() => editCategory(cat)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              aria-label="Delete"
-                              className={classes.deleteicon}
-                              onClick={() => props.categoryDeleteAction(cat.id)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      categories
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map(cat => (
+                          <TableRow key={cat.id} hover>
+                            <TableCell>{cat.name}</TableCell>
+                            <TableCell>{cat.date}</TableCell>
+                            <TableCell>
+                              <Tooltip title="Edit Category" aria-label="edit">
+                                <IconButton
+                                  aria-label="Edit"
+                                  onClick={() => editCategory(cat)}
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip
+                                title="Delete Category"
+                                aria-label="delete"
+                              >
+                                <IconButton
+                                  aria-label="Delete"
+                                  className={classes.deleteicon}
+                                  onClick={() =>
+                                    props.categoryDeleteAction(cat.id)
+                                  }
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                   </TableBody>
                 </Table>
               </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 20]}
+                component="div"
+                count={categories.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
             </CardContent>
           </Card>
         </Grid>
@@ -183,6 +231,64 @@ const AllCategory = props => {
                       ))}
                   </Select>
                 </FormControl>
+                <TextField
+                  label="Url"
+                  name="url"
+                  variant="outlined"
+                  className={clsx(classes.marginBottom, classes.width100)}
+                  onChange={handleChange}
+                  value={singlecategory.url}
+                />
+                <Grid container>
+                  <Grid item className={classes.flex1}>
+                    <TextField
+                      helperText="Featured Image"
+                      name="feature_image"
+                      variant="outlined"
+                      className={clsx(
+                        classes.marginBottom,
+                        classes.width100,
+                        "top-helper"
+                      )}
+                      onChange={fileChange}
+                      type="file"
+                    />
+                  </Grid>
+                  <Grid item>
+                    {featuredImage !== null && (
+                      <Box className={classes.logoImageBox}>
+                        <img
+                          src={featuredImage}
+                          className={classes.logoImagePreview}
+                        />
+                      </Box>
+                    )}
+                  </Grid>
+                </Grid>
+                <TextField
+                  label="Meta Title"
+                  name="metatitle"
+                  variant="outlined"
+                  className={clsx(classes.marginBottom, classes.width100)}
+                  onChange={handleChange}
+                  value={singlecategory.metatitle}
+                />
+                <TextField
+                  label="Meta Keyword"
+                  name="metakeyword"
+                  variant="outlined"
+                  className={clsx(classes.marginBottom, classes.width100)}
+                  onChange={handleChange}
+                  value={singlecategory.metakeyword}
+                />
+                <TextField
+                  label="Meta Description"
+                  name="metadescription"
+                  variant="outlined"
+                  className={clsx(classes.marginBottom, classes.width100)}
+                  onChange={handleChange}
+                  value={singlecategory.metadescription}
+                />
               </CardContent>
               <CardActions>
                 <Button

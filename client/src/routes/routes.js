@@ -11,8 +11,12 @@ import { AllOrders, ViewOrder } from "../views/order";
 import { AllPages, AddPage, EditPage } from "../views/page";
 import { AllCustomers, AddCustomer, EditCustomer } from "../views/customer";
 import { AllBrands, AddBrands, EditBrand } from "../views/brand";
+import Settings from "../views/settings";
+import { AllCoupons, AddCoupon, EditCoupon } from "../views/coupon";
+import NotFound from "../views/notFound";
 
 const Routes = [
+  { path: "/", exact: true, component: Dashboard, name: "Home" },
   { path: "/dashboard", exact: true, component: Dashboard, name: "Home" },
   { path: "/user", exact: true, component: AllUsers, name: "Users" },
   { path: "/all-users", exact: true, component: AllUsers, name: "All Users" },
@@ -112,6 +116,34 @@ const Routes = [
     exact: true,
     component: EditBrand,
     name: "Edit Brand"
+  },
+  {
+    path: "/settings",
+    exact: true,
+    component: Settings,
+    name: "Settings"
+  },
+  {
+    path: "/all-coupons",
+    exact: true,
+    component: AllCoupons,
+    name: "All Coupons"
+  },
+  {
+    path: "/add-coupon",
+    exact: true,
+    component: AddCoupon,
+    name: "Add Coupon"
+  },
+  {
+    path: "/edit-coupon/:id",
+    exact: true,
+    component: EditCoupon,
+    name: "Edit Coupon"
+  },
+  {
+    path: "*",
+    component: NotFound
   }
 ];
 

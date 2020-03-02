@@ -13,8 +13,8 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import { Link } from "react-router-dom";
 import menuItems from "../routes/nav.json";
-import StarIcon from "@material-ui/icons/Star";
-import DashboardIcon from "@material-ui/icons/Dashboard";
+import Icon from "@material-ui/core/Icon";
+import clsx from "clsx";
 
 const useStyles = makeStyles(theme => ({
   item: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     color: colors.blueGrey[800],
-    padding: "10px 8px",
+    padding: "4px",
     justifyContent: "flex-start",
     textTransform: "none",
     letterSpacing: 0,
@@ -38,12 +38,13 @@ const useStyles = makeStyles(theme => ({
     textAlign: "left !important"
   },
   collapse: {
-    backgroundColor: "#fafafa",
-    padding: "0px 10px"
+    backgroundColor: "#f5f5f5",
+    padding: "0px 10px",
+    paddingLeft: 40
   }
 }));
 
-const MenuBar = () => {
+const MenuBar = props => {
   const classes = useStyles();
 
   const [menuName, setMenuName] = useState("");
@@ -64,12 +65,11 @@ const MenuBar = () => {
             <ListItem className={classes.item} disableGutters>
               <Button className={classes.button}>
                 <ListItemIcon className={classes.icons}>
-                  {menu.icon ? <DashboardIcon /> : <StarIcon />}
+                  {menu.icon && <Icon>{menu.icon}</Icon>}
                 </ListItemIcon>
                 <ListItemText
                   className={classes.itemtext}
                   primary={menu.name}
-                  
                 />
               </Button>
             </ListItem>
@@ -85,7 +85,7 @@ const MenuBar = () => {
           >
             <Button className={classes.button}>
               <ListItemIcon className={classes.icons}>
-                {menu.icon ? <DashboardIcon /> : <StarIcon />}
+                {menu.icon && <Icon>{menu.icon}</Icon>}
               </ListItemIcon>
               <ListItemText className={classes.itemtext} primary={menu.name} />
               {menuName === menu.name ? <ExpandLess /> : <ExpandMore />}
@@ -95,7 +95,7 @@ const MenuBar = () => {
             in={menuName === menu.name ? true : false}
             timeout="auto"
             unmountOnExit
-            className={classes.collapse}
+            className={clsx(classes.collapse, "menu-collapse")}
           >
             {menuListing(menu.children)}
           </Collapse>

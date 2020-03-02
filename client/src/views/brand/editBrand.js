@@ -12,7 +12,6 @@ import {
   Divider
 } from "@material-ui/core";
 import Alert from "../utils/Alert";
-import HelpPop from "../utils/helpPop.js";
 import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
 import { Link } from "react-router-dom";
@@ -118,6 +117,7 @@ const EditBrand = props => {
                       <img
                         src={logoImage}
                         className={classes.logoImagePreview}
+                        alt="Brand Logo"
                       />
                     </Box>
                   )}

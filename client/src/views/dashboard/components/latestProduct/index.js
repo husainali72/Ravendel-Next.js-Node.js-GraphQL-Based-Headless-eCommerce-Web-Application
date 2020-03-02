@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles';
+import React from "react";
+import clsx from "clsx";
+import PropTypes from "prop-types";
+import { makeStyles } from "@material-ui/styles";
 import {
   Card,
   CardHeader,
@@ -12,15 +12,68 @@ import {
   List,
   ListItem,
   ListItemAvatar,
-  ListItemText
-} from '@material-ui/core';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+  ListItemText,
+  CircularProgress
+} from "@material-ui/core";
+import ArrowRightIcon from "@material-ui/icons/ArrowRight";
+import { Link } from "react-router-dom";
 
-import mockData from './data';
+const LatestProducts = props => {
+  const { className, ...rest } = props;
+  const classes = useStyles();
+
+  return (
+    <Card {...rest} className={clsx(classes.root, className)}>
+      <CardHeader
+        subtitle={`${props.products.length} in total`}
+        title="Latest props.products"
+      />
+      <Divider />
+      <CardContent className={classes.content}>
+        <List>
+          {!props.products ? (
+            <ListItem>
+              <CircularProgress />
+            </ListItem>
+          ) : (
+            props.products.slice(0, 2).map((product, i) => (
+              <ListItem
+                divider={i < props.products.length - 1}
+                key={product.id}
+              >
+                <ListItemAvatar>
+                  <img
+                    alt="Product"
+                    className={classes.image}
+                    src={
+                      product.feature_image && product.feature_image.thumbnail
+                    }
+                  />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={product.name}
+                  secondary={`Updated ${product.date}`}
+                />
+              </ListItem>
+            ))
+          )}
+        </List>
+      </CardContent>
+      <Divider />
+      <CardActions className={classes.actions}>
+        <Link to="/all-products">
+          <Button color="primary" size="small" variant="text">
+            View all <ArrowRightIcon />
+          </Button>
+        </Link>
+      </CardActions>
+    </Card>
+  );
+};
 
 const useStyles = makeStyles(() => ({
   root: {
-    height: '100%'
+    height: "100%"
   },
   content: {
     padding: 0
@@ -30,62 +83,9 @@ const useStyles = makeStyles(() => ({
     width: 48
   },
   actions: {
-    justifyContent: 'flex-end'
+    justifyContent: "flex-end"
   }
 }));
-
-const LatestProducts = props => {
-  const { className, ...rest } = props;
-
-  const classes = useStyles();
-
-  const [products] = useState(mockData);
-
-  return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
-      <CardHeader
-        subtitle={`${products.length} in total`}
-        title="Latest products"
-      />
-      <Divider />
-      <CardContent className={classes.content}>
-        <List>
-          {products.map((product, i) => (
-            <ListItem
-              divider={i < products.length - 1}
-              key={product.id}
-            >
-              <ListItemAvatar>
-                <img
-                  alt="Product"
-                  className={classes.image}
-                  src={product.imageUrl}
-                />
-              </ListItemAvatar>
-              <ListItemText
-                primary={product.name}
-                secondary={`Updated ${product.updatedAt}`}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </CardContent>
-      <Divider />
-      <CardActions className={classes.actions}>
-        <Button
-          color="primary"
-          size="small"
-          variant="text"
-        >
-          View all <ArrowRightIcon />
-        </Button>
-      </CardActions>
-    </Card>
-  );
-};
 
 LatestProducts.propTypes = {
   className: PropTypes.string

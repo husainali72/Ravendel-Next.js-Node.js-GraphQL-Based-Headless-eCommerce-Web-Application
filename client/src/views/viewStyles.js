@@ -157,6 +157,30 @@ const viewStyles = makeStyles(theme => ({
     left: "7px",
     zIndex: 1,
     fontSize: 12
+  },
+  settingRoot: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+    display: "flex",
+    height: 500,
+    "&: .MuiTabs-flexContainerVertical": {
+      "&: .MuiButtonBase-root.Mui-selected": {
+        backgroundColor: "#000"
+      }
+    }
+  },
+  settingsTabs: {
+    borderRight: `1px solid ${theme.palette.divider}`,
+    background: "#eee"
+  },
+  flexGrow1: {
+    flexGrow: 1
+  },
+  tabsHeader: { background: "#eee" },
+  tabsBody: {
+    border: ".5px solid #cacaca",
+    borderTop: "none",
+    backgroundColor: "#fbfbfb"
   }
 }));
 

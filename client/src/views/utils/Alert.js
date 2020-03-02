@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 import { connect } from "react-redux";
 
 function CustomAlert(props) {
@@ -18,13 +18,12 @@ const Alert = props => {
           type: "ALERT_SUCCESS",
           payload: { boolean: false, message: "", error: false }
         });
-      }, 6000);
+      }, 3000);
     }
   }, [props.alert.success]);
 
   return (
     <Fragment>
-
       {/* <Snackbar
         anchorOrigin={{
           vertical: 'top',
@@ -39,15 +38,15 @@ const Alert = props => {
         severity={props.alert.error ? 'error' : 'success'}
       /> */}
 
-      <Snackbar  
-          autoHideDuration={6000}
-          open={isOpen} 
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }} 
-        >
-        <CustomAlert severity={props.alert.error ? 'error' : 'success'}>
+      <Snackbar
+        autoHideDuration={3000}
+        open={isOpen}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right"
+        }}
+      >
+        <CustomAlert severity={props.alert.error ? "error" : "success"}>
           {props.alert.message}
         </CustomAlert>
       </Snackbar>

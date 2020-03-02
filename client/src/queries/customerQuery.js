@@ -39,7 +39,6 @@ const ADD_CUSTOMER = gql`
     $company: String
     $phone: String
     $password: String
-    $address_book: customArray
   ) {
     addCustomer(
       first_name: $first_name
@@ -48,7 +47,6 @@ const ADD_CUSTOMER = gql`
       company: $company
       phone: $phone
       password: $password
-      address_book: $address_book
     ) {
       id
       first_name
@@ -112,7 +110,6 @@ const UPDATE_CUSTOMER = gql`
     $company: String
     $phone: String
     $password: String
-    $address_book: customArray
   ) {
     updateCustomer(
       id: $id
@@ -122,7 +119,6 @@ const UPDATE_CUSTOMER = gql`
       company: $company
       phone: $phone
       password: $password
-      address_book: $address_book
     ) {
       id
       first_name
@@ -197,7 +193,7 @@ const DELETE_CUSTOMER = gql`
 
 const DELETE_ADDRESSBOOK = gql`
   mutation($id: ID!, $_id: ID!) {
-    deleteAddressBook(id: $id, _id: $id) {
+    deleteAddressBook(id: $id, _id: $_id) {
       id
       first_name
       last_name

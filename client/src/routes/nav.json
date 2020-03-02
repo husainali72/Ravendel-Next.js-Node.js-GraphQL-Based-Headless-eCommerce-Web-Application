@@ -3,121 +3,128 @@
     {
       "name": "Dashboard",
       "url": "/dashboard",
-      "icon": "abc"
-    },
-    {
-      "name": "Users",
-      "icon": "abc",
-      "children": [
-        {
-          "name": "All Users",
-          "url": "/all-users"
-        },
-        {
-          "name": "Add User",
-          "url": "/add-user"
-        }
-      ]
-    },
-    {
-      "name": "Blogs",
-      "url": "/all-blogs",
-      "icon": "icon-pin",
-      "children": [
-        {
-          "name": "All Blogs",
-          "url": "/all-blogs",
-          "icon": "icon-pin"
-        },
-        {
-          "name": "Add Blog",
-          "url": "/add-blog",
-          "icon": "icon-plus"
-        }
-      ]
-    },
-    {
-      "name": "Products",
-      "url": "",
-      "icon": "icon-pin",
-      "children": [
-        {
-          "name": "All Products",
-          "url": "/all-products",
-          "icon": "icon-pin"
-        },
-        {
-          "name": "Add Product",
-          "url": "/add-product",
-          "icon": "icon-plus"
-        },
-        {
-          "name": "Categories",
-          "url": "/all-categories",
-          "icon": "icon-pin"
-        }
-      ]
+      "icon": "dashboard"
     },
     {
       "name": "Orders",
       "url": "/all-orders",
-      "icon": "icon-pin",
-      "children": [
-        {
-          "name": "All Orders",
-          "url": "/all-orders",
-          "icon": "icon-pin"
-        }
-      ]
+      "icon": "shopping_cart"
     },
     {
-      "name": "Pages",
-      "url": "/all-pages",
-      "icon": "icon-pin",
+      "name": "Products",
+      "url": "",
+      "icon": "storefront",
       "children": [
         {
-          "name": "All Pages",
-          "url": "/all-pages",
-          "icon": "icon-pin"
+          "name": "All Products",
+          "url": "/all-products",
+          "icon": "storefront"
         },
         {
-          "name": "Add Page",
-          "url": "/add-page",
-          "icon": "icon-plus"
+          "name": "Add Product",
+          "url": "/add-product",
+          "icon": "add"
+        },
+        {
+          "name": "Categories",
+          "url": "/all-categories",
+          "icon": "subject"
         }
       ]
     },
     {
       "name": "Customers",
       "url": "/all-customers",
-      "icon": "icon-pin",
+      "icon": "supervised_user_circle",
       "children": [
         {
           "name": "All Customer",
           "url": "/all-customer",
-          "icon": "icon-pin"
+          "icon": "supervised_user_circle"
         },
         {
           "name": "Add Customer",
           "url": "/add-customer",
-          "icon": "icon-plus"
+          "icon": "add"
         }
       ]
     },
     {
       "name": "Brands",
       "url": "/all-brands",
-      "icon": "icon-pin",
+      "icon": "redeem",
       "children": [
         {
           "name": "All Brands",
           "url": "/all-brands",
-          "icon": "icon-pin"
+          "icon": "redeem"
         },
         {
           "name": "Add Brand",
           "url": "/add-brand",
-          "icon": "icon-plus"
+          "icon": "add"
+        }
+      ]
+    },
+    {
+      "name": "Coupons",
+      "url": "/all-coupons",
+      "icon": "new_releases"
+    },
+    {
+      "name": "Pages",
+      "url": "/all-pages",
+      "icon": "insert_drive_file",
+      "children": [
+        {
+          "name": "All Pages",
+          "url": "/all-pages",
+          "icon": "insert_drive_file"
+        },
+        {
+          "name": "Add Page",
+          "url": "/add-page",
+          "icon": "add"
+        }
+      ]
+    },
+
+    {
+      "name": "Blogs",
+      "url": "/all-blogs",
+      "icon": "description",
+      "children": [
+        {
+          "name": "All Blogs",
+          "url": "/all-blogs",
+          "icon": "description"
+        },
+        {
+          "name": "Add Blog",
+          "url": "/add-blog",
+          "icon": "add"
+        }
+      ]
+    },
+
+    {
+      "name": "Settings",
+      "url": "/settings",
+      "icon": "settings"
+    },
+    {
+      "name": "Users",
+      "icon": "person",
+      "children": [
+        {
+          "name": "All Users",
+          "url": "/all-users",
+          "icon": "person"
+        },
+        {
+          "name": "Add User",
+          "url": "/add-user",
+          "icon": "person_add"
         }
       ]
     }

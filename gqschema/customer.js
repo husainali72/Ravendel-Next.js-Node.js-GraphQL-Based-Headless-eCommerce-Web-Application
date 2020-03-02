@@ -15,6 +15,7 @@ module.exports = gql`
 
   type AddressBook {
     id: ID
+    _id: ID
     first_name: String
     last_name: String
     company: String
@@ -42,7 +43,6 @@ module.exports = gql`
       company: String
       phone: String
       password: String
-      address_book: customArray
     ): [Customer]
     updateCustomer(
       id: ID!

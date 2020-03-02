@@ -6,23 +6,23 @@ module.exports = function validate(method, args) {
     case "addCustomer": {
       let errors = "";
 
-      if (args.first_name && Validator.isEmpty(args.first_name)) {
+      if (!args.first_name && Validator.isEmpty(args.first_name)) {
         return (errors = "First Name field is required");
       }
 
-      if (args.last_name && Validator.isEmpty(args.last_name)) {
+      if (!args.last_name && Validator.isEmpty(args.last_name)) {
         return (errors = "Last Name field is required");
       }
 
-      if (args.email && Validator.isEmpty(args.email)) {
+      if (!args.email && Validator.isEmpty(args.email)) {
         return (errors = "Email field is required");
       }
 
-      if (!Validator.isEmail(args.email)) {
+      if (!!Validator.isEmail(args.email)) {
         return (errors = "Email is invalid");
       }
 
-      if (args.password && Validator.isEmpty(args.password)) {
+      if (!args.password && Validator.isEmpty(args.password)) {
         return (errors = "Password field is required");
       }
       break;
@@ -30,15 +30,15 @@ module.exports = function validate(method, args) {
     case "updateCustomer": {
       let errors = "";
 
-      if (args.first_name && Validator.isEmpty(args.first_name)) {
+      if (!args.first_name && Validator.isEmpty(args.first_name)) {
         return (errors = "First Name field is required");
       }
 
-      if (args.last_name && Validator.isEmpty(args.last_name)) {
+      if (!args.last_name && Validator.isEmpty(args.last_name)) {
         return (errors = "Last Name field is required");
       }
 
-      if (args.email && Validator.isEmpty(args.email)) {
+      if (!args.email && Validator.isEmpty(args.email)) {
         return (errors = "Email field is required");
       }
 
@@ -46,35 +46,34 @@ module.exports = function validate(method, args) {
         return (errors = "Email is invalid");
       }
 
-      if (args.password && Validator.isEmpty(args.password)) {
+      if (!args.password && Validator.isEmpty(args.password)) {
         return (errors = "Password field is required");
       }
       break;
     }
     case "addAddressBook": {
       let errors = "";
-
-      if (args.first_name && Validator.isEmpty(args.first_name)) {
+      if (!args.first_name && Validator.isEmpty(args.first_name)) {
         return (errors = "First Name field is required");
       }
 
-      if (args.last_name && Validator.isEmpty(args.last_name)) {
+      if (!args.last_name && Validator.isEmpty(args.last_name)) {
         return (errors = "Last Name field is required");
       }
 
-      if (args.address_line1 && Validator.isEmpty(args.address_line1)) {
+      if (!args.address_line1 && Validator.isEmpty(args.address_line1)) {
         return (errors = "Address Line 1 field is required");
       }
 
-      if (args.city && Validator.isEmpty(args.city)) {
+      if (!args.city && Validator.isEmpty(args.city)) {
         return (errors = "City field is required");
       }
 
-      if (args.country && Validator.isEmpty(args.country)) {
+      if (!args.country && Validator.isEmpty(args.country)) {
         return (errors = "Country field is required");
       }
 
-      if (args.pincode && Validator.isEmpty(args.pincode)) {
+      if (!args.pincode && Validator.isEmpty(args.pincode)) {
         return (errors = "Pincode field is required");
       }
 
@@ -83,27 +82,27 @@ module.exports = function validate(method, args) {
     case "updateAddressBook": {
       let errors = "";
 
-      if (args.first_name && Validator.isEmpty(args.first_name)) {
+      if (!args.first_name && Validator.isEmpty(args.first_name)) {
         return (errors = "First Name field is required");
       }
 
-      if (args.last_name && Validator.isEmpty(args.last_name)) {
+      if (!args.last_name && Validator.isEmpty(args.last_name)) {
         return (errors = "Last Name field is required");
       }
 
-      if (args.address_line1 && Validator.isEmpty(args.address_line1)) {
+      if (!args.address_line1 && Validator.isEmpty(args.address_line1)) {
         return (errors = "Address Line 1 field is required");
       }
 
-      if (args.city && Validator.isEmpty(args.city)) {
+      if (!args.city && Validator.isEmpty(args.city)) {
         return (errors = "City field is required");
       }
 
-      if (args.country && Validator.isEmpty(args.country)) {
+      if (!args.country && Validator.isEmpty(args.country)) {
         return (errors = "Country field is required");
       }
 
-      if (args.pincode && Validator.isEmpty(args.pincode)) {
+      if (!args.pincode && Validator.isEmpty(args.pincode)) {
         return (errors = "Pincode field is required");
       }
 

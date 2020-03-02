@@ -11,11 +11,10 @@ import {
   TableHead,
   TableRow,
   TableContainer,
+  TablePagination,
   IconButton,
-  Avatar,
   Button,
-  Backdrop,
-  CircularProgress
+  Tooltip
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -23,42 +22,13 @@ import { customersAction, customerDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
 import Alert from "../utils/Alert";
-import PeopleIcon from "@material-ui/icons/People";
+import Loading from "../utils/loading";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import palette from "../../theme/palette";
-import { makeStyles } from "@material-ui/styles";
-
-const useStyles = makeStyles(theme => ({
-  mainrow: {
-    padding: theme.spacing(4)
-  },
-  deleteicon: {
-    color: palette.error.dark
-  },
-  avatar: {
-    width: "50px",
-    height: "50px",
-    borderRadius: "100%"
-  },
-  addCustomerBtn: {
-    background: palette.success.main,
-    color: "#fff"
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff"
-  },
-  avtarTd: {
-    width: "50px"
-  },
-  container: {
-    maxHeight: 440
-  }
-}));
+import viewStyles from "../viewStyles";
 
 const AllCustomers = props => {
-  const classes = useStyles();
+  const classes = viewStyles();
 
   useEffect(() => {
     if (isEmpty(props.customers.customers)) {
@@ -66,24 +36,32 @@ const AllCustomers = props => {
     }
   }, []);
 
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <Fragment>
       <Alert />
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.customers.loading && (
-              <Backdrop className={classes.backdrop} open={true}>
-                <CircularProgress color="inherit" /> Loading
-              </Backdrop>
-            )}
+            {props.customers.loading && <Loading />}
 
             <CardHeader
               action={
                 <Link to="/add-customer">
                   <Button
                     color="primary"
-                    className={classes.addCustomerBtn}
+                    className={classes.addUserBtn}
                     size="small"
                     variant="contained"
                   >
@@ -96,7 +74,11 @@ const AllCustomers = props => {
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table>
+                <Table
+                  stickyHeader
+                  aria-label="sticky table and Dense Table"
+                  size="small"
+                >
                   <TableHead>
                     <TableRow>
                       <TableCell>Name</TableCell>
@@ -106,37 +88,58 @@ const AllCustomers = props => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {props.customers.customers.map(customer => (
-                      <TableRow key={customer.id}>
-                        <TableCell>
-                          {customer.first_name + " " + customer.last_name}
-                        </TableCell>
-                        <TableCell>{customer.email}</TableCell>
-                        <TableCell>{customer.date}</TableCell>
-                        <TableCell>
-                          <IconButton
-                            aria-label="Edit"
-                            onClick={() =>
-                              jumpTo(`edit-customer/${customer.id}`)
-                            }
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            aria-label="Delete"
-                            className={classes.deleteicon}
-                            onClick={() =>
-                              props.customerDeleteAction(customer.id)
-                            }
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {props.customers.customers
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map(customer => (
+                        <TableRow key={customer.id} hover>
+                          <TableCell>
+                            {customer.first_name + " " + customer.last_name}
+                          </TableCell>
+                          <TableCell>{customer.email}</TableCell>
+                          <TableCell>{customer.date}</TableCell>
+                          <TableCell>
+                            <Tooltip title="Edit Customer" aria-label="edit">
+                              <IconButton
+                                aria-label="Edit"
+                                onClick={() =>
+                                  jumpTo(`edit-customer/${customer.id}`)
+                                }
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip
+                              title="Delete Customer"
+                              aria-label="delete"
+                            >
+                              <IconButton
+                                aria-label="Delete"
+                                className={classes.deleteicon}
+                                onClick={() =>
+                                  props.customerDeleteAction(customer.id)
+                                }
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 20]}
+                component="div"
+                count={props.customers.customers.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
             </CardContent>
           </Card>
         </Grid>

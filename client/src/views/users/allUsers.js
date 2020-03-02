@@ -10,7 +10,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TableContainer, 
+  TableContainer,
+  TablePagination,
   IconButton,
   Avatar,
   Button,
@@ -26,39 +27,21 @@ import Alert from "../utils/Alert";
 import PeopleIcon from "@material-ui/icons/People";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import palette from "../../theme/palette";
-import { makeStyles } from "@material-ui/styles";
-
-const useStyles = makeStyles(theme => ({
-  mainrow: {
-    padding: theme.spacing(4)
-  },
-  deleteicon: {
-    color: palette.error.dark
-  },
-  avatar: {
-    width: "50px",
-    height: "50px",
-    borderRadius: "100%"
-  },
-  addUserBtn: {
-    background: palette.success.main,
-    color: "#fff"
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff"
-  },
-  avtarTd:{
-      width: '50px'
-  },
-  container: {
-    maxHeight: 440,
-  },
-}));
+import viewStyles from "../viewStyles.js";
 
 const AllUsers = props => {
-  const classes = useStyles();
+  const classes = viewStyles();
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   useEffect(() => {
     if (isEmpty(props.users.users)) {
@@ -95,51 +78,69 @@ const AllUsers = props => {
             />
             <Divider />
             <CardContent>
-            <TableContainer className={classes.container}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell className={classes.avtarTd}>
-                      <PeopleIcon />
-                    </TableCell>
-                    <TableCell>Username</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Role</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {props.users.users.map(user => (
-                    <TableRow key={user.id}>
-                      <TableCell>
-                        <Avatar
-                          alt={user.name}
-                          src={user.image && user.image.thumbnail}
-                        />
+              <TableContainer className={classes.container}>
+                <Table
+                  stickyHeader
+                  aria-label="sticky table and Dense Table"
+                  size="small"
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell className={classes.avtarTd}>
+                        <PeopleIcon />
                       </TableCell>
-                      <TableCell>{user.name}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.role}</TableCell>
-                      <TableCell>
-                        <IconButton
-                          aria-label="Edit"
-                          onClick={() => jumpTo(`edit-user/${user.id}`)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          aria-label="Delete"
-                          className={classes.deleteicon}
-                          onClick={() => props.userDeleteAction(user.id)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
+                      <TableCell>Username</TableCell>
+                      <TableCell>Email</TableCell>
+                      <TableCell>Role</TableCell>
+                      <TableCell>Actions</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHead>
+                  <TableBody>
+                    {props.users.users
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map(user => (
+                        <TableRow key={user.id} hover>
+                          <TableCell>
+                            <Avatar
+                              alt={user.name}
+                              src={user.image && user.image.thumbnail}
+                            />
+                          </TableCell>
+                          <TableCell>{user.name}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>{user.role}</TableCell>
+                          <TableCell>
+                            <IconButton
+                              aria-label="Edit"
+                              onClick={() => jumpTo(`edit-user/${user.id}`)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              aria-label="Delete"
+                              className={classes.deleteicon}
+                              onClick={() => props.userDeleteAction(user.id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
               </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 20]}
+                component="div"
+                count={props.users.users.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
             </CardContent>
           </Card>
         </Grid>

@@ -229,11 +229,11 @@ export const customerDeleteAction = id => dispatch => {
     });
 };
 
-export const addressbookDeleteAction = id => dispatch => {
+export const addressbookDeleteAction = object => dispatch => {
   dispatch({
     type: CUSTOMER_LOADING
   });
-  mutation(DELETE_ADDRESSBOOK, { id })
+  mutation(DELETE_ADDRESSBOOK, object)
     .then(response => {
       if (response) {
         dispatch({

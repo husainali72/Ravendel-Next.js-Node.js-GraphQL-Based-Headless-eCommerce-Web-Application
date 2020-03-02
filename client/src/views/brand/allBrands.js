@@ -11,8 +11,10 @@ import {
   TableHead,
   TableRow,
   TableContainer,
+  TablePagination,
   IconButton,
-  Button
+  Button,
+  Tooltip
 } from "@material-ui/core";
 import Alert from "../utils/Alert";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -24,6 +26,18 @@ import Loading from "../utils/loading";
 
 const AllBrands = props => {
   const classes = viewStyles();
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   const [brands, setBrands] = useState([
     { id: 1, name: "abc", products: 10 },
     { id: 2, name: "xyz", products: 20 },
@@ -56,7 +70,11 @@ const AllBrands = props => {
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table>
+                <Table
+                  stickyHeader
+                  aria-label="sticky table and Dense Table"
+                  size="small"
+                >
                   <TableHead>
                     <TableRow>
                       <TableCell>Brand Name</TableCell>
@@ -65,30 +83,48 @@ const AllBrands = props => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {brands.map(brand => (
-                      <TableRow key={brand.id}>
-                        <TableCell>{brand.name}</TableCell>
-                        <TableCell>{brand.products}</TableCell>
-                        <TableCell>
-                          <IconButton
-                            aria-label="Edit"
-                            onClick={() => jumpTo(`edit-brand/${brand.id}`)}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            aria-label="Delete"
-                            className={classes.deleteicon}
-                            onClick={() => console.log("delete")}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {brands
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map(brand => (
+                        <TableRow key={brand.id} hover>
+                          <TableCell>{brand.name}</TableCell>
+                          <TableCell>{brand.products}</TableCell>
+                          <TableCell>
+                            <Tooltip title="Edit Brand" aria-label="edit">
+                              <IconButton
+                                aria-label="Edit"
+                                onClick={() => jumpTo(`edit-brand/${brand.id}`)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Delete Brand" aria-label="delete">
+                              <IconButton
+                                aria-label="Delete"
+                                className={classes.deleteicon}
+                                onClick={() => console.log("delete")}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 20]}
+                component="div"
+                count={brands.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
             </CardContent>
           </Card>
         </Grid>

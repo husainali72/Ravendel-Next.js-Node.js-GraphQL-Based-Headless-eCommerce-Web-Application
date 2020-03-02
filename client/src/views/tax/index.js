@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Grid,
   Card,
@@ -13,31 +13,19 @@ import {
   TableContainer,
   TablePagination,
   IconButton,
-  Avatar,
   Button,
   Tooltip
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { productsAction, productDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
-import { isEmpty } from "../../utils/helper";
 import Alert from "../utils/Alert";
-import PeopleIcon from "@material-ui/icons/People";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import viewStyles from "../viewStyles";
+import { Link } from "react-router-dom";
+import jumpTo from "../../utils/navigation";
+import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
 
-const AllProduct = props => {
+const AllTaxes = props => {
   const classes = viewStyles();
-
-  useEffect(() => {
-    if (isEmpty(props.products.products)) {
-      props.productsAction();
-    }
-  }, []);
-
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -50,32 +38,38 @@ const AllProduct = props => {
     setPage(0);
   };
 
+  const [brands, setBrands] = useState([
+    { id: 1, name: "abc", products: 10 },
+    { id: 2, name: "xyz", products: 20 },
+    { id: 3, name: "dca", products: 36 }
+  ]);
+
   return (
     <Fragment>
       <Alert />
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.products.loading && <Loading />}
+            {brands.loading && <Loading />}
 
             <CardHeader
               action={
-                <Link to="/add-product">
+                <Link to="/add-brand">
                   <Button
                     color="primary"
                     className={classes.addUserBtn}
                     size="small"
                     variant="contained"
                   >
-                    Add Product
+                    Add New Brand
                   </Button>
                 </Link>
               }
-              title="All Products"
+              title="All Brands"
             />
             <Divider />
             <CardContent>
-              <TableContainer>
+              <TableContainer className={classes.container}>
                 <Table
                   stickyHeader
                   aria-label="sticky table and Dense Table"
@@ -83,51 +77,35 @@ const AllProduct = props => {
                 >
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.avtarTd}>
-                        <PeopleIcon />
-                      </TableCell>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Date</TableCell>
+                      <TableCell>Brand Name</TableCell>
+                      <TableCell>Products</TableCell>
                       <TableCell>Actions</TableCell>
                     </TableRow>
                   </TableHead>
-                  <TableBody className={classes.container}>
-                    {props.products.products
+                  <TableBody>
+                    {brands
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map(product => (
-                        <TableRow key={product.id} hover>
+                      .map(brand => (
+                        <TableRow key={brand.id} hover>
+                          <TableCell>{brand.name}</TableCell>
+                          <TableCell>{brand.products}</TableCell>
                           <TableCell>
-                            <Avatar
-                              alt={product.name}
-                              src={
-                                product.feature_image &&
-                                product.feature_image.thumbnail
-                              }
-                            />
-                          </TableCell>
-                          <TableCell>{product.name}</TableCell>
-                          <TableCell>{product.date}</TableCell>
-                          <TableCell>
-                            <Tooltip title="Edit Product" aria-label="edit">
+                            <Tooltip title="Edit Brand" aria-label="edit">
                               <IconButton
                                 aria-label="Edit"
-                                onClick={() =>
-                                  jumpTo(`edit-product/${product.id}`)
-                                }
+                                onClick={() => jumpTo(`edit-brand/${brand.id}`)}
                               >
                                 <EditIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Delete Product" aria-label="delete">
+                            <Tooltip title="Delete Brand" aria-label="delete">
                               <IconButton
                                 aria-label="Delete"
                                 className={classes.deleteicon}
-                                onClick={() =>
-                                  props.productDeleteAction(product.id)
-                                }
+                                onClick={() => console.log("delete")}
                               >
                                 <DeleteIcon />
                               </IconButton>
@@ -141,7 +119,7 @@ const AllProduct = props => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={props.products.products.length}
+                count={brands.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -154,13 +132,5 @@ const AllProduct = props => {
     </Fragment>
   );
 };
-const mapStateToProps = state => {
-  return { products: state.products };
-};
 
-const mapDispatchToProps = {
-  productsAction,
-  productDeleteAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AllProduct);
+export default AllTaxes;

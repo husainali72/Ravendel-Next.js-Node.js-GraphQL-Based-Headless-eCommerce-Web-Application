@@ -1,4 +1,3 @@
-import React from "react";
 import {
   GET_ORDERS,
   GET_ORDER,
@@ -8,7 +7,6 @@ import {
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import jumpTo from "../../utils/navigation";
 
 export const ordersAction = () => dispatch => {
   dispatch({
@@ -71,7 +69,11 @@ export const orderDeleteAction = id => dispatch => {
         });
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Order deleted successfully", error: false }
+          payload: {
+            boolean: true,
+            message: "Order deleted successfully",
+            error: false
+          }
         });
       }
     })
@@ -100,7 +102,11 @@ export const orderUpdateAction = object => dispatch => {
 
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Order updated successfully", error: false }
+          payload: {
+            boolean: true,
+            message: "Order updated successfully",
+            error: false
+          }
         });
 
         //jumpTo("/all-orders");
@@ -113,7 +119,7 @@ export const orderUpdateAction = object => dispatch => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true } 
+        payload: { boolean: true, message: error, error: true }
       });
     });
 };

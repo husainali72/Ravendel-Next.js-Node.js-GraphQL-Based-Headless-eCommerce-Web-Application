@@ -10,9 +10,9 @@ import {
   Avatar,
   CircularProgress
 } from "@material-ui/core";
-import StorefrontIcon from "@material-ui/icons/Storefront";
+import PeopleIcon from "@material-ui/icons/PeopleOutlined";
 
-const TotalProducts = props => {
+const TotalCustomers = props => {
   const { className, ...rest } = props;
 
   const classes = useStyles();
@@ -28,19 +28,19 @@ const TotalProducts = props => {
               gutterBottom
               variant="body2"
             >
-              TOTAL PRODUCTS
+              TOTAL CUSTOMERS
             </Typography>
             <Typography variant="h3">
-              {!props.productslength ? (
+              {!props.customerlength ? (
                 <CircularProgress />
               ) : (
-                props.productslength
+                props.customerlength
               )}
             </Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <StorefrontIcon className={classes.icon} />
+              <PeopleIcon className={classes.icon} />
             </Avatar>
           </Grid>
         </Grid>
@@ -61,7 +61,8 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 700
   },
   avatar: {
-    backgroundColor: theme.palette.success.main,
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
     height: 56,
     width: 56
   },
@@ -69,22 +70,13 @@ const useStyles = makeStyles(theme => ({
     height: 32,
     width: 32
   },
-  difference: {
-    marginTop: theme.spacing(2),
-    display: "flex",
-    alignItems: "center"
-  },
-  differenceIcon: {
-    color: theme.palette.success.dark
-  },
-  differenceValue: {
-    color: theme.palette.success.dark,
-    marginRight: theme.spacing(1)
+  progress: {
+    marginTop: theme.spacing(3)
   }
 }));
 
-TotalProducts.propTypes = {
+TotalCustomers.propTypes = {
   className: PropTypes.string
 };
 
-export default TotalProducts;
+export default TotalCustomers;
