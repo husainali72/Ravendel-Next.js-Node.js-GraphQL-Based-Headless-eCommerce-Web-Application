@@ -1,5 +1,6 @@
 import palette from "../theme/palette";
 import { makeStyles } from "@material-ui/styles";
+import { deepPurple } from "@material-ui/core/colors";
 
 const viewStyles = makeStyles(theme => ({
   mainrow: {
@@ -170,8 +171,7 @@ const viewStyles = makeStyles(theme => ({
     }
   },
   settingsTabs: {
-    borderRight: `1px solid ${theme.palette.divider}`,
-    background: "#eee"
+    //borderRight: `1px solid ${theme.palette.divider}`
   },
   flexGrow1: {
     flexGrow: 1
@@ -181,6 +181,85 @@ const viewStyles = makeStyles(theme => ({
     border: ".5px solid #cacaca",
     borderTop: "none",
     backgroundColor: "#fbfbfb"
+  },
+  upperCard: {
+    minHeight: 240
+  },
+  downCard: {
+    minHeight: 310
+  },
+  purple: {
+    backgroundColor: deepPurple[500]
+  },
+  statusSelect: {
+    marginTop: 25,
+    width: 300
+  },
+  fullWidth: {
+    width: "100%"
+  },
+  dBlock: {
+    display: "block"
+  },
+  textRight: {
+    textAlign: "right"
+  },
+  discount: {
+    color: "red"
+  },
+  mtb2: {
+    marginTop: 10,
+    marginBottom: 10,
+    minHeight: 25
+  },
+  radioRoot: {
+    "&:hover": {
+      backgroundColor: "transparent"
+    }
+  },
+  radioIcon: {
+    borderRadius: "50%",
+    width: 16,
+    height: 16,
+    boxShadow:
+      "inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)",
+    backgroundColor: "#f5f8fa",
+    backgroundImage:
+      "linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))",
+    "$root.Mui-focusVisible &": {
+      outline: "2px auto rgba(19,124,189,.6)",
+      outlineOffset: 2
+    },
+    "input:hover ~ &": {
+      backgroundColor: "#ebf1f5"
+    },
+    "input:disabled ~ &": {
+      boxShadow: "none",
+      background: "rgba(206,217,224,.5)"
+    }
+  },
+  radiocheckedIcon: {
+    backgroundColor: "#137cbd",
+    backgroundImage:
+      "linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))",
+    "&:before": {
+      display: "block",
+      width: 16,
+      height: 16,
+      backgroundImage: "radial-gradient(#fff,#fff 28%,transparent 32%)",
+      content: '""'
+    },
+    "input:hover ~ &": {
+      backgroundColor: "#106ba3"
+    }
+  },
+  settingLeft: {
+    maxHeight: "600px",
+    background: "#009688"
+  },
+  settingRight: {
+    maxHeight: "600px",
+    background: "#f5f5f5"
   }
 }));
 

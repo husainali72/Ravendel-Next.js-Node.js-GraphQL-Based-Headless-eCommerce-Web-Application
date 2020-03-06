@@ -22,48 +22,16 @@ import {
 import { connect } from "react-redux";
 // import jumpTo, { go } from "../../utils/navigation";
 import Alert from "../utils/Alert";
-import { makeStyles } from "@material-ui/styles";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { Link } from "react-router-dom";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import clsx from "clsx";
-import palette from "../../theme/palette";
 import { userUpdateAction } from "../../store/action";
-
-const useStyles = makeStyles(theme => ({
-  cancelBtn: {
-    background: palette.error.dark,
-    color: "#fff",
-    marginLeft: theme.spacing(2)
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff"
-  },
-  mainrow: {
-    padding: theme.spacing(4)
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2)
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120
-  },
-  width100: {
-    width: "100%"
-  },
-  formbottom: {
-    marginTop: theme.spacing(3)
-  },
-  secondRow: {
-    marginTop: theme.spacing(3)
-  }
-}));
+import viewStyles from "../viewStyles";
 
 const EditUser = props => {
-  const classes = useStyles();
+  const classes = viewStyles();
   const [user, setuser] = useState({
     id: "",
     name: "",
@@ -91,7 +59,6 @@ const EditUser = props => {
   }, [props.users.users]);
 
   const fileChange = e => {
-    console.log(e.target.name);
     setuser({ ...user, [e.target.name]: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
@@ -227,6 +194,7 @@ const EditUser = props => {
                         <img
                           src={featureImage}
                           className={classes.feautedImageBoxPreview}
+                          alt="user-thumbnail"
                         />
                       </Box>
                     )}

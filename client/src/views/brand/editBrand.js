@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
   Typography,
@@ -17,28 +17,56 @@ import Loading from "../utils/loading";
 import { Link } from "react-router-dom";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import clsx from "clsx";
+import { brandUpdateAction } from "../../store/action/";
+import { isEmpty } from "../../utils/helper";
+import { connect } from "react-redux";
 
 const EditBrand = props => {
   const classes = viewStyles();
   const [logoImage, setLogoImage] = useState(null);
   const [brand, setBrand] = useState({
-    name: "abc",
-    url: "/abc",
-    logo: ""
+    name: "",
+    url: "",
+    brand_logo: "",
+    meta: {
+      title: "",
+      description: "",
+      keywords: ""
+    }
   });
+
+  useEffect(() => {
+    props.brands.brands.map(editbrand => {
+      if (editbrand.id === props.match.params.id) {
+        setBrand({ ...brand, ...editbrand });
+        if (editbrand.brand_logo && editbrand.brand_logo.original) {
+          setLogoImage(editbrand.brand_logo.original);
+        }
+      }
+    });
+  }, []);
 
   const updateBrand = () => {
     console.log("brand", brand);
+    props.brandUpdateAction(brand);
   };
 
   const handleChange = e => {
     setBrand({ ...brand, [e.target.name]: e.target.value });
   };
 
+  const metaChange = e => {
+    //brand.meta[e.target.name] = e.target.value;
+    setBrand({
+      ...brand,
+      meta: { ...brand.meta, [e.target.name]: e.target.value }
+    });
+  };
+
   const fileChange = e => {
     setLogoImage(null);
     setLogoImage(URL.createObjectURL(e.target.files[0]));
-    setBrand({ ...brand, [e.target.name]: e.target.files });
+    setBrand({ ...brand, [e.target.name]: e.target.files[0] });
   };
 
   return (
@@ -100,7 +128,7 @@ const EditBrand = props => {
                 <Grid item className={classes.flex1}>
                   <TextField
                     helperText="Brand Logo"
-                    name="logo"
+                    name="updated_brand_logo"
                     variant="outlined"
                     className={clsx(
                       classes.marginBottom,
@@ -137,10 +165,11 @@ const EditBrand = props => {
                   <TextField
                     id="meta-title"
                     label="Meta Title"
-                    name="meta-title"
+                    name="title"
                     variant="outlined"
+                    value={brand.meta.title}
                     className={clsx(classes.width100)}
-                    onChange={handleChange}
+                    onChange={metaChange}
                   />
                 </Grid>
 
@@ -148,10 +177,11 @@ const EditBrand = props => {
                   <TextField
                     id="meta-keyword"
                     label="Meta Keyword"
-                    name="meta-keyword"
+                    name="keywords"
                     variant="outlined"
+                    value={brand.meta.keywords}
                     className={clsx(classes.width100)}
-                    onChange={handleChange}
+                    onChange={metaChange}
                   />
                 </Grid>
 
@@ -159,10 +189,11 @@ const EditBrand = props => {
                   <TextField
                     id="meta-description"
                     label="Meta-description"
-                    name="meta-description"
+                    name="description"
                     variant="outlined"
+                    value={brand.meta.description}
                     className={clsx(classes.marginBottom, classes.width100)}
-                    onChange={handleChange}
+                    onChange={metaChange}
                     multiline
                     rows="4"
                   />
@@ -176,4 +207,12 @@ const EditBrand = props => {
   );
 };
 
-export default EditBrand;
+const mapStateToProps = state => {
+  return { brands: state.brands };
+};
+
+const mapDispatchToProps = {
+  brandUpdateAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditBrand);

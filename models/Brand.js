@@ -8,15 +8,14 @@ const BrandSchema = new Schema({
     required: true
   },
   url: {
-    type: String,
-    required: true
+    type: String
   },
   brand_logo: {},
   meta: {
     title: {
       type: String
     },
-    desciption: {
+    description: {
       type: String
     },
     keywords: {

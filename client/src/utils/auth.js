@@ -8,6 +8,11 @@ const getToken = () => {
 const getUserId = () => {
   return user_token.user_id;
 };
+
+const getUser = () => {
+  return user_token;
+};
+
 const setUserToken = new_token => {
   cookie.save("auth", new_token);
   //localStorage.setItem("auth", JSON.stringify(new_token));
@@ -16,10 +21,12 @@ const setUserToken = new_token => {
 const logout = () => {
   //localStorage.removeItem("auth");
   cookie.remove("auth");
+  window.location.pathname = "/login";
 };
 
 export default {
   getToken,
+  getUser,
   getUserId,
   setUserToken,
   logout

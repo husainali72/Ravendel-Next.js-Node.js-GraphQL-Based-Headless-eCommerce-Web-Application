@@ -26,6 +26,7 @@ import Loading from "../utils/loading";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
+import convertDefault from "../utils/convertDate";
 
 const AllCustomers = props => {
   const classes = viewStyles();
@@ -99,7 +100,7 @@ const AllCustomers = props => {
                             {customer.first_name + " " + customer.last_name}
                           </TableCell>
                           <TableCell>{customer.email}</TableCell>
-                          <TableCell>{customer.date}</TableCell>
+                          <TableCell>{convertDefault(customer.date)}</TableCell>
                           <TableCell>
                             <Tooltip title="Edit Customer" aria-label="edit">
                               <IconButton

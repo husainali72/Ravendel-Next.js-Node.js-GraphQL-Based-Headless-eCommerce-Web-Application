@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
   Card,
@@ -23,9 +23,20 @@ import { Link } from "react-router-dom";
 import jumpTo from "../../utils/navigation";
 import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
+import convertDefault from "../utils/convertDate";
+import { isEmpty } from "../../utils/helper";
+import { brandsAction, brandDeleteAction } from "../../store/action";
+import { connect } from "react-redux";
 
 const AllBrands = props => {
   const classes = viewStyles();
+
+  useEffect(() => {
+    if (isEmpty(props.brands.brands)) {
+      props.brandsAction();
+    }
+  }, []);
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -50,7 +61,7 @@ const AllBrands = props => {
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {brands.loading && <Loading />}
+            {props.brands.loading && <Loading />}
 
             <CardHeader
               action={
@@ -78,12 +89,12 @@ const AllBrands = props => {
                   <TableHead>
                     <TableRow>
                       <TableCell>Brand Name</TableCell>
-                      <TableCell>Products</TableCell>
+                      <TableCell>date</TableCell>
                       <TableCell>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {brands
+                    {props.brands.brands
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -91,7 +102,7 @@ const AllBrands = props => {
                       .map(brand => (
                         <TableRow key={brand.id} hover>
                           <TableCell>{brand.name}</TableCell>
-                          <TableCell>{brand.products}</TableCell>
+                          <TableCell>{convertDefault(brand.date)}</TableCell>
                           <TableCell>
                             <Tooltip title="Edit Brand" aria-label="edit">
                               <IconButton
@@ -105,7 +116,9 @@ const AllBrands = props => {
                               <IconButton
                                 aria-label="Delete"
                                 className={classes.deleteicon}
-                                onClick={() => console.log("delete")}
+                                onClick={() =>
+                                  props.brandDeleteAction(brand.id)
+                                }
                               >
                                 <DeleteIcon />
                               </IconButton>
@@ -119,7 +132,7 @@ const AllBrands = props => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={brands.length}
+                count={props.brands.brands.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -133,4 +146,13 @@ const AllBrands = props => {
   );
 };
 
-export default AllBrands;
+const mapStateToProps = state => {
+  return { brands: state.brands };
+};
+
+const mapDispatchToProps = {
+  brandsAction,
+  brandDeleteAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllBrands);

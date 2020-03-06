@@ -39,9 +39,11 @@ import {
   TextField
 } from "@material-ui/core";
 import "../../App.css";
+import convertDefault from "../utils/convertDate";
+import viewStyles from "../viewStyles";
 
 const ViewOrder = props => {
-  const classes = useStyles();
+  const classes = viewStyles();
   const [editShipping, setEditShipping] = useState(false);
   const [editBilling, setEditBilling] = useState(false);
   const [order, setorder] = useState({
@@ -107,13 +109,6 @@ const ViewOrder = props => {
 
   const getFirstLetter = name => {
     return name.charAt(0);
-  };
-
-  const dateFormat = paymentdate => {
-    return (
-      // new Date(paymentdate)
-      paymentdate
-    );
   };
 
   const BillingInput = (label, name, type, value) => {
@@ -184,7 +179,7 @@ const ViewOrder = props => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={2} className={classes.mainrow}>
+      <Grid container spacing={2} className={classes.secondmainrow}>
         <Grid item md={6}>
           {/* ===============Orders Details====================== */}
           <Box component="span">
@@ -195,7 +190,7 @@ const ViewOrder = props => {
                 <Typography variant="h4">Order: {order.id}</Typography>
                 <Typography variant="body1" mt={2}>
                   Payment via {order.billing.payment_method} paid on{" "}
-                  {dateFormat(order.date)}, Transaction number{" "}
+                  {convertDefault(order.date)}, Transaction number{" "}
                   {order.billing.transaction_id}
                 </Typography>
                 <FormControl className={classes.statusSelect}>
@@ -605,52 +600,6 @@ const ViewOrder = props => {
     </Fragment>
   );
 };
-
-const useStyles = makeStyles(theme => ({
-  cancelBtn: {
-    background: palette.error.dark,
-    color: "#fff",
-    marginLeft: theme.spacing(2)
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff"
-  },
-  mainrow: {
-    padding: theme.spacing(4),
-    marginTop: 40
-  },
-  upperCard: {
-    minHeight: 240
-  },
-  downCard: {
-    minHeight: 310
-  },
-  purple: {
-    backgroundColor: deepPurple[500]
-  },
-  statusSelect: {
-    marginTop: 25,
-    width: 300
-  },
-  fullWidth: {
-    width: "100%"
-  },
-  dBlock: {
-    display: "block"
-  },
-  textRight: {
-    textAlign: "right"
-  },
-  discount: {
-    color: "red"
-  },
-  mtb2: {
-    marginTop: 10,
-    marginBottom: 10,
-    minHeight: 25
-  }
-}));
 
 const mapStateToProps = state => {
   return { orders: state.orders };

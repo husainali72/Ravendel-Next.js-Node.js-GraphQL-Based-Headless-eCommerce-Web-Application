@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../../../viewStyles";
 import jumpTo from "../../../../utils/navigation";
+import convertDefault from "../../../utils/convertDate";
 
 const LatestOrders = props => {
   const { className, ...rest } = props;
@@ -35,7 +36,7 @@ const LatestOrders = props => {
       <Divider />
       <CardContent className={classes.content}>
         <div className={classes.inner}>
-          <Table>
+          <Table aria-label="sticky table and Dense Table" size="small">
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
@@ -63,7 +64,7 @@ const LatestOrders = props => {
                     <TableCell>
                       {order.shipping.firstname + " " + order.shipping.lastname}
                     </TableCell>
-                    <TableCell>{order.date}</TableCell>
+                    <TableCell>{convertDefault(order.date)}</TableCell>
                     <TableCell>
                       <span className={"product-status-chip " + order.status}>
                         {order.status}

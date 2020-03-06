@@ -43,6 +43,13 @@ import {
   addressbookDeleteAction
 } from "./customerAction";
 
+import {
+  brandsAction,
+  brandAddAction,
+  brandUpdateAction,
+  brandDeleteAction
+} from "./brandAction";
+
 export {
   LoginAction,
   usersAction,
@@ -73,5 +80,9 @@ export {
   customerAddAction,
   addressbookAddAction,
   addressbookUpdateAction,
-  addressbookDeleteAction
+  addressbookDeleteAction,
+  brandsAction,
+  brandAddAction,
+  brandUpdateAction,
+  brandDeleteAction
 };

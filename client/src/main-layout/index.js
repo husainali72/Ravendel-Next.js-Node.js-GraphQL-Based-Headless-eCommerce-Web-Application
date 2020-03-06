@@ -20,7 +20,9 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 200
   },
   content: {
-    height: "100%"
+    height: "calc(100% - 58px)",
+    overflowY: "auto",
+    overflowX: "hidden"
   }
 }));
 
@@ -72,8 +74,8 @@ const MainLayout = props => {
           ))}
           <Redirect to="/dashboard" />
         </Switch>
-        <Footer />
       </main>
+      <Footer />
     </div>
   );
 };

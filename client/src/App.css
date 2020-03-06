@@ -133,3 +133,21 @@
 .marginBottom2 {
   margin-bottom: 20px !important;
 }
+.makeStyles-settingsTabs-404 .MuiTab-wrapper {
+  align-items: flex-start !important;
+  color: #fff !important;
+}
+.makeStyles-settingLeft-420 .PrivateTabIndicator-colorPrimary-485 {
+  background-color: #8bc34a !important;
+}
+.makeStyles-settingLeft-420 .PrivateTabIndicator-vertical-487 {
+  width: 5px !important;
+}
+.setting-footer {
+  height: 50px;
+  background-color: #d8d8d8;
+}
+.setting-content {
+  height: calc(100% - 50px);
+  overflow-y: auto;
+}

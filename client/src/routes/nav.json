@@ -72,6 +72,16 @@
       "icon": "new_releases"
     },
     {
+      "name": "Tax",
+      "url": "/taxes",
+      "icon": "attach_money"
+    },
+    {
+      "name": "Shipping",
+      "url": "/shipping",
+      "icon": "local_shipping"
+    },
+    {
       "name": "Pages",
       "url": "/all-pages",
       "icon": "insert_drive_file",

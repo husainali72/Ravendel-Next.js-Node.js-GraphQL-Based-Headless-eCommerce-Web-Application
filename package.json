@@ -1,7 +1,7 @@
 {
-  "name": "graphqlnode",
+  "name": "ravendel",
   "version": "1.0.0",
-  "description": "testing graphql",
+  "description": "An eCommerce Fortress",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,9 +9,10 @@
     "start": "nodemon server",
     "server": "export NODE_ENV=production && export PORT=80 && node server",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm start\" \"npm run client\"",
-    "localbuild": "npm install && npm install --prefix client && npm run build --prefix client && npm run server",
-    "postbuild": "npm install && NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client && npm run server"
+    "frontend": "npm start --prefix frontend",
+    "dev": "concurrently \"npm start\" \"npm run client\" \"npm run frontend\"",
+    "localbuild": "npm install && npm install --prefix client && npm install --prefix frontend && npm run build --prefix client && npm run build --prefix frontend && npm run server",
+    "postbuild": "npm install && NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm install --prefix frontend && npm run build --prefix client && npm run build --prefix frontend && npm run server"
   },
   "author": "Burhanuddin sarangpurwala",
   "license": "MIT",

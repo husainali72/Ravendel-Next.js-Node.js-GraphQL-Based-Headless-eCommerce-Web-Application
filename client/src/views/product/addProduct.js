@@ -23,12 +23,10 @@ import {
   MenuItem,
   InputLabel
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import palette from "../../theme/palette";
 import TinymceEditor from "./TinymceEditor.js";
 import { categoriesAction, productAddAction } from "../../store/action/";
 import Alert from "../utils/Alert";
@@ -38,9 +36,10 @@ import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
 import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTwoTone";
 import "../../App.css";
+import viewStyles from "../viewStyles";
 
 const AddProduct = props => {
-  const classes = useStyles();
+  const classes = viewStyles();
   const [tax, setTax] = useState("Global");
   const [shippingClass, setShippingClass] = useState("Global");
   const [featureImage, setfeatureImage] = useState(null);
@@ -129,7 +128,7 @@ const AddProduct = props => {
     var items = document.getElementsByName("categoryIds");
     var selectedItems = [];
     for (var i = 0; i < items.length; i++) {
-      if (items[i].type == "checkbox" && items[i].checked == true)
+      if (items[i].type === "checkbox" && items[i].checked === true)
         selectedItems.push(items[i].value);
     }
     product.categoryId = selectedItems;
@@ -234,7 +233,7 @@ const AddProduct = props => {
   };
 
   const StyledRadio = props => {
-    const classes = useStyles();
+    const classes = viewStyles();
     return (
       <Radio
         className="radioRoot"
@@ -279,7 +278,7 @@ const AddProduct = props => {
           </Grid>
         </Grid>
 
-        <Grid container spacing={4} className={classes.mainrow}>
+        <Grid container spacing={4} className={classes.secondmainrow}>
           {props.products.loading && (
             <Backdrop className={classes.backdrop} open={true}>
               <CircularProgress color="inherit" /> <br /> Loading
@@ -754,104 +753,5 @@ const mapDispatchToProps = {
   productAddAction,
   categoriesAction
 };
-
-const useStyles = makeStyles(theme => ({
-  cancelBtn: {
-    background: palette.error.dark,
-    color: "#fff",
-    marginLeft: theme.spacing(2)
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff"
-  },
-  mainrow: {
-    padding: theme.spacing(4),
-    marginTop: 40
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2)
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    width: "100%"
-  },
-  width100: {
-    width: "100%"
-  },
-  formbottom: {
-    marginTop: theme.spacing(3)
-  },
-  secondRow: {
-    marginTop: theme.spacing(3)
-  },
-  marginBottom: {
-    marginBottom: theme.spacing(3)
-  },
-  feautedImage: {
-    color: "#0073aa",
-    textDecoration: "underline",
-    display: "flex",
-    cursor: "pointer"
-  },
-  feautedImageBox: {
-    background: "rgb(240,240,240)",
-    height: "250px",
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: theme.spacing(2)
-  },
-  feautedImageBoxPreview: {
-    maxWidth: "90%",
-    maxHeight: "90%"
-  },
-  galleryImgOuterBox: {
-    display: "flex",
-    justifyContent: "flex-start",
-    flexWrap: "wrap",
-    marginBottom: 5
-  },
-  galleryImgBox: {
-    margin: 5,
-    width: 60,
-    height: 60,
-    position: "relative",
-    background: "#ddd",
-    padding: 5
-  },
-  galleryImgRemove: {
-    position: "absolute",
-    top: "-5px",
-    right: "-5px",
-    background: "#d80e0e",
-    borderRadius: "100%",
-    color: "#fff",
-    width: 20,
-    height: 20,
-    display: "flex",
-    justifyContent: "center",
-    cursor: "pointer",
-    fontSize: 12,
-    fontWeight: "bold"
-  },
-  galleryImg: { width: "100%", height: "100%" },
-  editpermalinkInput: {
-    padding: "5px !important",
-    height: "25px",
-    marginLeft: 10
-  },
-  editpermalinkInputBtn: {
-    height: "25px",
-    fontSize: "10px",
-    padding: 0,
-    marginLeft: 10
-  },
-  taxSelect: {
-    width: 300,
-    marginTop: 20
-  }
-}));
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddProduct);

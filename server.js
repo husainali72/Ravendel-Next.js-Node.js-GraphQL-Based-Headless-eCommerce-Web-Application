@@ -9,6 +9,10 @@ const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
 
+//models
+const Tax = require("./models/Tax");
+//Tax.createTax();
+
 //connect db
 connectDB();
 

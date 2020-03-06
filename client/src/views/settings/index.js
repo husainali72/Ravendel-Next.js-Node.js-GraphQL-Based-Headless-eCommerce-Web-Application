@@ -11,6 +11,7 @@ import {
   Divider
 } from "@material-ui/core";
 import viewStyles from "../viewStyles";
+import clsx from "clsx";
 
 const Settings = () => {
   const classes = viewStyles();
@@ -37,7 +38,7 @@ const Settings = () => {
 
   const a11yProps = index => {
     return {
-      id: `vertical-tab-${index}`,
+      id: `vertical-tab-${index} vertical-tabs-button`,
       "aria-controls": `vertical-tabpanel-${index}`
     };
   };
@@ -51,44 +52,56 @@ const Settings = () => {
             <Divider />
             <CardContent>
               <div className={classes.settingRoot}>
-                <Tabs
-                  orientation="vertical"
-                  variant="scrollable"
-                  value={value}
-                  onChange={handleChange}
-                  aria-label="Vertical tabs example"
-                  className={classes.settingsTabs}
-                  indicatorColor="primary"
-                >
-                  <Tab label="General" {...a11yProps(0)} />
-                  <Tab label="Store" {...a11yProps(1)} />
-                  <Tab label="Product" {...a11yProps(2)} />
-                  <Tab label="SEO" {...a11yProps(3)} />
-                  <Tab label="Theme" {...a11yProps(4)} />
-                  <Tab label="Shipping" {...a11yProps(5)} />
-                  <Tab label="Tax" {...a11yProps(6)} />
-                </Tabs>
-                <TabPanel value={value} index={0}>
-                  Item One
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                  Item Two
-                </TabPanel>
-                <TabPanel value={value} index={2}>
-                  Item Three
-                </TabPanel>
-                <TabPanel value={value} index={3}>
-                  Item Four
-                </TabPanel>
-                <TabPanel value={value} index={4}>
-                  Item Five
-                </TabPanel>
-                <TabPanel value={value} index={5}>
-                  Item Six
-                </TabPanel>
-                <TabPanel value={value} index={6}>
-                  Item Seven
-                </TabPanel>
+                <Grid container>
+                  <Grid item className={classes.settingLeft}>
+                    <Tabs
+                      orientation="vertical"
+                      variant="scrollable"
+                      value={value}
+                      onChange={handleChange}
+                      aria-label="Vertical tabs example"
+                      className={classes.settingsTabs}
+                      indicatorColor="primary"
+                    >
+                      <Tab label="General" {...a11yProps(0)} />
+                      <Tab label="Store" {...a11yProps(1)} />
+                      <Tab label="Product" {...a11yProps(2)} />
+                      <Tab label="SEO" {...a11yProps(3)} />
+                      <Tab label="Theme" {...a11yProps(4)} />
+                      <Tab label="Shipping" {...a11yProps(5)} />
+                      <Tab label="Tax" {...a11yProps(6)} />
+                    </Tabs>
+                  </Grid>
+                  <Grid
+                    item
+                    className={clsx(classes.flexGrow1, classes.settingRight)}
+                  >
+                    <Box component="div" className="setting-content">
+                      <TabPanel value={value} index={0}>
+                        Item One
+                      </TabPanel>
+                      <TabPanel value={value} index={1}>
+                        Item Two
+                      </TabPanel>
+                      <TabPanel value={value} index={2}>
+                        Item Three
+                      </TabPanel>
+                      <TabPanel value={value} index={3}>
+                        Item Four
+                      </TabPanel>
+                      <TabPanel value={value} index={4}>
+                        Item Five
+                      </TabPanel>
+                      <TabPanel value={value} index={5}>
+                        Item Six
+                      </TabPanel>
+                      <TabPanel value={value} index={6}>
+                        Item Seven
+                      </TabPanel>
+                    </Box>
+                    <Box component="div" className="setting-footer"></Box>
+                  </Grid>
+                </Grid>
               </div>
             </CardContent>
           </Card>

@@ -16,18 +16,17 @@ import {
   FormControlLabel,
   Typography
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Alert from "../utils/Alert";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { blogAddAction } from "../../store/action/";
-import palette from "../../theme/palette";
 import TinymceEditor from "./TinymceEditor.js";
 import clsx from "clsx";
+import viewStyles from "../viewStyles";
 
 const AddPage = props => {
-  const classes = useStyles();
+  const classes = viewStyles();
   const [editPremalink, setEditPermalink] = useState(false);
   const [blog, setBlog] = useState({
     status: "Publish",
@@ -106,7 +105,7 @@ const AddPage = props => {
           </Grid>
         </Grid>
 
-        <Grid container spacing={4} className={classes.mainrow}>
+        <Grid container spacing={4} className={classes.secondmainrow}>
           <Grid item lg={9} md={12}>
             <Box>
               <Card>
@@ -245,70 +244,6 @@ const StyledRadio = props => {
   );
 };
 
-const useStyles = makeStyles(theme => ({
-  cancelBtn: {
-    background: palette.error.dark,
-    color: "#fff",
-    marginLeft: theme.spacing(2)
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff"
-  },
-  mainrow: {
-    padding: theme.spacing(4),
-    marginTop: 40
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2)
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120
-  },
-  width100: {
-    width: "100%"
-  },
-  formbottom: {
-    marginTop: theme.spacing(3)
-  },
-  secondRow: {
-    marginTop: theme.spacing(3)
-  },
-  marginBottom: {
-    marginBottom: theme.spacing(3)
-  },
-  feautedImage: {
-    color: "#0073aa",
-    textDecoration: "underline",
-    display: "flex",
-    cursor: "pointer"
-  },
-  feautedImageBox: {
-    background: "rgb(240,240,240)",
-    height: "250px",
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: theme.spacing(2)
-  },
-  feautedImageBoxPreview: {
-    maxWidth: "90%",
-    maxHeight: "90%"
-  },
-  editpermalinkInput: {
-    padding: "5px !important",
-    height: "25px",
-    marginLeft: 10
-  },
-  editpermalinkInputBtn: {
-    height: "25px",
-    fontSize: "10px",
-    padding: 0,
-    marginLeft: 10
-  }
-}));
 
 const mapStateToProps = state => {
   return { blogs: state.blogs };

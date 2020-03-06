@@ -15,59 +15,31 @@ import {
   InputLabel,
   Divider,
   OutlinedInput,
-  InputAdornment
+  InputAdornment,
+  Box,
+  Input
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import { userAddAction } from "../../store/action/";
 import Alert from "../utils/Alert";
-import { makeStyles } from "@material-ui/styles";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { Link } from "react-router-dom";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import clsx from "clsx";
-import palette from "../../theme/palette";
-
-const useStyles = makeStyles(theme => ({
-  cancelBtn: {
-    background: palette.error.dark,
-    color: "#fff",
-    marginLeft: theme.spacing(2)
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff"
-  },
-  mainrow: {
-    padding: theme.spacing(4)
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2)
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120
-  },
-  width100: {
-    width: "100%"
-  },
-  formbottom: {
-    marginTop: theme.spacing(3)
-  },
-  secondRow: {
-    marginTop: theme.spacing(3)
-  }
-}));
+import viewStyles from "../viewStyles";
 
 const AddUser = props => {
-  const classes = useStyles();
+  const classes = viewStyles();
   const [user, setuser] = useState({});
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = React.useState(0);
   const [showPassword, setShowPassword] = useState(false);
+  const [featureImage, setfeatureImage] = useState(null);
 
   useEffect(() => {
     document.forms[0].reset();
+    setfeatureImage(null);
     setuser({});
     setLabelWidth(inputLabel.current.offsetWidth);
   }, [props.users.users]);
@@ -83,6 +55,8 @@ const AddUser = props => {
 
   const fileChange = e => {
     setuser({ ...user, [e.target.name]: e.target.files[0] });
+    setfeatureImage(null);
+    setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };
 
   const handleClickShowPassword = () => {
@@ -197,14 +171,37 @@ const AddUser = props => {
                 </Grid>
                 <Grid container className={classes.secondRow}>
                   <Grid item md={3}>
-                    <FormControl className={classes.width100}>
+                    {featureImage !== null && (
+                      <Box className={classes.feautedImageBox}>
+                        <img
+                          src={featureImage}
+                          className={classes.feautedImageBoxPreview}
+                          alt="user-thumbnail"
+                        />
+                      </Box>
+                    )}
+                    <Input
+                      className={classes.input}
+                      style={{ display: "none" }}
+                      id="image"
+                      type="file"
+                      onChange={fileChange}
+                      name="image"
+                    />
+                    <label htmlFor="image" className={classes.feautedImage}>
+                      {featureImage !== null
+                        ? "Change Featured Image"
+                        : "Set Featured Image"}
+                    </label>
+
+                    {/* <FormControl className={classes.width100}>
                       <TextField
                         type="file"
                         name="image"
                         onChange={fileChange}
                         className={classes.width100}
                       />
-                    </FormControl>
+                    </FormControl> */}
                   </Grid>
                 </Grid>
                 <Grid container className={classes.formbottom}>

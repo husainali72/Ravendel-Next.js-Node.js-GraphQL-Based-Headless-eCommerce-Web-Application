@@ -13,6 +13,8 @@ import { AllCustomers, AddCustomer, EditCustomer } from "../views/customer";
 import { AllBrands, AddBrands, EditBrand } from "../views/brand";
 import Settings from "../views/settings";
 import { AllCoupons, AddCoupon, EditCoupon } from "../views/coupon";
+import AllTaxes from "../views/tax";
+import AllShippings from "../views/shipping";
 import NotFound from "../views/notFound";
 
 const Routes = [
@@ -140,6 +142,18 @@ const Routes = [
     exact: true,
     component: EditCoupon,
     name: "Edit Coupon"
+  },
+  {
+    path: "/taxes",
+    exact: true,
+    component: AllTaxes,
+    name: "Taxes"
+  },
+  {
+    path: "/shipping",
+    exact: true,
+    component: AllShippings,
+    name: "Shipping"
   },
   {
     path: "*",

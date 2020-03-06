@@ -28,6 +28,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import Loading from "../utils/loading";
+import convertDefault from "../utils/convertDate";
 
 const AllProduct = props => {
   const classes = viewStyles();
@@ -109,7 +110,7 @@ const AllProduct = props => {
                             />
                           </TableCell>
                           <TableCell>{product.name}</TableCell>
-                          <TableCell>{product.date}</TableCell>
+                          <TableCell>{convertDefault(product.date)}</TableCell>
                           <TableCell>
                             <Tooltip title="Edit Product" aria-label="edit">
                               <IconButton

@@ -18,6 +18,8 @@ import Loading from "../utils/loading";
 import { Link } from "react-router-dom";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import clsx from "clsx";
+import { brandAddAction } from "../../store/action/";
+import { connect } from "react-redux";
 
 const AddBrands = props => {
   const classes = viewStyles();
@@ -25,8 +27,12 @@ const AddBrands = props => {
 
   const addBrands = () => {
     var string = newBrands;
-    var newArr = string.split("\n");
-    console.log(newArr);
+    var newBrandArr = string.split("\n").map(brand => {
+      return {
+        name: brand
+      };
+    });
+    props.brandAddAction({ brands: newBrandArr });
   };
 
   const handleChange = e => {
@@ -106,4 +112,12 @@ const AddBrands = props => {
   );
 };
 
-export default AddBrands;
+const mapStateToProps = state => {
+  return { brands: state.brands };
+};
+
+const mapDispatchToProps = {
+  brandAddAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddBrands);

@@ -28,6 +28,7 @@ import PeopleIcon from "@material-ui/icons/People";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
+import convertDefault from "../utils/convertDate";
 
 const AllBlog = props => {
   const classes = viewStyles();
@@ -113,7 +114,7 @@ const AllBlog = props => {
                             />
                           </TableCell>
                           <TableCell>{blog.title}</TableCell>
-                          <TableCell>{blog.date}</TableCell>
+                          <TableCell>{convertDefault(blog.date)}</TableCell>
                           <TableCell>
                             <IconButton
                               aria-label="Edit"

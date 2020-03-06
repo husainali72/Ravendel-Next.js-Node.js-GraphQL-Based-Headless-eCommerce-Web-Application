@@ -17,6 +17,7 @@ import {
 } from "@material-ui/core";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import { Link } from "react-router-dom";
+import convertDefault from "../../../utils/convertDate";
 
 const LatestProducts = props => {
   const { className, ...rest } = props;
@@ -24,10 +25,7 @@ const LatestProducts = props => {
 
   return (
     <Card {...rest} className={clsx(classes.root, className)}>
-      <CardHeader
-        subtitle={`${props.products.length} in total`}
-        title="Latest props.products"
-      />
+      <CardHeader title="Latest Products" />
       <Divider />
       <CardContent className={classes.content}>
         <List>
@@ -37,10 +35,7 @@ const LatestProducts = props => {
             </ListItem>
           ) : (
             props.products.slice(0, 2).map((product, i) => (
-              <ListItem
-                divider={i < props.products.length - 1}
-                key={product.id}
-              >
+              <ListItem divider={i < 1} key={product.id}>
                 <ListItemAvatar>
                   <img
                     alt="Product"
@@ -52,7 +47,7 @@ const LatestProducts = props => {
                 </ListItemAvatar>
                 <ListItemText
                   primary={product.name}
-                  secondary={`Updated ${product.date}`}
+                  secondary={`Updated ${convertDefault(product.date)}`}
                 />
               </ListItem>
             ))

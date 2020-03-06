@@ -8,6 +8,7 @@ const {
   checkToken
 } = require("../config/helpers");
 const validate = require("../validations/brand");
+const slugify = require("slugify");
 
 module.exports = {
   Query: {
@@ -43,16 +44,99 @@ module.exports = {
         }
 
         const brands = await Brand.find({});
+        let brandList = brands.map(brand => brand.name);
 
-        let brands = [];
-        for (let i in brands) {
-          brands = args.brands.filter(brand => brand.name !== brands[i].name);
+        let addBrands = [];
+        for (let i in args.brands) {
+          if (
+            !isEmpty(args.brands[i].name) &&
+            !~brandList.indexOf(args.brands[i].name)
+          ) {
+            var brandName = args.brands[i].name.replace(/[^a-z0-9\s]/gi, "");
+
+            args.brands[i].url =
+              "/" +
+              slugify(brandName, {
+                remove: /[*+~.()'"!:@]/g,
+                lower: true,
+                strict: true
+              });
+
+            args.brands[i].meta = { title: "", description: "", keywords: "" };
+
+            addBrands.push(args.brands[i]);
+          }
         }
 
-        console.log("brands", brands);
-        await Brand.insertMany(brands);
-
+        await Brand.insertMany(addBrands);
         return await Brand.find({});
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    updateBrand: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        // Check Validation
+        const errors = validate("updateBrand", args);
+        if (!isEmpty(errors)) {
+          throw putError(errors);
+        }
+
+        const brand = await Brand.findById({ _id: args.id });
+        if (brand) {
+          if (args.updated_brand_logo) {
+            let imgObject = await imageUpload(
+              args.updated_brand_logo,
+              "/assets/images/brand/"
+            );
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            } else {
+              imageUnlink(brand.brand_logo);
+              brand.brand_logo = imgObject.data;
+            }
+          }
+
+          var brandName = args.url.replace(/[^a-z0-9\s\-]/gi, "");
+
+          brandName =
+            "/" +
+            slugify(brandName, {
+              remove: /[*+~.()'"!:@]/g,
+              lower: true,
+              strict: true
+            });
+
+          brand.name = args.name;
+          brand.url = brandName;
+          brand.meta = args.meta;
+          brand.updated = Date.now();
+
+          await brand.save();
+          return await Brand.find({});
+        } else {
+          throw putError("Blog not exist");
+        }
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    deleteBrand: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        const brand = await Brand.findByIdAndRemove(args.id);
+        if (brand) {
+          //return true;
+          if (brand.brand_logo) {
+            imageUnlink(brand.brand_logo);
+          }
+          const brands = await Brand.find({});
+          return brands || [];
+        }
+        throw putError("Brand not exist");
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);

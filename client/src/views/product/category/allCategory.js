@@ -35,6 +35,7 @@ import {
 import { isEmpty } from "../../../utils/helper";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+import convertDefault from "../../utils/convertDate";
 
 var categoryObject = {
   name: "",
@@ -140,7 +141,7 @@ const AllCategory = props => {
                         .map(cat => (
                           <TableRow key={cat.id} hover>
                             <TableCell>{cat.name}</TableCell>
-                            <TableCell>{cat.date}</TableCell>
+                            <TableCell>{convertDefault(cat.date)}</TableCell>
                             <TableCell>
                               <Tooltip title="Edit Category" aria-label="edit">
                                 <IconButton
