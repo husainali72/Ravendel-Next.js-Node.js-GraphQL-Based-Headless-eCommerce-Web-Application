@@ -20,25 +20,49 @@ const ProductSchema = new Schema({
     type: Number
   },
   pricing: {},
-  slug: {
+  url: {
     type: String
   },
-  meta: [
-    {
-      key: {
-        type: String,
-        required: true
-      },
-      value: {
-        type: String,
-        required: true
-      }
+  meta: {
+    title: {
+      type: String
+    },
+    description: {
+      type: String
+    },
+    keywords: {
+      type: String
     }
-  ],
+  },
   feature_image: {},
   gallery_image: [],
   status: {
     type: String
+  },
+  shipping: {
+    height: {
+      type: Number
+    },
+    width: {
+      type: Number
+    },
+    depth: {
+      type: Number
+    },
+    weight: {
+      type: Number
+    },
+    shipping_class: {
+      type: Schema.ObjectId
+    }
+  },
+  tax: {
+    taxable: {
+      type: Boolean
+    },
+    tax_class: {
+      type: Schema.ObjectId
+    }
   },
   date: {
     type: Date,

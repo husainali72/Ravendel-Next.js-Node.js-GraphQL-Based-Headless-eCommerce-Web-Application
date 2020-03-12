@@ -10,6 +10,7 @@ const customerSchema = require("./customer");
 const brand = require("./brand");
 const setting = require("./setting");
 const tax = require("./tax");
+const shipping = require("./shipping");
 
 const linkSchema = gql`
   scalar Date
@@ -53,5 +54,6 @@ module.exports = [
   customerSchema,
   brand,
   setting,
-  tax
+  tax,
+  shipping
 ];

@@ -30,7 +30,7 @@ module.exports = {
       checkToken(id);
       try {
         // Check Validation
-        const errors = validate("updateGlobalTax", args);
+        const errors = validate("updateGlobalTax", args.global);
         if (!isEmpty(errors)) {
           throw putError(errors);
         }
@@ -63,7 +63,7 @@ module.exports = {
       checkToken(id);
       try {
         // Check Validation
-        const errors = validate("addTaxClass", args);
+        const errors = validate("addTaxClass", args.tax_class);
         if (!isEmpty(errors)) {
           throw putError(errors);
         }
@@ -81,7 +81,7 @@ module.exports = {
       checkToken(id);
       try {
         // Check Validation
-        const errors = validate("updateTaxClass", args);
+        const errors = validate("updateTaxClass", args.tax_class);
         if (!isEmpty(errors)) {
           throw putError(errors);
         }
@@ -89,12 +89,36 @@ module.exports = {
         const tax = await Tax.findOne({});
 
         for (let i in tax.tax_class) {
-          if (tax.tax_class[i]._id == args._id) {
-            tax.tax_class[i] = args;
+          if (tax.tax_class[i]._id == args.tax_class._id) {
+            tax.tax_class[i] = args.tax_class;
+            break;
           }
         }
 
-        tax.tax_class.push(args.tax_class);
+        //tax.tax_class.push(args.tax_class);
+        tax.updated = Date.now();
+        await tax.save();
+        return await Tax.findOne({});
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    deleteTaxClass: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        const tax = await Tax.findOne({});
+
+        var TaxClass = [...tax.tax_class];
+
+        for (let i in TaxClass) {
+          if (TaxClass[i]._id == args._id) {
+            delete TaxClass[i];
+            break;
+          }
+        }
+
+        tax.tax_class = TaxClass;
         tax.updated = Date.now();
         await tax.save();
         return await Tax.findOne({});

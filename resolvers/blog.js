@@ -5,7 +5,8 @@ const {
   checkError,
   imageUpload,
   imageUnlink,
-  checkToken
+  checkToken,
+  stringTourl
 } = require("../config/helpers");
 const validate = require("../validations/blog");
 const sanitizeHtml = require("sanitize-html");
@@ -59,11 +60,15 @@ module.exports = {
             }
           }
 
+          let url = stringTourl(args.url || args.title);
+
           const newBlog = new Blog({
             title: args.title,
+            url: url,
             content: args.content || "",
             status: args.status,
             feature_image: imgObject.data || imgObject,
+            meta: args.meta,
             author: user.id
           });
 
@@ -71,7 +76,6 @@ module.exports = {
           return await Blog.find({});
         }
       } catch (error) {
-        console.log("here comes", error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
@@ -97,26 +101,11 @@ module.exports = {
           blog.title = args.title || blog.title;
           blog.content = args.content || blog.content;
           blog.status = args.status || blog.status;
+
+          let url = stringTourl(args.url || blog.title);
+          blog.url = url;
+          blog.meta = args.meta;
           blog.updated = Date.now();
-
-          /* let metArra = {};
-          for (let i in args.meta) {
-            metArra[args.meta[i].key] = args.meta[i];
-          }
-
-          for (let i in blog.meta) {
-            if (metArra[blog.meta[i].key]) {
-              blog.meta[i].value = metArra[blog.meta[i].key].value;
-              delete metArra[blog.meta[i].key];
-            }
-          }
-
-          if (Object.keys(metArra).length) {
-            for (let i in metArra) {
-              blog.meta.unshift(metArra[i]);
-            }
-          } */
-
           await blog.save();
           return await Blog.find({});
         } else {

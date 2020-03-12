@@ -39,7 +39,25 @@ const checkToken = token => {
 
 module.exports.checkToken = checkToken;
 /*-------------------------------------------------------------------------------------------------------*/
+
 const slugify = require("slugify");
+const stringTourl = str => {
+  var brandName = str.replace(/[^a-z0-9\s\-]/gi, "");
+  brandName =
+    "/" +
+    slugify(brandName, {
+      remove: /[*+~.()'"!:@]/g,
+      lower: true,
+      strict: true
+    });
+
+  return brandName;
+};
+
+module.exports.stringTourl = stringTourl;
+
+/*-------------------------------------------------------------------------------------------------------*/
+
 const fs = require("fs");
 const Jimp = require("jimp");
 

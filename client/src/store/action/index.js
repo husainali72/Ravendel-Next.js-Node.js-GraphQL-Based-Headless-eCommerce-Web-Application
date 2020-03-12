@@ -50,6 +50,23 @@ import {
   brandDeleteAction
 } from "./brandAction";
 
+import {
+  taxAction,
+  globalTaxUpdateAction,
+  optionTaxUpdateAction,
+  taxClassAddAction,
+  taxClassUpdateAction,
+  taxClassDeleteAction
+} from "./taxAction";
+
+import {
+  shippingAction,
+  globalShippingUpdateAction,
+  shippingClassAddAction,
+  shippingClassUpdateAction,
+  shippingClassDeleteAction
+} from "./shippingAction";
+
 export {
   LoginAction,
   usersAction,
@@ -84,5 +101,16 @@ export {
   brandsAction,
   brandAddAction,
   brandUpdateAction,
-  brandDeleteAction
+  brandDeleteAction,
+  taxAction,
+  globalTaxUpdateAction,
+  optionTaxUpdateAction,
+  taxClassAddAction,
+  taxClassUpdateAction,
+  taxClassDeleteAction,
+  shippingAction,
+  globalShippingUpdateAction,
+  shippingClassAddAction,
+  shippingClassUpdateAction,
+  shippingClassDeleteAction
 };

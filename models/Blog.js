@@ -14,7 +14,7 @@ const BlogSchema = new Schema({
     type: String,
     required: true
   },
-  slug: {
+  url: {
     type: String
   },
   feature_image: {},
@@ -22,18 +22,17 @@ const BlogSchema = new Schema({
     type: Schema.ObjectId,
     default: null
   },
-  meta: [
-    {
-      key: {
-        type: String,
-        required: true
-      },
-      value: {
-        type: String,
-        required: true
-      }
+  meta: {
+    title: {
+      type: String
+    },
+    description: {
+      type: String
+    },
+    keywords: {
+      type: String
     }
-  ],
+  },
   date: {
     type: Date,
     default: Date.now

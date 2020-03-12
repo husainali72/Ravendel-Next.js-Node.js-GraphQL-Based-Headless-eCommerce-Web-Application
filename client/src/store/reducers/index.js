@@ -8,6 +8,8 @@ import products from "./productReducer";
 import orders from "./orderReducer";
 import customers from "./customerReducer";
 import brands from "./brandReducer";
+import taxs from "./taxReducer";
+import shippings from "./shippingReducer";
 
 // Combine Reducers
 const MasterReducer = combineReducers({
@@ -18,7 +20,9 @@ const MasterReducer = combineReducers({
   products,
   orders,
   customers,
-  brands
+  brands,
+  taxs,
+  shippings
 });
 
 export default MasterReducer;

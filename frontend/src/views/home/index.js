@@ -1,13 +1,9 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
-import { Container, Divider } from "@material-ui/core";
-import {
-  Banner,
-  CategoryListing,
-  BlogListing,
-  ProductSlider,
-  ProductGrid
-} from "./components";
+import { Banner, BlogListing } from "./components";
+import ProductSlider from "../components/productslider";
+import ProductGrid from "../components/productgrid";
+import CategoryListing from "../components/categorylist";
 
 const products = [
   {

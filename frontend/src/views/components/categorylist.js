@@ -8,6 +8,7 @@ import {
   Box,
   Container
 } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 const CategoryListing = props => {
   const classes = useStyles();
@@ -30,30 +31,32 @@ const CategoryListing = props => {
               {props.allCategories &&
                 props.allCategories.map((category, index) => (
                   <Grid item lg={4} md={6} sm={12} xs={12} key={index}>
-                    <ButtonBase
-                      focusRipple
-                      className={classes.image}
-                      focusVisibleClassName={classes.focusVisible}
-                    >
-                      <span
-                        className={classes.imageSrc}
-                        style={{
-                          backgroundImage: `url(${category.url})`
-                        }}
-                      />
-                      <span className={classes.imageBackdrop} />
-                      <span className={classes.imageButton}>
-                        <Typography
-                          component="span"
-                          variant="subtitle1"
-                          color="inherit"
-                          className={classes.imageTitle}
-                        >
-                          {category.title}
-                          <span className={classes.imageMarked} />
-                        </Typography>
-                      </span>
-                    </ButtonBase>
+                    <Link to={`/category/${category.title}`}>
+                      <ButtonBase
+                        focusRipple
+                        className={classes.image}
+                        focusVisibleClassName={classes.focusVisible}
+                      >
+                        <span
+                          className={classes.imageSrc}
+                          style={{
+                            backgroundImage: `url(${category.url})`
+                          }}
+                        />
+                        <span className={classes.imageBackdrop} />
+                        <span className={classes.imageButton}>
+                          <Typography
+                            component="span"
+                            variant="subtitle1"
+                            color="inherit"
+                            className={classes.imageTitle}
+                          >
+                            {category.title}
+                            <span className={classes.imageMarked} />
+                          </Typography>
+                        </span>
+                      </ButtonBase>
+                    </Link>
                   </Grid>
                 ))}
             </Grid>

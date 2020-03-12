@@ -44,19 +44,24 @@ const StyledRadio = props => {
   );
 };
 
+var deaaultObj = {
+  status: "Publish",
+  meta: {
+    title: "",
+    description: "",
+    keywords: ""
+  }
+};
+
 const AddBlog = props => {
   const classes = viewStyles();
   const [featureImage, setfeatureImage] = useState(null);
-  const [blog, setBlog] = useState({
-    status: "Publish"
-  });
+  const [blog, setBlog] = useState(deaaultObj);
 
   useEffect(() => {
     if (props.blogs.success) {
       document.forms[0].reset();
-      setBlog({
-        status: "Publish"
-      });
+      setBlog(deaaultObj);
       setfeatureImage(null);
     }
   }, [props.blogs.success]);
@@ -74,6 +79,13 @@ const AddBlog = props => {
 
   const handleChange = e => {
     setBlog({ ...blog, [e.target.name]: e.target.value });
+  };
+
+  const metaChange = e => {
+    setBlog({
+      ...blog,
+      meta: { ...blog.meta, [e.target.name]: e.target.value }
+    });
   };
 
   const fileChange = e => {
@@ -153,9 +165,10 @@ const AddBlog = props => {
                       <TextField
                         id="meta-title"
                         label="Meta Title"
-                        name="meta-title"
+                        name="title"
                         variant="outlined"
                         className={clsx(classes.width100)}
+                        onChange={metaChange}
                       />
                     </Grid>
 
@@ -163,9 +176,10 @@ const AddBlog = props => {
                       <TextField
                         id="meta-keyword"
                         label="Meta Keyword"
-                        name="meta-keyword"
+                        name="keywords"
                         variant="outlined"
                         className={clsx(classes.width100)}
+                        onChange={metaChange}
                       />
                     </Grid>
 
@@ -173,11 +187,12 @@ const AddBlog = props => {
                       <TextField
                         id="meta-description"
                         label="Meta-description"
-                        name="meta-description"
+                        name="description"
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                         multiline
                         rows="4"
+                        onChange={metaChange}
                       />
                     </Grid>
                   </Grid>

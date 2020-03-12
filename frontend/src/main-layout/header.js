@@ -8,7 +8,7 @@ const Header = () => {
       <header>
         <Container>
           <Box component="div" className="header-wrapper">
-            <Grid container justify="space-between">
+            <Grid container justify="space-between" alignItems="center">
               <Grid item className="logo">
                 Abc
               </Grid>

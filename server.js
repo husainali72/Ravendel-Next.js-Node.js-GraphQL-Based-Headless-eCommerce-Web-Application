@@ -9,12 +9,15 @@ const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
 
-//models
-const Tax = require("./models/Tax");
-//Tax.createTax();
-
 //connect db
 connectDB();
+
+//models
+/* const Tax = require("./models/Tax");
+Tax.createTax();
+
+const Shipping = require("./models/Shipping");
+Shipping.createShipping(); */
 
 //middleware
 const app = express();

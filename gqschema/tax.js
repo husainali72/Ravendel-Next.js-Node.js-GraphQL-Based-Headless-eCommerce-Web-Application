@@ -18,5 +18,6 @@ module.exports = gql`
     updateOptionTax(is_inclusive: Boolean): Tax
     addTaxClass(tax_class: customObject): Tax
     updateTaxClass(tax_class: customObject): Tax
+    deleteTaxClass(_id: String): Tax
   }
 `;

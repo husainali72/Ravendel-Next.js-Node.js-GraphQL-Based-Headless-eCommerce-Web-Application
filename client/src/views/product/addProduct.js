@@ -38,29 +38,34 @@ import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTw
 import "../../App.css";
 import viewStyles from "../viewStyles";
 
+import { shippingAction } from "../../store/action/";
+
+var defaultObj = {
+  name: "",
+  downloadable: false,
+  virtual: false,
+  categoryId: [],
+  meta: {
+    title: "",
+    description: "",
+    keywords: ""
+  }
+};
+
 const AddProduct = props => {
   const classes = viewStyles();
-  const [tax, setTax] = useState("Global");
-  const [shippingClass, setShippingClass] = useState("Global");
+
   const [featureImage, setfeatureImage] = useState(null);
   const [gallery, setGallery] = useState([]);
   const [editPremalink, setEditPermalink] = useState(false);
   const [collapseCategory, setcollapseCategory] = useState({});
   const [checkedCat, setCheckedCat] = useState({});
-  const [product, setProduct] = useState({
-    name: "",
-    downloadable: false,
-    virtual: false,
-    categoryId: []
-  });
+  const [product, setProduct] = useState(defaultObj);
 
   useEffect(() => {
     props.categoriesAction();
     document.forms[0].reset();
-    setProduct({
-      ...product,
-      categoryId: []
-    });
+    setProduct(defaultObj);
 
     setfeatureImage(null);
   }, [props.products.products]);
@@ -132,8 +137,6 @@ const AddProduct = props => {
         selectedItems.push(items[i].value);
     }
     product.categoryId = selectedItems;
-
-    console.log(product.categoryId);
   };
 
   const changePermalink = () => {
@@ -430,38 +433,19 @@ const AddProduct = props => {
                 <CardContent>
                   <Grid container spacing={3}>
                     <Grid item md={12}>
-                      <RadioGroup
-                        value={shippingClass}
-                        name="status"
-                        onChange={e => setShippingClass(e.target.value)}
-                        row
-                      >
-                        <FormControlLabel
-                          value="Global"
-                          control={<StyledRadio />}
-                          label="Global"
-                        />
-                        <FormControlLabel
-                          value="Custom-shipping"
-                          control={<StyledRadio />}
-                          label="Custom Shipping"
-                        />
-                      </RadioGroup>
-                      {shippingClass === "Custom-shipping" && (
-                        <FormControl className={classes.taxSelect}>
-                          <InputLabel id="Shipping-name">Shipping</InputLabel>
-                          <Select
-                            labelId="Shipping-name"
-                            id="Shipping-name"
-                            name="Shipping-name"
-                            onChange={e => console.log(e)}
-                          >
-                            <MenuItem value="Shipping-1">Shipping 1</MenuItem>
-                            <MenuItem value="Shipping-2">Shipping 2</MenuItem>
-                            <MenuItem value="Shipping-3">Shipping 3</MenuItem>
-                          </Select>
-                        </FormControl>
-                      )}
+                      <FormControl className={classes.taxSelect}>
+                        <InputLabel id="Shipping-name">Shipping</InputLabel>
+                        <Select
+                          labelId="Shipping-name"
+                          id="Shipping-name"
+                          name="Shipping-name"
+                          onChange={e => console.log(e)}
+                        >
+                          <MenuItem value="Shipping-1">Shipping 1</MenuItem>
+                          <MenuItem value="Shipping-2">Shipping 2</MenuItem>
+                          <MenuItem value="Shipping-3">Shipping 3</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Grid>
                     <Grid item md={3}>
                       <TextField

@@ -221,9 +221,11 @@ module.exports = {
             }
           }
 
+          let url = stringTourl(args.url || args.name);
+
           const newProduct = new Product({
             name: args.name,
-            slug: args.slug,
+            url: url,
             categoryId: args.categoryId,
             description: args.description,
             sku: args.sku,
@@ -231,7 +233,10 @@ module.exports = {
             pricing: args.pricing,
             feature_image: imgObject.data || imgObject,
             gallery_image: imgArray,
-            status: args.status
+            status: args.status,
+            meta: args.meta,
+            shipping: args.shipping,
+            tax: args.tax
           });
 
           await newProduct.save();
@@ -246,16 +251,24 @@ module.exports = {
     updateProduct: async (root, args, { id }) => {
       checkToken(id);
       try {
+        const errors = validate("updateProduct", args);
+        if (!isEmpty(errors)) {
+          throw putError(errors);
+        }
+
         const product = await Product.findById({ _id: args.id });
         if (product) {
-          product.name = args.name || product.name;
-          product.categoryId = args.categoryId || product.categoryId;
-          product.sku = args.sku || product.sku;
-          product.description = args.description || product.sku;
-          product.quantity = args.quantity || product.quantity;
-          product.pricing = args.pricing || product.pricing;
+          product.name = args.name;
+          product.categoryId = args.categoryId;
+          let url = stringTourl(args.url || args.name);
+          product.url = url;
+          product.description = args.description;
+          product.quantity = args.quantity;
+          product.pricing = args.pricing;
+          product.meta = args.meta;
+          product.shipping = args.shipping;
+          product.tax = args.tax;
           product.updated = Date.now();
-
           return await product.save();
         } else {
           throw putError("Product not exist");

@@ -32,7 +32,7 @@ module.exports = function validate(method, args) {
         return (errors = "Quantity field is required");
       }
       if (
-        typeof args.pricing != "object" &&
+        typeof args.pricing != "object" ||
         Object.keys(args.pricing).length != 0
       ) {
         return (errors = "Pricing field is required");

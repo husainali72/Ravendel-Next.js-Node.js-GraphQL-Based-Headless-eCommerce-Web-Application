@@ -38,7 +38,12 @@ const TaxSchema = new Schema({
 
 var Tax = (module.exports = mongoose.model("Tax", TaxSchema));
 
-module.exports.createTax = function(newTax, callback) {
+module.exports.createTax = async () => {
+  const tax = await Tax.findOne({});
+  if (tax) {
+    return;
+  }
+
   var newTax = new Tax({
     is_inclusive: true,
     global: {

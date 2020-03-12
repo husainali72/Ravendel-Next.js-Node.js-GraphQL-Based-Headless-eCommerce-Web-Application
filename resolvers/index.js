@@ -10,6 +10,8 @@ const orderResolvers = require("./order");
 const customerResolvers = require("./customer");
 const brandResolvers = require("./brand");
 const settingResolvers = require("./setting");
+const taxResolvers = require("./tax");
+const shippingResolvers = require("./shipping");
 
 const customScalarResolver = {
   Date: GraphQLDateTime
@@ -40,5 +42,7 @@ module.exports = [
   orderResolvers,
   customerResolvers,
   brandResolvers,
-  settingResolvers
+  settingResolvers,
+  taxResolvers,
+  shippingResolvers
 ];

@@ -1,8 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import {
-  Button,
-  Zoom,
   Typography,
   Box,
   Container,
@@ -13,7 +11,7 @@ import {
   Slider,
   Divider
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import ProductCard from "../components/productcard";
 
 const Shop = props => {
   const [prodIndex, setProdIndex] = useState("");
@@ -214,59 +212,11 @@ const Shop = props => {
               {products &&
                 products.map((product, index) => (
                   <Grid item lg={4} md={6} sm={6} key={index}>
-                    <div
-                      className="product-card"
-                      onMouseOver={() => setProdIndex(index)}
-                      onMouseOut={() => setProdIndex("")}
-                    >
-                      <div className="product-image-wrapper">
-                        <img src={product.featured_image} alt="product" />
-                        <Zoom in={index === prodIndex ? true : false}>
-                          <div className="hover-content">
-                            <Link to={`/product/${product.name}`}>
-                              <Button
-                                variant="contained"
-                                color="secondary"
-                                size="small"
-                                className="product-btn"
-                              >
-                                View
-                              </Button>
-                            </Link>
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              size="small"
-                              className="product-btn"
-                            >
-                              Add To Cart
-                            </Button>
-                          </div>
-                        </Zoom>
-                      </div>
-                      <div className="product-details">
-                        <span className="product-category">
-                          {product.category}
-                        </span>
-
-                        <a href="google.com" target="_blank">
-                          <h3 className="product-title">{product.title}</h3>
-                        </a>
-
-                        <p className="product-price">
-                          <span
-                            className={product.sale_price && "has-sale-price"}
-                          >
-                            ${product.price.toFixed(2)}
-                          </span>
-                          {product.sale_price && (
-                            <span className="sale-price">
-                              ${product.sale_price.toFixed(2)}
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
+                    <ProductCard
+                      productDetail={product}
+                      index={index}
+                      key={index}
+                    />
                   </Grid>
                 ))}
             </Grid>

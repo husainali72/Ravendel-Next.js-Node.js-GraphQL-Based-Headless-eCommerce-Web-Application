@@ -5,36 +5,34 @@ module.exports = gql`
     title: String
     content: String
     status: String
-    slug: String
+    url: String
     feature_image: customObject
-    meta: blogMeta
+    meta: customObject
     date: Date
     updated: Date
-  }
-
-  type blogMeta {
-    meta(key: String, value: String): metaKeyValueArray
   }
 
   extend type Query {
     blogs: [Blog]
     blog(id: ID!): Blog
-    blogsbyMeta(key: String, value: String): [Blog]
   }
   extend type Mutation {
     addBlog(
       title: String
       content: String
       status: String
+      url: String
       feature_image: Upload
+      meta: customObject
     ): [Blog]
     updateBlog(
       id: ID!
       title: String
       content: String
       status: String
+      url: String
       updatedImage: Upload
-      meta: [Meta]
+      meta: customObject
     ): [Blog]
     deleteBlog(id: ID!): [Blog]
   }

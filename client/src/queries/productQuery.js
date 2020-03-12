@@ -64,7 +64,7 @@ const GET_PRODUCTS = gql`
     products {
       id
       name
-      slug
+      url
       categoryId
       description
       sku
@@ -81,7 +81,7 @@ const GET_PRODUCTS = gql`
 const ADD_PRODUCT = gql`
   mutation(
     $name: String
-    $slug: String
+    $url: String
     $categoryId: customArray
     $description: String
     $sku: String
@@ -93,7 +93,7 @@ const ADD_PRODUCT = gql`
   ) {
     addProduct(
       name: $name
-      slug: $slug
+      url: $url
       categoryId: $categoryId
       description: $description
       sku: $sku
@@ -105,7 +105,7 @@ const ADD_PRODUCT = gql`
     ) {
       id
       name
-      slug
+      url
       categoryId
       description
       sku
@@ -123,7 +123,7 @@ const UPDATE_PRODUCT = gql`
   mutation(
     $id: ID!
     $name: String
-    $slug: String
+    $url: String
     $categoryId: customArray
     $description: String
     $sku: String
@@ -136,7 +136,7 @@ const UPDATE_PRODUCT = gql`
     updateProduct(
       id: $id
       name: $name
-      slug: $slug
+      url: $url
       categoryId: $categoryId
       description: $description
       sku: $sku
@@ -148,7 +148,7 @@ const UPDATE_PRODUCT = gql`
     ) {
       id
       name
-      slug
+      url
       categoryId
       description
       sku
@@ -167,7 +167,7 @@ const DELETE_PRODUCT = gql`
     deleteProduct(id: $id) {
       id
       name
-      slug
+      url
       categoryId
       description
       sku

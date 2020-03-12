@@ -15,13 +15,15 @@ module.exports = function validate(method, args) {
     case "updateBrand": {
       let errors = "";
 
-      if (!args.name && Validator.isEmpty(args.name)) {
+      if (!args.name || Validator.isEmpty(args.name)) {
         return (errors = "Name field is required");
       }
 
-      if (!args.url && Validator.isEmpty(args.url)) {
+      /* if (!args.url && Validator.isEmpty(args.url)) {
         return (errors = "URL field is required");
-      }
+      } */
+
+      //args.name = Validator.escape(args.name);
 
       break;
     }

@@ -7,6 +7,7 @@ const GET_BLOGS = gql`
       content
       status
       feature_image
+      meta
       date
     }
   }
@@ -20,6 +21,7 @@ const GET_BLOG = gql`
       content
       status
       feature_image
+      meta
       date
     }
   }
@@ -31,18 +33,21 @@ const ADD_BLOG = gql`
     $content: String
     $status: String
     $feature_image: Upload
+    $meta: customObject
   ) {
     addBlog(
       title: $title
       content: $content
       status: $status
       feature_image: $feature_image
+      meta: $meta
     ) {
       id
       title
       content
       status
       feature_image
+      meta
       date
     }
   }
@@ -55,6 +60,7 @@ const UPDATE_BLOG = gql`
     $content: String
     $status: String
     $updatedImage: Upload
+    $meta: customObject
   ) {
     updateBlog(
       id: $id
@@ -62,12 +68,14 @@ const UPDATE_BLOG = gql`
       content: $content
       status: $status
       updatedImage: $updatedImage
+      meta: $meta
     ) {
       id
       title
       content
       status
       feature_image
+      meta
       date
     }
   }
@@ -81,6 +89,7 @@ const DELETE_BLOG = gql`
       content
       status
       feature_image
+      meta
       date
     }
   }

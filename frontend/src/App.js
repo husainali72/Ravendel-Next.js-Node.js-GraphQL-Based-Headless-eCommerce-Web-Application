@@ -35,10 +35,6 @@ const App = props => {
         drawer: 1100
       }
     });
-    console.log(
-      "props.settings.themes[0].primaryColor",
-      props.settings.themes[0].primaryColor
-    );
   }, [props.settings.themes]);
 
   return (

@@ -5,7 +5,8 @@ const {
   checkError,
   imageUpload,
   imageUnlink,
-  checkToken
+  checkToken,
+  stringTourl
 } = require("../config/helpers");
 const validate = require("../validations/brand");
 const slugify = require("slugify");
@@ -52,18 +53,8 @@ module.exports = {
             !isEmpty(args.brands[i].name) &&
             !~brandList.indexOf(args.brands[i].name)
           ) {
-            var brandName = args.brands[i].name.replace(/[^a-z0-9\s]/gi, "");
-
-            args.brands[i].url =
-              "/" +
-              slugify(brandName, {
-                remove: /[*+~.()'"!:@]/g,
-                lower: true,
-                strict: true
-              });
-
+            args.brands[i].url = stringTourl(args.brands[i].name);
             args.brands[i].meta = { title: "", description: "", keywords: "" };
-
             addBrands.push(args.brands[i]);
           }
         }
@@ -99,25 +90,17 @@ module.exports = {
             }
           }
 
-          var brandName = args.url.replace(/[^a-z0-9\s\-]/gi, "");
-
-          brandName =
-            "/" +
-            slugify(brandName, {
-              remove: /[*+~.()'"!:@]/g,
-              lower: true,
-              strict: true
-            });
+          let url = stringTourl(args.url || args.name);
 
           brand.name = args.name;
-          brand.url = brandName;
+          brand.url = url;
           brand.meta = args.meta;
           brand.updated = Date.now();
 
           await brand.save();
           return await Brand.find({});
         } else {
-          throw putError("Blog not exist");
+          throw putError("Brand not exist");
         }
       } catch (error) {
         error = checkError(error);

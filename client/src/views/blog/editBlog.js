@@ -48,7 +48,12 @@ const EditBlog = props => {
     title: "",
     content: "",
     status: "Publish",
-    feature_image: ""
+    feature_image: "",
+    meta: {
+      title: "",
+      description: "",
+      keywords: ""
+    }
   });
 
   const updateBlog = e => {
@@ -75,6 +80,13 @@ const EditBlog = props => {
 
   const handleChange = e => {
     setBlog({ ...blog, [e.target.name]: e.target.value });
+  };
+
+  const metaChange = e => {
+    setBlog({
+      ...blog,
+      meta: { ...blog.meta, [e.target.name]: e.target.value }
+    });
   };
 
   const fileChange = e => {
@@ -154,7 +166,9 @@ const EditBlog = props => {
                       <TextField
                         id="meta-title"
                         label="Meta Title"
-                        name="meta-title"
+                        name="title"
+                        value={blog.meta.title}
+                        onChange={metaChange}
                         variant="outlined"
                         className={clsx(classes.width100)}
                       />
@@ -164,7 +178,9 @@ const EditBlog = props => {
                       <TextField
                         id="meta-keyword"
                         label="Meta Keyword"
-                        name="meta-keyword"
+                        name="keywords"
+                        value={blog.meta.keywords}
+                        onChange={metaChange}
                         variant="outlined"
                         className={clsx(classes.width100)}
                       />
@@ -174,7 +190,9 @@ const EditBlog = props => {
                       <TextField
                         id="meta-description"
                         label="Meta-description"
-                        name="meta-description"
+                        name="description"
+                        value={blog.meta.description}
+                        onChange={metaChange}
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                         multiline
