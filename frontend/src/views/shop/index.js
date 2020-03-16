@@ -154,7 +154,7 @@ const Shop = props => {
       </Box>
       <Container>
         <Grid container className="shop-row" spacing={4}>
-          <Grid item lg={3} md={4}>
+          <Grid item lg={3} md={4} sm={4} xs={12}>
             <Box component="div" className="filter-wrapper">
               <Typography variant="h3" className="fillter-header">
                 Categories
@@ -207,7 +207,7 @@ const Shop = props => {
             </Box>
           </Grid>
 
-          <Grid item lg={9} md={8}>
+          <Grid item lg={9} md={8} sm={8} xs={12}>
             <Grid container spacing={4}>
               {products &&
                 products.map((product, index) => (

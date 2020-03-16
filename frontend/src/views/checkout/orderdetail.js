@@ -26,7 +26,7 @@ const OrderDetails = props => {
       </Typography>
 
       <Grid container spacing={4}>
-        <Grid item md={12}>
+        <Grid item md={12} sm={6} xs={12}>
           <TableContainer>
             <Table>
               <TableHead>
@@ -80,7 +80,7 @@ const OrderDetails = props => {
           </TableContainer>
         </Grid>
 
-        <Grid item md={12}>
+        <Grid item md={12} sm={6} xs={12}>
           <Box component="div" m={2}>
             <FormControl component="fieldset">
               <FormLabel component="legend">
@@ -107,7 +107,7 @@ const OrderDetails = props => {
           </Box>
         </Grid>
 
-        <Grid item className="text-center" md={12}>
+        <Grid item className="text-center" md={12} sm={12} xs={12}>
           <Button
             type="submit"
             color="primary"

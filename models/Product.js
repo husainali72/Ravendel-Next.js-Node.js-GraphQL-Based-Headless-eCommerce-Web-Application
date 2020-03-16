@@ -19,7 +19,16 @@ const ProductSchema = new Schema({
   quantity: {
     type: Number
   },
-  pricing: {},
+  pricing: {
+    price: {
+      type: Number,
+      default: 0
+    },
+    sellprice: {
+      type: Number,
+      default: 0
+    }
+  },
   url: {
     type: String
   },
@@ -35,22 +44,41 @@ const ProductSchema = new Schema({
     }
   },
   feature_image: {},
-  gallery_image: [],
+  gallery_image: [
+    {
+      original: {
+        type: String
+      },
+      large: {
+        type: String
+      },
+      medium: {
+        type: String
+      },
+      thumbnail: {
+        type: String
+      }
+    }
+  ],
   status: {
     type: String
   },
   shipping: {
     height: {
-      type: Number
+      type: Number,
+      default: 0
     },
     width: {
-      type: Number
+      type: Number,
+      default: 0
     },
     depth: {
-      type: Number
+      type: Number,
+      default: 0
     },
     weight: {
-      type: Number
+      type: Number,
+      default: 0
     },
     shipping_class: {
       type: Schema.ObjectId

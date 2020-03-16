@@ -18,7 +18,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { blogsAction, blogDeleteAction } from "../../store/action";
+import { couponsAction, couponDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
 import Alert from "../utils/Alert";
@@ -31,8 +31,8 @@ const AllCoupons = props => {
   const classes = viewStyles();
 
   useEffect(() => {
-    if (isEmpty(props.blogs.blogs)) {
-      props.blogsAction();
+    if (isEmpty(props.couponState.coupons)) {
+      props.couponsAction();
     }
   }, []);
 
@@ -54,8 +54,7 @@ const AllCoupons = props => {
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.blogs.loading && <Loading />}
-
+            {props.couponState.loading && <Loading />}
             <CardHeader
               action={
                 <Link to="/add-coupon">
@@ -84,26 +83,22 @@ const AllCoupons = props => {
                       <TableCell>Code</TableCell>
                       <TableCell>Coupon type</TableCell>
                       <TableCell>Coupon Amount</TableCell>
-                      <TableCell>Description</TableCell>
-                      <TableCell>Usage / Limit</TableCell>
                       <TableCell>Expiry date</TableCell>
                       <TableCell>Action</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {props.blogs.blogs
+                    {props.couponState.coupons
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map(blog => (
-                        <TableRow key={blog.id} hover>
-                          <TableCell>{blog.title}</TableCell>
-                          <TableCell>{blog.date}</TableCell>
-                          <TableCell>{blog.title}</TableCell>
-                          <TableCell>{blog.date}</TableCell>
-                          <TableCell>{blog.title}</TableCell>
-                          <TableCell>{blog.date}</TableCell>
+                      .map(coupon => (
+                        <TableRow key={coupon.id} hover>
+                          <TableCell>{coupon.code}</TableCell>
+                          <TableCell>{coupon.discount_type}</TableCell>
+                          <TableCell>{coupon.discount_value}</TableCell>
+                          <TableCell>{coupon.expire}</TableCell>
                           <TableCell>
                             <Tooltip
                               title="Edit Coupon"
@@ -111,7 +106,9 @@ const AllCoupons = props => {
                             >
                               <IconButton
                                 aria-label="Edit"
-                                onClick={() => jumpTo(`edit-coupon/${blog.id}`)}
+                                onClick={() =>
+                                  jumpTo(`edit-coupon/${coupon.id}`)
+                                }
                               >
                                 <EditIcon />
                               </IconButton>
@@ -123,7 +120,9 @@ const AllCoupons = props => {
                               <IconButton
                                 aria-label="Delete"
                                 className={classes.deleteicon}
-                                onClick={() => props.blogDeleteAction(blog.id)}
+                                onClick={() =>
+                                  props.couponDeleteAction(coupon.id)
+                                }
                               >
                                 <DeleteIcon />
                               </IconButton>
@@ -137,7 +136,7 @@ const AllCoupons = props => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={props.blogs.blogs.length}
+                count={props.couponState.coupons.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -152,12 +151,12 @@ const AllCoupons = props => {
 };
 
 const mapStateToProps = state => {
-  return { blogs: state.blogs };
+  return { couponState: state.coupons };
 };
 
 const mapDispatchToProps = {
-  blogsAction,
-  blogDeleteAction
+  couponsAction,
+  couponDeleteAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllCoupons);

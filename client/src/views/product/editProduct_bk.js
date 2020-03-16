@@ -30,12 +30,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import palette from "../../theme/palette";
 import TinymceEditor from "./TinymceEditor.js";
-import {
-  categoriesAction,
-  productUpdateAction,
-  shippingAction,
-  taxAction
-} from "../../store/action/";
+import { categoriesAction, productUpdateAction } from "../../store/action/";
 import Alert from "../utils/Alert";
 import { unflatten } from "../../utils/helper";
 import clsx from "clsx";
@@ -47,38 +42,6 @@ import "../../App.css";
 import _ from "lodash";
 import viewStyles from "../viewStyles";
 
-var defaultObj = {
-  name: "",
-  downloadable: false,
-  virtual: false,
-  categoryId: [],
-  sku: "",
-  quantity: "",
-  status: "Draft",
-  pricing: {
-    price: "",
-    sellprice: ""
-  },
-  meta: {
-    title: "",
-    description: "",
-    keywords: ""
-  },
-  shipping: {
-    height: "",
-    width: "",
-    depth: "",
-    weight: "",
-    shipping_class: ""
-  },
-  tax: {
-    taxable: true,
-    tax_class: ""
-  },
-  removed_image: []
-};
-
-var catIds = [];
 const EditProduct = props => {
   const classes = viewStyles();
   const [tax, setTax] = useState("Global");
@@ -88,38 +51,55 @@ const EditProduct = props => {
   const [editPremalink, setEditPermalink] = useState(false);
   const [collapseCategory, setcollapseCategory] = useState({});
   const [checkedCat, setCheckedCat] = useState({});
-  const [catList, setCatList] = useState([]);
-  const [product, setProduct] = useState(defaultObj);
+  const [catList, setCatList] = useState("");
+  const [product, setProduct] = useState({
+    name: "",
+    categoryId: [],
+    slug: "",
+    description: "",
+    sku: "",
+    quantity: "",
+    pricing: { sellprice: "" },
+    feature_image: {},
+    gallery_image: [],
+    status: "Publish"
+  });
 
   useEffect(() => {
+    setCatList("");
     props.categoriesAction();
-    for (let i in props.products.products) {
-      if (props.products.products[i].id === props.match.params.id) {
-        catIds = props.products.products[i].categoryId;
-        setProduct({ ...product, ...props.products.products[i] });
-        if (props.products.products[i].feature_image.original) {
-          setfeatureImage(props.products.products[i].feature_image.original);
+    props.products.products.map(editproduct => {
+      if (editproduct.id == props.match.params.id) {
+        setProduct({ ...editproduct });
+        if (editproduct.feature_image.original) {
+          setfeatureImage(editproduct.feature_image.original);
         }
-
-        props.shippingAction();
-        props.taxAction();
-
-        break;
       }
-    }
+    });
   }, []);
 
   useEffect(() => {
+    if (
+      product.categoryId &&
+      product.categoryId.length &&
+      props.products.categories &&
+      props.products.categories.length
+    ) {
+      selectedCat();
+    }
+  }, [product.categoryId, props.products.categories]);
+
+  const selectedCat = () => {
     var selectedCat = _.cloneDeep(props.products.categories);
     if (selectedCat && selectedCat.length) {
       selectedCat.map(cat => {
-        if (~catIds.indexOf(cat.id)) {
+        if (~product.categoryId.indexOf(cat.id)) {
           cat.checked = true;
         }
       });
       setCatList(unflatten(selectedCat));
     }
-  }, [props.products.categories]);
+  };
 
   useEffect(() => {
     if (!isEmpty(props.products.product.description)) {
@@ -130,9 +110,33 @@ const EditProduct = props => {
     }
   }, [props.products.product.description]);
 
+  //   useEffect(() => {
+  //     props.categoriesAction();
+  //     document.forms[0].reset();
+  //     setProduct({
+  //       ...product,
+  //       categoryId: [],
+  //     });
+
+  //     setfeatureImage(null);
+  //   }, [props.products.products]);
+
+  //   useEffect(() => {
+  //     if (props.products.product.description != undefined) {
+  //       setProduct({
+  //         ...product,
+  //         description: props.products.product.description
+  //       });
+  //     }
+  //   }, [props.products.product.description]);
+
+  //   useEffect(() => {
+  //     var slugVal = product.name.replace(/[^A-Z0-9]/ig, "-");
+  //     setProduct({ ...product, slug: slugVal.toLowerCase() });
+  //   }, [product.name]);
+
   const updateProduct = e => {
     e.preventDefault();
-    console.log(product);
     props.productUpdateAction(product);
   };
 
@@ -151,32 +155,20 @@ const EditProduct = props => {
   };
 
   const updategalleryImg = e => {
-    var imagesRes = [...e.target.files];
+    var imagesRes = e.target.files;
     var images = [];
 
-    for (let i in imagesRes) {
+    for (var i = 0; i < imagesRes.length; i++) {
       images.push(URL.createObjectURL(imagesRes[i]));
     }
 
-    setGallery([...gallery, ...images]);
+    // setGallery([...gallery, ...images]);
     setProduct({ ...product, [e.target.name]: e.target.files });
   };
 
   const removeImage = img => {
-    if (img._id) {
-      let galleryImages = product.gallery_image;
-      let removed_image = product.removed_image || [];
-      removed_image.push(img._id);
-      setProduct({
-        ...product,
-        gallery_image: galleryImages.filter(
-          galleryImg => galleryImg._id !== img._id
-        ),
-        removed_image
-      });
-      return;
-    }
-    setGallery(gallery.filter(galleryImg => galleryImg !== img));
+    console.log("img", img);
+    //setGallery(gallery.filter(galleryImg => galleryImg !== img))
   };
 
   const collapseToggle = category => {
@@ -184,27 +176,26 @@ const EditProduct = props => {
     setcollapseCategory({ ...collapseCategory, [category.id]: category.open });
   };
 
-  const handleCategeryCheckbox = category => {
+  const handleCategeryCheckbox = (category, e) => {
     category.checked = !category.checked;
-    console.log(category);
     //setCheckedCat({ ...checkedCat, [category.id]: category.checked });
+
     var items = document.getElementsByName("categoryIds");
     var selectedItems = [];
-    for (let i in items) {
+    for (var i = 0; i < items.length; i++) {
       if (items[i].type == "checkbox" && items[i].checked == true)
         selectedItems.push(items[i].value);
     }
-    //product.categoryId = selectedItems;
-    setProduct({ ...product, categoryId: selectedItems });
+    product.categoryId = selectedItems;
   };
 
   const changePermalink = () => {
     setEditPermalink(!editPremalink);
   };
 
-  const checkedChildernChecked = cat => {
-    var checked = cat.children.filter(child => child.checked === true);
-    if (!cat.checked) {
+  const checkedChildernChecked = menu => {
+    var checked = menu.children.filter(child => child.checked === true);
+    if (!menu.checked) {
       if (checked.length) {
         return true;
       } else {
@@ -215,11 +206,11 @@ const EditProduct = props => {
     }
   };
 
-  const menuListing = categories => {
-    return categories.map(cat => {
-      if (!cat.children.length) {
+  const menuListing = values => {
+    return values.map(menu => {
+      if (!menu.children.length) {
         return (
-          <Grid container alignItems="center" key={cat.name}>
+          <Grid container alignItems="center" key={menu.name}>
             <Grid item>
               <Box mr={2}>
                 <FiberManualRecordTwoToneIcon />
@@ -229,28 +220,28 @@ const EditProduct = props => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={cat.checked}
+                    checked={menu.checked}
                     name="categoryIds"
-                    onChange={e => handleCategeryCheckbox(cat)}
-                    value={cat.id}
+                    onChange={e => handleCategeryCheckbox(menu, e)}
+                    value={menu.id}
                   />
                 }
-                label={cat.name}
+                label={menu.name}
               />
             </Grid>
           </Grid>
         );
       }
       return (
-        <Grid key={cat.name}>
+        <Grid key={menu.name}>
           <Grid container alignItems="center" className="category-dropdown">
             <Grid item>
               <Box mr={2}>
                 <span
                   className="toggle-icon"
-                  onClick={() => collapseToggle(cat)}
+                  onClick={() => collapseToggle(menu)}
                 >
-                  {collapseCategory[cat.id] ? (
+                  {collapseCategory[menu.id] ? (
                     <RemoveCircleRoundedIcon
                       style={{ fontSize: 22 }}
                       className="expand-right"
@@ -268,25 +259,25 @@ const EditProduct = props => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={cat.checked}
+                    checked={menu.checked}
                     name="categoryIds"
-                    onChange={e => handleCategeryCheckbox(cat)}
-                    value={cat.id}
-                    indeterminate={checkedChildernChecked(cat)}
+                    onChange={e => handleCategeryCheckbox(menu, e)}
+                    value={menu.id}
+                    indeterminate={checkedChildernChecked(menu)}
                   />
                 }
-                label={cat.name}
+                label={menu.name}
               />
             </Grid>
           </Grid>
           <Box ml={4}>
             <Collapse
-              in={collapseCategory[cat.id]}
+              in={collapseCategory[menu.id]}
               timeout="auto"
               unmountOnExit
               className="submenu-sidebar"
             >
-              {menuListing(cat.children)}
+              {menuListing(menu.children)}
             </Collapse>
           </Box>
         </Grid>
@@ -371,12 +362,13 @@ const EditProduct = props => {
                       {product.name ? (
                         <span style={{ marginBottom: 10, display: "block" }}>
                           <strong>Link: </strong>
-                          {editPremalink === false && product.url}
+                          https://www.google.com/product/
+                          {editPremalink === false && product.slug}
                           {editPremalink === true && (
                             <input
                               id="url"
-                              name="url"
-                              value={product.url}
+                              name="slug"
+                              value={product.slug}
                               onChange={handleChange}
                               variant="outlined"
                               className={classes.editpermalinkInput}
@@ -427,19 +419,11 @@ const EditProduct = props => {
                         id="price"
                         label="Price"
                         name="price"
+                        onChange={handleChange}
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                         type="number"
-                        value={product.pricing.price}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            pricing: {
-                              ...product.pricing,
-                              price: Number(e.target.value)
-                            }
-                          })
-                        }
+                        value={product.price}
                       />
                     </Grid>
                     <Grid item md={4}>
@@ -451,16 +435,7 @@ const EditProduct = props => {
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                         type="number"
-                        value={product.pricing.sellprice}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            pricing: {
-                              ...product.pricing,
-                              sellprice: Number(e.target.value)
-                            }
-                          })
-                        }
+                        value={product.sellprice}
                       />
                     </Grid>
                   </Grid>
@@ -512,37 +487,38 @@ const EditProduct = props => {
                 <CardContent>
                   <Grid container spacing={3}>
                     <Grid item md={12}>
-                      <FormControl className={classes.taxSelect}>
-                        <InputLabel id="Shipping-name">Shipping</InputLabel>
-                        <Select
-                          labelId="Shipping-name"
-                          id="Shipping-name"
-                          name="Shipping-name"
-                          value={product.shipping.shipping_class}
-                          onChange={e =>
-                            setProduct({
-                              ...product,
-                              shipping: {
-                                ...product.shipping,
-                                shipping_class: e.target.value
-                              }
-                            })
-                          }
-                        >
-                          {props.shippingState.shipping.shipping_class.map(
-                            shipping => {
-                              return (
-                                <MenuItem
-                                  value={shipping._id}
-                                  key={shipping._id}
-                                >
-                                  {shipping.name}
-                                </MenuItem>
-                              );
-                            }
-                          )}
-                        </Select>
-                      </FormControl>
+                      <RadioGroup
+                        value={shippingClass}
+                        name="status"
+                        onChange={e => setShippingClass(e.target.value)}
+                        row
+                      >
+                        <FormControlLabel
+                          value="Global"
+                          control={<StyledRadio />}
+                          label="Global"
+                        />
+                        <FormControlLabel
+                          value="Custom-shipping"
+                          control={<StyledRadio />}
+                          label="Custom Shipping"
+                        />
+                      </RadioGroup>
+                      {shippingClass === "Custom-shipping" && (
+                        <FormControl className={classes.taxSelect}>
+                          <InputLabel id="Shipping-name">Shipping</InputLabel>
+                          <Select
+                            labelId="Shipping-name"
+                            id="Shipping-name"
+                            name="Shipping-name"
+                            onChange={e => console.log(e)}
+                          >
+                            <MenuItem value="Shipping-1">Shipping 1</MenuItem>
+                            <MenuItem value="Shipping-2">Shipping 2</MenuItem>
+                            <MenuItem value="Shipping-3">Shipping 3</MenuItem>
+                          </Select>
+                        </FormControl>
+                      )}
                     </Grid>
                     <Grid item md={3}>
                       <TextField
@@ -553,16 +529,6 @@ const EditProduct = props => {
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                         type="number"
-                        value={product.shipping.height}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            shipping: {
-                              ...product.shipping,
-                              height: e.target.value
-                            }
-                          })
-                        }
                       />
                     </Grid>
 
@@ -575,16 +541,6 @@ const EditProduct = props => {
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                         type="number"
-                        value={product.shipping.width}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            shipping: {
-                              ...product.shipping,
-                              width: e.target.value
-                            }
-                          })
-                        }
                       />
                     </Grid>
 
@@ -597,16 +553,6 @@ const EditProduct = props => {
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                         type="number"
-                        value={product.shipping.depth}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            shipping: {
-                              ...product.shipping,
-                              depth: e.target.value
-                            }
-                          })
-                        }
                       />
                     </Grid>
 
@@ -619,16 +565,6 @@ const EditProduct = props => {
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                         type="number"
-                        value={product.shipping.weight}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            shipping: {
-                              ...product.shipping,
-                              weight: e.target.value
-                            }
-                          })
-                        }
                       />
                     </Grid>
                   </Grid>
@@ -641,53 +577,38 @@ const EditProduct = props => {
                 <CardHeader title="Tax" />
                 <Divider />
                 <CardContent>
-                  <FormControl className={classes.taxSelect}>
-                    <InputLabel id="tax-status">Tax status</InputLabel>
-                    <Select
-                      labelId="tax-status"
-                      name="tax-status"
-                      value={product.tax.taxable}
-                      onChange={e =>
-                        setProduct({
-                          ...product,
-                          tax: {
-                            ...product.tax,
-                            taxable: e.target.value === "true"
-                          }
-                        })
-                      }
-                    >
-                      <MenuItem value="true">Taxable</MenuItem>
-                      <MenuItem value="false">None</MenuItem>
-                    </Select>
-                  </FormControl>
-
-                  <FormControl className={classes.taxSelect}>
-                    <InputLabel id="tax-name">Tax Class</InputLabel>
-                    <Select
-                      labelId="tax-name"
-                      id="tax-name"
-                      name="tax-name"
-                      value={product.tax.tax_class}
-                      onChange={e =>
-                        setProduct({
-                          ...product,
-                          tax: {
-                            ...product.tax,
-                            tax_class: e.target.value
-                          }
-                        })
-                      }
-                    >
-                      {props.taxState.tax.tax_class.map(tax => {
-                        return (
-                          <MenuItem value={tax._id} key={tax._id}>
-                            {tax.name}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
+                  <RadioGroup
+                    value={tax}
+                    name="status"
+                    onChange={e => setTax(e.target.value)}
+                    row
+                  >
+                    <FormControlLabel
+                      value="Global"
+                      control={<StyledRadio />}
+                      label="Global"
+                    />
+                    <FormControlLabel
+                      value="Custom-tax"
+                      control={<StyledRadio />}
+                      label="Custom Tax"
+                    />
+                  </RadioGroup>
+                  {tax === "Custom-tax" && (
+                    <FormControl className={classes.taxSelect}>
+                      <InputLabel id="tax-name">Tax</InputLabel>
+                      <Select
+                        labelId="tax-name"
+                        id="tax-name"
+                        name="tax-name"
+                        onChange={e => console.log(e)}
+                      >
+                        <MenuItem value="Tax-1">Tax 1</MenuItem>
+                        <MenuItem value="Tax-2">Tax 2</MenuItem>
+                        <MenuItem value="Tax-3">Tax 3</MenuItem>
+                      </Select>
+                    </FormControl>
+                  )}
                 </CardContent>
               </Card>
             </Box>
@@ -740,16 +661,6 @@ const EditProduct = props => {
                         name="meta-title"
                         variant="outlined"
                         className={clsx(classes.width100)}
-                        value={product.meta.title}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            meta: {
-                              ...product.meta,
-                              title: e.target.value
-                            }
-                          })
-                        }
                       />
                     </Grid>
 
@@ -760,16 +671,6 @@ const EditProduct = props => {
                         name="meta-keyword"
                         variant="outlined"
                         className={clsx(classes.width100)}
-                        value={product.meta.keywords}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            meta: {
-                              ...product.meta,
-                              keywords: e.target.value
-                            }
-                          })
-                        }
                       />
                     </Grid>
 
@@ -782,16 +683,6 @@ const EditProduct = props => {
                         className={clsx(classes.marginBottom, classes.width100)}
                         multiline
                         rows="4"
-                        value={product.meta.description}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            meta: {
-                              ...product.meta,
-                              description: e.target.value
-                            }
-                          })
-                        }
                       />
                     </Grid>
                   </Grid>
@@ -847,7 +738,7 @@ const EditProduct = props => {
                       className={classes.input}
                       style={{ display: "none" }}
                       id="featured-image"
-                      name="update_feature_image"
+                      name="feature_image"
                       type="file"
                       onChange={fileChange}
                     />
@@ -872,42 +763,30 @@ const EditProduct = props => {
                 <CardContent>
                   <Grid item md={12}>
                     <div className={classes.galleryImgOuterBox}>
-                      {product.gallery_image &&
-                        product.gallery_image.map((img, index) => (
-                          <div key={index} className={classes.galleryImgBox}>
-                            <span
-                              className={classes.galleryImgRemove}
-                              onClick={() => removeImage(img)}
-                            >
-                              x
-                            </span>
-                            <img
-                              src={img.thumbnail}
-                              className={classes.galleryImg}
-                              alt="gallery-img"
-                            />
-                          </div>
-                        ))}
-
-                      {gallery &&
-                        gallery.map((img, index) => (
-                          <div key={index} className={classes.galleryImgBox}>
-                            <span
-                              className={classes.galleryImgRemove}
-                              onClick={() => removeImage(img)}
-                            >
-                              x
-                            </span>
-                            <img src={img} className={classes.galleryImg} />
-                          </div>
-                        ))}
+                      {product.gallery_image
+                        ? product.gallery_image.map((img, index) => (
+                            <div key={index} className={classes.galleryImgBox}>
+                              <span
+                                className={classes.galleryImgRemove}
+                                onClick={() => removeImage(img)}
+                              >
+                                x
+                              </span>
+                              <img
+                                src={img.thumbnail}
+                                className={classes.galleryImg}
+                                alt="gallery-img"
+                              />
+                            </div>
+                          ))
+                        : null}
                     </div>
                     <input
                       accept="image/*"
                       className={classes.input}
                       style={{ display: "none" }}
                       id="Gallery-Image"
-                      name="update_gallery_image"
+                      name="gallery_image"
                       type="file"
                       onChange={updategalleryImg}
                       multiple={true}
@@ -931,18 +810,12 @@ const EditProduct = props => {
 };
 
 const mapStateToProps = state => {
-  return {
-    products: state.products,
-    taxState: state.taxs,
-    shippingState: state.shippings
-  };
+  return { products: state.products };
 };
 
 const mapDispatchToProps = {
   productUpdateAction,
-  categoriesAction,
-  shippingAction,
-  taxAction
+  categoriesAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProduct);

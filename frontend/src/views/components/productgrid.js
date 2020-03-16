@@ -7,11 +7,13 @@ const ProductGrid = props => {
     <Fragment>
       <section className="home-product-listing">
         <Container>
+          {props.title && 
           <Box display="flex" justifyContent="center">
             <Typography variant="h2" className="section-title">
               {props.title}
             </Typography>
           </Box>
+}
           <Grid container spacing={5}>
             {props.allProducts &&
               props.allProducts.map((product, index) => (

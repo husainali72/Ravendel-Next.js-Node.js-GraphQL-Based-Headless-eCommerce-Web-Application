@@ -77,36 +77,36 @@ const CartSide = props => {
               </Typography>
               <Box component="div" className="cart-amount-inner">
                 <Grid container className="cart-row">
-                  <Grid item md={6}>
+                  <Grid item md={6} sm={6} xs={6}>
                     <Typography variant="h4" className="cart-td-left">
                       Subtotal
                     </Typography>
                   </Grid>
-                  <Grid item md={6}>
+                  <Grid item md={6} sm={6} xs={6}>
                     <Typography variant="h4" className="cart-td-right">
                       $274.00
                     </Typography>
                   </Grid>
                 </Grid>
                 <Grid container className="cart-row">
-                  <Grid item md={6}>
+                  <Grid item md={6} sm={6} xs={6}>
                     <Typography variant="h4" className="cart-td-left">
                       DELIVERY:
                     </Typography>
                   </Grid>
-                  <Grid item md={6}>
+                  <Grid item md={6} sm={6} xs={6}>
                     <Typography variant="h4" className="cart-td-right">
                       Free
                     </Typography>
                   </Grid>
                 </Grid>
                 <Grid container className="cart-row">
-                  <Grid item md={6}>
+                  <Grid item md={6} sm={6} xs={6}>
                     <Typography variant="h4" className="cart-td-left">
                       Total
                     </Typography>
                   </Grid>
-                  <Grid item md={6}>
+                  <Grid item md={6} sm={6} xs={6}>
                     <Typography variant="h4" className="cart-td-right">
                       $274.00
                     </Typography>

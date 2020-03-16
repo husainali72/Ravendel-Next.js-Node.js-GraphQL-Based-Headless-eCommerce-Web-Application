@@ -173,7 +173,9 @@ module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
 const imageUnlink = imgObject => {
+  console.log("here comes", imgObject);
   for (let i in imgObject) {
+    //console.log("here comes", imgObject[i]);
     //fs.unlinkSync("." + imgObject[i]);
     fs.unlink("." + imgObject[i], function(err) {
       if (err) console.log(err);

@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import Routes from "../routes";
 import DynamicScrollToTop from "../routes/DynamicScrollToTop";
+import NotFound from "../views/notfound";
 
 const Main = () => {
   return (
@@ -17,6 +18,7 @@ const Main = () => {
             component={route.component}
           />
         ))}
+        <Route path="*" component={NotFound} />
         <Redirect to="/" />
       </Switch>
     </main>

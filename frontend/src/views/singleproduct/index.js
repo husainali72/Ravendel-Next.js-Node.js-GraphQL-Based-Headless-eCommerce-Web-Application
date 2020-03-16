@@ -41,6 +41,38 @@ const SingleProduct = () => {
       {
         image:
           "https://colorlib.com/preview/theme/winter/img/product_details/prodect_details_4.png"
+      },
+      {
+        image:
+          "https://colorlib.com/preview/theme/winter/img/product_details/prodect_details_1.png"
+      },
+      {
+        image:
+          "https://colorlib.com/preview/theme/winter/img/product_details/prodect_details_2.png"
+      },
+      {
+        image:
+          "https://colorlib.com/preview/theme/winter/img/product_details/prodect_details_3.png"
+      },
+      {
+        image:
+          "https://colorlib.com/preview/theme/winter/img/product_details/prodect_details_4.png"
+      },
+      {
+        image:
+          "https://colorlib.com/preview/theme/winter/img/product_details/prodect_details_1.png"
+      },
+      {
+        image:
+          "https://colorlib.com/preview/theme/winter/img/product_details/prodect_details_2.png"
+      },
+      {
+        image:
+          "https://colorlib.com/preview/theme/winter/img/product_details/prodect_details_3.png"
+      },
+      {
+        image:
+          "https://colorlib.com/preview/theme/winter/img/product_details/prodect_details_4.png"
       }
     ]
   });
@@ -48,20 +80,28 @@ const SingleProduct = () => {
   return (
     <Fragment>
       <Grid container>
-        <Grid item md={6} className="singleproduct-col singleproduct-leftside">
+        <Grid
+          item
+          md={6}
+          sm={12}
+          xs={12}
+          className="singleproduct-col singleproduct-leftside"
+        >
           <GalleryImages galleryImages={product.gallery_images} />
         </Grid>
-        <Grid item md={6} className="singleproduct-col singleproduct-rightside">
+        <Grid
+          item
+          md={6}
+          sm={12}
+          xs={12}
+          className="singleproduct-col singleproduct-rightside"
+        >
           <ProductDetail details={product} />
         </Grid>
       </Grid>
       <Divider />
       <Container>
-        <Grid container>
-          <Grid item md={12}>
-            <ProductOtherDetails details={product} />
-          </Grid>
-        </Grid>
+        <ProductOtherDetails details={product} />
       </Container>
     </Fragment>
   );

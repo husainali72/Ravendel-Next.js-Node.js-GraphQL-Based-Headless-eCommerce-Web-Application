@@ -30,11 +30,19 @@ module.exports = function validate(method, args) {
         return (errors = "Quantity field is required");
       }
 
-      if (
+      /*  if (
         typeof args.pricing != "object" ||
-        Object.keys(args.pricing).length != 0
+        !Object.keys(args.pricing).length
       ) {
         return (errors = "Pricing field is required");
+      } */
+
+      if (!args.shipping || !args.shipping.shipping_class) {
+        return (errors = "Please select Shipping class");
+      }
+
+      if (!args.tax || !args.tax.tax_class) {
+        return (errors = "Please select Tax class");
       }
 
       break;
@@ -58,11 +66,19 @@ module.exports = function validate(method, args) {
         return (errors = "Quantity field is required");
       }
 
-      if (
+      /* if (
         typeof args.pricing != "object" ||
         Object.keys(args.pricing).length != 0
       ) {
         return (errors = "Pricing field is required");
+      } */
+
+      if (!args.shipping || !args.shipping.shipping_class) {
+        return (errors = "Please select Shipping class");
+      }
+
+      if (!args.tax || !args.tax.tax_class) {
+        return (errors = "Please select Tax class");
       }
 
       break;

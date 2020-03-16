@@ -16,7 +16,7 @@ const Footer = () => {
         <Box component="div" className="footer-upper">
           <Container>
             <Grid container spacing={5}>
-              <Grid item md={4}>
+              <Grid item md={4} sm={12} xs={12}>
                 <Box textAlign="center">
                   <Typography variant="h4" className="color-white">
                     Company Logo
@@ -27,7 +27,7 @@ const Footer = () => {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item md={4}>
+              <Grid item md={4} sm={6} xs={6}>
                 <Typography variant="h5" className="footer-widget-header">
                   Information
                 </Typography>
@@ -52,7 +52,7 @@ const Footer = () => {
                   </ListItem>
                 </List>
               </Grid>
-              <Grid item md={4}>
+              <Grid item md={4} sm={6} xs={6}>
                 <Typography variant="h5" className="footer-widget-header">
                   Extra
                 </Typography>

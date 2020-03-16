@@ -67,6 +67,14 @@ import {
   shippingClassDeleteAction
 } from "./shippingAction";
 
+import {
+  couponsAction,
+  couponAction,
+  couponAddAction,
+  couponUpdateAction,
+  couponDeleteAction
+} from "./couponAction";
+
 export {
   LoginAction,
   usersAction,
@@ -112,5 +120,10 @@ export {
   globalShippingUpdateAction,
   shippingClassAddAction,
   shippingClassUpdateAction,
-  shippingClassDeleteAction
+  shippingClassDeleteAction,
+  couponsAction,
+  couponAction,
+  couponAddAction,
+  couponUpdateAction,
+  couponDeleteAction
 };

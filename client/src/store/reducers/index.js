@@ -10,6 +10,7 @@ import customers from "./customerReducer";
 import brands from "./brandReducer";
 import taxs from "./taxReducer";
 import shippings from "./shippingReducer";
+import coupons from "./couponReducer";
 
 // Combine Reducers
 const MasterReducer = combineReducers({
@@ -22,7 +23,8 @@ const MasterReducer = combineReducers({
   customers,
   brands,
   taxs,
-  shippings
+  shippings,
+  coupons
 });
 
 export default MasterReducer;

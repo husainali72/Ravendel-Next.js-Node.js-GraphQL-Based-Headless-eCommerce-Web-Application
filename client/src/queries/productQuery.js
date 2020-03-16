@@ -73,6 +73,10 @@ const GET_PRODUCTS = gql`
       feature_image
       gallery_image
       status
+      featured_product
+      shipping
+      tax
+      meta
       date
     }
   }
@@ -90,6 +94,10 @@ const ADD_PRODUCT = gql`
     $feature_image: Upload
     $gallery_image: Upload
     $status: String
+    $featured_product: Boolean
+    $shipping: customObject
+    $tax: customObject
+    $meta: customObject
   ) {
     addProduct(
       name: $name
@@ -102,6 +110,10 @@ const ADD_PRODUCT = gql`
       feature_image: $feature_image
       gallery_image: $gallery_image
       status: $status
+      featured_product: $featured_product
+      shipping: $shipping
+      tax: $tax
+      meta: $meta
     ) {
       id
       name
@@ -114,6 +126,10 @@ const ADD_PRODUCT = gql`
       feature_image
       gallery_image
       status
+      featured_product
+      shipping
+      tax
+      meta
       date
     }
   }
@@ -129,9 +145,14 @@ const UPDATE_PRODUCT = gql`
     $sku: String
     $quantity: String
     $pricing: customObject
-    $feature_image: Upload
-    $gallery_image: Upload
+    $update_feature_image: Upload
+    $update_gallery_image: Upload
+    $removed_image: customArray
     $status: String
+    $featured_product: Boolean
+    $shipping: customObject
+    $tax: customObject
+    $meta: customObject
   ) {
     updateProduct(
       id: $id
@@ -142,9 +163,14 @@ const UPDATE_PRODUCT = gql`
       sku: $sku
       quantity: $quantity
       pricing: $pricing
-      feature_image: $feature_image
-      gallery_image: $gallery_image
+      update_feature_image: $update_feature_image
+      update_gallery_image: $update_gallery_image
+      removed_image: $removed_image
       status: $status
+      featured_product: $featured_product
+      shipping: $shipping
+      tax: $tax
+      meta: $meta
     ) {
       id
       name
@@ -157,6 +183,10 @@ const UPDATE_PRODUCT = gql`
       feature_image
       gallery_image
       status
+      featured_product
+      shipping
+      tax
+      meta
       date
     }
   }
@@ -176,6 +206,10 @@ const DELETE_PRODUCT = gql`
       feature_image
       gallery_image
       status
+      featured_product
+      shipping
+      tax
+      meta
       date
     }
   }

@@ -23,68 +23,76 @@ import {
   Tab,
   Tabs,
   Input,
-  Chip
+  Chip,
+  FormControlLabel,
+  Checkbox
 } from "@material-ui/core";
 import clsx from "clsx";
 import { connect } from "react-redux";
-import { categoriesAction, productsAction } from "../../store/action/";
+import {
+  categoriesAction,
+  productsAction,
+  couponAddAction
+} from "../../store/action/";
+
+var stateObj = {
+  code: "",
+  description: "",
+  discount_type: "amount-discount",
+  discount_value: "0",
+  free_shipping: false,
+  expire: "",
+  minimum_spend: "0",
+  maximum_spend: "0",
+  products: [],
+  exclude_products: [],
+  categories: [],
+  exclude_categories: []
+};
 
 const AddCoupon = props => {
   const classes = viewStyles();
   const [tabVal, setTabVal] = useState("general");
-  const [products, setProducts] = useState([]);
-  const [excludeProducts, setExcludeProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [excludeCategories, setExcludeCategories] = useState([]);
-  const [allCategroies, setAllCategories] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
+  const [coupon, setCoupon] = useState(stateObj);
 
   useEffect(() => {
-    if (isEmpty(props.products.categories)) {
-      props.categoriesAction();
-    }
+    props.categoriesAction();
+    props.productsAction();
   }, []);
 
   useEffect(() => {
-    if (isEmpty(props.products.products)) {
-      props.productsAction();
-    }
-  }, []);
-
-  useEffect(() => {
-    setAllProducts(props.products.products);
-  }, [props.products.products]);
-
-  useEffect(() => {
-    setAllCategories(props.products.categories);
-  }, [props.products.categories]);
+    setCoupon(stateObj);
+  }, [props.couponState.coupons]);
 
   const tabChange = (event, newValue) => {
     setTabVal(newValue);
   };
+
   const addCoupon = () => {
-    console.log("Coupon Added");
+    props.couponAddAction(coupon);
   };
+
   const handleChange = e => {
-    console.log("Name / Value", e.target.name + "/" + e.target.value);
+    setCoupon({ ...coupon, [e.target.name]: e.target.value });
   };
+
   const selectChange = e => {
-    switch (e.target.name) {
-      case "Products":
-        setProducts(e.target.value);
-        break;
-      case "ExcludeProducts":
-        setExcludeProducts(e.target.value);
-        break;
-      case "Categories":
-        setCategories(e.target.value);
-        break;
-      case "ExcludeCategories":
-        setExcludeCategories(e.target.value);
-        break;
-      default:
-        console.log("No Match any State");
-        break;
+    setCoupon({ ...coupon, [e.target.name]: e.target.value });
+  };
+
+  const getName = (id, element) => {
+    if (element === "products" || element === "exclude_products") {
+      for (let i in props.productState.products) {
+        if (id === props.productState.products[i].id) {
+          return props.productState.products[i].name;
+        }
+      }
+    } else {
+      for (let i in props.productState.categories) {
+        if (id === props.productState.categories[i].id) {
+          return props.productState.categories[i].name;
+        }
+      }
     }
   };
 
@@ -107,7 +115,11 @@ const AddCoupon = props => {
           renderValue={selected => (
             <div style={{ display: "flex", flexWrap: "wrap" }}>
               {selected.map(value => (
-                <Chip key={value} label={value} style={{ margin: 2 }} />
+                <Chip
+                  key={value}
+                  label={getName(value, props.name)}
+                  style={{ margin: 2 }}
+                />
               ))}
             </div>
           )}
@@ -161,7 +173,8 @@ const AddCoupon = props => {
                 <TextField
                   id="coupon_code"
                   label="Coupon Code"
-                  name="coupon_code"
+                  name="code"
+                  value={coupon.code}
                   onChange={handleChange}
                   variant="outlined"
                   className={clsx(classes.marginBottom, classes.width100)}
@@ -171,7 +184,8 @@ const AddCoupon = props => {
                 <TextField
                   id="coupon_discription"
                   label="Description"
-                  name="coupon_discription"
+                  name="description"
+                  value={coupon.description}
                   onChange={handleChange}
                   variant="outlined"
                   className={clsx(classes.marginBottom, classes.width100)}
@@ -218,24 +232,40 @@ const AddCoupon = props => {
                     <Select
                       onChange={handleChange}
                       inputProps={{
-                        name: "parentId"
+                        name: "discount_type",
+                        value: coupon.discount_type
                       }}
                     >
-                      <MenuItem value="fixed-cart-discount">
-                        Fixed Cart Discount
-                      </MenuItem>
-                      <MenuItem value="fixed-product-discount">
-                        Fixed Product Discount
+                      <MenuItem value="amount-discount">
+                        Fixed Amount Discount
                       </MenuItem>
                       <MenuItem value="precantage-discount">
-                        Precantage Discount
+                        Fixed Precantage Discount
                       </MenuItem>
                     </Select>
                   </FormControl>
+
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={coupon.free_shipping}
+                        onChange={e =>
+                          setCoupon({
+                            ...coupon,
+                            free_shipping: e.target.checked
+                          })
+                        }
+                      />
+                    }
+                    label="Free shipping"
+                  />
+
                   <TextField
+                    type="number"
                     id="coupon_amount"
                     label="Coupon Amount"
-                    name="coupon_amount"
+                    name="discount_value"
+                    value={coupon.discount_value}
                     onChange={handleChange}
                     variant="outlined"
                     className={clsx(classes.marginBottom, classes.width100)}
@@ -243,7 +273,8 @@ const AddCoupon = props => {
                   <TextField
                     id="coupon_expiry"
                     helperText="Coupon Expiry"
-                    name="coupon_expiry"
+                    name="expire"
+                    value={coupon.expire}
                     onChange={handleChange}
                     variant="outlined"
                     className={clsx(
@@ -260,7 +291,8 @@ const AddCoupon = props => {
                   <TextField
                     id="minimum-spend"
                     label="Minimum Spend"
-                    name="minimum-spend"
+                    name="minimum_spend"
+                    value={coupon.minimum_spend}
                     onChange={handleChange}
                     variant="outlined"
                     className={clsx(classes.marginBottom, classes.width100)}
@@ -268,7 +300,8 @@ const AddCoupon = props => {
                   <TextField
                     id="maximum-spend"
                     label="Maximum Spend"
-                    name="maximum-spend"
+                    name="maximum_spend"
+                    value={coupon.maximum_spend}
                     onChange={handleChange}
                     variant="outlined"
                     className={clsx(classes.marginBottom, classes.width100)}
@@ -276,58 +309,54 @@ const AddCoupon = props => {
 
                   {/*  ==================Products Select ================== */}
                   <SelectOptionField
-                    name="Products"
-                    value={products}
+                    name="products"
                     label="Products"
+                    value={coupon.products}
                   >
-                    {allProducts &&
-                      allProducts.map(product => (
-                        <MenuItem value={product.name} key={product.id}>
-                          {product.name}
-                        </MenuItem>
-                      ))}
+                    {props.productState.products.map(product => (
+                      <MenuItem value={product.id} key={product.id}>
+                        {product.name}
+                      </MenuItem>
+                    ))}
                   </SelectOptionField>
 
                   {/* ================== Exclude Products Select ================== */}
                   <SelectOptionField
-                    name="ExcludeProducts"
-                    value={excludeProducts}
+                    name="exclude_products"
                     label="Exclude Products"
+                    value={coupon.exclude_products}
                   >
-                    {allProducts &&
-                      allProducts.map(product => (
-                        <MenuItem value={product.name} key={product.id}>
-                          {product.name}
-                        </MenuItem>
-                      ))}
+                    {props.productState.products.map(product => (
+                      <MenuItem value={product.id} key={product.id}>
+                        {product.name}
+                      </MenuItem>
+                    ))}
                   </SelectOptionField>
 
                   {/*  ==================Category Select  ==================*/}
                   <SelectOptionField
-                    name="Categories"
-                    value={categories}
+                    name="categories"
                     label="Categories"
+                    value={coupon.categories}
                   >
-                    {allCategroies &&
-                      allCategroies.map(category => (
-                        <MenuItem value={category.name} key={category.id}>
-                          {category.name}
-                        </MenuItem>
-                      ))}
+                    {props.productState.categories.map(category => (
+                      <MenuItem value={category.id} key={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    ))}
                   </SelectOptionField>
 
                   {/* ==================Exclude Category Select===================== */}
                   <SelectOptionField
-                    name="ExcludeCategories"
-                    value={excludeCategories}
+                    name="exclude_categories"
                     label="Exclude Categories"
+                    value={coupon.exclude_categories}
                   >
-                    {allCategroies &&
-                      allCategroies.map(category => (
-                        <MenuItem value={category.name} key={category.id}>
-                          {category.name}
-                        </MenuItem>
-                      ))}
+                    {props.productState.categories.map(category => (
+                      <MenuItem value={category.id} key={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    ))}
                   </SelectOptionField>
                 </TabPanel>
               </Box>
@@ -380,12 +409,13 @@ const MenuProps = {
 };
 
 const mapStateToProps = state => {
-  return { products: state.products };
+  return { productState: state.products, couponState: state.coupons };
 };
 
 const mapDispatchToProps = {
   categoriesAction,
-  productsAction
+  productsAction,
+  couponAddAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddCoupon);

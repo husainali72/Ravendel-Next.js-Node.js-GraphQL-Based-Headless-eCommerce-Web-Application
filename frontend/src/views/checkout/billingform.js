@@ -71,22 +71,22 @@ const BillingForm = props => {
         Billing Details
       </Typography>
       <Grid container spacing={2}>
-        <Grid item md={6}>
+        <Grid item lg={6} md={12} sm={12} xs={12}>
           {BillingInputs("text", "First Name", "firstname", "")}
         </Grid>
-        <Grid item md={6}>
+        <Grid item lg={6} md={12} sm={12} xs={12}>
           {BillingInputs("text", "Last Name", "lastname", "")}
         </Grid>
-        <Grid item md={6}>
+        <Grid item lg={6} md={12} sm={12} xs={12}>
           {BillingInputs("email", "Email", "email", "")}
         </Grid>
-        <Grid item md={6}>
+        <Grid item lg={6} md={12} sm={12} xs={12}>
           {BillingInputs("tel", "Phone", "phone", "")}
         </Grid>
-        <Grid item md={12}>
+        <Grid item md={12} sm={12} xs={12}>
           {BillingInputs("text", "company Name", "company", "")}
         </Grid>
-        <Grid item md={12}>
+        <Grid item md={12} sm={12} xs={12}>
           <FormControl
             variant="outlined"
             className="billing-textfield"
@@ -108,22 +108,22 @@ const BillingForm = props => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item md={12}>
+        <Grid item md={12} sm={12} xs={12}>
           {BillingInputs("text", "Address Line 1", "address_line_1", "")}
         </Grid>
-        <Grid item md={12}>
+        <Grid item md={12} sm={12} xs={12}>
           {BillingInputs("text", "Address Line 2", "address_line_2", "")}
         </Grid>
-        <Grid item md={4}>
+        <Grid item md={4} sm={12} xs={12}>
           {BillingInputs("text", "City", "city", "")}
         </Grid>
-        <Grid item md={4}>
+        <Grid item md={4} sm={12} xs={12}>
           {BillingInputs("text", "State", "state", "")}
         </Grid>
-        <Grid item md={4}>
+        <Grid item md={4} sm={12} xs={12}>
           {BillingInputs("number", "Poscode", "poscode", "")}
         </Grid>
-        <Grid item md={12}>
+        <Grid item md={12} sm={12} xs={12}>
           <TextField
             label="Orders Notes"
             value=""
@@ -136,7 +136,7 @@ const BillingForm = props => {
             rows="5"
           />
         </Grid>
-        <Grid item md={12}>
+        <Grid item md={12} sm={12} xs={12}>
           <FormControlLabel
             control={
               <Checkbox
@@ -168,22 +168,22 @@ const BillingForm = props => {
         />
         <Collapse in={shippingAdd}>
           <Grid container spacing={2} className="margin-top-2 margin-bottom-3">
-            <Grid item md={6}>
+            <Grid item lg={6} md={12} sm={12} xs={12}>
               {ShippingInputs("text", "First Name", "firstname", "")}
             </Grid>
-            <Grid item md={6}>
+            <Grid item lg={6} md={12} sm={12} xs={12}>
               {ShippingInputs("text", "Last Name", "lastname", "")}
             </Grid>
-            <Grid item md={6}>
+            <Grid item lg={6} md={12} sm={12} xs={12}>
               {ShippingInputs("email", "Email", "email", "")}
             </Grid>
-            <Grid item md={6}>
+            <Grid item lg={6} md={12} sm={12} xs={12}>
               {ShippingInputs("tel", "Phone", "phone", "")}
             </Grid>
-            <Grid item md={12}>
+            <Grid item md={12} sm={12} xs={12}>
               {ShippingInputs("text", "company Name", "company", "")}
             </Grid>
-            <Grid item md={12}>
+            <Grid item md={12} sm={12} xs={12}>
               <FormControl
                 variant="outlined"
                 className="billing-textfield"
@@ -205,19 +205,19 @@ const BillingForm = props => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item md={12}>
+            <Grid item md={12} sm={12} xs={12}>
               {ShippingInputs("text", "Address Line 1", "address_line_1", "")}
             </Grid>
-            <Grid item md={12}>
+            <Grid item md={12} sm={12} xs={12}>
               {ShippingInputs("text", "Address Line 2", "address_line_2", "")}
             </Grid>
-            <Grid item md={4}>
+            <Grid item md={4} sm={12} xs={12}>
               {ShippingInputs("text", "City", "city", "")}
             </Grid>
-            <Grid item md={4}>
+            <Grid item md={4} sm={12} xs={12}>
               {ShippingInputs("text", "State", "state", "")}
             </Grid>
-            <Grid item md={4}>
+            <Grid item md={4} sm={12} xs={12}>
               {ShippingInputs("number", "Poscode", "poscode", "")}
             </Grid>
           </Grid>

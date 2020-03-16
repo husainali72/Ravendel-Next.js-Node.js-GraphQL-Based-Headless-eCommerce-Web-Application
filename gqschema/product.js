@@ -31,10 +31,11 @@ module.exports = gql`
     pricing: customObject
     feature_image: customObject
     gallery_image: customObject
-    meta: productMeta
+    meta: customObject
     shipping: customObject
     tax: customObject
     status: String
+    featured_product: Boolean
     date: Date
     updated: Date
   }
@@ -50,6 +51,7 @@ module.exports = gql`
     products: [Product]
     product(id: ID!): Product
   }
+
   extend type Mutation {
     addProductCategory(name: String, parentId: ID): [productCategory]
     updateProductCategory(
@@ -72,6 +74,8 @@ module.exports = gql`
       shipping: customObject
       tax: customObject
       status: String
+      featured_product: Boolean
+      meta: customObject
     ): [Product]
     updateProduct(
       id: ID
@@ -82,11 +86,14 @@ module.exports = gql`
       sku: String
       quantity: String
       pricing: customObject
-      feature_image: Upload
-      gallery_image: Upload
+      update_feature_image: Upload
+      update_gallery_image: Upload
+      removed_image: customArray
       shipping: customObject
       tax: customObject
       status: String
+      featured_product: Boolean
+      meta: customObject
     ): [Product]
     deleteProduct(id: ID!): [Product]
   }

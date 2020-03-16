@@ -7,7 +7,8 @@ const {
   checkError,
   imageUpload,
   imageUnlink,
-  checkToken
+  checkToken,
+  stringTourl
 } = require("../config/helpers");
 const validate = require("../validations/product");
 
@@ -230,12 +231,21 @@ module.exports = {
             description: args.description,
             sku: args.sku,
             quantity: args.quantity,
-            pricing: args.pricing,
+            pricing: {
+              price: args.pricing.price || 0,
+              sellprice: args.pricing.sellprice || 0
+            },
             feature_image: imgObject.data || imgObject,
             gallery_image: imgArray,
             status: args.status,
             meta: args.meta,
-            shipping: args.shipping,
+            shipping: {
+              height: args.shipping.height || 0,
+              width: args.shipping.width || 0,
+              depth: args.shipping.depth || 0,
+              weight: args.shipping.weight || 0,
+              shipping_class: args.shipping.shipping_class
+            },
             tax: args.tax
           });
 
@@ -258,18 +268,73 @@ module.exports = {
 
         const product = await Product.findById({ _id: args.id });
         if (product) {
+          let imgObject = "";
+          if (args.update_feature_image) {
+            imgObject = await imageUpload(
+              args.update_feature_image[0],
+              "/assets/images/product/feature/"
+            );
+
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            }
+
+            if (product.feature_image) {
+              imageUnlink(product.feature_image);
+            }
+
+            product.feature_image = imgObject.data;
+          }
+
+          let imgArray = [];
+          let gallery_images = [...product.gallery_image];
+          if (args.update_gallery_image) {
+            let galleryObject = "";
+            for (let i in args.update_gallery_image) {
+              galleryObject = await imageUpload(
+                args.update_gallery_image[i],
+                "/assets/images/product/gallery/"
+              );
+
+              if (galleryObject.success) {
+                gallery_images.push(galleryObject.data);
+              }
+            }
+          }
+
+          if (args.removed_image.length) {
+            for (let i in gallery_images) {
+              if (
+                gallery_images[i]._id &&
+                ~args.removed_image.indexOf(String(gallery_images[i]._id))
+              ) {
+                let imgObject = {
+                  large: gallery_images[i].large,
+                  medium: gallery_images[i].medium,
+                  original: gallery_images[i].original,
+                  thumbnail: gallery_images[i].thumbnail
+                };
+                imageUnlink(imgObject);
+                delete gallery_images[i];
+              }
+            }
+          }
+
           product.name = args.name;
           product.categoryId = args.categoryId;
-          let url = stringTourl(args.url || args.name);
-          product.url = url;
+          product.url = stringTourl(args.url || args.name);
           product.description = args.description;
+          product.sku = args.sku;
           product.quantity = args.quantity;
           product.pricing = args.pricing;
+          product.gallery_image = gallery_images;
           product.meta = args.meta;
           product.shipping = args.shipping;
           product.tax = args.tax;
           product.updated = Date.now();
-          return await product.save();
+          await product.save();
+          const products = await Product.find({});
+          return products || [];
         } else {
           throw putError("Product not exist");
         }

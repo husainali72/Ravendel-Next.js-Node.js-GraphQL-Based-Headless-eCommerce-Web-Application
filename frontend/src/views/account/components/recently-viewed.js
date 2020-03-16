@@ -1,8 +1,7 @@
 import React, { Fragment } from "react";
-import { Grid, Container, Typography, Box } from "@material-ui/core";
-import RelatedProducts from "../components/relatedproduct";
+import ProductGrid from "../../components/productgrid";
 
-const ProductOtherDetails = props => {
+const RecentlyViewed = props => {
   const products = [
     {
       featured_image:
@@ -58,39 +57,9 @@ const ProductOtherDetails = props => {
 
   return (
     <Fragment>
-      <section className="product-other-detail">
-        <Grid container>
-          {props.details.description && (
-            <Grid item md={12} sm={12} xs={12}>
-              <Box>
-                <Box display="flex" justifyContent="center">
-                  <Typography variant="h2" className="section-title">
-                    description
-                  </Typography>
-                </Box>
-                <Typography variant="body1" className="product-description">
-                  {props.details.description}
-                </Typography>
-              </Box>
-            </Grid>
-          )}
-
-          <Grid
-            item
-            md={12}
-            sm={12}
-            xs={12}
-            className="related-products-wrapper"
-          >
-            <RelatedProducts
-              relatedProduct={products}
-              title="Related Products"
-            />
-          </Grid>
-        </Grid>
-      </section>
+      <ProductGrid allProducts={products} />
     </Fragment>
   );
 };
 
-export default ProductOtherDetails;
+export default RecentlyViewed;

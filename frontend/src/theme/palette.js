@@ -3,7 +3,7 @@ import store from "../store";
 
 var theme = store.getState();
 
-console.log("them", theme.settings.themes[0].primaryColor);
+//console.log("them", theme.settings.themes[0].primaryColor);
 const primaryColor = theme.settings.themes[0].primaryColor;
 
 const white = "#fff";
