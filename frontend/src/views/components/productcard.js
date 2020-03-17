@@ -72,6 +72,9 @@ const ProductCard = props => {
             </span>
           )}
         </p>
+        {props.productDetail.sale_price && (
+          <span className="sale-price-label">Sale</span>
+        )}
       </div>
     </div>
   );

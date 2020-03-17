@@ -74,10 +74,12 @@ const GET_PRODUCTS = gql`
       gallery_image
       status
       featured_product
+      product_type
       shipping
-      tax
+      tax_class
       meta
       date
+      updated
     }
   }
 `;
@@ -95,8 +97,9 @@ const ADD_PRODUCT = gql`
     $gallery_image: Upload
     $status: String
     $featured_product: Boolean
+    $product_type: customObject
     $shipping: customObject
-    $tax: customObject
+    $tax_class: String
     $meta: customObject
   ) {
     addProduct(
@@ -111,8 +114,9 @@ const ADD_PRODUCT = gql`
       gallery_image: $gallery_image
       status: $status
       featured_product: $featured_product
+      product_type: $product_type
       shipping: $shipping
-      tax: $tax
+      tax_class: $tax_class
       meta: $meta
     ) {
       id
@@ -127,10 +131,12 @@ const ADD_PRODUCT = gql`
       gallery_image
       status
       featured_product
+      product_type
       shipping
-      tax
+      tax_class
       meta
       date
+      updated
     }
   }
 `;
@@ -150,8 +156,9 @@ const UPDATE_PRODUCT = gql`
     $removed_image: customArray
     $status: String
     $featured_product: Boolean
+    $product_type: customObject
     $shipping: customObject
-    $tax: customObject
+    $tax_class: String
     $meta: customObject
   ) {
     updateProduct(
@@ -168,8 +175,9 @@ const UPDATE_PRODUCT = gql`
       removed_image: $removed_image
       status: $status
       featured_product: $featured_product
+      product_type: $product_type
       shipping: $shipping
-      tax: $tax
+      tax_class: $tax_class
       meta: $meta
     ) {
       id
@@ -184,10 +192,12 @@ const UPDATE_PRODUCT = gql`
       gallery_image
       status
       featured_product
+      product_type
       shipping
-      tax
+      tax_class
       meta
       date
+      updated
     }
   }
 `;
@@ -207,10 +217,12 @@ const DELETE_PRODUCT = gql`
       gallery_image
       status
       featured_product
+      product_type
       shipping
-      tax
+      tax_class
       meta
       date
+      updated
     }
   }
 `;

@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import OrderDetails from "./orderdetail";
 import BillingForm from "./billingform";
+import PageTitle from "../components/pageTitle";
 
 const Checkout = props => {
   const Login = e => {
@@ -24,16 +25,7 @@ const Checkout = props => {
 
   return (
     <Fragment>
-      <Box
-        component="div"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className="page-header"
-      >
-        <Typography variant="h1">Checkout</Typography>
-      </Box>
-
+      <PageTitle title="Checkout" />
       {props.cart.products && props.cart.products.length ? (
         <Container>
           <Box className="checkout-wrapper" component="div">

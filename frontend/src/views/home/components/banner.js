@@ -7,12 +7,36 @@ import Slider from "react-slick";
 const Banner = props => {
   const [bannerSlider, setBannerSlider] = useState([
     {
-      image: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-1.jpg"
+      image: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-1.jpg",
+      url: "/category/CategoryFirst"
     },
     {
-      image: "https://colorlib.com/preview/theme/winter/img/banner_img.png"
+      image: "https://colorlib.com/preview/theme/winter/img/banner_img.png",
+      url: "/category/CategorySecond"
     }
   ]);
+
+  function SampleNextArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, right: "10px" }}
+        onClick={onClick}
+      />
+    );
+  }
+
+  function SamplePrevArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, left: "10px" }}
+        onClick={onClick}
+      />
+    );
+  }
 
   const settings = {
     dots: true,
@@ -22,8 +46,10 @@ const Banner = props => {
     slidesToScroll: 1,
     autoplay: true,
     speed: 1000,
-    autoplaySpeed: 8000,
-    cssEase: "linear"
+    autoplaySpeed: 4000,
+    cssEase: "linear",
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />
   };
 
   return (
@@ -33,7 +59,9 @@ const Banner = props => {
           {bannerSlider &&
             bannerSlider.map((slide, index) => (
               <div key={index}>
-                <img src={slide.image} alt="slide" className="slide-image" />
+                <Link to={slide.url}>
+                  <img src={slide.image} alt="slide" className="slide-image" />
+                </Link>
               </div>
             ))}
         </Slider>

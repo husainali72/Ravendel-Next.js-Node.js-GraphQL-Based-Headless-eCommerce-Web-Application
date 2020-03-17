@@ -9,37 +9,50 @@ import {
   List,
   Collapse,
   Slider,
-  Divider
+  Divider,
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  ExpansionPanelDetails,
+  Checkbox,
+  FormControlLabel,
+  Icon
 } from "@material-ui/core";
 import ProductCard from "../components/productcard";
+import PageTitle from "../components/pageTitle";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 const Shop = props => {
   const [prodIndex, setProdIndex] = useState("");
 
-  var categories = {
-    category: [
-      {
-        name: "Catergory First"
-      },
-      {
-        name: "Category Second"
-      },
-      {
-        name: "Catergory Third",
-        children: [
-          {
-            name: "category 1"
-          },
-          {
-            name: "category 2"
-          },
-          {
-            name: "category 3"
-          }
-        ]
-      }
-    ]
-  };
+  const categories = [
+    {
+      url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
+      title: "Cloths",
+      width: "40%"
+    },
+    {
+      url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
+      title: "Shoes",
+      width: "30%"
+    },
+    {
+      url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-4.jpg",
+      title: "Accessories",
+      width: "30%",
+      children: [
+        {
+          url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
+          title: "Cloths Sub",
+          width: "40%"
+        },
+        {
+          url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
+          title: "Shoes Sub",
+          width: "30%"
+        }
+      ]
+    }
+  ];
 
   const products = [
     {
@@ -101,35 +114,50 @@ const Shop = props => {
     ssetPriceRange(newValue);
   };
 
-  const handleClick = name => {
-    if (name === catName) {
+  const handleClick = title => {
+    if (title === catName) {
       setCatName("");
     } else {
-      setCatName(name);
+      setCatName(title);
     }
   };
 
-  const categoryListing = categories => {
-    return categories.map(cat => {
+  const categoryListing = categoriesParameter => {
+    return categoriesParameter.map(cat => {
       if (!cat.children) {
         return (
-          <ListItem disableGutters key={cat.name}>
+          <ListItem disableGutters key={cat.title}>
             <Typography variant="button" className="category-fillter">
-              {cat.name}
+              {cat.title}
             </Typography>
           </ListItem>
         );
       }
       return (
-        <div key={cat.name}>
-          <ListItem disableGutters onClick={() => handleClick(cat.name)}>
-            <Typography variant="button" className="category-fillter">
-              {cat.name}
-            </Typography>
-            {/* {catName === cat.name ? <ExpandLess /> : <ExpandMore />} */}
+        <div key={cat.title}>
+          <ListItem disableGutters onClick={() => handleClick(cat.title)}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              className="width-100"
+            >
+              <Typography
+                variant="button"
+                className="category-fillter"
+                edge="start"
+              >
+                {cat.title}
+              </Typography>
+
+              <Icon edge="end" onClick={() => handleClick(cat.title)}>
+                {catName === cat.title
+                  ? "keyboard_arrow_up"
+                  : "keyboard_arrow_down"}
+              </Icon>
+            </Box>
           </ListItem>
           <Collapse
-            in={catName === cat.name ? true : false}
+            in={catName === cat.title ? true : false}
             timeout="auto"
             unmountOnExit
             className="subcategory-collapse"
@@ -143,15 +171,7 @@ const Shop = props => {
 
   return (
     <Fragment>
-      <Box
-        component="div"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className="page-header"
-      >
-        <Typography variant="h1">Shop</Typography>
-      </Box>
+      <PageTitle title="Shop" />
       <Container>
         <Grid container className="shop-row" spacing={4}>
           <Grid item lg={3} md={4} sm={4} xs={12}>
@@ -160,50 +180,149 @@ const Shop = props => {
                 Categories
               </Typography>
               <List component="nav" dense>
-                {categoryListing(categories.category)}
+                {categoryListing(categories)}
               </List>
             </Box>
-            <Divider />
             <Box component="div" className="filter-wrapper">
               <Typography variant="h3" className="fillter-header">
                 Fillter by
               </Typography>
-
-              <Typography id="price-slider" gutterBottom>
-                Price
-              </Typography>
-              <Slider
-                value={priceRange}
-                onChange={priceChange}
-                valueLabelDisplay="auto"
-                aria-labelledby="price-slider"
-              />
-              <Typography variant="h6">
-                Range: ${priceRange[0]} - ${priceRange[1]}
-              </Typography>
+              <Box className="price-box-fillter">
+                <Typography
+                  variant="h4"
+                  id="price-slider"
+                  gutterBottom
+                  className="fillter-subheader"
+                >
+                  Price
+                </Typography>
+                <Slider
+                  value={priceRange}
+                  onChange={priceChange}
+                  valueLabelDisplay="auto"
+                  aria-labelledby="price-slider"
+                />
+                <Typography variant="h6">
+                  Range: ${priceRange[0]} - ${priceRange[1]}
+                </Typography>
+              </Box>
             </Box>
-            <Divider />
-            <Box component="div" className="filter-wrapper">
-              <Typography variant="h3" className="fillter-header">
-                Brands
-              </Typography>
-              <List component="nav" dense>
-                <ListItem disableGutters>
-                  <Typography variant="button" className="category-fillter">
-                    Brand 1
-                  </Typography>
-                </ListItem>
-                <ListItem disableGutters>
-                  <Typography variant="button" className="category-fillter">
-                    Brand 2
-                  </Typography>
-                </ListItem>
-                <ListItem disableGutters>
-                  <Typography variant="button" className="category-fillter">
-                    Brand 3
-                  </Typography>
-                </ListItem>
-              </List>
+
+            <Box component="div" className="expansionPanelwrapper">
+              <Divider />
+              <Box component="div" className="filter-wrapper">
+                <ExpansionPanel defaultExpanded>
+                  <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography variant="h4" className="fillter-subheader">
+                      Brands
+                    </Typography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <List>
+                      <ListItem disableGutters>
+                        <FormControlLabel
+                          control={<Checkbox color="primary" value="brand1" />}
+                          label={
+                            <Typography
+                              variant="button"
+                              className="filter-checkbox-label"
+                            >
+                              Brand 1
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                      <ListItem disableGutters>
+                        <FormControlLabel
+                          control={<Checkbox color="primary" value="brand2" />}
+                          label={
+                            <Typography
+                              variant="button"
+                              className="filter-checkbox-label"
+                            >
+                              Brand 2
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                      <ListItem disableGutters>
+                        <FormControlLabel
+                          control={<Checkbox color="primary" value="brand3" />}
+                          label={
+                            <Typography
+                              variant="button"
+                              className="filter-checkbox-label"
+                            >
+                              Brand 3
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                    </List>
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+              </Box>
+              <Divider />
+              <Box component="div" className="filter-wrapper">
+                <ExpansionPanel defaultExpanded>
+                  <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography variant="h4" className="fillter-subheader">
+                      Colors
+                    </Typography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <List>
+                      <ListItem disableGutters>
+                        <FormControlLabel
+                          control={<Checkbox color="primary" value="red" />}
+                          label={
+                            <Typography
+                              variant="button"
+                              className="filter-checkbox-label"
+                            >
+                              Red
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                      <ListItem disableGutters>
+                        <FormControlLabel
+                          control={<Checkbox color="primary" value="black" />}
+                          label={
+                            <Typography
+                              variant="button"
+                              className="filter-checkbox-label"
+                            >
+                              Black
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                      <ListItem disableGutters>
+                        <FormControlLabel
+                          control={<Checkbox color="primary" value="Green" />}
+                          label={
+                            <Typography
+                              variant="button"
+                              className="filter-checkbox-label"
+                            >
+                              Green
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                    </List>
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+              </Box>
             </Box>
           </Grid>
 

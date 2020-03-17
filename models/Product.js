@@ -84,12 +84,18 @@ const ProductSchema = new Schema({
       type: Schema.ObjectId
     }
   },
-  tax: {
-    taxable: {
+  tax_class: {
+    type: Schema.ObjectId
+  },
+  featured_product: {
+    type: Boolean
+  },
+  product_type: {
+    virtual: {
       type: Boolean
     },
-    tax_class: {
-      type: Schema.ObjectId
+    downloadable: {
+      type: Boolean
     }
   },
   date: {

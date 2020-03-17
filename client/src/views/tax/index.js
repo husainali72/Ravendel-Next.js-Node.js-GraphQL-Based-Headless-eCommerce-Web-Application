@@ -28,7 +28,9 @@ import {
   FormControl,
   FormLabel,
   FormGroup,
-  Checkbox
+  Checkbox,
+  Select,
+  MenuItem
 } from "@material-ui/core";
 
 import Alert from "../utils/Alert";
@@ -102,8 +104,8 @@ const Tax = props => {
   const [customTaxClass, setcustomTaxClass] = useState(TaxObject);
   const [taxGlobal, settaxGlobal] = useState({
     is_global: false,
-    name: "",
-    percentage: ""
+    tax_class: "",
+    overwrite: false
   });
 
   const [editMode, setEditMode] = useState(false);
@@ -113,7 +115,7 @@ const Tax = props => {
   useEffect(() => {
     props.taxAction();
     settaxOption(props.taxState.tax.is_inclusive ? "inclusive" : "exclusive");
-    settaxGlobal({ ...props.taxState.tax.global });
+    settaxGlobal({ ...taxGlobal, ...props.taxState.tax.global });
     setEditMode(false);
     setcustomTaxClass(TaxObject);
   }, [props.taxState.tax]);
@@ -218,26 +220,41 @@ const Tax = props => {
             label="Global Tax"
           />
 
-          <TextField
-            id="outlined-secondary"
-            label="Tax Name"
-            variant="outlined"
-            color="secondary"
-            value={taxGlobal.name}
-            onChange={e => settaxGlobal({ ...taxGlobal, name: e.target.value })}
-          />
-
-          <TextField
-            type="number"
-            id="outlined-secondary"
-            label="Percentage"
-            variant="outlined"
-            color="secondary"
-            value={taxGlobal.percentage}
+          <Select
+            name="Tax-name"
+            value={taxGlobal.tax_class}
             onChange={e =>
-              settaxGlobal({ ...taxGlobal, percentage: e.target.value })
+              settaxGlobal({
+                ...taxGlobal,
+                tax_class: e.target.value
+              })
             }
-          />
+          >
+            {props.taxState.tax.tax_class.map((tax, index) => {
+              return (
+                <MenuItem value={tax._id} key={index}>
+                  {tax.name}
+                </MenuItem>
+              );
+            })}
+          </Select>
+
+          {taxGlobal.is_global && (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={taxGlobal.overwrite}
+                  onChange={e =>
+                    settaxGlobal({
+                      ...taxGlobal,
+                      overwrite: e.target.checked
+                    })
+                  }
+                />
+              }
+              label="Do you want to override the current tax class selection in the existing products?"
+            />
+          )}
 
           <Button
             size="small"
@@ -292,19 +309,25 @@ const Tax = props => {
                                     <EditIcon />
                                   </IconButton>
                                 </Tooltip>
-                                <Tooltip title="Delete tax" aria-label="delete">
-                                  <IconButton
-                                    aria-label="Delete"
-                                    className={classes.deleteicon}
-                                    onClick={e =>
-                                      props.taxClassDeleteAction({
-                                        _id: tax._id
-                                      })
-                                    }
+
+                                <Box display={tax.system ? "none" : "flex"}>
+                                  <Tooltip
+                                    title="Delete tax"
+                                    aria-label="delete"
                                   >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </Tooltip>
+                                    <IconButton
+                                      aria-label="Delete"
+                                      className={classes.deleteicon}
+                                      onClick={e =>
+                                        props.taxClassDeleteAction({
+                                          _id: tax._id
+                                        })
+                                      }
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                </Box>
                               </TableCell>
                             </TableRow>
                           ))}
@@ -345,8 +368,8 @@ const Tax = props => {
                 />
                 <TextField
                   type="number"
-                  label="Amount"
-                  name="amount"
+                  label="Percentage"
+                  name="percentage"
                   variant="outlined"
                   onChange={e =>
                     setcustomTaxClass({

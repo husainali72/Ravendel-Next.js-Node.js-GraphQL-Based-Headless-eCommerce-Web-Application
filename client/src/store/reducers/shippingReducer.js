@@ -8,6 +8,9 @@ import {
 const initialState = {
   shippings: [],
   shipping: {
+    global: {
+      is_global: false
+    },
     shipping_class: []
   },
   loading: false,

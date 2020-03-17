@@ -8,6 +8,9 @@ import {
 const initialState = {
   taxs: [],
   tax: {
+    global: {
+      is_global: false
+    },
     tax_class: []
   },
   loading: false,

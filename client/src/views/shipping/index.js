@@ -28,7 +28,9 @@ import {
   FormControl,
   FormLabel,
   FormGroup,
-  Checkbox
+  Checkbox,
+  Select,
+  MenuItem
 } from "@material-ui/core";
 
 import Alert from "../utils/Alert";
@@ -102,9 +104,9 @@ const Shipping = props => {
   );
   const [shippingGlobal, setshippingGlobal] = useState({
     is_global: false,
-    name: "",
-    amount: "",
-    is_per_order: true
+    shipping_class: "",
+    is_per_order: true,
+    overwrite: false
   });
 
   const [editMode, setEditMode] = useState(false);
@@ -187,28 +189,28 @@ const Shipping = props => {
             label="Global Shipping"
           />
 
-          <TextField
-            id="outlined-secondary"
-            label="Shipping Name"
-            variant="outlined"
-            color="secondary"
-            value={shippingGlobal.name}
+          <Select
+            labelId="Shipping-name"
+            id="Shipping-name"
+            name="Shipping-name"
+            value={shippingGlobal.shipping_class}
             onChange={e =>
-              setshippingGlobal({ ...shippingGlobal, name: e.target.value })
+              setshippingGlobal({
+                ...shippingGlobal,
+                shipping_class: e.target.value
+              })
             }
-          />
-
-          <TextField
-            type="number"
-            id="outlined-secondary"
-            label="Amount"
-            variant="outlined"
-            color="secondary"
-            value={shippingGlobal.amount}
-            onChange={e =>
-              setshippingGlobal({ ...shippingGlobal, amount: e.target.value })
-            }
-          />
+          >
+            {props.shippingState.shipping.shipping_class.map(
+              (shipping, index) => {
+                return (
+                  <MenuItem value={shipping._id} key={index}>
+                    {shipping.name}
+                  </MenuItem>
+                );
+              }
+            )}
+          </Select>
 
           <RadioGroup
             aria-label="taxOption"
@@ -231,6 +233,22 @@ const Shipping = props => {
               label="Per Product"
             />
           </RadioGroup>
+          {shippingGlobal.is_global && (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={shippingGlobal.overwrite}
+                  onChange={e =>
+                    setshippingGlobal({
+                      ...shippingGlobal,
+                      overwrite: e.target.checked
+                    })
+                  }
+                />
+              }
+              label="Do you want to override the current shipping class selection in the existing products?"
+            />
+          )}
 
           <Button
             size="small"
@@ -288,22 +306,26 @@ const Shipping = props => {
                                     <EditIcon />
                                   </IconButton>
                                 </Tooltip>
-                                <Tooltip
-                                  title="Delete shipping"
-                                  aria-label="delete"
+                                <Box
+                                  display={shipping.system ? "none" : "flex"}
                                 >
-                                  <IconButton
-                                    aria-label="Delete"
-                                    className={classes.deleteicon}
-                                    onClick={e =>
-                                      props.shippingClassDeleteAction({
-                                        _id: shipping._id
-                                      })
-                                    }
+                                  <Tooltip
+                                    title="Delete shipping"
+                                    aria-label="delete"
                                   >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </Tooltip>
+                                    <IconButton
+                                      aria-label="Delete"
+                                      className={classes.deleteicon}
+                                      onClick={e =>
+                                        props.shippingClassDeleteAction({
+                                          _id: shipping._id
+                                        })
+                                      }
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                </Box>
                               </TableCell>
                             </TableRow>
                           ))}

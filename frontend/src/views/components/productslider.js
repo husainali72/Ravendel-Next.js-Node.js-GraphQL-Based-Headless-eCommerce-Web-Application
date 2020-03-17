@@ -39,7 +39,7 @@ const ProductSlider = props => {
 
   return (
     <Fragment>
-      <section className="home-product-listing">
+      <section className="home-product-listing with-slider">
         <Container>
           <Box display="flex" justifyContent="center">
             <Typography variant="h2" className="section-title">

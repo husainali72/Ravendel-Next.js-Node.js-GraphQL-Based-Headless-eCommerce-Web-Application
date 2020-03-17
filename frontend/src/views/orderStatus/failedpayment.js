@@ -1,19 +1,12 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { Typography, Box, Container, Grid } from "@material-ui/core";
+import PageTitle from "../components/pageTitle";
 
 const PaymentFailed = props => {
   return (
     <Fragment>
-      <Box
-        component="div"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className="page-header"
-      >
-        <Typography variant="h1">Payment Failed</Typography>
-      </Box>
+      <PageTitle title="Payment Failed" />
       <Container>
         <Grid container className="margin-bottom-3 margin-top-3">
           <Grid item xs={12} className="text-center">
