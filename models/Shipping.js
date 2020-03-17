@@ -7,11 +7,8 @@ const ShippingSchema = new Schema({
     is_global: {
       type: Boolean
     },
-    name: {
-      type: String
-    },
-    amount: {
-      type: Number
+    shipping_class: {
+      type: Schema.ObjectId
     },
     is_per_order: {
       type: Boolean
@@ -24,6 +21,10 @@ const ShippingSchema = new Schema({
       },
       amount: {
         type: Number
+      },
+      system: {
+        type: Number,
+        default: 0
       }
     }
   ],
@@ -46,25 +47,24 @@ module.exports.createShipping = async () => {
 
   var newShipping = new Shipping({
     global: {
-      is_global: true,
-      name: "Flat100",
-      amount: 100,
+      is_global: false,
       is_per_order: false
     },
     shipping_class: [
       {
-        name: "Flat50",
-        amount: 50
-      },
-      {
-        name: "Flat200",
-        amount: 200
+        name: "Free Shipping",
+        amount: 0,
+        system: 1
       }
     ]
   });
 
-  newShipping.save((err, shipping) => {
+  newShipping.save(async (err, defaultShipping) => {
     if (err) throw err;
-    console.log(shipping);
+    //const defaultShipping = await Shipping.findOne({});
+    defaultShipping.global.shipping_class =
+      defaultShipping.shipping_class[0]._id;
+    let result = await defaultShipping.save();
+    console.log(result);
   });
 };

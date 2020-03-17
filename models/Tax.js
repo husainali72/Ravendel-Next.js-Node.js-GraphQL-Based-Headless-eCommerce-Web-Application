@@ -10,11 +10,8 @@ const TaxSchema = new Schema({
     is_global: {
       type: Boolean
     },
-    name: {
-      type: String
-    },
-    percentage: {
-      type: Number
+    tax_class: {
+      type: Schema.ObjectId
     }
   },
   tax_class: [
@@ -24,6 +21,10 @@ const TaxSchema = new Schema({
       },
       percentage: {
         type: Number
+      },
+      system: {
+        type: Number,
+        default: 0
       }
     }
   ],
@@ -47,15 +48,21 @@ module.exports.createTax = async () => {
   var newTax = new Tax({
     is_inclusive: true,
     global: {
-      is_global: true,
-      name: "GST",
-      percentage: 10
+      is_global: true
     },
-    tax_class: []
+    tax_class: [
+      {
+        name: "Tax Free",
+        percentage: 0,
+        system: 1
+      }
+    ]
   });
 
-  newTax.save((err, tax) => {
+  newTax.save(async (err, defaultTax) => {
     if (err) throw err;
-    console.log(tax);
+    defaultTax.global.tax_class = defaultTax.tax_class[0]._id;
+    let result = await defaultTax.save();
+    console.log(result);
   });
 };

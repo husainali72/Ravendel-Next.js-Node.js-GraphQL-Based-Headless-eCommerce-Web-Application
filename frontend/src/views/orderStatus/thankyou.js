@@ -13,19 +13,12 @@ import {
   Divider,
   TableHead
 } from "@material-ui/core";
+import PageTitle from "../components/pageTitle";
 
 const Thankyou = props => {
   return (
     <Fragment>
-      <Box
-        component="div"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className="page-header"
-      >
-        <Typography variant="h1">Thankyou</Typography>
-      </Box>
+      <PageTitle title="Thankyou" />
       <Container className="margin-top-3 margin-bottom-3">
         <Grid container spacing={4}>
           <Grid item xs={12} className="text-center margin-bottom-3">

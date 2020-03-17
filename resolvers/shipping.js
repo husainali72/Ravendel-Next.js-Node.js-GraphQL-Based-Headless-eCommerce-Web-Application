@@ -1,4 +1,5 @@
 const Shipping = require("../models/Shipping");
+const Product = require("../models/Product");
 const {
   isEmpty,
   putError,
@@ -30,16 +31,25 @@ module.exports = {
       checkToken(id);
       try {
         // Check Validation
-        const errors = validate("updateGlobalShipping", args.global);
+        /* const errors = validate("updateGlobalShipping", args.global);
         if (!isEmpty(errors)) {
           throw putError(errors);
-        }
+        } */
 
         const shipping = await Shipping.findOne({});
         shipping.global = args.global;
         shipping.updated = Date.now();
-
         await shipping.save();
+
+        if (args.global.is_global && args.global.overwrite) {
+          await Product.updateMany(
+            {},
+            {
+              $set: { "shipping.shipping_class": args.global.shipping_class }
+            }
+          );
+        }
+
         return await Shipping.findOne({});
       } catch (error) {
         error = checkError(error);

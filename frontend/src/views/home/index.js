@@ -60,18 +60,21 @@ const products = [
 
 const blogs = [
   {
+    id: 1,
     featured_image:
       "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
     title: "Blog First",
     description: "Blog first lorem ipsom dolr sit"
   },
   {
+    id: 2,
     featured_image:
       "https://colorlib.com/preview/theme/essence/img/bg-img/bg-4.jpg",
     title: "Blog Second",
     description: "Blog second lorem ipsom dolr sit"
   },
   {
+    id: 3,
     featured_image:
       "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
     title: "Blog Third",

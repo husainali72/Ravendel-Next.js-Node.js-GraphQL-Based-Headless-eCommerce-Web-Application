@@ -11,6 +11,8 @@ import {
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import CartSide from "./cart";
+import Logo from "../assets/images/logo.png";
+import { Link } from "react-router-dom";
 
 const Header = props => {
   const [openMenu, setOpenMenu] = useState(false);
@@ -31,7 +33,13 @@ const Header = props => {
           <Box component="div" className="header-wrapper">
             <Grid container justify="space-between" alignItems="center">
               <Grid item className="logo">
-                Abc
+                <Link to="/">
+                  <img
+                    src={props.logo ? props.logo : Logo}
+                    alt="Logo"
+                    className="logo"
+                  />
+                </Link>
               </Grid>
               <Grid item className="menu">
                 <Hidden mdDown>

@@ -16,6 +16,7 @@ import Facebook from "../../assets/images/facebook.png";
 import Linkedin from "../../assets/images/linkedin.png";
 import Twitter from "../../assets/images/twitter.png";
 import Pinterest from "../../assets/images/pinterest.png";
+import PageTitle from "../components/pageTitle";
 
 const SingleBlog = props => {
   const [catName, setCatName] = useState("");
@@ -90,15 +91,7 @@ const SingleBlog = props => {
   };
   return (
     <Fragment>
-      <Box
-        component="div"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className="page-header"
-      >
-        <Typography variant="h1">Blog Name</Typography>
-      </Box>
+      <PageTitle title="Blog Name" />
       <Container>
         <Grid container spacing={4} className="margin-top-3 margin-bottom-3">
           <Grid item md={8} sm={12} xs={12}>

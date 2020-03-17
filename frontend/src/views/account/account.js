@@ -13,6 +13,7 @@ import Orders from "./components/orders";
 import Address from "./components/address";
 import RecentlyViewed from "./components/recently-viewed";
 import AccountSetting from "./components/account-setting";
+import PageTitle from "../components/pageTitle";
 
 const Account = props => {
   useEffect(() => {
@@ -30,15 +31,7 @@ const Account = props => {
 
   return (
     <Fragment>
-      <Box
-        component="div"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className="page-header"
-      >
-        <Typography variant="h1">Account</Typography>
-      </Box>
+      <PageTitle title="Account" />
       <Container>
         <Grid container className="margin-top-3 margin-bottom-3">
           <Grid item md={12} xs={12}>

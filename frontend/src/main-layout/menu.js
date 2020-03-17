@@ -31,6 +31,7 @@ const Navigation = props => {
   };
 
   const Logout = () => {
+    setLogoutConfrm(true);
     handleClose();
     props.drawerCloseFunc();
   };
@@ -44,7 +45,7 @@ const Navigation = props => {
         className="menu-item-wrapper"
       >
         <Box component="div" display="inline" m={2} className="menu-item">
-          <Link onClick={() => props.drawerCloseFunc()} to="/home">
+          <Link onClick={() => props.drawerCloseFunc()} to="/">
             Home
           </Link>
         </Box>

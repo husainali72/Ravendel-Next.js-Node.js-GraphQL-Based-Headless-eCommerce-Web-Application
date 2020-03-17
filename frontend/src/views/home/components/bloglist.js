@@ -10,6 +10,7 @@ import {
   Card,
   Container
 } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 const BlogListing = props => {
   return (
@@ -46,9 +47,11 @@ const BlogListing = props => {
                       </Typography>
                     </CardContent>
                     <CardActions>
-                      <Button size="small" color="primary">
-                        Learn More
-                      </Button>
+                      <Link to={`blog/${blog.id}`}>
+                        <Button size="small" color="primary">
+                          Learn More
+                        </Button>
+                      </Link>
                     </CardActions>
                   </Card>
                 </Grid>

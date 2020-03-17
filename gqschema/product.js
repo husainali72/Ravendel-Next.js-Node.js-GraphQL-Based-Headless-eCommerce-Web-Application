@@ -33,9 +33,10 @@ module.exports = gql`
     gallery_image: customObject
     meta: customObject
     shipping: customObject
-    tax: customObject
+    tax_class: String
     status: String
     featured_product: Boolean
+    product_type: customObject
     date: Date
     updated: Date
   }
@@ -72,9 +73,10 @@ module.exports = gql`
       feature_image: Upload
       gallery_image: Upload
       shipping: customObject
-      tax: customObject
+      tax_class: String
       status: String
       featured_product: Boolean
+      product_type: customObject
       meta: customObject
     ): [Product]
     updateProduct(
@@ -90,9 +92,10 @@ module.exports = gql`
       update_gallery_image: Upload
       removed_image: customArray
       shipping: customObject
-      tax: customObject
+      tax_class: String
       status: String
       featured_product: Boolean
+      product_type: customObject
       meta: customObject
     ): [Product]
     deleteProduct(id: ID!): [Product]

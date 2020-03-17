@@ -1,19 +1,12 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { Typography, Box, Container, Grid } from "@material-ui/core";
+import PageTitle from "../components/pageTitle";
 
 const NotFound = props => {
   return (
     <Fragment>
-      <Box
-        component="div"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className="page-header"
-      >
-        <Typography variant="h1">Not Found</Typography>
-      </Box>
+      <PageTitle title="Not Found" />
 
       <Container>
         <Grid container className="margin-top-3 margin-bottom-3 text-center">

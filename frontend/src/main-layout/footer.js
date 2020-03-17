@@ -17,7 +17,7 @@ const Footer = () => {
           <Container>
             <Grid container spacing={5}>
               <Grid item md={4} sm={12} xs={12}>
-                <Box textAlign="center">
+                <Box textAlign="left">
                   <Typography variant="h4" className="color-white">
                     Company Logo
                   </Typography>
@@ -79,7 +79,10 @@ const Footer = () => {
           className="footer-down"
         >
           <Typography variant="body1" className="copyright-text">
-            @ Copyright 2019
+            Copyright © 2020{" "}
+            <a href="https://www.hbwebsol.com/" target="_blank">
+              HB WEBSOL
+            </a>
           </Typography>
         </Box>
       </footer>

@@ -46,8 +46,6 @@ import _ from "lodash";
 
 var defaultObj = {
   name: "",
-  downloadable: false,
-  virtual: false,
   categoryId: [],
   pricing: {
     price: 0,
@@ -65,11 +63,12 @@ var defaultObj = {
     weight: 0,
     shipping_class: ""
   },
-  tax: {
-    taxable: true,
-    tax_class: ""
-  },
-  featured_product: false
+  tax_class: "",
+  featured_product: false,
+  product_type: {
+    virtual: false,
+    downloadable: false
+  }
 };
 
 const AddProduct = props => {
@@ -81,6 +80,7 @@ const AddProduct = props => {
   const [collapseCategory, setcollapseCategory] = useState({});
   const [product, setProduct] = useState(defaultObj);
   const [productCats, setproductCats] = useState([]);
+  const [customfield, setcustomfield] = useState([]);
 
   useEffect(() => {
     props.shippingAction();
@@ -113,7 +113,7 @@ const AddProduct = props => {
           ...product.shipping,
           shipping_class: props.shippingState.shipping.shipping_class[0]._id
         },
-        tax: { ...product.tax, tax_class: props.taxState.tax.tax_class[0]._id }
+        tax_class: props.taxState.tax.tax_class[0]._id
       });
     }
   }, [props.shippingState.shipping, props.taxState.tax]);
@@ -144,10 +144,6 @@ const AddProduct = props => {
       return;
     }
     setProduct({ ...product, [e.target.name]: e.target.value });
-  };
-
-  const handleChangeCheckbox = e => {
-    setProduct({ ...product, [e.target.name]: e.target.checked });
   };
 
   const fileChange = e => {
@@ -202,6 +198,25 @@ const AddProduct = props => {
     } else {
       return false;
     }
+  };
+
+  const addCustomField = () => {
+    setcustomfield([...customfield, { key: "", value: "" }]);
+  };
+
+  const removeCustomField = i => {
+    delete customfield[i];
+    setcustomfield([...customfield]);
+  };
+
+  const customChange = (e, i) => {
+    if (e.target.name === "key") {
+      customfield[i].key = e.target.value;
+    } else {
+      customfield[i].value = e.target.value;
+    }
+
+    setcustomfield([...customfield]);
   };
 
   const menuListing = categories => {
@@ -431,7 +446,7 @@ const AddProduct = props => {
                     <Grid item md={4}>
                       <TextField
                         id="sellprice"
-                        label="Sell Price"
+                        label="Sale Price"
                         name="sellprice"
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
@@ -463,10 +478,18 @@ const AddProduct = props => {
                         <FormControlLabel
                           control={
                             <Checkbox
-                              checked={product.virtual}
+                              checked={product.product_type.virtual}
                               name="virtual"
-                              onChange={handleChangeCheckbox}
-                              value={product.virtual}
+                              value="virtual"
+                              onChange={e =>
+                                setProduct({
+                                  ...product,
+                                  product_type: {
+                                    ...product.product_type,
+                                    virtual: e.target.checked
+                                  }
+                                })
+                              }
                             />
                           }
                           label="Virtual"
@@ -474,10 +497,18 @@ const AddProduct = props => {
                         <FormControlLabel
                           control={
                             <Checkbox
-                              checked={product.downloadable}
+                              checked={product.product_type.downloadable}
                               name="downloadable"
-                              onChange={handleChangeCheckbox}
-                              value={product.downloadable}
+                              value="downloadable"
+                              onChange={e =>
+                                setProduct({
+                                  ...product,
+                                  product_type: {
+                                    ...product.product_type,
+                                    downloadable: e.target.checked
+                                  }
+                                })
+                              }
                             />
                           }
                           label="Downloadable"
@@ -489,41 +520,53 @@ const AddProduct = props => {
               </Card>
             </Box>
 
-            <Box component="span" m={1}>
+            <Box
+              component="span"
+              m={1}
+              display={product.product_type.virtual ? "none" : "flex"}
+            >
               <Card>
                 <CardHeader title="Shipping" />
                 <Divider />
                 <CardContent>
                   <Grid container spacing={3}>
                     <Grid item md={12}>
-                      <FormControl className={classes.taxSelect}>
-                        <InputLabel id="Shipping-name">Shipping</InputLabel>
-                        <Select
-                          labelId="Shipping-name"
-                          id="Shipping-name"
-                          name="Shipping-name"
-                          value={product.shipping.shipping_class}
-                          onChange={e =>
-                            setProduct({
-                              ...product,
-                              shipping: {
-                                ...product.shipping,
-                                shipping_class: e.target.value
-                              }
-                            })
-                          }
-                        >
-                          {props.shippingState.shipping.shipping_class.map(
-                            (shipping, index) => {
-                              return (
-                                <MenuItem value={shipping._id} key={index}>
-                                  {shipping.name}
-                                </MenuItem>
-                              );
+                      {!props.shippingState.shipping.global.is_global ? (
+                        <FormControl className={classes.taxSelect}>
+                          <InputLabel id="Shipping-name">Shipping</InputLabel>
+                          <Select
+                            labelId="Shipping-name"
+                            id="Shipping-name"
+                            name="Shipping-name"
+                            value={product.shipping.shipping_class}
+                            onChange={e =>
+                              setProduct({
+                                ...product,
+                                shipping: {
+                                  ...product.shipping,
+                                  shipping_class: e.target.value
+                                }
+                              })
                             }
-                          )}
-                        </Select>
-                      </FormControl>
+                          >
+                            {props.shippingState.shipping.shipping_class.map(
+                              (shipping, index) => {
+                                return (
+                                  <MenuItem value={shipping._id} key={index}>
+                                    {shipping.name}
+                                  </MenuItem>
+                                );
+                              }
+                            )}
+                          </Select>
+                        </FormControl>
+                      ) : (
+                        <b>
+                          "The global shipping option is on currently. To
+                          configure the shipping for individual products, please
+                          turn off the global shipping option first."
+                        </b>
+                      )}
                     </Grid>
                     <Grid item md={3}>
                       <TextField
@@ -622,53 +665,37 @@ const AddProduct = props => {
                 <CardHeader title="Tax" />
                 <Divider />
                 <CardContent>
-                  <FormControl className={classes.taxSelect}>
-                    <InputLabel id="tax-status">Tax status</InputLabel>
-                    <Select
-                      labelId="tax-status"
-                      name="tax-status"
-                      value={product.tax.taxable}
-                      onChange={e =>
-                        setProduct({
-                          ...product,
-                          tax: {
-                            ...product.tax,
-                            taxable: e.target.value === "true"
-                          }
-                        })
-                      }
-                    >
-                      <MenuItem value="true">Taxable</MenuItem>
-                      <MenuItem value="false">None</MenuItem>
-                    </Select>
-                  </FormControl>
-
-                  <FormControl className={classes.taxSelect}>
-                    <InputLabel id="tax-name">Tax Class</InputLabel>
-                    <Select
-                      labelId="tax-name"
-                      id="tax-name"
-                      name="tax-name"
-                      value={product.tax.tax_class}
-                      onChange={e =>
-                        setProduct({
-                          ...product,
-                          tax: {
-                            ...product.tax,
+                  {!props.taxState.tax.global.is_global ? (
+                    <FormControl className={classes.taxSelect}>
+                      <InputLabel id="tax-name">Tax Class</InputLabel>
+                      <Select
+                        labelId="tax-name"
+                        id="tax-name"
+                        name="tax-name"
+                        value={product.tax_class}
+                        onChange={e =>
+                          setProduct({
+                            ...product,
                             tax_class: e.target.value
-                          }
-                        })
-                      }
-                    >
-                      {props.taxState.tax.tax_class.map(tax => {
-                        return (
-                          <MenuItem value={tax._id} key={tax._id}>
-                            {tax.name}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
+                          })
+                        }
+                      >
+                        {props.taxState.tax.tax_class.map(tax => {
+                          return (
+                            <MenuItem value={tax._id} key={tax._id}>
+                              {tax.name}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  ) : (
+                    <b>
+                      "The global tax option is on currently. To configure the
+                      tax for individual products, please turn off the global
+                      tax option first."
+                    </b>
+                  )}
                 </CardContent>
               </Card>
             </Box>
@@ -700,6 +727,68 @@ const AddProduct = props => {
                         className={clsx(classes.marginBottom, classes.width100)}
                         type="number"
                       />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Box>
+
+            <Box component="span" m={1}>
+              <Card>
+                <CardHeader title="Custom Fields" />
+                <Divider />
+                <CardContent>
+                  <Grid container spacing={3}>
+                    {customfield.map((field, index) => {
+                      return (
+                        <Grid container spacing={3} key={index}>
+                          <Grid item md={4}>
+                            <TextField
+                              label="Custom Field Name: *"
+                              variant="outlined"
+                              name="key"
+                              className={clsx(
+                                classes.marginBottom,
+                                classes.width100
+                              )}
+                              value={field.key}
+                              onChange={e => customChange(e, index)}
+                            />
+                          </Grid>
+
+                          <Grid item md={4}>
+                            <TextField
+                              label="Custom Field Value: *"
+                              variant="outlined"
+                              name="value"
+                              className={clsx(
+                                classes.marginBottom,
+                                classes.width100
+                              )}
+                              value={field.value}
+                              onChange={e => customChange(e, index)}
+                            />
+                          </Grid>
+                          <Grid item md={4}>
+                            <Button
+                              color="secondary"
+                              variant="contained"
+                              onClick={e => removeCustomField(index)}
+                            >
+                              -
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      );
+                    })}
+                    <Grid item md={4}>
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={addCustomField}
+                      >
+                        + Add Custom Fields
+                      </Button>
                     </Grid>
                   </Grid>
                 </CardContent>
@@ -805,8 +894,6 @@ const AddProduct = props => {
 
             <Box component="span" m={1}>
               <Card>
-                <CardHeader title="Featured Product" />
-                <Divider />
                 <CardContent>
                   <FormGroup row>
                     <FormControlLabel
@@ -821,7 +908,7 @@ const AddProduct = props => {
                           }
                         />
                       }
-                      label="Virtual"
+                      label="Featured Product"
                     />
                   </FormGroup>
                 </CardContent>

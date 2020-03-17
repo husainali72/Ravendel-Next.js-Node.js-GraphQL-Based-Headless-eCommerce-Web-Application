@@ -9,6 +9,9 @@ import PaymentFailed from "../views/orderStatus/failedpayment";
 import Thankyou from "../views/orderStatus/thankyou";
 import { Login, Register, ForgotPassword, Account } from "../views/account";
 import { AllBlogs, SingleBlog } from "../views/blog";
+import Pages from "../views/pages";
+import Brand from "../views/brand";
+import Tags from "../views/tags";
 
 const Routes = [
   { path: "/", exact: true, component: Home, name: "Home" },
@@ -45,7 +48,10 @@ const Routes = [
   { path: "/about", exact: true, component: About, name: "About" },
   { path: "/contact", exact: true, component: Contact, name: "Contact" },
   { path: "/blogs", exact: true, component: AllBlogs, name: "AllBlogs" },
-  { path: "/blog/:id", exact: true, component: SingleBlog, name: "SingleBlog" }
+  { path: "/blog/:id", exact: true, component: SingleBlog, name: "SingleBlog" },
+  { path: "/page/:name", exact: true, component: Pages, name: "Pages" },
+  { path: "/brand/:name", exact: true, component: Brand, name: "Brand" },
+  { path: "/tag/:name", exact: true, component: Tags, name: "Tags" }
 ];
 
 export default Routes;

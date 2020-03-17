@@ -1,4 +1,5 @@
 const Tax = require("../models/Tax");
+const Product = require("../models/Product");
 const {
   isEmpty,
   putError,
@@ -30,16 +31,25 @@ module.exports = {
       checkToken(id);
       try {
         // Check Validation
-        const errors = validate("updateGlobalTax", args.global);
+        /* const errors = validate("updateGlobalTax", args.global);
         if (!isEmpty(errors)) {
           throw putError(errors);
-        }
+        } */
 
         const tax = await Tax.findOne({});
         tax.global = args.global;
         tax.updated = Date.now();
-
         await tax.save();
+
+        if (args.global.is_global && args.global.overwrite) {
+          await Product.updateMany(
+            {},
+            {
+              $set: { tax_class: args.global.tax_class }
+            }
+          );
+        }
+
         return await Tax.findOne({});
       } catch (error) {
         error = checkError(error);

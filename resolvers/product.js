@@ -186,15 +186,15 @@ module.exports = {
     addProduct: async (root, args, { id }) => {
       checkToken(id);
       try {
+        const errors = validate("addProduct", args);
+        if (!isEmpty(errors)) {
+          throw putError(errors);
+        }
+
         const product = await Product.findOne({ name: args.name });
         if (product) {
           throw putError("Name already exist.");
         } else {
-          const errors = validate("addProduct", args);
-          if (!isEmpty(errors)) {
-            throw putError(errors);
-          }
-
           let imgObject = "";
           if (args.feature_image) {
             imgObject = await imageUpload(
@@ -246,7 +246,9 @@ module.exports = {
               weight: args.shipping.weight || 0,
               shipping_class: args.shipping.shipping_class
             },
-            tax: args.tax
+            tax_class: args.tax_class,
+            featured_product: args.featured_product,
+            product_type: args.product_type
           });
 
           await newProduct.save();
@@ -330,7 +332,9 @@ module.exports = {
           product.gallery_image = gallery_images;
           product.meta = args.meta;
           product.shipping = args.shipping;
-          product.tax = args.tax;
+          product.tax_class = args.tax_class;
+          product.featured_product = args.featured_product;
+          product.product_type = args.product_type;
           product.updated = Date.now();
           await product.save();
           const products = await Product.find({});
