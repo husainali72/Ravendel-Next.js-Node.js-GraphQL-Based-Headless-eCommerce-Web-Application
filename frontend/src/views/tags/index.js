@@ -59,7 +59,7 @@ const Tags = props => {
             {blogs &&
               blogs.map((blog, index) => (
                 <Grid item lg={6} md={6} sm={6} key={index}>
-                  <Card>
+                  <Card className="blog-card">
                     <Link to={`blog/${blog.id}`}>
                       <CardActionArea>
                         <CardMedia

@@ -635,8 +635,12 @@ section:nth-child(even) {
 .filter-checkbox-label {
   margin-left: 10px !important;
 }
-.blog-card:hover .MuiCardMedia-img {
-  transform: scale(1.1) !important;
+.blog-card {
+  transition: all 0.5s ease-in-out !important;
+}
+.blog-card:hover {
+  filter: drop-shadow(4px 5px 6px #eee);
+  transform: translateY(-10px);
 }
 /*=======Slider Navigation==========*/
 .slick-next,
