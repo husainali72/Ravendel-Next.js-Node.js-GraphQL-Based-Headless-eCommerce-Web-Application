@@ -8,7 +8,8 @@ import {
   CardContent,
   CardActions,
   Card,
-  Container
+  Container,
+  CardActionArea
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
@@ -27,25 +28,29 @@ const BlogListing = props => {
               props.recentlyBlogs.map((blog, index) => (
                 <Grid item lg={4} md={6} sm={6} key={index}>
                   <Card>
-                    <CardMedia
-                      component="img"
-                      alt="Contemplative Reptile"
-                      height="140"
-                      image={blog.featured_image}
-                      title="Contemplative Reptile"
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h4" component="h2">
-                        {blog.title}
-                      </Typography>
-                      <Typography
-                        variant="subtitle2"
-                        color="textSecondary"
-                        component="p"
-                      >
-                        {blog.description}
-                      </Typography>
-                    </CardContent>
+                    <Link to={`blog/${blog.id}`}>
+                      <CardActionArea>
+                        <CardMedia
+                          component="img"
+                          alt="Contemplative Reptile"
+                          height="140"
+                          image={blog.featured_image}
+                          title="Contemplative Reptile"
+                        />
+                        <CardContent>
+                          <Typography gutterBottom variant="h4" component="h2">
+                            {blog.title}
+                          </Typography>
+                          <Typography
+                            variant="subtitle2"
+                            color="textSecondary"
+                            component="p"
+                          >
+                            {blog.description}
+                          </Typography>
+                        </CardContent>
+                      </CardActionArea>
+                    </Link>
                     <CardActions>
                       <Link to={`blog/${blog.id}`}>
                         <Button size="small" color="primary">

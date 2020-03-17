@@ -48,29 +48,29 @@ const AllBlogs = props => {
           {blogs &&
             blogs.map((blog, index) => (
               <Grid item lg={6} md={6} sm={6} key={index}>
-                <Card>
-                <Link to={`blog/${blog.id}`}>
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      alt="Contemplative Reptile"
-                      height="175"
-                      image={blog.featured_image}
-                      title="Contemplative Reptile"
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h4" component="h2">
-                        {blog.title}
-                      </Typography>
-                      <Typography
-                        variant="subtitle2"
-                        color="textSecondary"
-                        component="p"
-                      >
-                        {blog.description}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
+                <Card className="blog-card">
+                  <Link to={`blog/${blog.id}`}>
+                    <CardActionArea>
+                      <CardMedia
+                        component="img"
+                        alt="Contemplative Reptile"
+                        height="175"
+                        image={blog.featured_image}
+                        title="Contemplative Reptile"
+                      />
+                      <CardContent>
+                        <Typography gutterBottom variant="h4" component="h2">
+                          {blog.title}
+                        </Typography>
+                        <Typography
+                          variant="subtitle2"
+                          color="textSecondary"
+                          component="p"
+                        >
+                          {blog.description}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
                   </Link>
                   <CardActions>
                     <Link to={`blog/${blog.id}`}>
