@@ -248,7 +248,8 @@ module.exports = {
             },
             tax_class: args.tax_class,
             featured_product: args.featured_product,
-            product_type: args.product_type
+            product_type: args.product_type,
+            custom_field: args.custom_field
           });
 
           await newProduct.save();
@@ -335,6 +336,7 @@ module.exports = {
           product.tax_class = args.tax_class;
           product.featured_product = args.featured_product;
           product.product_type = args.product_type;
+          product.custom_field = args.custom_field;
           product.updated = Date.now();
           await product.save();
           const products = await Product.find({});

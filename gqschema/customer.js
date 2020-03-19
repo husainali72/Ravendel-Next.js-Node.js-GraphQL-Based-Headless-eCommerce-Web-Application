@@ -66,6 +66,7 @@ module.exports = gql`
       country: String
       state: String
       pincode: String
+      default_address: Boolean
     ): [Customer]
     updateAddressBook(
       id: ID!
@@ -80,6 +81,7 @@ module.exports = gql`
       country: String
       state: String
       pincode: String
+      default_address: Boolean
     ): [Customer]
     deleteAddressBook(id: ID!, _id: ID!): [Customer]
   }

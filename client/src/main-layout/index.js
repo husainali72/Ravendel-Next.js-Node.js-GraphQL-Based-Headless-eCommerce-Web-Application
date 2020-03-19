@@ -7,7 +7,7 @@ import Routes from "../routes/routes";
 import Header from "./header";
 import SideBar from "./sidebar";
 import Footer from "./footer";
-
+import Alert from "../views/utils/Alert";
 const useStyles = makeStyles(theme => ({
   root: {
     paddingTop: 56,
@@ -61,19 +61,18 @@ const MainLayout = props => {
         variant={isDesktop ? "persistent" : "temporary"}
       />
       <main className={classes.content}>
+        <Alert />
         {children}
-        <Switch>
-          {Routes.map((route, index) => (
-            <Route
-              key={index}
-              exact={route.exact}
-              path={route.path}
-              name={route.name}
-              component={route.component}
-            />
-          ))}
-          <Redirect to="/dashboard" />
-        </Switch>
+        {Routes.map((route, index) => (
+          <Route
+            key={index}
+            exact={route.exact}
+            path={route.path}
+            name={route.name}
+            component={route.component}
+          />
+        ))}
+        {/* <Redirect to="/dashboard" /> */}
       </main>
       <Footer />
     </div>

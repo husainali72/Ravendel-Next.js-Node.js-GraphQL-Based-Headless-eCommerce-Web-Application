@@ -27,7 +27,7 @@ module.exports = function validate(method, args) {
         return (errors = "Name is required");
       }
 
-      if (!args.percentage || Validator.isEmpty(args.percentage)) {
+      if (isEmpty(args.percentage)) {
         return (errors = "Percentage is required");
       }
 
@@ -40,7 +40,7 @@ module.exports = function validate(method, args) {
         return (errors = "Name is required");
       }
 
-      if (!args.percentage || Validator.isEmpty(args.percentage)) {
+      if (isEmpty(args.percentage)) {
         return (errors = "Percentage is required");
       }
 

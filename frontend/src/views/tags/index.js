@@ -2,7 +2,6 @@ import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import {
   Container,
-  Box,
   Grid,
   Card,
   CardContent,
@@ -10,10 +9,13 @@ import {
   CardActions,
   Button,
   Typography,
-  CardActionArea
+  CardActionArea,
+  Hidden,
+  Divider
 } from "@material-ui/core";
 import PageTitle from "../components/pageTitle";
 import { Link } from "react-router-dom";
+import BlogSidebar from "../blog/blogSidebar";
 
 const Tags = props => {
   const [tagName, setTagName] = useState(props.match.params.name);
@@ -50,51 +52,59 @@ const Tags = props => {
     <Fragment>
       <PageTitle title={tagName} />
       <Container>
-        <Box
-          component="div"
-          display="flex"
-          className="margin-top-3 margin-bottom-3"
-        >
-          <Grid container spacing={4} className="margin-top-3 margin-bottom-3">
-            {blogs &&
-              blogs.map((blog, index) => (
-                <Grid item lg={6} md={6} sm={6} key={index}>
-                  <Card className="blog-card">
-                    <Link to={`blog/${blog.id}`}>
-                      <CardActionArea>
-                        <CardMedia
-                          component="img"
-                          alt="Contemplative Reptile"
-                          height="175"
-                          image={blog.featured_image}
-                          title="Contemplative Reptile"
-                        />
-                        <CardContent>
-                          <Typography gutterBottom variant="h4" component="h2">
-                            {blog.title}
-                          </Typography>
-                          <Typography
-                            variant="subtitle2"
-                            color="textSecondary"
-                            component="p"
-                          >
-                            {blog.description}
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Link>
-                    <CardActions>
-                      <Link to={`/blog/${blog.id}`}>
-                        <Button size="small" color="primary">
-                          Learn More
-                        </Button>
+        <Grid container spacing={4} className="margin-top-3 margin-bottom-3">
+          <Grid item md={9} sm={12} xs={12}>
+            <Grid container spacing={3}>
+              {blogs &&
+                blogs.map((blog, index) => (
+                  <Grid item lg={6} md={6} sm={6} key={index}>
+                    <Card className="blog-card">
+                      <Link to={`blog/${blog.id}`}>
+                        <CardActionArea>
+                          <CardMedia
+                            component="img"
+                            alt="Contemplative Reptile"
+                            height="175"
+                            image={blog.featured_image}
+                            title="Contemplative Reptile"
+                          />
+                          <CardContent>
+                            <Typography
+                              gutterBottom
+                              variant="h4"
+                              component="h2"
+                            >
+                              {blog.title}
+                            </Typography>
+                            <Typography
+                              variant="subtitle2"
+                              color="textSecondary"
+                              component="p"
+                            >
+                              {blog.description}
+                            </Typography>
+                          </CardContent>
+                        </CardActionArea>
                       </Link>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
+                      <CardActions>
+                        <Link to={`/blog/${blog.id}`}>
+                          <Button size="small" color="primary">
+                            Learn More
+                          </Button>
+                        </Link>
+                      </CardActions>
+                    </Card>
+                  </Grid>
+                ))}
+            </Grid>
           </Grid>
-        </Box>
+          <Hidden lgUp>
+            <Divider className="margin-top-2 margin-bottom-3" />
+          </Hidden>
+          <Grid item md={3} sm={12} xs={12}>
+            <BlogSidebar />
+          </Grid>
+        </Grid>
       </Container>
     </Fragment>
   );

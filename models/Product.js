@@ -98,6 +98,16 @@ const ProductSchema = new Schema({
       type: Boolean
     }
   },
+  custom_field: [
+    {
+      key: {
+        type: String
+      },
+      value: {
+        type: String
+      }
+    }
+  ],
   date: {
     type: Date,
     default: Date.now

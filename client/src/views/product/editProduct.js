@@ -21,22 +21,23 @@ import {
   FormControl,
   Select,
   MenuItem,
-  InputLabel
+  InputLabel,
+  Tooltip,
+  Icon
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import palette from "../../theme/palette";
 import TinymceEditor from "./TinymceEditor.js";
 import {
   categoriesAction,
   productUpdateAction,
   shippingAction,
-  taxAction
+  taxAction,
+  productsAction
 } from "../../store/action/";
-import Alert from "../utils/Alert";
+//import Alert from "../utils/Alert";
 import { unflatten } from "../../utils/helper";
 import clsx from "clsx";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -75,10 +76,12 @@ var defaultObj = {
   product_type: {
     virtual: false,
     downloadable: false
-  }
+  },
+  custom_field: []
 };
 
 var catIds = [];
+
 const EditProduct = props => {
   const classes = viewStyles();
   const [tax, setTax] = useState("Global");
@@ -91,11 +94,25 @@ const EditProduct = props => {
   const [catList, setCatList] = useState([]);
   const [product, setProduct] = useState(defaultObj);
 
+  const inputLabel = React.useRef(null);
+  const [labelWidth, setLabelWidth] = React.useState(0);
+  React.useEffect(() => {
+    if (inputLabel.current && inputLabel.current.offsetWidth) {
+      setLabelWidth(inputLabel.current.offsetWidth);
+    }
+  }, []);
+
   useEffect(() => {
-    props.categoriesAction();
+    if (isEmpty(props.products.products)) {
+      props.productsAction();
+    }
+
     for (let i in props.products.products) {
       if (props.products.products[i].id === props.match.params.id) {
         catIds = props.products.products[i].categoryId;
+        if (isEmpty(props.products.categories)) {
+          props.categoriesAction();
+        }
         setProduct({ ...product, ...props.products.products[i] });
         if (props.products.products[i].feature_image.original) {
           setfeatureImage(props.products.products[i].feature_image.original);
@@ -107,7 +124,7 @@ const EditProduct = props => {
         break;
       }
     }
-  }, []);
+  }, [props.products.products]);
 
   useEffect(() => {
     var selectedCat = _.cloneDeep(props.products.categories);
@@ -229,6 +246,7 @@ const EditProduct = props => {
               <FormControlLabel
                 control={
                   <Checkbox
+                    color="primary"
                     checked={cat.checked}
                     name="categoryIds"
                     onChange={e => handleCategeryCheckbox(cat)}
@@ -268,6 +286,7 @@ const EditProduct = props => {
               <FormControlLabel
                 control={
                   <Checkbox
+                    color="primary"
                     checked={cat.checked}
                     name="categoryIds"
                     onChange={e => handleCategeryCheckbox(cat)}
@@ -298,9 +317,9 @@ const EditProduct = props => {
     const classes = viewStyles();
     return (
       <Radio
+        color="primary"
         className={classes.radioRoot}
         disableRipple
-        color="default"
         checkedIcon={
           <span className={clsx(classes.radioIcon, classes.radiocheckedIcon)} />
         }
@@ -310,9 +329,37 @@ const EditProduct = props => {
     );
   };
 
+  const addCustomField = () => {
+    setProduct({
+      ...product,
+      custom_field: [...product.custom_field, { key: "", value: "" }]
+    });
+  };
+
+  const removeCustomField = i => {
+    product.custom_field.splice(i, 1);
+    setProduct({
+      ...product,
+      custom_field: [...product.custom_field]
+    });
+  };
+
+  const customChange = (e, i) => {
+    if (e.target.name === "key") {
+      product.custom_field[i].key = e.target.value;
+    } else {
+      product.custom_field[i].value = e.target.value;
+    }
+
+    setProduct({
+      ...product,
+      custom_field: [...product.custom_field]
+    });
+  };
+
   return (
     <Fragment>
-      <Alert />
+      {/* <Alert /> */}
       <form>
         <Grid container className="topbar">
           <Grid item lg={6}>
@@ -479,6 +526,7 @@ const EditProduct = props => {
                         <FormControlLabel
                           control={
                             <Checkbox
+                              color="primary"
                               checked={product.product_type.virtual}
                               name="virtual"
                               value="virtual"
@@ -498,6 +546,7 @@ const EditProduct = props => {
                         <FormControlLabel
                           control={
                             <Checkbox
+                              color="primary"
                               checked={product.product_type.downloadable}
                               name="downloadable"
                               value="downloadable"
@@ -521,148 +570,168 @@ const EditProduct = props => {
               </Card>
             </Box>
 
-            <Box
-              component="span"
-              m={1}
-              display={product.product_type.virtual ? "none" : "flex"}
-            >
-              <Card>
-                <CardHeader title="Shipping" />
-                <Divider />
-                <CardContent>
-                  <Grid container spacing={3}>
-                    <Grid item md={12}>
-                      {!props.shippingState.shipping.global.is_global ? (
-                        <FormControl className={classes.taxSelect}>
-                          <InputLabel id="Shipping-name">Shipping</InputLabel>
-                          <Select
-                            labelId="Shipping-name"
-                            id="Shipping-name"
-                            name="Shipping-name"
-                            value={product.shipping.shipping_class}
-                            onChange={e =>
-                              setProduct({
-                                ...product,
-                                shipping: {
-                                  ...product.shipping,
-                                  shipping_class: e.target.value
-                                }
-                              })
-                            }
+            {!product.product_type.virtual && (
+              <Box
+                component="span"
+                m={1}
+                // display={product.product_type.virtual ? "none" : "flex"}
+              >
+                <Card>
+                  <CardHeader title="Shipping" />
+                  <Divider />
+                  <CardContent>
+                    <Grid container spacing={3}>
+                      <Grid item md={12}>
+                        {!props.shippingState.shipping.global.is_global ? (
+                          <FormControl
+                            className={classes.cstmSelect}
+                            variant="outlined"
                           >
-                            {props.shippingState.shipping.shipping_class.map(
-                              shipping => {
-                                return (
-                                  <MenuItem
-                                    value={shipping._id}
-                                    key={shipping._id}
-                                  >
-                                    {shipping.name}
-                                  </MenuItem>
-                                );
+                            <InputLabel ref={inputLabel} id="Shipping-name">
+                              Shipping
+                            </InputLabel>
+                            <Select
+                              labelWidth={labelWidth}
+                              labelId="Shipping-name"
+                              id="Shipping-name"
+                              name="Shipping-name"
+                              value={product.shipping.shipping_class}
+                              onChange={e =>
+                                setProduct({
+                                  ...product,
+                                  shipping: {
+                                    ...product.shipping,
+                                    shipping_class: e.target.value
+                                  }
+                                })
                               }
-                            )}
-                          </Select>
-                        </FormControl>
-                      ) : (
-                        <b>
-                          "The global shipping option is on currently. To
-                          configure the shipping for individual products, please
-                          turn off the global shipping option first."
-                        </b>
-                      )}
-                    </Grid>
-                    <Grid item md={3}>
-                      <TextField
-                        id="height"
-                        label="Height"
-                        name="height"
-                        onChange={handleChange}
-                        variant="outlined"
-                        className={clsx(classes.marginBottom, classes.width100)}
-                        type="number"
-                        value={product.shipping.height}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            shipping: {
-                              ...product.shipping,
-                              height: e.target.value
-                            }
-                          })
-                        }
-                      />
-                    </Grid>
+                            >
+                              {props.shippingState.shipping.shipping_class.map(
+                                shipping => {
+                                  return (
+                                    <MenuItem
+                                      value={shipping._id}
+                                      key={shipping._id}
+                                    >
+                                      {shipping.name}
+                                    </MenuItem>
+                                  );
+                                }
+                              )}
+                            </Select>
+                          </FormControl>
+                        ) : (
+                          <em className={classes.noteline}>
+                            The global shipping option is on currently. To
+                            configure the shipping for individual products,
+                            please turn off the global shipping option first.
+                          </em>
+                        )}
+                      </Grid>
+                      <Grid item md={3}>
+                        <TextField
+                          id="height"
+                          label="Height"
+                          name="height"
+                          onChange={handleChange}
+                          variant="outlined"
+                          className={clsx(
+                            classes.marginBottom,
+                            classes.width100
+                          )}
+                          type="number"
+                          value={product.shipping.height}
+                          onChange={e =>
+                            setProduct({
+                              ...product,
+                              shipping: {
+                                ...product.shipping,
+                                height: e.target.value
+                              }
+                            })
+                          }
+                        />
+                      </Grid>
 
-                    <Grid item md={3}>
-                      <TextField
-                        id="width"
-                        label="Width"
-                        name="width"
-                        onChange={handleChange}
-                        variant="outlined"
-                        className={clsx(classes.marginBottom, classes.width100)}
-                        type="number"
-                        value={product.shipping.width}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            shipping: {
-                              ...product.shipping,
-                              width: e.target.value
-                            }
-                          })
-                        }
-                      />
-                    </Grid>
+                      <Grid item md={3}>
+                        <TextField
+                          id="width"
+                          label="Width"
+                          name="width"
+                          onChange={handleChange}
+                          variant="outlined"
+                          className={clsx(
+                            classes.marginBottom,
+                            classes.width100
+                          )}
+                          type="number"
+                          value={product.shipping.width}
+                          onChange={e =>
+                            setProduct({
+                              ...product,
+                              shipping: {
+                                ...product.shipping,
+                                width: e.target.value
+                              }
+                            })
+                          }
+                        />
+                      </Grid>
 
-                    <Grid item md={3}>
-                      <TextField
-                        id="depth"
-                        label="Depth"
-                        name="depth"
-                        onChange={handleChange}
-                        variant="outlined"
-                        className={clsx(classes.marginBottom, classes.width100)}
-                        type="number"
-                        value={product.shipping.depth}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            shipping: {
-                              ...product.shipping,
-                              depth: e.target.value
-                            }
-                          })
-                        }
-                      />
-                    </Grid>
+                      <Grid item md={3}>
+                        <TextField
+                          id="depth"
+                          label="Depth"
+                          name="depth"
+                          onChange={handleChange}
+                          variant="outlined"
+                          className={clsx(
+                            classes.marginBottom,
+                            classes.width100
+                          )}
+                          type="number"
+                          value={product.shipping.depth}
+                          onChange={e =>
+                            setProduct({
+                              ...product,
+                              shipping: {
+                                ...product.shipping,
+                                depth: e.target.value
+                              }
+                            })
+                          }
+                        />
+                      </Grid>
 
-                    <Grid item md={3}>
-                      <TextField
-                        id="weigth"
-                        label="Weigth"
-                        name="weigth"
-                        onChange={handleChange}
-                        variant="outlined"
-                        className={clsx(classes.marginBottom, classes.width100)}
-                        type="number"
-                        value={product.shipping.weight}
-                        onChange={e =>
-                          setProduct({
-                            ...product,
-                            shipping: {
-                              ...product.shipping,
-                              weight: e.target.value
-                            }
-                          })
-                        }
-                      />
+                      <Grid item md={3}>
+                        <TextField
+                          id="weigth"
+                          label="Weigth"
+                          name="weigth"
+                          onChange={handleChange}
+                          variant="outlined"
+                          className={clsx(
+                            classes.marginBottom,
+                            classes.width100
+                          )}
+                          type="number"
+                          value={product.shipping.weight}
+                          onChange={e =>
+                            setProduct({
+                              ...product,
+                              shipping: {
+                                ...product.shipping,
+                                weight: e.target.value
+                              }
+                            })
+                          }
+                        />
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Box>
+                  </CardContent>
+                </Card>
+              </Box>
+            )}
 
             <Box component="span">
               <Card>
@@ -670,9 +739,15 @@ const EditProduct = props => {
                 <Divider />
                 <CardContent>
                   {!props.taxState.tax.global.is_global ? (
-                    <FormControl className={classes.taxSelect}>
-                      <InputLabel id="tax-name">Tax Class</InputLabel>
+                    <FormControl
+                      className={classes.cstmSelect}
+                      variant="outlined"
+                    >
+                      <InputLabel ref={inputLabel} id="tax-name">
+                        Tax Class
+                      </InputLabel>
                       <Select
+                        labelWidth={labelWidth}
                         labelId="tax-name"
                         id="tax-name"
                         name="tax-name"
@@ -694,11 +769,11 @@ const EditProduct = props => {
                       </Select>
                     </FormControl>
                   ) : (
-                    <b>
-                      "The global tax option is on currently. To configure the
+                    <em className={classes.noteline}>
+                      The global tax option is on currently. To configure the
                       tax for individual products, please turn off the global
-                      tax option first."
-                    </b>
+                      tax option first.
+                    </em>
                   )}
                 </CardContent>
               </Card>
@@ -733,6 +808,69 @@ const EditProduct = props => {
                         type="number"
                         value={product.quantity}
                       />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Box>
+
+            <Box component="span" m={1}>
+              <Card>
+                <CardHeader title="Custom Fields" />
+                <Divider />
+                <CardContent>
+                  <Grid container spacing={3}>
+                    <Grid item md={12} sm={12} xs={12}>
+                      {product.custom_field.map((field, index) => (
+                        <Box
+                          key={index}
+                          display="flex"
+                          justifyContent="flex-start"
+                          alignItems="center"
+                          className={classes.customFieldRow}
+                        >
+                          <TextField
+                            label="Custom Field Name: *"
+                            variant="outlined"
+                            name="key"
+                            className={clsx(classes.customFieldInput)}
+                            value={field.key}
+                            onChange={e => customChange(e, index)}
+                            size="small"
+                          />
+                          <TextField
+                            label="Custom Field Value: *"
+                            variant="outlined"
+                            name="value"
+                            className={clsx(classes.customFieldInput)}
+                            value={field.value}
+                            onChange={e => customChange(e, index)}
+                            size="small"
+                          />
+                          <Tooltip
+                            title="Remove Field"
+                            aria-label="remove-field"
+                          >
+                            <IconButton
+                              aria-label="remove-field"
+                              onClick={e => removeCustomField(index)}
+                              size="small"
+                              className={classes.deleteicon}
+                            >
+                              <Icon>clear</Icon>
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      ))}
+                    </Grid>
+                    <Grid item md={4}>
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={addCustomField}
+                      >
+                        + Add Custom Fields
+                      </Button>
                     </Grid>
                   </Grid>
                 </CardContent>
@@ -846,6 +984,7 @@ const EditProduct = props => {
                     <FormControlLabel
                       control={
                         <Checkbox
+                          color="primary"
                           checked={product.featured_product}
                           onChange={e =>
                             setProduct({
@@ -977,7 +1116,8 @@ const mapDispatchToProps = {
   productUpdateAction,
   categoriesAction,
   shippingAction,
-  taxAction
+  taxAction,
+  productsAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProduct);

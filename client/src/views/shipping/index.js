@@ -30,7 +30,8 @@ import {
   FormGroup,
   Checkbox,
   Select,
-  MenuItem
+  MenuItem,
+  Paper
 } from "@material-ui/core";
 
 import Alert from "../utils/Alert";
@@ -96,7 +97,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Shipping = props => {
-  //const classes = useStyles();
   const classes = viewStyles();
   const [value, setValue] = useState(0);
   const [customShippingClass, setcustomShippingClass] = useState(
@@ -162,245 +162,303 @@ const Shipping = props => {
   return (
     <div className={classes.root}>
       <Alert />
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        aria-label="simple tabs example"
-      >
-        <Tab label="Global Shipping" {...a11yProps(0)} />
-        <Tab label="Custom Shipping" {...a11yProps(1)} />
-      </Tabs>
 
-      <TabPanel value={value} index={0}>
-        {props.shippingState.loading && <Loading />}
-        <FormGroup row>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={shippingGlobal.is_global}
-                onChange={e =>
-                  setshippingGlobal({
-                    ...shippingGlobal,
-                    is_global: e.target.checked
-                  })
-                }
-              />
-            }
-            label="Global Shipping"
-          />
+      <Grid container spacing={4} className={classes.mainrow}>
+        <Grid item md={12} sm={12} xs={12}>
+          <Card>
+            <CardHeader title="Shipping" />
+            <Divider />
+            <CardContent>
+              {/* ===================================Tab Navigation=================================== */}
+              <Paper square>
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="Shipping Tab"
+                  indicatorColor="primary"
+                  textColor="primary"
+                >
+                  <Tab label="Global Shipping" {...a11yProps(0)} />
+                  <Tab label="Custom Shipping" {...a11yProps(1)} />
+                </Tabs>
+              </Paper>
+              <Box className={classes.taxTabsWrapper}>
+                {/* ===================================Global Shipping=================================== */}
+                <TabPanel value={value} index={0}>
+                  {props.shippingState.loading && <Loading />}
 
-          <Select
-            labelId="Shipping-name"
-            id="Shipping-name"
-            name="Shipping-name"
-            value={shippingGlobal.shipping_class}
-            onChange={e =>
-              setshippingGlobal({
-                ...shippingGlobal,
-                shipping_class: e.target.value
-              })
-            }
-          >
-            {props.shippingState.shipping.shipping_class.map(
-              (shipping, index) => {
-                return (
-                  <MenuItem value={shipping._id} key={index}>
-                    {shipping.name}
-                  </MenuItem>
-                );
-              }
-            )}
-          </Select>
+                  <Grid container spacing={1} className={classes.marginBottom}>
+                    <Grid item md={6} sm={12} xs={12}>
+                      <Grid container spacing={1}>
+                        <Grid item>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                color="primary"
+                                checked={shippingGlobal.is_global}
+                                onChange={e =>
+                                  setshippingGlobal({
+                                    ...shippingGlobal,
+                                    is_global: e.target.checked
+                                  })
+                                }
+                              />
+                            }
+                            label="Global Shipping"
+                          />
+                        </Grid>
+                        <Grid item>
+                          <FormControl
+                            variant="outlined"
+                            size="small"
+                            style={{ minWidth: 300 }}
+                          >
+                            <Select
+                              labelId="Shipping-name"
+                              id="Shipping-name"
+                              name="Shipping-name"
+                              value={shippingGlobal.shipping_class}
+                              onChange={e =>
+                                setshippingGlobal({
+                                  ...shippingGlobal,
+                                  shipping_class: e.target.value
+                                })
+                              }
+                            >
+                              {props.shippingState.shipping.shipping_class.map(
+                                (shipping, index) => {
+                                  return (
+                                    <MenuItem value={shipping._id} key={index}>
+                                      {shipping.name}
+                                    </MenuItem>
+                                  );
+                                }
+                              )}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                      </Grid>
+                      <Grid item md={12} sm={12} xs={12}>
+                        <RadioGroup
+                          aria-label="taxOption"
+                          value={
+                            shippingGlobal.is_per_order
+                              ? "per_order"
+                              : "per_product"
+                          }
+                          onChange={e =>
+                            setshippingGlobal({
+                              ...shippingGlobal,
+                              is_per_order: e.target.value === "per_order"
+                            })
+                          }
+                        >
+                          <FormControlLabel
+                            value="per_order"
+                            control={<Radio color="primary" />}
+                            label="Per Order"
+                          />
+                          <FormControlLabel
+                            value="per_product"
+                            control={<Radio color="primary" />}
+                            label="Per Product"
+                          />
+                        </RadioGroup>
+                      </Grid>
 
-          <RadioGroup
-            aria-label="taxOption"
-            value={shippingGlobal.is_per_order ? "per_order" : "per_product"}
-            onChange={e =>
-              setshippingGlobal({
-                ...shippingGlobal,
-                is_per_order: e.target.value === "per_order"
-              })
-            }
-          >
-            <FormControlLabel
-              value="per_order"
-              control={<Radio />}
-              label="Per Order"
-            />
-            <FormControlLabel
-              value="per_product"
-              control={<Radio />}
-              label="Per Product"
-            />
-          </RadioGroup>
-          {shippingGlobal.is_global && (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={shippingGlobal.overwrite}
-                  onChange={e =>
-                    setshippingGlobal({
-                      ...shippingGlobal,
-                      overwrite: e.target.checked
-                    })
-                  }
-                />
-              }
-              label="Do you want to override the current shipping class selection in the existing products?"
-            />
-          )}
+                      {shippingGlobal.is_global && (
+                        <Grid item md={12} sm={12} xs={12}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                color="primary"
+                                checked={shippingGlobal.overwrite}
+                                onChange={e =>
+                                  setshippingGlobal({
+                                    ...shippingGlobal,
+                                    overwrite: e.target.checked
+                                  })
+                                }
+                              />
+                            }
+                            label="Do you want to override the current shipping class selection in the existing products?"
+                          />
+                        </Grid>
+                      )}
+                    </Grid>
+                  </Grid>
 
-          <Button
-            size="small"
-            color="primary"
-            onClick={saveGlobal}
-            variant="contained"
-          >
-            Save Changes
-          </Button>
-        </FormGroup>
-      </TabPanel>
-
-      <TabPanel value={value} index={1}>
-        <Grid container spacing={4} className={classes.mainrow}>
-          <Grid item lg={6}>
-            <Card>
-              {props.shippingState.loading && <Loading />}
-
-              <CardHeader title="All Shippings" />
-              <Divider />
-              <CardContent>
-                <TableContainer className={classes.container}>
-                  <Table
-                    stickyHeader
-                    aria-label="sticky table and Dense Table"
+                  <Button
                     size="small"
+                    color="primary"
+                    onClick={saveGlobal}
+                    variant="contained"
                   >
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Amount</TableCell>
-                        <TableCell>Actions</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {props.shippingState.shipping.shipping_class &&
-                        props.shippingState.shipping.shipping_class
-                          .slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage
-                          )
-                          .map(shipping => (
-                            <TableRow key={shipping._id} hover>
-                              <TableCell>{shipping.name}</TableCell>
-                              <TableCell>{shipping.amount}</TableCell>
-                              <TableCell>
-                                <Tooltip
-                                  title="Edit shipping"
-                                  aria-label="edit"
-                                >
-                                  <IconButton
-                                    aria-label="Edit"
-                                    onClick={() => editShipping(shipping)}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                </Tooltip>
-                                <Box
-                                  display={shipping.system ? "none" : "flex"}
-                                >
-                                  <Tooltip
-                                    title="Delete shipping"
-                                    aria-label="delete"
-                                  >
-                                    <IconButton
-                                      aria-label="Delete"
-                                      className={classes.deleteicon}
-                                      onClick={e =>
-                                        props.shippingClassDeleteAction({
-                                          _id: shipping._id
-                                        })
-                                      }
-                                    >
-                                      <DeleteIcon />
-                                    </IconButton>
-                                  </Tooltip>
-                                </Box>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 20]}
-                  component="div"
-                  count={props.shippingState.shipping.shipping_class.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onChangePage={handleChangePage}
-                  onChangeRowsPerPage={handleChangeRowsPerPage}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
+                    Save Changes
+                  </Button>
+                </TabPanel>
+                {/* ===================================Custom Shiping=================================== */}
+                <TabPanel value={value} index={1}>
+                  <Grid container spacing={2}>
+                    <Grid item lg={6}>
+                      <Card>
+                        {props.shippingState.loading && <Loading />}
 
-          <Grid item md={6}>
-            <Card>
-              <CardHeader title={`${editMode ? "Edit" : "Add"} Tax`} />
-              <Divider />
-              <CardContent>
-                <TextField
-                  type="text"
-                  label="Name"
-                  name="name"
-                  variant="outlined"
-                  onChange={e =>
-                    setcustomShippingClass({
-                      ...customShippingClass,
-                      name: e.target.value
-                    })
-                  }
-                  value={customShippingClass.name}
-                  className={clsx(classes.marginBottom, classes.width100)}
-                />
-                <TextField
-                  type="number"
-                  label="Amount"
-                  name="amount"
-                  variant="outlined"
-                  onChange={e =>
-                    setcustomShippingClass({
-                      ...customShippingClass,
-                      amount: e.target.value
-                    })
-                  }
-                  value={customShippingClass.amount}
-                  className={clsx(classes.marginBottom, classes.width100)}
-                />
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  color="primary"
-                  onClick={editMode ? updateCustomShipping : addCustomShipping}
-                  variant="contained"
-                >
-                  {editMode ? "Update" : "Add"}
-                </Button>
-                <Button
-                  size="small"
-                  onClick={cancelShipping}
-                  variant="contained"
-                  className={classes.cancelBtn}
-                >
-                  Cancel
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
+                        <CardHeader title="All Shippings" />
+                        <Divider />
+                        <CardContent>
+                          <TableContainer className={classes.container}>
+                            <Table
+                              stickyHeader
+                              aria-label="sticky table and Dense Table"
+                              size="small"
+                            >
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell>Name</TableCell>
+                                  <TableCell>Amount</TableCell>
+                                  <TableCell>Actions</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {props.shippingState.shipping.shipping_class &&
+                                  props.shippingState.shipping.shipping_class
+                                    .slice(
+                                      page * rowsPerPage,
+                                      page * rowsPerPage + rowsPerPage
+                                    )
+                                    .map(shipping => (
+                                      <TableRow key={shipping._id} hover>
+                                        <TableCell>{shipping.name}</TableCell>
+                                        <TableCell>{shipping.amount}</TableCell>
+                                        <TableCell>
+                                          <Tooltip
+                                            title="Edit shipping"
+                                            aria-label="edit"
+                                          >
+                                            <IconButton
+                                              aria-label="Edit"
+                                              onClick={() =>
+                                                editShipping(shipping)
+                                              }
+                                            >
+                                              <EditIcon />
+                                            </IconButton>
+                                          </Tooltip>
+                                          {!shipping.system && (
+                                            <Tooltip
+                                              title="Delete shipping"
+                                              aria-label="delete"
+                                            >
+                                              <IconButton
+                                                aria-label="Delete"
+                                                className={classes.deleteicon}
+                                                onClick={e =>
+                                                  props.shippingClassDeleteAction(
+                                                    {
+                                                      _id: shipping._id
+                                                    }
+                                                  )
+                                                }
+                                              >
+                                                <DeleteIcon />
+                                              </IconButton>
+                                            </Tooltip>
+                                          )}
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                          <TablePagination
+                            rowsPerPageOptions={[5, 10, 20]}
+                            component="div"
+                            count={
+                              props.shippingState.shipping.shipping_class.length
+                            }
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onChangePage={handleChangePage}
+                            onChangeRowsPerPage={handleChangeRowsPerPage}
+                          />
+                        </CardContent>
+                      </Card>
+                    </Grid>
+
+                    <Grid item md={6}>
+                      <Card>
+                        <CardHeader
+                          title={`${editMode ? "Edit" : "Add"} Tax`}
+                        />
+                        <Divider />
+                        <CardContent>
+                          <TextField
+                            type="text"
+                            label="Name"
+                            name="name"
+                            variant="outlined"
+                            onChange={e =>
+                              setcustomShippingClass({
+                                ...customShippingClass,
+                                name: e.target.value
+                              })
+                            }
+                            value={customShippingClass.name}
+                            className={clsx(
+                              classes.marginBottom,
+                              classes.width100
+                            )}
+                          />
+                          <TextField
+                            type="number"
+                            label="Amount"
+                            name="amount"
+                            variant="outlined"
+                            onChange={e =>
+                              setcustomShippingClass({
+                                ...customShippingClass,
+                                amount: e.target.value
+                              })
+                            }
+                            value={customShippingClass.amount}
+                            className={clsx(
+                              classes.marginBottom,
+                              classes.width100
+                            )}
+                          />
+                        </CardContent>
+                        <CardActions>
+                          <Button
+                            size="small"
+                            color="primary"
+                            onClick={
+                              editMode
+                                ? updateCustomShipping
+                                : addCustomShipping
+                            }
+                            variant="contained"
+                          >
+                            {editMode ? "Update" : "Add"}
+                          </Button>
+                          <Button
+                            size="small"
+                            onClick={cancelShipping}
+                            variant="contained"
+                            className={classes.cancelBtn}
+                          >
+                            Cancel
+                          </Button>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  </Grid>
+                </TabPanel>
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
-      </TabPanel>
+      </Grid>
     </div>
   );
 };

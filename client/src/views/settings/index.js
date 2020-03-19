@@ -12,10 +12,17 @@ import {
 } from "@material-ui/core";
 import viewStyles from "../viewStyles";
 import clsx from "clsx";
+import General from "./components/general";
+import Media from "./components/media";
+import SMTP from "./components/smtp";
+import SEO from "./components/seo";
+import Appearance from "./components/apperance";
+import Store from "./components/store";
+import Payment from "./components/payment";
 
 const Settings = () => {
   const classes = viewStyles();
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(5);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -39,7 +46,8 @@ const Settings = () => {
   const a11yProps = index => {
     return {
       id: `vertical-tab-${index} vertical-tabs-button`,
-      "aria-controls": `vertical-tabpanel-${index}`
+      "aria-controls": `vertical-tabpanel-${index}`,
+      className: "text-left-tab"
     };
   };
 
@@ -64,12 +72,12 @@ const Settings = () => {
                       indicatorColor="primary"
                     >
                       <Tab label="General" {...a11yProps(0)} />
-                      <Tab label="Store" {...a11yProps(1)} />
-                      <Tab label="Product" {...a11yProps(2)} />
+                      <Tab label="Media" {...a11yProps(1)} />
+                      <Tab label="SMTP" {...a11yProps(2)} />
                       <Tab label="SEO" {...a11yProps(3)} />
-                      <Tab label="Theme" {...a11yProps(4)} />
-                      <Tab label="Shipping" {...a11yProps(5)} />
-                      <Tab label="Tax" {...a11yProps(6)} />
+                      <Tab label="Store" {...a11yProps(4)} />
+                      <Tab label="Payment" {...a11yProps(5)} />
+                      <Tab label="Appearance" {...a11yProps(6)} />
                     </Tabs>
                   </Grid>
                   <Grid
@@ -78,28 +86,27 @@ const Settings = () => {
                   >
                     <Box component="div" className="setting-content">
                       <TabPanel value={value} index={0}>
-                        Item One
+                        <General />
                       </TabPanel>
                       <TabPanel value={value} index={1}>
-                        Item Two
+                        <Media />
                       </TabPanel>
                       <TabPanel value={value} index={2}>
-                        Item Three
+                        <SMTP />
                       </TabPanel>
                       <TabPanel value={value} index={3}>
-                        Item Four
+                        <SEO />
                       </TabPanel>
                       <TabPanel value={value} index={4}>
-                        Item Five
+                        <Store />
                       </TabPanel>
                       <TabPanel value={value} index={5}>
-                        Item Six
+                        <Payment />
                       </TabPanel>
                       <TabPanel value={value} index={6}>
-                        Item Seven
+                        <Appearance />
                       </TabPanel>
                     </Box>
-                    <Box component="div" className="setting-footer"></Box>
                   </Grid>
                 </Grid>
               </div>

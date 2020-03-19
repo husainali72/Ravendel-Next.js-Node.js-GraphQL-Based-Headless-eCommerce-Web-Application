@@ -1,4 +1,5 @@
 const Blog = require("../models/Blog");
+const BlogTag = require("../models/BlogTag");
 const {
   isEmpty,
   putError,
@@ -31,6 +32,14 @@ module.exports = {
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
+      }
+    },
+    blogtags: async (root, args) => {
+      try {
+        const blogtags = await BlogTag.find({});
+        return blogtags || [];
+      } catch (error) {
+        throw new Error("Something went wrong.");
       }
     }
   },
@@ -127,6 +136,74 @@ module.exports = {
           }
           const blogs = await Blog.find({});
           return blogs || [];
+        }
+        throw putError("Blog not exist");
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    addBlogTag: async (root, args, user) => {
+      checkToken(user.id);
+      try {
+        // Check Validation
+        const errors = validate("addBlogTag", args);
+        if (!isEmpty(errors)) {
+          throw putError(errors);
+        }
+
+        const blogtag = await BlogTag.findOne({ title: args.title });
+        if (blogtag) {
+          throw putError(
+            "A term with the name provided already exists in this taxonomy."
+          );
+        }
+
+        let url = stringTourl(args.url || args.name);
+
+        const newTag = new BlogTag({
+          name: args.name,
+          url: url
+        });
+
+        await newTag.save();
+        return await BlogTag.find({});
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    updateBlogTag: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        // Check Validation
+        const errors = validate("updateBlogTag", args);
+        if (!isEmpty(errors)) {
+          throw putError(errors);
+        }
+        const blogtag = await BlogTag.findById({ _id: args.id });
+        if (blogtag) {
+          blogtag.name = args.name;
+          let url = stringTourl(args.url || args.name);
+          blogtag.url = url;
+          blogtag.updated = Date.now();
+          await blogtag.save();
+          return await BlogTag.find({});
+        } else {
+          throw putError("Tag not exist");
+        }
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    deleteBlogTag: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        const blogtag = await BlogTag.findByIdAndRemove(args.id);
+        if (blogtag) {
+          const blogtags = await BlogTag.find({});
+          return blogtags || [];
         }
         throw putError("Blog not exist");
       } catch (error) {

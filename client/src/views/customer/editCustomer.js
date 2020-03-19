@@ -20,14 +20,17 @@ import {
   ListItemText,
   Box,
   ButtonGroup,
-  Tooltip
+  Tooltip,
+  FormControlLabel,
+  Checkbox
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import {
   customerUpdateAction,
   addressbookAddAction,
   addressbookUpdateAction,
-  addressbookDeleteAction
+  addressbookDeleteAction,
+  customersAction
 } from "../../store/action/";
 import Alert from "../utils/Alert";
 import Loading from "../utils/loading";
@@ -43,6 +46,8 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import BusinessIcon from "@material-ui/icons/Business";
 import PhoneIcon from "@material-ui/icons/Phone";
 import HomeIcon from "@material-ui/icons/Home";
+import Rating from "@material-ui/lab/Rating";
+import { isEmpty } from "../../utils/helper";
 
 var SingleCustomerObject = {
   id: "",
@@ -56,7 +61,8 @@ var SingleCustomerObject = {
   city: "",
   country: "",
   state: "",
-  pincode: ""
+  pincode: "",
+  default_address: false
 };
 
 const EditCustomer = props => {
@@ -83,13 +89,28 @@ const EditCustomer = props => {
       company: "",
       phone: ""
     });
-    props.customers.customers.map(editcustomer => {
+
+    if (isEmpty(props.customers.customers)) {
+      props.customersAction();
+    }
+
+    for (let i in props.customers.customers) {
+      if (props.customers.customers[i].id === props.match.params.id) {
+        SingleCustomerObject.id = props.customers.customers[i].id;
+        setSingleCustomer(SingleCustomerObject);
+        setcustomer({ ...customer, ...props.customers.customers[i] });
+        break;
+      }
+    }
+
+    /* props.customers.customers.map(editcustomer => {
       if (editcustomer.id === props.match.params.id) {
         SingleCustomerObject.id = editcustomer.id;
         setSingleCustomer(SingleCustomerObject);
         setcustomer({ ...customer, ...editcustomer });
       }
-    });
+    }); */
+
     setEditMode(false);
     /* if (props.customers.success) {
       setSingleCustomer(SingleCustomerObject);
@@ -316,6 +337,10 @@ const EditCustomer = props => {
                               variant="text"
                               aria-label="address-card-action"
                             >
+                              {/* <Tooltip title="Default" aria-label="Default"> */}
+
+                              {/* </Tooltip> */}
+
                               <Tooltip title="Edit Address" aria-label="edit">
                                 <Button onClick={() => editAddress(address)}>
                                   <EditIcon />
@@ -345,6 +370,12 @@ const EditCustomer = props => {
                                 primary={
                                   address.first_name + " " + address.last_name
                                 }
+                              />
+                              <Rating
+                                name="customized-10"
+                                value={address.default_address ? 1 : 0}
+                                max={1}
+                                readOnly
                               />
                             </ListItem>
                             <ListItem>
@@ -466,6 +497,23 @@ const EditCustomer = props => {
                       singleCustomer.pincode
                     )}
                   </Grid>
+                  <Grid item md={12}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          color="primary"
+                          checked={singleCustomer.default_address}
+                          onChange={e =>
+                            setSingleCustomer({
+                              ...singleCustomer,
+                              default_address: e.target.checked
+                            })
+                          }
+                        />
+                      }
+                      label="Default"
+                    />
+                  </Grid>
                 </Grid>
               </CardContent>
               <CardActions>
@@ -502,7 +550,8 @@ const mapDispatchToProps = {
   customerUpdateAction,
   addressbookAddAction,
   addressbookUpdateAction,
-  addressbookDeleteAction
+  addressbookDeleteAction,
+  customersAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditCustomer);

@@ -22,7 +22,7 @@ import { connect } from "react-redux";
 import { productsAction, productDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
-import Alert from "../utils/Alert";
+//import Alert from "../utils/Alert";
 import PeopleIcon from "@material-ui/icons/People";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -53,7 +53,7 @@ const AllProduct = props => {
 
   return (
     <Fragment>
-      <Alert />
+      {/* <Alert /> */}
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>

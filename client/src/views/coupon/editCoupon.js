@@ -55,6 +55,12 @@ const EditCoupon = props => {
   const [tabVal, setTabVal] = useState("general");
   const [coupon, setCoupon] = useState(stateObj);
 
+  const inputLabel = React.useRef(null);
+  const [labelWidth, setLabelWidth] = React.useState(0);
+  React.useEffect(() => {
+    setLabelWidth(inputLabel.current.offsetWidth);
+  }, []);
+
   useEffect(() => {
     props.categoriesAction();
     props.productsAction();
@@ -231,8 +237,11 @@ const EditCoupon = props => {
                     variant="outlined"
                     className={clsx(classes.marginBottom, classes.width100)}
                   >
-                    <InputLabel id="products-select">Discount Type</InputLabel>
+                    <InputLabel ref={inputLabel} id="products-select">
+                      Discount Type
+                    </InputLabel>
                     <Select
+                      labelWidth={labelWidth}
                       onChange={handleChange}
                       inputProps={{
                         name: "discount_type",
@@ -248,9 +257,38 @@ const EditCoupon = props => {
                     </Select>
                   </FormControl>
 
+                  <Grid container spacing={1}>
+                    <Grid item md={6} sm={12} xs={12}>
+                      <TextField
+                        type="number"
+                        id="coupon_amount"
+                        label="Coupon Amount"
+                        name="discount_value"
+                        value={coupon.discount_value}
+                        onChange={handleChange}
+                        variant="outlined"
+                        className={clsx(classes.width100)}
+                      />
+                    </Grid>
+                    <Grid item md={6} sm={12} xs={12}>
+                      <TextField
+                        id="coupon_expiry"
+                        helperText="Coupon Expiry"
+                        name="expire"
+                        value={coupon.expire}
+                        onChange={handleChange}
+                        variant="outlined"
+                        className={clsx(classes.width100, "top-helper")}
+                        type="date"
+                      />
+                    </Grid>
+                  </Grid>
+
                   <FormControlLabel
+                    className={clsx(classes.marginTop1, classes.width100)}
                     control={
                       <Checkbox
+                        color="primary"
                         checked={coupon.free_shipping}
                         onChange={e =>
                           setCoupon({
@@ -261,31 +299,6 @@ const EditCoupon = props => {
                       />
                     }
                     label="Free shipping"
-                  />
-
-                  <TextField
-                    type="number"
-                    id="coupon_amount"
-                    label="Coupon Amount"
-                    name="discount_value"
-                    value={coupon.discount_value}
-                    onChange={handleChange}
-                    variant="outlined"
-                    className={clsx(classes.marginBottom, classes.width100)}
-                  />
-                  <TextField
-                    id="coupon_expiry"
-                    helperText="Coupon Expiry"
-                    name="expire"
-                    value={coupon.expire}
-                    onChange={handleChange}
-                    variant="outlined"
-                    className={clsx(
-                      classes.marginBottom,
-                      classes.width100,
-                      "top-helper"
-                    )}
-                    type="date"
                   />
                 </TabPanel>
 

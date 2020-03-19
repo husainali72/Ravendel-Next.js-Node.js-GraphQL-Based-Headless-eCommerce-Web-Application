@@ -1,6 +1,6 @@
 import { login } from "../../utils/service";
 import cookie from "react-cookies";
-//import jumpTo, { go } from "../../utils/navigation";
+import jumpTo, { go } from "../../utils/navigation";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 export const LoginAction = (email, password) => dispatch => {
   dispatch({
@@ -8,10 +8,12 @@ export const LoginAction = (email, password) => dispatch => {
   });
   return login(email, password)
     .then(res => {
+      jumpTo("/");
       return dispatch({
         type: POST_TOKEN_SUCCESS,
         payload: res
       });
+
       //return res;
     })
     .catch(error => {

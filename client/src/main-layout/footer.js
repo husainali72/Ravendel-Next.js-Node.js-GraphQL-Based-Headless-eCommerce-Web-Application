@@ -15,8 +15,17 @@ const Footer = () => {
 
   return (
     <div className={classes.root}>
-      <Typography variant="body1">&copy; Ravendal . 2019</Typography>
-      <Typography variant="caption">Lorem Ipsum</Typography>
+      <Typography variant="body1">
+        &copy; Copyright - 2020{" "}
+        <a
+          href="https://www.hbwebsol.com/"
+          target="_blank"
+          style={{ color: "#000" }}
+        >
+          HB WEBSOL
+        </a>
+      </Typography>
+      <Typography variant="caption">All rights reserved</Typography>
     </div>
   );
 };

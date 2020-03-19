@@ -26,11 +26,10 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
-  FormLabel,
-  FormGroup,
   Checkbox,
   Select,
-  MenuItem
+  MenuItem,
+  Paper
 } from "@material-ui/core";
 
 import Alert from "../utils/Alert";
@@ -97,7 +96,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Tax = props => {
-  //const classes = useStyles();
   const classes = viewStyles();
   const [value, setValue] = useState(0);
   const [taxOption, settaxOption] = useState("");
@@ -163,246 +161,307 @@ const Tax = props => {
   return (
     <div className={classes.root}>
       <Alert />
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        aria-label="simple tabs example"
-      >
-        <Tab label="Tax Option" {...a11yProps(0)} />
-        <Tab label="Global Tax" {...a11yProps(1)} />
-        <Tab label="Custom Tax" {...a11yProps(2)} />
-      </Tabs>
 
-      <TabPanel value={value} index={0}>
-        {props.taxState.loading && <Loading />}
-        <FormControl component="fieldset" className={classes.formControl}>
-          <FormLabel component="legend">Prices entered with tax</FormLabel>
-          <RadioGroup
-            aria-label="taxOption"
-            value={taxOption}
-            onChange={e => settaxOption(e.target.value)}
-          >
-            <FormControlLabel
-              value="inclusive"
-              control={<Radio />}
-              label="Yes, I will enter prices inclusive of tax"
-            />
-            <FormControlLabel
-              value="exclusive"
-              control={<Radio />}
-              label="No, I will enter prices exclusive of tax"
-            />
-          </RadioGroup>
-        </FormControl>
-
-        <Button
-          size="small"
-          color="primary"
-          onClick={saveOption}
-          variant="contained"
-        >
-          Save Changes
-        </Button>
-      </TabPanel>
-
-      <TabPanel value={value} index={1}>
-        {props.taxState.loading && <Loading />}
-        <FormGroup row>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={taxGlobal.is_global}
-                onChange={e =>
-                  settaxGlobal({ ...taxGlobal, is_global: e.target.checked })
-                }
-              />
-            }
-            label="Global Tax"
-          />
-
-          <Select
-            name="Tax-name"
-            value={taxGlobal.tax_class}
-            onChange={e =>
-              settaxGlobal({
-                ...taxGlobal,
-                tax_class: e.target.value
-              })
-            }
-          >
-            {props.taxState.tax.tax_class.map((tax, index) => {
-              return (
-                <MenuItem value={tax._id} key={index}>
-                  {tax.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-
-          {taxGlobal.is_global && (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={taxGlobal.overwrite}
-                  onChange={e =>
-                    settaxGlobal({
-                      ...taxGlobal,
-                      overwrite: e.target.checked
-                    })
-                  }
-                />
-              }
-              label="Do you want to override the current tax class selection in the existing products?"
-            />
-          )}
-
-          <Button
-            size="small"
-            color="primary"
-            onClick={saveGlobal}
-            variant="contained"
-          >
-            Save Changes
-          </Button>
-        </FormGroup>
-      </TabPanel>
-
-      <TabPanel value={value} index={2}>
-        <Grid container spacing={4} className={classes.mainrow}>
-          <Grid item lg={6}>
-            <Card>
-              {props.taxState.loading && <Loading />}
-
-              <CardHeader title="All Taxs" />
-              <Divider />
-              <CardContent>
-                <TableContainer className={classes.container}>
-                  <Table
-                    stickyHeader
-                    aria-label="sticky table and Dense Table"
-                    size="small"
+      <Grid container spacing={4} className={classes.mainrow}>
+        <Grid item md={12}>
+          <Card>
+            <CardHeader title="Tax" />
+            <Divider />
+            <CardContent>
+              {/* ===================================Tab Navigation=================================== */}
+              <Paper square>
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="Tax tab"
+                  indicatorColor="primary"
+                  textColor="primary"
+                >
+                  <Tab label="Tax Option" {...a11yProps(0)} />
+                  <Tab label="Global Tax" {...a11yProps(1)} />
+                  <Tab label="Custom Tax" {...a11yProps(2)} />
+                </Tabs>
+              </Paper>
+              <Box className={classes.taxTabsWrapper}>
+                {/* ===================================Tax Option Tab=================================== */}
+                <TabPanel value={value} index={0}>
+                  {props.taxState.loading && <Loading />}
+                  <FormControl
+                    component="fieldset"
+                    className={classes.formControl}
                   >
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Amount</TableCell>
-                        <TableCell>Actions</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {props.taxState.tax.tax_class &&
-                        props.taxState.tax.tax_class
-                          .slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage
-                          )
-                          .map(tax => (
-                            <TableRow key={tax._id} hover>
-                              <TableCell>{tax.name}</TableCell>
-                              <TableCell>{tax.percentage}</TableCell>
-                              <TableCell>
-                                <Tooltip title="Edit tax" aria-label="edit">
-                                  <IconButton
-                                    aria-label="Edit"
-                                    onClick={() => editTax(tax)}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                </Tooltip>
+                    {/* <FormLabel component="legend">
+                      Prices entered with tax
+                    </FormLabel> */}
+                    <Typography variant="h5" style={{ marginBottom: 10 }}>
+                      Prices entered with tax
+                    </Typography>
+                    <RadioGroup
+                      aria-label="taxOption"
+                      value={taxOption}
+                      onChange={e => settaxOption(e.target.value)}
+                    >
+                      <FormControlLabel
+                        value="inclusive"
+                        control={<Radio color="primary" />}
+                        label="Yes, I will enter prices inclusive of tax"
+                      />
+                      <FormControlLabel
+                        value="exclusive"
+                        control={<Radio color="primary" />}
+                        label="No, I will enter prices exclusive of tax"
+                      />
+                    </RadioGroup>
+                  </FormControl>
 
-                                <Box display={tax.system ? "none" : "flex"}>
-                                  <Tooltip
-                                    title="Delete tax"
-                                    aria-label="delete"
-                                  >
-                                    <IconButton
-                                      aria-label="Delete"
-                                      className={classes.deleteicon}
-                                      onClick={e =>
-                                        props.taxClassDeleteAction({
-                                          _id: tax._id
-                                        })
-                                      }
-                                    >
-                                      <DeleteIcon />
-                                    </IconButton>
-                                  </Tooltip>
-                                </Box>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 20]}
-                  component="div"
-                  count={props.taxState.tax.tax_class.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onChangePage={handleChangePage}
-                  onChangeRowsPerPage={handleChangeRowsPerPage}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
+                  <Button
+                    size="small"
+                    color="primary"
+                    onClick={saveOption}
+                    variant="contained"
+                  >
+                    Save Changes
+                  </Button>
+                </TabPanel>
+                {/* ===================================Global Tax Tab=================================== */}
+                <TabPanel value={value} index={1}>
+                  {props.taxState.loading && <Loading />}
 
-          <Grid item md={6}>
-            <Card>
-              <CardHeader title={`${editMode ? "Edit" : "Add"} Tax`} />
-              <Divider />
-              <CardContent>
-                <TextField
-                  type="text"
-                  label="Name"
-                  name="name"
-                  variant="outlined"
-                  onChange={e =>
-                    setcustomTaxClass({
-                      ...customTaxClass,
-                      name: e.target.value
-                    })
-                  }
-                  value={customTaxClass.name}
-                  className={clsx(classes.marginBottom, classes.width100)}
-                />
-                <TextField
-                  type="number"
-                  label="Percentage"
-                  name="percentage"
-                  variant="outlined"
-                  onChange={e =>
-                    setcustomTaxClass({
-                      ...customTaxClass,
-                      percentage: e.target.value
-                    })
-                  }
-                  value={customTaxClass.percentage}
-                  className={clsx(classes.marginBottom, classes.width100)}
-                />
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  color="primary"
-                  onClick={editMode ? updateCustomTax : addCustomTax}
-                  variant="contained"
-                >
-                  {editMode ? "Update" : "Add"}
-                </Button>
-                <Button
-                  size="small"
-                  onClick={cancelTax}
-                  variant="contained"
-                  className={classes.cancelBtn}
-                >
-                  Cancel
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
+                  <Grid container spacing={2} className={classes.marginBottom}>
+                    <Grid item md={6} sm={12} xs={12}>
+                      <Grid container spacing={2}>
+                        <Grid item>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                color="primary"
+                                checked={taxGlobal.is_global}
+                                onChange={e =>
+                                  settaxGlobal({
+                                    ...taxGlobal,
+                                    is_global: e.target.checked
+                                  })
+                                }
+                              />
+                            }
+                            label="Global Tax"
+                          />
+                        </Grid>
+
+                        <Grid item>
+                          <FormControl
+                            variant="outlined"
+                            size="small"
+                            style={{ minWidth: 300 }}
+                          >
+                            <Select
+                              name="Tax-name"
+                              value={taxGlobal.tax_class}
+                              onChange={e =>
+                                settaxGlobal({
+                                  ...taxGlobal,
+                                  tax_class: e.target.value
+                                })
+                              }
+                            >
+                              {props.taxState.tax.tax_class.map(
+                                (tax, index) => {
+                                  return (
+                                    <MenuItem value={tax._id} key={index}>
+                                      {tax.name}
+                                    </MenuItem>
+                                  );
+                                }
+                              )}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+
+                        {taxGlobal.is_global && (
+                          <Grid item md={12} sm={12} xs={12}>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  color="primary"
+                                  checked={taxGlobal.overwrite}
+                                  onChange={e =>
+                                    settaxGlobal({
+                                      ...taxGlobal,
+                                      overwrite: e.target.checked
+                                    })
+                                  }
+                                />
+                              }
+                              label="Do you want to override the current tax class selection in the existing products?"
+                            />
+                          </Grid>
+                        )}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+
+                  <Button
+                    size="small"
+                    color="primary"
+                    onClick={saveGlobal}
+                    variant="contained"
+                  >
+                    Save Changes
+                  </Button>
+                </TabPanel>
+                {/* ===================================Custom Tax Tab=================================== */}
+                <TabPanel value={value} index={2}>
+                  <Grid container spacing={2}>
+                    <Grid item lg={6}>
+                      <Card>
+                        {props.taxState.loading && <Loading />}
+
+                        <CardHeader title="All Taxes" />
+                        <Divider />
+                        <CardContent>
+                          <TableContainer className={classes.container}>
+                            <Table
+                              stickyHeader
+                              aria-label="sticky table and Dense Table"
+                              size="small"
+                            >
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell>Name</TableCell>
+                                  <TableCell>Amount</TableCell>
+                                  <TableCell>Actions</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {props.taxState.tax.tax_class &&
+                                  props.taxState.tax.tax_class
+                                    .slice(
+                                      page * rowsPerPage,
+                                      page * rowsPerPage + rowsPerPage
+                                    )
+                                    .map(tax => (
+                                      <TableRow key={tax._id} hover>
+                                        <TableCell>{tax.name}</TableCell>
+                                        <TableCell>{tax.percentage}</TableCell>
+                                        <TableCell>
+                                          <Tooltip
+                                            title="Edit tax"
+                                            aria-label="edit"
+                                          >
+                                            <IconButton
+                                              aria-label="Edit"
+                                              onClick={() => editTax(tax)}
+                                            >
+                                              <EditIcon />
+                                            </IconButton>
+                                          </Tooltip>
+
+                                          {!tax.system && (
+                                            <Tooltip
+                                              title="Delete tax"
+                                              aria-label="delete"
+                                            >
+                                              <IconButton
+                                                aria-label="Delete"
+                                                className={classes.deleteicon}
+                                                onClick={e =>
+                                                  props.taxClassDeleteAction({
+                                                    _id: tax._id
+                                                  })
+                                                }
+                                              >
+                                                <DeleteIcon />
+                                              </IconButton>
+                                            </Tooltip>
+                                          )}
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                          <TablePagination
+                            rowsPerPageOptions={[5, 10, 20]}
+                            component="div"
+                            count={props.taxState.tax.tax_class.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onChangePage={handleChangePage}
+                            onChangeRowsPerPage={handleChangeRowsPerPage}
+                          />
+                        </CardContent>
+                      </Card>
+                    </Grid>
+
+                    <Grid item md={6}>
+                      <Card>
+                        <CardHeader
+                          title={`${editMode ? "Edit" : "Add"} Tax`}
+                        />
+                        <Divider />
+                        <CardContent>
+                          <TextField
+                            type="text"
+                            label="Name"
+                            name="name"
+                            variant="outlined"
+                            onChange={e =>
+                              setcustomTaxClass({
+                                ...customTaxClass,
+                                name: e.target.value
+                              })
+                            }
+                            value={customTaxClass.name}
+                            className={clsx(
+                              classes.marginBottom,
+                              classes.width100
+                            )}
+                          />
+                          <TextField
+                            type="number"
+                            label="Percentage"
+                            name="percentage"
+                            variant="outlined"
+                            onChange={e =>
+                              setcustomTaxClass({
+                                ...customTaxClass,
+                                percentage: e.target.value
+                              })
+                            }
+                            value={customTaxClass.percentage}
+                            className={clsx(
+                              classes.marginBottom,
+                              classes.width100
+                            )}
+                          />
+                        </CardContent>
+                        <CardActions>
+                          <Button
+                            size="small"
+                            color="primary"
+                            onClick={editMode ? updateCustomTax : addCustomTax}
+                            variant="contained"
+                          >
+                            {editMode ? "Update" : "Add"}
+                          </Button>
+                          <Button
+                            size="small"
+                            onClick={cancelTax}
+                            variant="contained"
+                            className={classes.cancelBtn}
+                          >
+                            Cancel
+                          </Button>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  </Grid>
+                </TabPanel>
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
-      </TabPanel>
+      </Grid>
     </div>
   );
 };

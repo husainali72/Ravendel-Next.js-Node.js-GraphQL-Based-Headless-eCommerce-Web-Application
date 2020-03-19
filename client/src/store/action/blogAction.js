@@ -2,7 +2,11 @@ import {
   GET_BLOGS,
   ADD_BLOG,
   UPDATE_BLOG,
-  DELETE_BLOG
+  DELETE_BLOG,
+  GET_BLOGTAGS,
+  ADD_BLOGTAG,
+  UPDATE_BLOGTAG,
+  DELETE_BLOGTAG
 } from "../../queries/blogQuery";
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
@@ -18,7 +22,7 @@ export const blogsAction = () => dispatch => {
       if (response) {
         return dispatch({
           type: BLOGS_SUCCESS,
-          payload: response.data.blogs,
+          payload: response.data.blogs
         });
       }
     })
@@ -52,7 +56,11 @@ export const blogAddAction = object => dispatch => {
 
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Blog added successfully", error: false }
+          payload: {
+            boolean: true,
+            message: "Blog added successfully",
+            error: false
+          }
         });
       }
     })
@@ -134,7 +142,11 @@ export const blogDeleteAction = id => dispatch => {
         });
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: "Blog deleted successfully", error: false }
+          payload: {
+            boolean: true,
+            message: "Blog deleted successfully",
+            error: false
+          }
         });
       }
     })
@@ -149,9 +161,39 @@ export const blogDeleteAction = id => dispatch => {
     });
 };
 
+/*----------------------------------------------TAGS---------------------------------------------------------------------*/
+
+export const blogtagsAction = () => dispatch => {
+  dispatch({
+    type: BLOGTAG_LOADING
+  });
+  query(GET_BLOGTAGS)
+    .then(response => {
+      if (response) {
+        return dispatch({
+          type: BLOGTAGS_SUCCESS,
+          payload: response.data.blogtags
+        });
+      }
+    })
+    .catch(error => {
+      dispatch({
+        type: BLOGTAG_FAIL
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error, error: true }
+      });
+    });
+};
+
 export const BLOG_LOADING = "BLOG_LOADING";
 export const BLOGS_SUCCESS = "BLOGS_SUCCESS";
 export const BLOG_SUCCESS = "BLOG_SUCCESS";
 export const BLOG_FAIL = "BLOG_FAIL";
 export const TINYMCE_SUCCESS = "TINYMCE_SUCCESS";
 export const TINYMCE_NULL = "TINYMCE_NULL";
+
+export const BLOGTAG_LOADING = "BLOGTAG_LOADING";
+export const BLOGTAGS_SUCCESS = "BLOGTAGS_SUCCESS";
+export const BLOGTAG_FAIL = "BLOGTAG_FAIL";

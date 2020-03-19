@@ -74,6 +74,7 @@ const ADD_ADDRESSBOOK = gql`
     $country: String
     $state: String
     $pincode: String
+    $default_address: Boolean
   ) {
     addAddressBook(
       id: $id
@@ -87,6 +88,7 @@ const ADD_ADDRESSBOOK = gql`
       country: $country
       state: $state
       pincode: $pincode
+      default_address: $default_address
     ) {
       id
       first_name
@@ -147,6 +149,7 @@ const UPDATE_ADDRESSBOOK = gql`
     $country: String
     $state: String
     $pincode: String
+    $default_address: Boolean
   ) {
     updateAddressBook(
       id: $id
@@ -161,6 +164,7 @@ const UPDATE_ADDRESSBOOK = gql`
       country: $country
       state: $state
       pincode: $pincode
+      default_address: $default_address
     ) {
       id
       first_name

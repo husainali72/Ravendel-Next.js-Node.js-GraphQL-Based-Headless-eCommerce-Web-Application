@@ -78,6 +78,7 @@ const GET_PRODUCTS = gql`
       shipping
       tax_class
       meta
+      custom_field
       date
       updated
     }
@@ -101,6 +102,7 @@ const ADD_PRODUCT = gql`
     $shipping: customObject
     $tax_class: String
     $meta: customObject
+    $custom_field: [customObject]
   ) {
     addProduct(
       name: $name
@@ -118,6 +120,7 @@ const ADD_PRODUCT = gql`
       shipping: $shipping
       tax_class: $tax_class
       meta: $meta
+      custom_field: $custom_field
     ) {
       id
       name
@@ -135,6 +138,7 @@ const ADD_PRODUCT = gql`
       shipping
       tax_class
       meta
+      custom_field
       date
       updated
     }
@@ -160,6 +164,7 @@ const UPDATE_PRODUCT = gql`
     $shipping: customObject
     $tax_class: String
     $meta: customObject
+    $custom_field: [customObject]
   ) {
     updateProduct(
       id: $id
@@ -179,6 +184,7 @@ const UPDATE_PRODUCT = gql`
       shipping: $shipping
       tax_class: $tax_class
       meta: $meta
+      custom_field: $custom_field
     ) {
       id
       name
@@ -196,6 +202,7 @@ const UPDATE_PRODUCT = gql`
       shipping
       tax_class
       meta
+      custom_field
       date
       updated
     }
@@ -221,6 +228,7 @@ const DELETE_PRODUCT = gql`
       shipping
       tax_class
       meta
+      custom_field
       date
       updated
     }

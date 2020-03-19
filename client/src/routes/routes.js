@@ -1,6 +1,6 @@
 import Dashboard from "../views/dashboard";
 import { AllUsers, AddUser, EditUser } from "../views/users";
-import { AddBlog, AllBlog, EditBlog } from "../views/blog";
+import { AddBlog, AllBlog, EditBlog, AllTags } from "../views/blog";
 import {
   AddProduct,
   AllProduct,
@@ -16,8 +16,13 @@ import { AllCoupons, AddCoupon, EditCoupon } from "../views/coupon";
 import AllTaxes from "../views/tax";
 import AllShippings from "../views/shipping";
 import NotFound from "../views/notFound";
+import { AllReviews, EditReview } from "../views/reviews";
 
 const Routes = [
+  // {
+  //   path: "*",
+  //   component: NotFound
+  // },
   { path: "/", exact: true, component: Dashboard, name: "Home" },
   { path: "/dashboard", exact: true, component: Dashboard, name: "Home" },
   { path: "/user", exact: true, component: AllUsers, name: "Users" },
@@ -37,6 +42,7 @@ const Routes = [
     name: "Edit Blog",
     component: EditBlog
   },
+  { path: "/tags", exact: true, name: "All Tags", component: AllTags },
   { path: "/products", exact: true, component: Dashboard, name: "Products" },
   { path: "/other", exact: true, component: Dashboard, name: "Other" },
   {
@@ -156,8 +162,16 @@ const Routes = [
     name: "Shipping"
   },
   {
-    path: "*",
-    component: NotFound
+    path: "/reviews",
+    exact: true,
+    component: AllReviews,
+    name: "All Reviews"
+  },
+  {
+    path: "/edit-review/:id",
+    exact: true,
+    component: EditReview,
+    name: "Edit Review"
   }
 ];
 

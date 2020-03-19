@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import {
   Typography,
@@ -7,94 +7,22 @@ import {
   Grid,
   Hidden,
   Divider,
-  Icon,
-  ListItem,
-  List,
-  Collapse
+  Icon
 } from "@material-ui/core";
 import Facebook from "../../assets/images/facebook.png";
 import Linkedin from "../../assets/images/linkedin.png";
 import Twitter from "../../assets/images/twitter.png";
 import Pinterest from "../../assets/images/pinterest.png";
 import PageTitle from "../components/pageTitle";
+import BlogSidebar from "./blogSidebar";
 
 const SingleBlog = props => {
-  const [catName, setCatName] = useState("");
-
-  var categories = {
-    category: [
-      {
-        name: "Catergory First"
-      },
-      {
-        name: "Category Second"
-      },
-      {
-        name: "Catergory Third",
-        children: [
-          {
-            name: "category 1"
-          },
-          {
-            name: "category 2"
-          },
-          {
-            name: "category 3"
-          }
-        ]
-      }
-    ]
-  };
-
-  const handleClick = name => {
-    if (name === catName) {
-      setCatName("");
-    } else {
-      setCatName(name);
-    }
-  };
-
-  const categoryListing = categories => {
-    return categories.map(cat => {
-      if (!cat.children) {
-        return (
-          <ListItem disableGutters key={cat.name}>
-            <Typography variant="button" className="category-fillter">
-              {cat.name}
-            </Typography>
-          </ListItem>
-        );
-      }
-      return (
-        <div key={cat.name}>
-          <ListItem disableGutters onClick={() => handleClick(cat.name)}>
-            <Typography variant="button" className="category-fillter">
-              {cat.name}
-            </Typography>
-            {catName === cat.name ? (
-              <Icon>keyboard_arrow_up</Icon>
-            ) : (
-              <Icon>keyboard_arrow_down</Icon>
-            )}
-          </ListItem>
-          <Collapse
-            in={catName === cat.name ? true : false}
-            timeout="auto"
-            unmountOnExit
-            className="subcategory-collapse"
-          >
-            {categoryListing(cat.children)}
-          </Collapse>
-        </div>
-      );
-    });
-  };
   return (
     <Fragment>
       <PageTitle title="Blog Name" />
       <Container>
         <Grid container spacing={4} className="margin-top-3 margin-bottom-3">
-          <Grid item md={8} sm={12} xs={12}>
+          <Grid item md={9} sm={12} xs={12}>
             <img
               src="https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg"
               alt="Blog-Featured"
@@ -162,15 +90,8 @@ const SingleBlog = props => {
           <Hidden lgUp>
             <Divider className="margin-top-2 margin-bottom-3" />
           </Hidden>
-          <Grid item md={4} sm={12} xs={12}>
-            <Box component="div" className="filter-wrapper">
-              <Typography variant="h3" className="fillter-header">
-                Blog Categories
-              </Typography>
-              <List component="nav" dense>
-                {categoryListing(categories.category)}
-              </List>
-            </Box>
+          <Grid item md={3} sm={12} xs={12}>
+            <BlogSidebar />
           </Grid>
         </Grid>
       </Container>

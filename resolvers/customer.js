@@ -129,6 +129,14 @@ module.exports = {
           throw putError("Something went wrong.");
         }
 
+        if (args.default_address) {
+          for (let i in customer.address_book) {
+            if (customer.address_book[i].default_address) {
+              customer.address_book[i].default_address = false;
+            }
+          }
+        }
+
         delete args.id;
         customer.address_book.push(args);
         customer.updated = Date.now();
@@ -154,9 +162,13 @@ module.exports = {
         if (!customer) {
           throw putError("Something went wrong.");
         }
-
+        console.log("here comes", args.default_address);
         delete args.id;
         customer.address_book = customer.address_book.map(address => {
+          if (args.default_address) {
+            address.default_address = false;
+          }
+
           if (address._id == args._id) {
             address = args;
           }

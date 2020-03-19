@@ -37,6 +37,7 @@ module.exports = gql`
     status: String
     featured_product: Boolean
     product_type: customObject
+    custom_field: [customObject]
     date: Date
     updated: Date
   }
@@ -78,6 +79,7 @@ module.exports = gql`
       featured_product: Boolean
       product_type: customObject
       meta: customObject
+      custom_field: [customObject]
     ): [Product]
     updateProduct(
       id: ID
@@ -97,6 +99,7 @@ module.exports = gql`
       featured_product: Boolean
       product_type: customObject
       meta: customObject
+      custom_field: [customObject]
     ): [Product]
     deleteProduct(id: ID!): [Product]
   }

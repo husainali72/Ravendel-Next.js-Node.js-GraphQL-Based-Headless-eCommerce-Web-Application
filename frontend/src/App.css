@@ -640,7 +640,7 @@ section:nth-child(even) {
 }
 .blog-card:hover {
   filter: drop-shadow(4px 5px 6px #eee);
-  transform: translateY(-10px);
+  transform: translateY(-7px);
 }
 /*=======Slider Navigation==========*/
 .slick-next,

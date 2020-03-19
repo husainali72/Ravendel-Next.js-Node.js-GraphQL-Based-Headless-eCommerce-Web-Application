@@ -6,7 +6,7 @@ import TotalUsers from "./components/totalUsers";
 import TotalProducts from "./components/totalProducts";
 import LatestProducts from "./components/latestProduct";
 import TotalCustomers from "./components/totalCustomer";
-import TotalProfit from "./components/totalProfit";
+import TotalSales from "./components/totalSales";
 import {
   usersAction,
   productsAction,
@@ -62,7 +62,7 @@ const Dashboard = props => {
           <TotalCustomers customerlength={props.customers.customers.length} />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-          <TotalProfit />
+          <TotalSales />
         </Grid>
         <Grid item lg={4} md={6} xl={3} xs={12}>
           <LatestProducts products={props.products.products} />

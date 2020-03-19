@@ -57,6 +57,9 @@ const CustomerSchema = new Schema({
       },
       pincode: {
         type: String
+      },
+      default_address: {
+        type: Boolean
       }
     }
   ],

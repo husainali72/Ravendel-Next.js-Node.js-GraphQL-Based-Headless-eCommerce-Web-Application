@@ -3,6 +3,9 @@ import { makeStyles } from "@material-ui/styles";
 import { deepPurple } from "@material-ui/core/colors";
 
 const viewStyles = makeStyles(theme => ({
+  marginTop1: {
+    marginTop: 10
+  },
   mainrow: {
     padding: theme.spacing(4)
   },
@@ -163,7 +166,7 @@ const viewStyles = makeStyles(theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
     display: "flex",
-    height: 500,
+    height: 600,
     "&: .MuiTabs-flexContainerVertical": {
       "&: .MuiButtonBase-root.Mui-selected": {
         backgroundColor: "#000"
@@ -171,7 +174,7 @@ const viewStyles = makeStyles(theme => ({
     }
   },
   settingsTabs: {
-    //borderRight: `1px solid ${theme.palette.divider}`
+    //borderRight: `1px solid ${theme.palette.divider}`\
   },
   flexGrow1: {
     flexGrow: 1
@@ -255,11 +258,68 @@ const viewStyles = makeStyles(theme => ({
   },
   settingLeft: {
     maxHeight: "600px",
-    background: "#009688"
+    background: "#00bcd4"
   },
   settingRight: {
     maxHeight: "600px",
-    background: "#f5f5f5"
+    background: "#fdfdfd",
+    border: ".5px solid #eee"
+  },
+  taxTabsWrapper: {
+    background: "#fafafa",
+    border: ".5px solid #eee"
+  },
+  noteline: {
+    background: "lightyellow",
+    fontSize: 14,
+    padding: 5
+  },
+  cstmSelect: {
+    width: 280,
+    marginTop: 20
+  },
+  customFieldRow: {
+    width: "100%",
+    marginTop: 20,
+    marginBottom: 20
+  },
+  customFieldInput: {
+    minWidth: 400,
+    marginRight: 10
+  },
+  settingInput: {
+    minWidth: 300,
+    marginBottom: 20
+  },
+  simpleSettingInput: {
+    minWidth: 300
+  },
+  marginBottom1: {
+    marginBottom: 10
+  },
+  marginBottom2: {
+    marginBottom: 20
+  },
+  marginBottom3: {
+    marginBottom: 30
+  },
+  marginRight1: {
+    marginRight: 10
+  },
+  marginRight2: {
+    marginRight: 20
+  },
+  marginRight3: {
+    marginRight: 30
+  },
+  paddingBottom1: {
+    paddingBottom: 10
+  },
+  paddingBottom2: {
+    paddingBottom: 20
+  },
+  paddingBottom3: {
+    marginBottom: 30
   }
 }));
 

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import Alert from "../utils/Alert";
 import { makeStyles } from "@material-ui/styles";
-import { orderUpdateAction } from "../../store/action/";
+import { orderUpdateAction, ordersAction } from "../../store/action/";
 import palette from "../../theme/palette";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { deepPurple } from "@material-ui/core/colors";
@@ -41,7 +41,7 @@ import {
 import "../../App.css";
 import convertDefault from "../utils/convertDate";
 import viewStyles from "../viewStyles";
-
+import { isEmpty } from "../../utils/helper";
 const ViewOrder = props => {
   const classes = viewStyles();
   const [editShipping, setEditShipping] = useState(false);
@@ -78,12 +78,16 @@ const ViewOrder = props => {
   });
 
   useEffect(() => {
-    props.orders.orders.map(order => {
-      if (order.id === props.match.params.id) {
-        setorder({ ...order });
+    if (isEmpty(props.orders.orders)) {
+      props.ordersAction();
+    }
+
+    for (let i in props.orders.orders) {
+      if (props.orders.orders[i].id === props.match.params.id) {
+        setorder({ ...props.orders.orders[i] });
       }
-    });
-  }, []);
+    }
+  }, [props.orders.orders]);
 
   const updateOrder = e => {
     e.preventDefault();
@@ -606,7 +610,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  orderUpdateAction
+  orderUpdateAction,
+  ordersAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewOrder);

@@ -30,6 +30,11 @@ module.exports = function validate(method, args) {
         return (errors = "Quantity field is required");
       }
 
+      if (args.custom_field.length) {
+        if (args.custom_field.some(field => isEmpty(field.key))) {
+          return (errors = "Please fill all custom field");
+        }
+      }
       /*  if (
         typeof args.pricing != "object" ||
         !Object.keys(args.pricing).length
@@ -64,6 +69,12 @@ module.exports = function validate(method, args) {
 
       if (!args.quantity) {
         return (errors = "Quantity field is required");
+      }
+
+      if (args.custom_field.length) {
+        if (args.custom_field.some(field => isEmpty(field.key))) {
+          return (errors = "Please fill all custom field");
+        }
       }
 
       /* if (

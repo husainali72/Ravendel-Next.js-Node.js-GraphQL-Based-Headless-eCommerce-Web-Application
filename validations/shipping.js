@@ -27,7 +27,7 @@ module.exports = function validate(method, args) {
         return (errors = "Name is required");
       }
 
-      if (!args.amount || Validator.isEmpty(args.amount)) {
+      if (isEmpty(args.amount)) {
         return (errors = "Amount is required");
       }
 
@@ -40,7 +40,7 @@ module.exports = function validate(method, args) {
         return (errors = "Name is required");
       }
 
-      if (!args.amount || Validator.isEmpty(args.amount)) {
+      if (isEmpty(args.amount)) {
         return (errors = "Amount is required");
       }
 

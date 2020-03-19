@@ -7,7 +7,7 @@ module.exports = function validate(method, args) {
     return (errors = "Something went wrong.");
   }
 
-  if (!args.status || Validator.isEmpty(args.slug)) {
+  if (!args.status || Validator.isEmpty(args.status)) {
     return (errors = "Status field is required");
   }
 

@@ -20,5 +20,23 @@ module.exports = function validate(method, args) {
       }
       break;
     }
+    case "addBlogTag": {
+      let errors = "";
+
+      if (!args.name || Validator.isEmpty(args.name)) {
+        return (errors = "Name field is required");
+      }
+      args.name = Validator.escape(args.name);
+      break;
+    }
+    case "updateBlogTag": {
+      let errors = "";
+
+      if (!args.name || Validator.isEmpty(args.name)) {
+        return (errors = "Name field is required");
+      }
+      args.name = Validator.escape(args.name);
+      break;
+    }
   }
 };
