@@ -138,7 +138,7 @@ export const customerUpdateAction = object => dispatch => {
           type: CUSTOMERS_SUCCESS,
           payload: response.data.updateCustomer
         });
-        jumpTo("/all-customers");
+
         dispatch({
           type: ALERT_SUCCESS,
           payload: {

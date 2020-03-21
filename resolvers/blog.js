@@ -152,7 +152,7 @@ module.exports = {
           throw putError(errors);
         }
 
-        const blogtag = await BlogTag.findOne({ title: args.title });
+        const blogtag = await BlogTag.findOne({ name: args.name });
         if (blogtag) {
           throw putError(
             "A term with the name provided already exists in this taxonomy."

@@ -126,7 +126,7 @@ const ADD_BLOGTAG = gql`
 
 const UPDATE_BLOGTAG = gql`
   mutation($id: ID!, $name: String, $url: String) {
-    updateBlog(id: $id, name: $name, url: $url) {
+    updateBlogTag(id: $id, name: $name, url: $url) {
       id
       name
       url

@@ -11,7 +11,11 @@ import {
   blogsAction,
   blogUpdateAction,
   blogDeleteAction,
-  blogAddAction
+  blogAddAction,
+  blogtagsAction,
+  blogtagAddAction,
+  blogtagUpdateAction,
+  blogtagDeleteAction
 } from "./blogAction";
 
 import {
@@ -125,5 +129,9 @@ export {
   couponAction,
   couponAddAction,
   couponUpdateAction,
-  couponDeleteAction
+  couponDeleteAction,
+  blogtagsAction,
+  blogtagAddAction,
+  blogtagUpdateAction,
+  blogtagDeleteAction
 };

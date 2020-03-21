@@ -675,6 +675,11 @@ section.with-slider {
 .home-slider-banner .slick-dots {
   bottom: 5px !important;
 }
+.default-address {
+  position: absolute !important;
+  top: 0px;
+  right: 0px;
+}
 
 @media only screen and (max-width: 1024px) {
   #root {
@@ -830,4 +835,7 @@ section.with-slider {
 }
 .padding-bottom-3 {
   padding-bottom: 30px !important;
+}
+.position-relative {
+  position: relative !important;
 }

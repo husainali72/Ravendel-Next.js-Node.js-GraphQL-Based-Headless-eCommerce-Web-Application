@@ -14,6 +14,7 @@ import PropTypes from "prop-types";
 import CashOnDelivery from "./cod";
 import DirectBankTransfer from "./directBankTransfer";
 import Paypal from "./paypal";
+import Stripe from "./stripe";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -47,7 +48,7 @@ function a11yProps(index) {
 
 const Payment = props => {
   const classes = viewStyles();
-  const [tabVal, setTabVal] = useState(3);
+  const [tabVal, setTabVal] = useState(0);
   const handleChange = (event, newValue) => {
     setTabVal(newValue);
   };
@@ -76,7 +77,7 @@ const Payment = props => {
             <DirectBankTransfer />
           </TabPanel>
           <TabPanel value={tabVal} index={2}>
-            Coming Soon
+            <Stripe />
           </TabPanel>
           <TabPanel value={tabVal} index={3}>
             <Paypal />

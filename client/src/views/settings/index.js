@@ -22,7 +22,7 @@ import Payment from "./components/payment";
 
 const Settings = () => {
   const classes = viewStyles();
-  const [value, setValue] = useState(5);
+  const [value, setValue] = useState(6);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -60,8 +60,8 @@ const Settings = () => {
             <Divider />
             <CardContent>
               <div className={classes.settingRoot}>
-                <Grid container>
-                  <Grid item className={classes.settingLeft}>
+                <Box display="flex" className={classes.width100}>
+                  <Box className={classes.settingLeft}>
                     <Tabs
                       orientation="vertical"
                       variant="scrollable"
@@ -79,9 +79,8 @@ const Settings = () => {
                       <Tab label="Payment" {...a11yProps(5)} />
                       <Tab label="Appearance" {...a11yProps(6)} />
                     </Tabs>
-                  </Grid>
-                  <Grid
-                    item
+                  </Box>
+                  <Box
                     className={clsx(classes.flexGrow1, classes.settingRight)}
                   >
                     <Box component="div" className="setting-content">
@@ -107,8 +106,8 @@ const Settings = () => {
                         <Appearance />
                       </TabPanel>
                     </Box>
-                  </Grid>
-                </Grid>
+                  </Box>
+                </Box>
               </div>
             </CardContent>
           </Card>

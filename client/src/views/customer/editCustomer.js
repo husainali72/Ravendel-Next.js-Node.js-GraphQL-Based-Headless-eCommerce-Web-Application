@@ -333,31 +333,48 @@ const EditCustomer = props => {
                         <CardHeader
                           title="Address"
                           action={
-                            <ButtonGroup
-                              variant="text"
-                              aria-label="address-card-action"
-                            >
-                              {/* <Tooltip title="Default" aria-label="Default"> */}
-
-                              {/* </Tooltip> */}
-
-                              <Tooltip title="Edit Address" aria-label="edit">
-                                <Button onClick={() => editAddress(address)}>
-                                  <EditIcon />
-                                </Button>
-                              </Tooltip>
-                              <Tooltip
-                                title="Delete Address"
-                                aria-label="delete"
+                            <Fragment>
+                              <ButtonGroup
+                                variant="text"
+                                aria-label="address-card-action"
                               >
-                                <Button
-                                  className={classes.deleteicon}
-                                  onClick={() => deleteAddressBook(address._id)}
+                                <Tooltip
+                                  title={
+                                    address.default_address
+                                      ? "Default Address"
+                                      : "Edit the address and check the 'Default Address' option to make it your default address."
+                                  }
+                                  aria-label="Default-Address"
                                 >
-                                  <DeleteIcon />
-                                </Button>
-                              </Tooltip>
-                            </ButtonGroup>
+                                  <Button>
+                                    <Rating
+                                      name="customized-10"
+                                      value={address.default_address ? 1 : 0}
+                                      max={1}
+                                      readOnly
+                                    />
+                                  </Button>
+                                </Tooltip>
+                                <Tooltip title="Edit Address" aria-label="edit">
+                                  <Button onClick={() => editAddress(address)}>
+                                    <EditIcon />
+                                  </Button>
+                                </Tooltip>
+                                <Tooltip
+                                  title="Delete Address"
+                                  aria-label="delete"
+                                >
+                                  <Button
+                                    className={classes.deleteicon}
+                                    onClick={() =>
+                                      deleteAddressBook(address._id)
+                                    }
+                                  >
+                                    <DeleteIcon />
+                                  </Button>
+                                </Tooltip>
+                              </ButtonGroup>
+                            </Fragment>
                           }
                         />
                         <CardContent>
@@ -370,12 +387,6 @@ const EditCustomer = props => {
                                 primary={
                                   address.first_name + " " + address.last_name
                                 }
-                              />
-                              <Rating
-                                name="customized-10"
-                                value={address.default_address ? 1 : 0}
-                                max={1}
-                                readOnly
                               />
                             </ListItem>
                             <ListItem>
@@ -511,7 +522,7 @@ const EditCustomer = props => {
                           }
                         />
                       }
-                      label="Default"
+                      label="Make it Default Address"
                     />
                   </Grid>
                 </Grid>

@@ -27,30 +27,24 @@ import clsx from "clsx";
 import { connect } from "react-redux";
 import viewStyles from "../viewStyles.js";
 import {
-  categoriesAction,
-  categoryDeleteAction,
-  categoryUpdateAction,
-  categoryAddAction
+  blogtagsAction,
+  blogtagAddAction,
+  blogtagUpdateAction,
+  blogtagDeleteAction
 } from "../../store/action/";
 import { isEmpty } from "../../utils/helper";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import convertDefault from "../utils/convertDate";
 
-var categoryObject = {
+var tagObject = {
   name: "",
-  parentId: null,
-  metadescription: "",
-  metakeyword: "",
-  metatitle: "",
   url: ""
 };
 const AllTags = props => {
   const classes = viewStyles();
-  const [tags, setTags] = useState([]);
-  const [singleTag, setSingleTag] = useState(categoryObject);
+  const [singleTag, setSingleTag] = useState(tagObject);
   const [editMode, setEditmode] = useState(false);
-  const [featuredImage, setfeaturedImage] = useState(null);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -64,55 +58,41 @@ const AllTags = props => {
   };
 
   useEffect(() => {
-    if (isEmpty(props.products.categories)) {
-      props.categoriesAction();
+    if (isEmpty(props.blogState.tags)) {
+      props.blogtagsAction();
     }
-  }, []);
+  }, [props.blogState.tags]);
 
-  useEffect(() => {
-    setTags(props.products.categories);
-  }, [props.products.categories]);
-
-  const editTag = cat => {
+  const editTag = tag => {
     setEditmode(true);
-    setSingleTag({ ...singleTag, ...cat });
+    setSingleTag({ ...singleTag, ...tag });
   };
 
   const handleChange = e => {
-    if (e.target.name === "parentId" && !e.target.value) {
-      setSingleTag({ ...singleTag, [e.target.name]: null });
-      return;
-    }
     setSingleTag({ ...singleTag, [e.target.name]: e.target.value });
   };
 
   const updateTag = () => {
-    props.categoryUpdateAction(singleTag);
+    props.blogtagUpdateAction(singleTag);
     setEditmode(false);
-    setSingleTag(categoryObject);
+    setSingleTag(tagObject);
   };
 
   const addTag = () => {
-    props.categoryAddAction(singleTag);
-    setSingleTag(categoryObject);
+    props.blogtagAddAction(singleTag);
+    setSingleTag(tagObject);
   };
 
   const cancelTag = () => {
     document.forms[0].reset();
     setEditmode(false);
-    setSingleTag(categoryObject);
-  };
-
-  const fileChange = e => {
-    setfeaturedImage(null);
-    setfeaturedImage(URL.createObjectURL(e.target.files[0]));
-    setSingleTag({ ...singleTag, [e.target.name]: e.target.files });
+    setSingleTag(tagObject);
   };
 
   return (
     <Fragment>
       <Alert />
-      {props.products.loading && <Loading />}
+      {props.blogState.loading && <Loading />}
       <Grid container className={classes.mainrow} spacing={3}>
         <Grid item md={6}>
           <Card>
@@ -128,46 +108,45 @@ const AllTags = props => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {tags &&
-                      tags
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map(tag => (
-                          <TableRow key={tag.id} hover>
-                            <TableCell>{tag.name}</TableCell>
-                            <TableCell>{convertDefault(tag.date)}</TableCell>
-                            <TableCell>
-                              <Tooltip title="Edit Tag" aria-label="edit">
-                                <IconButton
-                                  aria-label="Edit"
-                                  onClick={() => editTag(tag)}
-                                >
-                                  <EditIcon />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Delete Tag" aria-label="delete">
-                                <IconButton
-                                  aria-label="Delete"
-                                  className={classes.deleteicon}
-                                  onClick={() =>
-                                    props.categoryDeleteAction(tag.id)
-                                  }
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Tooltip>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                    {props.blogState.tags
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map(tag => (
+                        <TableRow key={tag.id} hover>
+                          <TableCell>{tag.name}</TableCell>
+                          <TableCell>{convertDefault(tag.date)}</TableCell>
+                          <TableCell>
+                            <Tooltip title="Edit Tag" aria-label="edit">
+                              <IconButton
+                                aria-label="Edit"
+                                onClick={() => editTag(tag)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Delete Tag" aria-label="delete">
+                              <IconButton
+                                aria-label="Delete"
+                                className={classes.deleteicon}
+                                onClick={() =>
+                                  props.blogtagDeleteAction(tag.id)
+                                }
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={tags.length}
+                count={props.blogState.tags.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -227,14 +206,14 @@ const AllTags = props => {
 };
 
 const mapStateToProps = state => {
-  return { products: state.products };
+  return { blogState: state.blogs };
 };
 
 const mapDispatchToProps = {
-  categoriesAction,
-  categoryDeleteAction,
-  categoryUpdateAction,
-  categoryAddAction
+  blogtagsAction,
+  blogtagAddAction,
+  blogtagUpdateAction,
+  blogtagDeleteAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllTags);

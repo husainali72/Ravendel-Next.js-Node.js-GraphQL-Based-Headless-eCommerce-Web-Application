@@ -13,19 +13,21 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
-  Typography
+  Typography,
+  Chip
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
 import Alert from "../utils/Alert";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { blogUpdateAction } from "../../store/action/";
+import { blogUpdateAction, blogtagsAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
 import clsx from "clsx";
 import { isEmpty } from "../../utils/helper";
 import Loading from "../utils/loading";
 import viewStyles from "../viewStyles";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const StyledRadio = props => {
   return (
@@ -55,6 +57,24 @@ const EditBlog = props => {
       keywords: ""
     }
   });
+
+  const [tags, setTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  useEffect(() => {
+    if (isEmpty(props.blogs.tags)) {
+      props.blogtagsAction();
+    }
+  }, []);
+
+  useEffect(() => {
+    setTags(props.blogs.tags);
+  }, [props.blogs.tags]);
+
+  const handleChangeTag = value => {
+    var id = value.map(val => val.id);
+    setSelectedTags(id);
+  };
 
   const updateBlog = e => {
     e.preventDefault();
@@ -242,6 +262,7 @@ const EditBlog = props => {
                         <img
                           src={featureImage}
                           className={classes.feautedImageBoxPreview}
+                          alt="featured"
                         />
                       </Box>
                     )}
@@ -266,6 +287,40 @@ const EditBlog = props => {
                 </CardContent>
               </Card>
             </Box>
+            <Box component="span" m={1}>
+              <Card>
+                <CardHeader title="Tags" />
+                <Divider />
+                <CardContent>
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.marginBottom1}
+                  >
+                    Select Tags
+                  </Typography>
+                  <Autocomplete
+                    multiple
+                    id="select-tags"
+                    options={tags}
+                    getOptionLabel={option => option.name}
+                    className={classes.width100}
+                    onChange={(event, value) => handleChangeTag(value)}
+                    renderInput={params => (
+                      <TextField {...params} variant="outlined" />
+                    )}
+                    renderTags={(value, getTagProps) =>
+                      value.map((option, index) => (
+                        <Chip
+                          label={option.name}
+                          {...getTagProps({ index })}
+                          disabled={index === 0}
+                        />
+                      ))
+                    }
+                  />
+                </CardContent>
+              </Card>
+            </Box>
           </Grid>
         </Grid>
       </form>
@@ -278,7 +333,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  blogUpdateAction
+  blogUpdateAction,
+  blogtagsAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditBlog);

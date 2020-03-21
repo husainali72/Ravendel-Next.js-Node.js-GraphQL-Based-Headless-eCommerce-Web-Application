@@ -13,7 +13,7 @@ import clsx from "clsx";
 
 const DirectBankTransfer = props => {
   const classes = viewStyles();
-  const [bankTransfer, setBankTransfer] = useState(true);
+  const [bankTransfer, setBankTransfer] = useState(false);
   const [bankTransferInfo, setBankTransferInfo] = useState({
     title: "Direct bank transfer",
     description:

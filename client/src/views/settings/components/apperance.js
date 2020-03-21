@@ -11,6 +11,8 @@ import {
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
 import PropTypes from "prop-types";
+import HomeSettings from "./home";
+import Themes from './themes';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -61,27 +63,14 @@ const Appearance = props => {
               textColor="primary"
             >
               <Tab label="Home" {...a11yProps(0)} />
+              <Tab label="Theme" {...a11yProps(1)} />
             </Tabs>
           </Paper>
           <TabPanel value={tabVal} index={0}>
-            <Box component="div">
-              <TextField
-                type="text"
-                variant="outlined"
-                label="Timezone"
-                className={clsx(classes.settingInput)}
-                size="small"
-              />
-            </Box>
-            <Box component="div">
-              <TextField
-                type="text"
-                variant="outlined"
-                label="Date Format"
-                className={clsx(classes.settingInput)}
-                size="small"
-              />
-            </Box>
+            <HomeSettings />
+          </TabPanel>
+          <TabPanel value={tabVal} index={1}>
+            <Themes />
           </TabPanel>
         </Grid>
       </Grid>

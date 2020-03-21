@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
   Card,
@@ -19,9 +19,13 @@ import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import jumpTo from "../../utils/navigation";
+import { isEmpty } from "../../utils/helper";
 import Rating from "@material-ui/lab/Rating";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { productsAction, customersAction } from "../../store/action";
+import { connect } from "react-redux";
 
 const StyledRadio = props => {
   return (
@@ -38,6 +42,18 @@ const StyledRadio = props => {
 const EditReview = props => {
   const classes = viewStyles();
   const [ratignVal, setRatinVal] = useState(3);
+
+  useEffect(() => {
+    if (isEmpty(props.products.products)) {
+      props.productsAction();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isEmpty(props.customers.customers)) {
+      props.customersAction();
+    }
+  }, []);
 
   const updateReview = () => {
     console.log("update Review");
@@ -107,17 +123,33 @@ const EditReview = props => {
               <CardHeader title="Review Details" />
               <Divider />
               <CardContent>
-                <TextField
-                  type="text"
-                  variant="outlined"
-                  label="Reviewed Products"
-                  className={clsx(classes.marginBottom, classes.width100)}
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={props.products.products}
+                  getOptionLabel={option => option.name}
+                  className={clsx(classes.marginBottom)}
+                  onChange={(event, value) => console.log(value)}
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Reviewed Products"
+                    />
+                  )}
                 />
-                <TextField
-                  type="text"
-                  variant="outlined"
-                  label="Reviewer Name"
-                  className={clsx(classes.marginBottom, classes.width100)}
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={props.customers.customers}
+                  getOptionLabel={option => option.first_name}
+                  className={clsx(classes.marginBottom)}
+                  onChange={(event, value) => console.log(value)}
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Reviewer Name"
+                    />
+                  )}
                 />
                 <TextField
                   type="email"
@@ -170,4 +202,13 @@ const EditReview = props => {
   );
 };
 
-export default EditReview;
+const mapStateToProps = state => {
+  return { products: state.products, customers: state.customers };
+};
+
+const mapDispatchToProps = {
+  productsAction,
+  customersAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditReview);

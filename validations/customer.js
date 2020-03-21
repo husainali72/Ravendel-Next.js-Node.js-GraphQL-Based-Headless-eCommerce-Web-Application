@@ -18,7 +18,7 @@ module.exports = function validate(method, args) {
         return (errors = "Email field is required");
       }
 
-      if (!!Validator.isEmail(args.email)) {
+      if (!Validator.isEmail(args.email)) {
         return (errors = "Email is invalid");
       }
 

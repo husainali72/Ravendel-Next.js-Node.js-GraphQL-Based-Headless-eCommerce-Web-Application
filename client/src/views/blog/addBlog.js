@@ -5,14 +5,9 @@ import {
   CardHeader,
   CardContent,
   Button,
-  Backdrop,
-  CircularProgress,
   TextField,
   IconButton,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
+  Chip,
   Divider,
   Box,
   Typography,
@@ -25,11 +20,13 @@ import ImageIcon from "@material-ui/icons/Image";
 import Alert from "../utils/Alert";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { blogAddAction } from "../../store/action/";
+import { blogAddAction, blogtagsAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
 import clsx from "clsx";
 import Loading from "../utils/loading";
 import viewStyles from "../viewStyles";
+import { isEmpty } from "../../utils/helper";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const StyledRadio = props => {
   return (
@@ -44,7 +41,7 @@ const StyledRadio = props => {
   );
 };
 
-var deaaultObj = {
+var defaultObj = {
   status: "Publish",
   meta: {
     title: "",
@@ -56,12 +53,29 @@ var deaaultObj = {
 const AddBlog = props => {
   const classes = viewStyles();
   const [featureImage, setfeatureImage] = useState(null);
-  const [blog, setBlog] = useState(deaaultObj);
+  const [blog, setBlog] = useState(defaultObj);
+  const [tags, setTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  useEffect(() => {
+    if (isEmpty(props.blogs.tags)) {
+      props.blogtagsAction();
+    }
+  }, []);
+
+  useEffect(() => {
+    setTags(props.blogs.tags);
+  }, [props.blogs.tags]);
+
+  const handleChangeTag = value => {
+    var id = value.map(val => val.id);
+    setSelectedTags(id);
+  };
 
   useEffect(() => {
     if (props.blogs.success) {
       document.forms[0].reset();
-      setBlog(deaaultObj);
+      setBlog(defaultObj);
       setfeatureImage(null);
     }
   }, [props.blogs.success]);
@@ -238,6 +252,7 @@ const AddBlog = props => {
                         <img
                           src={featureImage}
                           className={classes.feautedImageBoxPreview}
+                          alt="featured"
                         />
                       </Box>
                     )}
@@ -263,6 +278,41 @@ const AddBlog = props => {
                 </CardContent>
               </Card>
             </Box>
+
+            <Box component="span" m={1}>
+              <Card>
+                <CardHeader title="Tags" />
+                <Divider />
+                <CardContent>
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.marginBottom1}
+                  >
+                    Select Tags
+                  </Typography>
+                  <Autocomplete
+                    multiple
+                    id="select-tags"
+                    options={tags}
+                    getOptionLabel={option => option.name}
+                    className={classes.width100}
+                    onChange={(event, value) => handleChangeTag(value)}
+                    renderInput={params => (
+                      <TextField {...params} variant="outlined" />
+                    )}
+                    renderTags={(value, getTagProps) =>
+                      value.map((option, index) => (
+                        <Chip
+                          label={option.name}
+                          {...getTagProps({ index })}
+                          disabled={index === 0}
+                        />
+                      ))
+                    }
+                  />
+                </CardContent>
+              </Card>
+            </Box>
           </Grid>
         </Grid>
       </form>
@@ -271,11 +321,14 @@ const AddBlog = props => {
 };
 
 const mapStateToProps = state => {
-  return { blogs: state.blogs };
+  return {
+    blogs: state.blogs
+  };
 };
 
 const mapDispatchToProps = {
-  blogAddAction
+  blogAddAction,
+  blogtagsAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddBlog);

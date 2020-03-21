@@ -4,12 +4,16 @@ import {
   BLOG_FAIL,
   BLOG_SUCCESS,
   TINYMCE_SUCCESS,
-  TINYMCE_NULL
+  TINYMCE_NULL,
+  BLOGTAG_LOADING,
+  BLOGTAGS_SUCCESS,
+  BLOGTAG_FAIL
 } from "../action/blogAction";
 
 const initialState = {
   blogs: [],
   blog: {},
+  tags: [],
   loading: false,
   success: false
 };
@@ -57,6 +61,25 @@ export default (state = initialState, action) => {
           ...state.blog,
           content: action.payload.content
         }
+      };
+    case BLOGTAG_LOADING:
+      return {
+        ...state,
+        loading: true,
+        success: false
+      };
+    case BLOGTAGS_SUCCESS:
+      return {
+        ...state,
+        tags: action.payload,
+        loading: false,
+        success: true
+      };
+    case BLOGTAG_FAIL:
+      return {
+        ...state,
+        loading: false,
+        success: false
       };
     default:
       return state;

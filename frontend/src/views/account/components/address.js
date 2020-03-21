@@ -1,7 +1,6 @@
 import React, { Fragment, useState } from "react";
 import {
   Typography,
-  Box,
   Grid,
   Card,
   CardContent,
@@ -12,8 +11,12 @@ import {
   TextField,
   CardHeader,
   Divider,
-  Fade
+  Fade,
+  FormControlLabel,
+  Checkbox,
+  Tooltip
 } from "@material-ui/core";
+import Rating from "@material-ui/lab/Rating";
 
 const Address = props => {
   const [editMode, setEditMode] = useState(false);
@@ -106,6 +109,12 @@ const Address = props => {
                   <Grid item md={3} xs={12}>
                     {addressInput("Pincode", "pincode", "text", "")}
                   </Grid>
+                  <Grid item md={12} xs={12}>
+                    <FormControlLabel
+                      control={<Checkbox name="checkedB" color="primary" />}
+                      label="Make it Default Address"
+                    />
+                  </Grid>
                 </Grid>
               </CardContent>
               <CardActions>
@@ -142,7 +151,20 @@ const Address = props => {
         <Grid item md={6}>
           <Card>
             <CardContent>
-              <Grid container spacing={2}>
+              <Grid container spacing={2} className="position-relative">
+                <Tooltip
+                  className="default-address"
+                  title={
+                    1 === 1
+                      ? "Default Address"
+                      : "Edit the address and check the 'Default Address' option to make it your default address."
+                  }
+                  aria-label="Default-Address"
+                >
+                  <Button>
+                    <Rating name="Default Address" value={1} max={1} readOnly />
+                  </Button>
+                </Tooltip>
                 <Grid item>
                   <Icon>face</Icon>
                 </Grid>

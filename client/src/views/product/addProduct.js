@@ -975,6 +975,7 @@ const AddProduct = props => {
                         <img
                           src={featureImage}
                           className={classes.feautedImageBoxPreview}
+                          alt="Featured"
                         />
                       </Box>
                     )}

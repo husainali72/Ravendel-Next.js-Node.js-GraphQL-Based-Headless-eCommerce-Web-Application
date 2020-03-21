@@ -33,8 +33,6 @@ import {
   MenuItem,
   Paper
 } from "@material-ui/core";
-
-import Alert from "../utils/Alert";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles.js";
@@ -47,7 +45,8 @@ import {
   globalShippingUpdateAction,
   shippingClassAddAction,
   shippingClassUpdateAction,
-  shippingClassDeleteAction
+  shippingClassDeleteAction,
+  productsAction
 } from "../../store/action/";
 import { connect } from "react-redux";
 
@@ -115,6 +114,12 @@ const Shipping = props => {
 
   useEffect(() => {
     props.shippingAction();
+    if (shippingGlobal.overwrite) {
+      setTimeout(() => {
+        console.log(shippingGlobal.overwrite);
+        props.productsAction();
+      }, 5000);
+    }
     setshippingGlobal({
       ...shippingGlobal,
       ...props.shippingState.shipping.global
@@ -161,8 +166,6 @@ const Shipping = props => {
 
   return (
     <div className={classes.root}>
-      <Alert />
-
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item md={12} sm={12} xs={12}>
           <Card>
@@ -472,7 +475,8 @@ const mapDispatchToProps = {
   globalShippingUpdateAction,
   shippingClassAddAction,
   shippingClassUpdateAction,
-  shippingClassDeleteAction
+  shippingClassDeleteAction,
+  productsAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Shipping);

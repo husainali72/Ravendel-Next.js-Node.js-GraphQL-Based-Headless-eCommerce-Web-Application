@@ -25,19 +25,29 @@ import clsx from "clsx";
 import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
 
+/* var addressBookObj = {
+  first_name: "",
+  last_name: "",
+  company: "",
+  phone: "",
+  address_line1: "",
+  address_line2: "",
+  city: "",
+  country: "",
+  state: "",
+  pincode: "",
+  default_address: false
+}; */
+
 const AddCustomer = props => {
   const classes = viewStyles();
-  const [customer, setcustomer] = useState({
-    address_book: []
-  });
+  const [customer, setcustomer] = useState({});
 
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     document.forms[0].reset();
-    setcustomer({
-      address_book: []
-    });
+    setcustomer({});
   }, [props.customers.customers]);
 
   const addCustomer = e => {

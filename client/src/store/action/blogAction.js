@@ -187,6 +187,108 @@ export const blogtagsAction = () => dispatch => {
     });
 };
 
+export const blogtagAddAction = object => dispatch => {
+  dispatch({
+    type: BLOGTAG_LOADING
+  });
+  mutation(ADD_BLOGTAG, object)
+    .then(response => {
+      if (response) {
+        dispatch({
+          type: BLOGTAGS_SUCCESS,
+          payload: response.data.addBlogTag
+        });
+
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: true,
+            message: "Tag added successfully",
+            error: false
+          }
+        });
+      }
+    })
+    .catch(error => {
+      dispatch({
+        type: BLOGTAG_FAIL
+      });
+
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error, error: true }
+      });
+    });
+};
+
+export const blogtagUpdateAction = object => dispatch => {
+  dispatch({
+    type: BLOGTAG_LOADING
+  });
+  mutation(UPDATE_BLOGTAG, object)
+    .then(response => {
+      if (response) {
+        dispatch({
+          type: BLOGTAGS_SUCCESS,
+          payload: response.data.updateBlogTag
+        });
+
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: true,
+            message: "Tag updated successfully",
+            error: false
+          }
+        });
+
+        return;
+      }
+    })
+    .catch(error => {
+      dispatch({
+        type: BLOGTAG_FAIL
+      });
+
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error, error: true }
+      });
+    });
+};
+
+export const blogtagDeleteAction = id => dispatch => {
+  dispatch({
+    type: BLOGTAG_LOADING
+  });
+  mutation(DELETE_BLOGTAG, { id })
+    .then(response => {
+      if (response) {
+        dispatch({
+          type: BLOGTAGS_SUCCESS,
+          payload: response.data.deleteBlogTag
+        });
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: true,
+            message: "Tag deleted successfully",
+            error: false
+          }
+        });
+      }
+    })
+    .catch(error => {
+      dispatch({
+        type: BLOGTAG_FAIL
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error, error: true }
+      });
+    });
+};
+
 export const BLOG_LOADING = "BLOG_LOADING";
 export const BLOGS_SUCCESS = "BLOGS_SUCCESS";
 export const BLOG_SUCCESS = "BLOG_SUCCESS";

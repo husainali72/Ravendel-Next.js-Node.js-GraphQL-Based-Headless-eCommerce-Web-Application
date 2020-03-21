@@ -4,60 +4,56 @@ import axios from "axios";
 import { isEmpty } from "./helper";
 import APclient from "../Client";
 
-export const mutation = (query, variables) => {
-  return APclient.mutate({
-    mutation: query,
-    variables
-  })
-    .then(response => {
-      return Promise.resolve(response);
-    })
-    .catch(error => {
-      const errors = JSON.parse(JSON.stringify(error));
-      console.log(errors);
-      if (
-        errors.graphQLErrors.length &&
-        !isEmpty(errors.graphQLErrors[0].message)
-      ) {
-        return Promise.reject(errors.graphQLErrors[0].message);
-      }
-
-      if (
-        !isEmpty(errors.networkError) &&
-        errors.networkError.statusCode === 400
-      ) {
-        return Promise.reject(errors.message);
-      }
-      return Promise.reject("Something went wrong");
+export const mutation = async (query, variables) => {
+  try {
+    const response = await APclient.mutate({
+      mutation: query,
+      variables
     });
+    return Promise.resolve(response);
+  } catch (error) {
+    const errors = JSON.parse(JSON.stringify(error));
+    console.log(errors);
+    if (
+      errors.graphQLErrors.length &&
+      !isEmpty(errors.graphQLErrors[0].message)
+    ) {
+      return Promise.reject(errors.graphQLErrors[0].message);
+    }
+    if (
+      !isEmpty(errors.networkError) &&
+      errors.networkError.statusCode === 400
+    ) {
+      return Promise.reject(errors.message);
+    }
+    return Promise.reject("Something went wrong");
+  }
 };
 
-export const query = (query, variables) => {
-  return APclient.query({
-    query: query,
-    variables
-  })
-    .then(response => {
-      return Promise.resolve(response);
-    })
-    .catch(error => {
-      const errors = JSON.parse(JSON.stringify(error));
-      console.log(error);
-      if (
-        errors.graphQLErrors.length &&
-        !isEmpty(errors.graphQLErrors[0].message)
-      ) {
-        return Promise.reject(errors.graphQLErrors[0].message);
-      }
-
-      if (
-        !isEmpty(errors.networkError) &&
-        errors.networkError.statusCode === 400
-      ) {
-        return Promise.reject(errors.message);
-      }
-      return Promise.reject("Something went wrong");
+export const query = async (query, variables) => {
+  try {
+    const response = await APclient.query({
+      query: query,
+      variables
     });
+    return Promise.resolve(response);
+  } catch (error) {
+    const errors = JSON.parse(JSON.stringify(error));
+    console.log(error);
+    if (
+      errors.graphQLErrors.length &&
+      !isEmpty(errors.graphQLErrors[0].message)
+    ) {
+      return Promise.reject(errors.graphQLErrors[0].message);
+    }
+    if (
+      !isEmpty(errors.networkError) &&
+      errors.networkError.statusCode === 400
+    ) {
+      return Promise.reject(errors.message);
+    }
+    return Promise.reject("Something went wrong");
+  }
 };
 
 const service = config => {

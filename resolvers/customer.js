@@ -53,8 +53,7 @@ module.exports = {
             last_name: args.last_name,
             email: args.email,
             company: args.company || "",
-            phone: args.phone || "",
-            address_book: args.address_book || ""
+            phone: args.phone || ""
           });
 
           newCustomer.password = await bcrypt.hash(args.password, 10);

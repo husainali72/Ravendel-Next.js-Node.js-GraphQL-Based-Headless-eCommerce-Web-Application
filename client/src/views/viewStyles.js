@@ -78,6 +78,44 @@ const viewStyles = makeStyles(theme => ({
     maxWidth: "90%",
     maxHeight: "90%"
   },
+  sliderImageWrapper: {
+    background: "#f7f7f7",
+    height: "375px",
+    width: "95%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: theme.spacing(2),
+    flexDirection: "column",
+    position: "relative",
+    border: ".5px solid #ddd",
+    padding: 10
+  },
+  sliderImagePreviewWrapper: {
+    height: "250px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
+    marginBottom: theme.spacing(2),
+    width: "100%"
+  },
+  slidesInfo: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "center",
+    width: "100%"
+  },
+  sliderImagePreview: {
+    maxWidth: "90%",
+    maxHeight: "90%"
+  },
+  slideRemove: {
+    position: "absolute",
+    top: 10,
+    right: 10
+  },
   galleryImgOuterBox: {
     display: "flex",
     justifyContent: "flex-start",
@@ -258,7 +296,7 @@ const viewStyles = makeStyles(theme => ({
   },
   settingLeft: {
     maxHeight: "600px",
-    background: "#00bcd4"
+    background: "#03a9f463"
   },
   settingRight: {
     maxHeight: "600px",
