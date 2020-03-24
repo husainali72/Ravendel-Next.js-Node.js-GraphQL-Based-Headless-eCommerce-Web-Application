@@ -76,6 +76,7 @@ module.exports = {
             url: url,
             content: args.content || "",
             status: args.status,
+            blog_tag: args.blog_tag,
             feature_image: imgObject.data || imgObject,
             meta: args.meta,
             author: user.id
@@ -92,6 +93,12 @@ module.exports = {
     updateBlog: async (root, args, { id }) => {
       checkToken(id);
       try {
+        // Check Validation
+        const errors = validate("updateBlog", args);
+        if (!isEmpty(errors)) {
+          throw putError(errors);
+        }
+
         const blog = await Blog.findById({ _id: args.id });
         if (blog) {
           if (args.updatedImage) {
@@ -107,9 +114,10 @@ module.exports = {
             }
           }
 
-          blog.title = args.title || blog.title;
-          blog.content = args.content || blog.content;
-          blog.status = args.status || blog.status;
+          blog.title = args.title;
+          blog.content = args.content;
+          blog.status = args.status;
+          blog.blog_tag = args.blog_tag;
 
           let url = stringTourl(args.url || blog.title);
           blog.url = url;

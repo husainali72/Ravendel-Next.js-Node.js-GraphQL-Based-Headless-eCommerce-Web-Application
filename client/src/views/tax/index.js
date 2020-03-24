@@ -39,14 +39,15 @@ import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-
+import { isEmpty } from "../../utils/helper";
 import {
   taxAction,
   globalTaxUpdateAction,
   optionTaxUpdateAction,
   taxClassAddAction,
   taxClassUpdateAction,
-  taxClassDeleteAction
+  taxClassDeleteAction,
+  productsAction
 } from "../../store/action/";
 import { connect } from "react-redux";
 
@@ -111,7 +112,15 @@ const Tax = props => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    props.taxAction();
+    if (isEmpty(props.taxState.tax.tax_class)) {
+      props.taxAction();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (taxGlobal.overwrite) {
+      props.productsAction();
+    }
     settaxOption(props.taxState.tax.is_inclusive ? "inclusive" : "exclusive");
     settaxGlobal({ ...taxGlobal, ...props.taxState.tax.global });
     setEditMode(false);
@@ -476,7 +485,8 @@ const mapDispatchToProps = {
   optionTaxUpdateAction,
   taxClassAddAction,
   taxClassUpdateAction,
-  taxClassDeleteAction
+  taxClassDeleteAction,
+  productsAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Tax);

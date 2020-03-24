@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Button,
   Typography,
@@ -13,8 +13,12 @@ import {
 import { connect } from "react-redux";
 
 const ProductDetail = props => {
-  const [product, setProduct] = useState(props.details);
+  const [product, setProduct] = useState(null);
   const [qty, setQty] = useState(1);
+
+  useEffect(() => {
+    setProduct(props.details);
+  }, [props.details]);
 
   const addToCart = singleProduct => {
     if (
@@ -38,43 +42,51 @@ const ProductDetail = props => {
 
   return (
     <Fragment>
-      {props.details && (
+      {product === null ? null : (
         <Box component="div" display="flex" className="singleproduct-wrapper">
           <Box component="div" className="singleproduct-details">
             {/* ==========Product Availablity ===========*/}
-            {product.availablity && (
+            {product.quantity && (
               <Typography variant="subtitle1" className="product-availablity">
-                {product.availablity}
+                {product.quantity < 1 ? (
+                  <span className="outofstock">
+                    <Icon>sentiment_very_dissatisfied</Icon> Out of Stock
+                  </span>
+                ) : (
+                  <span className="inStock">In Stock</span>
+                )}
               </Typography>
             )}
 
             {/* ==========Product Title ===========*/}
             <Typography variant="h1" className="product-title">
-              {product.title}
+              {product.name}
             </Typography>
 
             {/* ==========Product Price ===========*/}
             <Typography variant="h3" className="product-price">
-              <span className={product.sale_price && "has-sale-price"}>
-                ${product.price.toFixed(2)}
+              <span
+                className={product.pricing.sellprice ? "has-sale-price" : ""}
+              >
+                ${product.pricing.price.toFixed(2)}
               </span>
-              {product.sale_price && (
+              {product.pricing.sellprice ? (
                 <span className="sale-price">
-                  ${product.sale_price.toFixed(2)}
+                  ${product.pricing.sellprice.toFixed(2)}
                 </span>
-              )}
+              ) : null}
             </Typography>
 
             {/* ==========Product Category ===========*/}
-            {product.categories &&
-              product.categories.map((cat, index) => (
+            {product.categoryId &&
+              product.categoryId.map((cat, index) => (
                 <Typography
                   variant="button"
                   className="product-category"
                   key={index}
                 >
-                  {cat.name}
-                  {product.categories.length - 1 === index ? "" : ","}
+                  Cat Id: {cat}
+                  {product.categoryId.length - 1 === index ? "" : ","}
                 </Typography>
               ))}
 
@@ -83,9 +95,23 @@ const ProductDetail = props => {
             </div>
 
             {/* ==========Product Short Desciprtion ===========*/}
-            {product.short_desc && (
+            {product.sku && (
+              <Typography
+                variant="body1"
+                className="product-description margin-bottom-1"
+              >
+                <strong>SKU</strong>: {product.sku}
+              </Typography>
+            )}
+
+            {/* ==========Product Short Desciprtion ===========*/}
+            {product.short_desc ? (
               <Typography variant="body1" className="product-description">
                 {product.short_desc}
+              </Typography>
+            ) : (
+              <Typography variant="body1" className="product-description">
+                Short Description Coming Soon
               </Typography>
             )}
 
@@ -116,8 +142,11 @@ const ProductDetail = props => {
             </Box>
 
             {/* ==========Product Attributes ===========*/}
-            {product && (
-              <Box component="div" className="select-attributed-wrapper">
+            {product.attributed && (
+              <Box
+                component="div"
+                className="select-attributed-wrapper margin-top-2"
+              >
                 <FormControl variant="filled" className="select-attributed">
                   <InputLabel htmlFor="size-option">Size</InputLabel>
                   <Select
@@ -153,6 +182,9 @@ const ProductDetail = props => {
               variant="contained"
               color="primary"
               onClick={() => addToCart(product)}
+              className="margin-top-2"
+              disabled={product.quantity < 1 ? true : false}
+              size="large"
             >
               Add To Cart
             </Button>

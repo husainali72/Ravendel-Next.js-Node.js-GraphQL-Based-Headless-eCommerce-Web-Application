@@ -39,7 +39,7 @@ import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-
+import { isEmpty } from "../../utils/helper";
 import {
   shippingAction,
   globalShippingUpdateAction,
@@ -113,12 +113,15 @@ const Shipping = props => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    props.shippingAction();
+    if (isEmpty(props.shippingState.shipping.shipping_class)) {
+      props.shippingAction();
+    }
+  }, []);
+
+  useEffect(() => {
     if (shippingGlobal.overwrite) {
-      setTimeout(() => {
-        console.log(shippingGlobal.overwrite);
-        props.productsAction();
-      }, 5000);
+      //props.productsReset();
+      props.productsAction();
     }
     setshippingGlobal({
       ...shippingGlobal,
@@ -476,7 +479,13 @@ const mapDispatchToProps = {
   shippingClassAddAction,
   shippingClassUpdateAction,
   shippingClassDeleteAction,
-  productsAction
+  productsAction,
+  productsReset: () => dispatch => {
+    dispatch({
+      type: "PRODUCT_RESET",
+      payload: []
+    });
+  }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Shipping);

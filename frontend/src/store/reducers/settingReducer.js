@@ -1,5 +1,5 @@
 const initialState = {
-  themes: [{ primaryColor: "#009688", productsCount: "3" }]
+  themes: [{ primaryColor: "#3f51b5", productsCount: "3" }]
 };
 
 export default (state = initialState, action) => {

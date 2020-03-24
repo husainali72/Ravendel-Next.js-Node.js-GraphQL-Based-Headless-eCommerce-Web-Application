@@ -1,6 +1,11 @@
 import React, { Fragment, useState, useEffect } from "react";
 import PageTitle from "../components/pageTitle";
 import ProductCard from "../components/productcard";
+import { connect } from "react-redux";
+import {
+  productsAction,
+  categoriesAction
+} from "../../store/action/productAction";
 import {
   Typography,
   Box,
@@ -19,59 +24,8 @@ import {
   FormControlLabel
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-
-const products = [
-  {
-    featured_image:
-      "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
-    title: "Product First",
-    price: 12,
-    category: "category",
-    description: "Product first lorem ipsom dolr sit"
-  },
-  {
-    featured_image:
-      "https://colorlib.com/preview/theme/essence/img/bg-img/bg-4.jpg",
-    title: "Product Second",
-    price: 12,
-    category: "category",
-    description: "Product second lorem ipsom dolr sit",
-    sale_price: 10
-  },
-  {
-    featured_image:
-      "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
-    title: "Product Third",
-    price: 12,
-    category: "category",
-    description: "Product third lorem ipsom dolr sit"
-  },
-  {
-    featured_image:
-      "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
-    title: "Product Fourth",
-    price: 12,
-    category: "category",
-    description: "Product first lorem ipsom dolr sit"
-  },
-  {
-    featured_image:
-      "https://colorlib.com/preview/theme/essence/img/bg-img/bg-4.jpg",
-    title: "Product Fifth",
-    price: 12,
-    category: "category",
-    description: "Product second lorem ipsom dolr sit",
-    sale_price: 10
-  },
-  {
-    featured_image:
-      "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
-    title: "Product Sixth",
-    price: 12,
-    category: "category",
-    description: "Product third lorem ipsom dolr sit"
-  }
-];
+import { isEmpty } from "../../utils/helper";
+import Loading from "../components/loading";
 
 const categories = [
   {
@@ -104,13 +58,29 @@ const categories = [
 ];
 
 const Category = props => {
-  const [categoryName, setCategoryName] = useState(props.match.params.name);
+  const [category, setCategory] = useState({});
   const [catName, setCatName] = useState("");
   const [priceRange, ssetPriceRange] = React.useState([20, 37]);
 
   useEffect(() => {
-    setCategoryName(props.match.params.name);
-  }, [props.match.params.name]);
+    if (isEmpty(props.products.products)) {
+      props.productsAction();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isEmpty(props.products.categories)) {
+      props.categoriesAction();
+    }
+  }, []);
+
+  useEffect(() => {
+    props.products.categories.map(cat => {
+      if (cat.id === props.match.params.id) {
+        setCategory({ ...cat });
+      }
+    });
+  }, [props.match.params.id, props.products.products]);
 
   const priceChange = (event, newValue) => {
     ssetPriceRange(newValue);
@@ -173,7 +143,8 @@ const Category = props => {
 
   return (
     <Fragment>
-      <PageTitle title={categoryName} />
+      {props.products.loading && <Loading />}
+      <PageTitle title={category.name} />
       <Container>
         <Grid container className="margin-top-3 margin-bottom-3" spacing={4}>
           <Grid item md={12} xs={12} sm={12}>
@@ -347,7 +318,7 @@ const Category = props => {
             </Box>
           </Grid>
           <Grid item lg={9} md={8} sm={8} xs={12}>
-            <Grid container spacing={4}>
+            {/* <Grid container spacing={4}>
               {products &&
                 products.map((product, index) => (
                   <Grid item lg={4} md={6} sm={6} key={index}>
@@ -358,7 +329,7 @@ const Category = props => {
                     />
                   </Grid>
                 ))}
-            </Grid>
+            </Grid> */}
           </Grid>
         </Grid>
       </Container>
@@ -366,4 +337,16 @@ const Category = props => {
   );
 };
 
-export default Category;
+const mapStateToProps = state => {
+  return {
+    products: state.products,
+    categories: state.categories
+  };
+};
+
+const mapDispatchToProps = {
+  productsAction,
+  categoriesAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Category);

@@ -37,7 +37,6 @@ import {
   taxAction,
   productsAction
 } from "../../store/action/";
-//import Alert from "../utils/Alert";
 import { unflatten } from "../../utils/helper";
 import clsx from "clsx";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -77,7 +76,8 @@ var defaultObj = {
     virtual: false,
     downloadable: false
   },
-  custom_field: []
+  custom_field: [],
+  short_description: ""
 };
 
 var catIds = [];
@@ -93,7 +93,6 @@ const EditProduct = props => {
   const [checkedCat, setCheckedCat] = useState({});
   const [catList, setCatList] = useState([]);
   const [product, setProduct] = useState(defaultObj);
-
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = React.useState(0);
   React.useEffect(() => {
@@ -110,19 +109,23 @@ const EditProduct = props => {
     for (let i in props.products.products) {
       if (props.products.products[i].id === props.match.params.id) {
         catIds = props.products.products[i].categoryId;
-        if (isEmpty(props.products.categories)) {
+        if (!props.products.categories) {
           props.categoriesAction();
         }
         setProduct({ ...product, ...props.products.products[i] });
         if (props.products.products[i].feature_image.original) {
           setfeatureImage(props.products.products[i].feature_image.original);
         }
-
-        props.shippingAction();
-        props.taxAction();
-
         break;
       }
+    }
+
+    if (isEmpty(props.shippingState.shipping.shipping_class)) {
+      props.shippingAction();
+    }
+
+    if (isEmpty(props.taxState.tax.tax_class)) {
+      props.taxAction();
     }
   }, [props.products.products]);
 
@@ -203,7 +206,6 @@ const EditProduct = props => {
 
   const handleCategeryCheckbox = category => {
     category.checked = !category.checked;
-    console.log(category);
     //setCheckedCat({ ...checkedCat, [category.id]: category.checked });
     var items = document.getElementsByName("categoryIds");
     var selectedItems = [];
@@ -359,7 +361,6 @@ const EditProduct = props => {
 
   return (
     <Fragment>
-      {/* <Alert /> */}
       <form>
         <Grid container className="topbar">
           <Grid item lg={6}>
@@ -871,6 +872,30 @@ const EditProduct = props => {
                       >
                         + Add Custom Fields
                       </Button>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Box>
+
+            <Box component="span" m={1}>
+              <Card>
+                <CardHeader title="Short Description" />
+                <Divider />
+                <CardContent>
+                  <Grid container spacing={3}>
+                    <Grid item md={12}>
+                      <TextField
+                        id="short-description"
+                        label="Short Description"
+                        name="short_description"
+                        variant="outlined"
+                        value={product.short_description}
+                        className={clsx(classes.marginBottom, classes.width100)}
+                        multiline
+                        rows="4"
+                        onChange={handleChange}
+                      />
                     </Grid>
                   </Grid>
                 </CardContent>

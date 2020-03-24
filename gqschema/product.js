@@ -5,8 +5,6 @@ module.exports = gql`
     id: ID
     name: String
     parentId: ID
-    child: metaKeyValueArray
-    ancestors: metaKeyValueArray
     date: Date
     updated: Date
   }
@@ -18,12 +16,38 @@ module.exports = gql`
     children: customArray
   }
 
+  type ProductWithCat {
+    id: ID
+    name: String
+    categoryId: [productCategory]
+    url: String
+    sku: String
+    short_description: String
+    description: String
+    shippingDetails: customObject
+    manufactureDetails: customObject
+    quantity: String
+    pricing: customObject
+    feature_image: customObject
+    gallery_image: customObject
+    meta: customObject
+    shipping: customObject
+    tax_class: String
+    status: String
+    featured_product: Boolean
+    product_type: customObject
+    custom_field: [customObject]
+    date: Date
+    updated: Date
+  }
+
   type Product {
     id: ID
     name: String
     categoryId: customArray
     url: String
     sku: String
+    short_description: String
     description: String
     shippingDetails: customObject
     manufactureDetails: customObject
@@ -51,7 +75,9 @@ module.exports = gql`
     productCategory(id: ID!): productCategory
     getTree: [cattree]
     products: [Product]
+    productswithcat: [ProductWithCat]
     product(id: ID!): Product
+    productsbycat(cat_id: ID!): [ProductWithCat]
   }
 
   extend type Mutation {
@@ -67,6 +93,7 @@ module.exports = gql`
       name: String
       categoryId: customArray
       url: String
+      short_description: String
       description: String
       sku: String
       quantity: String
@@ -86,6 +113,7 @@ module.exports = gql`
       name: String
       categoryId: customArray
       url: String
+      short_description: String
       description: String
       sku: String
       quantity: String

@@ -14,6 +14,7 @@ const BlogSchema = new Schema({
     type: String,
     required: true
   },
+  blog_tag: [],
   url: {
     type: String
   },

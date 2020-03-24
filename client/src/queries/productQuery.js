@@ -66,6 +66,7 @@ const GET_PRODUCTS = gql`
       name
       url
       categoryId
+      short_description
       description
       sku
       quantity
@@ -90,6 +91,7 @@ const ADD_PRODUCT = gql`
     $name: String
     $url: String
     $categoryId: customArray
+    $short_description: String
     $description: String
     $sku: String
     $quantity: String
@@ -108,6 +110,7 @@ const ADD_PRODUCT = gql`
       name: $name
       url: $url
       categoryId: $categoryId
+      short_description: $short_description
       description: $description
       sku: $sku
       quantity: $quantity
@@ -126,6 +129,7 @@ const ADD_PRODUCT = gql`
       name
       url
       categoryId
+      short_description
       description
       sku
       quantity
@@ -151,6 +155,7 @@ const UPDATE_PRODUCT = gql`
     $name: String
     $url: String
     $categoryId: customArray
+    $short_description: String
     $description: String
     $sku: String
     $quantity: String
@@ -171,6 +176,7 @@ const UPDATE_PRODUCT = gql`
       name: $name
       url: $url
       categoryId: $categoryId
+      short_description: $short_description
       description: $description
       sku: $sku
       quantity: $quantity
@@ -190,6 +196,7 @@ const UPDATE_PRODUCT = gql`
       name
       url
       categoryId
+      short_description
       description
       sku
       quantity
@@ -216,6 +223,7 @@ const DELETE_PRODUCT = gql`
       name
       url
       categoryId
+      short_description
       description
       sku
       quantity

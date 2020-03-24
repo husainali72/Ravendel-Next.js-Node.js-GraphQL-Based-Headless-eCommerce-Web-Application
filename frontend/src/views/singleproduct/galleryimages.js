@@ -1,13 +1,15 @@
 import React, { Fragment } from "react";
 import Slider from "react-slick";
+import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 
 const GalleryImagesComponents = props => {
+  console.log("Galler", props.galleryImages);
   const settings = {
     customPaging: function(i) {
       return (
         <a>
           <img
-            src={props.galleryImages[i].image}
+            src={props.galleryImages[i].thumbnail}
             alt="Thumbnail"
             className="thumbnail-image"
           />
@@ -25,18 +27,25 @@ const GalleryImagesComponents = props => {
   return (
     <Fragment>
       <div className="singleroduct-gallery-slider">
-        <Slider {...settings}>
-          {props.galleryImages &&
-            props.galleryImages.map((gallery, index) => (
+        {props.galleryImages && props.galleryImages.length ? (
+          <Slider {...settings}>
+            {props.galleryImages.map((gallery, index) => (
               <div key={index}>
                 <img
-                  src={gallery.image}
+                  src={gallery.large}
                   alt="gallery"
                   className="gallery-image"
                 />
               </div>
             ))}
-        </Slider>
+          </Slider>
+        ) : (
+          <img
+            src={PlaceHolder}
+            alt="Placeholder"
+            className="single-placholder-image"
+          />
+        )}
       </div>
     </Fragment>
   );

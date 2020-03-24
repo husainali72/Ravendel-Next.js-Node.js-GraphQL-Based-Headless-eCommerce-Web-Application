@@ -103,6 +103,7 @@ section:nth-child(even) {
   cursor: pointer;
   transition: all 1s ease-in-out;
   position: relative;
+  box-shadow: 0 0 1px 1px #f7f7f7;
 }
 .product-card .product-image-wrapper {
   position: relative;
@@ -168,6 +169,19 @@ section:nth-child(even) {
 }
 .sale-price {
   margin-left: 10px;
+}
+.product-card .product-details .out-of-stock {
+  color: tomato;
+  display: inline-flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  font-weight: bold;
+}
+.product-card .product-details .out-of-stock .material-icons {
+  font-size: 20px;
+  padding-right: 5px;
 }
 .product-card.product-grid-view {
   border: 1px solid #7a7a7a52;
@@ -322,10 +336,10 @@ section:nth-child(even) {
   line-height: 28px !important;
   color: #787878 !important;
 }
-.select-attributed-wrapper {
+/* .select-attributed-wrapper {
   margin-bottom: 25px;
   margin-top: 25px;
-}
+} */
 .singleproduct-rightside .singleproduct-details .select-attributed {
   min-width: 150px;
   margin-right: 20px;
@@ -334,6 +348,7 @@ section:nth-child(even) {
   display: flex;
   flex-direction: column;
   height: 100%;
+  background-color: #f1f1f1;
 }
 .singleroduct-gallery-slider .slick-slider {
   height: 100%;
@@ -356,6 +371,23 @@ section:nth-child(even) {
   width: 50px;
   overflow: hidden;
 }
+.single-placholder-image {
+  max-width: 800px;
+  height: 100%;
+  margin: 0 auto;
+}
+.product-availablity .outofstock {
+  color: tomato;
+  font-weight: bold;
+  display: inline-flex;
+}
+.product-availablity .outofstock .material-icons {
+  padding-right: 5px;
+}
+.product-availablity .inStock {
+  color: green;
+  font-weight: bold;
+}
 .thumbnail-image {
   width: 100%;
   height: 100%;
@@ -365,6 +397,8 @@ section:nth-child(even) {
   margin: 0 auto;
   cursor: zoom-in;
   transition: all 2s ease-in-out;
+  max-width: 800px;
+  max-height: 800px;
 }
 .gallery-image:hover {
   transform: scale(1.3);
@@ -642,6 +676,9 @@ section:nth-child(even) {
   filter: drop-shadow(4px 5px 6px #eee);
   transform: translateY(-7px);
 }
+.blog-sescription {
+  min-height: 50px;
+}
 /*=======Slider Navigation==========*/
 .slick-next,
 .slick-prev {
@@ -838,4 +875,7 @@ section.with-slider {
 }
 .position-relative {
   position: relative !important;
+}
+.text-capitalize {
+  text-transform: capitalize;
 }

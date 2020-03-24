@@ -23,7 +23,7 @@ const Routes = [
     name: "Single Product Page"
   },
   {
-    path: "/category/:name",
+    path: "/category/:id",
     exact: true,
     component: Category,
     name: "Category"

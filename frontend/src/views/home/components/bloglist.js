@@ -12,8 +12,15 @@ import {
   CardActionArea
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import PlaceHolder from "../../../assets/images/placeholder.png";
 
 const BlogListing = props => {
+  // var array = props.recentlyBlogs;
+  // var val = array.sort((a, b) =>
+  //   Date.parse("1970-01-01T" + b.date) > Date.parse("1970-01-01T" + a.date)
+  //     ? 1
+  //     : -1
+  // );
   return (
     <Fragment>
       <section className="blog-section-homepage">
@@ -25,42 +32,64 @@ const BlogListing = props => {
           </Box>
           <Grid container spacing={4}>
             {props.recentlyBlogs &&
-              props.recentlyBlogs.map((blog, index) => (
-                <Grid item lg={4} md={6} sm={6} key={index}>
-                  <Card className="blog-card">
-                    <Link to={`blog/${blog.id}`}>
-                      <CardActionArea>
-                        <CardMedia
-                          component="img"
-                          alt="Contemplative Reptile"
-                          height="140"
-                          image={blog.featured_image}
-                          title="Contemplative Reptile"
-                        />
-                        <CardContent>
-                          <Typography gutterBottom variant="h4" component="h2">
-                            {blog.title}
-                          </Typography>
-                          <Typography
-                            variant="subtitle2"
-                            color="textSecondary"
-                            component="p"
-                          >
-                            {blog.description}
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Link>
-                    <CardActions>
+              props.recentlyBlogs
+                .sort((a, b) =>
+                  Date.parse("1970-01-01T" + b.date) >
+                  Date.parse("1970-01-01T" + a.date)
+                    ? 1
+                    : -1
+                )
+                .slice(0, 3)
+                .map((blog, index) => (
+                  <Grid item lg={4} md={6} sm={6} key={index}>
+                    <Card className="blog-card">
                       <Link to={`blog/${blog.id}`}>
-                        <Button size="small" color="primary">
-                          Learn More
-                        </Button>
+                        <CardActionArea>
+                          <CardMedia
+                            component="img"
+                            alt={blog.title}
+                            height="175"
+                            image={
+                              blog.feature_image
+                                ? blog.feature_image.medium
+                                : PlaceHolder
+                            }
+                            title={blog.title}
+                          />
+                          <CardContent>
+                            <Typography
+                              gutterBottom
+                              variant="h4"
+                              component="h2"
+                              className="text-capitalize"
+                            >
+                              {blog.title}
+                            </Typography>
+                            <Typography
+                              variant="subtitle2"
+                              color="textSecondary"
+                              component="p"
+                              className="blog-sescription"
+                            >
+                              <span
+                                dangerouslySetInnerHTML={{
+                                  __html: blog.content.substring(0, 80) + "..."
+                                }}
+                              ></span>
+                            </Typography>
+                          </CardContent>
+                        </CardActionArea>
                       </Link>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
+                      <CardActions>
+                        <Link to={`blog/${blog.id}`}>
+                          <Button size="small" color="primary">
+                            Learn More
+                          </Button>
+                        </Link>
+                      </CardActions>
+                    </Card>
+                  </Grid>
+                ))}
           </Grid>
         </Container>
       </section>

@@ -9,6 +9,7 @@ import {
   Container
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 
 const CategoryListing = props => {
   const classes = useStyles();
@@ -30,34 +31,42 @@ const CategoryListing = props => {
             <Grid container spacing={4}>
               {props.allCategories &&
                 props.allCategories.map((category, index) => (
-                  <Grid item lg={4} md={6} sm={12} xs={12} key={index}>
-                    <Link to={`/category/${category.title}`}>
-                      <ButtonBase
-                        focusRipple
-                        className={classes.image}
-                        focusVisibleClassName={classes.focusVisible}
-                      >
-                        <span
-                          className={classes.imageSrc}
-                          style={{
-                            backgroundImage: `url(${category.url})`
-                          }}
-                        />
-                        <span className={classes.imageBackdrop} />
-                        <span className={classes.imageButton}>
-                          <Typography
-                            component="span"
-                            variant="subtitle1"
-                            color="inherit"
-                            className={classes.imageTitle}
+                  <Fragment key={index}>
+                    {category.parentId === null && (
+                      <Grid item lg={4} md={6} sm={12} xs={12}>
+                        <Link to={`/category/${category.id}`}>
+                          <ButtonBase
+                            focusRipple
+                            className={classes.image}
+                            focusVisibleClassName={classes.focusVisible}
                           >
-                            {category.title}
-                            <span className={classes.imageMarked} />
-                          </Typography>
-                        </span>
-                      </ButtonBase>
-                    </Link>
-                  </Grid>
+                            <span
+                              className={classes.imageSrc}
+                              style={{
+                                backgroundImage: `url(${
+                                  category.feature_image
+                                    ? category.feature_image
+                                    : PlaceHolder
+                                })`
+                              }}
+                            />
+                            <span className={classes.imageBackdrop} />
+                            <span className={classes.imageButton}>
+                              <Typography
+                                component="span"
+                                variant="subtitle1"
+                                color="inherit"
+                                className={classes.imageTitle}
+                              >
+                                {category.name}
+                                <span className={classes.imageMarked} />
+                              </Typography>
+                            </span>
+                          </ButtonBase>
+                        </Link>
+                      </Grid>
+                    )}
+                  </Fragment>
                 ))}
             </Grid>
           </Box>

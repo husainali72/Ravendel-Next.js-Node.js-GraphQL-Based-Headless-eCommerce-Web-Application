@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Button, Zoom } from "@material-ui/core";
+import React, { useState, useEffect, Fragment } from "react";
+import { Button, Zoom, Icon } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 
 const ProductCard = props => {
   const [prodIndex, setProdIndex] = useState("");
@@ -19,6 +20,35 @@ const ProductCard = props => {
       });
     }
   };
+
+  const categoryListing = categoryID => {
+    var category = [];
+
+    // category = categoryID.filter(id =>
+    //   props.categories.filter(cat => id === cat.id)
+    // );
+
+    // category = props.categories.map(cat =>
+    //   categoryID.filter(id => cat.id === id)
+    // );
+
+    // category = categoryID.map(id =>
+    //   props.categories.filter(cat => id === cat.id)
+    // );
+
+    // category = categoryID.filter(id =>
+    //   props.categories.filter(cat => id === cat.id)
+    // );
+
+    // for (var i = 0; i < categoryID.length; i++) {
+    //   for (var j = 0; j < props.categories.length; j++) {
+    //     if (props.categories[j].id === categoryID[i]) {
+    //       return props.categories[j].name;
+    //     }
+    //   }
+    // }
+  };
+
   return (
     <div
       className={
@@ -30,10 +60,18 @@ const ProductCard = props => {
       onMouseOut={() => setProdIndex("")}
     >
       <div className="product-image-wrapper">
-        <img src={props.productDetail.featured_image} alt="product" />
+        <img
+          src={
+            props.productDetail.feature_image &&
+            props.productDetail.feature_image.medium
+              ? props.productDetail.feature_image.medium
+              : PlaceHolder
+          }
+          alt="product"
+        />
         <Zoom in={props.index === prodIndex ? true : false}>
           <div className="hover-content">
-            <Link to={`/product/${props.productDetail.title}`}>
+            <Link to={`/product/${props.productDetail.id}`}>
               <Button
                 variant="contained"
                 color="secondary"
@@ -56,25 +94,41 @@ const ProductCard = props => {
         </Zoom>
       </div>
       <div className="product-details">
-        <span className="product-category">{props.productDetail.category}</span>
+        {props.productDetail.categoryId && (
+          <span className="product-category">
+            {categoryListing(props.productDetail.categoryId)}
+          </span>
+        )}
 
-        <a href="google.com" target="_blank">
-          <h3 className="product-title">{props.productDetail.title}</h3>
-        </a>
+        <Link to={`/product/${props.productDetail.id}`}>
+          <h3 className="product-title">{props.productDetail.name}</h3>
+        </Link>
 
         <p className="product-price">
-          <span className={props.productDetail.sale_price && "has-sale-price"}>
-            ${props.productDetail.price.toFixed(2)}
+          <span
+            className={
+              props.productDetail.pricing.sellprice ? "has-sale-price" : ""
+            }
+          >
+            ${props.productDetail.pricing.price.toFixed(2)}
           </span>
-          {props.productDetail.sale_price && (
+
+          {props.productDetail.pricing.sellprice ? (
             <span className="sale-price">
-              ${props.productDetail.sale_price.toFixed(2)}
+              ${props.productDetail.pricing.sellprice.toFixed(2)}
             </span>
-          )}
+          ) : null}
         </p>
-        {props.productDetail.sale_price && (
+        <p>
+        {props.productDetail.quantity < 1 ? (
+            <span className="out-of-stock">
+              <Icon>sentiment_very_dissatisfied</Icon> Out Of Stock
+            </span>
+          ) : null}
+        </p>
+        {props.productDetail.pricing.sellprice ? (
           <span className="sale-price-label">Sale</span>
-        )}
+        ) : null}
       </div>
     </div>
   );

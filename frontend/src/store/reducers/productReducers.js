@@ -1,14 +1,12 @@
 import {
   PRODUCT_LOADING,
-  PRODUCTS_SUCCESS,
   PRODUCT_FAIL,
   PRODUCT_SUCCESS,
-  CAT_LOADING,
+  PRODUCTS_SUCCESS,
   CATS_SUCCESS,
+  CAT_LOADING,
   CAT_FAIL,
-  CAT_SUCCESS,
-  TINYMCE_DESCRIPTION,
-  TINYMCE_DESCRIPTION_NULL
+  CAT_SUCCESS
 } from "../action/productAction";
 
 const initialState = {
@@ -48,18 +46,18 @@ export default (state = initialState, action) => {
         loading: false,
         success: false
       };
-    case PRODUCT_LOADING:
-      return {
-        ...state,
-        loading: true,
-        success: false
-      };
     case PRODUCTS_SUCCESS:
       return {
         ...state,
         products: action.payload,
         loading: false,
         success: true
+      };
+    case PRODUCT_LOADING:
+      return {
+        ...state,
+        loading: true,
+        success: false
       };
     case PRODUCT_SUCCESS:
       return {
@@ -73,28 +71,6 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         success: false
-      };
-    case TINYMCE_DESCRIPTION:
-      return {
-        ...state,
-        product: {
-          ...state.product,
-          description: action.payload.description
-        }
-      };
-    case TINYMCE_DESCRIPTION_NULL:
-      return {
-        ...state,
-        product: {
-          ...state.product,
-          description: action.payload.description
-        }
-      };
-    case "PRODUCT_RESET":
-      console.log("payload", action.payload);
-      return {
-        ...state,
-        products: action.payload
       };
     default:
       return state;

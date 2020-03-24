@@ -845,6 +845,29 @@ const AddProduct = props => {
 
             <Box component="span" m={1}>
               <Card>
+                <CardHeader title="Short Description" />
+                <Divider />
+                <CardContent>
+                  <Grid container spacing={3}>
+                    <Grid item md={12}>
+                      <TextField
+                        id="short-description"
+                        label="Short Description"
+                        name="short_description"
+                        variant="outlined"
+                        className={clsx(classes.marginBottom, classes.width100)}
+                        multiline
+                        rows="4"
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Box>
+
+            <Box component="span" m={1}>
+              <Card>
                 <CardHeader title="Meta Information" />
                 <Divider />
                 <CardContent>

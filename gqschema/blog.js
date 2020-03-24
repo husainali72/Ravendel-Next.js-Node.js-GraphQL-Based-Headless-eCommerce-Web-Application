@@ -5,6 +5,7 @@ module.exports = gql`
     title: String
     content: String
     status: String
+    blog_tag: customArray
     url: String
     feature_image: customObject
     meta: customObject
@@ -31,6 +32,7 @@ module.exports = gql`
       title: String
       content: String
       status: String
+      blog_tag: customArray
       url: String
       feature_image: Upload
       meta: customObject
@@ -40,6 +42,7 @@ module.exports = gql`
       title: String
       content: String
       status: String
+      blog_tag: customArray
       url: String
       updatedImage: Upload
       meta: customObject

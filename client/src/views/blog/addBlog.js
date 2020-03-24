@@ -17,7 +17,6 @@ import {
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
-import Alert from "../utils/Alert";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { blogAddAction, blogtagsAction } from "../../store/action/";
@@ -43,6 +42,7 @@ const StyledRadio = props => {
 
 var defaultObj = {
   status: "Publish",
+  blog_tag: [],
   meta: {
     title: "",
     description: "",
@@ -55,7 +55,6 @@ const AddBlog = props => {
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
 
   useEffect(() => {
     if (isEmpty(props.blogs.tags)) {
@@ -68,8 +67,8 @@ const AddBlog = props => {
   }, [props.blogs.tags]);
 
   const handleChangeTag = value => {
-    var id = value.map(val => val.id);
-    setSelectedTags(id);
+    //var id = value.map(val => val.id);
+    setBlog({ ...blog, blog_tag: value.map(val => val.id) });
   };
 
   useEffect(() => {
@@ -110,8 +109,6 @@ const AddBlog = props => {
 
   return (
     <Fragment>
-      <Alert />
-
       {props.blogs.loading && <Loading />}
       <form>
         <Grid container className="topbar">
@@ -302,11 +299,7 @@ const AddBlog = props => {
                     )}
                     renderTags={(value, getTagProps) =>
                       value.map((option, index) => (
-                        <Chip
-                          label={option.name}
-                          {...getTagProps({ index })}
-                          disabled={index === 0}
-                        />
+                        <Chip label={option.name} {...getTagProps({ index })} />
                       ))
                     }
                   />

@@ -163,8 +163,6 @@ export const productsAction = () => dispatch => {
         payload: { boolean: true, message: error, error: true }
       });
     });
-
-  console.log("productsAction");
 };
 
 export const productAddAction = object => dispatch => {

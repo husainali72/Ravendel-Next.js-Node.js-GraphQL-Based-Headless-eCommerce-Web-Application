@@ -3,7 +3,7 @@ import jumpTo from "./navigation";
 import axios from "axios";
 import { isEmpty } from "./helper";
 import APclient from "../Client";
-import gql from "graphql-tag";
+
 export const mutation = async (query, variables) => {
   try {
     const response = await APclient.mutate({
@@ -34,13 +34,12 @@ export const query = async (query, variables) => {
   try {
     const response = await APclient.query({
       query: query,
-      variables,
-      fetchPolicy: "no-cache" //fetchPolicy "cache-first" | "network-only" | "cache-only" | "no-cache" | "standby"
+      variables
     });
     return Promise.resolve(response);
   } catch (error) {
     const errors = JSON.parse(JSON.stringify(error));
-    console.log(error);
+    console.log("Error", errors);
     if (
       errors.graphQLErrors.length &&
       !isEmpty(errors.graphQLErrors[0].message)

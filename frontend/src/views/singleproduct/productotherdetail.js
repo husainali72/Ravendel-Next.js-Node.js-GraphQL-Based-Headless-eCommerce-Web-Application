@@ -18,59 +18,6 @@ import Rating from "@material-ui/lab/Rating";
 const ProductOtherDetails = props => {
   const [ratingVal, setRatingVal] = useState(0);
 
-  const products = [
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
-      title: "Product First",
-      price: 12,
-      category: "category",
-      description: "Product first lorem ipsom dolr sit"
-    },
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-4.jpg",
-      title: "Product Second",
-      price: 12,
-      category: "category",
-      description: "Product second lorem ipsom dolr sit",
-      sale_price: 10
-    },
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
-      title: "Product Third",
-      price: 12,
-      category: "category",
-      description: "Product third lorem ipsom dolr sit"
-    },
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
-      title: "Product Fourth",
-      price: 12,
-      category: "category",
-      description: "Product first lorem ipsom dolr sit"
-    },
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-4.jpg",
-      title: "Product Fifth",
-      price: 12,
-      category: "category",
-      description: "Product second lorem ipsom dolr sit",
-      sale_price: 10
-    },
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
-      title: "Product Sixth",
-      price: 12,
-      category: "category",
-      description: "Product third lorem ipsom dolr sit"
-    }
-  ];
-
   return (
     <Fragment>
       <section className="product-other-detail">
@@ -84,71 +31,64 @@ const ProductOtherDetails = props => {
                   </Typography>
                 </Box>
                 <Typography variant="body1" className="product-description">
-                  {props.details.description}
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: props.details.description
+                    }}
+                  ></span>
+                  {/* {props.details.description} */}
                 </Typography>
               </Box>
             </Grid>
           )}
 
-          <Grid
-            item
-            md={12}
-            sm={12}
-            xs={12}
-            className="margin-top-3 margin-bottom-3 additional-inforamtion"
-          >
-            <Box>
-              <Box display="flex" justifyContent="center">
-                <Typography variant="h2" className="section-title">
-                  Additional Information
-                </Typography>
+          {props.details.custom_field && (
+            <Grid
+              item
+              md={12}
+              sm={12}
+              xs={12}
+              className="margin-top-3 margin-bottom-3 additional-inforamtion"
+            >
+              <Box>
+                <Box display="flex" justifyContent="center">
+                  <Typography variant="h2" className="section-title">
+                    Additional Information
+                  </Typography>
+                </Box>
+                <Box className="additional-info-table">
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Name</TableCell>
+                          <TableCell>Value</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {props.details.custom_field.map((field, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <Typography variant="h5">{field.key}</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography
+                                variant="subtitle1"
+                                component="h4"
+                                className="text-capitalize"
+                              >
+                                {field.value}
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
               </Box>
-              <Box className="additional-info-table">
-                <TableContainer>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Value</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell>
-                          <Typography variant="h5">Color</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="subtitle1" component="h4">
-                            Black, Blue, Red
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>
-                          <Typography variant="h5">Size</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="subtitle1" component="h4">
-                            M, L, XL, XXL
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>
-                          <Typography variant="h5">Material</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="subtitle1" component="h4">
-                            ABC
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
-            </Box>
-          </Grid>
+            </Grid>
+          )}
 
           <Grid item md={12} sm={12} xs={12} className="product-reviews">
             <Box>
@@ -320,7 +260,7 @@ const ProductOtherDetails = props => {
             className="related-products-wrapper"
           >
             <RelatedProducts
-              relatedProduct={products}
+              relatedProduct={props.relatedProducts}
               title="Related Products"
             />
           </Grid>

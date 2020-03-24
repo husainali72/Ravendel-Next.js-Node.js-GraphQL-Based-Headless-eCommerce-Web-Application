@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import {
   Typography,
@@ -20,9 +20,25 @@ import {
 import ProductCard from "../components/productcard";
 import PageTitle from "../components/pageTitle";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import {
+  productsAction,
+  categoriesAction
+} from "../../store/action/productAction";
+import { isEmpty } from "../../utils/helper";
+import Loading from "../components/loading";
 
 const Shop = props => {
-  const [prodIndex, setProdIndex] = useState("");
+  useEffect(() => {
+    if (isEmpty(props.products.products)) {
+      props.productsAction();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isEmpty(props.products.categories)) {
+      props.categoriesAction();
+    }
+  }, []);
 
   const categories = [
     {
@@ -53,60 +69,6 @@ const Shop = props => {
       ]
     }
   ];
-
-  const products = [
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
-      title: "Product First",
-      price: 12,
-      category: "category",
-      description: "Product first lorem ipsom dolr sit"
-    },
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-4.jpg",
-      title: "Product Second",
-      price: 12,
-      category: "category",
-      description: "Product second lorem ipsom dolr sit",
-      sale_price: 10
-    },
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
-      title: "Product Third",
-      price: 12,
-      category: "category",
-      description: "Product third lorem ipsom dolr sit"
-    },
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
-      title: "Product Fourth",
-      price: 12,
-      category: "category",
-      description: "Product first lorem ipsom dolr sit"
-    },
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-4.jpg",
-      title: "Product Fifth",
-      price: 12,
-      category: "category",
-      description: "Product second lorem ipsom dolr sit",
-      sale_price: 10
-    },
-    {
-      featured_image:
-        "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
-      title: "Product Sixth",
-      price: 12,
-      category: "category",
-      description: "Product third lorem ipsom dolr sit"
-    }
-  ];
-
   const [catName, setCatName] = useState("");
   const [priceRange, ssetPriceRange] = React.useState([20, 37]);
 
@@ -171,6 +133,7 @@ const Shop = props => {
 
   return (
     <Fragment>
+      {props.products.loading && <Loading />}
       <PageTitle title="Shop" />
       <Container>
         <Grid container className="shop-row" spacing={4}>
@@ -328,15 +291,21 @@ const Shop = props => {
 
           <Grid item lg={9} md={8} sm={8} xs={12}>
             <Grid container spacing={4}>
-              {products &&
-                products.map((product, index) => (
-                  <Grid item lg={4} md={6} sm={6} key={index}>
-                    <ProductCard
-                      productDetail={product}
-                      index={index}
-                      key={index}
-                    />
-                  </Grid>
+              {props.products.products &&
+                props.products.products.map((product, index) => (
+                  <Fragment key={index}>
+                    {product.status === "Publish" && (
+                      <Grid item lg={4} md={6} sm={6}>
+                        <ProductCard
+                          productDetail={product}
+                          categories={props.products.categories}
+                          index={index}
+                          key={index}
+                          GirdProductView={true}
+                        />
+                      </Grid>
+                    )}
+                  </Fragment>
                 ))}
             </Grid>
           </Grid>
@@ -346,8 +315,16 @@ const Shop = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  settings: state.settings
-});
+const mapStateToProps = state => {
+  return {
+    products: state.products,
+    categories: state.categories
+  };
+};
 
-export default connect(mapStateToProps)(Shop);
+const mapDispatchToProps = {
+  productsAction,
+  categoriesAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Shop);

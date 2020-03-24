@@ -11,6 +11,9 @@ const ProductSchema = new Schema({
   sku: {
     type: String
   },
+  short_description: {
+    type: String
+  },
   description: {
     type: String
   },

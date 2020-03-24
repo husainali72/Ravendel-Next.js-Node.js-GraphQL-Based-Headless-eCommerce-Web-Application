@@ -18,10 +18,13 @@ import {
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
-import Alert from "../utils/Alert";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { blogUpdateAction, blogtagsAction } from "../../store/action/";
+import {
+  blogUpdateAction,
+  blogtagsAction,
+  blogsAction
+} from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
 import clsx from "clsx";
 import { isEmpty } from "../../utils/helper";
@@ -42,55 +45,76 @@ const StyledRadio = props => {
   );
 };
 
+var blog_tags = [];
+
+const defaultObj = {
+  title: "",
+  content: "",
+  status: "Publish",
+  blog_tag: [],
+  feature_image: "",
+  meta: {
+    title: "",
+    description: "",
+    keywords: ""
+  },
+  defaultTags: []
+};
 const EditBlog = props => {
   const classes = viewStyles();
   const [featureImage, setfeatureImage] = useState(null);
-
-  const [blog, setBlog] = useState({
-    title: "",
-    content: "",
-    status: "Publish",
-    feature_image: "",
-    meta: {
-      title: "",
-      description: "",
-      keywords: ""
-    }
-  });
+  const [blog, setBlog] = useState(defaultObj);
 
   const [tags, setTags] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
 
   useEffect(() => {
-    if (isEmpty(props.blogs.tags)) {
-      props.blogtagsAction();
+    if (!props.blogs.blogs.length) {
+      props.blogsAction();
     }
-  }, []);
+
+    if (props.blogs.blogs.length) {
+      for (let i in props.blogs.blogs) {
+        if (props.blogs.blogs[i].id === props.match.params.id) {
+          blog_tags = props.blogs.blogs[i].blog_tag;
+          if (!props.blogs.tags.length) {
+            props.blogtagsAction();
+          }
+
+          setBlog({ ...blog, ...props.blogs.blogs[i] });
+          if (props.blogs.blogs[i].feature_image.original) {
+            setfeatureImage(props.blogs.blogs[i].feature_image.original);
+          }
+        }
+      }
+    }
+  }, [props.blogs.blogs]);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
+    if (blog_tags.length) {
+      const defaultTags = [];
+      for (let i in props.blogs.tags) {
+        if (~blog_tags.indexOf(props.blogs.tags[i].id)) {
+          defaultTags.push(props.blogs.tags[i]);
+        }
+      }
+
+      if (defaultTags.length) {
+        setBlog({ ...blog, defaultTags: defaultTags });
+      }
+    }
     setTags(props.blogs.tags);
   }, [props.blogs.tags]);
 
   const handleChangeTag = value => {
-    var id = value.map(val => val.id);
-    setSelectedTags(id);
+    setBlog({ ...blog, blog_tag: value.map(val => val.id) });
   };
 
   const updateBlog = e => {
     e.preventDefault();
     props.blogUpdateAction(blog);
   };
-
-  useEffect(() => {
-    props.blogs.blogs.map(editblog => {
-      if (editblog.id === props.match.params.id) {
-        setBlog({ ...editblog });
-        if (editblog.feature_image.original) {
-          setfeatureImage(editblog.feature_image.original);
-        }
-      }
-    });
-  }, []);
 
   useEffect(() => {
     if (!isEmpty(props.blogs.blog.content)) {
@@ -117,7 +141,6 @@ const EditBlog = props => {
 
   return (
     <Fragment>
-      <Alert />
       {props.blogs.loading && <Loading />}
       <form>
         <Grid container className="topbar">
@@ -298,10 +321,12 @@ const EditBlog = props => {
                   >
                     Select Tags
                   </Typography>
+
                   <Autocomplete
                     multiple
                     id="select-tags"
                     options={tags}
+                    defaultValue={blog.defaultTags}
                     getOptionLabel={option => option.name}
                     className={classes.width100}
                     onChange={(event, value) => handleChangeTag(value)}
@@ -310,11 +335,7 @@ const EditBlog = props => {
                     )}
                     renderTags={(value, getTagProps) =>
                       value.map((option, index) => (
-                        <Chip
-                          label={option.name}
-                          {...getTagProps({ index })}
-                          disabled={index === 0}
-                        />
+                        <Chip label={option.name} {...getTagProps({ index })} />
                       ))
                     }
                   />
@@ -334,7 +355,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   blogUpdateAction,
-  blogtagsAction
+  blogtagsAction,
+  blogsAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditBlog);

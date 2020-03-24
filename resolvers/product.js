@@ -84,6 +84,26 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    productswithcat: async (root, args, { id }) => {
+      try {
+        const products = await Product.find({});
+        return products || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    productsbycat: async (root, args, { id }) => {
+      try {
+        const products = await Product.find({
+          categoryId: { $in: args.cat_id }
+        });
+        return products || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     product: async (root, args) => {
       try {
         const product = await Product.findById(args.id);
@@ -91,6 +111,17 @@ module.exports = {
           throw putError("Page not found");
         }
         return product;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    }
+  },
+  ProductWithCat: {
+    categoryId: async (root, args) => {
+      try {
+        const cats = await ProductCat.find({ _id: { $in: root.categoryId } });
+        return cats;
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -228,6 +259,7 @@ module.exports = {
             name: args.name,
             url: url,
             categoryId: args.categoryId,
+            short_description: args.short_description,
             description: args.description,
             sku: args.sku,
             quantity: args.quantity,
@@ -326,6 +358,7 @@ module.exports = {
           product.name = args.name;
           product.categoryId = args.categoryId;
           product.url = stringTourl(args.url || args.name);
+          product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;
           product.quantity = args.quantity;
@@ -337,6 +370,7 @@ module.exports = {
           product.featured_product = args.featured_product;
           product.product_type = args.product_type;
           product.custom_field = args.custom_field;
+          product.status = args.status;
           product.updated = Date.now();
           await product.save();
           const products = await Product.find({});
