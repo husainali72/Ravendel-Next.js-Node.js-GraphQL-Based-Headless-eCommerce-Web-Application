@@ -102,7 +102,7 @@ const EditProduct = props => {
   }, []);
 
   useEffect(() => {
-    if (isEmpty(props.products.products)) {
+    if (!props.products.products.length) {
       props.productsAction();
     }
 

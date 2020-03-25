@@ -8,7 +8,6 @@ const {
   checkToken
 } = require("../config/helpers");
 const validate = require("../validations/coupon");
-const bcrypt = require("bcryptjs");
 
 module.exports = {
   Query: {

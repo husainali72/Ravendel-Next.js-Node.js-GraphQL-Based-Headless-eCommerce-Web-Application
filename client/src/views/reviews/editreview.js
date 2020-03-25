@@ -14,7 +14,6 @@ import {
   Radio,
   FormControlLabel
 } from "@material-ui/core";
-import Alert from "../utils/Alert";
 import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
@@ -24,7 +23,11 @@ import Rating from "@material-ui/lab/Rating";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { productsAction, customersAction } from "../../store/action";
+import {
+  productsAction,
+  customersAction,
+  reviewsAction
+} from "../../store/action";
 import { connect } from "react-redux";
 
 const StyledRadio = props => {
@@ -39,32 +42,43 @@ const StyledRadio = props => {
     />
   );
 };
+
+var reviewObj = {
+  title: "",
+  customer_id: "",
+  product_id: "",
+  email: "",
+  review: "",
+  rating: "",
+  status: "Pending"
+};
 const EditReview = props => {
   const classes = viewStyles();
-  const [ratignVal, setRatinVal] = useState(3);
+  const [review, setreview] = useState(reviewObj);
 
   useEffect(() => {
-    if (isEmpty(props.products.products)) {
-      props.productsAction();
+    if (!props.reviewState.reviews.length) {
+      props.reviewsAction();
     }
-  }, []);
 
-  useEffect(() => {
-    if (isEmpty(props.customers.customers)) {
-      props.customersAction();
+    props.customersAction();
+    props.productsAction();
+
+    for (let i in props.reviewState.reviews) {
+      if (props.reviewState.reviews[i].id === props.match.params.id) {
+        setreview({ ...review, ...props.reviewState.reviews[i] });
+        break;
+      }
     }
-  }, []);
+  }, [props.reviewState.reviews]);
 
-  const updateReview = () => {
-    console.log("update Review");
-  };
+  const updateReview = () => {};
 
   const handleChange = () => {};
 
   return (
     <Fragment>
-      <Alert />
-      {props.loading && <Loading />}
+      {props.reviewState.loading && <Loading />}
       <Grid container className="topbar">
         <Grid item lg={6}>
           <Typography variant="h4">
@@ -105,6 +119,7 @@ const EditReview = props => {
                   variant="outlined"
                   label="Title"
                   className={clsx(classes.marginBottom, classes.width100)}
+                  value={review.title}
                 />
                 <TextField
                   type="text"
@@ -113,6 +128,7 @@ const EditReview = props => {
                   className={clsx(classes.marginBottom, classes.width100)}
                   multiline
                   rows="5"
+                  value={review.review}
                 />
               </CardContent>
             </Card>
@@ -125,7 +141,7 @@ const EditReview = props => {
               <CardContent>
                 <Autocomplete
                   id="combo-box-demo"
-                  options={props.products.products}
+                  options={props.productState.products}
                   getOptionLabel={option => option.name}
                   className={clsx(classes.marginBottom)}
                   onChange={(event, value) => console.log(value)}
@@ -139,7 +155,7 @@ const EditReview = props => {
                 />
                 <Autocomplete
                   id="combo-box-demo"
-                  options={props.customers.customers}
+                  options={props.customerState.customers}
                   getOptionLabel={option => option.first_name}
                   className={clsx(classes.marginBottom)}
                   onChange={(event, value) => console.log(value)}
@@ -156,14 +172,15 @@ const EditReview = props => {
                   variant="outlined"
                   label="Email Address"
                   className={clsx(classes.marginBottom, classes.width100)}
+                  value={review.email}
                 />
                 <Box component="fieldset" mb={3} borderColor="transparent">
                   <Typography component="legend">Rating</Typography>
                   <Rating
                     name="simple-controlled"
-                    value={ratignVal}
+                    value={Number(review.rating)}
                     onChange={(event, newValue) => {
-                      setRatinVal(newValue);
+                      console.log(newValue);
                     }}
                   />
                 </Box>
@@ -182,11 +199,12 @@ const EditReview = props => {
                 name="status"
                 onChange={handleChange}
                 row
+                value={review.status}
               >
                 <FormControlLabel
-                  value="Publish"
+                  value="Approved"
                   control={<StyledRadio />}
-                  label="Publish"
+                  label="Approved"
                 />
                 <FormControlLabel
                   value="Pending"
@@ -203,12 +221,17 @@ const EditReview = props => {
 };
 
 const mapStateToProps = state => {
-  return { products: state.products, customers: state.customers };
+  return {
+    productState: state.products,
+    customerState: state.customers,
+    reviewState: state.reviews
+  };
 };
 
 const mapDispatchToProps = {
   productsAction,
-  customersAction
+  customersAction,
+  reviewsAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditReview);

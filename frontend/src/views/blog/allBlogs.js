@@ -26,7 +26,6 @@ import Pagination from "@material-ui/lab/Pagination";
 const AllBlogs = props => {
   const [blogPerPage, setblogPerPage] = useState(2);
   const [page, setPage] = React.useState(1);
-  const [start, setStart] = React.useState(0);
 
   useEffect(() => {
     if (isEmpty(props.blogs.blogs)) {
@@ -36,8 +35,6 @@ const AllBlogs = props => {
 
   const changePage = (event, value) => {
     setPage(value);
-    setStart(value * blogPerPage);
-    setblogPerPage(value * blogPerPage);
   };
 
   return (
@@ -56,7 +53,7 @@ const AllBlogs = props => {
                       ? 1
                       : -1
                   )
-                  .slice(start, blogPerPage)
+                  .slice(page * blogPerPage, page * blogPerPage + blogPerPage)
                   .map((blog, index) => (
                     <Grid item lg={6} md={6} sm={6} key={index}>
                       <Card className="blog-card">
@@ -109,7 +106,12 @@ const AllBlogs = props => {
                     </Grid>
                   ))}
             </Grid>
-            <Box display="flex" justifyContent="center" alignItems="center">
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              className="margin-top-2"
+            >
               <Pagination
                 count={props.blogs.blogs.length / blogPerPage}
                 color="primary"

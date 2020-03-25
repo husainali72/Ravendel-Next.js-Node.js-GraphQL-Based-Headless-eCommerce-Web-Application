@@ -12,7 +12,8 @@ const initialState = {
   blogs: [],
   tags: [],
   loading: false,
-  success: false
+  success: false,
+  blog: []
 };
 
 export default (state = initialState, action) => {

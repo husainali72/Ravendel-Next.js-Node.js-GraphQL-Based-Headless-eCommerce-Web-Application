@@ -34,7 +34,7 @@ const AllProduct = props => {
   const classes = viewStyles();
 
   useEffect(() => {
-    if (isEmpty(props.products.products)) {
+    if (!props.products.products.length) {
       props.productsAction();
     }
   }, []);

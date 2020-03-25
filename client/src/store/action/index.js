@@ -79,6 +79,14 @@ import {
   couponDeleteAction
 } from "./couponAction";
 
+import {
+  reviewsAction,
+  reviewAction,
+  reviewAddAction,
+  reviewUpdateAction,
+  reviewDeleteAction
+} from "./reviewAction";
+
 export {
   LoginAction,
   usersAction,
@@ -133,5 +141,10 @@ export {
   blogtagsAction,
   blogtagAddAction,
   blogtagUpdateAction,
-  blogtagDeleteAction
+  blogtagDeleteAction,
+  reviewsAction,
+  reviewAction,
+  reviewAddAction,
+  reviewUpdateAction,
+  reviewDeleteAction
 };

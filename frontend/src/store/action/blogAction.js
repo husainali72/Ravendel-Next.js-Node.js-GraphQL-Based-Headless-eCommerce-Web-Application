@@ -1,4 +1,4 @@
-import { GET_BLOGS, GET_BLOGTAGS } from "../../queries/blogQuery";
+import { GET_BLOGS, GET_BLOGTAGS, GET_BLOG } from "../../queries/blogQuery";
 
 import { query } from "../../utils/service";
 
@@ -12,6 +12,30 @@ export const blogsAction = () => dispatch => {
         return dispatch({
           type: BLOGS_SUCCESS,
           payload: response.data.blogs
+        });
+      }
+    })
+    .catch(error => {
+      dispatch({
+        type: BLOG_FAIL
+      });
+      return dispatch({
+        type: BLOG_FAIL,
+        payload: { boolean: true, message: error, error: true }
+      });
+    });
+};
+
+export const blogAction = id => dispatch => {
+  dispatch({
+    type: BLOG_LOADING
+  });
+  query(GET_BLOG, { id: id })
+    .then(response => {
+      if (response) {
+        return dispatch({
+          type: BLOGS_SUCCESS,
+          payload: response.data.user
         });
       }
     })

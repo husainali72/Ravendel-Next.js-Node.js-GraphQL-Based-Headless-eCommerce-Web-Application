@@ -14,8 +14,8 @@ const vhost = require("vhost");
 connectDB();
 
 //models
-const Tax = require("./models/Tax");
-Tax.createTax();
+/*const Tax = require("./models/Tax");
+Tax.createTax();*/
 
 /*const Shipping = require("./models/Shipping");
 Shipping.createShipping();*/
@@ -54,11 +54,11 @@ const appFront = express();
 
 // Server static assets if in production
 //if (process.env.NODE_ENV === "production") {
-  // Set static folder
-  appFront.use(express.static("frontend/build"));
-  appFront.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-  });
+// Set static folder
+/* appFront.use(express.static("frontend/build"));
+appFront.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+}); */
 /*} else {
   appFront.get("/", (req, res) => res.send("api is running"));
 }*/
@@ -66,19 +66,19 @@ const appFront = express();
 const appAdmin = express();
 
 // Server static assets if in production
-//if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   // Set static folder
   appAdmin.use(express.static("client/build"));
   appAdmin.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
-/*} else {
-  appAdmin.get("/", (req, res) => res.send("api is running"));
-}*/
+} else {
+  //appAdmin.get("/", (req, res) => res.send("api is running"));
+  app.get("/", (req, res) => res.send("api is running"));
+}
 
-app.use(vhost('ravendel-frontend.hbwebsol.com', appFront));
-app.use(vhost('ravendel-backend.hbwebsol.com', appAdmin));
+//app.use(vhost("ravendel-frontend.hbwebsol.com", appFront));
+//app.use(vhost("ravendel-backend.hbwebsol.com", appAdmin));
 
-
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`server started on port ${PORT}`));
