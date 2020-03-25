@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
   Typography,
@@ -11,7 +11,8 @@ import {
   Button,
   Grid,
   Hidden,
-  Divider
+  Divider,
+  Box
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import PageTitle from "../components/pageTitle";
@@ -20,13 +21,24 @@ import { blogsAction } from "../../store/action/blogAction";
 import Loading from "../components/loading";
 import { isEmpty } from "../../utils/helper";
 import PlaceHolder from "../../assets/images/placeholder.png";
+import Pagination from "@material-ui/lab/Pagination";
 
 const AllBlogs = props => {
+  const [blogPerPage, setblogPerPage] = useState(2);
+  const [page, setPage] = React.useState(1);
+  const [start, setStart] = React.useState(0);
+
   useEffect(() => {
     if (isEmpty(props.blogs.blogs)) {
       props.blogsAction();
     }
   }, []);
+
+  const changePage = (event, value) => {
+    setPage(value);
+    setStart(value * blogPerPage);
+    setblogPerPage(value * blogPerPage);
+  };
 
   return (
     <Fragment>
@@ -37,57 +49,74 @@ const AllBlogs = props => {
           <Grid item md={9} sm={12} xs={12}>
             <Grid container spacing={3}>
               {props.blogs.blogs &&
-                props.blogs.blogs.map((blog, index) => (
-                  <Grid item lg={6} md={6} sm={6} key={index}>
-                    <Card className="blog-card">
-                      <Link to={`blog/${blog.id}`}>
-                        <CardActionArea>
-                          <CardMedia
-                            component="img"
-                            alt={blog.title}
-                            height="175"
-                            image={
-                              blog.feature_image
-                                ? blog.feature_image.medium
-                                : PlaceHolder
-                            }
-                            title={blog.title}
-                          />
-                          <CardContent>
-                            <Typography
-                              gutterBottom
-                              variant="h4"
-                              component="h2"
-                              className="text-capitalize"
-                            >
-                              {blog.title}
-                            </Typography>
-                            <Typography
-                              variant="subtitle2"
-                              color="textSecondary"
-                              component="p"
-                              className="blog-sescription"
-                            >
-                              <span
-                                dangerouslySetInnerHTML={{
-                                  __html: blog.content.substring(0, 80) + "..."
-                                }}
-                              ></span>
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                      </Link>
-                      <CardActions>
+                props.blogs.blogs
+                  .sort((a, b) =>
+                    Date.parse("1970-01-01T" + b.date) >
+                    Date.parse("1970-01-01T" + a.date)
+                      ? 1
+                      : -1
+                  )
+                  .slice(start, blogPerPage)
+                  .map((blog, index) => (
+                    <Grid item lg={6} md={6} sm={6} key={index}>
+                      <Card className="blog-card">
                         <Link to={`blog/${blog.id}`}>
-                          <Button size="small" color="primary">
-                            Learn More
-                          </Button>
+                          <CardActionArea>
+                            <CardMedia
+                              component="img"
+                              alt={blog.title}
+                              height="175"
+                              image={
+                                blog.feature_image
+                                  ? blog.feature_image.medium
+                                  : PlaceHolder
+                              }
+                              title={blog.title}
+                            />
+                            <CardContent>
+                              <Typography
+                                gutterBottom
+                                variant="h4"
+                                component="h2"
+                                className="text-capitalize"
+                              >
+                                {blog.title}
+                              </Typography>
+                              <Typography
+                                variant="subtitle2"
+                                color="textSecondary"
+                                component="p"
+                                className="blog-sescription"
+                              >
+                                <span
+                                  dangerouslySetInnerHTML={{
+                                    __html:
+                                      blog.content.substring(0, 80) + "..."
+                                  }}
+                                ></span>
+                              </Typography>
+                            </CardContent>
+                          </CardActionArea>
                         </Link>
-                      </CardActions>
-                    </Card>
-                  </Grid>
-                ))}
+                        <CardActions>
+                          <Link to={`blog/${blog.id}`}>
+                            <Button size="small" color="primary">
+                              Learn More
+                            </Button>
+                          </Link>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  ))}
             </Grid>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Pagination
+                count={props.blogs.blogs.length / blogPerPage}
+                color="primary"
+                page={page}
+                onChange={changePage}
+              />
+            </Box>
           </Grid>
 
           <Hidden lgUp>

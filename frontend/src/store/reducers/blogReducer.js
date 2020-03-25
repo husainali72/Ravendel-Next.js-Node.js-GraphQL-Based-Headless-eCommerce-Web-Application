@@ -2,12 +2,14 @@ import {
   BLOG_LOADING,
   BLOGS_SUCCESS,
   BLOG_FAIL,
-  BLOG_SUCCESS
+  BLOG_SUCCESS,
+  BLOGTAG_LOADING,
+  BLOGTAGS_SUCCESS,
+  BLOGTAG_FAIL
 } from "../action/blogAction";
 
 const initialState = {
   blogs: [],
-  blog: {},
   tags: [],
   loading: false,
   success: false
@@ -36,6 +38,25 @@ export default (state = initialState, action) => {
         success: true
       };
     case BLOG_FAIL:
+      return {
+        ...state,
+        loading: false,
+        success: false
+      };
+    case BLOGTAG_LOADING:
+      return {
+        ...state,
+        loading: true,
+        success: false
+      };
+    case BLOGTAGS_SUCCESS:
+      return {
+        ...state,
+        tags: action.payload,
+        loading: false,
+        success: true
+      };
+    case BLOGTAG_FAIL:
       return {
         ...state,
         loading: false,

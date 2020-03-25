@@ -11,6 +11,14 @@ module.exports = function validate(method, args) {
       }
       break;
     }
+    case "updateProductCategory": {
+      let errors = "";
+
+      if (!args.name || Validator.isEmpty(args.name)) {
+        return (errors = "Name field is required");
+      }
+      break;
+    }
     case "addProduct": {
       let errors = "";
 

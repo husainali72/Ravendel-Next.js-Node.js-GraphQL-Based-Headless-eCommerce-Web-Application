@@ -630,9 +630,13 @@ section:nth-child(even) {
   top: 50px;
   background-color: #dc0345;
 }
+.blog-featured-wrapper {
+  background-color: #f1f1f1;
+  padding: 10px;
+}
 .blog-featured {
-  width: 100%;
   height: auto;
+  margin: 0 auto;
 }
 .share-blog {
   margin-top: 15px;
@@ -678,6 +682,10 @@ section:nth-child(even) {
 }
 .blog-sescription {
   min-height: 50px;
+}
+.chips-tags {
+  margin: 5px !important;
+  cursor: pointer !important;
 }
 /*=======Slider Navigation==========*/
 .slick-next,
@@ -807,6 +815,9 @@ section.with-slider {
   }
 }
 
+.margin-1 {
+  margin: 10px !important;
+}
 .margin-bottom-1 {
   margin-bottom: 10px !important;
 }

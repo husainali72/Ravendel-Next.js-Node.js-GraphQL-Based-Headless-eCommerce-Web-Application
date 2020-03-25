@@ -1,101 +1,36 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect } from "react";
 import {
   Typography,
   Box,
-  Icon,
-  ListItem,
-  List,
-  Collapse,
   FormControl,
   InputAdornment,
   InputLabel,
   Input,
-  Divider
+  Divider,
+  Chip,
+  List,
+  ListItem,
+  ListItemText
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
+import { blogtagsAction, blogsAction } from "../../store/action/blogAction";
+import { isEmpty } from "../../utils/helper";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
-const BlogSidebar = () => {
-  const [catName, setCatName] = useState("");
-
-  var categories = {
-    category: [
-      {
-        name: "Tag First"
-      },
-      {
-        name: "Tag Second"
-      },
-      {
-        name: "Tag Third",
-        children: [
-          {
-            name: "Sub Tag 1"
-          },
-          {
-            name: "Sub Tag 2"
-          },
-          {
-            name: "Sub Tag 3"
-          }
-        ]
-      }
-    ]
-  };
-
-  const handleKeyPress = e => {
-    if (e.key === "Enter") {
-      console.log("Enter pressed");
+const BlogSidebar = props => {
+  useEffect(() => {
+    if (isEmpty(props.blogs.blogs)) {
+      props.blogsAction();
     }
-  };
+  }, []);
 
-  const handleClick = name => {
-    if (name === catName) {
-      setCatName("");
-    } else {
-      setCatName(name);
+  useEffect(() => {
+    if (isEmpty(props.blogs.tags)) {
+      props.blogtagsAction();
     }
-  };
-  const categoryListing = categories => {
-    return categories.map(cat => {
-      if (!cat.children) {
-        return (
-          <ListItem disableGutters key={cat.name}>
-            <Typography variant="button" className="category-fillter">
-              {cat.name}
-            </Typography>
-          </ListItem>
-        );
-      }
-      return (
-        <div key={cat.name}>
-          <ListItem disableGutters onClick={() => handleClick(cat.name)}>
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              className="width-100"
-            >
-              <Typography variant="button" className="category-fillter">
-                {cat.name}
-              </Typography>
-              <Icon>
-                {catName === cat.name
-                  ? "keyboard_arrow_up"
-                  : "keyboard_arrow_down"}
-              </Icon>
-            </Box>
-          </ListItem>
-          <Collapse
-            in={catName === cat.name ? true : false}
-            timeout="auto"
-            unmountOnExit
-            className="subcategory-collapse"
-          >
-            {categoryListing(cat.children)}
-          </Collapse>
-        </div>
-      );
-    });
-  };
+  }, [props.blogs.tags]);
+
   return (
     <Fragment>
       <Box component="div" className="filter-wrapper">
@@ -103,7 +38,6 @@ const BlogSidebar = () => {
           <InputLabel htmlFor="search-input">Search</InputLabel>
           <Input
             id="search-input"
-            onKeyPress={handleKeyPress}
             startAdornment={
               <InputAdornment position="start">
                 <SearchIcon />
@@ -112,17 +46,62 @@ const BlogSidebar = () => {
           />
         </FormControl>
       </Box>
+
       <Divider className="margin-top-2 margin-bottom-2" />
+
+      <Box component="div" className="filter-wrapper">
+        <Typography variant="h4" className="fillter-header">
+          Recent Blogs
+        </Typography>
+        <List component="nav" aria-label="recents-blogs">
+          {props.blogs.blogs &&
+            props.blogs.blogs
+              .sort((a, b) =>
+                Date.parse("1970-01-01T" + b.date) >
+                Date.parse("1970-01-01T" + a.date)
+                  ? 1
+                  : -1
+              )
+              .slice(0, 3)
+              .map((blog, index) => (
+                <Link to={`/blog/${blog.id}`} key={index}>
+                  <ListItem button>
+                    <ListItemText
+                      primary={blog.title}
+                      className="text-capitalize"
+                    />
+                  </ListItem>
+                </Link>
+              ))}
+        </List>
+      </Box>
+
+      <Divider className="margin-top-2 margin-bottom-2" />
+
       <Box component="div" className="filter-wrapper">
         <Typography variant="h4" className="fillter-header">
           Tags
         </Typography>
-        <List component="nav" dense>
-          {categoryListing(categories.category)}
-        </List>
+        <Box>
+          {props.blogs.tags &&
+            props.blogs.tags.map((tag, index) => (
+              <Link to={`/tag/${tag.name}`} key={index}>
+                <Chip label={tag.name} className="chips-tags" />
+              </Link>
+            ))}
+        </Box>
       </Box>
     </Fragment>
   );
 };
 
-export default BlogSidebar;
+const mapStateToProps = state => ({
+  blogs: state.blogs
+});
+
+const mapDispatchToProps = {
+  blogtagsAction,
+  blogsAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BlogSidebar);

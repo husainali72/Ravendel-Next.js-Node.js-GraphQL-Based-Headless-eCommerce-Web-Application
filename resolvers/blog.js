@@ -7,7 +7,8 @@ const {
   imageUpload,
   imageUnlink,
   checkToken,
-  stringTourl
+  stringTourl,
+  validateUrl
 } = require("../config/helpers");
 const validate = require("../validations/blog");
 const sanitizeHtml = require("sanitize-html");
@@ -34,6 +35,32 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    blogsbytagid: async (root, args, { id }) => {
+      try {
+        const blogs = await Blog.find({
+          blog_tag: { $in: args.tag_id }
+        });
+        return blogs || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    blogsbytagurl: async (root, args, { id }) => {
+      try {
+        const blogtag = await BlogTag.findOne({ url: args.tag_url });
+        if (!blogtag) {
+          throw putError("404 Not found");
+        }
+        const blogs = await Blog.find({
+          blog_tag: { $in: blogtag.id }
+        });
+        return blogs || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     blogtags: async (root, args) => {
       try {
         const blogtags = await BlogTag.find({});
@@ -53,38 +80,42 @@ module.exports = {
           throw putError(errors);
         }
 
-        const blog = await Blog.findOne({ title: args.title });
-        if (blog) {
-          throw putError("Title already exist.");
-        } else {
-          let imgObject = "";
-          if (args.feature_image) {
-            imgObject = await imageUpload(
-              args.feature_image,
-              "/assets/images/blog/feature/"
-            );
+        let imgObject = "";
+        if (args.feature_image) {
+          imgObject = await imageUpload(
+            args.feature_image,
+            "/assets/images/blog/feature/"
+          );
 
-            if (imgObject.success === false) {
-              throw putError(imgObject.message);
-            }
+          if (imgObject.success === false) {
+            throw putError(imgObject.message);
           }
-
-          let url = stringTourl(args.url || args.title);
-
-          const newBlog = new Blog({
-            title: args.title,
-            url: url,
-            content: args.content || "",
-            status: args.status,
-            blog_tag: args.blog_tag,
-            feature_image: imgObject.data || imgObject,
-            meta: args.meta,
-            author: user.id
-          });
-
-          await newBlog.save();
-          return await Blog.find({});
         }
+
+        var url = stringTourl(args.url || args.title);
+        var duplicate = true;
+        while (duplicate) {
+          let blog = await Blog.findOne({ url: url });
+          if (blog) {
+            url = validateUrl(url);
+          } else {
+            duplicate = false;
+          }
+        }
+
+        const newBlog = new Blog({
+          title: args.title,
+          url: url,
+          content: args.content || "",
+          status: args.status,
+          blog_tag: args.blog_tag,
+          feature_image: imgObject.data || imgObject,
+          meta: args.meta,
+          author: user.id
+        });
+
+        await newBlog.save();
+        return await Blog.find({});
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -114,12 +145,21 @@ module.exports = {
             }
           }
 
+          var url = stringTourl(args.url || args.title);
+          var duplicate = true;
+          while (duplicate) {
+            let blog = await Blog.findOne({ url: url });
+            if (blog) {
+              url = validateUrl(url);
+            } else {
+              duplicate = false;
+            }
+          }
+
           blog.title = args.title;
           blog.content = args.content;
           blog.status = args.status;
           blog.blog_tag = args.blog_tag;
-
-          let url = stringTourl(args.url || blog.title);
           blog.url = url;
           blog.meta = args.meta;
           blog.updated = Date.now();

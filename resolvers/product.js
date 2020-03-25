@@ -8,7 +8,8 @@ const {
   imageUpload,
   imageUnlink,
   checkToken,
-  stringTourl
+  stringTourl,
+  validateUrl
 } = require("../config/helpers");
 const validate = require("../validations/product");
 
@@ -93,10 +94,26 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    productsbycat: async (root, args, { id }) => {
+    productsbycatid: async (root, args, { id }) => {
       try {
         const products = await Product.find({
           categoryId: { $in: args.cat_id }
+        });
+        return products || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    productsbycaturl: async (root, args, { id }) => {
+      try {
+        const cat = await ProductCat.findOne({ url: args.cat_url });
+        if (!cat) {
+          throw putError("404 Not found");
+        }
+
+        const products = await Product.find({
+          categoryId: { $in: cat.id }
         });
         return products || [];
       } catch (error) {
@@ -146,9 +163,36 @@ module.exports = {
         if (cat) {
           throw putError("This category is already exist.");
         } else {
+          var url = stringTourl(args.url || args.name);
+          var duplicate = true;
+          while (duplicate) {
+            let cat = await ProductCat.findOne({ url: url });
+            if (cat) {
+              url = validateUrl(url);
+            } else {
+              duplicate = false;
+            }
+          }
+
+          let imgObject = "";
+          if (args.image) {
+            imgObject = await imageUpload(
+              args.image[0],
+              "/assets/images/product/category/"
+            );
+
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            }
+          }
+
           const newCat = new ProductCat({
             name: args.name,
-            parentId: args.parentId || null
+            parentId: args.parentId || null,
+            url: url,
+            description: args.description,
+            image: imgObject.data || imgObject,
+            meta: args.meta
           });
 
           await newCat.save();
@@ -164,8 +208,40 @@ module.exports = {
       try {
         const cat = await ProductCat.findById({ _id: args.id });
         if (cat) {
+          let imgObject = "";
+          if (args.update_image) {
+            imgObject = await imageUpload(
+              args.update_image[0],
+              "/assets/images/product/category/"
+            );
+
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            }
+
+            if (cat.image) {
+              imageUnlink(cat.image);
+            }
+
+            cat.image = imgObject.data;
+          }
+
+          var url = stringTourl(args.url || args.name);
+          var duplicate = true;
+          while (duplicate) {
+            let cat = await ProductCat.findOne({ url: url });
+            if (cat) {
+              url = validateUrl(url);
+            } else {
+              duplicate = false;
+            }
+          }
+
           cat.name = args.name;
-          cat.parentId = args.parentId;
+          cat.parentId = args.parentId || null;
+          cat.url = url;
+          cat.description = args.description;
+          cat.meta = args.meta;
           cat.updated = Date.now();
 
           await cat.save();
@@ -183,6 +259,9 @@ module.exports = {
       try {
         const cat = await ProductCat.findByIdAndRemove(args.id);
         if (cat) {
+          if (cat.image) {
+            imageUnlink(cat.image);
+          }
           const cats = await ProductCat.find({});
           return cats || [];
         }

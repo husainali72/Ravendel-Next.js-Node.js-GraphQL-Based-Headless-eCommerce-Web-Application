@@ -11,6 +11,24 @@ const ProductCatSchema = new Schema({
     type: Schema.ObjectId,
     default: null
   },
+  url: {
+    type: String
+  },
+  description: {
+    type: String
+  },
+  image: {},
+  meta: {
+    title: {
+      type: String
+    },
+    description: {
+      type: String
+    },
+    keywords: {
+      type: String
+    }
+  },
   date: {
     type: Date,
     default: Date.now

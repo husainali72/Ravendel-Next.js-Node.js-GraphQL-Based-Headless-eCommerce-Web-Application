@@ -5,6 +5,10 @@ module.exports = gql`
     id: ID
     name: String
     parentId: ID
+    url: String
+    description: String
+    image: customObject
+    meta: customObject
     date: Date
     updated: Date
   }
@@ -77,15 +81,27 @@ module.exports = gql`
     products: [Product]
     productswithcat: [ProductWithCat]
     product(id: ID!): Product
-    productsbycat(cat_id: ID!): [ProductWithCat]
+    productsbycatid(cat_id: ID!): [ProductWithCat]
+    productsbycaturl(cat_url: String!): [ProductWithCat]
   }
 
   extend type Mutation {
-    addProductCategory(name: String, parentId: ID): [productCategory]
+    addProductCategory(
+      name: String
+      parentId: ID
+      url: String
+      description: String
+      image: Upload
+      meta: customObject
+    ): [productCategory]
     updateProductCategory(
       id: ID!
       name: String
       parentId: ID
+      url: String
+      description: String
+      update_image: Upload
+      meta: customObject
     ): [productCategory]
     deleteProductCategory(id: ID!): [productCategory]
     addTree(name: String, parentname: String): productCategory

@@ -21,7 +21,6 @@ import {
   Box,
   TablePagination
 } from "@material-ui/core";
-import Alert from "../../utils/Alert";
 import Loading from "../../utils/loading";
 import clsx from "clsx";
 import { connect } from "react-redux";
@@ -40,10 +39,13 @@ import convertDefault from "../../utils/convertDate";
 var categoryObject = {
   name: "",
   parentId: null,
-  metadescription: "",
-  metakeyword: "",
-  metatitle: "",
-  url: ""
+  description: "",
+  url: "",
+  meta: {
+    title: "",
+    description: "",
+    keywords: ""
+  }
 };
 const AllCategory = props => {
   const classes = viewStyles();
@@ -64,17 +66,22 @@ const AllCategory = props => {
   };
 
   useEffect(() => {
-    if (isEmpty(props.products.categories)) {
+    if (!props.products.categories.length) {
       props.categoriesAction();
     }
   }, []);
 
   useEffect(() => {
     setCategories(props.products.categories);
+    cancelCat();
   }, [props.products.categories]);
 
   const editCategory = cat => {
     setEditmode(true);
+    setfeaturedImage(null);
+    if (cat.image && cat.image.original) {
+      setfeaturedImage(cat.image.original);
+    }
     setSingleCategory({ ...singlecategory, ...cat });
   };
 
@@ -94,24 +101,26 @@ const AllCategory = props => {
 
   const addCat = () => {
     props.categoryAddAction(singlecategory);
-    setSingleCategory(categoryObject);
   };
 
   const cancelCat = () => {
     document.forms[0].reset();
     setEditmode(false);
+    setfeaturedImage(null);
     setSingleCategory(categoryObject);
   };
 
   const fileChange = e => {
     setfeaturedImage(null);
     setfeaturedImage(URL.createObjectURL(e.target.files[0]));
-    setSingleCategory({ ...singlecategory, [e.target.name]: e.target.files });
+    setSingleCategory({
+      ...singlecategory,
+      [e.target.name]: e.target.files
+    });
   };
 
   return (
     <Fragment>
-      <Alert />
       {props.products.loading && <Loading />}
       <Grid container className={classes.mainrow} spacing={3}>
         <Grid item md={6}>
@@ -242,18 +251,33 @@ const AllCategory = props => {
                 />
                 <Grid container>
                   <Grid item className={classes.flex1}>
-                    <TextField
-                      helperText="Featured Image"
-                      name="feature_image"
-                      variant="outlined"
-                      className={clsx(
-                        classes.marginBottom,
-                        classes.width100,
-                        "top-helper"
-                      )}
-                      onChange={fileChange}
-                      type="file"
-                    />
+                    {editMode ? (
+                      <TextField
+                        helperText="Featured Image"
+                        name="update_image"
+                        variant="outlined"
+                        className={clsx(
+                          classes.marginBottom,
+                          classes.width100,
+                          "top-helper"
+                        )}
+                        onChange={fileChange}
+                        type="file"
+                      />
+                    ) : (
+                      <TextField
+                        helperText="Featured Image"
+                        name="image"
+                        variant="outlined"
+                        className={clsx(
+                          classes.marginBottom,
+                          classes.width100,
+                          "top-helper"
+                        )}
+                        onChange={fileChange}
+                        type="file"
+                      />
+                    )}
                   </Grid>
                   <Grid item>
                     {featuredImage !== null && (
@@ -267,28 +291,63 @@ const AllCategory = props => {
                   </Grid>
                 </Grid>
                 <TextField
+                  id="short-description"
+                  label="Short Description"
+                  name="description"
+                  variant="outlined"
+                  className={clsx(classes.marginBottom, classes.width100)}
+                  multiline
+                  rows="4"
+                  value={singlecategory.description}
+                  onChange={handleChange}
+                />
+                <TextField
                   label="Meta Title"
                   name="metatitle"
                   variant="outlined"
                   className={clsx(classes.marginBottom, classes.width100)}
-                  onChange={handleChange}
-                  value={singlecategory.metatitle}
+                  value={singlecategory.meta.title}
+                  onChange={e =>
+                    setSingleCategory({
+                      ...singlecategory,
+                      meta: {
+                        ...singlecategory.meta,
+                        title: e.target.value
+                      }
+                    })
+                  }
                 />
                 <TextField
                   label="Meta Keyword"
                   name="metakeyword"
                   variant="outlined"
                   className={clsx(classes.marginBottom, classes.width100)}
-                  onChange={handleChange}
-                  value={singlecategory.metakeyword}
+                  value={singlecategory.meta.keywords}
+                  onChange={e =>
+                    setSingleCategory({
+                      ...singlecategory,
+                      meta: {
+                        ...singlecategory.meta,
+                        keywords: e.target.value
+                      }
+                    })
+                  }
                 />
                 <TextField
                   label="Meta Description"
                   name="metadescription"
                   variant="outlined"
                   className={clsx(classes.marginBottom, classes.width100)}
-                  onChange={handleChange}
-                  value={singlecategory.metadescription}
+                  value={singlecategory.meta.description}
+                  onChange={e =>
+                    setSingleCategory({
+                      ...singlecategory,
+                      meta: {
+                        ...singlecategory.meta,
+                        description: e.target.value
+                      }
+                    })
+                  }
                 />
               </CardContent>
               <CardActions>

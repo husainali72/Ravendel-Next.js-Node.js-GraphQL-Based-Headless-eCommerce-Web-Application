@@ -57,7 +57,7 @@ const AddBlog = props => {
   const [tags, setTags] = useState([]);
 
   useEffect(() => {
-    if (isEmpty(props.blogs.tags)) {
+    if (!props.blogs.tags.length) {
       props.blogtagsAction();
     }
   }, []);

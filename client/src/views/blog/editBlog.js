@@ -322,7 +322,7 @@ const EditBlog = props => {
                     Select Tags
                   </Typography>
 
-                  <Autocomplete
+                  {/* <Autocomplete
                     multiple
                     id="select-tags"
                     options={tags}
@@ -338,7 +338,7 @@ const EditBlog = props => {
                         <Chip label={option.name} {...getTagProps({ index })} />
                       ))
                     }
-                  />
+                  /> */}
                 </CardContent>
               </Card>
             </Box>

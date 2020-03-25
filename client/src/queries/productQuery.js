@@ -5,6 +5,10 @@ const GET_CATEGORIES = gql`
       id
       name
       parentId
+      url
+      description
+      image
+      meta
       date
       updated
     }
@@ -17,6 +21,10 @@ const GET_CATEGORY = gql`
       id
       name
       parentId
+      url
+      description
+      image
+      meta
       date
       updated
     }
@@ -24,11 +32,29 @@ const GET_CATEGORY = gql`
 `;
 
 const ADD_CATEGORY = gql`
-  mutation($name: String, $parentId: ID) {
-    addProductCategory(name: $name, parentId: $parentId) {
+  mutation(
+    $name: String
+    $parentId: ID
+    $url: String
+    $description: String
+    $image: Upload
+    $meta: customObject
+  ) {
+    addProductCategory(
+      name: $name
+      parentId: $parentId
+      url: $url
+      description: $description
+      image: $image
+      meta: $meta
+    ) {
       id
       name
       parentId
+      url
+      description
+      image
+      meta
       date
       updated
     }
@@ -36,11 +62,31 @@ const ADD_CATEGORY = gql`
 `;
 
 const UPDATE_CATEGORY = gql`
-  mutation($id: ID!, $name: String, $parentId: ID) {
-    updateProductCategory(id: $id, name: $name, parentId: $parentId) {
+  mutation(
+    $id: ID!
+    $name: String
+    $parentId: ID
+    $url: String
+    $description: String
+    $update_image: Upload
+    $meta: customObject
+  ) {
+    updateProductCategory(
+      id: $id
+      name: $name
+      parentId: $parentId
+      url: $url
+      description: $description
+      update_image: $update_image
+      meta: $meta
+    ) {
       id
       name
       parentId
+      url
+      description
+      image
+      meta
       date
       updated
     }
@@ -53,6 +99,10 @@ const DELETE_CATEGORY = gql`
       id
       name
       parentId
+      url
+      description
+      image
+      meta
       date
       updated
     }

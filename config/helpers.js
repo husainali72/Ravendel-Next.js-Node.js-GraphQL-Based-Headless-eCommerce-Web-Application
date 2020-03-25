@@ -56,6 +56,18 @@ const stringTourl = str => {
 
 module.exports.stringTourl = stringTourl;
 
+const validateUrl = url => {
+  var validthis = /\-[0-9]$/; //regex for test "-(number 0-9)"
+  if (validthis.test(url)) {
+    let i = parseInt(url[url.length - 1]) + 1;
+    return url.slice(0, url.length - 1) + i;
+  } else {
+    return url + "-2";
+  }
+};
+
+module.exports.validateUrl = validateUrl;
+
 /*-------------------------------------------------------------------------------------------------------*/
 
 const fs = require("fs");

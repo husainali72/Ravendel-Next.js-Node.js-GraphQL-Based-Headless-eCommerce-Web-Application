@@ -25,6 +25,8 @@ module.exports = gql`
     blogs: [Blog]
     blog(id: ID!): Blog
     blogtags: [BlogTag]
+    blogsbytagid(tag_id: ID!): [Blog]
+    blogsbytagurl(tag_url: String!): [Blog]
   }
 
   extend type Mutation {

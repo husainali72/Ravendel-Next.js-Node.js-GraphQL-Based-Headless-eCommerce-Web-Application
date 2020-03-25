@@ -25,4 +25,16 @@ const GET_BLOG = gql`
   }
 `;
 
-export { GET_BLOGS, GET_BLOG };
+const GET_BLOGTAGS = gql`
+  {
+    blogtags {
+      id
+      name
+      url
+      date
+      updated
+    }
+  }
+`;
+
+export { GET_BLOGS, GET_BLOG, GET_BLOGTAGS };
