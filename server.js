@@ -53,15 +53,13 @@ app.use("/assets", express.static(__dirname + "/assets"));
 const appFront = express();
 
 // Server static assets if in production
-//if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
 // Set static folder
-/* appFront.use(express.static("frontend/build"));
-appFront.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-}); */
-/*} else {
-  appFront.get("/", (req, res) => res.send("api is running"));
-}*/
+  appFront.use(express.static("frontend/build"));
+    appFront.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+  }); 
+}
 
 const appAdmin = express();
 
@@ -73,12 +71,15 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
 } else {
-  //appAdmin.get("/", (req, res) => res.send("api is running"));
   app.get("/", (req, res) => res.send("api is running"));
 }
 
-//app.use(vhost("ravendel-frontend.hbwebsol.com", appFront));
-//app.use(vhost("ravendel-backend.hbwebsol.com", appAdmin));
-
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`server started on port ${PORT}`));
+if (process.env.NODE_ENV === "production") {
+  app.use(vhost("ravendel-frontend.hbwebsol.com", appFront));
+  app.use(vhost("ravendel-backend.hbwebsol.com", appAdmin));
+  const PORT = process.env.PORT || 80;
+  app.listen(PORT, () => console.log(`server started on port ${PORT}`));
+} else {
+  const PORT = process.env.PORT || 8000;
+  app.listen(PORT, () => console.log(`server started on port ${PORT}`));  
+}
