@@ -1,4 +1,24 @@
 const express = require("express");
+
+/*SSL Workout start*/
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
+
+
+// Certificate
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/chain.pem', 'utf8');
+
+const credentials = {
+  key: privateKey,
+  cert: certificate,
+  ca: ca
+};
+
+/* SSL Workout end */
+
 const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -77,8 +97,20 @@ if (process.env.NODE_ENV === "production") {
 if (process.env.NODE_ENV === "production") {
   app.use(vhost("ravendel-frontend.hbwebsol.com", appFront));
   app.use(vhost("ravendel-backend.hbwebsol.com", appAdmin));
-  const PORT = process.env.PORT || 80;
-  app.listen(PORT, () => console.log(`server started on port ${PORT}`));
+  /*const PORT = process.env.PORT || 80;
+  app.listen(PORT, () => console.log(`server started on port ${PORT}`));*/
+
+  // Starting both http & https servers
+  const httpServer = http.createServer(app);
+  const httpsServer = https.createServer(credentials, app);
+
+  httpServer.listen(80, () => {
+    console.log('HTTP Server running on port 80');
+  });
+
+  httpsServer.listen(443, () => {
+    console.log('HTTPS Server running on port 443');
+  });
 } else {
   const PORT = process.env.PORT || 8000;
   app.listen(PORT, () => console.log(`server started on port ${PORT}`));  
