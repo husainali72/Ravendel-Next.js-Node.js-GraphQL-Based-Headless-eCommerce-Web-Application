@@ -1,4 +1,6 @@
 const Review = require("../models/Review");
+const Product = require("../models/Product");
+const Customer = require("../models/Customer");
 const {
   isEmpty,
   putError,
@@ -37,6 +39,24 @@ module.exports = {
           product_id: { $in: args.product_id }
         });
         return reviews || [];
+      } catch (error) {
+        throw new Error("Something went wrong.");
+      }
+    }
+  },
+  Review: {
+    product_id: async (root, args) => {
+      try {
+        const product = await Product.findById(root.product_id);
+        return product || {};
+      } catch (error) {
+        throw new Error("Something went wrong.");
+      }
+    },
+    customer_id: async (root, args) => {
+      try {
+        const customer = await Customer.findById(root.customer_id);
+        return customer || {};
       } catch (error) {
         throw new Error("Something went wrong.");
       }

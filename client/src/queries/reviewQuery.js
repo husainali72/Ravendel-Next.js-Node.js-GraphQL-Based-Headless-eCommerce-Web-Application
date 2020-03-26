@@ -4,8 +4,14 @@ const GET_REVIEWS = gql`
     reviews {
       id
       title
-      customer_id
-      product_id
+      customer_id {
+        id
+        first_name
+      }
+      product_id {
+        id
+        name
+      }
       email
       review
       rating
@@ -21,8 +27,14 @@ const GET_REVIEW = gql`
     review(id: $id) {
       id
       title
-      customer_id
-      product_id
+      customer_id {
+        id
+        first_name
+      }
+      product_id {
+        id
+        name
+      }
       email
       review
       rating
@@ -54,8 +66,14 @@ const ADD_REVIEW = gql`
     ) {
       id
       title
-      customer_id
-      product_id
+      customer_id {
+        id
+        first_name
+      }
+      product_id {
+        id
+        name
+      }
       email
       review
       rating
@@ -77,7 +95,7 @@ const UPDATE_REVIEW = gql`
     $rating: String
     $status: String
   ) {
-    updateCoupon(
+    updateReview(
       id: $id
       title: $title
       customer_id: $customer_id
@@ -89,8 +107,14 @@ const UPDATE_REVIEW = gql`
     ) {
       id
       title
-      customer_id
-      product_id
+      customer_id {
+        id
+        first_name
+      }
+      product_id {
+        id
+        name
+      }
       email
       review
       rating
@@ -106,8 +130,14 @@ const DELETE_REVIEW = gql`
     deleteReview(id: $id) {
       id
       title
-      customer_id
-      product_id
+      customer_id {
+        id
+        first_name
+      }
+      product_id {
+        id
+        name
+      }
       email
       review
       rating

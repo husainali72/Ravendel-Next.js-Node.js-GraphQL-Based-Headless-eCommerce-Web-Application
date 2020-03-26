@@ -16,34 +16,26 @@ import {
 import PageTitle from "../components/pageTitle";
 import { Link } from "react-router-dom";
 import BlogSidebar from "../blog/blogSidebar";
-import { blogsAction } from "../../store/action/blogAction";
+import { blogsAction, tagBlogsAction } from "../../store/action/blogAction";
 import Loading from "../components/loading";
 import { isEmpty } from "../../utils/helper";
 import PlaceHolder from "../../assets/images/placeholder.png";
 
 const Tags = props => {
-  const [tagName, setTagName] = useState(props.match.params.name);
-
   useEffect(() => {
-    setTagName(props.match.params.name);
-  }, [props.match.params.name]);
-
-  useEffect(() => {
-    if (isEmpty(props.blogs.blogs)) {
-      props.blogsAction();
-    }
-  }, []);
+    props.tagBlogsAction(`/${props.match.params.url}`);
+  }, [props.match.params.url]);
 
   return (
     <Fragment>
       {props.blogs.loading && <Loading />}
-      <PageTitle title={tagName} />
+      <PageTitle title="Tag Name" />
       <Container>
         <Grid container spacing={4} className="margin-top-3 margin-bottom-3">
           <Grid item md={9} sm={12} xs={12}>
             <Grid container spacing={3}>
-              {props.blogs.blogs &&
-                props.blogs.blogs.map((blog, index) => (
+              {props.blogs.tagBlogs &&
+                props.blogs.tagBlogs.map((blog, index) => (
                   <Grid item lg={6} md={6} sm={6} key={index}>
                     <Card className="blog-card">
                       <Link to={`blog/${blog.id}`}>
@@ -113,7 +105,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  blogsAction
+  blogsAction,
+  tagBlogsAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Tags);

@@ -5,7 +5,8 @@ import {
   BLOG_SUCCESS,
   BLOGTAG_LOADING,
   BLOGTAGS_SUCCESS,
-  BLOGTAG_FAIL
+  BLOGTAG_FAIL,
+  TAG_BLOGS
 } from "../action/blogAction";
 
 const initialState = {
@@ -13,7 +14,8 @@ const initialState = {
   tags: [],
   loading: false,
   success: false,
-  blog: []
+  blog: [],
+  tagBlogs: []
 };
 
 export default (state = initialState, action) => {
@@ -54,6 +56,13 @@ export default (state = initialState, action) => {
       return {
         ...state,
         tags: action.payload,
+        loading: false,
+        success: true
+      };
+    case TAG_BLOGS:
+      return {
+        ...state,
+        tagBlogs: action.payload,
         loading: false,
         success: true
       };

@@ -85,7 +85,7 @@ const ProductDetail = props => {
                   className="product-category"
                   key={index}
                 >
-                  Cat Id: {cat}
+                  {cat}
                   {product.categoryId.length - 1 === index ? "" : ","}
                 </Typography>
               ))}

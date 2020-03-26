@@ -125,7 +125,7 @@ module.exports = {
       try {
         const product = await Product.findById(args.id);
         if (!product) {
-          throw putError("Page not found");
+          throw putError("Product not found");
         }
         return product;
       } catch (error) {

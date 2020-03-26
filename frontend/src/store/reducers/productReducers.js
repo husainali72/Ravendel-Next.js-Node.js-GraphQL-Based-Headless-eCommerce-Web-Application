@@ -6,7 +6,9 @@ import {
   CATS_SUCCESS,
   CAT_LOADING,
   CAT_FAIL,
-  CAT_SUCCESS
+  CAT_SUCCESS,
+  CAT_PRODUCTS,
+  PRODUCT_REVIEWS
 } from "../action/productAction";
 
 const initialState = {
@@ -15,7 +17,9 @@ const initialState = {
   categories: [],
   category: {},
   loading: false,
-  success: false
+  success: false,
+  catProducts: [],
+  productReviews: []
 };
 
 export default (state = initialState, action) => {
@@ -63,6 +67,20 @@ export default (state = initialState, action) => {
       return {
         ...state,
         product: action.payload,
+        loading: false,
+        success: true
+      };
+    case CAT_PRODUCTS:
+      return {
+        ...state,
+        catProducts: action.payload,
+        loading: false,
+        success: true
+      };
+    case PRODUCT_REVIEWS:
+      return {
+        ...state,
+        productReviews: action.payload,
         loading: false,
         success: true
       };

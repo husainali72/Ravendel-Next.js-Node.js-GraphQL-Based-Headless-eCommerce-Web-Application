@@ -85,7 +85,7 @@ const BlogSidebar = props => {
         <Box>
           {props.blogs.tags &&
             props.blogs.tags.map((tag, index) => (
-              <Link to={`/tag/${tag.name}`} key={index}>
+              <Link to={`/tag${tag.url}`} key={index}>
                 <Chip label={tag.name} className="chips-tags" />
               </Link>
             ))}

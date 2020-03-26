@@ -34,7 +34,7 @@ const CategoryListing = props => {
                   <Fragment key={index}>
                     {category.parentId === null && (
                       <Grid item lg={4} md={6} sm={12} xs={12}>
-                        <Link to={`/category/${category.id}`}>
+                        <Link to={`/category${category.url}`}>
                           <ButtonBase
                             focusRipple
                             className={classes.image}

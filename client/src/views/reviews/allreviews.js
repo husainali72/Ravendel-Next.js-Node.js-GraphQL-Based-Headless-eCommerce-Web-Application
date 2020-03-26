@@ -60,6 +60,7 @@ const AllReviews = props => {
                   <TableHead>
                     <TableRow>
                       <TableCell>Title</TableCell>
+                      <TableCell>Customer</TableCell>
                       <TableCell>Last Modified</TableCell>
                       <TableCell>Reviewed Product</TableCell>
                       <TableCell>Rating</TableCell>
@@ -74,11 +75,12 @@ const AllReviews = props => {
                       )
                       .map(review => (
                         <TableRow key={review.id} hover>
+                          <TableCell>{review.title}</TableCell>
                           <TableCell>
-                            {review.title} - {review.date}
+                            {review.customer_id.first_name} - {review.date}
                           </TableCell>
                           <TableCell>{review.update}</TableCell>
-                          <TableCell>need to assign</TableCell>
+                          <TableCell> {review.product_id.name}</TableCell>
                           <TableCell>
                             <Rating
                               name="read-only"

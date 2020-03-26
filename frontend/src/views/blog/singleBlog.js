@@ -16,17 +16,14 @@ import PageTitle from "../components/pageTitle";
 import BlogSidebar from "./blogSidebar";
 import { blogAction } from "../../store/action/blogAction";
 import Loading from "../components/loading";
-import { isEmpty } from "../../utils/helper";
 import PlaceHolder from "../../assets/images/placeholder.png";
 
 const SingleBlog = props => {
   const [singlePost, setSinglePost] = useState({});
 
   useEffect(() => {
-    if (isEmpty(props.blogs.blog)) {
-      props.blogAction(props.match.params.id);
-    }
-  }, []);
+    props.blogAction(props.match.params.id);
+  }, [props.match.params.id]);
 
   useEffect(() => {
     setSinglePost(props.blogs.blog);

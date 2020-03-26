@@ -3,7 +3,6 @@ import Slider from "react-slick";
 import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 
 const GalleryImagesComponents = props => {
-  console.log("Galler", props.galleryImages);
   const settings = {
     customPaging: function(i) {
       return (

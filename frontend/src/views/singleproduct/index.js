@@ -1,7 +1,10 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Grid, Container, Divider } from "@material-ui/core";
 import { connect } from "react-redux";
-import { productsAction } from "../../store/action/productAction";
+import {
+  productAction,
+  productReviewsAction
+} from "../../store/action/productAction";
 import { isEmpty } from "../../utils/helper";
 import ProductDetail from "./productdetails";
 import GalleryImages from "./galleryimages";
@@ -12,23 +15,18 @@ const SingleProduct = props => {
   const [singleProduct, setSingleProduct] = useState(null);
 
   useEffect(() => {
-    if (isEmpty(props.products.products)) {
-      props.productsAction();
-    }
-  }, []);
+    props.productAction(props.match.params.id);
+    props.productReviewsAction(props.match.params.id);
+  }, [props.match.params.id]);
 
   useEffect(() => {
-    props.products.products.map(product => {
-      if (product.id === props.match.params.id) {
-        setSingleProduct({ ...product });
-      }
-    });
-  }, [props.match.params.id, props.products.products]);
+    setSingleProduct(props.products.product);
+  }, [props.products.product]);
 
   return (
     <Fragment>
       {props.products.loading && <Loading />}
-      {singleProduct === null ? (
+      {isEmpty(singleProduct) ? (
         <Loading />
       ) : (
         <Fragment>
@@ -56,7 +54,9 @@ const SingleProduct = props => {
           <Container>
             <ProductOtherDetails
               details={singleProduct}
+              reviews={props.products.productReviews}
               relatedProducts={props.products.products}
+              productId={props.products.product.id}
             />
           </Container>
         </Fragment>
@@ -72,7 +72,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  productsAction
+  productAction,
+  productReviewsAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleProduct);

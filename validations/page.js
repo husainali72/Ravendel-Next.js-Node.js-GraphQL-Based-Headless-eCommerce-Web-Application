@@ -6,16 +6,15 @@ module.exports = function validate(method, args) {
     case "addPage": {
       let errors = "";
 
-      if (!args.name || Validator.isEmpty(args.name)) {
-        return (errors = "Name field is required");
+      if (!args.title || Validator.isEmpty(args.title)) {
+        return (errors = "Title field is required");
       }
-
-      if (!args.description || Validator.isEmpty(args.description)) {
-        return (errors = "Description field is required");
-      }
-
-      if (!args.status || Validator.isEmpty(args.status)) {
-        return (errors = "Status field is required");
+      break;
+    }
+    case "updatePage": {
+      let errors = "";
+      if (!args.title || Validator.isEmpty(args.title)) {
+        return (errors = "Title field is required");
       }
       break;
     }

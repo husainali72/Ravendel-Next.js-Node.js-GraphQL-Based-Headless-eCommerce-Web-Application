@@ -1,4 +1,9 @@
-import { GET_BLOGS, GET_BLOGTAGS, GET_BLOG } from "../../queries/blogQuery";
+import {
+  GET_BLOGS,
+  GET_BLOGTAGS,
+  GET_BLOG,
+  GET_TAG_BLOGS
+} from "../../queries/blogQuery";
 
 import { query } from "../../utils/service";
 
@@ -34,8 +39,8 @@ export const blogAction = id => dispatch => {
     .then(response => {
       if (response) {
         return dispatch({
-          type: BLOGS_SUCCESS,
-          payload: response.data.user
+          type: BLOG_SUCCESS,
+          payload: response.data.blog
         });
       }
     })
@@ -74,6 +79,30 @@ export const blogtagsAction = () => dispatch => {
     });
 };
 
+export const tagBlogsAction = url => dispatch => {
+  dispatch({
+    type: BLOG_LOADING
+  });
+  query(GET_TAG_BLOGS, { url: url })
+    .then(response => {
+      if (response) {
+        return dispatch({
+          type: TAG_BLOGS,
+          payload: response.data.blogsbytagurl
+        });
+      }
+    })
+    .catch(error => {
+      dispatch({
+        type: BLOG_FAIL
+      });
+      return dispatch({
+        type: BLOG_FAIL,
+        payload: { boolean: true, message: error, error: true }
+      });
+    });
+};
+
 export const BLOG_LOADING = "BLOG_LOADING";
 export const BLOGS_SUCCESS = "BLOGS_SUCCESS";
 export const BLOG_SUCCESS = "BLOG_SUCCESS";
@@ -84,3 +113,4 @@ export const TINYMCE_NULL = "TINYMCE_NULL";
 export const BLOGTAG_LOADING = "BLOGTAG_LOADING";
 export const BLOGTAGS_SUCCESS = "BLOGTAGS_SUCCESS";
 export const BLOGTAG_FAIL = "BLOGTAG_FAIL";
+export const TAG_BLOGS = "TAG_BLOGS";

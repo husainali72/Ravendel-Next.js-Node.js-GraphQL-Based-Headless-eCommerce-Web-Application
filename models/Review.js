@@ -21,6 +21,9 @@ const ReviewSchema = new Schema({
   rating: {
     type: Number
   },
+  status: {
+    type: String
+  },
   date: {
     type: Date,
     default: Date.now

@@ -4,7 +4,8 @@ import ProductCard from "../components/productcard";
 import { connect } from "react-redux";
 import {
   productsAction,
-  categoriesAction
+  categoriesAction,
+  catProductAction
 } from "../../store/action/productAction";
 import {
   Typography,
@@ -58,7 +59,6 @@ const categories = [
 ];
 
 const Category = props => {
-  const [category, setCategory] = useState({});
   const [catName, setCatName] = useState("");
   const [priceRange, ssetPriceRange] = React.useState([20, 37]);
 
@@ -75,12 +75,8 @@ const Category = props => {
   }, []);
 
   useEffect(() => {
-    props.products.categories.map(cat => {
-      if (cat.id === props.match.params.id) {
-        setCategory({ ...cat });
-      }
-    });
-  }, [props.match.params.id, props.products.products]);
+    props.catProductAction(`/${props.match.params.url}`);
+  }, [props.match.params.url]);
 
   const priceChange = (event, newValue) => {
     ssetPriceRange(newValue);
@@ -144,21 +140,12 @@ const Category = props => {
   return (
     <Fragment>
       {props.products.loading && <Loading />}
-      <PageTitle title={category.name} />
+      <PageTitle title="Category Name" />
       <Container>
         <Grid container className="margin-top-3 margin-bottom-3" spacing={4}>
           <Grid item md={12} xs={12} sm={12}>
             <Typography variant="subtitle1">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.
+              Category Description Coming Soon......
             </Typography>
           </Grid>
 
@@ -318,9 +305,9 @@ const Category = props => {
             </Box>
           </Grid>
           <Grid item lg={9} md={8} sm={8} xs={12}>
-            {/* <Grid container spacing={4}>
-              {products &&
-                products.map((product, index) => (
+            <Grid container spacing={4}>
+              {!isEmpty(props.products.catProducts) ? (
+                props.products.catProducts.map((product, index) => (
                   <Grid item lg={4} md={6} sm={6} key={index}>
                     <ProductCard
                       productDetail={product}
@@ -328,8 +315,15 @@ const Category = props => {
                       key={index}
                     />
                   </Grid>
-                ))}
-            </Grid> */}
+                ))
+              ) : (
+                <Grid item md={12}>
+                  <Typography variant="h3" className="text-center">
+                    No Products Available
+                  </Typography>
+                </Grid>
+              )}
+            </Grid>
           </Grid>
         </Grid>
       </Container>
@@ -346,7 +340,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   productsAction,
-  categoriesAction
+  categoriesAction,
+  catProductAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Category);

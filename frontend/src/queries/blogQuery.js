@@ -37,4 +37,17 @@ const GET_BLOGTAGS = gql`
   }
 `;
 
-export { GET_BLOGS, GET_BLOG, GET_BLOGTAGS };
+const GET_TAG_BLOGS = gql`
+  query($url: String!) {
+    blogsbytagurl(tag_url: $url) {
+      id
+      title
+      content
+      status
+      feature_image
+      date
+    }
+  }
+`;
+
+export { GET_BLOGS, GET_BLOG, GET_BLOGTAGS, GET_TAG_BLOGS };

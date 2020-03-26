@@ -3,8 +3,8 @@ module.exports = gql`
   type Review {
     id: ID
     title: String
-    customer_id: ID
-    product_id: ID
+    customer_id: Customer
+    product_id: Product
     email: String
     review: String
     rating: String
@@ -22,8 +22,8 @@ module.exports = gql`
   extend type Mutation {
     addReview(
       title: String
-      customer_id: ID
-      product_id: ID
+      customer_id: String
+      product_id: String
       email: String
       review: String
       rating: String
@@ -32,8 +32,8 @@ module.exports = gql`
     updateReview(
       id: ID!
       title: String
-      customer_id: ID
-      product_id: ID
+      customer_id: String
+      product_id: String
       email: String
       review: String
       rating: String

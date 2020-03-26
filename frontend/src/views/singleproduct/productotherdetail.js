@@ -14,9 +14,26 @@ import {
 } from "@material-ui/core";
 import RelatedProducts from "../components/relatedproduct";
 import Rating from "@material-ui/lab/Rating";
+import { isEmpty } from "../../utils/helper";
+import convertDate from "../../utils/convertDate";
+
+var reviewObject = {
+  title: "",
+  customer_id: "5e58ddd73a4cf62a50a386a9",
+  product_id: "",
+  email: "",
+  review: "",
+  rating: 0
+};
 
 const ProductOtherDetails = props => {
-  const [ratingVal, setRatingVal] = useState(0);
+  const [review, setReview] = useState(reviewObject);
+
+  const addReview = () => {
+    setReview({ ...review, product_id: props.productId });
+    console.log(review);
+    setReview(reviewObject);
+  };
 
   return (
     <Fragment>
@@ -91,7 +108,7 @@ const ProductOtherDetails = props => {
           )}
 
           <Grid item md={12} sm={12} xs={12} className="product-reviews">
-            <Box>
+            <Box className="margin-bottom-2">
               <Box display="flex" justifyContent="center">
                 <Typography variant="h2" className="section-title">
                   Product Reviews
@@ -99,90 +116,42 @@ const ProductOtherDetails = props => {
               </Box>
 
               <Grid container spacing={4}>
-                <Grid item md={6} sm={12} xs={12}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    borderBottom={1}
-                    className="padding-bottom-1"
-                  >
-                    <Typography variant="button">
-                      John Doe - June 16 2020
+                {!isEmpty(props.reviews) ? (
+                  props.reviews.map((singleReview, index) => (
+                    <Grid item md={6} sm={12} xs={12} key={index}>
+                      <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        borderBottom={1}
+                        className="padding-bottom-1"
+                      >
+                        <Typography variant="button">
+                          <span className="text-capitalize">
+                            {singleReview.customer_id.first_name}
+                          </span>{" "}
+                          - {convertDate(singleReview.date)}
+                        </Typography>
+                        <Rating
+                          name="read-only"
+                          value={parseInt(singleReview.rating, 10)}
+                          readOnly
+                        />
+                      </Box>
+                      <Typography variant="subtitle2" className="padding-top-2">
+                        {singleReview.review}
+                      </Typography>
+                    </Grid>
+                  ))
+                ) : (
+                  <Grid item md={12}>
+                    <Typography
+                      variant="h3"
+                      className="padding-top-2 text-center"
+                    >
+                      Reviews Not Available
                     </Typography>
-                    <Rating name="read-only" value={1} readOnly />
-                  </Box>
-                  <Typography variant="subtitle2" className="padding-top-2">
-                    Mauris viverra cursus ante laoreet eleifend. Donec vel
-                    fringilla ante. Aenean finibus velit id urna vehicula, nec
-                    maximus est sollicitudin.Mauris viverra cursus ante laoreet
-                    eleifend.
-                  </Typography>
-                </Grid>
-
-                <Grid item md={6} sm={12} xs={12}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    borderBottom={1}
-                    className="padding-bottom-1"
-                  >
-                    <Typography variant="button">
-                      Sam Rosenberg - Dec 11, 2018
-                    </Typography>
-                    <Rating name="read-only" value={3} readOnly />
-                  </Box>
-                  <Typography variant="subtitle2" className="padding-top-2">
-                    Mauris viverra cursus ante laoreet eleifend. Donec vel
-                    fringilla ante. Aenean finibus velit id urna vehicula, nec
-                    maximus est sollicitudin.Mauris viverra cursus ante laoreet
-                    eleifend. Aenean finibus velit id urna vehicula, nec maximus
-                    est sollicitudin.Mauris viverra cursus ante laoreet
-                    eleifend. Mauris viverra cursus ante laoreet eleifend. Donec
-                    vel fringilla ante. Aenean finibus velit id urna vehicula,
-                    nec maximus est sollicitudin.Mauris viverra cursus ante
-                    laoreet eleifend. Aenean finibus velit id urna vehicula, nec
-                    maximus est sollicitudin.Mauris viverra cursus ante laoreet
-                    eleifend.
-                  </Typography>
-                </Grid>
-
-                <Grid item md={6} sm={12} xs={12}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    borderBottom={1}
-                    className="padding-bottom-1"
-                  >
-                    <Typography variant="button">
-                      Applewood Orchards - Sep 16, 2018
-                    </Typography>
-                    <Rating name="read-only" value={5} readOnly />
-                  </Box>
-                  <Typography variant="subtitle2" className="padding-top-2">
-                    Mauris viverra cursus ante laoreet eleifend. Donec vel
-                    fringilla ante.
-                  </Typography>
-                </Grid>
-
-                <Grid item md={6} sm={12} xs={12}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    borderBottom={1}
-                    className="padding-bottom-1"
-                  >
-                    <Typography variant="button">
-                      Dov Breuer - May 14, 2019
-                    </Typography>
-                    <Rating name="read-only" value={4} readOnly />
-                  </Box>
-                  <Typography variant="subtitle2" className="padding-top-2">
-                    Mauris viverra cursus ante laoreet eleifend. Donec vel
-                    fringilla ante. Aenean finibus velit id urna vehicula, nec
-                    maximus est sollicitudin.Mauris viverra cursus ante laoreet
-                    eleifend.
-                  </Typography>
-                </Grid>
+                  </Grid>
+                )}
               </Grid>
             </Box>
 
@@ -204,6 +173,9 @@ const ProductOtherDetails = props => {
                       variant="outlined"
                       size="small"
                       className="width-100"
+                      onChange={e =>
+                        setReview({ ...review, name: e.target.value })
+                      }
                     />
                   </Grid>
                   <Grid item md={6} sm={6} xs={6}>
@@ -213,6 +185,9 @@ const ProductOtherDetails = props => {
                       variant="outlined"
                       size="small"
                       className="width-100"
+                      onChange={e =>
+                        setReview({ ...review, email: e.target.value })
+                      }
                     />
                   </Grid>
                   <Grid item md={12} sm={12} xs={12}>
@@ -224,9 +199,9 @@ const ProductOtherDetails = props => {
                       <Typography component="legend">Rating</Typography>
                       <Rating
                         name="rating-val"
-                        value={ratingVal}
+                        value={review.rating}
                         onChange={(event, newValue) => {
-                          setRatingVal(newValue);
+                          setReview({ ...review, rating: newValue });
                         }}
                       />
                     </Box>
@@ -240,10 +215,17 @@ const ProductOtherDetails = props => {
                       className="width-100"
                       multiline
                       rows="4"
+                      onChange={e =>
+                        setReview({ ...review, review: e.target.value })
+                      }
                     />
                   </Grid>
                   <Grid item md={12} xs={12} sm={12} className="text-center">
-                    <Button variant="contained" color="primary">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={addReview}
+                    >
                       Add Review
                     </Button>
                   </Grid>
