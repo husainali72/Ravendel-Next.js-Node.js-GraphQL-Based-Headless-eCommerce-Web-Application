@@ -1,8 +1,8 @@
 # Ravendel
 
-[Backend or Admin Demo](http://ravendel-backend.hbwebsol.com)
+[Backend or Admin Demo](https://ravendel-backend.hbwebsol.com)
 
-[Frontend Demo](http://ravendel-frontend.hbwebsol.com)
+[Frontend Demo](https://ravendel-frontend.hbwebsol.com)
 
 ## What are we building?
 We are working towards building a complete eCommerce solution, which includes a web-based Backend and Frontend, IOS/Android mobile apps for the Buyer/Customer, and the admin.
