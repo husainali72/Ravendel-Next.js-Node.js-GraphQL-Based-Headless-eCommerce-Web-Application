@@ -17,12 +17,11 @@ const CartSide = props => {
                   key={index}
                   style={{
                     backgroundImage: `url(${
-                      cart.featured_image ? cart.featured_image : PlaceHolderImg
+                      cart.feature_image
+                        ? cart.feature_image.thumbnail
+                        : PlaceHolderImg
                     })`
                   }}
-                  // style={{
-                  //   backgroundImage: `url("../assets/images/placholder.png")`
-                  // }}
                 >
                   <div className="item-inner">
                     <Icon
@@ -55,10 +54,22 @@ const CartSide = props => {
                     </Typography>
 
                     <Typography variant="h6" className="item-price">
-                      ${cart.price.toFixed(2)}
+                      <span
+                        className={
+                          cart.pricing.sellprice ? "has-sale-price" : ""
+                        }
+                      >
+                        ${cart.pricing.price.toFixed(2)}
+                      </span>
+
+                      {cart.pricing.sellprice ? (
+                        <span className="sale-price">
+                          ${cart.pricing.sellprice.toFixed(2)}
+                        </span>
+                      ) : null}
                     </Typography>
                     <Link
-                      to={`/product/${cart.title}`}
+                      to={`/product/${cart.id}`}
                       className="view-item"
                       onClick={props.closeCart}
                     >

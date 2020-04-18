@@ -1,22 +1,31 @@
 const express = require("express");
 
 /*SSL Workout start*/
-const fs = require('fs');
-const http = require('http');
-const https = require('https');
-
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
 
 // Certificate
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/chain.pem', 'utf8');
+if (process.env.NODE_ENV === "production") {
+  const privateKey = fs.readFileSync(
+    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/privkey.pem",
+    "utf8"
+  );
+  const certificate = fs.readFileSync(
+    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/cert.pem",
+    "utf8"
+  );
+  const ca = fs.readFileSync(
+    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/chain.pem",
+    "utf8"
+  );
 
-const credentials = {
-  key: privateKey,
-  cert: certificate,
-  ca: ca
-};
-
+  const credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca: ca
+  };
+}
 /* SSL Workout end */
 
 const { ApolloServer } = require("apollo-server-express");
@@ -74,11 +83,11 @@ const appFront = express();
 
 // Server static assets if in production
 if (process.env.NODE_ENV === "production") {
-// Set static folder
+  // Set static folder
   appFront.use(express.static("frontend/build"));
-    appFront.get("*", (req, res) => {
+  appFront.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-  }); 
+  });
 }
 
 const appAdmin = express();
@@ -105,13 +114,13 @@ if (process.env.NODE_ENV === "production") {
   const httpsServer = https.createServer(credentials, app);
 
   httpServer.listen(80, () => {
-    console.log('HTTP Server running on port 80');
+    console.log("HTTP Server running on port 80");
   });
 
   httpsServer.listen(443, () => {
-    console.log('HTTPS Server running on port 443');
+    console.log("HTTPS Server running on port 443");
   });
 } else {
   const PORT = process.env.PORT || 8000;
-  app.listen(PORT, () => console.log(`server started on port ${PORT}`));  
+  app.listen(PORT, () => console.log(`server started on port ${PORT}`));
 }

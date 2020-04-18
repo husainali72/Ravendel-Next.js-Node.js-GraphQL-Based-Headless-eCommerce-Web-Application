@@ -18,6 +18,10 @@ const ProductCard = props => {
         type: "ADD_VALUE",
         payload: props.productDetail
       });
+      localStorage.setItem("cartProducts", [
+        ...localStorage.getItem("cartProducts"),
+        props.productDetail
+      ]);
     }
   };
 
@@ -120,7 +124,7 @@ const ProductCard = props => {
           ) : null}
         </p>
         <p>
-        {props.productDetail.quantity < 1 ? (
+          {props.productDetail.quantity < 1 ? (
             <span className="out-of-stock">
               <Icon>sentiment_very_dissatisfied</Icon> Out Of Stock
             </span>

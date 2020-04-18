@@ -483,6 +483,19 @@ section:nth-child(even) {
   margin-top: 30px;
   color: #fff !important;
 }
+.cart-wrapper .cart-product .cart-item .item-price span {
+  display: block;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+.cart-wrapper .cart-product .cart-item .item-price span.has-sale-price {
+  text-decoration: line-through;
+  font-size: 14px;
+  opacity: 0.5;
+}
+.cart-wrapper .cart-product .cart-item .item-price span.sale-price {
+  margin-left: 0px;
+}
 .cart-wrapper .cart-product .cart-item .item-category {
   font-weight: 600;
   font-size: 10px;
