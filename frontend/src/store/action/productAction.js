@@ -3,127 +3,150 @@ import {
   GET_CATEGORIES,
   GET_PRODUCT,
   GET_CAT_PRODUCTS,
-  GET_PRODUCT_REVIEWS
+  GET_PRODUCT_REVIEWS,
+  ADD_REVIEW,
 } from "../../queries/productQuery";
-import { query } from "../../utils/service";
+import { mutation, query } from "../../utils/service";
 // import jumpTo from "../../utils/navigation";
 
-export const productsAction = () => dispatch => {
+export const productsAction = () => (dispatch) => {
   dispatch({
-    type: PRODUCT_LOADING
+    type: PRODUCT_LOADING,
   });
   query(GET_PRODUCTS)
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: PRODUCTS_SUCCESS,
-          payload: response.data.products
+          payload: response.data.products,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: PRODUCT_FAIL
+        type: PRODUCT_FAIL,
       });
       return dispatch({
         type: PRODUCT_FAIL,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const productAction = id => dispatch => {
+export const productAction = (id) => (dispatch) => {
   dispatch({
-    type: PRODUCT_LOADING
+    type: PRODUCT_LOADING,
   });
   query(GET_PRODUCT, { id: id })
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: PRODUCT_SUCCESS,
-          payload: response.data.product
+          payload: response.data.product,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: PRODUCT_FAIL
+        type: PRODUCT_FAIL,
       });
       return dispatch({
         type: PRODUCT_FAIL,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const categoriesAction = () => dispatch => {
+export const categoriesAction = () => (dispatch) => {
   dispatch({
-    type: CAT_LOADING
+    type: CAT_LOADING,
   });
   query(GET_CATEGORIES)
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: CATS_SUCCESS,
-          payload: response.data.productCategories
+          payload: response.data.productCategories,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: CAT_FAIL
+        type: CAT_FAIL,
       });
       return dispatch({
         type: CAT_FAIL,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const catProductAction = url => dispatch => {
+export const catProductAction = (url) => (dispatch) => {
   dispatch({
-    type: PRODUCT_LOADING
+    type: PRODUCT_LOADING,
   });
   query(GET_CAT_PRODUCTS, { url: url })
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: CAT_PRODUCTS,
-          payload: response.data.productsbycaturl
+          payload: response.data.productsbycaturl,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: PRODUCT_FAIL
+        type: PRODUCT_FAIL,
       });
       return dispatch({
         type: PRODUCT_FAIL,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const productReviewsAction = id => dispatch => {
+export const productReviewsAction = (id) => (dispatch) => {
   dispatch({
-    type: PRODUCT_LOADING
+    type: PRODUCT_LOADING,
   });
   query(GET_PRODUCT_REVIEWS, { id: id })
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: PRODUCT_REVIEWS,
-          payload: response.data.productwisereview
+          payload: response.data.productwisereview,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: PRODUCT_FAIL
+        type: PRODUCT_FAIL,
       });
       return dispatch({
         type: PRODUCT_FAIL,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
+      });
+    });
+};
+
+export const productAddReviewAction = (object) => (dispatch) => {
+  console.log("object", object);
+  dispatch({
+    type: PRODUCT_LOADING,
+  });
+  mutation(ADD_REVIEW, object)
+    .then((response) => {
+      console.log("res Add Review", response);
+      if (response) {
+        dispatch({
+          type: ADD_PRODUCT_REVIEWS,
+          payload: response.data.addReviews,
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: PRODUCT_FAIL,
       });
     });
 };
@@ -138,3 +161,4 @@ export const PRODUCTS_SUCCESS = "PRODUCTS_SUCCESS";
 export const PRODUCT_FAIL = "PRODUCT_FAIL";
 export const CAT_PRODUCTS = "CAT_PRODUCTS";
 export const PRODUCT_REVIEWS = "PRODUCT_REVIEWS";
+export const ADD_PRODUCT_REVIEWS = "ADD_PRODUCT_REVIEWS";

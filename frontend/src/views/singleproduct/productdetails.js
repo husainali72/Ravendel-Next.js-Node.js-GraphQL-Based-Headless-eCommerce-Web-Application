@@ -8,35 +8,42 @@ import {
   FormControl,
   MenuItem,
   TextField,
-  Icon
+  Icon,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 
-const ProductDetail = props => {
+const ProductDetail = (props) => {
   const [product, setProduct] = useState(null);
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
     setProduct(props.details);
+    checkProductCart(props.details);
   }, [props.details]);
 
-  const addToCart = singleProduct => {
-    if (
-      props.cart.products.some(
-        cartproduct => cartproduct.title === singleProduct.title
-      )
-    ) {
-      props.productDetail.cart = true;
+  const checkProductCart = (singleProduct) => {
+    if (props.cart.products) {
+      props.cart.products.map(
+        (cartProduct) =>
+          cartProduct.id === singleProduct.id && (singleProduct.cart = true)
+      );
+    } else {
+      singleProduct.cart = false;
+    }
+  };
+
+  const addToCart = (singleProduct) => {
+    if (product.cart) {
       alert("Item already in a Cart");
     } else {
       props.dispatch({
         type: "ADD_VALUE",
-        payload: singleProduct
+        payload: singleProduct,
       });
     }
   };
 
-  const handlechange = e => {
+  const handlechange = (e) => {
     setQty(e.target.value);
   };
 
@@ -105,9 +112,9 @@ const ProductDetail = props => {
             )}
 
             {/* ==========Product Short Desciprtion ===========*/}
-            {product.short_desc ? (
+            {product.short_description ? (
               <Typography variant="body1" className="product-description">
-                {product.short_desc}
+                {product.short_description}
               </Typography>
             ) : (
               <Typography variant="body1" className="product-description">
@@ -150,10 +157,10 @@ const ProductDetail = props => {
                 <FormControl variant="filled" className="select-attributed">
                   <InputLabel htmlFor="size-option">Size</InputLabel>
                   <Select
-                    onChange={e => console.log(e)}
+                    onChange={(e) => console.log(e)}
                     inputProps={{
                       name: "size",
-                      id: "size-option"
+                      id: "size-option",
                     }}
                   >
                     <MenuItem value={10}>Small</MenuItem>
@@ -164,10 +171,10 @@ const ProductDetail = props => {
                 <FormControl variant="filled" className="select-attributed">
                   <InputLabel htmlFor="color-option">Color</InputLabel>
                   <Select
-                    onChange={e => console.log(e)}
+                    onChange={(e) => console.log(e)}
                     inputProps={{
                       name: "color",
-                      id: "color-option"
+                      id: "color-option",
                     }}
                   >
                     <MenuItem value={10}>Black</MenuItem>
@@ -186,7 +193,7 @@ const ProductDetail = props => {
               disabled={product.quantity < 1 ? true : false}
               size="large"
             >
-              Add To Cart
+              {product.cart ? "Added" : "Add To Cart"}
             </Button>
           </Box>
         </Box>
@@ -195,8 +202,8 @@ const ProductDetail = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  cart: state.cart
+const mapStateToProps = (state) => ({
+  cart: state.cart,
 });
 
 export default connect(mapStateToProps)(ProductDetail);

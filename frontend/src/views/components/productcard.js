@@ -4,28 +4,37 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 
-const ProductCard = props => {
+const ProductCard = (props) => {
   const [prodIndex, setProdIndex] = useState("");
 
-  const addToCart = singleProduct => {
-    if (
-      props.cart.products.some(product => product.title === singleProduct.title)
-    ) {
-      props.productDetail.cart = true;
-      alert("Item already in a Cart");
+  const checkProductCart = (singleProduct) => {
+    if (props.cart.products) {
+      props.cart.products.map(
+        (cartProduct) =>
+          cartProduct.id === singleProduct.id && (singleProduct.cart = true)
+      );
     } else {
-      props.dispatch({
-        type: "ADD_VALUE",
-        payload: props.productDetail
-      });
-      localStorage.setItem("cartProducts", [
-        ...localStorage.getItem("cartProducts"),
-        props.productDetail
-      ]);
+      singleProduct.cart = false;
     }
   };
 
-  const categoryListing = categoryID => {
+  // props.cart.products.some((product) => product.id === singleProduct.id)
+
+  const addToCart = (singleProduct) => {
+    if (singleProduct.cart) {
+      alert("Item is already in a Cart");
+    } else {
+      if (singleProduct.id === props.productDetail.id) {
+        props.productDetail.cart = true;
+      }
+      props.dispatch({
+        type: "ADD_VALUE",
+        payload: singleProduct,
+      });
+    }
+  };
+
+  const categoryListing = (categoryID) => {
     var category = [];
 
     // category = categoryID.filter(id =>
@@ -63,6 +72,7 @@ const ProductCard = props => {
       onMouseOver={() => setProdIndex(props.index)}
       onMouseOut={() => setProdIndex("")}
     >
+      {checkProductCart(props.productDetail)}
       <div className="product-image-wrapper">
         <img
           src={
@@ -138,8 +148,8 @@ const ProductCard = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  cart: state.cart
+const mapStateToProps = (state) => ({
+  cart: state.cart,
 });
 
 export default connect(mapStateToProps)(ProductCard);

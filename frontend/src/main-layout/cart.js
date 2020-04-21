@@ -3,8 +3,7 @@ import { Box, Typography, Icon, Grid, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import PlaceHolderImg from "../assets/images/placeholder.png";
 
-const CartSide = props => {
-  console.log("props.cartValue", props.cartValue);
+const CartSide = (props) => {
   return (
     <Fragment>
       {props.cartValue && props.cartValue.length ? (
@@ -20,7 +19,7 @@ const CartSide = props => {
                       cart.feature_image
                         ? cart.feature_image.thumbnail
                         : PlaceHolderImg
-                    })`
+                    })`,
                   }}
                 >
                   <div className="item-inner">
@@ -37,14 +36,14 @@ const CartSide = props => {
                       </Typography>
                     )}
 
-                    {cart.title && (
+                    {cart.name && (
                       <Typography variant="h6" className="item-title">
-                        {cart.title}
+                        {cart.name}
                       </Typography>
                     )}
 
                     <Typography variant="body2" className="item-attr">
-                      Qty: 2
+                      Qty: 1
                     </Typography>
                     <Typography variant="body2" className="item-attr">
                       Size: Small

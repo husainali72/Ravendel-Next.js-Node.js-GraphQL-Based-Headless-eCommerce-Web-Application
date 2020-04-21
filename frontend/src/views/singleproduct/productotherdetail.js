@@ -10,29 +10,33 @@ import {
   Table,
   TableCell,
   TextField,
-  Button
+  Button,
 } from "@material-ui/core";
 import RelatedProducts from "../components/relatedproduct";
 import Rating from "@material-ui/lab/Rating";
 import { isEmpty } from "../../utils/helper";
 import convertDate from "../../utils/convertDate";
+import { connect } from "react-redux";
+import { productAddReviewAction } from "../../store/action/productAction";
 
 var reviewObject = {
   title: "",
   customer_id: "5e58ddd73a4cf62a50a386a9",
-  product_id: "",
+  product_id: "5e81acb241738428396af74d",
   email: "",
   review: "",
-  rating: 0
+  rating: 0,
+  status: "Pending",
 };
 
-const ProductOtherDetails = props => {
+const ProductOtherDetails = (props) => {
   const [review, setReview] = useState(reviewObject);
 
   const addReview = () => {
-    setReview({ ...review, product_id: props.productId });
-    console.log(review);
-    setReview(reviewObject);
+    //setReview({ ...review, product_id: props.productId });
+    //console.log(review);
+    props.productAddReviewAction(review);
+    //setReview(reviewObject);
   };
 
   return (
@@ -50,7 +54,7 @@ const ProductOtherDetails = props => {
                 <Typography variant="body1" className="product-description">
                   <span
                     dangerouslySetInnerHTML={{
-                      __html: props.details.description
+                      __html: props.details.description,
                     }}
                   ></span>
                   {/* {props.details.description} */}
@@ -173,7 +177,7 @@ const ProductOtherDetails = props => {
                       variant="outlined"
                       size="small"
                       className="width-100"
-                      onChange={e =>
+                      onChange={(e) =>
                         setReview({ ...review, name: e.target.value })
                       }
                     />
@@ -185,7 +189,7 @@ const ProductOtherDetails = props => {
                       variant="outlined"
                       size="small"
                       className="width-100"
-                      onChange={e =>
+                      onChange={(e) =>
                         setReview({ ...review, email: e.target.value })
                       }
                     />
@@ -215,7 +219,7 @@ const ProductOtherDetails = props => {
                       className="width-100"
                       multiline
                       rows="4"
-                      onChange={e =>
+                      onChange={(e) =>
                         setReview({ ...review, review: e.target.value })
                       }
                     />
@@ -252,4 +256,17 @@ const ProductOtherDetails = props => {
   );
 };
 
-export default ProductOtherDetails;
+const mapStateToProps = (state) => {
+  return {
+    products: state.products,
+  };
+};
+
+const mapDispatchToProps = {
+  productAddReviewAction,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProductOtherDetails);

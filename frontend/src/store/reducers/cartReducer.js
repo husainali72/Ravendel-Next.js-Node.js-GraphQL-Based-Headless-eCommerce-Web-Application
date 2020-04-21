@@ -1,22 +1,27 @@
 const initialState = {
-  products: [
-    // {
-    //   featured_image:
-    //     "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
-    //   title: "Product Third",
-    //   price: 12,
-    //   category: "category",
-    //   description: "Product third lorem ipsom dolr sit"
-    // }
-  ]
+  products: [],
 };
+
+if (localStorage.getItem("cartProducts") != null) {
+  initialState.products = JSON.parse(localStorage.getItem("cartProducts"));
+}
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case "ADD_VALUE":
+      if (localStorage.getItem("cartProducts") === null) {
+        var singleData = [];
+        singleData.push(action.payload);
+        localStorage.setItem("cartProducts", JSON.stringify(singleData));
+      } else {
+        var oldData = [...JSON.parse(localStorage.getItem("cartProducts"))];
+        oldData.push(action.payload);
+        localStorage.setItem("cartProducts", JSON.stringify(oldData));
+      }
+
       return {
         ...state,
-        products: [...state.products, action.payload]
+        products: [...state.products, action.payload],
       };
     default: {
       return state;
