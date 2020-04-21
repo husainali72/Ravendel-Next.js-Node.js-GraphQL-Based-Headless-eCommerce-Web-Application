@@ -46,7 +46,7 @@ const Navigation = props => {
       >
         <Box component="div" display="inline" m={2} className="menu-item">
           <Link onClick={() => props.drawerCloseFunc()} to="/">
-            Home
+            Homes
           </Link>
         </Box>
         <Box component="div" display="inline" m={2} className="menu-item">
