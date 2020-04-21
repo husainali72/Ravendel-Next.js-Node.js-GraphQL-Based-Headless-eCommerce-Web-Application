@@ -34,7 +34,7 @@ const ProductDetail = (props) => {
 
   const addToCart = (singleProduct) => {
     if (product.cart) {
-      alert("Item already in a Cart");
+      alert("Item already in a Cart ");
     } else {
       props.dispatch({
         type: "ADD_VALUE",
