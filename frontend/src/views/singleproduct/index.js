@@ -3,7 +3,7 @@ import { Grid, Container, Divider } from "@material-ui/core";
 import { connect } from "react-redux";
 import {
   productAction,
-  productReviewsAction
+  productReviewsAction,
 } from "../../store/action/productAction";
 import { isEmpty } from "../../utils/helper";
 import ProductDetail from "./productdetails";
@@ -11,8 +11,9 @@ import GalleryImages from "./galleryimages";
 import ProductOtherDetails from "./productotherdetail";
 import Loading from "../components/loading";
 
-const SingleProduct = props => {
+const SingleProduct = (props) => {
   const [singleProduct, setSingleProduct] = useState(null);
+  const [sliderImages, setSliderImages] = useState([]);
 
   useEffect(() => {
     props.productAction(props.match.params.id);
@@ -20,7 +21,20 @@ const SingleProduct = props => {
   }, [props.match.params.id]);
 
   useEffect(() => {
-    setSingleProduct(props.products.product);
+    var product = props.products.product;
+
+    setSingleProduct(product);
+
+    var allimages = [];
+    if (product.feature_image) {
+      allimages.push(product.feature_image);
+    }
+    if (product.gallery_image) {
+      product.gallery_image.map((img) => {
+        allimages.push(img);
+      });
+    }
+    setSliderImages(allimages);
   }, [props.products.product]);
 
   return (
@@ -38,7 +52,8 @@ const SingleProduct = props => {
               xs={12}
               className="singleproduct-col singleproduct-leftside"
             >
-              <GalleryImages galleryImages={singleProduct.gallery_image} />
+              {/* <GalleryImages galleryImages={singleProduct.gallery_image} /> */}
+              <GalleryImages galleryImages={sliderImages} />
             </Grid>
             <Grid
               item
@@ -65,15 +80,15 @@ const SingleProduct = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    products: state.products
+    products: state.products,
   };
 };
 
 const mapDispatchToProps = {
   productAction,
-  productReviewsAction
+  productReviewsAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleProduct);

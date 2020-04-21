@@ -119,6 +119,7 @@ const GET_PRODUCT_REVIEWS = gql`
       rating
       date
       updated
+      status
     }
   }
 `;
@@ -142,13 +143,22 @@ const ADD_REVIEW = gql`
       rating: $rating
       status: $status
     ) {
+      id
       title
-      customer_id
-      product_id
+      customer_id {
+        id
+        first_name
+      }
+      product_id {
+        id
+        name
+      }
       email
       review
       rating
       status
+      date
+      updated
     }
   }
 `;
@@ -160,23 +170,6 @@ const ADD_REVIEW = gql`
 // review
 // rating
 // status
-
-// id
-// title
-// customer_id {
-//   id
-//   first_name
-// }
-// product_id {
-//   id
-//   name
-// }
-// email
-// review
-// rating
-// status
-// date
-// updated
 
 export {
   GET_PRODUCTS,

@@ -12,7 +12,7 @@ import {
   Box,
   RadioGroup,
   Radio,
-  FormControlLabel
+  FormControlLabel,
 } from "@material-ui/core";
 import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
@@ -26,12 +26,12 @@ import {
   productsAction,
   customersAction,
   reviewsAction,
-  reviewUpdateAction
+  reviewUpdateAction,
 } from "../../store/action";
 import { connect } from "react-redux";
 import Select from "react-select";
 
-const StyledRadio = props => {
+const StyledRadio = (props) => {
   return (
     <Radio
       className="radioRoot"
@@ -53,9 +53,9 @@ var reviewObj = {
   rating: "",
   status: "Pending",
   customer: {},
-  product: {}
+  product: {},
 };
-const EditReview = props => {
+const EditReview = (props) => {
   const classes = viewStyles();
   const [review, setreview] = useState(reviewObj);
   const [products, setproducts] = useState([]);
@@ -77,12 +77,12 @@ const EditReview = props => {
           product_id: props.reviewState.reviews[i].product_id.id,
           customer: {
             value: props.reviewState.reviews[i].customer_id.id,
-            label: props.reviewState.reviews[i].customer_id.first_name
+            label: props.reviewState.reviews[i].customer_id.first_name,
           },
           product: {
             value: props.reviewState.reviews[i].product_id.id,
-            label: props.reviewState.reviews[i].product_id.name
-          }
+            label: props.reviewState.reviews[i].product_id.name,
+          },
         });
         break;
       }
@@ -90,10 +90,10 @@ const EditReview = props => {
   }, [props.reviewState.reviews]);
 
   useEffect(() => {
-    const prodcutArr = props.productState.products.map(product => {
+    const prodcutArr = props.productState.products.map((product) => {
       return {
         value: product.id,
-        label: product.name
+        label: product.name,
       };
     });
 
@@ -101,10 +101,10 @@ const EditReview = props => {
   }, [props.productState.products]);
 
   useEffect(() => {
-    const customerArr = props.customerState.customers.map(customer => {
+    const customerArr = props.customerState.customers.map((customer) => {
       return {
         value: customer.id,
-        label: customer.first_name
+        label: customer.first_name,
       };
     });
 
@@ -116,10 +116,10 @@ const EditReview = props => {
     props.reviewUpdateAction(review);
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setreview({
       ...review,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -129,7 +129,7 @@ const EditReview = props => {
       <Grid container className="topbar">
         <Grid item lg={6}>
           <Typography variant="h4">
-            <Link to="/all-pages">
+            <Link to="/reviews">
               <IconButton aria-label="Back">
                 <ArrowBackIcon />
               </IconButton>
@@ -194,11 +194,11 @@ const EditReview = props => {
                   <Select
                     value={review.product}
                     name="product_id"
-                    onChange={e =>
+                    onChange={(e) =>
                       setreview({
                         ...review,
                         product_id: e.value,
-                        product: { value: e.value, label: e.label }
+                        product: { value: e.value, label: e.label },
                       })
                     }
                     options={products}
@@ -212,11 +212,11 @@ const EditReview = props => {
                   <Select
                     value={review.customer}
                     name="customer_id"
-                    onChange={e =>
+                    onChange={(e) =>
                       setreview({
                         ...review,
                         customer_id: e.value,
-                        customer: { value: e.value, label: e.label }
+                        customer: { value: e.value, label: e.label },
                       })
                     }
                     options={customers}
@@ -241,7 +241,7 @@ const EditReview = props => {
                     onChange={(event, newValue) => {
                       setreview({
                         ...review,
-                        rating: String(newValue)
+                        rating: String(newValue),
                       });
                     }}
                   />
@@ -264,12 +264,12 @@ const EditReview = props => {
                 value={review.status}
               >
                 <FormControlLabel
-                  value="Approved"
+                  value="approved"
                   control={<StyledRadio />}
                   label="Approved"
                 />
                 <FormControlLabel
-                  value="Pending"
+                  value="pending"
                   control={<StyledRadio />}
                   label="Pending"
                 />
@@ -282,11 +282,11 @@ const EditReview = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     productState: state.products,
     customerState: state.customers,
-    reviewState: state.reviews
+    reviewState: state.reviews,
   };
 };
 
@@ -294,7 +294,7 @@ const mapDispatchToProps = {
   productsAction,
   customersAction,
   reviewsAction,
-  reviewUpdateAction
+  reviewUpdateAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditReview);

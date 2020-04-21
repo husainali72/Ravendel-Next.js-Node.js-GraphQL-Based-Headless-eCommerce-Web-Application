@@ -2,9 +2,9 @@ import React, { Fragment } from "react";
 import Slider from "react-slick";
 import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 
-const GalleryImagesComponents = props => {
+const GalleryImagesComponents = (props) => {
   const settings = {
-    customPaging: function(i) {
+    customPaging: function (i) {
       return (
         <a>
           <img
@@ -20,7 +20,7 @@ const GalleryImagesComponents = props => {
     infinite: true,
     speed: 500,
     slidesToShow: 1,
-    slidesToScroll: 1
+    slidesToScroll: 1,
   };
 
   return (

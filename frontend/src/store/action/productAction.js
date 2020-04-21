@@ -130,7 +130,7 @@ export const productReviewsAction = (id) => (dispatch) => {
 };
 
 export const productAddReviewAction = (object) => (dispatch) => {
-  console.log("object", object);
+  console.log("Review Object", object);
   dispatch({
     type: PRODUCT_LOADING,
   });
@@ -145,6 +145,7 @@ export const productAddReviewAction = (object) => (dispatch) => {
       }
     })
     .catch((error) => {
+      console.log("error", error);
       dispatch({
         type: PRODUCT_FAIL,
       });

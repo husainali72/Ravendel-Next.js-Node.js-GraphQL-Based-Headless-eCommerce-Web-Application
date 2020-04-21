@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
   Typography,
@@ -21,23 +21,36 @@ import { productAddReviewAction } from "../../store/action/productAction";
 
 var reviewObject = {
   title: "",
-  customer_id: "5e58ddd73a4cf62a50a386a9",
-  product_id: "5e81acb241738428396af74d",
-  email: "",
+  email: "review@email.com",
   review: "",
-  rating: 0,
-  status: "Pending",
+  rating: "0",
+  status: "pending",
+  customer_id: "5e58ddd73a4cf62a50a386a9",
+  product_id: "",
 };
 
 const ProductOtherDetails = (props) => {
   const [review, setReview] = useState(reviewObject);
+  // const [reviewAvailable, setreviewAvailable] = useState(false);
 
   const addReview = () => {
-    //setReview({ ...review, product_id: props.productId });
-    //console.log(review);
     props.productAddReviewAction(review);
-    //setReview(reviewObject);
+    setReview(reviewObject);
   };
+
+  useEffect(() => {
+    setReview({ ...review, product_id: props.productId });
+  }, [props.productId]);
+
+  // useEffect(() => {
+  //   if (props.reviews) {
+  //     reviewAvailable =
+  //       props.reviews.filter((review) => review.status === "approved").length >
+  //       0;
+  //   } else {
+  //     reviewAvailable = false;
+  //   }
+  // }, [props.reviews]);
 
   return (
     <Fragment>
@@ -57,7 +70,6 @@ const ProductOtherDetails = (props) => {
                       __html: props.details.description,
                     }}
                   ></span>
-                  {/* {props.details.description} */}
                 </Typography>
               </Box>
             </Grid>
@@ -120,36 +132,49 @@ const ProductOtherDetails = (props) => {
               </Box>
 
               <Grid container spacing={4}>
-                {!isEmpty(props.reviews) ? (
-                  props.reviews.map((singleReview, index) => (
-                    <Grid item md={6} sm={12} xs={12} key={index}>
-                      <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        borderBottom={1}
-                        className="padding-bottom-1"
-                      >
-                        <Typography variant="button">
-                          <span className="text-capitalize">
-                            {singleReview.customer_id.first_name}
-                          </span>{" "}
-                          - {convertDate(singleReview.date)}
+                {props.reviews &&
+                props.reviews.filter((review) => review.status === "approved")
+                  .length > 0 ? (
+                  props.reviews
+                    .filter((review) => review.status === "approved")
+                    .map((singleReview, index) => (
+                      <Grid item md={6} sm={12} xs={12} key={index}>
+                        <Box
+                          display="flex"
+                          justifyContent="space-between"
+                          borderBottom={1}
+                          className="padding-bottom-1"
+                        >
+                          <Typography variant="button">
+                            <span className="text-capitalize">
+                              {singleReview.customer_id.first_name}
+                            </span>{" "}
+                            - {convertDate(singleReview.date)}
+                          </Typography>
+                          <Rating
+                            name="read-only"
+                            value={parseInt(singleReview.rating, 10)}
+                            readOnly
+                          />
+                        </Box>
+                        <Typography
+                          variant="subtitle1"
+                          className="padding-top-2"
+                        >
+                          {singleReview.title}
                         </Typography>
-                        <Rating
-                          name="read-only"
-                          value={parseInt(singleReview.rating, 10)}
-                          readOnly
-                        />
-                      </Box>
-                      <Typography variant="subtitle2" className="padding-top-2">
-                        {singleReview.review}
-                      </Typography>
-                    </Grid>
-                  ))
+                        <Typography
+                          variant="subtitle2"
+                          className="padding-top-1"
+                        >
+                          {singleReview.review}
+                        </Typography>
+                      </Grid>
+                    ))
                 ) : (
                   <Grid item md={12}>
                     <Typography
-                      variant="h3"
+                      variant="h5"
                       className="padding-top-2 text-center"
                     >
                       Reviews Not Available
@@ -170,27 +195,16 @@ const ProductOtherDetails = (props) => {
                       Leave Us A Review
                     </Typography>
                   </Grid>
-                  <Grid item md={6} sm={6} xs={6}>
+                  <Grid item md={12} sm={12} xs={12}>
                     <TextField
                       type="text"
-                      label="Name"
+                      label="Title"
                       variant="outlined"
                       size="small"
                       className="width-100"
+                      value={review.title}
                       onChange={(e) =>
-                        setReview({ ...review, name: e.target.value })
-                      }
-                    />
-                  </Grid>
-                  <Grid item md={6} sm={6} xs={6}>
-                    <TextField
-                      type="email"
-                      label="Email"
-                      variant="outlined"
-                      size="small"
-                      className="width-100"
-                      onChange={(e) =>
-                        setReview({ ...review, email: e.target.value })
+                        setReview({ ...review, title: e.target.value })
                       }
                     />
                   </Grid>
@@ -203,9 +217,9 @@ const ProductOtherDetails = (props) => {
                       <Typography component="legend">Rating</Typography>
                       <Rating
                         name="rating-val"
-                        value={review.rating}
+                        value={parseInt(review.rating)}
                         onChange={(event, newValue) => {
-                          setReview({ ...review, rating: newValue });
+                          setReview({ ...review, rating: newValue.toString() });
                         }}
                       />
                     </Box>
@@ -218,6 +232,7 @@ const ProductOtherDetails = (props) => {
                       size="small"
                       className="width-100"
                       multiline
+                      value={review.review}
                       rows="4"
                       onChange={(e) =>
                         setReview({ ...review, review: e.target.value })

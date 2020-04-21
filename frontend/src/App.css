@@ -358,6 +358,9 @@ section:nth-child(even) {
   height: 85%;
   overflow: hidden;
 }
+.singleroduct-gallery-slider .slick-list div {
+  height: 100% !important;
+}
 .singleroduct-gallery-slider .slick-dots.slick-thumb {
   /* height: 15%; */
   height: auto;
@@ -397,8 +400,11 @@ section:nth-child(even) {
   margin: 0 auto;
   cursor: zoom-in;
   transition: all 2s ease-in-out;
-  max-width: 800px;
-  max-height: 800px;
+  /* max-width: 800px;
+  max-height: 800px; */
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
 }
 .gallery-image:hover {
   transform: scale(1.3);
