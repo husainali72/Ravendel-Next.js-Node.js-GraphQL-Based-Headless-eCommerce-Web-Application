@@ -4,7 +4,7 @@ const express = require("express");
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
-
+var credentials = {};
 // Certificate
 if (process.env.NODE_ENV === "production") {
   const privateKey = fs.readFileSync(
@@ -20,10 +20,10 @@ if (process.env.NODE_ENV === "production") {
     "utf8"
   );
 
-  const credentials = {
+  credentials = {
     key: privateKey,
     cert: certificate,
-    ca: ca
+    ca: ca,
   };
 }
 /* SSL Workout end */
@@ -64,8 +64,8 @@ const server = new ApolloServer({
     // graphql-upload:
     // https://github.com/jaydenseric/graphql-upload#type-uploadoptions
     maxFileSize: 5000000, // 5 MB
-    maxFiles: 20
-  }
+    maxFiles: 20,
+  },
 });
 server.applyMiddleware({ app, path: "/graphql" });
 

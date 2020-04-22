@@ -4,7 +4,7 @@ import {
   userAction,
   userUpdateAction,
   userDeleteAction,
-  userAddAction
+  userAddAction,
 } from "./userAction";
 
 import {
@@ -15,7 +15,7 @@ import {
   blogtagsAction,
   blogtagAddAction,
   blogtagUpdateAction,
-  blogtagDeleteAction
+  blogtagDeleteAction,
 } from "./blogAction";
 
 import {
@@ -26,14 +26,14 @@ import {
   productsAction,
   productAddAction,
   productDeleteAction,
-  productUpdateAction
+  productUpdateAction,
 } from "./productAction";
 
 import {
   ordersAction,
   orderAction,
   orderDeleteAction,
-  orderUpdateAction
+  orderUpdateAction,
 } from "./orderAction";
 
 import {
@@ -44,14 +44,14 @@ import {
   customerAddAction,
   addressbookAddAction,
   addressbookUpdateAction,
-  addressbookDeleteAction
+  addressbookDeleteAction,
 } from "./customerAction";
 
 import {
   brandsAction,
   brandAddAction,
   brandUpdateAction,
-  brandDeleteAction
+  brandDeleteAction,
 } from "./brandAction";
 
 import {
@@ -60,7 +60,7 @@ import {
   optionTaxUpdateAction,
   taxClassAddAction,
   taxClassUpdateAction,
-  taxClassDeleteAction
+  taxClassDeleteAction,
 } from "./taxAction";
 
 import {
@@ -68,7 +68,7 @@ import {
   globalShippingUpdateAction,
   shippingClassAddAction,
   shippingClassUpdateAction,
-  shippingClassDeleteAction
+  shippingClassDeleteAction,
 } from "./shippingAction";
 
 import {
@@ -76,7 +76,7 @@ import {
   couponAction,
   couponAddAction,
   couponUpdateAction,
-  couponDeleteAction
+  couponDeleteAction,
 } from "./couponAction";
 
 import {
@@ -84,8 +84,16 @@ import {
   reviewAction,
   reviewAddAction,
   reviewUpdateAction,
-  reviewDeleteAction
+  reviewDeleteAction,
 } from "./reviewAction";
+
+import {
+  pagesAction,
+  pageAction,
+  pageAddAction,
+  pageUpdateAction,
+  pageDeleteAction,
+} from "./pageAction";
 
 export {
   LoginAction,
@@ -146,5 +154,10 @@ export {
   reviewAction,
   reviewAddAction,
   reviewUpdateAction,
-  reviewDeleteAction
+  reviewDeleteAction,
+  pagesAction,
+  pageAction,
+  pageAddAction,
+  pageUpdateAction,
+  pageDeleteAction,
 };

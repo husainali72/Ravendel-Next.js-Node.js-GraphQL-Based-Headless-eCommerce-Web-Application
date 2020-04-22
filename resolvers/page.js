@@ -4,7 +4,8 @@ const {
   putError,
   checkError,
   checkToken,
-  validateUrl
+  validateUrl,
+  stringTourl,
 } = require("../config/helpers");
 const validate = require("../validations/page");
 
@@ -28,7 +29,7 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
+    },
   },
   Mutation: {
     addPage: async (root, args, { id }) => {
@@ -56,7 +57,7 @@ module.exports = {
           content: args.content,
           status: args.status,
           url: url,
-          meta: args.meta
+          meta: args.meta,
         });
 
         await newPage.save();
@@ -76,8 +77,8 @@ module.exports = {
           var url = stringTourl(args.url || args.title);
           var duplicate = true;
           while (duplicate) {
-            let blog = await Blog.findOne({ url: url });
-            if (blog) {
+            let page = await Page.findOne({ url: url, _id: { $nin: args.id } });
+            if (page) {
               url = validateUrl(url);
             } else {
               duplicate = false;
@@ -113,6 +114,6 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
-  }
+    },
+  },
 };

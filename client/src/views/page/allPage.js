@@ -15,11 +15,11 @@ import {
   IconButton,
   Avatar,
   Button,
-  Tooltip
+  Tooltip,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { blogsAction, blogDeleteAction } from "../../store/action";
+import { pagesAction, pageDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
 import Alert from "../utils/Alert";
@@ -30,12 +30,12 @@ import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import convertDefault from "../utils/convertDate";
 
-const AllPages = props => {
+const AllPages = (props) => {
   const classes = viewStyles();
 
   useEffect(() => {
-    if (isEmpty(props.blogs.blogs)) {
-      props.blogsAction();
+    if (isEmpty(props.pageState.pages)) {
+      props.pagesAction();
     }
   }, []);
 
@@ -46,7 +46,7 @@ const AllPages = props => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
@@ -57,7 +57,7 @@ const AllPages = props => {
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.blogs.loading && <Loading />}
+            {props.pageState.loading && <Loading />}
 
             <CardHeader
               action={
@@ -84,38 +84,28 @@ const AllPages = props => {
                 >
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.avtarTd}>
-                        <PeopleIcon />
-                      </TableCell>
                       <TableCell>Title</TableCell>
                       <TableCell>Date</TableCell>
                       <TableCell>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {props.blogs.blogs
+                    {props.pageState.pages
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map(blog => (
-                        <TableRow key={blog.id} hover>
+                      .map((page) => (
+                        <TableRow key={page.id} hover>
+                          <TableCell>{page.title}</TableCell>
                           <TableCell>
-                            <Avatar
-                              alt={blog.name}
-                              src={
-                                blog.feature_image &&
-                                blog.feature_image.thumbnail
-                              }
-                            />
+                            {convertDefault(page.createdAt)}
                           </TableCell>
-                          <TableCell>{blog.title}</TableCell>
-                          <TableCell>{convertDefault(blog.date)}</TableCell>
                           <TableCell>
                             <Tooltip title="Edit Page" aria-label="edit">
                               <IconButton
                                 aria-label="Edit"
-                                onClick={() => jumpTo(`edit-page/${blog.id}`)}
+                                onClick={() => jumpTo(`edit-page/${page.id}`)}
                               >
                                 <EditIcon />
                               </IconButton>
@@ -124,7 +114,7 @@ const AllPages = props => {
                               <IconButton
                                 aria-label="Delete"
                                 className={classes.deleteicon}
-                                onClick={() => props.blogDeleteAction(blog.id)}
+                                onClick={() => props.pageDeleteAction(page.id)}
                               >
                                 <DeleteIcon />
                               </IconButton>
@@ -138,7 +128,7 @@ const AllPages = props => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={props.blogs.blogs.length}
+                count={props.pageState.pages.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -152,13 +142,13 @@ const AllPages = props => {
   );
 };
 
-const mapStateToProps = state => {
-  return { blogs: state.blogs };
+const mapStateToProps = (state) => {
+  return { pageState: state.pages };
 };
 
 const mapDispatchToProps = {
-  blogsAction,
-  blogDeleteAction
+  pagesAction,
+  pageDeleteAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllPages);
