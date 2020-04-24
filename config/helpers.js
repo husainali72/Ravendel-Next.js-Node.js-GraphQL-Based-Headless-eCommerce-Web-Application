@@ -114,7 +114,7 @@ const imageUpload = async (upload, uploadPath) => {
       if (!~extensions.indexOf(ext)) {
         return resolve({
           success: false,
-          message: "This image can't be upload",
+          message: "This image can't be upload ext",
         });
       }
 
@@ -145,7 +145,7 @@ const imageUpload = async (upload, uploadPath) => {
           });
           return resolve({
             success: false,
-            message: "This image can't be upload",
+            message: "This image can't be upload stream",
           });
         })
 
@@ -164,7 +164,7 @@ const imageUpload = async (upload, uploadPath) => {
               });
               return resolve({
                 success: false,
-                message: "This image can't be upload",
+                message: "This image can't be upload unlink",
               });
             }
           }
@@ -182,7 +182,7 @@ const imageUpload = async (upload, uploadPath) => {
     } catch (error) {
       return resolve({
         success: false,
-        message: "This image can't be upload",
+        message: "This image can't be upload catch",
       });
     }
   });

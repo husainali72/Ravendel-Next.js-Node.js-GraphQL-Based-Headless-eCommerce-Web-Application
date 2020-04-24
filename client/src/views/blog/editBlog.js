@@ -149,7 +149,7 @@ const EditBlog = (props) => {
                   <ArrowBackIcon />
                 </IconButton>
               </Link>
-              <span style={{ paddingTop: 10 }}>Edit Blog A</span>
+              <span style={{ paddingTop: 10 }}>Edit Blog B</span>
             </Typography>
           </Grid>
 
