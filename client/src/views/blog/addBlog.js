@@ -56,6 +56,7 @@ const AddBlog = (props) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState([]);
+  const [clearTags, setclearTags] = useState([]);
 
   useEffect(() => {
     props.blogtagsAction();
@@ -77,6 +78,7 @@ const AddBlog = (props) => {
       document.forms[0].reset();
       setBlog(defaultObj);
       setfeatureImage(null);
+      setclearTags([]);
     }
   }, [props.blogState.success]);
 
@@ -88,8 +90,7 @@ const AddBlog = (props) => {
 
   const addBlog = (e) => {
     e.preventDefault();
-    console.log(blog);
-    //props.blogAddAction(blog);
+    props.blogAddAction(blog);
   };
 
   const handleChange = (e) => {
@@ -98,6 +99,7 @@ const AddBlog = (props) => {
 
   const tagChange = (e) => {
     if (!isEmpty(e)) {
+      setclearTags(e);
       setBlog({ ...blog, blog_tag: e.map((tag) => tag.value) });
     }
   };
@@ -317,6 +319,7 @@ const AddBlog = (props) => {
 
               <Select
                 isMulti
+                value={clearTags}
                 name="blog_tag"
                 options={tags}
                 onChange={tagChange}

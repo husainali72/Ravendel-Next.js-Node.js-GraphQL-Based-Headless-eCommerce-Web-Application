@@ -1,5 +1,6 @@
 import {
   GET_BLOGS,
+  GET_BLOG,
   ADD_BLOG,
   UPDATE_BLOG,
   DELETE_BLOG,
@@ -13,6 +14,23 @@ import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
 
+export const blogclearAction = () => (dispatch) => {
+  dispatch({
+    type: BLOG_SUCCESS,
+    payload: {},
+  });
+
+  dispatch({
+    type: BLOGTAGS_SUCCESS,
+    payload: [],
+  });
+
+  dispatch({
+    type: TINYMCE_NULL,
+    payload: {},
+  });
+};
+
 export const blogsAction = () => (dispatch) => {
   dispatch({
     type: BLOG_LOADING,
@@ -23,6 +41,30 @@ export const blogsAction = () => (dispatch) => {
         return dispatch({
           type: BLOGS_SUCCESS,
           payload: response.data.blogs,
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: BLOG_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error, error: true },
+      });
+    });
+};
+
+export const blogAction = (id) => (dispatch) => {
+  dispatch({
+    type: BLOG_LOADING,
+  });
+  query(GET_BLOG, { id: id })
+    .then((response) => {
+      if (response) {
+        return dispatch({
+          type: BLOG_SUCCESS,
+          payload: response.data.blog,
         });
       }
     })
@@ -88,17 +130,11 @@ export const blogUpdateAction = (object) => (dispatch) => {
   mutation(UPDATE_BLOG, object)
     .then((response) => {
       if (response) {
+        jumpTo("/all-blogs");
         dispatch({
           type: BLOGS_SUCCESS,
           payload: response.data.updateBlog,
         });
-
-        dispatch({
-          type: TINYMCE_NULL,
-          payload: {},
-        });
-
-        jumpTo("/all-blogs");
 
         dispatch({
           type: ALERT_SUCCESS,

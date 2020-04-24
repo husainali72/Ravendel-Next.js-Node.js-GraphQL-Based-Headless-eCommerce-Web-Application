@@ -1,4 +1,4 @@
-const isEmpty = value =>
+const isEmpty = (value) =>
   value === undefined ||
   value === null ||
   (typeof value === "object" && Object.keys(value).length === 0) ||
@@ -6,7 +6,7 @@ const isEmpty = value =>
 
 module.exports.isEmpty = isEmpty;
 /*-------------------------------------------------------------------------------------------------------*/
-const putError = value => {
+const putError = (value) => {
   const error = {};
   error.custom_message = value;
   return error;
@@ -14,7 +14,7 @@ const putError = value => {
 
 module.exports.putError = putError;
 /*-------------------------------------------------------------------------------------------------------*/
-const checkError = error => {
+const checkError = (error) => {
   console.log(error);
   if (isEmpty(error.custom_message)) {
     error = {};
@@ -28,7 +28,7 @@ module.exports.checkError = checkError;
 
 const { AuthenticationError } = require("apollo-server-express");
 
-const checkToken = token => {
+const checkToken = (token) => {
   if (token === false) {
     throw new AuthenticationError(
       "Authentication token is invalid, please log in"
@@ -41,14 +41,14 @@ module.exports.checkToken = checkToken;
 /*-------------------------------------------------------------------------------------------------------*/
 
 const slugify = require("slugify");
-const stringTourl = str => {
+const stringTourl = (str) => {
   var brandName = str.replace(/[^a-z0-9\s\-]/gi, "");
   brandName =
     "/" +
     slugify(brandName, {
       remove: /[*+~.()'"!:@]/g,
       lower: true,
-      strict: true
+      strict: true,
     });
 
   return brandName;
@@ -56,7 +56,7 @@ const stringTourl = str => {
 
 module.exports.stringTourl = stringTourl;
 
-const validateUrl = url => {
+const validateUrl = (url) => {
   var validthis = /\-[0-9]$/; //regex for test "-(number 0-9)"
   if (validthis.test(url)) {
     let i = parseInt(url[url.length - 1]) + 1;
@@ -76,7 +76,7 @@ const Jimp = require("jimp");
 const sizes = {
   thumbnail: [150, 150],
   medium: [300, 300],
-  large: [1024, 1024]
+  large: [1024, 1024],
 };
 
 const jimpResize = (path, i, uploadPath, filename) => {
@@ -114,7 +114,7 @@ const imageUpload = async (upload, uploadPath) => {
       if (!~extensions.indexOf(ext)) {
         return resolve({
           success: false,
-          message: "This image can't be upload"
+          message: "This image can't be upload",
         });
       }
 
@@ -129,16 +129,23 @@ const imageUpload = async (upload, uploadPath) => {
       let thumbnail = uploadPath + "thumbnail/" + filename;
       let path = "." + original;
 
+      if (!fs.existsSync(uploadPath + "original/")) {
+        return resolve({
+          success: false,
+          message: "Path does not exist",
+        });
+      }
+
       stream
-        .on("error", error => {
+        .on("error", (error) => {
           console.log(JSON.stringify(error));
 
-          fs.unlink(path, function(err) {
+          fs.unlink(path, function (err) {
             if (err) console.log(err);
           });
           return resolve({
             success: false,
-            message: "This image can't be upload"
+            message: "This image can't be upload",
           });
         })
 
@@ -152,12 +159,12 @@ const imageUpload = async (upload, uploadPath) => {
               continue;
             } else {
               //fs.unlinkSync(path);
-              fs.unlink(path, function(err) {
+              fs.unlink(path, function (err) {
                 if (err) console.log(err);
               });
               return resolve({
                 success: false,
-                message: "This image can't be upload"
+                message: "This image can't be upload",
               });
             }
           }
@@ -168,14 +175,14 @@ const imageUpload = async (upload, uploadPath) => {
               original,
               large,
               medium,
-              thumbnail
-            }
+              thumbnail,
+            },
           });
         });
     } catch (error) {
       return resolve({
         success: false,
-        message: "This image can't be upload"
+        message: "This image can't be upload",
       });
     }
   });
@@ -184,12 +191,12 @@ const imageUpload = async (upload, uploadPath) => {
 module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
-const imageUnlink = imgObject => {
+const imageUnlink = (imgObject) => {
   console.log("here comes", imgObject);
   for (let i in imgObject) {
     //console.log("here comes", imgObject[i]);
     //fs.unlinkSync("." + imgObject[i]);
-    fs.unlink("." + imgObject[i], function(err) {
+    fs.unlink("." + imgObject[i], function (err) {
       if (err) console.log(err);
     });
   }
