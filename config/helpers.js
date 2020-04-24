@@ -129,7 +129,7 @@ const imageUpload = async (upload, uploadPath) => {
       let thumbnail = uploadPath + "thumbnail/" + filename;
       let path = "." + original;
 
-      if (!fs.existsSync(uploadPath + "original/")) {
+      if (!fs.existsSync("." + uploadPath + "original/")) {
         return resolve({
           success: false,
           message: "Path does not exist",
