@@ -51,7 +51,7 @@ const Navigation = props => {
         </Box>
         <Box component="div" display="inline" m={2} className="menu-item">
           <Link onClick={() => props.drawerCloseFunc()} to="/shop">
-            Shop
+            Shopping
           </Link>
         </Box>
         <Box component="div" display="inline" m={2} className="menu-item">
