@@ -13,7 +13,7 @@ import {
   Typography,
   RadioGroup,
   Radio,
-  FormControlLabel
+  FormControlLabel,
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
@@ -25,9 +25,10 @@ import clsx from "clsx";
 import Loading from "../utils/loading";
 import viewStyles from "../viewStyles";
 import { isEmpty } from "../../utils/helper";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+//import Autocomplete from "@material-ui/lab/Autocomplete";
+import Select from "react-select";
 
-const StyledRadio = props => {
+const StyledRadio = (props) => {
   return (
     <Radio
       className="radioRoot"
@@ -46,62 +47,69 @@ var defaultObj = {
   meta: {
     title: "",
     description: "",
-    keywords: ""
-  }
+    keywords: "",
+  },
 };
 
-const AddBlog = props => {
+const AddBlog = (props) => {
   const classes = viewStyles();
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState([]);
 
   useEffect(() => {
-    if (!props.blogs.tags.length) {
-      props.blogtagsAction();
-    }
+    props.blogtagsAction();
   }, []);
 
   useEffect(() => {
-    setTags(props.blogs.tags);
-  }, [props.blogs.tags]);
+    const tagObj = props.blogState.tags.map((tag) => {
+      return {
+        value: tag.id,
+        label: tag.name,
+      };
+    });
 
-  const handleChangeTag = value => {
-    //var id = value.map(val => val.id);
-    setBlog({ ...blog, blog_tag: value.map(val => val.id) });
-  };
+    setTags([...tagObj]);
+  }, [props.blogState.tags]);
 
   useEffect(() => {
-    if (props.blogs.success) {
+    if (props.blogState.success) {
       document.forms[0].reset();
       setBlog(defaultObj);
       setfeatureImage(null);
     }
-  }, [props.blogs.success]);
+  }, [props.blogState.success]);
 
   useEffect(() => {
-    if (props.blogs.blog.content !== undefined) {
-      setBlog({ ...blog, content: props.blogs.blog.content });
+    if (props.blogState.blog.content !== undefined) {
+      setBlog({ ...blog, content: props.blogState.blog.content });
     }
-  }, [props.blogs.blog.content]);
+  }, [props.blogState.blog.content]);
 
-  const addBlog = e => {
+  const addBlog = (e) => {
     e.preventDefault();
-    props.blogAddAction(blog);
+    console.log(blog);
+    //props.blogAddAction(blog);
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setBlog({ ...blog, [e.target.name]: e.target.value });
   };
 
-  const metaChange = e => {
+  const tagChange = (e) => {
+    if (!isEmpty(e)) {
+      setBlog({ ...blog, blog_tag: e.map((tag) => tag.value) });
+    }
+  };
+
+  const metaChange = (e) => {
     setBlog({
       ...blog,
-      meta: { ...blog.meta, [e.target.name]: e.target.value }
+      meta: { ...blog.meta, [e.target.name]: e.target.value },
     });
   };
 
-  const fileChange = e => {
+  const fileChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
     setBlog({ ...blog, [e.target.name]: e.target.files[0] });
@@ -109,7 +117,7 @@ const AddBlog = props => {
 
   return (
     <Fragment>
-      {props.blogs.loading && <Loading />}
+      {props.blogState.loading && <Loading />}
       <form>
         <Grid container className="topbar">
           <Grid item lg={6}>
@@ -287,7 +295,8 @@ const AddBlog = props => {
                   >
                     Select Tags
                   </Typography>
-                  <Autocomplete
+
+                  {/* <Autocomplete
                     multiple
                     id="select-tags"
                     options={tags}
@@ -302,9 +311,16 @@ const AddBlog = props => {
                         <Chip label={option.name} {...getTagProps({ index })} />
                       ))
                     }
-                  />
+                  /> */}
                 </CardContent>
               </Card>
+
+              <Select
+                isMulti
+                name="blog_tag"
+                options={tags}
+                onChange={tagChange}
+              />
             </Box>
           </Grid>
         </Grid>
@@ -313,15 +329,15 @@ const AddBlog = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    blogs: state.blogs
+    blogState: state.blogs,
   };
 };
 
 const mapDispatchToProps = {
   blogAddAction,
-  blogtagsAction
+  blogtagsAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddBlog);
