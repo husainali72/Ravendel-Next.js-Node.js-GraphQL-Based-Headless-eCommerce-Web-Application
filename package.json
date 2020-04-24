@@ -12,7 +12,7 @@
     "frontend": "npm start --prefix frontend",
     "dev": "concurrently \"npm start\" \"npm run client\"",
     "localbuild": "npm install && npm install --prefix client && npm install --prefix frontend && npm run build --prefix client && npm run build --prefix frontend && npm run server",
-    "postbuild": "npm install && NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm install --prefix frontend && npm run build --prefix client && npm run build --prefix frontend && npm run server"
+    "postbuild": "npm install && NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm install --prefix frontend && npm run build --prefix client && npm run build --prefix frontend"
   },
   "author": "Husain Bandookwala",
   "license": "MIT",
