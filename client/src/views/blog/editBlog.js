@@ -70,10 +70,6 @@ const EditBlog = (props) => {
     if (!isEmpty(props.match.params.id)) {
       props.blogAction(props.match.params.id);
     }
-    // returned function will be called on component unmount
-    return () => {
-      props.blogclearAction();
-    };
   }, []);
 
   useEffect(() => {

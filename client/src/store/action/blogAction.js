@@ -137,6 +137,11 @@ export const blogUpdateAction = (object) => (dispatch) => {
         });
 
         dispatch({
+          type: TINYMCE_NULL,
+          payload: {},
+        });
+
+        dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,

@@ -114,16 +114,11 @@ const imageUpload = async (upload, uploadPath) => {
       if (!~extensions.indexOf(ext)) {
         return resolve({
           success: false,
-          message: "This image can't be upload ext",
+          message: "This extension not allowed",
         });
       }
 
       let stream = createReadStream();
-
-      return resolve({
-        success: false,
-        message: "Here comes 3",
-      });
 
       filename = slugify(filename, { lower: true, replacement: "-" });
       filename = Date.now() + "-" + filename;
@@ -150,7 +145,7 @@ const imageUpload = async (upload, uploadPath) => {
           });
           return resolve({
             success: false,
-            message: "This image can't be upload stream",
+            message: "This image can't be upload",
           });
         })
 
@@ -169,7 +164,7 @@ const imageUpload = async (upload, uploadPath) => {
               });
               return resolve({
                 success: false,
-                message: "This image can't be upload unlink",
+                message: "This image can't be upload",
               });
             }
           }
