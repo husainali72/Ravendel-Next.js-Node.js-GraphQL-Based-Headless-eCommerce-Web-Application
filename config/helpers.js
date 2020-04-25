@@ -107,6 +107,11 @@ const imageUpload = async (upload, uploadPath) => {
     try {
       let { filename, mimetype, encoding, createReadStream } = await upload;
 
+      return resolve({
+        success: false,
+        message: "Here comes",
+      });
+
       const extensions = ["gif", "jpeg", "jpg", "png"];
       let ext = filename.split(".");
       ext = ext.pop();
@@ -119,11 +124,6 @@ const imageUpload = async (upload, uploadPath) => {
       }
 
       let stream = createReadStream();
-
-      return resolve({
-        success: false,
-        message: "Here comes",
-      });
 
       filename = slugify(filename, { lower: true, replacement: "-" });
       filename = Date.now() + "-" + filename;
