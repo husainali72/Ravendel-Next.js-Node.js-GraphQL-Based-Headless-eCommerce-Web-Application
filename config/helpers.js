@@ -120,6 +120,11 @@ const imageUpload = async (upload, uploadPath) => {
 
       let stream = createReadStream();
 
+      return resolve({
+        success: false,
+        message: "Here comes",
+      });
+
       filename = slugify(filename, { lower: true, replacement: "-" });
       filename = Date.now() + "-" + filename;
 
@@ -182,7 +187,7 @@ const imageUpload = async (upload, uploadPath) => {
     } catch (error) {
       return resolve({
         success: false,
-        message: error,
+        message: "This image can't be upload",
       });
     }
   });
