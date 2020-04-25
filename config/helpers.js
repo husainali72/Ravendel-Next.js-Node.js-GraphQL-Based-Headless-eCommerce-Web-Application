@@ -107,11 +107,6 @@ const imageUpload = async (upload, uploadPath) => {
     try {
       let { filename, mimetype, encoding, createReadStream } = await upload;
 
-      return resolve({
-        success: false,
-        message: "Here comes",
-      });
-
       const extensions = ["gif", "jpeg", "jpg", "png"];
       let ext = filename.split(".");
       ext = ext.pop();
@@ -122,6 +117,11 @@ const imageUpload = async (upload, uploadPath) => {
           message: "This image can't be upload ext",
         });
       }
+
+      return resolve({
+        success: false,
+        message: "Here comes 2",
+      });
 
       let stream = createReadStream();
 
