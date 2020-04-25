@@ -118,12 +118,12 @@ const imageUpload = async (upload, uploadPath) => {
         });
       }
 
+      let stream = createReadStream();
+
       return resolve({
         success: false,
-        message: "Here comes 2",
+        message: "Here comes 3",
       });
-
-      let stream = createReadStream();
 
       filename = slugify(filename, { lower: true, replacement: "-" });
       filename = Date.now() + "-" + filename;
