@@ -182,7 +182,7 @@ const imageUpload = async (upload, uploadPath) => {
     } catch (error) {
       return resolve({
         success: false,
-        message: "This image can't be upload catch add" + JSON.stringify(error),
+        message: error,
       });
     }
   });
