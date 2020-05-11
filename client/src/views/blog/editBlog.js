@@ -87,21 +87,23 @@ const EditBlog = (props) => {
 
   useEffect(() => {
     if (!isEmpty(props.blogState.tags)) {
-      var defaultTags = [];
-      const tagObj = props.blogState.tags.map((tag) => {
-        if (~blog.blog_tag.indexOf(tag.id)) {
-          defaultTags.push({
+      setTimeout(() => {
+        var defaultTags = [];
+        const tagObj = props.blogState.tags.map((tag) => {
+          if (~blog.blog_tag.indexOf(tag.id)) {
+            defaultTags.push({
+              value: tag.id,
+              label: tag.name,
+            });
+          }
+
+          return {
             value: tag.id,
             label: tag.name,
-          });
-        }
-
-        return {
-          value: tag.id,
-          label: tag.name,
-        };
-      });
-      setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
+          };
+        });
+        setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
+      }, 1000);
     }
   }, [props.blogState.tags]);
 

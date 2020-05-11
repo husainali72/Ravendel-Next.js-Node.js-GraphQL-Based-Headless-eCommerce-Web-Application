@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
   Box,
@@ -9,20 +9,32 @@ import {
   Radio,
   Typography,
   TextField,
-  Button
+  Button,
 } from "@material-ui/core";
 import viewStyles from "../../viewStyles.js";
 import TimeZones from "./timeZones";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { getDatesAction, generalUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
 
-const General = props => {
+const General = (props) => {
   const classes = viewStyles();
-  const [dateFormat, setDateFormat] = useState("March 19, 2020");
   const [timeZone, setTimeZone] = useState(15);
+  const [general, setgeneral] = useState({});
 
-  const changeTimeZone = val => {
-    var getIndex = TimeZones.findIndex(timezone => timezone === val);
-    setTimeZone(getIndex);
+  useEffect(() => {
+    props.getDatesAction();
+  }, []);
+
+  const changeTimeZone = (val) => {
+    setgeneral({ ...general, time_zone: val.value });
+    //var getIndex = TimeZones.findIndex((timezone) => timezone === val);
+    //setTimeZone(getIndex);
+  };
+
+  const addGeneral = () => {
+    console.log(general);
+    props.generalUpdateAction(general);
   };
 
   return (
@@ -35,31 +47,20 @@ const General = props => {
                 <Typography variant="h5">Date Format</Typography>
               </FormLabel>
               <RadioGroup
-                aria-label="gender"
-                name="gender1"
-                value={dateFormat}
-                onChange={e => setDateFormat(e.target.value)}
+                aria-label="Format"
+                name="dates"
+                onChange={(e) =>
+                  setgeneral({ ...general, date_format: e.target.value })
+                }
               >
-                <FormControlLabel
-                  value="March 19, 2020"
-                  control={<Radio color="primary" size="small" />}
-                  label="March 19, 2020"
-                />
-                <FormControlLabel
-                  value="2020-03-19"
-                  control={<Radio color="primary" size="small" />}
-                  label="2020-03-19"
-                />
-                <FormControlLabel
-                  value="03/19/2020"
-                  control={<Radio color="primary" size="small" />}
-                  label="03/19/2020"
-                />
-                <FormControlLabel
-                  value="19/03/2020"
-                  control={<Radio color="primary" size="small" />}
-                  label="19/03/2020"
-                />
+                {props.settingState.date_formats.map((format) => (
+                  <FormControlLabel
+                    key={format.id}
+                    value={format.id}
+                    control={<Radio color="primary" size="small" />}
+                    label={format.value}
+                  />
+                ))}
               </RadioGroup>
             </FormControl>
           </Box>
@@ -70,18 +71,23 @@ const General = props => {
             <Autocomplete
               id="combo-box-demo"
               options={TimeZones}
-              getOptionLabel={option => option.name}
+              getOptionLabel={(option) => option.name}
               style={{ width: 300 }}
               defaultValue={TimeZones[timeZone]}
               onChange={(event, value) => changeTimeZone(value)}
-              renderInput={params => (
+              renderInput={(params) => (
                 <TextField {...params} variant="outlined" />
               )}
             />
           </Box>
         </Grid>
         <Grid item md={12}>
-          <Button size="small" color="primary" variant="contained">
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={addGeneral}
+          >
             Save Change
           </Button>
         </Grid>
@@ -90,4 +96,13 @@ const General = props => {
   );
 };
 
-export default General;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  getDatesAction,
+  generalUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(General);

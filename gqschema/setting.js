@@ -7,12 +7,23 @@ module.exports = gql`
     menu: [customObject]
     footer_copyright: String
     theme: Theme
-    date: Date
-    updated: Date
+    general: General
+    createdAt: Date
+    updatedAt: Date
+  }
+
+  type dateformat {
+    id: String
+    value: String
   }
 
   type Theme {
     primary_color: String
+  }
+
+  type General {
+    date_format: String
+    time_zone: String
   }
 
   input MenuField {
@@ -22,6 +33,8 @@ module.exports = gql`
 
   extend type Query {
     setting: Setting
+    getDateformat: [dateformat]
+    getSettings: customObject
   }
 
   extend type Mutation {
@@ -38,5 +51,6 @@ module.exports = gql`
       footer_copyright: String
       theme: customObject
     ): Setting
+    updateGeneral(date_format: String, time_zone: String): Setting
   }
 `;

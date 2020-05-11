@@ -8,7 +8,7 @@ import {
   CardContent,
   Card,
   CardHeader,
-  Divider
+  Divider,
 } from "@material-ui/core";
 import viewStyles from "../viewStyles";
 import clsx from "clsx";
@@ -20,14 +20,16 @@ import Appearance from "./components/apperance";
 import Store from "./components/store";
 import Payment from "./components/payment";
 
-const Settings = () => {
+//import { connect } from "react-redux";
+
+const Settings = (props) => {
   const classes = viewStyles();
   const [value, setValue] = useState(6);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const TabPanel = props => {
+  const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
     return (
       <Typography
@@ -43,11 +45,11 @@ const Settings = () => {
     );
   };
 
-  const a11yProps = index => {
+  const a11yProps = (index) => {
     return {
       id: `vertical-tab-${index} vertical-tabs-button`,
       "aria-controls": `vertical-tabpanel-${index}`,
-      className: "text-left-tab"
+      className: "text-left-tab",
     };
   };
 
@@ -116,5 +118,11 @@ const Settings = () => {
     </Fragment>
   );
 };
+
+/* const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {}; */
 
 export default Settings;

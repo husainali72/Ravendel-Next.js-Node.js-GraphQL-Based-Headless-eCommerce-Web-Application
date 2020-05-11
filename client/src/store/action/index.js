@@ -97,6 +97,8 @@ import {
   pageDeleteAction,
 } from "./pageAction";
 
+import { getDatesAction, generalUpdateAction } from "./settingAction";
+
 export {
   LoginAction,
   usersAction,
@@ -164,4 +166,6 @@ export {
   pageAddAction,
   pageUpdateAction,
   pageDeleteAction,
+  getDatesAction,
+  generalUpdateAction,
 };

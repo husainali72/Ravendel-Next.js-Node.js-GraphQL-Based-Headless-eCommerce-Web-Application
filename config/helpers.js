@@ -205,3 +205,84 @@ const imageUnlink = (imgObject) => {
 module.exports.imageUnlink = imageUnlink;
 
 /*---------------------------------------------------------------------------------------------------------------*/
+const getdate = (format, timezone = "UTC", date) => {
+  var d;
+  if (isEmpty(date)) {
+    d = new Date();
+  } else {
+    d = new Date(date);
+  }
+
+  switch (format) {
+    case "1": {
+      const dtf = new Intl.DateTimeFormat("en", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "long",
+        day: "2-digit",
+      });
+      const [
+        { value: mo },
+        ,
+        { value: da },
+        ,
+        { value: ye },
+      ] = dtf.formatToParts(d);
+      return `${mo} ${da}, ${ye}`;
+      break;
+    }
+    case "2": {
+      const dtf = new Intl.DateTimeFormat("en", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      const [
+        { value: mo },
+        ,
+        { value: da },
+        ,
+        { value: ye },
+      ] = dtf.formatToParts(d);
+      return `${ye}-${mo}-${da}`;
+      break;
+    }
+    case "3": {
+      const dtf = new Intl.DateTimeFormat("en", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      const [
+        { value: mo },
+        ,
+        { value: da },
+        ,
+        { value: ye },
+      ] = dtf.formatToParts(d);
+      return `${mo}/${da}/${ye}`;
+      break;
+    }
+    case "4": {
+      const dtf = new Intl.DateTimeFormat("en", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      const [
+        { value: mo },
+        ,
+        { value: da },
+        ,
+        { value: ye },
+      ] = dtf.formatToParts(d);
+      return `${da}/${mo}/${ye}`;
+      break;
+    }
+  }
+};
+
+module.exports.getdate = getdate;

@@ -3,7 +3,7 @@ import { Grid, TextField, Box, Typography, Button } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
 
-const Media = props => {
+const Media = (props) => {
   const classes = viewStyles();
   const [thumbnailSize, setThumbnailSize] = useState({ width: 80, height: 80 });
   const [mediumSize, setMediumSize] = useState({ width: 300, height: 300 });
@@ -25,10 +25,10 @@ const Media = props => {
                 className={clsx(classes.settingInput, classes.marginRight2)}
                 size="small"
                 value={thumbnailSize.width}
-                onChange={e =>
+                onChange={(e) =>
                   setThumbnailSize({
                     ...thumbnailSize,
-                    width: e.target.value
+                    width: e.target.value,
                   })
                 }
               />
@@ -39,10 +39,10 @@ const Media = props => {
                 className={clsx(classes.settingInput)}
                 size="small"
                 value={thumbnailSize.height}
-                onChange={e =>
+                onChange={(e) =>
                   setThumbnailSize({
                     ...thumbnailSize,
-                    height: e.target.value
+                    height: e.target.value,
                   })
                 }
               />
@@ -60,10 +60,10 @@ const Media = props => {
                 className={clsx(classes.settingInput, classes.marginRight2)}
                 size="small"
                 value={mediumSize.width}
-                onChange={e =>
+                onChange={(e) =>
                   setMediumSize({
                     ...mediumSize,
-                    width: e.target.value
+                    width: e.target.value,
                   })
                 }
               />
@@ -74,10 +74,10 @@ const Media = props => {
                 className={clsx(classes.settingInput)}
                 size="small"
                 value={mediumSize.height}
-                onChange={e =>
+                onChange={(e) =>
                   setMediumSize({
                     ...mediumSize,
-                    height: e.target.value
+                    height: e.target.value,
                   })
                 }
               />
@@ -95,10 +95,10 @@ const Media = props => {
                 className={clsx(classes.settingInput, classes.marginRight2)}
                 size="small"
                 value={largeSize.width}
-                onChange={e =>
+                onChange={(e) =>
                   setLargeSize({
                     ...largeSize,
-                    width: e.target.value
+                    width: e.target.value,
                   })
                 }
               />
@@ -109,10 +109,10 @@ const Media = props => {
                 className={clsx(classes.settingInput)}
                 size="small"
                 value={largeSize.height}
-                onChange={e =>
+                onChange={(e) =>
                   setLargeSize({
                     ...largeSize,
-                    height: e.target.value
+                    height: e.target.value,
                   })
                 }
               />
