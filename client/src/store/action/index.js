@@ -97,7 +97,18 @@ import {
   pageDeleteAction,
 } from "./pageAction";
 
-import { getDatesAction, generalUpdateAction } from "./settingAction";
+import {
+  getDatesAction,
+  generalUpdateAction,
+  getSettings,
+  mediaUpdateAction,
+  smtpUpdateAction,
+  seoUpdateAction,
+  storeCurrencyUpdateAction,
+  storeAddressUpdateAction,
+  storeMeasuresUpdateAction,
+  storeInventoryUpdateAction,
+} from "./settingAction";
 
 export {
   LoginAction,
@@ -168,4 +179,12 @@ export {
   pageDeleteAction,
   getDatesAction,
   generalUpdateAction,
+  getSettings,
+  mediaUpdateAction,
+  smtpUpdateAction,
+  seoUpdateAction,
+  storeCurrencyUpdateAction,
+  storeAddressUpdateAction,
+  storeMeasuresUpdateAction,
+  storeInventoryUpdateAction,
 };

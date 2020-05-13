@@ -2,12 +2,20 @@ import React, { Fragment, useState } from "react";
 import { Grid, TextField, Box, Typography, Button } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
+import { mediaUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
 
 const Media = (props) => {
   const classes = viewStyles();
-  const [thumbnailSize, setThumbnailSize] = useState({ width: 80, height: 80 });
-  const [mediumSize, setMediumSize] = useState({ width: 300, height: 300 });
-  const [largeSize, setLargeSize] = useState({ width: 1030, height: 1030 });
+  const [media, setmedia] = useState({
+    thumbnail: props.settingState.settings.media.thumbnail,
+    medium: props.settingState.settings.media.medium,
+    large: props.settingState.settings.media.large,
+  });
+
+  const updateGeneral = () => {
+    props.mediaUpdateAction(media);
+  };
 
   return (
     <Fragment>
@@ -24,11 +32,14 @@ const Media = (props) => {
                 label="Width"
                 className={clsx(classes.settingInput, classes.marginRight2)}
                 size="small"
-                value={thumbnailSize.width}
+                value={media.thumbnail.width}
                 onChange={(e) =>
-                  setThumbnailSize({
-                    ...thumbnailSize,
-                    width: e.target.value,
+                  setmedia({
+                    ...media,
+                    thumbnail: {
+                      ...media.thumbnail,
+                      width: e.target.value,
+                    },
                   })
                 }
               />
@@ -38,11 +49,14 @@ const Media = (props) => {
                 label="Height"
                 className={clsx(classes.settingInput)}
                 size="small"
-                value={thumbnailSize.height}
+                value={media.thumbnail.height}
                 onChange={(e) =>
-                  setThumbnailSize({
-                    ...thumbnailSize,
-                    height: e.target.value,
+                  setmedia({
+                    ...media,
+                    thumbnail: {
+                      ...media.thumbnail,
+                      height: e.target.value,
+                    },
                   })
                 }
               />
@@ -59,11 +73,14 @@ const Media = (props) => {
                 label="Max Width"
                 className={clsx(classes.settingInput, classes.marginRight2)}
                 size="small"
-                value={mediumSize.width}
+                value={media.medium.width}
                 onChange={(e) =>
-                  setMediumSize({
-                    ...mediumSize,
-                    width: e.target.value,
+                  setmedia({
+                    ...media,
+                    medium: {
+                      ...media.medium,
+                      width: e.target.value,
+                    },
                   })
                 }
               />
@@ -73,11 +90,14 @@ const Media = (props) => {
                 label="Max Height"
                 className={clsx(classes.settingInput)}
                 size="small"
-                value={mediumSize.height}
+                value={media.medium.height}
                 onChange={(e) =>
-                  setMediumSize({
-                    ...mediumSize,
-                    height: e.target.value,
+                  setmedia({
+                    ...media,
+                    medium: {
+                      ...media.medium,
+                      height: e.target.value,
+                    },
                   })
                 }
               />
@@ -94,11 +114,14 @@ const Media = (props) => {
                 label="Max Width"
                 className={clsx(classes.settingInput, classes.marginRight2)}
                 size="small"
-                value={largeSize.width}
+                value={media.large.width}
                 onChange={(e) =>
-                  setLargeSize({
-                    ...largeSize,
-                    width: e.target.value,
+                  setmedia({
+                    ...media,
+                    large: {
+                      ...media.large,
+                      width: e.target.value,
+                    },
                   })
                 }
               />
@@ -108,11 +131,14 @@ const Media = (props) => {
                 label="Max Height"
                 className={clsx(classes.settingInput)}
                 size="small"
-                value={largeSize.height}
+                value={media.large.height}
                 onChange={(e) =>
-                  setLargeSize({
-                    ...largeSize,
-                    height: e.target.value,
+                  setmedia({
+                    ...media,
+                    large: {
+                      ...media.large,
+                      height: e.target.value,
+                    },
                   })
                 }
               />
@@ -120,7 +146,12 @@ const Media = (props) => {
           </Box>
         </Grid>
         <Grid item md={12}>
-          <Button size="small" color="primary" variant="contained">
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updateGeneral}
+          >
             Save Change
           </Button>
         </Grid>
@@ -129,4 +160,12 @@ const Media = (props) => {
   );
 };
 
-export default Media;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  mediaUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Media);

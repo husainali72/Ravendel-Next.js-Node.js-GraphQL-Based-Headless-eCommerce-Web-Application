@@ -20,7 +20,9 @@ import { connect } from "react-redux";
 const General = (props) => {
   const classes = viewStyles();
   const [timeZone, setTimeZone] = useState(15);
-  const [general, setgeneral] = useState({});
+  const [general, setgeneral] = useState({
+    date_format: props.settingState.settings.general.date_format,
+  });
 
   useEffect(() => {
     props.getDatesAction();
@@ -32,8 +34,7 @@ const General = (props) => {
     //setTimeZone(getIndex);
   };
 
-  const addGeneral = () => {
-    console.log(general);
+  const updateGenral = () => {
     props.generalUpdateAction(general);
   };
 
@@ -49,6 +50,7 @@ const General = (props) => {
               <RadioGroup
                 aria-label="Format"
                 name="dates"
+                value={general.date_format}
                 onChange={(e) =>
                   setgeneral({ ...general, date_format: e.target.value })
                 }
@@ -86,7 +88,7 @@ const General = (props) => {
             size="small"
             color="primary"
             variant="contained"
-            onClick={addGeneral}
+            onClick={updateGenral}
           >
             Save Change
           </Button>

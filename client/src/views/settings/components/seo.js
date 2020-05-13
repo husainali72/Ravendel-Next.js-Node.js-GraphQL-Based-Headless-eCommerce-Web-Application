@@ -2,14 +2,17 @@ import React, { Fragment, useState } from "react";
 import { Grid, TextField, Box, Button } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
+import { seoUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
 
-const SEO = props => {
+const SEO = (props) => {
   const classes = viewStyles();
-  const [seo, setSeo] = useState({
-    seoTitle: "",
-    seoTag: "",
-    seoDescription: ""
-  });
+  const [seo, setSeo] = useState({ ...props.settingState.settings.seo });
+
+  const updateSeo = () => {
+    props.seoUpdateAction(seo);
+  };
+
   return (
     <Fragment>
       <Grid container spacing={2}>
@@ -21,8 +24,8 @@ const SEO = props => {
               label="Meta Title"
               className={clsx(classes.settingInput)}
               size="small"
-              value={seo.seoTitle}
-              onChange={e => setSeo({ ...seo, seoTitle: e.target.value })}
+              value={seo.meta_title}
+              onChange={(e) => setSeo({ ...seo, meta_title: e.target.value })}
             />
           </Box>
           <Box component="div">
@@ -32,8 +35,8 @@ const SEO = props => {
               label="Meta Tag"
               className={clsx(classes.settingInput)}
               size="small"
-              value={seo.seoTag}
-              onChange={e => setSeo({ ...seo, seoTag: e.target.value })}
+              value={seo.meta_tag}
+              onChange={(e) => setSeo({ ...seo, meta_tag: e.target.value })}
             />
           </Box>
           <Box component="div">
@@ -45,13 +48,20 @@ const SEO = props => {
               size="small"
               multiline
               rows="5"
-              value={seo.seoDescription}
-              onChange={e => setSeo({ ...seo, seoDescription: e.target.value })}
+              value={seo.meta_description}
+              onChange={(e) =>
+                setSeo({ ...seo, meta_description: e.target.value })
+              }
             />
           </Box>
         </Grid>
         <Grid item md={12}>
-          <Button size="small" color="primary" variant="contained">
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updateSeo}
+          >
             Save Change
           </Button>
         </Grid>
@@ -60,4 +70,12 @@ const SEO = props => {
   );
 };
 
-export default SEO;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  seoUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SEO);

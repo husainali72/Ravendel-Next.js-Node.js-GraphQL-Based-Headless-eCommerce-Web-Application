@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
   TextField,
@@ -13,6 +13,8 @@ import viewStyles from "../../viewStyles.js";
 import PropTypes from "prop-types";
 import HomeSettings from "./home";
 import Themes from "./themes";
+import { getSettings } from "../../../store/action";
+import { connect } from "react-redux";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -45,12 +47,16 @@ function a11yProps(index) {
 }
 
 const Appearance = (props) => {
-  console.log("here comes appearnce");
   const classes = viewStyles();
   const [tabVal, setTabVal] = useState(0);
   const handleChange = (event, newValue) => {
     setTabVal(newValue);
   };
+
+  useEffect(() => {
+    props.getSettings();
+  }, []);
+
   return (
     <Fragment>
       <Grid container spacing={2}>
@@ -79,4 +85,12 @@ const Appearance = (props) => {
   );
 };
 
-export default Appearance;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  getSettings,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Appearance);

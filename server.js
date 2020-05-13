@@ -49,6 +49,9 @@ Tax.createTax();*/
 /*const Shipping = require("./models/Shipping");
 Shipping.createShipping();*/
 
+const Settings = require("./models/Setting");
+Settings.createSettings();
+
 //middleware
 const app = express();
 app.use(cors());

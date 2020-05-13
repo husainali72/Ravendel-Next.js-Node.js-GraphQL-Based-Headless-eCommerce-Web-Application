@@ -5,17 +5,21 @@ import {
   Box,
   Button,
   Select,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
+import { storeMeasuresUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
 
-const Measurements = props => {
+const Measurements = (props) => {
   const classes = viewStyles();
   const [measurementVal, setMeasurementVal] = useState({
-    weight: "kg",
-    dimensions: "cm"
+    ...props.settingState.settings.store.measurements,
   });
+  const updateMeasures = () => {
+    props.storeMeasuresUpdateAction(measurementVal);
+  };
   return (
     <Fragment>
       <Grid container spacing={2}>
@@ -27,16 +31,16 @@ const Measurements = props => {
             <FormControl variant="outlined" size="small">
               <Select
                 native
-                value={measurementVal.weight}
-                onChange={e =>
+                value={measurementVal.weight_unit}
+                onChange={(e) =>
                   setMeasurementVal({
                     ...measurementVal,
-                    weight: e.target.value
+                    weight_unit: e.target.value,
                   })
                 }
                 inputProps={{
                   name: "stock-display-format",
-                  id: "stock-display-format"
+                  id: "stock-display-format",
                 }}
                 className={classes.simpleSettingInput}
               >
@@ -54,15 +58,16 @@ const Measurements = props => {
             <FormControl variant="outlined" size="small">
               <Select
                 native
-                onChange={e =>
+                value={measurementVal.dimensions_unit}
+                onChange={(e) =>
                   setMeasurementVal({
                     ...measurementVal,
-                    dimensions: e.target.value
+                    dimensions_unit: e.target.value,
                   })
                 }
                 inputProps={{
                   name: "stock-display-format",
-                  id: "stock-display-format"
+                  id: "stock-display-format",
                 }}
                 className={classes.simpleSettingInput}
               >
@@ -77,7 +82,12 @@ const Measurements = props => {
           </Box>
         </Grid>
         <Grid item md={12}>
-          <Button size="small" color="primary" variant="contained">
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updateMeasures}
+          >
             Save Change
           </Button>
         </Grid>
@@ -86,4 +96,12 @@ const Measurements = props => {
   );
 };
 
-export default Measurements;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  storeMeasuresUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Measurements);

@@ -8,12 +8,14 @@ import {
   Typography,
   Select,
   FormControl,
-  Button
+  Button,
 } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
+import { storeInventoryUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
 
-const Inventory = props => {
+const Inventory = (props) => {
   const classes = viewStyles();
   const [manageStock, setManageStock] = useState(false);
   return (
@@ -27,7 +29,7 @@ const Inventory = props => {
                 <Checkbox
                   color="primary"
                   value={manageStock}
-                  onChange={e => setManageStock(e.target.checked)}
+                  onChange={(e) => setManageStock(e.target.checked)}
                 />
               }
               label="Do you want to track the inventory?"
@@ -91,7 +93,7 @@ const Inventory = props => {
                 native
                 inputProps={{
                   name: "stock-display-format",
-                  id: "stock-display-format"
+                  id: "stock-display-format",
                 }}
               >
                 <option value={"inStock"}>
@@ -118,4 +120,12 @@ const Inventory = props => {
   );
 };
 
-export default Inventory;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  storeInventoryUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Inventory);
