@@ -6,25 +6,25 @@ import {
   FormControlLabel,
   Checkbox,
   Typography,
-  Button
+  Button,
 } from "@material-ui/core";
 import viewStyles from "../../viewStyles.js";
 import clsx from "clsx";
+import { paymentBankUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
 
-const DirectBankTransfer = props => {
+const DirectBankTransfer = (props) => {
   const classes = viewStyles();
-  const [bankTransfer, setBankTransfer] = useState(false);
+
   const [bankTransferInfo, setBankTransferInfo] = useState({
-    title: "Direct bank transfer",
-    description:
-      "Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.",
-    instructions: "",
-    account_name: "",
-    account_number: "",
-    bank_name: "",
-    sort_code: "",
-    IBAN: ""
+    ...props.settingState.settings.paymnet.bank_transfer,
   });
+
+  const updateBank = () => {
+    delete bankTransferInfo.account_details.__typename;
+    props.paymentBankUpdateAction(bankTransferInfo);
+  };
+
   return (
     <Fragment>
       <Grid container spacing={2}>
@@ -35,14 +35,19 @@ const DirectBankTransfer = props => {
               control={
                 <Checkbox
                   color="primary"
-                  checked={bankTransfer}
-                  onChange={e => setBankTransfer(e.target.checked)}
+                  checked={bankTransferInfo.enable}
+                  onChange={(e) =>
+                    setBankTransferInfo({
+                      ...bankTransferInfo,
+                      enable: e.target.checked,
+                    })
+                  }
                 />
               }
               label="Enable bank transfer"
             />
           </Box>
-          {bankTransfer && (
+          {bankTransferInfo.enable && (
             <Box>
               <Box component="div" className={classes.marginBottom2}>
                 <Typography variant="h5" className={classes.paddingBottom1}>
@@ -52,10 +57,10 @@ const DirectBankTransfer = props => {
                   size="small"
                   variant="outlined"
                   value={bankTransferInfo.title}
-                  onChange={e =>
+                  onChange={(e) =>
                     setBankTransferInfo({
-                      bankTransferInfo,
-                      title: e.target.value
+                      ...bankTransferInfo,
+                      title: e.target.value,
                     })
                   }
                   className={classes.simpleSettingInput}
@@ -70,10 +75,10 @@ const DirectBankTransfer = props => {
                   size="small"
                   variant="outlined"
                   value={bankTransferInfo.description}
-                  onChange={e =>
+                  onChange={(e) =>
                     setBankTransferInfo({
-                      bankTransferInfo,
-                      description: e.target.value
+                      ...bankTransferInfo,
+                      description: e.target.value,
                     })
                   }
                   multiline
@@ -90,10 +95,10 @@ const DirectBankTransfer = props => {
                   size="small"
                   variant="outlined"
                   value={bankTransferInfo.instructions}
-                  onChange={e =>
+                  onChange={(e) =>
                     setBankTransferInfo({
-                      bankTransferInfo,
-                      instructions: e.target.value
+                      ...bankTransferInfo,
+                      instructions: e.target.value,
                     })
                   }
                   className={classes.simpleSettingInput}
@@ -110,11 +115,14 @@ const DirectBankTransfer = props => {
                       size="small"
                       variant="outlined"
                       label="Accoun Name"
-                      value={bankTransferInfo.account_name}
-                      onChange={e =>
+                      value={bankTransferInfo.account_details.account_name}
+                      onChange={(e) =>
                         setBankTransferInfo({
-                          bankTransferInfo,
-                          account_name: e.target.value
+                          ...bankTransferInfo,
+                          account_details: {
+                            ...bankTransferInfo.account_details,
+                            account_name: e.target.value,
+                          },
                         })
                       }
                       className={clsx(classes.width100, classes.marginBottom1)}
@@ -125,11 +133,14 @@ const DirectBankTransfer = props => {
                       size="small"
                       variant="outlined"
                       label="Account number"
-                      value={bankTransferInfo.account_number}
-                      onChange={e =>
+                      value={bankTransferInfo.account_details.account_number}
+                      onChange={(e) =>
                         setBankTransferInfo({
-                          bankTransferInfo,
-                          account_number: e.target.value
+                          ...bankTransferInfo,
+                          account_details: {
+                            ...bankTransferInfo.account_details,
+                            account_number: e.target.value,
+                          },
                         })
                       }
                       className={clsx(classes.width100, classes.marginBottom1)}
@@ -140,11 +151,14 @@ const DirectBankTransfer = props => {
                       size="small"
                       variant="outlined"
                       label="Bank name"
-                      value={bankTransferInfo.bank_name}
-                      onChange={e =>
+                      value={bankTransferInfo.account_details.bank_name}
+                      onChange={(e) =>
                         setBankTransferInfo({
-                          bankTransferInfo,
-                          bank_name: e.target.value
+                          ...bankTransferInfo,
+                          account_details: {
+                            ...bankTransferInfo.account_details,
+                            bank_name: e.target.value,
+                          },
                         })
                       }
                       className={clsx(classes.width100, classes.marginBottom1)}
@@ -155,11 +169,14 @@ const DirectBankTransfer = props => {
                       size="small"
                       variant="outlined"
                       label="Sort code"
-                      value={bankTransferInfo.sort_code}
-                      onChange={e =>
+                      value={bankTransferInfo.account_details.short_code}
+                      onChange={(e) =>
                         setBankTransferInfo({
-                          bankTransferInfo,
-                          sort_code: e.target.value
+                          ...bankTransferInfo,
+                          account_details: {
+                            ...bankTransferInfo.account_details,
+                            short_code: e.target.value,
+                          },
                         })
                       }
                       className={clsx(classes.width100, classes.marginBottom1)}
@@ -170,11 +187,14 @@ const DirectBankTransfer = props => {
                       size="small"
                       variant="outlined"
                       label="IBAN"
-                      value={bankTransferInfo.IBAN}
-                      onChange={e =>
+                      value={bankTransferInfo.account_details.iban}
+                      onChange={(e) =>
                         setBankTransferInfo({
-                          bankTransferInfo,
-                          IBAN: e.target.value
+                          ...bankTransferInfo,
+                          account_details: {
+                            ...bankTransferInfo.account_details,
+                            iban: e.target.value,
+                          },
                         })
                       }
                       className={clsx(classes.width100, classes.marginBottom1)}
@@ -186,6 +206,16 @@ const DirectBankTransfer = props => {
                       variant="outlined"
                       label="BIC / Swift"
                       className={clsx(classes.width100, classes.marginBottom1)}
+                      value={bankTransferInfo.account_details.bic_swift}
+                      onChange={(e) =>
+                        setBankTransferInfo({
+                          ...bankTransferInfo,
+                          account_details: {
+                            ...bankTransferInfo.account_details,
+                            bic_swift: e.target.value,
+                          },
+                        })
+                      }
                     />
                   </Grid>
                 </Grid>
@@ -194,7 +224,12 @@ const DirectBankTransfer = props => {
           )}
         </Grid>
         <Grid item md={12}>
-          <Button size="small" color="primary" variant="contained">
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updateBank}
+          >
             Save Change
           </Button>
         </Grid>
@@ -203,4 +238,12 @@ const DirectBankTransfer = props => {
   );
 };
 
-export default DirectBankTransfer;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  paymentBankUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DirectBankTransfer);

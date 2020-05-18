@@ -272,7 +272,7 @@ const UPDATE_STORE_INVENTORY = gql`
     $out_of_stock_visibility: Boolean
     $stock_display_format: String
   ) {
-    updateStoreMeasurements(
+    updateStoreInventory(
       manage_stock: $manage_stock
       notifications: $notifications
       notification_recipients: $notification_recipients
@@ -287,6 +287,132 @@ const UPDATE_STORE_INVENTORY = gql`
   ${SETTING_TILE_DATA}
 `;
 
+const UPDATE_PAYMENT_COD = gql`
+  mutation(
+    $enable: Boolean
+    $title: String
+    $description: String
+    $instructions: String
+  ) {
+    updatePaymnetCOD(
+      enable: $enable
+      title: $title
+      description: $description
+      instructions: $instructions
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
+const UPDATE_PAYMENT_BANK = gql`
+  mutation(
+    $enable: Boolean
+    $title: String
+    $description: String
+    $instructions: String
+    $account_details: account_details
+  ) {
+    updatePaymnetBank(
+      enable: $enable
+      title: $title
+      description: $description
+      instructions: $instructions
+      account_details: $account_details
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
+const UPDATE_PAYMENT_STRIPE = gql`
+  mutation(
+    $enable: Boolean
+    $title: String
+    $description: String
+    $inline_credit_card_form: Boolean
+    $statement_descriptor: String
+    $capture: Boolean
+    $test_mode: Boolean
+    $publishable_key: String
+    $secret_key: String
+    $webhook_key: String
+  ) {
+    updatePaymnetStripe(
+      enable: $enable
+      title: $title
+      description: $description
+      inline_credit_card_form: $inline_credit_card_form
+      statement_descriptor: $statement_descriptor
+      capture: $capture
+      test_mode: $test_mode
+      publishable_key: $publishable_key
+      secret_key: $secret_key
+      webhook_key: $webhook_key
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
+const UPDATE_PAYMENT_PAYPAL = gql`
+  mutation(
+    $enable: Boolean
+    $title: String
+    $description: String
+    $paypal_email: String
+    $ipn_email_notification: Boolean
+    $receiver_email: String
+    $paypal_identity_token: String
+    $invoice_prefix: String
+    $test_mode: Boolean
+    $api_username: String
+    $api_password: String
+    $api_signature: String
+  ) {
+    updatePaymentPaypal(
+      enable: $enable
+      title: $title
+      description: $description
+      paypal_email: $paypal_email
+      ipn_email_notification: $ipn_email_notification
+      receiver_email: $receiver_email
+      paypal_identity_token: $paypal_identity_token
+      invoice_prefix: $invoice_prefix
+      test_mode: $test_mode
+      api_username: $api_username
+      api_password: $api_password
+      api_signature: $api_signature
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
+const UPDATE_APPEARANCE_HOME = gql`
+  mutation($slider: [slider_input], $add_section_in_home: add_section_in_home) {
+    updateAppearanceHome(
+      slider: $slider
+      add_section_in_home: $add_section_in_home
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
+const UPDATE_APPEARANCE_THEME = gql`
+  mutation($primary_color: String) {
+    updateAppeanranceTheme(primary_color: $primary_color) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
 //https://www.apollographql.com/docs/tutorial/introduction/
 
 export {
@@ -300,4 +426,10 @@ export {
   UPDATE_STORE_ADDRESS,
   UPDATE_STORE_MEASUREMENTS,
   UPDATE_STORE_INVENTORY,
+  UPDATE_PAYMENT_COD,
+  UPDATE_PAYMENT_BANK,
+  UPDATE_PAYMENT_STRIPE,
+  UPDATE_PAYMENT_PAYPAL,
+  UPDATE_APPEARANCE_HOME,
+  UPDATE_APPEARANCE_THEME,
 };

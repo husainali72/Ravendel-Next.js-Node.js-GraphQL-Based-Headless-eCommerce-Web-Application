@@ -108,6 +108,12 @@ import {
   storeAddressUpdateAction,
   storeMeasuresUpdateAction,
   storeInventoryUpdateAction,
+  paymentCodUpdateAction,
+  paymentBankUpdateAction,
+  paymentStripeUpdateAction,
+  paymentPaypalUpdateAction,
+  appearanceHomeUpdateAction,
+  appearanceThemeUpdateAction,
 } from "./settingAction";
 
 export {
@@ -187,4 +193,10 @@ export {
   storeAddressUpdateAction,
   storeMeasuresUpdateAction,
   storeInventoryUpdateAction,
+  paymentCodUpdateAction,
+  paymentBankUpdateAction,
+  paymentStripeUpdateAction,
+  paymentPaypalUpdateAction,
+  appearanceHomeUpdateAction,
+  appearanceThemeUpdateAction,
 };

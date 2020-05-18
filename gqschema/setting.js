@@ -140,7 +140,7 @@ module.exports = gql`
     title: String
     description: String
     paypal_email: String
-    ipn_email_notification: String
+    ipn_email_notification: Boolean
     receiver_email: String
     paypal_identity_token: String
     invoice_prefix: String
@@ -183,6 +183,32 @@ module.exports = gql`
   input inventory_notification {
     show_out_of_stock: Boolean
     alert_for_minimum_stock: Boolean
+  }
+
+  input account_details {
+    account_name: String
+    account_number: String
+    bank_name: String
+    short_code: String
+    iban: String
+    bic_swift: String
+  }
+
+  input slider_input {
+    update_image: Upload
+    image: customObject
+    link: String
+    open_in_tab: Boolean
+  }
+
+  input add_section_in_home {
+    feature_product: Boolean
+    recently_added_products: Boolean
+    most_viewed_products: Boolean
+    recently_bought_products: Boolean
+    product_recommendation: Boolean
+    products_on_sales: Boolean
+    product_from_specific_categories: Boolean
   }
 
   extend type Query {
@@ -237,5 +263,49 @@ module.exports = gql`
       out_of_stock_visibility: Boolean
       stock_display_format: String
     ): Setting
+    updatePaymnetCOD(
+      enable: Boolean
+      title: String
+      description: String
+      instructions: String
+    ): Setting
+    updatePaymnetBank(
+      enable: Boolean
+      title: String
+      description: String
+      instructions: String
+      account_details: account_details
+    ): Setting
+    updatePaymnetStripe(
+      enable: Boolean
+      title: String
+      description: String
+      inline_credit_card_form: Boolean
+      statement_descriptor: String
+      capture: Boolean
+      test_mode: Boolean
+      publishable_key: String
+      secret_key: String
+      webhook_key: String
+    ): Setting
+    updatePaymentPaypal(
+      enable: Boolean
+      title: String
+      description: String
+      paypal_email: String
+      ipn_email_notification: Boolean
+      receiver_email: String
+      paypal_identity_token: String
+      invoice_prefix: String
+      test_mode: Boolean
+      api_username: String
+      api_password: String
+      api_signature: String
+    ): Setting
+    updateAppearanceHome(
+      slider: [slider_input]
+      add_section_in_home: add_section_in_home
+    ): Setting
+    updateAppeanranceTheme(primary_color: String): Setting
   }
 `;

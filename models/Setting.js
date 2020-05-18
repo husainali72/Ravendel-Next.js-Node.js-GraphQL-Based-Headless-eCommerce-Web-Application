@@ -233,7 +233,7 @@ const SeetingSchema = new Schema(
           type: String,
         },
         ipn_email_notification: {
-          type: String,
+          type: Boolean,
         },
         receiver_email: {
           type: String,
@@ -429,7 +429,7 @@ module.exports.createSettings = async () => {
         title: "",
         description: "",
         paypal_email: "",
-        ipn_email_notification: "",
+        ipn_email_notification: true,
         receiver_email: "abc@gmail.com",
         paypal_identity_token: "",
         invoice_prefix: "",
@@ -446,7 +446,8 @@ module.exports.createSettings = async () => {
             image: {
               original: "",
               large: "",
-              medium: "",
+              medium:
+                "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
               thumbnail:
                 "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
             },
@@ -457,7 +458,8 @@ module.exports.createSettings = async () => {
             image: {
               original: "",
               large: "",
-              medium: "",
+              medium:
+                "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
               thumbnail:
                 "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
             },

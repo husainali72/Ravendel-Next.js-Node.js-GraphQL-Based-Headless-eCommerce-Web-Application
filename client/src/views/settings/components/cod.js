@@ -6,19 +6,25 @@ import {
   FormControlLabel,
   Checkbox,
   Typography,
-  Button
+  Button,
 } from "@material-ui/core";
 
 import viewStyles from "../../viewStyles.js";
 
-const CashOnDelivery = props => {
+import { paymentCodUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
+
+const CashOnDelivery = (props) => {
   const classes = viewStyles();
-  const [cod, setCod] = useState(false);
+
   const [codInfo, setCodInfo] = useState({
-    title: "Cash On Delivery",
-    description: "Pay with cash upon delivery.",
-    instructions: "Pay with cash upon delivery."
+    ...props.settingState.settings.paymnet.cash_on_delivery,
   });
+
+  const updateCOD = () => {
+    props.paymentCodUpdateAction(codInfo);
+  };
+
   return (
     <Fragment>
       <Grid container spacing={2}>
@@ -29,14 +35,16 @@ const CashOnDelivery = props => {
               control={
                 <Checkbox
                   color="primary"
-                  checked={cod}
-                  onChange={e => setCod(e.target.checked)}
+                  checked={codInfo.enable}
+                  onChange={(e) =>
+                    setCodInfo({ ...codInfo, enable: e.target.checked })
+                  }
                 />
               }
               label="Enable cash on delivery"
             />
           </Box>
-          {cod && (
+          {codInfo.enable && (
             <Box>
               <Box component="div" className={classes.marginBottom2}>
                 <Typography variant="h5" className={classes.paddingBottom1}>
@@ -46,7 +54,9 @@ const CashOnDelivery = props => {
                   size="small"
                   variant="outlined"
                   value={codInfo.title}
-                  onChange={e => setCodInfo({ codInfo, title: e.target.value })}
+                  onChange={(e) =>
+                    setCodInfo({ ...codInfo, title: e.target.value })
+                  }
                   className={classes.simpleSettingInput}
                 />
               </Box>
@@ -59,8 +69,8 @@ const CashOnDelivery = props => {
                   size="small"
                   variant="outlined"
                   value={codInfo.description}
-                  onChange={e =>
-                    setCodInfo({ codInfo, description: e.target.value })
+                  onChange={(e) =>
+                    setCodInfo({ ...codInfo, description: e.target.value })
                   }
                   className={classes.simpleSettingInput}
                   multiline
@@ -76,8 +86,8 @@ const CashOnDelivery = props => {
                   size="small"
                   variant="outlined"
                   value={codInfo.instructions}
-                  onChange={e =>
-                    setCodInfo({ codInfo, instructions: e.target.value })
+                  onChange={(e) =>
+                    setCodInfo({ ...codInfo, instructions: e.target.value })
                   }
                   className={classes.simpleSettingInput}
                 />
@@ -86,7 +96,12 @@ const CashOnDelivery = props => {
           )}
         </Grid>
         <Grid item md={12}>
-          <Button size="small" color="primary" variant="contained">
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updateCOD}
+          >
             Save Change
           </Button>
         </Grid>
@@ -95,4 +110,12 @@ const CashOnDelivery = props => {
   );
 };
 
-export default CashOnDelivery;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  paymentCodUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CashOnDelivery);
