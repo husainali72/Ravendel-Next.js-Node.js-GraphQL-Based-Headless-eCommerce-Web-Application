@@ -6,20 +6,23 @@ import {
   Button,
   Typography,
   FormControl,
-  Select
+  Select,
 } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
+import { storeCurrencyUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
 
-const CurrencyOptions = props => {
+const CurrencyOptions = (props) => {
   const classes = viewStyles();
   const [currencyOption, setCurrencyOption] = useState({
-    currency: "dollar",
-    currency_position: "Left",
-    thousand_separator: ",",
-    decimal_separator: ".",
-    number_of_decimals: 2
+    ...props.settingState.settings.store.currency_options,
   });
+
+  const updateStoreCurrency = () => {
+    props.storeCurrencyUpdateAction(currencyOption);
+  };
+
   return (
     <Fragment>
       <Grid container spacing={2}>
@@ -32,15 +35,15 @@ const CurrencyOptions = props => {
               <Select
                 native
                 value={currencyOption.currency}
-                onChange={e =>
+                onChange={(e) =>
                   setCurrencyOption({
                     ...currencyOption,
-                    currency: e.target.value
+                    currency: e.target.value,
                   })
                 }
                 inputProps={{
                   name: "stock-display-format",
-                  id: "stock-display-format"
+                  id: "stock-display-format",
                 }}
                 className={classes.simpleSettingInput}
               >
@@ -60,22 +63,22 @@ const CurrencyOptions = props => {
               <Select
                 native
                 value={currencyOption.currency_position}
-                onChange={e =>
+                onChange={(e) =>
                   setCurrencyOption({
                     ...currencyOption,
-                    currency_position: e.target.value
+                    currency_position: e.target.value,
                   })
                 }
                 inputProps={{
                   name: "stock-display-format",
-                  id: "stock-display-format"
+                  id: "stock-display-format",
                 }}
                 className={classes.simpleSettingInput}
               >
                 <option value={"left"}>Left</option>
                 <option value={"right"}>Right</option>
-                <option value={"left_s"}>Left with space</option>
-                <option value={"right_s"}>Right with space</option>
+                <option value={"left_space"}>Left with space</option>
+                <option value={"right_space"}>Right with space</option>
               </Select>
             </FormControl>
           </Box>
@@ -90,10 +93,10 @@ const CurrencyOptions = props => {
               className={clsx(classes.marginBottom2)}
               size="small"
               value={currencyOption.thousand_separator}
-              onChange={e =>
+              onChange={(e) =>
                 setCurrencyOption({
                   ...currencyOption,
-                  thousand_separator: e.target.value
+                  thousand_separator: e.target.value,
                 })
               }
             />
@@ -108,10 +111,10 @@ const CurrencyOptions = props => {
               className={clsx(classes.marginBottom2)}
               size="small"
               value={currencyOption.decimal_separator}
-              onChange={e =>
+              onChange={(e) =>
                 setCurrencyOption({
                   ...currencyOption,
-                  decimal_separator: e.target.value
+                  decimal_separator: e.target.value,
                 })
               }
             />
@@ -126,17 +129,22 @@ const CurrencyOptions = props => {
               className={clsx(classes.marginBottom2)}
               size="small"
               value={currencyOption.number_of_decimals}
-              onChange={e =>
+              onChange={(e) =>
                 setCurrencyOption({
                   ...currencyOption,
-                  number_of_decimals: e.target.value
+                  number_of_decimals: parseInt(e.target.value),
                 })
               }
             />
           </Box>
         </Grid>
         <Grid item md={12}>
-          <Button size="small" color="primary" variant="contained">
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updateStoreCurrency}
+          >
             Save Change
           </Button>
         </Grid>
@@ -145,4 +153,12 @@ const CurrencyOptions = props => {
   );
 };
 
-export default CurrencyOptions;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  storeCurrencyUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CurrencyOptions);

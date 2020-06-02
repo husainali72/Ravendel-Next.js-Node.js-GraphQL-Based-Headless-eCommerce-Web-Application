@@ -1,164 +1,189 @@
 import {
-  GET_COUPONS,
-  GET_COUPON,
-  ADD_COUPON,
-  UPDATE_COUPON,
-  DELETE_COUPON
-} from "../../queries/couponQuery";
+  GET_PAGES,
+  GET_PAGE,
+  ADD_PAGE,
+  UPDATE_PAGE,
+  DELETE_PAGE,
+} from "../../queries/pageQuery";
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
 
-export const couponsAction = () => dispatch => {
+export const pagesAction = () => (dispatch) => {
   dispatch({
-    type: COUPON_LOADING
+    type: PAGE_LOADING,
   });
-  query(GET_COUPONS)
-    .then(response => {
+  query(GET_PAGES)
+    .then((response) => {
       if (response) {
         return dispatch({
-          type: COUPONS_SUCCESS,
-          payload: response.data.coupons
+          type: PAGES_SUCCESS,
+          payload: response.data.pages,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: COUPON_FAIL
+        type: PAGE_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const couponAction = id => dispatch => {
+export const pageAction = (id) => (dispatch) => {
   dispatch({
-    type: COUPON_LOADING
+    type: PAGE_LOADING,
   });
-  query(GET_COUPON, { id: id })
-    .then(response => {
+  query(GET_PAGE, { id: id })
+    .then((response) => {
       if (response) {
         return dispatch({
-          type: COUPON_SUCCESS,
-          payload: response.data.coupon
+          type: PAGE_SUCCESS,
+          payload: response.data.page,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: COUPON_FAIL
+        type: PAGE_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const couponAddAction = object => dispatch => {
+export const pageAddAction = (object) => (dispatch) => {
   dispatch({
-    type: COUPON_LOADING
+    type: PAGE_LOADING,
   });
-  mutation(ADD_COUPON, object)
-    .then(response => {
+  mutation(ADD_PAGE, object)
+    .then((response) => {
       if (response) {
         dispatch({
-          type: COUPONS_SUCCESS,
-          payload: response.data.addCoupon
+          type: PAGES_SUCCESS,
+          payload: response.data.addPage,
+        });
+
+        dispatch({
+          type: TINYMCE_NULL,
+          payload: {},
         });
 
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
-            message: "Coupon added successfully",
-            error: false
-          }
+            message: "Page added successfully",
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: COUPON_FAIL
+        type: PAGE_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const couponUpdateAction = object => dispatch => {
+export const pageUpdateAction = (object) => (dispatch) => {
   dispatch({
-    type: COUPON_LOADING
+    type: PAGE_LOADING,
   });
-  mutation(UPDATE_COUPON, object)
-    .then(response => {
+  mutation(UPDATE_PAGE, object)
+    .then((response) => {
       if (response) {
         dispatch({
-          type: COUPONS_SUCCESS,
-          payload: response.data.updateCoupon
+          type: PAGES_SUCCESS,
+          payload: response.data.updatePage,
         });
-        jumpTo("/all-coupons");
+
+        dispatch({
+          type: TINYMCE_NULL,
+          payload: {},
+        });
+
+        jumpTo("/all-pages");
+
         dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
-            message: "Coupon updated successfully",
-            error: false
-          }
+            message: "Page updated successfully",
+            error: false,
+          },
         });
 
         return;
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: COUPON_FAIL
+        type: PAGE_FAIL,
+      });
+      dispatch({
+        type: TINYMCE_NULL,
+        payload: {},
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const couponDeleteAction = id => dispatch => {
+export const pageDeleteAction = (id) => (dispatch) => {
   dispatch({
-    type: COUPON_LOADING
+    type: PAGE_LOADING,
   });
-  mutation(DELETE_COUPON, { id })
-    .then(response => {
+  mutation(DELETE_PAGE, { id })
+    .then((response) => {
       if (response) {
         dispatch({
-          type: COUPONS_SUCCESS,
-          payload: response.data.deleteCoupon
+          type: PAGES_SUCCESS,
+          payload: response.data.deletePage,
         });
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
-            message: "Coupon deleted successfully",
-            error: false
-          }
+            message: "Page deleted successfully",
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: COUPON_FAIL
+        type: PAGE_FAIL,
       });
+
+      dispatch({
+        type: TINYMCE_NULL,
+        payload: {},
+      });
+
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const COUPON_LOADING = "COUPON_LOADING";
-export const COUPONS_SUCCESS = "COUPONS_SUCCESS";
-export const COUPON_SUCCESS = "COUPON_SUCCESS";
-export const COUPON_FAIL = "COUPON_FAIL";
+export const PAGE_LOADING = "PAGE_LOADING";
+export const PAGES_SUCCESS = "PAGES_SUCCESS";
+export const PAGE_SUCCESS = "PAGE_SUCCESS";
+export const PAGE_FAIL = "PAGE_FAIL";
+
+export const TINYMCE_SUCCESS = "TINYMCE_SUCCESS";
+export const TINYMCE_NULL = "TINYMCE_NULL";

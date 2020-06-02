@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
   TextField,
@@ -6,13 +6,15 @@ import {
   Paper,
   Tab,
   Tabs,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
 import PropTypes from "prop-types";
 import HomeSettings from "./home";
-import Themes from './themes';
+import Themes from "./themes";
+import { getSettings } from "../../../store/action";
+import { connect } from "react-redux";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -34,22 +36,27 @@ function TabPanel(props) {
 TabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired
+  value: PropTypes.any.isRequired,
 };
 
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
-const Appearance = props => {
+const Appearance = (props) => {
   const classes = viewStyles();
   const [tabVal, setTabVal] = useState(0);
   const handleChange = (event, newValue) => {
     setTabVal(newValue);
   };
+
+  useEffect(() => {
+    props.getSettings();
+  }, []);
+
   return (
     <Fragment>
       <Grid container spacing={2}>
@@ -78,4 +85,12 @@ const Appearance = props => {
   );
 };
 
-export default Appearance;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  getSettings,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Appearance);

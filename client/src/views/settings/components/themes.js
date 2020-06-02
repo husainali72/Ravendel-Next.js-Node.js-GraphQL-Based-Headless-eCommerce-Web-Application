@@ -3,11 +3,20 @@ import { Grid, TextField, Box, Button } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
 
-const Themes = props => {
+import { appearanceThemeUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
+import { isEmpty } from "../../../utils/helper";
+
+const Themes = (props) => {
   const classes = viewStyles();
   const [themeSetting, setThemeSetting] = useState({
-    primary_color: "#154050"
+    ...props.settingState.settings.appearance.theme,
   });
+
+  const updateTheme = () => {
+    props.appearanceThemeUpdateAction(themeSetting);
+  };
+
   return (
     <Fragment>
       <Grid container spacing={2}>
@@ -19,17 +28,22 @@ const Themes = props => {
               label="Primary Color"
               className={clsx(classes.settingInput)}
               value={themeSetting.primary_color}
-              onChange={e =>
+              onChange={(e) =>
                 setThemeSetting({
                   ...themeSetting,
-                  primary_color: e.target.value
+                  primary_color: e.target.value,
                 })
               }
             />
           </Box>
         </Grid>
         <Grid item md={12}>
-          <Button size="small" color="primary" variant="contained">
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updateTheme}
+          >
             Save Change
           </Button>
         </Grid>
@@ -38,4 +52,12 @@ const Themes = props => {
   );
 };
 
-export default Themes;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  appearanceThemeUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Themes);

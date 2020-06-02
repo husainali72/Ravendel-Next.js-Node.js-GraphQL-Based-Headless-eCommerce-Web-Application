@@ -6,19 +6,21 @@ import {
   Select,
   Button,
   FormControl,
-  InputLabel
+  InputLabel,
 } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
+import { smtpUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
 
-const SMTP = props => {
+const SMTP = (props) => {
   const classes = viewStyles();
-  const [smtp, setSmptp] = useState({
-    server: "",
-    username: "",
-    password: "",
-    port: "TLS"
-  });
+  const [smtp, setSmptp] = useState({ ...props.settingState.settings.smtp });
+
+  const updateSmtp = () => {
+    props.smtpUpdateAction(smtp);
+  };
+
   return (
     <Fragment>
       <Grid container spacing={2}>
@@ -31,7 +33,7 @@ const SMTP = props => {
               className={clsx(classes.settingInput, classes.marginRight2)}
               size="small"
               value={smtp.server}
-              onChange={e => setSmptp({ ...smtp, server: e.target.value })}
+              onChange={(e) => setSmptp({ ...smtp, server: e.target.value })}
             />
           </Box>
           <Box component="div">
@@ -42,7 +44,7 @@ const SMTP = props => {
               className={clsx(classes.settingInput)}
               size="small"
               value={smtp.username}
-              onChange={e => setSmptp({ ...smtp, username: e.target.value })}
+              onChange={(e) => setSmptp({ ...smtp, username: e.target.value })}
             />
           </Box>
           <Box component="div">
@@ -53,7 +55,7 @@ const SMTP = props => {
               className={clsx(classes.settingInput)}
               size="small"
               value={smtp.password}
-              onChange={e => setSmptp({ ...smtp, password: e.target.value })}
+              onChange={(e) => setSmptp({ ...smtp, password: e.target.value })}
             />
           </Box>
           <Box component="div">
@@ -68,19 +70,26 @@ const SMTP = props => {
                 label="SMTP Port "
                 inputProps={{
                   name: "smtp-port",
-                  id: "smtp-port"
+                  id: "smtp-port",
                 }}
                 value={smtp.port}
-                onChange={e => setSmptp({ ...smtp, port: e.target.value })}
+                onChange={(e) =>
+                  setSmptp({ ...smtp, port: parseInt(e.target.value) })
+                }
               >
-                <option value={"SSL"}>465 (SSL)</option>
-                <option value={"TLS"}>587 (TLS)</option>
+                <option value={465}>465 (SSL)</option>
+                <option value={587}>587 (TLS)</option>
               </Select>
             </FormControl>
           </Box>
         </Grid>
         <Grid item md={12}>
-          <Button size="small" color="primary" variant="contained">
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updateSmtp}
+          >
             Save Change
           </Button>
         </Grid>
@@ -89,4 +98,12 @@ const SMTP = props => {
   );
 };
 
-export default SMTP;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  smtpUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SMTP);

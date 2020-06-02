@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
   TextField,
@@ -10,43 +10,83 @@ import {
   FormGroup,
   Tooltip,
   IconButton,
-  Icon
+  Icon,
 } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
+import { appearanceHomeUpdateAction } from "../../../store/action";
+import { connect } from "react-redux";
+import { isEmpty } from "../../../utils/helper";
 
-const HomeSettings = props => {
+const HomeSettings = (props) => {
   const classes = viewStyles();
-  const [featureImage, setfeatureImage] = useState(null);
-  const [slider, setSlider] = useState([
-    { slide_image: null, slide_link: "", open_newtab: false }
-  ]);
-  const [homePageSetting, setHomePageSetting] = useState({
-    featured_product: false,
-    recently_added_products: false,
-    most_viewed_products: false,
-    recently_bought_products: false,
-    product_recommendation: false,
-    products_on_sales: false,
-    product_from_specific_categories: false
+
+  const [settingHome, setsettingHome] = useState({
+    ...props.settingState.settings.appearance.home,
   });
 
+  useEffect(() => {
+    setsettingHome({
+      ...props.settingState.settings.appearance.home,
+    });
+  }, [props.settingState.settings.appearance.home]);
+
   const addSlide = () => {
-    setSlider([
-      ...slider,
-      { slide_image: null, slide_link: "", open_newtab: false }
-    ]);
+    setsettingHome({
+      ...settingHome,
+      slider: [
+        ...settingHome.slider,
+        {
+          image: {},
+          link: "",
+          open_in_tab: false,
+        },
+      ],
+    });
   };
 
-  const removeCustomField = i => {
-    slider.splice(i, 1);
-    setSlider([...slider]);
+  const removeSlide = (i) => {
+    /*  slider.splice(i, 1);
+    setSlider([...slider]); */
+    settingHome.slider.splice(i, 1);
+    setsettingHome({
+      ...settingHome,
+      slider: [...settingHome.slider],
+    });
+  };
+
+  const handleChange = (e, i) => {
+    if (e.target.name === "link") {
+      settingHome.slider[i].link = e.target.value;
+    } else {
+      settingHome.slider[i].open_in_tab = e.target.checked;
+    }
+
+    setsettingHome({
+      ...settingHome,
+      slider: [...settingHome.slider],
+    });
   };
 
   const fileChange = (e, i) => {
-    slider[i].slide_image = URL.createObjectURL(e.target.files[0]);
-    setSlider([...slider]);
-    console.log(slider);
+    settingHome.slider[i].image.medium = URL.createObjectURL(e.target.files[0]);
+    settingHome.slider[i].update_image = e.target.files;
+    setsettingHome({
+      ...settingHome,
+      slider: [...settingHome.slider],
+    });
+    //console.log(slider);
+  };
+
+  const updateHome = () => {
+    console.log(settingHome);
+    for (let i in settingHome.slider) {
+      delete settingHome.slider[i].__typename;
+    }
+
+    delete settingHome.add_section_in_home.__typename;
+
+    props.appearanceHomeUpdateAction(settingHome);
   };
 
   return (
@@ -57,13 +97,13 @@ const HomeSettings = props => {
             <Grid container spacing={2}>
               <Grid item md={12} sm={12} xs={12}>
                 <Grid container spacing={2}>
-                  {slider.map((slide, index) => (
+                  {settingHome.slider.map((slide, index) => (
                     <Grid item md={4} sm={12} xs={12} key={index}>
                       <Box className={classes.sliderImageWrapper}>
                         <Tooltip title="Remove Slide" aria-label="remove-slide">
                           <IconButton
                             aria-label="remove-slide"
-                            onClick={e => removeCustomField(index)}
+                            onClick={(e) => removeSlide(index)}
                             size="small"
                             className={clsx(
                               classes.deleteicon,
@@ -74,9 +114,9 @@ const HomeSettings = props => {
                           </IconButton>
                         </Tooltip>
                         <Box className={classes.sliderImagePreviewWrapper}>
-                          {slide.slide_image !== null && (
+                          {slide.image.medium && (
                             <img
-                              src={slide.slide_image}
+                              src={slide.image.medium}
                               className={classes.sliderImagePreview}
                               alt="Featured"
                             />
@@ -88,13 +128,13 @@ const HomeSettings = props => {
                             id={`featured-image-${index}`}
                             name={`featured-image-${index}`}
                             type="file"
-                            onChange={e => fileChange(e, index)}
+                            onChange={(e) => fileChange(e, index)}
                           />
                           <label
                             htmlFor={`featured-image-${index}`}
                             className={classes.feautedImage}
                           >
-                            {slide.slide_image !== null
+                            {slide.image.medium
                               ? "Change Slider"
                               : "Add Slide Image"}
                           </label>
@@ -103,16 +143,18 @@ const HomeSettings = props => {
                           <TextField
                             label="Slide Link"
                             variant="outlined"
-                            name="Slide Link"
+                            name="link"
                             className={clsx(classes.width100)}
-                            value={slide.slide_link}
+                            value={slide.link}
+                            onChange={(e) => handleChange(e, index)}
                             size="small"
                           />
                           <FormControlLabel
                             control={
                               <Checkbox
                                 color="primary"
-                                checked={slide.open_newtab}
+                                checked={slide.open_in_tab}
+                                onChange={(e) => handleChange(e, index)}
                               />
                             }
                             label="Open in New Tab"
@@ -145,11 +187,14 @@ const HomeSettings = props => {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={homePageSetting.featured_product}
-                    onChange={e =>
-                      setHomePageSetting({
-                        ...homePageSetting,
-                        featured_product: e.target.checked
+                    checked={settingHome.add_section_in_home.feature_product}
+                    onChange={(e) =>
+                      setsettingHome({
+                        ...settingHome,
+                        add_section_in_home: {
+                          ...settingHome.add_section_in_home,
+                          feature_product: e.target.checked,
+                        },
                       })
                     }
                   />
@@ -160,11 +205,16 @@ const HomeSettings = props => {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={homePageSetting.recently_added_products}
-                    onChange={e =>
-                      setHomePageSetting({
-                        ...homePageSetting,
-                        recently_added_products: e.target.checked
+                    checked={
+                      settingHome.add_section_in_home.recently_added_products
+                    }
+                    onChange={(e) =>
+                      setsettingHome({
+                        ...settingHome,
+                        add_section_in_home: {
+                          ...settingHome.add_section_in_home,
+                          recently_added_products: e.target.checked,
+                        },
                       })
                     }
                   />
@@ -176,11 +226,16 @@ const HomeSettings = props => {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={homePageSetting.most_viewed_products}
-                    onChange={e =>
-                      setHomePageSetting({
-                        ...homePageSetting,
-                        most_viewed_products: e.target.checked
+                    checked={
+                      settingHome.add_section_in_home.most_viewed_products
+                    }
+                    onChange={(e) =>
+                      setsettingHome({
+                        ...settingHome,
+                        add_section_in_home: {
+                          ...settingHome.add_section_in_home,
+                          most_viewed_products: e.target.checked,
+                        },
                       })
                     }
                   />
@@ -192,11 +247,16 @@ const HomeSettings = props => {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={homePageSetting.recently_bought_products}
-                    onChange={e =>
-                      setHomePageSetting({
-                        ...homePageSetting,
-                        recently_bought_products: e.target.checked
+                    checked={
+                      settingHome.add_section_in_home.recently_bought_products
+                    }
+                    onChange={(e) =>
+                      setsettingHome({
+                        ...settingHome,
+                        add_section_in_home: {
+                          ...settingHome.add_section_in_home,
+                          recently_bought_products: e.target.checked,
+                        },
                       })
                     }
                   />
@@ -208,11 +268,16 @@ const HomeSettings = props => {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={homePageSetting.product_recommendation}
-                    onChange={e =>
-                      setHomePageSetting({
-                        ...homePageSetting,
-                        product_recommendation: e.target.checked
+                    checked={
+                      settingHome.add_section_in_home.product_recommendation
+                    }
+                    onChange={(e) =>
+                      setsettingHome({
+                        ...settingHome,
+                        add_section_in_home: {
+                          ...settingHome.add_section_in_home,
+                          product_recommendation: e.target.checked,
+                        },
                       })
                     }
                   />
@@ -224,11 +289,14 @@ const HomeSettings = props => {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={homePageSetting.products_on_sales}
-                    onChange={e =>
-                      setHomePageSetting({
-                        ...homePageSetting,
-                        products_on_sales: e.target.checked
+                    checked={settingHome.add_section_in_home.products_on_sales}
+                    onChange={(e) =>
+                      setsettingHome({
+                        ...settingHome,
+                        add_section_in_home: {
+                          ...settingHome.add_section_in_home,
+                          products_on_sales: e.target.checked,
+                        },
                       })
                     }
                   />
@@ -240,11 +308,17 @@ const HomeSettings = props => {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={homePageSetting.product_from_specific_categories}
-                    onChange={e =>
-                      setHomePageSetting({
-                        ...homePageSetting,
-                        product_from_specific_categories: e.target.checked
+                    checked={
+                      settingHome.add_section_in_home
+                        .product_from_specific_categories
+                    }
+                    onChange={(e) =>
+                      setsettingHome({
+                        ...settingHome,
+                        add_section_in_home: {
+                          ...settingHome.add_section_in_home,
+                          product_from_specific_categories: e.target.checked,
+                        },
                       })
                     }
                   />
@@ -255,7 +329,12 @@ const HomeSettings = props => {
           </Box>
         </Grid>
         <Grid item md={12}>
-          <Button size="small" color="primary" variant="contained">
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updateHome}
+          >
             Save Change
           </Button>
         </Grid>
@@ -264,4 +343,12 @@ const HomeSettings = props => {
   );
 };
 
-export default HomeSettings;
+const mapStateToProps = (state) => {
+  return { settingState: state.settings };
+};
+
+const mapDispatchToProps = {
+  appearanceHomeUpdateAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeSettings);

@@ -12,8 +12,8 @@ const authLink = new ApolloLink((operation, forward) => {
   // Use the setContext method to set the HTTP headers.
   operation.setContext({
     headers: {
-      authorization: token
-    }
+      authorization: token,
+    },
   });
   // Call the next link in the middleware chain.
   return forward(operation);
@@ -21,7 +21,12 @@ const authLink = new ApolloLink((operation, forward) => {
 
 const APclient = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
 });
+
+// if u dont wanna __typename in retrieving data
+/* cache: new InMemoryCache({
+  addTypename: false,
+}) */
 
 export default APclient;

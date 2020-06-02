@@ -4,18 +4,20 @@ import {
   userAction,
   userUpdateAction,
   userDeleteAction,
-  userAddAction
+  userAddAction,
 } from "./userAction";
 
 import {
   blogsAction,
+  blogAction,
   blogUpdateAction,
   blogDeleteAction,
   blogAddAction,
   blogtagsAction,
   blogtagAddAction,
   blogtagUpdateAction,
-  blogtagDeleteAction
+  blogtagDeleteAction,
+  blogclearAction,
 } from "./blogAction";
 
 import {
@@ -26,14 +28,14 @@ import {
   productsAction,
   productAddAction,
   productDeleteAction,
-  productUpdateAction
+  productUpdateAction,
 } from "./productAction";
 
 import {
   ordersAction,
   orderAction,
   orderDeleteAction,
-  orderUpdateAction
+  orderUpdateAction,
 } from "./orderAction";
 
 import {
@@ -44,14 +46,14 @@ import {
   customerAddAction,
   addressbookAddAction,
   addressbookUpdateAction,
-  addressbookDeleteAction
+  addressbookDeleteAction,
 } from "./customerAction";
 
 import {
   brandsAction,
   brandAddAction,
   brandUpdateAction,
-  brandDeleteAction
+  brandDeleteAction,
 } from "./brandAction";
 
 import {
@@ -60,7 +62,7 @@ import {
   optionTaxUpdateAction,
   taxClassAddAction,
   taxClassUpdateAction,
-  taxClassDeleteAction
+  taxClassDeleteAction,
 } from "./taxAction";
 
 import {
@@ -68,7 +70,7 @@ import {
   globalShippingUpdateAction,
   shippingClassAddAction,
   shippingClassUpdateAction,
-  shippingClassDeleteAction
+  shippingClassDeleteAction,
 } from "./shippingAction";
 
 import {
@@ -76,7 +78,7 @@ import {
   couponAction,
   couponAddAction,
   couponUpdateAction,
-  couponDeleteAction
+  couponDeleteAction,
 } from "./couponAction";
 
 import {
@@ -84,8 +86,35 @@ import {
   reviewAction,
   reviewAddAction,
   reviewUpdateAction,
-  reviewDeleteAction
+  reviewDeleteAction,
 } from "./reviewAction";
+
+import {
+  pagesAction,
+  pageAction,
+  pageAddAction,
+  pageUpdateAction,
+  pageDeleteAction,
+} from "./pageAction";
+
+import {
+  getDatesAction,
+  generalUpdateAction,
+  getSettings,
+  mediaUpdateAction,
+  smtpUpdateAction,
+  seoUpdateAction,
+  storeCurrencyUpdateAction,
+  storeAddressUpdateAction,
+  storeMeasuresUpdateAction,
+  storeInventoryUpdateAction,
+  paymentCodUpdateAction,
+  paymentBankUpdateAction,
+  paymentStripeUpdateAction,
+  paymentPaypalUpdateAction,
+  appearanceHomeUpdateAction,
+  appearanceThemeUpdateAction,
+} from "./settingAction";
 
 export {
   LoginAction,
@@ -95,9 +124,11 @@ export {
   userDeleteAction,
   userAddAction,
   blogsAction,
+  blogAction,
   blogUpdateAction,
   blogDeleteAction,
   blogAddAction,
+  blogclearAction,
   categoriesAction,
   categoryAddAction,
   categoryUpdateAction,
@@ -146,5 +177,26 @@ export {
   reviewAction,
   reviewAddAction,
   reviewUpdateAction,
-  reviewDeleteAction
+  reviewDeleteAction,
+  pagesAction,
+  pageAction,
+  pageAddAction,
+  pageUpdateAction,
+  pageDeleteAction,
+  getDatesAction,
+  generalUpdateAction,
+  getSettings,
+  mediaUpdateAction,
+  smtpUpdateAction,
+  seoUpdateAction,
+  storeCurrencyUpdateAction,
+  storeAddressUpdateAction,
+  storeMeasuresUpdateAction,
+  storeInventoryUpdateAction,
+  paymentCodUpdateAction,
+  paymentBankUpdateAction,
+  paymentStripeUpdateAction,
+  paymentPaypalUpdateAction,
+  appearanceHomeUpdateAction,
+  appearanceThemeUpdateAction,
 };

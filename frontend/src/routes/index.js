@@ -14,7 +14,7 @@ import Brand from "../views/brand";
 import Tags from "../views/tags";
 
 const Routes = [
-  { path: "/", exact: true, component: Home, name: "Home" },
+  { path: "/", exact: true, component: Home, name: "Homes" },
   { path: "/shop", exact: true, component: Shop, name: "Shop" },
   {
     path: "/product/:id",

@@ -1,57 +1,99 @@
 import {
   GET_BLOGS,
+  GET_BLOG,
   ADD_BLOG,
   UPDATE_BLOG,
   DELETE_BLOG,
   GET_BLOGTAGS,
   ADD_BLOGTAG,
   UPDATE_BLOGTAG,
-  DELETE_BLOGTAG
+  DELETE_BLOGTAG,
 } from "../../queries/blogQuery";
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
 
-export const blogsAction = () => dispatch => {
+export const blogclearAction = () => (dispatch) => {
   dispatch({
-    type: BLOG_LOADING
+    type: BLOG_SUCCESS,
+    payload: {},
+  });
+
+  dispatch({
+    type: BLOGTAGS_SUCCESS,
+    payload: [],
+  });
+
+  dispatch({
+    type: TINYMCE_NULL,
+    payload: {},
+  });
+};
+
+export const blogsAction = () => (dispatch) => {
+  dispatch({
+    type: BLOG_LOADING,
   });
   query(GET_BLOGS)
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: BLOGS_SUCCESS,
-          payload: response.data.blogs
+          payload: response.data.blogs,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BLOG_FAIL
+        type: BLOG_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const blogAddAction = object => dispatch => {
+export const blogAction = (id) => (dispatch) => {
   dispatch({
-    type: BLOG_LOADING
+    type: BLOG_LOADING,
+  });
+  query(GET_BLOG, { id: id })
+    .then((response) => {
+      if (response) {
+        return dispatch({
+          type: BLOG_SUCCESS,
+          payload: response.data.blog,
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: BLOG_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error, error: true },
+      });
+    });
+};
+
+export const blogAddAction = (object) => (dispatch) => {
+  dispatch({
+    type: BLOG_LOADING,
   });
   mutation(ADD_BLOG, object)
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: BLOGS_SUCCESS,
-          payload: response.data.addBlog
+          payload: response.data.addBlog,
         });
 
         dispatch({
           type: TINYMCE_NULL,
-          payload: {}
+          payload: {},
         });
 
         return dispatch({
@@ -59,144 +101,143 @@ export const blogAddAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "Blog added successfully",
-            error: false
-          }
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BLOG_FAIL
+        type: BLOG_FAIL,
       });
 
       dispatch({
         type: TINYMCE_NULL,
-        payload: {}
+        payload: {},
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const blogUpdateAction = object => dispatch => {
+export const blogUpdateAction = (object) => (dispatch) => {
   dispatch({
-    type: BLOG_LOADING
+    type: BLOG_LOADING,
   });
   mutation(UPDATE_BLOG, object)
-    .then(response => {
+    .then((response) => {
       if (response) {
+        jumpTo("/all-blogs");
         dispatch({
           type: BLOGS_SUCCESS,
-          payload: response.data.updateBlog
+          payload: response.data.updateBlog,
         });
 
         dispatch({
           type: TINYMCE_NULL,
-          payload: {}
+          payload: {},
         });
-
-        jumpTo("/all-blogs");
 
         dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
             message: "Blog updated successfully",
-            error: false
-          }
+            error: false,
+          },
         });
 
         return;
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BLOG_FAIL
+        type: BLOG_FAIL,
       });
 
       dispatch({
         type: TINYMCE_NULL,
-        payload: {}
+        payload: {},
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const blogDeleteAction = id => dispatch => {
+export const blogDeleteAction = (id) => (dispatch) => {
   dispatch({
-    type: BLOG_LOADING
+    type: BLOG_LOADING,
   });
   mutation(DELETE_BLOG, { id })
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: BLOGS_SUCCESS,
-          payload: response.data.deleteBlog
+          payload: response.data.deleteBlog,
         });
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
             message: "Blog deleted successfully",
-            error: false
-          }
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BLOG_FAIL
+        type: BLOG_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
 /*----------------------------------------------TAGS---------------------------------------------------------------------*/
 
-export const blogtagsAction = () => dispatch => {
+export const blogtagsAction = () => (dispatch) => {
   dispatch({
-    type: BLOGTAG_LOADING
+    type: BLOGTAG_LOADING,
   });
   query(GET_BLOGTAGS)
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: BLOGTAGS_SUCCESS,
-          payload: response.data.blogtags
+          payload: response.data.blogtags,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BLOGTAG_FAIL
+        type: BLOGTAG_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const blogtagAddAction = object => dispatch => {
+export const blogtagAddAction = (object) => (dispatch) => {
   dispatch({
-    type: BLOGTAG_LOADING
+    type: BLOGTAG_LOADING,
   });
   mutation(ADD_BLOGTAG, object)
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: BLOGTAGS_SUCCESS,
-          payload: response.data.addBlogTag
+          payload: response.data.addBlogTag,
         });
 
         return dispatch({
@@ -204,33 +245,33 @@ export const blogtagAddAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "Tag added successfully",
-            error: false
-          }
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BLOGTAG_FAIL
+        type: BLOGTAG_FAIL,
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const blogtagUpdateAction = object => dispatch => {
+export const blogtagUpdateAction = (object) => (dispatch) => {
   dispatch({
-    type: BLOGTAG_LOADING
+    type: BLOGTAG_LOADING,
   });
   mutation(UPDATE_BLOGTAG, object)
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: BLOGTAGS_SUCCESS,
-          payload: response.data.updateBlogTag
+          payload: response.data.updateBlogTag,
         });
 
         dispatch({
@@ -238,53 +279,53 @@ export const blogtagUpdateAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "Tag updated successfully",
-            error: false
-          }
+            error: false,
+          },
         });
 
         return;
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BLOGTAG_FAIL
+        type: BLOGTAG_FAIL,
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const blogtagDeleteAction = id => dispatch => {
+export const blogtagDeleteAction = (id) => (dispatch) => {
   dispatch({
-    type: BLOGTAG_LOADING
+    type: BLOGTAG_LOADING,
   });
   mutation(DELETE_BLOGTAG, { id })
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: BLOGTAGS_SUCCESS,
-          payload: response.data.deleteBlogTag
+          payload: response.data.deleteBlogTag,
         });
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
             message: "Tag deleted successfully",
-            error: false
-          }
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BLOGTAG_FAIL
+        type: BLOGTAG_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };

@@ -14,64 +14,75 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Alert from "../utils/Alert";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { blogAddAction } from "../../store/action/";
+import { pageAddAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
 import clsx from "clsx";
 import viewStyles from "../viewStyles";
 
-const AddPage = props => {
+var defaultObj = {
+  status: "Publish",
+  title: "",
+  meta: {
+    title: "",
+    description: "",
+    keywords: "",
+  },
+};
+
+const AddPage = (props) => {
   const classes = viewStyles();
   const [editPremalink, setEditPermalink] = useState(false);
-  const [blog, setBlog] = useState({
-    status: "Publish",
-    slug: "",
-    title: ""
-  });
+  const [page, setPage] = useState(defaultObj);
 
   useEffect(() => {
-    if (props.blogs.success) {
+    if (props.pageState.page.content !== undefined) {
+      setPage({ ...page, content: props.pageState.page.content });
+    }
+  }, [props.pageState.page.content]);
+
+  useEffect(() => {
+    if (props.pageState.success) {
       document.forms[0].reset();
-      setBlog({
-        ...blog,
-        status: "Publish"
-      });
+      setPage(defaultObj);
     }
-  }, [props.blogs.success]);
+  }, [props.pageState.success]);
 
   useEffect(() => {
-    if (props.blogs.blog.content !== undefined) {
-      setBlog({ ...blog, content: props.blogs.blog.content });
-    }
-  }, [props.blogs.blog.content]);
+    var slugVal = page.title.replace(/[^A-Z0-9]/gi, "-");
+    setPage({ ...page, url: slugVal.toLowerCase() });
+  }, [page.title]);
 
-  useEffect(() => {
-    var slugVal = blog.title.replace(/[^A-Z0-9]/gi, "-");
-    setBlog({ ...blog, slug: slugVal.toLowerCase() });
-  }, [blog.title]);
-
-  const addPage = e => {
+  const addPage = (e) => {
     e.preventDefault();
+    props.pageAddAction(page);
   };
 
-  const handleChange = e => {
-    setBlog({ ...blog, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setPage({ ...page, [e.target.name]: e.target.value });
   };
 
   const changePermalink = () => {
     setEditPermalink(!editPremalink);
   };
 
+  const metaChange = (e) => {
+    setPage({
+      ...page,
+      meta: { ...page.meta, [e.target.name]: e.target.value },
+    });
+  };
+
   return (
     <Fragment>
       <Alert />
       <form>
-        {props.blogs.loading && (
+        {props.pageState.loading && (
           <Backdrop className={classes.backdrop} open={true}>
             <CircularProgress color="inherit" /> <br /> Loading
           </Backdrop>
@@ -116,23 +127,23 @@ const AddPage = props => {
                     id="title"
                     label="Title"
                     name="title"
-                    value={blog.title}
+                    value={page.title}
                     onChange={handleChange}
                     variant="outlined"
                     className={clsx(classes.marginBottom, classes.width100)}
                   />
 
                   <Grid item md={12}>
-                    {blog.title ? (
+                    {page.title ? (
                       <span style={{ marginBottom: 10, display: "block" }}>
                         <strong>Link: </strong>
                         https://www.google.com/product/
-                        {editPremalink === false && blog.slug}
+                        {editPremalink === false && page.url}
                         {editPremalink === true && (
                           <input
                             id="url"
-                            name="slug"
-                            value={blog.slug}
+                            name="url"
+                            value={page.url}
                             onChange={handleChange}
                             variant="outlined"
                             className={classes.editpermalinkInput}
@@ -165,9 +176,10 @@ const AddPage = props => {
                       <TextField
                         id="meta-title"
                         label="Meta Title"
-                        name="meta-title"
+                        name="title"
                         variant="outlined"
                         className={clsx(classes.width100)}
+                        onChange={metaChange}
                       />
                     </Grid>
 
@@ -175,9 +187,10 @@ const AddPage = props => {
                       <TextField
                         id="meta-keyword"
                         label="Meta Keyword"
-                        name="meta-keyword"
+                        name="keywords"
                         variant="outlined"
                         className={clsx(classes.width100)}
+                        onChange={metaChange}
                       />
                     </Grid>
 
@@ -185,11 +198,12 @@ const AddPage = props => {
                       <TextField
                         id="meta-description"
                         label="Meta-description"
-                        name="meta-description"
+                        name="description"
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                         multiline
                         rows="4"
+                        onChange={metaChange}
                       />
                     </Grid>
                   </Grid>
@@ -231,7 +245,7 @@ const AddPage = props => {
   );
 };
 
-const StyledRadio = props => {
+const StyledRadio = (props) => {
   return (
     <Radio
       className="radioRoot"
@@ -244,13 +258,12 @@ const StyledRadio = props => {
   );
 };
 
-
-const mapStateToProps = state => {
-  return { blogs: state.blogs };
+const mapStateToProps = (state) => {
+  return { pageState: state.pages };
 };
 
 const mapDispatchToProps = {
-  blogAddAction
+  pageAddAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddPage);

@@ -37,7 +37,7 @@ const ADD_PAGE = gql`
     $url: String
     $meta: customObject
   ) {
-    addCoupon(
+    addPage(
       title: $title
       content: $content
       status: $status
@@ -65,7 +65,7 @@ const UPDATE_PAGE = gql`
     $url: String
     $meta: customObject
   ) {
-    updateCoupon(
+    updatePage(
       id: $id
       title: $title
       content: $content

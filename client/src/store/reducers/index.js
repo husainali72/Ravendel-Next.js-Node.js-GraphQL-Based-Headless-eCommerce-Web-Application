@@ -12,6 +12,8 @@ import taxs from "./taxReducer";
 import shippings from "./shippingReducer";
 import coupons from "./couponReducer";
 import reviews from "./reviewReducer";
+import pages from "./pageReducer";
+import settings from "./settingReducer";
 
 // Combine Reducers
 const MasterReducer = combineReducers({
@@ -26,7 +28,9 @@ const MasterReducer = combineReducers({
   taxs,
   shippings,
   coupons,
-  reviews
+  reviews,
+  pages,
+  settings,
 });
 
 export default MasterReducer;

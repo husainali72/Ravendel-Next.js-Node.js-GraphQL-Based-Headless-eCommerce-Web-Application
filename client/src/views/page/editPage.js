@@ -14,66 +14,76 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Alert from "../utils/Alert";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { blogUpdateAction } from "../../store/action/";
+import { pageUpdateAction, pageAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
 import clsx from "clsx";
 import { isEmpty } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 
-const EditPage = props => {
+var defaultObj = {
+  status: "Publish",
+  title: "",
+  meta: {
+    title: "",
+    description: "",
+    keywords: "",
+  },
+};
+
+const EditPage = (props) => {
   const classes = viewStyles();
   const [editPremalink, setEditPermalink] = useState(false);
-  const [blog, setBlog] = useState({
-    title: "",
-    content: "",
-    status: "Publish",
-    feature_image: "",
-    slug: ""
-  });
+  const [page, setPage] = useState(defaultObj);
+  //const [showEditor, setshowEditor] = useState(false);
+
+  /* useEffect(() => {
+    var slugVal = page.title.replace(/[^A-Z0-9]/gi, "-");
+    setPage({ ...page, url: slugVal.toLowerCase() });
+  }, [page.title]); */
 
   useEffect(() => {
-    var slugVal = blog.title.replace(/[^A-Z0-9]/gi, "-");
-    setBlog({ ...blog, slug: slugVal.toLowerCase() });
-  }, [blog.title]);
-
-  useEffect(() => {
-    props.blogs.blogs.map(editblog => {
-      if (editblog.id === props.match.params.id) {
-        setBlog({ ...editblog });
-      }
-    });
+    if (props.match.params.id) {
+      props.pageAction(props.match.params.id);
+    }
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(props.blogs.blog.content)) {
-      setBlog({ ...blog, content: props.blogs.blog.content });
+    if (!isEmpty(props.pageState.page)) {
+      setPage({ ...props.pageState.page });
     }
-  }, [props.blogs.blog.content]);
+  }, [props.pageState.page]);
 
-  const updatePage = e => {
+  const updatePage = (e) => {
     e.preventDefault();
-    console.log(blog);
+    props.pageUpdateAction(page);
   };
 
-  const handleChange = e => {
-    setBlog({ ...blog, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setPage({ ...page, [e.target.name]: e.target.value });
   };
 
   const changePermalink = () => {
     setEditPermalink(!editPremalink);
   };
 
+  const metaChange = (e) => {
+    setPage({
+      ...page,
+      meta: { ...page.meta, [e.target.name]: e.target.value },
+    });
+  };
+
   return (
     <Fragment>
       <Alert />
 
-      {props.blogs.loading && (
+      {props.pageState.loading && (
         <Backdrop className={classes.backdrop} open={true}>
           <CircularProgress color="inherit" /> <br /> Loading
         </Backdrop>
@@ -121,21 +131,21 @@ const EditPage = props => {
                     name="title"
                     onChange={handleChange}
                     variant="outlined"
-                    value={blog.title}
+                    value={page.title}
                     className={clsx(classes.marginBottom, classes.width100)}
                   />
 
                   <Grid item md={12}>
-                    {blog.title ? (
+                    {page.title ? (
                       <span style={{ marginBottom: 10, display: "block" }}>
                         <strong>Link: </strong>
                         https://www.google.com/product/
-                        {editPremalink === false && blog.slug}
+                        {editPremalink === false && page.url}
                         {editPremalink === true && (
                           <input
                             id="url"
-                            name="slug"
-                            value={blog.slug}
+                            name="url"
+                            value={page.url}
                             onChange={handleChange}
                             variant="outlined"
                             className={classes.editpermalinkInput}
@@ -152,8 +162,7 @@ const EditPage = props => {
                       </span>
                     ) : null}
                   </Grid>
-
-                  <TinymceEditor value={blog.content} />
+                  <TinymceEditor value={page.content} />
                 </CardContent>
               </Card>
             </Box>
@@ -168,7 +177,9 @@ const EditPage = props => {
                       <TextField
                         id="meta-title"
                         label="Meta Title"
-                        name="meta-title"
+                        name="title"
+                        value={page.meta.title}
+                        onChange={metaChange}
                         variant="outlined"
                         className={clsx(classes.width100)}
                       />
@@ -178,7 +189,9 @@ const EditPage = props => {
                       <TextField
                         id="meta-keyword"
                         label="Meta Keyword"
-                        name="meta-keyword"
+                        name="keywords"
+                        value={page.meta.keywords}
+                        onChange={metaChange}
                         variant="outlined"
                         className={clsx(classes.width100)}
                       />
@@ -188,7 +201,9 @@ const EditPage = props => {
                       <TextField
                         id="meta-description"
                         label="Meta-description"
-                        name="meta-description"
+                        name="description"
+                        value={page.meta.description}
+                        onChange={metaChange}
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                         multiline
@@ -212,6 +227,7 @@ const EditPage = props => {
                     name="status"
                     onChange={handleChange}
                     row
+                    value={page.status}
                   >
                     <FormControlLabel
                       value="Publish"
@@ -234,7 +250,7 @@ const EditPage = props => {
   );
 };
 
-const StyledRadio = props => {
+const StyledRadio = (props) => {
   return (
     <Radio
       className="radioRoot"
@@ -247,12 +263,13 @@ const StyledRadio = props => {
   );
 };
 
-const mapStateToProps = state => {
-  return { blogs: state.blogs };
+const mapStateToProps = (state) => {
+  return { pageState: state.pages };
 };
 
 const mapDispatchToProps = {
-  blogUpdateAction
+  pageUpdateAction,
+  pageAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditPage);

@@ -14,7 +14,7 @@ import {
   Radio,
   FormControlLabel,
   Typography,
-  Chip
+  Chip,
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
@@ -23,16 +23,19 @@ import { connect } from "react-redux";
 import {
   blogUpdateAction,
   blogtagsAction,
-  blogsAction
+  blogsAction,
+  blogAction,
+  blogclearAction,
 } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
 import clsx from "clsx";
 import { isEmpty } from "../../utils/helper";
 import Loading from "../utils/loading";
 import viewStyles from "../viewStyles";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+//import Autocomplete from "@material-ui/lab/Autocomplete";
+import Select from "react-select";
 
-const StyledRadio = props => {
+const StyledRadio = (props) => {
   return (
     <Radio
       className="radioRoot"
@@ -45,8 +48,6 @@ const StyledRadio = props => {
   );
 };
 
-var blog_tags = [];
-
 const defaultObj = {
   title: "",
   content: "",
@@ -56,84 +57,79 @@ const defaultObj = {
   meta: {
     title: "",
     description: "",
-    keywords: ""
+    keywords: "",
   },
-  defaultTags: []
 };
-const EditBlog = props => {
+const EditBlog = (props) => {
   const classes = viewStyles();
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
-
-  const [tags, setTags] = useState([]);
-
-  useEffect(() => {
-    if (!props.blogs.blogs.length) {
-      props.blogsAction();
-    }
-
-    if (props.blogs.blogs.length) {
-      for (let i in props.blogs.blogs) {
-        if (props.blogs.blogs[i].id === props.match.params.id) {
-          blog_tags = props.blogs.blogs[i].blog_tag;
-          if (!props.blogs.tags.length) {
-            props.blogtagsAction();
-          }
-
-          setBlog({ ...blog, ...props.blogs.blogs[i] });
-          if (props.blogs.blogs[i].feature_image.original) {
-            setfeatureImage(props.blogs.blogs[i].feature_image.original);
-          }
-        }
-      }
-    }
-  }, [props.blogs.blogs]);
-
-  useEffect(() => {}, []);
+  const [tags, setTags] = useState({ tags: [], defaultTags: [] });
 
   useEffect(() => {
-    if (blog_tags.length) {
-      const defaultTags = [];
-      for (let i in props.blogs.tags) {
-        if (~blog_tags.indexOf(props.blogs.tags[i].id)) {
-          defaultTags.push(props.blogs.tags[i]);
-        }
-      }
-
-      if (defaultTags.length) {
-        setBlog({ ...blog, defaultTags: defaultTags });
-      }
+    if (!isEmpty(props.match.params.id)) {
+      props.blogAction(props.match.params.id);
     }
-    setTags(props.blogs.tags);
-  }, [props.blogs.tags]);
+  }, []);
 
-  const handleChangeTag = value => {
-    setBlog({ ...blog, blog_tag: value.map(val => val.id) });
+  useEffect(() => {
+    if (!isEmpty(props.blogState.blog)) {
+      setBlog({ ...blog, ...props.blogState.blog });
+      if (
+        props.blogState.blog.feature_image &&
+        props.blogState.blog.feature_image.original
+      ) {
+        setfeatureImage(props.blogState.blog.feature_image.original);
+      }
+      props.blogtagsAction();
+    }
+  }, [props.blogState.blog]);
+
+  useEffect(() => {
+    if (!isEmpty(props.blogState.tags)) {
+      setTimeout(() => {
+        var defaultTags = [];
+        const tagObj = props.blogState.tags.map((tag) => {
+          if (~blog.blog_tag.indexOf(tag.id)) {
+            defaultTags.push({
+              value: tag.id,
+              label: tag.name,
+            });
+          }
+
+          return {
+            value: tag.id,
+            label: tag.name,
+          };
+        });
+        setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
+      }, 1000);
+    }
+  }, [props.blogState.tags]);
+
+  const tagChange = (e) => {
+    if (!isEmpty(e)) {
+      setBlog({ ...blog, blog_tag: e.map((tag) => tag.value) });
+    }
   };
 
-  const updateBlog = e => {
+  const updateBlog = (e) => {
     e.preventDefault();
     props.blogUpdateAction(blog);
   };
 
-  useEffect(() => {
-    if (!isEmpty(props.blogs.blog.content)) {
-      setBlog({ ...blog, content: props.blogs.blog.content });
-    }
-  }, [props.blogs.blog.content]);
-
-  const handleChange = e => {
+  const handleChange = (e) => {
     setBlog({ ...blog, [e.target.name]: e.target.value });
   };
 
-  const metaChange = e => {
+  const metaChange = (e) => {
     setBlog({
       ...blog,
-      meta: { ...blog.meta, [e.target.name]: e.target.value }
+      meta: { ...blog.meta, [e.target.name]: e.target.value },
     });
   };
 
-  const fileChange = e => {
+  const fileChange = (e) => {
     setBlog({ ...blog, [e.target.name]: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
@@ -141,7 +137,7 @@ const EditBlog = props => {
 
   return (
     <Fragment>
-      {props.blogs.loading && <Loading />}
+      {props.blogState.loading && <Loading />}
       <form>
         <Grid container className="topbar">
           <Grid item lg={6}>
@@ -151,7 +147,7 @@ const EditBlog = props => {
                   <ArrowBackIcon />
                 </IconButton>
               </Link>
-              <span style={{ paddingTop: 10 }}>Edit Blog</span>
+              <span style={{ paddingTop: 10 }}>Edit Blog B</span>
             </Typography>
           </Grid>
 
@@ -164,7 +160,11 @@ const EditBlog = props => {
               color="primary"
               className={classes.cancelBtn}
             >
-              <Link to="/all-blogs" style={{ color: "#fff" }}>
+              <Link
+                to="/all-blogs"
+                //onClick={() => props.blogclearAction()}
+                style={{ color: "#fff" }}
+              >
                 Discard
               </Link>
             </Button>
@@ -193,7 +193,9 @@ const EditBlog = props => {
 
                 <Grid container>
                   <Grid item md={12}>
-                    <TinymceEditor value={blog.content} />
+                    {!isEmpty(props.blogState.blog) && (
+                      <TinymceEditor value={blog.content} />
+                    )}
                   </Grid>
                 </Grid>
               </CardContent>
@@ -321,26 +323,17 @@ const EditBlog = props => {
                   >
                     Select Tags
                   </Typography>
-
-                  {/* <Autocomplete
-                    multiple
-                    id="select-tags"
-                    options={tags}
-                    defaultValue={blog.defaultTags}
-                    getOptionLabel={option => option.name}
-                    className={classes.width100}
-                    onChange={(event, value) => handleChangeTag(value)}
-                    renderInput={params => (
-                      <TextField {...params} variant="outlined" />
-                    )}
-                    renderTags={(value, getTagProps) =>
-                      value.map((option, index) => (
-                        <Chip label={option.name} {...getTagProps({ index })} />
-                      ))
-                    }
-                  /> */}
                 </CardContent>
               </Card>
+              {tags.tags[0] && (
+                <Select
+                  isMulti
+                  defaultValue={tags.defaultTags}
+                  name="blog_tag"
+                  options={tags.tags}
+                  onChange={tagChange}
+                />
+              )}
             </Box>
           </Grid>
         </Grid>
@@ -349,14 +342,16 @@ const EditBlog = props => {
   );
 };
 
-const mapStateToProps = state => {
-  return { blogs: state.blogs };
+const mapStateToProps = (state) => {
+  return { blogState: state.blogs };
 };
 
 const mapDispatchToProps = {
   blogUpdateAction,
   blogtagsAction,
-  blogsAction
+  blogsAction,
+  blogAction,
+  blogclearAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditBlog);
