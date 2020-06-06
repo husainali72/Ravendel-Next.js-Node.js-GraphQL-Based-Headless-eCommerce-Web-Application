@@ -42,7 +42,7 @@ module.exports.checkToken = checkToken;
 
 const slugify = require("slugify");
 const stringTourl = (str) => {
-  var brandName = str.replace(/[^a-z0-9\s\-]/gi, "");
+  var brandName = str.replace(/[^a-z0-9\s\-]/gi, "-");
   brandName =
     "/" +
     slugify(brandName, {
