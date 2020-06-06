@@ -6,12 +6,12 @@ import {
   ButtonBase,
   Grid,
   Box,
-  Container
+  Container,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 
-const CategoryListing = props => {
+const CategoryListing = (props) => {
   const classes = useStyles();
 
   return (
@@ -44,10 +44,10 @@ const CategoryListing = props => {
                               className={classes.imageSrc}
                               style={{
                                 backgroundImage: `url(${
-                                  category.feature_image
-                                    ? category.feature_image
+                                  category.image
+                                    ? category.image.large
                                     : PlaceHolder
-                                })`
+                                })`,
                               }}
                             />
                             <span className={classes.imageBackdrop} />
@@ -76,11 +76,11 @@ const CategoryListing = props => {
   );
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   categoryListingWrapper: {
     display: "flex",
     flexWrap: "wrap",
-    minWidth: "100%"
+    minWidth: "100%",
   },
   image: {
     position: "relative",
@@ -89,16 +89,16 @@ const useStyles = makeStyles(theme => ({
     "&:hover, &$focusVisible": {
       zIndex: 1,
       "& $imageBackdrop": {
-        opacity: 0.1
+        opacity: 0.1,
       },
       "& $imageMarked": {
-        opacity: 0
+        opacity: 0,
       },
       "& $imageTitle": {
         border: "4px solid currentColor",
-        backgroundColor: "#3a3a3a57"
-      }
-    }
+        backgroundColor: "#3a3a3a57",
+      },
+    },
   },
   focusVisible: {},
   imageButton: {
@@ -110,7 +110,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    color: theme.palette.common.white
+    color: theme.palette.common.white,
   },
   imageSrc: {
     position: "absolute",
@@ -119,7 +119,7 @@ const useStyles = makeStyles(theme => ({
     top: 0,
     bottom: 0,
     backgroundSize: "cover",
-    backgroundPosition: "center 40%"
+    backgroundPosition: "center 40%",
   },
   imageBackdrop: {
     position: "absolute",
@@ -130,14 +130,15 @@ const useStyles = makeStyles(theme => ({
     // backgroundColor: theme.palette.common.black,
     backgroundColor: "#3a3a3a",
     opacity: 0.4,
-    transition: theme.transitions.create("opacity")
+    transition: theme.transitions.create("opacity"),
   },
   imageTitle: {
     position: "relative",
-    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px ${theme.spacing(1) +
-      6}px`,
+    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px ${
+      theme.spacing(1) + 6
+    }px`,
     fontWeight: "bold",
-    textTransform: "uppercase"
+    textTransform: "uppercase",
   },
   imageMarked: {
     height: 3,
@@ -146,12 +147,12 @@ const useStyles = makeStyles(theme => ({
     position: "absolute",
     bottom: -2,
     left: "calc(50% - 9px)",
-    transition: theme.transitions.create("opacity")
-  }
+    transition: theme.transitions.create("opacity"),
+  },
 }));
 
-const mapStateToProps = state => ({
-  settings: state.settings
+const mapStateToProps = (state) => ({
+  settings: state.settings,
 });
 
 export default connect(mapStateToProps)(CategoryListing);

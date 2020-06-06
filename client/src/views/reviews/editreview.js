@@ -220,6 +220,7 @@ const EditReview = (props) => {
                       })
                     }
                     options={customers}
+                    className={classes.marginBottom}
                   />
                 )}
 

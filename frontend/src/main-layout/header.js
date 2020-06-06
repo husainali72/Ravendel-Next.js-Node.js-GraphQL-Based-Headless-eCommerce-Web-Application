@@ -7,19 +7,19 @@ import {
   Icon,
   Hidden,
   Drawer,
-  Badge
+  Badge,
+  Typography,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import CartSide from "./cart";
 import Logo from "../assets/images/logo.png";
 import { Link } from "react-router-dom";
 
-const Header = props => {
+const Header = (props) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [openCart, setOpenCart] = useState(false);
 
-  const toggleCart = e => {
-    console.log("card");
+  const toggleCart = (e) => {
     if (e.type === "keydown" && (e.key === "Tab" || e.key === "Shift")) {
       return;
     }
@@ -34,11 +34,12 @@ const Header = props => {
             <Grid container justify="space-between" alignItems="center">
               <Grid item className="logo">
                 <Link to="/">
-                  <img
+                  {/* <img
                     src={props.logo ? props.logo : Logo}
                     alt="Logo"
                     className="logo"
-                  />
+                  /> */}
+                  <Typography variant="h3">Ravendel</Typography>
                 </Link>
               </Grid>
               <Grid item className="menu">
@@ -85,8 +86,8 @@ const Header = props => {
     </Fragment>
   );
 };
-const mapStateToProps = state => ({
-  cart: state.cart
+const mapStateToProps = (state) => ({
+  cart: state.cart,
 });
 
 export default connect(mapStateToProps)(Header);

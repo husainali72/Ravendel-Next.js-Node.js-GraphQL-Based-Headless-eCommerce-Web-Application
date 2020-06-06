@@ -115,7 +115,17 @@ const ProductCard = (props) => {
         )}
 
         <Link to={`/product/${props.productDetail.id}`}>
-          <h3 className="product-title">{props.productDetail.name}</h3>
+          <h3 className="product-title">
+            {props.productDetail.name.length > 50 ? (
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: props.productDetail.name.substring(0, 60) + "...",
+                }}
+              ></span>
+            ) : (
+              props.productDetail.name
+            )}
+          </h3>
         </Link>
 
         <p className="product-price">

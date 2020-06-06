@@ -5,6 +5,7 @@ import settings from "./settingReducer";
 import cart from "./cartReducer";
 import products from "./productReducers";
 import blogs from "./blogReducer";
+import homepage from "./homepageReducer";
 
 // Combine Reducers
 const MasterReducer = combineReducers({
@@ -12,7 +13,8 @@ const MasterReducer = combineReducers({
   settings,
   cart,
   products,
-  blogs
+  blogs,
+  homepage,
 });
 
 export default MasterReducer;

@@ -67,6 +67,7 @@ const GET_CATEGORIES = gql`
       date
       updated
       url
+      image
     }
   }
 `;

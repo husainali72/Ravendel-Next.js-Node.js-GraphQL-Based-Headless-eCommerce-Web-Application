@@ -69,7 +69,9 @@ const HomeSettings = (props) => {
   };
 
   const fileChange = (e, i) => {
-    settingHome.slider[i].image.medium = URL.createObjectURL(e.target.files[0]);
+    settingHome.slider[i].image.original = URL.createObjectURL(
+      e.target.files[0]
+    );
     settingHome.slider[i].update_image = e.target.files;
     setsettingHome({
       ...settingHome,
@@ -114,9 +116,9 @@ const HomeSettings = (props) => {
                           </IconButton>
                         </Tooltip>
                         <Box className={classes.sliderImagePreviewWrapper}>
-                          {slide.image.medium && (
+                          {slide.image.original && (
                             <img
-                              src={slide.image.medium}
+                              src={slide.image.original}
                               className={classes.sliderImagePreview}
                               alt="Featured"
                             />
@@ -134,7 +136,7 @@ const HomeSettings = (props) => {
                             htmlFor={`featured-image-${index}`}
                             className={classes.feautedImage}
                           >
-                            {slide.image.medium
+                            {slide.image.original
                               ? "Change Slider"
                               : "Add Slide Image"}
                           </label>

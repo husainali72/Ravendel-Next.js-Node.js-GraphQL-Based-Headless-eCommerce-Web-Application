@@ -12,6 +12,9 @@ import { AllBlogs, SingleBlog } from "../views/blog";
 import Pages from "../views/pages";
 import Brand from "../views/brand";
 import Tags from "../views/tags";
+import TermsAndCondition from "../views/terms";
+import ReturnsAndRefunds from "../views/refund";
+import FAQ from "../views/faq";
 
 const Routes = [
   { path: "/", exact: true, component: Home, name: "Homes" },
@@ -20,20 +23,20 @@ const Routes = [
     path: "/product/:id",
     exact: true,
     component: SingleProduct,
-    name: "Single Product Page"
+    name: "Single Product Page",
   },
   {
     path: "/category/:url",
     exact: true,
     component: Category,
-    name: "Category"
+    name: "Category",
   },
   { path: "/checkout", exact: true, component: Checkout, name: "Checkout" },
   {
     path: "/payment-failed",
     exact: true,
     component: PaymentFailed,
-    name: "Payment Failed"
+    name: "Payment Failed",
   },
   { path: "/thankyou", exact: true, component: Thankyou, name: "Thankyou" },
   { path: "/account/:tabid", exact: true, component: Account, name: "Account" },
@@ -43,7 +46,7 @@ const Routes = [
     path: "/forgot-password",
     exact: true,
     component: ForgotPassword,
-    name: "Forgot Password"
+    name: "Forgot Password",
   },
   { path: "/about", exact: true, component: About, name: "About" },
   { path: "/contact", exact: true, component: Contact, name: "Contact" },
@@ -51,7 +54,25 @@ const Routes = [
   { path: "/blog/:id", exact: true, component: SingleBlog, name: "SingleBlog" },
   { path: "/page/:name", exact: true, component: Pages, name: "Pages" },
   { path: "/brand/:name", exact: true, component: Brand, name: "Brand" },
-  { path: "/tag/:url", exact: true, component: Tags, name: "Tags" }
+  { path: "/tag/:url", exact: true, component: Tags, name: "Tags" },
+  {
+    path: "/terms",
+    exact: true,
+    component: TermsAndCondition,
+    name: "TermsAndCondition",
+  },
+  {
+    path: "/refund",
+    exact: true,
+    component: ReturnsAndRefunds,
+    name: "ReturnsAndRefunds",
+  },
+  {
+    path: "/faq",
+    exact: true,
+    component: FAQ,
+    name: "FAQ",
+  },
 ];
 
 export default Routes;

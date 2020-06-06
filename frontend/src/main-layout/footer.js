@@ -6,8 +6,9 @@ import {
   Container,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -19,11 +20,12 @@ const Footer = () => {
               <Grid item md={4} sm={12} xs={12}>
                 <Box textAlign="left">
                   <Typography variant="h4" className="color-white">
-                    Company Logo
+                    Ravendel
                   </Typography>
                   <Typography variant="subtitle1" className="footer-subtitle">
-                    Persuit is a Premium PSD Template. Best choice for your
-                    online store. Let purchase it to enjoy now
+                    To sell online what you need is a lightning-fast platform
+                    with easy to use user interface. With Ravendel deliver
+                    exceptional digital experiences to your customers.
                   </Typography>
                 </Box>
               </Grid>
@@ -33,22 +35,28 @@ const Footer = () => {
                 </Typography>
                 <List dense>
                   <ListItem>
-                    <ListItemText
-                      primary="About Us"
-                      className="footer-menulink"
-                    />
+                    <Link to="/about">
+                      <ListItemText
+                        primary="About Us"
+                        className="footer-menulink"
+                      />
+                    </Link>
                   </ListItem>
                   <ListItem>
-                    <ListItemText
-                      primary="Terms and Condition"
-                      className="footer-menulink"
-                    />
+                    <Link to="/terms">
+                      <ListItemText
+                        primary="Terms and Condition"
+                        className="footer-menulink"
+                      />
+                    </Link>
                   </ListItem>
                   <ListItem>
-                    <ListItemText
-                      primary="Returns and Refunds"
-                      className="footer-menulink"
-                    />
+                    <Link to="/refund">
+                      <ListItemText
+                        primary="Returns and Refunds"
+                        className="footer-menulink"
+                      />
+                    </Link>
                   </ListItem>
                 </List>
               </Grid>
@@ -58,13 +66,17 @@ const Footer = () => {
                 </Typography>
                 <List dense>
                   <ListItem>
-                    <ListItemText
-                      primary="Contact Us"
-                      className="footer-menulink"
-                    />
+                    <Link to="/contact">
+                      <ListItemText
+                        primary="Contact Us"
+                        className="footer-menulink"
+                      />
+                    </Link>
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="FAQ" className="footer-menulink" />
+                    <Link to="/faq">
+                      <ListItemText primary="FAQ" className="footer-menulink" />
+                    </Link>
                   </ListItem>
                 </List>
               </Grid>

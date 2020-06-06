@@ -9,12 +9,12 @@ import {
   CardActions,
   Card,
   Container,
-  CardActionArea
+  CardActionArea,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import PlaceHolder from "../../../assets/images/placeholder.png";
 
-const BlogListing = props => {
+const BlogListing = (props) => {
   // var array = props.recentlyBlogs;
   // var val = array.sort((a, b) =>
   //   Date.parse("1970-01-01T" + b.date) > Date.parse("1970-01-01T" + a.date)
@@ -61,11 +61,19 @@ const BlogListing = props => {
                               gutterBottom
                               variant="h4"
                               component="h2"
-                              className="text-capitalize"
+                              className="text-capitalize blog-title"
                             >
-                              {blog.title}
+                              {blog.title.length > 50 ? (
+                                <span
+                                  dangerouslySetInnerHTML={{
+                                    __html: blog.title.substring(0, 75) + "...",
+                                  }}
+                                ></span>
+                              ) : (
+                                blog.title
+                              )}
                             </Typography>
-                            <Typography
+                            {/* <Typography
                               variant="subtitle2"
                               color="textSecondary"
                               component="p"
@@ -76,17 +84,17 @@ const BlogListing = props => {
                                   __html: blog.content.substring(0, 80) + "..."
                                 }}
                               ></span>
-                            </Typography>
+                            </Typography> */}
                           </CardContent>
                         </CardActionArea>
                       </Link>
-                      <CardActions>
+                      {/* <CardActions>
                         <Link to={`blog/${blog.id}`}>
                           <Button size="small" color="primary">
                             Learn More
                           </Button>
                         </Link>
-                      </CardActions>
+                      </CardActions> */}
                     </Card>
                   </Grid>
                 ))}

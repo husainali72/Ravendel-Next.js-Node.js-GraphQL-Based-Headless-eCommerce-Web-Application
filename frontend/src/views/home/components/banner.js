@@ -1,20 +1,27 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Typography, Button, Container, Box } from "@material-ui/core";
 import Slider from "react-slick";
 
-const Banner = props => {
-  const [bannerSlider, setBannerSlider] = useState([
-    {
-      image: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-1.jpg",
-      url: "/category/CategoryFirst"
-    },
-    {
-      image: "https://colorlib.com/preview/theme/winter/img/banner_img.png",
-      url: "/category/CategorySecond"
-    }
-  ]);
+const Banner = (props) => {
+  console.log("sliders", props.sliders);
+  // const [bannerSlider, setBannerSlider] = useState([
+  //   {
+  //     image: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-1.jpg",
+  //     link: "/category/CategoryFirst",
+  //   },
+  //   {
+  //     image: "https://colorlib.com/preview/theme/winter/img/banner_img.png",
+  //     link: "/category/CategorySecond",
+  //   },
+  // ]);
+
+  const [bannerSlider, setBannerSlider] = useState([]);
+
+  useEffect(() => {
+    setBannerSlider(props.sliders);
+  }, [props.sliders]);
 
   function SampleNextArrow(props) {
     const { className, style, onClick } = props;
@@ -49,7 +56,7 @@ const Banner = props => {
     autoplaySpeed: 4000,
     cssEase: "linear",
     nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />
+    prevArrow: <SamplePrevArrow />,
   };
 
   return (
@@ -59,9 +66,27 @@ const Banner = props => {
           {bannerSlider &&
             bannerSlider.map((slide, index) => (
               <div key={index}>
-                <Link to={slide.url}>
-                  <img src={slide.image} alt="slide" className="slide-image" />
-                </Link>
+                {slide.open_in_tab ? (
+                  <a href={slide.link} target="_blank">
+                    {slide.image && (
+                      <img
+                        src={slide.image.original}
+                        alt="slide"
+                        className="slide-image"
+                      />
+                    )}
+                  </a>
+                ) : (
+                  <Link to={slide.link}>
+                    {slide.image && (
+                      <img
+                        src={slide.image.original}
+                        alt="slide"
+                        className="slide-image"
+                      />
+                    )}
+                  </Link>
+                )}
               </div>
             ))}
         </Slider>
@@ -88,8 +113,8 @@ const Banner = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  settings: state.settings
+const mapStateToProps = (state) => ({
+  settings: state.settings,
 });
 
 export default connect(mapStateToProps)(Banner);
