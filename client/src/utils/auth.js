@@ -13,7 +13,7 @@ const getUser = () => {
   return user_token;
 };
 
-const setUserToken = new_token => {
+const setUserToken = (new_token) => {
   cookie.save("auth", new_token);
   //localStorage.setItem("auth", JSON.stringify(new_token));
 };
@@ -25,9 +25,10 @@ const logout = () => {
 };
 
 export default {
+  user_token,
   getToken,
   getUser,
   getUserId,
   setUserToken,
-  logout
+  logout,
 };

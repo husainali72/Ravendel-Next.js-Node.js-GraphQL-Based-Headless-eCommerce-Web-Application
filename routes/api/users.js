@@ -13,7 +13,7 @@ const ProductCat = require("../../models/ProductCat");
 // @desc    Registering user
 // @access  public
 router.post("/register", (req, res) => {
-  User.findOne({ email: req.body.email }).then(user => {
+  User.findOne({ email: req.body.email }).then((user) => {
     if (user) {
       return res.status(400).json("Email already exists");
     } else {
@@ -21,7 +21,7 @@ router.post("/register", (req, res) => {
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
-        role: req.body.role
+        role: req.body.role,
       });
 
       bcrypt.genSalt(10, (err, salt) => {
@@ -30,14 +30,14 @@ router.post("/register", (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then(user =>
+            .then((user) =>
               res.json({
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
               })
             )
-            .catch(err => console.log(err));
+            .catch((err) => console.log(err));
         });
       });
     }
@@ -52,13 +52,13 @@ router.post("/login", (req, res) => {
   const password = req.body.password;
   const errors = {};
   // Find user by email
-  User.findOne({ email }).then(user => {
+  User.findOne({ email }).then((user) => {
     // Check for user
     if (!user) {
       return res.status(404).json("Invalid credentials");
     }
     // Check Password
-    bcrypt.compare(password, user.password).then(isMatch => {
+    bcrypt.compare(password, user.password).then((isMatch) => {
       if (isMatch) {
         // User Matched
         const payload = { id: user.id, name: user.name, email: user.email }; // Create JWT Payload
@@ -74,7 +74,7 @@ router.post("/login", (req, res) => {
               role: user.role,
               user_id: user.id,
               name: user.name,
-              image: user.image
+              image: user.image,
             });
           }
         );
@@ -92,7 +92,7 @@ router.get("/current", auth, (req, res) => {
   //console.log(req.user);
   res.json({
     id: req.user.id,
-    name: req.user.name
+    name: req.user.name,
     //email: req.user.email
   });
 });
@@ -106,14 +106,14 @@ router.get("/", auth, (req, res) => {
 
   User.find()
     .select("-password")
-    .then(Users => {
+    .then((Users) => {
       if (!Users) {
         errors.noprofile = "There is no User";
         return res.status(404).json(errors);
       }
       res.json(Users);
     })
-    .catch(err => res.status(404).json(err));
+    .catch((err) => res.status(404).json(err));
 });
 
 // @route   GET api/users
@@ -125,14 +125,14 @@ router.get("/:userId", auth, (req, res) => {
 
   User.findOne({ _id: req.params.userId })
     .select("-password")
-    .then(user => {
+    .then((user) => {
       if (!user) {
         errors.noprofile = "There is no User";
         return res.status(404).json(errors);
       }
       res.json(user);
     })
-    .catch(err => res.status(404).json(err));
+    .catch((err) => res.status(404).json(err));
 });
 
 router.post("/cattree", async (req, res) => {
