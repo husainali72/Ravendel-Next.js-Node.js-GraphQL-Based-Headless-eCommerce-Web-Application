@@ -3,6 +3,11 @@ import gql from "graphql-tag";
 const GET_HOMEPAGE_DATA = gql`
   {
     getSettings {
+      seo {
+        meta_title
+        meta_tag
+        meta_description
+      }
       appearance {
         home {
           slider {

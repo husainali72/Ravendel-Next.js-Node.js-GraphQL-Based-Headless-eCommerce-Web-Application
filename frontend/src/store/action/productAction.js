@@ -88,6 +88,7 @@ export const catProductAction = (url) => (dispatch) => {
   query(GET_CAT_PRODUCTS, { url: url })
     .then((response) => {
       if (response) {
+        console.log("response", response);
         return dispatch({
           type: CAT_PRODUCTS,
           payload: response.data.productsbycaturl,

@@ -5,18 +5,6 @@ import { Typography, Button, Container, Box } from "@material-ui/core";
 import Slider from "react-slick";
 
 const Banner = (props) => {
-  console.log("sliders", props.sliders);
-  // const [bannerSlider, setBannerSlider] = useState([
-  //   {
-  //     image: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-1.jpg",
-  //     link: "/category/CategoryFirst",
-  //   },
-  //   {
-  //     image: "https://colorlib.com/preview/theme/winter/img/banner_img.png",
-  //     link: "/category/CategorySecond",
-  //   },
-  // ]);
-
   const [bannerSlider, setBannerSlider] = useState([]);
 
   useEffect(() => {

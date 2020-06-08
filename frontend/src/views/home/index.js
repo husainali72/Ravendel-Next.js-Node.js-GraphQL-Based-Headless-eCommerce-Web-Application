@@ -13,9 +13,15 @@ import { blogsAction } from "../../store/action/blogAction";
 import { isEmpty } from "../../utils/helper";
 import Loading from "../components/loading";
 import { CircularProgress, Typography, Box } from "@material-ui/core";
+import { Helmet } from "react-helmet";
 
 const Home = (props) => {
   const [homepageSetting, setHomepageSetting] = useState({
+    seo: {
+      meta_description: "",
+      meta_tag: "",
+      meta_title: "",
+    },
     appearance: {
       home: {
         slider: [],
@@ -55,6 +61,14 @@ const Home = (props) => {
 
   return (
     <Fragment>
+      <Helmet>
+        <title>{homepageSetting.seo.meta_title}</title>
+        <meta
+          name="description"
+          content={homepageSetting.seo.meta_description}
+        />
+      </Helmet>
+
       {props.products.loading || props.blogs.loading || props.home.loading ? (
         <Loading />
       ) : (
@@ -108,10 +122,16 @@ const Home = (props) => {
       )}
 
       {homepageSetting.appearance.home.add_section_in_home.products_on_sales ? (
-        <ProductGrid
-          allProducts={props.products.products}
-          title="On Sale Products"
-        />
+        <Fragment>
+          <ProductGrid
+            allProducts={props.products.products}
+            title="On Sale Products"
+          />
+          <img
+            src="https://www.hbwebsol.com/wp-content/uploads/2020/06/section2.jpg"
+            alt="On Sale Product Graphics"
+          />
+        </Fragment>
       ) : (
         ""
       )}
