@@ -23,6 +23,12 @@ export default (state = initialState, action) => {
         ...state,
         products: [...state.products, action.payload],
       };
+
+    case "REMOVE_VALUE":
+      return {
+        ...state,
+        products: action.payload,
+      };
     default: {
       return state;
     }

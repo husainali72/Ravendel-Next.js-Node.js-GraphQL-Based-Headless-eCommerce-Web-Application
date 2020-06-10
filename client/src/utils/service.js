@@ -59,8 +59,9 @@ export const query = async (query, variables) => {
 
 const service = (config) => {
   //header authorization
-  if (Auth.user_token) {
+  if (Auth.getToken()) {
     const token = Auth.getToken();
+    console.log("token", token);
     config.headers = {
       authorization: token,
     };
@@ -72,9 +73,10 @@ const service = (config) => {
       return response;
     },
     function (error) {
+      console.log(error);
       if (!error.response) {
         error.response = {
-          data: "net work error",
+          data: "network error",
           status: 500,
         };
       }

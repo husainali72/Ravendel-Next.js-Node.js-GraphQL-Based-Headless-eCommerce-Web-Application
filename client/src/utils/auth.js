@@ -3,7 +3,9 @@ import cookie from "react-cookies";
 //var user_token = JSON.parse(localStorage.getItem("auth")) || {};
 var user_token = cookie.load("auth");
 const getToken = () => {
-  return user_token.token;
+  if (!cookie.load("auth")) return false;
+  //console.log(cookie.load("auth"));
+  return cookie.load("auth").token;
 };
 const getUserId = () => {
   return user_token.user_id;

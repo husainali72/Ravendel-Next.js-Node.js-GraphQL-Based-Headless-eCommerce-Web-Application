@@ -1,23 +1,38 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Box, Typography, Icon, Grid, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import PlaceHolderImg from "../assets/images/placeholder.png";
+import { connect } from "react-redux";
 
 const CartSide = (props) => {
+  const [cartItems, setCartItems] = useState(props.cartValue);
+
+  const removeCartItem = (removedItem) => {
+    removedItem.cart = false;
+    let filteredArray = cartItems.filter((item) => item !== removedItem);
+    localStorage.removeItem("cartProducts");
+    localStorage.setItem("cartProducts", JSON.stringify(filteredArray));
+    setCartItems(filteredArray);
+    props.dispatch({
+      type: "REMOVE_VALUE",
+      payload: filteredArray,
+    });
+  };
+
   return (
     <Fragment>
-      {props.cartValue && props.cartValue.length ? (
+      {cartItems && cartItems.length ? (
         <Fragment>
           <Box className="cart-product">
             <Box display="flex" flexDirection="column" component="div">
-              {props.cartValue.map((cart, index) => (
+              {cartItems.map((item, index) => (
                 <Box
                   className="cart-item"
                   key={index}
                   style={{
                     backgroundImage: `url(${
-                      cart.feature_image
-                        ? cart.feature_image.thumbnail
+                      item.feature_image
+                        ? item.feature_image.thumbnail
                         : PlaceHolderImg
                     })`,
                   }}
@@ -25,50 +40,44 @@ const CartSide = (props) => {
                   <div className="item-inner">
                     <Icon
                       className="remove-item"
-                      onClick={() => console.log("remove")}
+                      onClick={() => removeCartItem(item)}
                     >
                       close
                     </Icon>
 
-                    {cart.category && (
+                    {item.category && (
                       <Typography variant="button" className="item-category">
-                        {cart.category}
+                        {item.category}
                       </Typography>
                     )}
 
-                    {cart.name && (
+                    {item.name && (
                       <Typography variant="h6" className="item-title">
-                        {cart.name}
+                        {item.name}
                       </Typography>
                     )}
 
                     <Typography variant="body2" className="item-attr">
                       Qty: 1
                     </Typography>
-                    <Typography variant="body2" className="item-attr">
-                      Size: Small
-                    </Typography>
-                    <Typography variant="body2" className="item-attr">
-                      Color: Red
-                    </Typography>
 
                     <Typography variant="h6" className="item-price">
                       <span
                         className={
-                          cart.pricing.sellprice ? "has-sale-price" : ""
+                          item.pricing.sellprice ? "has-sale-price" : ""
                         }
                       >
-                        ${cart.pricing.price.toFixed(2)}
+                        ${item.pricing.price.toFixed(2)}
                       </span>
 
-                      {cart.pricing.sellprice ? (
+                      {item.pricing.sellprice ? (
                         <span className="sale-price">
-                          ${cart.pricing.sellprice.toFixed(2)}
+                          ${item.pricing.sellprice.toFixed(2)}
                         </span>
                       ) : null}
                     </Typography>
                     <Link
-                      to={`/product/${cart.id}`}
+                      to={`/product/${item.id}`}
                       className="view-item"
                       onClick={props.closeCart}
                     >
@@ -144,4 +153,8 @@ const CartSide = (props) => {
   );
 };
 
-export default CartSide;
+const mapStateToProps = (state) => ({
+  cart: state.cart,
+});
+
+export default connect(mapStateToProps)(CartSide);

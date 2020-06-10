@@ -8,7 +8,6 @@ export const homepageAction = () => (dispatch) => {
   query(GET_HOMEPAGE_DATA)
     .then((response) => {
       if (response) {
-        console.log("response", response);
         return dispatch({
           type: HOMEPAGE_SUCCESS,
           payload: response.data.getSettings,
