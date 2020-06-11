@@ -9,7 +9,7 @@ const {
   imageUnlink,
   checkToken,
   stringTourl,
-  validateUrl
+  validateUrl,
 } = require("../config/helpers");
 const validate = require("../validations/product");
 
@@ -97,7 +97,7 @@ module.exports = {
     productsbycatid: async (root, args, { id }) => {
       try {
         const products = await Product.find({
-          categoryId: { $in: args.cat_id }
+          categoryId: { $in: args.cat_id },
         });
         return products || [];
       } catch (error) {
@@ -113,9 +113,13 @@ module.exports = {
         }
 
         const products = await Product.find({
-          categoryId: { $in: cat.id }
+          categoryId: { $in: cat.id },
         });
-        return products || [];
+
+        cat.products = products || [];
+        return cat;
+
+        //return products || [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -132,7 +136,7 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
+    },
   },
   ProductWithCat: {
     categoryId: async (root, args) => {
@@ -143,7 +147,7 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
+    },
   },
   Mutation: {
     addProductCategory: async (root, args, { id }) => {
@@ -157,7 +161,7 @@ module.exports = {
 
         const cat = await ProductCat.findOne({
           name: args.name,
-          parentId: args.parentId
+          parentId: args.parentId,
         });
 
         if (cat) {
@@ -192,7 +196,7 @@ module.exports = {
             url: url,
             description: args.description,
             image: imgObject.data || imgObject,
-            meta: args.meta
+            meta: args.meta,
           });
 
           await newCat.save();
@@ -279,7 +283,7 @@ module.exports = {
           throw putError("Name already exist.");
         } else {
           const newCat = new CatTree({
-            name: args.name
+            name: args.name,
           });
 
           if (args.parentname) {
@@ -344,7 +348,7 @@ module.exports = {
             quantity: args.quantity,
             pricing: {
               price: args.pricing.price || 0,
-              sellprice: args.pricing.sellprice || 0
+              sellprice: args.pricing.sellprice || 0,
             },
             feature_image: imgObject.data || imgObject,
             gallery_image: imgArray,
@@ -355,12 +359,12 @@ module.exports = {
               width: args.shipping.width || 0,
               depth: args.shipping.depth || 0,
               weight: args.shipping.weight || 0,
-              shipping_class: args.shipping.shipping_class
+              shipping_class: args.shipping.shipping_class,
             },
             tax_class: args.tax_class,
             featured_product: args.featured_product,
             product_type: args.product_type,
-            custom_field: args.custom_field
+            custom_field: args.custom_field,
           });
 
           await newProduct.save();
@@ -426,7 +430,7 @@ module.exports = {
                   large: gallery_images[i].large,
                   medium: gallery_images[i].medium,
                   original: gallery_images[i].original,
-                  thumbnail: gallery_images[i].thumbnail
+                  thumbnail: gallery_images[i].thumbnail,
                 };
                 imageUnlink(imgObject);
                 delete gallery_images[i];
@@ -485,6 +489,6 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
-  }
+    },
+  },
 };
