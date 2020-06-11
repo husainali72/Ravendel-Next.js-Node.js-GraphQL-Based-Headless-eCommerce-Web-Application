@@ -88,7 +88,6 @@ export const catProductAction = (url) => (dispatch) => {
   query(GET_CAT_PRODUCTS, { url: url })
     .then((response) => {
       if (response) {
-        console.log("response", response);
         return dispatch({
           type: CAT_PRODUCTS,
           payload: response.data.productsbycaturl,
@@ -131,13 +130,11 @@ export const productReviewsAction = (id) => (dispatch) => {
 };
 
 export const productAddReviewAction = (object) => (dispatch) => {
-  console.log("Review Object", object);
   dispatch({
     type: PRODUCT_LOADING,
   });
   mutation(ADD_REVIEW, object)
     .then((response) => {
-      console.log("res Add Review", response);
       if (response) {
         dispatch({
           type: ADD_PRODUCT_REVIEWS,

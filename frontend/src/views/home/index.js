@@ -12,7 +12,6 @@ import { homepageAction } from "../../store/action/homepageAction";
 import { blogsAction } from "../../store/action/blogAction";
 import { isEmpty } from "../../utils/helper";
 import Loading from "../components/loading";
-import { CircularProgress, Typography, Box } from "@material-ui/core";
 import { Helmet } from "react-helmet";
 
 const Home = (props) => {
