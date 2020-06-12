@@ -19,7 +19,7 @@ const initialState = {
   category: {},
   loading: false,
   success: false,
-  catProducts: [],
+  singleCategoryDetails: [],
   productReviews: [],
 };
 
@@ -74,7 +74,7 @@ export default (state = initialState, action) => {
     case CAT_PRODUCTS:
       return {
         ...state,
-        catProducts: action.payload,
+        singleCategoryDetails: action.payload,
         loading: false,
         success: true,
       };

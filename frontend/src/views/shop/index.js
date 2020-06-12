@@ -15,19 +15,19 @@ import {
   ExpansionPanelDetails,
   Checkbox,
   FormControlLabel,
-  Icon
+  Icon,
 } from "@material-ui/core";
 import ProductCard from "../components/productcard";
 import PageTitle from "../components/pageTitle";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import {
   productsAction,
-  categoriesAction
+  categoriesAction,
 } from "../../store/action/productAction";
 import { isEmpty } from "../../utils/helper";
 import Loading from "../components/loading";
 
-const Shop = props => {
+const Shop = (props) => {
   useEffect(() => {
     if (isEmpty(props.products.products)) {
       props.productsAction();
@@ -44,12 +44,12 @@ const Shop = props => {
     {
       url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
       title: "Cloths",
-      width: "40%"
+      width: "40%",
     },
     {
       url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
       title: "Shoes",
-      width: "30%"
+      width: "30%",
     },
     {
       url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-4.jpg",
@@ -59,15 +59,15 @@ const Shop = props => {
         {
           url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
           title: "Cloths Sub",
-          width: "40%"
+          width: "40%",
         },
         {
           url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
           title: "Shoes Sub",
-          width: "30%"
-        }
-      ]
-    }
+          width: "30%",
+        },
+      ],
+    },
   ];
   const [catName, setCatName] = useState("");
   const [priceRange, ssetPriceRange] = React.useState([20, 37]);
@@ -76,7 +76,7 @@ const Shop = props => {
     ssetPriceRange(newValue);
   };
 
-  const handleClick = title => {
+  const handleClick = (title) => {
     if (title === catName) {
       setCatName("");
     } else {
@@ -84,8 +84,8 @@ const Shop = props => {
     }
   };
 
-  const categoryListing = categoriesParameter => {
-    return categoriesParameter.map(cat => {
+  const categoryListing = (categoriesParameter) => {
+    return categoriesParameter.map((cat) => {
       if (!cat.children) {
         return (
           <ListItem disableGutters key={cat.title}>
@@ -137,7 +137,7 @@ const Shop = props => {
       <PageTitle title="Shop" />
       <Container>
         <Grid container className="shop-row" spacing={4}>
-          <Grid item lg={3} md={4} sm={4} xs={12}>
+          <Grid item lg={3} md={4} sm={4} xs={12} className="left-sidebar">
             <Box component="div" className="filter-wrapper">
               <Typography variant="h3" className="fillter-header">
                 Categories
@@ -174,7 +174,7 @@ const Shop = props => {
             <Box component="div" className="expansionPanelwrapper">
               <Divider />
               <Box component="div" className="filter-wrapper">
-                <ExpansionPanel defaultExpanded>
+                <ExpansionPanel>
                   <ExpansionPanelSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
@@ -231,7 +231,7 @@ const Shop = props => {
               </Box>
               <Divider />
               <Box component="div" className="filter-wrapper">
-                <ExpansionPanel defaultExpanded>
+                <ExpansionPanel>
                   <ExpansionPanelSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
@@ -289,7 +289,7 @@ const Shop = props => {
             </Box>
           </Grid>
 
-          <Grid item lg={9} md={8} sm={8} xs={12}>
+          <Grid item lg={9} md={8} sm={8} xs={12} className="right-sidebar">
             <Grid container spacing={4}>
               {props.products.products &&
                 props.products.products.map((product, index) => (
@@ -315,16 +315,16 @@ const Shop = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     products: state.products,
-    categories: state.categories
+    categories: state.categories,
   };
 };
 
 const mapDispatchToProps = {
   productsAction,
-  categoriesAction
+  categoriesAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Shop);

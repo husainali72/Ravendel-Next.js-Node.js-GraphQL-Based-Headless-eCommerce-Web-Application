@@ -77,27 +77,38 @@ const GET_CAT_PRODUCTS = gql`
     productsbycaturl(cat_url: $url) {
       id
       name
+      parentId
       url
-      sku
       description
-      shippingDetails
-      manufactureDetails
-      quantity
-      pricing
-      feature_image
-      gallery_image
+      image
       meta
-      shipping
-      tax_class
-      status
-      featured_product
-      product_type
-      custom_field
       date
       updated
-      categoryId {
+      products {
         id
         name
+        url
+        sku
+        description
+        shippingDetails
+        manufactureDetails
+        quantity
+        pricing
+        feature_image
+        gallery_image
+        meta
+        shipping
+        tax_class
+        status
+        featured_product
+        product_type
+        custom_field
+        date
+        updated
+        categoryId {
+          id
+          name
+        }
       }
     }
   }
