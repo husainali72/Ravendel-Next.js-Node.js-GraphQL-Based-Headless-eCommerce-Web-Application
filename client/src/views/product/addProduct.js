@@ -38,7 +38,7 @@ import {
 } from "../../store/action/";
 //import Alert from "../utils/Alert";
 import { unflatten, toUrl } from "../../utils/helper";
-import service from "../../utils/service";
+import service, { getUpdatedUrl } from "../../utils/service";
 import clsx from "clsx";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
@@ -240,34 +240,12 @@ const AddProduct = (props) => {
     });
   };
 
-  const isUrlExist = (url) => {
-    /* props.dispatch({
-      type: "PRODUCT_LOADING",
-    }); */
-
-    service({
-      method: "POST",
-      url: "api/misc/checkurl",
-      data: { url: url, table: "Product" },
-    })
-      .then((res) => {
-        if (res.data.success) {
-          setProduct({
-            ...product,
-            url: res.data.url,
-          });
-        }
-      })
-      .catch((error) => {
-        props.dispatch({
-          type: "ALERT_SUCCESS",
-          payload: {
-            boolean: true,
-            message: "Something went wrong",
-            error: true,
-          },
-        });
-      });
+  const isUrlExist = async (url) => {
+    let updatedUrl = await getUpdatedUrl("Product", url);
+    setProduct({
+      ...product,
+      url: updatedUrl,
+    });
   };
 
   const menuListing = (categories) => {
@@ -426,6 +404,7 @@ const AddProduct = (props) => {
                       {product.url ? (
                         <span style={{ marginBottom: 10, display: "block" }}>
                           <strong>Link: </strong>
+                          {window.location.origin}/product/
                           {editPremalink === false && product.url}
                           {editPremalink === true && (
                             <input
