@@ -477,6 +477,8 @@ section:nth-child(even) {
 }
 .cart-wrapper .cart-product {
   width: 250px;
+  overflow-y: auto;
+  background-color: #f1f1f1;
 }
 
 .cart-wrapper .cart-product .cart-item {
@@ -489,13 +491,14 @@ section:nth-child(even) {
   box-sizing: border-box;
   position: relative;
   background-size: cover;
+  margin-bottom: 0.5px;
 }
 .cart-wrapper .cart-product .cart-item::before {
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: #29315a8c;
   content: "";
   position: absolute;
   z-index: 1;
@@ -510,6 +513,9 @@ section:nth-child(even) {
   text-transform: uppercase;
   margin-bottom: 5px;
   line-height: 1;
+}
+.cart-wrapper .cart-product .cart-item .item-qty-wrapper {
+  color: #fff !important;
 }
 .cart-wrapper .cart-product .cart-item .item-title {
   font-size: 13px;
@@ -591,6 +597,17 @@ section:nth-child(even) {
   margin-top: 15px;
   margin-bottom: 15px;
 }
+.increse-decrease-buttongrp {
+  box-shadow: none !important;
+  margin-left: 10px;
+}
+.increse-decrease-buttongrp .MuiButtonGroup-grouped {
+  min-width: 20px;
+}
+.increse-decrease-buttongrp .MuiButton-containedSizeSmall {
+  padding: 0px 8px;
+}
+/* Checkout */
 .qty-wrapper {
   margin-top: 20px;
 }
