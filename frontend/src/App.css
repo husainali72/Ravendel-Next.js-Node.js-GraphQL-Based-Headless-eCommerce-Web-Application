@@ -299,6 +299,7 @@ section:nth-child(even) {
   min-height: 700px;
   max-height: 700px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .left-sidebar::-webkit-scrollbar {
   width: 4px;
