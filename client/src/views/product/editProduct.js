@@ -23,7 +23,7 @@ import {
   MenuItem,
   InputLabel,
   Tooltip,
-  Icon
+  Icon,
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
@@ -35,9 +35,10 @@ import {
   productUpdateAction,
   shippingAction,
   taxAction,
-  productsAction
+  productsAction,
 } from "../../store/action/";
 import { unflatten } from "../../utils/helper";
+import { getUpdatedUrl } from "../../utils/service";
 import clsx from "clsx";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
@@ -55,34 +56,34 @@ var defaultObj = {
   status: "Draft",
   pricing: {
     price: "",
-    sellprice: ""
+    sellprice: "",
   },
   meta: {
     title: "",
     description: "",
-    keywords: ""
+    keywords: "",
   },
   shipping: {
     height: "",
     width: "",
     depth: "",
     weight: "",
-    shipping_class: ""
+    shipping_class: "",
   },
   tax_class: "",
   removed_image: [],
   featured_product: false,
   product_type: {
     virtual: false,
-    downloadable: false
+    downloadable: false,
   },
   custom_field: [],
-  short_description: ""
+  short_description: "",
 };
 
 var catIds = [];
 
-const EditProduct = props => {
+const EditProduct = (props) => {
   const classes = viewStyles();
   const [tax, setTax] = useState("Global");
   const [shippingClass, setShippingClass] = useState("Global");
@@ -132,7 +133,7 @@ const EditProduct = props => {
   useEffect(() => {
     var selectedCat = _.cloneDeep(props.products.categories);
     if (selectedCat && selectedCat.length) {
-      selectedCat.map(cat => {
+      selectedCat.map((cat) => {
         if (~catIds.indexOf(cat.id)) {
           cat.checked = true;
         }
@@ -145,32 +146,32 @@ const EditProduct = props => {
     if (!isEmpty(props.products.product.description)) {
       setProduct({
         ...product,
-        description: props.products.product.description
+        description: props.products.product.description,
       });
     }
   }, [props.products.product.description]);
 
-  const updateProduct = e => {
+  const updateProduct = (e) => {
     e.preventDefault();
     console.log(product);
     props.productUpdateAction(product);
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
-  const handleChangeCheckbox = e => {
+  const handleChangeCheckbox = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.checked });
   };
 
-  const fileChange = e => {
+  const fileChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
     setProduct({ ...product, [e.target.name]: e.target.files });
   };
 
-  const updategalleryImg = e => {
+  const updategalleryImg = (e) => {
     var imagesRes = [...e.target.files];
     var images = [];
 
@@ -182,7 +183,7 @@ const EditProduct = props => {
     setProduct({ ...product, [e.target.name]: e.target.files });
   };
 
-  const removeImage = img => {
+  const removeImage = (img) => {
     if (img._id) {
       let galleryImages = product.gallery_image;
       let removed_image = product.removed_image || [];
@@ -190,21 +191,21 @@ const EditProduct = props => {
       setProduct({
         ...product,
         gallery_image: galleryImages.filter(
-          galleryImg => galleryImg._id !== img._id
+          (galleryImg) => galleryImg._id !== img._id
         ),
-        removed_image
+        removed_image,
       });
       return;
     }
-    setGallery(gallery.filter(galleryImg => galleryImg !== img));
+    setGallery(gallery.filter((galleryImg) => galleryImg !== img));
   };
 
-  const collapseToggle = category => {
+  const collapseToggle = (category) => {
     category.open = !category.open;
     setcollapseCategory({ ...collapseCategory, [category.id]: category.open });
   };
 
-  const handleCategeryCheckbox = category => {
+  const handleCategeryCheckbox = (category) => {
     category.checked = !category.checked;
     //setCheckedCat({ ...checkedCat, [category.id]: category.checked });
     var items = document.getElementsByName("categoryIds");
@@ -218,11 +219,22 @@ const EditProduct = props => {
   };
 
   const changePermalink = () => {
+    if (editPremalink) {
+      isUrlExist(product.url);
+    }
     setEditPermalink(!editPremalink);
   };
 
-  const checkedChildernChecked = cat => {
-    var checked = cat.children.filter(child => child.checked === true);
+  const isUrlExist = async (url) => {
+    let updatedUrl = await getUpdatedUrl("Product", url);
+    setProduct({
+      ...product,
+      url: updatedUrl,
+    });
+  };
+
+  const checkedChildernChecked = (cat) => {
+    var checked = cat.children.filter((child) => child.checked === true);
     if (!cat.checked) {
       if (checked.length) {
         return true;
@@ -234,8 +246,8 @@ const EditProduct = props => {
     }
   };
 
-  const menuListing = categories => {
-    return categories.map(cat => {
+  const menuListing = (categories) => {
+    return categories.map((cat) => {
       if (!cat.children.length) {
         return (
           <Grid container alignItems="center" key={cat.name}>
@@ -251,7 +263,7 @@ const EditProduct = props => {
                     color="primary"
                     checked={cat.checked}
                     name="categoryIds"
-                    onChange={e => handleCategeryCheckbox(cat)}
+                    onChange={(e) => handleCategeryCheckbox(cat)}
                     value={cat.id}
                   />
                 }
@@ -291,7 +303,7 @@ const EditProduct = props => {
                     color="primary"
                     checked={cat.checked}
                     name="categoryIds"
-                    onChange={e => handleCategeryCheckbox(cat)}
+                    onChange={(e) => handleCategeryCheckbox(cat)}
                     value={cat.id}
                     indeterminate={checkedChildernChecked(cat)}
                   />
@@ -315,7 +327,7 @@ const EditProduct = props => {
     });
   };
 
-  const StyledRadio = props => {
+  const StyledRadio = (props) => {
     const classes = viewStyles();
     return (
       <Radio
@@ -334,15 +346,15 @@ const EditProduct = props => {
   const addCustomField = () => {
     setProduct({
       ...product,
-      custom_field: [...product.custom_field, { key: "", value: "" }]
+      custom_field: [...product.custom_field, { key: "", value: "" }],
     });
   };
 
-  const removeCustomField = i => {
+  const removeCustomField = (i) => {
     product.custom_field.splice(i, 1);
     setProduct({
       ...product,
-      custom_field: [...product.custom_field]
+      custom_field: [...product.custom_field],
     });
   };
 
@@ -355,7 +367,7 @@ const EditProduct = props => {
 
     setProduct({
       ...product,
-      custom_field: [...product.custom_field]
+      custom_field: [...product.custom_field],
     });
   };
 
@@ -419,6 +431,7 @@ const EditProduct = props => {
                       {product.name ? (
                         <span style={{ marginBottom: 10, display: "block" }}>
                           <strong>Link: </strong>
+                          {window.location.origin}/product/
                           {editPremalink === false && product.url}
                           {editPremalink === true && (
                             <input
@@ -479,13 +492,13 @@ const EditProduct = props => {
                         className={clsx(classes.marginBottom, classes.width100)}
                         type="number"
                         value={product.pricing.price}
-                        onChange={e =>
+                        onChange={(e) =>
                           setProduct({
                             ...product,
                             pricing: {
                               ...product.pricing,
-                              price: Number(e.target.value)
-                            }
+                              price: Number(e.target.value),
+                            },
                           })
                         }
                       />
@@ -500,13 +513,13 @@ const EditProduct = props => {
                         className={clsx(classes.marginBottom, classes.width100)}
                         type="number"
                         value={product.pricing.sellprice}
-                        onChange={e =>
+                        onChange={(e) =>
                           setProduct({
                             ...product,
                             pricing: {
                               ...product.pricing,
-                              sellprice: Number(e.target.value)
-                            }
+                              sellprice: Number(e.target.value),
+                            },
                           })
                         }
                       />
@@ -531,13 +544,13 @@ const EditProduct = props => {
                               checked={product.product_type.virtual}
                               name="virtual"
                               value="virtual"
-                              onChange={e =>
+                              onChange={(e) =>
                                 setProduct({
                                   ...product,
                                   product_type: {
                                     ...product.product_type,
-                                    virtual: e.target.checked
-                                  }
+                                    virtual: e.target.checked,
+                                  },
                                 })
                               }
                             />
@@ -551,13 +564,13 @@ const EditProduct = props => {
                               checked={product.product_type.downloadable}
                               name="downloadable"
                               value="downloadable"
-                              onChange={e =>
+                              onChange={(e) =>
                                 setProduct({
                                   ...product,
                                   product_type: {
                                     ...product.product_type,
-                                    downloadable: e.target.checked
-                                  }
+                                    downloadable: e.target.checked,
+                                  },
                                 })
                               }
                             />
@@ -597,18 +610,18 @@ const EditProduct = props => {
                               id="Shipping-name"
                               name="Shipping-name"
                               value={product.shipping.shipping_class}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setProduct({
                                   ...product,
                                   shipping: {
                                     ...product.shipping,
-                                    shipping_class: e.target.value
-                                  }
+                                    shipping_class: e.target.value,
+                                  },
                                 })
                               }
                             >
                               {props.shippingState.shipping.shipping_class.map(
-                                shipping => {
+                                (shipping) => {
                                   return (
                                     <MenuItem
                                       value={shipping._id}
@@ -642,13 +655,13 @@ const EditProduct = props => {
                           )}
                           type="number"
                           value={product.shipping.height}
-                          onChange={e =>
+                          onChange={(e) =>
                             setProduct({
                               ...product,
                               shipping: {
                                 ...product.shipping,
-                                height: e.target.value
-                              }
+                                height: e.target.value,
+                              },
                             })
                           }
                         />
@@ -667,13 +680,13 @@ const EditProduct = props => {
                           )}
                           type="number"
                           value={product.shipping.width}
-                          onChange={e =>
+                          onChange={(e) =>
                             setProduct({
                               ...product,
                               shipping: {
                                 ...product.shipping,
-                                width: e.target.value
-                              }
+                                width: e.target.value,
+                              },
                             })
                           }
                         />
@@ -692,13 +705,13 @@ const EditProduct = props => {
                           )}
                           type="number"
                           value={product.shipping.depth}
-                          onChange={e =>
+                          onChange={(e) =>
                             setProduct({
                               ...product,
                               shipping: {
                                 ...product.shipping,
-                                depth: e.target.value
-                              }
+                                depth: e.target.value,
+                              },
                             })
                           }
                         />
@@ -717,13 +730,13 @@ const EditProduct = props => {
                           )}
                           type="number"
                           value={product.shipping.weight}
-                          onChange={e =>
+                          onChange={(e) =>
                             setProduct({
                               ...product,
                               shipping: {
                                 ...product.shipping,
-                                weight: e.target.value
-                              }
+                                weight: e.target.value,
+                              },
                             })
                           }
                         />
@@ -753,14 +766,14 @@ const EditProduct = props => {
                         id="tax-name"
                         name="tax-name"
                         value={product.tax_class}
-                        onChange={e =>
+                        onChange={(e) =>
                           setProduct({
                             ...product,
-                            tax_class: e.target.value
+                            tax_class: e.target.value,
                           })
                         }
                       >
-                        {props.taxState.tax.tax_class.map(tax => {
+                        {props.taxState.tax.tax_class.map((tax) => {
                           return (
                             <MenuItem value={tax._id} key={tax._id}>
                               {tax.name}
@@ -836,7 +849,7 @@ const EditProduct = props => {
                             name="key"
                             className={clsx(classes.customFieldInput)}
                             value={field.key}
-                            onChange={e => customChange(e, index)}
+                            onChange={(e) => customChange(e, index)}
                             size="small"
                           />
                           <TextField
@@ -845,7 +858,7 @@ const EditProduct = props => {
                             name="value"
                             className={clsx(classes.customFieldInput)}
                             value={field.value}
-                            onChange={e => customChange(e, index)}
+                            onChange={(e) => customChange(e, index)}
                             size="small"
                           />
                           <Tooltip
@@ -854,7 +867,7 @@ const EditProduct = props => {
                           >
                             <IconButton
                               aria-label="remove-field"
-                              onClick={e => removeCustomField(index)}
+                              onClick={(e) => removeCustomField(index)}
                               size="small"
                               className={classes.deleteicon}
                             >
@@ -890,7 +903,7 @@ const EditProduct = props => {
                         label="Short Description"
                         name="short_description"
                         variant="outlined"
-                        value={product.short_description}
+                        defaultValue={product.short_description}
                         className={clsx(classes.marginBottom, classes.width100)}
                         multiline
                         rows="4"
@@ -916,13 +929,13 @@ const EditProduct = props => {
                         variant="outlined"
                         className={clsx(classes.width100)}
                         value={product.meta.title}
-                        onChange={e =>
+                        onChange={(e) =>
                           setProduct({
                             ...product,
                             meta: {
                               ...product.meta,
-                              title: e.target.value
-                            }
+                              title: e.target.value,
+                            },
                           })
                         }
                       />
@@ -936,13 +949,13 @@ const EditProduct = props => {
                         variant="outlined"
                         className={clsx(classes.width100)}
                         value={product.meta.keywords}
-                        onChange={e =>
+                        onChange={(e) =>
                           setProduct({
                             ...product,
                             meta: {
                               ...product.meta,
-                              keywords: e.target.value
-                            }
+                              keywords: e.target.value,
+                            },
                           })
                         }
                       />
@@ -958,13 +971,13 @@ const EditProduct = props => {
                         multiline
                         rows="4"
                         value={product.meta.description}
-                        onChange={e =>
+                        onChange={(e) =>
                           setProduct({
                             ...product,
                             meta: {
                               ...product.meta,
-                              description: e.target.value
-                            }
+                              description: e.target.value,
+                            },
                           })
                         }
                       />
@@ -1011,10 +1024,10 @@ const EditProduct = props => {
                         <Checkbox
                           color="primary"
                           checked={product.featured_product}
-                          onChange={e =>
+                          onChange={(e) =>
                             setProduct({
                               ...product,
-                              featured_product: e.target.checked
+                              featured_product: e.target.checked,
                             })
                           }
                         />
@@ -1129,11 +1142,11 @@ const EditProduct = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     products: state.products,
     taxState: state.taxs,
-    shippingState: state.shippings
+    shippingState: state.shippings,
   };
 };
 
@@ -1142,7 +1155,7 @@ const mapDispatchToProps = {
   categoriesAction,
   shippingAction,
   taxAction,
-  productsAction
+  productsAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProduct);

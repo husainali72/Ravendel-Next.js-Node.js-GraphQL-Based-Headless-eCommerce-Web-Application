@@ -107,3 +107,15 @@ export const login = (email, password) => {
     return res;
   });
 };
+
+export const getUpdatedUrl = (table, url) => {
+  return service({
+    method: "POST",
+    url: "/api/misc/checkurl",
+    data: { url: url, table: table },
+  }).then((res) => {
+    if (res.data.success) {
+      return Promise.resolve(res.data.url);
+    }
+  });
+};
