@@ -26,6 +26,7 @@ const ProductCard = (props) => {
     } else {
       if (singleProduct.id === props.productDetail.id) {
         props.productDetail.cart = true;
+        props.productDetail.cartQty = 1;
       }
       props.dispatch({
         type: "ADD_VALUE",

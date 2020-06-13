@@ -6,19 +6,19 @@ import {
   Container,
   Grid,
   TextField,
-  Button
+  Button,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import OrderDetails from "./orderdetail";
 import BillingForm from "./billingform";
 import PageTitle from "../components/pageTitle";
 
-const Checkout = props => {
-  const Login = e => {
+const Checkout = (props) => {
+  const Login = (e) => {
     e.preventDefault();
   };
 
-  const Billing = e => {
+  const Billing = (e) => {
     e.preventDefault();
     console.log("Hello");
   };
@@ -75,7 +75,11 @@ const Checkout = props => {
                       variant="outlined"
                       size="small"
                     />
-                    <Button variant="contained" color="primary">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className="margin-left-1"
+                    >
                       Apply
                     </Button>
                   </Grid>
@@ -112,8 +116,8 @@ const Checkout = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  cart: state.cart
+const mapStateToProps = (state) => ({
+  cart: state.cart,
 });
 
 export default connect(mapStateToProps)(Checkout);

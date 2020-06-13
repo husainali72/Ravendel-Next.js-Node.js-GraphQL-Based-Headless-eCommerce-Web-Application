@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import {
   Typography,
@@ -15,10 +15,34 @@ import {
   FormLabel,
   FormControlLabel,
   RadioGroup,
-  Radio
+  Radio,
 } from "@material-ui/core";
 
-const OrderDetails = props => {
+const OrderDetails = (props) => {
+  const [subtotal, setSubTotal] = useState(0);
+  const [delievery, setDelievery] = useState(0);
+  const [coupon, setcoupon] = useState(0);
+
+  const cartSubTotal = () => {
+    var subtotalVar = 0;
+    if (props.cart.products && props.cart.products.length) {
+      props.cart.products.map((item) => {
+        if (item.pricing.sellprice) {
+          var sellPrice = item.pricing.sellprice * item.cartQty;
+          subtotalVar = subtotalVar + sellPrice;
+        } else {
+          var totalPrice = item.pricing.price * item.cartQty;
+          subtotalVar = subtotalVar + totalPrice;
+        }
+      });
+    }
+    setSubTotal(subtotalVar);
+  };
+
+  useEffect(() => {
+    cartSubTotal();
+  }, [props.cart.products]);
+
   return (
     <Fragment>
       <Typography variant="h3" className="margin-bottom-2">
@@ -39,10 +63,13 @@ const OrderDetails = props => {
               <TableBody>
                 {props.cart.products.map((product, index) => (
                   <TableRow key={index}>
-                    <TableCell>{product.title}</TableCell>
-                    <TableCell>x1</TableCell>
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell>x{product.cartQty}</TableCell>
                     <TableCell className="text-right">
-                      ${product.price.toFixed(2)}
+                      $
+                      {product.pricing.sellprice
+                        ? product.pricing.sellprice.toFixed(2) * product.cartQty
+                        : product.pricing.price.toFixed(2) * product.cartQty}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -55,25 +82,32 @@ const OrderDetails = props => {
                   <TableCell>
                     <Typography variant="h5">Subtotal</Typography>
                   </TableCell>
-                  <TableCell className="text-right">$4500</TableCell>
+                  <TableCell className="text-right">${subtotal}</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
                     <Typography variant="h5">Shipping</Typography>
                   </TableCell>
-                  <TableCell className="text-right">Flat Rate: $50</TableCell>
+                  <TableCell className="text-right">
+                    {delievery === 0 ? "Free" : "Flat Rate: $" + delievery}
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
                     <Typography variant="h5">Discount</Typography>
                   </TableCell>
-                  <TableCell className="text-right">Coupon: $150</TableCell>
+                  <TableCell className="text-right">
+                    {coupon === 0 ? "$0" : "Coupon: $" + coupon}
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
                     <Typography variant="h5">Total</Typography>
                   </TableCell>
-                  <TableCell className="text-right">$4400</TableCell>
+                  <TableCell className="text-right">
+                    {" "}
+                    ${subtotal + delievery + coupon}
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -122,8 +156,8 @@ const OrderDetails = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  cart: state.cart
+const mapStateToProps = (state) => ({
+  cart: state.cart,
 });
 
 export default connect(mapStateToProps)(OrderDetails);
