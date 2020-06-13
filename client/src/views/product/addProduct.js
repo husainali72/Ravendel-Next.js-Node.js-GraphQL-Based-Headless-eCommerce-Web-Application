@@ -407,7 +407,8 @@ const AddProduct = (props) => {
                           {window.location.origin}/product/
                           {editPremalink === false && product.url}
                           {editPremalink === true && (
-                            <input
+                            <TextField
+                              type="text"
                               id="url"
                               name="url"
                               value={product.url}

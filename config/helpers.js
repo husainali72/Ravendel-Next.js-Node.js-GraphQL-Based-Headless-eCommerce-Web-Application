@@ -49,6 +49,11 @@ const stringTourl = (str) => {
     strict: true,
   });
 
+  if (isEmpty(brandName) || brandName === "-") {
+    brandName = Math.floor(Math.random() * 1000 + 1);
+    brandName = brandName.toString();
+  }
+
   return brandName;
 };
 
@@ -65,6 +70,34 @@ const validateUrl = (url) => {
 };
 
 module.exports.validateUrl = validateUrl;
+
+const updateUrl = async (url, table) => {
+  var url = stringTourl(url);
+  switch (table) {
+    case "Product":
+      var Table = require("../models/Product");
+      break;
+    case "ProductCat":
+      var Table = require("../models/ProductCat");
+      break;
+    case "Blog":
+      var Table = require("../models/Blog");
+      break;
+  }
+
+  var duplicate = true;
+  while (duplicate) {
+    let data = await Table.findOne({ url: url });
+    if (data) {
+      url = validateUrl(url);
+    } else {
+      duplicate = false;
+      return Promise.resolve(url);
+    }
+  }
+};
+
+module.exports.updateUrl = updateUrl;
 
 /*-------------------------------------------------------------------------------------------------------*/
 

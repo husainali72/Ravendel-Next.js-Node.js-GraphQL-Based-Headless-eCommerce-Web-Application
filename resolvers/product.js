@@ -10,6 +10,7 @@ const {
   checkToken,
   stringTourl,
   validateUrl,
+  updateUrl,
 } = require("../config/helpers");
 const validate = require("../validations/product");
 
@@ -336,7 +337,7 @@ module.exports = {
             }
           }
 
-          let url = stringTourl(args.url || args.name);
+          let url = await updateUrl(args.url || args.name, "Product");
 
           const newProduct = new Product({
             name: args.name,
@@ -440,7 +441,7 @@ module.exports = {
 
           product.name = args.name;
           product.categoryId = args.categoryId;
-          product.url = stringTourl(args.url || args.name);
+          product.url = await updateUrl(args.url || args.name, "Product");
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;

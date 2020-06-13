@@ -15,42 +15,23 @@ const {
   checkToken,
   stringTourl,
   validateUrl,
+  updateUrl,
 } = require("../../config/helpers");
 
 // user model
-const User = require("../../models/User");
+/* const User = require("../../models/User");
 const ProductCat = require("../../models/ProductCat");
-const Product = require("../../models/Product");
+const Product = require("../../models/Product"); */
 
 router.post("/checkurl", auth, async (req, res) => {
   try {
-    var url = stringTourl(req.body.url);
-    switch (req.body.table) {
-      case "Product":
-        var Table = require("../../models/Product");
-        break;
-      case "ProductCat":
-        var Table = require("../../models/ProductCat");
-        break;
-      case "Blog":
-        var Table = require("../../models/Blog");
-        break;
-    }
-
-    var duplicate = true;
-    while (duplicate) {
-      let data = await Table.findOne({ url: url });
-      if (data) {
-        url = validateUrl(url);
-      } else {
-        duplicate = false;
-        res.json({
-          success: true,
-          url: url,
-        });
-      }
-    }
+    var url = await updateUrl(req.body.url, req.body.table);
+    res.json({
+      success: true,
+      url: url,
+    });
   } catch (error) {
+    console.log(error);
     res.status(404).json("Something went wrong");
   }
 });
