@@ -1,8 +1,39 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Typography, Box, Grid, Container } from "@material-ui/core";
 import ProductCard from "./productcard";
+import { isEmpty } from "../../utils/helper";
 
-const ProductGrid = props => {
+const ProductGrid = (props) => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    var products = [];
+    var onSaleCount = 0;
+    var productcount = 0;
+    if (!isEmpty(props.allProducts)) {
+      for (var i = 0; i < props.allProducts.length; i++) {
+        if (props.allProducts[i].status === "Publish") {
+          if (props.onSale) {
+            if (props.allProducts[i].pricing.sellprice > 0) {
+              products.push(props.allProducts[i]);
+              onSaleCount++;
+              if (onSaleCount > 7) {
+                break;
+              }
+            }
+          } else {
+            products.push(props.allProducts[i]);
+            productcount++;
+            if (productcount > 7) {
+              break;
+            }
+          }
+        }
+      }
+      setProducts(products);
+    }
+  }, [props.allProducts]);
+
   return (
     <Fragment>
       <section className="home-product-listing">
@@ -15,19 +46,17 @@ const ProductGrid = props => {
             </Box>
           )}
           <Grid container spacing={5}>
-            {props.allProducts &&
-              props.allProducts.map((product, index) => (
+            {products &&
+              products.map((product, index) => (
                 <Fragment key={index}>
-                  {product.status === "Publish" && (
-                    <Grid item lg={3} md={6} sm={6}>
-                      <ProductCard
-                        productDetail={product}
-                        index={index}
-                        key={index}
-                        GirdProductView={true}
-                      />
-                    </Grid>
-                  )}
+                  <Grid item lg={3} md={6} sm={6}>
+                    <ProductCard
+                      productDetail={product}
+                      index={index}
+                      key={index}
+                      GirdProductView={true}
+                    />
+                  </Grid>
                 </Fragment>
               ))}
           </Grid>

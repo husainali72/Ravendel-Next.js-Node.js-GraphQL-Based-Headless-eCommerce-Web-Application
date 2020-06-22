@@ -90,6 +90,7 @@ const Home = (props) => {
           <ProductSlider
             allProducts={props.products.products}
             title="Featured Products"
+            featuredProducts={true}
           />
           <img
             src="https://www.hbwebsol.com/wp-content/uploads/2020/06/section.jpg"
@@ -125,6 +126,7 @@ const Home = (props) => {
           <ProductGrid
             allProducts={props.products.products}
             title="On Sale Products"
+            onSale={true}
           />
           <img
             src="https://www.hbwebsol.com/wp-content/uploads/2020/06/section2.jpg"

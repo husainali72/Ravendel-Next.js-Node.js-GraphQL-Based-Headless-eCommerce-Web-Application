@@ -4,7 +4,7 @@ import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import ProductCard from "./productcard";
 
-const RelatedProducts = props => {
+const RelatedProducts = (props) => {
   const settings = {
     infinite: true,
     slidesToShow: 4,
@@ -18,24 +18,24 @@ const RelatedProducts = props => {
         breakpoint: 1025,
         settings: {
           slidesToShow: 3,
-          slidesToScroll: 1
-        }
+          slidesToScroll: 1,
+        },
       },
       {
         breakpoint: 992,
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 1
-        }
+          slidesToScroll: 1,
+        },
       },
       {
         breakpoint: 600,
         settings: {
           slidesToShow: 1,
-          slidesToScroll: 1
-        }
-      }
-    ]
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
 
   return (
@@ -49,13 +49,16 @@ const RelatedProducts = props => {
           </Box>
           <Slider {...settings}>
             {props.relatedProduct &&
-              props.relatedProduct.map((product, index) => (
-                <ProductCard
-                  productDetail={product}
-                  index={index}
-                  key={index}
-                />
-              ))}
+              props.relatedProduct.map(
+                (product, index) =>
+                  product.status === "Publish" && (
+                    <ProductCard
+                      productDetail={product}
+                      index={index}
+                      key={index}
+                    />
+                  )
+              )}
           </Slider>
         </Container>
       </section>

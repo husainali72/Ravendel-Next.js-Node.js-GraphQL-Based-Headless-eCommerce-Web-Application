@@ -1,8 +1,9 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Typography, Box, Container } from "@material-ui/core";
 import Slider from "react-slick";
 import ProductCard from "./productcard";
 import SectionLoading from "./sectionLoading";
+import { isEmpty } from "../../utils/helper";
 
 const ProductSlider = (props) => {
   const settings = {
@@ -38,6 +39,26 @@ const ProductSlider = (props) => {
     ],
   };
 
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    var products = [];
+    if (!isEmpty(props.allProducts)) {
+      props.allProducts.map((product) => {
+        if (product.status === "Publish") {
+          if (props.featuredProducts) {
+            if (product.featured_product) {
+              products.push(product);
+            }
+          } else {
+            products.push(product);
+          }
+        }
+      });
+      setProducts(products);
+    }
+  }, [props.allProducts]);
+
   return (
     <Fragment>
       <section className="home-product-listing with-slider">
@@ -51,14 +72,16 @@ const ProductSlider = (props) => {
               </Typography>
             </Box>
             <Slider {...settings}>
-              {props.allProducts &&
-                props.allProducts.map((product, index) => (
-                  <ProductCard
-                    productDetail={product}
-                    index={index}
-                    key={index}
-                  />
-                ))}
+              {products &&
+                products
+                  .sort((a, b) => (a.date > b.date ? 1 : -1))
+                  .map((product, index) => (
+                    <ProductCard
+                      productDetail={product}
+                      index={index}
+                      key={index}
+                    />
+                  ))}
             </Slider>
           </Container>
         )}
