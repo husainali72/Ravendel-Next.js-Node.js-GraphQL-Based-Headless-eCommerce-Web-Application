@@ -22,6 +22,7 @@ const OrderDetails = (props) => {
   const [subtotal, setSubTotal] = useState(0);
   const [delievery, setDelievery] = useState(0);
   const [coupon, setcoupon] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState("paypal");
 
   const cartSubTotal = () => {
     var subtotalVar = 0;
@@ -42,6 +43,16 @@ const OrderDetails = (props) => {
   useEffect(() => {
     cartSubTotal();
   }, [props.cart.products]);
+
+  useEffect(() => {
+    var allData = {
+      subtotal: subtotal,
+      paymentMethod: paymentMethod,
+      coupon: coupon,
+      delievery: delievery,
+    };
+    props.getOrderDetails(allData);
+  }, [subtotal, paymentMethod, coupon, delievery]);
 
   return (
     <Fragment>
@@ -120,7 +131,12 @@ const OrderDetails = (props) => {
               <FormLabel component="legend">
                 <Typography variant="h5">Payment Method</Typography>
               </FormLabel>
-              <RadioGroup aria-label="payment-method" name="payment-method">
+              <RadioGroup
+                aria-label="payment-method"
+                name="payment-method"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              >
                 <FormControlLabel
                   value="paypal"
                   control={<Radio color="default" />}

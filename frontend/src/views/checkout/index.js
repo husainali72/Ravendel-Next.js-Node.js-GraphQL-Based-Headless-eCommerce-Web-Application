@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import {
   Typography,
@@ -16,19 +16,26 @@ import PageTitle from "../components/pageTitle";
 import { useForm } from "react-hook-form";
 
 const Checkout = (props) => {
-  const { register, errors, handleSubmit } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const { register, errors, handleSubmit } = useForm({
+    mode: "onChange", // onBlur, onSubmit
+  });
+  const [billingDetails, setBillingDetails] = useState({});
 
   const Login = (e) => {
     e.preventDefault();
   };
 
-  // const Billing = (e) => {
-  //   e.preventDefault();
-  // };
-
   const Billing = (data) => {
-    console.log("data", data);
+    //console.log("data", JSON.stringify(data));
+    console.log("billingDetails", billingDetails);
+  };
+
+  const getBillingData = (val) => {
+    setBillingDetails({ ...billingDetails, ...val });
+  };
+
+  const getOrderDetailsData = (val) => {
+    setBillingDetails({ ...billingDetails, ...val });
   };
 
   return (
@@ -36,33 +43,6 @@ const Checkout = (props) => {
       <PageTitle title="Checkout" />
       {props.cart.products && props.cart.products.length ? (
         <Container>
-          {/* <form onSubmit={handleSubmit(onSubmit)}>
-            <TextField
-              inputRef={register({ required: true, maxLength: 20 })}
-              label="First Name"
-              name="firstName"
-            />
-            {errors.firstName?.type === "required" && "First Name is required"}
-            {errors.firstName?.type === "maxLength" &&
-              "First Name exceed maxLength"}
-            <TextField
-              inputRef={register({ required: true })}
-              label="Last Name"
-              name="lastName"
-            />
-            {errors.lastName && "Last name is required"}
-            <TextField
-              inputRef={register({ required: true, min: 18, max: 99 })}
-              label="Age"
-              name="age"
-              type="number"
-            />
-            {errors.age?.type === "required" && "age is required"}
-            {errors.age?.type === "max" && "age max 99"}
-            {errors.age?.type === "min" && "age min 18"}
-            <input type="submit" />
-          </form> */}
-
           <Box className="checkout-wrapper" component="div">
             <Grid container>
               <Grid item md={12} className="login-section">
@@ -119,10 +99,14 @@ const Checkout = (props) => {
                     </Button>
                   </Grid>
                   <Grid item md={7} sm={12} xs={12}>
-                    <BillingForm registerRef={register} errorRef={errors} />
+                    <BillingForm
+                      registerRef={register}
+                      errorRef={errors}
+                      getBillingInfo={getBillingData}
+                    />
                   </Grid>
                   <Grid item md={5} sm={12} xs={12}>
-                    <OrderDetails />
+                    <OrderDetails getOrderDetails={getOrderDetailsData} />
                   </Grid>
                 </Grid>
               </form>
