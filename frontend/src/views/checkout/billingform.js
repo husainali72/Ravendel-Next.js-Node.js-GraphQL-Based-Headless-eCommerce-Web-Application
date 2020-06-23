@@ -14,17 +14,17 @@ import {
 } from "@material-ui/core";
 
 var billingInfoObject = {
-  order_notes: "No",
-  poscode: "452001",
-  state: "State",
-  city: "City",
-  address_line_2: "Address Line Two",
-  address_line_1: "Address Line First",
-  phone: "1234567980",
-  company: "Company Name",
-  email: "email@ymail.com",
-  lastname: "Last Name",
-  firstname: "First Name",
+  order_notes: "",
+  poscode: "",
+  state: "",
+  city: "",
+  address_line_2: "",
+  address_line_1: "",
+  phone: "",
+  company: "",
+  email: "",
+  lastname: "",
+  firstname: "",
   country: "",
 };
 
