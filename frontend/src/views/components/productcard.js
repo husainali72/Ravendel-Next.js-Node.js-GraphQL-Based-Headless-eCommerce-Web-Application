@@ -139,9 +139,37 @@ const ProductCard = (props) => {
           </span>
 
           {props.productDetail.pricing.sellprice ? (
-            <span className="sale-price">
-              ${props.productDetail.pricing.sellprice.toFixed(2)}
-            </span>
+            <Fragment>
+              <span className="sale-price">
+                ${props.productDetail.pricing.sellprice.toFixed(2)}
+              </span>
+              {/* <span className="save-price">
+                Save: $
+                {(
+                  props.productDetail.pricing.price -
+                  props.productDetail.pricing.sellprice
+                ).toFixed(2)}
+                <span className="percantage-save">
+                  (
+                  {Math.round(
+                    (100 / props.productDetail.pricing.price) *
+                      (props.productDetail.pricing.price -
+                        props.productDetail.pricing.sellprice)
+                  )}
+                  %)
+                </span>
+              </span> */}
+              <span className="save-price">
+                <span className="percantage-save">
+                  {Math.round(
+                    (100 / props.productDetail.pricing.price) *
+                      (props.productDetail.pricing.price -
+                        props.productDetail.pricing.sellprice)
+                  )}
+                  % off
+                </span>
+              </span>
+            </Fragment>
           ) : null}
         </p>
         <p>

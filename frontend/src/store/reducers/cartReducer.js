@@ -29,6 +29,15 @@ export default (state = initialState, action) => {
         ...state,
         products: action.payload,
       };
+
+    case "REMOVE_ALL_VALUE":
+      if (localStorage.getItem("cartProducts")) {
+        localStorage.removeItem("cartProducts");
+      }
+      return {
+        ...state,
+        products: action.payload,
+      };
     default: {
       return state;
     }

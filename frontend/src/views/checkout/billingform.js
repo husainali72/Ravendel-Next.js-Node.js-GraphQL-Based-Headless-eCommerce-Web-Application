@@ -6,27 +6,25 @@ import {
   TextField,
   Grid,
   FormControl,
-  Select,
-  MenuItem,
-  InputLabel,
   FormControlLabel,
   Checkbox,
   Collapse,
   FormHelperText,
+  NativeSelect,
 } from "@material-ui/core";
 
 var billingInfoObject = {
-  orer_notes: "",
-  poscode: "",
-  state: "",
-  city: "",
-  address_line_2: "",
-  address_line_1: "",
-  phone: "",
-  company: "",
-  email: "",
-  lastname: "",
-  firstname: "",
+  order_notes: "No",
+  poscode: "452001",
+  state: "State",
+  city: "City",
+  address_line_2: "Address Line Two",
+  address_line_1: "Address Line First",
+  phone: "1234567980",
+  company: "Company Name",
+  email: "email@ymail.com",
+  lastname: "Last Name",
+  firstname: "First Name",
   country: "",
 };
 
@@ -41,6 +39,7 @@ var shippingObject = {
   shippingemail: "",
   shippinglastname: "",
   shippingfirstname: "",
+  shippingcountry: "",
 };
 
 var savedShippingInfo;
@@ -48,14 +47,8 @@ var savedShippingInfo;
 const BillingForm = (props) => {
   const [billingInfo, setBillingInfo] = useState(billingInfoObject);
   const [shippingInfo, setShippingInfo] = useState(shippingObject);
-  const inputLabel = React.useRef(null);
-  const [labelWidth, setLabelWidth] = useState(0);
   const [createAccount, setCreateAccount] = useState(false);
   const [shippingAdd, setShippingAdd] = useState(false);
-
-  useEffect(() => {
-    setLabelWidth(inputLabel.current.offsetWidth);
-  }, []);
 
   useEffect(() => {
     var allData = {
@@ -414,27 +407,23 @@ const BillingForm = (props) => {
         <Grid item md={12} sm={12} xs={12}>
           <FormControl
             variant="outlined"
-            className="billing-textfield"
+            className="billing-textfield outlined-select-option margin-top-1 margin-bottom-1"
             size="small"
             error={props.errorRef.country ? true : false}
           >
-            <InputLabel ref={inputLabel} id="country-label">
-              Country
-            </InputLabel>
-            <Select
-              labelId="country-label"
-              labelWidth={labelWidth}
-              name="country"
-              inputRef={props.registerRef({ required: true })}
+            <NativeSelect
               value={billingInfo.country}
               onChange={billingInfoChange}
+              inputProps={{
+                name: "country",
+                id: "country-label",
+              }}
+              inputRef={props.registerRef({ required: true })}
             >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value="US">United State</MenuItem>
-              <MenuItem value="IN">India</MenuItem>
-            </Select>
+              <option value="">Select Country</option>
+              <option value="in">India</option>
+              <option value="usa">USA</option>
+            </NativeSelect>
             <FormHelperText>
               {props.errorRef.country && "Country is required"}
             </FormHelperText>
@@ -464,8 +453,8 @@ const BillingForm = (props) => {
         <Grid item md={12} sm={12} xs={12}>
           <TextField
             label="Orders Notes"
-            value={billingInfo.orer_notes}
-            name="orer_notes"
+            value={billingInfo.order_notes}
+            name="order_notes"
             onChange={billingInfoChange}
             variant="outlined"
             size="small"
@@ -505,121 +494,129 @@ const BillingForm = (props) => {
           label="Ship to a diffrent address?"
         />
         <Collapse in={shippingAdd}>
-          <Grid container spacing={2} className="margin-top-2 margin-bottom-3">
-            <Grid item lg={6} md={12} sm={12} xs={12}>
-              {checkoutInputs(
-                "text",
-                "First Name",
-                "shippingfirstname",
-                shippingInfo.shippingfirstname,
-                "shipping"
-              )}
-            </Grid>
-            <Grid item lg={6} md={12} sm={12} xs={12}>
-              {checkoutInputs(
-                "text",
-                "Last Name",
-                "shippinglastname",
-                shippingInfo.shippinglastname,
-                "shipping"
-              )}
-            </Grid>
-            <Grid item lg={6} md={12} sm={12} xs={12}>
-              {checkoutInputs(
-                "email",
-                "Email",
-                "shippingemail",
-                shippingInfo.shippingemail,
-                "shipping"
-              )}
-            </Grid>
-            <Grid item lg={6} md={12} sm={12} xs={12}>
-              {checkoutInputs(
-                "tel",
-                "Phone",
-                "shippingphone",
-                shippingInfo.shippingphone,
-                "shipping"
-              )}
-            </Grid>
-            <Grid item md={12} sm={12} xs={12}>
-              {checkoutInputs(
-                "text",
-                "company Name",
-                "shippingcompany",
-                shippingInfo.shippingcompany,
-                "shipping"
-              )}
-            </Grid>
-            <Grid item md={12} sm={12} xs={12}>
-              {checkoutInputs(
-                "text",
-                "Address Line 1",
-                "shippingaddress_line_1",
-                shippingInfo.shippingaddress_line_1,
-                "shipping"
-              )}
-            </Grid>
-            <Grid item md={12} sm={12} xs={12}>
-              {checkoutInputs(
-                "text",
-                "Address Line 2",
-                "shippingaddress_line_2",
-                shippingInfo.shippingaddress_line_2,
-                "shipping"
-              )}
-            </Grid>
-            <Grid item md={12} sm={12} xs={12}>
-              <FormControl
-                variant="outlined"
-                className="billing-textfield"
-                size="small"
-              >
-                <InputLabel ref={inputLabel} id="country-label">
-                  Country
-                </InputLabel>
-                <Select
-                  labelId="country-label"
-                  id="country-select"
-                  labelWidth={labelWidth}
-                  name="shippingCompany"
+          {shippingAdd && (
+            <Grid
+              container
+              spacing={2}
+              className="margin-top-2 margin-bottom-3"
+            >
+              <Grid item lg={6} md={12} sm={12} xs={12}>
+                {checkoutInputs(
+                  "text",
+                  "First Name",
+                  "shippingfirstname",
+                  shippingInfo.shippingfirstname,
+                  "shipping"
+                )}
+              </Grid>
+              <Grid item lg={6} md={12} sm={12} xs={12}>
+                {checkoutInputs(
+                  "text",
+                  "Last Name",
+                  "shippinglastname",
+                  shippingInfo.shippinglastname,
+                  "shipping"
+                )}
+              </Grid>
+              <Grid item lg={6} md={12} sm={12} xs={12}>
+                {checkoutInputs(
+                  "email",
+                  "Email",
+                  "shippingemail",
+                  shippingInfo.shippingemail,
+                  "shipping"
+                )}
+              </Grid>
+              <Grid item lg={6} md={12} sm={12} xs={12}>
+                {checkoutInputs(
+                  "tel",
+                  "Phone",
+                  "shippingphone",
+                  shippingInfo.shippingphone,
+                  "shipping"
+                )}
+              </Grid>
+              <Grid item md={12} sm={12} xs={12}>
+                {checkoutInputs(
+                  "text",
+                  "company Name",
+                  "shippingcompany",
+                  shippingInfo.shippingcompany,
+                  "shipping"
+                )}
+              </Grid>
+              <Grid item md={12} sm={12} xs={12}>
+                {checkoutInputs(
+                  "text",
+                  "Address Line 1",
+                  "shippingaddress_line_1",
+                  shippingInfo.shippingaddress_line_1,
+                  "shipping"
+                )}
+              </Grid>
+              <Grid item md={12} sm={12} xs={12}>
+                {checkoutInputs(
+                  "text",
+                  "Address Line 2",
+                  "shippingaddress_line_2",
+                  shippingInfo.shippingaddress_line_2,
+                  "shipping"
+                )}
+              </Grid>
+              <Grid item md={12} sm={12} xs={12}>
+                <FormControl
+                  variant="outlined"
+                  className="billing-textfield outlined-select-option margin-top-1 margin-bottom-1"
+                  size="small"
+                  error={props.errorRef.shippingcountry ? true : false}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="US">United State</MenuItem>
-                  <MenuItem value="IN">India</MenuItem>
-                </Select>
-              </FormControl>
+                  <NativeSelect
+                    value={shippingInfo.shippingcountry}
+                    onChange={shippingInfoChange}
+                    inputProps={{
+                      name: "shippingcountry",
+                      id: "country-label",
+                    }}
+                    inputRef={props.registerRef({ required: true })}
+                  >
+                    <option value="">Select Country</option>
+                    <option value="in">India</option>
+                    <option value="usa">USA</option>
+                  </NativeSelect>
+                  <FormHelperText>
+                    {props.errorRef.shippingcountry && "Country is required"}
+                  </FormHelperText>
+                </FormControl>
+              </Grid>
+              <Grid item md={4} sm={12} xs={12}>
+                {checkoutInputs(
+                  "text",
+                  "City",
+                  "shippingcity",
+                  shippingInfo.shippingcity,
+                  "shipping"
+                )}
+              </Grid>
+              <Grid item md={4} sm={12} xs={12}>
+                {checkoutInputs(
+                  "text",
+                  "State",
+                  "shippingstate",
+                  shippingInfo.shippingstate,
+                  "shipping"
+                )}
+              </Grid>
+              <Grid item md={4} sm={12} xs={12}>
+                {checkoutInputs(
+                  "number",
+                  "Poscode",
+                  "shippingposcode",
+                  shippingInfo.shippingposcode,
+                  "shipping"
+                )}
+              </Grid>
             </Grid>
-            <Grid item md={4} sm={12} xs={12}>
-              {checkoutInputs(
-                "text",
-                "City",
-                "shippingcity",
-                shippingInfo.shippingcity,
-                "shipping"
-              )}
-            </Grid>
-            <Grid item md={4} sm={12} xs={12}>
-              {checkoutInputs(
-                "text",
-                "State",
-                "shippingstate",
-                shippingInfo.shippingstate,
-                "shipping"
-              )}
-            </Grid>
-            <Grid item md={4} sm={12} xs={12}>
-              {checkoutInputs(
-                "number",
-                "Poscode",
-                "shippingposcode",
-                shippingInfo.shippingposcode,
-                "shipping"
-              )}
-            </Grid>
-          </Grid>
+          )}
         </Collapse>
       </Box>
     </Fragment>

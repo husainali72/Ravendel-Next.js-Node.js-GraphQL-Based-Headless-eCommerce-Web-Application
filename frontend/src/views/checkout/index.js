@@ -7,17 +7,17 @@ import {
   Grid,
   TextField,
   Button,
-  Input,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import OrderDetails from "./orderdetail";
 import BillingForm from "./billingform";
 import PageTitle from "../components/pageTitle";
 import { useForm } from "react-hook-form";
+import { checkoutDetailsAction } from "../../store/action/checkoutAction";
 
 const Checkout = (props) => {
   const { register, errors, handleSubmit } = useForm({
-    mode: "onChange", // onBlur, onSubmit
+    mode: "onSubmit", // onBlur, onSubmit
   });
   const [billingDetails, setBillingDetails] = useState({});
 
@@ -26,8 +26,9 @@ const Checkout = (props) => {
   };
 
   const Billing = (data) => {
-    //console.log("data", JSON.stringify(data));
-    console.log("billingDetails", billingDetails);
+    // console.log("data", JSON.stringify(data));
+    props.checkoutDetailsAction(billingDetails);
+    props.history.push("/thankyou");
   };
 
   const getBillingData = (val) => {
@@ -139,4 +140,8 @@ const mapStateToProps = (state) => ({
   cart: state.cart,
 });
 
-export default connect(mapStateToProps)(Checkout);
+const mapDispatchToProps = {
+  checkoutDetailsAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Checkout);

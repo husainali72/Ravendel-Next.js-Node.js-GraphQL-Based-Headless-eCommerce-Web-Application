@@ -47,12 +47,15 @@ const OrderDetails = (props) => {
   useEffect(() => {
     var allData = {
       subtotal: subtotal,
+      total: subtotal + delievery + coupon,
       paymentMethod: paymentMethod,
       coupon: coupon,
       delievery: delievery,
+      products: props.cart.products,
+      checkoutDate: new Date(),
     };
     props.getOrderDetails(allData);
-  }, [subtotal, paymentMethod, coupon, delievery]);
+  }, [subtotal, paymentMethod, coupon, delievery, props.cart.products]);
 
   return (
     <Fragment>

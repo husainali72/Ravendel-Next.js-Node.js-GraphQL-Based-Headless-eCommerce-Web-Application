@@ -6,6 +6,7 @@ import cart from "./cartReducer";
 import products from "./productReducers";
 import blogs from "./blogReducer";
 import homepage from "./homepageReducer";
+import checkoutDetail from "./checkoutReducer";
 
 // Combine Reducers
 const MasterReducer = combineReducers({
@@ -15,6 +16,7 @@ const MasterReducer = combineReducers({
   products,
   blogs,
   homepage,
+  checkoutDetail,
 });
 
 export default MasterReducer;
