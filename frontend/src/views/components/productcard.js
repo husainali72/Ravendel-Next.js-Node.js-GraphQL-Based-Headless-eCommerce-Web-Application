@@ -130,6 +130,13 @@ const ProductCard = (props) => {
         </Link>
 
         <p className="product-price">
+          {props.productDetail.pricing.sellprice ? (
+            <span className="sale-price">
+              ${props.productDetail.pricing.sellprice.toFixed(2)}
+            </span>
+          ) : (
+            ""
+          )}
           <span
             className={
               props.productDetail.pricing.sellprice ? "has-sale-price" : ""
@@ -140,9 +147,6 @@ const ProductCard = (props) => {
 
           {props.productDetail.pricing.sellprice ? (
             <Fragment>
-              <span className="sale-price">
-                ${props.productDetail.pricing.sellprice.toFixed(2)}
-              </span>
               {/* <span className="save-price">
                 Save: $
                 {(

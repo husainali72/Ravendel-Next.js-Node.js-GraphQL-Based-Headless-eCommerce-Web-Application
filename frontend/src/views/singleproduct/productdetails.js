@@ -9,12 +9,33 @@ import {
   MenuItem,
   TextField,
   Icon,
+  Paper,
+  Tabs,
+  Tab,
+  TableContainer,
+  TableHead,
+  TableBody,
+  TableRow,
+  Table,
+  TableCell,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 
 const ProductDetail = (props) => {
   const [product, setProduct] = useState(null);
   const [qty, setQty] = useState(1);
+  const [value, setValue] = useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      "aria-controls": `simple-tabpanel-${index}`,
+    };
+  }
 
   useEffect(() => {
     setProduct(props.details);
@@ -46,6 +67,26 @@ const ProductDetail = (props) => {
   const handlechange = (e) => {
     setQty(e.target.value);
   };
+
+  function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box p={3}>
+            <Typography>{children}</Typography>
+          </Box>
+        )}
+      </div>
+    );
+  }
 
   return (
     <Fragment>
@@ -113,7 +154,7 @@ const ProductDetail = (props) => {
               <hr />
             </div>
 
-            {/* ==========Product Short Desciprtion ===========*/}
+            {/* ==========Product SKU ===========*/}
             {product.sku && (
               <Typography
                 variant="body1"
@@ -133,32 +174,6 @@ const ProductDetail = (props) => {
                 Short Description Coming Soon
               </Typography>
             )}
-
-            <Box component="div" className="qty-wrapper">
-              <Typography variant="body1" className="qty-label">
-                Qty
-              </Typography>
-              <Box
-                component="div"
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                className="qtyIncDecbtn"
-              >
-                <Button onClick={() => setQty(qty - 1)} size="small">
-                  <Icon>remove</Icon>
-                </Button>
-                <TextField
-                  value={qty}
-                  size="small"
-                  onChange={handlechange}
-                  type="number"
-                />
-                <Button onClick={() => setQty(qty + 1)} size="small">
-                  <Icon>add</Icon>
-                </Button>
-              </Box>
-            </Box>
 
             {/* ==========Product Attributes ===========*/}
             {product.attributed && (
@@ -197,16 +212,105 @@ const ProductDetail = (props) => {
               </Box>
             )}
 
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => addToCart(product)}
-              className="margin-top-2"
-              disabled={product.quantity < 1 ? true : false}
-              size="large"
-            >
-              {product.cart ? "Added" : "Add To Cart"}
-            </Button>
+            <Box component="div">
+              <Box component="div" className="qty-wrapper">
+                <Typography variant="body1" className="qty-label">
+                  Qty
+                </Typography>
+                <Box
+                  component="div"
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  className="qtyIncDecbtn"
+                >
+                  <Button onClick={() => setQty(qty - 1)} size="small">
+                    <Icon>remove</Icon>
+                  </Button>
+                  <TextField
+                    value={qty}
+                    size="small"
+                    onChange={handlechange}
+                    type="number"
+                  />
+                  <Button onClick={() => setQty(qty + 1)} size="small">
+                    <Icon>add</Icon>
+                  </Button>
+                </Box>
+              </Box>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => addToCart(product)}
+                className="margin-top-2"
+                disabled={product.quantity < 1 ? true : false}
+                size="large"
+              >
+                {product.cart ? "Added" : "Add To Cart"}
+              </Button>
+            </Box>
+
+            {/* {props.details.custom_field || props.details.description ? (
+              <Fragment>
+                <Paper square>
+                  <Tabs
+                    value={value}
+                    onChange={handleTabChange}
+                    aria-label="ADDITIONAL-INFORMATION"
+                    indicatorColor="primary"
+                    textColor="primary"
+                    centered
+                  >
+                    {props.details.description && (
+                      <Tab label="Description" {...a11yProps(0)} />
+                    )}
+
+                    {props.details.custom_field && (
+                      <Tab label="Additional Information" {...a11yProps(1)} />
+                    )}
+                  </Tabs>
+                </Paper>
+
+                {props.details.description && (
+                  <TabPanel value={value} index={0}>
+                    {props.details.description}
+                  </TabPanel>
+                )}
+
+                <TabPanel value={value} index={1}>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Name</TableCell>
+                          <TableCell>Value</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {props.details.custom_field.map((field, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <Typography variant="h5">{field.key}</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography
+                                variant="subtitle1"
+                                component="h4"
+                                className="text-capitalize"
+                              >
+                                {field.value}
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </TabPanel>
+              </Fragment>
+            ) : (
+              ""
+            )} */}
           </Box>
         </Box>
       )}

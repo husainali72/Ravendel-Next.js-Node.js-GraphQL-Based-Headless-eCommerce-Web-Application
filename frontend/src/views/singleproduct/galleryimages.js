@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import Slider from "react-slick";
 import PlaceHolder from "../../assets/images/product-placeholder.jpg";
+import { GlassMagnifier } from "react-image-magnifiers";
 
 const GalleryImagesComponents = (props) => {
   const settings = {
@@ -30,10 +31,19 @@ const GalleryImagesComponents = (props) => {
           <Slider {...settings}>
             {props.galleryImages.map((gallery, index) => (
               <div key={index}>
-                <img
+                {/* <img
                   src={gallery.large}
                   alt="gallery"
                   className="gallery-image"
+                /> */}
+                <GlassMagnifier
+                  imageSrc={gallery.large}
+                  imageAlt="Example"
+                  largeImageSrc={gallery.large} // Optional
+                  className="gallery-image"
+                  magnifierSize="30%"
+                  magnifierBorderSize={5}
+                  magnifierBorderColor="rgba(0, 0, 0, .5)"
                 />
               </div>
             ))}
