@@ -25,6 +25,7 @@ import clsx from "clsx";
 import Loading from "../utils/loading";
 import viewStyles from "../viewStyles";
 import { isEmpty } from "../../utils/helper";
+import service, { getUpdatedUrl } from "../../utils/service";
 //import Autocomplete from "@material-ui/lab/Autocomplete";
 import Select from "react-select";
 
@@ -44,6 +45,7 @@ const StyledRadio = (props) => {
 var defaultObj = {
   status: "Publish",
   blog_tag: [],
+  url: "",
   meta: {
     title: "",
     description: "",
@@ -57,6 +59,7 @@ const AddBlog = (props) => {
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState([]);
   const [clearTags, setclearTags] = useState([]);
+  const [editPremalink, setEditPermalink] = useState(false);
 
   useEffect(() => {
     props.blogtagsAction();
@@ -117,6 +120,21 @@ const AddBlog = (props) => {
     setBlog({ ...blog, [e.target.name]: e.target.files[0] });
   };
 
+  const changePermalink = () => {
+    if (editPremalink) {
+      isUrlExist(blog.url);
+    }
+    setEditPermalink(!editPremalink);
+  };
+
+  const isUrlExist = async (url) => {
+    let updatedUrl = await getUpdatedUrl("Blog", url);
+    setBlog({
+      ...blog,
+      url: updatedUrl,
+    });
+  };
+
   return (
     <Fragment>
       {props.blogState.loading && <Loading />}
@@ -162,10 +180,38 @@ const AddBlog = (props) => {
                       label="Title"
                       name="title"
                       onChange={handleChange}
+                      onBlur={(e) => isUrlExist(blog.title)}
                       variant="outlined"
                       className={clsx(classes.marginBottom, classes.width100)}
                     />
                   </Grid>
+                </Grid>
+                <Grid item md={12}>
+                  {blog.url ? (
+                    <span style={{ marginBottom: 10, display: "block" }}>
+                      <strong>Link: </strong>
+                      {window.location.origin}/blog/
+                      {editPremalink === false && blog.url}
+                      {editPremalink === true && (
+                        <input
+                          id="url"
+                          name="url"
+                          value={blog.url}
+                          onChange={handleChange}
+                          variant="outlined"
+                          className={classes.editpermalinkInput}
+                        />
+                      )}
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={changePermalink}
+                        className={classes.editpermalinkInputBtn}
+                      >
+                        {editPremalink ? "Ok" : "Edit"}
+                      </Button>
+                    </span>
+                  ) : null}
                 </Grid>
 
                 <Grid container>

@@ -19,7 +19,7 @@ import {
   Select,
   Tooltip,
   Box,
-  TablePagination
+  TablePagination,
 } from "@material-ui/core";
 import Loading from "../../utils/loading";
 import clsx from "clsx";
@@ -29,9 +29,10 @@ import {
   categoriesAction,
   categoryDeleteAction,
   categoryUpdateAction,
-  categoryAddAction
+  categoryAddAction,
 } from "../../../store/action/";
 import { isEmpty } from "../../../utils/helper";
+import service, { getUpdatedUrl } from "../../../utils/service";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import convertDefault from "../../utils/convertDate";
@@ -44,10 +45,10 @@ var categoryObject = {
   meta: {
     title: "",
     description: "",
-    keywords: ""
-  }
+    keywords: "",
+  },
 };
-const AllCategory = props => {
+const AllCategory = (props) => {
   const classes = viewStyles();
   const [categories, setCategories] = useState([]);
   const [singlecategory, setSingleCategory] = useState(categoryObject);
@@ -55,12 +56,13 @@ const AllCategory = props => {
   const [featuredImage, setfeaturedImage] = useState(null);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [editPremalink, setEditPermalink] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
@@ -76,7 +78,7 @@ const AllCategory = props => {
     cancelCat();
   }, [props.products.categories]);
 
-  const editCategory = cat => {
+  const editCategory = (cat) => {
     setEditmode(true);
     setfeaturedImage(null);
     if (cat.image && cat.image.original) {
@@ -85,7 +87,7 @@ const AllCategory = props => {
     setSingleCategory({ ...singlecategory, ...cat });
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     if (e.target.name === "parentId" && !e.target.value) {
       setSingleCategory({ ...singlecategory, [e.target.name]: null });
       return;
@@ -110,12 +112,27 @@ const AllCategory = props => {
     setSingleCategory(categoryObject);
   };
 
-  const fileChange = e => {
+  const fileChange = (e) => {
     setfeaturedImage(null);
     setfeaturedImage(URL.createObjectURL(e.target.files[0]));
     setSingleCategory({
       ...singlecategory,
-      [e.target.name]: e.target.files
+      [e.target.name]: e.target.files,
+    });
+  };
+
+  const changePermalink = () => {
+    if (editPremalink) {
+      isUrlExist(singlecategory.url);
+    }
+    setEditPermalink(!editPremalink);
+  };
+
+  const isUrlExist = async (url) => {
+    let updatedUrl = await getUpdatedUrl("ProductCat", url);
+    setSingleCategory({
+      ...singlecategory,
+      url: updatedUrl,
     });
   };
 
@@ -147,7 +164,7 @@ const AllCategory = props => {
                           page * rowsPerPage,
                           page * rowsPerPage + rowsPerPage
                         )
-                        .map(cat => (
+                        .map((cat) => (
                           <TableRow key={cat.id} hover>
                             <TableCell>{cat.name}</TableCell>
                             <TableCell>{convertDefault(cat.date)}</TableCell>
@@ -206,7 +223,34 @@ const AllCategory = props => {
                   className={clsx(classes.marginBottom, classes.width100)}
                   onChange={handleChange}
                   value={singlecategory.name}
+                  onBlur={(e) => isUrlExist(singlecategory.name)}
                 />
+
+                {singlecategory.url ? (
+                  <span style={{ marginBottom: 10, display: "block" }}>
+                    <strong>Link: </strong>
+                    {window.location.origin}/category/
+                    {editPremalink === false && singlecategory.url}
+                    {editPremalink === true && (
+                      <input
+                        id="url"
+                        name="url"
+                        value={singlecategory.url}
+                        onChange={handleChange}
+                        variant="outlined"
+                        className={classes.editpermalinkInput}
+                      />
+                    )}
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      onClick={changePermalink}
+                      className={classes.editpermalinkInputBtn}
+                    >
+                      {editPremalink ? "Ok" : "Edit"}
+                    </Button>
+                  </span>
+                ) : null}
                 <FormControl
                   variant="outlined"
                   className={clsx(classes.marginBottom, classes.width100)}
@@ -221,12 +265,12 @@ const AllCategory = props => {
                     }
                     onChange={handleChange}
                     inputProps={{
-                      name: "parentId"
+                      name: "parentId",
                     }}
                   >
                     <option value="">---Select---</option>
                     {categories &&
-                      categories.map(cat => (
+                      categories.map((cat) => (
                         <option
                           key={cat.id}
                           value={cat.id}
@@ -241,14 +285,14 @@ const AllCategory = props => {
                       ))}
                   </Select>
                 </FormControl>
-                <TextField
+                {/* <TextField
                   label="Url"
                   name="url"
                   variant="outlined"
                   className={clsx(classes.marginBottom, classes.width100)}
                   onChange={handleChange}
                   value={singlecategory.url}
-                />
+                /> */}
                 <Grid container>
                   <Grid item className={classes.flex1}>
                     {editMode ? (
@@ -307,13 +351,13 @@ const AllCategory = props => {
                   variant="outlined"
                   className={clsx(classes.marginBottom, classes.width100)}
                   value={singlecategory.meta.title}
-                  onChange={e =>
+                  onChange={(e) =>
                     setSingleCategory({
                       ...singlecategory,
                       meta: {
                         ...singlecategory.meta,
-                        title: e.target.value
-                      }
+                        title: e.target.value,
+                      },
                     })
                   }
                 />
@@ -323,13 +367,13 @@ const AllCategory = props => {
                   variant="outlined"
                   className={clsx(classes.marginBottom, classes.width100)}
                   value={singlecategory.meta.keywords}
-                  onChange={e =>
+                  onChange={(e) =>
                     setSingleCategory({
                       ...singlecategory,
                       meta: {
                         ...singlecategory.meta,
-                        keywords: e.target.value
-                      }
+                        keywords: e.target.value,
+                      },
                     })
                   }
                 />
@@ -339,13 +383,13 @@ const AllCategory = props => {
                   variant="outlined"
                   className={clsx(classes.marginBottom, classes.width100)}
                   value={singlecategory.meta.description}
-                  onChange={e =>
+                  onChange={(e) =>
                     setSingleCategory({
                       ...singlecategory,
                       meta: {
                         ...singlecategory.meta,
-                        description: e.target.value
-                      }
+                        description: e.target.value,
+                      },
                     })
                   }
                 />
@@ -376,7 +420,7 @@ const AllCategory = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return { products: state.products };
 };
 
@@ -384,7 +428,7 @@ const mapDispatchToProps = {
   categoriesAction,
   categoryDeleteAction,
   categoryUpdateAction,
-  categoryAddAction
+  categoryAddAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllCategory);

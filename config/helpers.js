@@ -50,8 +50,10 @@ const stringTourl = (str) => {
   });
 
   if (isEmpty(brandName) || brandName === "-") {
-    brandName = Math.floor(Math.random() * 1000 + 1);
-    brandName = brandName.toString();
+    /* brandName = Math.floor(Math.random() * 1000 + 1);
+    brandName = brandName.toString(); */
+    var date = new Date();
+    brandName = date.getTime().toString();
   }
 
   return brandName;

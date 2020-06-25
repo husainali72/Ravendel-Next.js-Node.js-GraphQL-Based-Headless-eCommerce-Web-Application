@@ -195,7 +195,9 @@ const AddProduct = (props) => {
   };
 
   const changePermalink = () => {
-    isUrlExist(product.url);
+    if (editPremalink) {
+      isUrlExist(product.url);
+    }
     setEditPermalink(!editPremalink);
   };
 
@@ -407,8 +409,7 @@ const AddProduct = (props) => {
                           {window.location.origin}/product/
                           {editPremalink === false && product.url}
                           {editPremalink === true && (
-                            <TextField
-                              type="text"
+                            <input
                               id="url"
                               name="url"
                               value={product.url}

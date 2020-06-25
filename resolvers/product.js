@@ -168,17 +168,7 @@ module.exports = {
         if (cat) {
           throw putError("This category is already exist.");
         } else {
-          var url = stringTourl(args.url || args.name);
-          var duplicate = true;
-          while (duplicate) {
-            let cat = await ProductCat.findOne({ url: url });
-            if (cat) {
-              url = validateUrl(url);
-            } else {
-              duplicate = false;
-            }
-          }
-
+          let url = await updateUrl(args.url || args.name, "ProductCat");
           let imgObject = "";
           if (args.image) {
             imgObject = await imageUpload(
@@ -231,17 +221,7 @@ module.exports = {
             cat.image = imgObject.data;
           }
 
-          var url = stringTourl(args.url || args.name);
-          var duplicate = true;
-          while (duplicate) {
-            let cat = await ProductCat.findOne({ url: url });
-            if (cat) {
-              url = validateUrl(url);
-            } else {
-              duplicate = false;
-            }
-          }
-
+          var url = await updateUrl(args.url || args.name, "ProductCat");
           cat.name = args.name;
           cat.parentId = args.parentId || null;
           cat.url = url;
