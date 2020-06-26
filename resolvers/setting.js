@@ -300,7 +300,20 @@ module.exports = {
       checkToken(id);
       try {
         const setting = await Setting.findOne({});
+        let imgObject = "";
+        if (args.new_logo) {
+          imgObject = await imageUpload(
+            args.new_logo[0],
+            "/assets/images/setting/"
+          );
+
+          if (imgObject.success === false) {
+            throw putError(imgObject.message);
+          }
+        }
+
         setting.appearance.theme.primary_color = args.primary_color;
+        setting.appearance.theme.logo = imgObject.data || args.logo;
         return await setting.save();
       } catch (error) {
         error = checkError(error);

@@ -36,6 +36,7 @@ import {
   shippingAction,
   taxAction,
   productsAction,
+  brandsAction,
 } from "../../store/action/";
 import { unflatten } from "../../utils/helper";
 import { getUpdatedUrl } from "../../utils/service";
@@ -43,6 +44,7 @@ import clsx from "clsx";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
 import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTwoTone";
+import ReactSelect from "react-select";
 import { isEmpty } from "../../utils/helper";
 import "../../App.css";
 import _ from "lodash";
@@ -51,6 +53,7 @@ import viewStyles from "../viewStyles";
 var defaultObj = {
   name: "",
   categoryId: [],
+  brand: "",
   sku: "",
   quantity: "",
   status: "Draft",
@@ -96,11 +99,43 @@ const EditProduct = (props) => {
   const [product, setProduct] = useState(defaultObj);
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = React.useState(0);
-  React.useEffect(() => {
+  const [brands, setbrands] = useState({});
+
+  useEffect(() => {
     if (inputLabel.current && inputLabel.current.offsetWidth) {
       setLabelWidth(inputLabel.current.offsetWidth);
     }
+    props.brandsAction();
   }, []);
+
+  useEffect(() => {
+    const brandObj = props.brandState.brands.map((brand) => {
+      return {
+        value: brand.id,
+        label: brand.name,
+      };
+    });
+    setbrands({ ...brands, allBrands: brandObj });
+  }, [props.brandState.brands]);
+
+  useEffect(() => {
+    let defaultBrand = {};
+    for (let i in props.brandState.brands) {
+      if (props.brandState.brands[i].id === product.brand) {
+        defaultBrand = {
+          value: props.brandState.brands[i].id,
+          label: props.brandState.brands[i].name,
+        };
+      }
+    }
+
+    setbrands({ ...brands, defaultBrand: defaultBrand });
+  }, [product]);
+
+  const brandChange = (e) => {
+    console.log(e);
+    setProduct({ ...product, brand: e.value });
+  };
 
   useEffect(() => {
     if (!props.products.products.length) {
@@ -117,6 +152,7 @@ const EditProduct = (props) => {
         if (props.products.products[i].feature_image.original) {
           setfeatureImage(props.products.products[i].feature_image.original);
         }
+
         break;
       }
     }
@@ -1135,6 +1171,21 @@ const EditProduct = (props) => {
                 </CardContent>
               </Card>
             </Box>
+
+            <Box component="span" m={1}>
+              <Card>
+                <CardHeader title="Brands" />
+                <Divider />
+              </Card>
+              <Grid item md={12}>
+                <ReactSelect
+                  name="brand"
+                  defaultValue={brands.defaultBrand}
+                  options={brands.allBrands}
+                  onChange={brandChange}
+                />
+              </Grid>
+            </Box>
           </Grid>
         </Grid>
       </form>
@@ -1147,6 +1198,7 @@ const mapStateToProps = (state) => {
     products: state.products,
     taxState: state.taxs,
     shippingState: state.shippings,
+    brandState: state.brands,
   };
 };
 
@@ -1156,6 +1208,7 @@ const mapDispatchToProps = {
   shippingAction,
   taxAction,
   productsAction,
+  brandsAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProduct);

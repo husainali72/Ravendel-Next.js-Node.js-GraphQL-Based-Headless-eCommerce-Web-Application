@@ -132,6 +132,7 @@ const SETTING_TILE_DATA = gql`
       }
       theme {
         primary_color
+        logo
       }
     }
     createdAt
@@ -406,8 +407,8 @@ const UPDATE_APPEARANCE_HOME = gql`
 `;
 
 const UPDATE_APPEARANCE_THEME = gql`
-  mutation($primary_color: String) {
-    updateAppeanranceTheme(primary_color: $primary_color) {
+  mutation($primary_color: String, $new_logo: Upload) {
+    updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo) {
       ...SettingTile
     }
   }

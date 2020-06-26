@@ -5,119 +5,120 @@ const Schema = mongoose.Schema;
 const ProductSchema = new Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   categoryId: [],
+  brand: Schema.ObjectId,
   sku: {
-    type: String
+    type: String,
   },
   short_description: {
-    type: String
+    type: String,
   },
   description: {
-    type: String
+    type: String,
   },
   shippingDetails: {},
   manufactureDetails: {},
   quantity: {
-    type: Number
+    type: Number,
   },
   pricing: {
     price: {
       type: Number,
-      default: 0
+      default: 0,
     },
     sellprice: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   url: {
-    type: String
+    type: String,
   },
   meta: {
     title: {
-      type: String
+      type: String,
     },
     description: {
-      type: String
+      type: String,
     },
     keywords: {
-      type: String
-    }
+      type: String,
+    },
   },
   feature_image: {},
   gallery_image: [
     {
       original: {
-        type: String
+        type: String,
       },
       large: {
-        type: String
+        type: String,
       },
       medium: {
-        type: String
+        type: String,
       },
       thumbnail: {
-        type: String
-      }
-    }
+        type: String,
+      },
+    },
   ],
   status: {
-    type: String
+    type: String,
   },
   shipping: {
     height: {
       type: Number,
-      default: 0
+      default: 0,
     },
     width: {
       type: Number,
-      default: 0
+      default: 0,
     },
     depth: {
       type: Number,
-      default: 0
+      default: 0,
     },
     weight: {
       type: Number,
-      default: 0
+      default: 0,
     },
     shipping_class: {
-      type: Schema.ObjectId
-    }
+      type: Schema.ObjectId,
+    },
   },
   tax_class: {
-    type: Schema.ObjectId
+    type: Schema.ObjectId,
   },
   featured_product: {
-    type: Boolean
+    type: Boolean,
   },
   product_type: {
     virtual: {
-      type: Boolean
+      type: Boolean,
     },
     downloadable: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   custom_field: [
     {
       key: {
-        type: String
+        type: String,
       },
       value: {
-        type: String
-      }
-    }
+        type: String,
+      },
+    },
   ],
   date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updated: {
-    type: Date
-  }
+    type: Date,
+  },
 });
 
 module.exports = mongoose.model("Product", ProductSchema);

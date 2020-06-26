@@ -13,7 +13,19 @@ const Themes = (props) => {
     ...props.settingState.settings.appearance.theme,
   });
 
+  const fileChange = (e) => {
+    themeSetting.logo.original = URL.createObjectURL(e.target.files[0]);
+
+    themeSetting.new_logo = e.target.files;
+    setThemeSetting({
+      ...themeSetting,
+      new_logo: themeSetting.new_logo,
+    });
+    //console.log(slider);
+  };
+
   const updateTheme = () => {
+    console.log(themeSetting);
     props.appearanceThemeUpdateAction(themeSetting);
   };
 
@@ -35,6 +47,27 @@ const Themes = (props) => {
                 })
               }
             />
+          </Box>
+          <Box className={classes.sliderImagePreviewWrapper}>
+            {themeSetting.logo.original && (
+              <img
+                src={themeSetting.logo.original}
+                className={classes.sliderImagePreview}
+                alt="Featured"
+              />
+            )}
+            <input
+              accept="image/*"
+              className={classes.input}
+              style={{ display: "none" }}
+              id="logo"
+              name="logo"
+              type="file"
+              onChange={(e) => fileChange(e)}
+            />
+            <label htmlFor="logo" className={classes.feautedImage}>
+              {themeSetting.logo.original ? "Change Logo" : "Add Logo"}
+            </label>
           </Box>
         </Grid>
         <Grid item md={12}>

@@ -178,6 +178,7 @@ module.exports = gql`
 
   type APPEARANCE_THEME {
     primary_color: String
+    logo: customObject
   }
 
   input inventory_notification {
@@ -306,6 +307,6 @@ module.exports = gql`
       slider: [slider_input]
       add_section_in_home: add_section_in_home
     ): Setting
-    updateAppeanranceTheme(primary_color: String): Setting
+    updateAppeanranceTheme(primary_color: String, new_logo: Upload): Setting
   }
 `;

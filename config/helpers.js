@@ -85,6 +85,9 @@ const updateUrl = async (url, table) => {
     case "Blog":
       var Table = require("../models/Blog");
       break;
+    case "Brand":
+      var Table = require("../models/Brand");
+      break;
   }
 
   var duplicate = true;

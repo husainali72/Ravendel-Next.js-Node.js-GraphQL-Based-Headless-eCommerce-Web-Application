@@ -95,6 +95,17 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    featureproducts: async (root, args, { id }) => {
+      try {
+        const products = await Product.find({
+          featured_product: true,
+        });
+        return products || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     productsbycatid: async (root, args, { id }) => {
       try {
         const products = await Product.find({
@@ -323,6 +334,7 @@ module.exports = {
             name: args.name,
             url: url,
             categoryId: args.categoryId,
+            brand: args.brand || "",
             short_description: args.short_description,
             description: args.description,
             sku: args.sku,

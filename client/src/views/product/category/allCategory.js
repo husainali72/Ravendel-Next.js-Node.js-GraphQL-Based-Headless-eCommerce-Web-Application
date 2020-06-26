@@ -223,7 +223,9 @@ const AllCategory = (props) => {
                   className={clsx(classes.marginBottom, classes.width100)}
                   onChange={handleChange}
                   value={singlecategory.name}
-                  onBlur={(e) => isUrlExist(singlecategory.name)}
+                  onBlur={(e) =>
+                    !singlecategory.url && isUrlExist(singlecategory.name)
+                  }
                 />
 
                 {singlecategory.url ? (

@@ -180,7 +180,7 @@ const AddBlog = (props) => {
                       label="Title"
                       name="title"
                       onChange={handleChange}
-                      onBlur={(e) => isUrlExist(blog.title)}
+                      onBlur={(e) => !blog.url && isUrlExist(blog.title)}
                       variant="outlined"
                       className={clsx(classes.marginBottom, classes.width100)}
                     />
