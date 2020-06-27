@@ -63,7 +63,7 @@ const Shop = (props) => {
                   .map((product, index) => (
                     <Fragment key={index}>
                       {product.status === "Publish" && (
-                        <Grid item lg={4} md={6} sm={6}>
+                        <Grid item lg={4} md={6} sm={6} xs={6}>
                           <ProductCard
                             productDetail={product}
                             categories={props.products.categories}

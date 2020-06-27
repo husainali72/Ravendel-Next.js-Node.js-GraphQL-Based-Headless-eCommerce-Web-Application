@@ -41,7 +41,7 @@ const BlogListing = (props) => {
                 )
                 .slice(0, 3)
                 .map((blog, index) => (
-                  <Grid item lg={4} md={6} sm={6} key={index}>
+                  <Grid item lg={4} md={6} sm={6} xs={12} key={index}>
                     <Card className="blog-card">
                       <Link to={`blog/${blog.id}`}>
                         <CardActionArea>

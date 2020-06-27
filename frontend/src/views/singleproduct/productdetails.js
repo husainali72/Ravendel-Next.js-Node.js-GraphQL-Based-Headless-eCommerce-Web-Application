@@ -9,33 +9,13 @@ import {
   MenuItem,
   TextField,
   Icon,
-  Paper,
-  Tabs,
-  Tab,
-  TableContainer,
-  TableHead,
-  TableBody,
-  TableRow,
-  Table,
-  TableCell,
 } from "@material-ui/core";
 import { connect } from "react-redux";
+import ProductOtherDetails from "./productotherdetail";
 
 const ProductDetail = (props) => {
   const [product, setProduct] = useState(null);
   const [qty, setQty] = useState(1);
-  const [value, setValue] = useState(0);
-
-  const handleTabChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  function a11yProps(index) {
-    return {
-      id: `simple-tab-${index}`,
-      "aria-controls": `simple-tabpanel-${index}`,
-    };
-  }
 
   useEffect(() => {
     setProduct(props.details);
@@ -54,9 +34,11 @@ const ProductDetail = (props) => {
   };
 
   const addToCart = (singleProduct) => {
+    singleProduct.cartQty = qty;
     if (product.cart) {
       alert("Item already in a Cart ");
     } else {
+      singleProduct.cart = true;
       props.dispatch({
         type: "ADD_VALUE",
         payload: singleProduct,
@@ -67,26 +49,6 @@ const ProductDetail = (props) => {
   const handlechange = (e) => {
     setQty(e.target.value);
   };
-
-  function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box p={3}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    );
-  }
 
   return (
     <Fragment>
@@ -154,16 +116,6 @@ const ProductDetail = (props) => {
               <hr />
             </div>
 
-            {/* ==========Product SKU ===========*/}
-            {product.sku && (
-              <Typography
-                variant="body1"
-                className="product-description margin-bottom-1"
-              >
-                <strong>SKU</strong>: {product.sku}
-              </Typography>
-            )}
-
             {/* ==========Product Short Desciprtion ===========*/}
             {product.short_description ? (
               <Typography variant="body1" className="product-description">
@@ -212,11 +164,9 @@ const ProductDetail = (props) => {
               </Box>
             )}
 
+            {/* =======================================Product Qty and AddtoCart================================= */}
             <Box component="div">
               <Box component="div" className="qty-wrapper">
-                <Typography variant="body1" className="qty-label">
-                  Qty
-                </Typography>
                 <Box
                   component="div"
                   display="flex"
@@ -238,79 +188,39 @@ const ProductDetail = (props) => {
                   </Button>
                 </Box>
               </Box>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => addToCart(product)}
-                className="margin-top-2"
-                disabled={product.quantity < 1 ? true : false}
-                size="large"
-              >
-                {product.cart ? "Added" : "Add To Cart"}
-              </Button>
+              <Box component="div" className="addto-cart-singleproduct">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => addToCart(product)}
+                  className="margin-top-2"
+                  disabled={product.quantity < 1 ? true : false}
+                  size="large"
+                >
+                  {product.cart ? "Added" : "Add To Cart"}
+                </Button>
+              </Box>
             </Box>
 
-            {/* {props.details.custom_field || props.details.description ? (
-              <Fragment>
-                <Paper square>
-                  <Tabs
-                    value={value}
-                    onChange={handleTabChange}
-                    aria-label="ADDITIONAL-INFORMATION"
-                    indicatorColor="primary"
-                    textColor="primary"
-                    centered
-                  >
-                    {props.details.description && (
-                      <Tab label="Description" {...a11yProps(0)} />
-                    )}
+            {/* ==========Product SKU ===========*/}
+            {product.sku && (
+              <Typography
+                variant="body2"
+                className="product-sku margin-bottom-1"
+              >
+                <strong>SKU</strong>: {product.sku}
+              </Typography>
+            )}
 
-                    {props.details.custom_field && (
-                      <Tab label="Additional Information" {...a11yProps(1)} />
-                    )}
-                  </Tabs>
-                </Paper>
-
-                {props.details.description && (
-                  <TabPanel value={value} index={0}>
-                    {props.details.description}
-                  </TabPanel>
-                )}
-
-                <TabPanel value={value} index={1}>
-                  <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Name</TableCell>
-                          <TableCell>Value</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {props.details.custom_field.map((field, index) => (
-                          <TableRow key={index}>
-                            <TableCell>
-                              <Typography variant="h5">{field.key}</Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography
-                                variant="subtitle1"
-                                component="h4"
-                                className="text-capitalize"
-                              >
-                                {field.value}
-                              </Typography>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </TabPanel>
-              </Fragment>
-            ) : (
-              ""
-            )} */}
+            {/* =======================================Product Other Details================================= */}
+            {product && (
+              <ProductOtherDetails
+                details={product}
+                reviews={props.reviews}
+                productId={product.id}
+              />
+            )}
+            {/* =======================================End Product Other Details================================= */}
           </Box>
         </Box>
       )}

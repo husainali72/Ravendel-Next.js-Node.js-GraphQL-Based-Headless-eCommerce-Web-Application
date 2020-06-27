@@ -49,7 +49,7 @@ const ProductGrid = (props) => {
             {products &&
               products.map((product, index) => (
                 <Fragment key={index}>
-                  <Grid item lg={3} md={6} sm={6}>
+                  <Grid item lg={3} md={4} sm={4} xs={6}>
                     <ProductCard
                       productDetail={product}
                       index={index}

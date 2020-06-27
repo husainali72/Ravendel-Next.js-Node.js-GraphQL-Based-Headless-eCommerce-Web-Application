@@ -18,8 +18,6 @@ const ProductCard = (props) => {
     }
   };
 
-  // props.cart.products.some((product) => product.id === singleProduct.id)
-
   const addToCart = (singleProduct) => {
     if (singleProduct.cart) {
       alert("Item is already in a Cart");

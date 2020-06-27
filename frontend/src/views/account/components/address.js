@@ -14,11 +14,11 @@ import {
   Fade,
   FormControlLabel,
   Checkbox,
-  Tooltip
+  Tooltip,
 } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 
-const Address = props => {
+const Address = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
 
@@ -41,13 +41,13 @@ const Address = props => {
     setEditMode(false);
   };
 
-  const editAddress = adress => {
+  const editAddress = (adress) => {
     console.log(adress);
     setEditMode(true);
     setAddMode(false);
   };
 
-  const handleChangeEditAdd = e => {
+  const handleChangeEditAdd = (e) => {
     console.log("e", e.target.name);
   };
 
@@ -60,7 +60,7 @@ const Address = props => {
     setEditMode(false);
   };
 
-  const deleteAddressBook = _id => {
+  const deleteAddressBook = (_id) => {
     console.log("delete");
   };
 
@@ -148,7 +148,7 @@ const Address = props => {
           </Fade>
         </Grid>
 
-        <Grid item md={6}>
+        <Grid item md={6} xs={12}>
           <Card>
             <CardContent>
               <Grid container spacing={2} className="position-relative">

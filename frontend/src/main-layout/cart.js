@@ -161,42 +161,42 @@ const CartSide = (props) => {
           </Box>
 
           <Box className="cart-amount">
-            <Box component="div" p={4} width="100%">
+            <Box component="div" p={3} width="100%">
               <Typography variant="h2" className="cart-amount-title">
                 Summary
               </Typography>
               <Box component="div" className="cart-amount-inner">
                 <Grid container className="cart-row">
-                  <Grid item md={6} sm={6} xs={6}>
+                  <Grid item md={6} sm={12} xs={12}>
                     <Typography variant="h4" className="cart-td-left">
                       Subtotal
                     </Typography>
                   </Grid>
-                  <Grid item md={6} sm={6} xs={6}>
+                  <Grid item md={6} sm={12} xs={12}>
                     <Typography variant="h4" className="cart-td-right">
                       ${subtotal}
                     </Typography>
                   </Grid>
                 </Grid>
                 <Grid container className="cart-row">
-                  <Grid item md={6} sm={6} xs={6}>
+                  <Grid item md={6} sm={12} xs={12}>
                     <Typography variant="h4" className="cart-td-left">
-                      DELIVERY:
+                      DELIVERY
                     </Typography>
                   </Grid>
-                  <Grid item md={6} sm={6} xs={6}>
+                  <Grid item md={6} sm={12} xs={12}>
                     <Typography variant="h4" className="cart-td-right">
                       {delievery === 0 ? "Free" : "$" + delievery}
                     </Typography>
                   </Grid>
                 </Grid>
                 <Grid container className="cart-row">
-                  <Grid item md={6} sm={6} xs={6}>
+                  <Grid item md={6} sm={12} xs={12}>
                     <Typography variant="h4" className="cart-td-left">
                       Total
                     </Typography>
                   </Grid>
-                  <Grid item md={6} sm={6} xs={6}>
+                  <Grid item md={6} sm={12} xs={12}>
                     <Typography variant="h4" className="cart-td-right">
                       ${subtotal + delievery}
                     </Typography>
@@ -216,7 +216,7 @@ const CartSide = (props) => {
           </Box>
         </Fragment>
       ) : (
-        <Box display="flex" p={5} width="100%">
+        <Box display="flex" className="empty-cart-wrapper" p={3} width="100%">
           <Typography variant="h4">Your cart is currently empty.</Typography>
 
           <Link to="/shop">

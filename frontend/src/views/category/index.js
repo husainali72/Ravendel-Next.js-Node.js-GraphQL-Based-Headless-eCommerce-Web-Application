@@ -92,7 +92,7 @@ const Category = (props) => {
                   .map(
                     (product, index) =>
                       product.status === "Publish" && (
-                        <Grid item lg={4} md={6} sm={6} key={index}>
+                        <Grid item lg={4} md={6} sm={6} xs={6} key={index}>
                           <ProductCard
                             productDetail={product}
                             index={index}

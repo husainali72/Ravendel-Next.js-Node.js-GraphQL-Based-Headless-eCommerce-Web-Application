@@ -18,7 +18,6 @@ export default (state = initialState, action) => {
         oldData.push(action.payload);
         localStorage.setItem("cartProducts", JSON.stringify(oldData));
       }
-
       return {
         ...state,
         products: [...state.products, action.payload],

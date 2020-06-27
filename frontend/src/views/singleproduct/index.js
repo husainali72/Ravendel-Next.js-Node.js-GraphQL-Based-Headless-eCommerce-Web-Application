@@ -2,13 +2,14 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Grid, Container, Divider } from "@material-ui/core";
 import { connect } from "react-redux";
 import {
+  productsAction,
   productAction,
   productReviewsAction,
 } from "../../store/action/productAction";
 import { isEmpty } from "../../utils/helper";
 import ProductDetail from "./productdetails";
 import GalleryImages from "./galleryimages";
-import ProductOtherDetails from "./productotherdetail";
+import RelatedProducts from "../components/relatedproduct";
 import Loading from "../components/loading";
 
 const SingleProduct = (props) => {
@@ -19,6 +20,12 @@ const SingleProduct = (props) => {
     props.productAction(props.match.params.id);
     props.productReviewsAction(props.match.params.id);
   }, [props.match.params.id]);
+
+  useEffect(() => {
+    if (isEmpty(props.products.products)) {
+      props.productsAction();
+    }
+  }, []);
 
   useEffect(() => {
     var product = props.products.product;
@@ -62,18 +69,25 @@ const SingleProduct = (props) => {
               xs={12}
               className="singleproduct-col singleproduct-rightside"
             >
-              <ProductDetail details={singleProduct} />
+              <ProductDetail
+                details={singleProduct}
+                reviews={props.products.productReviews}
+              />
             </Grid>
           </Grid>
           <Divider />
-          <Container>
-            <ProductOtherDetails
-              details={singleProduct}
-              reviews={props.products.productReviews}
-              relatedProducts={props.products.products}
-              productId={props.products.product.id}
+          <Grid
+            item
+            md={12}
+            sm={12}
+            xs={12}
+            className="related-products-wrapper"
+          >
+            <RelatedProducts
+              relatedProduct={props.products.products}
+              title="Related Products"
             />
-          </Container>
+          </Grid>
         </Fragment>
       )}
     </Fragment>
@@ -88,6 +102,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   productAction,
+  productsAction,
   productReviewsAction,
 };
 

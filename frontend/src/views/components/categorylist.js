@@ -33,7 +33,7 @@ const CategoryListing = (props) => {
                 props.allCategories.map((category, index) => (
                   <Fragment key={index}>
                     {category.parentId === null && (
-                      <Grid item lg={4} md={6} sm={12} xs={12}>
+                      <Grid item lg={3} md={3} sm={6} xs={6}>
                         <Link to={`/category/${category.url}`}>
                           <ButtonBase
                             focusRipple
@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
   },
   image: {
     position: "relative",
-    height: 300,
+    height: 200,
     width: "100%",
     "&:hover, &$focusVisible": {
       zIndex: 1,
