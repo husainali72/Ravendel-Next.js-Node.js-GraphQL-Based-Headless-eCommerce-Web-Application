@@ -338,6 +338,214 @@ const ProductOtherDetails = (props) => {
               </TabPanel>
             </div>
           </div>
+
+          <div className="product-other-information-tab mobile">
+            <div className="product-other-information-tabpanel">
+              {/* =======================================Product Description================================= */}
+              {props.details.description && (
+                <Fragment>
+                  <Typography component="h3" className="additional-info-title">
+                    Description
+                  </Typography>
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: props.details.description,
+                    }}
+                  ></span>
+                </Fragment>
+              )}
+              {/* =======================================End Product Description================================= */}
+
+              {/* =======================================Product CustomField================================= */}
+              {props.details.custom_field.length ? (
+                <Fragment>
+                  <Typography component="h3" className="additional-info-title">
+                    Additional Information
+                  </Typography>
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Name</TableCell>
+                          <TableCell>Value</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {props.details.custom_field.map((field, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <Typography variant="h6">{field.key}</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography
+                                variant="body2"
+                                component="h6"
+                                className="text-capitalize"
+                              >
+                                {field.value}
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Fragment>
+              ) : (
+                ""
+              )}
+
+              {/* =======================================END Product CustomField================================= */}
+
+              {/* =======================================Reviews================================= */}
+
+              <Box component="div" style={{ position: "relative" }}>
+                <span className="write-a-review" onClick={writeReviewToggle}>
+                  Write a review
+                </span>
+                <Typography component="h3" className="additional-info-title">
+                  Reviews
+                </Typography>
+                <Collapse in={writeReview}>
+                  <Grid item md={12} sm={12} xs={12}>
+                    <Box className="leave-review-wrapper">
+                      <Grid container spacing={2}>
+                        <Grid item md={12} sm={12} xs={12}>
+                          <Typography
+                            variant="h3"
+                            className="margin-bottom-2 text-center"
+                          >
+                            Leave Us A Review
+                          </Typography>
+                        </Grid>
+                        <Grid item md={12} sm={12} xs={12}>
+                          <TextField
+                            type="text"
+                            label="Title"
+                            variant="outlined"
+                            size="small"
+                            className="width-100"
+                            value={review.title}
+                            onChange={(e) =>
+                              setReview({ ...review, title: e.target.value })
+                            }
+                          />
+                        </Grid>
+                        <Grid item md={12} sm={12} xs={12}>
+                          <Box
+                            component="fieldset"
+                            borderColor="transparent"
+                            className="fieldset-rating"
+                          >
+                            <Typography component="legend">Rating</Typography>
+                            <Rating
+                              name="rating-val"
+                              value={parseInt(review.rating)}
+                              onChange={(event, newValue) => {
+                                setReview({
+                                  ...review,
+                                  rating: newValue.toString(),
+                                });
+                              }}
+                            />
+                          </Box>
+                        </Grid>
+                        <Grid item md={12} sm={6} xs={12}>
+                          <TextField
+                            type="text"
+                            label="Review"
+                            variant="outlined"
+                            size="small"
+                            className="width-100"
+                            multiline
+                            value={review.review}
+                            rows="4"
+                            onChange={(e) =>
+                              setReview({ ...review, review: e.target.value })
+                            }
+                          />
+                        </Grid>
+                        <Grid
+                          item
+                          md={12}
+                          xs={12}
+                          sm={12}
+                          className="text-center"
+                        >
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={addReview}
+                          >
+                            Add Review
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </Grid>
+                </Collapse>
+              </Box>
+              <Grid container spacing={2} className="product-reviews">
+                {props.reviews &&
+                props.reviews.filter((review) => review.status === "approved")
+                  .length > 0 ? (
+                  props.reviews
+                    .filter((review) => review.status === "approved")
+                    .map((singleReview, index) => (
+                      <Grid
+                        item
+                        lg={6}
+                        md={12}
+                        sm={12}
+                        xs={12}
+                        key={index}
+                        className="product-reviews-item"
+                      >
+                        <Box
+                          display="flex"
+                          justifyContent="space-between"
+                          borderBottom={1}
+                          className="padding-bottom-1"
+                        >
+                          <Typography variant="button">
+                            <span className="text-capitalize">
+                              {singleReview.customer_id.first_name}
+                            </span>{" "}
+                            - {convertDate(singleReview.date)}
+                          </Typography>
+                          <Rating
+                            name="read-only"
+                            value={parseInt(singleReview.rating, 10)}
+                            readOnly
+                          />
+                        </Box>
+                        <Typography
+                          variant="subtitle1"
+                          className="padding-top-1"
+                        >
+                          {singleReview.title}
+                        </Typography>
+                        <Typography
+                          variant="subtitle2"
+                          className="padding-top-1"
+                        >
+                          {singleReview.review}
+                        </Typography>
+                      </Grid>
+                    ))
+                ) : (
+                  <Grid item md={12}>
+                    <Typography
+                      variant="h5"
+                      className="padding-top-2 text-center"
+                    >
+                      Reviews Not Available
+                    </Typography>
+                  </Grid>
+                )}
+              </Grid>
+            </div>
+          </div>
           {/* =======================================Reviews End================================= */}
         </Fragment>
       ) : (

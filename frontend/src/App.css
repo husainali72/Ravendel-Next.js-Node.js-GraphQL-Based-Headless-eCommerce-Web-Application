@@ -883,7 +883,12 @@ section.with-slider {
   color: #ff5722;
   cursor: pointer;
 }
-
+.product-other-information-tab.mobile {
+  display: none;
+}
+.filterheading-mobile {
+  display: none;
+}
 @media only screen and (max-width: 1279px) {
   .singleproduct-leftside .gallery-image {
     height: 400px;
@@ -1106,6 +1111,55 @@ section.with-slider {
   .title-price-switch {
     display: flex;
     flex-direction: column-reverse;
+  }
+  .product-other-information-tab {
+    display: none;
+  }
+  .product-other-information-tab.mobile {
+    display: block;
+  }
+  .product-other-information-tab.mobile .product-other-information-tabpanel {
+    height: auto;
+    max-height: initial;
+    border: none !important;
+    overflow-y: inherit;
+  }
+  .product-other-information-tab.mobile
+    .product-other-information-tabpanel
+    .additional-info-title {
+    font-size: 17px !important;
+    margin-top: 40px;
+    color: #3f51b5;
+    margin-bottom: 5px;
+  }
+  .left-sidebar {
+    background: #fff;
+    position: fixed;
+    bottom: 5px;
+    width: 100%;
+    z-index: 1100;
+    box-shadow: 0 0 10px 5px rgba(131, 131, 131, 0.356);
+    max-height: 40px !important;
+    padding-top: 0 !important;
+    transition: 1s all ease-in-out;
+  }
+  .fillter-sidebar {
+    margin-top: 50px;
+  }
+  .left-sidebar.open-left-sidebar {
+    max-height: 100vh !important;
+  }
+  .filterheading-mobile {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: -5px;
+    left: 5%;
+    cursor: pointer;
+    width: 100%;
+    padding: 0 10px;
+    font-weight: bold;
+    width: 90%;
   }
 }
 

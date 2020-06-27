@@ -49,6 +49,7 @@ const categories = [
 const FilterSideBar = (props) => {
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [catName, setCatName] = useState("");
+  const [filterToggle, setFilterToggle] = useState(false);
 
   const priceChange = (event, newValue) => {
     setPriceRange(newValue);
@@ -112,8 +113,27 @@ const FilterSideBar = (props) => {
     });
   };
 
+  const openFillters = () => {
+    var element = document.getElementsByClassName("left-sidebar")[0];
+    if (element.classList.contains("open-left-sidebar")) {
+      element.classList.remove("open-left-sidebar");
+      setFilterToggle(false);
+    } else {
+      element.classList.add("open-left-sidebar");
+      setFilterToggle(true);
+    }
+  };
+
   return (
     <Box component="div" className="fillter-sidebar">
+      <p className="filterheading-mobile" onClick={openFillters}>
+        <span>Fillters</span>
+        <span>
+          <Icon className="fillter-toggle-butn">
+            {filterToggle ? "keyboard_arrow_down" : "keyboard_arrow_up"}
+          </Icon>
+        </span>
+      </p>
       <Box component="div" className="filter-wrapper">
         <Typography variant="h3" className="fillter-header">
           Categories
