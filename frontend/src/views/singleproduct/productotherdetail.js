@@ -242,7 +242,7 @@ const ProductOtherDetails = (props) => {
                             />
                           </Box>
                         </Grid>
-                        <Grid item md={12} sm={6} xs={6}>
+                        <Grid item md={12} sm={6} xs={12}>
                           <TextField
                             type="text"
                             label="Review"

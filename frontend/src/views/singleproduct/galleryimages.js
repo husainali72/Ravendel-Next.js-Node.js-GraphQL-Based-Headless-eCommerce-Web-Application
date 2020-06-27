@@ -22,6 +22,7 @@ const GalleryImagesComponents = (props) => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    touchMove: false,
   };
 
   return (
@@ -41,7 +42,7 @@ const GalleryImagesComponents = (props) => {
                   imageAlt="Example"
                   largeImageSrc={gallery.large} // Optional
                   className="gallery-image"
-                  magnifierSize="30%"
+                  magnifierSize={window.innerWidth < 1025 ? "60%" : "30%"}
                   magnifierBorderSize={5}
                   magnifierBorderColor="rgba(0, 0, 0, .5)"
                 />

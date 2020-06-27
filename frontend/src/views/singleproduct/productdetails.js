@@ -56,51 +56,41 @@ const ProductDetail = (props) => {
         <Box component="div" display="flex" className="singleproduct-wrapper">
           <Box component="div" className="singleproduct-details">
             {/* ==========Product Availablity ===========*/}
-            {product.quantity && (
-              <Typography variant="overline" className="product-availablity">
-                {product.quantity < 1 ? (
-                  <span className="outofstock">
-                    <Icon>sentiment_very_dissatisfied</Icon> Out of Stock
+
+            <div className="title-price-switch">
+              {/* ==========Product Title ===========*/}
+              <Typography variant="h4" className="product-title">
+                {product.name}
+              </Typography>
+              {/* ==========Product Price ===========*/}
+              <Typography variant="h3" className="product-price">
+                {product.pricing.sellprice ? (
+                  <span className="sale-price">
+                    ${product.pricing.sellprice.toFixed(2)}
                   </span>
-                ) : (
-                  <span className="inStock">In Stock</span>
+                ) : null}
+                <span
+                  className={product.pricing.sellprice ? "has-sale-price" : ""}
+                >
+                  ${product.pricing.price.toFixed(2)}
+                </span>
+                {product.pricing.sellprice && (
+                  <span className="save-price">
+                    <span className="percantage-save">
+                      (
+                      {Math.round(
+                        (100 / product.pricing.price) *
+                          (product.pricing.price - product.pricing.sellprice)
+                      )}
+                      % off)
+                    </span>
+                  </span>
                 )}
               </Typography>
-            )}
-
-            {/* ==========Product Title ===========*/}
-            <Typography variant="h4" className="product-title">
-              {product.name}
-            </Typography>
-
-            {/* ==========Product Price ===========*/}
-            <Typography variant="h3" className="product-price">
-              {product.pricing.sellprice ? (
-                <span className="sale-price">
-                  ${product.pricing.sellprice.toFixed(2)}
-                </span>
-              ) : null}
-              <span
-                className={product.pricing.sellprice ? "has-sale-price" : ""}
-              >
-                ${product.pricing.price.toFixed(2)}
-              </span>
-              {product.pricing.sellprice && (
-                <span className="save-price">
-                  <span className="percantage-save">
-                    (
-                    {Math.round(
-                      (100 / product.pricing.price) *
-                        (product.pricing.price - product.pricing.sellprice)
-                    )}
-                    % off)
-                  </span>
-                </span>
-              )}
-            </Typography>
+            </div>
 
             {/* ==========Product Category ===========*/}
-            {product.categoryId &&
+            {/* {product.categoryId &&
               product.categoryId.map((cat, index) => (
                 <Typography
                   variant="button"
@@ -110,7 +100,7 @@ const ProductDetail = (props) => {
                   {cat}
                   {product.categoryId.length - 1 === index ? "" : ","}
                 </Typography>
-              ))}
+              ))} */}
 
             <div className="custom-divider">
               <hr />
@@ -209,6 +199,17 @@ const ProductDetail = (props) => {
                 className="product-sku margin-bottom-1"
               >
                 <strong>SKU</strong>: {product.sku}
+              </Typography>
+            )}
+            {product.quantity && (
+              <Typography variant="overline" className="product-availablity">
+                {product.quantity < 1 ? (
+                  <span className="outofstock">
+                    <Icon>sentiment_very_dissatisfied</Icon> Out of Stock
+                  </span>
+                ) : (
+                  <span className="inStock">In Stock</span>
+                )}
               </Typography>
             )}
 
