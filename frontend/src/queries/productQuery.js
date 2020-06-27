@@ -5,12 +5,13 @@ const GET_PRODUCTS = gql`
     products {
       id
       name
-      categoryId
+      categoryId {
+        id
+        name
+      }
       url
       sku
       description
-      shippingDetails
-      manufactureDetails
       quantity
       pricing
       feature_image
@@ -37,8 +38,6 @@ const GET_PRODUCT = gql`
       url
       sku
       description
-      shippingDetails
-      manufactureDetails
       quantity
       pricing
       feature_image
@@ -52,7 +51,10 @@ const GET_PRODUCT = gql`
       custom_field
       date
       updated
-      categoryId
+      categoryId {
+        id
+        name
+      }
       short_description
     }
   }
@@ -90,8 +92,6 @@ const GET_CAT_PRODUCTS = gql`
         url
         sku
         description
-        shippingDetails
-        manufactureDetails
         quantity
         pricing
         feature_image
