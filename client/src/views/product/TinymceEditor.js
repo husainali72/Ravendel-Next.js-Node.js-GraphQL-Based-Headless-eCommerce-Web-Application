@@ -1,13 +1,15 @@
 import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { connect } from "react-redux";
-const TinymceEditor = props => {
-  const handleEditorChange = e => {
+const TinymceEditor = (props) => {
+  const handleEditorChange = (e) => {
     //console.log("Content was updated:", e.target.getContent());
-    props.dispatch({
+    /* props.dispatch({
       type: "TINYMCE_DESCRIPTION",
       payload: { description: e.target.getContent() }
-    });
+    }); */
+
+    props.onChangeEditor(e.target.getContent());
   };
 
   return (
@@ -20,7 +22,7 @@ const TinymceEditor = props => {
         plugins: [
           "advlist autolink lists link image charmap print preview anchor",
           "searchreplace visualblocks code fullscreen",
-          "insertdatetime media table paste code help wordcount"
+          "insertdatetime media table paste code help wordcount",
         ],
         toolbar:
           "undo redo | formatselect | bold italic underline backcolor forecolor | \
@@ -28,7 +30,7 @@ const TinymceEditor = props => {
             bullist numlist outdent indent | removeformat | help | image | code",
         images_upload_url: "/api/files/upload",
         paste_data_images: true,
-        convert_urls: false
+        convert_urls: false,
       }}
       onChange={handleEditorChange}
       onBlur={handleEditorChange}

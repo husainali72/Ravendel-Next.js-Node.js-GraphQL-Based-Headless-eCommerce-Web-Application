@@ -115,7 +115,72 @@ const GET_PRODUCTS = gql`
       id
       name
       url
-      categoryId
+      categoryId {
+        id
+        name
+        parentId
+        url
+        description
+        image
+        meta
+        date
+        updated
+      }
+      brand {
+        id
+        name
+        url
+        brand_logo
+        meta
+        date
+        updated
+      }
+      short_description
+      description
+      sku
+      quantity
+      pricing
+      feature_image
+      gallery_image
+      status
+      featured_product
+      product_type
+      shipping
+      tax_class
+      meta
+      custom_field
+      date
+      updated
+    }
+  }
+`;
+
+const GET_PRODUCT = gql`
+  query($id: ID!) {
+    product(id: $id) {
+      id
+      name
+      url
+      categoryId {
+        id
+        name
+        parentId
+        url
+        description
+        image
+        meta
+        date
+        updated
+      }
+      brand {
+        id
+        name
+        url
+        brand_logo
+        meta
+        date
+        updated
+      }
       short_description
       description
       sku
@@ -304,6 +369,7 @@ export {
   UPDATE_CATEGORY,
   DELETE_CATEGORY,
   GET_PRODUCTS,
+  GET_PRODUCT,
   ADD_PRODUCT,
   UPDATE_PRODUCT,
   DELETE_PRODUCT,

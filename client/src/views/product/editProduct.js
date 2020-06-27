@@ -37,6 +37,7 @@ import {
   taxAction,
   productsAction,
   brandsAction,
+  productAction,
 } from "../../store/action/";
 import { unflatten } from "../../utils/helper";
 import { getUpdatedUrl } from "../../utils/service";
@@ -53,7 +54,7 @@ import viewStyles from "../viewStyles";
 var defaultObj = {
   name: "",
   categoryId: [],
-  brand: "",
+  brand: {},
   sku: "",
   quantity: "",
   status: "Draft",
@@ -100,13 +101,62 @@ const EditProduct = (props) => {
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = React.useState(0);
   const [brands, setbrands] = useState({});
+  //props.products.
+
+  const onChangeContent = (value) => {
+    console.log("editor", value);
+    setProduct({
+      ...product,
+      description: value,
+    });
+  };
 
   useEffect(() => {
     if (inputLabel.current && inputLabel.current.offsetWidth) {
       setLabelWidth(inputLabel.current.offsetWidth);
     }
+    if (!isEmpty(props.match.params.id)) {
+      props.productAction(props.match.params.id);
+    }
     props.brandsAction();
   }, []);
+
+  useEffect(() => {
+    if (!isEmpty(props.productState.product)) {
+      console.log("run");
+      let defaultBrand = {};
+      for (let i in props.brandState.brands) {
+        if (
+          props.brandState.brands[i].id === props.productState.product.brand.id
+        ) {
+          defaultBrand = {
+            value: props.brandState.brands[i].id,
+            label: props.brandState.brands[i].name,
+          };
+
+          break;
+        }
+      }
+      setbrands({ ...brands, defaultBrand: defaultBrand });
+
+      catIds = props.productState.product.categoryId.map((cat) => cat.id);
+      if (!props.productState.categories.length) {
+        props.categoriesAction();
+      }
+      setProduct({ ...product, ...props.productState.product });
+      if (props.productState.product.feature_image.original) {
+        setfeatureImage(props.productState.product.feature_image.original);
+      }
+
+      if (isEmpty(props.shippingState.shipping.shipping_class)) {
+        props.shippingAction();
+      }
+
+      if (isEmpty(props.taxState.tax.tax_class)) {
+        props.taxAction();
+      }
+    }
+  }, [props.productState.product]);
 
   useEffect(() => {
     const brandObj = props.brandState.brands.map((brand) => {
@@ -118,56 +168,19 @@ const EditProduct = (props) => {
     setbrands({ ...brands, allBrands: brandObj });
   }, [props.brandState.brands]);
 
-  useEffect(() => {
-    let defaultBrand = {};
-    for (let i in props.brandState.brands) {
-      if (props.brandState.brands[i].id === product.brand) {
-        defaultBrand = {
-          value: props.brandState.brands[i].id,
-          label: props.brandState.brands[i].name,
-        };
-      }
-    }
-
-    setbrands({ ...brands, defaultBrand: defaultBrand });
-  }, [product]);
-
   const brandChange = (e) => {
-    console.log(e);
+    setbrands({
+      ...brands,
+      defaultBrand: {
+        value: e.value,
+        label: e.label,
+      },
+    });
     setProduct({ ...product, brand: e.value });
   };
 
   useEffect(() => {
-    if (!props.products.products.length) {
-      props.productsAction();
-    }
-
-    for (let i in props.products.products) {
-      if (props.products.products[i].id === props.match.params.id) {
-        catIds = props.products.products[i].categoryId;
-        if (!props.products.categories) {
-          props.categoriesAction();
-        }
-        setProduct({ ...product, ...props.products.products[i] });
-        if (props.products.products[i].feature_image.original) {
-          setfeatureImage(props.products.products[i].feature_image.original);
-        }
-
-        break;
-      }
-    }
-
-    if (isEmpty(props.shippingState.shipping.shipping_class)) {
-      props.shippingAction();
-    }
-
-    if (isEmpty(props.taxState.tax.tax_class)) {
-      props.taxAction();
-    }
-  }, [props.products.products]);
-
-  useEffect(() => {
-    var selectedCat = _.cloneDeep(props.products.categories);
+    var selectedCat = _.cloneDeep(props.productState.categories);
     if (selectedCat && selectedCat.length) {
       selectedCat.map((cat) => {
         if (~catIds.indexOf(cat.id)) {
@@ -176,16 +189,16 @@ const EditProduct = (props) => {
       });
       setCatList(unflatten(selectedCat));
     }
-  }, [props.products.categories]);
+  }, [props.productState.categories]);
 
-  useEffect(() => {
-    if (!isEmpty(props.products.product.description)) {
+  /* useEffect(() => {
+    if (!isEmpty(props.productState.product.description)) {
       setProduct({
         ...product,
-        description: props.products.product.description,
+        description: props.productState.product.description,
       });
     }
-  }, [props.products.product.description]);
+  }, [props.productState.product.description]); */
 
   const updateProduct = (e) => {
     e.preventDefault();
@@ -439,7 +452,7 @@ const EditProduct = (props) => {
         </Grid>
 
         <Grid container spacing={4} className={classes.secondmainrow}>
-          {props.products.loading && (
+          {props.productState.loading && (
             <Backdrop className={classes.backdrop} open={true}>
               <CircularProgress color="inherit" /> <br /> Loading
             </Backdrop>
@@ -494,7 +507,10 @@ const EditProduct = (props) => {
 
                   <Grid container>
                     <Grid item md={12}>
-                      <TinymceEditor value={product.description} />
+                      <TinymceEditor
+                        value={product.description}
+                        onChangeEditor={onChangeContent}
+                      />
                     </Grid>
                   </Grid>
                 </CardContent>
@@ -1180,7 +1196,7 @@ const EditProduct = (props) => {
               <Grid item md={12}>
                 <ReactSelect
                   name="brand"
-                  defaultValue={brands.defaultBrand}
+                  value={brands.defaultBrand}
                   options={brands.allBrands}
                   onChange={brandChange}
                 />
@@ -1196,6 +1212,7 @@ const EditProduct = (props) => {
 const mapStateToProps = (state) => {
   return {
     products: state.products,
+    productState: state.products,
     taxState: state.taxs,
     shippingState: state.shippings,
     brandState: state.brands,
@@ -1208,6 +1225,7 @@ const mapDispatchToProps = {
   shippingAction,
   taxAction,
   productsAction,
+  productAction,
   brandsAction,
 };
 

@@ -4,49 +4,50 @@ import {
   UPDATE_CATEGORY,
   DELETE_CATEGORY,
   GET_PRODUCTS,
+  GET_PRODUCT,
   ADD_PRODUCT,
   UPDATE_PRODUCT,
-  DELETE_PRODUCT
+  DELETE_PRODUCT,
 } from "../../queries/productQuery";
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
 
-export const categoriesAction = () => dispatch => {
+export const categoriesAction = () => (dispatch) => {
   dispatch({
-    type: CAT_LOADING
+    type: CAT_LOADING,
   });
   query(GET_CATEGORIES)
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: CATS_SUCCESS,
-          payload: response.data.productCategories
+          payload: response.data.productCategories,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: CAT_FAIL
+        type: CAT_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const categoryAddAction = object => dispatch => {
+export const categoryAddAction = (object) => (dispatch) => {
   dispatch({
-    type: CAT_LOADING
+    type: CAT_LOADING,
   });
   mutation(ADD_CATEGORY, object)
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: CATS_SUCCESS,
-          payload: response.data.addProductCategory
+          payload: response.data.addProductCategory,
         });
 
         return dispatch({
@@ -54,33 +55,33 @@ export const categoryAddAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "Category added successfully",
-            error: false
-          }
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: CAT_FAIL
+        type: CAT_FAIL,
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: false }
+        payload: { boolean: true, message: error, error: false },
       });
     });
 };
 
-export const categoryUpdateAction = object => dispatch => {
+export const categoryUpdateAction = (object) => (dispatch) => {
   dispatch({
-    type: CAT_LOADING
+    type: CAT_LOADING,
   });
   mutation(UPDATE_CATEGORY, object)
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: CATS_SUCCESS,
-          payload: response.data.updateProductCategory
+          payload: response.data.updateProductCategory,
         });
 
         //jumpTo("/all-blogs");
@@ -90,96 +91,120 @@ export const categoryUpdateAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "Category updated successfully",
-            error: false
-          }
+            error: false,
+          },
         });
 
         return;
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: CAT_FAIL
+        type: CAT_FAIL,
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const categoryDeleteAction = id => dispatch => {
+export const categoryDeleteAction = (id) => (dispatch) => {
   dispatch({
-    type: CAT_LOADING
+    type: CAT_LOADING,
   });
   mutation(DELETE_CATEGORY, { id })
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: CATS_SUCCESS,
-          payload: response.data.deleteProductCategory
+          payload: response.data.deleteProductCategory,
         });
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
             message: "Category deleted successfully",
-            error: false
-          }
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: CAT_FAIL
+        type: CAT_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const productsAction = () => dispatch => {
+export const productsAction = () => (dispatch) => {
   dispatch({
-    type: PRODUCT_LOADING
+    type: PRODUCT_LOADING,
   });
   query(GET_PRODUCTS)
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: PRODUCTS_SUCCESS,
-          payload: response.data.products
+          payload: response.data.products,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: PRODUCT_FAIL
+        type: PRODUCT_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const productAddAction = object => dispatch => {
+export const productAction = (id) => (dispatch) => {
   dispatch({
-    type: PRODUCT_LOADING
+    type: PRODUCT_LOADING,
+  });
+  query(GET_PRODUCT, { id: id })
+    .then((response) => {
+      if (response) {
+        return dispatch({
+          type: PRODUCT_SUCCESS,
+          payload: response.data.product,
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: PRODUCT_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error, error: true },
+      });
+    });
+};
+
+export const productAddAction = (object) => (dispatch) => {
+  dispatch({
+    type: PRODUCT_LOADING,
   });
   mutation(ADD_PRODUCT, object)
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: PRODUCTS_SUCCESS,
-          payload: response.data.addProduct
+          payload: response.data.addProduct,
         });
 
         dispatch({
           type: TINYMCE_DESCRIPTION_NULL,
-          payload: {}
+          payload: {},
         });
 
         jumpTo("/all-products");
@@ -189,38 +214,38 @@ export const productAddAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "Product added successfully",
-            error: false
-          }
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: PRODUCT_FAIL
+        type: PRODUCT_FAIL,
       });
 
       dispatch({
         type: TINYMCE_DESCRIPTION_NULL,
-        payload: {}
+        payload: {},
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const productUpdateAction = object => dispatch => {
+export const productUpdateAction = (object) => (dispatch) => {
   dispatch({
-    type: PRODUCT_LOADING
+    type: PRODUCT_LOADING,
   });
   mutation(UPDATE_PRODUCT, object)
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: PRODUCTS_SUCCESS,
-          payload: response.data.updateProduct
+          payload: response.data.updateProduct,
         });
 
         jumpTo("/all-products");
@@ -230,53 +255,53 @@ export const productUpdateAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "Product updated successfully",
-            error: false
-          }
+            error: false,
+          },
         });
 
         return;
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: PRODUCT_FAIL
+        type: PRODUCT_FAIL,
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const productDeleteAction = id => dispatch => {
+export const productDeleteAction = (id) => (dispatch) => {
   dispatch({
-    type: PRODUCT_LOADING
+    type: PRODUCT_LOADING,
   });
   mutation(DELETE_PRODUCT, { id })
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: PRODUCTS_SUCCESS,
-          payload: response.data.deleteProduct
+          payload: response.data.deleteProduct,
         });
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
             message: "Product deleted successfully",
-            error: false
-          }
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: PRODUCT_FAIL
+        type: PRODUCT_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };

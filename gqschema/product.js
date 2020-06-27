@@ -70,14 +70,12 @@ module.exports = gql`
   type Product {
     id: ID
     name: String
-    categoryId: customArray
+    categoryId: [productCategory]
     brand: productBrand
     url: String
     sku: String
     short_description: String
     description: String
-    shippingDetails: customObject
-    manufactureDetails: customObject
     quantity: String
     pricing: customObject
     feature_image: customObject
@@ -101,7 +99,7 @@ module.exports = gql`
     productCategories: [productCategory]
     productCategory(id: ID!): productCategory
     getTree: [cattree]
-    products: [Product]
+    products: [ProductWithCat]
     productswithcat: [ProductWithCat]
     featureproducts: [ProductWithCat]
     product(id: ID!): Product
