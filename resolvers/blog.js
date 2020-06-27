@@ -8,7 +8,8 @@ const {
   imageUnlink,
   checkToken,
   stringTourl,
-  validateUrl
+  validateUrl,
+  updateUrl,
 } = require("../config/helpers");
 const validate = require("../validations/blog");
 const sanitizeHtml = require("sanitize-html");
@@ -38,7 +39,7 @@ module.exports = {
     blogsbytagid: async (root, args, { id }) => {
       try {
         const blogs = await Blog.find({
-          blog_tag: { $in: args.tag_id }
+          blog_tag: { $in: args.tag_id },
         });
         return blogs || [];
       } catch (error) {
@@ -53,7 +54,7 @@ module.exports = {
           throw putError("404 Not found");
         }
         const blogs = await Blog.find({
-          blog_tag: { $in: blogtag.id }
+          blog_tag: { $in: blogtag.id },
         });
         return blogs || [];
       } catch (error) {
@@ -68,7 +69,7 @@ module.exports = {
       } catch (error) {
         throw new Error("Something went wrong.");
       }
-    }
+    },
   },
   Mutation: {
     addBlog: async (root, args, user) => {
@@ -92,16 +93,7 @@ module.exports = {
           }
         }
 
-        var url = stringTourl(args.url || args.title);
-        var duplicate = true;
-        while (duplicate) {
-          let blog = await Blog.findOne({ url: url });
-          if (blog) {
-            url = validateUrl(url);
-          } else {
-            duplicate = false;
-          }
-        }
+        var url = await updateUrl(args.url || args.title, "Blog");
 
         const newBlog = new Blog({
           title: args.title,
@@ -111,7 +103,7 @@ module.exports = {
           blog_tag: args.blog_tag,
           feature_image: imgObject.data || imgObject,
           meta: args.meta,
-          author: user.id
+          author: user.id,
         });
 
         await newBlog.save();
@@ -145,16 +137,7 @@ module.exports = {
             }
           }
 
-          var url = stringTourl(args.url || args.title);
-          var duplicate = true;
-          while (duplicate) {
-            let blog = await Blog.findOne({ url: url });
-            if (blog) {
-              url = validateUrl(url);
-            } else {
-              duplicate = false;
-            }
-          }
+          var url = await updateUrl(args.url || args.title, "Blog");
 
           blog.title = args.title;
           blog.content = args.content;
@@ -211,7 +194,7 @@ module.exports = {
 
         const newTag = new BlogTag({
           name: args.name,
-          url: url
+          url: url,
         });
 
         await newTag.save();
@@ -258,6 +241,6 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
-  }
+    },
+  },
 };

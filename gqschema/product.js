@@ -13,6 +13,16 @@ module.exports = gql`
     updated: Date
   }
 
+  type productBrand {
+    id: ID
+    name: String
+    url: String
+    brand_logo: customObject
+    meta: customObject
+    date: Date
+    updated: Date
+  }
+
   type cattree {
     _id: ID
     name: String
@@ -37,12 +47,11 @@ module.exports = gql`
     id: ID
     name: String
     categoryId: [productCategory]
+    brand: productBrand
     url: String
     sku: String
     short_description: String
     description: String
-    shippingDetails: customObject
-    manufactureDetails: customObject
     quantity: String
     pricing: customObject
     feature_image: customObject
@@ -61,13 +70,12 @@ module.exports = gql`
   type Product {
     id: ID
     name: String
-    categoryId: customArray
+    categoryId: [productCategory]
+    brand: productBrand
     url: String
     sku: String
     short_description: String
     description: String
-    shippingDetails: customObject
-    manufactureDetails: customObject
     quantity: String
     pricing: customObject
     feature_image: customObject
@@ -91,8 +99,9 @@ module.exports = gql`
     productCategories: [productCategory]
     productCategory(id: ID!): productCategory
     getTree: [cattree]
-    products: [Product]
+    products: [ProductWithCat]
     productswithcat: [ProductWithCat]
+    featureproducts: [ProductWithCat]
     product(id: ID!): Product
     productsbycatid(cat_id: ID!): [ProductWithCat]
     productsbycaturl(cat_url: String!): CatwithProducts
@@ -121,6 +130,7 @@ module.exports = gql`
     addProduct(
       name: String
       categoryId: customArray
+      brand: ID
       url: String
       short_description: String
       description: String
@@ -141,6 +151,7 @@ module.exports = gql`
       id: ID
       name: String
       categoryId: customArray
+      brand: ID
       url: String
       short_description: String
       description: String

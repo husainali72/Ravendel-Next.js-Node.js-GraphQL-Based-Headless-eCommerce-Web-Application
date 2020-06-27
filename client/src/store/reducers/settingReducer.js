@@ -31,6 +31,14 @@ const initialState = {
       },
       theme: {
         primary_color: "#154050",
+        logo: {
+          original: "",
+          large: "",
+          medium:
+            "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+          thumbnail:
+            "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+        },
       },
     },
   },

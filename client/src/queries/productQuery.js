@@ -115,7 +115,72 @@ const GET_PRODUCTS = gql`
       id
       name
       url
-      categoryId
+      categoryId {
+        id
+        name
+        parentId
+        url
+        description
+        image
+        meta
+        date
+        updated
+      }
+      brand {
+        id
+        name
+        url
+        brand_logo
+        meta
+        date
+        updated
+      }
+      short_description
+      description
+      sku
+      quantity
+      pricing
+      feature_image
+      gallery_image
+      status
+      featured_product
+      product_type
+      shipping
+      tax_class
+      meta
+      custom_field
+      date
+      updated
+    }
+  }
+`;
+
+const GET_PRODUCT = gql`
+  query($id: ID!) {
+    product(id: $id) {
+      id
+      name
+      url
+      categoryId {
+        id
+        name
+        parentId
+        url
+        description
+        image
+        meta
+        date
+        updated
+      }
+      brand {
+        id
+        name
+        url
+        brand_logo
+        meta
+        date
+        updated
+      }
       short_description
       description
       sku
@@ -141,6 +206,7 @@ const ADD_PRODUCT = gql`
     $name: String
     $url: String
     $categoryId: customArray
+    $brand: ID
     $short_description: String
     $description: String
     $sku: String
@@ -160,6 +226,7 @@ const ADD_PRODUCT = gql`
       name: $name
       url: $url
       categoryId: $categoryId
+      brand: $brand
       short_description: $short_description
       description: $description
       sku: $sku
@@ -205,6 +272,7 @@ const UPDATE_PRODUCT = gql`
     $name: String
     $url: String
     $categoryId: customArray
+    $brand: ID
     $short_description: String
     $description: String
     $sku: String
@@ -226,6 +294,7 @@ const UPDATE_PRODUCT = gql`
       name: $name
       url: $url
       categoryId: $categoryId
+      brand: $brand
       short_description: $short_description
       description: $description
       sku: $sku
@@ -300,7 +369,8 @@ export {
   UPDATE_CATEGORY,
   DELETE_CATEGORY,
   GET_PRODUCTS,
+  GET_PRODUCT,
   ADD_PRODUCT,
   UPDATE_PRODUCT,
-  DELETE_PRODUCT
+  DELETE_PRODUCT,
 };

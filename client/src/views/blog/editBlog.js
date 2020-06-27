@@ -34,6 +34,7 @@ import Loading from "../utils/loading";
 import viewStyles from "../viewStyles";
 //import Autocomplete from "@material-ui/lab/Autocomplete";
 import Select from "react-select";
+import service, { getUpdatedUrl } from "../../utils/service";
 
 const StyledRadio = (props) => {
   return (
@@ -50,6 +51,7 @@ const StyledRadio = (props) => {
 
 const defaultObj = {
   title: "",
+  url: "",
   content: "",
   status: "Publish",
   blog_tag: [],
@@ -65,6 +67,7 @@ const EditBlog = (props) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
+  const [editPremalink, setEditPermalink] = useState(false);
 
   useEffect(() => {
     if (!isEmpty(props.match.params.id)) {
@@ -135,6 +138,21 @@ const EditBlog = (props) => {
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };
 
+  const changePermalink = () => {
+    if (editPremalink) {
+      isUrlExist(blog.url);
+    }
+    setEditPermalink(!editPremalink);
+  };
+
+  const isUrlExist = async (url) => {
+    let updatedUrl = await getUpdatedUrl("Blog", url);
+    setBlog({
+      ...blog,
+      url: updatedUrl,
+    });
+  };
+
   return (
     <Fragment>
       {props.blogState.loading && <Loading />}
@@ -189,6 +207,34 @@ const EditBlog = (props) => {
                       className={clsx(classes.marginBottom, classes.width100)}
                     />
                   </Grid>
+                </Grid>
+
+                <Grid item md={12}>
+                  {blog.url ? (
+                    <span style={{ marginBottom: 10, display: "block" }}>
+                      <strong>Link: </strong>
+                      {window.location.origin}/blog/
+                      {editPremalink === false && blog.url}
+                      {editPremalink === true && (
+                        <input
+                          id="url"
+                          name="url"
+                          value={blog.url}
+                          onChange={handleChange}
+                          variant="outlined"
+                          className={classes.editpermalinkInput}
+                        />
+                      )}
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={changePermalink}
+                        className={classes.editpermalinkInputBtn}
+                      >
+                        {editPremalink ? "Ok" : "Edit"}
+                      </Button>
+                    </span>
+                  ) : null}
                 </Grid>
 
                 <Grid container>

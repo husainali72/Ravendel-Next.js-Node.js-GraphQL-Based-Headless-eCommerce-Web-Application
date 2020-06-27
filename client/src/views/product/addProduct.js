@@ -35,6 +35,7 @@ import {
   productAddAction,
   shippingAction,
   taxAction,
+  brandsAction,
 } from "../../store/action/";
 //import Alert from "../utils/Alert";
 import { unflatten, toUrl } from "../../utils/helper";
@@ -43,6 +44,7 @@ import clsx from "clsx";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
 import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTwoTone";
+import ReactSelect from "react-select";
 import "../../App.css";
 import viewStyles from "../viewStyles";
 import _ from "lodash";
@@ -85,6 +87,7 @@ const AddProduct = (props) => {
 
   const [collapseCategory, setcollapseCategory] = useState({});
   const [product, setProduct] = useState(defaultObj);
+  const [brands, setbrands] = useState([]);
   const [productCats, setproductCats] = useState([]);
 
   const inputLabel = React.useRef(null);
@@ -96,6 +99,7 @@ const AddProduct = (props) => {
   useEffect(() => {
     props.shippingAction();
     props.taxAction();
+    props.brandsAction();
   }, []);
 
   useEffect(() => {
@@ -106,9 +110,19 @@ const AddProduct = (props) => {
   }, [props.products.categories, props.products.products]);
 
   useEffect(() => {
+    const brandObj = props.brandState.brands.map((brand) => {
+      return {
+        value: brand.id,
+        label: brand.name,
+      };
+    });
+
+    setbrands([...brandObj]);
+  }, [props.brandState.brands]);
+
+  useEffect(() => {
     props.categoriesAction();
     document.forms[0].reset();
-
     setProduct(defaultObj);
     setfeatureImage(null);
   }, [props.products.products]);
@@ -195,7 +209,9 @@ const AddProduct = (props) => {
   };
 
   const changePermalink = () => {
-    isUrlExist(product.url);
+    if (editPremalink) {
+      isUrlExist(product.url);
+    }
     setEditPermalink(!editPremalink);
   };
 
@@ -246,6 +262,10 @@ const AddProduct = (props) => {
       ...product,
       url: updatedUrl,
     });
+  };
+
+  const brandChange = (e) => {
+    setProduct({ ...product, brand: e.value });
   };
 
   const menuListing = (categories) => {
@@ -394,7 +414,7 @@ const AddProduct = (props) => {
                         name="name"
                         value={product.name}
                         onChange={handleChange}
-                        onBlur={(e) => isUrlExist(product.name)}
+                        onBlur={(e) => !product.url && isUrlExist(product.name)}
                         variant="outlined"
                         className={clsx(classes.marginBottom, classes.width100)}
                       />
@@ -407,8 +427,7 @@ const AddProduct = (props) => {
                           {window.location.origin}/product/
                           {editPremalink === false && product.url}
                           {editPremalink === true && (
-                            <TextField
-                              type="text"
+                            <input
                               id="url"
                               name="url"
                               value={product.url}
@@ -1081,6 +1100,20 @@ const AddProduct = (props) => {
                 </CardContent>
               </Card>
             </Box>
+
+            <Box component="span" m={1}>
+              <Card>
+                <CardHeader title="Brands" />
+                <Divider />
+              </Card>
+              <Grid item md={12}>
+                <ReactSelect
+                  name="brand"
+                  options={brands}
+                  onChange={brandChange}
+                />
+              </Grid>
+            </Box>
           </Grid>
         </Grid>
       </form>
@@ -1093,6 +1126,7 @@ const mapStateToProps = (state) => {
     products: state.products,
     taxState: state.taxs,
     shippingState: state.shippings,
+    brandState: state.brands,
   };
 };
 
@@ -1108,6 +1142,7 @@ const mapDispatchToProps = (dispatch) => {
     productAddAction: (product) => dispatch(productAddAction(product)),
     taxAction: () => dispatch(taxAction()),
     shippingAction: () => dispatch(shippingAction()),
+    brandsAction: () => dispatch(brandsAction()),
     dispatch,
   };
 };

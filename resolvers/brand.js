@@ -6,7 +6,8 @@ const {
   imageUpload,
   imageUnlink,
   checkToken,
-  stringTourl
+  stringTourl,
+  updateUrl,
 } = require("../config/helpers");
 const validate = require("../validations/brand");
 const slugify = require("slugify");
@@ -32,7 +33,7 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
+    },
   },
   Mutation: {
     addBrand: async (root, args, { id }) => {
@@ -45,7 +46,7 @@ module.exports = {
         }
 
         const brands = await Brand.find({});
-        let brandList = brands.map(brand => brand.name);
+        let brandList = brands.map((brand) => brand.name);
 
         let addBrands = [];
         for (let i in args.brands) {
@@ -53,7 +54,7 @@ module.exports = {
             !isEmpty(args.brands[i].name) &&
             !~brandList.indexOf(args.brands[i].name)
           ) {
-            args.brands[i].url = stringTourl(args.brands[i].name);
+            args.brands[i].url = await updateUrl(args.brands[i].name, "Brand");
             args.brands[i].meta = { title: "", description: "", keywords: "" };
             addBrands.push(args.brands[i]);
           }
@@ -90,7 +91,7 @@ module.exports = {
             }
           }
 
-          let url = stringTourl(args.url || args.name);
+          let url = await updateUrl(args.url, "Brand");
 
           brand.name = args.name;
           brand.url = url;
@@ -124,6 +125,6 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
-  }
+    },
+  },
 };

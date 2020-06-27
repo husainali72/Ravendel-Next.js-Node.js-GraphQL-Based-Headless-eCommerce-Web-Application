@@ -4,6 +4,7 @@ const GET_BLOGS = gql`
     blogs {
       id
       title
+      url
       content
       status
       blog_tag
@@ -20,6 +21,7 @@ const GET_BLOG = gql`
     blog(id: $id) {
       id
       title
+      url
       content
       status
       blog_tag
@@ -50,6 +52,7 @@ const ADD_BLOG = gql`
     ) {
       id
       title
+      url
       content
       status
       blog_tag
@@ -82,6 +85,7 @@ const UPDATE_BLOG = gql`
     ) {
       id
       title
+      url
       content
       status
       blog_tag
@@ -98,6 +102,7 @@ const DELETE_BLOG = gql`
     deleteBlog(id: $id) {
       id
       title
+      url
       content
       status
       blog_tag
@@ -166,5 +171,5 @@ export {
   GET_BLOGTAGS,
   ADD_BLOGTAG,
   UPDATE_BLOGTAG,
-  DELETE_BLOGTAG
+  DELETE_BLOGTAG,
 };

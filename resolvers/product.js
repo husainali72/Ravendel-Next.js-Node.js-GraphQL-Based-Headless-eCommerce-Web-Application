@@ -1,6 +1,7 @@
 const ProductCat = require("../models/ProductCat");
 const CatTree = require("../models/CatTree");
 const Product = require("../models/Product");
+const Brand = require("../models/Brand");
 const {
   isEmpty,
   putError,
@@ -95,6 +96,17 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    featureproducts: async (root, args, { id }) => {
+      try {
+        const products = await Product.find({
+          featured_product: true,
+        });
+        return products || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     productsbycatid: async (root, args, { id }) => {
       try {
         const products = await Product.find({
@@ -149,6 +161,37 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    brand: async (root, args) => {
+      try {
+        console.log("here comes", root.brand);
+        const brands = await Brand.findById(root.brand);
+        return brands;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+  },
+  Product: {
+    categoryId: async (root, args) => {
+      try {
+        const cats = await ProductCat.find({ _id: { $in: root.categoryId } });
+        return cats;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    brand: async (root, args) => {
+      try {
+        console.log("here comes", root.brand);
+        const brands = await Brand.findById(root.brand);
+        return brands;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
   },
   Mutation: {
     addProductCategory: async (root, args, { id }) => {
@@ -168,17 +211,7 @@ module.exports = {
         if (cat) {
           throw putError("This category is already exist.");
         } else {
-          var url = stringTourl(args.url || args.name);
-          var duplicate = true;
-          while (duplicate) {
-            let cat = await ProductCat.findOne({ url: url });
-            if (cat) {
-              url = validateUrl(url);
-            } else {
-              duplicate = false;
-            }
-          }
-
+          let url = await updateUrl(args.url || args.name, "ProductCat");
           let imgObject = "";
           if (args.image) {
             imgObject = await imageUpload(
@@ -231,17 +264,7 @@ module.exports = {
             cat.image = imgObject.data;
           }
 
-          var url = stringTourl(args.url || args.name);
-          var duplicate = true;
-          while (duplicate) {
-            let cat = await ProductCat.findOne({ url: url });
-            if (cat) {
-              url = validateUrl(url);
-            } else {
-              duplicate = false;
-            }
-          }
-
+          var url = await updateUrl(args.url || args.name, "ProductCat");
           cat.name = args.name;
           cat.parentId = args.parentId || null;
           cat.url = url;
@@ -343,6 +366,7 @@ module.exports = {
             name: args.name,
             url: url,
             categoryId: args.categoryId,
+            brand: args.brand || "",
             short_description: args.short_description,
             description: args.description,
             sku: args.sku,

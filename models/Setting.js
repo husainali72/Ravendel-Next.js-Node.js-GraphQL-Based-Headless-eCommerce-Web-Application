@@ -312,6 +312,20 @@ const SeetingSchema = new Schema(
         primary_color: {
           type: String,
         },
+        logo: {
+          original: {
+            type: String,
+          },
+          large: {
+            type: String,
+          },
+          medium: {
+            type: String,
+          },
+          thumbnail: {
+            type: String,
+          },
+        },
       },
     },
   },
@@ -479,6 +493,14 @@ module.exports.createSettings = async () => {
       },
       theme: {
         primary_color: "#154050",
+        logo: {
+          original: "",
+          large: "",
+          medium:
+            "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+          thumbnail:
+            "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+        },
       },
     },
   });
