@@ -52,6 +52,7 @@ import _ from "lodash";
 var defaultObj = {
   name: "",
   categoryId: [],
+  brand: "",
   pricing: {
     price: 0,
     sellprice: 0,

@@ -185,6 +185,9 @@ module.exports = {
     },
     brand: async (root, args) => {
       try {
+        if (isEmpty(root.brand)) {
+          return "";
+        }
         const brands = await Brand.findById(root.brand);
         return brands;
       } catch (error) {

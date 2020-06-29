@@ -54,7 +54,7 @@ import viewStyles from "../viewStyles";
 var defaultObj = {
   name: "",
   categoryId: [],
-  brand: {},
+  brand: "",
   sku: "",
   quantity: "",
   status: "Draft",

@@ -8,7 +8,7 @@ const ProductSchema = new Schema({
     required: true,
   },
   categoryId: [],
-  brand: Schema.ObjectId,
+  brand: "",
   sku: {
     type: String,
   },
