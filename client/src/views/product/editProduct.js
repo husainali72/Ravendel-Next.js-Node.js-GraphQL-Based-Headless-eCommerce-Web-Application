@@ -100,11 +100,10 @@ const EditProduct = (props) => {
   const [product, setProduct] = useState(defaultObj);
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = React.useState(0);
-  const [brands, setbrands] = useState({});
+  const [brands, setbrands] = useState({ brands: [], defaultBrand: {} });
   //props.products.
 
   const onChangeContent = (value) => {
-    console.log("editor", value);
     setProduct({
       ...product,
       description: value,
@@ -123,27 +122,37 @@ const EditProduct = (props) => {
 
   useEffect(() => {
     if (!isEmpty(props.productState.product)) {
-      console.log("run");
+      //console.log(props.productState.product);
       let defaultBrand = {};
-      for (let i in props.brandState.brands) {
-        if (
-          props.brandState.brands[i].id === props.productState.product.brand.id
-        ) {
-          defaultBrand = {
-            value: props.brandState.brands[i].id,
-            label: props.brandState.brands[i].name,
-          };
 
-          break;
+      if (props.productState.product.brand) {
+        for (let i in props.brandState.brands) {
+          if (
+            props.brandState.brands[i].id ===
+            props.productState.product.brand.id
+          ) {
+            defaultBrand = {
+              value: props.brandState.brands[i].id,
+              label: props.brandState.brands[i].name,
+            };
+
+            break;
+          }
         }
       }
+
       setbrands({ ...brands, defaultBrand: defaultBrand });
 
       catIds = props.productState.product.categoryId.map((cat) => cat.id);
       if (!props.productState.categories.length) {
         props.categoriesAction();
       }
-      setProduct({ ...product, ...props.productState.product });
+      setProduct({
+        ...product,
+        ...props.productState.product,
+        categoryId: catIds,
+        brand: defaultBrand.value || "",
+      });
       if (props.productState.product.feature_image.original) {
         setfeatureImage(props.productState.product.feature_image.original);
       }
@@ -191,18 +200,9 @@ const EditProduct = (props) => {
     }
   }, [props.productState.categories]);
 
-  /* useEffect(() => {
-    if (!isEmpty(props.productState.product.description)) {
-      setProduct({
-        ...product,
-        description: props.productState.product.description,
-      });
-    }
-  }, [props.productState.product.description]); */
-
   const updateProduct = (e) => {
     e.preventDefault();
-    console.log(product);
+    //console.log(product);
     props.productUpdateAction(product);
   };
 
@@ -264,6 +264,7 @@ const EditProduct = (props) => {
         selectedItems.push(items[i].value);
     }
     //product.categoryId = selectedItems;
+    console.log(selectedItems);
     setProduct({ ...product, categoryId: selectedItems });
   };
 

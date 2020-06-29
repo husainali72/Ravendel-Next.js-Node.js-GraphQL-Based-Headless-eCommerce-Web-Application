@@ -108,11 +108,35 @@ module.exports.updateUrl = updateUrl;
 
 const fs = require("fs");
 const Jimp = require("jimp");
+const sharp = require("sharp");
+
+//const path = require("path");
+//const pathToFile = path.dirname(require.main.filename);
 
 const sizes = {
   thumbnail: [150, 150],
   medium: [300, 300],
   large: [1024, 1024],
+};
+
+const sharpResize = (path, i, uploadPath, filename) => {
+  return new Promise((resolve, reject) => {
+    try {
+      sharp(path)
+        .resize(sizes[i][0], sizes[i][1])
+        .toBuffer()
+        .then((data) => {
+          fs.writeFileSync(`.${uploadPath + i}/${filename}`, data);
+          return resolve(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          return resolve(false);
+        });
+    } catch (error) {
+      return resolve(false);
+    }
+  });
 };
 
 const jimpResize = (path, i, uploadPath, filename) => {
@@ -143,7 +167,7 @@ const imageUpload = async (upload, uploadPath) => {
     try {
       let { filename, mimetype, encoding, createReadStream } = await upload;
 
-      const extensions = ["gif", "jpeg", "jpg", "png"];
+      const extensions = ["gif", "jpeg", "jpg", "png", "webp", "svg"];
       let ext = filename.split(".");
       ext = ext.pop();
       ext = ext.toLowerCase();
@@ -181,7 +205,7 @@ const imageUpload = async (upload, uploadPath) => {
           });
           return resolve({
             success: false,
-            message: "This image can't be upload",
+            message: "This image can't be upload 1",
           });
         })
 
@@ -189,7 +213,12 @@ const imageUpload = async (upload, uploadPath) => {
 
         .on("finish", async () => {
           for (let i in sizes) {
-            let resized = await jimpResize(path, i, uploadPath, filename);
+            if (ext === "svg") {
+              fs.copyFileSync(path, `.${uploadPath + i}/${filename}`);
+              continue;
+            }
+
+            let resized = await sharpResize(path, i, uploadPath, filename);
 
             if (resized) {
               continue;
@@ -200,7 +229,7 @@ const imageUpload = async (upload, uploadPath) => {
               });
               return resolve({
                 success: false,
-                message: "This image can't be upload",
+                message: "This image can't be upload 2",
               });
             }
           }
@@ -218,7 +247,7 @@ const imageUpload = async (upload, uploadPath) => {
     } catch (error) {
       return resolve({
         success: false,
-        message: "This image can't be upload",
+        message: "This image can't be upload 3",
       });
     }
   });
@@ -228,7 +257,7 @@ module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
 const imageUnlink = (imgObject) => {
-  console.log("here comes", imgObject);
+  console.log("is here comes", imgObject);
   for (let i in imgObject) {
     //console.log("here comes", imgObject[i]);
     //fs.unlinkSync("." + imgObject[i]);

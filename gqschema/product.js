@@ -99,11 +99,11 @@ module.exports = gql`
     productCategories: [productCategory]
     productCategory(id: ID!): productCategory
     getTree: [cattree]
-    products: [ProductWithCat]
-    productswithcat: [ProductWithCat]
-    featureproducts: [ProductWithCat]
+    products: [Product]
+    productswithcat: [Product]
+    featureproducts: [Product]
     product(id: ID!): Product
-    productsbycatid(cat_id: ID!): [ProductWithCat]
+    productsbycatid(cat_id: ID!): [Product]
     productsbycaturl(cat_url: String!): CatwithProducts
   }
 

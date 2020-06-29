@@ -92,15 +92,20 @@ const AddProduct = (props) => {
 
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = React.useState(0);
-  React.useEffect(() => {
-    setLabelWidth(inputLabel.current.offsetWidth);
-  }, []);
 
   useEffect(() => {
+    setLabelWidth(inputLabel.current.offsetWidth);
     props.shippingAction();
     props.taxAction();
     props.brandsAction();
   }, []);
+
+  const onChangeContent = (value) => {
+    setProduct({
+      ...product,
+      description: value,
+    });
+  };
 
   useEffect(() => {
     if (props.products.categories && props.products.categories.length) {
@@ -451,7 +456,10 @@ const AddProduct = (props) => {
 
                   <Grid container>
                     <Grid item md={12}>
-                      <TinymceEditor />
+                      <TinymceEditor
+                        value={product.description}
+                        onChangeEditor={onChangeContent}
+                      />
                     </Grid>
                   </Grid>
                 </CardContent>

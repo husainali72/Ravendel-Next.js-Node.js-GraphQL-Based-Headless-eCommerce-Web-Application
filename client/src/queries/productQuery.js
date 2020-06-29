@@ -1,4 +1,49 @@
 import gql from "graphql-tag";
+
+const PRODUCT_TILE_DATA = gql`
+  fragment ProductTile on Product {
+    id
+    name
+    url
+    categoryId {
+      id
+      name
+      parentId
+      url
+      description
+      image
+      meta
+      date
+      updated
+    }
+    brand {
+      id
+      name
+      url
+      brand_logo
+      meta
+      date
+      updated
+    }
+    short_description
+    description
+    sku
+    quantity
+    pricing
+    feature_image
+    gallery_image
+    status
+    featured_product
+    product_type
+    shipping
+    tax_class
+    meta
+    custom_field
+    date
+    updated
+  }
+`;
+
 const GET_CATEGORIES = gql`
   {
     productCategories {
@@ -112,93 +157,19 @@ const DELETE_CATEGORY = gql`
 const GET_PRODUCTS = gql`
   {
     products {
-      id
-      name
-      url
-      categoryId {
-        id
-        name
-        parentId
-        url
-        description
-        image
-        meta
-        date
-        updated
-      }
-      brand {
-        id
-        name
-        url
-        brand_logo
-        meta
-        date
-        updated
-      }
-      short_description
-      description
-      sku
-      quantity
-      pricing
-      feature_image
-      gallery_image
-      status
-      featured_product
-      product_type
-      shipping
-      tax_class
-      meta
-      custom_field
-      date
-      updated
+      ...ProductTile
     }
   }
+  ${PRODUCT_TILE_DATA}
 `;
 
 const GET_PRODUCT = gql`
   query($id: ID!) {
     product(id: $id) {
-      id
-      name
-      url
-      categoryId {
-        id
-        name
-        parentId
-        url
-        description
-        image
-        meta
-        date
-        updated
-      }
-      brand {
-        id
-        name
-        url
-        brand_logo
-        meta
-        date
-        updated
-      }
-      short_description
-      description
-      sku
-      quantity
-      pricing
-      feature_image
-      gallery_image
-      status
-      featured_product
-      product_type
-      shipping
-      tax_class
-      meta
-      custom_field
-      date
-      updated
+      ...ProductTile
     }
   }
+  ${PRODUCT_TILE_DATA}
 `;
 
 const ADD_PRODUCT = gql`
@@ -242,28 +213,10 @@ const ADD_PRODUCT = gql`
       meta: $meta
       custom_field: $custom_field
     ) {
-      id
-      name
-      url
-      categoryId
-      short_description
-      description
-      sku
-      quantity
-      pricing
-      feature_image
-      gallery_image
-      status
-      featured_product
-      product_type
-      shipping
-      tax_class
-      meta
-      custom_field
-      date
-      updated
+      ...ProductTile
     }
   }
+  ${PRODUCT_TILE_DATA}
 `;
 
 const UPDATE_PRODUCT = gql`
@@ -311,55 +264,19 @@ const UPDATE_PRODUCT = gql`
       meta: $meta
       custom_field: $custom_field
     ) {
-      id
-      name
-      url
-      categoryId
-      short_description
-      description
-      sku
-      quantity
-      pricing
-      feature_image
-      gallery_image
-      status
-      featured_product
-      product_type
-      shipping
-      tax_class
-      meta
-      custom_field
-      date
-      updated
+      ...ProductTile
     }
   }
+  ${PRODUCT_TILE_DATA}
 `;
 
 const DELETE_PRODUCT = gql`
   mutation($id: ID!) {
     deleteProduct(id: $id) {
-      id
-      name
-      url
-      categoryId
-      short_description
-      description
-      sku
-      quantity
-      pricing
-      feature_image
-      gallery_image
-      status
-      featured_product
-      product_type
-      shipping
-      tax_class
-      meta
-      custom_field
-      date
-      updated
+      ...ProductTile
     }
   }
+  ${PRODUCT_TILE_DATA}
 `;
 
 export {

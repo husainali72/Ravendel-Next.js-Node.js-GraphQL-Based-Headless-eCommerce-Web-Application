@@ -175,6 +175,7 @@ module.exports = {
   Product: {
     categoryId: async (root, args) => {
       try {
+        //let catIDs = root.categoryId.map(cat => cat.id);
         const cats = await ProductCat.find({ _id: { $in: root.categoryId } });
         return cats;
       } catch (error) {
@@ -184,7 +185,6 @@ module.exports = {
     },
     brand: async (root, args) => {
       try {
-        console.log("here comes", root.brand);
         const brands = await Brand.findById(root.brand);
         return brands;
       } catch (error) {
@@ -465,7 +465,8 @@ module.exports = {
 
           product.name = args.name;
           product.categoryId = args.categoryId;
-          product.url = await updateUrl(args.url || args.name, "Product");
+          (product.brand = args.brand || ""),
+            (product.url = await updateUrl(args.url || args.name, "Product"));
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;
