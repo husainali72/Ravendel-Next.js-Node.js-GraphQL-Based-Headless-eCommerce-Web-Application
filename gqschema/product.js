@@ -40,31 +40,7 @@ module.exports = gql`
     meta: customObject
     date: Date
     updated: Date
-    products: [ProductWithCat]
-  }
-
-  type ProductWithCat {
-    id: ID
-    name: String
-    categoryId: [productCategory]
-    brand: productBrand
-    url: String
-    sku: String
-    short_description: String
-    description: String
-    quantity: String
-    pricing: customObject
-    feature_image: customObject
-    gallery_image: customObject
-    meta: customObject
-    shipping: customObject
-    tax_class: String
-    status: String
-    featured_product: Boolean
-    product_type: customObject
-    custom_field: [customObject]
-    date: Date
-    updated: Date
+    products: [Product]
   }
 
   type Product {

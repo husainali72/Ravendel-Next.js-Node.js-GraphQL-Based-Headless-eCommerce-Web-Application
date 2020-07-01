@@ -151,27 +151,6 @@ module.exports = {
       }
     },
   },
-  ProductWithCat: {
-    categoryId: async (root, args) => {
-      try {
-        const cats = await ProductCat.find({ _id: { $in: root.categoryId } });
-        return cats;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
-    brand: async (root, args) => {
-      try {
-        console.log("here comes", root.brand);
-        const brands = await Brand.findById(root.brand);
-        return brands;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
-  },
   Product: {
     categoryId: async (root, args) => {
       try {
