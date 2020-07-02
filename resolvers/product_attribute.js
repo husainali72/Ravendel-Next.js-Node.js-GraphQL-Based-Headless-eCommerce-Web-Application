@@ -66,7 +66,9 @@ module.exports = {
     updateAttribute: async (root, args, { id }) => {
       //checkToken(id);
       try {
-        const update_attr = await ProductAttribute.findById({ _id: args.id });
+        const update_attr = await ProductAttribute.findById({
+          _id: args.attribute.id,
+        });
         if (update_attr) {
           update_attr.name = args.attribute.name;
           update_attr.values = args.attribute.values;
@@ -85,7 +87,7 @@ module.exports = {
       }
     },
     deleteAttribute: async (root, args, { id }) => {
-      checkToken(id);
+      //checkToken(id);
       try {
         const attribute = await ProductAttribute.findByIdAndRemove(args.id);
         if (attribute) {

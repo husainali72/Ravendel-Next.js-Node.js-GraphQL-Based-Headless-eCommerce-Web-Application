@@ -9,7 +9,7 @@ module.exports = gql`
   type productAttribute {
     id: ID
     name: String
-    values: attributeValues
+    values: [attributeValues]
     date: Date
     updated: Date
   }
@@ -25,6 +25,7 @@ module.exports = gql`
   }
 
   input AttributeInput {
+    id: ID
     name: String
     values: [customObject]
   }
@@ -36,7 +37,7 @@ module.exports = gql`
 
   extend type Mutation {
     addAttribute(attribute: AttributeInput): attributeResponse
-    updateAttribute(id: ID!, attribute: AttributeInput): attributeResponse
+    updateAttribute(attribute: AttributeInput): attributeResponse
     deleteAttribute(id: ID!): attributeResponse
   }
 `;

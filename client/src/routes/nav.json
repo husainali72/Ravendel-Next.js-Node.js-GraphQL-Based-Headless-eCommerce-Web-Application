@@ -29,6 +29,11 @@
           "name": "Categories",
           "url": "/all-categories",
           "icon": "subject"
+        },
+        {
+          "name": "Attribute",
+          "url": "/attributes",
+          "icon": "subject"
         }
       ]
     },
