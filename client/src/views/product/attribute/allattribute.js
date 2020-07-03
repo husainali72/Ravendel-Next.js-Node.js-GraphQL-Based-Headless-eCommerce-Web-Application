@@ -51,7 +51,6 @@ const AllAttribute = () => {
 
   return (
     <Fragment>
-      {/* <Alert /> */}
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>

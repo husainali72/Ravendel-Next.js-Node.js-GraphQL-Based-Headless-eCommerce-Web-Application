@@ -4,10 +4,7 @@ const ATTRIBUTE_TILE = gql`
   fragment AttributeTile on productAttribute {
     id
     name
-    values {
-      id
-      name
-    }
+    values
     date
     updated
   }

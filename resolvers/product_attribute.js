@@ -37,7 +37,7 @@ module.exports = {
   },
   Mutation: {
     addAttribute: async (root, args, { id }) => {
-      //checkToken(id);
+      checkToken(id);
       try {
         const attribute = await ProductAttribute.findOne({
           name: args.attribute.name,
@@ -64,7 +64,7 @@ module.exports = {
       }
     },
     updateAttribute: async (root, args, { id }) => {
-      //checkToken(id);
+      checkToken(id);
       try {
         const update_attr = await ProductAttribute.findById({
           _id: args.attribute.id,
@@ -87,7 +87,7 @@ module.exports = {
       }
     },
     deleteAttribute: async (root, args, { id }) => {
-      //checkToken(id);
+      checkToken(id);
       try {
         const attribute = await ProductAttribute.findByIdAndRemove(args.id);
         if (attribute) {

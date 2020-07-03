@@ -52,16 +52,12 @@ const EditAttribute = (props) => {
     name: "",
     values: [],
   });
-
+  const dispatch = useDispatch();
   const attributeState = useSelector((state) => state.product_attributes);
 
   useEffect(() => {
     if (!isEmpty(props.match.params.id)) {
       dispatch(attributeAction(props.match.params.id));
-    }
-
-    if (Object.keys(attributeState.attribute).length) {
-      setattribute(attributeState.attribute);
     }
   }, []);
 
@@ -76,17 +72,16 @@ const EditAttribute = (props) => {
     }
   }, [attributeState]);
 
-  const dispatch = useDispatch();
-
   const onDeleteTag = (i) => {
-    console.log(attribute);
     attribute.values.splice(i, 1);
     setattribute({ ...attribute });
+    console.log(attribute);
   };
 
   const onAddTag = (tag) => {
     attribute.values.push(tag);
     setattribute({ ...attribute });
+    console.log(attribute);
   };
 
   return (

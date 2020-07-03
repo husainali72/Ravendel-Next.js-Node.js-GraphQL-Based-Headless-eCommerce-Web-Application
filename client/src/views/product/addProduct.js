@@ -24,7 +24,15 @@ import {
   InputLabel,
   Tooltip,
   Icon,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableContainer,
+  TablePagination,
 } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
 import { Link } from "react-router-dom";
@@ -36,6 +44,7 @@ import {
   shippingAction,
   taxAction,
   brandsAction,
+  attributesAction,
 } from "../../store/action/";
 //import Alert from "../utils/Alert";
 import { unflatten, toUrl } from "../../utils/helper";
@@ -45,6 +54,7 @@ import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
 import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTwoTone";
 import ReactSelect from "react-select";
+import ReactTags from "react-tag-autocomplete";
 import "../../App.css";
 import viewStyles from "../viewStyles";
 import _ from "lodash";
@@ -76,30 +86,118 @@ var defaultObj = {
     downloadable: false,
   },
   custom_field: [],
+  attribute: [],
+  variant: [],
 };
+
+const delimiters = ["Enter", "Tab"];
 
 const AddProduct = (props) => {
   const classes = viewStyles();
-
   const [featureImage, setfeatureImage] = useState(null);
   const [gallery, setGallery] = useState([]);
   const [editPremalink, setEditPermalink] = useState(false);
   const [showPermalink, setshowPermalink] = useState(false);
-
   const [collapseCategory, setcollapseCategory] = useState({});
   const [product, setProduct] = useState(defaultObj);
   const [brands, setbrands] = useState([]);
   const [productCats, setproductCats] = useState([]);
-
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = React.useState(0);
+  const [currentAttribute, setcurrentAttribute] = useState({
+    id: "",
+    name: "",
+    values: [],
+    selected_values: [],
+    isVariant: false,
+    attribute_list: [],
+  });
 
   useEffect(() => {
     setLabelWidth(inputLabel.current.offsetWidth);
     props.shippingAction();
     props.taxAction();
     props.brandsAction();
+    props.attributesAction();
   }, []);
+
+  const onSelectAttr = (e) => {
+    let values = [];
+    let name = "";
+    for (let i of props.attributeState.attributes) {
+      if (i.id === e.target.value) {
+        name = i.name;
+        for (let j of i.values) {
+          values.push({ value: j._id, label: j.name });
+        }
+        break;
+      }
+    }
+    currentAttribute.selected_values = [];
+    setcurrentAttribute({
+      ...currentAttribute,
+      id: e.target.value,
+      name: name,
+      values: values,
+    });
+  };
+
+  const onAddAttributeValue = (e) => {
+    currentAttribute.selected_values = e;
+    setcurrentAttribute({
+      ...currentAttribute,
+    });
+  };
+
+  const deleteAttribute = (i) => {
+    currentAttribute.attribute_list.splice(i, 1);
+    setcurrentAttribute({
+      ...currentAttribute,
+    });
+  };
+
+  const saveAttribute = () => {
+    if (!currentAttribute.id || !currentAttribute.values.length) {
+      alert("invalid");
+      return;
+    }
+
+    let attribute_list = {
+      id: currentAttribute.id,
+      name: currentAttribute.name,
+      isVariant: currentAttribute.isVariant,
+      values: [],
+    };
+
+    currentAttribute.selected_values.forEach((val, index) => {
+      product.attribute.push({
+        attribute_id: currentAttribute.id,
+        attribute_value_id: val.value,
+      });
+
+      attribute_list.values.push(val.label);
+    });
+
+    if (currentAttribute.isVariant) {
+      product.variant.push(currentAttribute.id);
+    }
+
+    currentAttribute.attribute_list.push(attribute_list);
+    currentAttribute.selected_values = [];
+    currentAttribute.values = [];
+    currentAttribute.isVariant = false;
+    setcurrentAttribute({
+      ...currentAttribute,
+    });
+
+    setProduct({
+      ...product,
+    });
+  };
+
+  useEffect(() => {
+    console.log(product);
+  }, [product]);
 
   const onChangeContent = (value) => {
     setProduct({
@@ -165,15 +263,6 @@ const AddProduct = (props) => {
   };
 
   const handleChange = (e) => {
-    /* if (e.target.name === "name") {
-      var slugVal = toUrl(e.target.value);
-      setProduct({
-        ...product,
-        url: slugVal,
-        name: e.target.value,
-      });
-      return;
-    } */
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
@@ -824,6 +913,128 @@ const AddProduct = (props) => {
 
             <Box component="span" m={1}>
               <Card>
+                <CardHeader title="Attributes" />
+                <Divider />
+                <CardContent>
+                  <TableContainer>
+                    <Table
+                      stickyHeader
+                      aria-label="sticky table and Dense Table"
+                      size="small"
+                    >
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Name</TableCell>
+                          <TableCell>Values</TableCell>
+                          <TableCell>Variation</TableCell>
+                          <TableCell>Remove</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody className={classes.container}>
+                        {currentAttribute.attribute_list.map((attribute) => (
+                          <TableRow key={attribute.id} hover>
+                            <TableCell>{attribute.name}</TableCell>
+                            <TableCell>{attribute.values.join(",")}</TableCell>
+                            <TableCell>
+                              {attribute.isVariant ? "Yes" : "No"}
+                            </TableCell>
+                            <TableCell>
+                              <Tooltip title="Delete" aria-label="delete">
+                                <IconButton
+                                  aria-label="Delete"
+                                  className={classes.deleteicon}
+                                  onClick={deleteAttribute}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CardContent>
+                <Divider />
+                <CardContent>
+                  <Grid container spacing={3}>
+                    <Grid item md={4}>
+                      <FormControl
+                        className={classes.cstmSelect}
+                        variant="outlined"
+                      >
+                        <InputLabel ref={inputLabel} id="attribute-name">
+                          Name
+                        </InputLabel>
+                        <Select
+                          labelWidth={labelWidth}
+                          labelId="attribute-name"
+                          value={currentAttribute.id}
+                          onChange={onSelectAttr}
+                        >
+                          {props.attributeState.attributes.map(
+                            (attr, index) => {
+                              return (
+                                <MenuItem
+                                  disabled={currentAttribute.attribute_list.some(
+                                    (i) => i.id === attr.id
+                                  )}
+                                  value={attr.id}
+                                  key={index}
+                                >
+                                  {attr.name}
+                                </MenuItem>
+                              );
+                            }
+                          )}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+
+                    <Grid item md={4}>
+                      <ReactSelect
+                        name="attribute-value"
+                        isMulti
+                        value={currentAttribute.selected_values}
+                        options={currentAttribute.values}
+                        onChange={onAddAttributeValue}
+                      />
+                    </Grid>
+
+                    <Grid item md={4}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            color="primary"
+                            checked={currentAttribute.isVariant}
+                            onChange={(e) =>
+                              setcurrentAttribute({
+                                ...currentAttribute,
+                                isVariant: e.target.checked,
+                              })
+                            }
+                          />
+                        }
+                        label="Used for variations"
+                      />
+                    </Grid>
+
+                    <Grid item md={4}>
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={saveAttribute}
+                      >
+                        Save Attribute
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Box>
+
+            <Box component="span" m={1}>
+              <Card>
                 <CardHeader title="Custom Fields" />
                 <Divider />
                 <CardContent>
@@ -1136,6 +1347,7 @@ const mapStateToProps = (state) => {
     taxState: state.taxs,
     shippingState: state.shippings,
     brandState: state.brands,
+    attributeState: state.product_attributes,
   };
 };
 
@@ -1152,6 +1364,7 @@ const mapDispatchToProps = (dispatch) => {
     taxAction: () => dispatch(taxAction()),
     shippingAction: () => dispatch(shippingAction()),
     brandsAction: () => dispatch(brandsAction()),
+    attributesAction: () => dispatch(attributesAction()),
     dispatch,
   };
 };

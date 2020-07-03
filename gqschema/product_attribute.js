@@ -9,7 +9,7 @@ module.exports = gql`
   type productAttribute {
     id: ID
     name: String
-    values: [attributeValues]
+    values: [customObject]
     date: Date
     updated: Date
   }
@@ -21,6 +21,7 @@ module.exports = gql`
   }
 
   input AttributeValuesInput {
+    id: ID
     name: String
   }
 

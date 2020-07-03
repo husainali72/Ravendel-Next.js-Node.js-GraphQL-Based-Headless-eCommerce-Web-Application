@@ -285,3 +285,7 @@
   opacity: 0.5;
   cursor: auto;
 }
+
+.MuiCard-root {
+  overflow: inherit !important;
+}
