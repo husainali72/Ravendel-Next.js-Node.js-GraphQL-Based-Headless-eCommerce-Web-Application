@@ -135,11 +135,11 @@ module.exports = {
           throw putError("404 Not found");
         }
 
-        const products = await Product.find({
+        /* const products = await Product.find({
           categoryId: { $in: cat.id },
         });
 
-        cat.products = products || [];
+        cat.products = products || []; */
         return cat;
 
         //return products || [];
@@ -191,6 +191,29 @@ module.exports = {
         });
         //console.log(variations);
         return variations || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+  },
+  Category: {
+    products: async (root, args) => {
+      try {
+        const products = await Product.find({
+          categoryId: { $in: root.id },
+        });
+
+        return products || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    child_cat: async (root, args) => {
+      try {
+        const cats = await ProductCat.find({ parentId: root.id });
+        return cats || [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);

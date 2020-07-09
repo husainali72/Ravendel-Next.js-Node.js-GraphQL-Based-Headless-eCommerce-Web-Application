@@ -30,6 +30,27 @@ module.exports = gql`
     children: customArray
   }
 
+  type ChildCat {
+    id: ID
+    name: String
+    parentId: ID
+    url: String
+  }
+
+  type Category {
+    id: ID
+    name: String
+    parentId: ID
+    url: String
+    description: String
+    image: customObject
+    products: [Product]
+    child_cat: [ChildCat]
+    meta: customObject
+    date: Date
+    updated: Date
+  }
+
   type CatwithProducts {
     id: ID
     name: String
@@ -95,7 +116,7 @@ module.exports = gql`
     featureproducts: [Product]
     product(id: ID!): Product
     productsbycatid(cat_id: ID!): [Product]
-    productsbycaturl(cat_url: String!): CatwithProducts
+    productsbycaturl(cat_url: String!): Category
   }
 
   extend type Mutation {
