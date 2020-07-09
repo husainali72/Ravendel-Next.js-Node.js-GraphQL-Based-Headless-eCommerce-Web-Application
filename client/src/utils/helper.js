@@ -93,3 +93,38 @@ export const toUrl = (text) => {
   let url = text.replace(/[^a-z0-9\s]/gi, "-");
   return url.toLowerCase();
 };
+
+/*---------------------------------------------------------------------------------------------------------------------*/
+
+export const allPossibleCases = (arr) => {
+  if (arr.length === 1) {
+    let comb = [];
+    for (const i of arr[0]) {
+      comb.push([i]);
+    }
+
+    return comb;
+
+    //return arr[0];
+  } else {
+    var result = [];
+    var allCasesOfRest = allPossibleCases(arr.slice(1)); // recur with the rest of array
+    for (var i = 0; i < allCasesOfRest.length; i++) {
+      for (var j = 0; j < arr[0].length; j++) {
+        let comb = [];
+        comb.push(arr[0][j]);
+        if (Array.isArray(allCasesOfRest[i])) {
+          for (const k of allCasesOfRest[i]) {
+            comb.push(k);
+          }
+        } else {
+          comb.push(allCasesOfRest[i]);
+        }
+        result.push(comb);
+      }
+    }
+    return result;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------------------------------------*/

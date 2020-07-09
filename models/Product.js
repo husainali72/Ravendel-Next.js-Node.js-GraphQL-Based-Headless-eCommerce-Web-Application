@@ -112,6 +112,17 @@ const ProductSchema = new Schema({
       },
     },
   ],
+  attribute: [
+    {
+      attribute_id: {
+        type: Schema.ObjectId,
+      },
+      attribute_value_id: {
+        type: Schema.ObjectId,
+      },
+    },
+  ],
+  variant: [],
   date: {
     type: Date,
     default: Date.now,

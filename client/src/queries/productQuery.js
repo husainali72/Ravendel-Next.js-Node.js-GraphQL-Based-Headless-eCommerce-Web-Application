@@ -39,6 +39,18 @@ const PRODUCT_TILE_DATA = gql`
     tax_class
     meta
     custom_field
+    attribute
+    variant
+    variation_master {
+      id
+      product_id
+      combination
+      price
+      quantity
+      image
+      createdAt
+      updatedAt
+    }
     date
     updated
   }
@@ -192,6 +204,9 @@ const ADD_PRODUCT = gql`
     $tax_class: String
     $meta: customObject
     $custom_field: [customObject]
+    $attribute: [customObject]
+    $variant: customArray
+    $combinations: [customObject]
   ) {
     addProduct(
       name: $name
@@ -212,6 +227,9 @@ const ADD_PRODUCT = gql`
       tax_class: $tax_class
       meta: $meta
       custom_field: $custom_field
+      attribute: $attribute
+      variant: $variant
+      combinations: $combinations
     ) {
       ...ProductTile
     }

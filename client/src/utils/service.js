@@ -61,7 +61,6 @@ const service = (config) => {
   //header authorization
   if (Auth.getToken()) {
     const token = Auth.getToken();
-    console.log("token", token);
     config.headers = {
       authorization: token,
     };

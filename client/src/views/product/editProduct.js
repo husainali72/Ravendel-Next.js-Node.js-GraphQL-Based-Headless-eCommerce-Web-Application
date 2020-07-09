@@ -24,7 +24,14 @@ import {
   InputLabel,
   Tooltip,
   Icon,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableContainer,
 } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
 import { Link } from "react-router-dom";
@@ -38,8 +45,9 @@ import {
   productsAction,
   brandsAction,
   productAction,
+  attributesAction,
 } from "../../store/action/";
-import { unflatten } from "../../utils/helper";
+import { unflatten, allPossibleCases } from "../../utils/helper";
 import { getUpdatedUrl } from "../../utils/service";
 import clsx from "clsx";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -51,57 +59,64 @@ import "../../App.css";
 import _ from "lodash";
 import viewStyles from "../viewStyles";
 
-var defaultObj = {
-  name: "",
-  categoryId: [],
-  brand: "",
-  sku: "",
-  quantity: "",
-  status: "Draft",
-  pricing: {
-    price: "",
-    sellprice: "",
-  },
-  meta: {
-    title: "",
-    description: "",
-    keywords: "",
-  },
-  shipping: {
-    height: "",
-    width: "",
-    depth: "",
-    weight: "",
-    shipping_class: "",
-  },
-  tax_class: "",
-  removed_image: [],
-  featured_product: false,
-  product_type: {
-    virtual: false,
-    downloadable: false,
-  },
-  custom_field: [],
-  short_description: "",
-};
-
 var catIds = [];
-
 const EditProduct = (props) => {
   const classes = viewStyles();
-  const [tax, setTax] = useState("Global");
-  const [shippingClass, setShippingClass] = useState("Global");
   const [featureImage, setfeatureImage] = useState(null);
   const [gallery, setGallery] = useState([]);
   const [editPremalink, setEditPermalink] = useState(false);
   const [collapseCategory, setcollapseCategory] = useState({});
-  const [checkedCat, setCheckedCat] = useState({});
   const [catList, setCatList] = useState([]);
-  const [product, setProduct] = useState(defaultObj);
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = React.useState(0);
   const [brands, setbrands] = useState({ brands: [], defaultBrand: {} });
-  //props.products.
+  const [showLoader, setshowLoader] = useState(false);
+  const [product, setProduct] = useState({
+    name: "",
+    categoryId: [],
+    brand: "",
+    sku: "",
+    quantity: "",
+    status: "Draft",
+    pricing: {
+      price: "",
+      sellprice: "",
+    },
+    meta: {
+      title: "",
+      description: "",
+      keywords: "",
+    },
+    shipping: {
+      height: "",
+      width: "",
+      depth: "",
+      weight: "",
+      shipping_class: "",
+    },
+    tax_class: "",
+    removed_image: [],
+    featured_product: false,
+    product_type: {
+      virtual: false,
+      downloadable: false,
+    },
+    custom_field: [],
+    short_description: "",
+    attribute: [],
+    variant: [],
+  });
+
+  const [currentVariants, setcurrentVariants] = useState({
+    variant: [],
+    combinations: [],
+    allValues: {},
+  });
+
+  const [currentAttribute, setcurrentAttribute] = useState({
+    id: "",
+    attribute_list: [],
+  });
 
   const onChangeContent = (value) => {
     setProduct({
@@ -118,7 +133,187 @@ const EditProduct = (props) => {
       props.productAction(props.match.params.id);
     }
     props.brandsAction();
+    props.attributesAction();
   }, []);
+
+  useEffect(() => {
+    for (let i of props.attributeState.attributes) {
+      for (let j of i.values) {
+        currentVariants.allValues[j._id] = j.name;
+      }
+    }
+  }, [props.attributeState.attributes]);
+
+  const changeSelectedValue = (e, i) => {
+    currentAttribute.attribute_list[i].selected_values = e;
+    setcurrentAttribute({
+      ...currentAttribute,
+    });
+  };
+
+  const deleteAttribute = (i) => {
+    currentAttribute.attribute_list.splice(i, 1);
+    setcurrentAttribute({
+      ...currentAttribute,
+    });
+  };
+
+  const addAttribute = () => {
+    if (!currentAttribute.id) {
+      alert("invalid");
+      return;
+    }
+
+    let values = [];
+    let name = "";
+    for (let i of props.attributeState.attributes) {
+      if (i.id === currentAttribute.id) {
+        name = i.name;
+        for (let j of i.values) {
+          values.push({ value: j._id, label: j.name });
+        }
+        break;
+      }
+    }
+
+    let attribute_list = {
+      id: currentAttribute.id,
+      name: name,
+      isVariant: false,
+      selected_values: [],
+      values: values,
+    };
+
+    currentAttribute.attribute_list.push(attribute_list);
+    currentAttribute.id = "";
+    setcurrentAttribute({
+      ...currentAttribute,
+    });
+  };
+
+  const saveAttribute = () => {
+    setshowLoader(true);
+    product.attribute = [];
+    product.variant = [];
+    currentAttribute.attribute_list.forEach((attr, index) => {
+      if (attr.selected_values.length) {
+        attr.selected_values.forEach((val) => {
+          product.attribute.push({
+            attribute_id: attr.id,
+            attribute_value_id: val.value,
+          });
+        });
+
+        if (attr.isVariant) {
+          product.variant.push(attr.id);
+        }
+      }
+    });
+
+    setProduct({
+      ...product,
+    });
+
+    createVariants();
+  };
+
+  const createVariants = () => {
+    let variants = {};
+    for (const i of product.variant) {
+      variants[i] = [];
+    }
+
+    for (let attr of product.attribute) {
+      if (variants.hasOwnProperty(attr.attribute_id)) {
+        variants[attr.attribute_id].push(attr.attribute_value_id);
+      }
+    }
+
+    if (!Object.keys(variants).length) {
+      setshowLoader(false);
+      return;
+    }
+
+    variants = Object.values(variants);
+    let combinations = allPossibleCases(variants);
+
+    let countMatch = [];
+    let generatedVariants = [];
+
+    combinations.forEach((comb, i) => {
+      countMatch = [];
+      currentVariants.combinations.forEach((prevComb, j) => {
+        countMatch[j] = 0;
+        prevComb.combination.forEach((v) => {
+          if (~comb.indexOf(v)) {
+            countMatch[j] = countMatch[j] + 1;
+          }
+        });
+      });
+
+      var max = 0;
+      var index = 0;
+      countMatch.forEach((val, key) => {
+        if (val > max) {
+          max = countMatch[key];
+          index = key;
+        }
+      });
+
+      if (max) {
+        generatedVariants.push({
+          combination: comb,
+          sku: currentVariants.combinations[index].sku,
+          quantity: currentVariants.combinations[index].quantity,
+          price: currentVariants.combinations[index].price,
+          image: currentVariants.combinations[index].image,
+        });
+
+        currentVariants.combinations.splice(index, 1);
+      } else {
+        generatedVariants.push({
+          combination: comb,
+          sku: "",
+          quantity: "",
+          price: "",
+          image: {},
+        });
+      }
+    });
+
+    currentVariants.combinations = generatedVariants;
+    setcurrentVariants({
+      ...currentVariants,
+    });
+
+    setshowLoader(false);
+  };
+
+  const variantChange = (e, index) => {
+    if (e.target.name === "image") {
+      currentVariants.combinations[index][e.target.name].file = e.target.files;
+      currentVariants.combinations[index][
+        e.target.name
+      ].view = URL.createObjectURL(e.target.files[0]);
+    } else {
+      currentVariants.combinations[index][e.target.name] = e.target.value;
+    }
+
+    setcurrentVariants({
+      ...currentVariants,
+    });
+  };
+
+  const variantDelete = (i) => {
+    currentVariants.combinations.splice(i, 1);
+    setcurrentVariants({
+      ...currentVariants,
+    });
+  };
+
+  useEffect(() => {
+    console.log(product);
+  }, [product]);
 
   useEffect(() => {
     if (!isEmpty(props.productState.product)) {
@@ -164,6 +359,8 @@ const EditProduct = (props) => {
       if (isEmpty(props.taxState.tax.tax_class)) {
         props.taxAction();
       }
+
+      //currentAttribute.attribute_list
     }
   }, [props.productState.product]);
 
@@ -883,6 +1080,140 @@ const EditProduct = (props) => {
 
             <Box component="span" m={1}>
               <Card>
+                <CardHeader title="Attributes" />
+                <Divider />
+                <CardContent>
+                  <Grid container spacing={3}>
+                    <Grid item md={4}>
+                      <FormControl
+                        className={classes.cstmSelect}
+                        variant="outlined"
+                      >
+                        <InputLabel ref={inputLabel} id="attribute-name">
+                          Select Attribute
+                        </InputLabel>
+                        <Select
+                          labelWidth={labelWidth}
+                          labelId="attribute-name"
+                          value={currentAttribute.id}
+                          onChange={(e) =>
+                            setcurrentAttribute({
+                              ...currentAttribute,
+                              id: e.target.value,
+                            })
+                          }
+                        >
+                          {props.attributeState.attributes.map(
+                            (attr, index) => {
+                              return (
+                                <MenuItem
+                                  disabled={currentAttribute.attribute_list.some(
+                                    (i) => i.id === attr.id
+                                  )}
+                                  value={attr.id}
+                                  key={index}
+                                >
+                                  {attr.name}
+                                </MenuItem>
+                              );
+                            }
+                          )}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item md={4}>
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={addAttribute}
+                      >
+                        Add
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+                <Divider />
+                <CardContent>
+                  <TableContainer>
+                    <Table
+                      stickyHeader
+                      aria-label="sticky table and Dense Table"
+                      size="small"
+                    >
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Name</TableCell>
+                          <TableCell>Values</TableCell>
+                          <TableCell>Variation</TableCell>
+                          <TableCell>Remove</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody className={classes.container}>
+                        {currentAttribute.attribute_list.map(
+                          (attribute, index) => (
+                            <TableRow key={attribute.id} hover>
+                              <TableCell>{attribute.name}</TableCell>
+                              {/* <TableCell>{attribute.values.join(",")}</TableCell> */}
+                              <TableCell>
+                                <ReactSelect
+                                  isMulti
+                                  value={attribute.selected_values}
+                                  options={attribute.values}
+                                  onChange={(e) =>
+                                    changeSelectedValue(e, index)
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell>
+                                {/* {attribute.isVariant ? "Yes" : "No"} */}
+                                <Checkbox
+                                  color="primary"
+                                  checked={attribute.isVariant}
+                                  onChange={(e) => {
+                                    attribute.isVariant = e.target.checked;
+                                    setcurrentAttribute({
+                                      ...currentAttribute,
+                                    });
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Tooltip title="Delete" aria-label="delete">
+                                  <IconButton
+                                    aria-label="Delete"
+                                    className={classes.deleteicon}
+                                    onClick={deleteAttribute}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Tooltip>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CardContent>
+                <Divider />
+                <CardContent>
+                  <Grid container spacing={3}>
+                    <Grid item md={4}>
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={saveAttribute}
+                      >
+                        Save Attribute
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Box>
+
+            <Box component="span" m={1}>
+              <Card>
                 <CardHeader title="Custom Fields" />
                 <Divider />
                 <CardContent>
@@ -1217,6 +1548,7 @@ const mapStateToProps = (state) => {
     taxState: state.taxs,
     shippingState: state.shippings,
     brandState: state.brands,
+    attributeState: state.product_attributes,
   };
 };
 
@@ -1228,6 +1560,7 @@ const mapDispatchToProps = {
   productsAction,
   productAction,
   brandsAction,
+  attributesAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProduct);

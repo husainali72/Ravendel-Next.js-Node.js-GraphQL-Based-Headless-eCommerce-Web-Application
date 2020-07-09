@@ -43,6 +43,17 @@ module.exports = gql`
     products: [Product]
   }
 
+  type ProductVariations {
+    id: ID
+    product_id: ID
+    combination: customArray
+    price: Float
+    quantity: Float
+    image: customObject
+    createdAt: Date
+    updatedAt: Date
+  }
+
   type Product {
     id: ID
     name: String
@@ -63,6 +74,9 @@ module.exports = gql`
     featured_product: Boolean
     product_type: customObject
     custom_field: [customObject]
+    attribute: [customObject]
+    variant: customArray
+    variation_master: [ProductVariations]
     date: Date
     updated: Date
   }
@@ -73,6 +87,7 @@ module.exports = gql`
 
   extend type Query {
     productCategories: [productCategory]
+    productCategoriesByFilter(filter: customObject): [productCategory]
     productCategory(id: ID!): productCategory
     getTree: [cattree]
     products: [Product]
@@ -122,6 +137,9 @@ module.exports = gql`
       product_type: customObject
       meta: customObject
       custom_field: [customObject]
+      attribute: [customObject]
+      variant: customArray
+      combinations: [customObject]
     ): [Product]
     updateProduct(
       id: ID

@@ -47,7 +47,7 @@ import {
   attributesAction,
 } from "../../store/action/";
 //import Alert from "../utils/Alert";
-import { unflatten, toUrl } from "../../utils/helper";
+import { unflatten, toUrl, allPossibleCases } from "../../utils/helper";
 import service, { getUpdatedUrl } from "../../utils/service";
 import clsx from "clsx";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -55,40 +55,10 @@ import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
 import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTwoTone";
 import ReactSelect from "react-select";
 import ReactTags from "react-tag-autocomplete";
+import Loading from "../utils/loading";
 import "../../App.css";
 import viewStyles from "../viewStyles";
-import _ from "lodash";
-
-var defaultObj = {
-  name: "",
-  categoryId: [],
-  brand: "",
-  pricing: {
-    price: 0,
-    sellprice: 0,
-  },
-  meta: {
-    title: "",
-    description: "",
-    keywords: "",
-  },
-  shipping: {
-    height: 0,
-    width: 0,
-    depth: 0,
-    weight: 0,
-    shipping_class: "",
-  },
-  tax_class: "",
-  featured_product: false,
-  product_type: {
-    virtual: false,
-    downloadable: false,
-  },
-  custom_field: [],
-  attribute: [],
-  variant: [],
-};
+import _, { indexOf } from "lodash";
 
 const delimiters = ["Enter", "Tab"];
 
@@ -97,19 +67,50 @@ const AddProduct = (props) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [gallery, setGallery] = useState([]);
   const [editPremalink, setEditPermalink] = useState(false);
-  const [showPermalink, setshowPermalink] = useState(false);
+  const [showLoader, setshowLoader] = useState(false);
   const [collapseCategory, setcollapseCategory] = useState({});
-  const [product, setProduct] = useState(defaultObj);
+  const [product, setProduct] = useState({
+    name: "",
+    categoryId: [],
+    brand: "",
+    pricing: {
+      price: 0,
+      sellprice: 0,
+    },
+    status: "Draft",
+    meta: {
+      title: "",
+      description: "",
+      keywords: "",
+    },
+    shipping: {
+      height: 0,
+      width: 0,
+      depth: 0,
+      weight: 0,
+      shipping_class: "",
+    },
+    tax_class: "",
+    featured_product: false,
+    product_type: {
+      virtual: false,
+      downloadable: false,
+    },
+    custom_field: [],
+    attribute: [],
+    variant: [],
+  });
   const [brands, setbrands] = useState([]);
   const [productCats, setproductCats] = useState([]);
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = React.useState(0);
+  const [currentVariants, setcurrentVariants] = useState({
+    variant: [],
+    combinations: [],
+    allValues: {},
+  });
   const [currentAttribute, setcurrentAttribute] = useState({
     id: "",
-    name: "",
-    values: [],
-    selected_values: [],
-    isVariant: false,
     attribute_list: [],
   });
 
@@ -119,31 +120,19 @@ const AddProduct = (props) => {
     props.taxAction();
     props.brandsAction();
     props.attributesAction();
+    props.categoriesAction();
   }, []);
 
-  const onSelectAttr = (e) => {
-    let values = [];
-    let name = "";
+  useEffect(() => {
     for (let i of props.attributeState.attributes) {
-      if (i.id === e.target.value) {
-        name = i.name;
-        for (let j of i.values) {
-          values.push({ value: j._id, label: j.name });
-        }
-        break;
+      for (let j of i.values) {
+        currentVariants.allValues[j._id] = j.name;
       }
     }
-    currentAttribute.selected_values = [];
-    setcurrentAttribute({
-      ...currentAttribute,
-      id: e.target.value,
-      name: name,
-      values: values,
-    });
-  };
+  }, [props.attributeState.attributes]);
 
-  const onAddAttributeValue = (e) => {
-    currentAttribute.selected_values = e;
+  const changeSelectedValue = (e, i) => {
+    currentAttribute.attribute_list[i].selected_values = e;
     setcurrentAttribute({
       ...currentAttribute,
     });
@@ -156,42 +145,156 @@ const AddProduct = (props) => {
     });
   };
 
-  const saveAttribute = () => {
-    if (!currentAttribute.id || !currentAttribute.values.length) {
+  const addAttribute = () => {
+    if (!currentAttribute.id) {
       alert("invalid");
       return;
     }
 
-    let attribute_list = {
-      id: currentAttribute.id,
-      name: currentAttribute.name,
-      isVariant: currentAttribute.isVariant,
-      values: [],
-    };
-
-    currentAttribute.selected_values.forEach((val, index) => {
-      product.attribute.push({
-        attribute_id: currentAttribute.id,
-        attribute_value_id: val.value,
-      });
-
-      attribute_list.values.push(val.label);
-    });
-
-    if (currentAttribute.isVariant) {
-      product.variant.push(currentAttribute.id);
+    let values = [];
+    let name = "";
+    for (let i of props.attributeState.attributes) {
+      if (i.id === currentAttribute.id) {
+        name = i.name;
+        for (let j of i.values) {
+          values.push({ value: j._id, label: j.name });
+        }
+        break;
+      }
     }
 
+    let attribute_list = {
+      id: currentAttribute.id,
+      name: name,
+      isVariant: false,
+      selected_values: [],
+      values: values,
+    };
+
     currentAttribute.attribute_list.push(attribute_list);
-    currentAttribute.selected_values = [];
-    currentAttribute.values = [];
-    currentAttribute.isVariant = false;
+    currentAttribute.id = "";
     setcurrentAttribute({
       ...currentAttribute,
+    });
+  };
+
+  const saveAttribute = () => {
+    setshowLoader(true);
+    product.attribute = [];
+    product.variant = [];
+    currentAttribute.attribute_list.forEach((attr, index) => {
+      if (attr.selected_values.length) {
+        attr.selected_values.forEach((val) => {
+          product.attribute.push({
+            attribute_id: attr.id,
+            attribute_value_id: val.value,
+          });
+        });
+
+        if (attr.isVariant) {
+          product.variant.push(attr.id);
+        }
+      }
     });
 
     setProduct({
       ...product,
+    });
+
+    createVariants();
+  };
+
+  const createVariants = () => {
+    let variants = {};
+    for (const i of product.variant) {
+      variants[i] = [];
+    }
+
+    for (let attr of product.attribute) {
+      if (variants.hasOwnProperty(attr.attribute_id)) {
+        variants[attr.attribute_id].push(attr.attribute_value_id);
+      }
+    }
+
+    if (!Object.keys(variants).length) {
+      setshowLoader(false);
+      return;
+    }
+
+    variants = Object.values(variants);
+    let combinations = allPossibleCases(variants);
+
+    let countMatch = [];
+    let generatedVariants = [];
+
+    combinations.forEach((comb, i) => {
+      countMatch = [];
+      currentVariants.combinations.forEach((prevComb, j) => {
+        countMatch[j] = 0;
+        prevComb.combination.forEach((v) => {
+          if (~comb.indexOf(v)) {
+            countMatch[j] = countMatch[j] + 1;
+          }
+        });
+      });
+
+      var max = 0;
+      var index = 0;
+      countMatch.forEach((val, key) => {
+        if (val > max) {
+          max = countMatch[key];
+          index = key;
+        }
+      });
+
+      if (max) {
+        generatedVariants.push({
+          combination: comb,
+          sku: currentVariants.combinations[index].sku,
+          quantity: currentVariants.combinations[index].quantity,
+          price: currentVariants.combinations[index].price,
+          image: currentVariants.combinations[index].image,
+        });
+
+        currentVariants.combinations.splice(index, 1);
+      } else {
+        generatedVariants.push({
+          combination: comb,
+          sku: "",
+          quantity: "",
+          price: "",
+          image: {},
+        });
+      }
+    });
+
+    currentVariants.combinations = generatedVariants;
+    setcurrentVariants({
+      ...currentVariants,
+    });
+
+    setshowLoader(false);
+  };
+
+  const variantChange = (e, index) => {
+    if (e.target.name === "image") {
+      currentVariants.combinations[index][e.target.name].file = e.target.files;
+      currentVariants.combinations[index][
+        e.target.name
+      ].view = URL.createObjectURL(e.target.files[0]);
+    } else {
+      currentVariants.combinations[index][e.target.name] = e.target.value;
+    }
+
+    setcurrentVariants({
+      ...currentVariants,
+    });
+  };
+
+  const variantDelete = (i) => {
+    currentVariants.combinations.splice(i, 1);
+    setcurrentVariants({
+      ...currentVariants,
     });
   };
 
@@ -225,13 +328,6 @@ const AddProduct = (props) => {
   }, [props.brandState.brands]);
 
   useEffect(() => {
-    props.categoriesAction();
-    document.forms[0].reset();
-    setProduct(defaultObj);
-    setfeatureImage(null);
-  }, [props.products.products]);
-
-  useEffect(() => {
     if (
       props.shippingState.shipping.shipping_class.length &&
       props.taxState.tax.tax_class.length
@@ -247,18 +343,23 @@ const AddProduct = (props) => {
     }
   }, [props.shippingState.shipping, props.taxState.tax]);
 
-  useEffect(() => {
+  /*  useEffect(() => {
     if (props.products.product.description != undefined) {
       setProduct({
         ...product,
         description: props.products.product.description,
       });
     }
-  }, [props.products.product.description]);
+  }, [props.products.product.description]); */
 
   const addProduct = (e) => {
     e.preventDefault();
-    console.log(product);
+    product.combinations = currentVariants.combinations;
+    /* setProduct({
+      ...product,
+      variant: currentVariants.variant,
+      combinations: currentVariants.combinations,
+    }); */
     props.productAddAction(product);
   };
 
@@ -490,11 +591,7 @@ const AddProduct = (props) => {
         </Grid>
 
         <Grid container spacing={4} className={classes.secondmainrow}>
-          {props.products.loading && (
-            <Backdrop className={classes.backdrop} open={true}>
-              <CircularProgress color="inherit" /> <br /> Loading
-            </Backdrop>
-          )}
+          {showLoader && <Loading />}
           <Grid item lg={9} md={12}>
             <Box component="span">
               <Card>
@@ -916,47 +1013,6 @@ const AddProduct = (props) => {
                 <CardHeader title="Attributes" />
                 <Divider />
                 <CardContent>
-                  <TableContainer>
-                    <Table
-                      stickyHeader
-                      aria-label="sticky table and Dense Table"
-                      size="small"
-                    >
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Name</TableCell>
-                          <TableCell>Values</TableCell>
-                          <TableCell>Variation</TableCell>
-                          <TableCell>Remove</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody className={classes.container}>
-                        {currentAttribute.attribute_list.map((attribute) => (
-                          <TableRow key={attribute.id} hover>
-                            <TableCell>{attribute.name}</TableCell>
-                            <TableCell>{attribute.values.join(",")}</TableCell>
-                            <TableCell>
-                              {attribute.isVariant ? "Yes" : "No"}
-                            </TableCell>
-                            <TableCell>
-                              <Tooltip title="Delete" aria-label="delete">
-                                <IconButton
-                                  aria-label="Delete"
-                                  className={classes.deleteicon}
-                                  onClick={deleteAttribute}
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Tooltip>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-                <Divider />
-                <CardContent>
                   <Grid container spacing={3}>
                     <Grid item md={4}>
                       <FormControl
@@ -964,13 +1020,18 @@ const AddProduct = (props) => {
                         variant="outlined"
                       >
                         <InputLabel ref={inputLabel} id="attribute-name">
-                          Name
+                          Select Attribute
                         </InputLabel>
                         <Select
                           labelWidth={labelWidth}
                           labelId="attribute-name"
                           value={currentAttribute.id}
-                          onChange={onSelectAttr}
+                          onChange={(e) =>
+                            setcurrentAttribute({
+                              ...currentAttribute,
+                              id: e.target.value,
+                            })
+                          }
                         >
                           {props.attributeState.attributes.map(
                             (attr, index) => {
@@ -990,35 +1051,83 @@ const AddProduct = (props) => {
                         </Select>
                       </FormControl>
                     </Grid>
-
                     <Grid item md={4}>
-                      <ReactSelect
-                        name="attribute-value"
-                        isMulti
-                        value={currentAttribute.selected_values}
-                        options={currentAttribute.values}
-                        onChange={onAddAttributeValue}
-                      />
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={addAttribute}
+                      >
+                        Add
+                      </Button>
                     </Grid>
-
-                    <Grid item md={4}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            color="primary"
-                            checked={currentAttribute.isVariant}
-                            onChange={(e) =>
-                              setcurrentAttribute({
-                                ...currentAttribute,
-                                isVariant: e.target.checked,
-                              })
-                            }
-                          />
-                        }
-                        label="Used for variations"
-                      />
-                    </Grid>
-
+                  </Grid>
+                </CardContent>
+                <Divider />
+                <CardContent>
+                  <TableContainer>
+                    <Table
+                      stickyHeader
+                      aria-label="sticky table and Dense Table"
+                      size="small"
+                    >
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Name</TableCell>
+                          <TableCell>Values</TableCell>
+                          <TableCell>Variation</TableCell>
+                          <TableCell>Remove</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody className={classes.container}>
+                        {currentAttribute.attribute_list.map(
+                          (attribute, index) => (
+                            <TableRow key={attribute.id} hover>
+                              <TableCell>{attribute.name}</TableCell>
+                              {/* <TableCell>{attribute.values.join(",")}</TableCell> */}
+                              <TableCell>
+                                <ReactSelect
+                                  isMulti
+                                  value={attribute.selected_values}
+                                  options={attribute.values}
+                                  onChange={(e) =>
+                                    changeSelectedValue(e, index)
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell>
+                                {/* {attribute.isVariant ? "Yes" : "No"} */}
+                                <Checkbox
+                                  color="primary"
+                                  checked={attribute.isVariant}
+                                  onChange={(e) => {
+                                    attribute.isVariant = e.target.checked;
+                                    setcurrentAttribute({
+                                      ...currentAttribute,
+                                    });
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Tooltip title="Delete" aria-label="delete">
+                                  <IconButton
+                                    aria-label="Delete"
+                                    className={classes.deleteicon}
+                                    onClick={deleteAttribute}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Tooltip>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CardContent>
+                <Divider />
+                <CardContent>
+                  <Grid container spacing={3}>
                     <Grid item md={4}>
                       <Button
                         color="primary"
@@ -1029,6 +1138,124 @@ const AddProduct = (props) => {
                       </Button>
                     </Grid>
                   </Grid>
+                </CardContent>
+              </Card>
+            </Box>
+
+            <Box component="span" m={1}>
+              <Card>
+                <CardHeader title="Variants" />
+                <Divider />
+                <CardContent>
+                  <TableContainer>
+                    <Table
+                      stickyHeader
+                      aria-label="sticky table and Dense Table"
+                      size="small"
+                    >
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Variant</TableCell>
+                          <TableCell>Price</TableCell>
+                          <TableCell>Quantity</TableCell>
+                          <TableCell>SKU</TableCell>
+                          <TableCell>Image</TableCell>
+                          <TableCell>Remove</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody className={classes.container}>
+                        {currentVariants.combinations.map((variant, index) => (
+                          <TableRow hover key={index}>
+                            <TableCell>
+                              {variant.combination
+                                .map((val) => currentVariants.allValues[val])
+                                .join(" / ")}
+                            </TableCell>
+                            <TableCell>
+                              <TextField
+                                label="Price"
+                                variant="outlined"
+                                name="price"
+                                className={clsx(
+                                  classes.marginBottom,
+                                  classes.width100
+                                )}
+                                type="number"
+                                value={variant.price}
+                                onChange={(e) => variantChange(e, index)}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <TextField
+                                label="Quantity"
+                                variant="outlined"
+                                className={clsx(
+                                  classes.marginBottom,
+                                  classes.width100
+                                )}
+                                type="number"
+                                name="quantity"
+                                value={variant.quantity}
+                                onChange={(e) => variantChange(e, index)}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <TextField
+                                label="SKU"
+                                variant="outlined"
+                                className={clsx(
+                                  classes.marginBottom,
+                                  classes.width100
+                                )}
+                                name="sku"
+                                value={variant.sku}
+                                onChange={(e) => variantChange(e, index)}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Box className={classes.feautedImageBox}>
+                                <img
+                                  src={variant.image.view}
+                                  className={classes.feautedImageBoxPreview}
+                                  alt="Featured"
+                                />
+                              </Box>
+
+                              <input
+                                accept="image/*"
+                                className={classes.input}
+                                style={{ display: "none" }}
+                                id={`variant-image-${index}`}
+                                name="image"
+                                type="file"
+                                onChange={(e) => variantChange(e, index)}
+                              />
+                              <label
+                                htmlFor={`variant-image-${index}`}
+                                className={classes.feautedImage}
+                              >
+                                <ImageIcon />{" "}
+                                {variant.image.view !== null
+                                  ? "Change Featured Image"
+                                  : "Set Featured Image"}
+                              </label>
+                            </TableCell>
+                            <TableCell>
+                              <Tooltip title="Delete" aria-label="delete">
+                                <IconButton
+                                  aria-label="Delete"
+                                  className={classes.deleteicon}
+                                  onClick={() => variantDelete(index)}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </CardContent>
               </Card>
             </Box>
@@ -1196,7 +1423,7 @@ const AddProduct = (props) => {
                 <Divider />
                 <CardContent>
                   <RadioGroup
-                    defaultValue="Publish"
+                    defaultValue="Draft"
                     name="status"
                     onChange={handleChange}
                     row

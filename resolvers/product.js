@@ -2,6 +2,7 @@ const ProductCat = require("../models/ProductCat");
 const CatTree = require("../models/CatTree");
 const Product = require("../models/Product");
 const Brand = require("../models/Brand");
+const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const {
   isEmpty,
   putError,
@@ -51,6 +52,15 @@ module.exports = {
     productCategories: async (root, args) => {
       try {
         const cats = await ProductCat.find({});
+        return cats || [];
+      } catch (error) {
+        console.log(error);
+        throw new Error("Something went wrong.");
+      }
+    },
+    productCategoriesByFilter: async (root, args) => {
+      try {
+        const cats = await ProductCat.find(args.filter);
         return cats || [];
       } catch (error) {
         console.log(error);
@@ -169,6 +179,18 @@ module.exports = {
         }
         const brands = await Brand.findById(root.brand);
         return brands;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    variation_master: async (root, args) => {
+      try {
+        const variations = await ProductAttributeVariation.find({
+          product_id: root.id,
+        });
+        //console.log(variations);
+        return variations || [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -372,9 +394,39 @@ module.exports = {
             featured_product: args.featured_product,
             product_type: args.product_type,
             custom_field: args.custom_field,
+            attribute: args.attribute,
+            variant: args.variant,
           });
 
-          await newProduct.save();
+          let lastProduct = await newProduct.save();
+          let combinations = [];
+          if (args.variant.length && args.combinations.length) {
+            combinations = args.combinations;
+            for (const combination of combinations) {
+              combination.product_id = lastProduct.id;
+
+              let imgObject = "";
+              if (combination.image.file) {
+                imgObject = await imageUpload(
+                  combination.image.file[0],
+                  "/assets/images/product/variant/"
+                );
+                combination.image = imgObject.data || imgObject;
+              }
+            }
+          } else {
+            combinations = [
+              {
+                combination: [],
+                sku: args.sku,
+                quantity: args.quantity,
+                price: args.pricing.sellprice || args.pricing.price,
+                image: {},
+              },
+            ];
+          }
+
+          await ProductAttributeVariation.insertMany(combinations);
           const products = await Product.find({});
           return products || [];
         }
@@ -486,6 +538,22 @@ module.exports = {
           if (product.gallery_image) {
             for (let i in product.gallery_image) {
               imageUnlink(product.gallery_image[i]);
+            }
+          }
+
+          const variations = await ProductAttributeVariation.find({
+            product_id: args.id,
+          });
+
+          await ProductAttributeVariation.deleteMany({
+            product_id: args.id,
+          });
+
+          console.log(variations);
+
+          for (const variation of variations) {
+            if (variation.image) {
+              imageUnlink(variation.image);
             }
           }
 
