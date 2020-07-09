@@ -1,6 +1,13 @@
 const { gql } = require("apollo-server-express");
 
 module.exports = gql`
+  type ChildCat {
+    id: ID
+    name: String
+    parentId: ID
+    url: String
+  }
+
   type productCategory {
     id: ID
     name: String
@@ -30,13 +37,6 @@ module.exports = gql`
     children: customArray
   }
 
-  type ChildCat {
-    id: ID
-    name: String
-    parentId: ID
-    url: String
-  }
-
   type Category {
     id: ID
     name: String
@@ -49,19 +49,6 @@ module.exports = gql`
     meta: customObject
     date: Date
     updated: Date
-  }
-
-  type CatwithProducts {
-    id: ID
-    name: String
-    parentId: ID
-    url: String
-    description: String
-    image: customObject
-    meta: customObject
-    date: Date
-    updated: Date
-    products: [Product]
   }
 
   type ProductVariations {
@@ -108,7 +95,7 @@ module.exports = gql`
 
   extend type Query {
     productCategories: [productCategory]
-    productCategoriesByFilter(filter: customObject): [productCategory]
+    productCategoriesByFilter(filter: customObject): [Category]
     productCategory(id: ID!): productCategory
     getTree: [cattree]
     products: [Product]
