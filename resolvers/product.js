@@ -54,7 +54,6 @@ module.exports = {
         const cats = await ProductCat.find({});
         return cats || [];
       } catch (error) {
-        console.log(error);
         throw new Error("Something went wrong.");
       }
     },
@@ -63,7 +62,6 @@ module.exports = {
         const cats = await ProductCat.find(args.filter);
         return cats || [];
       } catch (error) {
-        console.log(error);
         throw new Error("Something went wrong.");
       }
     },
@@ -84,9 +82,7 @@ module.exports = {
         const cats = await CatTree.find({});
         //return unflatten(cats);
         return cats;
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     },
     products: async (root, args, { id }) => {
       try {
@@ -441,6 +437,7 @@ module.exports = {
             combinations = [
               {
                 combination: [],
+                product_id: lastProduct.id,
                 sku: args.sku,
                 quantity: args.quantity,
                 price: args.pricing.sellprice || args.pricing.price,
@@ -450,7 +447,7 @@ module.exports = {
           }
 
           let result = await ProductAttributeVariation.insertMany(combinations);
-          console.log(result);
+
           const products = await Product.find({});
           return products || [];
         }
@@ -562,6 +559,7 @@ module.exports = {
             combinations = [
               {
                 combination: [],
+                product_id: args.id,
                 sku: args.sku,
                 quantity: args.quantity,
                 price: args.pricing.sellprice || args.pricing.price,
@@ -575,7 +573,6 @@ module.exports = {
           });
 
           let result = await ProductAttributeVariation.insertMany(combinations);
-          console.log(result);
 
           const products = await Product.find({});
           return products || [];
@@ -609,8 +606,6 @@ module.exports = {
           await ProductAttributeVariation.deleteMany({
             product_id: args.id,
           });
-
-          console.log(variations);
 
           for (const variation of variations) {
             if (variation.image) {

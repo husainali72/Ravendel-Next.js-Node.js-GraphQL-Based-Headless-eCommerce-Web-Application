@@ -68,7 +68,7 @@ import "../../App.css";
 import _ from "lodash";
 import viewStyles from "../viewStyles";
 
-var catIds = [];
+//var catIds = [];
 const EditProduct = (props) => {
   const classes = viewStyles();
   const [featureImage, setfeatureImage] = useState(null);
@@ -148,6 +148,7 @@ const EditProduct = (props) => {
     }
     props.brandsAction();
     props.attributesAction();
+    props.categoriesAction();
   }, []);
 
   const changeSelectedValue = (e, i) => {
@@ -366,16 +367,17 @@ const EditProduct = (props) => {
 
       setbrands({ ...brands, defaultBrand: defaultBrand });
 
-      catIds = props.productState.product.categoryId.map((cat) => cat.id);
-      if (!props.productState.categories.length) {
+      /*catIds = props.productState.product.categoryId.map((cat) => cat.id);
+       if (!props.productState.categories.length) {
         props.categoriesAction();
-      }
+      } */
       setProduct({
         ...product,
         ...props.productState.product,
-        categoryId: catIds,
+        categoryId: props.productState.product.categoryId.map((cat) => cat.id),
         brand: defaultBrand.value || "",
       });
+
       if (props.productState.product.feature_image.original) {
         setfeatureImage(props.productState.product.feature_image.original);
       }
@@ -472,16 +474,24 @@ const EditProduct = (props) => {
   };
 
   useEffect(() => {
-    var selectedCat = _.cloneDeep(props.productState.categories);
-    if (selectedCat && selectedCat.length) {
-      selectedCat.map((cat) => {
-        if (~catIds.indexOf(cat.id)) {
-          cat.checked = true;
-        }
-      });
-      setCatList(unflatten(selectedCat));
+    if (props.productState.categories.length && product.categoryId.length) {
+      console.log("length", product.categoryId.length);
+      //var selectedCat = _.cloneDeep(props.productState.categories);
+      var selectedCat = JSON.parse(
+        JSON.stringify(props.productState.categories)
+      );
+      if (selectedCat && selectedCat.length) {
+        selectedCat.map((cat) => {
+          if (~product.categoryId.indexOf(cat.id)) {
+            cat.checked = true;
+          }
+        });
+
+        console.log(selectedCat);
+        setCatList(unflatten(selectedCat));
+      }
     }
-  }, [props.productState.categories]);
+  }, [props.productState.categories, product.categoryId]);
 
   const updateProduct = (e) => {
     e.preventDefault();

@@ -111,9 +111,13 @@ const EditBlog = (props) => {
   }, [props.blogState.tags]);
 
   const tagChange = (e) => {
-    if (!isEmpty(e)) {
-      setBlog({ ...blog, blog_tag: e.map((tag) => tag.value) });
-    }
+    //if (!isEmpty(e)) {
+    setBlog({
+      ...blog,
+      blog_tag: e && e.length > 0 ? e.map((tag) => tag.value) : [],
+    });
+    setTags({ ...tags, defaultTags: e });
+    //}
   };
 
   const updateBlog = (e) => {
@@ -160,12 +164,12 @@ const EditBlog = (props) => {
         <Grid container className="topbar">
           <Grid item lg={6}>
             <Typography variant="h4">
-              <Link to="/all-pages">
+              <Link to="/all-blogs">
                 <IconButton aria-label="Back">
                   <ArrowBackIcon />
                 </IconButton>
               </Link>
-              <span style={{ paddingTop: 10 }}>Edit Blog B</span>
+              <span style={{ paddingTop: 10 }}>Edit Blog</span>
             </Typography>
           </Grid>
 
@@ -371,15 +375,13 @@ const EditBlog = (props) => {
                   </Typography>
                 </CardContent>
               </Card>
-              {tags.tags[0] && (
-                <Select
-                  isMulti
-                  defaultValue={tags.defaultTags}
-                  name="blog_tag"
-                  options={tags.tags}
-                  onChange={tagChange}
-                />
-              )}
+              <Select
+                isMulti
+                value={tags.defaultTags}
+                name="blog_tag"
+                options={tags.tags}
+                onChange={tagChange}
+              />
             </Box>
           </Grid>
         </Grid>

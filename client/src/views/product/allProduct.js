@@ -15,7 +15,7 @@ import {
   IconButton,
   Avatar,
   Button,
-  Tooltip
+  Tooltip,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -30,13 +30,11 @@ import viewStyles from "../viewStyles";
 import Loading from "../utils/loading";
 import convertDefault from "../utils/convertDate";
 
-const AllProduct = props => {
+const AllProduct = (props) => {
   const classes = viewStyles();
 
   useEffect(() => {
-    if (!props.products.products.length) {
-      props.productsAction();
-    }
+    props.productsAction();
   }, []);
 
   const [page, setPage] = React.useState(0);
@@ -46,7 +44,7 @@ const AllProduct = props => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
@@ -98,7 +96,7 @@ const AllProduct = props => {
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map(product => (
+                      .map((product) => (
                         <TableRow key={product.id} hover>
                           <TableCell>
                             <Avatar
@@ -155,13 +153,13 @@ const AllProduct = props => {
     </Fragment>
   );
 };
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return { products: state.products };
 };
 
 const mapDispatchToProps = {
   productsAction,
-  productDeleteAction
+  productDeleteAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllProduct);
