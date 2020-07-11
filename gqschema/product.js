@@ -57,6 +57,7 @@ module.exports = gql`
     combination: customArray
     price: Float
     quantity: Float
+    sku: String
     image: customObject
     createdAt: Date
     updatedAt: Date
@@ -170,6 +171,9 @@ module.exports = gql`
       product_type: customObject
       meta: customObject
       custom_field: [customObject]
+      attribute: [customObject]
+      variant: customArray
+      combinations: [customObject]
     ): [Product]
     deleteProduct(id: ID!): [Product]
   }

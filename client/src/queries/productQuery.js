@@ -47,6 +47,7 @@ const PRODUCT_TILE_DATA = gql`
       combination
       price
       quantity
+      sku
       image
       createdAt
       updatedAt
@@ -259,6 +260,9 @@ const UPDATE_PRODUCT = gql`
     $tax_class: String
     $meta: customObject
     $custom_field: [customObject]
+    $attribute: [customObject]
+    $variant: customArray
+    $combinations: [customObject]
   ) {
     updateProduct(
       id: $id
@@ -281,6 +285,9 @@ const UPDATE_PRODUCT = gql`
       tax_class: $tax_class
       meta: $meta
       custom_field: $custom_field
+      attribute: $attribute
+      variant: $variant
+      combinations: $combinations
     ) {
       ...ProductTile
     }

@@ -105,7 +105,6 @@ const AddProduct = (props) => {
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = React.useState(0);
   const [currentVariants, setcurrentVariants] = useState({
-    variant: [],
     combinations: [],
     allValues: {},
   });
@@ -136,6 +135,8 @@ const AddProduct = (props) => {
     setcurrentAttribute({
       ...currentAttribute,
     });
+
+    createVariants();
   };
 
   const deleteAttribute = (i) => {
@@ -143,6 +144,8 @@ const AddProduct = (props) => {
     setcurrentAttribute({
       ...currentAttribute,
     });
+
+    createVariants();
   };
 
   const addAttribute = () => {
@@ -343,23 +346,9 @@ const AddProduct = (props) => {
     }
   }, [props.shippingState.shipping, props.taxState.tax]);
 
-  /*  useEffect(() => {
-    if (props.products.product.description != undefined) {
-      setProduct({
-        ...product,
-        description: props.products.product.description,
-      });
-    }
-  }, [props.products.product.description]); */
-
   const addProduct = (e) => {
     e.preventDefault();
     product.combinations = currentVariants.combinations;
-    /* setProduct({
-      ...product,
-      variant: currentVariants.variant,
-      combinations: currentVariants.combinations,
-    }); */
     props.productAddAction(product);
   };
 
@@ -1112,7 +1101,7 @@ const AddProduct = (props) => {
                                   <IconButton
                                     aria-label="Delete"
                                     className={classes.deleteicon}
-                                    onClick={deleteAttribute}
+                                    onClick={(e) => deleteAttribute(index)}
                                   >
                                     <DeleteIcon />
                                   </IconButton>

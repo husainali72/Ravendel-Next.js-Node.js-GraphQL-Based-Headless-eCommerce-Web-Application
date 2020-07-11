@@ -118,3 +118,27 @@ export const getUpdatedUrl = (table, url) => {
     }
   });
 };
+
+export const deleteProductVariation = (id) => {
+  return service({
+    method: "POST",
+    url: "/api/misc/delete_variation",
+    data: { id: id },
+  }).then((res) => {
+    if (res.data.success) {
+      return Promise.resolve(true);
+    }
+  });
+};
+
+export const deleteProductVariationImage = (obj) => {
+  return service({
+    method: "POST",
+    url: "/api/misc/delete_image",
+    data: { image: obj },
+  }).then((res) => {
+    if (res.data.success) {
+      return Promise.resolve(true);
+    }
+  });
+};

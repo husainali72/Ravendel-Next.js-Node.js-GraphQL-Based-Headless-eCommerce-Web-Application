@@ -449,7 +449,8 @@ module.exports = {
             ];
           }
 
-          await ProductAttributeVariation.insertMany(combinations);
+          let result = await ProductAttributeVariation.insertMany(combinations);
+          console.log(result);
           const products = await Product.find({});
           return products || [];
         }
@@ -537,8 +538,45 @@ module.exports = {
           product.product_type = args.product_type;
           product.custom_field = args.custom_field;
           product.status = args.status;
-          product.updated = Date.now();
+          (product.attribute = args.attribute),
+            (product.variant = args.variant),
+            (product.updated = Date.now());
           await product.save();
+
+          let combinations = [];
+          if (args.variant.length && args.combinations.length) {
+            combinations = args.combinations;
+            for (const combination of combinations) {
+              combination.product_id = args.id;
+
+              let imgObject = "";
+              if (combination.image.hasOwnProperty("file")) {
+                imgObject = await imageUpload(
+                  combination.image.file[0],
+                  "/assets/images/product/variant/"
+                );
+                combination.image = imgObject.data || imgObject;
+              }
+            }
+          } else {
+            combinations = [
+              {
+                combination: [],
+                sku: args.sku,
+                quantity: args.quantity,
+                price: args.pricing.sellprice || args.pricing.price,
+                image: {},
+              },
+            ];
+          }
+
+          await ProductAttributeVariation.deleteMany({
+            product_id: args.id,
+          });
+
+          let result = await ProductAttributeVariation.insertMany(combinations);
+          console.log(result);
+
           const products = await Product.find({});
           return products || [];
         } else {

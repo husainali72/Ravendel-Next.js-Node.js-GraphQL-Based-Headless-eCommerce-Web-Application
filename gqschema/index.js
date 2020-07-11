@@ -32,6 +32,11 @@ const linkSchema = gql`
     value: String
   }
 
+  type generalResponse {
+    success: Boolean
+    message: String
+  }
+
   type Query {
     _: Boolean
   }
