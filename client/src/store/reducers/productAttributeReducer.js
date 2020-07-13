@@ -10,6 +10,7 @@ const initialState = {
   attribute: {},
   loading: false,
   success: false,
+  render: false,
 };
 
 export default (state = initialState, action) => {
@@ -21,9 +22,10 @@ export default (state = initialState, action) => {
       };
     case ATTRIBUTES_SUCCESS:
       return {
-        ...state,
+        ...initialState,
         attributes: action.payload,
         loading: false,
+        render: false,
       };
     case ATTRIBUTE_SUCCESS:
       return {
@@ -35,6 +37,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         loading: false,
+      };
+    case "RENDER":
+      return {
+        ...initialState,
+        render: action.payload,
       };
     default:
       return state;

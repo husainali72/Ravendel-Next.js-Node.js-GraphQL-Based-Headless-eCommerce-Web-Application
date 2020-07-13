@@ -301,10 +301,6 @@ const AddProduct = (props) => {
     });
   };
 
-  useEffect(() => {
-    console.log(product);
-  }, [product]);
-
   const onChangeContent = (value) => {
     setProduct({
       ...product,

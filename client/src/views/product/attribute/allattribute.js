@@ -33,6 +33,7 @@ const AllAttribute = () => {
   const classes = viewStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const attributeState = useSelector((state) => state.product_attributes);
   const dispatch = useDispatch();
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -47,7 +48,11 @@ const AllAttribute = () => {
     dispatch(attributesAction());
   }, []);
 
-  const attributeState = useSelector((state) => state.product_attributes);
+  useEffect(() => {
+    if (attributeState.render) {
+      dispatch(attributesAction());
+    }
+  }, [attributeState.render]);
 
   return (
     <Fragment>
@@ -109,7 +114,13 @@ const AllAttribute = () => {
                                 <EditIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Delete" aria-label="delete">
+                            <Tooltip
+                              title="Delete"
+                              aria-label="delete"
+                              onClick={() =>
+                                dispatch(attributeDeleteAction(attribute.id))
+                              }
+                            >
                               <IconButton
                                 aria-label="Delete"
                                 className={classes.deleteicon}

@@ -55,7 +55,7 @@ const UPDATE_ATTRIBUTE = gql`
 `;
 
 const DELETE_ATTRIBUTE = gql`
-  mutation($id: ID) {
+  mutation($id: ID!) {
     deleteAttribute(id: $id) {
       ...GeneralRsponseTile
     }

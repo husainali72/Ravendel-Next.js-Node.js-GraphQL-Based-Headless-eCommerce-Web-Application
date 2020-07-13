@@ -129,7 +129,13 @@ export const attributeDeleteAction = (id) => (dispatch) => {
   mutation(DELETE_ATTRIBUTE, { id })
     .then((response) => {
       if (response) {
-        jumpTo("/attributes");
+        //jumpTo("/attributes");
+
+        dispatch({
+          type: "RENDER",
+          payload: true,
+        });
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {

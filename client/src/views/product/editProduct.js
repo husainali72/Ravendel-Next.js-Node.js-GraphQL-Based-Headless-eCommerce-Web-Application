@@ -475,7 +475,6 @@ const EditProduct = (props) => {
 
   useEffect(() => {
     if (props.productState.categories.length && product.categoryId.length) {
-      console.log("length", product.categoryId.length);
       //var selectedCat = _.cloneDeep(props.productState.categories);
       var selectedCat = JSON.parse(
         JSON.stringify(props.productState.categories)
@@ -486,8 +485,6 @@ const EditProduct = (props) => {
             cat.checked = true;
           }
         });
-
-        console.log(selectedCat);
         setCatList(unflatten(selectedCat));
       }
     }
@@ -1381,14 +1378,16 @@ const EditProduct = (props) => {
                             </TableCell>
                             <TableCell>
                               <Box className={classes.feautedImageBox}>
-                                <img
-                                  src={
-                                    variant.image.view ||
-                                    variant.image.thumbnail
-                                  }
-                                  className={classes.feautedImageBoxPreview}
-                                  alt="Featured"
-                                />
+                                {variant.image && (
+                                  <img
+                                    src={
+                                      variant.image.view ||
+                                      variant.image.thumbnail
+                                    }
+                                    className={classes.feautedImageBoxPreview}
+                                    alt="Featured"
+                                  />
+                                )}
                               </Box>
 
                               <input
@@ -1404,10 +1403,7 @@ const EditProduct = (props) => {
                                 htmlFor={`variant-image-${index}`}
                                 className={classes.feautedImage}
                               >
-                                <ImageIcon />{" "}
-                                {variant.image.view !== null
-                                  ? "Change Featured Image"
-                                  : "Set Featured Image"}
+                                <ImageIcon /> {"change"}
                               </label>
                             </TableCell>
                             <TableCell>
