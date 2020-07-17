@@ -5,6 +5,7 @@ import {
   GET_CAT_PRODUCTS,
   GET_PRODUCT_REVIEWS,
   ADD_REVIEW,
+  GET_FILTEREDPRODUCTS,
 } from "../../queries/productQuery";
 import { mutation, query } from "../../utils/service";
 // import jumpTo from "../../utils/navigation";
@@ -144,6 +145,26 @@ export const productAddReviewAction = (object) => (dispatch) => {
     })
     .catch((error) => {
       console.log("error", error);
+      dispatch({
+        type: PRODUCT_FAIL,
+      });
+    });
+};
+
+export const filterProductAction = (config) => (dispatch) => {
+  dispatch({
+    type: PRODUCT_LOADING,
+  });
+  query(GET_FILTEREDPRODUCTS, { config })
+    .then((response) => {
+      if (response) {
+        return dispatch({
+          type: PRODUCTS_SUCCESS,
+          payload: response.data.filteredProducts,
+        });
+      }
+    })
+    .catch((error) => {
       dispatch({
         type: PRODUCT_FAIL,
       });

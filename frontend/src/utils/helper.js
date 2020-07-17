@@ -1,4 +1,4 @@
-export const isEmpty = value =>
+export const isEmpty = (value) =>
   value === undefined ||
   value === null ||
   (typeof value === "object" && Object.keys(value).length === 0) ||
@@ -16,7 +16,7 @@ export const baseUrl = "http://localhost:8000";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------- */
 //simple category array to Tree array
-export const unflatten = arr => {
+export const unflatten = (arr) => {
   var tree = [],
     mappedArr = {},
     arrElem,
@@ -63,13 +63,19 @@ export const unflatten = arr => {
 // };
 
 export var categoriesPrint = "";
-export const printTree = tree => {
+export const printTree = (tree) => {
   categoriesPrint += "<ul className='category-dropdown'>";
 
   for (let i in tree) {
-    categoriesPrint += `<li className="${tree[i].children && tree[i].children.length ? 'has-submenu' : ''}">                               
-                        <label for="${tree[i].name}" className="checkmark-container">${tree[i].name}
-                          <input type='checkbox' name="abc" id="${tree[i].name}">
+    categoriesPrint += `<li className="${
+      tree[i].children && tree[i].children.length ? "has-submenu" : ""
+    }">                               
+                        <label for="${
+                          tree[i].name
+                        }" className="checkmark-container">${tree[i].name}
+                          <input type='checkbox' name="abc" id="${
+                            tree[i].name
+                          }">
                           <span className="checkmark"></span>
                         </label>`;
     if (tree[i].children && tree[i].children.length) {
@@ -79,4 +85,10 @@ export const printTree = tree => {
   }
 
   categoriesPrint += "</ul>";
+};
+
+/*----------------------------------------------------------------------------------------------------------------------------------------------*/
+
+export const getQueryString = (search, param) => {
+  return new URLSearchParams(search).get(param);
 };

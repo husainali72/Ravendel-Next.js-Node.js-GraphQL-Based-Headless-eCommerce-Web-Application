@@ -5,10 +5,12 @@ import Header from "./header";
 import Footer from "./footer";
 import Main from "./main";
 
-const MainLayout = props => {
+import { registerNav } from "../utils/navigation";
+
+const MainLayout = (props) => {
   return (
     <Fragment>
-      <BrowserRouter>
+      <BrowserRouter ref={registerNav}>
         <Header />
         <Main />
         <Footer />
@@ -17,8 +19,8 @@ const MainLayout = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  settings: state.settings
+const mapStateToProps = (state) => ({
+  settings: state.settings,
 });
 
 export default connect(mapStateToProps)(MainLayout);

@@ -3,47 +3,47 @@ import {
   GET_BRAND,
   ADD_BRAND,
   UPDATE_BRAND,
-  DELETE_BRAND
+  DELETE_BRAND,
 } from "../../queries/brandQuery";
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
 
-export const brandsAction = () => dispatch => {
+export const brandsAction = () => (dispatch) => {
   dispatch({
-    type: BRAND_LOADING
+    type: BRAND_LOADING,
   });
   query(GET_BRANDS)
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: BRANDS_SUCCESS,
-          payload: response.data.brands
+          payload: response.data.brands,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BRAND_FAIL
+        type: BRAND_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const brandAddAction = object => dispatch => {
+export const brandAddAction = (object) => (dispatch) => {
   dispatch({
-    type: BRAND_LOADING
+    type: BRAND_LOADING,
   });
   mutation(ADD_BRAND, object)
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: BRANDS_SUCCESS,
-          payload: response.data.addBrand
+          payload: response.data.addBrand,
         });
 
         jumpTo("/all-brands");
@@ -53,33 +53,33 @@ export const brandAddAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "added successfully",
-            error: false
-          }
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BRAND_FAIL
+        type: BRAND_FAIL,
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const brandUpdateAction = object => dispatch => {
+export const brandUpdateAction = (object) => (dispatch) => {
   dispatch({
-    type: BRAND_LOADING
+    type: BRAND_LOADING,
   });
   mutation(UPDATE_BRAND, object)
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: BRANDS_SUCCESS,
-          payload: response.data.updateBrand
+          payload: response.data.updateBrand,
         });
 
         jumpTo("/all-brands");
@@ -89,53 +89,53 @@ export const brandUpdateAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "Brand updated successfully",
-            error: false
-          }
+            error: false,
+          },
         });
 
         return;
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BRAND_FAIL
+        type: BRAND_FAIL,
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const brandDeleteAction = id => dispatch => {
+export const brandDeleteAction = (id) => (dispatch) => {
   dispatch({
-    type: BRAND_LOADING
+    type: BRAND_LOADING,
   });
   mutation(DELETE_BRAND, { id })
-    .then(response => {
+    .then((response) => {
       if (response) {
         dispatch({
           type: BRANDS_SUCCESS,
-          payload: response.data.deleteBrand
+          payload: response.data.deleteBrand,
         });
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
             message: "Brand deleted successfully",
-            error: false
-          }
+            error: false,
+          },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: BRAND_FAIL
+        type: BRAND_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };

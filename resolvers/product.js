@@ -46,6 +46,17 @@ const getTree = async treeReference => {
     }
   }
 }; */
+let allids = [];
+const getTree = async (id) => {
+  let cats = await ProductCat.find({ parentId: id });
+
+  for (let cat of cats) {
+    allids.push(cat.id);
+    await getTree(cat.id);
+  }
+
+  return Promise.resolve(allids);
+};
 
 module.exports = {
   Query: {
@@ -131,14 +142,30 @@ module.exports = {
           throw putError("404 Not found");
         }
 
-        /* const products = await Product.find({
-          categoryId: { $in: cat.id },
-        });
-
-        cat.products = products || []; */
         return cat;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    filteredProducts: async (root, args) => {
+      try {
+        let filterObj = {
+          status: "Publish",
+        };
 
-        //return products || [];
+        if (args.config.category.length) {
+          let cats = await getTree(args.config.category[0]);
+          filterObj.categoryId = { $in: cats };
+        }
+
+        if (args.config.brand.length) {
+          filterObj.brand = { $in: args.config.brand };
+        }
+
+        console.log(filterObj);
+        const products = await Product.find(filterObj);
+        return products || [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);

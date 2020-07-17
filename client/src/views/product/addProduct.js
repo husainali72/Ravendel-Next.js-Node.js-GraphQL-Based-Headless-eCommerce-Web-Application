@@ -123,6 +123,12 @@ const AddProduct = (props) => {
   }, []);
 
   useEffect(() => {
+    if (productCats.length) {
+      console.log(unflatten(productCats));
+    }
+  }, [productCats]);
+
+  useEffect(() => {
     for (let i of props.attributeState.attributes) {
       for (let j of i.values) {
         currentVariants.allValues[j._id] = j.name;

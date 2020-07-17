@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -15,6 +15,13 @@ import {
   FormControlLabel,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { set } from "lodash";
+
+import { useLocation } from "react-router-dom";
+
+import { getQueryString } from "../../utils/helper";
+
+import jumpTo, { go } from "../../utils/navigation";
 
 const categories = [
   {
@@ -50,6 +57,60 @@ const FilterSideBar = (props) => {
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [catName, setCatName] = useState("");
   const [filterToggle, setFilterToggle] = useState(false);
+  const [brands, setbrands] = useState([]);
+  const [FILTER_CONFIG, SET_FILTER_CONFIG] = useState({
+    category: [],
+    brand: [],
+  });
+
+  let location = useLocation();
+
+  const runFilterOnChange = () => {
+    let queryString = "?";
+    let brandParam = [];
+    FILTER_CONFIG.brand = [];
+    for (let i in brands) {
+      if (brands[i].checked) {
+        brandParam.push(encodeURIComponent(brands[i].name));
+        FILTER_CONFIG.brand.push(brands[i].id);
+      }
+    }
+
+    if (brandParam.length) {
+      queryString += `brand=${brandParam.join(",")}`;
+    }
+
+    jumpTo(`${location.pathname}${queryString}`);
+    props.getfilteredProducts(FILTER_CONFIG);
+  };
+
+  useEffect(() => {
+    if (props.brands.length && props.currentCat) {
+      FILTER_CONFIG.category = [props.currentCat];
+      let url_brands = getQueryString(location.search, "brand");
+      FILTER_CONFIG.brand = [];
+      if (url_brands) {
+        for (let single_param of url_brands.split(",")) {
+          for (let brand of props.brands) {
+            if (brand.name === single_param) {
+              brand.checked = true;
+              FILTER_CONFIG.brand.push(brand.id);
+              break;
+            }
+          }
+        }
+      }
+
+      setbrands(props.brands);
+      props.getfilteredProducts(FILTER_CONFIG);
+    }
+  }, [props.brands, props.currentCat]);
+
+  const filterBrand = (e, i) => {
+    brands[i].checked = e.target.checked;
+    runFilterOnChange();
+    setbrands(brands);
+  };
 
   const priceChange = (event, newValue) => {
     setPriceRange(newValue);
@@ -185,45 +246,27 @@ const FilterSideBar = (props) => {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <List>
-                <ListItem disableGutters>
-                  <FormControlLabel
-                    control={<Checkbox color="primary" value="brand1" />}
-                    label={
-                      <Typography
-                        variant="button"
-                        className="filter-checkbox-label"
-                      >
-                        Brand 1
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-                <ListItem disableGutters>
-                  <FormControlLabel
-                    control={<Checkbox color="primary" value="brand2" />}
-                    label={
-                      <Typography
-                        variant="button"
-                        className="filter-checkbox-label"
-                      >
-                        Brand 2
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-                <ListItem disableGutters>
-                  <FormControlLabel
-                    control={<Checkbox color="primary" value="brand3" />}
-                    label={
-                      <Typography
-                        variant="button"
-                        className="filter-checkbox-label"
-                      >
-                        Brand 3
-                      </Typography>
-                    }
-                  />
-                </ListItem>
+                {brands.map((brand, i) => (
+                  <ListItem disableGutters key={brand.id}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          color="primary"
+                          checked={brand.checked}
+                          onChange={(e) => filterBrand(e, i)}
+                        />
+                      }
+                      label={
+                        <Typography
+                          variant="button"
+                          className="filter-checkbox-label"
+                        >
+                          {brand.name}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                ))}
               </List>
             </ExpansionPanelDetails>
           </ExpansionPanel>

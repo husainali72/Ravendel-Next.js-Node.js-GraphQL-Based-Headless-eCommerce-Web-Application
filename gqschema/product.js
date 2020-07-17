@@ -105,6 +105,7 @@ module.exports = gql`
     product(id: ID!): Product
     productsbycatid(cat_id: ID!): [Product]
     productsbycaturl(cat_url: String!): Category
+    filteredProducts(config: customObject): [Product]
   }
 
   extend type Mutation {
