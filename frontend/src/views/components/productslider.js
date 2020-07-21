@@ -4,6 +4,7 @@ import Slider from "react-slick";
 import ProductCard from "./productcard";
 import SectionLoading from "./sectionLoading";
 import { isEmpty } from "../../utils/helper";
+import Loading from "./loading";
 
 const ProductSlider = (props) => {
   const settings = {
@@ -61,6 +62,7 @@ const ProductSlider = (props) => {
 
   return (
     <Fragment>
+      {!products.length ? <Loading /> : ""}
       <section className="home-product-listing with-slider">
         {props.allProducts.length < 0 ? (
           <SectionLoading />

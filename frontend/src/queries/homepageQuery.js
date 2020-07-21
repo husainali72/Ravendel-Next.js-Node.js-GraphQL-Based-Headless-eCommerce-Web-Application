@@ -9,6 +9,10 @@ const GET_HOMEPAGE_DATA = gql`
         meta_description
       }
       appearance {
+        theme {
+          primary_color
+          logo
+        }
         home {
           slider {
             image

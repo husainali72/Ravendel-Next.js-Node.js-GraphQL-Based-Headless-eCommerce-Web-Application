@@ -2,8 +2,9 @@ import React, { useState, useEffect, Fragment } from "react";
 import { Button, Zoom, Icon } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 
+var PlaceHolder =
+  "https://www.hbwebsol.com/wp-content/uploads/2020/07/category_dummy.png";
 const ProductCard = (props) => {
   const [prodIndex, setProdIndex] = useState("");
 

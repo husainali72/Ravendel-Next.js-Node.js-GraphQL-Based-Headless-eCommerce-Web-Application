@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import PlaceHolderImg from "../assets/images/placeholder.png";
 import { connect } from "react-redux";
+import cookie from "react-cookies";
 
 const CartSide = (props) => {
   const [cartItems, setCartItems] = useState(props.cartValue);
@@ -21,6 +22,7 @@ const CartSide = (props) => {
     let filteredArray = cartItems.filter((item) => item !== removedItem);
     localStorage.removeItem("cartProducts");
     localStorage.setItem("cartProducts", JSON.stringify(filteredArray));
+
     setCartItems(filteredArray);
     props.dispatch({
       type: "REMOVE_VALUE",

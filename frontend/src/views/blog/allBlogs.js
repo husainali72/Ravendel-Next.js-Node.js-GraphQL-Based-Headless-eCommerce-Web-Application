@@ -12,7 +12,7 @@ import {
   Grid,
   Hidden,
   Divider,
-  Box
+  Box,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import PageTitle from "../components/pageTitle";
@@ -23,7 +23,7 @@ import { isEmpty } from "../../utils/helper";
 import PlaceHolder from "../../assets/images/placeholder.png";
 import Pagination from "@material-ui/lab/Pagination";
 
-const AllBlogs = props => {
+const AllBlogs = (props) => {
   const [blogPerPage, setblogPerPage] = useState(2);
   const [page, setPage] = React.useState(1);
 
@@ -47,15 +47,9 @@ const AllBlogs = props => {
             <Grid container spacing={3}>
               {props.blogs.blogs &&
                 props.blogs.blogs
-                  .sort((a, b) =>
-                    Date.parse("1970-01-01T" + b.date) >
-                    Date.parse("1970-01-01T" + a.date)
-                      ? 1
-                      : -1
-                  )
-                  .slice(page * blogPerPage, page * blogPerPage + blogPerPage)
+                  // .slice(page * blogPerPage, page * blogPerPage)
                   .map((blog, index) => (
-                    <Grid item lg={6} md={6} sm={6} key={index}>
+                    <Grid item lg={6} md={6} sm={6} xs={12} key={index}>
                       <Card className="blog-card">
                         <Link to={`blog/${blog.id}`}>
                           <CardActionArea>
@@ -88,7 +82,7 @@ const AllBlogs = props => {
                                 <span
                                   dangerouslySetInnerHTML={{
                                     __html:
-                                      blog.content.substring(0, 80) + "..."
+                                      blog.content.substring(0, 80) + "...",
                                   }}
                                 ></span>
                               </Typography>
@@ -106,7 +100,7 @@ const AllBlogs = props => {
                     </Grid>
                   ))}
             </Grid>
-            <Box
+            {/* <Box
               display="flex"
               justifyContent="center"
               alignItems="center"
@@ -118,7 +112,7 @@ const AllBlogs = props => {
                 page={page}
                 onChange={changePage}
               />
-            </Box>
+            </Box> */}
           </Grid>
 
           <Hidden lgUp>
@@ -133,12 +127,12 @@ const AllBlogs = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  blogs: state.blogs
+const mapStateToProps = (state) => ({
+  blogs: state.blogs,
 });
 
 const mapDispatchToProps = {
-  blogsAction
+  blogsAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllBlogs);

@@ -78,6 +78,9 @@ const Footer = () => {
                       <ListItemText primary="FAQ" className="footer-menulink" />
                     </Link>
                   </ListItem>
+                  <ListItem>
+                    <Link to="/blogs">Blog</Link>
+                  </ListItem>
                 </List>
               </Grid>
             </Grid>

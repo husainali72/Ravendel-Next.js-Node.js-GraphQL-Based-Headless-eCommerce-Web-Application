@@ -12,17 +12,17 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Button
+  Button,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 
-const Navigation = props => {
+const Navigation = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [collaspeAccount, setCollaspeAccount] = useState(false);
   const [logoutConfrm, setLogoutConfrm] = useState(false);
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -54,27 +54,12 @@ const Navigation = props => {
             Shopping
           </Link>
         </Box>
-        <Box component="div" display="inline" m={2} className="menu-item">
-          <Link onClick={() => props.drawerCloseFunc()} to="/about">
-            About
-          </Link>
-        </Box>
-        <Box component="div" display="inline" m={2} className="menu-item">
-          <Link onClick={() => props.drawerCloseFunc()} to="/blogs">
-            Blog
-          </Link>
-        </Box>
-        <Box component="div" display="inline" m={2} className="menu-item">
-          <Link onClick={() => props.drawerCloseFunc()} to="/contact">
-            Contact
-          </Link>
-        </Box>
         <Hidden mdDown>
           <Box component="div" display="inline" m={2} className="menu-item">
             <Badge badgeContent={props.cart.products.length} color="primary">
               <Icon
                 style={{ fontSize: 24 }}
-                onClick={e => props.toggleCartFunc(e)}
+                onClick={(e) => props.toggleCartFunc(e)}
               >
                 shopping_basket
               </Icon>
@@ -226,8 +211,8 @@ const Navigation = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  cart: state.cart
+const mapStateToProps = (state) => ({
+  cart: state.cart,
 });
 
 export default connect(mapStateToProps)(Navigation);

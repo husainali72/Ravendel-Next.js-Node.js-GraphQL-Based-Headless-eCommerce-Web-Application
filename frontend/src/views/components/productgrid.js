@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { Typography, Box, Grid, Container } from "@material-ui/core";
 import ProductCard from "./productcard";
 import { isEmpty } from "../../utils/helper";
+import Loading from "./loading";
 
 const ProductGrid = (props) => {
   const [products, setProducts] = useState([]);
@@ -36,6 +37,8 @@ const ProductGrid = (props) => {
 
   return (
     <Fragment>
+      {!products.length ? <Loading /> : ""}
+
       <section className="home-product-listing">
         <Container>
           {props.title && (

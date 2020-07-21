@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import Navigation from "./menu";
 import {
   Grid,
@@ -14,10 +14,25 @@ import { connect } from "react-redux";
 import CartSide from "./cart";
 import Logo from "../assets/images/logo.png";
 import { Link } from "react-router-dom";
+import { homepageAction } from "../store/action/homepageAction";
+import { isEmpty } from "../utils/helper";
 
 const Header = (props) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [openCart, setOpenCart] = useState(false);
+  const [themeSetting, setThemeSetting] = useState({});
+
+  useEffect(() => {
+    if (isEmpty(props.home.homepage)) {
+      props.homepageAction();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isEmpty(props.home.homepage)) {
+      setThemeSetting(props.home.homepage);
+    }
+  }, [props.home.homepage]);
 
   const toggleCart = (e) => {
     if (e.type === "keydown" && (e.key === "Tab" || e.key === "Shift")) {
@@ -39,7 +54,18 @@ const Header = (props) => {
                     alt="Logo"
                     className="logo"
                   /> */}
-                  <Typography variant="h3">Ravendel</Typography>
+
+                  {themeSetting.appearance &&
+                  themeSetting.appearance.theme &&
+                  themeSetting.appearance.theme.logo ? (
+                    <img
+                      src={themeSetting.appearance.theme.logo.original}
+                      alt="Logo"
+                      className="logo"
+                    />
+                  ) : (
+                    <Typography variant="h3">Ravendel</Typography>
+                  )}
                 </Link>
               </Grid>
               <Grid item className="menu">
@@ -86,8 +112,16 @@ const Header = (props) => {
     </Fragment>
   );
 };
-const mapStateToProps = (state) => ({
-  cart: state.cart,
-});
 
-export default connect(mapStateToProps)(Header);
+const mapStateToProps = (state) => {
+  return {
+    cart: state.cart,
+    home: state.homepage,
+  };
+};
+
+const mapDispatchToProps = {
+  homepageAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

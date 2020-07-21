@@ -44,9 +44,6 @@ const Home = (props) => {
     if (isEmpty(props.products.categories)) {
       props.categoriesAction();
     }
-    if (isEmpty(props.blogs.blogs)) {
-      props.blogsAction();
-    }
     if (isEmpty(props.home.homepage)) {
       props.homepageAction();
     }
@@ -165,10 +162,6 @@ const Home = (props) => {
         />
       ) : (
         ""
-      )}
-
-      {props.blogs.blogs && (
-        <BlogListing recentlyBlogs={props.blogs.blogs} title="OUR BLOG" />
       )}
     </Fragment>
   );
