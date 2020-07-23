@@ -6,6 +6,9 @@ import {
   AllProduct,
   EditProduct,
   AllCategory,
+  AllAttribute,
+  AddAttribute,
+  EditAttribute,
 } from "../views/product";
 import { AllOrders, ViewOrder } from "../views/order";
 import { AllPages, AddPage, EditPage } from "../views/page";
@@ -51,6 +54,24 @@ const Routes = [
     exact: true,
     name: "Categories",
     component: AllCategory,
+  },
+  {
+    path: "/attributes",
+    exact: true,
+    name: "Attributes",
+    component: AllAttribute,
+  },
+  {
+    path: "/add-attribute",
+    exact: true,
+    name: "Add Attribute",
+    component: AddAttribute,
+  },
+  {
+    path: "/edit-attribute/:id",
+    exact: true,
+    name: "Edit Attribute",
+    component: EditAttribute,
   },
   {
     path: "/all-products",

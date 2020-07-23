@@ -5,7 +5,9 @@ import { connect } from "react-redux";
 import {
   productsAction,
   catProductAction,
-} from "../../store/action/productAction";
+  brandsAction,
+  filterProductAction,
+} from "../../store/action";
 import { Typography, Box, Container, Grid } from "@material-ui/core";
 import { isEmpty } from "../../utils/helper";
 import Loading from "../components/loading";
@@ -27,15 +29,24 @@ const Category = (props) => {
   });
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    if (isEmpty(props.products.products)) {
-      props.productsAction();
-    }
-  }, []);
+  const [brands, setbrands] = useState([]);
 
   useEffect(() => {
-    props.catProductAction(`${props.match.params.url}`);
-  }, [props.match.params.url]);
+    if (props.products.products.length) {
+      setProducts(props.products.products);
+    }
+  }, [props.products.products]);
+
+  useEffect(() => {
+    console.log(products);
+  }, [products]);
+
+  useEffect(() => {
+    if (props.match.params.url) {
+      props.catProductAction(`${props.match.params.url}`);
+    }
+    props.brandsAction();
+  }, []);
 
   useEffect(() => {
     setCategoryDetail(props.products.singleCategoryDetails);
@@ -47,6 +58,10 @@ const Category = (props) => {
     }
   }, [categoryDetail.products]);
 
+  useEffect(() => {
+    setbrands(props.brandState.brands);
+  }, [props.brandState.brands]);
+
   const fillterProducts = (newValue) => {
     setPriceRange(newValue);
     let filteredProducts = categoryDetail.products.filter(
@@ -55,6 +70,12 @@ const Category = (props) => {
         product.pricing.price <= newValue[1]
     );
     setProducts(filteredProducts);
+  };
+
+  const getfilteredProducts = (config) => {
+    console.log("config", config);
+    setProducts([]);
+    props.filterProductAction(config);
   };
 
   return (
@@ -75,6 +96,9 @@ const Category = (props) => {
           <Grid item lg={3} md={4} sm={4} xs={12} className="left-sidebar">
             <FilterSideBar
               onPriceChange={(newValue) => fillterProducts(newValue)}
+              brands={brands}
+              currentCat={props.products.singleCategoryDetails.id}
+              getfilteredProducts={getfilteredProducts}
             />
           </Grid>
 
@@ -120,12 +144,15 @@ const mapStateToProps = (state) => {
   return {
     products: state.products,
     categories: state.categories,
+    brandState: state.brand,
   };
 };
 
 const mapDispatchToProps = {
   productsAction,
   catProductAction,
+  brandsAction,
+  filterProductAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Category);

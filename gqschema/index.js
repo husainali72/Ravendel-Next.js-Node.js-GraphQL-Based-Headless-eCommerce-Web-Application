@@ -13,6 +13,7 @@ const tax = require("./tax");
 const shipping = require("./shipping");
 const coupon = require("./coupon");
 const review = require("./review");
+const product_attribute = require("./product_attribute");
 
 const linkSchema = gql`
   scalar Date
@@ -29,6 +30,11 @@ const linkSchema = gql`
   input Meta {
     key: String
     value: String
+  }
+
+  type generalResponse {
+    success: Boolean
+    message: String
   }
 
   type Query {
@@ -59,5 +65,6 @@ module.exports = [
   tax,
   shipping,
   coupon,
-  review
+  review,
+  product_attribute,
 ];

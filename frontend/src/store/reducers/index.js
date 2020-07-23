@@ -8,6 +8,7 @@ import blogs from "./blogReducer";
 import homepage from "./homepageReducer";
 import checkoutDetail from "./checkoutReducer";
 import faqs from "./faqReducer";
+import brand from "./brandReducer";
 
 // Combine Reducers
 const MasterReducer = combineReducers({
@@ -19,6 +20,7 @@ const MasterReducer = combineReducers({
   homepage,
   checkoutDetail,
   faqs,
+  brand,
 });
 
 export default MasterReducer;

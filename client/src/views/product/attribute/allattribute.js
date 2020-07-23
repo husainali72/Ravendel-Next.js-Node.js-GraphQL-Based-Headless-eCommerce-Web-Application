@@ -18,28 +18,23 @@ import {
   Tooltip,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { productsAction, productDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
-import { isEmpty } from "../../utils/helper";
+import { useSelector, useDispatch } from "react-redux";
+import { attributesAction, attributeDeleteAction } from "../../../store/action";
+import jumpTo from "../../../utils/navigation";
+import { isEmpty } from "../../../utils/helper";
 //import Alert from "../utils/Alert";
 import PeopleIcon from "@material-ui/icons/People";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import viewStyles from "../viewStyles";
-import Loading from "../utils/loading";
-import convertDefault from "../utils/convertDate";
+import viewStyles from "../../viewStyles";
+import Loading from "../../utils/loading";
 
-const AllProduct = (props) => {
+const AllAttribute = () => {
   const classes = viewStyles();
-
-  useEffect(() => {
-    props.productsAction();
-  }, []);
-
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+  const attributeState = useSelector((state) => state.product_attributes);
+  const dispatch = useDispatch();
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -49,24 +44,33 @@ const AllProduct = (props) => {
     setPage(0);
   };
 
+  useEffect(() => {
+    dispatch(attributesAction());
+  }, []);
+
+  useEffect(() => {
+    if (attributeState.render) {
+      dispatch(attributesAction());
+    }
+  }, [attributeState.render]);
+
   return (
     <Fragment>
-      {/* <Alert /> */}
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.products.loading && <Loading />}
+            {attributeState.loading && <Loading />}
 
             <CardHeader
               action={
-                <Link to="/add-product">
+                <Link to="/add-attribute">
                   <Button
                     color="primary"
                     className={classes.addUserBtn}
                     size="small"
                     variant="contained"
                   >
-                    Add Product
+                    Add Attribute
                   </Button>
                 </Link>
               }
@@ -82,51 +86,44 @@ const AllProduct = (props) => {
                 >
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.avtarTd}>
-                        <PeopleIcon />
-                      </TableCell>
                       <TableCell>Name</TableCell>
-                      <TableCell>Date</TableCell>
+                      <TableCell>Values</TableCell>
                       <TableCell>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody className={classes.container}>
-                    {props.products.products
+                    {attributeState.attributes
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map((product) => (
-                        <TableRow key={product.id} hover>
+                      .map((attribute) => (
+                        <TableRow key={attribute.id} hover>
+                          <TableCell>{attribute.name}</TableCell>
                           <TableCell>
-                            <Avatar
-                              alt={product.name}
-                              src={
-                                product.feature_image &&
-                                product.feature_image.thumbnail
-                              }
-                            />
+                            {attribute.values.map((val) => val.name).join(",")}
                           </TableCell>
-                          <TableCell>{product.name}</TableCell>
-                          <TableCell>{convertDefault(product.date)}</TableCell>
                           <TableCell>
-                            <Tooltip title="Edit Product" aria-label="edit">
+                            <Tooltip title="Edit" aria-label="edit">
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(`edit-product/${product.id}`)
+                                  jumpTo(`edit-attribute/${attribute.id}`)
                                 }
                               >
                                 <EditIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Delete Product" aria-label="delete">
+                            <Tooltip
+                              title="Delete"
+                              aria-label="delete"
+                              onClick={() =>
+                                dispatch(attributeDeleteAction(attribute.id))
+                              }
+                            >
                               <IconButton
                                 aria-label="Delete"
                                 className={classes.deleteicon}
-                                onClick={() =>
-                                  props.productDeleteAction(product.id)
-                                }
                               >
                                 <DeleteIcon />
                               </IconButton>
@@ -140,7 +137,7 @@ const AllProduct = (props) => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={props.products.products.length}
+                count={attributeState.attributes.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -153,13 +150,5 @@ const AllProduct = (props) => {
     </Fragment>
   );
 };
-const mapStateToProps = (state) => {
-  return { products: state.products };
-};
 
-const mapDispatchToProps = {
-  productsAction,
-  productDeleteAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AllProduct);
+export default AllAttribute;

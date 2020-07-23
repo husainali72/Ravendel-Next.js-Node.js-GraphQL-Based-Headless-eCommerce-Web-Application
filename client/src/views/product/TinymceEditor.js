@@ -2,7 +2,7 @@ import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { connect } from "react-redux";
 const TinymceEditor = (props) => {
-  const handleEditorChange = (e) => {
+  const handleEditorChange_ = (e) => {
     //console.log("Content was updated:", e.target.getContent());
     /* props.dispatch({
       type: "TINYMCE_DESCRIPTION",
@@ -12,10 +12,16 @@ const TinymceEditor = (props) => {
     props.onChangeEditor(e.target.getContent());
   };
 
+  const handleEditorChange = (content) => {
+    props.onChangeEditor(content);
+  };
+
   return (
     <Editor
-      initialValue={props.value}
-      apiKey="v2hjstbxulr41w4f0l84z1q1bdnvlvqylhg0wbpy5yo7xghu"
+      /*initialValue={props.value}*/
+      /*apiKey="v2hjstbxulr41w4f0l84z1q1bdnvlvqylhg0wbpy5yo7xghu"*/
+      apiKey="fe3qpddmthniot1kdjkg6cxbyed9oq0kyvbnkl3mcqm2px4v"
+      value={props.value}
       init={{
         height: 500,
         menubar: false,
@@ -32,8 +38,9 @@ const TinymceEditor = (props) => {
         paste_data_images: true,
         convert_urls: false,
       }}
-      onChange={handleEditorChange}
-      onBlur={handleEditorChange}
+      /*onChange={handleEditorChange}*/
+      onEditorChange={handleEditorChange}
+      /*onBlur={handleEditorChange}*/
     />
   );
 };

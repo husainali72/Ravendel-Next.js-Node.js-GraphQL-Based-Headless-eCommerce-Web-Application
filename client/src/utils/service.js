@@ -61,7 +61,6 @@ const service = (config) => {
   //header authorization
   if (Auth.getToken()) {
     const token = Auth.getToken();
-    console.log("token", token);
     config.headers = {
       authorization: token,
     };
@@ -116,6 +115,30 @@ export const getUpdatedUrl = (table, url) => {
   }).then((res) => {
     if (res.data.success) {
       return Promise.resolve(res.data.url);
+    }
+  });
+};
+
+export const deleteProductVariation = (id) => {
+  return service({
+    method: "POST",
+    url: "/api/misc/delete_variation",
+    data: { id: id },
+  }).then((res) => {
+    if (res.data.success) {
+      return Promise.resolve(true);
+    }
+  });
+};
+
+export const deleteProductVariationImage = (obj) => {
+  return service({
+    method: "POST",
+    url: "/api/misc/delete_image",
+    data: { image: obj },
+  }).then((res) => {
+    if (res.data.success) {
+      return Promise.resolve(true);
     }
   });
 };

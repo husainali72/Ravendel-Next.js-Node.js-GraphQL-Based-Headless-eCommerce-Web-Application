@@ -2,6 +2,7 @@ const ProductCat = require("../models/ProductCat");
 const CatTree = require("../models/CatTree");
 const Product = require("../models/Product");
 const Brand = require("../models/Brand");
+const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const {
   isEmpty,
   putError,
@@ -45,6 +46,17 @@ const getTree = async treeReference => {
     }
   }
 }; */
+let allids = [];
+const getTree = async (id) => {
+  let cats = await ProductCat.find({ parentId: id });
+
+  for (let cat of cats) {
+    allids.push(cat.id);
+    await getTree(cat.id);
+  }
+
+  return Promise.resolve(allids);
+};
 
 module.exports = {
   Query: {
@@ -53,7 +65,14 @@ module.exports = {
         const cats = await ProductCat.find({});
         return cats || [];
       } catch (error) {
-        console.log(error);
+        throw new Error("Something went wrong.");
+      }
+    },
+    productCategoriesByFilter: async (root, args) => {
+      try {
+        const cats = await ProductCat.find(args.filter);
+        return cats || [];
+      } catch (error) {
         throw new Error("Something went wrong.");
       }
     },
@@ -74,9 +93,7 @@ module.exports = {
         const cats = await CatTree.find({});
         //return unflatten(cats);
         return cats;
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     },
     products: async (root, args, { id }) => {
       try {
@@ -125,14 +142,30 @@ module.exports = {
           throw putError("404 Not found");
         }
 
-        const products = await Product.find({
-          categoryId: { $in: cat.id },
-        });
-
-        cat.products = products || [];
         return cat;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    filteredProducts: async (root, args) => {
+      try {
+        let filterObj = {
+          status: "Publish",
+        };
 
-        //return products || [];
+        if (args.config.category.length) {
+          let cats = await getTree(args.config.category[0]);
+          filterObj.categoryId = { $in: cats };
+        }
+
+        if (args.config.brand.length) {
+          filterObj.brand = { $in: args.config.brand };
+        }
+
+        console.log(filterObj);
+        const products = await Product.find(filterObj);
+        return products || [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -151,9 +184,10 @@ module.exports = {
       }
     },
   },
-  ProductWithCat: {
+  Product: {
     categoryId: async (root, args) => {
       try {
+        //let catIDs = root.categoryId.map(cat => cat.id);
         const cats = await ProductCat.find({ _id: { $in: root.categoryId } });
         return cats;
       } catch (error) {
@@ -163,30 +197,46 @@ module.exports = {
     },
     brand: async (root, args) => {
       try {
-        console.log("here comes", root.brand);
+        if (isEmpty(root.brand)) {
+          return "";
+        }
         const brands = await Brand.findById(root.brand);
         return brands;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    variation_master: async (root, args) => {
+      try {
+        const variations = await ProductAttributeVariation.find({
+          product_id: root.id,
+        });
+        //console.log(variations);
+        return variations || [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
   },
-  Product: {
-    categoryId: async (root, args) => {
+  Category: {
+    products: async (root, args) => {
       try {
-        const cats = await ProductCat.find({ _id: { $in: root.categoryId } });
-        return cats;
+        const products = await Product.find({
+          categoryId: { $in: root.id },
+        });
+
+        return products || [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
-    brand: async (root, args) => {
+    child_cat: async (root, args) => {
       try {
-        console.log("here comes", root.brand);
-        const brands = await Brand.findById(root.brand);
-        return brands;
+        const cats = await ProductCat.find({ parentId: root.id });
+        return cats || [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -390,9 +440,41 @@ module.exports = {
             featured_product: args.featured_product,
             product_type: args.product_type,
             custom_field: args.custom_field,
+            attribute: args.attribute,
+            variant: args.variant,
           });
 
-          await newProduct.save();
+          let lastProduct = await newProduct.save();
+          let combinations = [];
+          if (args.variant.length && args.combinations.length) {
+            combinations = args.combinations;
+            for (const combination of combinations) {
+              combination.product_id = lastProduct.id;
+
+              let imgObject = "";
+              if (combination.image.file) {
+                imgObject = await imageUpload(
+                  combination.image.file[0],
+                  "/assets/images/product/variant/"
+                );
+                combination.image = imgObject.data || imgObject;
+              }
+            }
+          } else {
+            combinations = [
+              {
+                combination: [],
+                product_id: lastProduct.id,
+                sku: args.sku,
+                quantity: args.quantity,
+                price: args.pricing.sellprice || args.pricing.price,
+                image: {},
+              },
+            ];
+          }
+
+          let result = await ProductAttributeVariation.insertMany(combinations);
+
           const products = await Product.find({});
           return products || [];
         }
@@ -465,7 +547,8 @@ module.exports = {
 
           product.name = args.name;
           product.categoryId = args.categoryId;
-          product.url = await updateUrl(args.url || args.name, "Product");
+          (product.brand = args.brand || ""),
+            (product.url = await updateUrl(args.url || args.name, "Product"));
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;
@@ -479,8 +562,45 @@ module.exports = {
           product.product_type = args.product_type;
           product.custom_field = args.custom_field;
           product.status = args.status;
-          product.updated = Date.now();
+          (product.attribute = args.attribute),
+            (product.variant = args.variant),
+            (product.updated = Date.now());
           await product.save();
+
+          let combinations = [];
+          if (args.variant.length && args.combinations.length) {
+            combinations = args.combinations;
+            for (const combination of combinations) {
+              combination.product_id = args.id;
+
+              let imgObject = "";
+              if (combination.image.hasOwnProperty("file")) {
+                imgObject = await imageUpload(
+                  combination.image.file[0],
+                  "/assets/images/product/variant/"
+                );
+                combination.image = imgObject.data || imgObject;
+              }
+            }
+          } else {
+            combinations = [
+              {
+                combination: [],
+                product_id: args.id,
+                sku: args.sku,
+                quantity: args.quantity,
+                price: args.pricing.sellprice || args.pricing.price,
+                image: {},
+              },
+            ];
+          }
+
+          await ProductAttributeVariation.deleteMany({
+            product_id: args.id,
+          });
+
+          let result = await ProductAttributeVariation.insertMany(combinations);
+
           const products = await Product.find({});
           return products || [];
         } else {
@@ -503,6 +623,20 @@ module.exports = {
           if (product.gallery_image) {
             for (let i in product.gallery_image) {
               imageUnlink(product.gallery_image[i]);
+            }
+          }
+
+          const variations = await ProductAttributeVariation.find({
+            product_id: args.id,
+          });
+
+          await ProductAttributeVariation.deleteMany({
+            product_id: args.id,
+          });
+
+          for (const variation of variations) {
+            if (variation.image) {
+              imageUnlink(variation.image);
             }
           }
 

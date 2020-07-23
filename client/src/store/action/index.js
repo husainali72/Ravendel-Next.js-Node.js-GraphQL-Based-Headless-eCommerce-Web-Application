@@ -117,6 +117,14 @@ import {
   appearanceThemeUpdateAction,
 } from "./settingAction";
 
+import {
+  attributesAction,
+  attributeAction,
+  attributeAddAction,
+  attributeUpdateAction,
+  attributeDeleteAction,
+} from "./productAttributeAction";
+
 export {
   LoginAction,
   usersAction,
@@ -201,4 +209,9 @@ export {
   paymentPaypalUpdateAction,
   appearanceHomeUpdateAction,
   appearanceThemeUpdateAction,
+  attributesAction,
+  attributeAction,
+  attributeAddAction,
+  attributeUpdateAction,
+  attributeDeleteAction,
 };

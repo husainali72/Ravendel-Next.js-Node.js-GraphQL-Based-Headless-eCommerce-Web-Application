@@ -86,7 +86,6 @@ export default (state = initialState, action) => {
         success: true,
       };
     case ADD_PRODUCT_REVIEWS:
-      console.log("ADD_PRODUCT_REVIEWS", action.payload);
       return {
         ...state,
         loading: false,

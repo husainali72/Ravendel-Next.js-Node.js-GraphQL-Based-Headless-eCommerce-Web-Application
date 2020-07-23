@@ -22,6 +22,7 @@ const {
 /* const User = require("../../models/User");
 const ProductCat = require("../../models/ProductCat");
 const Product = require("../../models/Product"); */
+const ProductAttributeVariation = require("../../models/ProductAttributeVariation");
 
 router.post("/checkurl", auth, async (req, res) => {
   try {
@@ -29,6 +30,40 @@ router.post("/checkurl", auth, async (req, res) => {
     res.json({
       success: true,
       url: url,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json("Something went wrong");
+  }
+});
+
+router.post("/delete_variation", auth, async (req, res) => {
+  try {
+    const variant = await ProductAttributeVariation.findByIdAndRemove(
+      req.body.id
+    );
+    if (variant.image) {
+      imageUnlink(variant.image);
+    }
+
+    res.json({
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json("Something went wrong");
+  }
+});
+
+router.post("/delete_image", auth, async (req, res) => {
+  try {
+    console.log(req.body.image);
+    if (req.body.image) {
+      imageUnlink(req.body.image);
+    }
+
+    res.json({
+      success: true,
     });
   } catch (error) {
     console.log(error);

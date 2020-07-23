@@ -1,6 +1,13 @@
 const { gql } = require("apollo-server-express");
 
 module.exports = gql`
+  type ChildCat {
+    id: ID
+    name: String
+    parentId: ID
+    url: String
+  }
+
   type productCategory {
     id: ID
     name: String
@@ -30,41 +37,30 @@ module.exports = gql`
     children: customArray
   }
 
-  type CatwithProducts {
+  type Category {
     id: ID
     name: String
     parentId: ID
     url: String
     description: String
     image: customObject
+    products: [Product]
+    child_cat: [ChildCat]
     meta: customObject
     date: Date
     updated: Date
-    products: [ProductWithCat]
   }
 
-  type ProductWithCat {
+  type ProductVariations {
     id: ID
-    name: String
-    categoryId: [productCategory]
-    brand: productBrand
-    url: String
+    product_id: ID
+    combination: customArray
+    price: Float
+    quantity: Float
     sku: String
-    short_description: String
-    description: String
-    quantity: String
-    pricing: customObject
-    feature_image: customObject
-    gallery_image: customObject
-    meta: customObject
-    shipping: customObject
-    tax_class: String
-    status: String
-    featured_product: Boolean
-    product_type: customObject
-    custom_field: [customObject]
-    date: Date
-    updated: Date
+    image: customObject
+    createdAt: Date
+    updatedAt: Date
   }
 
   type Product {
@@ -87,6 +83,9 @@ module.exports = gql`
     featured_product: Boolean
     product_type: customObject
     custom_field: [customObject]
+    attribute: [customObject]
+    variant: customArray
+    variation_master: [ProductVariations]
     date: Date
     updated: Date
   }
@@ -97,14 +96,16 @@ module.exports = gql`
 
   extend type Query {
     productCategories: [productCategory]
+    productCategoriesByFilter(filter: customObject): [Category]
     productCategory(id: ID!): productCategory
     getTree: [cattree]
-    products: [ProductWithCat]
-    productswithcat: [ProductWithCat]
-    featureproducts: [ProductWithCat]
+    products: [Product]
+    productswithcat: [Product]
+    featureproducts: [Product]
     product(id: ID!): Product
-    productsbycatid(cat_id: ID!): [ProductWithCat]
-    productsbycaturl(cat_url: String!): CatwithProducts
+    productsbycatid(cat_id: ID!): [Product]
+    productsbycaturl(cat_url: String!): Category
+    filteredProducts(config: customObject): [Product]
   }
 
   extend type Mutation {
@@ -146,6 +147,9 @@ module.exports = gql`
       product_type: customObject
       meta: customObject
       custom_field: [customObject]
+      attribute: [customObject]
+      variant: customArray
+      combinations: [customObject]
     ): [Product]
     updateProduct(
       id: ID
@@ -168,6 +172,9 @@ module.exports = gql`
       product_type: customObject
       meta: customObject
       custom_field: [customObject]
+      attribute: [customObject]
+      variant: customArray
+      combinations: [customObject]
     ): [Product]
     deleteProduct(id: ID!): [Product]
   }

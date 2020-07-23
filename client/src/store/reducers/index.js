@@ -14,6 +14,7 @@ import coupons from "./couponReducer";
 import reviews from "./reviewReducer";
 import pages from "./pageReducer";
 import settings from "./settingReducer";
+import product_attributes from "./productAttributeReducer";
 
 // Combine Reducers
 const MasterReducer = combineReducers({
@@ -31,6 +32,7 @@ const MasterReducer = combineReducers({
   reviews,
   pages,
   settings,
+  product_attributes,
 });
 
 export default MasterReducer;

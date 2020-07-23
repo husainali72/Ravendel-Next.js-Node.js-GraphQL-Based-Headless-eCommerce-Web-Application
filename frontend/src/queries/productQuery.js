@@ -1,5 +1,34 @@
 import gql from "graphql-tag";
 
+const PRODUCT_TILE_DATA = gql`
+  fragment ProductTile on Product {
+    id
+    name
+    url
+    pricing
+    quantity
+    feature_image
+    status
+    brand {
+      id
+      name
+    }
+    categoryId {
+      id
+      name
+    }
+  }
+`;
+
+const GET_FILTEREDPRODUCTS = gql`
+  query($config: customObject) {
+    filteredProducts(config: $config) {
+      ...ProductTile
+    }
+  }
+  ${PRODUCT_TILE_DATA}
+`;
+
 const GET_PRODUCTS = gql`
   {
     products {
@@ -84,31 +113,10 @@ const GET_CAT_PRODUCTS = gql`
       description
       image
       meta
-      date
-      updated
-      products {
+      child_cat {
         id
         name
         url
-        sku
-        description
-        quantity
-        pricing
-        feature_image
-        gallery_image
-        meta
-        shipping
-        tax_class
-        status
-        featured_product
-        product_type
-        custom_field
-        date
-        updated
-        categoryId {
-          id
-          name
-        }
       }
     }
   }
@@ -190,4 +198,5 @@ export {
   GET_CAT_PRODUCTS,
   GET_PRODUCT_REVIEWS,
   ADD_REVIEW,
+  GET_FILTEREDPRODUCTS,
 };
