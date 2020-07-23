@@ -373,15 +373,16 @@ const EditBlog = (props) => {
                   >
                     Select Tags
                   </Typography>
+                  <Select
+                    isMulti
+                    value={tags.defaultTags}
+                    name="blog_tag"
+                    options={tags.tags}
+                    onChange={tagChange}
+                    menuPortalTarget={document.querySelector("body")}
+                  />
                 </CardContent>
               </Card>
-              <Select
-                isMulti
-                value={tags.defaultTags}
-                name="blog_tag"
-                options={tags.tags}
-                onChange={tagChange}
-              />
             </Box>
           </Grid>
         </Grid>

@@ -360,18 +360,16 @@ const AddBlog = (props) => {
                       ))
                     }
                   /> */}
+                  <Select
+                    isMulti
+                    value={clearTags}
+                    name="blog_tag"
+                    options={tags}
+                    onChange={tagChange}
+                    menuPortalTarget={document.querySelector("body")}
+                  />
                 </CardContent>
               </Card>
-
-              <Box component="div">
-                <Select
-                  isMulti
-                  value={clearTags}
-                  name="blog_tag"
-                  options={tags}
-                  onChange={tagChange}
-                />
-              </Box>
             </Box>
           </Grid>
         </Grid>
