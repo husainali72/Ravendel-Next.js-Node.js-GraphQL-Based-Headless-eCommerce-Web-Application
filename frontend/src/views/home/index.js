@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Banner, BlogListing } from "./components";
+import { Banner } from "./components";
 import ProductSlider from "../components/productslider";
 import ProductGrid from "../components/productgrid";
 import CategoryListing from "../components/categorylist";

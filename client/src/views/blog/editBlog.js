@@ -160,12 +160,12 @@ const EditBlog = (props) => {
         <Grid container className="topbar">
           <Grid item lg={6}>
             <Typography variant="h4">
-              <Link to="/all-pages">
+              <Link to="/all-blogs">
                 <IconButton aria-label="Back">
                   <ArrowBackIcon />
                 </IconButton>
               </Link>
-              <span style={{ paddingTop: 10 }}>Edit Blog B</span>
+              <span style={{ paddingTop: 10 }}>Edit Blog</span>
             </Typography>
           </Grid>
 

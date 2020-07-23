@@ -35,13 +35,18 @@ const ProductDetail = (props) => {
 
   const addToCart = (singleProduct) => {
     singleProduct.cartQty = qty;
-    if (product.cart) {
+    if (singleProduct.cart) {
       alert("Item already in a Cart ");
     } else {
       singleProduct.cart = true;
+      var product = {
+        id: singleProduct.id,
+        cartQty: qty,
+      };
+
       props.dispatch({
         type: "ADD_VALUE",
-        payload: singleProduct,
+        payload: product,
       });
     }
   };

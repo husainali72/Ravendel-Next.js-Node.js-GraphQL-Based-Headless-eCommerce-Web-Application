@@ -12,7 +12,6 @@ import {
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import CartSide from "./cart";
-import Logo from "../assets/images/logo.png";
 import { Link } from "react-router-dom";
 import { homepageAction } from "../store/action/homepageAction";
 import { isEmpty } from "../utils/helper";
@@ -49,12 +48,6 @@ const Header = (props) => {
             <Grid container justify="space-between" alignItems="center">
               <Grid item className="logo">
                 <Link to="/">
-                  {/* <img
-                    src={props.logo ? props.logo : Logo}
-                    alt="Logo"
-                    className="logo"
-                  /> */}
-
                   {themeSetting.appearance &&
                   themeSetting.appearance.theme &&
                   themeSetting.appearance.theme.logo ? (

@@ -142,7 +142,7 @@ const AddBlog = (props) => {
         <Grid container className="topbar">
           <Grid item lg={6}>
             <Typography variant="h4">
-              <Link to="/all-pages">
+              <Link to="/all-blogs">
                 <IconButton aria-label="Back">
                   <ArrowBackIcon />
                 </IconButton>
@@ -363,13 +363,15 @@ const AddBlog = (props) => {
                 </CardContent>
               </Card>
 
-              <Select
-                isMulti
-                value={clearTags}
-                name="blog_tag"
-                options={tags}
-                onChange={tagChange}
-              />
+              <Box component="div">
+                <Select
+                  isMulti
+                  value={clearTags}
+                  name="blog_tag"
+                  options={tags}
+                  onChange={tagChange}
+                />
+              </Box>
             </Box>
           </Grid>
         </Grid>

@@ -23,44 +23,22 @@ const ProductCard = (props) => {
     if (singleProduct.cart) {
       alert("Item is already in a Cart");
     } else {
+      var product;
       if (singleProduct.id === props.productDetail.id) {
         props.productDetail.cart = true;
-        props.productDetail.cartQty = 1;
+        product = {
+          id: singleProduct.id,
+          cartQty: 1,
+        };
       }
       props.dispatch({
         type: "ADD_VALUE",
-        payload: singleProduct,
+        payload: product,
       });
     }
   };
 
-  const categoryListing = (categoryID) => {
-    var category = [];
-
-    // category = categoryID.filter(id =>
-    //   props.categories.filter(cat => id === cat.id)
-    // );
-
-    // category = props.categories.map(cat =>
-    //   categoryID.filter(id => cat.id === id)
-    // );
-
-    // category = categoryID.map(id =>
-    //   props.categories.filter(cat => id === cat.id)
-    // );
-
-    // category = categoryID.filter(id =>
-    //   props.categories.filter(cat => id === cat.id)
-    // );
-
-    // for (var i = 0; i < categoryID.length; i++) {
-    //   for (var j = 0; j < props.categories.length; j++) {
-    //     if (props.categories[j].id === categoryID[i]) {
-    //       return props.categories[j].name;
-    //     }
-    //   }
-    // }
-  };
+  const categoryListing = (categoryID) => {};
 
   return (
     <div

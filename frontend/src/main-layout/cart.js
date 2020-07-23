@@ -11,29 +11,20 @@ import { Link } from "react-router-dom";
 import PlaceHolderImg from "../assets/images/placeholder.png";
 import { connect } from "react-redux";
 import cookie from "react-cookies";
+import { productsAction } from "../store/action/productAction";
+import { removeCartItemAction } from "../store/action/cartAction";
+import { isEmpty } from "../utils/helper";
 
 const CartSide = (props) => {
   const [cartItems, setCartItems] = useState(props.cartValue);
+  const [cartProduct, setCartProduct] = useState([]);
   const [subtotal, setSubTotal] = useState(0);
   const [delievery, setDelievery] = useState(0);
 
-  const removeCartItem = (removedItem) => {
-    removedItem.cart = false;
-    let filteredArray = cartItems.filter((item) => item !== removedItem);
-    localStorage.removeItem("cartProducts");
-    localStorage.setItem("cartProducts", JSON.stringify(filteredArray));
-
-    setCartItems(filteredArray);
-    props.dispatch({
-      type: "REMOVE_VALUE",
-      payload: filteredArray,
-    });
-  };
-
   const cartSubTotal = () => {
     var subtotalVar = 0;
-    if (cartItems && cartItems.length) {
-      cartItems.map((item) => {
+    if (cartProduct && cartProduct.length) {
+      cartProduct.map((item) => {
         if (item.pricing.sellprice) {
           var sellPrice = item.pricing.sellprice * item.cartQty;
           subtotalVar = subtotalVar + sellPrice;
@@ -46,40 +37,73 @@ const CartSide = (props) => {
     setSubTotal(subtotalVar);
   };
 
+  const removeCartItem = (removedItem) => {
+    removedItem.cart = false;
+    let filteredProduct = cartProduct.filter((item) => item !== removedItem);
+    let filterCartItem = cartItems.filter((item) => item.id !== removedItem.id);
+    setCartProduct(filteredProduct);
+    props.removeCartItemAction(filterCartItem);
+  };
+
   const increaseItemQty = (item) => {
-    var increaseItem = item;
-    let filteredArray = cartItems.filter((cartitem) => cartitem !== item);
-    localStorage.removeItem("cartProducts");
-    increaseItem.cartQty = item.cartQty + 1;
-    filteredArray.push(increaseItem);
-    localStorage.setItem("cartProducts", JSON.stringify(filteredArray));
-    setCartItems(filteredArray);
+    cartItems.map((cart) => {
+      if (cart.id === item.id) {
+        cart.cartQty = cart.cartQty + 1;
+      }
+    });
+    cookie.save("cartProducts", cartItems, { path: "/" });
+    ListingCartProducts();
   };
 
   const decreaseItemQty = (item) => {
     if (item.cartQty <= 1) {
       return;
     }
-    var decreaseItem = item;
-    let filteredArray = cartItems.filter((cartitem) => cartitem !== item);
-    localStorage.removeItem("cartProducts");
-    decreaseItem.cartQty = item.cartQty - 1;
-    filteredArray.push(decreaseItem);
-    localStorage.setItem("cartProducts", JSON.stringify(filteredArray));
-    setCartItems(filteredArray);
+    cartItems.map((cart) => {
+      if (cart.id === item.id) {
+        cart.cartQty = cart.cartQty - 1;
+      }
+    });
+    cookie.save("cartProducts", cartItems, { path: "/" });
+    ListingCartProducts();
   };
 
   useEffect(() => {
     cartSubTotal();
+  }, [cartProduct]);
+
+  useEffect(() => {
+    if (isEmpty(props.products.products)) {
+      props.productsAction();
+    }
+  }, []);
+
+  const ListingCartProducts = () => {
+    var filteredProducts = [];
+
+    cartItems.map((item) => {
+      props.products.products.filter((product) => {
+        if (product.id === item.id) {
+          product.cartQty = item.cartQty;
+          filteredProducts.push(product);
+        }
+      });
+    });
+
+    setCartProduct(filteredProducts);
+  };
+
+  useEffect(() => {
+    ListingCartProducts();
   }, [cartItems]);
 
   return (
     <Fragment>
-      {cartItems && cartItems.length ? (
+      {cartProduct && cartProduct.length ? (
         <Fragment>
           <Box className="cart-product">
             <Box display="flex" flexDirection="column" component="div">
-              {cartItems
+              {cartProduct
                 .sort((a, b) => (a.name > b.name ? 1 : -1))
                 .map((item, index) => (
                   <Box
@@ -109,7 +133,9 @@ const CartSide = (props) => {
 
                       {item.name && (
                         <Typography variant="h6" className="item-title">
-                          {item.name}
+                          {item.name.length > 30
+                            ? item.name.substring(0, 30) + "..."
+                            : item.name}
                         </Typography>
                       )}
 
@@ -240,6 +266,12 @@ const CartSide = (props) => {
 
 const mapStateToProps = (state) => ({
   cart: state.cart,
+  products: state.products,
 });
 
-export default connect(mapStateToProps)(CartSide);
+const mapDispatchToProps = {
+  productsAction,
+  removeCartItemAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CartSide);
