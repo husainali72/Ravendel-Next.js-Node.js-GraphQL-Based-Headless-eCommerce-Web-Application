@@ -16,12 +16,10 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { set } from "lodash";
-
 import { useLocation } from "react-router-dom";
-
-import { getQueryString } from "../../utils/helper";
-
+import { getQueryString, isEmpty } from "../../utils/helper";
 import jumpTo, { go } from "../../utils/navigation";
+import { useSelector } from "react-redux";
 
 const categories = [
   {
@@ -58,17 +56,22 @@ const FilterSideBar = (props) => {
   const [catName, setCatName] = useState("");
   const [filterToggle, setFilterToggle] = useState(false);
   const [brands, setbrands] = useState([]);
+  const [attributes, setattributes] = useState([]);
+
   const [FILTER_CONFIG, SET_FILTER_CONFIG] = useState({
     category: [],
     brand: [],
+    attribute: [],
   });
 
   let location = useLocation();
 
   const runFilterOnChange = () => {
     let queryString = "?";
+    let brandQueryString = "";
     let brandParam = [];
     FILTER_CONFIG.brand = [];
+
     for (let i in brands) {
       if (brands[i].checked) {
         brandParam.push(encodeURIComponent(brands[i].name));
@@ -77,17 +80,48 @@ const FilterSideBar = (props) => {
     }
 
     if (brandParam.length) {
-      queryString += `brand=${brandParam.join(",")}`;
+      brandQueryString += `Brand=${brandParam.join(",")}`;
+    }
+
+    FILTER_CONFIG.attribute = [];
+    let attributeParam = [];
+    let attrQueryString = [];
+    for (let attr of attributes) {
+      attributeParam = [];
+      for (let val of attr.values) {
+        if (val.checked) {
+          attributeParam.push(encodeURIComponent(val.name));
+          //FILTER_CONFIG.attribute.push(val.id);
+          FILTER_CONFIG.attribute.push({
+            attribute_id: attr.id,
+            attribute_value_id: val.id,
+          });
+        }
+      }
+
+      if (attributeParam.length) {
+        attrQueryString.push(
+          `${encodeURIComponent(attr.name)}=${attributeParam.join(",")}`
+        );
+      }
+    }
+
+    if (brandQueryString) {
+      queryString += brandQueryString + "&" + attrQueryString.join("&");
+    } else {
+      queryString += attrQueryString.join("&");
     }
 
     jumpTo(`${location.pathname}${queryString}`);
     props.getfilteredProducts(FILTER_CONFIG);
   };
 
+  const attributeValues = [];
   useEffect(() => {
-    if (props.brands.length && props.currentCat) {
+    if (props.currentCat && props.brands.length) {
       FILTER_CONFIG.category = [props.currentCat];
-      let url_brands = getQueryString(location.search, "brand");
+      let url_brands = getQueryString(location.search, "Brand");
+
       FILTER_CONFIG.brand = [];
       if (url_brands) {
         for (let single_param of url_brands.split(",")) {
@@ -101,7 +135,63 @@ const FilterSideBar = (props) => {
         }
       }
 
-      setbrands(props.brands);
+      for (let brand of props.brands) {
+        brand.checked = brand.checked || false;
+        brands.push(brand);
+      }
+
+      let attributeObj = {};
+      if (props.filtered_attributes.length) {
+        for (const attr_data of props.filtered_attributes) {
+          attributeValues.push(attr_data._id.attribute_value_id);
+          attributeObj[attr_data._id.attribute_id] = {
+            id: attr_data.attributeMaster._id,
+            name: attr_data.attributeMaster.name,
+            values: attr_data.attributeMaster.values,
+          };
+        }
+
+        for (let attr_obj of Object.values(attributeObj)) {
+          let is_param = [];
+          let attribute_Obj = {
+            id: attr_obj.id,
+            name: attr_obj.name,
+            values: [],
+          };
+
+          is_param = getQueryString(location.search, attr_obj.name);
+          if (is_param) {
+            is_param = is_param.split(",");
+          } else {
+            is_param = [];
+          }
+
+          for (let val of attr_obj.values) {
+            if (~attributeValues.indexOf(val._id)) {
+              if (~is_param.indexOf(val.name)) {
+                val.checked = true;
+                //FILTER_CONFIG.attribute.push(val._id);
+                FILTER_CONFIG.attribute.push({
+                  attribute_id: attr_obj.id,
+                  attribute_value_id: val._id,
+                });
+              }
+
+              attribute_Obj.values.push({
+                id: val._id,
+                name: val.name,
+                checked: val.checked || false,
+              });
+            }
+          }
+
+          attributes.push(attribute_Obj);
+        }
+
+        setattributes(attributes);
+      }
+
+      setbrands(brands);
       props.getfilteredProducts(FILTER_CONFIG);
     }
   }, [props.brands, props.currentCat]);
@@ -110,6 +200,12 @@ const FilterSideBar = (props) => {
     brands[i].checked = e.target.checked;
     runFilterOnChange();
     setbrands(brands);
+  };
+
+  const filterAttribute = (e, p, i) => {
+    attributes[p].values[i].checked = e.target.checked;
+    runFilterOnChange();
+    setattributes(attributes);
   };
 
   const priceChange = (event, newValue) => {
@@ -273,60 +369,44 @@ const FilterSideBar = (props) => {
         </Box>
         <Divider />
         <Box component="div" className="filter-wrapper">
-          <ExpansionPanel>
-            <ExpansionPanelSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="color-content"
-              id="color-filter-header"
-            >
-              <Typography variant="h4" className="fillter-subheader">
-                Colors
-              </Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <List>
-                <ListItem disableGutters>
-                  <FormControlLabel
-                    control={<Checkbox color="primary" value="red" />}
-                    label={
-                      <Typography
-                        variant="button"
-                        className="filter-checkbox-label"
-                      >
-                        Red
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-                <ListItem disableGutters>
-                  <FormControlLabel
-                    control={<Checkbox color="primary" value="black" />}
-                    label={
-                      <Typography
-                        variant="button"
-                        className="filter-checkbox-label"
-                      >
-                        Black
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-                <ListItem disableGutters>
-                  <FormControlLabel
-                    control={<Checkbox color="primary" value="Green" />}
-                    label={
-                      <Typography
-                        variant="button"
-                        className="filter-checkbox-label"
-                      >
-                        Green
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-              </List>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
+          {attributes.map((attr, p) => (
+            <ExpansionPanel key={attr.id}>
+              <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="color-content"
+                id="color-filter-header"
+              >
+                <Typography variant="h4" className="fillter-subheader">
+                  {attr.name}
+                </Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <List>
+                  {attr.values.map((val, i) => (
+                    <ListItem disableGutters key={val.id}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            color="primary"
+                            checked={val.checked}
+                            onChange={(e) => filterAttribute(e, p, i)}
+                          />
+                        }
+                        label={
+                          <Typography
+                            variant="button"
+                            className="filter-checkbox-label"
+                          >
+                            {val.name}
+                          </Typography>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          ))}
         </Box>
       </Box>
     </Box>

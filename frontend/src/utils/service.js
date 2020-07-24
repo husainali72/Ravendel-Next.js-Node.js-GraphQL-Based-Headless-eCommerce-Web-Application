@@ -8,7 +8,7 @@ export const mutation = async (query, variables) => {
   try {
     const response = await APclient.mutate({
       mutation: query,
-      variables
+      variables,
     });
     return Promise.resolve(response);
   } catch (error) {
@@ -34,7 +34,8 @@ export const query = async (query, variables) => {
   try {
     const response = await APclient.query({
       query: query,
-      variables
+      variables,
+      fetchPolicy: "no-cache",
     });
     return Promise.resolve(response);
   } catch (error) {
@@ -56,25 +57,25 @@ export const query = async (query, variables) => {
   }
 };
 
-const service = config => {
+const service = (config) => {
   //header authorization
   if (Auth.user_token) {
     const token = Auth.getToken();
     config.headers = {
-      authorization: token
+      authorization: token,
     };
   }
 
   //interceptors handle network error
   axios.interceptors.response.use(
-    response => {
+    (response) => {
       return response;
     },
-    function(error) {
+    function (error) {
       if (!error.response) {
         error.response = {
           data: "net work error",
-          status: 500
+          status: 500,
         };
       }
       if (error.response.status === 401) {
@@ -93,13 +94,13 @@ export default service;
 export const login = (email, password) => {
   const body = {
     email: email,
-    password: password
+    password: password,
   };
   return service({
     method: "POST",
     url: "api/users/login",
-    data: body
-  }).then(res => {
+    data: body,
+  }).then((res) => {
     Auth.setUserToken(res.data);
     return res;
   });

@@ -6,6 +6,7 @@ import {
   filterProductAction,
 } from "./productAction";
 import { brandsAction } from "./brandAction";
+import { attributesAction } from "./attributeAction";
 
 export {
   LoginAction,
@@ -13,4 +14,5 @@ export {
   catProductAction,
   brandsAction,
   filterProductAction,
+  attributesAction,
 };

@@ -28,7 +28,6 @@ const Category = (props) => {
     },
   });
   const [products, setProducts] = useState([]);
-
   const [brands, setbrands] = useState([]);
 
   useEffect(() => {
@@ -36,10 +35,6 @@ const Category = (props) => {
       setProducts(props.products.products);
     }
   }, [props.products.products]);
-
-  useEffect(() => {
-    console.log(products);
-  }, [products]);
 
   useEffect(() => {
     if (props.match.params.url) {
@@ -73,7 +68,6 @@ const Category = (props) => {
   };
 
   const getfilteredProducts = (config) => {
-    console.log("config", config);
     setProducts([]);
     props.filterProductAction(config);
   };
@@ -99,6 +93,9 @@ const Category = (props) => {
               brands={brands}
               currentCat={props.products.singleCategoryDetails.id}
               getfilteredProducts={getfilteredProducts}
+              filtered_attributes={
+                props.products.singleCategoryDetails.filter_attributes
+              }
             />
           </Grid>
 

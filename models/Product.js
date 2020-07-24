@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+/* brand: {
+  type: Schema.Types.ObjectId,
+  ref: "Brand",
+}, */
+
 // Create Schema
 const ProductSchema = new Schema({
   name: {
@@ -8,7 +13,10 @@ const ProductSchema = new Schema({
     required: true,
   },
   categoryId: [],
-  brand: "",
+  brand: {
+    type: Schema.Types.ObjectId,
+    ref: "Brand",
+  },
   sku: {
     type: String,
   },

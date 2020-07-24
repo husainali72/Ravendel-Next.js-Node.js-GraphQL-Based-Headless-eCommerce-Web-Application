@@ -39,7 +39,7 @@ module.exports = function validate(method, args) {
       }
 
       if (args.custom_field.length) {
-        if (args.custom_field.some(field => isEmpty(field.key))) {
+        if (args.custom_field.some((field) => isEmpty(field.key))) {
           return (errors = "Please fill all custom field");
         }
       }
@@ -49,6 +49,8 @@ module.exports = function validate(method, args) {
       ) {
         return (errors = "Pricing field is required");
       } */
+
+      console.log(args.shipping);
 
       if (!args.shipping || !args.shipping.shipping_class) {
         return (errors = "Please select Shipping class");
@@ -80,7 +82,7 @@ module.exports = function validate(method, args) {
       }
 
       if (args.custom_field.length) {
-        if (args.custom_field.some(field => isEmpty(field.key))) {
+        if (args.custom_field.some((field) => isEmpty(field.key))) {
           return (errors = "Please fill all custom field");
         }
       }

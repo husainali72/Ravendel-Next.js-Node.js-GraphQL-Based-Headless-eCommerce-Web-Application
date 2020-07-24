@@ -15,41 +15,11 @@ const {
   updateUrl,
 } = require("../config/helpers");
 const validate = require("../validations/product");
-
-/*const Tree = [
-  {
-    _id: "electronics",
-    child: ""
-  },
-  {
-    _id: "cases",
-    child: ""
-  }
-];
-var childs;
-var count = 0;
-var promises = [];
-const getTree = async treeReference => {
-  for (let i in treeReference) {
-    let subcat = await CatTree.find({ parent: treeReference[i]._id }).select(
-      "_id"
-    );
-    if (subcat && subcat.length) {
-      treeReference[i].child = subcat;
-      childs = subcat;
-      getTree(treeReference[i].child);
-      if (childs[0]._id == "yellow") {
-        console.log("subcat", treeReference[i].child);
-        console.log(Tree[1].child[1].child[0]._id);
-        return resolve(Tree);
-      }
-    }
-  }
-}; */
+var mongoose = require("mongoose");
+/*geting child*/
 let allids = [];
 const getTree = async (id) => {
   let cats = await ProductCat.find({ parentId: id });
-
   for (let cat of cats) {
     allids.push(cat.id);
     await getTree(cat.id);
@@ -87,13 +57,6 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    },
-    getTree: async (root, args) => {
-      try {
-        const cats = await CatTree.find({});
-        //return unflatten(cats);
-        return cats;
-      } catch (error) {}
     },
     products: async (root, args, { id }) => {
       try {
@@ -150,21 +113,51 @@ module.exports = {
     },
     filteredProducts: async (root, args) => {
       try {
-        let filterObj = {
-          status: "Publish",
-        };
+        let filterArrey = [
+          {
+            $match: {
+              status: "Publish",
+            },
+          },
+        ];
 
         if (args.config.category.length) {
           let cats = await getTree(args.config.category[0]);
-          filterObj.categoryId = { $in: cats };
+          cats = cats.length ? cats : args.config.category;
+          filterArrey[0]["$match"].categoryId = {
+            $in: cats,
+          };
         }
 
         if (args.config.brand.length) {
-          filterObj.brand = { $in: args.config.brand };
+          filterArrey[0]["$match"].brand = { $in: args.config.brand };
         }
 
-        console.log(filterObj);
-        const products = await Product.find(filterObj);
+        if (args.config.attribute.length) {
+          for (let attr of args.config.attribute) {
+            filterArrey.push({
+              $match: {
+                "attribute.attribute_id": mongoose.Types.ObjectId(
+                  attr.attribute_id
+                ),
+              },
+            });
+          }
+          let values = [];
+          for (let attr of args.config.attribute) {
+            values.push(mongoose.Types.ObjectId(attr.attribute_value_id));
+          }
+
+          filterArrey.push({
+            $match: {
+              "attribute.attribute_value_id": {
+                $in: values,
+              },
+            },
+          });
+        }
+
+        const products = await Product.aggregate(filterArrey);
         return products || [];
       } catch (error) {
         error = checkError(error);
@@ -228,6 +221,50 @@ module.exports = {
         });
 
         return products || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    filter_attributes: async (root, args) => {
+      try {
+        const result = await Product.aggregate([
+          {
+            $match: {
+              "attribute.0": { $exists: true },
+              categoryId: { $in: [root.id] },
+              //status: "Publish",
+            },
+          },
+          { $unwind: "$attribute" },
+          {
+            $group: {
+              _id: {
+                attribute_id: "$attribute.attribute_id",
+                attribute_value_id: "$attribute.attribute_value_id",
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: "productattributes",
+              localField: "_id.attribute_id",
+              foreignField: "_id",
+              as: "attributeMaster",
+            },
+          },
+          { $unwind: "$attributeMaster" },
+        ]);
+
+        return result || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    filter_brands: async (root, args) => {
+      try {
+        return [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -344,28 +381,6 @@ module.exports = {
           return cats || [];
         }
         throw putError("Category not exist");
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
-    addTree: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const cat = await CatTree.findOne({ name: args.name });
-        if (cat) {
-          throw putError("Name already exist.");
-        } else {
-          const newCat = new CatTree({
-            name: args.name,
-          });
-
-          if (args.parentname) {
-            newCat.ancestors.push(args.parentname);
-          }
-
-          return await newCat.save();
-        }
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);

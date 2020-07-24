@@ -9,6 +9,7 @@ module.exports = gql`
   type productAttribute {
     id: ID
     name: String
+    slug: String
     values: [customObject]
     date: Date
     updated: Date

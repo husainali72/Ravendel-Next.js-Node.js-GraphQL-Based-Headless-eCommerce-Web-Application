@@ -1,6 +1,22 @@
 const { gql } = require("apollo-server-express");
 
 module.exports = gql`
+  type GROUP_ATTRBUTE {
+    attribute_id: ID
+    attribute_value_id: ID
+  }
+
+  type ATTRIBUTE_MASTER {
+    _id: ID
+    name: String
+    values: [customObject]
+  }
+
+  type FILTER_ATTRIBUTE {
+    _id: GROUP_ATTRBUTE
+    attributeMaster: ATTRIBUTE_MASTER
+  }
+
   type ChildCat {
     id: ID
     name: String
@@ -46,6 +62,8 @@ module.exports = gql`
     image: customObject
     products: [Product]
     child_cat: [ChildCat]
+    filter_attributes: [FILTER_ATTRIBUTE]
+    filter_brands: Brand
     meta: customObject
     date: Date
     updated: Date

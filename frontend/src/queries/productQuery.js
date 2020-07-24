@@ -17,6 +17,7 @@ const PRODUCT_TILE_DATA = gql`
       id
       name
     }
+    attribute
   }
 `;
 
@@ -27,6 +28,16 @@ const GET_FILTEREDPRODUCTS = gql`
     }
   }
   ${PRODUCT_TILE_DATA}
+`;
+
+const GET_ATTRIBUTES = gql`
+  {
+    product_attributes {
+      id
+      name
+      values
+    }
+  }
 `;
 
 const GET_PRODUCTS = gql`
@@ -118,6 +129,17 @@ const GET_CAT_PRODUCTS = gql`
         name
         url
       }
+      filter_attributes {
+        _id {
+          attribute_id
+          attribute_value_id
+        }
+        attributeMaster {
+          _id
+          name
+          values
+        }
+      }
     }
   }
 `;
@@ -183,14 +205,6 @@ const ADD_REVIEW = gql`
   }
 `;
 
-// title
-// customer_id
-// product_id
-// email
-// review
-// rating
-// status
-
 export {
   GET_PRODUCTS,
   GET_CATEGORIES,
@@ -199,4 +213,5 @@ export {
   GET_PRODUCT_REVIEWS,
   ADD_REVIEW,
   GET_FILTEREDPRODUCTS,
+  GET_ATTRIBUTES,
 };

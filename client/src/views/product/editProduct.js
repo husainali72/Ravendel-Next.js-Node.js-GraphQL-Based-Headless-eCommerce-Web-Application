@@ -483,6 +483,8 @@ const EditProduct = (props) => {
         selectedCat.map((cat) => {
           if (~product.categoryId.indexOf(cat.id)) {
             cat.checked = true;
+          } else {
+            cat.checked = false;
           }
         });
         setCatList(unflatten(selectedCat));
