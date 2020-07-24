@@ -78,6 +78,9 @@ const Footer = () => {
                       <ListItemText primary="FAQ" className="footer-menulink" />
                     </Link>
                   </ListItem>
+                  <ListItem>
+                    <Link to="/blogs">Blog</Link>
+                  </ListItem>
                 </List>
               </Grid>
             </Grid>
@@ -92,7 +95,11 @@ const Footer = () => {
         >
           <Typography variant="body1" className="copyright-text">
             Copyright © 2020{" "}
-            <a href="https://www.hbwebsol.com/" target="_blank">
+            <a
+              href="https://www.hbwebsol.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               HB WEBSOL
             </a>
           </Typography>

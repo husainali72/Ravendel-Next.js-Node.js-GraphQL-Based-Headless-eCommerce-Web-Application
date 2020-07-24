@@ -1,35 +1,47 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import PageTitle from "../components/pageTitle";
-import { Container, Grid, Typography, Box } from "@material-ui/core";
+import {
+  Container,
+  Grid,
+  Typography,
+  Box,
+  ExpansionPanel,
+  ExpansionPanelDetails,
+  ExpansionPanelSummary,
+} from "@material-ui/core";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Logo from "../../assets/images/logo.png";
 
-const FAQ = props => {
+const FAQ = (props) => {
+  console.log("props.faqs.faqs", props.faqs.faqs);
   return (
     <Fragment>
       <PageTitle title="FAQ" />
       <Container>
         <Grid container className="margin-top-3 margin-bottom-3">
           <Grid item md={12} sm={12} xs={12}>
-            <Box component="div" className="text-center">
-              <img
-                src={props.logo ? props.logo : Logo}
-                alt="Logo"
-                className="aboutLogo"
-              />
+            <Box component="div" mt={5} mb={5}>
+              {props.faqs.faqs && props.faqs.faqs.length
+                ? props.faqs.faqs.map((faq) => (
+                    <ExpansionPanel key={faq.id}>
+                      <ExpansionPanelSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="faqs"
+                        id={faq.id}
+                      >
+                        <Typography variant="h6">{faq.title}</Typography>
+                      </ExpansionPanelSummary>
+
+                      <ExpansionPanelDetails>
+                        <Typography variant="body1">
+                          {faq.description}
+                        </Typography>
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                  ))
+                : ""}
             </Box>
-            <Typography variant="subtitle1">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.
-            </Typography>
           </Grid>
         </Grid>
       </Container>
@@ -37,8 +49,8 @@ const FAQ = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  settings: state.settings
+const mapStateToProps = (state) => ({
+  faqs: state.faqs,
 });
 
 export default connect(mapStateToProps)(FAQ);

@@ -7,6 +7,7 @@ import products from "./productReducers";
 import blogs from "./blogReducer";
 import homepage from "./homepageReducer";
 import checkoutDetail from "./checkoutReducer";
+import faqs from "./faqReducer";
 import brand from "./brandReducer";
 import attribute from "./attributeReducer";
 
@@ -19,6 +20,7 @@ const MasterReducer = combineReducers({
   blogs,
   homepage,
   checkoutDetail,
+  faqs,
   brand,
   attribute,
 });

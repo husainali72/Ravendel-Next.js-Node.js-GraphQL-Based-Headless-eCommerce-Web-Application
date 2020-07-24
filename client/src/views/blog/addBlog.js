@@ -142,7 +142,7 @@ const AddBlog = (props) => {
         <Grid container className="topbar">
           <Grid item lg={6}>
             <Typography variant="h4">
-              <Link to="/all-pages">
+              <Link to="/all-blogs">
                 <IconButton aria-label="Back">
                   <ArrowBackIcon />
                 </IconButton>
@@ -360,16 +360,16 @@ const AddBlog = (props) => {
                       ))
                     }
                   /> */}
+                  <Select
+                    isMulti
+                    value={clearTags}
+                    name="blog_tag"
+                    options={tags}
+                    onChange={tagChange}
+                    menuPortalTarget={document.querySelector("body")}
+                  />
                 </CardContent>
               </Card>
-
-              <Select
-                isMulti
-                value={clearTags}
-                name="blog_tag"
-                options={tags}
-                onChange={tagChange}
-              />
             </Box>
           </Grid>
         </Grid>

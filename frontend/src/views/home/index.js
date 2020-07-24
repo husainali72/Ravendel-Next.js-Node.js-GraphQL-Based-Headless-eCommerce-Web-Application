@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Banner, BlogListing } from "./components";
+import { Banner } from "./components";
 import ProductSlider from "../components/productslider";
 import ProductGrid from "../components/productgrid";
 import CategoryListing from "../components/categorylist";
@@ -43,9 +43,6 @@ const Home = (props) => {
     }
     if (isEmpty(props.products.categories)) {
       props.categoriesAction();
-    }
-    if (isEmpty(props.blogs.blogs)) {
-      props.blogsAction();
     }
     if (isEmpty(props.home.homepage)) {
       props.homepageAction();
@@ -165,10 +162,6 @@ const Home = (props) => {
         />
       ) : (
         ""
-      )}
-
-      {props.blogs.blogs && (
-        <BlogListing recentlyBlogs={props.blogs.blogs} title="OUR BLOG" />
       )}
     </Fragment>
   );

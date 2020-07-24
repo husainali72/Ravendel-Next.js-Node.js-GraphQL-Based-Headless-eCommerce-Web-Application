@@ -5,8 +5,6 @@ import {
   CardHeader,
   CardContent,
   Button,
-  Backdrop,
-  CircularProgress,
   TextField,
   IconButton,
   Typography,
@@ -30,7 +28,6 @@ import {
   TableHead,
   TableRow,
   TableContainer,
-  TablePagination,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
@@ -59,6 +56,7 @@ import Loading from "../utils/loading";
 import "../../App.css";
 import viewStyles from "../viewStyles";
 import _, { indexOf } from "lodash";
+import { isEmpty } from "../../utils/helper";
 
 const delimiters = ["Enter", "Tab"];
 
@@ -1004,12 +1002,9 @@ const AddProduct = (props) => {
                 <CardHeader title="Attributes" />
                 <Divider />
                 <CardContent>
-                  <Grid container spacing={3}>
-                    <Grid item md={4}>
-                      <FormControl
-                        className={classes.cstmSelect}
-                        variant="outlined"
-                      >
+                  <Grid container spacing={1} alignItems="center">
+                    <Grid item>
+                      <FormControl style={{ width: 250 }} variant="outlined">
                         <InputLabel ref={inputLabel} id="attribute-name">
                           Select Attribute
                         </InputLabel>
@@ -1042,7 +1037,7 @@ const AddProduct = (props) => {
                         </Select>
                       </FormControl>
                     </Grid>
-                    <Grid item md={4}>
+                    <Grid item>
                       <Button
                         color="primary"
                         variant="contained"
@@ -1054,72 +1049,80 @@ const AddProduct = (props) => {
                   </Grid>
                 </CardContent>
                 <Divider />
-                <CardContent>
-                  <TableContainer>
-                    <Table
-                      stickyHeader
-                      aria-label="sticky table and Dense Table"
-                      size="small"
-                    >
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Name</TableCell>
-                          <TableCell>Values</TableCell>
-                          <TableCell>Variation</TableCell>
-                          <TableCell>Remove</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody className={classes.container}>
-                        {currentAttribute.attribute_list.map(
-                          (attribute, index) => (
-                            <TableRow key={attribute.id} hover>
-                              <TableCell>{attribute.name}</TableCell>
-                              {/* <TableCell>{attribute.values.join(",")}</TableCell> */}
-                              <TableCell>
-                                <ReactSelect
-                                  isMulti
-                                  value={attribute.selected_values}
-                                  options={attribute.values}
-                                  onChange={(e) =>
-                                    changeSelectedValue(e, index)
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell>
-                                {/* {attribute.isVariant ? "Yes" : "No"} */}
-                                <Checkbox
-                                  color="primary"
-                                  checked={attribute.isVariant}
-                                  onChange={(e) => {
-                                    attribute.isVariant = e.target.checked;
-                                    setcurrentAttribute({
-                                      ...currentAttribute,
-                                    });
-                                  }}
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Tooltip title="Delete" aria-label="delete">
-                                  <IconButton
-                                    aria-label="Delete"
-                                    className={classes.deleteicon}
-                                    onClick={(e) => deleteAttribute(index)}
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </Tooltip>
-                              </TableCell>
-                            </TableRow>
-                          )
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-                <Divider />
-                <CardContent>
-                  <Grid container spacing={3}>
-                    <Grid item md={4}>
+
+                {currentAttribute.attribute_list.length ? (
+                  <CardContent>
+                    <TableContainer>
+                      <Table
+                        stickyHeader
+                        aria-label="sticky table and Dense Table"
+                        size="small"
+                      >
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Values</TableCell>
+                            <TableCell>Variation</TableCell>
+                            <TableCell>Remove</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody className={classes.container}>
+                          {currentAttribute.attribute_list.map(
+                            (attribute, index) => (
+                              <TableRow key={attribute.id} hover>
+                                <TableCell>{attribute.name}</TableCell>
+                                {/* <TableCell>{attribute.values.join(",")}</TableCell> */}
+                                <TableCell>
+                                  <ReactSelect
+                                    isMulti
+                                    value={attribute.selected_values}
+                                    options={attribute.values}
+                                    onChange={(e) =>
+                                      changeSelectedValue(e, index)
+                                    }
+                                    styles={{
+                                      menu: (provided) => ({
+                                        ...provided,
+                                        zIndex: 9999,
+                                      }),
+                                    }}
+                                    menuPortalTarget={document.querySelector(
+                                      "body"
+                                    )}
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  {/* {attribute.isVariant ? "Yes" : "No"} */}
+                                  <Checkbox
+                                    color="primary"
+                                    checked={attribute.isVariant}
+                                    onChange={(e) => {
+                                      attribute.isVariant = e.target.checked;
+                                      setcurrentAttribute({
+                                        ...currentAttribute,
+                                      });
+                                    }}
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <Tooltip title="Delete" aria-label="delete">
+                                    <IconButton
+                                      aria-label="Delete"
+                                      className={classes.deleteicon}
+                                      onClick={(e) => deleteAttribute(index)}
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                </TableCell>
+                              </TableRow>
+                            )
+                          )}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                    <Divider />
+                    <Box mt={1}>
                       <Button
                         color="primary"
                         variant="contained"
@@ -1127,129 +1130,135 @@ const AddProduct = (props) => {
                       >
                         Save Attribute
                       </Button>
-                    </Grid>
-                  </Grid>
-                </CardContent>
+                    </Box>
+                  </CardContent>
+                ) : (
+                  ""
+                )}
               </Card>
             </Box>
 
-            <Box component="span" m={1}>
-              <Card>
-                <CardHeader title="Variants" />
-                <Divider />
-                <CardContent>
-                  <TableContainer>
-                    <Table
-                      stickyHeader
-                      aria-label="sticky table and Dense Table"
-                      size="small"
-                    >
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Variant</TableCell>
-                          <TableCell>Price</TableCell>
-                          <TableCell>Quantity</TableCell>
-                          <TableCell>SKU</TableCell>
-                          <TableCell>Image</TableCell>
-                          <TableCell>Remove</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody className={classes.container}>
-                        {currentVariants.combinations.map((variant, index) => (
-                          <TableRow hover key={index}>
-                            <TableCell>
-                              {variant.combination
-                                .map((val) => currentVariants.allValues[val])
-                                .join(" / ")}
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                label="Price"
-                                variant="outlined"
-                                name="price"
-                                className={clsx(
-                                  classes.marginBottom,
-                                  classes.width100
-                                )}
-                                type="number"
-                                value={variant.price}
-                                onChange={(e) => variantChange(e, index)}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                label="Quantity"
-                                variant="outlined"
-                                className={clsx(
-                                  classes.marginBottom,
-                                  classes.width100
-                                )}
-                                type="number"
-                                name="quantity"
-                                value={variant.quantity}
-                                onChange={(e) => variantChange(e, index)}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                label="SKU"
-                                variant="outlined"
-                                className={clsx(
-                                  classes.marginBottom,
-                                  classes.width100
-                                )}
-                                name="sku"
-                                value={variant.sku}
-                                onChange={(e) => variantChange(e, index)}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Box className={classes.feautedImageBox}>
-                                <img
-                                  src={variant.image.view}
-                                  className={classes.feautedImageBoxPreview}
-                                  alt="Featured"
-                                />
-                              </Box>
-
-                              <input
-                                accept="image/*"
-                                className={classes.input}
-                                style={{ display: "none" }}
-                                id={`variant-image-${index}`}
-                                name="image"
-                                type="file"
-                                onChange={(e) => variantChange(e, index)}
-                              />
-                              <label
-                                htmlFor={`variant-image-${index}`}
-                                className={classes.feautedImage}
-                              >
-                                <ImageIcon />{" "}
-                                {variant.image.view !== null
-                                  ? "Change Featured Image"
-                                  : "Set Featured Image"}
-                              </label>
-                            </TableCell>
-                            <TableCell>
-                              <Tooltip title="Delete" aria-label="delete">
-                                <IconButton
-                                  aria-label="Delete"
-                                  className={classes.deleteicon}
-                                  onClick={() => variantDelete(index)}
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Tooltip>
-                            </TableCell>
+            {currentVariants.combinations.length ? (
+              <Box component="span" m={1}>
+                <Card>
+                  <CardHeader title="Variants" />
+                  <Divider />
+                  <CardContent>
+                    <TableContainer>
+                      <Table
+                        stickyHeader
+                        aria-label="sticky table and Dense Table"
+                        size="small"
+                      >
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Variant</TableCell>
+                            <TableCell>Price</TableCell>
+                            <TableCell>Quantity</TableCell>
+                            <TableCell>SKU</TableCell>
+                            <TableCell>Image</TableCell>
+                            <TableCell>Remove</TableCell>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
-            </Box>
+                        </TableHead>
+                        <TableBody className={classes.container}>
+                          {currentVariants.combinations.map(
+                            (variant, index) => (
+                              <TableRow hover key={index}>
+                                <TableCell>
+                                  {variant.combination
+                                    .map(
+                                      (val) => currentVariants.allValues[val]
+                                    )
+                                    .join(" / ")}
+                                </TableCell>
+                                <TableCell>
+                                  <TextField
+                                    label="Price"
+                                    variant="outlined"
+                                    name="price"
+                                    className={clsx(classes.width100)}
+                                    type="number"
+                                    value={variant.price}
+                                    onChange={(e) => variantChange(e, index)}
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <TextField
+                                    label="Quantity"
+                                    variant="outlined"
+                                    className={clsx(classes.width100)}
+                                    type="number"
+                                    name="quantity"
+                                    value={variant.quantity}
+                                    onChange={(e) => variantChange(e, index)}
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <TextField
+                                    label="SKU"
+                                    variant="outlined"
+                                    className={clsx(classes.width100)}
+                                    name="sku"
+                                    value={variant.sku}
+                                    onChange={(e) => variantChange(e, index)}
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <Box m={1}>
+                                    {!isEmpty(variant.image) ? (
+                                      <img
+                                        src={
+                                          variant.image.view ||
+                                          variant.image.thumbnail
+                                        }
+                                        className={classes.variantImage}
+                                        alt="variant"
+                                      />
+                                    ) : (
+                                      ""
+                                    )}
+                                  </Box>
+
+                                  <input
+                                    accept="image/*"
+                                    className={classes.input}
+                                    style={{ display: "none" }}
+                                    id={`variant-image-${index}`}
+                                    name="image"
+                                    type="file"
+                                    onChange={(e) => variantChange(e, index)}
+                                  />
+                                  <label
+                                    htmlFor={`variant-image-${index}`}
+                                    className={classes.feautedImage}
+                                  >
+                                    <ImageIcon />
+                                    {"Set Image"}
+                                  </label>
+                                </TableCell>
+                                <TableCell>
+                                  <Tooltip title="Delete" aria-label="delete">
+                                    <IconButton
+                                      aria-label="Delete"
+                                      className={classes.deleteicon}
+                                      onClick={() => variantDelete(index)}
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                </TableCell>
+                              </TableRow>
+                            )
+                          )}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </CardContent>
+                </Card>
+              </Box>
+            ) : (
+              ""
+            )}
 
             <Box component="span" m={1}>
               <Card>
@@ -1543,14 +1552,15 @@ const AddProduct = (props) => {
               <Card>
                 <CardHeader title="Brands" />
                 <Divider />
+                <CardContent>
+                  <ReactSelect
+                    name="brand"
+                    options={brands}
+                    onChange={brandChange}
+                    menuPortalTarget={document.querySelector("body")}
+                  />
+                </CardContent>
               </Card>
-              <Grid item md={12}>
-                <ReactSelect
-                  name="brand"
-                  options={brands}
-                  onChange={brandChange}
-                />
-              </Grid>
             </Box>
           </Grid>
         </Grid>

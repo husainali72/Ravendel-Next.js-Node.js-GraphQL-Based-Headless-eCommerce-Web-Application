@@ -20,6 +20,7 @@ import AllTaxes from "../views/tax";
 import AllShippings from "../views/shipping";
 import NotFound from "../views/notFound";
 import { AllReviews, EditReview } from "../views/reviews";
+import { AddFAQ, AllFAQ, EditFAQ } from "../views/faq";
 
 const Routes = [
   // {
@@ -109,6 +110,14 @@ const Routes = [
     exact: true,
     name: "Edit Page",
     component: EditPage,
+  },
+  { path: "/all-faq", exact: true, name: "All FAQ", component: AllFAQ },
+  { path: "/add-faq", exact: true, name: "Add FAQ", component: AddFAQ },
+  {
+    path: "/edit-faq/:id",
+    exact: true,
+    name: "Edit FAQ",
+    component: EditFAQ,
   },
   {
     path: "/all-customer",

@@ -63,8 +63,8 @@ const ProductOtherDetails = (props) => {
         {...other}
       >
         {value === index && (
-          <Box p={3}>
-            <Typography>{children}</Typography>
+          <Box p={3} component="div" className="hlelop">
+            {children}
           </Box>
         )}
       </div>
@@ -200,7 +200,7 @@ const ProductOtherDetails = (props) => {
                 </span>
                 <Collapse in={writeReview}>
                   <Grid item md={12} sm={12} xs={12}>
-                    <Box className="leave-review-wrapper">
+                    <Box className="leave-review-wrapper" component="div">
                       <Grid container spacing={2}>
                         <Grid item md={12} sm={12} xs={12}>
                           <Typography
@@ -489,7 +489,7 @@ const ProductOtherDetails = (props) => {
                 {props.reviews &&
                 props.reviews.filter((review) => review.status === "approved")
                   .length > 0 ? (
-                  props.reviews
+                  props.reviews 
                     .filter((review) => review.status === "approved")
                     .map((singleReview, index) => (
                       <Grid

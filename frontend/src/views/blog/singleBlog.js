@@ -7,7 +7,7 @@ import {
   Grid,
   Hidden,
   Divider,
-  Icon
+  Icon,
 } from "@material-ui/core";
 import Facebook from "../../assets/images/facebook.png";
 import Linkedin from "../../assets/images/linkedin.png";
@@ -18,7 +18,7 @@ import { blogAction } from "../../store/action/blogAction";
 import Loading from "../components/loading";
 import PlaceHolder from "../../assets/images/placeholder.png";
 
-const SingleBlog = props => {
+const SingleBlog = (props) => {
   const [singlePost, setSinglePost] = useState({});
 
   useEffect(() => {
@@ -53,20 +53,22 @@ const SingleBlog = props => {
                     className="blog-featured"
                   />
                 </Box>
+                <Box component="div" className="single-blog-innner-content">
+                  <Typography
+                    variant="h2"
+                    className="margin-top-2 margin-bottom-2 text-capitalize"
+                  >
+                    {singlePost.title}
+                  </Typography>
+                  <Typography variant="subtitle1">
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: singlePost.content,
+                      }}
+                    ></span>
+                  </Typography>
+                </Box>
 
-                <Typography
-                  variant="h2"
-                  className="margin-top-2 margin-bottom-2 text-capitalize"
-                >
-                  {singlePost.title}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: singlePost.content
-                    }}
-                  ></span>
-                </Typography>
                 <Divider className="margin-top-2 margin-bottom-3" />
                 <Typography variant="h3">
                   <Icon style={{ fontSize: 20 }}>share</Icon> Share this blog
@@ -119,12 +121,12 @@ const SingleBlog = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  blogs: state.blogs
+const mapStateToProps = (state) => ({
+  blogs: state.blogs,
 });
 
 const mapDispatchToProps = {
-  blogAction
+  blogAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleBlog);
