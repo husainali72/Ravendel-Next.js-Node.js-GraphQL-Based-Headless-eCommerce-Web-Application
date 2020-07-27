@@ -75,7 +75,7 @@ const FilterSideBar = (props) => {
     for (let i in brands) {
       if (brands[i].checked) {
         brandParam.push(encodeURIComponent(brands[i].name));
-        FILTER_CONFIG.brand.push(brands[i].id);
+        FILTER_CONFIG.brand.push(brands[i]._id);
       }
     }
 
@@ -107,7 +107,10 @@ const FilterSideBar = (props) => {
     }
 
     if (brandQueryString) {
-      queryString += brandQueryString + "&" + attrQueryString.join("&");
+      queryString += brandQueryString;
+      if (attrQueryString.length) {
+        queryString += "&" + attrQueryString.join("&");
+      }
     } else {
       queryString += attrQueryString.join("&");
     }
@@ -118,26 +121,26 @@ const FilterSideBar = (props) => {
 
   const attributeValues = [];
   useEffect(() => {
-    if (props.currentCat && props.brands.length) {
+    if (props.currentCat) {
       FILTER_CONFIG.category = [props.currentCat];
       let url_brands = getQueryString(location.search, "Brand");
 
       FILTER_CONFIG.brand = [];
+
       if (url_brands) {
-        for (let single_param of url_brands.split(",")) {
-          for (let brand of props.brands) {
-            if (brand.name === single_param) {
-              brand.checked = true;
-              FILTER_CONFIG.brand.push(brand.id);
-              break;
-            }
-          }
-        }
+        url_brands = url_brands.split(",");
+      } else {
+        url_brands = [];
       }
 
-      for (let brand of props.brands) {
-        brand.checked = brand.checked || false;
-        brands.push(brand);
+      for (let brand of props.filter_brands) {
+        if (~url_brands.indexOf(brand.brandMaster.name)) {
+          brand.brandMaster.checked = true;
+          FILTER_CONFIG.brand.push(brand.brandMaster._id);
+        }
+
+        brand.brandMaster.checked = brand.brandMaster.checked || false;
+        brands.push(brand.brandMaster);
       }
 
       let attributeObj = {};
@@ -194,7 +197,7 @@ const FilterSideBar = (props) => {
       setbrands(brands);
       props.getfilteredProducts(FILTER_CONFIG);
     }
-  }, [props.brands, props.currentCat]);
+  }, [props.currentCat]);
 
   const filterBrand = (e, i) => {
     brands[i].checked = e.target.checked;
@@ -343,7 +346,7 @@ const FilterSideBar = (props) => {
             <ExpansionPanelDetails>
               <List>
                 {brands.map((brand, i) => (
-                  <ListItem disableGutters key={brand.id}>
+                  <ListItem disableGutters key={brand._id}>
                     <FormControlLabel
                       control={
                         <Checkbox

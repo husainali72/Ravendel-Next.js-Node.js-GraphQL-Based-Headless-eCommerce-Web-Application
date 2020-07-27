@@ -130,7 +130,10 @@ module.exports = {
         }
 
         if (args.config.brand.length) {
-          filterArrey[0]["$match"].brand = { $in: args.config.brand };
+          filterArrey[0]["$match"].brand = {
+            /*$in: args.config.brand.map((id) => mongoose.Types.ObjectId(id)),*/
+            $in: args.config.brand.map((id) => id),
+          };
         }
 
         if (args.config.attribute.length) {
@@ -142,8 +145,17 @@ module.exports = {
                 ),
               },
             });
+
+            filterArrey.push({
+              $match: {
+                "attribute.attribute_value_id": mongoose.Types.ObjectId(
+                  attr.attribute_value_id
+                ),
+              },
+            });
           }
-          let values = [];
+
+          /* let values = [];
           for (let attr of args.config.attribute) {
             values.push(mongoose.Types.ObjectId(attr.attribute_value_id));
           }
@@ -154,9 +166,9 @@ module.exports = {
                 $in: values,
               },
             },
-          });
+          }); */
         }
-
+        console.log(JSON.stringify(filterArrey));
         const products = await Product.aggregate(filterArrey);
         return products || [];
       } catch (error) {
@@ -233,7 +245,7 @@ module.exports = {
             $match: {
               "attribute.0": { $exists: true },
               categoryId: { $in: [root.id] },
-              //status: "Publish",
+              status: "Publish",
             },
           },
           { $unwind: "$attribute" },
@@ -264,7 +276,34 @@ module.exports = {
     },
     filter_brands: async (root, args) => {
       try {
-        return [];
+        const result = await Product.aggregate([
+          {
+            $match: {
+              categoryId: {
+                $in: [root.id],
+              },
+              status: "Publish",
+            },
+          },
+          {
+            $group: {
+              _id: {
+                brand: { $toObjectId: "$brand" },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: "brands",
+              localField: "_id.brand",
+              foreignField: "_id",
+              as: "brandMaster",
+            },
+          },
+          { $unwind: "$brandMaster" },
+        ]);
+
+        return result || [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -431,7 +470,7 @@ module.exports = {
             name: args.name,
             url: url,
             categoryId: args.categoryId,
-            brand: args.brand || "",
+            brand: args.brand,
             short_description: args.short_description,
             description: args.description,
             sku: args.sku,

@@ -24,6 +24,7 @@ const {
 /* const User = require("../../models/User");
 const ProductCat = require("../../models/ProductCat"); */
 const Product = require("../../models/Product");
+const CatTree = require("../../models/CatTree");
 const ProductAttributeVariation = require("../../models/ProductAttributeVariation");
 
 router.post("/checkurl", auth, async (req, res) => {
@@ -75,140 +76,6 @@ router.post("/delete_image", auth, async (req, res) => {
 
 router.get("/testing", async (req, res) => {
   try {
-    /* const Masters = Product.aggregate(
-      [
-        {
-          $match: {
-            "attribute.0": { $exists: true },
-            categoryId: { $in: ["5e81875141738428396af6c8"] },
-            //status: "Draft",
-          },
-        },
-        { $unwind: "$attribute" },
-        {
-          $group: {
-            _id: {
-              attribute_id: "$attribute.attribute_id",
-              attribute_value_id: "$attribute.attribute_value_id",
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: "productattributes",
-            localField: "_id.attribute_id",
-            foreignField: "_id",
-            as: "attributeMaster",
-          },
-        },
-        { $unwind: "$attributeMaster" },
-      ],
-      function (err, result) {
-        res.json({
-          success: true,
-          response: result,
-        });
-      }
-    ); */
-
-    /* const Masters = Product.aggregate(
-      [
-        {
-          $match: {
-            //brand: { $exists: true },
-            categoryId: { $in: ["5e81875141738428396af6c8"] },
-          },
-        },
-        {
-          $group: {
-            _id: {
-              brand: { $toObjectId: "$brand" },
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: "brands",
-            localField: "_id.brand",
-            foreignField: "_id",
-            as: "brandMaster",
-          },
-        } /* 
-        { $unwind: "$brandMaster" },
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-          },
-        }, 
-      ],
-      function (err, result) {
-        console.log(err);
-        res.json({
-          success: true,
-          response: result,
-        });
-      }
-    ); */
-
-    /* const Masters = Product.aggregate(
-      [
-        {
-          $match: {
-            //brand: { $exists: true },
-            categoryId: { $in: ["5e81875141738428396af6c8"] },
-          },
-        },
-        { $unwind: "$brands" },
-        {
-          $group: {
-            _id: {
-              brand: { $toObjectId: "$brand" },
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: "brands",
-            localField: "_id.brand",
-            foreignField: "_id",
-            as: "brandMaster",
-          },
-        },
-      ],
-      function (err, result) {
-        res.json({
-          success: true,
-          response: result,
-        });
-      }
-    ); */
-
-    /* const Masters = Product.aggregate(
-      [
-        { $unwind: "$attribute" },
-        {
-          $match: {
-            attribute: {
-              $elemMatch: {
-                attribute_value_id: mongoose.Types.ObjectId(
-                  "5efd6f4eab130d037cc65853"
-                ),
-              },
-            },
-            
-          },
-        },
-      ],
-      function (err, result) {
-        console.log(err);
-        res.json({
-          success: true,
-          response: result,
-        });
-      }
-    ); */
-
     /*let filterObj = {
       categoryId: {
         $in: ["5e81875141738428396af6c8", "5e81b11e41738428396af768"],
@@ -233,55 +100,109 @@ router.get("/testing", async (req, res) => {
       },
     };*/
 
-    const Masters = Product.aggregate(
-      [
-        {
-          $match: {
-            categoryId: {
-              $in: ["5e81875141738428396af6c8", "5e81b11e41738428396af768"],
-            },
-            status: "Publish",
-            brand: "5efad76585734b0bf9674415",
+    let findArr = [
+      {
+        $match: {
+          categoryId: {
+            $in: ["5e81875141738428396af6c8"],
+          },
+          status: "Publish",
+          brand: {
+            $in: ["5efad76585734b0bf9674415"],
           },
         },
-        {
-          $match: {
-            "attribute.attribute_id": mongoose.Types.ObjectId(
-              "5efb4205f84b3c35b088fb97"
-            ),
+      },
+      {
+        $match: {
+          "attribute.attribute_id": mongoose.Types.ObjectId(
+            "5efb4205f84b3c35b088fb97"
+          ),
+        },
+      },
+      {
+        $match: {
+          "attribute.attribute_id": mongoose.Types.ObjectId(
+            "5f0c0495672afc2e00e9c10b"
+          ),
+        },
+      },
+      {
+        $match: {
+          "attribute.attribute_value_id": {
+            $in: [mongoose.Types.ObjectId("5efd6f4eab130d037cc65853")],
           },
         },
-        {
-          $match: {
-            "attribute.attribute_id": mongoose.Types.ObjectId(
-              "5f0c0495672afc2e00e9c10b"
-            ),
+      },
+      {
+        $match: {
+          "attribute.attribute_value_id": {
+            $in: [mongoose.Types.ObjectId("5f0c0495672afc2e00e9c10c")],
           },
         },
-        {
-          $match: {
-            "attribute.attribute_value_id": {
-              $in: [
-                mongoose.Types.ObjectId("5efd70b9b0abdc1294c1dc2a"),
-                mongoose.Types.ObjectId("5efd6f4eab130d037cc65853"),
-              ],
-            },
-          },
-        },
-      ],
-      function (err, result) {
-        console.log(err);
-        res.json({
-          success: true,
-          response: result,
-        });
-      }
-    );
+      },
+    ];
+
+    const Masters = await Product.aggregate(findArr);
+    console.log(JSON.stringify(findArr));
+    res.json({
+      success: true,
+      response: Masters,
+    });
   } catch (error) {
     console.log(error);
     res.status(404).json("Something went wrong");
   }
 });
+
+router.get("/update_product", async (req, res) => {
+  /* const cat = await CatTree.updateOne({ parent: "" }, [
+    { $set: { parent: "$_id" } },
+  ]); */
+
+  Product.aggregate(
+    [
+      {
+        $match: {
+          //brand: { $exists: true },
+          categoryId: {
+            $in: [
+              "5e81875141738428396af6c8",
+              "5e8187e441738428396af6c9",
+              "5f06ece3d2d24f46a2d4eb53",
+              "5f06ecf0d2d24f46a2d4eb54",
+              "5f06f119d2d24f46a2d4eb5b",
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            brand: { $toObjectId: "$brand" },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "brands",
+          localField: "_id.brand",
+          foreignField: "_id",
+          as: "brandMaster",
+        },
+      },
+      { $unwind: "$brandMaster" },
+    ],
+    function (err, result) {
+      console.log(err);
+      res.json({
+        success: true,
+        response: result,
+      });
+    }
+  );
+});
+
+router.get("/block_ads", async (req, res) => {});
 
 module.exports = router;
 

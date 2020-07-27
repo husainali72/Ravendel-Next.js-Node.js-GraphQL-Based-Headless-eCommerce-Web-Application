@@ -2,12 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import PageTitle from "../components/pageTitle";
 import ProductCard from "../components/productcard";
 import { connect } from "react-redux";
-import {
-  productsAction,
-  catProductAction,
-  brandsAction,
-  filterProductAction,
-} from "../../store/action";
+import { catProductAction, filterProductAction } from "../../store/action";
 import { Typography, Box, Container, Grid } from "@material-ui/core";
 import { isEmpty } from "../../utils/helper";
 import Loading from "../components/loading";
@@ -40,7 +35,6 @@ const Category = (props) => {
     if (props.match.params.url) {
       props.catProductAction(`${props.match.params.url}`);
     }
-    props.brandsAction();
   }, []);
 
   useEffect(() => {
@@ -52,10 +46,6 @@ const Category = (props) => {
       fillterProducts(priceRange);
     }
   }, [categoryDetail.products]);
-
-  useEffect(() => {
-    setbrands(props.brandState.brands);
-  }, [props.brandState.brands]);
 
   const fillterProducts = (newValue) => {
     setPriceRange(newValue);
@@ -90,7 +80,7 @@ const Category = (props) => {
           <Grid item lg={3} md={4} sm={4} xs={12} className="left-sidebar">
             <FilterSideBar
               onPriceChange={(newValue) => fillterProducts(newValue)}
-              brands={brands}
+              filter_brands={props.products.singleCategoryDetails.filter_brands}
               currentCat={props.products.singleCategoryDetails.id}
               getfilteredProducts={getfilteredProducts}
               filtered_attributes={
@@ -141,14 +131,11 @@ const mapStateToProps = (state) => {
   return {
     products: state.products,
     categories: state.categories,
-    brandState: state.brand,
   };
 };
 
 const mapDispatchToProps = {
-  productsAction,
   catProductAction,
-  brandsAction,
   filterProductAction,
 };
 

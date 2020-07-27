@@ -16,6 +16,7 @@ const ProductSchema = new Schema({
   brand: {
     type: Schema.Types.ObjectId,
     ref: "Brand",
+    default: null,
   },
   sku: {
     type: String,

@@ -129,6 +129,12 @@ const GET_CAT_PRODUCTS = gql`
         name
         url
       }
+      filter_brands {
+        brandMaster {
+          _id
+          name
+        }
+      }
       filter_attributes {
         _id {
           attribute_id

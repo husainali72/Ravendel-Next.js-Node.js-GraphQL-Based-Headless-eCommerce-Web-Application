@@ -70,7 +70,7 @@ const AddProduct = (props) => {
   const [product, setProduct] = useState({
     name: "",
     categoryId: [],
-    brand: "",
+    brand: null,
     pricing: {
       price: 0,
       sellprice: 0,

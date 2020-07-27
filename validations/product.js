@@ -50,8 +50,6 @@ module.exports = function validate(method, args) {
         return (errors = "Pricing field is required");
       } */
 
-      console.log(args.shipping);
-
       if (!args.shipping || !args.shipping.shipping_class) {
         return (errors = "Please select Shipping class");
       }
