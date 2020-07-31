@@ -10,6 +10,10 @@ import {
   CAT_PRODUCTS,
   PRODUCT_REVIEWS,
   ADD_PRODUCT_REVIEWS,
+  SALE_PRODUCTS_SUCCESS,
+  RECENT_PRODUCTS_SUCCESS,
+  FEATURED_PRODUCTS_SUCCESS,
+  PRODUCTS_CATID_SUCCESS,
 } from "../action/productAction";
 
 const initialState = {
@@ -21,10 +25,42 @@ const initialState = {
   success: false,
   singleCategoryDetails: [],
   productReviews: [],
+  productsByCatId: [],
+  onSaleProducts: [],
+  recentProducts: [],
+  featuredProducts: [],
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case SALE_PRODUCTS_SUCCESS:
+      return {
+        ...state,
+        onSaleProducts: action.payload,
+        loading: false,
+        success: true,
+      };
+    case RECENT_PRODUCTS_SUCCESS:
+      return {
+        ...state,
+        recentProducts: action.payload,
+        loading: false,
+        success: true,
+      };
+    case FEATURED_PRODUCTS_SUCCESS:
+      return {
+        ...state,
+        featuredProducts: action.payload,
+        loading: false,
+        success: true,
+      };
+    case PRODUCTS_CATID_SUCCESS:
+      return {
+        ...state,
+        productsByCatId: action.payload,
+        loading: false,
+        success: true,
+      };
     case CAT_LOADING:
       return {
         ...state,

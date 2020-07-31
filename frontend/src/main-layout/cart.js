@@ -46,7 +46,7 @@ const CartSide = (props) => {
   };
 
   const increaseItemQty = (item) => {
-    cartItems.map((cart) => {
+    cartItems.map((cart) => { 
       if (cart.id === item.id) {
         cart.cartQty = cart.cartQty + 1;
       }

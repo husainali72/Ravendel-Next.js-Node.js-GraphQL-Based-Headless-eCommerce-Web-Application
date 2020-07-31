@@ -1,5 +1,85 @@
 import gql from "graphql-tag";
 
+const GET_FEATURED_PRODUCTS = gql`
+  query {
+    featureproducts {
+      id
+      name
+      feature_image
+      pricing
+      url
+      categoryId {
+        id
+        name
+      }
+      quantity
+      featured_product
+      status
+      variant
+    }
+  }
+`;
+
+const GET_RECENT_PRODUCTS = gql`
+  query {
+    recentproducts {
+      id
+      name
+      feature_image
+      pricing
+      url
+      categoryId {
+        id
+        name
+      }
+      quantity
+      featured_product
+      status
+      variant
+    }
+  }
+`;
+
+const ON_SALE_PRODUCTS = gql`
+  query {
+    onSaleProducts {
+      id
+      name
+      feature_image
+      pricing
+      url
+      categoryId {
+        id
+        name
+      }
+      quantity
+      featured_product
+      status
+      variant
+    }
+  }
+`;
+
+const GET_PRODUCTS_CATID = gql`
+  query($id: ID!) {
+    productsbycatid(cat_id: $id) {
+      id
+      name
+      feature_image
+      pricing
+      url
+      categoryId {
+        id
+        name
+      }
+      quantity
+      featured_product
+      status
+      variant
+    }
+  }
+`;
+
 const PRODUCT_TILE_DATA = gql`
   fragment ProductTile on Product {
     id
@@ -220,4 +300,8 @@ export {
   ADD_REVIEW,
   GET_FILTEREDPRODUCTS,
   GET_ATTRIBUTES,
+  GET_PRODUCTS_CATID,
+  GET_FEATURED_PRODUCTS,
+  GET_RECENT_PRODUCTS,
+  ON_SALE_PRODUCTS,
 };

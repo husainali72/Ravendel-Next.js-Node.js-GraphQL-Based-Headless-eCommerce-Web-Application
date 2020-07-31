@@ -77,13 +77,17 @@ const ProductSlider = (props) => {
               {products &&
                 products
                   .sort((a, b) => (a.date > b.date ? 1 : -1))
-                  .map((product, index) => (
-                    <ProductCard
-                      productDetail={product}
-                      index={index}
-                      key={index}
-                    />
-                  ))}
+                  .map((product, index) =>
+                    product.status === "Publish" ? (
+                      <ProductCard
+                        productDetail={product}
+                        index={index}
+                        key={index}
+                      />
+                    ) : (
+                      ""
+                    )
+                  )}
             </Slider>
           </Container>
         )}

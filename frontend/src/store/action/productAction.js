@@ -6,6 +6,10 @@ import {
   GET_PRODUCT_REVIEWS,
   ADD_REVIEW,
   GET_FILTEREDPRODUCTS,
+  GET_PRODUCTS_CATID,
+  GET_FEATURED_PRODUCTS,
+  GET_RECENT_PRODUCTS,
+  ON_SALE_PRODUCTS,
 } from "../../queries/productQuery";
 import { mutation, query } from "../../utils/service";
 // import jumpTo from "../../utils/navigation";
@@ -171,6 +175,102 @@ export const filterProductAction = (config) => (dispatch) => {
     });
 };
 
+export const getProductByCatIDAction = (id) => (dispatch) => {
+  dispatch({
+    type: PRODUCT_LOADING,
+  });
+  query(GET_PRODUCTS_CATID, { id: id })
+    .then((response) => {
+      if (response) {
+        return dispatch({
+          type: PRODUCTS_CATID_SUCCESS,
+          payload: response.data,
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: PRODUCT_FAIL,
+      });
+      return dispatch({
+        type: PRODUCT_FAIL,
+        payload: { boolean: true, message: error, error: true },
+      });
+    });
+};
+
+export const getFeaturedProductsAction = () => (dispatch) => {
+  dispatch({
+    type: PRODUCT_LOADING,
+  });
+  query(GET_FEATURED_PRODUCTS)
+    .then((response) => {
+      if (response) {
+        return dispatch({
+          type: FEATURED_PRODUCTS_SUCCESS,
+          payload: response.data,
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: PRODUCT_FAIL,
+      });
+      return dispatch({
+        type: PRODUCT_FAIL,
+        payload: { boolean: true, message: error, error: true },
+      });
+    });
+};
+
+export const getRecentProductsAction = () => (dispatch) => {
+  dispatch({
+    type: PRODUCT_LOADING,
+  });
+  query(GET_RECENT_PRODUCTS)
+    .then((response) => {
+      if (response) {
+        return dispatch({
+          type: RECENT_PRODUCTS_SUCCESS,
+          payload: response.data,
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: PRODUCT_FAIL,
+      });
+      return dispatch({
+        type: PRODUCT_FAIL,
+        payload: { boolean: true, message: error, error: true },
+      });
+    });
+};
+
+export const getSaleProductsAction = () => (dispatch) => {
+  dispatch({
+    type: PRODUCT_LOADING,
+  });
+  query(ON_SALE_PRODUCTS)
+    .then((response) => {
+      if (response) {
+        return dispatch({
+          type: SALE_PRODUCTS_SUCCESS,
+          payload: response.data,
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: PRODUCT_FAIL,
+      });
+      return dispatch({
+        type: PRODUCT_FAIL,
+        payload: { boolean: true, message: error, error: true },
+      });
+    });
+};
+
 export const CAT_LOADING = "CAT_LOADING";
 export const CATS_SUCCESS = "CATS_SUCCESS";
 export const CAT_FAIL = "CAT_FAIL";
@@ -182,3 +282,8 @@ export const PRODUCT_FAIL = "PRODUCT_FAIL";
 export const CAT_PRODUCTS = "CAT_PRODUCTS";
 export const PRODUCT_REVIEWS = "PRODUCT_REVIEWS";
 export const ADD_PRODUCT_REVIEWS = "ADD_PRODUCT_REVIEWS";
+
+export const PRODUCTS_CATID_SUCCESS = "PRODUCTS_CATID_SUCCESS";
+export const FEATURED_PRODUCTS_SUCCESS = "FEATURED_PRODUCTS_SUCCESS";
+export const RECENT_PRODUCTS_SUCCESS = "RECENT_PRODUCTS_SUCCESS";
+export const SALE_PRODUCTS_SUCCESS = "SALE_PRODUCTS_SUCCESS";
