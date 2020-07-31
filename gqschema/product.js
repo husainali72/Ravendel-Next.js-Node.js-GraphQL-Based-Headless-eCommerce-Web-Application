@@ -129,10 +129,12 @@ module.exports = gql`
     products: [Product]
     productswithcat: [Product]
     featureproducts: [Product]
+    recentproducts: [Product]
     product(id: ID!): Product
     productsbycatid(cat_id: ID!): [Product]
     productsbycaturl(cat_url: String!): Category
     filteredProducts(config: customObject): [Product]
+    onSaleProducts: [Product]
   }
 
   extend type Mutation {

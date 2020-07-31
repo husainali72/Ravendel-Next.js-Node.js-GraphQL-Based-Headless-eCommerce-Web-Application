@@ -82,7 +82,21 @@ router.get("/testing", async (req, res) => {
       },
       status: "Publish",
       brand: "5efad76585734b0bf9674415",
-      $and: [
+      $or: [
+      {
+        "pricing.saleprice": {
+          $gt: 100,
+          $lte: 200,
+        },
+      },
+      {
+        "pricing.price": {
+          $gt: 100,
+          $lte: 200,
+        },
+      },
+    ],
+    $and: [
         {
           "attribute.attribute_id": "5efb4205f84b3c35b088fb97",
         },
@@ -90,6 +104,7 @@ router.get("/testing", async (req, res) => {
           "attribute.attribute_id": "5e81b11e41738428396af768",
         },
       ],
+      
       /*attribute: {
         attribute_value_id: {
           $or: [
@@ -143,7 +158,7 @@ router.get("/testing", async (req, res) => {
     ];
 
     const Masters = await Product.aggregate(findArr);
-    console.log(JSON.stringify(findArr));
+    //console.log(JSON.stringify(findArr));
     res.json({
       success: true,
       response: Masters,
@@ -155,54 +170,72 @@ router.get("/testing", async (req, res) => {
 });
 
 router.get("/update_product", async (req, res) => {
-  /* const cat = await CatTree.updateOne({ parent: "" }, [
-    { $set: { parent: "$_id" } },
-  ]); */
+  /* const cat = await ProductAttributeVariation.updateMany([
+    {
+      $set: {
+        "pricing.price": "$price",
+        "pricing.saleprice": 0,
+      },
+    },
+  ]);
 
-  Product.aggregate(
-    [
+  res.json({
+    success: true,
+    response: cat,
+  }); */
+
+  /* const result = await ProductAttributeVariation.find({
+    price: { $gte: 0, $lte: 200 },
+  })
+    .populate({ path: "product_id" })
+    .select(["price", "createdAt"]); */
+
+  /* const result = await ProductAttributeVariation.find({
+    $or: [
       {
-        $match: {
-          //brand: { $exists: true },
-          categoryId: {
-            $in: [
-              "5e81875141738428396af6c8",
-              "5e8187e441738428396af6c9",
-              "5f06ece3d2d24f46a2d4eb53",
-              "5f06ecf0d2d24f46a2d4eb54",
-              "5f06f119d2d24f46a2d4eb5b",
-            ],
-          },
+        "pricing.saleprice": {
+          $gt: 0,
+          $lte: 200000,
         },
       },
       {
-        $group: {
-          _id: {
-            brand: { $toObjectId: "$brand" },
-          },
+        "pricing.price": {
+          $gt: 0,
+          $lte: 200000,
         },
       },
-      {
-        $lookup: {
-          from: "brands",
-          localField: "_id.brand",
-          foreignField: "_id",
-          as: "brandMaster",
-        },
-      },
-      { $unwind: "$brandMaster" },
     ],
-    function (err, result) {
-      console.log(err);
-      res.json({
-        success: true,
-        response: result,
-      });
-    }
-  );
-});
+  })
+    .populate({ path: "product_id", select: ["name", "pricing"] })
+    .select(["pricing", "createdAt"]); */
 
-router.get("/block_ads", async (req, res) => {});
+  const result = await Product.find({
+    $and: [
+      {
+        status: "Publish",
+      },
+      {
+        "pricing.sellprice": {
+          $ne: null,
+        },
+      },
+      {
+        "pricing.sellprice": {
+          $ne: 0,
+        },
+      },
+    ],
+  })
+    .sort({ $natural: -1 })
+    .limit(10);
+
+  console.log(result.length);
+
+  res.json({
+    success: true,
+    response: result,
+  });
+});
 
 module.exports = router;
 

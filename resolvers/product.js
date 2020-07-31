@@ -80,7 +80,50 @@ module.exports = {
       try {
         const products = await Product.find({
           featured_product: true,
-        });
+          status: "Publish",
+        }).limit(10);
+        return products || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    recentproducts: async (root, args, { id }) => {
+      try {
+        const products = await Product.find({
+          status: "Publish",
+        })
+          .sort({ $natural: -1 })
+          .limit(10);
+
+        return products || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    onSaleProducts: async (root, args, { id }) => {
+      try {
+        const products = await Product.find({
+          $and: [
+            {
+              status: "Publish",
+            },
+            {
+              "pricing.sellprice": {
+                $ne: null,
+              },
+            },
+            {
+              "pricing.sellprice": {
+                $ne: 0,
+              },
+            },
+          ],
+        })
+          .sort({ $natural: -1 })
+          .limit(10);
+
         return products || [];
       } catch (error) {
         error = checkError(error);
@@ -91,7 +134,9 @@ module.exports = {
       try {
         const products = await Product.find({
           categoryId: { $in: args.cat_id },
-        });
+        })
+          .sort({ $natural: -1 })
+          .limit(10);
         return products || [];
       } catch (error) {
         error = checkError(error);
@@ -154,21 +199,7 @@ module.exports = {
               },
             });
           }
-
-          /* let values = [];
-          for (let attr of args.config.attribute) {
-            values.push(mongoose.Types.ObjectId(attr.attribute_value_id));
-          }
-
-          filterArrey.push({
-            $match: {
-              "attribute.attribute_value_id": {
-                $in: values,
-              },
-            },
-          }); */
         }
-        console.log(JSON.stringify(filterArrey));
         const products = await Product.aggregate(filterArrey);
         return products || [];
       } catch (error) {

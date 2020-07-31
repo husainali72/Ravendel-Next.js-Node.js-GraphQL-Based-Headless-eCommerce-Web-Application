@@ -213,9 +213,9 @@ const FilterSideBar = (props) => {
 
   const priceChange = (event, newValue) => {
     setPriceRange(newValue);
-    if (props.onPriceChange) {
+    /*if (props.onPriceChange) {
       props.onPriceChange(newValue);
-    }
+    } */
   };
 
   const handleClick = (title) => {

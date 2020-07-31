@@ -5,13 +5,20 @@ const Schema = mongoose.Schema;
 const ProductAttributeVariationSchema = new Schema(
   {
     product_id: {
-      type: Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: "Product",
     },
     combination: [],
-    price: {
-      type: Number,
-      default: 0,
+    pricing: {
+      price: {
+        type: Number,
+        default: 0,
+      },
+      saleprice: {
+        type: Number,
+        default: 0,
+      },
     },
     quantity: {
       type: Number,
