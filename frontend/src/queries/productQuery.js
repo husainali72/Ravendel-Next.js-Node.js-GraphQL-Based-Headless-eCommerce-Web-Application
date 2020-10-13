@@ -180,6 +180,36 @@ const GET_PRODUCT = gql`
   }
 `;
 
+const GET_SINGLE_PRODUCT = gql`
+  query($url: String!) {
+    productbyurl(url: $url) {
+      id
+      name
+      url
+      sku
+      description
+      quantity
+      pricing
+      feature_image
+      gallery_image
+      meta
+      shipping
+      tax_class
+      status
+      featured_product
+      product_type
+      custom_field
+      date
+      updated
+      categoryId {
+        id
+        name
+      }
+      short_description
+    }
+  }
+`;
+
 const GET_CATEGORIES = gql`
   {
     productCategories {
@@ -293,6 +323,7 @@ const ADD_REVIEW = gql`
 
 export {
   GET_PRODUCTS,
+  GET_SINGLE_PRODUCT,
   GET_CATEGORIES,
   GET_PRODUCT,
   GET_CAT_PRODUCTS,

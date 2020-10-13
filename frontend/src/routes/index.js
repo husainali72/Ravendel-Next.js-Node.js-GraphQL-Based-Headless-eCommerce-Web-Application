@@ -19,8 +19,14 @@ import FAQ from "../views/faq";
 const Routes = [
   { path: "/", exact: true, component: Home, name: "Homes" },
   { path: "/shop", exact: true, component: Shop, name: "Shop" },
-  {
+  /* {
     path: "/product/:id",
+    exact: true,
+    component: SingleProduct,
+    name: "Single Product Page",
+  }, */
+  {
+    path: "/product/:url",
     exact: true,
     component: SingleProduct,
     name: "Single Product Page",

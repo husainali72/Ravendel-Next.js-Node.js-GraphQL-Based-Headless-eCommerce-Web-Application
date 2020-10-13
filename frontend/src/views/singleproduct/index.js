@@ -5,6 +5,7 @@ import {
   productsAction,
   productAction,
   productReviewsAction,
+  singleProductAction
 } from "../../store/action/productAction";
 import { isEmpty } from "../../utils/helper";
 import ProductDetail from "./productdetails";
@@ -17,9 +18,10 @@ const SingleProduct = (props) => {
   const [sliderImages, setSliderImages] = useState([]);
 
   useEffect(() => {
-    props.productAction(props.match.params.id);
-    props.productReviewsAction(props.match.params.id);
-  }, [props.match.params.id]);
+    //props.productAction(props.match.params.id);
+    //props.productReviewsAction(props.match.params.id);
+    props.singleProductAction(props.match.params.url)
+  }, [props.match.params.url]);
 
   useEffect(() => {
     if (isEmpty(props.products.products)) {
@@ -29,9 +31,7 @@ const SingleProduct = (props) => {
 
   useEffect(() => {
     var product = props.products.product;
-
     setSingleProduct(product);
-
     var allimages = [];
     if (product.feature_image) {
       allimages.push(product.feature_image);
@@ -40,6 +40,10 @@ const SingleProduct = (props) => {
       product.gallery_image.map((img) => {
         allimages.push(img);
       });
+    }
+
+    if(product.id){
+      props.productReviewsAction(product.id);
     }
     setSliderImages(allimages);
   }, [props.products.product]);
@@ -104,6 +108,7 @@ const mapDispatchToProps = {
   productAction,
   productsAction,
   productReviewsAction,
+  singleProductAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleProduct);

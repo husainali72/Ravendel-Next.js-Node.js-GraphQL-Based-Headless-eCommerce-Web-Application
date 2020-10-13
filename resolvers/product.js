@@ -156,6 +156,19 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    productbyurl: async (root, args, { id }) => {
+      try {
+        const product = await Product.findOne({ url: args.url });
+        if (!product) {
+          throw putError("404 Not found");
+        }
+
+        return product;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     filteredProducts: async (root, args) => {
       try {
         let filterArrey = [
@@ -200,7 +213,7 @@ module.exports = {
             });
           }
         }
-        const products = await Product.aggregate(filterArrey);
+        const products = (await Product.aggregate(filterArrey)).map((pro)=> {pro.id = pro._id; return pro});        
         return products || [];
       } catch (error) {
         error = checkError(error);

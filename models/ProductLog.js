@@ -20,4 +20,4 @@ const ProductLog = new Schema(
   }
 );
 
-module.exports = mongoose.model("ProductLog", PageSchema);
+module.exports = mongoose.model("ProductLog", ProductLog);

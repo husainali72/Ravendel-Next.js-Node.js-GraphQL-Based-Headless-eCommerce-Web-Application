@@ -2,6 +2,7 @@ import {
   GET_PRODUCTS,
   GET_CATEGORIES,
   GET_PRODUCT,
+  GET_SINGLE_PRODUCT,
   GET_CAT_PRODUCTS,
   GET_PRODUCT_REVIEWS,
   ADD_REVIEW,
@@ -48,6 +49,30 @@ export const productAction = (id) => (dispatch) => {
         return dispatch({
           type: PRODUCT_SUCCESS,
           payload: response.data.product,
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: PRODUCT_FAIL,
+      });
+      return dispatch({
+        type: PRODUCT_FAIL,
+        payload: { boolean: true, message: error, error: true },
+      });
+    });
+};
+
+export const singleProductAction = (url) => (dispatch) => {
+  dispatch({
+    type: PRODUCT_LOADING,
+  });
+  query(GET_SINGLE_PRODUCT, { url: url })
+    .then((response) => {
+      if (response) {
+        return dispatch({
+          type: PRODUCT_SUCCESS,
+          payload: response.data.productbyurl,
         });
       }
     })

@@ -63,7 +63,7 @@ const ProductCard = (props) => {
         />
         <Zoom in={props.index === prodIndex ? true : false}>
           <div className="hover-content">
-            <Link to={`/product/${props.productDetail.id}`}>
+            <Link to={`/product/${props.productDetail.url}`}>
               <Button
                 variant="contained"
                 color="secondary"
@@ -92,7 +92,7 @@ const ProductCard = (props) => {
           </span>
         )}
 
-        <Link to={`/product/${props.productDetail.id}`}>
+        <Link to={`/product/${props.productDetail.url}`}>
           <h3 className="product-title">
             {props.productDetail.name.length > 50 ? (
               <span

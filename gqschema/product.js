@@ -133,6 +133,7 @@ module.exports = gql`
     product(id: ID!): Product
     productsbycatid(cat_id: ID!): [Product]
     productsbycaturl(cat_url: String!): Category
+    productbyurl(url: String): Product
     filteredProducts(config: customObject): [Product]
     onSaleProducts: [Product]
   }
