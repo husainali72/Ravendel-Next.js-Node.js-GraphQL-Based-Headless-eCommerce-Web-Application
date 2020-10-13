@@ -26,6 +26,7 @@ const ProductCat = require("../../models/ProductCat"); */
 const Product = require("../../models/Product");
 const CatTree = require("../../models/CatTree");
 const ProductAttributeVariation = require("../../models/ProductAttributeVariation");
+const ProductLog = require("../../models/ProductLog");
 
 router.post("/checkurl", auth, async (req, res) => {
   try {
@@ -64,6 +65,24 @@ router.post("/delete_image", auth, async (req, res) => {
     if (req.body.image) {
       imageUnlink(req.body.image);
     }
+
+    res.json({
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json("Something went wrong");
+  }
+});
+
+router.post("/add_log", auth, async (req, res) => {
+  try {
+    const ProductLog = new ProductLog({
+      product_id: req.body.product_id,
+      customer_id: req.body.customer_id || null,
+    });
+
+    await ProductLog.save();
 
     res.json({
       success: true,

@@ -57,7 +57,7 @@ export const query = async (query, variables) => {
   }
 };
 
-const service = (config) => {
+/* const service = (config) => {
   //header authorization
   if (Auth.user_token) {
     const token = Auth.getToken();
@@ -89,19 +89,4 @@ const service = (config) => {
   //config.baseURL = baseUrl;
   return axios(config);
 };
-export default service;
-
-export const login = (email, password) => {
-  const body = {
-    email: email,
-    password: password,
-  };
-  return service({
-    method: "POST",
-    url: "api/users/login",
-    data: body,
-  }).then((res) => {
-    Auth.setUserToken(res.data);
-    return res;
-  });
-};
+export default service; */

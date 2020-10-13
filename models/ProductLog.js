@@ -4,29 +4,15 @@ const Schema = mongoose.Schema;
 // Create Schema
 const ProductLog = new Schema(
   {
-    title: {
-      type: String,
+    product_id: {
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: "Product",
     },
-    content: {
-      type: String,
-    },
-    status: {
-      type: String,
-    },
-    url: {
-      type: String,
-    },
-    meta: {
-      title: {
-        type: String,
-      },
-      description: {
-        type: String,
-      },
-      keywords: {
-        type: String,
-      },
+    customer_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "Customer",
     },
   },
   {
@@ -34,4 +20,4 @@ const ProductLog = new Schema(
   }
 );
 
-module.exports = mongoose.model("Page", PageSchema);
+module.exports = mongoose.model("ProductLog", PageSchema);
