@@ -41,7 +41,7 @@ const OrderDetails = (props) => {
   };
 
   useEffect(() => {
-    cartSubTotal();
+    //cartSubTotal();
   }, [props.cart.products]);
 
   useEffect(() => {
@@ -74,7 +74,7 @@ const OrderDetails = (props) => {
                   <TableCell className="text-right">Amount</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
+              {/* <TableBody>
                 {props.cart.products.map((product, index) => (
                   <TableRow key={index}>
                     <TableCell>{product.name}</TableCell>
@@ -87,7 +87,7 @@ const OrderDetails = (props) => {
                     </TableCell>
                   </TableRow>
                 ))}
-              </TableBody>
+              </TableBody> */}
             </Table>
 
             <Table className="margin-top-3">
