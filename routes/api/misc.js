@@ -24,6 +24,7 @@ const {
 const User = require("../../models/User");
 //const ProductCat = require("../../models/ProductCat"); 
 const Product = require("../../models/Product");
+
 const Customer = require("../../models/Customer");
 //const CatTree = require("../../models/CatTree");
 const ProductAttributeVariation = require("../../models/ProductAttributeVariation");
@@ -163,11 +164,18 @@ router.get("/testing", async (req, res) => {
           },
           status: "Publish",
           brand: {
-            $in: ["5efad76585734b0bf9674415"],
+            $in: [mongoose.Types.ObjectId("5efad76585734b0bf9674413"), mongoose.Types.ObjectId("5ef9c93e333dfc7d09d9df90")],
           },
         },
       },
       {
+        $project: {
+          name: "$name",
+          brand: "$brand",
+          categoryId: "$categoryId" 
+        }
+      },
+      /* {
         $match: {
           "attribute.attribute_id": mongoose.Types.ObjectId(
             "5efb4205f84b3c35b088fb97"
@@ -194,18 +202,18 @@ router.get("/testing", async (req, res) => {
             $in: [mongoose.Types.ObjectId("5f0c0495672afc2e00e9c10c")],
           },
         },
-      },
+      }, */
     ];
 
     //const Masters = await Product.aggregate(findArr);
 
-    const Masters = await Product.find({brand: mongoose.Types.ObjectId("5efad76585734b0bf9674413"), status: "Publish", categoryId: {
+    /* const Masters = await Product.find({brand: mongoose.Types.ObjectId("5efad76585734b0bf9674413"), status: "Publish", categoryId: {
       $in: ["5e81875141738428396af6c8"],
-    } }, 'name brand categoryId' );
+    } }, 'name brand categoryId' ); */
     //console.log(JSON.stringify(findArr));
     res.json({
       success: true,
-      response: Masters,
+      response: await Product.findOne({ sku: "MN-SN-2123" }).sort({date: "DESC"}),
     });
   } catch (error) {
     console.log(error);

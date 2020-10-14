@@ -189,8 +189,8 @@ module.exports = {
 
         if (args.config.brand.length) {
           filterArrey[0]["$match"].brand = {
-            /*$in: args.config.brand.map((id) => mongoose.Types.ObjectId(id)),*/
-            $in: args.config.brand.map((id) => id),
+            $in: args.config.brand.map((id) => mongoose.Types.ObjectId(id)),
+            /* $in: args.config.brand.map((id) => id), */
           };
         }
 
@@ -213,8 +213,11 @@ module.exports = {
             });
           }
         }
-        console.log(filterArrey);
+        
         const products = (await Product.aggregate(filterArrey)).map((pro)=> {pro.id = pro._id; return pro});        
+
+        
+
         return products || [];
       } catch (error) {
         error = checkError(error);
@@ -482,6 +485,7 @@ module.exports = {
         if (product) {
           throw putError("Name already exist.");
         } else {
+          //const isSku = await Product.findOne({ sku: args.sku });
           let imgObject = "";
           if (args.feature_image) {
             imgObject = await imageUpload(
@@ -592,6 +596,12 @@ module.exports = {
 
         const product = await Product.findById({ _id: args.id });
         if (product) {
+          let isSku = false;
+          /* const matchedProduct = await Product.findOne({ sku: args.sku });
+          if(matchedProduct && matchedProduct._id != args.id){
+            isSku = true;
+          } */
+
           let imgObject = "";
           if (args.update_feature_image) {
             imgObject = await imageUpload(
