@@ -21,12 +21,13 @@ const {
 } = require("../../config/helpers");
 
 // user model
-/* const User = require("../../models/User");
-const ProductCat = require("../../models/ProductCat"); */
+const User = require("../../models/User");
+//const ProductCat = require("../../models/ProductCat"); 
 const Product = require("../../models/Product");
-const CatTree = require("../../models/CatTree");
+const Customer = require("../../models/Customer");
+//const CatTree = require("../../models/CatTree");
 const ProductAttributeVariation = require("../../models/ProductAttributeVariation");
-const ProductLog = require("../../models/ProductLog");
+//const ProductLog = require("../../models/ProductLog");
 
 router.post("/checkurl", auth, async (req, res) => {
   try {
@@ -86,6 +87,26 @@ router.post("/add_log", auth, async (req, res) => {
 
     res.json({
       success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json("Something went wrong");
+  }
+});
+
+
+router.post("/dashboard_data", auth, async (req, res) => {
+  try {
+    //auth
+    const dashBoardData = {};
+    dashBoardData.product_count = await Product.countDocuments({status: "Publish"});
+    dashBoardData.user_count = await User.countDocuments({});
+    dashBoardData.customer_count = await Customer.countDocuments({});
+    dashBoardData.latest_products = await Product.find({}).sort({date: 'desc'}).limit(2);
+
+    res.json({
+      success: true,
+      dashBoardData
     });
   } catch (error) {
     console.log(error);
@@ -176,7 +197,11 @@ router.get("/testing", async (req, res) => {
       },
     ];
 
-    const Masters = await Product.aggregate(findArr);
+    //const Masters = await Product.aggregate(findArr);
+
+    const Masters = await Product.find({brand: mongoose.Types.ObjectId("5efad76585734b0bf9674413"), status: "Publish", categoryId: {
+      $in: ["5e81875141738428396af6c8"],
+    } }, 'name brand categoryId' );
     //console.log(JSON.stringify(findArr));
     res.json({
       success: true,

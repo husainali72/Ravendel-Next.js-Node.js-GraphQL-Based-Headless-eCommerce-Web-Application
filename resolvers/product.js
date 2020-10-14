@@ -213,6 +213,7 @@ module.exports = {
             });
           }
         }
+        console.log(filterArrey);
         const products = (await Product.aggregate(filterArrey)).map((pro)=> {pro.id = pro._id; return pro});        
         return products || [];
       } catch (error) {
