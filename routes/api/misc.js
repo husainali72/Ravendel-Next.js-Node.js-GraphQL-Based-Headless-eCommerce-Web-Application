@@ -117,7 +117,8 @@ router.post("/dashboard_data", auth, async (req, res) => {
 
 router.get("/testing", async (req, res) => {
   try {
-    /*let filterObj = {
+    
+    let filterObj = {
       categoryId: {
         $in: ["5e81875141738428396af6c8", "5e81b11e41738428396af768"],
       },
@@ -146,7 +147,7 @@ router.get("/testing", async (req, res) => {
         },
       ],
       
-      /*attribute: {
+      attribute: {
         attribute_value_id: {
           $or: [
             { attribute_value_id: "5f0c0495672afc2e00e9c10c" },
@@ -154,7 +155,7 @@ router.get("/testing", async (req, res) => {
           ],
         },
       },
-    };*/
+    };
 
     let findArr = [
       {
@@ -210,10 +211,11 @@ router.get("/testing", async (req, res) => {
     /* const Masters = await Product.find({brand: mongoose.Types.ObjectId("5efad76585734b0bf9674413"), status: "Publish", categoryId: {
       $in: ["5e81875141738428396af6c8"],
     } }, 'name brand categoryId' ); */
-    //console.log(JSON.stringify(findArr));
+
+    
     res.json({
       success: true,
-      response: await Product.findOne({ sku: "MN-SN-2123" }).sort({date: "DESC"}),
+      response: await ProductAttributeVariation.find({ product_id: "5f1182f226104110805cb3a0" }),//ProductAttributeVariation.find({ combination: { $in : {product_id: { $exists: true } } }  }),
     });
   } catch (error) {
     console.log(error);

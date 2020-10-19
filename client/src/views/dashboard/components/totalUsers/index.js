@@ -31,7 +31,8 @@ const TotalUsers = props => {
               TOTAL USERS
             </Typography>
             <Typography variant="h3">
-              {!props.userslength ? <CircularProgress /> : props.userslength}
+              {/* {!props.userslength ? <CircularProgress /> : props.userslength} */}
+              {props.userslength}
             </Typography>
           </Grid>
           <Grid item>

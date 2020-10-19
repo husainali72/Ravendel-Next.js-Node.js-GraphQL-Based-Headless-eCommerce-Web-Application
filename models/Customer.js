@@ -63,6 +63,25 @@ const CustomerSchema = new Schema({
       }
     }
   ],
+  cart: {
+    items: [      
+      {
+        product_id: {
+          type: Schema.ObjectId,
+          required: true
+        },
+        qty: {
+          type: Number,
+          required: true
+        },
+        combination:[],      
+        date: {
+          type: Date,
+          default: Date.now
+        }
+      }
+    ],    
+  },
   date: {
     type: Date,
     default: Date.now

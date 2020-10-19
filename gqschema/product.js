@@ -83,6 +83,7 @@ module.exports = gql`
     product_id: ID
     combination: customArray
     price: Float
+    pricing: customObject
     quantity: Float
     sku: String
     image: customObject
@@ -111,6 +112,7 @@ module.exports = gql`
     product_type: customObject
     custom_field: [customObject]
     attribute: [customObject]
+    attribute_master: [productAttribute]
     variant: customArray
     variation_master: [ProductVariations]
     date: Date

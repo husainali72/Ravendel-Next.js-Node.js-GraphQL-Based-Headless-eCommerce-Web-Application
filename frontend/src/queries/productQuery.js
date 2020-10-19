@@ -206,6 +206,8 @@ const GET_SINGLE_PRODUCT = gql`
         name
       }
       short_description
+      variant
+      variation_master
     }
   }
 `;

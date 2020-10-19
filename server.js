@@ -43,14 +43,14 @@ const vhost = require("vhost");
 connectDB();
 
 //models
-/*const Tax = require("./models/Tax");
-Tax.createTax();*/
+/* const Tax = require("./models/Tax");
+Tax.createTax();
 
-/*const Shipping = require("./models/Shipping");
-Shipping.createShipping();*/
+const Shipping = require("./models/Shipping");
+Shipping.createShipping();
 
 const Settings = require("./models/Setting");
-Settings.createSettings();
+Settings.createSettings(); */
 
 //middleware
 const app = express();

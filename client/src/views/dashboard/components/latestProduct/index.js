@@ -35,7 +35,7 @@ const LatestProducts = props => {
             </ListItem>
           ) : (
             props.products.slice(0, 2).map((product, i) => (
-              <ListItem divider={i < 1} key={product.id}>
+              <ListItem divider={i < 1} key={i}>
                 <ListItemAvatar>
                   <img
                     alt="Product"

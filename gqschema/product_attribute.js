@@ -11,6 +11,7 @@ module.exports = gql`
     name: String
     slug: String
     values: [customObject]
+    attribute_values: [customObject]
     date: Date
     updated: Date
   }

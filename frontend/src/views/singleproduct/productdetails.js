@@ -208,7 +208,7 @@ const ProductDetail = (props) => {
             )}
             {product.quantity && (
               <Typography variant="overline" className="product-availablity">
-                {product.quantity < 1 ? (
+                {parseInt(product.quantity) < 1 ? (
                   <span className="outofstock">
                     <Icon>sentiment_very_dissatisfied</Icon> Out of Stock
                   </span>

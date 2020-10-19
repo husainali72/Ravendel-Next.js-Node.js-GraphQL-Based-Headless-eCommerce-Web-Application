@@ -337,7 +337,7 @@ const Tax = props => {
                               <TableHead>
                                 <TableRow>
                                   <TableCell>Name</TableCell>
-                                  <TableCell>Amount</TableCell>
+                                  <TableCell>Percentage</TableCell>
                                   <TableCell>Actions</TableCell>
                                 </TableRow>
                               </TableHead>

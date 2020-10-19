@@ -297,7 +297,7 @@ const FilterSideBar = (props) => {
           </Icon>
         </span>
       </p>
-      <Box component="div" className="filter-wrapper">
+      {/* <Box component="div" className="filter-wrapper">
         <Typography variant="h3" className="fillter-header">
           Categories
         </Typography>
@@ -331,11 +331,11 @@ const FilterSideBar = (props) => {
             Range: ${priceRange[0]} - ${priceRange[1]}
           </Typography>
         </Box>
-      </Box>
+      </Box> */}
 
       <Box component="div" className="expansionPanelwrapper">
         <Divider />
-        <Box component="div" className="filter-wrapper">
+        { brands.length ?  (<Box component="div" className="filter-wrapper" >
           <ExpansionPanel>
             <ExpansionPanelSummary
               expandIcon={<ExpandMoreIcon />}
@@ -372,7 +372,7 @@ const FilterSideBar = (props) => {
               </List>
             </ExpansionPanelDetails>
           </ExpansionPanel>
-        </Box>
+        </Box>) : null}
         <Divider />
         <Box component="div" className="filter-wrapper">
           {attributes.map((attr, p) => (

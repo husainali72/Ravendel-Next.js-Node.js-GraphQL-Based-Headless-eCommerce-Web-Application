@@ -121,11 +121,11 @@ const AddProduct = (props) => {
     props.categoriesAction();
   }, []);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (productCats.length) {
       console.log(unflatten(productCats));
     }
-  }, [productCats]);
+  }, [productCats]); */
 
   useEffect(() => {
     for (let i of props.attributeState.attributes) {
@@ -261,6 +261,10 @@ const AddProduct = (props) => {
           sku: currentVariants.combinations[index].sku,
           quantity: currentVariants.combinations[index].quantity,
           price: currentVariants.combinations[index].price,
+          /* pricing: {
+            price: currentVariants.combinations[index].pricing.price,
+            saleprice: currentVariants.combinations[index].pricing.saleprice,
+          }, */ 
           image: currentVariants.combinations[index].image,
         });
 
@@ -285,15 +289,15 @@ const AddProduct = (props) => {
   };
 
   const variantChange = (e, index) => {
+    console.log(currentVariants);
     if (e.target.name === "image") {
       currentVariants.combinations[index][e.target.name].file = e.target.files;
       currentVariants.combinations[index][
         e.target.name
       ].view = URL.createObjectURL(e.target.files[0]);
-    } else {
+    } else {      
       currentVariants.combinations[index][e.target.name] = e.target.value;
     }
-
     setcurrentVariants({
       ...currentVariants,
     });
