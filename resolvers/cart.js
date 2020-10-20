@@ -202,8 +202,13 @@ module.exports = {
         }
 
         if(isGlobalTaxObj && isGlobalTaxObj.hasOwnProperty("percentage")){
-          
+          calculated.tax.amount = (calculated.subtotal / 100) * isGlobalTaxObj.percentage;
+          calculated.tax.name = isGlobalTaxObj.name;
         }
+
+        calculated.total = calculated.subtotal + calculated.shipping.amount + calculated.tax.amount;
+
+        return calculated;
 
       } catch (error) {
         error = checkError(error);
