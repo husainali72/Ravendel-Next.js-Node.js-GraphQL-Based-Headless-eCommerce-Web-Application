@@ -36,10 +36,10 @@ module.exports = gql`
   type calculatedCart {
     items: [cartItem]
     subtotal: Float,
-    shipping: shippingObj,
-    tax: taxObj,
-    coupon: Float,
-    total: Float,
+    total_shipping: shippingObj,
+    total_tax: taxObj,
+    total_coupon: Float,
+    grand_total: Float,
   } 
 
   input cartProduct {

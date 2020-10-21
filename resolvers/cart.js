@@ -52,7 +52,10 @@ module.exports = {
       try {
         let cartItems = [];
         let calculated = {
-          items: []
+          items: [],
+          total_tax: {},
+          total_shipping: {},
+          grand_total: {}
         };
 
         const shipping = await Shipping.find({});
@@ -80,13 +83,15 @@ module.exports = {
               isGlobalShippingObj = {
                 name: shippingVal.name,
                 amount: shippingVal.amount
-              }
+              };
+
+              break
             }
           }
         }
 
         let productIds = [];
-        args.cart.forEach((item, i) => {
+        args.cart.forEach((item, i) => {                    
           productIds.push(item.product_id);
         });
         
@@ -98,10 +103,16 @@ module.exports = {
             combination: []
           };
 
-          let varProduct = productAttributeVariation.map((varP) => varP.product_id.toString() === product._id.toString());
+          let varProduct = productAttributeVariation.map((varP) => { 
+            if(varP.product_id.toString() === product._id.toString()){
+              return varP;
+            } 
+          });
+
           if(product.variant && product.variant.length){
             let combination = [];
-            for (const cartP of args.cart) {
+            
+            for (const cartP of args.cart) {              
               if(cartP.product_id.toString() === varProduct[0].product_id.toString()){
                 combination = cartP.combination;
                 item.qty = cartP.qty;
@@ -126,7 +137,7 @@ module.exports = {
                 item.product_id = varP.product_id;
 
                 for (const attr of productAttribute) {
-                  for (const attrVal of attr) {
+                  for (const attrVal of attr.values) {
                     if(~combination.indexOf(attrVal._id.toString())){
                       item.combination.push({
                         id: attrVal._id,
@@ -160,7 +171,8 @@ module.exports = {
             item.shipping = {
               name: isGlobalShippingObj.name,
               amount: isGlobalShippingObj.amount
-            }
+            } 
+            
           } else if(!shipping[0].global.is_global){
             for (const shippingVal of shipping[0].shipping_class) {
               if(product.shipping.shipping_class.toString() === shippingVal._id.toString()){
@@ -176,37 +188,38 @@ module.exports = {
         });
 
         calculated.subtotal = 0;
-        calculated.tax = {
-          name: "Mix",
+        calculated.total_tax = {
+          name: "",
           amount: 0,
         };
 
-        calculated.shipping = {
-          name: "Mix",
+        calculated.total_shipping = {
+          name: "",
           amount: 0,
         };
 
         for (const item of calculated.items) {
           calculated.subtotal += parseFloat(item.price);
           if(item.tax && item.tax.hasOwnProperty("amount") && item.tax.amount >= 0){
-            calculated.tax.amount += item.tax.amount
+            calculated.total_tax.amount += item.tax.amount
           }  
 
           if(item.shipping && item.shipping.hasOwnProperty("amount") && item.shipping.amount >= 0){
-            calculated.shipping.amount += item.shipping.amount;
+            calculated.total_shipping.amount += item.shipping.amount;
           }
         }
 
         if(shipping[0].global.is_global && shipping[0].global.is_per_order){
-          calculated.shipping = isGlobalShippingObj;            
+          calculated.total_shipping.amount = isGlobalShippingObj.amount;
+          calculated.total_shipping.name = isGlobalShippingObj.name;
         }
 
         if(isGlobalTaxObj && isGlobalTaxObj.hasOwnProperty("percentage")){
-          calculated.tax.amount = (calculated.subtotal / 100) * isGlobalTaxObj.percentage;
-          calculated.tax.name = isGlobalTaxObj.name;
+          calculated.total_tax.amount = (calculated.subtotal / 100) * isGlobalTaxObj.percentage;
+          calculated.total_tax.name = isGlobalTaxObj.name;
         }
 
-        calculated.total = calculated.subtotal + calculated.shipping.amount + calculated.tax.amount;
+        calculated.grand_total = calculated.subtotal + calculated.total_shipping.amount + calculated.total_tax.amount;
 
         return calculated;
 
