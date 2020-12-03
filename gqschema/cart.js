@@ -10,16 +10,49 @@ module.exports = gql`
     updated: Date
   }
 
+  type combinationItem {
+    id: ID,
+    name: String
+  }
+
+  type taxObj {
+    name: String
+    amount: Float
+  }
+
+  type shippingObj {
+    name: String
+    amount: Float
+  }
+
+  type cartItem {
+    product_id: ID
+    qty: Int
+    combination: customArray
+    tax: taxObj,
+    shipping: shippingObj,
+  }
+
+  type calculatedCart {
+    items: [cartItem]
+    subtotal: Float,
+    total_shipping: shippingObj,
+    total_tax: taxObj,
+    total_coupon: Float,
+    grand_total: Float,
+  } 
+
   input cartProduct {
     product_id: ID
     qty: Int
-    total: Float
+    combination: [String]
   }
 
   extend type Query {
     carts: [Cart]
     cart(id: ID!): Cart
     cartbyUser(user_id: ID!): Cart
+    calculateCart(cart: [cartProduct]): calculatedCart
   }
 
   extend type Mutation {
@@ -27,5 +60,6 @@ module.exports = gql`
     updateCart(id: ID!, total: Float, products: [cartProduct]): Cart
     deleteCart(id: ID!): Boolean!
     deleteCartProduct(id: ID!, object_id: ID!): Cart
+    addToCart(customer_id: ID, cart: [cartProduct]): generalResponse    
   }
 `;

@@ -136,6 +136,9 @@ const AddAttribute = () => {
                         delimiters={delimiters}
                         allowNew={true}
                       />
+                      <em className={classes.noteline}>
+                        Press tab after adding each tag.
+                      </em>
                     </Grid>
                   </Grid>
                 </CardContent>

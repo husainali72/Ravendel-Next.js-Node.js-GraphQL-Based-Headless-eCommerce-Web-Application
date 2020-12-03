@@ -62,6 +62,7 @@ const FilterSideBar = (props) => {
     category: [],
     brand: [],
     attribute: [],
+    price: []
   });
 
   let location = useLocation();
@@ -124,6 +125,7 @@ const FilterSideBar = (props) => {
     if (props.currentCat) {
       FILTER_CONFIG.category = [props.currentCat];
       let url_brands = getQueryString(location.search, "Brand");
+      //let url_brands = getQueryString(location.search, "Price");
 
       FILTER_CONFIG.brand = [];
 
@@ -212,6 +214,7 @@ const FilterSideBar = (props) => {
   };
 
   const priceChange = (event, newValue) => {
+    console.log(newValue);
     setPriceRange(newValue);
     /*if (props.onPriceChange) {
       props.onPriceChange(newValue);
@@ -294,7 +297,7 @@ const FilterSideBar = (props) => {
           </Icon>
         </span>
       </p>
-      <Box component="div" className="filter-wrapper">
+      {/* <Box component="div" className="filter-wrapper">
         <Typography variant="h3" className="fillter-header">
           Categories
         </Typography>
@@ -321,18 +324,18 @@ const FilterSideBar = (props) => {
             valueLabelDisplay="auto"
             aria-labelledby="price-slider"
             min={0}
-            max={500}
+            max={5000}
             step={10}
           />
           <Typography variant="h6">
             Range: ${priceRange[0]} - ${priceRange[1]}
           </Typography>
         </Box>
-      </Box>
+      </Box> */}
 
       <Box component="div" className="expansionPanelwrapper">
         <Divider />
-        <Box component="div" className="filter-wrapper">
+        { brands.length ?  (<Box component="div" className="filter-wrapper" >
           <ExpansionPanel>
             <ExpansionPanelSummary
               expandIcon={<ExpandMoreIcon />}
@@ -369,7 +372,7 @@ const FilterSideBar = (props) => {
               </List>
             </ExpansionPanelDetails>
           </ExpansionPanel>
-        </Box>
+        </Box>) : null}
         <Divider />
         <Box component="div" className="filter-wrapper">
           {attributes.map((attr, p) => (

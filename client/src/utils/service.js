@@ -142,3 +142,14 @@ export const deleteProductVariationImage = (obj) => {
     }
   });
 };
+
+export const getDashboardData = () => {
+  return service({
+    method: "POST",
+    url: "/api/misc/dashboard_data"
+  }).then((res) => {
+    if (res.data.success) {
+      return Promise.resolve(res.data.dashBoardData);
+    }
+  });
+};

@@ -274,7 +274,7 @@ const EditProduct = (props) => {
           combination: comb,
           sku: currentVariants.combinations[index].sku,
           quantity: currentVariants.combinations[index].quantity,
-          price: currentVariants.combinations[index].price,
+          price: currentVariants.combinations[index].price,           
           image: currentVariants.combinations[index].image,
         });
 
@@ -310,7 +310,7 @@ const EditProduct = (props) => {
   const variantChange = async (e, index) => {
     if (e.target.name === "image") {
       let files = e.target.files;
-      if (
+      if (currentVariants.combinations[index].image &&
         currentVariants.combinations[index].image.hasOwnProperty("original")
       ) {
         await deleteProductVariationImage(

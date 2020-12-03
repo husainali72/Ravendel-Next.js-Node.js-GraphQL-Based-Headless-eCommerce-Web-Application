@@ -10,15 +10,9 @@ const ProductAttributeVariationSchema = new Schema(
       ref: "Product",
     },
     combination: [],
-    pricing: {
-      price: {
-        type: Number,
-        default: 0,
-      },
-      saleprice: {
-        type: Number,
-        default: 0,
-      },
+    price: {
+      type: Number,
+      default: 0,
     },
     quantity: {
       type: Number,

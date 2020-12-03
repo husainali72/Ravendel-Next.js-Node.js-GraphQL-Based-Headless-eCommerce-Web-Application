@@ -31,11 +31,12 @@ const TotalProducts = props => {
               TOTAL PRODUCTS
             </Typography>
             <Typography variant="h3">
-              {!props.productslength ? (
+              {/* {!props.productslength ? (
                 <CircularProgress />
               ) : (
                 props.productslength
-              )}
+              )} */}
+              {props.productslength}
             </Typography>
           </Grid>
           <Grid item>

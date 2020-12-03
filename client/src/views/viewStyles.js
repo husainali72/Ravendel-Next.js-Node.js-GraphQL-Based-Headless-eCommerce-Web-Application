@@ -25,7 +25,7 @@ const viewStyles = makeStyles((theme) => ({
     background: palette.success.main,
     color: "#fff",
   },
-  backdrop: {
+   backdrop: {
     zIndex: "1101 !important",
     color: "#fff",
   },
@@ -66,7 +66,7 @@ const viewStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   marginBottom: {
-    marginBottom: theme.spacing(3),
+    marginBottom: "24px !important",
   },
   feautedImage: {
     color: "#0073aa",
@@ -328,51 +328,51 @@ const viewStyles = makeStyles((theme) => ({
     padding: 5,
   },
   cstmSelect: {
-    width: 280,
-    marginTop: 20,
+    width: "280px !important",
+    marginTop: "20px !important",
   },
   customFieldRow: {
     width: "100%",
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: "20px !important",
+    marginBottom: "20px !important",
   },
   customFieldInput: {
-    minWidth: 400,
-    marginRight: 10,
+    minWidth: "400px !important",
+    marginRight: "10px !important",
   },
   settingInput: {
-    minWidth: 300,
-    marginBottom: 20,
+    minWidth: "300px !important",
+    marginBottom: "20px !important",
   },
   simpleSettingInput: {
-    minWidth: 300,
+    minWidth: "300px !important",
   },
   marginBottom1: {
-    marginBottom: 10,
+    marginBottom: "10px !important",
   },
   marginBottom2: {
-    marginBottom: 20,
+    marginBottom: "20px !important",
   },
   marginBottom3: {
-    marginBottom: 30,
+    marginBottom: "30px !important",
   },
   marginRight1: {
-    marginRight: 10,
+    marginRight: "10px !important",
   },
   marginRight2: {
-    marginRight: 20,
+    marginRight: "20px !important",
   },
   marginRight3: {
-    marginRight: 30,
+    marginRight: "30px !important",
   },
   paddingBottom1: {
-    paddingBottom: 10,
+    paddingBottom: "10px !important",
   },
   paddingBottom2: {
-    paddingBottom: 20,
+    paddingBottom: "20px !important",
   },
   paddingBottom3: {
-    marginBottom: 30,
+    marginBottom: "30px !important",
   },
 }));
 

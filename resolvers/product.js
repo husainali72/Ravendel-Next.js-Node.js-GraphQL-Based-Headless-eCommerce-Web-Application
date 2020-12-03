@@ -3,6 +3,7 @@ const CatTree = require("../models/CatTree");
 const Product = require("../models/Product");
 const Brand = require("../models/Brand");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
+const ProductAttribute = require("../models/ProductAttribute");
 const {
   isEmpty,
   putError,
@@ -189,8 +190,8 @@ module.exports = {
 
         if (args.config.brand.length) {
           filterArrey[0]["$match"].brand = {
-            /*$in: args.config.brand.map((id) => mongoose.Types.ObjectId(id)),*/
-            $in: args.config.brand.map((id) => id),
+            $in: args.config.brand.map((id) => mongoose.Types.ObjectId(id)),
+            /* $in: args.config.brand.map((id) => id), */
           };
         }
 
@@ -213,7 +214,11 @@ module.exports = {
             });
           }
         }
+        
         const products = (await Product.aggregate(filterArrey)).map((pro)=> {pro.id = pro._id; return pro});        
+
+        
+
         return products || [];
       } catch (error) {
         error = checkError(error);
@@ -263,6 +268,43 @@ module.exports = {
         });
         //console.log(variations);
         return variations || [];
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    attribute_master: async (root, args) => {
+      try {
+
+        if(!root.attribute && !root.attribute.length){
+          return [];
+        } 
+        let attributes = {};
+        for(let attr of root.attribute){
+          if(!Array.isArray(attributes[attr.attribute_id.toString()])){
+            attributes[attr.attribute_id.toString()] = [];
+          }
+         
+          attributes[attr.attribute_id.toString()].push(attr.attribute_value_id.toString());
+        }
+
+        const attrMaster = await ProductAttribute.find({ _id: {$in: Object.keys(attributes)}});                      
+
+        for (const [i, attr] of attrMaster.entries()) {
+          for (const [j, val] of attr.values.entries()) {
+            if (~attributes[attr._id.toString()].indexOf(val._id.toString())) {
+              
+              if(!Array.isArray(attrMaster[i].attribute_values)){
+                attrMaster[i].attribute_values = [];                  
+              }
+              attrMaster[i].attribute_values.push(val);
+            }            
+          }
+
+          attrMaster[i].values = [];
+        }
+        
+        return attrMaster || [];
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -481,6 +523,7 @@ module.exports = {
         if (product) {
           throw putError("Name already exist.");
         } else {
+          //const isSku = await Product.findOne({ sku: args.sku });
           let imgObject = "";
           if (args.feature_image) {
             imgObject = await imageUpload(
@@ -550,7 +593,7 @@ module.exports = {
               combination.product_id = lastProduct.id;
 
               let imgObject = "";
-              if (combination.image.file) {
+              if (combination.image && combination.image.file) {
                 imgObject = await imageUpload(
                   combination.image.file[0],
                   "/assets/images/product/variant/"
@@ -591,6 +634,12 @@ module.exports = {
 
         const product = await Product.findById({ _id: args.id });
         if (product) {
+          let isSku = false;
+          /* const matchedProduct = await Product.findOne({ sku: args.sku });
+          if(matchedProduct && matchedProduct._id != args.id){
+            isSku = true;
+          } */
+
           let imgObject = "";
           if (args.update_feature_image) {
             imgObject = await imageUpload(
@@ -645,7 +694,7 @@ module.exports = {
 
           product.name = args.name;
           product.categoryId = args.categoryId;
-          (product.brand = args.brand || ""),
+          (product.brand = args.brand || null),
             (product.url = await updateUrl(args.url || args.name, "Product"));
           product.short_description = args.short_description;
           product.description = args.description;
@@ -672,7 +721,7 @@ module.exports = {
               combination.product_id = args.id;
 
               let imgObject = "";
-              if (combination.image.hasOwnProperty("file")) {
+              if (combination.image && combination.image.hasOwnProperty("file")) {
                 imgObject = await imageUpload(
                   combination.image.file[0],
                   "/assets/images/product/variant/"
