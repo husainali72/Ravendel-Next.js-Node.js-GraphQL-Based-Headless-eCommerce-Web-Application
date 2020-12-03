@@ -57,7 +57,7 @@ const viewStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   marginBottom: {
-    marginBottom: theme.spacing(3),
+    marginBottom: "24px !important",
   },
   feautedImage: {
     color: "#0073aa",
