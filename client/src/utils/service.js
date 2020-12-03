@@ -108,7 +108,7 @@ export const login = (email, password) => {
 };
 
 export const getUpdatedUrl = (table, url) => {
-  return service({
+  return service({ 
     method: "POST",
     url: "/api/misc/checkurl",
     data: { url: url, table: table },

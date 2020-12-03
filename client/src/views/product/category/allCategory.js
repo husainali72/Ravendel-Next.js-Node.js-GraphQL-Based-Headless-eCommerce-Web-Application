@@ -35,7 +35,7 @@ import { isEmpty } from "../../../utils/helper";
 import service, { getUpdatedUrl } from "../../../utils/service";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import convertDefault from "../../utils/convertDate";
+import convertDefault from "../../utils/convertDate"; 
 
 var categoryObject = {
   name: "",
@@ -114,6 +114,8 @@ const AllCategory = (props) => {
 
   const fileChange = (e) => {
     setfeaturedImage(null);
+    console.log("e.target.files[0]", e.target.files[0]);
+    console.log("URL e.target.files[0]", URL.createObjectURL(e.target.files[0]));
     setfeaturedImage(URL.createObjectURL(e.target.files[0]));
     setSingleCategory({
       ...singlecategory,
@@ -134,7 +136,7 @@ const AllCategory = (props) => {
       ...singlecategory,
       url: updatedUrl,
     });
-  };
+  }; 
 
   return (
     <Fragment>

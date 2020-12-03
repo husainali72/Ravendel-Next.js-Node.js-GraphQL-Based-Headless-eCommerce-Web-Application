@@ -18,15 +18,6 @@ if (cartItems !== undefined) {
 export default (state = initialState, action) => {
   switch (action.type) {
     case "ADD_VALUE":
-      // if (localStorage.getItem("cartProducts") === null) {
-      //   var singleData = [];
-      //   singleData.push(action.payload);
-      //   localStorage.setItem("cartProducts", JSON.stringify(singleData));
-      // } else {
-      //   var oldData = [...JSON.parse(localStorage.getItem("cartProducts"))];
-      //   oldData.push(action.payload);
-      //   localStorage.setItem("cartProducts", JSON.stringify(oldData));
-      // }
 
       var item = action.payload;
 
@@ -41,7 +32,7 @@ export default (state = initialState, action) => {
       }
       return {
         ...state,
-        //products: [...state.products, item],
+        products: [...state.products, item],
       };
 
     case REMOVE_VALUE:
@@ -52,10 +43,6 @@ export default (state = initialState, action) => {
       };
 
     case "REMOVE_ALL_VALUE":
-      // if (localStorage.getItem("cartProducts")) {
-      //   localStorage.removeItem("cartProducts");
-      // }
-
       if (cookie.load("cartProducts")) {
         cookie.remove("cartProducts", { path: "/" });
       }

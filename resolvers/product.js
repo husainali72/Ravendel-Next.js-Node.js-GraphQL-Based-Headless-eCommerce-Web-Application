@@ -706,6 +706,7 @@ module.exports = {
         }
       } catch (error) {
         error = checkError(error);
+        console.log("error", error)
         throw new Error(error.custom_message);
       }
     },

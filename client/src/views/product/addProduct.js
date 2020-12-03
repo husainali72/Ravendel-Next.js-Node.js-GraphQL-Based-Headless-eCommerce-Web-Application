@@ -1078,9 +1078,10 @@ const AddProduct = (props) => {
                                     isMulti
                                     value={attribute.selected_values}
                                     options={attribute.values}
-                                    onChange={(e) =>
-                                      changeSelectedValue(e, index)
-                                    }
+                                    onChange={(e) => {
+                                      console.log("e", e);
+                                      changeSelectedValue(e, index);
+                                    }}
                                     styles={{
                                       menu: (provided) => ({
                                         ...provided,

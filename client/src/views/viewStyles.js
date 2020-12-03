@@ -26,8 +26,17 @@ const viewStyles = makeStyles((theme) => ({
     color: "#fff",
   },
   backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
+    zIndex: "1101 !important",
     color: "#fff",
+  },
+  backdropInnerWrapper:{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  backdropLoadingText:{
+    color: '#fff',
+    marginTop: '20px !important'
   },
   avtarTd: {
     width: "50px",

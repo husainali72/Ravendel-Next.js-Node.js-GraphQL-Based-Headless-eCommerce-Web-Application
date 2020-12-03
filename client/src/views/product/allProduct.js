@@ -31,7 +31,7 @@ import Loading from "../utils/loading";
 import convertDefault from "../utils/convertDate";
 
 const AllProduct = (props) => {
-  const classes = viewStyles();
+  const classes = viewStyles(); 
 
   useEffect(() => {
     props.productsAction();

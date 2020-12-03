@@ -17,17 +17,21 @@ import {
   RadioGroup,
   Radio,
 } from "@material-ui/core";
+import { productsAction } from "../../store/action/productAction";
+import { isEmpty } from "../../utils/helper";
+import Loading from "../components/loading";
 
 const OrderDetails = (props) => {
   const [subtotal, setSubTotal] = useState(0);
   const [delievery, setDelievery] = useState(0);
   const [coupon, setcoupon] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("paypal");
+  const [cartProduct, setCartProduct] = useState([]);
 
   const cartSubTotal = () => {
     var subtotalVar = 0;
-    if (props.cart.products && props.cart.products.length) {
-      props.cart.products.map((item) => {
+    if (cartProduct && cartProduct.length > 0) {
+      cartProduct.map((item) => {
         if (item.pricing.sellprice) {
           var sellPrice = item.pricing.sellprice * item.cartQty;
           subtotalVar = subtotalVar + sellPrice;
@@ -41,8 +45,46 @@ const OrderDetails = (props) => {
   };
 
   useEffect(() => {
-    //cartSubTotal();
+    if (cartProduct.length > 0) {
+      cartSubTotal();
+    }
+  }, [cartProduct]);
+
+  const ListingCartProducts = () => {
+    var filteredProducts = [];
+
+    props.cart.products.map((item) => {
+      props.products.products.filter((product) => {
+        if (product.id === item.id) {
+          product.cartQty = item.cartQty;
+          filteredProducts.push(product);
+        }
+      });
+    });
+    console.log("filteredProducts", filteredProducts)
+    console.log("props.cart.products", props.cart.products)
+    console.log("props.products.products", props.products.products)
+
+    setCartProduct(filteredProducts);
+  };
+
+  useEffect(() => {
+    if (props.cart.products && props.cart.products.length > 0) {
+      if (isEmpty(props.products.products)) {
+        props.productsAction();
+      }
+      if (props.products.products && props.products.products.length > 0) {
+        ListingCartProducts();
+      }
+    }
   }, [props.cart.products]);
+
+  useEffect(() => {
+    if (props.products.products && props.products.products.length > 0) {
+      ListingCartProducts();
+    }
+  }, [props.products.products]);
+
 
   useEffect(() => {
     var allData = {
@@ -59,6 +101,7 @@ const OrderDetails = (props) => {
 
   return (
     <Fragment>
+      {props.products.loading && <Loading />}
       <Typography variant="h3" className="margin-bottom-2">
         Your Orders
       </Typography>
@@ -74,20 +117,23 @@ const OrderDetails = (props) => {
                   <TableCell className="text-right">Amount</TableCell>
                 </TableRow>
               </TableHead>
-              {/* <TableBody>
-                {props.cart.products.map((product, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>x{product.cartQty}</TableCell>
-                    <TableCell className="text-right">
-                      $
-                      {product.pricing.sellprice
-                        ? product.pricing.sellprice.toFixed(2) * product.cartQty
-                        : product.pricing.price.toFixed(2) * product.cartQty}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody> */}
+              {cartProduct.length > 0 ?
+                <TableBody>
+                  {cartProduct.map((product, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{product.name}</TableCell>
+                      <TableCell>x{product.cartQty}</TableCell>
+                      <TableCell className="text-right">
+                        $
+                    {product.pricing.sellprice
+                          ? product.pricing.sellprice.toFixed(2) * product.cartQty
+                          : product.pricing.price.toFixed(2) * product.cartQty}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                : null
+              }
             </Table>
 
             <Table className="margin-top-3">
@@ -119,7 +165,6 @@ const OrderDetails = (props) => {
                     <Typography variant="h5">Total</Typography>
                   </TableCell>
                   <TableCell className="text-right">
-                    {" "}
                     ${subtotal + delievery + coupon}
                   </TableCell>
                 </TableRow>
@@ -141,14 +186,14 @@ const OrderDetails = (props) => {
                 onChange={(e) => setPaymentMethod(e.target.value)}
               >
                 <FormControlLabel
-                  value="paypal"
-                  control={<Radio color="default" />}
-                  label="Paypal"
-                />
-                <FormControlLabel
                   value="cod"
                   control={<Radio color="default" />}
                   label="Cash on delievery"
+                />
+                <FormControlLabel
+                  value="paypal"
+                  control={<Radio color="default" />}
+                  label="Paypal"
                 />
                 <FormControlLabel
                   value="credit-card"
@@ -177,6 +222,11 @@ const OrderDetails = (props) => {
 
 const mapStateToProps = (state) => ({
   cart: state.cart,
+  products: state.products,
 });
 
-export default connect(mapStateToProps)(OrderDetails);
+const mapDispatchToProps = {
+  productsAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(OrderDetails);
