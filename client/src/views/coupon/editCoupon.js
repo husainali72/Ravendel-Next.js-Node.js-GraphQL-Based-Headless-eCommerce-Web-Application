@@ -186,8 +186,7 @@ const EditCoupon = props => {
                   value={coupon.code}
                   onChange={handleChange}
                   variant="outlined"
-                  //className={clsx(classes.marginBottom, classes.width100)}
-                  className={[classes.marginBottom, classes.width100]}
+                  className={clsx(classes.marginBottom, classes.width100)}
                 />
               </Box>
               <Box component="div">
@@ -198,8 +197,7 @@ const EditCoupon = props => {
                   value={coupon.description}
                   onChange={handleChange}
                   variant="outlined"
-                  //className={clsx(classes.marginBottom, classes.width100)}
-                  className={[classes.marginBottom, classes.width100]}
+                  className={clsx(classes.marginBottom, classes.width100)}
                   multiline
                   rows="4"
                 />
@@ -237,8 +235,7 @@ const EditCoupon = props => {
                 <TabPanel value={tabVal} index="general">
                   <FormControl
                     variant="outlined"
-                    //className={clsx(classes.marginBottom, classes.width100)}
-                    className={[classes.marginBottom, classes.width100]}
+                    className={clsx(classes.marginBottom, classes.width100)}
                   >
                     <InputLabel ref={inputLabel} id="products-select">
                       Discount Type
@@ -270,7 +267,7 @@ const EditCoupon = props => {
                         value={coupon.discount_value}
                         onChange={handleChange}
                         variant="outlined"
-                        className={classes.width100}
+                        className={clsx(classes.width100)}
                       />
                     </Grid>
                     <Grid item md={6} sm={12} xs={12}>
@@ -281,16 +278,14 @@ const EditCoupon = props => {
                         value={coupon.expire}
                         onChange={handleChange}
                         variant="outlined"
-                        //className={clsx(classes.width100, "top-helper")}
-                        className={[classes.width100, "top-helper"]}
+                        className={clsx(classes.width100, "top-helper")}
                         type="date"
                       />
                     </Grid>
                   </Grid>
 
                   <FormControlLabel
-                    //className={clsx(classes.marginTop1, classes.width100)}
-                    className={[classes.marginTop1, classes.width100]}
+                    className={clsx(classes.marginTop1, classes.width100)}
                     control={
                       <Checkbox
                         color="primary"
@@ -316,8 +311,7 @@ const EditCoupon = props => {
                     value={coupon.minimum_spend}
                     onChange={handleChange}
                     variant="outlined"
-                    //className={clsx(classes.marginBottom, classes.width100)}
-                    className={[classes.marginBottom, classes.width100]}
+                    className={clsx(classes.marginBottom, classes.width100)}
                   />
                   <TextField
                     id="maximum-spend"
@@ -326,8 +320,7 @@ const EditCoupon = props => {
                     value={coupon.maximum_spend}
                     onChange={handleChange}
                     variant="outlined"
-                    //className={clsx(classes.marginBottom, classes.width100)}
-                    className={[classes.marginBottom, classes.width100]}
+                    className={clsx(classes.marginBottom, classes.width100)}
                   />
 
                   {/*  ================== Products Select ================== */}
