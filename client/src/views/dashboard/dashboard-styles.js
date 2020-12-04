@@ -8,9 +8,9 @@ const DashboardStyles = makeStyles((theme) => ({
     fontWeight: 700,
   },
   dashboardcardavatar: {
-    backgroundColor: theme.palette.success.main,
-    height: 56,
-    width: 56,
+    backgroundColor: `${theme.palette.success.main} !important`,
+    height: "56px !important",
+    width: "56px !important",
   },
   dashboardcardicon: {
     height: 32,

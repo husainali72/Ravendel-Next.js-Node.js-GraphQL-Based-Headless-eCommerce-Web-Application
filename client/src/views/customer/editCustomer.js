@@ -5,15 +5,8 @@ import {
   CardHeader,
   CardContent,
   Button,
-  TextField,
-  IconButton,
-  FormControl,
   Divider,
-  Typography,
   CardActions,
-  InputAdornment,
-  OutlinedInput,
-  InputLabel,
   List,
   ListItem,
   ListItemIcon,
@@ -22,23 +15,18 @@ import {
   ButtonGroup,
   Tooltip,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  useMediaQuery
 } from "@material-ui/core";
-import { connect } from "react-redux";
+import {  useTheme } from '@material-ui/styles';
 import {
   customerUpdateAction,
   addressbookAddAction,
   addressbookUpdateAction,
   addressbookDeleteAction,
-  customersAction
+  customersAction,
 } from "../../store/action/";
 import Alert from "../utils/Alert";
-import Loading from "../utils/loading";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { Link } from "react-router-dom";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import clsx from "clsx";
 import viewStyles from "../viewStyles.js";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -48,6 +36,8 @@ import PhoneIcon from "@material-ui/icons/Phone";
 import HomeIcon from "@material-ui/icons/Home";
 import Rating from "@material-ui/lab/Rating";
 import { isEmpty } from "../../utils/helper";
+import { Loading, TextInput, PasswordInput, TopBar } from "../components";
+import { useDispatch, useSelector } from "react-redux";
 
 var SingleCustomerObject = {
   id: "",
@@ -62,132 +52,94 @@ var SingleCustomerObject = {
   country: "",
   state: "",
   pincode: "",
-  default_address: false
+  default_address: false,
+};
+var customerObj = {
+  first_name: "",
+  last_name: "",
+  email: "",
+  password: "",
+  company: "",
+  phone: "",
 };
 
-const EditCustomer = props => {
+const EditCustomer = (props) => {
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const Customers = useSelector((state) => state.customers);
   const [editMode, setEditMode] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [singleCustomer, setSingleCustomer] = useState(SingleCustomerObject);
-  const [customer, setcustomer] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    password: "",
-    company: "",
-    phone: ""
-  });
+  const [customer, setcustomer] = useState(customerObj);
 
   useEffect(() => {
     document.forms[0].reset();
-    setcustomer({
-      first_name: "",
-      last_name: "",
-      email: "",
-      password: "",
-      company: "",
-      phone: ""
-    });
+    setcustomer(customerObj);
 
-    if (isEmpty(props.customers.customers)) {
-      props.customersAction();
+    if (isEmpty(Customers.customers)) {
+      dispatch(customersAction());
     }
 
-    for (let i in props.customers.customers) {
-      if (props.customers.customers[i].id === props.match.params.id) {
-        SingleCustomerObject.id = props.customers.customers[i].id;
+    for (let i in Customers.customers) {
+      if (Customers.customers[i].id === props.match.params.id) {
+        SingleCustomerObject.id = Customers.customers[i].id;
         setSingleCustomer(SingleCustomerObject);
-        setcustomer({ ...customer, ...props.customers.customers[i] });
+        setcustomer({ ...customer, ...Customers.customers[i] });
         break;
       }
     }
 
-    /* props.customers.customers.map(editcustomer => {
-      if (editcustomer.id === props.match.params.id) {
-        SingleCustomerObject.id = editcustomer.id;
-        setSingleCustomer(SingleCustomerObject);
-        setcustomer({ ...customer, ...editcustomer });
-      }
-    }); */
-
     setEditMode(false);
-    /* if (props.customers.success) {
-      setSingleCustomer(SingleCustomerObject);
-    } */
-  }, [props.customers.customers]);
+  }, [Customers.customers]);
 
-  const updateCustomer = e => {
+  const updateCustomer = (e) => {
     e.preventDefault();
-    props.customerUpdateAction(customer);
+    dispatch(customerUpdateAction(customer));
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setcustomer({ ...customer, [e.target.name]: e.target.value });
   };
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = event => {
-    event.preventDefault();
-  };
-
-  const editAddress = address => {
+  const editAddress = (address) => {
     setEditMode(true);
     setSingleCustomer({ ...SingleCustomerObject, ...address });
   };
 
-  const handleChangeEditAdd = e => {
+  const handleAddressInputField = (e) => {
     setSingleCustomer({ ...singleCustomer, [e.target.name]: e.target.value });
   };
 
-  const addressInput = (label, name, type, value) => {
+  const addressInput = (label, name) => {
     return (
-      <TextField
-        type={type}
-        label={label}
-        name={name}
-        variant="outlined"
-        size="small"
-        value={value}
-        onChange={handleChangeEditAdd}
-        className={classes.width100}
-      />
-    );
-  };
-
-  const customerInput = (label, name, type, value) => {
-    return (
-      <TextField
-        type={type}
-        label={label}
-        name={name}
-        variant="outlined"
-        value={value}
-        onChange={handleChange}
-        className={classes.width100}
-      />
+      <Grid item md={12} sm={6} xs={12}>
+        <TextInput
+          label={label}
+          name={name}
+          value={singleCustomer[name]}
+          onInputChange={handleAddressInputField}
+          sizeSmall
+        />
+      </Grid>
     );
   };
 
   const updateAddress = () => {
-    props.addressbookUpdateAction(singleCustomer);
-    //setEditMode(false);
-    //setSingleCustomer(SingleCustomerObject);
+    dispatch(addressbookUpdateAction(singleCustomer));
   };
 
   const addAddress = () => {
-    props.addressbookAddAction(singleCustomer);
-    //setSingleCustomer(SingleCustomerObject);
+    dispatch(addressbookAddAction(singleCustomer));
   };
 
-  const deleteAddressBook = _id => {
-    props.addressbookDeleteAction({
-      id: SingleCustomerObject.id,
-      _id
-    });
+  const deleteAddressBook = (_id) => {
+    dispatch(
+      addressbookDeleteAction({
+        id: SingleCustomerObject.id,
+        _id,
+      })
+    );
   };
 
   const cancelAddress = () => {
@@ -198,137 +150,152 @@ const EditCustomer = props => {
   return (
     <Fragment>
       <Alert />
-      {props.customers.loading && <Loading />}
+      {Customers.loading && <Loading />}
       <form>
-        <Grid container className="topbar">
-          <Grid item lg={6}>
-            <Typography variant="h4">
-              <Link to="/all-customer">
-                <IconButton aria-label="Back">
-                  <ArrowBackIcon />
-                </IconButton>
-              </Link>
-              <span style={{ paddingTop: 10 }}>Edit Customer</span>
-            </Typography>
-          </Grid>
+        <TopBar
+          title="Edit Customer"
+          onSubmit={updateCustomer}
+          submitTitle="Update"
+          backLink={"/all-customer"}
+        />
 
-          <Grid item lg={6} className="text-right padding-right-2">
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={updateCustomer}
-            >
-              Update
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.cancelBtn}
-            >
-              <Link to="/all-customer" style={{ color: "#fff" }}>
-                Discard
-              </Link>
-            </Button>
-          </Grid>
-        </Grid>
+        {/* ==============Customer Details============== */}
 
-        <Grid container spacing={4} className={classes.secondmainrow}>
+        <Grid container spacing={isSmall ? 2 : 4} className={classes.secondmainrow}>
           <Grid item lg={12}>
             <Card>
-              <CardHeader
-                action={
-                  <Link to="/all-customer">
-                    <IconButton aria-label="Back">
-                      <ArrowBackIcon />
-                    </IconButton>
-                  </Link>
-                }
-                title="Customer Information"
-              />
+              <CardHeader title="Customer Information" />
               <Divider />
               <CardContent>
-                <Grid container spacing={4}>
-                  <Grid item md={3}>
-                    {customerInput(
-                      "First Name",
-                      "first_name",
-                      "text",
-                      customer.first_name
-                    )}
+                <Grid container spacing={isSmall ? 2 : 4}>
+                  <Grid item md={3} sm={6} xs={12}>
+                    <TextInput
+                      value={customer.first_name}
+                      label="First Name"
+                      name="first_name"
+                      onInputChange={handleChange}
+                    />
                   </Grid>
-                  <Grid item md={3}>
-                    {customerInput(
-                      "Last Nam",
-                      "last_name",
-                      "text",
-                      customer.last_name
-                    )}
+                  <Grid item md={3} sm={6} xs={12}>
+                    <TextInput
+                      value={customer.last_name}
+                      label="Last Name"
+                      name="last_name"
+                      onInputChange={handleChange}
+                    />
                   </Grid>
-                  <Grid item md={3}>
-                    {customerInput("Email", "email", "tel", customer.email)}
+                  <Grid item md={3} sm={6} xs={12}>
+                    <TextInput
+                      value={customer.email}
+                      label="Email"
+                      name="email"
+                      onInputChange={handleChange}
+                      type="email"
+                    />
                   </Grid>
-                  <Grid item md={3}>
-                    <FormControl
-                      className={clsx(
-                        classes.margin,
-                        classes.textField,
-                        classes.width100
-                      )}
-                      variant="outlined"
-                    >
-                      <InputLabel htmlFor="customer_password">
-                        Password
-                      </InputLabel>
-
-                      <OutlinedInput
-                        id="customer_password"
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        value={customer.password}
-                        onChange={handleChange}
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={handleClickShowPassword}
-                              onMouseDown={handleMouseDownPassword}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <Visibility />
-                              ) : (
-                                <VisibilityOff />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        }
-                        labelWidth={70}
-                      />
-                    </FormControl>
+                  <Grid item md={3} sm={6} xs={12}>
+                    <PasswordInput
+                      name="password"
+                      value={customer.password}
+                      label="Password"
+                      onInputChange={handleChange}
+                    />
                   </Grid>
-                  <Grid item md={3}>
-                    {customerInput(
-                      "Company",
-                      "company",
-                      "Text",
-                      customer.company
-                    )}
+                  <Grid item md={3} sm={6} xs={12}>
+                    <TextInput
+                      value={customer.company}
+                      label="Company"
+                      name="company"
+                      onInputChange={handleChange}
+                    />
                   </Grid>
-                  <Grid item md={3}>
-                    {customerInput("Phone", "phone", "tel", customer.phone)}
+                  <Grid item md={3} sm={6} xs={12}>
+                    <TextInput
+                      value={customer.phone}
+                      label="Phone"
+                      name="phone"
+                      onInputChange={handleChange}
+                    />
                   </Grid>
                 </Grid>
               </CardContent>
             </Card>
           </Grid>
 
-          <Grid item md={8}>
-            <Grid container spacing={4}>
+          {/* ==============Address Books============== */}
+
+          <Grid item md={4} sm={12} xs={12}>
+            <Card>
+              <CardHeader title={`${editMode ? "Edit" : "Add"} Adress`} />
+              <Divider />
+              <CardContent>
+                <Grid container spacing={2}>
+                  {addressInput("First Name", "first_name")}
+
+                  {addressInput("Last Name", "last_name")}
+
+                  {addressInput("Company", "company")}
+
+                  {addressInput("Phone", "phone")}
+
+                  {addressInput("Address line1", "address_line1")}
+
+                  {addressInput("Address line2", "address_line2")}
+
+                  {addressInput("City", "city")}
+
+                  {addressInput("State", "state")}
+
+                  {addressInput("Country", "country")}
+
+                  {addressInput("Pincode", "pincode")}
+                  <Grid item md={12}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          color="primary"
+                          checked={singleCustomer.default_address}
+                          onChange={(e) =>
+                            setSingleCustomer({
+                              ...singleCustomer,
+                              default_address: e.target.checked,
+                            })
+                          }
+                        />
+                      }
+                      label="Make it Default Address"
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  color="primary"
+                  onClick={editMode ? updateAddress : addAddress}
+                  variant="contained"
+                >
+                  {editMode ? "Update" : "Add"}
+                </Button>
+                <Button
+                  size="small"
+                  onClick={cancelAddress}
+                  variant="contained"
+                  className={classes.cancelBtn}
+                >
+                  Cancel
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+
+          <Grid item md={8} sm={12} xs={12}>
+            <Grid container spacing={isSmall ? 2 : 4}>
               {customer &&
                 customer.address_book &&
                 customer.address_book.map((address, index) => (
-                  <Grid item md={6} key={index}>
-                    <Box mb={1}>
+                  <Grid item md={6} sm={6} xs={12} key={index}>
+                    <Box>
                       <Card>
                         <CardHeader
                           title="Address"
@@ -427,142 +394,10 @@ const EditCustomer = props => {
                 ))}
             </Grid>
           </Grid>
-          <Grid item md={4}>
-            <Card>
-              <CardHeader title={`${editMode ? "Edit" : "Add"} Adress`} />
-              <Divider />
-              <CardContent>
-                <Grid container spacing={2}>
-                  <Grid item md={12}>
-                    {addressInput(
-                      "First Name",
-                      "first_name",
-                      "text",
-                      singleCustomer.first_name
-                    )}
-                  </Grid>
-                  <Grid item md={12}>
-                    {addressInput(
-                      "Last Name",
-                      "last_name",
-                      "text",
-                      singleCustomer.last_name
-                    )}
-                  </Grid>
-                  <Grid item md={12}>
-                    {addressInput(
-                      "Company",
-                      "company",
-                      "text",
-                      singleCustomer.company
-                    )}
-                  </Grid>
-                  <Grid item md={12}>
-                    {addressInput(
-                      "Phone",
-                      "phone",
-                      "tel",
-                      singleCustomer.phone
-                    )}
-                  </Grid>
-                  <Grid item md={12}>
-                    {addressInput(
-                      "Address line1",
-                      "address_line1",
-                      "text",
-                      singleCustomer.address_line1
-                    )}
-                  </Grid>
-                  <Grid item md={12}>
-                    {addressInput(
-                      "Address line2",
-                      "address_line2",
-                      "text",
-                      singleCustomer.address_line2
-                    )}
-                  </Grid>
-                  <Grid item md={12}>
-                    {addressInput("City", "city", "text", singleCustomer.city)}
-                  </Grid>
-                  <Grid item md={12}>
-                    {addressInput(
-                      "Country",
-                      "country",
-                      "text",
-                      singleCustomer.country
-                    )}
-                  </Grid>
-                  <Grid item md={12}>
-                    {addressInput(
-                      "State",
-                      "state",
-                      "text",
-                      singleCustomer.state
-                    )}
-                  </Grid>
-                  <Grid item md={12}>
-                    {addressInput(
-                      "Pincode",
-                      "pincode",
-                      "text",
-                      singleCustomer.pincode
-                    )}
-                  </Grid>
-                  <Grid item md={12}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          color="primary"
-                          checked={singleCustomer.default_address}
-                          onChange={e =>
-                            setSingleCustomer({
-                              ...singleCustomer,
-                              default_address: e.target.checked
-                            })
-                          }
-                        />
-                      }
-                      label="Make it Default Address"
-                    />
-                  </Grid>
-                </Grid>
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  color="primary"
-                  onClick={editMode ? updateAddress : addAddress}
-                  variant="contained"
-                >
-                  {editMode ? "Update" : "Add"}
-                </Button>
-                <Button
-                  size="small"
-                  onClick={cancelAddress}
-                  variant="contained"
-                  className={classes.cancelBtn}
-                >
-                  Cancel
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
         </Grid>
       </form>
     </Fragment>
   );
 };
 
-const mapStateToProps = state => {
-  return { customers: state.customers };
-};
-
-const mapDispatchToProps = {
-  customerUpdateAction,
-  addressbookAddAction,
-  addressbookUpdateAction,
-  addressbookDeleteAction,
-  customersAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditCustomer);
+export default EditCustomer;

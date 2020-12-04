@@ -12,6 +12,9 @@ const viewStyles = makeStyles((theme) => ({
   secondmainrow: {
     padding: theme.spacing(4),
     marginTop: 40,
+    [theme.breakpoints.down('xs')]: {
+      marginTop: 60,
+    },
   },
   deleteicon: {
     color: palette.error.dark,

@@ -34,6 +34,10 @@
   width: calc(100% - 200px) !important;
   box-shadow: 0 0 20px -10px grey;
 }
+.topbar-action{
+  text-align: right;
+  padding-right: 20px;
+}
 .text-right {
   text-align: right;
 }
@@ -288,4 +292,19 @@
 
 .MuiCard-root {
   overflow: inherit !important;
+}
+
+
+@media screen and (max-width: 1279px) {
+  .topbar{
+    width: 100% !important
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .topbar-action{
+    text-align: center;
+    padding-bottom: 10px;
+    padding-right: 0;
+  }
 }

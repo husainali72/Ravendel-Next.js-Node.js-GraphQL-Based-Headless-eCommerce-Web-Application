@@ -4,236 +4,115 @@ import {
   Card,
   CardHeader,
   CardContent,
-  Button,
-  TextField,
-  IconButton,
-  FormControl,
-  InputLabel,
   Divider,
-  OutlinedInput,
-  InputAdornment,
-  Typography
+  useMediaQuery
 } from "@material-ui/core";
-import { connect } from "react-redux";
-import { customerAddAction } from "../../store/action/";
+import {  useTheme } from '@material-ui/styles';
 import Alert from "../utils/Alert";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { Link } from "react-router-dom";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import clsx from "clsx";
+import { useDispatch, useSelector } from "react-redux";
+import { customerAddAction } from "../../store/action/";
 import viewStyles from "../viewStyles.js";
-import Loading from "../utils/loading";
+import { Loading, TextInput, PasswordInput, TopBar } from "../components";
 
-/* var addressBookObj = {
+var customerObj = {
   first_name: "",
   last_name: "",
+  email: "",
+  password: "",
   company: "",
   phone: "",
-  address_line1: "",
-  address_line2: "",
-  city: "",
-  country: "",
-  state: "",
-  pincode: "",
-  default_address: false
-}; */
+};
 
-const AddCustomer = props => {
+const AddCustomer = () => {
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = viewStyles();
-  const [customer, setcustomer] = useState({});
-
-  const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const Customers = useSelector((state) => state.customers);
+  const [customer, setcustomer] = useState(customerObj);
 
   useEffect(() => {
     document.forms[0].reset();
-    setcustomer({});
-  }, [props.customers.customers]);
+    setcustomer(customerObj);
+  }, [Customers.customers]);
 
-  const addCustomer = e => {
+  const addCustomer = (e) => {
     e.preventDefault();
-    props.customerAddAction(customer);
+    dispatch(customerAddAction(customer));
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setcustomer({ ...customer, [e.target.name]: e.target.value });
-  };
-
-  /* const addAddress = e => {
-    setcustomer({
-      ...customer,
-      address_book: [
-        ...customer.address_book,
-        { [e.target.name]: e.target.value }
-      ]
-    });
-  }; */
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = event => {
-    event.preventDefault();
   };
 
   return (
     <Fragment>
       <Alert />
-      {props.customers.loading && <Loading />}
+      {Customers.loading && <Loading />}
       <form>
-        <Grid container className="topbar">
-          <Grid item lg={6}>
-            <Typography variant="h4">
-              <Link to="/all-customer">
-                <IconButton aria-label="Back">
-                  <ArrowBackIcon />
-                </IconButton>
-              </Link>
-              <span style={{ paddingTop: 10 }}>Add Customer</span>
-            </Typography>
-          </Grid>
-
-          <Grid item lg={6} className="text-right padding-right-2">
-            <Button color="primary" variant="contained" onClick={addCustomer}>
-              Add
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.cancelBtn}
-            >
-              <Link to="/all-customer" style={{ color: "#fff" }}>
-                Discard
-              </Link>
-            </Button>
-          </Grid>
-        </Grid>
-
-        <Grid container spacing={4} className={classes.secondmainrow}>
+        <TopBar 
+          title="Add Customer"
+          onSubmit={addCustomer}
+          submitTitle="Add"
+          backLink={"/all-customer"}
+        />
+        <Grid container spacing={isSmall ? 2 : 4} className={classes.secondmainrow}>
           <Grid item lg={12}>
             <Card>
-              <CardHeader
-                action={
-                  <Link to="/all-customer">
-                    <IconButton aria-label="Back">
-                      <ArrowBackIcon />
-                    </IconButton>
-                  </Link>
-                }
-                title="Add Customer"
-              />
+              <CardHeader title="Add Customer" />
               <Divider />
               <CardContent>
                 <Grid container spacing={4}>
-                  <Grid item md={3}>
-                    <TextField
+                  <Grid item md={3} sm={6} xs={12}>
+                    <TextInput
+                      value={customer.first_name}
                       label="First Name"
                       name="first_name"
-                      onChange={handleChange}
-                      variant="outlined"
-                      className={classes.width100}
+                      onInputChange={handleChange}
                     />
                   </Grid>
-                  <Grid item md={3}>
-                    <TextField
+                  <Grid item md={3} sm={6} xs={12}>
+                    <TextInput
+                      value={customer.last_name}
                       label="Last Name"
                       name="last_name"
-                      onChange={handleChange}
-                      variant="outlined"
-                      className={classes.width100}
+                      onInputChange={handleChange}
                     />
                   </Grid>
-                  <Grid item md={3}>
-                    <TextField
+                  <Grid item md={3} sm={6} xs={12}>
+                    <TextInput
+                      value={customer.email}
                       type="email"
                       label="Email"
                       name="email"
-                      onChange={handleChange}
-                      variant="outlined"
-                      className={classes.width100}
+                      onInputChange={handleChange}
                     />
                   </Grid>
-                  <Grid item md={3}>
-                    <FormControl
-                      className={clsx(
-                        classes.margin,
-                        classes.textField,
-                        classes.width100
-                      )}
-                      variant="outlined"
-                    >
-                      <InputLabel htmlFor="outlined-adornment-password">
-                        Password
-                      </InputLabel>
-                      <OutlinedInput
-                        id="outlined-adornment-password"
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        onChange={handleChange}
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={handleClickShowPassword}
-                              onMouseDown={handleMouseDownPassword}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <Visibility />
-                              ) : (
-                                <VisibilityOff />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        }
-                        labelWidth={70}
-                      />
-                    </FormControl>
+                  <Grid item md={3} sm={6} xs={12}>
+                    <PasswordInput
+                      name="password"
+                      value={customer.password}
+                      label="Password"
+                      onInputChange={handleChange}
+                    />
                   </Grid>
-                  <Grid item md={3}>
-                    <TextField
+                  <Grid item md={3} sm={6} xs={12}>
+                    <TextInput
+                      value={customer.company}
                       label="Company"
                       name="company"
-                      onChange={handleChange}
-                      variant="outlined"
-                      className={classes.width100}
+                      onInputChange={handleChange}
                     />
                   </Grid>
-                  <Grid item md={3}>
-                    <FormControl className={classes.width100}>
-                      <TextField
-                        label="Phone"
-                        name="phone"
-                        onChange={handleChange}
-                        variant="outlined"
-                        className={classes.width100}
-                        type="tel"
-                      />
-                    </FormControl>
+                  <Grid item md={3} sm={6} xs={12}>
+                    <TextInput
+                      value={customer.phone}
+                      label="Phone"
+                      name="phone"
+                      onInputChange={handleChange}
+                    />
                   </Grid>
                 </Grid>
-
-                {/* <Grid container className={classes.formbottom}>
-                  <Grid item md={12}>
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      onClick={addCustomer}
-                    >
-                      Add
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      className={classes.cancelBtn}
-                    >
-                      <Link to="/all-customer" style={{ color: "#fff" }}>
-                        Cancel
-                      </Link>
-                    </Button>
-                  </Grid>
-                </Grid> */}
               </CardContent>
             </Card>
           </Grid>
@@ -243,12 +122,4 @@ const AddCustomer = props => {
   );
 };
 
-const mapStateToProps = state => {
-  return { customers: state.customers };
-};
-
-const mapDispatchToProps = {
-  customerAddAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddCustomer);
+export default AddCustomer;

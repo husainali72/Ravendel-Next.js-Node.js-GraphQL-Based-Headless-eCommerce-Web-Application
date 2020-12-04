@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Grid,
   Card,
@@ -14,10 +14,11 @@ import {
   TablePagination,
   IconButton,
   Button,
-  Tooltip
+  Tooltip,
+  useMediaQuery
 } from "@material-ui/core";
+import {  useTheme } from '@material-ui/styles';
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
 import { customersAction, customerDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
@@ -27,24 +28,28 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import convertDefault from "../utils/convertDate";
+import { useDispatch, useSelector } from "react-redux";
 
-const AllCustomers = props => {
+const AllCustomers = () => {
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const Customers = useSelector((state) => state.customers);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    if (isEmpty(props.customers.customers)) {
-      props.customersAction();
+    if (isEmpty(Customers.customers)) {
+      dispatch(customersAction());
     }
   }, []);
-
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
@@ -52,10 +57,10 @@ const AllCustomers = props => {
   return (
     <Fragment>
       <Alert />
-      <Grid container spacing={4} className={classes.mainrow}>
+      <Grid container spacing={isSmall ? 2 : 4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.customers.loading && <Loading />}
+            {Customers.loading && <Loading />}
 
             <CardHeader
               action={
@@ -77,7 +82,7 @@ const AllCustomers = props => {
               <TableContainer className={classes.container}>
                 <Table
                   stickyHeader
-                  aria-label="sticky table and Dense Table"
+                  aria-label="customers-table"
                   size="small"
                 >
                   <TableHead>
@@ -89,12 +94,12 @@ const AllCustomers = props => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {props.customers.customers
+                    {Customers.customers
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map(customer => (
+                      .map((customer) => (
                         <TableRow key={customer.id} hover>
                           <TableCell>
                             {customer.first_name + " " + customer.last_name}
@@ -120,7 +125,7 @@ const AllCustomers = props => {
                                 aria-label="Delete"
                                 className={classes.deleteicon}
                                 onClick={() =>
-                                  props.customerDeleteAction(customer.id)
+                                  dispatch(customerDeleteAction(customer.id))
                                 }
                               >
                                 <DeleteIcon />
@@ -135,7 +140,7 @@ const AllCustomers = props => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={props.customers.customers.length}
+                count={Customers.customers.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -148,13 +153,5 @@ const AllCustomers = props => {
     </Fragment>
   );
 };
-const mapStateToProps = state => {
-  return { customers: state.customers };
-};
 
-const mapDispatchToProps = {
-  customersAction,
-  customerDeleteAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AllCustomers);
+export default AllCustomers;
