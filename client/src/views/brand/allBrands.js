@@ -14,31 +14,35 @@ import {
   TablePagination,
   IconButton,
   Button,
-  Tooltip
+  Tooltip,
+  useMediaQuery
 } from "@material-ui/core";
-import Alert from "../utils/Alert";
+import {  useTheme } from '@material-ui/styles';
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import { Link } from "react-router-dom";
 import jumpTo from "../../utils/navigation";
 import viewStyles from "../viewStyles.js";
-import Loading from "../utils/loading";
 import convertDefault from "../utils/convertDate";
 import { isEmpty } from "../../utils/helper";
 import { brandsAction, brandDeleteAction } from "../../store/action";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {Loading, Alert} from '../components'
 
 const AllBrands = props => {
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const Brands = useSelector(state => state.brands);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    if (isEmpty(props.brands.brands)) {
-      props.brandsAction();
+    if (isEmpty(Brands.brands)) {
+      dispatch(brandsAction());
     }
   }, []);
-
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -49,19 +53,13 @@ const AllBrands = props => {
     setPage(0);
   };
 
-  const [brands, setBrands] = useState([
-    { id: 1, name: "abc", products: 10 },
-    { id: 2, name: "xyz", products: 20 },
-    { id: 3, name: "dca", products: 36 }
-  ]);
-
   return (
     <Fragment>
       <Alert />
-      <Grid container spacing={4} className={classes.mainrow}>
+      <Grid container spacing={isSmall ? 2 : 4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.brands.loading && <Loading />}
+            {Brands.loading && <Loading />}
 
             <CardHeader
               action={
@@ -83,7 +81,7 @@ const AllBrands = props => {
               <TableContainer className={classes.container}>
                 <Table
                   stickyHeader
-                  aria-label="sticky table and Dense Table"
+                  aria-label="brands-table"
                   size="small"
                 >
                   <TableHead>
@@ -94,7 +92,7 @@ const AllBrands = props => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {props.brands.brands
+                    {Brands.brands
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -117,7 +115,7 @@ const AllBrands = props => {
                                 aria-label="Delete"
                                 className={classes.deleteicon}
                                 onClick={() =>
-                                  props.brandDeleteAction(brand.id)
+                                  dispatch(brandDeleteAction(brand.id))
                                 }
                               >
                                 <DeleteIcon />
@@ -132,7 +130,7 @@ const AllBrands = props => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={props.brands.brands.length}
+                count={Brands.brands.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -146,13 +144,4 @@ const AllBrands = props => {
   );
 };
 
-const mapStateToProps = state => {
-  return { brands: state.brands };
-};
-
-const mapDispatchToProps = {
-  brandsAction,
-  brandDeleteAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AllBrands);
+export default AllBrands;

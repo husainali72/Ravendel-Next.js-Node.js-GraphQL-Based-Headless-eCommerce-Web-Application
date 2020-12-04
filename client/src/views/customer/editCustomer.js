@@ -26,7 +26,6 @@ import {
   addressbookDeleteAction,
   customersAction,
 } from "../../store/action/";
-import Alert from "../utils/Alert";
 import viewStyles from "../viewStyles.js";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -36,7 +35,7 @@ import PhoneIcon from "@material-ui/icons/Phone";
 import HomeIcon from "@material-ui/icons/Home";
 import Rating from "@material-ui/lab/Rating";
 import { isEmpty } from "../../utils/helper";
-import { Loading, TextInput, PasswordInput, TopBar } from "../components";
+import { Loading, TextInput, PasswordInput, TopBar, Alert } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 
 var SingleCustomerObject = {

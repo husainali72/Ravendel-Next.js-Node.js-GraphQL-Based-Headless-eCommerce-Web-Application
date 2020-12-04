@@ -22,13 +22,12 @@ import { Link } from "react-router-dom";
 import { customersAction, customerDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
-import Alert from "../utils/Alert";
-import Loading from "../utils/loading";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import convertDefault from "../utils/convertDate";
 import { useDispatch, useSelector } from "react-redux";
+import {Alert, Loading} from '../components';
 
 const AllCustomers = () => {
   const theme = useTheme();

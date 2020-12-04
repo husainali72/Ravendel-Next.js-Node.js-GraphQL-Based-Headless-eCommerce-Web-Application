@@ -1,30 +1,34 @@
 import React, { Fragment, useState, useEffect } from "react";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 function CustomAlert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const Alert = props => {
+const Alert = () => {
+  const dispatch = useDispatch();
+  const alert = useSelector(state => state.alert);
   const [isOpen, setisOpen] = useState(false);
+
   useEffect(() => {
-    if (props.alert.success) {
+    if (alert.success) {
       setisOpen(true);
       window.setTimeout(() => {
         setisOpen(false);
-        props.dispatch({
+        dispatch({
           type: "ALERT_SUCCESS",
           payload: { boolean: false, message: "", error: false }
         });
       }, 3000);
     }
-  }, [props.alert.success]);
+  }, [alert.success]);
 
   return (
     <Fragment>
-      <Snackbar
+      
+        <Snackbar
         autoHideDuration={3000}
         open={isOpen}
         anchorOrigin={{
@@ -32,18 +36,17 @@ const Alert = props => {
           horizontal: "right"
         }}
       >
-        <CustomAlert severity={props.alert.error ? "error" : "success"}>
-          {props.alert.message}
+        {
+        isOpen ?
+        <CustomAlert severity={alert.error ? "error" : "success"}>
+          {alert.message}
         </CustomAlert>
+         :null
+        }
       </Snackbar>
+       
     </Fragment>
   );
 };
 
-const mapStateToProps = state => {
-  return { alert: state.alert };
-};
-
-//const mapDispatchToProps = dispatch => {};
-
-export default connect(mapStateToProps)(Alert);
+export default Alert;

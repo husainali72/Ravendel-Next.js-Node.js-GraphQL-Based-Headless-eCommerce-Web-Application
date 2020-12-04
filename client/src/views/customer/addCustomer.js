@@ -8,11 +8,10 @@ import {
   useMediaQuery
 } from "@material-ui/core";
 import {  useTheme } from '@material-ui/styles';
-import Alert from "../utils/Alert";
 import { useDispatch, useSelector } from "react-redux";
 import { customerAddAction } from "../../store/action/";
 import viewStyles from "../viewStyles.js";
-import { Loading, TextInput, PasswordInput, TopBar } from "../components";
+import { Loading, TextInput, PasswordInput, TopBar, Alert } from "../components";
 
 var customerObj = {
   first_name: "",
