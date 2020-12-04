@@ -115,7 +115,7 @@ const AddCustomer = props => {
             <Card>
               <CardHeader
                 action={
-                  <Link to="/all-customers">
+                  <Link to="/all-customer">
                     <IconButton aria-label="Back">
                       <ArrowBackIcon />
                     </IconButton>

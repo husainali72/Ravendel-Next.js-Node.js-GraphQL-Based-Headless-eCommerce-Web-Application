@@ -1,7 +1,4 @@
 import React from "react";
-import clsx from "clsx";
-import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/styles";
 import {
   Card,
   CardHeader,
@@ -13,35 +10,45 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  CircularProgress
+  CircularProgress,
+  Box,
+  Typography,
 } from "@material-ui/core";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import { Link } from "react-router-dom";
 import convertDefault from "../../../utils/convertDate";
+import DashboardStyles from "../../dashboard-styles";
 
-const LatestProducts = props => {
-  const { className, ...rest } = props;
-  const classes = useStyles();
+const LatestProducts = ({ products, loader }) => {
+  const classes = DashboardStyles();
 
   return (
-    <Card {...rest} className={clsx(classes.root, className)}>
+    <Card className={classes.root}>
       <CardHeader title="Latest Products" />
       <Divider />
       <CardContent className={classes.content}>
-        <List>
-          {!props.products ? (
-            <ListItem>
-              <CircularProgress />
-            </ListItem>
-          ) : (
-            props.products.slice(0, 2).map((product, i) => (
+        {loader ? (
+          <Box component="div" display="flex" justifyContent="center" p={2}>
+            <CircularProgress size={20} />
+          </Box>
+        ) : !products ? (
+          <Box component="div" display="flex" justifyContent="center" p={2}>
+            <Typography className={classes.noRecordFound} variant="caption">
+              No Records Found
+            </Typography>
+          </Box>
+        ) : (
+          <List>
+            {products.slice(0, 2).map((product, i) => (
               <ListItem divider={i < 1} key={i}>
                 <ListItemAvatar>
                   <img
                     alt="Product"
-                    className={classes.image}
+                    className={classes.productImage}
                     src={
                       product.feature_image && product.feature_image.thumbnail
+                        ? product.feature_image.thumbnail
+                        : "https://www.hbwebsol.com/wp-content/uploads/2020/07/category_dummy.png"
                     }
                   />
                 </ListItemAvatar>
@@ -50,40 +57,24 @@ const LatestProducts = props => {
                   secondary={`Updated ${convertDefault(product.date)}`}
                 />
               </ListItem>
-            ))
-          )}
-        </List>
+            ))}
+          </List>
+        )}
       </CardContent>
-      <Divider />
-      <CardActions className={classes.actions}>
-        <Link to="/all-products">
-          <Button color="primary" size="small" variant="text">
-            View all <ArrowRightIcon />
-          </Button>
-        </Link>
-      </CardActions>
+      {products ? (
+        <>
+          <Divider />
+          <CardActions className="flex-end">
+            <Link to="/all-products">
+              <Button color="primary" size="small" variant="text">
+                View all <ArrowRightIcon />
+              </Button>
+            </Link>
+          </CardActions>
+        </>
+      ) : null}
     </Card>
   );
-};
-
-const useStyles = makeStyles(() => ({
-  root: {
-    height: "100%"
-  },
-  content: {
-    padding: 0
-  },
-  image: {
-    height: 48,
-    width: 48
-  },
-  actions: {
-    justifyContent: "flex-end"
-  }
-}));
-
-LatestProducts.propTypes = {
-  className: PropTypes.string
 };
 
 export default LatestProducts;

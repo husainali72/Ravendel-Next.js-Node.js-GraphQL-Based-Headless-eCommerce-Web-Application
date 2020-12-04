@@ -1,6 +1,4 @@
 import React from "react";
-import clsx from "clsx";
-import PropTypes from "prop-types";
 import {
   Card,
   CardActions,
@@ -16,26 +14,30 @@ import {
   Tooltip,
   TableSortLabel,
   CircularProgress,
-  IconButton
+  IconButton,
+  Box,
+  Typography,
 } from "@material-ui/core";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import { Link } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
-import viewStyles from "../../../viewStyles";
 import jumpTo from "../../../../utils/navigation";
 import convertDefault from "../../../utils/convertDate";
+import DashboardStyles from "../../dashboard-styles";
 
-const LatestOrders = props => {
-  const { className, ...rest } = props;
-
-  const classes = viewStyles();
+const LatestOrders = ({ ordersState }) => {
+  const classes = DashboardStyles();
 
   return (
-    <Card {...rest} className={clsx(classes.root, className)}>
+    <Card className={classes.root}>
       <CardHeader title="Latest Orders" />
       <Divider />
       <CardContent className={classes.content}>
-        <div className={classes.inner}>
+        {ordersState.loading ? (
+          <Box component="div" display="flex" justifyContent="center" p={2}>
+            <CircularProgress size={20} />
+          </Box>
+        ) : ordersState.orders.lenght > 0 ? (
           <Table aria-label="sticky table and Dense Table" size="small">
             <TableHead>
               <TableRow>
@@ -52,55 +54,54 @@ const LatestOrders = props => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {!props.orders ? (
-                <TableRow className="text-center">
+              {ordersState.orders.slice(0, 2).map((order) => (
+                <TableRow hover key={order.id}>
                   <TableCell>
-                    <CircularProgress />
+                    {order.shipping.firstname + " " + order.shipping.lastname}
+                  </TableCell>
+                  <TableCell>{convertDefault(order.date)}</TableCell>
+                  <TableCell>
+                    <span className={"product-status-chip " + order.status}>
+                      {order.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip title="Edit Order" aria-label="edit">
+                      <IconButton
+                        aria-label="Edit"
+                        onClick={() => jumpTo(`view-order/${order.id}`)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
-              ) : (
-                props.orders.slice(0, 2).map(order => (
-                  <TableRow hover key={order.id}>
-                    <TableCell>
-                      {order.shipping.firstname + " " + order.shipping.lastname}
-                    </TableCell>
-                    <TableCell>{convertDefault(order.date)}</TableCell>
-                    <TableCell>
-                      <span className={"product-status-chip " + order.status}>
-                        {order.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <Tooltip title="Edit Order" aria-label="edit">
-                        <IconButton
-                          aria-label="Edit"
-                          onClick={() => jumpTo(`view-order/${order.id}`)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+              ))}
             </TableBody>
           </Table>
-        </div>
+        ) : (
+          <Box component="div" display="flex" justifyContent="center" p={2}>
+            <Typography className={classes.noRecordFound} variant="caption">
+              No records found
+            </Typography>
+          </Box>
+        )}
       </CardContent>
-      <Divider />
-      <CardActions className="flex-end">
-        <Link to="/all-orders">
-          <Button color="primary" size="small" variant="text">
-            View all <ArrowRightIcon />
-          </Button>
-        </Link>
-      </CardActions>
+
+      {ordersState.orders.lenght > 0 ? (
+        <>
+          <Divider />
+          <CardActions className="flex-end">
+            <Link to="/all-orders">
+              <Button color="primary" size="small" variant="text">
+                View all <ArrowRightIcon />
+              </Button>
+            </Link>
+          </CardActions>
+        </>
+      ) : null}
     </Card>
   );
-};
-
-LatestOrders.propTypes = {
-  className: PropTypes.string
 };
 
 export default LatestOrders;

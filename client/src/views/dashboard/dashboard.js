@@ -1,105 +1,88 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/styles";
-import { Grid } from "@material-ui/core";
+import { Grid, Box, useMediaQuery } from "@material-ui/core";
+import {  useTheme } from '@material-ui/styles';
 import LatestOrder from "./components/latestOrder";
-import TotalUsers from "./components/totalUsers";
-import TotalProducts from "./components/totalProducts";
 import LatestProducts from "./components/latestProduct";
-import TotalCustomers from "./components/totalCustomer";
-import TotalSales from "./components/totalSales";
-import {
-  usersAction,
-  productsAction,
-  customersAction,
-  ordersAction
-} from "../../store/action";
+import DashboardCard from './components/dashboardCard';
 import { getDashboardData } from "../../utils/service";
-import { connect } from "react-redux";
-import { isEmpty } from "../../utils/helper";
+import { useSelector, useDispatch } from 'react-redux';
+import { ordersAction } from "../../store/action";
+import PeopleIcon from "@material-ui/icons/PeopleOutlined";
+import StorefrontIcon from "@material-ui/icons/Storefront";
+import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(4)
-  }
-}));
-
-const Dashboard = props => {
-  const classes = useStyles();
-  const [dashBoardCount,setdashBoardCount] = useState({});
-  
+const Dashboard = () => {
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const dispatch = useDispatch();
+  const Orders = useSelector((state) => state.orders)
+  const [dashBoardCount,setdashBoardCount] = useState({}); 
+  const [loader,setLoader] = useState(true);  
 
   useEffect(()=>{
     async function fetchData() {
-      // You can await here      
-      setdashBoardCount(await getDashboardData());
+      setLoader(true);
+      var data = {}
+      try{
+        data = await getDashboardData();
+        setLoader(false);
+        setdashBoardCount(data);
+      }catch{
+        setLoader(false);
+        setdashBoardCount({});
+      }
     }
-    fetchData();      
+    fetchData();    
+    dispatch(ordersAction())  
   }, []);
-
-  /* useEffect(() => {
-    if (isEmpty(props.users.users)) {
-      props.usersAction();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isEmpty(props.products.products)) {
-      props.productsAction();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isEmpty(props.customers.customers)) {
-      props.customersAction();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isEmpty(props.orders.orders)) {
-      props.ordersAction();
-    }
-  }, []); */
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={4}>
+    <Box component="div" p={isSmall ? 1 : 4}>
+      <Grid container spacing={isSmall ? 1 : 4}>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-          <TotalUsers userslength={dashBoardCount.user_count} />
+          <DashboardCard 
+            count={dashBoardCount.user_count}
+            title={"TOTAL USERS"}
+            Icon={({className}) => <PeopleIcon className={className} />}
+            loader={loader}
+          />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-          <TotalProducts productslength={dashBoardCount.product_count} />
+          <DashboardCard 
+            count={dashBoardCount.product_count}
+            title={"TOTAL PRODUCTS"}
+            Icon={({className}) => <StorefrontIcon className={className} />}
+            loader={loader}
+          />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-          <TotalCustomers customerlength={dashBoardCount.customer_count} />
+          <DashboardCard 
+            count={dashBoardCount.customer_count}
+            title={"TOTAL CUSTOMERS"}
+            Icon={({className}) => <PeopleIcon className={className} />}
+            loader={loader}
+          />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-          <TotalSales />
+          <DashboardCard 
+            count={"$23,000"}
+            title={"TOTAL SALES"}
+            Icon={({className}) => <AttachMoneyIcon className={className} />}
+            loader={loader}
+          />
         </Grid>
-        <Grid item lg={4} md={6} xl={3} xs={12}>
-          <LatestProducts products={dashBoardCount.latest_products} />
+        <Grid item lg={4} xl={3} md={12} xs={12}>
+          <LatestProducts 
+            products={dashBoardCount.latest_products} 
+            loader={loader}
+          />
         </Grid>
-        <Grid item lg={8} md={12} xl={9} xs={12}>
-          <LatestOrder orders={props.orders.orders} />
+        <Grid item lg={8} xl={9} md={12} xs={12}>
+          <LatestOrder ordersState={Orders} />
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 
-const mapStateToProps = state => {
-  return {
-    users: state.users,
-    products: state.products,
-    customers: state.customers,
-    orders: state.orders
-  };
-};
-
-const mapDispatchToProps = {
-  usersAction,
-  productsAction,
-  customersAction,
-  ordersAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default Dashboard;
