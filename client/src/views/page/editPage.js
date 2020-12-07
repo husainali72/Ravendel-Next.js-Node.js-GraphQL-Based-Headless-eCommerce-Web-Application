@@ -1,23 +1,26 @@
 import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
-  Card,
-  CardHeader,
-  CardContent,
   Button,
-  Divider,
   Box,
   RadioGroup,
   FormControlLabel,
-  useMediaQuery
+  useMediaQuery,
 } from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
+import { useTheme } from "@material-ui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { pageUpdateAction, pageAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
 import { isEmpty } from "../../utils/helper";
 import viewStyles from "../viewStyles";
-import { Alert, Loading, TopBar, TextInput, StyledRadio } from "../components";
+import {
+  Alert,
+  Loading,
+  TopBar,
+  TextInput,
+  StyledRadio,
+  CardBlocks,
+} from "../components";
 
 var defaultObj = {
   status: "Publish",
@@ -32,7 +35,7 @@ var defaultObj = {
 const EditPage = (props) => {
   const PageID = props.match.params.id;
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
   const dispatch = useDispatch();
   const pageState = useSelector((state) => state.pages);
@@ -83,123 +86,109 @@ const EditPage = (props) => {
           backLink={"/all-pages"}
         />
 
-        <Grid container spacing={isSmall ? 2 : 3} className={classes.secondmainrow}>
+        <Grid
+          container
+          spacing={isSmall ? 2 : 3}
+          className={classes.secondmainrow}
+        >
           <Grid item lg={9} md={12} xs={12}>
-            <Box>
-              <Card>
-                <CardHeader title='Page Information' />
-                <Divider />
-                <CardContent>
-                  <Box component='div' mb={2}>
-                    <TextInput
-                      value={page.title}
-                      label='Title'
-                      name='title'
-                      onInputChange={handleChange}
-                    />
-                  </Box>
+            <CardBlocks title='Page Information' nomargin>
+              <Box component='div' mb={2}>
+                <TextInput
+                  value={page.title}
+                  label='Title'
+                  name='title'
+                  onInputChange={handleChange}
+                />
+              </Box>
 
-                  <Box component='div' mb={2}>
-                    {page.title ? (
-                      <span style={{ marginBottom: 10, display: "block" }}>
-                        <strong>Link: </strong>
-                        https://www.google.com/product/
-                        {editPremalink === false && page.url}
-                        {editPremalink === true && (
-                          <input
-                            id='url'
-                            name='url'
-                            value={page.url}
-                            onChange={handleChange}
-                            variant='outlined'
-                            className={classes.editpermalinkInput}
-                          />
-                        )}
-                        <Button
-                          color='primary'
-                          variant='contained'
-                          onClick={changePermalink}
-                          className={classes.editpermalinkInputBtn}
-                        >
-                          {editPremalink ? "Ok" : "Edit"}
-                        </Button>
-                      </span>
-                    ) : null}
-                  </Box>
-                  <Box component='div'>
-                    <TinymceEditor value={page.content} />
-                  </Box>
-                </CardContent>
-              </Card>
-            </Box>
-
-            <Box component='span' m={1}>
-              <Card>
-                <CardHeader title='Meta Information' />
-                <Divider />
-                <CardContent>
-                  <Grid container spacing={3}>
-                    <Grid item md={6} xs={12}>
-                      <TextInput
-                        label='Meta Title'
-                        name='title'
-                        value={page.meta.title}
-                        onInputChange={metaChange}
+              <Box component='div' mb={2}>
+                {page.title ? (
+                  <span style={{ marginBottom: 10, display: "block" }}>
+                    <strong>Link: </strong>
+                    https://www.google.com/product/
+                    {editPremalink === false && page.url}
+                    {editPremalink === true && (
+                      <input
+                        id='url'
+                        name='url'
+                        value={page.url}
+                        onChange={handleChange}
+                        variant='outlined'
+                        className={classes.editpermalinkInput}
                       />
-                    </Grid>
+                    )}
+                    <Button
+                      color='primary'
+                      variant='contained'
+                      onClick={changePermalink}
+                      className={classes.editpermalinkInputBtn}
+                    >
+                      {editPremalink ? "Ok" : "Edit"}
+                    </Button>
+                  </span>
+                ) : null}
+              </Box>
+              <Box component='div'>
+                <TinymceEditor value={page.content} />
+              </Box>
+            </CardBlocks>
 
-                    <Grid item md={6} xs={12}>
-                      <TextInput
-                        label='Meta Keyword'
-                        name='keywords'
-                        value={page.meta.keywords}
-                        onInputChange={metaChange}
-                      />
-                    </Grid>
+            <CardBlocks title='Meta Information'>
+              <Grid container spacing={3}>
+                <Grid item md={6} xs={12}>
+                  <TextInput
+                    label='Meta Title'
+                    name='title'
+                    value={page.meta.title}
+                    onInputChange={metaChange}
+                  />
+                </Grid>
 
-                    <Grid item md={12} xs={12}>
-                      <TextInput
-                        label='Description'
-                        name='description'
-                        value={page.meta.description}
-                        onInputChange={metaChange}
-                        multiline
-                        rows='4'
-                      />
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Box>
+                <Grid item md={6} xs={12}>
+                  <TextInput
+                    label='Meta Keyword'
+                    name='keywords'
+                    value={page.meta.keywords}
+                    onInputChange={metaChange}
+                  />
+                </Grid>
+
+                <Grid item md={12} xs={12}>
+                  <TextInput
+                    label='Description'
+                    name='description'
+                    value={page.meta.description}
+                    onInputChange={metaChange}
+                    multiline
+                    rows='4'
+                  />
+                </Grid>
+              </Grid>
+            </CardBlocks>
           </Grid>
 
           <Grid item lg={3} md={12} xs={12}>
-            <Box>
-              <Card>
-                <CardHeader title='Status' />
-                <Divider />
-                <CardContent>
-                  <RadioGroup
-                    defaultValue='Publish'
-                    name='status'
-                    onChange={handleChange}
-                    row
-                    value={page.status}
-                  >
-                    <FormControlLabel
-                      value='Publish'
-                      control={<StyledRadio />}
-                      label='Publish'
-                    />
-                    <FormControlLabel
-                      value='Draft'
-                      control={<StyledRadio />}
-                      label='Draft'
-                    />
-                  </RadioGroup>
-                </CardContent>
-              </Card>
-            </Box>
+            <CardBlocks title='Status' nomargin>
+              <RadioGroup
+                defaultValue='Publish'
+                name='status'
+                onChange={handleChange}
+                row
+                value={page.status}
+              >
+                <FormControlLabel
+                  value='Publish'
+                  control={<StyledRadio />}
+                  label='Publish'
+                />
+                <FormControlLabel
+                  value='Draft'
+                  control={<StyledRadio />}
+                  label='Draft'
+                />
+              </RadioGroup>
+            </CardBlocks>
           </Grid>
         </Grid>
       </form>

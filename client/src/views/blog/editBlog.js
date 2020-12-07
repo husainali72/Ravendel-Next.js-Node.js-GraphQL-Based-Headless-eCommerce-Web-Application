@@ -16,10 +16,11 @@ import {
   Typography,
   Chip,
 } from "@material-ui/core";
+import Select from "react-select";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ImageIcon from "@material-ui/icons/Image";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import {
   blogUpdateAction,
   blogtagsAction,
@@ -30,24 +31,9 @@ import {
 import TinymceEditor from "./TinymceEditor.js";
 import clsx from "clsx";
 import { isEmpty } from "../../utils/helper";
-import Loading from "../utils/loading";
 import viewStyles from "../viewStyles";
-//import Autocomplete from "@material-ui/lab/Autocomplete";
-import Select from "react-select";
 import service, { getUpdatedUrl } from "../../utils/service";
-
-const StyledRadio = (props) => {
-  return (
-    <Radio
-      className="radioRoot"
-      disableRipple
-      color="default"
-      checkedIcon={<span className="radioIcon radiocheckedIcon" />}
-      icon={<span className="radioIcon" />}
-      {...props}
-    />
-  );
-};
+import {Loading, TopBar, StyledRadio} from '../components';
 
 const defaultObj = {
   title: "",
@@ -64,6 +50,8 @@ const defaultObj = {
 };
 const EditBlog = (props) => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const blogs = useSelector(state => state.blogs);
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
@@ -161,6 +149,12 @@ const EditBlog = (props) => {
     <Fragment>
       {props.blogState.loading && <Loading />}
       <form>
+      <TopBar 
+          title="Add Brands"
+          onSubmit={updateBlog}
+          submitTitle="Add"
+          backLink={"/all-brands"}
+      />
         <Grid container className="topbar">
           <Grid item lg={6}>
             <Typography variant="h4">

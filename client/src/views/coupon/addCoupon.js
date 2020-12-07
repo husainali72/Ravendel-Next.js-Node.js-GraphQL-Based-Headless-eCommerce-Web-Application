@@ -2,14 +2,10 @@ import React, { Fragment, useState, useEffect, useRef } from "react";
 import viewStyles from "../viewStyles";
 import {
   Grid,
-  Card,
-  CardHeader,
-  CardContent,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
-  Divider,
   Box,
   Tab,
   Tabs,
@@ -28,7 +24,7 @@ import {
   productsAction,
   couponAddAction,
 } from "../../store/action/";
-import { Alert, Loading, TopBar, TextInput } from "../components";
+import { Alert, Loading, TopBar, TextInput, CardBlocks } from "../components";
 import {
   TabPanel,
   a11yProps,
@@ -137,10 +133,7 @@ const AddCoupon = () => {
 
       <Grid container spacing={isSmall ? 1 : 4} className={classes.secondmainrow}>
         <Grid item md={6} sm={12} xs={12}>
-          <Card>
-            <CardHeader title='Coupon Information' />
-            <Divider />
-            <CardContent>
+            <CardBlocks title='Coupon Information' nomargin>            
               <Box component='div' mb={2}>
                 <TextInput
                   value={coupon.code}
@@ -159,15 +152,11 @@ const AddCoupon = () => {
                   rows='4'
                 />
               </Box>
-            </CardContent>
-          </Card>
+          </CardBlocks>
         </Grid>
 
         <Grid item md={6} sm={12} xs={12}>
-          <Card>
-            <CardHeader title='Couon Data' />
-            <Divider />
-            <CardContent>
+            <CardBlocks title='Coupon Data' nomargin>
               <Box component='div' className={classes.tabsHeader}>
                 <Tabs
                   value={tabVal}
@@ -325,8 +314,7 @@ const AddCoupon = () => {
                   </SelectOptionField>
                 </TabPanel>
               </Box>
-            </CardContent>
-          </Card>
+          </CardBlocks>
         </Grid>
       </Grid>
     </Fragment>

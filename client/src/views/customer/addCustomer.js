@@ -1,17 +1,17 @@
 import React, { Fragment, useState, useEffect } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  useMediaQuery
-} from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
+import { Grid, useMediaQuery } from "@material-ui/core";
+import { useTheme } from "@material-ui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { customerAddAction } from "../../store/action/";
 import viewStyles from "../viewStyles.js";
-import { Loading, TextInput, PasswordInput, TopBar, Alert } from "../components";
+import {
+  Loading,
+  TextInput,
+  PasswordInput,
+  TopBar,
+  Alert,
+  CardBlocks,
+} from "../components";
 
 var customerObj = {
   first_name: "",
@@ -24,7 +24,7 @@ var customerObj = {
 
 const AddCustomer = () => {
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
   const dispatch = useDispatch();
   const Customers = useSelector((state) => state.customers);
@@ -49,71 +49,71 @@ const AddCustomer = () => {
       <Alert />
       {Customers.loading && <Loading />}
       <form>
-        <TopBar 
-          title="Add Customer"
+        <TopBar
+          title='Add Customer'
           onSubmit={addCustomer}
-          submitTitle="Add"
+          submitTitle='Add'
           backLink={"/all-customer"}
         />
-        <Grid container spacing={isSmall ? 2 : 4} className={classes.secondmainrow}>
+        <Grid
+          container
+          spacing={isSmall ? 2 : 4}
+          className={classes.secondmainrow}
+        >
           <Grid item lg={12}>
-            <Card>
-              <CardHeader title="Add Customer" />
-              <Divider />
-              <CardContent>
-                <Grid container spacing={4}>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <TextInput
-                      value={customer.first_name}
-                      label="First Name"
-                      name="first_name"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <TextInput
-                      value={customer.last_name}
-                      label="Last Name"
-                      name="last_name"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <TextInput
-                      value={customer.email}
-                      type="email"
-                      label="Email"
-                      name="email"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <PasswordInput
-                      name="password"
-                      value={customer.password}
-                      label="Password"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <TextInput
-                      value={customer.company}
-                      label="Company"
-                      name="company"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <TextInput
-                      value={customer.phone}
-                      label="Phone"
-                      name="phone"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
+            <CardBlocks title='Add Customer' nomargin>
+              <Grid container spacing={4}>
+                <Grid item md={3} sm={6} xs={12}>
+                  <TextInput
+                    value={customer.first_name}
+                    label='First Name'
+                    name='first_name'
+                    onInputChange={handleChange}
+                  />
                 </Grid>
-              </CardContent>
-            </Card>
+                <Grid item md={3} sm={6} xs={12}>
+                  <TextInput
+                    value={customer.last_name}
+                    label='Last Name'
+                    name='last_name'
+                    onInputChange={handleChange}
+                  />
+                </Grid>
+                <Grid item md={3} sm={6} xs={12}>
+                  <TextInput
+                    value={customer.email}
+                    type='email'
+                    label='Email'
+                    name='email'
+                    onInputChange={handleChange}
+                  />
+                </Grid>
+                <Grid item md={3} sm={6} xs={12}>
+                  <PasswordInput
+                    name='password'
+                    value={customer.password}
+                    label='Password'
+                    onInputChange={handleChange}
+                  />
+                </Grid>
+                <Grid item md={3} sm={6} xs={12}>
+                  <TextInput
+                    value={customer.company}
+                    label='Company'
+                    name='company'
+                    onInputChange={handleChange}
+                  />
+                </Grid>
+                <Grid item md={3} sm={6} xs={12}>
+                  <TextInput
+                    value={customer.phone}
+                    label='Phone'
+                    name='phone'
+                    onInputChange={handleChange}
+                  />
+                </Grid>
+              </Grid>
+            </CardBlocks>
           </Grid>
         </Grid>
       </form>

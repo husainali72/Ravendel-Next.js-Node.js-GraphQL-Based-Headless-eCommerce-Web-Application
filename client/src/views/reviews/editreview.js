@@ -1,10 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
   Typography,
   Box,
   RadioGroup,
@@ -19,7 +15,7 @@ import {
   reviewUpdateAction,
 } from "../../store/action";
 import { useSelector, useDispatch } from "react-redux";
-import { StyledRadio, Loading, TopBar, TextInput } from "../components";
+import { StyledRadio, Loading, TopBar, TextInput, CardBlocks } from "../components";
 import viewStyles from "../viewStyles";
 
 var reviewObj = {
@@ -117,125 +113,109 @@ const EditReview = (props) => {
 
       <Grid container spacing={4} className={classes.secondmainrow}>
         <Grid item lg={9} md={12} sm={12} xs={12}>
-          <Box>
-            <Card>
-              <CardHeader title='Review Information' />
-              <Divider />
-              <CardContent>
-                <Box component='div' mb={2}>
-                  <TextInput
-                    value={review.title}
-                    label='Title'
-                    name='title'
-                    onInputChange={handleChange}
-                  />
-                </Box>
-                <Box component='div' mb={2}>
-                  <TextInput
-                    value={review.review}
-                    name='review'
-                    label='Review'
-                    onInputChange={handleChange}
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Box>
+          <CardBlocks title='Review Information' nomargin>
+            <Box component='div' mb={2}>
+              <TextInput
+                value={review.title}
+                label='Title'
+                name='title'
+                onInputChange={handleChange}
+              />
+            </Box>
+            <Box component='div' mb={2}>
+              <TextInput
+                value={review.review}
+                name='review'
+                label='Review'
+                onInputChange={handleChange}
+              />
+            </Box>
+          </CardBlocks>
 
-          <Box mt={2}>
-            <Card>
-              <CardHeader title='Review Details' />
-              <Divider />
-              <CardContent>
-                {review.product.value && (
-                  <Box component='div' mb={2}>
-                    <Typography component='legend'>Products</Typography>
-                    <Select
-                      value={review.product}
-                      name='product_id'
-                      onChange={(e) =>
-                        setreview({
-                          ...review,
-                          product_id: e.value,
-                          product: { value: e.value, label: e.label },
-                        })
-                      }
-                      options={products}
-                    />
-                  </Box>
-                )}
+          <CardBlocks title='Review Details'>
+            {review.product.value && (
+              <Box component='div' mb={2}>
+                <Typography component='legend'>Products</Typography>
+                <Select
+                  value={review.product}
+                  name='product_id'
+                  onChange={(e) =>
+                    setreview({
+                      ...review,
+                      product_id: e.value,
+                      product: { value: e.value, label: e.label },
+                    })
+                  }
+                  options={products}
+                />
+              </Box>
+            )}
 
-                {review.customer.value && (
-                  <Box component='div' mb={2}>
-                    <Typography component='legend'>Customer</Typography>
-                    <Select
-                      value={review.customer}
-                      name='customer_id'
-                      onChange={(e) =>
-                        setreview({
-                          ...review,
-                          customer_id: e.value,
-                          customer: { value: e.value, label: e.label },
-                        })
-                      }
-                      options={customers}
-                      className={classes.marginBottom}
-                    />
-                  </Box>
-                )}
+            {review.customer.value && (
+              <Box component='div' mb={2}>
+                <Typography component='legend'>Customer</Typography>
+                <Select
+                  value={review.customer}
+                  name='customer_id'
+                  onChange={(e) =>
+                    setreview({
+                      ...review,
+                      customer_id: e.value,
+                      customer: { value: e.value, label: e.label },
+                    })
+                  }
+                  options={customers}
+                  className={classes.marginBottom}
+                />
+              </Box>
+            )}
 
-                <Box component='div' mb={2}>
-                  <TextInput
-                    value={review.email}
-                    label='Email'
-                    name='email'
-                    onInputChange={handleChange}
-                  />
-                </Box>
+            <Box component='div' mb={2}>
+              <TextInput
+                value={review.email}
+                label='Email'
+                name='email'
+                onInputChange={handleChange}
+              />
+            </Box>
 
-                <Box component='fieldset' mb={3} borderColor='transparent'>
-                  <Typography component='legend'>Rating</Typography>
-                  <Rating
-                    name='simple-controlled'
-                    value={Number(review.rating)}
-                    onChange={(event, newValue) => {
-                      setreview({
-                        ...review,
-                        rating: String(newValue),
-                      });
-                    }}
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Box>
+            <Box component='fieldset' mb={3} borderColor='transparent'>
+              <Typography component='legend'>Rating</Typography>
+              <Rating
+                name='simple-controlled'
+                value={Number(review.rating)}
+                onChange={(event, newValue) => {
+                  setreview({
+                    ...review,
+                    rating: String(newValue),
+                  });
+                }}
+              />
+            </Box>
+          </CardBlocks>
         </Grid>
 
         <Grid item lg={3} md={12} xs={12}>
-          <Card>
-            <CardHeader title='Status' />
-            <Divider />
-            <CardContent>
-              <RadioGroup
-                defaultValue='Publish'
-                name='status'
-                onChange={handleChange}
-                row
-                value={review.status}
-              >
-                <FormControlLabel
-                  value='approved'
-                  control={<StyledRadio />}
-                  label='Approved'
-                />
-                <FormControlLabel
-                  value='pending'
-                  control={<StyledRadio />}
-                  label='Pending'
-                />
-              </RadioGroup>
-            </CardContent>
-          </Card>
+          <CardBlocks title='Status' nomargin>
+            <RadioGroup
+              defaultValue='Publish'
+              name='status'
+              onChange={handleChange}
+              row
+              value={review.status}
+            >
+              <FormControlLabel
+                value='approved'
+                control={<StyledRadio />}
+                label='Approved'
+              />
+              <FormControlLabel
+                value='pending'
+                control={<StyledRadio />}
+                label='Pending'
+              />
+            </RadioGroup>
+          </CardBlocks>
         </Grid>
       </Grid>
     </Fragment>

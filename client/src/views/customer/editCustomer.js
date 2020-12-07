@@ -5,7 +5,6 @@ import {
   CardHeader,
   CardContent,
   Button,
-  Divider,
   CardActions,
   List,
   ListItem,
@@ -35,7 +34,7 @@ import PhoneIcon from "@material-ui/icons/Phone";
 import HomeIcon from "@material-ui/icons/Home";
 import Rating from "@material-ui/lab/Rating";
 import { isEmpty } from "../../utils/helper";
-import { Loading, TextInput, PasswordInput, TopBar, Alert } from "../components";
+import { Loading, TextInput, PasswordInput, TopBar, Alert, CardBlocks } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 
 var SingleCustomerObject = {
@@ -162,10 +161,7 @@ const EditCustomer = (props) => {
 
         <Grid container spacing={isSmall ? 2 : 4} className={classes.secondmainrow}>
           <Grid item lg={12}>
-            <Card>
-              <CardHeader title="Customer Information" />
-              <Divider />
-              <CardContent>
+              <CardBlocks title="Customer Information" nomargin>
                 <Grid container spacing={isSmall ? 2 : 4}>
                   <Grid item md={3} sm={6} xs={12}>
                     <TextInput
@@ -217,17 +213,13 @@ const EditCustomer = (props) => {
                     />
                   </Grid>
                 </Grid>
-              </CardContent>
-            </Card>
+            </CardBlocks>
           </Grid>
 
           {/* ==============Address Books============== */}
 
           <Grid item md={4} sm={12} xs={12}>
-            <Card>
-              <CardHeader title={`${editMode ? "Edit" : "Add"} Adress`} />
-              <Divider />
-              <CardContent>
+              <CardBlocks title={`${editMode ? "Edit" : "Add"} Adress`} >
                 <Grid container spacing={2}>
                   {addressInput("First Name", "first_name")}
 
@@ -266,7 +258,6 @@ const EditCustomer = (props) => {
                     />
                   </Grid>
                 </Grid>
-              </CardContent>
               <CardActions>
                 <Button
                   size="small"
@@ -285,7 +276,7 @@ const EditCustomer = (props) => {
                   Cancel
                 </Button>
               </CardActions>
-            </Card>
+            </CardBlocks>
           </Grid>
 
           <Grid item md={8} sm={12} xs={12}>
