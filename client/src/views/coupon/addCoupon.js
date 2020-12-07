@@ -165,7 +165,7 @@ const AddCoupon = () => {
 
         <Grid item md={6} sm={12} xs={12}>
           <Card>
-            <CardHeader title='Copon Data' />
+            <CardHeader title='Couon Data' />
             <Divider />
             <CardContent>
               <Box component='div' className={classes.tabsHeader}>
