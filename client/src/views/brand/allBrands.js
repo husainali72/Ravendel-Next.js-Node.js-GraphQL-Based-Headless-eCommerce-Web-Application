@@ -23,11 +23,11 @@ import EditIcon from "@material-ui/icons/Edit";
 import { Link } from "react-router-dom";
 import jumpTo from "../../utils/navigation";
 import viewStyles from "../viewStyles.js";
-import convertDefault from "../utils/convertDate";
 import { isEmpty } from "../../utils/helper";
 import { brandsAction, brandDeleteAction } from "../../store/action";
 import { useDispatch, useSelector } from "react-redux";
-import {Loading, Alert} from '../components'
+import {Loading, Alert} from '../components';
+import {convertDateToStringFormat} from '../utils/convertDate';
 
 const AllBrands = props => {
   const theme = useTheme();
@@ -87,7 +87,7 @@ const AllBrands = props => {
                   <TableHead>
                     <TableRow>
                       <TableCell>Brand Name</TableCell>
-                      <TableCell>date</TableCell>
+                      <TableCell>Date</TableCell>
                       <TableCell>Actions</TableCell>
                     </TableRow>
                   </TableHead>
@@ -100,7 +100,7 @@ const AllBrands = props => {
                       .map(brand => (
                         <TableRow key={brand.id} hover>
                           <TableCell>{brand.name}</TableCell>
-                          <TableCell>{convertDefault(brand.date)}</TableCell>
+                          <TableCell>{convertDateToStringFormat(brand.date)}</TableCell>
                           <TableCell>
                             <Tooltip title="Edit Brand" aria-label="edit">
                               <IconButton

@@ -24,7 +24,7 @@ import Loading from "../utils/loading";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
-import convertDefault from "../utils/convertDate";
+import {convertDateToStringFormat} from "../utils/convertDate";
 
 const AllOrders = props => {
   const classes = viewStyles();
@@ -85,7 +85,7 @@ const AllOrders = props => {
                               " " +
                               order.shipping.lastname}
                           </TableCell>
-                          <TableCell>{convertDefault(order.date)}</TableCell>
+                          <TableCell>{convertDateToStringFormat(order.date)}</TableCell>
                           <TableCell>
                             <span
                               className={"product-status-chip " + order.status}

@@ -103,7 +103,7 @@ const Tax = () => {
       <Alert />
       {taxState.loading && <Loading />}
       <Grid container spacing={4} className={classes.mainrow}>
-        <Grid item md={12}>
+        <Grid item md={12} xs={12}>
           <Card>
             <CardHeader title='Tax' />
             <Divider />
@@ -148,7 +148,7 @@ const Tax = () => {
                 {/* ===================================Custom Tax Tab=================================== */}
                 <TabPanel value={value} index={2}>
                   <Grid container spacing={2}>
-                    <Grid item lg={6}>
+                    <Grid item lg={6} xs={12}>
                       <AllTaxesComponent
                         taxState={taxState}
                         editTaxChange={(tax) => editTax(tax)}
@@ -162,7 +162,7 @@ const Tax = () => {
                       />
                     </Grid>
 
-                    <Grid item md={6}>
+                    <Grid item lg={6} xs={12}>
                       <TaxFormComponent
                         formMode={editMode}
                         onInputChange={(name, value) => {

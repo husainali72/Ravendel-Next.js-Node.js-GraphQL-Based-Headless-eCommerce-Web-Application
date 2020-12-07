@@ -25,7 +25,7 @@ import { isEmpty } from "../../utils/helper";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
-import convertDefault from "../utils/convertDate";
+import {convertDateToStringFormat} from "../utils/convertDate";
 import { useDispatch, useSelector } from "react-redux";
 import {Alert, Loading} from '../components';
 
@@ -104,7 +104,7 @@ const AllCustomers = () => {
                             {customer.first_name + " " + customer.last_name}
                           </TableCell>
                           <TableCell>{customer.email}</TableCell>
-                          <TableCell>{convertDefault(customer.date)}</TableCell>
+                          <TableCell>{convertDateToStringFormat(customer.date)}</TableCell>
                           <TableCell>
                             <Tooltip title="Edit Customer" aria-label="edit">
                               <IconButton

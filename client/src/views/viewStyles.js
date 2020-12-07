@@ -8,6 +8,9 @@ const viewStyles = makeStyles((theme) => ({
   },
   mainrow: {
     padding: theme.spacing(4),
+    [theme.breakpoints.down('xs')]: {
+      padding: theme.spacing(2),
+    },
   },
   secondmainrow: {
     padding: theme.spacing(4),

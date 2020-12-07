@@ -6,12 +6,17 @@ import {
   Button,
   Checkbox,
   Select,
-  MenuItem
+  MenuItem,
+  useMediaQuery
 } from "@material-ui/core";
+import {  useTheme } from '@material-ui/styles';
 import viewStyles from "../../viewStyles.js";
 
 const GlobalTaxComponent = ({ taxGlobalState, taxState, saveGlobal, changeGlobalState }) => {
   const classes = viewStyles();
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
     <>
       <Grid container spacing={2} className={classes.marginBottom}>
@@ -30,11 +35,12 @@ const GlobalTaxComponent = ({ taxGlobalState, taxState, saveGlobal, changeGlobal
               />
             </Grid>
 
-            <Grid item>
+            <Grid item md={6} sm={12} xs={12}>
               <FormControl
                 variant='outlined'
                 size='small'
-                style={{ minWidth: 300 }}
+                fullWidth
+                style={{ marginBottom: isSmall ? 20 : 0 }}
               >
                 <Select
                   name='Tax-name'

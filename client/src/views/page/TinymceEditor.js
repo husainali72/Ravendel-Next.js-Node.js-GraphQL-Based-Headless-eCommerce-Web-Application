@@ -1,10 +1,11 @@
 import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
-import { connect } from "react-redux";
-const TinymceEditor = props => {
+import { useDispatch } from 'react-redux';
+
+const TinymceEditor = ({value}) => {
+  const dispatch = useDispatch();
   const handleEditorChange = e => {
-    //console.log("Content was updated:", e.target.getContent());
-    props.dispatch({
+    dispatch({
       type: "TINYMCE_SUCCESS",
       payload: { content: e.target.getContent() }
     });
@@ -12,7 +13,7 @@ const TinymceEditor = props => {
 
   return (
     <Editor
-      initialValue={props.value}
+      initialValue={value}
       apiKey="v2hjstbxulr41w4f0l84z1q1bdnvlvqylhg0wbpy5yo7xghu"
       init={{
         height: 500,
@@ -36,10 +37,4 @@ const TinymceEditor = props => {
   );
 };
 
-/* const mapStateToProps = state => {
-  return { blogs: state.blogs };
-}; */
-
-//const mapDispatchToProps = dispatch => {};
-
-export default connect()(TinymceEditor);
+export default TinymceEditor;

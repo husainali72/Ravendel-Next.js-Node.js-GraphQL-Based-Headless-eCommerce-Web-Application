@@ -22,7 +22,7 @@ import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import { Link } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import jumpTo from "../../../../utils/navigation";
-import convertDefault from "../../../utils/convertDate";
+import {convertDateToStringFormat} from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
 
 const LatestOrders = ({ ordersState }) => {
@@ -59,7 +59,7 @@ const LatestOrders = ({ ordersState }) => {
                   <TableCell>
                     {order.shipping.firstname + " " + order.shipping.lastname}
                   </TableCell>
-                  <TableCell>{convertDefault(order.date)}</TableCell>
+                  <TableCell>{convertDateToStringFormat(order.date)}</TableCell>
                   <TableCell>
                     <span className={"product-status-chip " + order.status}>
                       {order.status}

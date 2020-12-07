@@ -39,7 +39,7 @@ import {
   TextField
 } from "@material-ui/core";
 import "../../App.css";
-import convertDefault from "../utils/convertDate";
+import {convertDateToStringFormat} from "../utils/convertDate";
 import viewStyles from "../viewStyles";
 import { isEmpty } from "../../utils/helper";
 const ViewOrder = props => {
@@ -194,7 +194,7 @@ const ViewOrder = props => {
                 <Typography variant="h4">Order: {order.id}</Typography>
                 <Typography variant="body1" mt={2}>
                   Payment via {order.billing.payment_method} paid on{" "}
-                  {convertDefault(order.date)}, Transaction number{" "}
+                  {convertDateToStringFormat(order.date)}, Transaction number{" "}
                   {order.billing.transaction_id}
                 </Typography>
                 <FormControl className={classes.statusSelect}>

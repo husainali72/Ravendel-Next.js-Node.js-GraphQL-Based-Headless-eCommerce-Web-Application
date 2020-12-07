@@ -16,7 +16,7 @@ import {
 } from "@material-ui/core";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import { Link } from "react-router-dom";
-import convertDefault from "../../../utils/convertDate";
+import {convertDateToStringFormat} from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
 
 const LatestProducts = ({ products, loader }) => {
@@ -54,7 +54,7 @@ const LatestProducts = ({ products, loader }) => {
                 </ListItemAvatar>
                 <ListItemText
                   primary={product.name}
-                  secondary={`Updated ${convertDefault(product.date)}`}
+                  secondary={`Updated ${convertDateToStringFormat(product.date)}`}
                 />
               </ListItem>
             ))}

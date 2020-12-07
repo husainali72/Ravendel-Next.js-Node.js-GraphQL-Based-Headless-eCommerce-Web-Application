@@ -13,26 +13,28 @@ import {
   TableContainer,
   TablePagination,
   IconButton,
-  Tooltip
+  Tooltip,
 } from "@material-ui/core";
-
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles.js";
-import Loading from "../utils/loading";
 import jumpTo from "../../utils/navigation";
 import Rating from "@material-ui/lab/Rating";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { reviewsAction, reviewDeleteAction } from "../../store/action";
+import { Loading } from "../components";
+import {convertDateToStringFormat} from '../utils/convertDate';
 
-const AllReviews = props => {
+const AllReviews = () => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const reviewState = useSelector((state) => state.reviews);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    if (!props.reviewState.reviews.length) {
-      props.reviewsAction();
+    if (!reviewState.reviews.length) {
+      dispatch(reviewsAction());
     }
   }, []);
 
@@ -40,7 +42,7 @@ const AllReviews = props => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
@@ -50,13 +52,12 @@ const AllReviews = props => {
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.reviewState.loading && <Loading />}
-
-            <CardHeader title="All Reviews" />
+            {reviewState.loading ? <Loading /> : null}
+            <CardHeader title='All Reviews' />
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table stickyHeader aria-label="all reviews table" size="small">
+                <Table stickyHeader aria-label='reviews-table' size='small'>
                   <TableHead>
                     <TableRow>
                       <TableCell>Title</TableCell>
@@ -68,30 +69,33 @@ const AllReviews = props => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {props.reviewState.reviews
+                    {reviewState.reviews
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map(review => (
+                      .map((review) => (
                         <TableRow key={review.id} hover>
                           <TableCell>{review.title}</TableCell>
                           <TableCell>
-                            {review.customer_id.first_name} - {review.date}
+                            {review.customer_id.first_name} -{" "}
+                            {convertDateToStringFormat(review.date)}
                           </TableCell>
-                          <TableCell>{review.update}</TableCell>
+                          <TableCell>
+                            {convertDateToStringFormat(review.updated)}
+                          </TableCell>
                           <TableCell> {review.product_id.name}</TableCell>
                           <TableCell>
                             <Rating
-                              name="read-only"
+                              name='read-only'
                               value={Number(review.rating)}
                               readOnly
                             />
                           </TableCell>
                           <TableCell>
-                            <Tooltip title="Edit Review" aria-label="delete">
+                            <Tooltip title='Edit Review' aria-label='delete'>
                               <IconButton
-                                aria-label="Edit"
+                                aria-label='Edit'
                                 onClick={() =>
                                   jumpTo(`edit-review/${review.id}`)
                                 }
@@ -99,12 +103,12 @@ const AllReviews = props => {
                                 <EditIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Delete Review" aria-label="delete">
+                            <Tooltip title='Delete Review' aria-label='delete'>
                               <IconButton
-                                aria-label="Delete"
+                                aria-label='Delete'
                                 className={classes.deleteicon}
                                 onClick={() =>
-                                  props.reviewDeleteAction(review.id)
+                                  dispatch(reviewDeleteAction(review.id))
                                 }
                               >
                                 <DeleteIcon />
@@ -118,8 +122,8 @@ const AllReviews = props => {
               </TableContainer>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={props.reviewState.reviews.length}
+                component='div'
+                count={reviewState.reviews.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -132,13 +136,5 @@ const AllReviews = props => {
     </Fragment>
   );
 };
-const mapStateToProps = state => {
-  return { reviewState: state.reviews };
-};
 
-const mapDispatchToProps = {
-  reviewsAction,
-  reviewDeleteAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AllReviews);
+export default AllReviews;

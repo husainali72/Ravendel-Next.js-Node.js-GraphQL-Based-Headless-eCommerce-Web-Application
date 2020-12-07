@@ -136,7 +136,7 @@ const Shipping = () => {
                 {/* ===================================Custom Shiping=================================== */}
                 <TabPanel value={tabVal} index={1}>
                   <Grid container spacing={2}>
-                    <Grid item lg={6}>
+                    <Grid item lg={6} xs={12}>
                       <AllShippingComponent 
                         shippingState={shippingState}
                         editShippingForm={(shipping) => editShipping(shipping)}
@@ -150,7 +150,7 @@ const Shipping = () => {
                       />
                     </Grid>
 
-                    <Grid item md={6}>
+                    <Grid item lg={6} xs={12}>
                       <ShippingFormComponent 
                         formMode={editMode}
                         onInputChange={(name, value) => {

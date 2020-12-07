@@ -35,7 +35,7 @@ import { isEmpty } from "../../../utils/helper";
 import service, { getUpdatedUrl } from "../../../utils/service";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import convertDefault from "../../utils/convertDate"; 
+import {convertDateToStringFormat} from "../../utils/convertDate"; 
 
 var categoryObject = {
   name: "",
@@ -169,7 +169,7 @@ const AllCategory = (props) => {
                         .map((cat) => (
                           <TableRow key={cat.id} hover>
                             <TableCell>{cat.name}</TableCell>
-                            <TableCell>{convertDefault(cat.date)}</TableCell>
+                            <TableCell>{convertDateToStringFormat(cat.date)}</TableCell>
                             <TableCell>
                               <Tooltip title="Edit Category" aria-label="edit">
                                 <IconButton

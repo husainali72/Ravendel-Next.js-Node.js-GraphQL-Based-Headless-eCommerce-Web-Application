@@ -8,8 +8,10 @@ import {
   Radio,
   Button,
   Checkbox, 
-  MenuItem
+  MenuItem,
+  useMediaQuery
 } from "@material-ui/core";
+import {  useTheme } from '@material-ui/styles';
 import viewStyles from "../../viewStyles.js";
 
 const GlobalShippingComponent = ({
@@ -19,12 +21,14 @@ const GlobalShippingComponent = ({
   shippingState
 }) => {
   const classes = viewStyles();
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <>
       <Grid container spacing={1} className={classes.marginBottom}>
         <Grid item md={6} sm={12} xs={12}>
           <Grid container spacing={1}>
-            <Grid item>
+            <Grid item >
               <FormControlLabel
                 control={
                   <Checkbox
@@ -38,11 +42,12 @@ const GlobalShippingComponent = ({
                 label='Global Shipping'
               />
             </Grid>
-            <Grid item>
+            <Grid item md={6} sm={12} xs={12}>
               <FormControl
                 variant='outlined'
                 size='small'
-                style={{ minWidth: 300 }}
+                fullWidth
+                style={{ marginBottom: isSmall ? 20 : 0 }}
               >
                 <Select
                   labelId='Shipping-name'

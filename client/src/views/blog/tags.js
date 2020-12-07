@@ -35,7 +35,7 @@ import {
 import { isEmpty } from "../../utils/helper";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import convertDefault from "../utils/convertDate";
+import {convertDateToStringFormat} from "../utils/convertDate";
 
 var tagObject = {
   name: "",
@@ -116,7 +116,7 @@ const AllTags = props => {
                       .map(tag => (
                         <TableRow key={tag.id} hover>
                           <TableCell>{tag.name}</TableCell>
-                          <TableCell>{convertDefault(tag.date)}</TableCell>
+                          <TableCell>{convertDateToStringFormat(tag.date)}</TableCell>
                           <TableCell>
                             <Tooltip title="Edit Tag" aria-label="edit">
                               <IconButton

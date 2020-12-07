@@ -25,6 +25,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import {Alert, Loading} from '../components';
+import {convertDateToStringFormat} from '../utils/convertDate';
 
 const AllCoupons = () => {
   const classes = viewStyles();
@@ -98,7 +99,7 @@ const AllCoupons = () => {
                           <TableCell>{coupon.code}</TableCell>
                           <TableCell>{coupon.discount_type}</TableCell>
                           <TableCell>{coupon.discount_value}</TableCell>
-                          <TableCell>{coupon.expire}</TableCell>
+                          <TableCell>{convertDateToStringFormat(coupon.expire)}</TableCell>
                           <TableCell>
                             <Tooltip
                               title="Edit Coupon"

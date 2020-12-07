@@ -26,7 +26,7 @@ import Alert from "../utils/Alert";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
-import convertDefault from "../utils/convertDate";
+import {convertDateToStringFormat} from "../utils/convertDate";
 
 const AllFAQ = (props) => {
   const classes = viewStyles();
@@ -100,7 +100,7 @@ const AllFAQ = (props) => {
                       .map((blog) => (
                         <TableRow key={blog.id} hover>
                           <TableCell>{blog.title}</TableCell>
-                          <TableCell>{convertDefault(blog.date)}</TableCell>
+                          <TableCell>{convertDateToStringFormat(blog.date)}</TableCell>
                           <TableCell>
                             <IconButton
                               aria-label="Edit"

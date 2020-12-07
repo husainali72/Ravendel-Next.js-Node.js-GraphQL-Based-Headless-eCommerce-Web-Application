@@ -143,6 +143,8 @@ const EditProduct = (props) => {
     if (inputLabel.current && inputLabel.current.offsetWidth) {
       setLabelWidth(inputLabel.current.offsetWidth);
     }
+    console.log("props.match.params.id", props.match.params.id)
+    console.log("props.match.params.id", !isEmpty(props.match.params.id))
     if (!isEmpty(props.match.params.id)) {
       props.productAction(props.match.params.id);
     }

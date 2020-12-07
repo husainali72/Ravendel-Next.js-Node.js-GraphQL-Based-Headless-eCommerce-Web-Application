@@ -5,26 +5,19 @@ import {
   CardHeader,
   CardContent,
   Button,
-  Backdrop,
-  CircularProgress,
-  TextField,
-  IconButton,
   Divider,
   Box,
   RadioGroup,
-  Radio,
   FormControlLabel,
-  Typography,
+  useMediaQuery
 } from "@material-ui/core";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import Alert from "../utils/Alert";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import {  useTheme } from '@material-ui/styles';
+import { useDispatch, useSelector } from "react-redux";
 import { pageUpdateAction, pageAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
-import clsx from "clsx";
 import { isEmpty } from "../../utils/helper";
 import viewStyles from "../viewStyles";
+import { Alert, Loading, TopBar, TextInput, StyledRadio } from "../components";
 
 var defaultObj = {
   status: "Publish",
@@ -37,31 +30,30 @@ var defaultObj = {
 };
 
 const EditPage = (props) => {
+  const PageID = props.match.params.id;
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const pageState = useSelector((state) => state.pages);
   const [editPremalink, setEditPermalink] = useState(false);
   const [page, setPage] = useState(defaultObj);
-  //const [showEditor, setshowEditor] = useState(false);
-
-  /* useEffect(() => {
-    var slugVal = page.title.replace(/[^A-Z0-9]/gi, "-");
-    setPage({ ...page, url: slugVal.toLowerCase() });
-  }, [page.title]); */
 
   useEffect(() => {
-    if (props.match.params.id) {
-      props.pageAction(props.match.params.id);
+    if (PageID) {
+      dispatch(pageAction(PageID));
     }
-  }, []);
+  }, [PageID]);
 
   useEffect(() => {
-    if (!isEmpty(props.pageState.page)) {
-      setPage({ ...props.pageState.page });
+    if (!isEmpty(pageState.page)) {
+      setPage({ ...pageState.page });
     }
-  }, [props.pageState.page]);
+  }, [pageState.page]);
 
   const updatePage = (e) => {
     e.preventDefault();
-    props.pageUpdateAction(page);
+    dispatch(pageUpdateAction(page));
   };
 
   const handleChange = (e) => {
@@ -82,60 +74,32 @@ const EditPage = (props) => {
   return (
     <Fragment>
       <Alert />
-
-      {props.pageState.loading && (
-        <Backdrop className={classes.backdrop} open={true}>
-          <CircularProgress color="inherit" /> <br /> Loading
-        </Backdrop>
-      )}
-
+      {pageState.loading ? <Loading /> : null}
       <form>
-        <Grid container className="topbar">
-          <Grid item lg={6}>
-            <Typography variant="h4">
-              <Link to="/all-pages">
-                <IconButton aria-label="Back">
-                  <ArrowBackIcon />
-                </IconButton>
-              </Link>
-              <span style={{ paddingTop: 10 }}>Edit Page</span>
-            </Typography>
-          </Grid>
+        <TopBar
+          title='Edit Page'
+          onSubmit={updatePage}
+          submitTitle='Update'
+          backLink={"/all-pages"}
+        />
 
-          <Grid item lg={6} className="text-right padding-right-2">
-            <Button color="primary" variant="contained" onClick={updatePage}>
-              Save
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.cancelBtn}
-            >
-              <Link to="/all-pages" style={{ color: "#fff" }}>
-                Discard
-              </Link>
-            </Button>
-          </Grid>
-        </Grid>
-
-        <Grid container spacing={4} className={classes.secondmainrow}>
-          <Grid item lg={9} md={12}>
+        <Grid container spacing={isSmall ? 2 : 3} className={classes.secondmainrow}>
+          <Grid item lg={9} md={12} xs={12}>
             <Box>
               <Card>
-                <CardHeader title="Page Information" />
+                <CardHeader title='Page Information' />
                 <Divider />
                 <CardContent>
-                  <TextField
-                    id="title"
-                    label="Title"
-                    name="title"
-                    onChange={handleChange}
-                    variant="outlined"
-                    value={page.title}
-                    className={clsx(classes.marginBottom, classes.width100)}
-                  />
+                  <Box component='div' mb={2}>
+                    <TextInput
+                      value={page.title}
+                      label='Title'
+                      name='title'
+                      onInputChange={handleChange}
+                    />
+                  </Box>
 
-                  <Grid item md={12}>
+                  <Box component='div' mb={2}>
                     {page.title ? (
                       <span style={{ marginBottom: 10, display: "block" }}>
                         <strong>Link: </strong>
@@ -143,17 +107,17 @@ const EditPage = (props) => {
                         {editPremalink === false && page.url}
                         {editPremalink === true && (
                           <input
-                            id="url"
-                            name="url"
+                            id='url'
+                            name='url'
                             value={page.url}
                             onChange={handleChange}
-                            variant="outlined"
+                            variant='outlined'
                             className={classes.editpermalinkInput}
                           />
                         )}
                         <Button
-                          color="primary"
-                          variant="contained"
+                          color='primary'
+                          variant='contained'
                           onClick={changePermalink}
                           className={classes.editpermalinkInputBtn}
                         >
@@ -161,53 +125,46 @@ const EditPage = (props) => {
                         </Button>
                       </span>
                     ) : null}
-                  </Grid>
-                  <TinymceEditor value={page.content} />
+                  </Box>
+                  <Box component='div'>
+                    <TinymceEditor value={page.content} />
+                  </Box>
                 </CardContent>
               </Card>
             </Box>
 
-            <Box component="span" m={1}>
+            <Box component='span' m={1}>
               <Card>
-                <CardHeader title="Meta Information" />
+                <CardHeader title='Meta Information' />
                 <Divider />
                 <CardContent>
                   <Grid container spacing={3}>
-                    <Grid item md={6}>
-                      <TextField
-                        id="meta-title"
-                        label="Meta Title"
-                        name="title"
+                    <Grid item md={6} xs={12}>
+                      <TextInput
+                        label='Meta Title'
+                        name='title'
                         value={page.meta.title}
-                        onChange={metaChange}
-                        variant="outlined"
-                        className={clsx(classes.width100)}
+                        onInputChange={metaChange}
                       />
                     </Grid>
 
-                    <Grid item md={6}>
-                      <TextField
-                        id="meta-keyword"
-                        label="Meta Keyword"
-                        name="keywords"
+                    <Grid item md={6} xs={12}>
+                      <TextInput
+                        label='Meta Keyword'
+                        name='keywords'
                         value={page.meta.keywords}
-                        onChange={metaChange}
-                        variant="outlined"
-                        className={clsx(classes.width100)}
+                        onInputChange={metaChange}
                       />
                     </Grid>
 
-                    <Grid item md={12}>
-                      <TextField
-                        id="meta-description"
-                        label="Meta-description"
-                        name="description"
+                    <Grid item md={12} xs={12}>
+                      <TextInput
+                        label='Description'
+                        name='description'
                         value={page.meta.description}
-                        onChange={metaChange}
-                        variant="outlined"
-                        className={clsx(classes.marginBottom, classes.width100)}
+                        onInputChange={metaChange}
                         multiline
-                        rows="4"
+                        rows='4'
                       />
                     </Grid>
                   </Grid>
@@ -216,28 +173,28 @@ const EditPage = (props) => {
             </Box>
           </Grid>
 
-          <Grid item lg={3} md={12}>
+          <Grid item lg={3} md={12} xs={12}>
             <Box>
               <Card>
-                <CardHeader title="Status" />
+                <CardHeader title='Status' />
                 <Divider />
                 <CardContent>
                   <RadioGroup
-                    defaultValue="Publish"
-                    name="status"
+                    defaultValue='Publish'
+                    name='status'
                     onChange={handleChange}
                     row
                     value={page.status}
                   >
                     <FormControlLabel
-                      value="Publish"
+                      value='Publish'
                       control={<StyledRadio />}
-                      label="Publish"
+                      label='Publish'
                     />
                     <FormControlLabel
-                      value="Draft"
+                      value='Draft'
                       control={<StyledRadio />}
-                      label="Draft"
+                      label='Draft'
                     />
                   </RadioGroup>
                 </CardContent>
@@ -250,26 +207,4 @@ const EditPage = (props) => {
   );
 };
 
-const StyledRadio = (props) => {
-  return (
-    <Radio
-      className="radioRoot"
-      disableRipple
-      color="default"
-      checkedIcon={<span className="radioIcon radiocheckedIcon" />}
-      icon={<span className="radioIcon" />}
-      {...props}
-    />
-  );
-};
-
-const mapStateToProps = (state) => {
-  return { pageState: state.pages };
-};
-
-const mapDispatchToProps = {
-  pageUpdateAction,
-  pageAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditPage);
+export default EditPage;
