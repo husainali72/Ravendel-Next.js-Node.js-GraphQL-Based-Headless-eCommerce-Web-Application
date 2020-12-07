@@ -13,7 +13,8 @@ const viewStyles = makeStyles((theme) => ({
     padding: theme.spacing(4),
     marginTop: 40,
     [theme.breakpoints.down('xs')]: {
-      marginTop: 60,
+      marginTop: 75,
+      padding: theme.spacing(2),
     },
   },
   deleteicon: {

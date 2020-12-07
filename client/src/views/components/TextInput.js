@@ -2,7 +2,7 @@ import React from "react";
 import { TextField } from "@material-ui/core";
 import viewStyles from "../viewStyles.js";
 
-const TextInput = ({ name, value, label, onInputChange, type, sizeSmall }) => {
+const TextInput = ({ name, value, label, onInputChange, type, sizeSmall, ...other }) => {
   const classes = viewStyles();
 
   return (
@@ -15,6 +15,7 @@ const TextInput = ({ name, value, label, onInputChange, type, sizeSmall }) => {
       variant="outlined"
       fullWidth
       size={sizeSmall? "small" : 'medium'}
+      {...other}
     />
   );
 };

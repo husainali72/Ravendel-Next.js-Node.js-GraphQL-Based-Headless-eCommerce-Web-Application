@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Grid,
   Card,
@@ -17,27 +17,27 @@ import {
   Tooltip
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { couponsAction, couponDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
-import Alert from "../utils/Alert";
-import Loading from "../utils/loading";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
+import {Alert, Loading} from '../components';
 
-const AllCoupons = props => {
+const AllCoupons = () => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const Coupons = useSelector(state => state.coupons)
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    if (isEmpty(props.couponState.coupons)) {
-      props.couponsAction();
+    if (isEmpty(Coupons.coupons)) {
+      dispatch(couponsAction());
     }
   }, []);
-
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -54,7 +54,7 @@ const AllCoupons = props => {
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.couponState.loading && <Loading />}
+            {Coupons.loading && <Loading />}
             <CardHeader
               action={
                 <Link to="/add-coupon">
@@ -75,7 +75,7 @@ const AllCoupons = props => {
               <TableContainer className={classes.container}>
                 <Table
                   stickyHeader
-                  aria-label="sticky table and Dense Table"
+                  aria-label="allcoupons-table"
                   size="small"
                 >
                   <TableHead>
@@ -88,7 +88,7 @@ const AllCoupons = props => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {props.couponState.coupons
+                    {Coupons.coupons
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -121,7 +121,7 @@ const AllCoupons = props => {
                                 aria-label="Delete"
                                 className={classes.deleteicon}
                                 onClick={() =>
-                                  props.couponDeleteAction(coupon.id)
+                                  dispatch(couponDeleteAction(coupon.id))
                                 }
                               >
                                 <DeleteIcon />
@@ -136,7 +136,7 @@ const AllCoupons = props => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={props.couponState.coupons.length}
+                count={Coupons.coupons.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -150,13 +150,4 @@ const AllCoupons = props => {
   );
 };
 
-const mapStateToProps = state => {
-  return { couponState: state.coupons };
-};
-
-const mapDispatchToProps = {
-  couponsAction,
-  couponDeleteAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AllCoupons);
+export default AllCoupons;

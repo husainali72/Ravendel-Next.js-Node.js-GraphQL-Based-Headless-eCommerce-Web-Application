@@ -56,17 +56,17 @@ export default (state = initialState, action) => {
       };
     case PRODUCTS_SUCCESS:
       return {
-        ...initialState,
+        ...state,
         products: action.payload,
         loading: false,
         success: true,
       };
     case PRODUCT_SUCCESS:
       return {
-        ...state,
         product: action.payload,
         loading: false,
         success: true,
+        ...state,
       };
     case PRODUCT_FAIL:
       return {

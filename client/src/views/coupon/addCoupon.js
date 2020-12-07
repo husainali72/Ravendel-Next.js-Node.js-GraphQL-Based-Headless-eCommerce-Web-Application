@@ -1,137 +1,124 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import viewStyles from "../viewStyles";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { Link } from "react-router-dom";
-import Alert from "../utils/Alert";
-import Loading from "../utils/loading";
-import { isEmpty } from "../../utils/helper";
 import {
   Grid,
   Card,
   CardHeader,
   CardContent,
-  Button,
-  TextField,
-  IconButton,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
   Divider,
   Box,
-  Typography,
   Tab,
   Tabs,
   Input,
   Chip,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  TextField,
+  useMediaQuery
 } from "@material-ui/core";
+import {  useTheme } from '@material-ui/styles';
 import clsx from "clsx";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   categoriesAction,
   productsAction,
-  couponAddAction
+  couponAddAction,
 } from "../../store/action/";
+import { Alert, Loading, TopBar, TextInput } from "../components";
+import {
+  TabPanel,
+  a11yProps,
+  MenuProps,
+  couponObj,
+  getSelectedName,
+} from "./coupon-components";
+import { isEmpty } from "../../utils/helper";
 
-var stateObj = {
-  code: "",
-  description: "",
-  discount_type: "amount-discount",
-  discount_value: "0",
-  free_shipping: false,
-  expire: "",
-  minimum_spend: "0",
-  maximum_spend: "0",
-  products: [],
-  exclude_products: [],
-  categories: [],
-  exclude_categories: []
-};
-
-const AddCoupon = props => {
+const AddCoupon = () => {
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const Products = useSelector((state) => state.products);
+  const Coupons = useSelector((state) => state.coupons);
+  const dispatch = useDispatch();
   const classes = viewStyles();
   const [tabVal, setTabVal] = useState("general");
-  const [coupon, setCoupon] = useState(stateObj);
-
-  const inputLabel = React.useRef(null);
-  const [labelWidth, setLabelWidth] = React.useState(0);
-  React.useEffect(() => {
+  const [coupon, setCoupon] = useState(couponObj);
+  const inputLabel = useRef(null);
+  const [labelWidth, setLabelWidth] = useState(0);
+  useEffect(() => {
     setLabelWidth(inputLabel.current.offsetWidth);
   }, []);
 
   useEffect(() => {
-    props.categoriesAction();
-    props.productsAction();
+    if (isEmpty(Products.products)) {
+      dispatch(productsAction());
+    }
+    if (isEmpty(Products.categories)) {
+      dispatch(categoriesAction());
+    }
   }, []);
 
   useEffect(() => {
-    setCoupon(stateObj);
-  }, [props.couponState.coupons]);
+    setCoupon(couponObj);
+  }, [Coupons.coupons]);
 
   const tabChange = (event, newValue) => {
     setTabVal(newValue);
   };
 
   const addCoupon = () => {
-    props.couponAddAction(coupon);
+    dispatch(couponAddAction(coupon));
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setCoupon({ ...coupon, [e.target.name]: e.target.value });
   };
 
-  const selectChange = e => {
+  const selectChange = (e) => {
     setCoupon({ ...coupon, [e.target.name]: e.target.value });
-  };
-
-  const getName = (id, element) => {
-    if (element === "products" || element === "exclude_products") {
-      for (let i in props.productState.products) {
-        if (id === props.productState.products[i].id) {
-          return props.productState.products[i].name;
-        }
-      }
-    } else {
-      for (let i in props.productState.categories) {
-        if (id === props.productState.categories[i].id) {
-          return props.productState.categories[i].name;
-        }
-      }
-    }
   };
 
   /* ==================Component for Select===================== */
 
-  const SelectOptionField = props => {
+  const SelectOptionField = ({ label, name, value, children, id }) => {
     return (
       <FormControl
-        variant="outlined"
-        className={clsx(classes.marginBottom, classes.width100)}
+        variant='outlined'
+        className={classes.marginBottom}
+        fullWidth
       >
-        <InputLabel id="products-select">{props.label}</InputLabel>
+        <InputLabel id={id}>{label}</InputLabel>
         <Select
-          labelId="products-select"
+          labelId={id}
           multiple
           onChange={selectChange}
-          input={<Input id="select-multiple-chip" variant="outlined" />}
-          value={props.value}
-          name={props.name}
-          renderValue={selected => (
+          input={<Input id='select-multiple-chip' variant='outlined' />}
+          value={value}
+          name={name}
+          renderValue={(selected) => (
             <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {selected.map(value => (
+              {selected.map((value) => (
                 <Chip
                   key={value}
-                  label={getName(value, props.name)}
+                  label={getSelectedName(
+                    value,
+                    name,
+                    Products.products,
+                    Products.categories
+                  )}
                   style={{ margin: 2 }}
                 />
               ))}
             </div>
           )}
           MenuProps={MenuProps}
+          fullWidth
         >
-          {props.children}
+          {children}
         </Select>
       </FormControl>
     );
@@ -140,143 +127,110 @@ const AddCoupon = props => {
   return (
     <Fragment>
       <Alert />
-      {props.loading && <Loading />}
-      <Grid container className="topbar">
-        <Grid item lg={6}>
-          <Typography variant="h4">
-            <Link to="/all-coupons">
-              <IconButton aria-label="Back">
-                <ArrowBackIcon />
-              </IconButton>
-            </Link>
-            <span style={{ paddingTop: 10 }}>Add Coupon</span>
-          </Typography>
-        </Grid>
+      {Products.loading || Coupons.loading ? <Loading /> : null}
+      <TopBar
+        title='Add Coupon'
+        onSubmit={addCoupon}
+        submitTitle='Add'
+        backLink={"/all-coupons"}
+      />
 
-        <Grid item lg={6} className="text-right padding-right-2">
-          <Button color="primary" variant="contained" onClick={addCoupon}>
-            Add
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.cancelBtn}
-          >
-            <Link to="/all-coupons" style={{ color: "#fff" }}>
-              Discard
-            </Link>
-          </Button>
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={4} className={classes.secondmainrow}>
-        <Grid item md={6}>
+      <Grid container spacing={isSmall ? 1 : 4} className={classes.secondmainrow}>
+        <Grid item md={6} sm={12} xs={12}>
           <Card>
-            <CardHeader title="Coupon Information" />
+            <CardHeader title='Coupon Information' />
             <Divider />
             <CardContent>
-              <Box component="div">
-                <TextField
-                  id="coupon_code"
-                  label="Coupon Code"
-                  name="code"
+              <Box component='div' mb={2}>
+                <TextInput
                   value={coupon.code}
-                  onChange={handleChange}
-                  variant="outlined"
-                  className={clsx(classes.marginBottom, classes.width100)}
+                  label='Coupon Code'
+                  name='code'
+                  onInputChange={handleChange}
                 />
               </Box>
-              <Box component="div">
-                <TextField
-                  id="coupon_discription"
-                  label="Description"
-                  name="description"
+              <Box component='div' mb={2}>
+                <TextInput
                   value={coupon.description}
-                  onChange={handleChange}
-                  variant="outlined"
-                  className={clsx(classes.marginBottom, classes.width100)}
+                  label='Description'
+                  name='description'
+                  onInputChange={handleChange}
                   multiline
-                  rows="4"
+                  rows='4'
                 />
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item md={6}>
+        <Grid item md={6} sm={12} xs={12}>
           <Card>
-            <CardHeader title="Copon Data" />
+            <CardHeader title='Copon Data' />
             <Divider />
             <CardContent>
-              <Box component="div" className={classes.tabsHeader}>
+              <Box component='div' className={classes.tabsHeader}>
                 <Tabs
                   value={tabVal}
                   onChange={tabChange}
-                  indicatorColor="primary"
-                  textColor="primary"
+                  indicatorColor='primary'
+                  textColor='primary'
                 >
                   <Tab
-                    value="general"
-                    label="General"
+                    value='general'
+                    label='General'
                     {...a11yProps("general")}
                   />
                   <Tab
-                    value="usage-restriction"
-                    label="Usage restriction"
+                    value='usage-restriction'
+                    label='Usage restriction'
                     {...a11yProps("usage-restriction")}
                   />
                 </Tabs>
               </Box>
-              <Box component="div" className={classes.tabsBody}>
+              <Box component='div' className={classes.tabsBody}>
                 {/*  ==================Genreal Tab ================== */}
-                <TabPanel value={tabVal} index="general">
-                  <FormControl
-                    variant="outlined"
-                    className={clsx(classes.marginBottom, classes.width100)}
-                  >
-                    <InputLabel ref={inputLabel} id="products-select">
-                      Discount Type
-                    </InputLabel>
-                    <Select
-                      labelWidth={labelWidth}
-                      onChange={handleChange}
-                      inputProps={{
-                        name: "discount_type",
-                        value: coupon.discount_type
-                      }}
-                    >
-                      <MenuItem value="amount-discount">
-                        Fixed Amount Discount
-                      </MenuItem>
-                      <MenuItem value="precantage-discount">
-                        Fixed Precantage Discount
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-
-                  <Grid container spacing={1}>
+                <TabPanel value={tabVal} index='general'>
+                  <Grid container spacing={2}>
+                    <Grid item md={12} sm={12} xs={12}>
+                      <FormControl variant='outlined' fullWidth>
+                        <InputLabel ref={inputLabel} id='products-select'>
+                          Discount Type
+                        </InputLabel>
+                        <Select
+                          labelWidth={labelWidth}
+                          onChange={handleChange}
+                          inputProps={{
+                            name: "discount_type",
+                            value: coupon.discount_type,
+                          }}
+                        >
+                          <MenuItem value='amount-discount'>
+                            Fixed Amount Discount
+                          </MenuItem>
+                          <MenuItem value='precantage-discount'>
+                            Fixed Precantage Discount
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
                     <Grid item md={6} sm={12} xs={12}>
-                      <TextField
-                        type="number"
-                        id="coupon_amount"
-                        label="Coupon Amount"
-                        name="discount_value"
+                      <TextInput
                         value={coupon.discount_value}
-                        onChange={handleChange}
-                        variant="outlined"
-                        className={clsx(classes.width100)}
+                        label='Coupon Amount'
+                        name='discount_value'
+                        onInputChange={handleChange}
                       />
                     </Grid>
                     <Grid item md={6} sm={12} xs={12}>
                       <TextField
-                        id="coupon_expiry"
-                        helperText="Coupon Expiry"
-                        name="expire"
+                        id='coupon_expiry'
+                        helperText='Coupon Expiry'
+                        name='expire'
                         value={coupon.expire}
                         onChange={handleChange}
-                        variant="outlined"
+                        variant='outlined'
                         className={clsx(classes.width100, "top-helper")}
-                        type="date"
+                        type='date'
                       />
                     </Grid>
                   </Grid>
@@ -285,48 +239,46 @@ const AddCoupon = props => {
                     className={clsx(classes.marginTop1, classes.width100)}
                     control={
                       <Checkbox
-                        color="primary"
+                        color='primary'
                         checked={coupon.free_shipping}
-                        onChange={e =>
+                        onChange={(e) =>
                           setCoupon({
                             ...coupon,
-                            free_shipping: e.target.checked
+                            free_shipping: e.target.checked,
                           })
                         }
                       />
                     }
-                    label="Free shipping"
+                    label='Free shipping'
                   />
                 </TabPanel>
 
                 {/*  ==================Usage Restriction Tab ================== */}
-                <TabPanel value={tabVal} index="usage-restriction">
-                  <TextField
-                    id="minimum-spend"
-                    label="Minimum Spend"
-                    name="minimum_spend"
-                    value={coupon.minimum_spend}
-                    onChange={handleChange}
-                    variant="outlined"
-                    className={clsx(classes.marginBottom, classes.width100)}
-                  />
-                  <TextField
-                    id="maximum-spend"
-                    label="Maximum Spend"
-                    name="maximum_spend"
-                    value={coupon.maximum_spend}
-                    onChange={handleChange}
-                    variant="outlined"
-                    className={clsx(classes.marginBottom, classes.width100)}
-                  />
+                <TabPanel value={tabVal} index='usage-restriction'>
+                  <Box component='div' mb={2}>
+                    <TextInput
+                      value={coupon.minimum_spend}
+                      label='Minimum Spend'
+                      name='minimum_spend'
+                      onInputChange={handleChange}
+                    />
+                  </Box>
+                  <Box component='div' mb={2}>
+                    <TextInput
+                      value={coupon.maximum_spend}
+                      label='Maximum Spend'
+                      name='maximum_spend'
+                      onInputChange={handleChange}
+                    />
+                  </Box>
 
                   {/*  ==================Products Select ================== */}
                   <SelectOptionField
-                    name="products"
-                    label="Products"
+                    name='products'
+                    label='Products'
                     value={coupon.products}
                   >
-                    {props.productState.products.map(product => (
+                    {Products.products.map((product) => (
                       <MenuItem value={product.id} key={product.id}>
                         {product.name}
                       </MenuItem>
@@ -335,11 +287,11 @@ const AddCoupon = props => {
 
                   {/* ================== Exclude Products Select ================== */}
                   <SelectOptionField
-                    name="exclude_products"
-                    label="Exclude Products"
+                    name='exclude_products'
+                    label='Exclude Products'
                     value={coupon.exclude_products}
                   >
-                    {props.productState.products.map(product => (
+                    {Products.products.map((product) => (
                       <MenuItem value={product.id} key={product.id}>
                         {product.name}
                       </MenuItem>
@@ -348,11 +300,11 @@ const AddCoupon = props => {
 
                   {/*  ==================Category Select  ==================*/}
                   <SelectOptionField
-                    name="categories"
-                    label="Categories"
+                    name='categories'
+                    label='Categories'
                     value={coupon.categories}
                   >
-                    {props.productState.categories.map(category => (
+                    {Products.categories.map((category) => (
                       <MenuItem value={category.id} key={category.id}>
                         {category.name}
                       </MenuItem>
@@ -361,11 +313,11 @@ const AddCoupon = props => {
 
                   {/* ==================Exclude Category Select===================== */}
                   <SelectOptionField
-                    name="exclude_categories"
-                    label="Exclude Categories"
+                    name='exclude_categories'
+                    label='Exclude Categories'
                     value={coupon.exclude_categories}
                   >
-                    {props.productState.categories.map(category => (
+                    {Products.categories.map((category) => (
                       <MenuItem value={category.id} key={category.id}>
                         {category.name}
                       </MenuItem>
@@ -381,54 +333,4 @@ const AddCoupon = props => {
   );
 };
 
-/* ==================Component for Tabpanel===================== */
-
-const TabPanel = props => {
-  const { children, value, index, ...other } = props;
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`wrapped-tabpanel-${index}`}
-      aria-labelledby={`wrapped-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </Typography>
-  );
-};
-
-/* ==================Component for Tabpanel===================== */
-
-const a11yProps = index => {
-  return {
-    id: `wrapped-tab-${index}`,
-    "aria-controls": `wrapped-tabpanel-${index}`
-  };
-};
-
-/* ==================Component for Tabpanel===================== */
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250
-    }
-  }
-};
-
-const mapStateToProps = state => {
-  return { productState: state.products, couponState: state.coupons };
-};
-
-const mapDispatchToProps = {
-  categoriesAction,
-  productsAction,
-  couponAddAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddCoupon);
+export default AddCoupon;
