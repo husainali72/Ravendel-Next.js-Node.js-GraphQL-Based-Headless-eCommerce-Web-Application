@@ -1,41 +1,19 @@
 import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Button,
   TextField,
-  IconButton,
-  Divider,
   Box,
   RadioGroup,
-  Radio,
   FormControlLabel,
-  Typography,
+  useMediaQuery,
 } from "@material-ui/core";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { useTheme } from "@material-ui/styles";
+import { useSelector, useDispatch } from "react-redux";
 import { blogUpdateAction, blogAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
-import clsx from "clsx";
 import { isEmpty } from "../../utils/helper";
-import Loading from "../utils/loading";
 import viewStyles from "../viewStyles";
-
-const StyledRadio = (props) => {
-  return (
-    <Radio
-      className="radioRoot"
-      disableRipple
-      color="default"
-      checkedIcon={<span className="radioIcon radiocheckedIcon" />}
-      icon={<span className="radioIcon" />}
-      {...props}
-    />
-  );
-};
+import { Alert, Loading, TopBar, StyledRadio, CardBlocks } from "../components";
 
 const defaultObj = {
   title: "",
@@ -51,24 +29,29 @@ const defaultObj = {
   },
 };
 const EditFAQ = (props) => {
+  const FAQId = props.match.params.id;
   const classes = viewStyles();
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
+  const dispatch = useDispatch();
+  const blogState = useSelector((state) => state.blogs);
   const [faq, setFaq] = useState(defaultObj);
 
   useEffect(() => {
-    if (!isEmpty(props.match.params.id)) {
-      props.blogAction(props.match.params.id);
+    if (!isEmpty(FAQId)) {
+      dispatch(blogAction(FAQId));
     }
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(props.blogState.blog)) {
-      setFaq({ ...faq, ...props.blogState.blog });
+    if (!isEmpty(blogState.blog)) {
+      setFaq({ ...faq, ...blogState.blog });
     }
-  }, [props.blogState.blog]);
+  }, [blogState.blog]);
 
   const updateFaq = (e) => {
     e.preventDefault();
-    props.blogUpdateAction(faq);
+    dispatch(blogUpdateAction(faq));
   };
 
   const handleChange = (e) => {
@@ -77,94 +60,63 @@ const EditFAQ = (props) => {
 
   return (
     <Fragment>
-      {props.blogState.loading && <Loading />}
+      <Alert />
+      {blogState.loading ? <Loading /> : null}
       <form>
-        <Grid container className="topbar">
-          <Grid item lg={6}>
-            <Typography variant="h4">
-              <Link to="/all-faq">
-                <IconButton aria-label="Back">
-                  <ArrowBackIcon />
-                </IconButton>
-              </Link>
-              <span style={{ paddingTop: 10 }}>Edit FAQ</span>
-            </Typography>
+        <TopBar
+          title='Edit FAQ'
+          onSubmit={updateFaq}
+          submitTitle='Update'
+          backLink={"/all-faq"}
+        />
+
+        <Grid
+          container
+          spacing={isSmall ? 2 : 3}
+          className={classes.secondmainrow}
+        >
+          <Grid item lg={9} md={12} xs={12}>
+            <CardBlocks title='FAQ Information' nomargin>
+              <Box component='div' mb={2}>
+                <TextField
+                  id='title'
+                  label='Title'
+                  name='title'
+                  onChange={handleChange}
+                  variant='outlined'
+                  value={faq.title}
+                  fullWidth
+                />
+              </Box>
+              <Box component='div'>
+                {!isEmpty(blogState.blog) && (
+                  <TinymceEditor value={faq.content} />
+                )}
+              </Box>
+            </CardBlocks>
           </Grid>
 
-          <Grid item lg={6} className="text-right padding-right-2">
-            <Button color="primary" variant="contained" onClick={updateFaq}>
-              Update
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.cancelBtn}
-            >
-              <Link to="/all-faq" style={{ color: "#fff" }}>
-                Discard
-              </Link>
-            </Button>
-          </Grid>
-        </Grid>
-
-        <Grid container spacing={4} className={classes.secondmainrow}>
-          <Grid item lg={9} md={12}>
-            <Card>
-              <CardHeader title="FAQ Information" />
-              <Divider />
-              <CardContent>
-                <Grid container>
-                  <Grid item md={12}>
-                    <TextField
-                      id="title"
-                      label="Title"
-                      name="title"
-                      onChange={handleChange}
-                      variant="outlined"
-                      value={faq.title}
-                      className={clsx(classes.marginBottom, classes.width100)}
-                    />
-                  </Grid>
-                </Grid>
-
-                <Grid container>
-                  <Grid item md={12}>
-                    {!isEmpty(props.blogState.blog) && (
-                      <TinymceEditor value={faq.content} />
-                    )}
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item lg={3} md={12}>
-            <Box>
-              <Card>
-                <CardHeader title="Status" />
-                <Divider />
-                <CardContent>
-                  <RadioGroup
-                    defaultValue="Publish"
-                    name="status"
-                    onChange={handleChange}
-                    row
-                    value={faq.status}
-                  >
-                    <FormControlLabel
-                      value="Publish"
-                      control={<StyledRadio />}
-                      label="Publish"
-                    />
-                    <FormControlLabel
-                      value="Draft"
-                      control={<StyledRadio />}
-                      label="Draft"
-                    />
-                  </RadioGroup>
-                </CardContent>
-              </Card>
-            </Box>
+          <Grid item lg={3} md={12} xs={12}>
+            <CardBlocks title='Status' nomargin>
+              <RadioGroup
+                defaultValue='Publish'
+                name='status'
+                onChange={handleChange}
+                row
+                value={faq.status}
+              >
+                <FormControlLabel
+                  value='Publish'
+                  control={<StyledRadio />}
+                  label='Publish'
+                />
+                <FormControlLabel
+                  value='Draft'
+                  control={<StyledRadio />}
+                  label='Draft'
+                />
+              </RadioGroup>
+            </CardBlocks>
           </Grid>
         </Grid>
       </form>
@@ -172,13 +124,4 @@ const EditFAQ = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { blogState: state.blogs };
-};
-
-const mapDispatchToProps = {
-  blogUpdateAction,
-  blogAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditFAQ);
+export default EditFAQ;

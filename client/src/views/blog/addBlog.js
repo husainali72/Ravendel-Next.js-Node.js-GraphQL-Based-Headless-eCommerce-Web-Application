@@ -149,7 +149,7 @@ const AddBlog = (props) => {
                   onChange={handleChange}
                   onBlur={(e) => !blog.url && isUrlExist(blog.title)}
                   variant='outlined'
-                  fullwidth
+                  fullWidth
                 />
               </Box>
 

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Grid,
   Card,
@@ -14,31 +14,30 @@ import {
   TablePagination,
   IconButton,
   Button,
-  Backdrop,
-  CircularProgress,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { blogsAction, blogDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
-import Alert from "../utils/Alert";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import {convertDateToStringFormat} from "../utils/convertDate";
+import {Alert, Loading} from '../components';
 
 const AllFAQ = (props) => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const blogs = useSelector(state => state.blogs);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    if (isEmpty(props.blogs.blogs)) {
-      props.blogsAction();
+    if (isEmpty(blogs.blogs)) {
+      dispatch(blogsAction());
     }
   }, []);
-
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -52,15 +51,10 @@ const AllFAQ = (props) => {
   return (
     <Fragment>
       <Alert />
+      {blogs.loading ? <Loading /> : null }
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.blogs.loading && (
-              <Backdrop className={classes.backdrop} open={true}>
-                <CircularProgress color="inherit" /> Loading
-              </Backdrop>
-            )}
-
             <CardHeader
               action={
                 <Link to="/add-faq">
@@ -81,7 +75,7 @@ const AllFAQ = (props) => {
               <TableContainer className={classes.container}>
                 <Table
                   stickyHeader
-                  aria-label="sticky table and Dense Table"
+                  aria-label="faq-table"
                   size="small"
                 >
                   <TableHead>
@@ -92,7 +86,7 @@ const AllFAQ = (props) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {props.blogs.blogs
+                    {blogs.blogs
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -111,7 +105,7 @@ const AllFAQ = (props) => {
                             <IconButton
                               aria-label="Delete"
                               className={classes.deleteicon}
-                              onClick={() => props.blogDeleteAction(blog.id)}
+                              onClick={() => dispatch(blogDeleteAction(blog.id))}
                             >
                               <DeleteIcon />
                             </IconButton>
@@ -124,7 +118,7 @@ const AllFAQ = (props) => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={props.blogs.blogs.length}
+                count={blogs.blogs.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -138,13 +132,4 @@ const AllFAQ = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { blogs: state.blogs };
-};
-
-const mapDispatchToProps = {
-  blogsAction,
-  blogDeleteAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AllFAQ);
+export default AllFAQ;
