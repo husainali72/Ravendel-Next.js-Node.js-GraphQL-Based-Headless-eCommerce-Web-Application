@@ -3,106 +3,86 @@ import { Grid, TextField, Box, Button, Typography } from "@material-ui/core";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
 import { storeAddressUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
+import { SettingTextInput, SettingBlock } from "./setting-components";
+import { useDispatch, useSelector } from "react-redux";
 
 const StoreAddress = (props) => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const settingState = useSelector((state) => state.settings);
   const [address, setAddress] = useState({
-    ...props.settingState.settings.store.store_address,
+    ...settingState.settings.store.store_address,
   });
 
   const updateStoreAddress = () => {
-    props.storeAddressUpdateAction(address);
+    dispatch(storeAddressUpdateAction(address));
   };
 
   return (
     <Fragment>
       <Grid container spacing={2}>
-        <Grid item md={12}>
-          <Typography variant="h5" className={classes.paddingBottom1}>
-            Store Address
-          </Typography>
-          <Box component="div">
-            <TextField
-              type="text"
-              variant="outlined"
-              label="Address line 1"
-              className={clsx(classes.settingInput)}
-              size="small"
-              value={address.address_line1}
-              onChange={(e) =>
-                setAddress({ ...address, address_line1: e.target.value })
-              }
-            />
-          </Box>
-          <Box component="div">
-            <TextField
-              type="text"
-              variant="outlined"
-              label="Address line 2"
-              className={clsx(classes.settingInput)}
-              size="small"
-              value={address.address_line2}
-              onChange={(e) =>
-                setAddress({ ...address, address_line2: e.target.value })
-              }
-            />
-          </Box>
-          <Box component="div">
-            <TextField
-              type="text"
-              variant="outlined"
-              label="City"
-              className={clsx(classes.settingInput)}
-              size="small"
-              value={address.city}
-              onChange={(e) => setAddress({ ...address, city: e.target.value })}
-            />
-          </Box>
-          <Box component="div">
-            <TextField
-              type="text"
-              variant="outlined"
-              label="Country"
-              className={clsx(classes.settingInput)}
-              size="small"
-              value={address.country}
-              onChange={(e) =>
-                setAddress({ ...address, country: e.target.value })
-              }
-            />
-          </Box>
-
-          <Box component="div">
-            <TextField
-              type="text"
-              variant="outlined"
-              label="State"
-              className={clsx(classes.settingInput)}
-              size="small"
-              value={address.state}
-              onChange={(e) =>
-                setAddress({ ...address, state: e.target.value })
-              }
-            />
-          </Box>
-          <Box component="div">
-            <TextField
-              type="text"
-              variant="outlined"
-              label="Postcode / ZIP"
-              className={clsx(classes.settingInput)}
-              size="small"
-              value={address.zip}
-              onChange={(e) => setAddress({ ...address, zip: e.target.value })}
-            />
-          </Box>
+        <Grid item xs={12}>
+            <Box component='div'>
+              <SettingTextInput
+                value={address.address_line1}
+                label='Address line 1'
+                onSettingInputChange={(val) => {
+                  setAddress({ ...address, address_line1: val });
+                }}
+              />
+            </Box>
+            <Box component='div'>
+              <SettingTextInput
+                value={address.address_line2}
+                label='Address line 2'
+                onSettingInputChange={(val) => {
+                  setAddress({ ...address, address_line2: val });
+                }}
+              />
+            </Box>
+            <Box component='div'>
+              <SettingTextInput
+                value={address.city}
+                label='City'
+                onSettingInputChange={(val) => {
+                  setAddress({ ...address, city: val });
+                }}
+              />
+            </Box>
+            <Box component='div'>
+              <SettingTextInput
+                value={address.state}
+                label='State'
+                onSettingInputChange={(val) => {
+                  setAddress({ ...address, state: val });
+                }}
+              />
+            </Box>
+            <Box component='div'>
+              <SettingTextInput
+                value={address.country}
+                label='Country'
+                onSettingInputChange={(val) => {
+                  setAddress({ ...address, country: val });
+                }}
+              />
+            </Box>
+            <Box component='div'>
+              <SettingTextInput
+                value={address.zip}
+                label='Postcode / ZIP'
+                onSettingInputChange={(val) => {
+                  setAddress({ ...address, zip: val });
+                }}
+              />
+            </Box>
         </Grid>
+
         <Grid item md={12}>
           <Button
-            size="small"
-            color="primary"
-            variant="contained"
+            size='small'
+            color='primary'
+            variant='contained'
             onClick={updateStoreAddress}
           >
             Save Change
@@ -113,12 +93,4 @@ const StoreAddress = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  storeAddressUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(StoreAddress);
+export default StoreAddress;

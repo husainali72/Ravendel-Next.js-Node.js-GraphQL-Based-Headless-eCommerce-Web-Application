@@ -48,12 +48,13 @@ const PasswordInput = ({ name, value, label, onInputChange }) => {
           </InputAdornment>
         }
         labelWidth={70}
-        inputProps={{
-            autocomplete: 'new-password',
-            form: {
-              autocomplete: 'off',
-            },
-          }}
+        autoComplete='off'
+        // inputProps={{
+        //     autocomplete: 'new-password',
+        //     form: {
+        //       autocomplete: 'off',
+        //     },
+        //   }}
       />
     </FormControl>
   );

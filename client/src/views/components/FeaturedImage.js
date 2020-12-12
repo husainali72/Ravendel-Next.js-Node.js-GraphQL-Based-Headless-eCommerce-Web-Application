@@ -3,6 +3,8 @@ import { Box } from "@material-ui/core";
 import ImageIcon from "@material-ui/icons/Image";
 import viewStyles from "../viewStyles";
 import { isEmpty } from "../../utils/helper";
+import NoImagePlaceholder from '../../assets/images/no-image-placeholder.png'
+import UserPlaceholder from '../../assets/images/user-placeholder.png'
 
 const FeaturedImageComponent = ({ image, feautedImageChange, user }) => {
   const classes = viewStyles();
@@ -20,8 +22,8 @@ const FeaturedImageComponent = ({ image, feautedImageChange, user }) => {
           <img
             src={
               user
-                ? "https://www.hbwebsol.com/wp-content/uploads/2020/12/user-placeholder.png"
-                : "https://www.hbwebsol.com/wp-content/uploads/2020/12/no-image-placeholder.png"
+                ? UserPlaceholder
+                : NoImagePlaceholder
             }
             className={classes.feautedImageBoxPreview}
             alt='featured'

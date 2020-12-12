@@ -1,40 +1,42 @@
 import React, { Fragment, useState } from "react";
 import {
   Grid,
-  TextField,
   Box,
   FormControlLabel,
   Checkbox,
-  Typography,
   Button,
+  useMediaQuery
 } from "@material-ui/core";
-import viewStyles from "../../viewStyles.js";
-import clsx from "clsx";
+import { useTheme } from "@material-ui/styles";
+import viewStyles from "../../viewStyles";
 import { paymentBankUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { SettingTextInput, SettingBlock } from "./setting-components/";
 
 const DirectBankTransfer = (props) => {
   const classes = viewStyles();
-
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
+  const dispatch = useDispatch();
+  const settingState = useSelector((state) => state.settings);
   const [bankTransferInfo, setBankTransferInfo] = useState({
-    ...props.settingState.settings.paymnet.bank_transfer,
+    ...settingState.settings.paymnet.bank_transfer,
   });
 
   const updateBank = () => {
     delete bankTransferInfo.account_details.__typename;
-    props.paymentBankUpdateAction(bankTransferInfo);
+    dispatch(paymentBankUpdateAction(bankTransferInfo));
   };
 
   return (
     <Fragment>
       <Grid container spacing={2}>
-        <Grid item md={12}>
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5">Enable/Disable</Typography>
+        <Grid item xs={12}>
+          <Box component='div' className={classes.marginBottom2}>
             <FormControlLabel
               control={
                 <Checkbox
-                  color="primary"
+                  color='primary'
                   checked={bankTransferInfo.enable}
                   onChange={(e) =>
                     setBankTransferInfo({
@@ -44,190 +46,158 @@ const DirectBankTransfer = (props) => {
                   }
                 />
               }
-              label="Enable bank transfer"
+              label='Enable bank transfer'
             />
           </Box>
           {bankTransferInfo.enable && (
             <Box>
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Title
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='Title'
                   value={bankTransferInfo.title}
-                  onChange={(e) =>
+                  onSettingInputChange={(val) =>
                     setBankTransferInfo({
                       ...bankTransferInfo,
-                      title: e.target.value,
+                      title: val,
                     })
                   }
-                  className={classes.simpleSettingInput}
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Description
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='Description'
                   value={bankTransferInfo.description}
-                  onChange={(e) =>
+                  onSettingInputChange={(val) =>
                     setBankTransferInfo({
                       ...bankTransferInfo,
-                      description: e.target.value,
+                      description: val,
                     })
                   }
-                  multiline
-                  rows="5"
-                  className={classes.simpleSettingInput}
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Instructions
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
-                  value={bankTransferInfo.instructions}
-                  onChange={(e) =>
+              <Box component='div'>
+                <SettingTextInput
+                  label='Instructions'
+                  value={bankTransferInfo.description}
+                  onSettingInputChange={(val) =>
                     setBankTransferInfo({
                       ...bankTransferInfo,
-                      instructions: e.target.value,
+                      instructions: val,
                     })
                   }
-                  className={classes.simpleSettingInput}
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Account details:
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item md={4}>
-                    <TextField
-                      size="small"
-                      variant="outlined"
-                      label="Accoun Name"
+              <SettingBlock label='Account details'>
+                <Grid container spacing={isSmall ? 0 : 2}>
+                  <Grid item lg={4} md={6} xs={12}>
+                    <SettingTextInput
+                      label='Account Name'
                       value={bankTransferInfo.account_details.account_name}
-                      onChange={(e) =>
+                      onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
                             ...bankTransferInfo.account_details,
-                            account_name: e.target.value,
+                            account_name: val,
                           },
                         })
                       }
-                      className={clsx(classes.width100, classes.marginBottom1)}
+                      fullWidth
                     />
                   </Grid>
-                  <Grid item md={4}>
-                    <TextField
-                      size="small"
-                      variant="outlined"
-                      label="Account number"
+                  <Grid item lg={4} md={6} xs={12}>
+                    <SettingTextInput
+                      label='Account number'
                       value={bankTransferInfo.account_details.account_number}
-                      onChange={(e) =>
+                      onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
                             ...bankTransferInfo.account_details,
-                            account_number: e.target.value,
+                            account_number: val,
                           },
                         })
                       }
-                      className={clsx(classes.width100, classes.marginBottom1)}
+                      fullWidth
                     />
                   </Grid>
-                  <Grid item md={4}>
-                    <TextField
-                      size="small"
-                      variant="outlined"
-                      label="Bank name"
+                  <Grid item lg={4} md={6} xs={12}>
+                    <SettingTextInput
+                      label='Bank name'
                       value={bankTransferInfo.account_details.bank_name}
-                      onChange={(e) =>
+                      onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
                             ...bankTransferInfo.account_details,
-                            bank_name: e.target.value,
+                            bank_name: val,
                           },
                         })
                       }
-                      className={clsx(classes.width100, classes.marginBottom1)}
+                      fullWidth
                     />
                   </Grid>
-                  <Grid item md={4}>
-                    <TextField
-                      size="small"
-                      variant="outlined"
-                      label="Sort code"
+                  <Grid item lg={4} md={6} xs={12}>
+                    <SettingTextInput
+                      label='Sort code'
                       value={bankTransferInfo.account_details.short_code}
-                      onChange={(e) =>
+                      onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
                             ...bankTransferInfo.account_details,
-                            short_code: e.target.value,
+                            short_code: val,
                           },
                         })
                       }
-                      className={clsx(classes.width100, classes.marginBottom1)}
+                      fullWidth
                     />
                   </Grid>
-                  <Grid item md={4}>
-                    <TextField
-                      size="small"
-                      variant="outlined"
-                      label="IBAN"
+                  <Grid item lg={4} md={6} xs={12}>
+                    <SettingTextInput
+                      label='IBAN'
                       value={bankTransferInfo.account_details.iban}
-                      onChange={(e) =>
+                      onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
                             ...bankTransferInfo.account_details,
-                            iban: e.target.value,
+                            iban: val,
                           },
                         })
                       }
-                      className={clsx(classes.width100, classes.marginBottom1)}
+                      fullWidth
                     />
                   </Grid>
-                  <Grid item md={4}>
-                    <TextField
-                      size="small"
-                      variant="outlined"
-                      label="BIC / Swift"
-                      className={clsx(classes.width100, classes.marginBottom1)}
+                  <Grid item lg={4} md={6} xs={12}>
+                    <SettingTextInput
+                      label='BIC / Swift'
                       value={bankTransferInfo.account_details.bic_swift}
-                      onChange={(e) =>
+                      onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
                             ...bankTransferInfo.account_details,
-                            bic_swift: e.target.value,
+                            bic_swift: val,
                           },
                         })
                       }
+                      fullWidth
                     />
                   </Grid>
                 </Grid>
-              </Box>
+              </SettingBlock>
             </Box>
           )}
         </Grid>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Button
-            size="small"
-            color="primary"
-            variant="contained"
+            size='small'
+            color='primary'
+            variant='contained'
             onClick={updateBank}
           >
             Save Change
@@ -238,12 +208,4 @@ const DirectBankTransfer = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  paymentBankUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(DirectBankTransfer);
+export default DirectBankTransfer;

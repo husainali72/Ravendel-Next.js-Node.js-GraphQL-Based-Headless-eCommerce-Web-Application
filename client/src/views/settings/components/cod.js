@@ -1,105 +1,85 @@
 import React, { Fragment, useState } from "react";
 import {
   Grid,
-  TextField,
   Box,
   FormControlLabel,
   Checkbox,
-  Typography,
   Button,
 } from "@material-ui/core";
-
 import viewStyles from "../../viewStyles.js";
-
 import { paymentCodUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {SettingTextInput} from './setting-components/';
 
 const CashOnDelivery = (props) => {
   const classes = viewStyles();
-
+  const dispatch = useDispatch();
+  const settingState = useSelector((state) => state.settings);
   const [codInfo, setCodInfo] = useState({
-    ...props.settingState.settings.paymnet.cash_on_delivery,
+    ...settingState.settings.paymnet.cash_on_delivery,
   });
 
   const updateCOD = () => {
-    props.paymentCodUpdateAction(codInfo);
+    dispatch(paymentCodUpdateAction(codInfo));
   };
 
   return (
     <Fragment>
       <Grid container spacing={2}>
-        <Grid item md={12}>
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5">Enable/Disable</Typography>
+        <Grid item xs={12}>
+          <Box component='div' className={classes.marginBottom2}>
             <FormControlLabel
               control={
                 <Checkbox
-                  color="primary"
+                  color='primary'
                   checked={codInfo.enable}
                   onChange={(e) =>
                     setCodInfo({ ...codInfo, enable: e.target.checked })
                   }
                 />
               }
-              label="Enable cash on delivery"
+              label='Enable cash on delivery'
             />
           </Box>
           {codInfo.enable && (
             <Box>
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Title
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='Title'
                   value={codInfo.title}
-                  onChange={(e) =>
-                    setCodInfo({ ...codInfo, title: e.target.value })
+                  onSettingInputChange={(val) =>
+                    setCodInfo({ ...codInfo, title: val })
                   }
-                  className={classes.simpleSettingInput}
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Description
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='Description'
                   value={codInfo.description}
-                  onChange={(e) =>
-                    setCodInfo({ ...codInfo, description: e.target.value })
+                  onSettingInputChange={(val) =>
+                    setCodInfo({ ...codInfo, description: val })
                   }
-                  className={classes.simpleSettingInput}
-                  multiline
-                  rows="5"
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Instructions
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='Instructions'
                   value={codInfo.instructions}
-                  onChange={(e) =>
-                    setCodInfo({ ...codInfo, instructions: e.target.value })
+                  onSettingInputChange={(val) =>
+                    setCodInfo({ ...codInfo, instructions: val })
                   }
-                  className={classes.simpleSettingInput}
                 />
               </Box>
             </Box>
           )}
         </Grid>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Button
-            size="small"
-            color="primary"
-            variant="contained"
+            size='small'
+            color='primary'
+            variant='contained'
             onClick={updateCOD}
           >
             Save Change
@@ -110,12 +90,4 @@ const CashOnDelivery = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  paymentCodUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CashOnDelivery);
+export default CashOnDelivery;

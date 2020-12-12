@@ -3,13 +3,14 @@ import {
   Grid,
   Tabs,
   Tab,
-  Typography,
   Box,
   CardContent,
   Card,
   CardHeader,
   Divider,
+  useMediaQuery
 } from "@material-ui/core";
+import { useTheme } from "@material-ui/styles";
 import viewStyles from "../viewStyles";
 import clsx from "clsx";
 import General from "./components/general";
@@ -19,53 +20,30 @@ import SEO from "./components/seo";
 import Appearance from "./components/apperance";
 import Store from "./components/store";
 import Payment from "./components/payment";
+import { TabPanel, TabProps } from "../components";
 
-//import { connect } from "react-redux";
-
-const Settings = (props) => {
+const Settings = () => {
   const classes = viewStyles();
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const [value, setValue] = useState(6);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const TabPanel = (props) => {
-    const { children, value, index, ...other } = props;
-    return (
-      <Typography
-        component="div"
-        role="tabpanel"
-        hidden={value !== index}
-        id={`vertical-tabpanel-${index}`}
-        aria-labelledby={`vertical-tab-${index}`}
-        {...other}
-      >
-        {value === index && <Box p={3}>{children}</Box>}
-      </Typography>
-    );
-  };
-
-  const a11yProps = (index) => {
-    return {
-      id: `vertical-tab-${index} vertical-tabs-button`,
-      "aria-controls": `vertical-tabpanel-${index}`,
-      className: "text-left-tab",
-    };
-  };
-
   return (
     <Fragment>
       <Grid container spacing={4} className={classes.mainrow}>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Card>
             <CardHeader title="Settings" />
             <Divider />
             <CardContent>
               <div className={classes.settingRoot}>
-                <Box display="flex" className={classes.width100}>
+                <Box display="flex" flexDirection={isSmall ? 'column' : 'row'} className={classes.width100}>
                   <Box className={classes.settingLeft}>
                     <Tabs
-                      orientation="vertical"
+                      orientation= {isSmall ? "horizontal" : "vertical"}
                       variant="scrollable"
                       value={value}
                       onChange={handleChange}
@@ -73,13 +51,13 @@ const Settings = (props) => {
                       className={classes.settingsTabs}
                       indicatorColor="primary"
                     >
-                      <Tab label="General" {...a11yProps(0)} />
-                      <Tab label="Media" {...a11yProps(1)} />
-                      <Tab label="SMTP" {...a11yProps(2)} />
-                      <Tab label="SEO" {...a11yProps(3)} />
-                      <Tab label="Store" {...a11yProps(4)} />
-                      <Tab label="Payment" {...a11yProps(5)} />
-                      <Tab label="Appearance" {...a11yProps(6)} />
+                      <Tab label="General" {...TabProps(0)} />
+                      <Tab label="Media" {...TabProps(1)} />
+                      <Tab label="SMTP" {...TabProps(2)} />
+                      <Tab label="SEO" {...TabProps(3)} />
+                      <Tab label="Store" {...TabProps(4)} />
+                      <Tab label="Payment" {...TabProps(5)} />
+                      <Tab label="Appearance" {...TabProps(6)} />
                     </Tabs>
                   </Box>
                   <Box
@@ -118,11 +96,5 @@ const Settings = (props) => {
     </Fragment>
   );
 };
-
-/* const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {}; */
 
 export default Settings;

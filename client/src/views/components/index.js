@@ -10,6 +10,8 @@ import FeaturedImageComponent from "./FeaturedImage";
 import URLComponent from "./URLComponent";
 import TinymceEditor from "./Editor";
 import SelectComponent from "./SelectComponent";
+import TabPanel from './TabPanel';
+import TabProps from './tabProps';
 
 export {
   SelectComponent,
@@ -24,4 +26,6 @@ export {
   CardBlocksWithAction,
   FeaturedImageComponent,
   URLComponent,
+  TabPanel,
+  TabProps
 };

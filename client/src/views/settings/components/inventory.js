@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Grid,
   TextField,
@@ -13,62 +13,62 @@ import {
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
 import { storeInventoryUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  SettingTextInput,
+  SettingSelectComponent,
+  SettingBlock,
+} from "./setting-components";
 
-const Inventory = (props) => {
+const Inventory = () => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const settingState = useSelector((state) => state.settings);
   const [inventory, setinventory] = useState({
-    ...props.settingState.settings.store.inventory,
+    ...settingState.settings.store.inventory,
     notifications: {
       show_out_of_stock:
-        props.settingState.settings.store.inventory.notifications
-          .show_out_of_stock,
+        settingState.settings.store.inventory.notifications.show_out_of_stock,
       alert_for_minimum_stock:
-        props.settingState.settings.store.inventory.notifications
+        settingState.settings.store.inventory.notifications
           .alert_for_minimum_stock,
     },
   });
 
-  /* useEffect(() => {
-    setinventory({
-      ...props.settingState.settings.store.inventory,
-    });
-  }, [props.settingState]); */
-
   const updateInventory = () => {
-    props.storeInventoryUpdateAction(inventory);
+    dispatch(storeInventoryUpdateAction(inventory));
   };
 
   return (
     <Fragment>
       <Grid container spacing={2}>
-        <Grid item md={12}>
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5">Manage stock</Typography>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  checked={inventory.manage_stock}
-                  onChange={(e) =>
-                    setinventory({
-                      ...inventory,
-                      manage_stock: e.target.checked,
-                    })
-                  }
-                />
-              }
-              label="Do you want to track the inventory?"
-            />
-          </Box>
-          {inventory.manage_stock && (
-            <Box>
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5">Notifications</Typography>
+        <Grid item xs={12}>
+          <SettingBlock label='Manage stock' noBottomMargin>
+            <Box component='div' className={classes.marginBottom2}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    color='primary'
+                    checked={inventory.manage_stock}
+                    onChange={(e) =>
+                      setinventory({
+                        ...inventory,
+                        manage_stock: e.target.checked,
+                      })
+                    }
+                  />
+                }
+                label='Do you want to track the inventory?'
+              />
+            </Box>
+          </SettingBlock>
+          {inventory.manage_stock ? (
+            <SettingBlock label='Notifications' noBottomMargin>
+              <Box component='div' className={classes.marginBottom2}>
                 <FormControlLabel
                   control={
                     <Checkbox
-                      color="primary"
+                      color='primary'
                       checked={inventory.notifications.show_out_of_stock}
                       onChange={(e) =>
                         setinventory({
@@ -81,12 +81,12 @@ const Inventory = (props) => {
                       }
                     />
                   }
-                  label="Show out of stock products?"
+                  label='Show out of stock products?'
                 />
                 <FormControlLabel
                   control={
                     <Checkbox
-                      color="primary"
+                      color='primary'
                       checked={inventory.notifications.alert_for_minimum_stock}
                       onChange={(e) =>
                         setinventory({
@@ -99,72 +99,56 @@ const Inventory = (props) => {
                       }
                     />
                   }
-                  label="Alert for Minimum stock."
+                  label='Alert for Minimum stock.'
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Notification recipient(s)
-                </Typography>
-                <TextField
-                  type="email"
-                  variant="outlined"
-                  size="small"
+              <Box component='div'>
+                <SettingTextInput
                   value={inventory.notification_recipients}
-                  onChange={(e) =>
+                  label='Notification recipient(s)'
+                  onSettingInputChange={(val) => {
                     setinventory({
                       ...inventory,
-                      notification_recipients: e.target.value,
-                    })
-                  }
+                      notification_recipients: val,
+                    });
+                  }}
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Low stock threshold
-                </Typography>
-                <TextField
-                  type="number"
-                  variant="outlined"
-                  size="small"
+              <Box component='div'>
+                <SettingTextInput
                   value={inventory.low_stock_threshold}
-                  onChange={(e) =>
+                  label='Low stock threshold'
+                  onSettingInputChange={(val) => {
                     setinventory({
                       ...inventory,
-                      low_stock_threshold: parseInt(e.target.value),
-                    })
-                  }
+                      low_stock_threshold: parseInt(val),
+                    });
+                  }}
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Out of stock threshold
-                </Typography>
-                <TextField
-                  type="number"
-                  variant="outlined"
-                  size="small"
+              <Box component='div'>
+                <SettingTextInput
                   value={inventory.out_of_stock_threshold}
-                  onChange={(e) =>
+                  label='Out of stock threshold'
+                  onSettingInputChange={(val) => {
                     setinventory({
                       ...inventory,
-                      out_of_stock_threshold: parseInt(e.target.value),
-                    })
-                  }
+                      out_of_stock_threshold: parseInt(val),
+                    });
+                  }}
                 />
               </Box>
-            </Box>
-          )}
+            </SettingBlock>
+          ) : null}
 
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5">Out of stock visibility</Typography>
+          <Box component='div' className={classes.marginBottom2}>
             <FormControlLabel
               control={
                 <Checkbox
-                  color="primary"
+                  color='primary'
                   checked={inventory.out_of_stock_visibility}
                   onChange={(e) =>
                     setinventory({
@@ -174,52 +158,45 @@ const Inventory = (props) => {
                   }
                 />
               }
-              label="Show out of stock products?"
+              label='Show out of stock products?'
             />
           </Box>
 
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5" className={classes.paddingBottom1}>
-              Stock display format
-            </Typography>
-            <FormControl
-              variant="outlined"
-              className={clsx(classes.settingInput)}
-              size="small"
-            >
-              <Select
-                native
-                inputProps={{
-                  name: "stock-display-format",
-                  id: "stock-display-format",
-                }}
-                value={inventory.stock_display_format}
-                onChange={(e) =>
-                  setinventory({
-                    ...inventory,
-                    stock_display_format: e.target.value,
-                  })
-                }
-              >
-                <option value={"inStock"}>
-                  Always show quantity remaining in stock e.g. "12 in stock"
-                </option>
-                <option value={"leftStock"}>
-                  Only show quantity remaining in stock when low e.g. "Only 2
-                  left in stock"
-                </option>
-                <option value={"never"}>
-                  Never show quantity remaining in stock
-                </option>
-              </Select>
-            </FormControl>
+          <Box component='div' className={classes.marginBottom2}>
+            <SettingSelectComponent
+              label='Stock display format'
+              name='currency-position'
+              value={inventory.stock_display_format}
+              onSelecteChange={(val) =>
+                setinventory({
+                  ...inventory,
+                  stock_display_format: val,
+                })
+              }
+              items={[
+                {
+                  name:
+                    "Always show quantity remaining in stock e.g. '12 in stock'",
+                  value: "inStock",
+                },
+                {
+                  name:
+                    "Only show quantity remaining in stock when low e.g. 'Only 2 left in stock'",
+                  value: "leftStock",
+                },
+                {
+                  name: "Never show quantity remaining in stock",
+                  value: "never",
+                },
+              ]}
+            />
           </Box>
         </Grid>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Button
-            size="small"
-            color="primary"
-            variant="contained"
+            size='small'
+            color='primary'
+            variant='contained'
             onClick={updateInventory}
           >
             Save Change
@@ -230,12 +207,4 @@ const Inventory = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  storeInventoryUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Inventory);
+export default Inventory;

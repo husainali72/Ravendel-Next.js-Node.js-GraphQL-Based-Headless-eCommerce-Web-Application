@@ -232,6 +232,9 @@ const viewStyles = makeStyles((theme) => ({
         backgroundColor: "#000",
       },
     },
+    [theme.breakpoints.down('md')]: {
+      height: 'auto',
+    },
   },
   settingsTabs: {
     //borderRight: `1px solid ${theme.palette.divider}`\
@@ -318,7 +321,7 @@ const viewStyles = makeStyles((theme) => ({
   },
   settingLeft: {
     maxHeight: "600px",
-    background: "#03a9f463",
+    background: "#ececec",
   },
   settingRight: {
     maxHeight: "600px",
@@ -349,10 +352,20 @@ const viewStyles = makeStyles((theme) => ({
   },
   settingInput: {
     minWidth: "300px !important",
-    marginBottom: "20px !important",
+    marginBottom: "25px !important",
+    [theme.breakpoints.down('md')]: {
+      minWidth: "100% !important",
+      width: "100% !important",
+      display: "flex !important"
+    },
   },
-  simpleSettingInput: {
+  settingSelectInput: {
     minWidth: "300px !important",
+    [theme.breakpoints.down('md')]: {
+      minWidth: "100% !important",
+      width: "100% !important",
+      display: "flex !important"
+    },
   },
   marginBottom1: {
     marginBottom: "10px !important",

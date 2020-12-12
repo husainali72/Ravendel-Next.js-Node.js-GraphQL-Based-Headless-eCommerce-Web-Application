@@ -1,148 +1,114 @@
 import React, { Fragment, useState } from "react";
 import {
   Grid,
-  TextField,
   Box,
   Button,
-  Typography,
-  FormControl,
-  Select,
 } from "@material-ui/core";
-import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
 import { storeCurrencyUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  SettingTextInput,
+  SettingSelectComponent,
+} from "./setting-components";
 
-const CurrencyOptions = (props) => {
-  const classes = viewStyles();
+const CurrencyOptions = () => {
+  const dispatch = useDispatch();
+  const settingState = useSelector((state) => state.settings);
   const [currencyOption, setCurrencyOption] = useState({
-    ...props.settingState.settings.store.currency_options,
+    ...settingState.settings.store.currency_options,
   });
 
   const updateStoreCurrency = () => {
-    props.storeCurrencyUpdateAction(currencyOption);
+    dispatch(storeCurrencyUpdateAction(currencyOption));
   };
 
   return (
     <Fragment>
       <Grid container spacing={2}>
-        <Grid item md={12}>
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5" className={classes.paddingBottom1}>
-              Currency 123
-            </Typography>
-            <FormControl variant="outlined" size="small">
-              <Select
-                native
-                value={currencyOption.currency}
-                onChange={(e) =>
-                  setCurrencyOption({
-                    ...currencyOption,
-                    currency: e.target.value,
-                  })
-                }
-                inputProps={{
-                  name: "stock-display-format",
-                  id: "stock-display-format",
-                }}
-                className={classes.simpleSettingInput}
-              >
-                <option value={"dollar"}>Dollar $</option>
-                <option value={"g"}>g</option>
-                <option value={"lbs"}>lbs</option>
-                <option value={"oz"}>oz</option>
-              </Select>
-            </FormControl>
+        <Grid item xs={12}>
+          <Box component='div' mb={3}>
+            <SettingSelectComponent
+              label='Currency'
+              name='Currency'
+              value={currencyOption.currency}
+              onSelecteChange={(val) =>
+                setCurrencyOption({
+                  ...currencyOption,
+                  currency: val,
+                })
+              }
+              items={[
+                { name: "U.S. Dollar (USD)", value: "dollar" },
+                { name: "Euro (EUR)", value: "eur" },
+                { name: "British Pound (GBP)", value: "gbp" },
+                { name: "Canadian Dollar (CAD)", value: "cad" },
+              ]}
+            />
           </Box>
 
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5" className={classes.paddingBottom1}>
-              Currency Position
-            </Typography>
-            <FormControl variant="outlined" size="small">
-              <Select
-                native
-                value={currencyOption.currency_position}
-                onChange={(e) =>
-                  setCurrencyOption({
-                    ...currencyOption,
-                    currency_position: e.target.value,
-                  })
-                }
-                inputProps={{
-                  name: "stock-display-format",
-                  id: "stock-display-format",
-                }}
-                className={classes.simpleSettingInput}
-              >
-                <option value={"left"}>Left</option>
-                <option value={"right"}>Right</option>
-                <option value={"left_space"}>Left with space</option>
-                <option value={"right_space"}>Right with space</option>
-              </Select>
-            </FormControl>
+          <Box component='div' mb={3}>
+            <SettingSelectComponent
+              label='Currency Position'
+              name='currency-position'
+              value={currencyOption.currency_position}
+              onSelecteChange={(val) =>
+                setCurrencyOption({
+                  ...currencyOption,
+                  currency_position: val,
+                })
+              }
+              items={[
+                { name: "Left", value: "left" },
+                { name: "Right", value: "right" },
+                { name: "Left with space", value: "left_space" },
+                { name: "Right with space", value: "right_space" },
+              ]}
+            />
           </Box>
-
-          <Box component="div">
-            <Typography variant="h5" className={classes.paddingBottom1}>
-              Thousand separator
-            </Typography>
-            <TextField
-              type="text"
-              variant="outlined"
-              className={clsx(classes.marginBottom2)}
-              size="small"
+          <Box component='div'>
+            <SettingTextInput
               value={currencyOption.thousand_separator}
-              onChange={(e) =>
+              label='Thousand separator'
+              onSettingInputChange={(val) => {
                 setCurrencyOption({
                   ...currencyOption,
-                  thousand_separator: e.target.value,
-                })
-              }
+                  thousand_separator: val,
+                });
+              }}
             />
           </Box>
-          <Box component="div">
-            <Typography variant="h5" className={classes.paddingBottom1}>
-              Decimal separator
-            </Typography>
-            <TextField
-              type="text"
-              variant="outlined"
-              className={clsx(classes.marginBottom2)}
-              size="small"
+          <Box component='div'>
+            <SettingTextInput
               value={currencyOption.decimal_separator}
-              onChange={(e) =>
+              label='Decimal separator'
+              onSettingInputChange={(val) => {
                 setCurrencyOption({
                   ...currencyOption,
-                  decimal_separator: e.target.value,
-                })
-              }
+                  decimal_separator: val,
+                });
+              }}
             />
           </Box>
-          <Box component="div">
-            <Typography variant="h5" className={classes.paddingBottom1}>
-              Number of decimals
-            </Typography>
-            <TextField
-              type="number"
-              variant="outlined"
-              className={clsx(classes.marginBottom2)}
-              size="small"
+          <Box component='div'>
+            <SettingTextInput
               value={currencyOption.number_of_decimals}
-              onChange={(e) =>
+              label='Number of decimals'
+              onSettingInputChange={(val) => {
                 setCurrencyOption({
                   ...currencyOption,
-                  number_of_decimals: parseInt(e.target.value),
-                })
-              }
+                  number_of_decimals: parseInt(val),
+                });
+              }}
+              type='number'
             />
           </Box>
         </Grid>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Button
-            size="small"
-            color="primary"
-            variant="contained"
+            size='small'
+            color='primary'
+            variant='contained'
             onClick={updateStoreCurrency}
           >
             Save Change
@@ -153,12 +119,4 @@ const CurrencyOptions = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  storeCurrencyUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CurrencyOptions);
+export default CurrencyOptions;

@@ -15,33 +15,33 @@ import viewStyles from "../../viewStyles.js";
 import TimeZones from "./timeZones";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { getDatesAction, generalUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-const General = (props) => {
+const General = () => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const settingState = useSelector(state => state.settings);
   const [timeZone, setTimeZone] = useState(15);
   const [general, setgeneral] = useState({
-    date_format: props.settingState.settings.general.date_format,
+    date_format: settingState.settings.general.date_format,
   });
 
   useEffect(() => {
-    props.getDatesAction();
+    dispatch(getDatesAction());
   }, []);
 
   const changeTimeZone = (val) => {
     setgeneral({ ...general, time_zone: val.value });
-    //var getIndex = TimeZones.findIndex((timezone) => timezone === val);
-    //setTimeZone(getIndex);
   };
 
   const updateGenral = () => {
-    props.generalUpdateAction(general);
+    dispatch(generalUpdateAction(general));
   };
 
   return (
     <Fragment>
       <Grid container spacing={2}>
-        <Grid item md={12}>
+        <Grid item md={12} xs={12}>
           <Box component="div" className={classes.marginBottom2}>
             <FormControl component="fieldset">
               <FormLabel component="legend" className={classes.marginBottom1}>
@@ -55,7 +55,7 @@ const General = (props) => {
                   setgeneral({ ...general, date_format: e.target.value })
                 }
               >
-                {props.settingState.date_formats.map((format) => (
+                {settingState.date_formats.map((format) => (
                   <FormControlLabel
                     key={format.id}
                     value={format.id}
@@ -83,14 +83,14 @@ const General = (props) => {
             />
           </Box>
         </Grid>
-        <Grid item md={12}>
+        <Grid item md={12} xs={12}>
           <Button
             size="small"
             color="primary"
             variant="contained"
             onClick={updateGenral}
           >
-            Save Change
+            Save Changes
           </Button>
         </Grid>
       </Grid>
@@ -98,13 +98,4 @@ const General = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  getDatesAction,
-  generalUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(General);
+export default General;

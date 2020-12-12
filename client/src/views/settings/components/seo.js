@@ -1,65 +1,55 @@
 import React, { Fragment, useState } from "react";
-import { Grid, TextField, Box, Button } from "@material-ui/core";
-import clsx from "clsx";
-import viewStyles from "../../viewStyles.js";
+import { Grid, Box, Button } from "@material-ui/core";
 import { seoUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { SettingTextInput } from "./setting-components";
 
-const SEO = (props) => {
-  const classes = viewStyles();
-  const [seo, setSeo] = useState({ ...props.settingState.settings.seo });
+const SEO = () => {
+  const dispatch = useDispatch();
+  const settingState = useSelector((state) => state.settings);
+  const [seo, setSeo] = useState({ ...settingState.settings.seo });
 
   const updateSeo = () => {
-    props.seoUpdateAction(seo);
+    dispatch(seoUpdateAction(seo));
   };
 
   return (
     <Fragment>
       <Grid container spacing={2}>
-        <Grid item md={12}>
-          <Box component="div">
-            <TextField
-              type="text"
-              variant="outlined"
-              label="Meta Title"
-              className={clsx(classes.settingInput)}
-              size="small"
+        <Grid item xs={12}>
+          <Box component='div'>
+            <SettingTextInput
+              label='Meta Title'
               value={seo.meta_title}
-              onChange={(e) => setSeo({ ...seo, meta_title: e.target.value })}
-            />
-          </Box>
-          <Box component="div">
-            <TextField
-              type="text"
-              variant="outlined"
-              label="Meta Tag"
-              className={clsx(classes.settingInput)}
-              size="small"
-              value={seo.meta_tag}
-              onChange={(e) => setSeo({ ...seo, meta_tag: e.target.value })}
-            />
-          </Box>
-          <Box component="div">
-            <TextField
-              type="text"
-              variant="outlined"
-              label="Meta Desciption"
-              className={clsx(classes.settingInput)}
-              size="small"
-              multiline
-              rows="5"
-              value={seo.meta_description}
-              onChange={(e) =>
-                setSeo({ ...seo, meta_description: e.target.value })
+              onSettingInputChange={(val) =>
+                setSeo({ ...seo, meta_title: val })
               }
+            />
+          </Box>
+          <Box component='div'>
+            <SettingTextInput
+              label='Meta Tag'
+              value={seo.meta_tag}
+              onSettingInputChange={(val) => setSeo({ ...seo, meta_tag: val })}
+            />
+          </Box>
+          <Box component='div'>
+            <SettingTextInput
+              label='Meta Desciption'
+              value={seo.meta_description}
+              onSettingInputChange={(val) =>
+                setSeo({ ...seo, meta_description: val })
+              }
+              multiline
+              rows='5'
             />
           </Box>
         </Grid>
         <Grid item md={12}>
           <Button
-            size="small"
-            color="primary"
-            variant="contained"
+            size='small'
+            color='primary'
+            variant='contained'
             onClick={updateSeo}
           >
             Save Change
@@ -70,12 +60,4 @@ const SEO = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  seoUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(SEO);
+export default SEO;

@@ -1,91 +1,71 @@
 import React, { Fragment, useState } from "react";
 import {
   Grid,
-  FormControl,
   Box,
   Button,
-  Select,
-  Typography,
 } from "@material-ui/core";
-import clsx from "clsx";
-import viewStyles from "../../viewStyles.js";
 import { storeMeasuresUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { SettingSelectComponent } from "./setting-components";
 
-const Measurements = (props) => {
-  const classes = viewStyles();
+const Measurements = () => {
+  const dispatch = useDispatch();
+  const settingState = useSelector((state) => state.settings);
   const [measurementVal, setMeasurementVal] = useState({
-    ...props.settingState.settings.store.measurements,
+    ...settingState.settings.store.measurements,
   });
   const updateMeasures = () => {
-    props.storeMeasuresUpdateAction(measurementVal);
+    dispatch(storeMeasuresUpdateAction(measurementVal));
   };
   return (
     <Fragment>
       <Grid container spacing={2}>
-        <Grid item md={12}>
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5" className={classes.paddingBottom1}>
-              Weight unit
-            </Typography>
-            <FormControl variant="outlined" size="small">
-              <Select
-                native
-                value={measurementVal.weight_unit}
-                onChange={(e) =>
-                  setMeasurementVal({
-                    ...measurementVal,
-                    weight_unit: e.target.value,
-                  })
-                }
-                inputProps={{
-                  name: "stock-display-format",
-                  id: "stock-display-format",
-                }}
-                className={classes.simpleSettingInput}
-              >
-                <option value={"kg"}>kg</option>
-                <option value={"g"}>g</option>
-                <option value={"lbs"}>lbs</option>
-                <option value={"oz"}>oz</option>
-              </Select>
-            </FormControl>
+        <Grid item xs={12}>
+          <Box component='div' mb={3}>
+            <SettingSelectComponent
+              label='Weight unit'
+              name='weight-unit'
+              value={measurementVal.weight_unit}
+              onSelecteChange={(val) =>
+                setMeasurementVal({
+                  ...measurementVal,
+                  weight_unit: val,
+                })
+              }
+              items={[
+                { name: "Kilo Gram (KG)", value: "kg" },
+                { name: "Gram (G)", value: "g" },
+                { name: "LBS", value: "lbs" },
+                { name: "OZ", value: "oz" },
+              ]}
+            />
           </Box>
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5" className={classes.paddingBottom1}>
-              Dimensions unit
-            </Typography>
-            <FormControl variant="outlined" size="small">
-              <Select
-                native
-                value={measurementVal.dimensions_unit}
-                onChange={(e) =>
-                  setMeasurementVal({
-                    ...measurementVal,
-                    dimensions_unit: e.target.value,
-                  })
-                }
-                inputProps={{
-                  name: "stock-display-format",
-                  id: "stock-display-format",
-                }}
-                className={classes.simpleSettingInput}
-              >
-                <option value={"m"}>m</option>
-                <option value={"cm"}>cm</option>
-                <option value={"mm"}>mm</option>
-                <option value={"in"}>in</option>
-                <option value={"yd"}>yd</option>
-                <option value={"cm"}>cm</option>
-              </Select>
-            </FormControl>
+          <Box component='div' mb={3}>
+            <SettingSelectComponent
+              label='Dimensions unit'
+              name='dimensions-unit'
+              value={measurementVal.dimensions_unit}
+              onSelecteChange={(val) =>
+                setMeasurementVal({
+                  ...measurementVal,
+                  dimensions_unit: val,
+                })
+              }
+              items={[
+                { name: "M", value: "m" },
+                { name: "CM", value: "cm" },
+                { name: "MM", value: "mm" },
+                { name: "Inch", value: "in" },
+                { name: "Yard", value: "yd" },
+              ]}
+            />
           </Box>
         </Grid>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Button
-            size="small"
-            color="primary"
-            variant="contained"
+            size='small'
+            color='primary'
+            variant='contained'
             onClick={updateMeasures}
           >
             Save Change
@@ -96,12 +76,4 @@ const Measurements = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  storeMeasuresUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Measurements);
+export default Measurements;
