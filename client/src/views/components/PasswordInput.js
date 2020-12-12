@@ -6,7 +6,7 @@ import {
   InputAdornment,
   IconButton,
 } from "@material-ui/core";
-import viewStyles from "../viewStyles.js";
+import viewStyles from "../viewStyles";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import clsx from "clsx";

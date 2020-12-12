@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Grid,
   Card,
@@ -15,75 +15,66 @@ import {
   IconButton,
   Avatar,
   Button,
-  Backdrop,
-  CircularProgress
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { usersAction, userDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
-import Alert from "../utils/Alert";
 import PeopleIcon from "@material-ui/icons/People";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles.js";
+import { Alert, Loading } from "../components";
 
-const AllUsers = props => {
+const AllUsers = () => {
   const classes = viewStyles();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const UsersState = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
   useEffect(() => {
-    if (isEmpty(props.users.users)) {
-      props.usersAction();
+    if (isEmpty(UsersState.users)) {
+      dispatch(usersAction());
     }
   }, []);
 
   return (
     <Fragment>
       <Alert />
+      {UsersState.loading ? <Loading /> : null}
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
-            {props.users.loading && (
-              <Backdrop className={classes.backdrop} open={true}>
-                <CircularProgress color="inherit" /> Loading
-              </Backdrop>
-            )}
-
             <CardHeader
               action={
-                <Link to="/add-user">
+                <Link to='/add-user'>
                   <Button
-                    color="primary"
+                    color='primary'
                     className={classes.addUserBtn}
-                    size="small"
-                    variant="contained"
+                    size='small'
+                    variant='contained'
                   >
                     Add User
                   </Button>
                 </Link>
               }
-              title="All Users"
+              title='All Users'
             />
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table
-                  stickyHeader
-                  aria-label="sticky table and Dense Table"
-                  size="small"
-                >
+                <Table stickyHeader aria-label='users-table' size='small'>
                   <TableHead>
                     <TableRow>
                       <TableCell className={classes.avtarTd}>
@@ -96,12 +87,12 @@ const AllUsers = props => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {props.users.users
+                    {UsersState.users
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map(user => (
+                      .map((user) => (
                         <TableRow key={user.id} hover>
                           <TableCell>
                             <Avatar
@@ -114,15 +105,17 @@ const AllUsers = props => {
                           <TableCell>{user.role}</TableCell>
                           <TableCell>
                             <IconButton
-                              aria-label="Edit"
+                              aria-label='Edit'
                               onClick={() => jumpTo(`edit-user/${user.id}`)}
                             >
                               <EditIcon />
                             </IconButton>
                             <IconButton
-                              aria-label="Delete"
+                              aria-label='Delete'
                               className={classes.deleteicon}
-                              onClick={() => props.userDeleteAction(user.id)}
+                              onClick={() =>
+                                dispatch(userDeleteAction(user.id))
+                              }
                             >
                               <DeleteIcon />
                             </IconButton>
@@ -134,8 +127,8 @@ const AllUsers = props => {
               </TableContainer>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={props.users.users.length}
+                component='div'
+                count={UsersState.users.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -148,13 +141,5 @@ const AllUsers = props => {
     </Fragment>
   );
 };
-const mapStateToProps = state => {
-  return { users: state.users };
-};
 
-const mapDispatchToProps = {
-  usersAction,
-  userDeleteAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AllUsers);
+export default AllUsers;

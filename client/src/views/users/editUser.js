@@ -1,271 +1,145 @@
 import React, { Fragment, useState, useEffect } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Button,
-  Backdrop,
-  CircularProgress,
-  TextField,
-  IconButton,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Divider,
-  OutlinedInput,
-  InputAdornment,
-  Box,
-  Input
-} from "@material-ui/core";
-import { connect } from "react-redux";
-// import jumpTo, { go } from "../../utils/navigation";
-import Alert from "../utils/Alert";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { Link } from "react-router-dom";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import clsx from "clsx";
-import { userUpdateAction } from "../../store/action";
+import { Grid, Box } from "@material-ui/core";
+import { useDispatch, useSelector } from "react-redux";
+import { userUpdateAction, usersAction } from "../../store/action";
+import { isEmpty } from "../../utils/helper";
 import viewStyles from "../viewStyles";
+import {
+  Alert,
+  Loading,
+  TopBar,
+  CardBlocks,
+  PasswordInput,
+  TextInput,
+  FeaturedImageComponent,
+  SelectComponent,
+} from "../components";
 
-const EditUser = props => {
+var defaultObj = {
+  id: "",
+  name: "",
+  email: "",
+  role: "",
+  password: "",
+};
+
+const EditUser = (props) => {
+  const USER_ID =
+    props.match.params && props.match.params.id ? props.match.params.id : "";
   const classes = viewStyles();
-  const [user, setuser] = useState({
-    id: "",
-    name: "",
-    email: "",
-    role: "",
-    password: ""
-  });
-  const inputLabel = React.useRef(null);
-  const [labelWidth, setLabelWidth] = useState(0);
-  const [showPassword, setShowPassword] = useState(false);
+  const UsersState = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+  const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
 
   useEffect(() => {
+    if (isEmpty(UsersState.users)) {
+      dispatch(usersAction());
+    }
+  }, []);
+
+  useEffect(() => {
     document.forms[0].reset();
-    setuser({});
-    setLabelWidth(inputLabel.current.offsetWidth);
-    props.users.users.map(edituser => {
-      if (edituser.id === props.match.params.id) {
+    setuser(defaultObj);
+    UsersState.users.map((edituser) => {
+      if (edituser.id === USER_ID) {
         setuser({ ...edituser });
         if (edituser.image && edituser.image.original) {
           setfeatureImage(edituser.image.original);
         }
       }
     });
-  }, [props.users.users]);
+  }, [UsersState.users]);
 
-  const fileChange = e => {
+  const fileChange = (e) => {
     setuser({ ...user, [e.target.name]: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };
 
-  const updateUser = e => {
+  const updateUser = (e) => {
     e.preventDefault();
-    props.userUpdateAction(user);
+    dispatch(userUpdateAction(user));
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setuser({ ...user, [e.target.name]: e.target.value });
-  };
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = event => {
-    event.preventDefault();
   };
 
   return (
     <Fragment>
       <Alert />
-      <Grid container spacing={4} className={classes.mainrow}>
-        <Grid item lg={12}>
-          <Card>
-            <CardHeader
-              action={
-                <Link to="/all-users">
-                  <IconButton aria-label="Back">
-                    <ArrowBackIcon />
-                  </IconButton>
-                </Link>
-              }
-              title="Edit Users"
-            />
-            <Divider />
-            <CardContent>
-              <form>
-                <Grid container spacing={4}>
-                  <Grid item md={3}>
-                    <TextField
-                      id="username"
-                      label="Username"
-                      name="name"
-                      onChange={handleChange}
-                      variant="outlined"
-                      className={classes.width100}
-                      value={user.name}
-                    />
-                  </Grid>
-                  <Grid item md={3}>
-                    <TextField
-                      type="email"
-                      id="email"
-                      label="Email"
-                      name="email"
-                      onChange={handleChange}
-                      variant="outlined"
-                      className={classes.width100}
-                      value={user.email}
-                    />
-                  </Grid>
-                  <Grid item md={3}>
-                    <FormControl
-                      className={clsx(
-                        classes.margin,
-                        classes.textField,
-                        classes.width100
-                      )}
-                      variant="outlined"
-                    >
-                      <InputLabel htmlFor="outlined-adornment-password">
-                        Password
-                      </InputLabel>
-                      <OutlinedInput
-                        id="outlined-adornment-password"
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        onChange={handleChange}
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={handleClickShowPassword}
-                              onMouseDown={handleMouseDownPassword}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <Visibility />
-                              ) : (
-                                <VisibilityOff />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        }
-                        labelWidth={70}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item md={3}>
-                    <FormControl
-                      variant="outlined"
-                      className={classes.width100}
-                    >
-                      <InputLabel ref={inputLabel} id="role">
-                        Role
-                      </InputLabel>
-                      <Select
-                        labelId="role"
-                        id="role"
-                        name="role"
-                        onChange={handleChange}
-                        labelWidth={labelWidth}
-                        value={user.role}
-                        multiple={false}
-                      >
-                        <MenuItem value="Subscriber">Subscriber</MenuItem>
-                        <MenuItem value="Manager">Manager</MenuItem>
-                        <MenuItem value="Editor">Editor</MenuItem>
-                        <MenuItem value="Author">Author</MenuItem>
-                        <MenuItem value="User">User</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                </Grid>
-                <Grid container className={classes.secondRow}>
-                  <Grid item md={3}>
-                    {featureImage !== null && (
-                      <Box className={classes.feautedImageBox}>
-                        <img
-                          src={featureImage}
-                          className={classes.feautedImageBoxPreview}
-                          alt="user-thumbnail"
-                        />
-                      </Box>
-                    )}
-                    <Input
-                      className={classes.input}
-                      style={{ display: "none" }}
-                      id="updatedImage"
-                      type="file"
-                      onChange={fileChange}
-                      name="updatedImage"
-                    />
-                    <label
-                      htmlFor="updatedImage"
-                      className={classes.feautedImage}
-                    >
-                      {featureImage !== null
-                        ? "Change Featured Image"
-                        : "Set Featured Image"}
-                    </label>
+      {UsersState.loading ? <Loading /> : null}
 
-                    {/* <FormControl className={classes.width100}>                      
-                      <TextField
-                        type="file"
-                        name="updatedImage"
-                        // onChange={fileChange}
-                        onChange={onSelectFile}
-                        className={classes.width100}
-                      />
-                    </FormControl> */}
-                  </Grid>
+      <form>
+        <TopBar
+          title='Edit Users'
+          onSubmit={updateUser}
+          submitTitle='Update'
+          backLink={"/all-users"}
+        />
+        <Grid container spacing={3} className={classes.secondmainrow}>
+          <Grid item xs={12}>
+            <CardBlocks title='User Information' nomargin>
+              <Grid container spacing={4}>
+                <Grid item xl={2} lg={3} md={4} xs={12}>
+                  <FeaturedImageComponent
+                    image={featureImage}
+                    feautedImageChange={(e) => fileChange(e)}
+                    user
+                  />
                 </Grid>
-                <Grid container className={classes.formbottom}>
-                  <Grid item md={12}>
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      onClick={updateUser}
-                    >
-                      Update
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      className={classes.cancelBtn}
-                    >
-                      <Link to="/all-users" style={{ color: "#fff" }}>
-                        Cancel
-                      </Link>
-                    </Button>
-                  </Grid>
+                <Grid item md={6} xs={12}>
+                  <Box component='div' mb={2}>
+                    <TextInput
+                      value={user.name}
+                      label='Name'
+                      name='name'
+                      onInputChange={handleChange}
+                    />
+                  </Box>
+                  <Box component='div' mb={2}>
+                    <TextInput
+                      type='email'
+                      value={user.email}
+                      label='Email'
+                      name='email'
+                      onInputChange={handleChange}
+                    />
+                  </Box>
+                  <Box component='div' mb={2}>
+                    <PasswordInput
+                      name='password'
+                      value={user.password}
+                      label='Password'
+                      onInputChange={handleChange}
+                    />
+                  </Box>
+                  <Box component='div'>
+                    <SelectComponent
+                      label='Role'
+                      onSelecteChange={(val) =>
+                        setuser({ ...user, ["role"]: val })
+                      }
+                      items={[
+                        "Subscriber",
+                        "Manager",
+                        "Editor",
+                        "Author",
+                        "User",
+                      ]}
+                      name='role'
+                      value={user.role}
+                    />
+                  </Box>
                 </Grid>
-                {props.users.loading && (
-                  <Backdrop className={classes.backdrop} open={true}>
-                    <CircularProgress color="inherit" /> Loading
-                  </Backdrop>
-                )}
-              </form>
-            </CardContent>
-          </Card>
+              </Grid>
+            </CardBlocks>
+          </Grid>
         </Grid>
-      </Grid>
+      </form>
     </Fragment>
   );
 };
 
-const mapStateToProps = state => {
-  return { users: state.users };
-};
-
-const mapDispatchToProps = {
-  userUpdateAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditUser);
+export default EditUser;

@@ -2,22 +2,32 @@ import React from "react";
 import { Box } from "@material-ui/core";
 import ImageIcon from "@material-ui/icons/Image";
 import viewStyles from "../viewStyles";
-import {isEmpty} from '../../utils/helper';
+import { isEmpty } from "../../utils/helper";
 
-const FeaturedImageComponent = ({ image, feautedImageChange }) => {
+const FeaturedImageComponent = ({ image, feautedImageChange, user }) => {
   const classes = viewStyles();
 
   return (
     <>
-      {!isEmpty(image) ? (
-        <Box className={classes.feautedImageBox}>
+      <Box className={classes.feautedImageBox}>
+        {!isEmpty(image) ? (
           <img
             src={image}
             className={classes.feautedImageBoxPreview}
             alt='featured'
           />
-        </Box>
-      ): null}
+        ) : (
+          <img
+            src={
+              user
+                ? "https://www.hbwebsol.com/wp-content/uploads/2020/12/user-placeholder.png"
+                : "https://www.hbwebsol.com/wp-content/uploads/2020/12/no-image-placeholder.png"
+            }
+            className={classes.feautedImageBoxPreview}
+            alt='featured'
+          />
+        )}
+      </Box>
       <input
         accept='image/*'
         className={classes.input}
