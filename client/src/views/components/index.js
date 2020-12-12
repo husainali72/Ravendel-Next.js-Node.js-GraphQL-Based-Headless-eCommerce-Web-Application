@@ -8,5 +8,6 @@ import CardBlocks from './CardBlocks';
 import CardBlocksWithAction from './CardBlocksWithAction';
 import FeaturedImageComponent from './FeaturedImage';
 import URLComponent from './URLComponent';
+import TinymceEditor from './Editor';
 
-export {Alert, Loading, TextInput, PasswordInput, TopBar, StyledRadio, CardBlocks, CardBlocksWithAction, FeaturedImageComponent, URLComponent}
+export {TinymceEditor, Alert, Loading, TextInput, PasswordInput, TopBar, StyledRadio, CardBlocks, CardBlocksWithAction, FeaturedImageComponent, URLComponent}

@@ -3,7 +3,6 @@ import { Editor } from "@tinymce/tinymce-react";
 import { connect } from "react-redux";
 const TinymceEditor = (props) => {
   const handleEditorChange = (e) => {
-    //console.log("Content was updated:", e.target.getContent());
     props.dispatch({
       type: "TINYMCE_SUCCESS",
       payload: { content: e.target.getContent() },
@@ -36,10 +35,4 @@ const TinymceEditor = (props) => {
   );
 };
 
-/* const mapStateToProps = state => {
-  return { blogs: state.blogs };
-}; */
-
-//const mapDispatchToProps = dispatch => {};
-
-export default connect()(TinymceEditor);
+export default TinymceEditor;

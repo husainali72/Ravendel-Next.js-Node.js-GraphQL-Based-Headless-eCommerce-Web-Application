@@ -10,23 +10,21 @@ import {
 import { useTheme } from "@material-ui/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { blogUpdateAction, blogAction } from "../../store/action/";
-import TinymceEditor from "./TinymceEditor.js";
 import { isEmpty } from "../../utils/helper";
 import viewStyles from "../viewStyles";
-import { Alert, Loading, TopBar, StyledRadio, CardBlocks } from "../components";
+import {
+  Alert,
+  Loading,
+  TopBar,
+  StyledRadio,
+  CardBlocks,
+  TinymceEditor,
+} from "../components";
 
 const defaultObj = {
   title: "",
-  url: "",
   content: "",
   status: "Publish",
-  blog_tag: [],
-  feature_image: "",
-  meta: {
-    title: "",
-    description: "",
-    keywords: "",
-  },
 };
 const EditFAQ = (props) => {
   const FAQId = props.match.params.id;
@@ -41,6 +39,9 @@ const EditFAQ = (props) => {
     if (!isEmpty(FAQId)) {
       dispatch(blogAction(FAQId));
     }
+    return () => {
+      setFaq(defaultObj);
+    };
   }, []);
 
   useEffect(() => {
@@ -89,9 +90,14 @@ const EditFAQ = (props) => {
                 />
               </Box>
               <Box component='div'>
-                {!isEmpty(blogState.blog) && (
-                  <TinymceEditor value={faq.content} />
-                )}
+                {!blogState.loading ? 
+                  <TinymceEditor
+                    value={faq.content}
+                    onEditorChange={(value) =>
+                      setFaq({ ...faq, ["content"]: value })
+                    }
+                  />
+                : null}
               </Box>
             </CardBlocks>
           </Grid>
