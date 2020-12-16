@@ -6,50 +6,17 @@ import {
   TextField,
   Typography
 } from '@material-ui/core';
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { LoginAction } from '../../store/action';
-import Alert from '../utils/Alert'
+import {Alert, Loading} from '../components';
 
-const useStyles = makeStyles(theme => ({
-    root: {
-      backgroundColor: theme.palette.background.default,
-      height: '100%'
-    },
-    grid: {
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    form: {
-        padding: '30px',
-        backgroundColor: '#fff',
-        width: '450px',
-        [theme.breakpoints.down('sm')]: {
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(2),
-            width: '90%',
-            margin: '50px auto'
-        }
-    },
-    title: {
-      marginBottom: theme.spacing(4),
-      textAlign: 'center'
-    },
-    textField: {
-      marginTop: theme.spacing(2)
-    },
-    signInButton: {
-      margin: theme.spacing(2, 0)
-    }
-}));
-
-const Login = props => {
+const Login = () => {
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const login_loading = useSelector(state => state.login.token_loading)
 
     const [values, setValues] = useState({
-        email: "SirCumference@doe.com",
+        email: "admin@ravendel.com",
         password: "123456"
     });    
 
@@ -59,16 +26,13 @@ const Login = props => {
 
     const login = e =>{
         e.preventDefault();
-        props.handleFormSubmit(
-            values.email,
-            values.password,
-            props
-        )
+        dispatch(LoginAction(values.email, values.password));
     }
 
     return(
         <div className={classes.root}>
             <Alert />
+            {login_loading? <Loading /> : null}
             <Grid className={classes.grid} container>
                 <Grid className={classes.content} item lg={4} md={4} xs={12} >
                     <form className={classes.form} onSubmit={login}>
@@ -112,17 +76,40 @@ const Login = props => {
     )
 }
 
-const mapStateToProps = state => ({
-    login_loading: state.login.token_loading,
-    login_error: state.login.error
-});
-  
-const mapDispatchToProps = dispatch => {
-    return {
-        handleFormSubmit: (email, password) => {
-        dispatch(LoginAction(email, password));
+
+const useStyles = makeStyles(theme => ({
+    root: {
+      backgroundColor: theme.palette.background.default,
+      height: '100%'
+    },
+    grid: {
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    form: {
+        padding: '30px',
+        backgroundColor: '#fff',
+        width: '450px',
+        [theme.breakpoints.down('sm')]: {
+            paddingLeft: theme.spacing(2),
+            paddingRight: theme.spacing(2),
+            width: '90%',
+            margin: '50px auto'
         }
-    };
-};
+    },
+    title: {
+      marginBottom: theme.spacing(4),
+      textAlign: 'center'
+    },
+    textField: {
+      marginTop: theme.spacing(2)
+    },
+    signInButton: {
+      margin: theme.spacing(2, 0)
+    }
+}));
   
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;
