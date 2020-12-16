@@ -1,110 +1,86 @@
 import React, { Fragment, useState } from "react";
 import {
   Grid,
-  TextField,
   Box,
   FormControlLabel,
   Checkbox,
-  Typography,
   Button,
 } from "@material-ui/core";
-
-import viewStyles from "../../viewStyles.js";
+import viewStyles from "../../viewStyles";
 import { paymentPaypalUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { SettingTextInput } from "./setting-components/";
 
-const Paypal = (props) => {
+const Paypal = () => {
   const classes = viewStyles();
-
+  const dispatch = useDispatch();
+  const settingState = useSelector((state) => state.settings);
   const [paypalInfo, setPaypalInfo] = useState({
-    ...props.settingState.settings.paymnet.paypal,
+    ...settingState.settings.paymnet.paypal,
   });
 
   const updatePaypal = () => {
-    props.paymentPaypalUpdateAction(paypalInfo);
+    dispatch(paymentPaypalUpdateAction(paypalInfo));
   };
 
   return (
     <Fragment>
       <Grid container spacing={2}>
         <Grid item md={6} sm={12} xs={12}>
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5">Enable/Disable</Typography>
+          <Box component='div' className={classes.marginBottom2}>
             <FormControlLabel
               control={
                 <Checkbox
-                  color="primary"
+                  color='primary'
                   checked={paypalInfo.enable}
                   onChange={(e) =>
                     setPaypalInfo({ ...paypalInfo, enable: e.target.checked })
                   }
                 />
               }
-              label="Enable PayPal Standard"
+              label='Enable PayPal Standard'
             />
           </Box>
           {paypalInfo.enable && (
-            <Box>
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Title
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+            <Box component='div'>
+              <Box component='div'>
+                <SettingTextInput
+                  label='Title'
                   value={paypalInfo.title}
-                  onChange={(e) =>
-                    setPaypalInfo({ ...paypalInfo, title: e.target.value })
+                  onSettingInputChange={(val) =>
+                    setPaypalInfo({ ...paypalInfo, title: val })
                   }
-                  className={classes.simpleSettingInput}
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Description
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='Description'
                   value={paypalInfo.description}
-                  onChange={(e) =>
-                    setPaypalInfo({
-                      ...paypalInfo,
-                      description: e.target.value,
-                    })
+                  onSettingInputChange={(val) =>
+                    setPaypalInfo({ ...paypalInfo, description: val })
                   }
-                  className={classes.simpleSettingInput}
                   multiline
-                  rows="5"
+                  rows='5'
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  PayPal email
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='PayPal email'
                   value={paypalInfo.paypal_email}
-                  onChange={(e) =>
-                    setPaypalInfo({
-                      ...paypalInfo,
-                      paypal_email: e.target.value,
-                    })
+                  onSettingInputChange={(val) =>
+                    setPaypalInfo({ ...paypalInfo, paypal_email: val })
                   }
-                  className={classes.simpleSettingInput}
-                  type="email"
+                  type='email'
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5">IPN Email Notifications</Typography>
+              <Box component='div' className={classes.marginBottom2}>
                 <FormControlLabel
                   control={
                     <Checkbox
-                      color="primary"
+                      color='primary'
                       checked={paypalInfo.ipn_email_notification}
                       onChange={(e) =>
                         setPaypalInfo({
@@ -114,62 +90,38 @@ const Paypal = (props) => {
                       }
                     />
                   }
-                  label="Enable IPN email notifications"
+                  label='Enable IPN email notifications'
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Receiver email
-                </Typography>
-                <TextField
-                  type="email"
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='Receiver email'
                   value={paypalInfo.receiver_email}
-                  onChange={(e) =>
-                    setPaypalInfo({
-                      ...paypalInfo,
-                      receiver_email: e.target.value,
-                    })
+                  onSettingInputChange={(val) =>
+                    setPaypalInfo({ ...paypalInfo, receiver_email: val })
                   }
-                  className={classes.simpleSettingInput}
+                  type='email'
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  PayPal identity token
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='PayPal identity token'
                   value={paypalInfo.paypal_identity_token}
-                  onChange={(e) =>
-                    setPaypalInfo({
-                      ...paypalInfo,
-                      paypal_identity_token: e.target.value,
-                    })
+                  onSettingInputChange={(val) =>
+                    setPaypalInfo({ ...paypalInfo, paypal_identity_token: val })
                   }
-                  className={classes.simpleSettingInput}
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Invoice prefix
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='Invoice prefix'
                   value={paypalInfo.invoice_prefix}
-                  onChange={(e) =>
-                    setPaypalInfo({
-                      ...paypalInfo,
-                      invoice_prefix: e.target.value,
-                    })
+                  onSettingInputChange={(val) =>
+                    setPaypalInfo({ ...paypalInfo, invoice_prefix: val })
                   }
-                  className={classes.simpleSettingInput}
                 />
               </Box>
             </Box>
@@ -180,12 +132,11 @@ const Paypal = (props) => {
 
         {paypalInfo.enable && (
           <Grid item md={6} sm={12} xs={12}>
-            <Box component="div" className={classes.marginBottom2}>
-              <Typography variant="h5">API credentials</Typography>
+            <Box component='div' className={classes.marginBottom2}>
               <FormControlLabel
                 control={
                   <Checkbox
-                    color="primary"
+                    color='primary'
                     checked={paypalInfo.test_mode}
                     onChange={(e) =>
                       setPaypalInfo({
@@ -195,74 +146,49 @@ const Paypal = (props) => {
                     }
                   />
                 }
-                label="Enable PayPal sandbox"
+                label='Enable PayPal sandbox'
               />
             </Box>
 
-            <Box>
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  API username
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
-                  className={classes.simpleSettingInput}
-                  value={paypalInfo.api_username}
-                  onChange={(e) =>
-                    setPaypalInfo({
-                      ...paypalInfo,
-                      api_username: e.target.value,
-                    })
-                  }
-                />
-              </Box>
+            <Box component='div'>
+              <SettingTextInput
+                label='API Username'
+                value={paypalInfo.api_username}
+                onSettingInputChange={(val) =>
+                  setPaypalInfo({ ...paypalInfo, api_username: val })
+                }
+              />
+            </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  API password
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
-                  className={classes.simpleSettingInput}
-                  type="password"
-                  value={paypalInfo.api_password}
-                  onChange={(e) =>
-                    setPaypalInfo({
-                      ...paypalInfo,
-                      api_password: e.target.value,
-                    })
-                  }
-                />
-              </Box>
+            <Box component='div'>
+              <SettingTextInput
+                label='API password'
+                value={paypalInfo.api_password}
+                onSettingInputChange={(val) =>
+                  setPaypalInfo({ ...paypalInfo, api_password: val })
+                }
+                type='password'
+              />
+            </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  API signature
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
-                  className={classes.simpleSettingInput}
-                  value={paypalInfo.api_signature}
-                  onChange={(e) =>
-                    setPaypalInfo({
-                      ...paypalInfo,
-                      api_signature: e.target.value,
-                    })
-                  }
-                />
-              </Box>
+            <Box component='div'>
+              <SettingTextInput
+                label='API signature'
+                value={paypalInfo.api_signature}
+                onSettingInputChange={(val) =>
+                  setPaypalInfo({ ...paypalInfo, api_signature: val })
+                }
+                type='password'
+              />
             </Box>
           </Grid>
         )}
 
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Button
-            size="small"
-            color="primary"
-            variant="contained"
+            size='small'
+            color='primary'
+            variant='contained'
             onClick={updatePaypal}
           >
             Save Change
@@ -273,12 +199,4 @@ const Paypal = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  paymentPaypalUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Paypal);
+export default Paypal;

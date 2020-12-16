@@ -1,3 +1,5 @@
+import React from 'react';
+import { Route, Switch } from "react-router-dom";
 import Dashboard from "../views/dashboard";
 import { AllUsers, AddUser, EditUser } from "../views/users";
 import { AddBlog, AllBlog, EditBlog, AllTags } from "../views/blog";
@@ -23,10 +25,6 @@ import { AllReviews, EditReview } from "../views/reviews";
 import { AddFAQ, AllFAQ, EditFAQ } from "../views/faq";
 
 const Routes = [
-  // {
-  //   path: "*",
-  //   component: NotFound
-  // },
   { path: "/", exact: true, component: Dashboard, name: "Home" },
   { path: "/dashboard", exact: true, component: Dashboard, name: "Home" },
   { path: "/user", exact: true, component: AllUsers, name: "Users" },
@@ -203,6 +201,27 @@ const Routes = [
     component: EditReview,
     name: "Edit Review",
   },
+   {
+    path: "*",
+    component: NotFound,
+    name: 'NotFound'
+  },
 ];
 
-export default Routes;
+const AllRoutes = () => {
+  return (
+    <Switch>
+         {Routes.map((route, index) => (
+          <Route
+            key={index}
+            exact={route.exact}
+            path={route.path}
+            name={route.name}
+            component={route.component}
+          />
+        ))}
+    </Switch>
+  )
+}
+
+export default AllRoutes;

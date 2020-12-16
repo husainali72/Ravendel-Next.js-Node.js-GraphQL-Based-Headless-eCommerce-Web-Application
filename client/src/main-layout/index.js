@@ -1,40 +1,19 @@
 import React, { useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/styles";
 import { useMediaQuery } from "@material-ui/core";
-import { Route, Switch, Redirect } from "react-router-dom";
 import clsx from "clsx";
-import Routes from "../routes/routes";
+import AllRoutes from '../routes/routes';
 import Header from "./header";
 import SideBar from "./sidebar";
 import Footer from "./footer";
 import Alert from "../views/utils/Alert";
-const useStyles = makeStyles(theme => ({
-  root: {
-    paddingTop: 56,
-    height: "100%",
-    [theme.breakpoints.up("sm")]: {
-      paddingTop: 50
-    }
-  },
-  shiftContent: {
-    paddingLeft: 200
-  },
-  content: {
-    height: "calc(100% - 58px)",
-    overflowY: "auto",
-    overflowX: "hidden"
-  }
-}));
 
-const MainLayout = props => {
-  const { children } = props;
-
+const MainLayout = ({ children }) => {
   const classes = useStyles();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"), {
-    defaultMatches: true
+    defaultMatches: true,
   });
-
   const [openSidebar, setOpenSidebar] = useState(false);
 
   const handleSidebarOpen = () => {
@@ -51,7 +30,7 @@ const MainLayout = props => {
     <div
       className={clsx({
         [classes.root]: true,
-        [classes.shiftContent]: isDesktop
+        [classes.shiftContent]: isDesktop,
       })}
     >
       <Header onSidebarOpen={handleSidebarOpen} />
@@ -63,20 +42,29 @@ const MainLayout = props => {
       <main className={classes.content}>
         <Alert />
         {children}
-        {Routes.map((route, index) => (
-          <Route
-            key={index}
-            exact={route.exact}
-            path={route.path}
-            name={route.name}
-            component={route.component}
-          />
-        ))}
-        {/* <Redirect to="/dashboard" /> */}
+        <AllRoutes />
       </main>
       <Footer />
     </div>
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    paddingTop: 56,
+    height: "100%",
+    [theme.breakpoints.up("sm")]: {
+      paddingTop: 50,
+    },
+  },
+  shiftContent: {
+    paddingLeft: 175,
+  },
+  content: {
+    height: "calc(100% - 58px)",
+    overflowY: "auto",
+    overflowX: "hidden",
+  },
+}));
 
 export default MainLayout;

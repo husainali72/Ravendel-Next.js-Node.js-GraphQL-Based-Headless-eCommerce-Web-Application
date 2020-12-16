@@ -13,23 +13,23 @@ import {
   Icon,
 } from "@material-ui/core";
 import clsx from "clsx";
-import viewStyles from "../../viewStyles.js";
+import viewStyles from "../../viewStyles";
 import { appearanceHomeUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
-import { isEmpty } from "../../../utils/helper";
+import {useDispatch, useSelector} from 'react-redux';
 
-const HomeSettings = (props) => {
+const HomeSettings = () => {
   const classes = viewStyles();
-
+  const dispatch = useDispatch();
+  const settingState = useSelector((state) => state.settings);
   const [settingHome, setsettingHome] = useState({
-    ...props.settingState.settings.appearance.home,
+    ...settingState.settings.appearance.home,
   });
 
   useEffect(() => {
     setsettingHome({
-      ...props.settingState.settings.appearance.home,
+      ...settingState.settings.appearance.home,
     });
-  }, [props.settingState.settings.appearance.home]);
+  }, [settingState.settings.appearance.home]);
 
   const addSlide = () => {
     setsettingHome({
@@ -46,8 +46,6 @@ const HomeSettings = (props) => {
   };
 
   const removeSlide = (i) => {
-    /*  slider.splice(i, 1);
-    setSlider([...slider]); */
     settingHome.slider.splice(i, 1);
     setsettingHome({
       ...settingHome,
@@ -77,36 +75,45 @@ const HomeSettings = (props) => {
       ...settingHome,
       slider: [...settingHome.slider],
     });
-    //console.log(slider);
   };
 
   const updateHome = () => {
-    console.log(settingHome);
     for (let i in settingHome.slider) {
       delete settingHome.slider[i].__typename;
     }
-
     delete settingHome.add_section_in_home.__typename;
+    dispatch(appearanceHomeUpdateAction(settingHome));
+  };
 
-    props.appearanceHomeUpdateAction(settingHome);
+  const checkBoxOnChange = (name, value) => {
+    setsettingHome({
+      ...settingHome,
+      add_section_in_home: {
+        ...settingHome.add_section_in_home,
+        [name]: value,
+      },
+    })
   };
 
   return (
     <Fragment>
       <Grid container spacing={2}>
-        <Grid item md={12}>
-          <Box component="div" className={classes.marginBottom3}>
+        <Grid item xs={12}>
+          <Box component='div' className={classes.marginBottom3}>
             <Grid container spacing={2}>
-              <Grid item md={12} sm={12} xs={12}>
+              <Grid item xs={12}>
+              <Typography variant='h5' className={classes.paddingBottom1}>
+                  Slider
+                </Typography>
                 <Grid container spacing={2}>
                   {settingHome.slider.map((slide, index) => (
-                    <Grid item md={4} sm={12} xs={12} key={index}>
+                    <Grid item md={4} sm={6} xs={12} key={index}>
                       <Box className={classes.sliderImageWrapper}>
-                        <Tooltip title="Remove Slide" aria-label="remove-slide">
+                        <Tooltip title='Remove Slide' aria-label='remove-slide'>
                           <IconButton
-                            aria-label="remove-slide"
+                            aria-label='remove-slide'
                             onClick={(e) => removeSlide(index)}
-                            size="small"
+                            size='small'
                             className={clsx(
                               classes.deleteicon,
                               classes.slideRemove
@@ -120,20 +127,20 @@ const HomeSettings = (props) => {
                             <img
                               src={slide.image.original}
                               className={classes.sliderImagePreview}
-                              alt="Featured"
+                              alt='Featured'
                             />
                           )}
                           <input
-                            accept="image/*"
+                            accept='image/*'
                             className={classes.input}
                             style={{ display: "none" }}
-                            id={`featured-image-${index}`}
-                            name={`featured-image-${index}`}
-                            type="file"
+                            id={`slide-${index}`}
+                            name={`slide-${index}`}
+                            type='file'
                             onChange={(e) => fileChange(e, index)}
                           />
                           <label
-                            htmlFor={`featured-image-${index}`}
+                            htmlFor={`slide-${index}`}
                             className={classes.feautedImage}
                           >
                             {slide.image.original
@@ -143,23 +150,23 @@ const HomeSettings = (props) => {
                         </Box>
                         <Box className={classes.slidesInfo}>
                           <TextField
-                            label="Slide Link"
-                            variant="outlined"
-                            name="link"
+                            label='Slide Link'
+                            variant='outlined'
+                            name='link'
                             className={clsx(classes.width100)}
                             value={slide.link}
                             onChange={(e) => handleChange(e, index)}
-                            size="small"
+                            size='small'
                           />
                           <FormControlLabel
                             control={
                               <Checkbox
-                                color="primary"
+                                color='primary'
                                 checked={slide.open_in_tab}
                                 onChange={(e) => handleChange(e, index)}
                               />
                             }
-                            label="Open in New Tab"
+                            label='Open in New Tab'
                           />
                         </Box>
                       </Box>
@@ -167,12 +174,12 @@ const HomeSettings = (props) => {
                   ))}
                 </Grid>
               </Grid>
-              <Grid item md={12}>
+              <Grid item xs={12}>
                 <Button
-                  color="primary"
-                  variant="contained"
+                  color='primary'
+                  variant='contained'
                   onClick={addSlide}
-                  size="small"
+                  size='small'
                 >
                   + Add Slide
                 </Button>
@@ -180,161 +187,105 @@ const HomeSettings = (props) => {
             </Grid>
           </Box>
 
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5" className={classes.paddingBottom1}>
+          <Box component='div' className={classes.marginBottom2}>
+            <Typography variant='h5' className={classes.paddingBottom1}>
               Add Section in Home Page
             </Typography>
             <FormGroup>
               <FormControlLabel
                 control={
                   <Checkbox
-                    color="primary"
+                    color='primary'
                     checked={settingHome.add_section_in_home.feature_product}
-                    onChange={(e) =>
-                      setsettingHome({
-                        ...settingHome,
-                        add_section_in_home: {
-                          ...settingHome.add_section_in_home,
-                          feature_product: e.target.checked,
-                        },
-                      })
-                    }
+                    onChange={(e) => checkBoxOnChange('feature_product', e.target.checked)}
                   />
                 }
-                label="Featured product"
+                label='Featured product'
               />
               <FormControlLabel
                 control={
                   <Checkbox
-                    color="primary"
+                    color='primary'
                     checked={
                       settingHome.add_section_in_home.recently_added_products
                     }
-                    onChange={(e) =>
-                      setsettingHome({
-                        ...settingHome,
-                        add_section_in_home: {
-                          ...settingHome.add_section_in_home,
-                          recently_added_products: e.target.checked,
-                        },
-                      })
-                    }
+                    onChange={(e) => checkBoxOnChange('recently_added_products', e.target.checked)}
                   />
                 }
-                label="Recently Added Products"
+                label='Recently Added Products'
               />
 
               <FormControlLabel
                 control={
                   <Checkbox
-                    color="primary"
+                    color='primary'
                     checked={
                       settingHome.add_section_in_home.most_viewed_products
                     }
-                    onChange={(e) =>
-                      setsettingHome({
-                        ...settingHome,
-                        add_section_in_home: {
-                          ...settingHome.add_section_in_home,
-                          most_viewed_products: e.target.checked,
-                        },
-                      })
-                    }
+                    onChange={(e) => checkBoxOnChange('most_viewed_products', e.target.checked)}
                   />
                 }
-                label="Most Viewed Products"
+                label='Most Viewed Products'
               />
 
               <FormControlLabel
                 control={
                   <Checkbox
-                    color="primary"
+                    color='primary'
                     checked={
                       settingHome.add_section_in_home.recently_bought_products
                     }
-                    onChange={(e) =>
-                      setsettingHome({
-                        ...settingHome,
-                        add_section_in_home: {
-                          ...settingHome.add_section_in_home,
-                          recently_bought_products: e.target.checked,
-                        },
-                      })
-                    }
+                    onChange={(e) => checkBoxOnChange('recently_bought_products', e.target.checked)}
                   />
                 }
-                label="Recently Bought Products"
+                label='Recently Bought Products'
               />
 
               <FormControlLabel
                 control={
                   <Checkbox
-                    color="primary"
+                    color='primary'
                     checked={
                       settingHome.add_section_in_home.product_recommendation
                     }
-                    onChange={(e) =>
-                      setsettingHome({
-                        ...settingHome,
-                        add_section_in_home: {
-                          ...settingHome.add_section_in_home,
-                          product_recommendation: e.target.checked,
-                        },
-                      })
-                    }
+                    onChange={(e) => checkBoxOnChange('product_recommendation', e.target.checked)}
                   />
                 }
-                label="Product Recommendation (Based on Your Browsing History)"
+                label='Product Recommendation (Based on Your Browsing History)'
               />
 
               <FormControlLabel
                 control={
                   <Checkbox
-                    color="primary"
+                    color='primary'
                     checked={settingHome.add_section_in_home.products_on_sales}
-                    onChange={(e) =>
-                      setsettingHome({
-                        ...settingHome,
-                        add_section_in_home: {
-                          ...settingHome.add_section_in_home,
-                          products_on_sales: e.target.checked,
-                        },
-                      })
-                    }
+                    onChange={(e) => checkBoxOnChange('products_on_sales', e.target.checked)}
                   />
                 }
-                label="Products on Sales"
+                label='Products on Sales'
               />
 
               <FormControlLabel
                 control={
                   <Checkbox
-                    color="primary"
+                    color='primary'
                     checked={
                       settingHome.add_section_in_home
                         .product_from_specific_categories
                     }
-                    onChange={(e) =>
-                      setsettingHome({
-                        ...settingHome,
-                        add_section_in_home: {
-                          ...settingHome.add_section_in_home,
-                          product_from_specific_categories: e.target.checked,
-                        },
-                      })
-                    }
+                    onChange={(e) => checkBoxOnChange('product_from_specific_categories', e.target.checked)}
                   />
                 }
-                label="Product from Specific Categories"
+                label='Product from Specific Categories'
               />
             </FormGroup>
           </Box>
         </Grid>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Button
-            size="small"
-            color="primary"
-            variant="contained"
+            size='small'
+            color='primary'
+            variant='contained'
             onClick={updateHome}
           >
             Save Change
@@ -345,12 +296,4 @@ const HomeSettings = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  appearanceHomeUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomeSettings);
+export default HomeSettings;

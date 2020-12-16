@@ -22,7 +22,7 @@ const Store = () => {
               aria-label='Shipping Tab'
               indicatorColor='primary'
               textColor='primary'
-              variant="scrollable"
+              variant='scrollable'
             >
               <Tab label='Currency options' {...TabProps(0)} />
               <Tab label='Store Address' {...TabProps(1)} />
@@ -32,16 +32,24 @@ const Store = () => {
           </Paper>
           <Box>
             <TabPanel value={tabVal} index={0}>
-              <CurrencyOptions />
+              <Box mt={2}>
+                <CurrencyOptions />
+              </Box>
             </TabPanel>
             <TabPanel value={tabVal} index={1}>
-              <StoreAddress />
+              <Box mt={2}>
+                <StoreAddress />
+              </Box>
             </TabPanel>
             <TabPanel value={tabVal} index={2}>
-              <Measurements />
+              <Box mt={2}>
+                <Measurements />
+              </Box>
             </TabPanel>
             <TabPanel value={tabVal} index={3}>
-              <Inventory />
+              <Box mt={2}>
+                <Inventory />
+              </Box>
             </TabPanel>
           </Box>
         </Grid>

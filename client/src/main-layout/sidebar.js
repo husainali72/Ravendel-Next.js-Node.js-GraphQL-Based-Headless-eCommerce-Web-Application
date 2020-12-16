@@ -6,7 +6,7 @@ import MenuBar from './menubar';
 
 const useStyles = makeStyles(theme => ({
     drawer: { 
-      width: 200,
+      width: 175,
       [theme.breakpoints.up('lg')]: {
         marginTop: 50,
         height: 'calc(100% - 50px)'

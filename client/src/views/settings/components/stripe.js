@@ -1,90 +1,76 @@
 import React, { Fragment, useState } from "react";
 import {
   Grid,
-  TextField,
   Box,
   FormControlLabel,
   Checkbox,
-  Typography,
   Button,
 } from "@material-ui/core";
 
-import viewStyles from "../../viewStyles.js";
+import viewStyles from "../../viewStyles";
 import { paymentStripeUpdateAction } from "../../../store/action";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { SettingTextInput } from "./setting-components/";
 
-const Stripe = (props) => {
+const Stripe = () => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const settingState = useSelector((state) => state.settings);
   const [stripeInfo, setstripeInfo] = useState({
-    ...props.settingState.settings.paymnet.stripe,
+    ...settingState.settings.paymnet.stripe,
   });
 
   const updateStripe = () => {
-    props.paymentStripeUpdateAction(stripeInfo);
+    dispatch(paymentStripeUpdateAction(stripeInfo));
   };
 
   return (
     <Fragment>
       <Grid container spacing={2}>
         <Grid item md={6} sm={12} xs={12}>
-          <Box component="div" className={classes.marginBottom2}>
-            <Typography variant="h5">Enable/Disable</Typography>
+          <Box component='div' className={classes.marginBottom2}>
             <FormControlLabel
               control={
                 <Checkbox
-                  color="primary"
+                  color='primary'
                   checked={stripeInfo.enable}
                   onChange={(e) =>
                     setstripeInfo({ ...stripeInfo, enable: e.target.checked })
                   }
                 />
               }
-              label="Enable Stripe"
+              label='Enable Stripe'
             />
           </Box>
           {stripeInfo.enable && (
-            <Box>
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Title
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+            <Box component='div'>
+              <Box component='div'>
+                <SettingTextInput
+                  label='Title'
                   value={stripeInfo.title}
-                  onChange={(e) =>
-                    setstripeInfo({ ...stripeInfo, title: e.target.value })
+                  onSettingInputChange={(val) =>
+                    setstripeInfo({ ...stripeInfo, title: val })
                   }
-                  className={classes.simpleSettingInput}
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Description
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='Description'
                   value={stripeInfo.description}
-                  onChange={(e) =>
-                    setstripeInfo({
-                      ...stripeInfo,
-                      description: e.target.value,
-                    })
+                  onSettingInputChange={(val) =>
+                    setstripeInfo({ ...stripeInfo, description: val })
                   }
-                  className={classes.simpleSettingInput}
                   multiline
-                  rows="5"
+                  rows='5'
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5">Inline Credit Card Form</Typography>
+              <Box component='div' className={classes.marginBottom2}>
                 <FormControlLabel
                   control={
                     <Checkbox
-                      color="primary"
+                      color='primary'
                       checked={stripeInfo.inline_credit_card_form}
                       onChange={(e) =>
                         setstripeInfo({
@@ -94,34 +80,25 @@ const Stripe = (props) => {
                       }
                     />
                   }
-                  label="Inline Credit Card Form"
+                  label='Inline Credit Card Form'
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Statement Descriptor
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
+              <Box component='div'>
+                <SettingTextInput
+                  label='Statement Descriptor'
                   value={stripeInfo.statement_descriptor}
-                  onChange={(e) =>
-                    setstripeInfo({
-                      ...stripeInfo,
-                      statement_descriptor: e.target.value,
-                    })
+                  onSettingInputChange={(val) =>
+                    setstripeInfo({ ...stripeInfo, statement_descriptor: val })
                   }
-                  className={classes.simpleSettingInput}
                 />
               </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5">Capture</Typography>
+              <Box component='div' className={classes.marginBottom2}>
                 <FormControlLabel
                   control={
                     <Checkbox
-                      color="primary"
+                      color='primary'
                       checked={stripeInfo.capture}
                       onChange={(e) =>
                         setstripeInfo({
@@ -131,7 +108,7 @@ const Stripe = (props) => {
                       }
                     />
                   }
-                  label="Capture charge immediately"
+                  label='Capture charge immediately'
                 />
               </Box>
             </Box>
@@ -142,12 +119,11 @@ const Stripe = (props) => {
 
         {stripeInfo.enable && (
           <Grid item md={6} sm={12} xs={12}>
-            <Box component="div" className={classes.marginBottom2}>
-              <Typography variant="h5">Test mode</Typography>
+            <Box component='div' className={classes.marginBottom2}>
               <FormControlLabel
                 control={
                   <Checkbox
-                    color="primary"
+                    color='primary'
                     checked={stripeInfo.test_mode}
                     onChange={(e) =>
                       setstripeInfo({
@@ -157,75 +133,57 @@ const Stripe = (props) => {
                     }
                   />
                 }
-                label="Enable Test Mode"
+                label='Enable Test Mode'
               />
             </Box>
 
-            <Box>
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Publishable Key
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
-                  className={classes.simpleSettingInput}
-                  value={stripeInfo.publishable_key}
-                  onChange={(e) =>
-                    setstripeInfo({
-                      ...stripeInfo,
-                      publishable_key: e.target.value,
-                    })
-                  }
-                />
-              </Box>
+            <Box component='div'>
+              <SettingTextInput
+                label='Publishable Key'
+                value={stripeInfo.publishable_key}
+                onSettingInputChange={(val) =>
+                  setstripeInfo({
+                    ...stripeInfo,
+                    publishable_key: val,
+                  })
+                }
+              />
+            </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Secret Key
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
-                  className={classes.simpleSettingInput}
-                  type="password"
-                  value={stripeInfo.secret_key}
-                  onChange={(e) =>
-                    setstripeInfo({
-                      ...stripeInfo,
-                      secret_key: e.target.value,
-                    })
-                  }
-                />
-              </Box>
+            <Box component='div'>
+              <SettingTextInput
+                label='Secret Key'
+                value={stripeInfo.secret_key}
+                onSettingInputChange={(val) =>
+                  setstripeInfo({
+                    ...stripeInfo,
+                    secret_key: val,
+                  })
+                }
+                type='password'
+              />
+            </Box>
 
-              <Box component="div" className={classes.marginBottom2}>
-                <Typography variant="h5" className={classes.paddingBottom1}>
-                  Webhook Secret
-                </Typography>
-                <TextField
-                  size="small"
-                  variant="outlined"
-                  className={classes.simpleSettingInput}
-                  type="password"
-                  value={stripeInfo.webhook_key}
-                  onChange={(e) =>
-                    setstripeInfo({
-                      ...stripeInfo,
-                      webhook_key: e.target.value,
-                    })
-                  }
-                />
-              </Box>
+            <Box component='div'>
+              <SettingTextInput
+                label='Webhook Secret'
+                value={stripeInfo.webhook_key}
+                onSettingInputChange={(val) =>
+                  setstripeInfo({
+                    ...stripeInfo,
+                    webhook_key: val,
+                  })
+                }
+              />
             </Box>
           </Grid>
         )}
 
-        <Grid item md={12}>
+        <Grid item md={12} xs={12}>
           <Button
-            size="small"
-            color="primary"
-            variant="contained"
+            size='small'
+            color='primary'
+            variant='contained'
             onClick={updateStripe}
           >
             Save Change
@@ -236,12 +194,4 @@ const Stripe = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { settingState: state.settings };
-};
-
-const mapDispatchToProps = {
-  paymentStripeUpdateAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Stripe);
+export default Stripe;

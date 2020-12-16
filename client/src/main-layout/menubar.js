@@ -16,37 +16,8 @@ import menuItems from "../routes/nav.json";
 import Icon from "@material-ui/core/Icon";
 import clsx from "clsx";
 
-const useStyles = makeStyles(theme => ({
-  item: {
-    display: "flex",
-    paddingTop: 0,
-    paddingBottom: 0
-  },
-  button: {
-    color: colors.blueGrey[800],
-    padding: "4px",
-    justifyContent: "flex-start",
-    textTransform: "none",
-    letterSpacing: 0,
-    width: "100%",
-    fontWeight: theme.typography.fontWeightMedium
-  },
-  icons: {
-    minWidth: "40px !important"
-  },
-  itemtext: {
-    textAlign: "left !important"
-  },
-  collapse: {
-    backgroundColor: "#f5f5f5",
-    padding: "0px 10px",
-    paddingLeft: 40
-  }
-}));
-
-const MenuBar = props => {
+const MenuBar = () => {
   const classes = useStyles();
-
   const [menuName, setMenuName] = useState("");
 
   const handleClick = name => {
@@ -65,7 +36,7 @@ const MenuBar = props => {
             <ListItem className={classes.item} disableGutters>
               <Button className={classes.button}>
                 <ListItemIcon className={classes.icons}>
-                  {menu.icon && <Icon>{menu.icon}</Icon>}
+                  {menu.icon && <Icon fontSize="small">{menu.icon}</Icon>}
                 </ListItemIcon>
                 <ListItemText
                   className={classes.itemtext}
@@ -85,10 +56,10 @@ const MenuBar = props => {
           >
             <Button className={classes.button}>
               <ListItemIcon className={classes.icons}>
-                {menu.icon && <Icon>{menu.icon}</Icon>}
+                {menu.icon && <Icon fontSize="small">{menu.icon}</Icon>}
               </ListItemIcon>
               <ListItemText className={classes.itemtext} primary={menu.name} />
-              {menuName === menu.name ? <ExpandLess /> : <ExpandMore />}
+              {menuName === menu.name ? <ExpandLess  fontSize="small"/> : <ExpandMore  fontSize="small"/>}
             </Button>
           </ListItem>
           <Collapse
@@ -106,5 +77,34 @@ const MenuBar = props => {
 
   return <List component="nav">{menuListing(menuItems.menu)}</List>;
 };
+
+const useStyles = makeStyles(theme => ({
+  item: {
+    display: "flex",
+    paddingTop: 0,
+    paddingBottom: 0
+  },
+  button: {
+    color: colors.blueGrey[800],
+    padding: "4px",
+    justifyContent: "flex-start",
+    textTransform: "none",
+    letterSpacing: 0,
+    width: "100%",
+    fontWeight: theme.typography.fontWeightMedium,
+  },
+  icons: {
+    minWidth: "30px !important"
+  },
+  itemtext: {
+    textAlign: "left !important",
+    fontSize: 10
+  },
+  collapse: {
+    backgroundColor: "#f5f5f5",
+    padding: "0px 10px",
+    paddingLeft: 25
+  }
+}));
 
 export default MenuBar;

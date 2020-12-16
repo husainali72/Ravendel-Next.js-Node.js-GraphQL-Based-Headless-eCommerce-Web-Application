@@ -52,7 +52,7 @@ const Header = props => {
       <Toolbar className={classes.header}>
         <RouterLink to="/dashboard">
           <Typography variant="h4" component="h4" className={classes.textWhite}>
-            Ravendal
+            Ravendel
           </Typography>
         </RouterLink>
         <div className={classes.flexGrow} />

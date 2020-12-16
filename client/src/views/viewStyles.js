@@ -102,8 +102,8 @@ const viewStyles = makeStyles((theme) => ({
   },
   sliderImageWrapper: {
     background: "#f7f7f7",
-    height: "375px",
-    width: "95%",
+    minHeight: "225px",
+    width: "100%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -114,7 +114,7 @@ const viewStyles = makeStyles((theme) => ({
     padding: 10,
   },
   sliderImagePreviewWrapper: {
-    height: "250px",
+    height: "100px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -135,8 +135,8 @@ const viewStyles = makeStyles((theme) => ({
   },
   slideRemove: {
     position: "absolute",
-    top: 10,
-    right: 10,
+    top: 2,
+    right: 2,
   },
   galleryImgOuterBox: {
     display: "flex",
@@ -393,6 +393,21 @@ const viewStyles = makeStyles((theme) => ({
   },
   paddingBottom3: {
     marginBottom: "30px !important",
+  },
+  themeLogoWrapper: {
+    background: "rgb(240,240,240)",
+    width: "250px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: theme.spacing(2),
+    padding: theme.spacing(2),
+    flexDirection: 'column'
+  },
+  themeLogoBoxPreview: {
+    maxWidth: "95%",
+    maxHeight: "95%",
+    marginBottom: 5
   },
 }));
 
