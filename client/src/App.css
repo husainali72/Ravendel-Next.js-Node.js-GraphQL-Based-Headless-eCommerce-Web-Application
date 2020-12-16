@@ -31,7 +31,7 @@
   top: 49px;
   align-items: center;
   z-index: 1099;
-  width: calc(100% - 200px) !important;
+  width: calc(100% - 175px) !important;
   box-shadow: 0 0 20px -10px grey;
 }
 .topbar-action{

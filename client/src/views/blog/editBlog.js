@@ -1,39 +1,32 @@
 import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Button,
   TextField,
-  IconButton,
-  Divider,
   Box,
-  Input,
   RadioGroup,
-  Radio,
   FormControlLabel,
-  Typography,
-  Chip,
+  useMediaQuery,
 } from "@material-ui/core";
+import { useTheme } from "@material-ui/styles";
 import Select from "react-select";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import ImageIcon from "@material-ui/icons/Image";
-import { Link } from "react-router-dom";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   blogUpdateAction,
   blogtagsAction,
-  blogsAction,
   blogAction,
-  blogclearAction,
 } from "../../store/action/";
-import TinymceEditor from "./TinymceEditor.js";
 import clsx from "clsx";
 import { isEmpty } from "../../utils/helper";
 import viewStyles from "../viewStyles";
-import service, { getUpdatedUrl } from "../../utils/service";
-import {Loading, TopBar, StyledRadio} from '../components';
+import {
+  Loading,
+  TopBar,
+  StyledRadio,
+  CardBlocks,
+  FeaturedImageComponent,
+  URLComponent,
+  TinymceEditor,
+} from "../components";
 
 const defaultObj = {
   title: "",
@@ -50,37 +43,38 @@ const defaultObj = {
 };
 const EditBlog = (props) => {
   const classes = viewStyles();
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
-  const blogs = useSelector(state => state.blogs);
+  const blogState = useSelector((state) => state.blogs);
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
-  const [editPremalink, setEditPermalink] = useState(false);
 
   useEffect(() => {
     if (!isEmpty(props.match.params.id)) {
-      props.blogAction(props.match.params.id);
+      dispatch(blogAction(props.match.params.id));
     }
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(props.blogState.blog)) {
-      setBlog({ ...blog, ...props.blogState.blog });
+    if (!isEmpty(blogState.blog)) {
+      setBlog({ ...blog, ...blogState.blog });
       if (
-        props.blogState.blog.feature_image &&
-        props.blogState.blog.feature_image.original
+        blogState.blog.feature_image &&
+        blogState.blog.feature_image.original
       ) {
-        setfeatureImage(props.blogState.blog.feature_image.original);
+        setfeatureImage(blogState.blog.feature_image.original);
       }
-      props.blogtagsAction();
+      dispatch(blogtagsAction());
     }
-  }, [props.blogState.blog]);
+  }, [blogState.blog]);
 
   useEffect(() => {
-    if (!isEmpty(props.blogState.tags)) {
+    if (!isEmpty(blogState.tags)) {
       setTimeout(() => {
         var defaultTags = [];
-        const tagObj = props.blogState.tags.map((tag) => {
+        const tagObj = blogState.tags.map((tag) => {
           if (~blog.blog_tag.indexOf(tag.id)) {
             defaultTags.push({
               value: tag.id,
@@ -96,21 +90,19 @@ const EditBlog = (props) => {
         setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
       }, 1000);
     }
-  }, [props.blogState.tags]);
+  }, [blogState.tags]);
 
   const tagChange = (e) => {
-    //if (!isEmpty(e)) {
     setBlog({
       ...blog,
       blog_tag: e && e.length > 0 ? e.map((tag) => tag.value) : [],
     });
     setTags({ ...tags, defaultTags: e });
-    //}
   };
 
   const updateBlog = (e) => {
     e.preventDefault();
-    props.blogUpdateAction(blog);
+    dispatch(blogUpdateAction(blog));
   };
 
   const handleChange = (e) => {
@@ -130,254 +122,135 @@ const EditBlog = (props) => {
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };
 
-  const changePermalink = () => {
-    if (editPremalink) {
-      isUrlExist(blog.url);
-    }
-    setEditPermalink(!editPremalink);
-  };
-
-  const isUrlExist = async (url) => {
-    let updatedUrl = await getUpdatedUrl("Blog", url);
-    setBlog({
-      ...blog,
-      url: updatedUrl,
-    });
-  };
-
   return (
     <Fragment>
-      {props.blogState.loading && <Loading />}
+      {blogState.loading ? <Loading /> : null}
       <form>
-      <TopBar 
-          title="Add Brands"
+        <TopBar
+          title='Edit Blog'
           onSubmit={updateBlog}
-          submitTitle="Add"
-          backLink={"/all-brands"}
-      />
-        <Grid container className="topbar">
-          <Grid item lg={6}>
-            <Typography variant="h4">
-              <Link to="/all-blogs">
-                <IconButton aria-label="Back">
-                  <ArrowBackIcon />
-                </IconButton>
-              </Link>
-              <span style={{ paddingTop: 10 }}>Edit Blog</span>
-            </Typography>
-          </Grid>
+          submitTitle='Update'
+          backLink={"/all-blogs"}
+        />
 
-          <Grid item lg={6} className="text-right padding-right-2">
-            <Button color="primary" variant="contained" onClick={updateBlog}>
-              Update
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.cancelBtn}
-            >
-              <Link
-                to="/all-blogs"
-                //onClick={() => props.blogclearAction()}
-                style={{ color: "#fff" }}
-              >
-                Discard
-              </Link>
-            </Button>
-          </Grid>
-        </Grid>
+        <Grid
+          container
+          spacing={isSmall ? 2 : 3}
+          className={classes.secondmainrow}
+        >
+          <Grid item lg={9} xs={12}>
+            <CardBlocks title='Blog Information' nomargin>
+              <Box component='div' mb={2}>
+                <TextField
+                  id='title'
+                  label='Title'
+                  name='title'
+                  onChange={handleChange}
+                  variant='outlined'
+                  value={blog.title}
+                  fullWidth
+                />
+              </Box>
+              <Box component='div' mb={2}>
+                <URLComponent
+                  url={blog.url}
+                  onInputChange={(updatedUrl) => {
+                    setBlog({
+                      ...blog,
+                      url: updatedUrl,
+                    });
+                  }}
+                />
+              </Box>
+              <Box component='div'>
+                <TinymceEditor
+                  value={blog.content}
+                  onEditorChange={(value) =>
+                    setBlog({ ...blog, ["content"]: value })
+                  }
+                />
+              </Box>
+            </CardBlocks>
 
-        <Grid container spacing={4} className={classes.secondmainrow}>
-          <Grid item lg={9} md={12}>
-            <Card>
-              <CardHeader title="Blog Information" />
-              <Divider />
-              <CardContent>
-                <Grid container>
-                  <Grid item md={12}>
-                    <TextField
-                      id="title"
-                      label="Title"
-                      name="title"
-                      onChange={handleChange}
-                      variant="outlined"
-                      value={blog.title}
-                      className={clsx(classes.marginBottom, classes.width100)}
-                    />
-                  </Grid>
-                </Grid>
-
-                <Grid item md={12}>
-                  {blog.url ? (
-                    <span style={{ marginBottom: 10, display: "block" }}>
-                      <strong>Link: </strong>
-                      {window.location.origin}/blog/
-                      {editPremalink === false && blog.url}
-                      {editPremalink === true && (
-                        <input
-                          id="url"
-                          name="url"
-                          value={blog.url}
-                          onChange={handleChange}
-                          variant="outlined"
-                          className={classes.editpermalinkInput}
-                        />
-                      )}
-                      <Button
-                        color="primary"
-                        variant="contained"
-                        onClick={changePermalink}
-                        className={classes.editpermalinkInputBtn}
-                      >
-                        {editPremalink ? "Ok" : "Edit"}
-                      </Button>
-                    </span>
-                  ) : null}
-                </Grid>
-
-                <Grid container>
-                  <Grid item md={12}>
-                    {!isEmpty(props.blogState.blog) && (
-                      <TinymceEditor value={blog.content} />
-                    )}
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-
-            <Box component="span" m={1}>
-              <Card>
-                <CardHeader title="Meta Information" />
-                <Divider />
-                <CardContent>
-                  <Grid container spacing={3}>
-                    <Grid item md={6}>
-                      <TextField
-                        id="meta-title"
-                        label="Meta Title"
-                        name="title"
-                        value={blog.meta.title}
-                        onChange={metaChange}
-                        variant="outlined"
-                        className={clsx(classes.width100)}
-                      />
-                    </Grid>
-
-                    <Grid item md={6}>
-                      <TextField
-                        id="meta-keyword"
-                        label="Meta Keyword"
-                        name="keywords"
-                        value={blog.meta.keywords}
-                        onChange={metaChange}
-                        variant="outlined"
-                        className={clsx(classes.width100)}
-                      />
-                    </Grid>
-
-                    <Grid item md={12}>
-                      <TextField
-                        id="meta-description"
-                        label="Meta-description"
-                        name="description"
-                        value={blog.meta.description}
-                        onChange={metaChange}
-                        variant="outlined"
-                        className={clsx(classes.marginBottom, classes.width100)}
-                        multiline
-                        rows="4"
-                      />
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Box>
-          </Grid>
-
-          <Grid item lg={3} md={12}>
-            <Box>
-              <Card>
-                <CardHeader title="Status" />
-                <Divider />
-                <CardContent>
-                  <RadioGroup
-                    defaultValue="Publish"
-                    name="status"
-                    onChange={handleChange}
-                    row
-                    value={blog.status}
-                  >
-                    <FormControlLabel
-                      value="Publish"
-                      control={<StyledRadio />}
-                      label="Publish"
-                    />
-                    <FormControlLabel
-                      value="Draft"
-                      control={<StyledRadio />}
-                      label="Draft"
-                    />
-                  </RadioGroup>
-                </CardContent>
-              </Card>
-            </Box>
-            <Box component="span" m={1}>
-              <Card>
-                <CardHeader title="Featured Image" />
-                <CardContent>
-                  <Grid item md={12}>
-                    {featureImage !== null && (
-                      <Box className={classes.feautedImageBox}>
-                        <img
-                          src={featureImage}
-                          className={classes.feautedImageBoxPreview}
-                          alt="featured"
-                        />
-                      </Box>
-                    )}
-                    <Input
-                      className={classes.input}
-                      style={{ display: "none" }}
-                      id="updatedImage"
-                      type="file"
-                      onChange={fileChange}
-                      name="updatedImage"
-                    />
-                    <label
-                      htmlFor="updatedImage"
-                      className={classes.feautedImage}
-                    >
-                      <ImageIcon />{" "}
-                      {featureImage !== null
-                        ? "Change Featured Image"
-                        : "Set Featured Image"}
-                    </label>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Box>
-            <Box component="span" m={1}>
-              <Card>
-                <CardHeader title="Tags" />
-                <Divider />
-                <CardContent>
-                  <Typography
-                    variant="subtitle1"
-                    className={classes.marginBottom1}
-                  >
-                    Select Tags
-                  </Typography>
-                  <Select
-                    isMulti
-                    value={tags.defaultTags}
-                    name="blog_tag"
-                    options={tags.tags}
-                    onChange={tagChange}
-                    menuPortalTarget={document.querySelector("body")}
+            <CardBlocks title='Meta Information'>
+              <Grid container spacing={isSmall ? 1 : 2}>
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    label='Meta Title'
+                    name='title'
+                    value={blog.meta.title}
+                    onChange={metaChange}
+                    variant='outlined'
+                    fullWidth
                   />
-                </CardContent>
-              </Card>
-            </Box>
+                </Grid>
+
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    label='Meta Keyword'
+                    name='keywords'
+                    value={blog.meta.keywords}
+                    onChange={metaChange}
+                    variant='outlined'
+                    fullWidth
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    label='Meta description'
+                    name='description'
+                    value={blog.meta.description}
+                    onChange={metaChange}
+                    variant='outlined'
+                    className={clsx(classes.marginBottom, classes.width100)}
+                    multiline
+                    rows='4'
+                  />
+                </Grid>
+              </Grid>
+            </CardBlocks>
+          </Grid>
+
+          <Grid item lg={3} xs={12}>
+            <CardBlocks title='Status' nomargin>
+              <RadioGroup
+                defaultValue='Publish'
+                name='status'
+                onChange={handleChange}
+                row
+                value={blog.status}
+              >
+                <FormControlLabel
+                  value='Publish'
+                  control={<StyledRadio />}
+                  label='Publish'
+                />
+                <FormControlLabel
+                  value='Draft'
+                  control={<StyledRadio />}
+                  label='Draft'
+                />
+              </RadioGroup>
+            </CardBlocks>
+
+            <CardBlocks title='Featured Image'>
+              <FeaturedImageComponent
+                image={featureImage}
+                feautedImageChange={(e) => fileChange(e)}
+              />
+            </CardBlocks>
+
+            <CardBlocks title='Tags'>
+              <Select
+                isMulti
+                value={tags.defaultTags}
+                name='blog_tag'
+                options={tags.tags}
+                onChange={tagChange}
+                // menuPortalTarget={document.querySelector("body")}
+              />
+            </CardBlocks>
           </Grid>
         </Grid>
       </form>
@@ -385,16 +258,4 @@ const EditBlog = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { blogState: state.blogs };
-};
-
-const mapDispatchToProps = {
-  blogUpdateAction,
-  blogtagsAction,
-  blogsAction,
-  blogAction,
-  blogclearAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditBlog);
+export default EditBlog;

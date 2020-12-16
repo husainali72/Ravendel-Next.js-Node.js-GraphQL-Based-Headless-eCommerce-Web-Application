@@ -1,10 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
   Table,
   TableBody,
   TableCell,
@@ -12,37 +8,38 @@ import {
   TableRow,
   TableContainer,
   IconButton,
-  Button,
   TextField,
-  CardActions,
-  FormControl,
-  Select,
   Tooltip,
+  TablePagination,
   Box,
-  TablePagination
 } from "@material-ui/core";
-import Alert from "../utils/Alert";
-import Loading from "../utils/loading";
-import clsx from "clsx";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import viewStyles from "../viewStyles.js";
 import {
   blogtagsAction,
   blogtagAddAction,
   blogtagUpdateAction,
-  blogtagDeleteAction
+  blogtagDeleteAction,
 } from "../../store/action/";
 import { isEmpty } from "../../utils/helper";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import {convertDateToStringFormat} from "../utils/convertDate";
+import { convertDateToStringFormat } from "../utils/convertDate";
+import {
+  Alert,
+  Loading,
+  CardBlocks,
+  CardBlocksWithAction,
+} from "../components";
 
 var tagObject = {
   name: "",
-  url: ""
+  url: "",
 };
-const AllTags = props => {
+const AllTags = () => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const blogState = useSelector((state) => state.blogs);
   const [singleTag, setSingleTag] = useState(tagObject);
   const [editMode, setEditmode] = useState(false);
   const [page, setPage] = React.useState(0);
@@ -52,34 +49,34 @@ const AllTags = props => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
   useEffect(() => {
-    if (isEmpty(props.blogState.tags)) {
-      props.blogtagsAction();
+    if (isEmpty(blogState.tags)) {
+      dispatch(blogtagsAction());
     }
-  }, [props.blogState.tags]);
+  }, [blogState.tags]);
 
-  const editTag = tag => {
+  const editTag = (tag) => {
     setEditmode(true);
     setSingleTag({ ...singleTag, ...tag });
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setSingleTag({ ...singleTag, [e.target.name]: e.target.value });
   };
 
   const updateTag = () => {
-    props.blogtagUpdateAction(singleTag);
+    dispatch(blogtagUpdateAction(singleTag));
     setEditmode(false);
     setSingleTag(tagObject);
   };
 
   const addTag = () => {
-    props.blogtagAddAction(singleTag);
+    dispatch(blogtagAddAction(singleTag));
     setSingleTag(tagObject);
   };
 
@@ -92,112 +89,96 @@ const AllTags = props => {
   return (
     <Fragment>
       <Alert />
-      {props.blogState.loading && <Loading />}
-      <Grid container className={classes.mainrow} spacing={3}>
-        <Grid item md={6}>
-          <Card>
-            <CardHeader title="All Tags" />
-            <CardContent>
-              <TableContainer className={classes.container}>
-                <Table stickyHeader aria-label="Tags-table" size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {props.blogState.tags
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map(tag => (
-                        <TableRow key={tag.id} hover>
-                          <TableCell>{tag.name}</TableCell>
-                          <TableCell>{convertDateToStringFormat(tag.date)}</TableCell>
-                          <TableCell>
-                            <Tooltip title="Edit Tag" aria-label="edit">
-                              <IconButton
-                                aria-label="Edit"
-                                onClick={() => editTag(tag)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Delete Tag" aria-label="delete">
-                              <IconButton
-                                aria-label="Delete"
-                                className={classes.deleteicon}
-                                onClick={() =>
-                                  props.blogtagDeleteAction(tag.id)
-                                }
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={props.blogState.tags.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
+      {blogState.loading ? <Loading /> : null}
+      <Grid container className={classes.mainrow} spacing={2}>
+        <Grid item md={6} xs={12}>
+          <CardBlocks title='All Tags' nomargin>
+            <TableContainer className={classes.container}>
+              <Table stickyHeader aria-label='Tags-table' size='small'>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {blogState.tags
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((tag) => (
+                      <TableRow key={tag.id} hover>
+                        <TableCell>{tag.name}</TableCell>
+                        <TableCell>
+                          {convertDateToStringFormat(tag.date)}
+                        </TableCell>
+                        <TableCell>
+                          <Tooltip title='Edit Tag' aria-label='edit'>
+                            <IconButton
+                              aria-label='Edit'
+                              onClick={() => editTag(tag)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title='Delete Tag' aria-label='delete'>
+                            <IconButton
+                              aria-label='Delete'
+                              className={classes.deleteicon}
+                              onClick={() =>
+                                dispatch(blogtagDeleteAction(tag.id))
+                              }
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 20]}
+              component='div'
+              count={blogState.tags.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          </CardBlocks>
         </Grid>
 
-        <Grid item md={6}>
+        <Grid item md={6} xs={12}>
           <form>
-            <Card>
-              <CardHeader title={`${editMode ? "Edit" : "Add"} Tag`} />
-              <Divider />
-              <CardContent>
+            <CardBlocksWithAction
+              title={`${editMode ? "Edit" : "Add"} Tag`}
+              successBtnLable={editMode ? "Update" : "Add"}
+              successBtnOnChange={editMode ? updateTag : addTag}
+              cancelBtnOnChange={cancelTag}
+              nomargin
+            >
+              <Box component='div' mb={2}>
                 <TextField
-                  label="Name"
-                  name="name"
-                  variant="outlined"
-                  className={clsx(classes.marginBottom, classes.width100)}
+                  label='Name'
+                  name='name'
+                  variant='outlined'
                   onChange={handleChange}
                   value={singleTag.name}
+                  fullWidth
                 />
+              </Box>
+              <Box component='div' mb={2}>
                 <TextField
-                  label="Url"
-                  name="url"
-                  variant="outlined"
-                  className={clsx(classes.marginBottom, classes.width100)}
+                  label='Url'
+                  name='url'
+                  variant='outlined'
                   onChange={handleChange}
                   value={singleTag.url}
+                  fullWidth
                 />
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  color="primary"
-                  onClick={editMode ? updateTag : addTag}
-                  variant="contained"
-                >
-                  {editMode ? "Update" : "Add"}
-                </Button>
-                <Button
-                  size="small"
-                  onClick={cancelTag}
-                  variant="contained"
-                  className={classes.cancelBtn}
-                >
-                  Cancel
-                </Button>
-              </CardActions>
-            </Card>
+              </Box>
+            </CardBlocksWithAction>
           </form>
         </Grid>
       </Grid>
@@ -205,15 +186,4 @@ const AllTags = props => {
   );
 };
 
-const mapStateToProps = state => {
-  return { blogState: state.blogs };
-};
-
-const mapDispatchToProps = {
-  blogtagsAction,
-  blogtagAddAction,
-  blogtagUpdateAction,
-  blogtagDeleteAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AllTags);
+export default AllTags;

@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
-  Button,
   TextField,
   Box,
   Typography,
@@ -13,10 +12,9 @@ import { useTheme } from "@material-ui/styles";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import { blogAddAction, blogtagsAction } from "../../store/action/";
-import TinymceEditor from "./TinymceEditor.js";
 import viewStyles from "../viewStyles";
 import { isEmpty } from "../../utils/helper";
-import service, { getUpdatedUrl } from "../../utils/service";
+import { getUpdatedUrl } from "../../utils/service";
 import {
   Loading,
   TopBar,
@@ -24,13 +22,15 @@ import {
   TextInput,
   CardBlocks,
   FeaturedImageComponent,
-  URLComponent
+  URLComponent,
+  TinymceEditor
 } from "../components";
 
 var defaultObj = {
   status: "Publish",
   blog_tag: [],
   url: "",
+  content: "",
   meta: {
     title: "",
     description: "",
@@ -38,7 +38,7 @@ var defaultObj = {
   },
 };
 
-const AddBlog = (props) => {
+const AddBlog = () => {
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -48,7 +48,6 @@ const AddBlog = (props) => {
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState([]);
   const [clearTags, setclearTags] = useState([]);
-  const [editPremalink, setEditPermalink] = useState(false);
 
   useEffect(() => {
     dispatch(blogtagsAction());
@@ -73,12 +72,6 @@ const AddBlog = (props) => {
       setclearTags([]);
     }
   }, [blogState.success]);
-
-  useEffect(() => {
-    if (blogState.blog.content !== undefined) {
-      setBlog({ ...blog, content: blogState.blog.content });
-    }
-  }, [blogState.blog.content]);
 
   const addBlog = (e) => {
     e.preventDefault();
@@ -107,13 +100,6 @@ const AddBlog = (props) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
     setBlog({ ...blog, [e.target.name]: e.target.files[0] });
-  };
-
-  const changePermalink = () => {
-    if (editPremalink) {
-      isUrlExist(blog.url);
-    }
-    setEditPermalink(!editPremalink);
   };
 
   const isUrlExist = async (url) => {
@@ -154,45 +140,29 @@ const AddBlog = (props) => {
               </Box>
 
               <Box component='div' mb={2}>
-                {/* <URLComponent 
+                <URLComponent 
                   url={blog.url}
-                  editPremalink={editPremalink}
-                  changePermalink={changePermalink}
-                /> */}
-                {blog.url ? (
-                  <span style={{ marginBottom: 10, display: "block" }}>
-                    <strong>Link: </strong>
-                    {window.location.origin}/blog/
-                    {editPremalink === false && blog.url}
-                    {editPremalink === true && (
-                      <input
-                        id='url'
-                        name='url'
-                        value={blog.url}
-                        onChange={handleChange}
-                        variant='outlined'
-                        className={classes.editpermalinkInput}
-                      />
-                    )}
-                    <Button
-                      color='primary'
-                      variant='contained'
-                      onClick={changePermalink}
-                      className={classes.editpermalinkInputBtn}
-                    >
-                      {editPremalink ? "Ok" : "Edit"}
-                    </Button>
-                  </span>
-                ) : null}
+                  onInputChange={(updatedUrl) => {
+                    setBlog({
+                      ...blog,
+                      url: updatedUrl,
+                    });
+                  }}
+                />
               </Box>
 
               <Box component='div'>
-                <TinymceEditor />
+                <TinymceEditor 
+                   value={blog.content}
+                   onEditorChange={(value) =>
+                    setBlog({ ...blog, ["content"]: value })
+                   }
+                />
               </Box>
             </CardBlocks>
 
             <CardBlocks title='Meta Information'>
-              <Grid container spacing={3}>
+              <Grid container spacing={isSmall ? 1 : 2}>
                 <Grid item md={6} xs={12}>
                   <TextInput
                     value={blog.meta.title}
@@ -211,7 +181,7 @@ const AddBlog = (props) => {
                   />
                 </Grid>
 
-                <Grid item md={12} xs={12}>
+                <Grid item xs={12}>
                   <TextInput
                     value={blog.meta.description}
                     label='Meta Description'
@@ -247,7 +217,7 @@ const AddBlog = (props) => {
             </CardBlocks>
 
             <CardBlocks title='Featured Image'>
-              <Grid item md={12}>
+              <Grid item xs={12}>
                 <FeaturedImageComponent 
                   image={featureImage}
                   feautedImageChange={(e) => fileChange(e)}
@@ -266,7 +236,7 @@ const AddBlog = (props) => {
                 name='blog_tag'
                 options={tags}
                 onChange={tagChange}
-                menuPortalTarget={document.querySelector("body")}
+                // menuPortalTarget={document.querySelector("body")}
               />
             </CardBlocks>
           </Grid>
