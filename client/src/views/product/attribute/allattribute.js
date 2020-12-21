@@ -13,7 +13,6 @@ import {
   TableContainer,
   TablePagination,
   IconButton,
-  Avatar,
   Button,
   Tooltip,
 } from "@material-ui/core";
@@ -21,20 +20,20 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { attributesAction, attributeDeleteAction } from "../../../store/action";
 import jumpTo from "../../../utils/navigation";
-import { isEmpty } from "../../../utils/helper";
-//import Alert from "../utils/Alert";
-import PeopleIcon from "@material-ui/icons/People";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../../viewStyles";
-import Loading from "../../utils/loading";
+import {
+  Alert,
+  Loading,
+} from "../../components";
 
 const AllAttribute = () => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
+  const attributeState = useSelector((state) => state.product_attributes);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const attributeState = useSelector((state) => state.product_attributes);
-  const dispatch = useDispatch();
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -56,11 +55,11 @@ const AllAttribute = () => {
 
   return (
     <Fragment>
-      <Grid container spacing={4} className={classes.mainrow}>
-        <Grid item lg={12}>
+      <Alert />
+      <Grid container spacing={2} className={classes.mainrow}>
+        <Grid item xl={12}>
           <Card>
-            {attributeState.loading && <Loading />}
-
+            {attributeState.loading ? <Loading /> : null} 
             <CardHeader
               action={
                 <Link to="/add-attribute">
@@ -74,14 +73,14 @@ const AllAttribute = () => {
                   </Button>
                 </Link>
               }
-              title="All Products"
+              title="All Attributes"
             />
             <Divider />
             <CardContent>
               <TableContainer>
                 <Table
                   stickyHeader
-                  aria-label="sticky table and Dense Table"
+                  aria-label="all-attributes"
                   size="small"
                 >
                   <TableHead>
