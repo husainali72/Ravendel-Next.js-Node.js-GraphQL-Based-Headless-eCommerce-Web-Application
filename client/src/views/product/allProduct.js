@@ -18,23 +18,22 @@ import {
   Tooltip,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { productsAction, productDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
-import { isEmpty } from "../../utils/helper";
-//import Alert from "../utils/Alert";
-import PeopleIcon from "@material-ui/icons/People";
+import ImageIcon from "@material-ui/icons/Image";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
-import Loading from "../utils/loading";
-import {convertDateToStringFormat} from "../utils/convertDate";
+import { convertDateToStringFormat } from "../utils/convertDate";
+import { Alert, Loading } from "../components";
 
-const AllProduct = (props) => {
-  const classes = viewStyles(); 
-
+const AllProduct = () => {
+  const classes = viewStyles();
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state.products);
   useEffect(() => {
-    props.productsAction();
+    dispatch(productsAction());
   }, []);
 
   const [page, setPage] = React.useState(0);
@@ -51,39 +50,34 @@ const AllProduct = (props) => {
 
   return (
     <Fragment>
-      {/* <Alert /> */}
-      <Grid container spacing={4} className={classes.mainrow}>
-        <Grid item lg={12}>
+      <Alert />
+      <Grid container spacing={2} className={classes.mainrow}>
+        <Grid item xl={12}>
           <Card>
-            {props.products.loading && <Loading />}
-
+            {products.loading ? <Loading /> : null}
             <CardHeader
               action={
-                <Link to="/add-product">
+                <Link to='/add-product'>
                   <Button
-                    color="primary"
+                    color='primary'
                     className={classes.addUserBtn}
-                    size="small"
-                    variant="contained"
+                    size='small'
+                    variant='contained'
                   >
                     Add Product
                   </Button>
                 </Link>
               }
-              title="All Products"
+              title='All Products'
             />
             <Divider />
             <CardContent>
               <TableContainer>
-                <Table
-                  stickyHeader
-                  aria-label="sticky table and Dense Table"
-                  size="small"
-                >
+                <Table stickyHeader aria-label='all-products' size='small'>
                   <TableHead>
                     <TableRow>
                       <TableCell className={classes.avtarTd}>
-                        <PeopleIcon />
+                        <ImageIcon />
                       </TableCell>
                       <TableCell>Name</TableCell>
                       <TableCell>Date</TableCell>
@@ -91,7 +85,7 @@ const AllProduct = (props) => {
                     </TableRow>
                   </TableHead>
                   <TableBody className={classes.container}>
-                    {props.products.products
+                    {products.products
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -108,11 +102,13 @@ const AllProduct = (props) => {
                             />
                           </TableCell>
                           <TableCell>{product.name}</TableCell>
-                          <TableCell>{convertDateToStringFormat(product.date)}</TableCell>
                           <TableCell>
-                            <Tooltip title="Edit Product" aria-label="edit">
+                            {convertDateToStringFormat(product.date)}
+                          </TableCell>
+                          <TableCell>
+                            <Tooltip title='Edit Product' aria-label='edit'>
                               <IconButton
-                                aria-label="Edit"
+                                aria-label='Edit'
                                 onClick={() =>
                                   jumpTo(`edit-product/${product.id}`)
                                 }
@@ -120,12 +116,12 @@ const AllProduct = (props) => {
                                 <EditIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Delete Product" aria-label="delete">
+                            <Tooltip title='Delete Product' aria-label='delete'>
                               <IconButton
-                                aria-label="Delete"
+                                aria-label='Delete'
                                 className={classes.deleteicon}
                                 onClick={() =>
-                                  props.productDeleteAction(product.id)
+                                  dispatch(productDeleteAction(product.id))
                                 }
                               >
                                 <DeleteIcon />
@@ -139,8 +135,8 @@ const AllProduct = (props) => {
               </TableContainer>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={props.products.products.length}
+                component='div'
+                count={products.products.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -153,13 +149,5 @@ const AllProduct = (props) => {
     </Fragment>
   );
 };
-const mapStateToProps = (state) => {
-  return { products: state.products };
-};
 
-const mapDispatchToProps = {
-  productsAction,
-  productDeleteAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AllProduct);
+export default AllProduct;

@@ -232,6 +232,8 @@ const AllCategory = (props) => {
                   onInputChange={(updatedUrl) => {
                     setSingleCategory({ ...singlecategory, url: updatedUrl });
                   }}
+                  pageUrl="category"
+                  tableUrl="ProductCat"
                 />
               </Box>
 

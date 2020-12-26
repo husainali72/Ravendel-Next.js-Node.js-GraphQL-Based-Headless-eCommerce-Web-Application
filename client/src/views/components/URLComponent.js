@@ -5,7 +5,7 @@ import { getUpdatedUrl } from "../../utils/service";
 import viewStyles from "../viewStyles";
 import Loading from "./Loading";
 
-const URLComponent = ({ url, onInputChange }) => {
+const URLComponent = ({ url, onInputChange, pageUrl, tableUrl }) => {
   const classes = viewStyles();
   const [editPremalink, setEditPermalink] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ const URLComponent = ({ url, onInputChange }) => {
 
   const isUrlExist = async (url) => {
     setLoading(true);
-    let updatedUrl = await getUpdatedUrl("Blog", url);
+    let updatedUrl = await getUpdatedUrl(tableUrl, url);
     onInputChange(updatedUrl);
     setLoading(false);
   };
@@ -30,7 +30,7 @@ const URLComponent = ({ url, onInputChange }) => {
       {!isEmpty(url) ? (
         <span style={{ marginBottom: 10, display: "block" }}>
           <strong>Link: </strong>
-          {window.location.origin}/blog/
+          {window.location.origin}/{pageUrl}/
           {editPremalink === false && url}
           {editPremalink === true && (
             <input

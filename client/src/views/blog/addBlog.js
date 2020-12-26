@@ -148,6 +148,8 @@ const AddBlog = () => {
                       url: updatedUrl,
                     });
                   }}
+                  pageUrl="blog"
+                  tableUrl="Blog"
                 />
               </Box>
 

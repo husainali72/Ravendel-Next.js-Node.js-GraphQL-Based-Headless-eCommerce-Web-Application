@@ -160,6 +160,8 @@ const EditBlog = (props) => {
                       url: updatedUrl,
                     });
                   }}
+                  pageUrl="blog"
+                  tableUrl="Blog"
                 />
               </Box>
               <Box component='div'>

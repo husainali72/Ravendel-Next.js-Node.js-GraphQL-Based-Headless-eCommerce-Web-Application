@@ -194,6 +194,9 @@ export const productAddAction = (object) => (dispatch) => {
   dispatch({
     type: PRODUCT_LOADING,
   });
+  if(object.brand && object.brand.value){
+    object.brand = object.brand.value;
+  }
   mutation(ADD_PRODUCT, object)
     .then((response) => {
       if (response) {
