@@ -17,7 +17,6 @@ import { useTheme } from "@material-ui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { productAddAction } from "../../store/action/";
 import { getUpdatedUrl } from "../../utils/service";
-import clsx from "clsx";
 import viewStyles from "../viewStyles";
 import {
   Alert,
@@ -220,7 +219,7 @@ const AddProduct = () => {
                     label='Price'
                     name='price'
                     variant='outlined'
-                    className={clsx(classes.marginBottom, classes.width100)}
+                    fullWidth
                     type='number'
                     onChange={(e) =>
                       setProduct({
@@ -238,7 +237,7 @@ const AddProduct = () => {
                     label='Sale Price'
                     name='sellprice'
                     variant='outlined'
-                    className={clsx(classes.marginBottom, classes.width100)}
+                    fullWidth
                     type='number'
                     onChange={(e) =>
                       setProduct({
@@ -400,7 +399,7 @@ const AddProduct = () => {
                         label='Custom Field Name: *'
                         variant='outlined'
                         name='key'
-                        className={clsx(classes.customFieldInput)}
+                        className={classes.customFieldInput}
                         value={field.key}
                         onChange={(e) => customChange(e, index)}
                         size='small'
@@ -409,7 +408,7 @@ const AddProduct = () => {
                         label='Custom Field Value: *'
                         variant='outlined'
                         name='value'
-                        className={clsx(classes.customFieldInput)}
+                        className={classes.customFieldInput}
                         value={field.value}
                         onChange={(e) => customChange(e, index)}
                         size='small'

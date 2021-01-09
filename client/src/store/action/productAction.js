@@ -243,6 +243,10 @@ export const productUpdateAction = (object) => (dispatch) => {
   dispatch({
     type: PRODUCT_LOADING,
   });
+  console.log("befor obje", object);
+  if(object.brand && object.brand.value){
+    object.brand = object.brand.value;
+  }
   mutation(UPDATE_PRODUCT, object)
     .then((response) => {
       if (response) {

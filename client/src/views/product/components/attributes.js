@@ -29,7 +29,7 @@ import { CardBlocks } from "../../components";
 import { attributesAction } from "../../../store/action/";
 import viewStyles from "../../viewStyles";
 
-const Attributes = ({ product, productStateChange, onCombinationUpdate }) => {
+const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode }) => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const inputLabel = useRef(null);
@@ -62,6 +62,55 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate }) => {
         currentVariants.allValues[j._id] = j.name;
       }
     }
+
+    if(EditMode && product && attributeState.attributes.length){
+      let attrWithValue = {};
+      for (const attr of product.attribute) {
+        if (!Array.isArray(attrWithValue[attr.attribute_id])) {
+          attrWithValue[attr.attribute_id] = [];
+        }
+
+        attrWithValue[attr.attribute_id].push(attr.attribute_value_id);
+      }
+
+      currentAttribute.attribute_list = [];
+      for (let i in attrWithValue) {
+        let values = [];
+        let selected_values = [];
+
+        for (let attr of attributeState.attributes) {
+          if (i === attr.id) {
+            for (let j of attr.values) {
+              if (~attrWithValue[i].indexOf(j._id)) {
+                selected_values.push({ value: j._id, label: j.name });
+              }
+              values.push({ value: j._id, label: j.name });
+            }
+
+            currentAttribute.attribute_list.push({
+              id: attr.id,
+              name: attr.name,
+              isVariant: ~product.variant.indexOf(attr.id),
+              selected_values: selected_values,
+              values: values,
+            });
+
+            break;
+          }
+        }
+      }
+
+      currentVariants.combinations = product.variation_master;
+
+      setcurrentAttribute({
+        ...currentAttribute,
+      });
+
+      setcurrentVariants({
+        ...currentVariants,
+      });
+    }
+
   }, [attributeState.attributes]);
 
   const changeSelectedValue = (e, i) => {
@@ -287,7 +336,7 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate }) => {
             </Grid>
           </Grid>
 
-          {currentAttribute.attribute_list.length ? (
+          {currentAttribute.attribute_list.length > 0 ? (
             <>
               <CardBlocks title='Attributes'>
                 <TableContainer>
@@ -405,6 +454,7 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate }) => {
                               type='number'
                               value={variant.price}
                               onChange={(e) => variantChange(e, index)}
+                              size="small"
                             />
                           </TableCell>
                           <TableCell>
@@ -416,6 +466,7 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate }) => {
                               name='quantity'
                               value={variant.quantity}
                               onChange={(e) => variantChange(e, index)}
+                              size="small"
                             />
                           </TableCell>
                           <TableCell>
@@ -426,6 +477,7 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate }) => {
                               name='sku'
                               value={variant.sku}
                               onChange={(e) => variantChange(e, index)}
+                              size="small"
                             />
                           </TableCell>
                           <TableCell>

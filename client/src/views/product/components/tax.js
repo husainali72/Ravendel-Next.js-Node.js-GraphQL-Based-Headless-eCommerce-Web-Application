@@ -12,14 +12,16 @@ const TaxComponent = ({ product, onTaxInputChange }) => {
   const [labelWidth, setLabelWidth] = useState(0);
 
   useEffect(() => {
-    setLabelWidth(inputLabel.current.offsetWidth);
+    if(!taxState.tax.global.is_global){
+      setLabelWidth(inputLabel.current.offsetWidth);
+    }
     dispatch(taxAction());
   }, []);
 
   useEffect(() => {
     if (taxState.tax.tax_class.length) {
       var taxClass = taxState.tax.tax_class[0]._id;
-      onTaxInputChange("tax_class", taxClass);
+      // onTaxInputChange("tax_class", taxClass);
     }
   }, [taxState.tax]);
 
