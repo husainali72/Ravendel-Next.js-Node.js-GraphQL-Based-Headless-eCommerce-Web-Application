@@ -209,7 +209,7 @@ const EditProduct = (props) => {
       {productState.loading ? <Loading /> : null}
       <form>
         <TopBar
-          title='Edit product'
+          title='Edit Product'
           onSubmit={updateProduct}
           submitTitle='Update'
           backLink={"/all-products"}
