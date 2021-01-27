@@ -10,7 +10,7 @@ const {
   isEmpty,
   putError,
   checkError,
-  checkToken
+  checkToken,
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
@@ -55,20 +55,20 @@ module.exports = {
           items: [],
           total_tax: {},
           total_shipping: {},
-          grand_total: {}
+          grand_total: {},
         };
 
         const shipping = await Shipping.find({});
         const tax = await Tax.find({});
         const productAttribute = await ProductAttribute.find({});
 
-        let isGlobalTaxObj = {}
-        if(!tax[0].is_inclusive && tax[0].global.is_global){
+        let isGlobalTaxObj = {};
+        if (!tax[0].is_inclusive && tax[0].global.is_global) {
           for (const taxval of tax[0].tax_class) {
-            if(tax[0].global.tax_class.toString() === taxval._id.toString()){
+            if (tax[0].global.tax_class.toString() === taxval._id.toString()) {
               isGlobalTaxObj = {
                 name: taxval.name,
-                percentage: taxval.percentage
+                percentage: taxval.percentage,
               };
 
               break;
@@ -77,115 +77,158 @@ module.exports = {
         }
 
         let isGlobalShippingObj = {};
-        if(shipping[0].global.is_global){
+        if (shipping[0].global.is_global) {
           for (const shippingVal of shipping[0].shipping_class) {
-            if(shipping[0].global.shipping_class.toString() === shippingVal._id.toString()){
+            if (
+              shipping[0].global.shipping_class.toString() ===
+              shippingVal._id.toString()
+            ) {
               isGlobalShippingObj = {
                 name: shippingVal.name,
-                amount: shippingVal.amount
+                amount: shippingVal.amount,
               };
 
-              break
+              break;
             }
           }
         }
 
+        let productById = {};
         let productIds = [];
-        args.cart.forEach((item, i) => {                    
+        args.cart.forEach((item, i) => {
           productIds.push(item.product_id);
+          if (typeof productById[item.product_id.toString()] !== "object") {
+            productById[item.product_id.toString()] = {};
+            productById[item.product_id.toString()].carts = [];
+          }
+          productById[item.product_id.toString()].carts.push(item);
         });
-        
-        const products = await Product.find({ _id: {$in: productIds}});
-        const productAttributeVariation = await ProductAttributeVariation.find({ product_id: {$in: productIds}});
 
-        products.forEach((product, i) => {
-          let item = {
-            combination: []
+        const products = await Product.find({ _id: { $in: productIds } });
+
+        for (const prod of products) {
+          productById[prod._id.toString()].product = {
+            product_id: prod._id,
+            variant: prod.variant,
+            shipping: prod.shipping,
+            tax_class: prod.tax_class,
           };
+        }
 
-          let varProduct = productAttributeVariation.map((varP) => { 
-            if(varP.product_id.toString() === product._id.toString()){
-              return varP;
-            } 
-          });
+        const productAttributeVariation = await ProductAttributeVariation.find({
+          product_id: { $in: productIds },
+        });
 
-          if(product.variant && product.variant.length){
-            let combination = [];
-            
-            for (const cartP of args.cart) {              
-              if(cartP.product_id.toString() === varProduct[0].product_id.toString()){
-                combination = cartP.combination;
-                item.qty = cartP.qty;
+        for (const prod of productAttributeVariation) {
+          if (prod.combination.length) {
+            let attributeVariation = {
+              combination_values: [],
+              price: prod.price,
+            };
+
+            for (const attr of productAttribute) {
+              for (const attrVal of attr.values) {
+                if (~prod.combination.indexOf(attrVal._id.toString())) {
+                  attributeVariation.combination_values.push({
+                    id: attrVal._id,
+                    name: attrVal.name,
+                  });
+                }
               }
             }
 
-            for (const varP of varProduct) {
-              let isMatch = true;
-              if(combination.length === varP.combination.length){
-                for (let i of varP.combination) {
-                  if(!~combination.indexOf(i)){                    
-                    isMatch = false;
-                    break;
-                  }
-                }
-              } else {
-                continue;
-              }
-              
-              if(isMatch){
-                item.price = varP.price;
-                item.product_id = varP.product_id;
+            if (!productById[prod.product_id.toString()].attributeVariation) {
+              productById[prod.product_id.toString()].attributeVariation = [];
+            }
 
-                for (const attr of productAttribute) {
-                  for (const attrVal of attr.values) {
-                    if(~combination.indexOf(attrVal._id.toString())){
-                      item.combination.push({
-                        id: attrVal._id,
-                        name: attrVal.name
-                      });
+            productById[prod.product_id.toString()].attributeVariation.push(
+              attributeVariation
+            );
+          } else {
+            productById[prod.product_id.toString()].price = prod.price;
+          }
+        }
+
+        for (let i in productById) {
+          for (const cart of productById[i].carts) {
+            let item = {
+              combination: [],
+              qty: cart.qty,
+            };
+
+            if (cart.combination && cart.combination.length) {
+              for (const varProduct of productById[i].attributeVariation) {
+                let isMatch = true;
+                if (
+                  cart.combination.length ===
+                  varProduct.combination_values.length
+                ) {
+                  for (let i of varProduct.combination_values) {
+                    if (!~cart.combination.indexOf(i.id.toString())) {
+                      isMatch = false;
+                      break;
                     }
                   }
+                } else {
+                  continue;
                 }
 
-              }
-            }
-          } else {
-            item.price = varProduct[0].price;
-            item.product_id = varProduct[0].product_id;
-          }
-          
-          if(!tax[0].is_inclusive && !tax[0].global.is_global){
-            for (const taxval of tax[0].tax_class) {
-              if(product.tax_class.toString() === taxval._id.toString()){
-                let taxAmount = (parseFloat(item.price) / 100) * parseFloat(taxval.percentage);
-                item.tax = {
-                  name: taxval.name,
-                  amount: taxAmount
+                if (isMatch) {
+                  item.price = varProduct.price;
+                  item.product_id = productById[i].product.product_id;
+                  item.combination = varProduct.combination_values;
                 }
-                break;
               }
+            } else {
+              item.price = productById[i].price;
+              item.product_id = productById[i].product.product_id;
+              console.log(item);
             }
-          }
 
-          if(shipping[0].global.is_global && !shipping[0].global.is_per_order){
-            item.shipping = {
-              name: isGlobalShippingObj.name,
-              amount: isGlobalShippingObj.amount
-            } 
-            
-          } else if(!shipping[0].global.is_global){
-            for (const shippingVal of shipping[0].shipping_class) {
-              if(product.shipping.shipping_class.toString() === shippingVal._id.toString()){
-                item.shipping = {
-                  name: shippingVal.name,
-                  amount: shippingVal.amount
+            if (!tax[0].is_inclusive && !tax[0].global.is_global) {
+              for (const taxval of tax[0].tax_class) {
+                //console.log(productById[i]);
+                if (
+                  productById[i].product.tax_class.toString() ===
+                  taxval._id.toString()
+                ) {
+                  let taxAmount =
+                    (parseFloat(item.price) / 100) *
+                    parseFloat(taxval.percentage);
+                  item.tax = {
+                    name: taxval.name,
+                    amount: taxAmount,
+                  };
+                  break;
                 }
               }
             }
-          }
 
-          calculated.items.push(item);
-        });
+            if (
+              shipping[0].global.is_global &&
+              !shipping[0].global.is_per_order
+            ) {
+              item.shipping = {
+                name: isGlobalShippingObj.name,
+                amount: isGlobalShippingObj.amount,
+              };
+            } else if (!shipping[0].global.is_global) {
+              for (const shippingVal of shipping[0].shipping_class) {
+                if (
+                  productById[i].product.shipping.shipping_class.toString() ===
+                  shippingVal._id.toString()
+                ) {
+                  item.shipping = {
+                    name: shippingVal.name,
+                    amount: shippingVal.amount,
+                  };
+                }
+              }
+            }
+
+            calculated.items.push(item);
+          }
+        }
 
         calculated.subtotal = 0;
         calculated.total_tax = {
@@ -200,29 +243,40 @@ module.exports = {
 
         for (const item of calculated.items) {
           calculated.subtotal += parseFloat(item.price);
-          if(item.tax && item.tax.hasOwnProperty("amount") && item.tax.amount >= 0){
-            calculated.total_tax.amount += item.tax.amount
-          }  
+          if (
+            item.tax &&
+            item.tax.hasOwnProperty("amount") &&
+            item.tax.amount >= 0
+          ) {
+            calculated.total_tax.amount += item.tax.amount;
+          }
 
-          if(item.shipping && item.shipping.hasOwnProperty("amount") && item.shipping.amount >= 0){
+          if (
+            item.shipping &&
+            item.shipping.hasOwnProperty("amount") &&
+            item.shipping.amount >= 0
+          ) {
             calculated.total_shipping.amount += item.shipping.amount;
           }
         }
 
-        if(shipping[0].global.is_global && shipping[0].global.is_per_order){
+        if (shipping[0].global.is_global && shipping[0].global.is_per_order) {
           calculated.total_shipping.amount = isGlobalShippingObj.amount;
           calculated.total_shipping.name = isGlobalShippingObj.name;
         }
 
-        if(isGlobalTaxObj && isGlobalTaxObj.hasOwnProperty("percentage")){
-          calculated.total_tax.amount = (calculated.subtotal / 100) * isGlobalTaxObj.percentage;
+        if (isGlobalTaxObj && isGlobalTaxObj.hasOwnProperty("percentage")) {
+          calculated.total_tax.amount =
+            (calculated.subtotal / 100) * isGlobalTaxObj.percentage;
           calculated.total_tax.name = isGlobalTaxObj.name;
         }
 
-        calculated.grand_total = calculated.subtotal + calculated.total_shipping.amount + calculated.total_tax.amount;
+        calculated.grand_total =
+          calculated.subtotal +
+          calculated.total_shipping.amount +
+          calculated.total_tax.amount;
 
         return calculated;
-
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -234,25 +288,24 @@ module.exports = {
       //checkToken(id);
       try {
         const customer = await Customer.findById(args.customer_id);
-        if (customer) {          
+        if (customer) {
           customer.cart.items = args.cart;
           await customer.save();
           return {
             success: true,
-            message: ""
-          }
+            message: "",
+          };
         }
         return {
           success: false,
-          message: "Customer does not exist"
-        }        
-        
+          message: "Customer does not exist",
+        };
       } catch (error) {
         console.log(error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    },    
+    },
     addCart: async (root, args, { id }) => {
       checkToken(id);
       try {
@@ -266,7 +319,7 @@ module.exports = {
 
         const newCart = new Cart({
           user_id: args.user_id,
-          total: args.total
+          total: args.total,
         });
 
         newCart.products.unshift(args.product);
@@ -316,6 +369,6 @@ module.exports = {
       } else {
         throw putError("Cart not exist");
       }
-    }
-  }
+    },
+  },
 };
