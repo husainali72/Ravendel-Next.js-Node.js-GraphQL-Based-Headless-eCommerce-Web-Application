@@ -121,7 +121,6 @@ if (process.env.NODE_ENV === "production") {
     console.log("HTTP Server running on port 80");
   });
 
-  
   httpsServer.listen(443, () => {
     console.log("HTTPS Server running on port 443");
   });

@@ -3,6 +3,9 @@
 node_modules
 package-lock.json
 yarn.lock
+.editorconfig
+.env
+
 # dependencies
 /node_modules
 /client/node_modules
