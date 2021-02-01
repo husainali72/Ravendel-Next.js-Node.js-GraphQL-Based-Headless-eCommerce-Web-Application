@@ -1,10 +1,10 @@
 import React, { Fragment } from "react";
 import {
   Typography,
-  ExpansionPanel,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
-  ExpansionPanelActions,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  AccordionActions,
   Grid,
   Button,
   Divider,
@@ -19,13 +19,13 @@ import {
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import palette from "../../../theme/palette";
 
-const Orders = props => {
+const Orders = () => {
   return (
     <Fragment>
       <Grid container>
         <Grid item md={12} xs={12}>
-          <ExpansionPanel>
-            <ExpansionPanelSummary
+          <Accordion>
+            <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1c-content"
               id="panel1c-header"
@@ -43,9 +43,9 @@ const Orders = props => {
                   <Typography variant="button">Shipped</Typography>
                 </Grid>
               </Grid>
-            </ExpansionPanelSummary>
+            </AccordionSummary>
             <Divider />
-            <ExpansionPanelDetails>
+            <AccordionDetails>
               <Grid container spacing={4} className="margin-top-2">
                 <Grid item lg={6} xs={12}>
                   <Typography
@@ -214,15 +214,15 @@ const Orders = props => {
                   </TableContainer>
                 </Grid>
               </Grid>
-            </ExpansionPanelDetails>
+            </AccordionDetails>
             <Divider />
-            <ExpansionPanelActions>
+            <AccordionActions>
               <Button size="small">Reorder</Button>
               <Button size="small" color="primary">
                 Print Invoices
               </Button>
-            </ExpansionPanelActions>
-          </ExpansionPanel>
+            </AccordionActions>
+          </Accordion>
         </Grid>
       </Grid>
     </Fragment>

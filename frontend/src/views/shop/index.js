@@ -1,35 +1,35 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Container, Grid, Typography } from "@material-ui/core";
-import ProductCard from "../components/productcard";
-import PageTitle from "../components/pageTitle";
 import {
   productsAction,
   categoriesAction,
 } from "../../store/action/productAction";
 import { isEmpty } from "../../utils/helper";
-import Loading from "../components/loading";
-import FilterSideBar from "../components/filtersidebar";
+import {PageTitle, Loading, ProductCard, FilterSideBar} from '../components';
 
-const Shop = (props) => {
+const Shop = () => {
+  const dispatch = useDispatch();
+  const products = useSelector(state => state.products);
+  const categories = useSelector(state => state.categories);
   const [fillterProducts, setFillterProducts] = useState([]);
   const [priceRange, setPriceRange] = React.useState([0, 2000]);
 
   useEffect(() => {
-    if (isEmpty(props.products.products)) {
-      props.productsAction();
+    if (isEmpty(products.products)) {
+      dispatch(productsAction());
     }
   }, []);
 
   useEffect(() => {
-    if (isEmpty(props.products.categories)) {
-      props.categoriesAction();
+    if (isEmpty(products.categories)) {
+      dispatch(categoriesAction());
     }
   }, []);
 
   const fillterShopProducts = (newValue) => {
     setPriceRange(newValue);
-    let filteredProducts = props.products.products.filter(
+    let filteredProducts = products.products.filter(
       (product) =>
         product.pricing.price >= newValue[0] &&
         product.pricing.price <= newValue[1]
@@ -38,14 +38,14 @@ const Shop = (props) => {
   };
 
   useEffect(() => {
-    if (!isEmpty(props.products.products)) {
+    if (!isEmpty(products.products)) {
       fillterShopProducts(priceRange);
     }
-  }, [props.products.products]);
+  }, [products.products]);
 
   return (
     <Fragment>
-      {props.products.loading && <Loading />}
+      {products.loading && <Loading />}
       <PageTitle title="Shop" />
       <Container>
         <Grid container className="shop-row" spacing={4}>
@@ -66,7 +66,7 @@ const Shop = (props) => {
                         <Grid item lg={4} md={6} sm={6} xs={6}>
                           <ProductCard
                             productDetail={product}
-                            categories={props.products.categories}
+                            categories={products.categories}
                             index={index}
                             key={index}
                             GirdProductView={true}
@@ -77,8 +77,8 @@ const Shop = (props) => {
                   ))
               ) : (
                 <Grid item md={12}>
-                  <Typography variant="h3" className="text-center">
-                    No Products Available
+                  <Typography variant="body1" className="text-center width-100">
+                    No products available
                   </Typography>
                 </Grid>
               )}
@@ -90,16 +90,4 @@ const Shop = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    products: state.products,
-    categories: state.categories,
-  };
-};
-
-const mapDispatchToProps = {
-  productsAction,
-  categoriesAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Shop);
+export default Shop;

@@ -8,9 +8,9 @@ import {
   Slider,
   Divider,
   Icon,
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Checkbox,
   FormControlLabel,
 } from "@material-ui/core";
@@ -20,36 +20,6 @@ import { useLocation } from "react-router-dom";
 import { getQueryString, isEmpty } from "../../utils/helper";
 import jumpTo, { go } from "../../utils/navigation";
 import { useSelector } from "react-redux";
-
-const categories = [
-  {
-    url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
-    title: "Cloths",
-    width: "40%",
-  },
-  {
-    url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
-    title: "Shoes",
-    width: "30%",
-  },
-  {
-    url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-4.jpg",
-    title: "Accessories",
-    width: "30%",
-    children: [
-      {
-        url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-2.jpg",
-        title: "Cloths Sub",
-        width: "40%",
-      },
-      {
-        url: "https://colorlib.com/preview/theme/essence/img/bg-img/bg-3.jpg",
-        title: "Shoes Sub",
-        width: "30%",
-      },
-    ],
-  },
-];
 
 const FilterSideBar = (props) => {
   const [priceRange, setPriceRange] = useState([0, 2000]);
@@ -62,7 +32,7 @@ const FilterSideBar = (props) => {
     category: [],
     brand: [],
     attribute: [],
-    price: []
+    price: [],
   });
 
   let location = useLocation();
@@ -214,7 +184,7 @@ const FilterSideBar = (props) => {
   };
 
   const priceChange = (event, newValue) => {
-    console.log(newValue);
+    // console.log(newValue);
     setPriceRange(newValue);
     /*if (props.onPriceChange) {
       props.onPriceChange(newValue);
@@ -297,96 +267,64 @@ const FilterSideBar = (props) => {
           </Icon>
         </span>
       </p>
-      {/* <Box component="div" className="filter-wrapper">
-        <Typography variant="h3" className="fillter-header">
-          Categories
-        </Typography>
-        <List component="nav" dense>
-          {categoryListing(categories)}
-        </List>
-      </Box>
-      <Box component="div" className="filter-wrapper">
-        <Typography variant="h3" className="fillter-header">
-          Fillter by
-        </Typography>
-        <Box className="price-box-fillter">
-          <Typography
-            variant="h4"
-            id="price-slider"
-            gutterBottom
-            className="fillter-subheader"
-          >
-            Price
-          </Typography>
-          <Slider
-            value={priceRange}
-            onChange={priceChange}
-            valueLabelDisplay="auto"
-            aria-labelledby="price-slider"
-            min={0}
-            max={5000}
-            step={10}
-          />
-          <Typography variant="h6">
-            Range: ${priceRange[0]} - ${priceRange[1]}
-          </Typography>
-        </Box>
-      </Box> */}
 
       <Box component="div" className="expansionPanelwrapper">
         <Divider />
-        { brands.length ?  (<Box component="div" className="filter-wrapper" >
-          <ExpansionPanel>
-            <ExpansionPanelSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="brand-content"
-              id="brand-filter-header"
-            >
-              <Typography variant="h4" className="fillter-subheader">
-                Brands
-              </Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <List>
-                {brands.map((brand, i) => (
-                  <ListItem disableGutters key={brand._id}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          color="primary"
-                          checked={brand.checked}
-                          onChange={(e) => filterBrand(e, i)}
-                        />
-                      }
-                      label={
-                        <Typography
-                          variant="button"
-                          className="filter-checkbox-label"
-                        >
-                          {brand.name}
-                        </Typography>
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
-        </Box>) : null}
+        {brands.length ? (
+          <Box component="div" className="filter-wrapper">
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="brand-content"
+                id="brand-filter-header"
+              >
+                <Typography variant="h6" className="fillter-subheader">
+                  Brands
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <List>
+                  {brands.map((brand, i) => (
+                    <ListItem disableGutters key={brand._id}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            color="primary"
+                            checked={brand.checked}
+                            onChange={(e) => filterBrand(e, i)}
+                            size="small"
+                          />
+                        }
+                        label={
+                          <Typography
+                            variant="button"
+                            className="filter-checkbox-label"
+                          >
+                            {brand.name}
+                          </Typography>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          </Box>
+        ) : null}
         <Divider />
         <Box component="div" className="filter-wrapper">
           {attributes.map((attr, p) => (
-            <ExpansionPanel key={attr.id}>
-              <ExpansionPanelSummary
+            <Accordion key={attr.id}>
+              <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="color-content"
                 id="color-filter-header"
               >
-                <Typography variant="h4" className="fillter-subheader">
+                <Typography variant="h6" className="fillter-subheader">
                   {attr.name}
                 </Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
+              </AccordionSummary>
+              <AccordionDetails>
                 <List>
                   {attr.values.map((val, i) => (
                     <ListItem disableGutters key={val.id}>
@@ -396,6 +334,7 @@ const FilterSideBar = (props) => {
                             color="primary"
                             checked={val.checked}
                             onChange={(e) => filterAttribute(e, p, i)}
+                            size="small"
                           />
                         }
                         label={
@@ -410,8 +349,8 @@ const FilterSideBar = (props) => {
                     </ListItem>
                   ))}
                 </List>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
+              </AccordionDetails>
+            </Accordion>
           ))}
         </Box>
       </Box>

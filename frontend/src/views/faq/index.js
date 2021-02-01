@@ -1,20 +1,20 @@
 import React, { Fragment } from "react";
-import { connect } from "react-redux";
+import {useSelector} from 'react-redux';
 import PageTitle from "../components/pageTitle";
 import {
   Container,
   Grid,
   Typography,
   Box,
-  ExpansionPanel,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import Logo from "../../assets/images/logo.png";
 
-const FAQ = (props) => {
-  console.log("props.faqs.faqs", props.faqs.faqs);
+const FAQ = () => {
+  const faqs = useSelector(state => state.faqs);
+
   return (
     <Fragment>
       <PageTitle title="FAQ" />
@@ -22,23 +22,23 @@ const FAQ = (props) => {
         <Grid container className="margin-top-3 margin-bottom-3">
           <Grid item md={12} sm={12} xs={12}>
             <Box component="div" mt={5} mb={5}>
-              {props.faqs.faqs && props.faqs.faqs.length
-                ? props.faqs.faqs.map((faq) => (
-                    <ExpansionPanel key={faq.id}>
-                      <ExpansionPanelSummary
+              {faqs.faqs && faqs.faqs.length
+                ? faqs.faqs.map((faq) => (
+                    <Accordion key={faq.id}>
+                      <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="faqs"
                         id={faq.id}
                       >
                         <Typography variant="h6">{faq.title}</Typography>
-                      </ExpansionPanelSummary>
+                      </AccordionSummary>
 
-                      <ExpansionPanelDetails>
+                      <AccordionDetails>
                         <Typography variant="body1">
                           {faq.description}
                         </Typography>
-                      </ExpansionPanelDetails>
-                    </ExpansionPanel>
+                      </AccordionDetails>
+                    </Accordion>
                   ))
                 : ""}
             </Box>
@@ -49,8 +49,4 @@ const FAQ = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  faqs: state.faqs,
-});
-
-export default connect(mapStateToProps)(FAQ);
+export default FAQ;

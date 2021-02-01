@@ -15,9 +15,11 @@ import {
   Button,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 
 const Navigation = (props) => {
+  const customer = useSelector((state) => state.customer);
+  const cart = useSelector((state) => state.cart);
   const [anchorEl, setAnchorEl] = useState(null);
   const [collaspeAccount, setCollaspeAccount] = useState(false);
   const [logoutConfrm, setLogoutConfrm] = useState(false);
@@ -56,7 +58,7 @@ const Navigation = (props) => {
         </Box>
         <Hidden mdDown>
           <Box component="div" display="inline" m={2} className="menu-item">
-            <Badge badgeContent={props.cart.products.length} color="primary">
+            <Badge badgeContent={cart.products.length} color="primary">
               <Icon
                 style={{ fontSize: 24 }}
                 onClick={(e) => props.toggleCartFunc(e)}
@@ -101,53 +103,95 @@ const Navigation = (props) => {
           </Box>
           {/* ==============================Collapsable Menu============================ */}
           <Collapse in={collaspeAccount} className="collapsible-menu-mobile">
-            <Box component="div" display="inline" m={2} className="menu-item">
-              <Link onClick={() => props.drawerCloseFunc()} to="/login">
-                Login
-              </Link>
-            </Box>
-            <Box component="div" display="inline" m={2} className="menu-item">
-              <Link onClick={() => props.drawerCloseFunc()} to="/register">
-                Register
-              </Link>
-            </Box>
-            <Box component="div" display="inline" m={2} className="menu-item">
-              <Link
-                onClick={() => props.drawerCloseFunc()}
-                to="/account/orders"
-              >
-                Orders
-              </Link>
-            </Box>
-            <Box component="div" display="inline" m={2} className="menu-item">
-              <Link
-                onClick={() => props.drawerCloseFunc()}
-                to="/account/address"
-              >
-                Address
-              </Link>
-            </Box>
-            <Box component="div" display="inline" m={2} className="menu-item">
-              <Link
-                onClick={() => props.drawerCloseFunc()}
-                to="/account/recently-viewed"
-              >
-                Recently Viewed
-              </Link>
-            </Box>
-            <Box component="div" display="inline" m={2} className="menu-item">
-              <Link
-                onClick={() => props.drawerCloseFunc()}
-                to="/account/profile"
-              >
-                Profile
-              </Link>
-            </Box>
-            <Box component="div" display="inline" m={2} className="menu-item">
-              <Link onClick={() => props.drawerCloseFunc()} to="/login">
-                Logout
-              </Link>
-            </Box>
+            {customer.login ? (
+              <>
+                <Box
+                  component="div"
+                  display="inline"
+                  m={2}
+                  className="menu-item"
+                >
+                  <Link
+                    onClick={() => props.drawerCloseFunc()}
+                    to="/account/orders"
+                  >
+                    Orders
+                  </Link>
+                </Box>
+                <Box
+                  component="div"
+                  display="inline"
+                  m={2}
+                  className="menu-item"
+                >
+                  <Link
+                    onClick={() => props.drawerCloseFunc()}
+                    to="/account/address"
+                  >
+                    Address
+                  </Link>
+                </Box>
+                <Box
+                  component="div"
+                  display="inline"
+                  m={2}
+                  className="menu-item"
+                >
+                  <Link
+                    onClick={() => props.drawerCloseFunc()}
+                    to="/account/recently-viewed"
+                  >
+                    Recently Viewed
+                  </Link>
+                </Box>
+                <Box
+                  component="div"
+                  display="inline"
+                  m={2}
+                  className="menu-item"
+                >
+                  <Link
+                    onClick={() => props.drawerCloseFunc()}
+                    to="/account/profile"
+                  >
+                    Profile
+                  </Link>
+                </Box>
+                <Box
+                  component="div"
+                  display="inline"
+                  m={2}
+                  className="menu-item"
+                >
+                  <Link onClick={() => props.drawerCloseFunc()} to="/login">
+                    Logout
+                  </Link>
+                </Box>
+              </>
+            ) : (
+              <>
+                <Box
+                  component="div"
+                  display="inline"
+                  m={2}
+                  className="menu-item"
+                >
+                  <Link onClick={() => props.drawerCloseFunc()} to="/login">
+                    Login
+                  </Link>
+                </Box>
+                <Box
+                  component="div"
+                  display="inline"
+                  m={2}
+                  className="menu-item"
+                >
+                  <Link onClick={() => props.drawerCloseFunc()} to="/register">
+                    Register
+                  </Link>
+                </Box>
+              </>
+            )}
           </Collapse>
         </Hidden>
       </Box>
@@ -160,25 +204,32 @@ const Navigation = (props) => {
         keepMounted
         style={{ zIndex: 9999, minWidth: 200 }}
       >
-        <Link to="/login">
-          <MenuItem onClick={handleClose}>Login</MenuItem>
-        </Link>
-        <Link to="/register">
-          <MenuItem onClick={handleClose}>Register</MenuItem>
-        </Link>
-        <Link to="/account/orders">
-          <MenuItem onClick={handleClose}>Orders</MenuItem>
-        </Link>
-        <Link to="/account/address">
-          <MenuItem onClick={handleClose}>Address</MenuItem>
-        </Link>
-        <Link to="/account/recently-viewed">
-          <MenuItem onClick={handleClose}>Recently Viewed</MenuItem>
-        </Link>
-        <Link to="/account/profile">
-          <MenuItem onClick={handleClose}>Profile</MenuItem>
-        </Link>
-        <MenuItem onClick={Logout}>Logout</MenuItem>
+        {customer.login ? (
+          <>
+            <Link to="/account/orders">
+              <MenuItem onClick={handleClose}>Orders</MenuItem>
+            </Link>
+            <Link to="/account/address">
+              <MenuItem onClick={handleClose}>Address</MenuItem>
+            </Link>
+            <Link to="/account/recently-viewed">
+              <MenuItem onClick={handleClose}>Recently Viewed</MenuItem>
+            </Link>
+            <Link to="/account/profile">
+              <MenuItem onClick={handleClose}>Profile</MenuItem>
+            </Link>
+            <MenuItem onClick={Logout}>Logout</MenuItem>
+          </>
+        ) : (
+          <>
+            <Link to="/login">
+              <MenuItem onClick={handleClose}>Login</MenuItem>
+            </Link>
+            <Link to="/register">
+              <MenuItem onClick={handleClose}>Register</MenuItem>
+            </Link>
+          </>
+        )}
       </Menu>
 
       {/* ==============================Logout Dialog============================ */}
@@ -211,8 +262,4 @@ const Navigation = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  cart: state.cart,
-});
-
-export default connect(mapStateToProps)(Navigation);
+export default Navigation;

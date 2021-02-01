@@ -9,6 +9,7 @@ import {
   TextField
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import {PageTitle} from '../components';
 
 const Login = props => {
   const doLogin = e => {
@@ -16,15 +17,7 @@ const Login = props => {
   };
   return (
     <Fragment>
-      <Box
-        component="div"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className="page-header"
-      >
-        <Typography variant="h1">Login</Typography>
-      </Box>
+     <PageTitle title="Login"/>
       <Container>
         <Grid
           container
@@ -53,6 +46,7 @@ const Login = props => {
                 name="username"
                 onChange={e => console.log(e.target.value)}
                 className="width-100 margin-top-1 margin-bottom-1"
+                size="small"
               />
 
               <TextField
@@ -62,6 +56,7 @@ const Login = props => {
                 name="password"
                 onChange={e => console.log(e.target.value)}
                 className="width-100 margin-top-1 margin-bottom-2"
+                size="small"
               />
 
               <Button

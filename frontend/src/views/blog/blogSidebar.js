@@ -10,26 +10,27 @@ import {
   Chip,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import { blogtagsAction, blogsAction } from "../../store/action/blogAction";
 import { isEmpty } from "../../utils/helper";
-import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
-const BlogSidebar = props => {
+const BlogSidebar = () => {
+  const dispatch = useDispatch();
+  const blogs = useSelector((state) => state.blogs);
+
   useEffect(() => {
-    if (isEmpty(props.blogs.blogs)) {
-      props.blogsAction();
+    if (isEmpty(blogs.blogs)) {
+      dispatch(blogsAction());
+    }
+
+    if (isEmpty(blogs.tags)) {
+      dispatch(blogtagsAction());
     }
   }, []);
-
-  useEffect(() => {
-    if (isEmpty(props.blogs.tags)) {
-      props.blogtagsAction();
-    }
-  }, [props.blogs.tags]);
 
   return (
     <Fragment>
@@ -54,8 +55,8 @@ const BlogSidebar = props => {
           Recent Blogs
         </Typography>
         <List component="nav" aria-label="recents-blogs">
-          {props.blogs.blogs &&
-            props.blogs.blogs
+          {blogs.blogs.lenght > 0 ?
+            blogs.blogs
               .sort((a, b) =>
                 Date.parse("1970-01-01T" + b.date) >
                 Date.parse("1970-01-01T" + a.date)
@@ -72,7 +73,11 @@ const BlogSidebar = props => {
                     />
                   </ListItem>
                 </Link>
-              ))}
+              )) : (
+                <Typography variant="body2">
+                  No recent blogs found
+                </Typography>
+              )}
         </List>
       </Box>
 
@@ -83,25 +88,21 @@ const BlogSidebar = props => {
           Tags
         </Typography>
         <Box>
-          {props.blogs.tags &&
-            props.blogs.tags.map((tag, index) => (
+          {blogs.tags.lenght > 0 ? (
+            blogs.tags.map((tag, index) => (
               <Link to={`/tag${tag.url}`} key={index}>
                 <Chip label={tag.name} className="chips-tags" />
               </Link>
-            ))}
+            ))
+          ) : (
+            <Typography variant="body2">
+              No tags found
+            </Typography>
+          )}
         </Box>
       </Box>
     </Fragment>
   );
 };
 
-const mapStateToProps = state => ({
-  blogs: state.blogs
-});
-
-const mapDispatchToProps = {
-  blogtagsAction,
-  blogsAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(BlogSidebar);
+export default BlogSidebar;

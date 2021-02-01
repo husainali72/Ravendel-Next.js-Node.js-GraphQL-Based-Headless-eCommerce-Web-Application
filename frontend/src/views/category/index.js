@@ -1,15 +1,16 @@
 import React, { Fragment, useState, useEffect } from "react";
-import PageTitle from "../components/pageTitle";
-import ProductCard from "../components/productcard";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { catProductAction, filterProductAction } from "../../store/action";
 import { Typography, Box, Container, Grid } from "@material-ui/core";
 import { isEmpty } from "../../utils/helper";
-import Loading from "../components/loading";
 import { Helmet } from "react-helmet";
-import FilterSideBar from "../components/filtersidebar";
+import {PageTitle, Loading, ProductCard, FilterSideBar} from '../components';
 
 const Category = (props) => {
+  const catID = props.match.params.url;
+  const dispatch = useDispatch();
+  const productsState = useSelector(state => state.products);
+  const categories = useSelector(state => state.categories);
   const [priceRange, setPriceRange] = React.useState([0, 2000]);
   const [categoryDetail, setCategoryDetail] = useState({
     name: "",
@@ -26,20 +27,20 @@ const Category = (props) => {
   const [brands, setbrands] = useState([]);
 
   useEffect(() => {
-    if (props.products.products.length) {
-      setProducts(props.products.products);
+    if (productsState.products.length) {
+      setProducts(productsState.products);
     }
-  }, [props.products.products]);
+  }, [productsState.products]);
 
   useEffect(() => {
-    if (props.match.params.url) {
-      props.catProductAction(`${props.match.params.url}`);
+    if (catID) {
+      dispatch(catProductAction(catID));
     }
   }, []);
 
   useEffect(() => {
-    setCategoryDetail(props.products.singleCategoryDetails);
-  }, [props.products.singleCategoryDetails]);
+    setCategoryDetail(productsState.singleCategoryDetails);
+  }, [productsState.singleCategoryDetails]);
 
   useEffect(() => {
     if (!isEmpty(categoryDetail.products)) {
@@ -59,12 +60,12 @@ const Category = (props) => {
 
   const getfilteredProducts = (config) => {
     setProducts([]);
-    props.filterProductAction(config);
+    dispatch(filterProductAction(config));
   };
 
   return (
     <Fragment>
-      {props.products.loading && <Loading />}
+      {productsState.loading && <Loading />}
 
       {categoryDetail.meta && (
         <Helmet>
@@ -80,11 +81,11 @@ const Category = (props) => {
           <Grid item lg={3} md={4} sm={4} xs={12} className="left-sidebar">
             <FilterSideBar
               onPriceChange={(newValue) => fillterProducts(newValue)}
-              filter_brands={props.products.singleCategoryDetails.filter_brands}
-              currentCat={props.products.singleCategoryDetails.id}
+              filter_brands={productsState.singleCategoryDetails.filter_brands}
+              currentCat={productsState.singleCategoryDetails.id}
               getfilteredProducts={getfilteredProducts}
               filtered_attributes={
-                props.products.singleCategoryDetails.filter_attributes
+                productsState.singleCategoryDetails.filter_attributes
               }
             />
           </Grid>
@@ -114,8 +115,8 @@ const Category = (props) => {
                   )
               ) : (
                 <Grid item md={12}>
-                  <Typography variant="h3" className="text-center">
-                    No Products Available
+                  <Typography variant="body1" className="text-center width-100">
+                    No products available
                   </Typography>
                 </Grid>
               )}
@@ -127,16 +128,4 @@ const Category = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    products: state.products,
-    categories: state.categories,
-  };
-};
-
-const mapDispatchToProps = {
-  catProductAction,
-  filterProductAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Category);
+export default Category;

@@ -11,7 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 
-const CategoryListing = (props) => {
+const CategoryListing = ({allCategories, title}) => {
   const classes = useStyles();
 
   return (
@@ -20,7 +20,7 @@ const CategoryListing = (props) => {
         <Container>
           <Box display="flex" justifyContent="center">
             <Typography variant="h2" className="section-title">
-              {props.title}
+              {title}
             </Typography>
           </Box>
           <Box
@@ -29,8 +29,8 @@ const CategoryListing = (props) => {
             display="flex"
           >
             <Grid container spacing={4}>
-              {props.allCategories &&
-                props.allCategories.map((category, index) => (
+              {allCategories &&
+                allCategories.map((category, index) => (
                   <Fragment key={index}>
                     {category.parentId === null && (
                       <Grid item lg={3} md={3} sm={6} xs={6}>
@@ -151,8 +151,4 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const mapStateToProps = (state) => ({
-  settings: state.settings,
-});
-
-export default connect(mapStateToProps)(CategoryListing);
+export default CategoryListing;

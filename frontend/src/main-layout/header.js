@@ -10,28 +10,31 @@ import {
   Badge,
   Typography,
 } from "@material-ui/core";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CartSide from "./cart";
 import { Link } from "react-router-dom";
 import { homepageAction } from "../store/action/homepageAction";
 import { isEmpty } from "../utils/helper";
 
 const Header = (props) => {
+  const dispatch = useDispatch();
+  const cart = useSelector(state => state.cart);
+  const home = useSelector(state => state.homepage);
   const [openMenu, setOpenMenu] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [themeSetting, setThemeSetting] = useState({});
 
   useEffect(() => {
-    if (isEmpty(props.home.homepage)) {
-      props.homepageAction();
+    if (isEmpty(home.homepage)) {
+      dispatch(homepageAction());
     }
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(props.home.homepage)) {
-      setThemeSetting(props.home.homepage);
+    if (!isEmpty(home.homepage)) {
+      setThemeSetting(home.homepage);
     }
-  }, [props.home.homepage]);
+  }, [home.homepage]);
 
   const toggleCart = (e) => {
     if (e.type === "keydown" && (e.key === "Tab" || e.key === "Shift")) {
@@ -71,7 +74,7 @@ const Header = (props) => {
                 <Hidden lgUp>
                   <Box display="flex" justify="flex-end" alignItems="center">
                     <Badge
-                      badgeContent={props.cart.products.length}
+                      badgeContent={cart.products.length}
                       color="primary"
                       onClick={toggleCart}
                       className="margin-right-2"
@@ -97,7 +100,7 @@ const Header = (props) => {
       >
         <Box className="cart-wrapper" component="div" height="100%">
           <CartSide
-            cartValue={props.cart.products}
+            cartValue={cart.products}
             closeCart={() => setOpenCart(false)}
           />
         </Box>
@@ -106,15 +109,4 @@ const Header = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    cart: state.cart,
-    home: state.homepage,
-  };
-};
-
-const mapDispatchToProps = {
-  homepageAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default Header;

@@ -6,7 +6,7 @@ import SectionLoading from "./sectionLoading";
 import { isEmpty } from "../../utils/helper";
 import Loading from "./loading";
 
-const ProductSlider = (props) => {
+const ProductSlider = ({allProducts, title, featuredProducts}) => {
   const settings = {
     infinite: true,
     slidesToShow: 4,
@@ -44,10 +44,10 @@ const ProductSlider = (props) => {
 
   useEffect(() => {
     var products = [];
-    if (!isEmpty(props.allProducts)) {
-      props.allProducts.map((product) => {
+    if (!isEmpty(allProducts)) {
+      allProducts.map((product) => {
         if (product.status === "Publish") {
-          if (props.featuredProducts) {
+          if (featuredProducts) {
             if (product.featured_product) {
               products.push(product);
             }
@@ -58,19 +58,19 @@ const ProductSlider = (props) => {
       });
       setProducts(products);
     }
-  }, [props.allProducts]);
+  }, [allProducts]);
 
   return (
     <Fragment>
       {!products.length ? <Loading /> : ""}
       <section className="home-product-listing with-slider">
-        {props.allProducts.length < 0 ? (
+        {allProducts.length < 0 ? (
           <SectionLoading />
         ) : (
           <Container>
             <Box display="flex" justifyContent="center">
               <Typography variant="h2" className="section-title">
-                {props.title}
+                {title}
               </Typography>
             </Box>
             <Slider {...settings}>

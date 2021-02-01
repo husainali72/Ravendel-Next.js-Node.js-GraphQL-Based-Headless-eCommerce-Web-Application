@@ -1,9 +1,8 @@
 import React, { Fragment } from "react";
-import { connect } from "react-redux";
 import { Typography, Box, Container, Grid } from "@material-ui/core";
 import PageTitle from "../components/pageTitle";
 
-const PaymentFailed = (props) => {
+const PaymentFailed = () => {
   return (
     <Fragment>
       <PageTitle title="Payment Failed" />
@@ -25,8 +24,4 @@ const PaymentFailed = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  settings: state.settings,
-});
-
-export default connect(mapStateToProps)(PaymentFailed);
+export default PaymentFailed;

@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { connect } from "react-redux";
 import { Container, Grid, Typography, Box } from "@material-ui/core";
 import PageTitle from "../components/pageTitle";
 import ProductGrid from "../components/productgrid";
@@ -100,8 +99,4 @@ const Brand = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  settings: state.settings
-});
-
-export default connect(mapStateToProps)(Brand);
+export default Brand;
