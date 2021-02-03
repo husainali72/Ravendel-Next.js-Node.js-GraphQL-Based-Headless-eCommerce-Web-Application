@@ -79,6 +79,7 @@ app.use(express.json({ extended: false }));
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
+app.use("/api/customer", require("./routes/api/customer"));
 
 //app.use(express.static("public"));
 app.use("/assets", express.static(__dirname + "/assets"));
