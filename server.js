@@ -26,8 +26,8 @@ if (process.env.NODE_ENV === "production") {
     ca: ca,
   };
 }
-/* SSL Workout end */
 
+/* SSL Workout end */
 const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
 const connectDB = require("./config/db");
