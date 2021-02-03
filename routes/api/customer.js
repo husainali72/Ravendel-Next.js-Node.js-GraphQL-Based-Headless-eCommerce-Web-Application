@@ -15,13 +15,14 @@ const { customerService, tokenService } = require("../../services");
 // @route   Post api/posts
 // @desc    Registering user
 // @access  public
-router.post("/register", async (req, res) => {
-  //return catchAsync(async (req, res) => {
-  console.log(req.body);
-  const user = await customerService.createUser(req.body);
-  const tokens = await tokenService.generateAuthTokens(user);
-  res.status(httpStatus.CREATED).send({ user, tokens });
-  //});
-});
+router.post(
+  "/register",
+  catchAsync(async (req, res) => {
+    console.log(req.body);
+    const user = await customerService.createUser(req.body);
+    const tokens = await tokenService.generateAuthTokens(user);
+    res.status(httpStatus.CREATED).send({ user, tokens });
+  })
+);
 
 module.exports = router;

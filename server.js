@@ -38,6 +38,7 @@ const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
 const vhost = require("vhost");
+const { errorConverter, errorHandler } = require("./middleware/error");
 
 //connect db
 connectDB();
@@ -85,6 +86,12 @@ app.use("/api/customer", require("./routes/api/customer"));
 app.use("/assets", express.static(__dirname + "/assets"));
 
 const appFront = express();
+
+// convert error to ApiError, if needed
+app.use(errorConverter);
+
+// handle error
+app.use(errorHandler);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === "production") {
