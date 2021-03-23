@@ -8,15 +8,15 @@ var credentials = {};
 // Certificate
 if (process.env.NODE_ENV === "production") {
   const privateKey = fs.readFileSync(
-    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/privkey.pem",
+    "/etc/letsencrypt/live/ravendel-backend.hbwebsol.com/privkey.pem",
     "utf8"
   );
   const certificate = fs.readFileSync(
-    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/cert.pem",
+    "/etc/letsencrypt/live/ravendel-backend.hbwebsol.com/cert.pem",
     "utf8"
   );
   const ca = fs.readFileSync(
-    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/chain.pem",
+    "/etc/letsencrypt/live/ravendel-backend.hbwebsol.com/chain.pem",
     "utf8"
   );
 
