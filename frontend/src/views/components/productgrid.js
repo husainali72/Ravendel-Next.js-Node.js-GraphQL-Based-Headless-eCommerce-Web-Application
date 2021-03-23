@@ -4,37 +4,12 @@ import ProductCard from "./productcard";
 import { isEmpty } from "../../utils/helper";
 import Loading from "./loading";
 
-const ProductGrid = (props) => {
+const ProductGrid = ({allProducts, title}) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // var products = [];
-    // var onSaleCount = 0;
-    // var productcount = 0;
-    // if (!isEmpty(props.allProducts)) {
-    //   for (var i = 0; i < props.allProducts.length; i++) {
-    //     if (props.allProducts[i].status === "Publish") {
-    //       if (props.onSale) {
-    //         if (props.allProducts[i].pricing.sellprice > 0) {
-    //           products.push(props.allProducts[i]);
-    //           onSaleCount++;
-    //           if (onSaleCount > 7) {
-    //             break;
-    //           }
-    //         }
-    //       } else {
-    //         products.push(props.allProducts[i]);
-    //         productcount++;
-    //         // if (productcount > 7) {
-    //         //   break;
-    //         // }
-    //       }
-    //     }
-    //   }
-    //   setProducts(products);
-    // }
-    setProducts(props.allProducts);
-  }, [props.allProducts]);
+    setProducts(allProducts);
+  }, [allProducts]);
 
   return (
     <Fragment>
@@ -42,10 +17,10 @@ const ProductGrid = (props) => {
 
       <section className="home-product-listing">
         <Container>
-          {props.title && (
+          {title && (
             <Box display="flex" justifyContent="center">
               <Typography variant="h2" className="section-title">
-                {props.title}
+                {title}
               </Typography>
             </Box>
           )}

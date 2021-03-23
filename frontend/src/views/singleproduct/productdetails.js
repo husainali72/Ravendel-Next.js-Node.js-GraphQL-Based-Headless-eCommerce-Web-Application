@@ -10,21 +10,23 @@ import {
   TextField,
   Icon,
 } from "@material-ui/core";
-import { connect } from "react-redux";
+import { useSelector, useDispatch} from "react-redux";
 import ProductOtherDetails from "./productotherdetail";
 
-const ProductDetail = (props) => {
+const ProductDetail = ({details, reviews}) => {
+  const dispatch = useDispatch();
+  const cart = useSelector(state => state.cart);
   const [product, setProduct] = useState(null);
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
-    setProduct(props.details);
-    checkProductCart(props.details);
-  }, [props.details]);
+    setProduct(details);
+    checkProductCart(details);
+  }, [details]);
 
   const checkProductCart = (singleProduct) => {
-    if (props.cart.products) {
-      props.cart.products.map(
+    if (cart.products) {
+      cart.products.map(
         (cartProduct) =>
           cartProduct.id === singleProduct.id && (singleProduct.cart = true)
       );
@@ -44,7 +46,7 @@ const ProductDetail = (props) => {
         cartQty: qty,
       };
 
-      props.dispatch({
+      dispatch({
         type: "ADD_VALUE",
         payload: product,
       });
@@ -222,7 +224,7 @@ const ProductDetail = (props) => {
             {product && (
               <ProductOtherDetails
                 details={product}
-                reviews={props.reviews}
+                reviews={reviews}
                 productId={product.id}
               />
             )}
@@ -234,8 +236,4 @@ const ProductDetail = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  cart: state.cart,
-});
-
-export default connect(mapStateToProps)(ProductDetail);
+export default ProductDetail;

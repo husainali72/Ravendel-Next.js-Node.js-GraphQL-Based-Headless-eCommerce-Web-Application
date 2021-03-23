@@ -32,11 +32,6 @@ const GalleryImagesComponents = (props) => {
           <Slider {...settings}>
             {props.galleryImages.map((gallery, index) => (
               <div key={index}>
-                {/* <img
-                  src={gallery.large}
-                  alt="gallery"
-                  className="gallery-image"
-                /> */}
                 <GlassMagnifier
                   imageSrc={gallery.large}
                   imageAlt="Example"

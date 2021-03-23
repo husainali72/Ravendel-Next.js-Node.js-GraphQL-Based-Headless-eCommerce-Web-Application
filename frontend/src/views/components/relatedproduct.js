@@ -1,10 +1,9 @@
-import React, { Fragment, useState } from "react";
-import { Button, Zoom, Typography, Box, Container } from "@material-ui/core";
+import React, { Fragment } from "react";
+import { Typography, Box, Container } from "@material-ui/core";
 import Slider from "react-slick";
-import { Link } from "react-router-dom";
 import ProductCard from "./productcard";
 
-const RelatedProducts = (props) => {
+const RelatedProducts = ({relatedProduct, title}) => {
   const settings = {
     infinite: true,
     slidesToShow: 4,
@@ -44,12 +43,12 @@ const RelatedProducts = (props) => {
         <Container>
           <Box display="flex" justifyContent="center">
             <Typography variant="h2" className="section-title">
-              {props.title}
+              {title}
             </Typography>
           </Box>
           <Slider {...settings}>
-            {props.relatedProduct &&
-              props.relatedProduct.map(
+            {relatedProduct.length > 0 ? (
+              relatedProduct.map(
                 (product, index) =>
                   product.status === "Publish" && (
                     <ProductCard
@@ -58,7 +57,12 @@ const RelatedProducts = (props) => {
                       key={index}
                     />
                   )
-              )}
+              )
+            ) : (
+              <Typography variant="h2" className="section-title">
+                No products found
+              </Typography>
+            )}
           </Slider>
         </Container>
       </section>

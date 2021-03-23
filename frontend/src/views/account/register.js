@@ -1,30 +1,21 @@
 import React, { Fragment } from "react";
-import { connect } from "react-redux";
 import {
   Typography,
-  Box,
   Container,
   Grid,
   Button,
   TextField
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import {PageTitle} from '../components';
 
-const Register = props => {
+const Register = () => {
   const doRegister = e => {
     e.preventDefault();
   };
   return (
     <Fragment>
-      <Box
-        component="div"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className="page-header"
-      >
-        <Typography variant="h1">Register</Typography>
-      </Box>
+      <PageTitle title="Register" />
       <Container>
         <Grid
           container
@@ -33,7 +24,7 @@ const Register = props => {
         >
           <Grid item md={6} xs={12}>
             <form onSubmit={doRegister} className="width-100 margin-top-3">
-              <Typography variant="h2" className="margin-bottom-2">
+              <Typography variant="h4" className="margin-bottom-2">
                 Create Account
               </Typography>
               <TextField
@@ -42,6 +33,7 @@ const Register = props => {
                 name="username"
                 onChange={e => console.log(e.target.value)}
                 className="width-100 margin-top-1 margin-bottom-1"
+                size="small"
               />
 
               <TextField
@@ -51,6 +43,7 @@ const Register = props => {
                 name="password"
                 onChange={e => console.log(e.target.value)}
                 className="width-100 margin-top-1 margin-bottom-2"
+                size="small"
               />
 
               <TextField
@@ -60,6 +53,7 @@ const Register = props => {
                 name="confirm-password"
                 onChange={e => console.log(e.target.value)}
                 className="width-100 margin-top-1 margin-bottom-2"
+                size="small"
               />
 
               <Button
@@ -81,8 +75,4 @@ const Register = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  settings: state.settings
-});
-
-export default connect(mapStateToProps)(Register);
+export default Register;

@@ -35,7 +35,7 @@ const initialState = {
   // },
   homepage: {},
   loading: false,
-  success: false,
+  success: false, 
 };
 
 export default (state = initialState, action) => {

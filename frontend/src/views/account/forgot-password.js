@@ -1,5 +1,4 @@
 import React, { Fragment } from "react";
-import { connect } from "react-redux";
 import {
   Typography,
   Box,
@@ -8,26 +7,19 @@ import {
   TextField,
   Button
 } from "@material-ui/core";
+import {PageTitle} from '../components';
 
-const ForgotPassword = props => {
+const ForgotPassword = () => {
   return (
     <Fragment>
-      <Box
-        component="div"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className="page-header"
-      >
-        <Typography variant="h1">Reset Password</Typography>
-      </Box>
+      <PageTitle title="Reset Password"/>
       <Container>
         <Grid
           container
           className="margin-top-3 margin-bottom-3"
           justify="center"
         >
-          <Grid item md={6} xs={12}>
+          <Grid item md={5} xs={12}>
             <Typography variant="h5">
               Fill in your email below to request a new password. An email will
               be sent to the address below containing a link to verify your
@@ -40,8 +32,10 @@ const ForgotPassword = props => {
               name="password"
               onChange={e => console.log(e.target.value)}
               className="width-100 margin-top-1 margin-bottom-2"
+              size="small"
             />
 
+            <Box component="div" display="flex" justifyContent="center">
             <Button
               variant="contained"
               color="primary"
@@ -50,6 +44,7 @@ const ForgotPassword = props => {
             >
               Reset
             </Button>
+            </Box>
           </Grid>
         </Grid>
       </Container>
@@ -57,8 +52,4 @@ const ForgotPassword = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  settings: state.settings
-});
-
-export default connect(mapStateToProps)(ForgotPassword);
+export default ForgotPassword;

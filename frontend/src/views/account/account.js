@@ -1,8 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { connect } from "react-redux";
 import {
-  Typography,
-  Box,
   Tabs,
   Tab,
   Container,
@@ -13,17 +10,17 @@ import Orders from "./components/orders";
 import Address from "./components/address";
 import RecentlyViewed from "./components/recently-viewed";
 import AccountSetting from "./components/account-setting";
-import PageTitle from "../components/pageTitle";
+import {TabPanel, PageTitle, Tabprops} from "../components";
 
 const Account = props => {
-  useEffect(() => {
-    console.log(props.match.params.tabid);
-    if (props.match.params && props.match.params.tabid) {
-      setActiveTab(props.match.params.tabid);
-    }
-  }, [props.match.params.tabid]);
-
+  var tabID = props.match.params.tabid;
   const [activeTab, setActiveTab] = useState("orders");
+
+  useEffect(() => {
+    if (props.match.params && tabID) {
+      setActiveTab(tabID);
+    }
+  }, [tabID]);
 
   const changeTab = (event, newValue) => {
     setActiveTab(newValue);
@@ -42,25 +39,24 @@ const Account = props => {
                 aria-label="account-tabs"
                 indicatorColor="primary"
                 textColor="primary"
-                // variant="fullWidth"
                 variant="scrollable"
                 scrollButtons="on"
               >
-                <Tab value="orders" label="Orders" {...a11yProps("orders")} />
+                <Tab value="orders" label="Orders" {...Tabprops("orders")} />
                 <Tab
                   value="address"
                   label="Address"
-                  {...a11yProps("address")}
+                  {...Tabprops("address")}
                 />
                 <Tab
                   value="recently-viewed"
                   label="Recently Viewed"
-                  {...a11yProps("recently-viewed")}
+                  {...Tabprops("recently-viewed")}
                 />
                 <Tab
                   value="profile"
                   label="Profile"
-                  {...a11yProps("profile")}
+                  {...Tabprops("profile")}
                 />
               </Tabs>
             </Paper>
@@ -85,31 +81,6 @@ const Account = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  settings: state.settings
-});
+export default Account;
 
-export default connect(mapStateToProps)(Account);
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`wrapped-tabpanel-${index}`}
-      aria-labelledby={`wrapped-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </Typography>
-  );
-}
-function a11yProps(index) {
-  return {
-    id: `wrapped-tab-${index}`,
-    "aria-controls": `wrapped-tabpanel-${index}`
-  };
-}

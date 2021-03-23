@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Typography,
   Box,
@@ -21,7 +21,10 @@ import { productsAction } from "../../store/action/productAction";
 import { isEmpty } from "../../utils/helper";
 import Loading from "../components/loading";
 
-const OrderDetails = (props) => {
+const OrderDetails = ({getOrderDetails}) => {
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
+  const products = useSelector((state) => state.products);
   const [subtotal, setSubTotal] = useState(0);
   const [delievery, setDelievery] = useState(0);
   const [coupon, setcoupon] = useState(0);
@@ -53,38 +56,34 @@ const OrderDetails = (props) => {
   const ListingCartProducts = () => {
     var filteredProducts = [];
 
-    props.cart.products.map((item) => {
-      props.products.products.filter((product) => {
+    cart.products.map((item) => {
+      products.products.filter((product) => {
         if (product.id === item.id) {
           product.cartQty = item.cartQty;
           filteredProducts.push(product);
         }
       });
     });
-    console.log("filteredProducts", filteredProducts)
-    console.log("props.cart.products", props.cart.products)
-    console.log("props.products.products", props.products.products)
 
     setCartProduct(filteredProducts);
   };
 
   useEffect(() => {
-    if (props.cart.products && props.cart.products.length > 0) {
-      if (isEmpty(props.products.products)) {
-        props.productsAction();
+    if (cart.products && cart.products.length > 0) {
+      if (isEmpty(products.products)) {
+        dispatch(productsAction());
       }
-      if (props.products.products && props.products.products.length > 0) {
+      if (products.products && products.products.length > 0) {
         ListingCartProducts();
       }
     }
-  }, [props.cart.products]);
+  }, [cart.products]);
 
   useEffect(() => {
-    if (props.products.products && props.products.products.length > 0) {
+    if (products.products && products.products.length > 0) {
       ListingCartProducts();
     }
-  }, [props.products.products]);
-
+  }, [products.products]);
 
   useEffect(() => {
     var allData = {
@@ -93,15 +92,15 @@ const OrderDetails = (props) => {
       paymentMethod: paymentMethod,
       coupon: coupon,
       delievery: delievery,
-      products: props.cart.products,
+      products: cart.products,
       checkoutDate: new Date(),
     };
-    props.getOrderDetails(allData);
-  }, [subtotal, paymentMethod, coupon, delievery, props.cart.products]);
+    getOrderDetails(allData);
+  }, [subtotal, paymentMethod, coupon, delievery, cart.products]);
 
   return (
     <Fragment>
-      {props.products.loading && <Loading />}
+      {products.loading && <Loading />}
       <Typography variant="h3" className="margin-bottom-2">
         Your Orders
       </Typography>
@@ -117,7 +116,7 @@ const OrderDetails = (props) => {
                   <TableCell className="text-right">Amount</TableCell>
                 </TableRow>
               </TableHead>
-              {cartProduct.length > 0 ?
+              {cartProduct.length > 0 ? (
                 <TableBody>
                   {cartProduct.map((product, index) => (
                     <TableRow key={index}>
@@ -125,15 +124,15 @@ const OrderDetails = (props) => {
                       <TableCell>x{product.cartQty}</TableCell>
                       <TableCell className="text-right">
                         $
-                    {product.pricing.sellprice
-                          ? product.pricing.sellprice.toFixed(2) * product.cartQty
+                        {product.pricing.sellprice
+                          ? product.pricing.sellprice.toFixed(2) *
+                            product.cartQty
                           : product.pricing.price.toFixed(2) * product.cartQty}
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
-                : null
-              }
+              ) : null}
             </Table>
 
             <Table className="margin-top-3">
@@ -220,13 +219,4 @@ const OrderDetails = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  cart: state.cart,
-  products: state.products,
-});
-
-const mapDispatchToProps = {
-  productsAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(OrderDetails);
+export default OrderDetails;

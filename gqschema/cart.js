@@ -11,7 +11,7 @@ module.exports = gql`
   }
 
   type combinationItem {
-    id: ID,
+    id: ID
     name: String
   }
 
@@ -28,19 +28,20 @@ module.exports = gql`
   type cartItem {
     product_id: ID
     qty: Int
+    price: Float
     combination: customArray
-    tax: taxObj,
-    shipping: shippingObj,
+    tax: taxObj
+    shipping: shippingObj
   }
 
   type calculatedCart {
     items: [cartItem]
-    subtotal: Float,
-    total_shipping: shippingObj,
-    total_tax: taxObj,
-    total_coupon: Float,
-    grand_total: Float,
-  } 
+    subtotal: Float
+    total_shipping: shippingObj
+    total_tax: taxObj
+    total_coupon: Float
+    grand_total: Float
+  }
 
   input cartProduct {
     product_id: ID
@@ -60,6 +61,15 @@ module.exports = gql`
     updateCart(id: ID!, total: Float, products: [cartProduct]): Cart
     deleteCart(id: ID!): Boolean!
     deleteCartProduct(id: ID!, object_id: ID!): Cart
-    addToCart(customer_id: ID, cart: [cartProduct]): generalResponse    
+    addToCart(customer_id: ID, cart: [cartProduct]): generalResponse
   }
 `;
+
+/* type calculatedCart {
+  items: [cartItem]
+  subtotal: Float,
+  total_shipping: shippingObj,
+  total_tax: taxObj,
+  total_coupon: Float,
+  grand_total: Float,
+} */

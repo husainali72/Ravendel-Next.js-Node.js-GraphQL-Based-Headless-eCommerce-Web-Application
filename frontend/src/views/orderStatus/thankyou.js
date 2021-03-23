@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Typography,
   Box,
@@ -18,12 +18,13 @@ import PageTitle from "../components/pageTitle";
 import { isEmpty } from "../../utils/helper";
 import { Link } from "react-router-dom";
 
-const Thankyou = (props) => {
+const Thankyou = () => {
+  const checkoutDetail = useSelector(state => state.checkoutDetail);
   const [checkoutDetails, setCheckoutDetails] = useState({});
 
   useEffect(() => {
-    setCheckoutDetails(props.checkoutDetail.chekoutDetails);
-  }, [props.checkoutDetail]);
+    setCheckoutDetails(checkoutDetail.chekoutDetails);
+  }, [checkoutDetail]);
 
   return (
     <Fragment>
@@ -267,8 +268,4 @@ const Thankyou = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  checkoutDetail: state.checkoutDetail,
-});
-
-export default connect(mapStateToProps)(Thankyou);
+export default Thankyou;

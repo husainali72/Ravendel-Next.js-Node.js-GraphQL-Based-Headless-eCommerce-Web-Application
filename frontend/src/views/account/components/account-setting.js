@@ -8,7 +8,7 @@ import {
   CardActions
 } from "@material-ui/core";
 
-const AccountSetting = props => {
+const AccountSetting = () => {
   const handleChangedAccount = e => {
     console.log("e", e.target.name);
   };

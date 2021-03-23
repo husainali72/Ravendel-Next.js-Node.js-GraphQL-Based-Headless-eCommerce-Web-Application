@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { Helmet } from "react-helmet";
+import {useDispatch, useSelector} from 'react-redux';
 import { Banner } from "./components";
 import ProductSlider from "../components/productslider";
 import ProductGrid from "../components/productgrid";
 import CategoryListing from "../components/categorylist";
 import {
-  productsAction,
   categoriesAction,
   getSaleProductsAction,
   getRecentProductsAction,
@@ -13,12 +13,17 @@ import {
   getProductByCatIDAction,
 } from "../../store/action/productAction";
 import { homepageAction } from "../../store/action/homepageAction";
-import { blogsAction } from "../../store/action/blogAction";
 import { isEmpty } from "../../utils/helper";
 import Loading from "../components/loading";
-import { Helmet } from "react-helmet";
 
-const Home = (props) => {
+const Home = () => {
+  const dispatch = useDispatch();
+  const products = useSelector(state => state.products);
+  const home = useSelector(state => state.homepage);
+  const featuredProductsState = useSelector(state => state.featuredProducts);
+  const recentProductsState = useSelector(state => state.recentProducts);
+  const productsByCatId = useSelector(state => state.productsByCatId);
+  const onSaleProducts = useSelector(state => state.onSaleProducts);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [saleProducts, setSaleProducts] = useState([]);
   const [recentProducts, setRecentProducts] = useState([]);
@@ -47,82 +52,79 @@ const Home = (props) => {
 
   // API Call of Products, Categories, Homepage setting
   useEffect(() => {
-    // if (isEmpty(props.products.products)) {
-    //   props.productsAction();
-    // }
-    if (isEmpty(props.products.categories)) {
-      props.categoriesAction();
+    if (isEmpty(products.categories)) {
+      dispatch(categoriesAction());
     }
-    if (isEmpty(props.home.homepage)) {
-      props.homepageAction();
+    if (isEmpty(home.homepage)) {
+      dispatch(homepageAction());
     }
   }, []);
 
   // Homepage Setting set
   useEffect(() => {
-    if (!isEmpty(props.home.homepage)) {
-      setHomepageSetting(props.home.homepage);
+    if (!isEmpty(home.homepage)) {
+      setHomepageSetting(home.homepage);
     }
-  }, [props.home.homepage]);
+  }, [home.homepage]);
 
   // Section show by setting page
   useEffect(() => {
     if (homepageSetting.appearance.home.add_section_in_home.products_on_sales) {
-      props.getSaleProductsAction();
+      dispatch(getSaleProductsAction());
     }
     if (homepageSetting.appearance.home.add_section_in_home.feature_product) {
-      props.getFeaturedProductsAction();
+      dispatch(getFeaturedProductsAction());
     }
     if (
       homepageSetting.appearance.home.add_section_in_home
         .recently_added_products
     ) {
-      props.getRecentProductsAction();
+      dispatch(getRecentProductsAction());
     }
 
     if (
       homepageSetting.appearance.home.add_section_in_home
         .product_from_specific_categories
     ) {
-      props.getProductByCatIDAction("5ea404daf2d07839fba0526a");
+      dispatch(getProductByCatIDAction("5ea404daf2d07839fba0526a"));
     }
   }, [homepageSetting]);
 
   // Featured Products Set
   useEffect(() => {
-    if (!isEmpty(props.featuredProducts)) {
-      if (props.featuredProducts.featureproducts) {
-        setFeaturedProducts(props.featuredProducts.featureproducts);
+    if (!isEmpty(featuredProductsState)) {
+      if (featuredProductsState.featureproducts) {
+        setFeaturedProducts(featuredProductsState.featureproducts);
       }
     }
-  }, [props.featuredProducts]);
+  }, [featuredProductsState]);
 
   // Sale Products Set
   useEffect(() => {
-    if (!isEmpty(props.onSaleProducts)) {
-      if (props.onSaleProducts.onSaleProducts) {
-        setSaleProducts(props.onSaleProducts.onSaleProducts);
+    if (!isEmpty(onSaleProducts)) {
+      if (onSaleProducts.onSaleProducts) {
+        setSaleProducts(onSaleProducts.onSaleProducts);
       }
     }
-  }, [props.onSaleProducts]);
+  }, [onSaleProducts]);
 
   // Recent Products Set
   useEffect(() => {
-    if (!isEmpty(props.recentProducts)) {
-      if (props.recentProducts.recentproducts) {
-        setRecentProducts(props.recentProducts.recentproducts);
+    if (!isEmpty(recentProductsState)) {
+      if (recentProductsState.recentproducts) {
+        setRecentProducts(recentProductsState.recentproducts);
       }
     }
-  }, [props.recentProducts]);
+  }, [recentProductsState]);
 
   // Category wise products
   useEffect(() => {
-    if (!isEmpty(props.productsByCatId)) {
-      if (props.productsByCatId.productsbycatid) {
-        setCatIdProducts(props.productsByCatId.productsbycatid);
+    if (!isEmpty(productsByCatId)) {
+      if (productsByCatId.productsbycatid) {
+        setCatIdProducts(productsByCatId.productsbycatid);
       }
     }
-  }, [props.productsByCatId]);
+  }, [productsByCatId]);
 
   return (
     <Fragment>
@@ -134,28 +136,22 @@ const Home = (props) => {
         />
       </Helmet>
 
-      {props.products.loading || props.blogs.loading || props.home.loading ? (
+      {products.loading || home.loading ? (
         <Loading />
-      ) : (
-        ""
-      )}
+      ) : null}
 
       {/* ==============Banner================ */}
-      {homepageSetting.appearance.home.slider.length < 0 ? (
-        ""
-      ) : (
+      {homepageSetting.appearance.home.slider.length < 0 ? null : (
         <Banner sliders={homepageSetting.appearance.home.slider} />
       )}
 
       {/* ==============Categories List================ */}
-
       <CategoryListing
-        allCategories={props.products.categories}
+        allCategories={products.categories}
         title="Categories"
       />
 
       {/* ==============Featured Products================ */}
-
       {homepageSetting.appearance.home.add_section_in_home.feature_product &&
       featuredProducts.length > 0 ? (
         <Fragment>
@@ -180,7 +176,6 @@ const Home = (props) => {
       )}
 
       {/* ==============Specific Category Products================ */}
-
       {homepageSetting.appearance.home.add_section_in_home
         .product_from_specific_categories && catIdProducts.length > 0 ? (
         <ProductSlider allProducts={catIdProducts} title="Womens Sunglasses" />
@@ -189,7 +184,6 @@ const Home = (props) => {
       )}
 
       {/* ==============OnSale Products================ */}
-
       {homepageSetting.appearance.home.add_section_in_home.products_on_sales &&
       saleProducts.length > 0 ? (
         <Fragment>
@@ -267,28 +261,4 @@ const Home = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    products: state.products,
-    categories: state.categories,
-    blogs: state.blogs,
-    home: state.homepage,
-    featuredProducts: state.products.featuredProducts,
-    recentProducts: state.products.recentProducts,
-    productsByCatId: state.products.productsByCatId,
-    onSaleProducts: state.products.onSaleProducts,
-  };
-};
-
-const mapDispatchToProps = {
-  productsAction,
-  categoriesAction,
-  blogsAction,
-  homepageAction,
-  getSaleProductsAction,
-  getRecentProductsAction,
-  getFeaturedProductsAction,
-  getProductByCatIDAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default Home;

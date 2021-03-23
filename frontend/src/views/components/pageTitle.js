@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography, Box } from "@material-ui/core";
 
-const PageTitle = props => {
+const PageTitle = ({title}) => {
   return (
     <Box
       component="div"
@@ -10,9 +10,9 @@ const PageTitle = props => {
       alignItems="center"
       className="page-header"
     >
-      <Typography variant="h1">{props.title}</Typography>
+      <Typography variant="h1">{title}</Typography>
     </Box>
   );
-};
+}; 
 
 export default PageTitle;

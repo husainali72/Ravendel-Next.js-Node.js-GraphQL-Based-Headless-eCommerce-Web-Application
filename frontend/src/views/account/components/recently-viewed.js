@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
-import ProductGrid from "../../components/productgrid";
+import {ProductGrid} from "../../components";
 
-const RecentlyViewed = props => {
+const RecentlyViewed = () => {
   const products = [
     {
       featured_image:

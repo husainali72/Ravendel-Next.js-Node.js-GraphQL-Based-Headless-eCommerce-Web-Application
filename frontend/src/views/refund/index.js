@@ -37,8 +37,4 @@ const ReturnsAndRefunds = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  settings: state.settings
-});
-
-export default connect(mapStateToProps)(ReturnsAndRefunds);
+export default ReturnsAndRefunds;
