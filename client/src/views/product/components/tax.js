@@ -26,7 +26,7 @@ const TaxComponent = ({ product, onTaxInputChange }) => {
   }, [taxState.tax]);
 
   return (
-    <>
+    <React.Fragment>
       {!taxState.tax.global.is_global ? (
         <FormControl className={classes.cstmSelect} variant='outlined'>
           <InputLabel ref={inputLabel} id='tax-name'>
@@ -55,7 +55,7 @@ const TaxComponent = ({ product, onTaxInputChange }) => {
           individual products, please turn off the global tax option first.
         </em>
       )}
-    </>
+    </React.Fragment>
   );
 };
 

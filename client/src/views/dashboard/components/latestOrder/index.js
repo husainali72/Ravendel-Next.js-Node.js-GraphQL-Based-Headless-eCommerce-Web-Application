@@ -89,7 +89,7 @@ const LatestOrders = ({ ordersState }) => {
       </CardContent>
 
       {ordersState.orders.lenght > 0 ? (
-        <>
+        <React.Fragment>
           <Divider />
           <CardActions className="flex-end">
             <Link to="/all-orders">
@@ -98,7 +98,7 @@ const LatestOrders = ({ ordersState }) => {
               </Button>
             </Link>
           </CardActions>
-        </>
+        </React.Fragment>
       ) : null}
     </Card>
   );

@@ -15,13 +15,13 @@ import {
   FormControlLabel,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { set } from "lodash";
 import { useLocation } from "react-router-dom";
 import { getQueryString, isEmpty } from "../../utils/helper";
 import jumpTo, { go } from "../../utils/navigation";
 import { useSelector } from "react-redux";
 
 const FilterSideBar = (props) => {
+  let location = useLocation();
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [catName, setCatName] = useState("");
   const [filterToggle, setFilterToggle] = useState(false);
@@ -34,8 +34,6 @@ const FilterSideBar = (props) => {
     attribute: [],
     price: [],
   });
-
-  let location = useLocation();
 
   const runFilterOnChange = () => {
     let queryString = "?";
@@ -199,53 +197,6 @@ const FilterSideBar = (props) => {
     }
   };
 
-  const categoryListing = (categoriesParameter) => {
-    return categoriesParameter.map((cat) => {
-      if (!cat.children) {
-        return (
-          <ListItem disableGutters key={cat.title}>
-            <Typography variant="button" className="category-fillter">
-              {cat.title}
-            </Typography>
-          </ListItem>
-        );
-      }
-      return (
-        <div key={cat.title}>
-          <ListItem disableGutters onClick={() => handleClick(cat.title)}>
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              className="width-100"
-            >
-              <Typography
-                variant="button"
-                className="category-fillter"
-                edge="start"
-              >
-                {cat.title}
-              </Typography>
-
-              <Icon edge="end" onClick={() => handleClick(cat.title)}>
-                {catName === cat.title
-                  ? "keyboard_arrow_up"
-                  : "keyboard_arrow_down"}
-              </Icon>
-            </Box>
-          </ListItem>
-          <Collapse
-            in={catName === cat.title ? true : false}
-            timeout="auto"
-            unmountOnExit
-            className="subcategory-collapse"
-          >
-            {categoryListing(cat.children)}
-          </Collapse>
-        </div>
-      );
-    });
-  };
-
   const openFillters = () => {
     var element = document.getElementsByClassName("left-sidebar")[0];
     if (element.classList.contains("open-left-sidebar")) {
@@ -270,7 +221,7 @@ const FilterSideBar = (props) => {
 
       <Box component="div" className="expansionPanelwrapper">
         <Divider />
-        {brands.length ? (
+        {brands.length > 0 ? (
           <Box component="div" className="filter-wrapper">
             <Accordion>
               <AccordionSummary
@@ -285,7 +236,7 @@ const FilterSideBar = (props) => {
               <AccordionDetails>
                 <List>
                   {brands.map((brand, i) => (
-                    <ListItem disableGutters key={brand._id}>
+                    <ListItem key={brand._id}>
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -311,6 +262,7 @@ const FilterSideBar = (props) => {
             </Accordion>
           </Box>
         ) : null}
+
         <Divider />
         <Box component="div" className="filter-wrapper">
           {attributes.map((attr, p) => (
@@ -327,7 +279,7 @@ const FilterSideBar = (props) => {
               <AccordionDetails>
                 <List>
                   {attr.values.map((val, i) => (
-                    <ListItem disableGutters key={val.id}>
+                    <ListItem key={val.id}>
                       <FormControlLabel
                         control={
                           <Checkbox

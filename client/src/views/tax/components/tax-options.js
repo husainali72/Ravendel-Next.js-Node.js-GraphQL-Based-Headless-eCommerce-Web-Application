@@ -12,7 +12,7 @@ import viewStyles from "../../viewStyles.js";
 const TaxOptionsComponent = ({ saveOption, taxOptionState, onRadioChange }) => {
   const classes = viewStyles();
   return (
-    <>
+    <React.Fragment>
       <FormControl component='fieldset' className={classes.formControl}>
         <Typography variant='h5' style={{ marginBottom: 10 }}>
           Prices entered with tax
@@ -43,7 +43,7 @@ const TaxOptionsComponent = ({ saveOption, taxOptionState, onRadioChange }) => {
       >
         Save Changes
       </Button>
-    </>
+    </React.Fragment>
   );
 };
 

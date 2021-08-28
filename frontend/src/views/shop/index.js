@@ -5,15 +5,19 @@ import {
   productsAction,
   categoriesAction,
 } from "../../store/action/productAction";
+import { brandsAction } from "../../store/action/brandAction";
+import {filterProductAction} from '../../store/action';
 import { isEmpty } from "../../utils/helper";
-import {PageTitle, Loading, ProductCard, FilterSideBar} from '../components';
+import { PageTitle, Loading, ProductCard, FilterSideBar } from "../components";
 
 const Shop = () => {
   const dispatch = useDispatch();
-  const products = useSelector(state => state.products);
-  const categories = useSelector(state => state.categories);
+  const products = useSelector((state) => state.products);
+  const AllBrands = useSelector((state) => state.brand.brands);
   const [fillterProducts, setFillterProducts] = useState([]);
   const [priceRange, setPriceRange] = React.useState([0, 2000]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [brands, setbrands] = useState([]);
 
   useEffect(() => {
     if (isEmpty(products.products)) {
@@ -22,10 +26,10 @@ const Shop = () => {
   }, []);
 
   useEffect(() => {
-    if (isEmpty(products.categories)) {
-      dispatch(categoriesAction());
+    if (isEmpty(AllBrands)) {
+      dispatch(brandsAction());
     }
-  }, []);
+  }, [AllBrands]);
 
   const fillterShopProducts = (newValue) => {
     setPriceRange(newValue);
@@ -43,6 +47,11 @@ const Shop = () => {
     }
   }, [products.products]);
 
+  const getfilteredProducts = (config) => {
+    setAllProducts([]);
+    dispatch(filterProductAction(config));
+  };
+
   return (
     <Fragment>
       {products.loading && <Loading />}
@@ -50,8 +59,17 @@ const Shop = () => {
       <Container>
         <Grid container className="shop-row" spacing={4}>
           <Grid item lg={3} md={4} sm={4} xs={12} className="left-sidebar">
+            {/* <FilterSideBar
+              onPriceChange={(newValue) => fillterShopProducts(newValue)}
+            /> */}
             <FilterSideBar
               onPriceChange={(newValue) => fillterShopProducts(newValue)}
+              filter_brands={products.singleCategoryDetails.filter_brands}
+              currentCat={products.singleCategoryDetails.id}
+              getfilteredProducts={getfilteredProducts}
+              filtered_attributes={
+                products.singleCategoryDetails.filter_attributes
+              }
             />
           </Grid>
 

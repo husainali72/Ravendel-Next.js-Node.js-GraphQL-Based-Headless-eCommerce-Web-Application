@@ -32,7 +32,7 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
   };
 
   return (
-    <>
+    <React.Fragment>
       <div className={classes.galleryImgOuterBox}>
       {product.gallery_image && product.gallery_image.length > 0 ?
                         product.gallery_image.map((img, index) => (
@@ -82,7 +82,7 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
       <label htmlFor='Gallery-Image' className={classes.feautedImage}>
         <ImageIcon /> {" Add Gallery Images"}
       </label>
-    </>
+    </React.Fragment>
   );
 };
 

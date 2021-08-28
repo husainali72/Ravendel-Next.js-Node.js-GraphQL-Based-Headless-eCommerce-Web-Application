@@ -10,7 +10,7 @@ const FeaturedImageComponent = ({ image, feautedImageChange, user }) => {
   const classes = viewStyles();
 
   return (
-    <>
+    <React.Fragment>
       <Box className={classes.feautedImageBox}>
         {!isEmpty(image) ? (
           <img
@@ -43,7 +43,7 @@ const FeaturedImageComponent = ({ image, feautedImageChange, user }) => {
         <ImageIcon />{" "}
         {!isEmpty(image) ? "Change Featured Image" : "Set Featured Image"}
       </label>
-    </>
+    </React.Fragment>
   );
 };
 

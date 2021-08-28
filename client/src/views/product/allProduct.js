@@ -52,7 +52,7 @@ const AllProduct = () => {
     <Fragment>
       <Alert />
       <Grid container spacing={2} className={classes.mainrow}>
-        <Grid item xl={12}>
+        <Grid item xl={12} md={12}>
           <Card>
             {products.loading ? <Loading /> : null}
             <CardHeader

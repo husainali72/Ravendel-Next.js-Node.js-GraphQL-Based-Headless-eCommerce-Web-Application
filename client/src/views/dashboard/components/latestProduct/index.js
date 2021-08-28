@@ -62,7 +62,7 @@ const LatestProducts = ({ products, loader }) => {
         )}
       </CardContent>
       {products ? (
-        <>
+        <React.Fragment>
           <Divider />
           <CardActions className="flex-end">
             <Link to="/all-products">
@@ -71,7 +71,7 @@ const LatestProducts = ({ products, loader }) => {
               </Button>
             </Link>
           </CardActions>
-        </>
+        </React.Fragment>
       ) : null}
     </Card>
   );

@@ -1,28 +1,36 @@
 import React, { Fragment, useState, useEffect } from "react";
-import Navigation from "./menu";
 import {
-  Grid,
-  Container,
   Box,
-  Icon,
-  Hidden,
   Drawer,
-  Badge,
   Typography,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  Button,
+  Tooltip,
 } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
-import CartSide from "./cart";
 import { Link } from "react-router-dom";
+import Navigation from "./menu";
+import CartSide from "./cart";
 import { homepageAction } from "../store/action/homepageAction";
 import { isEmpty } from "../utils/helper";
 
 const Header = (props) => {
   const dispatch = useDispatch();
-  const cart = useSelector(state => state.cart);
-  const home = useSelector(state => state.homepage);
+  const customer = useSelector((state) => state.customer);
+  const cart = useSelector((state) => state.cart);
+  const home = useSelector((state) => state.homepage);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [themeSetting, setThemeSetting] = useState({});
+  const [logoutConfrm, setLogoutConfrm] = useState(false);
 
   useEffect(() => {
     if (isEmpty(home.homepage)) {
@@ -43,55 +51,92 @@ const Header = (props) => {
     setOpenCart(!openCart);
   };
 
+  const Logout = () => {
+    setLogoutConfrm(true);
+    handleClose();
+    props.drawerCloseFunc();
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const HtmlTooltip = withStyles((theme) => ({
+    tooltip: {
+      backgroundColor: "#f5f5f9",
+      color: "rgba(0, 0, 0, 0.87)",
+      maxWidth: 220,
+      fontSize: theme.typography.pxToRem(12),
+      border: "1px solid #dadde9",
+      zIndex: 9999,
+    },
+  }))(Tooltip);
+
   return (
     <Fragment>
       <header>
-        <Container>
-          <Box component="div" className="header-wrapper">
-            <Grid container justify="space-between" alignItems="center">
-              <Grid item className="logo">
-                <Link to="/">
-                  {themeSetting.appearance &&
-                  themeSetting.appearance.theme &&
-                  themeSetting.appearance.theme.logo ? (
-                    <img
-                      src={themeSetting.appearance.theme.logo.original}
-                      alt="Logo"
-                      className="logo"
-                    />
-                  ) : (
-                    <Typography variant="h3">Ravendel</Typography>
-                  )}
-                </Link>
-              </Grid>
-              <Grid item className="menu">
-                <Hidden mdDown>
-                  <Navigation
-                    toggleCartFunc={toggleCart}
-                    drawerCloseFunc={() => setOpenMenu(false)}
-                  />
-                </Hidden>
-                <Hidden lgUp>
-                  <Box display="flex" justify="flex-end" alignItems="center">
-                    <Badge
-                      badgeContent={cart.products.length}
-                      color="primary"
-                      onClick={toggleCart}
-                      className="margin-right-2"
-                    >
-                      <Icon style={{ fontSize: 24 }}>shopping_basket</Icon>
-                    </Badge>
-                    <Icon onClick={() => setOpenMenu(!openMenu)}>menu</Icon>
-                  </Box>
-                </Hidden>
-              </Grid>
-            </Grid>
+        <div className="header-top">
+          <Box
+            component="div"
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            className="page-width"
+          >
+            <div className="wishlist-compare-wrapper">
+              <HtmlTooltip
+                title={
+                  <React.Fragment>
+                    <Typography color="inherit">Coming Soon</Typography>
+                  </React.Fragment>
+                }
+              >
+                <a href="#">My Wishlist (0)</a>
+              </HtmlTooltip>
+              <HtmlTooltip
+                title={
+                  <React.Fragment>
+                    <Typography color="inherit">Coming Soon</Typography>
+                  </React.Fragment>
+                }
+              >
+                <a href="#">Compare (0)</a>
+              </HtmlTooltip>
+            </div>
+            <Box component="div">
+              <Typography variant="h3">RAVENDEL</Typography>
+            </Box>
+            <div className="account-cart-wrapper">
+              <a href="#" onClick={(e) => setAnchorEl(e.currentTarget)}>
+                Account
+              </a>
+              <a href="#" onClick={toggleCart}>Cart ({cart.products.length})</a>
+            </div>
           </Box>
-        </Container>
+        </div>
+        <div className="header-bottom">
+          <Box
+            component="div"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            className="page-width"
+          >
+            <Navigation
+              toggleCartFunc={toggleCart}
+              drawerCloseFunc={() => setOpenMenu(false)}
+            />
+          </Box>
+        </div>
       </header>
-      <Drawer open={openMenu} onClose={() => setOpenMenu(false)}>
+     
+      {/* <Drawer open={openMenu} onClose={() => setOpenMenu(false)}>
         <Navigation drawerCloseFunc={() => setOpenMenu(false)} />
-      </Drawer>
+      </Drawer> */}
       <Drawer
         anchor="right"
         open={openCart}
@@ -105,6 +150,70 @@ const Header = (props) => {
           />
         </Box>
       </Drawer>
+
+      {/* ==============================Account Menu for Desktop============================ */}
+      <Menu
+        id="account-menu"
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        keepMounted
+        style={{ zIndex: 9999, minWidth: 200 }}
+      >
+        {customer.login ? (
+          <>
+            <Link to="/account/orders">
+              <MenuItem onClick={handleClose}>Orders</MenuItem>
+            </Link>
+            <Link to="/account/address">
+              <MenuItem onClick={handleClose}>Address</MenuItem>
+            </Link>
+            <Link to="/account/recently-viewed">
+              <MenuItem onClick={handleClose}>Recently Viewed</MenuItem>
+            </Link>
+            <Link to="/account/profile">
+              <MenuItem onClick={handleClose}>Profile</MenuItem>
+            </Link>
+            <MenuItem onClick={Logout}>Logout</MenuItem>
+          </>
+        ) : (
+          <>
+            <Link to="/login">
+              <MenuItem onClick={handleClose}>Login</MenuItem>
+            </Link>
+            <Link to="/register">
+              <MenuItem onClick={handleClose}>Register</MenuItem>
+            </Link>
+          </>
+        )}
+      </Menu>
+
+      {/* ==============================Logout Dialog============================ */}
+      <Dialog
+        open={logoutConfrm}
+        onClose={handleClose}
+        aria-labelledby="logout-dailog"
+        aria-describedby="logout-confirmation"
+        fullWidth={false}
+        maxWidth={"xs"}
+      >
+        <DialogTitle id="logout-dailog">{"LogOut"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="logout-confirmation">
+            Are you sure you would like to logout?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLogoutConfrm(false)} color="primary">
+            Cancel
+          </Button>
+          <Link to="/login" onClick={() => setLogoutConfrm(false)}>
+            <Button color="primary" autoFocus>
+              Logout
+            </Button>
+          </Link>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };
