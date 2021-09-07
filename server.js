@@ -39,11 +39,12 @@ app.use("/api/misc", require("./routes/api/misc"));
 
 //app.use(express.static("public"));
 app.use("/assets", express.static(__dirname + "/assets"));
+
+app.get("/", (req, res) => res.send(`api is running ${PORT}`));
+
 app.use(express.static('client/build'));
 
 const PORT = process.env.PORT || 8000;
-
-app.get("/", (req, res) => res.send(`api is running ${PORT}`));
 
 app.get("/admin", (req, res) => {
   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
