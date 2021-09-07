@@ -16,7 +16,7 @@ const Login = () => {
     const login_loading = useSelector(state => state.login.token_loading)
 
     const [values, setValues] = useState({
-        email: "admin@ravendel.com",
+        email: "SirCumference@doe.com",
         password: "123456"
     });    
 
