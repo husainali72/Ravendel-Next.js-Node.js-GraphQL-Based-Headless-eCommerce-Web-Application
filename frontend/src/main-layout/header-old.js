@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CartSide from "./cart";
 import { Link } from "react-router-dom";
 import { homepageAction } from "../store/action/homepageAction";
-import { isEmpty } from "../utils/helper";
+import { isEmpty, app_router_base_url } from "../utils/helper";
 
 const Header = (props) => {
   const dispatch = useDispatch();
@@ -50,7 +50,7 @@ const Header = (props) => {
           <Box component="div" className="header-wrapper">
             <Grid container justify="space-between" alignItems="center">
               <Grid item className="logo">
-                <Link to="/">
+                <Link to={`${app_router_base_url}`}>
                   {themeSetting.appearance &&
                   themeSetting.appearance.theme &&
                   themeSetting.appearance.theme.logo ? (

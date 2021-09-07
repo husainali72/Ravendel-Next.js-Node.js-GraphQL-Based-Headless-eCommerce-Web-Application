@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Rating from "@material-ui/lab/Rating";
 import { useSelector, useDispatch } from "react-redux";
 import JacketImage from "../../assets/images/jacket.webp";
+import {app_router_base_url} from '../../utils/helper';
 
 var PlaceHolder =
   "https://www.hbwebsol.com/wp-content/uploads/2020/07/category_dummy.png";
@@ -122,7 +123,7 @@ const ProductCard = ({ productDetail, index, GirdProductView }) => {
       <div className="product-details">
         <Rating name="read-only" value={5} readOnly size="small" />
 
-        <Link to={`/product/${productDetail.url}`}>
+        <Link to={`${app_router_base_url}product/${productDetail.url}`}>
           <h3 className="product-title">
             {productDetail.name.length > 50 ? (
               <span

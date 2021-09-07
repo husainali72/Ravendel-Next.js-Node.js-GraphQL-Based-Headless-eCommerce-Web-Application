@@ -14,6 +14,7 @@ import BillingForm from "./billingform";
 import PageTitle from "../components/pageTitle";
 import { useForm } from "react-hook-form";
 import { checkoutDetailsAction } from "../../store/action/checkoutAction";
+import {app_router_base_url} from '../../utils/helper';
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -126,7 +127,7 @@ const Checkout = () => {
             <Typography variant="h3" className="margin-bottom-1">
               Your cart is currently empty.
             </Typography>
-            <Link to="/shop">
+            <Link to={`${app_router_base_url}shop`}>
               <Button variant="contained" color="primary">
                 Shop Now
               </Button>

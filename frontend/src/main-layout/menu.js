@@ -16,6 +16,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import {app_router_base_url} from '../utils/helper';
 
 const Navigation = (props) => {
   const customer = useSelector((state) => state.customer);
@@ -26,7 +27,7 @@ const Navigation = (props) => {
   return (
     <Fragment>
       <Box component="div" display="inline" className="navigation-item">
-        <Link onClick={() => props.drawerCloseFunc()} to="/">
+        <Link onClick={() => props.drawerCloseFunc()} to={`${app_router_base_url}`}>
           Home
         </Link>
       </Box>
@@ -50,17 +51,17 @@ const Navigation = (props) => {
         </div>
       </span>
       <Box component="div" display="inline" className="navigation-item">
-        <Link onClick={() => props.drawerCloseFunc()} to="/blogs">
+        <Link onClick={() => props.drawerCloseFunc()} to={`${app_router_base_url}blogs`}>
           Blog
         </Link>
       </Box>
       <Box component="div" display="inline" className="navigation-item">
-        <Link onClick={() => props.drawerCloseFunc()} to="/contact">
+        <Link onClick={() => props.drawerCloseFunc()} to={`${app_router_base_url}contact`}>
           Contact
         </Link>
       </Box>
       <Box component="div" display="inline" className="navigation-item">
-        <Link onClick={() => props.drawerCloseFunc()} to="/about">
+        <Link onClick={() => props.drawerCloseFunc()} to={`${app_router_base_url}about`}>
            About us
         </Link>
       </Box>
@@ -116,7 +117,7 @@ const Navigation = (props) => {
               <Box component="div" display="inline" m={2} className="menu-item">
                 <Link
                   onClick={() => props.drawerCloseFunc()}
-                  to="/account/orders"
+                  to={`${app_router_base_url}account/orders`}
                 >
                   Orders
                 </Link>
@@ -124,7 +125,7 @@ const Navigation = (props) => {
               <Box component="div" display="inline" m={2} className="menu-item">
                 <Link
                   onClick={() => props.drawerCloseFunc()}
-                  to="/account/address"
+                  to={`${app_router_base_url}account/address`}
                 >
                   Address
                 </Link>
@@ -132,7 +133,7 @@ const Navigation = (props) => {
               <Box component="div" display="inline" m={2} className="menu-item">
                 <Link
                   onClick={() => props.drawerCloseFunc()}
-                  to="/account/recently-viewed"
+                  to={`${app_router_base_url}account/recently-viewed`}
                 >
                   Recently Viewed
                 </Link>
@@ -140,13 +141,13 @@ const Navigation = (props) => {
               <Box component="div" display="inline" m={2} className="menu-item">
                 <Link
                   onClick={() => props.drawerCloseFunc()}
-                  to="/account/profile"
+                  to={`${app_router_base_url}account/profile`}
                 >
                   Profile
                 </Link>
               </Box>
               <Box component="div" display="inline" m={2} className="menu-item">
-                <Link onClick={() => props.drawerCloseFunc()} to="/login">
+                <Link onClick={() => props.drawerCloseFunc()} to={`${app_router_base_url}login`}>
                   Logout
                 </Link>
               </Box>
@@ -154,12 +155,12 @@ const Navigation = (props) => {
           ) : (
             <>
               <Box component="div" display="inline" m={2} className="menu-item">
-                <Link onClick={() => props.drawerCloseFunc()} to="/login">
+                <Link onClick={() => props.drawerCloseFunc()} to={`${app_router_base_url}login`}>
                   Login
                 </Link>
               </Box>
               <Box component="div" display="inline" m={2} className="menu-item">
-                <Link onClick={() => props.drawerCloseFunc()} to="/register">
+                <Link onClick={() => props.drawerCloseFunc()} to={`${app_router_base_url}register`}>
                   Register
                 </Link>
               </Box>

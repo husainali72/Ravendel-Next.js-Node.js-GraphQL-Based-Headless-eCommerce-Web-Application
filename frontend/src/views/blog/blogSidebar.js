@@ -17,6 +17,7 @@ import { blogtagsAction, blogsAction } from "../../store/action/blogAction";
 import { isEmpty } from "../../utils/helper";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import {app_router_base_url} from '../../utils/helper';
 
 const BlogSidebar = () => {
   const dispatch = useDispatch();
@@ -65,7 +66,7 @@ const BlogSidebar = () => {
               )
               .slice(0, 3)
               .map((blog, index) => (
-                <Link to={`/blog/${blog.id}`} key={index}>
+                <Link to={`${app_router_base_url}blog/${blog.id}`} key={index}>
                   <ListItem button>
                     <ListItemText
                       primary={blog.title}
@@ -90,7 +91,7 @@ const BlogSidebar = () => {
         <Box>
           {blogs.tags.lenght > 0 ? (
             blogs.tags.map((tag, index) => (
-              <Link to={`/tag${tag.url}`} key={index}>
+              <Link to={`${app_router_base_url}tag${tag.url}`} key={index}>
                 <Chip label={tag.name} className="chips-tags" />
               </Link>
             ))

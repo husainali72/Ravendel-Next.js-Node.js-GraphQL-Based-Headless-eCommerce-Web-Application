@@ -9,6 +9,7 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import {app_router_base_url} from '../utils/helper';
 
 const Footer = () => {
   return (
@@ -35,7 +36,7 @@ const Footer = () => {
                 </Typography>
                 <List dense>
                   <ListItem>
-                    <Link to="/about">
+                    <Link to={`${app_router_base_url}about`}>
                       <ListItemText
                         primary="About Us"
                         className="footer-menulink"
@@ -43,7 +44,7 @@ const Footer = () => {
                     </Link>
                   </ListItem>
                   <ListItem>
-                    <Link to="/terms">
+                    <Link to={`${app_router_base_url}terms`}>
                       <ListItemText
                         primary="Terms and Condition"
                         className="footer-menulink"
@@ -51,7 +52,7 @@ const Footer = () => {
                     </Link>
                   </ListItem>
                   <ListItem>
-                    <Link to="/refund">
+                    <Link to={`${app_router_base_url}refund`}>
                       <ListItemText
                         primary="Returns and Refunds"
                         className="footer-menulink"
@@ -66,7 +67,7 @@ const Footer = () => {
                 </Typography>
                 <List dense>
                   <ListItem>
-                    <Link to="/contact">
+                    <Link to={`${app_router_base_url}contact`}>
                       <ListItemText
                         primary="Contact Us"
                         className="footer-menulink"
@@ -74,12 +75,12 @@ const Footer = () => {
                     </Link>
                   </ListItem>
                   <ListItem>
-                    <Link to="/faq">
+                    <Link to={`${app_router_base_url}faq`}>
                       <ListItemText primary="FAQ" className="footer-menulink" />
                     </Link>
                   </ListItem>
                   <ListItem>
-                    <Link to="/blogs">Blog</Link>
+                    <Link to={`${app_router_base_url}blogs`}>Blog</Link>
                   </ListItem>
                 </List>
               </Grid>

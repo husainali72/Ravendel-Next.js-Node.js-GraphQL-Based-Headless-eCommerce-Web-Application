@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import Navigation from "./menu";
 import CartSide from "./cart";
 import { homepageAction } from "../store/action/homepageAction";
-import { isEmpty } from "../utils/helper";
+import { isEmpty, app_router_base_url } from "../utils/helper";
 
 const Header = (props) => {
   const dispatch = useDispatch();
@@ -162,26 +162,26 @@ const Header = (props) => {
       >
         {customer.login ? (
           <>
-            <Link to="/account/orders">
+            <Link to={`${app_router_base_url}account/orders`}>
               <MenuItem onClick={handleClose}>Orders</MenuItem>
             </Link>
-            <Link to="/account/address">
+            <Link to={`${app_router_base_url}account/address`}>
               <MenuItem onClick={handleClose}>Address</MenuItem>
             </Link>
-            <Link to="/account/recently-viewed">
+            <Link to={`${app_router_base_url}account/recently-viewed`}>
               <MenuItem onClick={handleClose}>Recently Viewed</MenuItem>
             </Link>
-            <Link to="/account/profile">
+            <Link to={`${app_router_base_url}account/profile`}>
               <MenuItem onClick={handleClose}>Profile</MenuItem>
             </Link>
             <MenuItem onClick={Logout}>Logout</MenuItem>
           </>
         ) : (
           <>
-            <Link to="/login">
+            <Link to={`${app_router_base_url}login`}>
               <MenuItem onClick={handleClose}>Login</MenuItem>
             </Link>
-            <Link to="/register">
+            <Link to={`${app_router_base_url}register`}>
               <MenuItem onClick={handleClose}>Register</MenuItem>
             </Link>
           </>
@@ -207,7 +207,7 @@ const Header = (props) => {
           <Button onClick={() => setLogoutConfrm(false)} color="primary">
             Cancel
           </Button>
-          <Link to="/login" onClick={() => setLogoutConfrm(false)}>
+          <Link to={`${app_router_base_url}login`} onClick={() => setLogoutConfrm(false)}>
             <Button color="primary" autoFocus>
               Logout
             </Button>

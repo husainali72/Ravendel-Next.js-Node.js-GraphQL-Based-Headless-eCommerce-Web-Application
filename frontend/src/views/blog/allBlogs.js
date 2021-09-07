@@ -18,7 +18,7 @@ import { Link } from "react-router-dom";
 import { PageTitle, Loading } from "../components";
 import BlogSidebar from "./blogSidebar";
 import { blogsAction } from "../../store/action/blogAction";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, app_router_base_url } from "../../utils/helper";
 import PlaceHolder from "../../assets/images/placeholder.png";
 
 const AllBlogs = () => {
@@ -43,7 +43,7 @@ const AllBlogs = () => {
                 blogs.blogs.map((blog, index) => (
                   <Grid item lg={6} md={6} sm={6} xs={12} key={index}>
                     <Card className="blog-card">
-                      <Link to={`blog/${blog.id}`}>
+                      <Link to={`${app_router_base_url}blog/${blog.id}`}>
                         <CardActionArea>
                           <CardMedia
                             component="img"
@@ -81,7 +81,7 @@ const AllBlogs = () => {
                         </CardActionArea>
                       </Link>
                       <CardActions>
-                        <Link to={`blog/${blog.id}`}>
+                        <Link to={`${app_router_base_url}blog/${blog.id}`}>
                           <Button size="small" color="primary">
                             Learn More
                           </Button>

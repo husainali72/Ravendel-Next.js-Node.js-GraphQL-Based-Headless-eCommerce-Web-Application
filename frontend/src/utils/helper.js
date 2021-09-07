@@ -12,7 +12,8 @@ if (process.env.NODE_ENV === "production") {
 }*/
 
 //export const baseUrl = "http://159.89.170.199";
-export const baseUrl = "http://localhost:8000";
+export const baseUrl = "http://localhost:8000"; 
+export const app_router_base_url = '/frontend/'
 
 /*-------------------------------------------------------------------------------------------------------------------------------------- */
 //simple category array to Tree array

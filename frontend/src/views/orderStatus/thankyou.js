@@ -17,6 +17,7 @@ import {
 import PageTitle from "../components/pageTitle";
 import { isEmpty } from "../../utils/helper";
 import { Link } from "react-router-dom";
+import {app_router_base_url} from '../../utils/helper';
 
 const Thankyou = () => {
   const checkoutDetail = useSelector(state => state.checkoutDetail);
@@ -256,7 +257,7 @@ const Thankyou = () => {
             <Typography variant="h3" className="margin-bottom-1">
               Your cart is currently empty.
             </Typography>
-            <Link to="/shop">
+            <Link to={`${app_router_base_url}shop`}>
               <Button variant="contained" color="primary">
                 Shop Now
               </Button>

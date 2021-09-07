@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import {PageTitle} from '../components';
+import {app_router_base_url} from '../../utils/helper';
 
 const Login = props => {
   const doLogin = e => {
@@ -30,7 +31,7 @@ const Login = props => {
               There are advances being made in science and technology everyday,
               and a good example of this is the
             </Typography>
-            <Link to="/register">
+            <Link to={`${app_router_base_url}register`}>
               <Button variant="contained" color="secondary">
                 CREATE AN ACCOUNT
               </Button>
@@ -68,7 +69,7 @@ const Login = props => {
                 Login
               </Button>
               <Typography variant="button">
-                <Link to="/forgot-password">Forgot Your Password?</Link>
+                <Link to={`${app_router_base_url}forgot-password`}>Forgot Your Password?</Link>
               </Typography>
             </form>
           </Grid>
