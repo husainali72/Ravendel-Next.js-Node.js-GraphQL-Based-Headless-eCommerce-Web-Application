@@ -12,6 +12,8 @@ const vhost = require("vhost");
 //connect db
 connectDB();
 
+const PORT = process.env.PORT || 8000;
+
 //middleware
 const app = express();
 app.use(cors());
@@ -29,22 +31,16 @@ const server = new ApolloServer({
 });
 server.applyMiddleware({ app, path: "/graphql" });
 
+app.get("/", (req, res) => res.send(`Ravendel is running on port: ${PORT}`));
+
 // Init Middleware
 app.use(express.json({ extended: false }));
-
-//routes
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
-
-//app.use(express.static("public"));
 app.use("/assets", express.static(__dirname + "/assets"));
-
-app.get("/", (req, res) => res.send(`api is running ${PORT}`));
-
-app.use(express.static('client/build'));
-
-const PORT = process.env.PORT || 8000;
+// app.use(express.static('client/build'));
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get("/admin", (req, res) => {
   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
