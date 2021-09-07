@@ -83,6 +83,16 @@ app.use("/api/misc", require("./routes/api/misc"));
 //app.use(express.static("public"));
 app.use("/assets", express.static(__dirname + "/assets"));
 
+
+const PORT = process.env.PORT || 8000;
+
+app.get("/admin", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+});
+
+app.listen(PORT, () => console.log(`server started on port ${PORT}`));
+
+/*
 const appFront = express();
 
 // Server static assets if in production
@@ -107,10 +117,6 @@ if (process.env.NODE_ENV === "production") {
   app.get("/", (req, res) => res.send("api is running"));
 }
 
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`server started on port ${PORT}`));
-
-/*
 if (process.env.NODE_ENV === "production") {
   app.use(vhost("ravendel-frontend.hbwebsol.com", appFront));
   app.use(vhost("ravendel-backend.hbwebsol.com", appAdmin));
