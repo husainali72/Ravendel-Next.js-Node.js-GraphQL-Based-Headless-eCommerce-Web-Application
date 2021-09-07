@@ -39,11 +39,17 @@ app.use("/api/users", require("./routes/api/users"));
 app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
 app.use("/assets", express.static(__dirname + "/assets"));
-// app.use(express.static('client/build'));
-app.use(express.static(path.join(__dirname, 'client/build')));
 
+// Admin
+app.use(express.static(path.join(__dirname, 'client/build')));
 app.get("/admin", (req, res) => {
   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+});
+
+//Frontend
+app.use(express.static(path.join(__dirname, 'frontend/build')));
+app.get("/frontend", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
 });
 
 app.listen(PORT, () => console.log(`server started on port ${PORT}`));
