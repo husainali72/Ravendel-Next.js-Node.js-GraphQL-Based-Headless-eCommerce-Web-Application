@@ -40,17 +40,19 @@ app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
 app.use("/assets", express.static(__dirname + "/assets"));
 
+app.use(express.static(path.join(__dirname, "client", "build")));
+app.use(express.static(path.join(__dirname, "frontend", "build")));
 
-app.use(express.static(path.join(__dirname, 'frontend/build')));
-app.use(express.static(path.join(__dirname, 'client/build')));
-
+app.get('/frontend', (req, res) => {
+  res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+});
 
 app.get('/frontend/*', (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend/build", "index.html"));
+  res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
 });
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+  res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
 });
 
 app.listen(PORT, () => console.log(`server started on port ${PORT}`));

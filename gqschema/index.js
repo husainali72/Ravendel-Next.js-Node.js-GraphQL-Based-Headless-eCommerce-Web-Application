@@ -12,7 +12,7 @@ const setting = require("./setting");
 const tax = require("./tax");
 const shipping = require("./shipping");
 const coupon = require("./coupon");
-const review = require("./review");
+const review = require("./Review");
 const product_attribute = require("./product_attribute");
 
 const linkSchema = gql`

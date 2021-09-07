@@ -41,4 +41,5 @@ module.exports = gql`
     ): [Review]
     deleteReview(id: ID!): [Review]
   }
+  
 `;
