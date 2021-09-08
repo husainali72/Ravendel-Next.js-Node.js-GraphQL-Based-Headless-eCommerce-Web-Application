@@ -19,7 +19,7 @@ const validate = require("../validations/product");
 var mongoose = require("mongoose");
 
 
-/* For Test geting child*/
+/* geting child*/
 let allids = [];
 const getTree = async (id) => {
   let cats = await ProductCat.find({ parentId: id });
