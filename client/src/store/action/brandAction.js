@@ -5,6 +5,7 @@ import {
   UPDATE_BRAND,
   DELETE_BRAND,
 } from "../../queries/brandQuery";
+import {client_app_route_url} from '../../utils/helper';
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
@@ -46,7 +47,7 @@ export const brandAddAction = (object) => (dispatch) => {
           payload: response.data.addBrand,
         });
 
-        jumpTo("/all-brands");
+        jumpTo(`${client_app_route_url}all-brands`);
 
         return dispatch({
           type: ALERT_SUCCESS,
@@ -82,7 +83,7 @@ export const brandUpdateAction = (object) => (dispatch) => {
           payload: response.data.updateBrand,
         });
 
-        jumpTo("/all-brands");
+        jumpTo(`${client_app_route_url}all-brands`);
 
         dispatch({
           type: ALERT_SUCCESS,

@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Grid, TextField } from "@material-ui/core";
 import { useSelector, useDispatch } from "react-redux";
 import { attributeUpdateAction, attributeAction } from "../../../store/action/";
-import { isEmpty } from "../../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../../utils/helper";
 import ReactTags from "react-tag-autocomplete";
 import viewStyles from "../../viewStyles";
 import { Alert, Loading, TopBar, CardBlocks } from "../../components";
@@ -59,7 +59,7 @@ const EditAttribute = (props) => {
           title='Edit Attribute'
           onSubmit={onUpdate}
           submitTitle='Update'
-          backLink={"/attributes"}
+          backLink={`${client_app_route_url}attributes`}
         />
 
         <Grid container spacing={2} className={classes.secondmainrow}>

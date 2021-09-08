@@ -47,8 +47,6 @@ export const globalTaxUpdateAction = object => dispatch => {
           payload: response.data.updateGlobalTax
         });
 
-        //jumpTo("/all-brands");
-
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -83,8 +81,6 @@ export const optionTaxUpdateAction = object => dispatch => {
           payload: response.data.updateOptionTax
         });
 
-        //jumpTo("/all-brands");
-
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -118,8 +114,6 @@ export const taxClassAddAction = object => dispatch => {
           type: TAX_SUCCESS,
           payload: response.data.addTaxClass
         });
-
-        //jumpTo("/all-brands");
 
         dispatch({
           type: ALERT_SUCCESS,
@@ -157,8 +151,6 @@ export const taxClassUpdateAction = object => dispatch => {
           payload: response.data.updateTaxClass
         });
 
-        //jumpTo("/all-brands");
-
         dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -194,8 +186,6 @@ export const taxClassDeleteAction = object => dispatch => {
           type: TAX_SUCCESS,
           payload: response.data.deleteTaxClass
         });
-
-        //jumpTo("/all-brands");
 
         dispatch({
           type: ALERT_SUCCESS,

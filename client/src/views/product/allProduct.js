@@ -27,6 +27,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import { Alert, Loading } from "../components";
+import { client_app_route_url } from "../../utils/helper";
 
 const AllProduct = () => {
   const classes = viewStyles();
@@ -57,7 +58,7 @@ const AllProduct = () => {
             {products.loading ? <Loading /> : null}
             <CardHeader
               action={
-                <Link to='/add-product'>
+                <Link to={`${client_app_route_url}add-product`}>
                   <Button
                     color='primary'
                     className={classes.addUserBtn}
@@ -110,7 +111,7 @@ const AllProduct = () => {
                               <IconButton
                                 aria-label='Edit'
                                 onClick={() =>
-                                  jumpTo(`edit-product/${product.id}`)
+                                  jumpTo(`${client_app_route_url}edit-product/${product.id}`)
                                 }
                               >
                                 <EditIcon />

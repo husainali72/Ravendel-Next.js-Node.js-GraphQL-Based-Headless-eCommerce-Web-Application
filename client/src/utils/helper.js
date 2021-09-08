@@ -13,6 +13,7 @@ if (process.env.NODE_ENV === "production") {
 
 //export const baseUrl = "http://159.89.170.199";
 export const baseUrl = "http://localhost:8000";
+export const client_app_route_url = "/admin/";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------- */
 //simple category array to Tree array

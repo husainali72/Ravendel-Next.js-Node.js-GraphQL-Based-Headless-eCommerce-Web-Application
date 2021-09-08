@@ -20,6 +20,7 @@ import {
   CardBlocks,
 } from "../components";
 import viewStyles from "../viewStyles";
+import {client_app_route_url} from '../../utils/helper';
 
 var defaultObj = {
   status: "Publish",
@@ -87,7 +88,7 @@ const AddPage = (props) => {
           title='Add Page'
           onSubmit={addPage}
           submitTitle='Add'
-          backLink={"/all-pages"}
+          backLink={`${client_app_route_url}all-pages`}
         />
 
         <Grid

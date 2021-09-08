@@ -13,6 +13,7 @@ import {
   FeaturedImageComponent,
   SelectComponent,
 } from "../components";
+import {client_app_route_url} from '../../utils/helper';
 
 var defaultObj = {
   id: "",
@@ -61,7 +62,7 @@ const AddUser = () => {
           title='Add User'
           onSubmit={addUser}
           submitTitle='Add'
-          backLink={"/all-users"}
+          backLink={`${client_app_route_url}all-users`}
         />
         <Grid container spacing={3} className={classes.secondmainrow}>
           <Grid item xs={12}>
@@ -128,55 +129,3 @@ const AddUser = () => {
 };
 
 export default AddUser;
-
-
-// Backup for user upload image
-//   const [featureImage, setfeatureImage] = useState(null);
-
-//   useEffect(() => {
-//     document.forms[0].reset();
-//     setfeatureImage(null);
-//     setuser({});
-//     setLabelWidth(inputLabel.current.offsetWidth);
-//   }, [props.users.users]);
-
-//   const addUser = e => {
-//     e.preventDefault();
-//     props.userAddAction(user);
-//   };
-
-//   const handleChange = e => {
-//     setuser({ ...user, [e.target.name]: e.target.value });
-//   };
-
-//   const fileChange = e => {
-//     setuser({ ...user, [e.target.name]: e.target.files[0] });
-//     setfeatureImage(null);
-//     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-//   };
-
-
-
-
-  // {featureImage !== null && (
-  //   <Box className={classes.feautedImageBox}>
-  //     <img
-  //       src={featureImage}
-  //       className={classes.feautedImageBoxPreview}
-  //       alt="user-thumbnail"
-  //     />
-  //   </Box>
-  // )}
-  // <Input
-  //   className={classes.input}
-  //   style={{ display: "none" }}
-  //   id="image"
-  //   type="file"
-  //   onChange={fileChange}
-  //   name="image"
-  // />
-  // <label htmlFor="image" className={classes.feautedImage}>
-  //   {featureImage !== null
-  //     ? "Change Featured Image"
-  //     : "Set Featured Image"}
-  // </label>

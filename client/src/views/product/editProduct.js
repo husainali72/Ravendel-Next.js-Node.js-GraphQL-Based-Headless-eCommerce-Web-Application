@@ -26,7 +26,7 @@ import {
   deleteProductVariationImage,
   deleteProductVariation,
 } from "../../utils/service";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import {
   Alert,
   Loading,
@@ -212,7 +212,7 @@ const EditProduct = (props) => {
           title='Edit Product'
           onSubmit={updateProduct}
           submitTitle='Update'
-          backLink={"/all-products"}
+          backLink={`${client_app_route_url}all-products`}
         />
 
         {!isEmpty(product.id) ? (

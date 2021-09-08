@@ -11,7 +11,7 @@ import { useTheme } from "@material-ui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { pageUpdateAction, pageAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
   Alert,
@@ -83,7 +83,7 @@ const EditPage = (props) => {
           title='Edit Page'
           onSubmit={updatePage}
           submitTitle='Update'
-          backLink={"/all-pages"}
+          backLink={`${client_app_route_url}all-pages`}
         />
 
         <Grid

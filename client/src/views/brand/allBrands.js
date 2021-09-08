@@ -28,6 +28,7 @@ import { brandsAction, brandDeleteAction } from "../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import {Loading, Alert} from '../components';
 import {convertDateToStringFormat} from '../utils/convertDate';
+import {client_app_route_url} from '../../utils/helper';
 
 const AllBrands = props => {
   const theme = useTheme();
@@ -63,7 +64,7 @@ const AllBrands = props => {
 
             <CardHeader
               action={
-                <Link to="/add-brand">
+                <Link to={`${client_app_route_url}add-brand`}>
                   <Button
                     color="primary"
                     className={classes.addUserBtn}
@@ -105,7 +106,7 @@ const AllBrands = props => {
                             <Tooltip title="Edit Brand" aria-label="edit">
                               <IconButton
                                 aria-label="Edit"
-                                onClick={() => jumpTo(`edit-brand/${brand.id}`)}
+                                onClick={() => jumpTo(`${client_app_route_url}edit-brand/${brand.id}`)}
                               >
                                 <EditIcon />
                               </IconButton>

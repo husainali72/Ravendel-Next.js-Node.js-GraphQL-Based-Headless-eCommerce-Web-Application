@@ -5,7 +5,7 @@ import {
   UPDATE_COUPON,
   DELETE_COUPON
 } from "../../queries/couponQuery";
-
+import {client_app_route_url} from '../../utils/helper';
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
@@ -102,7 +102,7 @@ export const couponUpdateAction = object => dispatch => {
           type: COUPONS_SUCCESS,
           payload: response.data.updateCoupon
         });
-        jumpTo("/all-coupons");
+        jumpTo(`${client_app_route_url}all-coupons`);
         dispatch({
           type: ALERT_SUCCESS,
           payload: {

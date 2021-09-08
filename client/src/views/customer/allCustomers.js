@@ -28,6 +28,7 @@ import viewStyles from "../viewStyles";
 import {convertDateToStringFormat} from "../utils/convertDate";
 import { useDispatch, useSelector } from "react-redux";
 import {Alert, Loading} from '../components';
+import {client_app_route_url} from '../../utils/helper';
 
 const AllCustomers = () => {
   const theme = useTheme();
@@ -63,7 +64,7 @@ const AllCustomers = () => {
 
             <CardHeader
               action={
-                <Link to="/add-customer">
+                <Link to={`${client_app_route_url}add-customer`}>
                   <Button
                     color="primary"
                     className={classes.addUserBtn}
@@ -110,7 +111,7 @@ const AllCustomers = () => {
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(`edit-customer/${customer.id}`)
+                                  jumpTo(`${client_app_route_url}edit-customer/${customer.id}`)
                                 }
                               >
                                 <EditIcon />

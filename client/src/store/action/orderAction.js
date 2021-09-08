@@ -4,7 +4,7 @@ import {
   DELETE_ORDER,
   UPDATE_ORDER
 } from "../../queries/orderQuery";
-
+import {client_app_route_url} from '../../utils/helper';
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 
@@ -109,7 +109,7 @@ export const orderUpdateAction = object => dispatch => {
           }
         });
 
-        //jumpTo("/all-orders");
+        //jumpTo(`${client_app_route_url}all-orders`);
         return;
       }
     })

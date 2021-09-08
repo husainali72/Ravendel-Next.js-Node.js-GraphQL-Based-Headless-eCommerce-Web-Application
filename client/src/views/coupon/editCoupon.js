@@ -32,7 +32,7 @@ import {
   getSelectedName,
   MenuProps,
 } from "./coupon-components";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 
 const EditCoupon = (props) => {
   const theme = useTheme();
@@ -134,7 +134,7 @@ const EditCoupon = (props) => {
         title='Edit Coupon'
         onSubmit={updateCoupon}
         submitTitle='Update'
-        backLink={"/all-coupons"}
+        backLink={`${client_app_route_url}all-coupons`}
       />
 
       {isEmpty(Coupons.coupons) ? null : (

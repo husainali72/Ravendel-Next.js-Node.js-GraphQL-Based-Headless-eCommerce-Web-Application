@@ -31,8 +31,6 @@ const server = new ApolloServer({
 });
 server.applyMiddleware({ app, path: "/graphql" });
 
-// app.get("/", (req, res) => res.send(`Ravendel is running on port: ${PORT}`));
-
 // Init Middleware
 app.use(express.json({ extended: false }));
 app.use("/api/users", require("./routes/api/users"));
@@ -40,20 +38,25 @@ app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
 app.use("/assets", express.static(__dirname + "/assets"));
 
-app.use(express.static(path.join(__dirname, "client", "build")));
-app.use(express.static(path.join(__dirname, "frontend", "build")));
 
-app.get('/frontend', (req, res) => {
-  res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-});
-
-app.get('/frontend/*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-});
-
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-});
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "frontend", "build")));
+  app.use(express.static(path.join(__dirname, "client", "build")));
+  
+  app.get('/admin', (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
+  
+  app.get('/admin/*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
+  
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => res.send(`Ravendel is running on port: ${PORT}`));
+}
 
 app.listen(PORT, () => console.log(`server started on port ${PORT}`));
 

@@ -16,7 +16,7 @@ import {
   blogAction,
 } from "../../store/action/";
 import clsx from "clsx";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
   Loading,
@@ -130,7 +130,7 @@ const EditBlog = (props) => {
           title='Edit Blog'
           onSubmit={updateBlog}
           submitTitle='Update'
-          backLink={"/all-blogs"}
+          backLink={`${client_app_route_url}all-blogs`}
         />
 
         <Grid

@@ -11,6 +11,7 @@ import clsx from "clsx";
 import { brandAddAction } from "../../store/action/";
 import { useDispatch, useSelector } from "react-redux";
 import { Loading, TopBar, Alert, CardBlocks } from "../components";
+import {client_app_route_url} from '../../utils/helper';
 
 const AddBrands = () => {
   const classes = viewStyles();
@@ -40,7 +41,7 @@ const AddBrands = () => {
         title='Add Brands'
         onSubmit={addBrands}
         submitTitle='Add'
-        backLink={"/all-brands"}
+        backLink={`${client_app_route_url}all-brands`}
       />
 
       <Grid container spacing={4} className={classes.secondmainrow}>

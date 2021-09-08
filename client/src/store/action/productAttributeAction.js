@@ -5,7 +5,7 @@ import {
   UPDATE_ATTRIBUTE,
   DELETE_ATTRIBUTE,
 } from "../../queries/productAttributeQuery";
-
+import {client_app_route_url} from '../../utils/helper';
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
@@ -68,7 +68,7 @@ export const attributeAddAction = (object) => (dispatch) => {
   mutation(ADD_ATTRIBUTE, object)
     .then((response) => {
       if (response) {
-        jumpTo("/attributes");
+        jumpTo(`${client_app_route_url}attributes`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -98,7 +98,7 @@ export const attributeUpdateAction = (object) => (dispatch) => {
   mutation(UPDATE_ATTRIBUTE, object)
     .then((response) => {
       if (response) {
-        jumpTo("/attributes");
+        jumpTo(`${client_app_route_url}attributes`);
         dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -129,8 +129,6 @@ export const attributeDeleteAction = (id) => (dispatch) => {
   mutation(DELETE_ATTRIBUTE, { id })
     .then((response) => {
       if (response) {
-        //jumpTo("/attributes");
-
         dispatch({
           type: "RENDER",
           payload: true,

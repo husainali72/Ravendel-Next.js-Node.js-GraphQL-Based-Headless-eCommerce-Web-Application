@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { pagesAction, pageDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
@@ -59,7 +59,7 @@ const AllPages = (props) => {
 
             <CardHeader
               action={
-                <Link to="/add-page">
+                <Link to={`${client_app_route_url}add-page`}>
                   <Button
                     color="primary"
                     className={classes.addUserBtn}
@@ -105,7 +105,7 @@ const AllPages = (props) => {
                             <Tooltip title="Edit Page" aria-label="edit">
                               <IconButton
                                 aria-label="Edit"
-                                onClick={() => jumpTo(`edit-page/${page.id}`)}
+                                onClick={() => jumpTo(`${client_app_route_url}edit-page/${page.id}`)}
                               >
                                 <EditIcon />
                               </IconButton>

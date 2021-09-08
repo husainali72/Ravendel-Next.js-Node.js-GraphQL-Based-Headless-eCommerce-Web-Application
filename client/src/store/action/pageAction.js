@@ -5,7 +5,7 @@ import {
   UPDATE_PAGE,
   DELETE_PAGE,
 } from "../../queries/pageQuery";
-
+import {client_app_route_url} from '../../utils/helper';
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
@@ -113,7 +113,7 @@ export const pageUpdateAction = (object) => (dispatch) => {
           payload: {},
         });
 
-        jumpTo("/all-pages");
+        jumpTo(`${client_app_route_url}all-pages`);
 
         dispatch({
           type: ALERT_SUCCESS,

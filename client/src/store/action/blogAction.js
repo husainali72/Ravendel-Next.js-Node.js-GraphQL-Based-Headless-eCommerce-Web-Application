@@ -9,6 +9,7 @@ import {
   UPDATE_BLOGTAG,
   DELETE_BLOGTAG,
 } from "../../queries/blogQuery";
+import {client_app_route_url} from '../../utils/helper';
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
@@ -130,7 +131,7 @@ export const blogUpdateAction = (object) => (dispatch) => {
   mutation(UPDATE_BLOG, object)
     .then((response) => {
       if (response) {
-        jumpTo("/all-blogs");
+        jumpTo(`${client_app_route_url}all-blogs`);
         dispatch({
           type: BLOGS_SUCCESS,
           payload: response.data.updateBlog,

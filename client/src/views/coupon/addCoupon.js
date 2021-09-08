@@ -32,7 +32,7 @@ import {
   couponObj,
   getSelectedName,
 } from "./coupon-components";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 
 const AddCoupon = () => {
   const theme = useTheme();
@@ -128,7 +128,7 @@ const AddCoupon = () => {
         title='Add Coupon'
         onSubmit={addCoupon}
         submitTitle='Add'
-        backLink={"/all-coupons"}
+        backLink={`${client_app_route_url}all-coupons`}
       />
 
       <Grid container spacing={isSmall ? 1 : 4} className={classes.secondmainrow}>

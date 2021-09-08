@@ -5,10 +5,8 @@ import {
   UPDATE_SHIPPINGCLASS,
   DELETE_SHIPPINGCLASS
 } from "../../queries/shippingQuery";
-
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-//import jumpTo from "../../utils/navigation";
 
 export const shippingAction = () => dispatch => {
   dispatch({
@@ -46,8 +44,6 @@ export const globalShippingUpdateAction = object => dispatch => {
           payload: response.data.updateGlobalShipping
         });
 
-        //jumpTo("/all-brands");
-
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -81,8 +77,6 @@ export const shippingClassAddAction = object => dispatch => {
           type: SHIPPING_SUCCESS,
           payload: response.data.addShippingClass
         });
-
-        //jumpTo("/all-brands");
 
         dispatch({
           type: ALERT_SUCCESS,
@@ -120,8 +114,6 @@ export const shippingClassUpdateAction = object => dispatch => {
           payload: response.data.updateShippingClass
         });
 
-        //jumpTo("/all-brands");
-
         dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -157,8 +149,6 @@ export const shippingClassDeleteAction = object => dispatch => {
           type: SHIPPING_SUCCESS,
           payload: response.data.deleteShippingClass
         });
-
-        //jumpTo("/all-brands");
 
         dispatch({
           type: ALERT_SUCCESS,

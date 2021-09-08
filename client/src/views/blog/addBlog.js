@@ -13,7 +13,7 @@ import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import { blogAddAction, blogtagsAction } from "../../store/action/";
 import viewStyles from "../viewStyles";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import { getUpdatedUrl } from "../../utils/service";
 import {
   Loading,
@@ -118,7 +118,7 @@ const AddBlog = () => {
           title='Add Blog'
           onSubmit={addBlog}
           submitTitle='Add'
-          backLink={"/all-blogs"}
+          backLink={`${client_app_route_url}all-blogs`}
         />
 
         <Grid

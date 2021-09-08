@@ -12,6 +12,7 @@ import {
   Alert,
   CardBlocks,
 } from "../components";
+import {client_app_route_url} from '../../utils/helper';
 
 var customerObj = {
   first_name: "",
@@ -53,7 +54,7 @@ const AddCustomer = () => {
           title='Add Customer'
           onSubmit={addCustomer}
           submitTitle='Add'
-          backLink={"/all-customer"}
+          backLink={`${client_app_route_url}all-customer`}
         />
         <Grid
           container

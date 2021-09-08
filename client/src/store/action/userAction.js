@@ -5,7 +5,7 @@ import {
   UPDATE_USER,
   DELETE_USER
 } from "../../queries/userQuery";
-
+import {client_app_route_url} from '../../utils/helper';
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
@@ -70,6 +70,8 @@ export const userAddAction = object => dispatch => {
           payload: response.data.addUser
         });
 
+        jumpTo(`${client_app_route_url}all-users`);
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -112,7 +114,7 @@ export const userUpdateAction = object => dispatch => {
           }
         });
 
-        jumpTo("/all-users");
+        jumpTo(`${client_app_route_url}all-users`);
         return;
       }
     })

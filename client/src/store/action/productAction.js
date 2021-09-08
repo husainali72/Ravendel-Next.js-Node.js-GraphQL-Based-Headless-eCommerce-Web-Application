@@ -9,7 +9,7 @@ import {
   UPDATE_PRODUCT,
   DELETE_PRODUCT,
 } from "../../queries/productQuery";
-
+import {client_app_route_url} from '../../utils/helper';
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
@@ -83,8 +83,6 @@ export const categoryUpdateAction = (object) => (dispatch) => {
           type: CATS_SUCCESS,
           payload: response.data.updateProductCategory,
         });
-
-        //jumpTo("/all-blogs");
 
         dispatch({
           type: ALERT_SUCCESS,
@@ -210,7 +208,7 @@ export const productAddAction = (object) => (dispatch) => {
           payload: {},
         });
 
-        jumpTo("/all-products");
+        jumpTo(`${client_app_route_url}all-products`);
 
         return dispatch({
           type: ALERT_SUCCESS,
@@ -254,7 +252,7 @@ export const productUpdateAction = (object) => (dispatch) => {
           payload: response.data.updateProduct,
         });
 
-        jumpTo("/all-products");
+        jumpTo(`${client_app_route_url}all-products`);
 
         dispatch({
           type: ALERT_SUCCESS,
