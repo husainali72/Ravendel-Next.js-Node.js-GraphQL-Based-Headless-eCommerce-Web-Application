@@ -12,8 +12,9 @@ const setting = require("./setting");
 const tax = require("./tax");
 const shipping = require("./shipping");
 const coupon = require("./coupon");
-const review = require("./Review");
+const review = require("./review");
 const product_attribute = require("./product_attribute");
+const faqSchema = require("./faq");
 
 const linkSchema = gql`
   scalar Date
@@ -67,4 +68,5 @@ module.exports = [
   coupon,
   review,
   product_attribute,
+  faqSchema,
 ];

@@ -11,12 +11,54 @@ const validate = require("../validations/page");
 
 module.exports = {
   Query: {
+    // pages: async (root, args) => {
+    //   try {
+    //     return await Page.find({});
+    //   } catch (error) {
+    //     throw new Error("Something went wrong.");
+    //   }
+    // },
+
     pages: async (root, args) => {
+      // destrcture search, page, limit, and set default values
+      
       try {
-        return await Page.find({});
-      } catch (error) {
-        throw new Error("Something went wrong.");
+      const { search = null, page = 1, limit = 20 } = args;
+
+      let searchQuery = {};
+
+      // run if search is provided
+      if (search) {
+        // update the search query
+        searchQuery = {
+          $or: [
+            { title: { $regex: search, $options: 'i' } },
+            { status: { $regex: search, $options: 'i' } }
+            
+          ]
+        };
       }
+
+      // execute query to search customers
+      const pages = await Page.find(searchQuery)
+
+
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .lean();
+
+      // get total documents
+      const count = await Page.countDocuments(searchQuery);
+
+      return {
+        pages,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        totalCount:count
+        }
+      } catch (error) {
+         throw new Error("Something went wrong.");
+       }
     },
     page: async (root, args) => {
       try {

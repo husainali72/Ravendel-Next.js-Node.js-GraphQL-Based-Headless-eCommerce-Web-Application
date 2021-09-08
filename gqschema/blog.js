@@ -1,7 +1,7 @@
 const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Blog {
-    id: ID
+    _id: ID
     title: String
     content: String
     status: String
@@ -21,8 +21,15 @@ module.exports = gql`
     updated: Date
   }
 
-  extend type Query {
+  type BFResult {
     blogs: [Blog]
+    currentPage: Int
+    totalPages: Int
+    totalCount:Int
+  }
+
+  extend type Query {
+    blogs(search: String, page: Int, limit: Int): BFResult
     blog(id: ID!): Blog
     blogtags: [BlogTag]
     blogsbytagid(tag_id: ID!): [Blog]

@@ -33,8 +33,16 @@ module.exports = gql`
     values: [customObject]
   }
 
-  extend type Query {
+  type AResult {
     product_attributes: [productAttribute]
+    currentPage: Int
+    totalPages: Int
+    totalCount:Int
+  }
+
+  extend type Query {
+    
+    product_attributes(search: String, page: Int, limit: Int): AResult
     product_attribute(id: ID!): productAttribute
   }
 

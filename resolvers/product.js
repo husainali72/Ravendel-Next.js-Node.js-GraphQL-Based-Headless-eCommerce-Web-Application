@@ -17,9 +17,7 @@ const {
 } = require("../config/helpers");
 const validate = require("../validations/product");
 var mongoose = require("mongoose");
-
-
-/* geting child*/
+/*geting child*/
 let allids = [];
 const getTree = async (id) => {
   let cats = await ProductCat.find({ parentId: id });
@@ -33,13 +31,55 @@ const getTree = async (id) => {
 
 module.exports = {
   Query: {
+    // productCategories: async (root, args) => {
+    //   try {
+    //     const cats = await ProductCat.find({});
+    //     return cats || [];
+    //   } catch (error) {
+    //     throw new Error("Something went wrong.");
+    //   }
+    // },
+
     productCategories: async (root, args) => {
+      // destrcture search, page, limit, and set default values
+      
       try {
-        const cats = await ProductCat.find({});
-        return cats || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
+      const { search = null, page = 1, limit = 20 } = args;
+
+      let searchQuery = {};
+
+      // run if search is provided
+      if (search) {
+        // update the search query
+        searchQuery = {
+          $or: [
+            { name: { $regex: search, $options: 'i' } }
+            
+            
+          ]
+        };
       }
+
+      // execute query to search orders
+      const cats = await ProductCat.find(searchQuery)
+
+
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .lean();
+
+      // get total documents
+      const count = await ProductCat.countDocuments(searchQuery);
+
+      return {
+        cats,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        totalCount:count
+        }
+      } catch (error) {
+         throw new Error("Something went wrong.");
+       }
     },
     productCategoriesByFilter: async (root, args) => {
       try {
@@ -61,7 +101,8 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    products: async (root, args, { id }) => {
+
+    product: async (root, args, { id }) => {
       try {
         const products = await Product.find({});
         return products || [];
@@ -70,6 +111,51 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+
+
+    products: async (root, args) => {
+      // destrcture search, page, limit, and set default values
+      
+      try {
+      const { search = null, page = 1, limit = 20 } = args;
+
+      let searchQuery = {};
+
+      // run if search is provided
+      if (search) {
+        // update the search query
+        searchQuery = {
+          $or: [
+            { name: { $regex: search, $options: 'i' } }
+            
+            
+          ]
+        };
+      }
+
+      // execute query to search customers
+      const products = await Product.find(searchQuery)
+
+
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .lean();
+
+      // get total documents
+      const count = await Product.countDocuments(searchQuery);
+
+      return {
+        products,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        totalCount:count
+        }
+      } catch (error) {
+         throw new Error("Something went wrong.");
+       }
+    },
+
+
     productswithcat: async (root, args, { id }) => {
       try {
         const products = await Product.find({});

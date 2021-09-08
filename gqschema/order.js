@@ -1,7 +1,7 @@
 const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Order {
-    id: ID
+    _id: ID
     user_id: ID
     status: String
     shipping: customObject
@@ -16,8 +16,17 @@ module.exports = gql`
     qty: Int
   }
 
-  extend type Query {
+  type OResult {
     orders: [Order]
+    currentPage: Int
+    totalPages: Int
+    totalCount:Int
+  }
+
+  
+
+  extend type Query {
+    orders(search: String, page: Int, limit: Int): OResult
     order(id: ID!): Order
     orderbyUser(user_id: ID!): Order
   }

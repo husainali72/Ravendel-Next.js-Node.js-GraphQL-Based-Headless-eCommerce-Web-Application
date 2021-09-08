@@ -1,7 +1,7 @@
 const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Customer {
-    id: ID
+    _id: ID
     first_name: String
     last_name: String
     email: String
@@ -30,8 +30,16 @@ module.exports = gql`
     updated: Date
   }
 
-  extend type Query {
+  type CResult {
     customers: [Customer]
+    currentPage: Int
+    totalPages: Int
+    totalCount:Int
+  }
+
+  extend type Query {
+    
+    customers(search: String, page: Int, limit: Int): CResult
     customer(id: ID!): Customer
   }
 

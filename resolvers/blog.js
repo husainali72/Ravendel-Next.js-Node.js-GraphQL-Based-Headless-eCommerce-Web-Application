@@ -17,12 +17,45 @@ const sanitizeHtml = require("sanitize-html");
 module.exports = {
   Query: {
     blogs: async (root, args) => {
+      // destrcture search, page, limit, and set default values
+      
       try {
-        const blogs = await Blog.find({});
-        return blogs || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
+      const { search = null, page = 1, limit = 20 } = args;
+
+      let searchQuery = {};
+
+      // run if search is provided
+      if (search) {
+        // update the search query
+        searchQuery = {
+          $or: [
+            { title: { $regex: search, $options: 'i' } }
+            
+            
+          ]
+        };
       }
+
+      // execute query to search orders
+      const blogs = await Blog.find(searchQuery)
+
+
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .lean();
+
+      // get total documents
+      const count = await Blog.countDocuments(searchQuery);
+
+      return {
+        blogs,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        totalCount:count
+        }
+      } catch (error) {
+         throw new Error("Something went wrong.");
+       }
     },
     blog: async (root, args) => {
       try {
@@ -51,7 +84,7 @@ module.exports = {
       try {
         const blogtag = await BlogTag.findOne({ url: args.tag_url });
         if (!blogtag) {
-          throw putError("404 Not found ");
+          throw putError("404 Not found");
         }
         const blogs = await Blog.find({
           blog_tag: { $in: blogtag.id },

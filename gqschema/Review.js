@@ -1,7 +1,7 @@
 const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Review {
-    id: ID
+    _id: ID
     title: String
     customer_id: Customer
     product_id: Product
@@ -13,8 +13,15 @@ module.exports = gql`
     updated: Date
   }
 
-  extend type Query {
+  type RResult {
     reviews: [Review]
+    currentPage: Int
+    totalPages: Int
+    totalCount:Int
+  }
+
+  extend type Query {
+    reviews(search: String, page: Int, limit: Int): RResult
     review(id: ID!): Review
     productwisereview(product_id: ID!): [Review]
   }
@@ -41,5 +48,4 @@ module.exports = gql`
     ): [Review]
     deleteReview(id: ID!): [Review]
   }
-  
 `;

@@ -12,14 +12,52 @@ const bcrypt = require("bcryptjs");
 
 module.exports = {
   Query: {
+    
+
     customers: async (root, args) => {
+      // destrcture search, page, limit, and set default values
+      
       try {
-        const customers = await Customer.find({});
-        return customers || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
+      const { search = null, page = 1, limit = 20 } = args;
+
+      let searchQuery = {};
+
+      // run if search is provided
+      if (search) {
+        // update the search query
+        searchQuery = {
+          $or: [
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } },
+            { email: { $regex: search, $options: 'i' } }
+            
+          ]
+        };
       }
+
+      // execute query to search customers
+      const customers = await Customer.find(searchQuery)
+
+
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .lean();
+
+      // get total documents
+      const count = await Customer.countDocuments(searchQuery);
+
+      return {
+        customers,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        totalCount:count
+        }
+      } catch (error) {
+         throw new Error("Something went wrong.");
+       }
     },
+
+
     customer: async (root, args) => {
       try {
         const customer = await Customer.findById(args.id);
@@ -122,6 +160,8 @@ module.exports = {
           throw putError(errors);
         }
 
+      //  console.log("Deatails", args);
+
         const customer = await Customer.findById({ _id: args.id });
 
         if (!customer) {
@@ -161,7 +201,7 @@ module.exports = {
         if (!customer) {
           throw putError("Something went wrong.");
         }
-        console.log("here comes", args.default_address);
+      //  console.log("here comes", args.default_address);
         delete args.id;
         customer.address_book = customer.address_book.map(address => {
           if (args.default_address) {

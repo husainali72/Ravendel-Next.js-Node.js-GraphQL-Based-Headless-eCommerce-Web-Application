@@ -11,13 +11,51 @@ const validate = require("../validations/coupon");
 
 module.exports = {
   Query: {
+    
+
     coupons: async (root, args) => {
+      // destrcture search, page, limit, and set default values
+      
       try {
-        const coupons = await Coupon.find({});
-        return coupons || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
+      const { search = null, page = 1, limit = 20 } = args;
+
+      let searchQuery = {};
+
+      // run if search is provided
+      if (search) {
+        // update the search query
+        searchQuery = {
+          $or: [
+            { code: { $regex: search, $options: 'i' } },
+            { description: { $regex: search, $options: 'i' } },
+            { discount_type: { $regex: search, $options: 'i' } }
+
+            
+
+          ]
+        };
       }
+
+      // execute query to search orders
+      const coupons = await Coupon.find(searchQuery)
+
+
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .lean();
+
+      // get total documents
+      const count = await Coupon.countDocuments(searchQuery);
+
+      return {
+        coupons,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        totalCount:count
+        }
+      } catch (error) {
+         throw new Error("Something went wrong.");
+       }
     },
     coupon: async (root, args) => {
       try {

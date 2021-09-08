@@ -34,7 +34,7 @@ module.exports = gql`
   }
 
   type productCategory {
-    id: ID
+    _id: ID
     name: String
     parentId: ID
     url: String
@@ -92,7 +92,7 @@ module.exports = gql`
   }
 
   type Product {
-    id: ID
+    _id: ID
     name: String
     categoryId: [productCategory]
     brand: productBrand
@@ -123,12 +123,27 @@ module.exports = gql`
     meta(key: String, value: String): metaKeyValueArray
   }
 
-  extend type Query {
+
+  type PResult {
+    products: [Product]
+    currentPage: Int
+    totalPages: Int
+    totalCount:Int
+  }
+
+  type PCResult {
     productCategories: [productCategory]
+    currentPage: Int
+    totalPages: Int
+    totalCount:Int
+  }
+
+  extend type Query {
+    
     productCategoriesByFilter(filter: customObject): [Category]
     productCategory(id: ID!): productCategory
     getTree: [cattree]
-    products: [Product]
+    products(search: String, page: Int, limit: Int): PResult
     productswithcat: [Product]
     featureproducts: [Product]
     recentproducts: [Product]
@@ -138,6 +153,7 @@ module.exports = gql`
     productbyurl(url: String): Product
     filteredProducts(config: customObject): [Product]
     onSaleProducts: [Product]
+    productCategories(search: String, page: Int, limit: Int): PCResult
   }
 
   extend type Mutation {

@@ -1,7 +1,7 @@
 const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Brand {
-    id: ID
+    _id: ID
     name: String
     url: String
     brand_logo: customObject
@@ -26,8 +26,15 @@ module.exports = gql`
     name: String
   }
 
-  extend type Query {
+  type BResult {
     brands: [Brand]
+    currentPage: Int
+    totalPages: Int
+    totalCount:Int
+  }
+
+  extend type Query {
+    brands(search: String, page: Int, limit: Int): BResult
     brand(id: ID!): Brand
   }
   extend type Mutation {

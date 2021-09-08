@@ -13,14 +13,59 @@ const {
 
 module.exports = {
   Query: {
+    
+    // product_attributes: async (root, args) => {
+    //   try {
+    //     const attributes = await ProductAttribute.find({});
+    //     return attributes || [];
+    //   } catch (error) {
+    //     error = checkError(error);
+    //     throw new Error(error.custom_message);
+    //   }
+    // },
+
     product_attributes: async (root, args) => {
+      // destrcture search, page, limit, and set default values
+      
       try {
-        const attributes = await ProductAttribute.find({});
-        return attributes || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+      const { search = null, page = 1, limit = 20 } = args;
+
+      let searchQuery = {};
+
+      // run if search is provided
+      if (search) {
+        // update the search query
+        searchQuery = {
+          $or: [
+            { name: { $regex: search, $options: 'i' } }
+            
+            
+          ]
+        };
       }
+
+      // execute query to search orders
+      const attributes = await ProductAttribute.find(searchQuery)
+
+
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .lean();
+
+      // get total documents
+      const count = await ProductAttribute.countDocuments(searchQuery);
+
+      //console.log(attributes);
+
+      return {
+        attributes,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        totalCount:count
+        }
+      } catch (error) {
+         throw new Error("Something went wrong.");
+       }
     },
     product_attribute: async (root, args) => {
       try {

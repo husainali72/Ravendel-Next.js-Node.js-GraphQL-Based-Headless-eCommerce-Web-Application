@@ -13,13 +13,60 @@ const validate = require("../validations/review");
 
 module.exports = {
   Query: {
+    // reviews: async (root, args) => {
+    //   try {
+    //     const reviews = await Review.find({});
+    //     return reviews || [];
+    //   } catch (error) {
+    //     throw new Error("Something went wrong.");
+    //   }
+    // },
+
     reviews: async (root, args) => {
+      // destrcture search, page, limit, and set default values
+      
       try {
-        const reviews = await Review.find({});
-        return reviews || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
+      const { search = null, page = 1, limit = 20 } = args;
+
+      let searchQuery = {};
+
+      // run if search is provided
+      if (search) {
+        // update the search query
+        searchQuery = {
+          $or: [
+            { title: { $regex: search, $options: 'i' } },
+            { review: { $regex: search, $options: 'i' } },
+            { status: { $regex: search, $options: 'i' } }
+          ]
+        };
       }
+
+      //console.log(searchQuery);
+
+      // execute query to search orders
+      const reviews = await Review.find(searchQuery)
+
+
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .lean();
+
+      // get total documents
+      const count = await Review.countDocuments(searchQuery);
+
+      //console.log(attributes);
+
+      return {
+        reviews,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        totalCount:count
+        }
+      } catch (error) {
+        console.log(error);
+         throw new Error("Something went wrong.");
+       }
     },
     review: async (root, args) => {
       try {

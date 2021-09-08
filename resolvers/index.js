@@ -15,6 +15,7 @@ const shippingResolvers = require("./shipping");
 const couponResolvers = require("./coupon");
 const reviewResolvers = require("./review");
 const product_attribute = require("./product_attribute");
+const faqResolvers = require("./faq");
 
 const customScalarResolver = {
   Date: GraphQLDateTime,
@@ -51,4 +52,5 @@ module.exports = [
   couponResolvers,
   reviewResolvers,
   product_attribute,
+  faqResolvers
 ];

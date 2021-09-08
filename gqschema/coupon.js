@@ -1,7 +1,7 @@
 const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Coupon {
-    id: ID
+    _id: ID
     code: String
     description: String
     discount_type: String
@@ -18,8 +18,16 @@ module.exports = gql`
     updated: Date
   }
 
-  extend type Query {
+
+  type OCResult {
     coupons: [Coupon]
+    currentPage: Int
+    totalPages: Int
+    totalCount:Int
+  }
+
+  extend type Query {
+    coupons(search: String, page: Int, limit: Int): OCResult
     coupon(id: ID!): Coupon
   }
 

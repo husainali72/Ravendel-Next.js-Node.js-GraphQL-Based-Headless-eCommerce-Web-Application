@@ -1,45 +1,39 @@
 const { gql } = require("apollo-server-express");
 module.exports = gql`
-  type Page {
+  type Faq {
     _id: ID
     title: String
     content: String
     status: String
-    url: String
-    meta: customObject
-    createdAt: Date
-    updatedAt: Date
+    date: Date
+    updated: Date
   }
 
-  type PageResult {
-    pages: [Page]
+
+  type FaqResult {
+    faqs: [Faq]
     currentPage: Int
     totalPages: Int
     totalCount:Int
   }
 
   extend type Query {
-    
-    pages(search: String, page: Int, limit: Int): PageResult
-    page(id: ID!): Page
+    faqs(search: String, page: Int, limit: Int): FaqResult
+    faq(id: ID!): Faq
   }
 
   extend type Mutation {
-    addPage(
+    addFaq(
       title: String
       content: String
       status: String
-      url: String
-      meta: customObject
-    ): [Page]
-    updatePage(
+    ): [Faq]
+    updateFaq(
       id: ID!
       title: String
       content: String
       status: String
-      url: String
-      meta: customObject
-    ): [Page]
-    deletePage(id: ID!): [Page]
+    ): [Faq]
+    deleteFaq(id: ID!): [Faq]
   }
 `;
