@@ -51,7 +51,7 @@ module.exports = {
       try {
         const blogtag = await BlogTag.findOne({ url: args.tag_url });
         if (!blogtag) {
-          throw putError("404 Not found");
+          throw putError("404 Not found ");
         }
         const blogs = await Blog.find({
           blog_tag: { $in: blogtag.id },
