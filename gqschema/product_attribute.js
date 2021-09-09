@@ -1,19 +1,28 @@
 const { gql } = require("apollo-server-express");
 
 module.exports = gql`
-  type attributeValues {
-    id: ID
-    name: String
-  }
+  
 
   type productAttribute {
-    id: ID
+    _id: ID
     name: String
     slug: String
     values: [customObject]
     attribute_values: [customObject]
     date: Date
     updated: Date
+  }
+
+  type AttrResult {
+    product_attributes: [productAttribute]
+    currentPage: Int
+    totalPages: Int
+    totalCount:Int
+  }
+
+  type attributeValues {
+    id: ID
+    name: String
   }
 
   type attributeResponse {
@@ -33,16 +42,9 @@ module.exports = gql`
     values: [customObject]
   }
 
-  type AResult {
-    product_attributes: [productAttribute]
-    currentPage: Int
-    totalPages: Int
-    totalCount:Int
-  }
 
   extend type Query {
-    
-    product_attributes(search: String, page: Int, limit: Int): AResult
+    product_attributes(search: String, page: Int, limit: Int): AttrResult
     product_attribute(id: ID!): productAttribute
   }
 

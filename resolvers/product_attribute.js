@@ -14,16 +14,6 @@ const {
 module.exports = {
   Query: {
     
-    // product_attributes: async (root, args) => {
-    //   try {
-    //     const attributes = await ProductAttribute.find({});
-    //     return attributes || [];
-    //   } catch (error) {
-    //     error = checkError(error);
-    //     throw new Error(error.custom_message);
-    //   }
-    // },
-
     product_attributes: async (root, args) => {
       // destrcture search, page, limit, and set default values
       
@@ -37,17 +27,14 @@ module.exports = {
         // update the search query
         searchQuery = {
           $or: [
-            { name: { $regex: search, $options: 'i' } }
-            
-            
+             { name: { $regex: search, $options: 'i' } }
+                       
           ]
         };
       }
 
-      // execute query to search orders
-      const attributes = await ProductAttribute.find(searchQuery)
-
-
+      // execute query to search customers
+      const product_attributes = await ProductAttribute.find(searchQuery)
         .limit(limit)
         .skip((page - 1) * limit)
         .lean();
@@ -55,10 +42,8 @@ module.exports = {
       // get total documents
       const count = await ProductAttribute.countDocuments(searchQuery);
 
-      //console.log(attributes);
-
       return {
-        attributes,
+        product_attributes,
         totalPages: Math.ceil(count / limit),
         currentPage: page,
         totalCount:count
@@ -67,6 +52,8 @@ module.exports = {
          throw new Error("Something went wrong.");
        }
     },
+
+    
     product_attribute: async (root, args) => {
       try {
         const attribute = await ProductAttribute.findById(args.id);

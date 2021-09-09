@@ -31,15 +31,7 @@ const getTree = async (id) => {
 
 module.exports = {
   Query: {
-    // productCategories: async (root, args) => {
-    //   try {
-    //     const cats = await ProductCat.find({});
-    //     return cats || [];
-    //   } catch (error) {
-    //     throw new Error("Something went wrong.");
-    //   }
-    // },
-
+    
     productCategories: async (root, args) => {
       // destrcture search, page, limit, and set default values
       
@@ -61,7 +53,7 @@ module.exports = {
       }
 
       // execute query to search orders
-      const cats = await ProductCat.find(searchQuery)
+      const productCategories = await ProductCat.find(searchQuery)
 
 
         .limit(limit)
@@ -72,7 +64,7 @@ module.exports = {
       const count = await ProductCat.countDocuments(searchQuery);
 
       return {
-        cats,
+        productCategories,
         totalPages: Math.ceil(count / limit),
         currentPage: page,
         totalCount:count
