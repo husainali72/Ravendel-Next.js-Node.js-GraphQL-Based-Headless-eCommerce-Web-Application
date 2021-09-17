@@ -122,13 +122,25 @@ module.exports = gql`
   type productMeta {
     meta(key: String, value: String): metaKeyValueArray
   }
-
-  extend type Query {
+  type Response {
     productCategories: [productCategory]
+    totalCount: Int
+    page: Int
+  }
+  type productResponse {
+    products: [ Product]
+    totalCount: Int
+    page: Int
+  }
+ 
+  extend type Query {
+    productCategories:[productCategory]
+    productCategories_Pagination(limit: Int, pageNumber: Int, search: String, orderBy: String, order: String): Response
     productCategoriesByFilter(filter: customObject): [Category]
     productCategory(id: ID!): productCategory
     getTree: [cattree]
-    products: [Product]
+    products:[Product]
+    products_Pagination(limit: Int, pageNumber: Int, search: String, orderBy: String, order: String): productResponse
     productswithcat: [Product]
     featureproducts: [Product]
     recentproducts: [Product]
