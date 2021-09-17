@@ -136,9 +136,9 @@ const EditProduct = (props) => {
     }
   }, [productState.product]);
 
-  useEffect(() => {
-    console.log("product useEffect", product);
-  }, [product]);
+  // useEffect(() => {
+  //   console.log("product useEffect", product);
+  // }, [product]);
 
   const updateProduct = (e) => {
     e.preventDefault();
@@ -154,7 +154,7 @@ const EditProduct = (props) => {
   const onFeatureImageChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    setProduct({ ...product, [e.target.name]: e.target.files });
+    setProduct({ ...product, ['update_feature_image']: e.target.files });
   };
 
   const isUrlExist = async (url) => {
