@@ -22,6 +22,48 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+
+    productAttribute_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var sort = orderBy ? orderBy : "_id";
+      var sortDirection = order === "DESC" ? -1 : 1;
+
+      const [
+        {
+          total: [total = 0],
+          edges,
+        },
+      ] = await ProductAttribute.aggregate([
+        { $match: { name: { $regex: search, $options: "i" } } },
+        {
+          $facet: {
+            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
+            edges: [
+              { $sort: { [sort]: sortDirection } },
+              { $skip: limit * (pageNumber - 1) },
+              { $limit: limit },
+            ],
+          },
+        },
+        {
+          $project: {
+            total: "$total.count",
+            edges: "$edges",
+          },
+        },
+      ]);
+
+      if (edges == null) {
+        return new Error(errorName.NOT_FOUND);
+      } else {
+        return {
+          meta_data: { totalCount: total, page: pageNumber },
+          data: edges,
+        };
+      }
+    },
     product_attribute: async (root, args) => {
       try {
         const attribute = await ProductAttribute.findById(args.id);

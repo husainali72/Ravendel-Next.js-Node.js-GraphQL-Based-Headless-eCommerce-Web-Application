@@ -44,20 +44,21 @@ module.exports = {
 
     // get all productCategories with the pagination...................
 
-    productCategories_Pagination: async (
+    productCategories_pagination: async (
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
       var sort = orderBy ? orderBy : "_id";
       var sortDirection = order === "DESC" ? -1 : 1;
-
       const [
         {
           total: [total = 0],
           edges,
         },
       ] = await ProductCat.aggregate([
-        { $match: { "name": { $regex: search, $options: 'i' } } },
+        {
+          $match: { name: { $regex: search, $options: "i" } },
+        },
         {
           $facet: {
             total: [{ $group: { _id: null, count: { $sum: 1 } } }],
@@ -79,7 +80,11 @@ module.exports = {
       if (edges == null) {
         return new Error(errorName.NOT_FOUND);
       } else {
-        return { totalCount: total, productCategories: edges, page: pageNumber };
+        // return { totalCount: total, productCategories: edges, page: pageNumber };
+        return {
+          meta_data: { totalCount: total, page: pageNumber },
+          data: edges,
+        };
       }
     },
 
@@ -115,7 +120,7 @@ module.exports = {
 
     /// get all products by pagination ........................................
 
-    products_Pagination: async (
+    products_pagination: async (
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
@@ -128,7 +133,7 @@ module.exports = {
           edges,
         },
       ] = await Product.aggregate([
-        { $match: { "name": { $regex: search, $options: 'i' } } },
+        { $match: { name: { $regex: search, $options: "i" } } },
         {
           $facet: {
             total: [{ $group: { _id: null, count: { $sum: 1 } } }],
@@ -150,7 +155,10 @@ module.exports = {
       if (edges == null) {
         return new Error(errorName.NOT_FOUND);
       } else {
-        return { totalCount: total, products: edges, page: pageNumber };
+        return {
+          meta_data: { totalCount: total, page: pageNumber },
+          data: edges,
+        };
       }
     },
 
@@ -163,7 +171,7 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-   
+
     featureproducts: async (root, args, { id }) => {
       try {
         const products = await Product.find({

@@ -32,8 +32,23 @@ module.exports = gql`
     name: String
     values: [customObject]
   }
+  type pagination {
+    totalCount: Int
+    page: Int
+  }
+  type productAttributeResponse {
+    data: [productAttribute]
+    meta_data: pagination
+  }
 
   extend type Query {
+    productAttribute_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): productAttributeResponse
     product_attributes: [productAttribute]
     product_attribute(id: ID!): productAttribute
   }
