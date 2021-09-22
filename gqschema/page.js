@@ -10,8 +10,22 @@ module.exports = gql`
     createdAt: Date
     updatedAt: Date
   }
-
+  type RESpage {
+    totalCount: Int
+    page: Int
+  }
+  type Response {
+    data: [Page]
+    pagination: RESpage
+  }
   extend type Query {
+    page_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): Response
     pages: [Page]
     page(id: ID!): Page
   }

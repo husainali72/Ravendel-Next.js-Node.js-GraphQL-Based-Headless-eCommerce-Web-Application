@@ -4,6 +4,7 @@ const Product = require("../models/Product");
 const Brand = require("../models/Brand");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const ProductAttribute = require("../models/ProductAttribute");
+const { errorName } = require("../constant/status");
 const {
   isEmpty,
   putError,
@@ -17,7 +18,6 @@ const {
 } = require("../config/helpers");
 const validate = require("../validations/product");
 var mongoose = require("mongoose");
-
 
 /* For Test geting child*/
 let allids = [];
@@ -41,6 +41,53 @@ module.exports = {
         throw new Error("Something went wrong.");
       }
     },
+
+    // get all productCategories with the pagination...................
+
+    productCategories_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var sort = orderBy ? orderBy : "_id";
+      var sortDirection = order === "DESC" ? -1 : 1;
+      const [
+        {
+          total: [total = 0],
+          edges,
+        },
+      ] = await ProductCat.aggregate([
+        {
+          $match: { name: { $regex: search, $options: "i" } },
+        },
+        {
+          $facet: {
+            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
+            edges: [
+              { $sort: { [sort]: sortDirection } },
+              { $skip: limit * (pageNumber - 1) },
+              { $limit: limit },
+            ],
+          },
+        },
+        {
+          $project: {
+            total: "$total.count",
+            edges: "$edges",
+          },
+        },
+      ]);
+
+      if (edges == null) {
+        return new Error(errorName.NOT_FOUND);
+      } else {
+        // return { totalCount: total, productCategories: edges, page: pageNumber };
+        return {
+          meta_data: { totalCount: total, page: pageNumber },
+          data: edges,
+        };
+      }
+    },
+
     productCategoriesByFilter: async (root, args) => {
       try {
         const cats = await ProductCat.find(args.filter);
@@ -70,6 +117,51 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+
+    /// get all products by pagination ........................................
+
+    products_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var sort = orderBy ? orderBy : "_id";
+      var sortDirection = order === "DESC" ? -1 : 1;
+
+      const [
+        {
+          total: [total = 0],
+          edges,
+        },
+      ] = await Product.aggregate([
+        { $match: { name: { $regex: search, $options: "i" } } },
+        {
+          $facet: {
+            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
+            edges: [
+              { $sort: { [sort]: sortDirection } },
+              { $skip: limit * (pageNumber - 1) },
+              { $limit: limit },
+            ],
+          },
+        },
+        {
+          $project: {
+            total: "$total.count",
+            edges: "$edges",
+          },
+        },
+      ]);
+
+      if (edges == null) {
+        return new Error(errorName.NOT_FOUND);
+      } else {
+        return {
+          meta_data: { totalCount: total, page: pageNumber },
+          data: edges,
+        };
+      }
+    },
+
     productswithcat: async (root, args, { id }) => {
       try {
         const products = await Product.find({});
@@ -79,6 +171,7 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+
     featureproducts: async (root, args, { id }) => {
       try {
         const products = await Product.find({
@@ -216,10 +309,11 @@ module.exports = {
             });
           }
         }
-        
-        const products = (await Product.aggregate(filterArrey)).map((pro)=> {pro.id = pro._id; return pro});        
 
-        
+        const products = (await Product.aggregate(filterArrey)).map((pro) => {
+          pro.id = pro._id;
+          return pro;
+        });
 
         return products || [];
       } catch (error) {
@@ -277,35 +371,37 @@ module.exports = {
     },
     attribute_master: async (root, args) => {
       try {
-
-        if(!root.attribute && !root.attribute.length){
+        if (!root.attribute && !root.attribute.length) {
           return [];
-        } 
+        }
         let attributes = {};
-        for(let attr of root.attribute){
-          if(!Array.isArray(attributes[attr.attribute_id.toString()])){
+        for (let attr of root.attribute) {
+          if (!Array.isArray(attributes[attr.attribute_id.toString()])) {
             attributes[attr.attribute_id.toString()] = [];
           }
-         
-          attributes[attr.attribute_id.toString()].push(attr.attribute_value_id.toString());
+
+          attributes[attr.attribute_id.toString()].push(
+            attr.attribute_value_id.toString()
+          );
         }
 
-        const attrMaster = await ProductAttribute.find({ _id: {$in: Object.keys(attributes)}});                      
+        const attrMaster = await ProductAttribute.find({
+          _id: { $in: Object.keys(attributes) },
+        });
 
         for (const [i, attr] of attrMaster.entries()) {
           for (const [j, val] of attr.values.entries()) {
             if (~attributes[attr._id.toString()].indexOf(val._id.toString())) {
-              
-              if(!Array.isArray(attrMaster[i].attribute_values)){
-                attrMaster[i].attribute_values = [];                  
+              if (!Array.isArray(attrMaster[i].attribute_values)) {
+                attrMaster[i].attribute_values = [];
               }
               attrMaster[i].attribute_values.push(val);
-            }            
+            }
           }
 
           attrMaster[i].values = [];
         }
-        
+
         return attrMaster || [];
       } catch (error) {
         error = checkError(error);
@@ -723,7 +819,10 @@ module.exports = {
               combination.product_id = args.id;
 
               let imgObject = "";
-              if (combination.image && combination.image.hasOwnProperty("file")) {
+              if (
+                combination.image &&
+                combination.image.hasOwnProperty("file")
+              ) {
                 imgObject = await imageUpload(
                   combination.image.file[0],
                   "/assets/images/product/variant/"
@@ -757,7 +856,7 @@ module.exports = {
         }
       } catch (error) {
         error = checkError(error);
-        console.log("error", error)
+        console.log("error", error);
         throw new Error(error.custom_message);
       }
     },

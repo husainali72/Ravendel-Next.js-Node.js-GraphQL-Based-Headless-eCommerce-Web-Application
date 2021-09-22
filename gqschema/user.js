@@ -15,9 +15,23 @@ module.exports = gql`
   type userMeta {
     meta(key: String, value: String): metaKeyValueArray
   }
-
+  type response {
+    totalCount: Int
+    page: Int
+  }
+  type UserResponse {
+    data: [User]
+    pagination: response
+  }
   extend type Query {
     users: [User]
+    users_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): UserResponse
     user(id: ID!): User
     usersbyMeta(key: String, value: String): [User]
   }

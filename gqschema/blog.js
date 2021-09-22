@@ -20,9 +20,23 @@ module.exports = gql`
     date: Date
     updated: Date
   }
-
+  type paginationRES {
+    totalCount: Int
+    page: Int
+  }
+  type blogResponse {
+    data: [Blog]
+    pagination: paginationRES
+  }
   extend type Query {
     blogs: [Blog]
+    blog_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): blogResponse
     blog(id: ID!): Blog
     blogtags: [BlogTag]
     blogsbytagid(tag_id: ID!): [Blog]
