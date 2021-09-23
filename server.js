@@ -28,6 +28,7 @@ const server = new ApolloServer({
     maxFileSize: 5000000, // 5 MB
     maxFiles: 20,
   },
+
 });
 server.applyMiddleware({ app, path: "/graphql" });
 

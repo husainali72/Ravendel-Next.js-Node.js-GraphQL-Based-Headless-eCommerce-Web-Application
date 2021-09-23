@@ -20,6 +20,12 @@ module.exports = gql`
     date: Date
     updated: Date
   }
+
+  type MessageSchema {
+    message: String
+    statuscode: Int
+  }
+
   type paginationRES {
     totalCount: Int
     page: Int
@@ -27,13 +33,20 @@ module.exports = gql`
   type blogResponse {
     data: [Blog]
     pagination: paginationRES
+    message: MessageSchema
   }
 
   type blogTagsRes {
     data: [BlogTag]
     pagination: paginationRES
+    message: MessageSchema
   }
 
+
+  type blogTagsRes {
+    data: [BlogTag]
+    pagination: paginationRES
+  }
   extend type Query {
     blogs: [Blog]
     blog_pagination(
@@ -65,7 +78,7 @@ module.exports = gql`
       url: String
       feature_image: Upload
       meta: customObject
-    ): [Blog]
+    ): MessageSchema
     updateBlog(
       id: ID!
       title: String
@@ -75,10 +88,10 @@ module.exports = gql`
       url: String
       updatedImage: Upload
       meta: customObject
-    ): [Blog]
-    deleteBlog(id: ID!): [Blog]
-    addBlogTag(name: String, url: String): [BlogTag]
-    updateBlogTag(id: ID!, name: String, url: String): [BlogTag]
-    deleteBlogTag(id: ID!): [BlogTag]
+    ): MessageSchema
+    deleteBlog(id: ID!): MessageSchema
+    addBlogTag(name: String, url: String): MessageSchema
+    updateBlogTag(id: ID!, name: String, url: String): MessageSchema
+    deleteBlogTag(id: ID!): MessageSchema
   }
 `;
