@@ -7,7 +7,7 @@ const {
   checkError,
   imageUpload,
   imageUnlink,
-  checkToken
+  checkToken,
 } = require("../config/helpers");
 const validate = require("../validations/review");
 
@@ -20,6 +20,55 @@ module.exports = {
       } catch (error) {
         throw new Error("Something went wrong.");
       }
+    },
+    // get all reviews with pagination.............................
+
+    reviews_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var sort = orderBy ? orderBy : "_id";
+      var sortDirection = order === "DESC" ? -1 : 1;
+      const [
+        {
+          total: [total = 0],
+          edges,
+        },
+      ] = await Review.aggregate([
+        {
+          $match: {
+            $or: [
+              { review: { $regex: search, $options: "i" } },
+             //{ "customer_id.first_name": { $regex: search, $options: "i" } },
+              // { product_id: { $regex: search, $options: "i" } },
+            ],
+          },
+        },
+        {
+          $facet: {
+            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
+            edges: [
+              { $sort: { [sort]: sortDirection } },
+              { $skip: limit * (pageNumber - 1) },
+              { $limit: limit },
+            ],
+          },
+        },
+        {
+          $project: {
+            total: "$total.count",
+            edges: "$edges",
+          },
+        },
+      ]);
+      console.log(edges);
+      if (!edges) {
+        throw putError("reviews not fetched");
+      }
+      return {
+        meta_data: { totalCount: total, page: pageNumber },
+        data: edges,
+      };
     },
     review: async (root, args) => {
       try {
@@ -36,13 +85,13 @@ module.exports = {
     productwisereview: async (root, args) => {
       try {
         const reviews = await Review.find({
-          product_id: { $in: args.product_id }
+          product_id: { $in: args.product_id },
         });
         return reviews || [];
       } catch (error) {
         throw new Error("Something went wrong.");
       }
-    }
+    },
   },
   Review: {
     product_id: async (root, args) => {
@@ -60,7 +109,7 @@ module.exports = {
       } catch (error) {
         throw new Error("Something went wrong.");
       }
-    }
+    },
   },
   Mutation: {
     addReview: async (root, args, { id }) => {
@@ -79,7 +128,7 @@ module.exports = {
           customer_id: args.customer_id,
           email: args.email,
           rating: args.rating,
-          status: args.status
+          status: args.status,
         });
 
         await newReview.save();
@@ -132,6 +181,6 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
-  }
+    },
+  },
 };

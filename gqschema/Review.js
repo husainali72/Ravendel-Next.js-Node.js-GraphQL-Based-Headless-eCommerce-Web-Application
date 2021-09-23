@@ -12,9 +12,25 @@ module.exports = gql`
     date: Date
     updated: Date
   }
+  type PageInfo {
+    totalCount: Int
+    page: Int
+  }
+
+  type reviewsResponse {
+    data: [Review]
+    meta_data: PageInfo
+  }
 
   extend type Query {
     reviews: [Review]
+    reviews_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): reviewsResponse
     review(id: ID!): Review
     productwisereview(product_id: ID!): [Review]
   }

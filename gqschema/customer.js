@@ -29,8 +29,23 @@ module.exports = gql`
     date: Date
     updated: Date
   }
+  type pageInfo {
+    totalCount: Int
+    page: Int
+  }
 
+  type customersResponse {
+    data: [Customer]
+    meta_data: pageInfo
+  }
   extend type Query {
+    customers_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): customersResponse
     customers: [Customer]
     customer(id: ID!): Customer
   }

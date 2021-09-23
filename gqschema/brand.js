@@ -25,8 +25,24 @@ module.exports = gql`
   input BrandField {
     name: String
   }
+  type PaginationRes {
+    totalCount: Int
+    page: Int
+  }
+
+  type brandResponse {
+    data: [Brand]
+    meta_data: PaginationRes
+  }
 
   extend type Query {
+    brands_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): brandResponse
     brands: [Brand]
     brand(id: ID!): Brand
   }

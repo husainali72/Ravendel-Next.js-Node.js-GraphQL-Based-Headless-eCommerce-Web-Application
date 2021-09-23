@@ -25,7 +25,7 @@ module.exports = {
       }
     },
 
-    // get all blog with pagination
+    // get all blog with pagination .............................
 
     blog_pagination: async (
       root,
@@ -58,6 +58,7 @@ module.exports = {
           },
         },
       ]);
+
       if(!edges.length){
          return {
           pagination: { totalCount: total, page: pageNumber },
@@ -71,6 +72,10 @@ module.exports = {
           message: {message: 'Blog List', statuscode: 200}
         };
       }
+      return {
+        pagination: { totalCount: total, page: pageNumber },
+        data: edges,
+      };
     },
     blog: async (root, args) => {
       try {
@@ -167,8 +172,45 @@ module.exports = {
         throw new Error("Something went wrong.");
       }
     },
+    blogTags_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var sort = orderBy ? orderBy : "_id";
+      var sortDirection = order === "DESC" ? -1 : 1;
 
-    
+      const [
+        {
+          total: [total = 0],
+          edges,
+        },
+      ] = await BlogTag.aggregate([
+        { $match: { name: { $regex: search, $options: "i" } } },
+        {
+          $facet: {
+            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
+            edges: [
+              { $sort: { [sort]: sortDirection } },
+              { $skip: limit * (pageNumber - 1) },
+              { $limit: limit },
+            ],
+          },
+        },
+        {
+          $project: {
+            total: "$total.count",
+            edges: "$edges",
+          },
+        },
+      ]);
+      if (!edges) {
+        throw putError("Blogtags not fetched");
+      }
+      return {
+        pagination: { totalCount: total, page: pageNumber },
+        data: edges,
+      };
+    },
   },
   Mutation: {
     addBlog: async (root, args, user) => {

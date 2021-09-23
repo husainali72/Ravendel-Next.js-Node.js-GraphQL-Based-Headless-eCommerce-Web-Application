@@ -42,7 +42,11 @@ module.exports = gql`
     message: MessageSchema
   }
 
-  
+
+  type blogTagsRes {
+    data: [BlogTag]
+    pagination: paginationRES
+  }
   extend type Query {
     blogs: [Blog]
     blog_pagination(

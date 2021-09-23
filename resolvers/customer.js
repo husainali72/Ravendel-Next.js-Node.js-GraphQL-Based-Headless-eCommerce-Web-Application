@@ -5,7 +5,7 @@ const {
   checkError,
   imageUpload,
   imageUnlink,
-  checkToken
+  checkToken,
 } = require("../config/helpers");
 const validate = require("../validations/customer");
 const bcrypt = require("bcryptjs");
@@ -20,6 +20,48 @@ module.exports = {
         throw new Error("Something went wrong.");
       }
     },
+    // get all customers with pagination ........................
+
+    customers_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var sort = orderBy ? orderBy : "_id";
+      var sortDirection = order === "DESC" ? -1 : 1;
+      const [
+        {
+          total: [total = 0],
+          edges,
+        },
+      ] = await Customer.aggregate([
+        {
+          $match: { first_name: { $regex: search, $options: "i" } },
+        },
+        {
+          $facet: {
+            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
+            edges: [
+              { $sort: { [sort]: sortDirection } },
+              { $skip: limit * (pageNumber - 1) },
+              { $limit: limit },
+            ],
+          },
+        },
+        {
+          $project: {
+            total: "$total.count",
+            edges: "$edges",
+          },
+        },
+      ]);
+      if (!edges) {
+        throw putError("Customers not fetched");
+      }
+      return {
+        meta_data: { totalCount: total, page: pageNumber },
+        data: edges,
+      };
+    },
     customer: async (root, args) => {
       try {
         const customer = await Customer.findById(args.id);
@@ -31,7 +73,7 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
+    },
   },
   Mutation: {
     addCustomer: async (root, args, { id }) => {
@@ -53,7 +95,7 @@ module.exports = {
             last_name: args.last_name,
             email: args.email,
             company: args.company || "",
-            phone: args.phone || ""
+            phone: args.phone || "",
           });
 
           newCustomer.password = await bcrypt.hash(args.password, 10);
@@ -163,7 +205,7 @@ module.exports = {
         }
         console.log("here comes", args.default_address);
         delete args.id;
-        customer.address_book = customer.address_book.map(address => {
+        customer.address_book = customer.address_book.map((address) => {
           if (args.default_address) {
             address.default_address = false;
           }
@@ -208,6 +250,6 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
-  }
+    },
+  },
 };
