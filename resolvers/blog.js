@@ -40,7 +40,7 @@ module.exports = {
           edges,
         },
       ] = await Blog.aggregate([
-        { $match: { name: { $regex: search, $options: "i" } } },
+        { $match: { title: { $regex: search, $options: "i" } } },
         {
           $facet: {
             total: [{ $group: { _id: null, count: { $sum: 1 } } }],
@@ -58,13 +58,17 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
+      if(!edges.length){
+         return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: {message: 'Blog not found', statuscode: 200}
+        };
       } else {
         return {
           pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: {message: 'Blog List', statuscode: 200}
         };
       }
     },
@@ -77,7 +81,7 @@ module.exports = {
         return blog;
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message, statuscode: 404}
       }
     },
     blogsbytagid: async (root, args, { id }) => {
@@ -106,6 +110,55 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+
+    // get all blog tag with pagination
+
+    blogTags_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var sort = orderBy ? orderBy : "_id";
+      var sortDirection = order === "DESC" ? -1 : 1;
+
+      const [
+        {
+          total: [total = 0],
+          edges,
+        },
+      ] = await BlogTag.aggregate([
+        { $match: { name: { $regex: search, $options: "i" } } },
+        {
+          $facet: {
+            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
+            edges: [
+              { $sort: { [sort]: sortDirection } },
+              { $skip: limit * (pageNumber - 1) },
+              { $limit: limit },
+            ],
+          },
+        },
+        {
+          $project: {
+            total: "$total.count",
+            edges: "$edges",
+          },
+        },
+      ]);
+      if(!edges.length){
+         return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: {message: 'Tag not found', statuscode: 200}
+        };
+      } else {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: {message: 'Tag List', statuscode: 200}
+        };
+      }
+    },
+
     blogtags: async (root, args) => {
       try {
         const blogtags = await BlogTag.find({});
@@ -114,10 +167,12 @@ module.exports = {
         throw new Error("Something went wrong.");
       }
     },
+
+    
   },
   Mutation: {
     addBlog: async (root, args, user) => {
-      checkToken(user.id);
+     checkToken(user.id);
       try {
         // Check Validation
         const errors = validate("addBlog", args);
@@ -151,10 +206,10 @@ module.exports = {
         });
 
         await newBlog.save();
-        return await Blog.find({});
+        return  {message: 'Blog saved successfully', statuscode: 200}
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message, statuscode: 404}
       }
     },
     updateBlog: async (root, args, { id }) => {
@@ -191,13 +246,14 @@ module.exports = {
           blog.meta = args.meta;
           blog.updated = Date.now();
           await blog.save();
-          return await Blog.find({});
+          return  {message: 'Blog updated successfully', statuscode: 200}
+          
         } else {
-          throw putError("Blog not exist");
+          return  {message: 'Blog not exist', statuscode: 404}
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message, statuscode: 400}
       }
     },
     deleteBlog: async (root, args, { id }) => {
@@ -210,12 +266,13 @@ module.exports = {
             imageUnlink(blog.feature_image);
           }
           const blogs = await Blog.find({});
-          return blogs || [];
+          return  {message: 'Blog deleted successfully', statuscode: 200}
         }
         throw putError("Blog not exist");
+        
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message, statuscode: 404}
       }
     },
     addBlogTag: async (root, args, user) => {
@@ -242,10 +299,11 @@ module.exports = {
         });
 
         await newTag.save();
-        return await BlogTag.find({});
+        //return await BlogTag.find({});
+        return  {message: 'Tag saved successfully', statuscode: 200}
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message, statuscode: 400}
       }
     },
     updateBlogTag: async (root, args, { id }) => {
@@ -263,13 +321,13 @@ module.exports = {
           blogtag.url = url;
           blogtag.updated = Date.now();
           await blogtag.save();
-          return await BlogTag.find({});
+          return  {message: 'Tag updated successfully', statuscode: 200}
         } else {
           throw putError("Tag not exist");
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message, statuscode: 404}
       }
     },
     deleteBlogTag: async (root, args, { id }) => {
@@ -278,12 +336,12 @@ module.exports = {
         const blogtag = await BlogTag.findByIdAndRemove(args.id);
         if (blogtag) {
           const blogtags = await BlogTag.find({});
-          return blogtags || [];
+          return  {message: 'Tag deleted successfully', statuscode: 200}
         }
-        throw putError("Blog not exist");
+        throw putError("Tag not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message , statuscode: 200}
       }
     },
   },
