@@ -209,7 +209,7 @@ module.exports = {
         return  {message: 'Blog saved successfully', statuscode: 200}
       } catch (error) {
         error = checkError(error);
-        return  {message: error.custom_message, statuscode: 404}
+        return  {message: error.custom_message, statuscode: 400}
       }
     },
     updateBlog: async (root, args, { id }) => {
