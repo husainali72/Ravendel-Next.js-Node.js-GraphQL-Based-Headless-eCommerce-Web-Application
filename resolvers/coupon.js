@@ -17,7 +17,49 @@ module.exports = {
         return coupons || [];
       } catch (error) {
         throw new Error("Something went wrong.");
+      }a
+    },
+    // get all coupons with pagination................
+
+    coupons_pagination : async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var sort = orderBy ? orderBy : "_id";
+      var sortDirection = order === "DESC" ? -1 : 1;
+      const [
+        {
+          total: [total = 0],
+          edges,
+        },
+      ] = await Coupon.aggregate([
+        {
+          $match: { code: { $regex: search, $options: "i" } },
+        },
+        {
+          $facet: {
+            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
+            edges: [
+              { $sort: { [sort]: sortDirection } },
+              { $skip: limit * (pageNumber - 1) },
+              { $limit: limit },
+            ],
+          },
+        },
+        {
+          $project: {
+            total: "$total.count",
+            edges: "$edges",
+          },
+        },
+      ]);
+      if (!edges) {
+        throw putError("Coupons not fetched");
       }
+      return {
+        meta_data: { totalCount: total, page: pageNumber },
+        data: edges,
+      };
     },
     coupon: async (root, args) => {
       try {

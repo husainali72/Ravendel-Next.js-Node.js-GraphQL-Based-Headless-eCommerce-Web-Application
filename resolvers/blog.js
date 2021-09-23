@@ -25,7 +25,7 @@ module.exports = {
       }
     },
 
-    // get all blog with pagination
+    // get all blog with pagination .............................
 
     blog_pagination: async (
       root,
@@ -40,7 +40,7 @@ module.exports = {
           edges,
         },
       ] = await Blog.aggregate([
-        { $match: { name: { $regex: search, $options: "i" } } },
+        { $match: { title: { $regex: search, $options: "i" } } },
         {
           $facet: {
             total: [{ $group: { _id: null, count: { $sum: 1 } } }],
@@ -58,15 +58,13 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
-      } else {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-        };
+      if (!edges) {
+        throw putError("Blogs not fetched");
       }
+      return {
+        pagination: { totalCount: total, page: pageNumber },
+        data: edges,
+      };
     },
     blog: async (root, args) => {
       try {
@@ -113,6 +111,46 @@ module.exports = {
       } catch (error) {
         throw new Error("Something went wrong.");
       }
+    },
+    // get all blogtags with pagination.....................
+    blogTags_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var sort = orderBy ? orderBy : "_id";
+      var sortDirection = order === "DESC" ? -1 : 1;
+
+      const [
+        {
+          total: [total = 0],
+          edges,
+        },
+      ] = await BlogTag.aggregate([
+        { $match: { name: { $regex: search, $options: "i" } } },
+        {
+          $facet: {
+            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
+            edges: [
+              { $sort: { [sort]: sortDirection } },
+              { $skip: limit * (pageNumber - 1) },
+              { $limit: limit },
+            ],
+          },
+        },
+        {
+          $project: {
+            total: "$total.count",
+            edges: "$edges",
+          },
+        },
+      ]);
+      if (!edges) {
+        throw putError("Blogtags not fetched");
+      }
+      return {
+        pagination: { totalCount: total, page: pageNumber },
+        data: edges,
+      };
     },
   },
   Mutation: {

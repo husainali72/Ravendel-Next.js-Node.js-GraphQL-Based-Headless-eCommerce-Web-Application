@@ -28,6 +28,12 @@ module.exports = gql`
     data: [Blog]
     pagination: paginationRES
   }
+
+  type blogTagsRes {
+    data: [BlogTag]
+    pagination: paginationRES
+  }
+
   extend type Query {
     blogs: [Blog]
     blog_pagination(
@@ -39,6 +45,13 @@ module.exports = gql`
     ): blogResponse
     blog(id: ID!): Blog
     blogtags: [BlogTag]
+    blogTags_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): blogTagsRes
     blogsbytagid(tag_id: ID!): [Blog]
     blogsbytagurl(tag_url: String!): [Blog]
   }

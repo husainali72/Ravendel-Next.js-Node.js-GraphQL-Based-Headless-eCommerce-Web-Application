@@ -33,7 +33,7 @@ module.exports = {
         },
       ] = await Page.aggregate([
         {
-          $match: { name: { $regex: search, $options: "i" } },
+          $match: { title: { $regex: search, $options: "i" } },
         },
         {
           $facet: {

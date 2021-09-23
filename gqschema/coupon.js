@@ -17,8 +17,24 @@ module.exports = gql`
     date: Date
     updated: Date
   }
+  type Pagination {
+    totalCount: Int
+    page: Int
+  }
+
+  type couponResponse {
+    data: [Coupon]
+    meta_data: Pagination
+  }
 
   extend type Query {
+    coupons_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): couponResponse
     coupons: [Coupon]
     coupon(id: ID!): Coupon
   }
