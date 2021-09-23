@@ -341,7 +341,7 @@ module.exports = {
         throw putError("Tag not exist");
       } catch (error) {
         error = checkError(error);
-        return  {message: error.custom_message , statuscode: 200}
+        return  {message: error.custom_message , statuscode: 404}
       }
     },
   },
