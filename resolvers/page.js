@@ -53,12 +53,17 @@ module.exports = {
         },
       ]);
 
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
+      if(!edges.length){
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: {message: 'Page not found', statuscode: 200}
+        };
       } else {
         return {
           pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: {message: 'Page List', statuscode: 200}
         };
       }
     },
@@ -71,7 +76,7 @@ module.exports = {
         return page;
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message, statuscode: 404}
       }
     },
   },
@@ -107,10 +112,10 @@ module.exports = {
         await newPage.save();
 
         let pages = await Page.find({});
-        return pages || [];
+        return  {message: 'page saved successfully', statuscode: 200}
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message, statuscode: 400}
       }
     },
     updatePage: async (root, args, { id }) => {
@@ -136,13 +141,13 @@ module.exports = {
           page.meta = args.meta;
           page.updatedAt = Date.now();
           await page.save();
-          return await Page.find({});
+          return  {message: 'Page updated successfully', statuscode: 200}
         } else {
-          throw putError("Page not exist");
+          return  {message: 'Page not exist', statuscode: 404}
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message, statuscode: 400}
       }
     },
     deletePage: async (root, args, { id }) => {
@@ -151,12 +156,12 @@ module.exports = {
         const page = await Page.findByIdAndRemove(args.id);
         if (page) {
           let pages = await Page.find({});
-          return pages || [];
+          return  {message: 'Page deleted successfully', statuscode: 200}
         }
         throw putError("Page not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: error.custom_message, statuscode: 404}
       }
     },
   },
