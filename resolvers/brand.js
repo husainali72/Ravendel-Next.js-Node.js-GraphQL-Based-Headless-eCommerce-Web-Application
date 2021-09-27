@@ -11,6 +11,8 @@ const {
 } = require("../config/helpers");
 const validate = require("../validations/brand");
 const slugify = require("slugify");
+const errorRES = require("../error");
+
 
 module.exports = {
   Query: {
@@ -58,14 +60,19 @@ module.exports = {
           },
         },
       ]);
-
-      if (!edges) {
-        throw putError("Brands not fetched");
+      if (!edges.length) {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: `${errorRES.RETRIEVE_ERROR} Brands`, status: 200 },
+        };
+      } else {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: "Brands list fetched", status: 200 },
+        };
       }
-      return {
-        meta_data: { totalCount: total, page: pageNumber },
-        data: edges,
-      };
     },
     brand: async (root, args) => {
       try {
@@ -106,10 +113,11 @@ module.exports = {
         }
 
         await Brand.insertMany(addBrands);
-        return await Brand.find({});
+        //return await Brand.find({});
+        return { message: "Brand saved successfully", status: 200 };
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.CREATE_ERROR} Brands`, status: 400 };
       }
     },
     updateBrand: async (root, args, { id }) => {
@@ -144,13 +152,14 @@ module.exports = {
           brand.updated = Date.now();
 
           await brand.save();
-          return await Brand.find({});
+          // return await Brand.find({});
+          return { message: "Brand updated successfully", status: 200 };
         } else {
-          throw putError("Brand not exist");
+          return { message: "Brand not exist", status: 404 };
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.UPDATE_ERROR} Brands`, status: 400 };
       }
     },
     deleteBrand: async (root, args, { id }) => {
@@ -162,13 +171,14 @@ module.exports = {
           if (brand.brand_logo) {
             imageUnlink(brand.brand_logo);
           }
-          const brands = await Brand.find({});
-          return brands || [];
+          // const brands = await Brand.find({});
+          // return brands || [];
+          return { message: "Brand deleted successfully", status: 200 };
         }
         throw putError("Brand not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.DELETE_ERROR} Brands`, status: 404 };
       }
     },
   },

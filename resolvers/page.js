@@ -8,6 +8,7 @@ const {
   stringTourl,
 } = require("../config/helpers");
 const validate = require("../validations/page");
+const errorRES = require("../error");
 
 module.exports = {
   Query: {
@@ -57,13 +58,13 @@ module.exports = {
         return {
           pagination: { totalCount: total, page: pageNumber },
           data: edges,
-          message: {message: 'Page not found', statuscode: 200}
+          message: {message: `${errorRES.RETRIEVE_ERROR} Page `, status: 200}
         };
       } else {
         return {
           pagination: { totalCount: total, page: pageNumber },
           data: edges,
-          message: {message: 'Page List', statuscode: 200}
+          message: {message: 'Page List', status: 200}
         };
       }
     },
@@ -76,7 +77,7 @@ module.exports = {
         return page;
       } catch (error) {
         error = checkError(error);
-        return  {message: error.custom_message, statuscode: 404}
+        return  {message: error.custom_message, status: 404}
       }
     },
   },
@@ -112,10 +113,10 @@ module.exports = {
         await newPage.save();
 
         let pages = await Page.find({});
-        return  {message: 'page saved successfully', statuscode: 200}
+        return  {message: 'page saved successfully', status: 200}
       } catch (error) {
         error = checkError(error);
-        return  {message: error.custom_message, statuscode: 400}
+        return  {message: `${errorRES.CREATE_ERROR} Page`, status: 400}
       }
     },
     updatePage: async (root, args, { id }) => {
@@ -141,13 +142,13 @@ module.exports = {
           page.meta = args.meta;
           page.updatedAt = Date.now();
           await page.save();
-          return  {message: 'Page updated successfully', statuscode: 200}
+          return  {message: 'Page updated successfully', status: 200}
         } else {
-          return  {message: 'Page not exist', statuscode: 404}
+          return  {message: 'Page not exist', status: 404}
         }
       } catch (error) {
         error = checkError(error);
-        return  {message: error.custom_message, statuscode: 400}
+        return  {message: `${errorRES.UPDATE_ERROR} Page`, status: 400}
       }
     },
     deletePage: async (root, args, { id }) => {
@@ -156,12 +157,12 @@ module.exports = {
         const page = await Page.findByIdAndRemove(args.id);
         if (page) {
           let pages = await Page.find({});
-          return  {message: 'Page deleted successfully', statuscode: 200}
+          return  {message: 'Page deleted successfully', status: 200}
         }
         throw putError("Page not exist");
       } catch (error) {
         error = checkError(error);
-        return  {message: error.custom_message, statuscode: 404}
+        return  {message: `${errorRES.DELETE_ERROR} Page`, status: 404}
       }
     },
   },

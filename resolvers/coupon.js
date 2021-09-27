@@ -8,6 +8,7 @@ const {
   checkToken
 } = require("../config/helpers");
 const validate = require("../validations/coupon");
+const errorRES = require("../error");
 
 module.exports = {
   Query: {
@@ -53,13 +54,19 @@ module.exports = {
           },
         },
       ]);
-      if (!edges) {
-        throw putError("Coupons not fetched");
+      if (!edges.length) {
+        return {
+          meta_data: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: `${errorRES.RETRIEVE_ERROR} coupon`, status: 200 },
+        };
+      } else {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: "Coupons list fetched", status: 200 },
+        };
       }
-      return {
-        meta_data: { totalCount: total, page: pageNumber },
-        data: edges,
-      };
     },
     coupon: async (root, args) => {
       try {
@@ -105,11 +112,12 @@ module.exports = {
           });
 
           await newCoupon.save();
-          return await Coupon.find({});
+          //return await Coupon.find({});
+          return { message: "Coupon saved successfully", status: 200 };
         }
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        //error = checkError(error);
+        return { message: `${errorRES.CREATE_ERROR} Coupon`, status: 400 };
       }
     },
     updateCoupon: async (root, args, { id }) => {
@@ -138,13 +146,15 @@ module.exports = {
           coupon.updated = Date.now();
 
           await coupon.save();
-          return await Coupon.find({});
+         // return await Coupon.find({});
+         return { message: "Coupon updated successfully", status: 200 };
         } else {
-          throw putError("Coupon not exist");
+          //throw putError("Coupon not exist");
+          return { message: "Coupon not exist", status: 400 };
         }
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        // error = checkError(error);
+        return { message: `${errorRES.UPDATE_ERROR} Coupon`, status: 400 };
       }
     },
     deleteCoupon: async (root, args, { id }) => {
@@ -152,13 +162,14 @@ module.exports = {
       try {
         const coupon = await Coupon.findByIdAndRemove(args.id);
         if (coupon) {
-          const coupons = await Coupon.find({});
-          return coupons || [];
+          // const coupons = await Coupon.find({});
+          // return coupons || [];
+          return { message: "Coupon deleted successfully", status: 200 };
         }
         throw putError("customer not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.DELETE_ERROR} Coupon`, status: 404 };
       }
     }
   }

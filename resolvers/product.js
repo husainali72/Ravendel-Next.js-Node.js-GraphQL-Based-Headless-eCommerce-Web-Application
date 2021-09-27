@@ -18,6 +18,7 @@ const {
 } = require("../config/helpers");
 const validate = require("../validations/product");
 var mongoose = require("mongoose");
+const errorRES = require("../error");
 
 /* For Test geting child*/
 let allids = [];
@@ -76,14 +77,17 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
-      } else {
-        // return { totalCount: total, productCategories: edges, page: pageNumber };
+      if (!edges.length) {
         return {
-          meta_data: { totalCount: total, page: pageNumber },
+          pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: { message: `${errorRES.RETRIEVE_ERROR} productCategories`, status: 200 },
+        };
+      } else {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: "productCategories list fetched", status: 200 },
         };
       }
     },
@@ -118,7 +122,7 @@ module.exports = {
       }
     },
 
-    /// get all products by pagination ........................................
+    /// get all products by pagination ........................................,
 
     products_pagination: async (
       root,
@@ -151,13 +155,17 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
+      if (!edges.length) {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: `${errorRES.RETRIEVE_ERROR} product`, status: 200 },
+        };
       } else {
         return {
-          meta_data: { totalCount: total, page: pageNumber },
+          pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: { message: "products list fetched", status: 200 },
         };
       }
     },
@@ -544,11 +552,12 @@ module.exports = {
           });
 
           await newCat.save();
-          return await ProductCat.find({});
+          return { message: "productCategory saved successfully", status: 200 };
+          // return await ProductCat.find({});
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.CREATE_ERROR} ProductCategory`, status: 400 };
       }
     },
     updateProductCategory: async (root, args, { id }) => {
@@ -583,15 +592,20 @@ module.exports = {
           cat.updated = Date.now();
 
           await cat.save();
-          return await ProductCat.find({});
+          //return await ProductCat.find({});
+          return {
+            message: "productCategory update successfully",
+            status: 200,
+          };
         } else {
           throw putError("Category not exist");
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.UPDATE_ERROR} productCategory`, status: 400 };
       }
     },
+
     deleteProductCategory: async (root, args, { id }) => {
       checkToken(id);
       try {
@@ -600,15 +614,20 @@ module.exports = {
           if (cat.image) {
             imageUnlink(cat.image);
           }
-          const cats = await ProductCat.find({});
-          return cats || [];
+          // const cats = await ProductCat.find({});
+          // return cats || [];
+          return {
+            message: "productCategory deleted successfully",
+            status: 200,
+          };
         }
         throw putError("Category not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.DELETE_ERROR} productCategory `, status: 404 };
       }
     },
+
     addProduct: async (root, args, { id }) => {
       checkToken(id);
       try {
@@ -714,12 +733,13 @@ module.exports = {
 
           let result = await ProductAttributeVariation.insertMany(combinations);
 
-          const products = await Product.find({});
-          return products || [];
+          // const products = await Product.find({});
+          // return products || [];
+          return { message: "products added successfully", status: 200 };
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.CREATE_ERROR} product`, status: 400 };
       }
     },
     updateProduct: async (root, args, { id }) => {
@@ -849,15 +869,16 @@ module.exports = {
 
           let result = await ProductAttributeVariation.insertMany(combinations);
 
-          const products = await Product.find({});
-          return products || [];
+          // const products = await Product.find({});
+          // return products || [];
+          return { message: "products updated successfully", status: 200 };
         } else {
           throw putError("Product not exist");
         }
       } catch (error) {
         error = checkError(error);
         console.log("error", error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.UPDATE_ERROR} Product `, status: 400 };
       }
     },
     deleteProduct: async (root, args, { id }) => {
@@ -889,13 +910,14 @@ module.exports = {
             }
           }
 
-          const products = await Product.find({});
-          return products || [];
+          // const products = await Product.find({});
+          // return products || [];
+          return { message: "products deleted successfully", status: 200 };
         }
         throw putError("Product not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.DELETE_ERROR} product`, status: 400 };
       }
     },
   },

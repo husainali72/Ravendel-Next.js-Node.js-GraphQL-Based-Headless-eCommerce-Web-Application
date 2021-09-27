@@ -29,14 +29,11 @@ module.exports = gql`
     date: Date
     updated: Date
   }
-  type pageInfo {
-    totalCount: Int
-    page: Int
-  }
 
   type customersResponse {
     data: [Customer]
-    meta_data: pageInfo
+    pagination: paginationInfo
+    message: statusSchema
   }
   extend type Query {
     customers_pagination(
@@ -58,7 +55,7 @@ module.exports = gql`
       company: String
       phone: String
       password: String
-    ): [Customer]
+    ): statusSchema
     updateCustomer(
       id: ID!
       first_name: String
@@ -67,8 +64,8 @@ module.exports = gql`
       company: String
       phone: String
       password: String
-    ): [Customer]
-    deleteCustomer(id: ID!): [Customer]
+    ): statusSchema
+    deleteCustomer(id: ID!): statusSchema
     addAddressBook(
       id: ID!
       first_name: String
@@ -82,7 +79,7 @@ module.exports = gql`
       state: String
       pincode: String
       default_address: Boolean
-    ): [Customer]
+    ): statusSchema
     updateAddressBook(
       id: ID!
       _id: ID!
@@ -97,7 +94,7 @@ module.exports = gql`
       state: String
       pincode: String
       default_address: Boolean
-    ): [Customer]
-    deleteAddressBook(id: ID!, _id: ID!): [Customer]
+    ): statusSchema
+    deleteAddressBook(id: ID!, _id: ID!): statusSchema
   }
 `;

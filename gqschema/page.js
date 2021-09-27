@@ -10,18 +10,11 @@ module.exports = gql`
     createdAt: Date
     updatedAt: Date
   }
-  type MessageSchemaPage {
-    message: String
-    statuscode: Int
-  }
-  type RESpage {
-    totalCount: Int
-    page: Int
-  }
+ 
   type Response {
     data: [Page]
-    pagination: RESpage
-    message: MessageSchemaPage
+    pagination: paginationInfo
+    message: statusSchema
   }
   extend type Query {
     page_pagination(
@@ -42,7 +35,7 @@ module.exports = gql`
       status: String
       url: String
       meta: customObject
-    ): MessageSchemaPage
+    ): statusSchema
     updatePage(
       id: ID!
       title: String
@@ -50,7 +43,7 @@ module.exports = gql`
       status: String
       url: String
       meta: customObject
-    ): MessageSchemaPage
-    deletePage(id: ID!): MessageSchemaPage
+    ): statusSchema
+    deletePage(id: ID!): statusSchema
   }
 `;

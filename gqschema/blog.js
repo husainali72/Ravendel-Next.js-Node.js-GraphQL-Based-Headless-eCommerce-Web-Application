@@ -21,34 +21,31 @@ module.exports = gql`
     updated: Date
   }
 
-  type MessageSchema {
-    message: String
-    statuscode: Int
-  }
-
-  type paginationRES {
-    totalCount: Int
-    page: Int
-  }
   type blogResponse {
     data: [Blog]
-    pagination: paginationRES
-    message: MessageSchema
+    pagination: paginationInfo
+    message: statusSchema
   }
 
   type blogTagsRes {
     data: [BlogTag]
-    pagination: paginationRES
-    message: MessageSchema
+    pagination: paginationInfo
+    message: statusSchema
   }
-
-
-  type blogTagsRes {
-    data: [BlogTag]
-    pagination: paginationRES
+  type response{
+  data:[Blog]
+    message: statusSchema
+  }
+  type blogRES{
+    data:Blog
+    message: statusSchema
+  }
+  type blogtagRES{
+    data:[BlogTag]
+    message: statusSchema
   }
   extend type Query {
-    blogs: [Blog]
+    blogs: response
     blog_pagination(
       limit: Int
       pageNumber: Int
@@ -56,8 +53,8 @@ module.exports = gql`
       orderBy: String
       order: String
     ): blogResponse
-    blog(id: ID!): Blog
-    blogtags: [BlogTag]
+    blog(id: ID!): blogRES
+    blogtags: blogtagRES
     blogTags_pagination(
       limit: Int
       pageNumber: Int
@@ -78,7 +75,7 @@ module.exports = gql`
       url: String
       feature_image: Upload
       meta: customObject
-    ): MessageSchema
+    ):statusSchema 
     updateBlog(
       id: ID!
       title: String
@@ -88,10 +85,10 @@ module.exports = gql`
       url: String
       updatedImage: Upload
       meta: customObject
-    ): MessageSchema
-    deleteBlog(id: ID!): MessageSchema
-    addBlogTag(name: String, url: String): MessageSchema
-    updateBlogTag(id: ID!, name: String, url: String): MessageSchema
-    deleteBlogTag(id: ID!): MessageSchema
+    ):statusSchema
+    deleteBlog(id: ID!):statusSchema
+    addBlogTag(name: String, url: String):statusSchema
+    updateBlogTag(id: ID!, name: String, url: String):statusSchema
+    deleteBlogTag(id: ID!):statusSchema
   }
 `;
