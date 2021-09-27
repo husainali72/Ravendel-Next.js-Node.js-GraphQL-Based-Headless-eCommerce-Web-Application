@@ -15,7 +15,7 @@ const putError = (value) => {
 module.exports.putError = putError;
 /*-------------------------------------------------------------------------------------------------------*/
 const checkError = (error) => {
-  console.log(error);
+  console.log(error.message);
   if (isEmpty(error.custom_message)) {
     error = {};
     error.custom_message = "something went wrong";
@@ -36,6 +36,7 @@ const checkToken = (token) => {
   }
   return;
 };
+
 
 module.exports.checkToken = checkToken;
 /*-------------------------------------------------------------------------------------------------------*/

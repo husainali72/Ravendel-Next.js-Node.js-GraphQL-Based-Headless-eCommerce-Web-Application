@@ -1,7 +1,7 @@
 const Validator = require("validator");
 const isEmpty = require("../config/is-empty");
 
-module.exports = function validate(method, args) {
+module.exports = function validate(method, args) { 
   switch (method) {
     case "addBlog": {
       let errors = "";

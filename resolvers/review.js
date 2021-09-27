@@ -10,6 +10,7 @@ const {
   checkToken,
 } = require("../config/helpers");
 const validate = require("../validations/review");
+const errorRES = require("../error");
 
 module.exports = {
   Query: {
@@ -61,14 +62,19 @@ module.exports = {
           },
         },
       ]);
-      console.log(edges);
-      if (!edges) {
-        throw putError("reviews not fetched");
+      if (!edges.length) {
+        return {
+          meta_data: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: `${errorRES.RETRIEVE_ERROR} review`, status: 200 },
+        };
+      } else {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: "reviews list fetched", status: 200 },
+        };
       }
-      return {
-        meta_data: { totalCount: total, page: pageNumber },
-        data: edges,
-      };
     },
     review: async (root, args) => {
       try {
@@ -132,10 +138,11 @@ module.exports = {
         });
 
         await newReview.save();
-        return await Review.find({});
+        //return await Review.find({});
+        return { message: "Review saved successfully", status: 200 };
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.CREATE_ERROR} review`, status: 400 };
       }
     },
     updateReview: async (root, args, { id }) => {
@@ -159,13 +166,14 @@ module.exports = {
           review.updated = Date.now();
 
           await review.save();
-          return await Review.find({});
+          //return await Review.find({});
+          return { message: "Review updated successfully", status: 200 };
         } else {
           throw putError("Review not exist");
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.UPDATE_ERROR} review`, status: 400 };
       }
     },
     deleteReview: async (root, args, { id }) => {
@@ -173,13 +181,15 @@ module.exports = {
       try {
         const review = await Review.findByIdAndRemove(args.id);
         if (review) {
-          const reviews = await Review.find({});
-          return reviews || [];
+          // const reviews = await Review.find({});
+          // return reviews || [];
+          return { message: "Review deleted successfully", status: 200 };
+
         }
         throw putError("Review not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${errorRES.DELETE_ERROR} review`, status: 400 };
       }
     },
   },

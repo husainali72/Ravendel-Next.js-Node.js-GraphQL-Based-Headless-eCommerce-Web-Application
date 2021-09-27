@@ -25,14 +25,11 @@ module.exports = gql`
   input BrandField {
     name: String
   }
-  type PaginationRes {
-    totalCount: Int
-    page: Int
-  }
 
   type brandResponse {
     data: [Brand]
-    meta_data: PaginationRes
+    pagination: paginationInfo
+    message: statusSchema
   }
 
   extend type Query {
@@ -47,14 +44,14 @@ module.exports = gql`
     brand(id: ID!): Brand
   }
   extend type Mutation {
-    addBrand(brands: [BrandField]): [Brand]
+    addBrand(brands: [BrandField]): statusSchema
     updateBrand(
       id: ID!
       name: String
       url: String
       updated_brand_logo: Upload
       meta: customObject
-    ): [Brand]
-    deleteBrand(id: ID!): [Brand]
+    ): statusSchema
+    deleteBrand(id: ID!): statusSchema
   }
 `;
