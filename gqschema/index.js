@@ -21,6 +21,7 @@ const linkSchema = gql`
   scalar metaKeyValueArray
   scalar customObject
   scalar customArray
+  scalar Upload
 
   type File {
     filename: String!
