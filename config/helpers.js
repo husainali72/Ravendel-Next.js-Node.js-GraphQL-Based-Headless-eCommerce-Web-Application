@@ -167,6 +167,7 @@ const jimpResize = (path, i, uploadPath, filename) => {
 };
 
 const imageUpload = async (upload, uploadPath) => {
+ 
   return new Promise(async (resolve, reject) => {
     try {
       let { filename, mimetype, encoding, createReadStream } = await upload;
@@ -182,6 +183,8 @@ const imageUpload = async (upload, uploadPath) => {
           message: "This extension not allowed",
         });
       }
+
+      // console.log(upload);
 
       let stream = createReadStream();
 
