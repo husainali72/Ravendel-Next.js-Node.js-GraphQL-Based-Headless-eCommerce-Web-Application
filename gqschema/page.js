@@ -16,6 +16,15 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
+
+  type PageIdRES {
+    data: Page
+    message: statusSchema
+  }
+  type PageRES {
+    data: [Page]
+    message: statusSchema
+  }
   extend type Query {
     page_pagination(
       limit: Int
@@ -24,8 +33,8 @@ module.exports = gql`
       orderBy: String
       order: String
     ): Response
-    pages: [Page]
-    page(id: ID!): Page
+    pages: PageRES
+    page(id: ID!): PageIdRES
   }
 
   extend type Mutation {

@@ -21,8 +21,12 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
+  type allUsers {
+    data: [User]
+    message: statusSchema
+  }
   extend type Query {
-    users: [User]
+    users: allUsers
     users_pagination(
       limit: Int
       pageNumber: Int

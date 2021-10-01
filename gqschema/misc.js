@@ -3,7 +3,7 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
   type statusSchema {
     message: String
-    status: Int
+    success: Boolean
   }
   type paginationInfo {
     totalCount: Int
@@ -13,4 +13,4 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
-`;
+`; 
