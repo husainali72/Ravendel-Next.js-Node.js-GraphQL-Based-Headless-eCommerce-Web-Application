@@ -3,13 +3,11 @@ const {
   isEmpty,
   putError,
   checkError,
-  imageUpload,
-  imageUnlink,
   checkToken,
 } = require("../config/helpers");
 const validate = require("../validations/customer");
 const bcrypt = require("bcryptjs");
-const errorRES = require("../error");
+const Messages = require("../config/messages");
 
 module.exports = {
   Query: {
@@ -59,13 +57,13 @@ module.exports = {
         return {
           pagination: { totalCount: total, page: pageNumber },
           data: edges,
-          message: { message:  `${errorRES.RETRIEVE_ERROR} Customers`, status: 200 },
+          message: { message:  `${Messages.RETRIEVE_ERROR} Customers`, success: true },
         };
       } else {
         return {
           pagination: { totalCount: total, page: pageNumber },
           data: edges,
-          message: { message: "Customers list fetched", status: 200 },
+          message: { message: "Customers list fetched", success: true },
         };
       }
     },
@@ -109,11 +107,11 @@ module.exports = {
           const user = await newCustomer.save();
           //return user;
           //return await Customer.find({});
-          return { message: "Customer saved successfully", status: 200 };
+          return { message: "Customer saved successfully", success: true };
         }
       } catch (error) {
         error = checkError(error);
-        return { message: `${errorRES.CREATE_ERROR} Customers`, status: 400 };
+        return { message: `${Messages.CREATE_ERROR} Customers`, success: false };
       }
     },
     updateCustomer: async (root, args, { id }) => {
@@ -141,13 +139,13 @@ module.exports = {
 
           await customer.save();
           //return await Customer.find({});
-          return { message: "Customer updated successfully", status: 200 };
+          return { message: "Customer updated successfully", success: true };
         } else {
           return { message: "Customer not exist", status: 404 };
         }
       } catch (error) {
         error = checkError(error);
-        return { message:  `${errorRES.UPDATE_ERROR} Customers`, status: 400 };
+        return { message:  `${Messages.UPDATE_ERROR} Customers`, success: false };
       }
     },
     deleteCustomer: async (root, args, { id }) => {
@@ -157,12 +155,12 @@ module.exports = {
         if (customer) {
           // const customers = await Customer.find({});
           // return customers || [];
-          return { message: "customer deleted successfully", status: 200 };
+          return { message: "customer deleted successfully", success: true };
         }
         throw putError("customer not exist");
       } catch (error) {
         error = checkError(error);
-        return { message: `${errorRES.DELETE_ERROR} Customers`, status: 404 };
+        return { message: `${Messages.DELETE_ERROR} Customers`, status: 404 };
       }
     },
     addAddressBook: async (root, args, { id }) => {
@@ -194,10 +192,10 @@ module.exports = {
 
         await customer.save();
         //return await Customer.find({});
-        return { message: "AddressBook saved successfully", status: 200 };
+        return { message: "AddressBook saved successfully", success: true };
       } catch (error) {
         error = checkError(error);
-        return { message: `${errorRES.CREATE_ERROR} AddressBook `, status: 400 };
+        return { message: `${Messages.CREATE_ERROR} AddressBook `, success: false };
       }
     },
     updateAddressBook: async (root, args, { id }) => {
@@ -230,10 +228,10 @@ module.exports = {
         customer.updated = Date.now();
         await customer.save();
         //return await Customer.find({});
-        return { message: "AddressBook updated successfully", status: 200 };
+        return { message: "AddressBook updated successfully", success: true };
       } catch (error) {
         error = checkError(error);
-        return { message: `${errorRES.UPDATE_ERROR} AddressBook`, status: 400 };
+        return { message: `${Messages.UPDATE_ERROR} AddressBook`, success: false };
       }
     },
     deleteAddressBook: async (root, args, { id }) => {
@@ -258,10 +256,10 @@ module.exports = {
 
         await customer.save();
        // return await Customer.find({});
-       return { message: "AddressBook deleted successfully", status: 200 };
+       return { message: "AddressBook deleted successfully", success: true };
       } catch (error) {
         error = checkError(error);
-        return { message: `${errorRES.DELETE_ERROR} AddressBook`, status: 404 };
+        return { message: `${Messages.DELETE_ERROR} AddressBook`, status: 404 };
       }
     },
   },

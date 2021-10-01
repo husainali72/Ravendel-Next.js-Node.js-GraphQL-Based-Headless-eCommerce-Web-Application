@@ -36,31 +36,56 @@ const GET_ATTRIBUTE = gql`
   ${ATTRIBUTE_TILE}
 `;
 
+// const ADD_ATTRIBUTE = gql`
+//   mutation($attribute: AttributeInput) {
+//     addAttribute(attribute: $attribute) {
+//       ...GeneralRsponseTile
+//     }
+//   }
+//   ${GENERAL_RESPONSE_TILE}
+// `;
 const ADD_ATTRIBUTE = gql`
   mutation($attribute: AttributeInput) {
     addAttribute(attribute: $attribute) {
-      ...GeneralRsponseTile
+      message
+      success
     }
   }
-  ${GENERAL_RESPONSE_TILE}
 `;
 
+// const UPDATE_ATTRIBUTE = gql`
+//   mutation($attribute: AttributeInput) {
+//     updateAttribute(attribute: $attribute) {
+//       ...GeneralRsponseTile
+//     }
+//   }
+//   ${GENERAL_RESPONSE_TILE}
+// `;
 const UPDATE_ATTRIBUTE = gql`
   mutation($attribute: AttributeInput) {
     updateAttribute(attribute: $attribute) {
-      ...GeneralRsponseTile
+      message
+      success
     }
   }
-  ${GENERAL_RESPONSE_TILE}
 `;
 
+// const DELETE_ATTRIBUTE = gql`
+//   mutation($id: ID!) {
+//     deleteAttribute(id: $id) {
+//       ...GeneralRsponseTile
+//     }
+//   }
+//   ${GENERAL_RESPONSE_TILE}
+// `;
 const DELETE_ATTRIBUTE = gql`
   mutation($id: ID!) {
     deleteAttribute(id: $id) {
-      ...GeneralRsponseTile
+      message
+      success
     }
   }
-  ${GENERAL_RESPONSE_TILE}
+  
 `;
 
 export {

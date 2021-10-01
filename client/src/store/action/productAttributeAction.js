@@ -67,8 +67,12 @@ export const attributeAddAction = (object) => (dispatch) => {
   });
   mutation(ADD_ATTRIBUTE, object)
     .then((response) => {
-      if (response) {
+      dispatch({
+        type: ATTRIBUTE_FAIL,
+      });
+      if (response.data.addAttribute.success) {
         jumpTo(`${client_app_route_url}attributes`);
+        dispatch(attributesAction());
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -77,6 +81,12 @@ export const attributeAddAction = (object) => (dispatch) => {
             error: false,
           },
         });
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.addAttribute.message, error: true },
+        });
+
       }
     })
     .catch((error) => {
@@ -97,8 +107,12 @@ export const attributeUpdateAction = (object) => (dispatch) => {
   });
   mutation(UPDATE_ATTRIBUTE, object)
     .then((response) => {
-      if (response) {
+      dispatch({
+        type: ATTRIBUTE_FAIL,
+      });
+      if (response.data.updateAttribute.success) {
         jumpTo(`${client_app_route_url}attributes`);
+        dispatch(attributesAction());
         dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -108,6 +122,12 @@ export const attributeUpdateAction = (object) => (dispatch) => {
           },
         });
         return;
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.updateAttribute.message, error: true },
+        });
+
       }
     })
     .catch((error) => {
@@ -127,12 +147,17 @@ export const attributeDeleteAction = (id) => (dispatch) => {
     payload: true,
   });
   mutation(DELETE_ATTRIBUTE, { id })
-    .then((response) => {
-      if (response) {
+  .then((response) => {
+      dispatch({
+        type: ATTRIBUTE_FAIL,
+      });
+      if (response.data.deleteAttribute.success) {
         dispatch({
           type: "RENDER",
           payload: true,
         });
+
+        dispatch(attributesAction());
 
         return dispatch({
           type: ALERT_SUCCESS,
@@ -142,6 +167,13 @@ export const attributeDeleteAction = (id) => (dispatch) => {
             error: false,
           },
         });
+      }else {
+        
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.deleteAttribute.message, error: true },
+        });
+
       }
     })
     .catch((error) => {

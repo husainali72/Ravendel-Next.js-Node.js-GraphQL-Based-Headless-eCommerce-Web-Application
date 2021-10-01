@@ -1,22 +1,33 @@
 const Page = require("../models/Page");
 const {
   isEmpty,
-  putError,
   checkError,
   checkToken,
   validateUrl,
   stringTourl,
 } = require("../config/helpers");
 const validate = require("../validations/page");
-const errorRES = require("../error");
+const Messages = require("../config/messages");
 
 module.exports = {
   Query: {
     pages: async (root, args) => {
       try {
-        return await Page.find({});
+        const allPage = await Page.find({});
+        return {
+          message: {
+            message: Messages.RESULT_FOUND.replace(":item", "Page"),
+            success: true,
+          },
+          data: allPage,
+        };
       } catch (error) {
-        throw new Error("Something went wrong.");
+        return {
+          message: {
+            message: Messages.RETRIEVE_ERROR.replace(":item", "Page"),
+            success: false,
+          },
+        };
       }
     },
     // all apge get with pagination.....................
@@ -54,43 +65,80 @@ module.exports = {
         },
       ]);
 
-      if(!edges.length){
+      if (!edges.length) {
         return {
           pagination: { totalCount: total, page: pageNumber },
           data: edges,
-          message: {message: `${errorRES.RETRIEVE_ERROR} Page `, status: 200}
+          message: {
+            message: Messages.RETRIEVE_ERROR.replace(":item", "Page"),
+            success: false,
+          },
         };
       } else {
         return {
           pagination: { totalCount: total, page: pageNumber },
           data: edges,
-          message: {message: 'Page List', status: 200}
+          message: {
+            message: Messages.RESULT_FOUND.replace(":item", "Page"),
+            success: true,
+          },
         };
       }
     },
     page: async (root, args) => {
+      if (!args.id) {
+        return {
+          message: {
+            message: Messages.ID_ERROR.replace(":item", "Page"),
+            success: false,
+          },
+        };
+      }
       try {
         const page = await Page.findById(args.id);
         if (!page) {
-          throw putError("Page not found");
+          return {
+            message: {
+              message: Messages.NOT_EXIST.replace(":item", "page"),
+              success: false,
+            },
+          };
         }
-        return page;
+        return {
+          message: {
+            message: Messages.RESULT_FOUND.replace(":item", "Page"),
+            success: true,
+          },
+          data: page,
+        };
       } catch (error) {
         error = checkError(error);
-        return  {message: error.custom_message, status: 404}
+        return {
+          message: {
+            message: Messages.RETRIEVE_ERROR.replace(":item", "Page"),
+            success: false,
+          },
+        };
       }
     },
   },
   Mutation: {
     addPage: async (root, args, { id }) => {
+      if (!id) {
+        return {
+          message: Messages.TOKEN_REQ.replace(":item", "Page"),
+          success: false,
+        };
+      }
       checkToken(id);
       try {
-        // Check Validation
         const errors = validate("addPage", args);
         if (!isEmpty(errors)) {
-          throw putError(errors);
+          return {
+            message: errors,
+            success: false,
+          };
         }
-
         var url = stringTourl(args.url || args.title);
         var duplicate = true;
         while (duplicate) {
@@ -113,14 +161,39 @@ module.exports = {
         await newPage.save();
 
         let pages = await Page.find({});
-        return  {message: 'page saved successfully', status: 200}
+        return {
+          message: Messages.AddSuccess.replace(":item", "Page"),
+          success: true,
+        };
       } catch (error) {
         error = checkError(error);
-        return  {message: `${errorRES.CREATE_ERROR} Page`, status: 400}
+        return {
+          message: Messages.CREATE_ERROR.replace(":item", "Page"),
+          success: false,
+        };
       }
     },
     updatePage: async (root, args, { id }) => {
+      if (!id) {
+        return {
+          message: Messages.TOKEN_REQ.replace(":item", "Page"),
+          success: false,
+        };
+      }
       checkToken(id);
+      if (!args.id) {
+        return {
+          message: Messages.ID_ERROR.replace(":item", "Page"),
+          success: false,
+        };
+      }
+      const errors = validate("updatePage", args);
+      if (!isEmpty(errors)) {
+        return {
+          message: errors,
+          success: false,
+        };
+      }
       try {
         const page = await Page.findById({ _id: args.id });
         if (page) {
@@ -142,27 +215,56 @@ module.exports = {
           page.meta = args.meta;
           page.updatedAt = Date.now();
           await page.save();
-          return  {message: 'Page updated successfully', status: 200}
-        } else {
-          return  {message: 'Page not exist', status: 404}
+          return {
+            message: Messages.UpdateSuccess.replace(":item", "Page"),
+            success: true,
+          };
         }
+        return {
+          message: Messages.NOT_EXIST.replace(":item", "page"),
+          success: false,
+        };
       } catch (error) {
         error = checkError(error);
-        return  {message: `${errorRES.UPDATE_ERROR} Page`, status: 400}
+        return {
+          message: Messages.UPDATE_ERROR.replace(":item", "Page"),
+          success: false,
+        };
       }
     },
     deletePage: async (root, args, { id }) => {
+      if (!id) {
+        return {
+          message: Messages.TOKEN_REQ.replace(":item", "Page"),
+          success: false,
+        };
+      }
       checkToken(id);
+      if (!args.id) {
+        return {
+          message: Messages.ID_ERROR.replace(":item", "Page"),
+          success: false,
+        };
+      }
       try {
         const page = await Page.findByIdAndRemove(args.id);
         if (page) {
           let pages = await Page.find({});
-          return  {message: 'Page deleted successfully', status: 200}
+          return {
+            message: Messages.DELETE.replace(":item", "Page"),
+            success: true,
+          };
         }
-        throw putError("Page not exist");
+        return {
+          message: Messages.NOT_EXIST.replace(":item", "page"),
+          success: false,
+        };
       } catch (error) {
         error = checkError(error);
-        return  {message: `${errorRES.DELETE_ERROR} Page`, status: 404}
+        return {
+          message: Messages.DELETE_ERROR.replace(":item", "Page"),
+          success: false,
+        };
       }
     },
   },

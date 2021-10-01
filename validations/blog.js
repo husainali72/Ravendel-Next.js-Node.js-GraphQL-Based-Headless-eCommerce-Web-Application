@@ -9,6 +9,9 @@ module.exports = function validate(method, args) {
       if (!args.title || Validator.isEmpty(args.title)) {
         return (errors = "Title field is required");
       }
+      if (!args.status || Validator.isEmpty(args.status)) {
+        return (errors = "status field is required");
+      }
       args.title = Validator.escape(args.title);
       break;
     }
@@ -17,6 +20,9 @@ module.exports = function validate(method, args) {
 
       if (!args.title || Validator.isEmpty(args.title)) {
         return (errors = "Title field is required");
+      }
+      if (!args.status || Validator.isEmpty(args.status)) {
+        return (errors = "status field is required");
       }
       break;
     }

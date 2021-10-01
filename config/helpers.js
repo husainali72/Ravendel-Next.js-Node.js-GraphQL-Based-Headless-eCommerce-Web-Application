@@ -1,3 +1,5 @@
+const Messages = require("./messages");
+
 const isEmpty = (value) =>
   value === undefined ||
   value === null ||
@@ -36,6 +38,7 @@ const checkToken = (token) => {
   }
   return;
 };
+
 
 
 module.exports.checkToken = checkToken;
@@ -352,3 +355,12 @@ const getdate = (format, timezone = "UTC", date) => {
 };
 
 module.exports.getdate = getdate;
+
+const MESSAGE_RESPONSE = (type, item, success) => {
+  return {
+    message: Messages[type].replace(":item", item),
+    success: success,
+  };
+};
+
+module.exports.MESSAGE_RESPONSE = MESSAGE_RESPONSE;

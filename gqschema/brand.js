@@ -31,7 +31,14 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
-
+  type BrandIDRES {
+    data: Brand
+    message: statusSchema
+  }
+  type BrandRES {
+    data: [Brand]
+    message: statusSchema
+  }
   extend type Query {
     brands_pagination(
       limit: Int
@@ -40,8 +47,8 @@ module.exports = gql`
       orderBy: String
       order: String
     ): brandResponse
-    brands: [Brand]
-    brand(id: ID!): Brand
+    brands: BrandRES
+    brand(id: ID!): BrandIDRES 
   }
   extend type Mutation {
     addBrand(brands: [BrandField]): statusSchema

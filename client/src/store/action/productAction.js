@@ -44,12 +44,11 @@ export const categoryAddAction = (object) => (dispatch) => {
   });
   mutation(ADD_CATEGORY, object)
     .then((response) => {
-      if (response) {
-        dispatch({
-          type: CATS_SUCCESS,
-          payload: response.data.addProductCategory,
-        });
-
+      dispatch({
+        type: CAT_FAIL,
+      });
+      if (response.data.addProductCategory.success) {
+        dispatch(categoriesAction());
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -58,6 +57,12 @@ export const categoryAddAction = (object) => (dispatch) => {
             error: false,
           },
         });
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.addProductCategory.message, error: true },
+        });
+
       }
     })
     .catch((error) => {
@@ -78,11 +83,12 @@ export const categoryUpdateAction = (object) => (dispatch) => {
   });
   mutation(UPDATE_CATEGORY, object)
     .then((response) => {
-      if (response) {
-        dispatch({
-          type: CATS_SUCCESS,
-          payload: response.data.updateProductCategory,
-        });
+      dispatch({
+        type: CAT_FAIL,
+      });
+      if (response.data.updateProductCategory.success) {
+
+        dispatch(categoriesAction());
 
         dispatch({
           type: ALERT_SUCCESS,
@@ -94,6 +100,12 @@ export const categoryUpdateAction = (object) => (dispatch) => {
         });
 
         return;
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.updateProductCategory.message, error: true },
+        });
+
       }
     })
     .catch((error) => {
@@ -114,11 +126,11 @@ export const categoryDeleteAction = (id) => (dispatch) => {
   });
   mutation(DELETE_CATEGORY, { id })
     .then((response) => {
-      if (response) {
-        dispatch({
-          type: CATS_SUCCESS,
-          payload: response.data.deleteProductCategory,
-        });
+      dispatch({
+        type: CAT_FAIL,
+      });
+      if (response.data.deleteProductCategory.success) {
+        dispatch(categoriesAction());
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -127,6 +139,12 @@ export const categoryDeleteAction = (id) => (dispatch) => {
             error: false,
           },
         });
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.deleteProductCategory.message, error: true },
+        });
+
       }
     })
     .catch((error) => {

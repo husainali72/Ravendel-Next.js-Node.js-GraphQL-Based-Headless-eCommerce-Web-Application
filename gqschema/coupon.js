@@ -24,7 +24,14 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
-
+  type couponIdRES {
+    data: Coupon
+    message: statusSchema
+  }
+  type couponRES {
+    data: [Coupon]
+    message: statusSchema
+  }
   extend type Query {
     coupons_pagination(
       limit: Int
@@ -33,8 +40,8 @@ module.exports = gql`
       orderBy: String
       order: String
     ): couponResponse
-    coupons: [Coupon]
-    coupon(id: ID!): Coupon
+    coupons: couponRES
+    coupon(id: ID!): couponIdRES
   }
 
   extend type Mutation {
