@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 
 const PRODUCT_TILE_DATA = gql`
   fragment ProductTile on Product {
-    id
+    _id
     name
     url
     categoryId {

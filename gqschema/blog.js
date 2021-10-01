@@ -43,10 +43,7 @@ module.exports = gql`
   }
 
 
-  type blogTagsRes {
-    data: [BlogTag]
-    pagination: paginationRES
-  }
+ 
   extend type Query {
     blogs: [Blog]
     blog_pagination(
