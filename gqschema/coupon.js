@@ -17,16 +17,21 @@ module.exports = gql`
     date: Date
     updated: Date
   }
-  type Pagination {
-    totalCount: Int
-    page: Int
-  }
+  
 
   type couponResponse {
     data: [Coupon]
-    meta_data: Pagination
+    pagination: paginationInfo
+    message: statusSchema
   }
-
+  type couponIdRES {
+    data: Coupon
+    message: statusSchema
+  }
+  type couponRES {
+    data: [Coupon]
+    message: statusSchema
+  }
   extend type Query {
     coupons_pagination(
       limit: Int
@@ -35,8 +40,8 @@ module.exports = gql`
       orderBy: String
       order: String
     ): couponResponse
-    coupons: [Coupon]
-    coupon(id: ID!): Coupon
+    coupons: couponRES
+    coupon(id: ID!): couponIdRES
   }
 
   extend type Mutation {
@@ -53,7 +58,7 @@ module.exports = gql`
       exclude_products: customArray
       categories: customArray
       exclude_categories: customArray
-    ): [Coupon]
+    ): statusSchema
     updateCoupon(
       id: ID!
       code: String
@@ -68,7 +73,7 @@ module.exports = gql`
       exclude_products: customArray
       categories: customArray
       exclude_categories: customArray
-    ): [Coupon]
-    deleteCoupon(id: ID!): [Coupon]
+    ): statusSchema
+    deleteCoupon(id: ID!): statusSchema
   }
 `;

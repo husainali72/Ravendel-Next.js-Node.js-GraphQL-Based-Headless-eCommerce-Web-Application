@@ -10,6 +10,28 @@ const {
 } = require("../config/helpers");
 //const setting = require("../validations/setting");
 //const sanitizeHtml = require("sanitize-html");
+const fs = require("fs");
+var sdir = './assets/images/setting';
+var ldir = './assets/images/setting/large';
+var mdir = './assets/images/setting/medium';
+var tdir = './assets/images/setting/thumbnail';
+var odir = './assets/images/setting/original';
+
+if (!fs.existsSync(sdir)){
+  fs.mkdirSync(sdir);
+}
+if (!fs.existsSync(ldir)){
+  fs.mkdirSync(ldir);
+}
+if (!fs.existsSync(mdir)){
+  fs.mkdirSync(mdir);
+}
+if (!fs.existsSync(odir)){
+  fs.mkdirSync(odir);
+}
+if (!fs.existsSync(tdir)){
+  fs.mkdirSync(tdir);
+}
 
 module.exports = {
   Query: {
@@ -272,7 +294,7 @@ module.exports = {
         for (let i in args.slider) {
           if (args.slider[i].update_image) {
             imgObject = await imageUpload(
-              args.slider[i].update_image[0],
+              args.slider[i].update_image[0].file,
               "/assets/images/setting/"
             );
 
@@ -303,7 +325,7 @@ module.exports = {
         let imgObject = "";
         if (args.new_logo) {
           imgObject = await imageUpload(
-            args.new_logo[0],
+            args.new_logo[0].file,
             "/assets/images/setting/"
           );
 

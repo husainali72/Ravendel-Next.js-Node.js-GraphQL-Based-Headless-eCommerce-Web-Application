@@ -16,11 +16,17 @@ export const usersAction = () => dispatch => {
   });
   query(GET_USERS)
     .then(response => {
-      if (response) {
+      if (response.data.users.message.success) {
         return dispatch({
           type: USERS_SUCCESS,
-          payload: response.data.users
+          payload: response.data.users.data
         });
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.users.message.message, error: true }
+        });
+
       }
     })
     .catch(error => {
@@ -64,13 +70,14 @@ export const userAddAction = object => dispatch => {
   });
   mutation(ADD_USER, object)
     .then(response => {
-      if (response) {
+      if (response.data.addUser.success) {
         dispatch({
-          type: USERS_SUCCESS,
-          payload: response.data.addUser
+          type: USER_FAIL,
         });
 
         jumpTo(`${client_app_route_url}all-users`);
+
+        dispatch(usersAction());
 
         return dispatch({
           type: ALERT_SUCCESS,
@@ -80,6 +87,12 @@ export const userAddAction = object => dispatch => {
             error: false
           }
         });
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.addUser.error, error: true }
+        });
+
       }
     })
     .catch(error => {
@@ -99,10 +112,9 @@ export const userUpdateAction = object => dispatch => {
   });
   mutation(UPDATE_USER, object)
     .then(response => {
-      if (response) {
+      if (response.data.updateUser.success) {
         dispatch({
-          type: USERS_SUCCESS,
-          payload: response.data.updateUser
+          type: USER_FAIL
         });
 
         dispatch({
@@ -115,7 +127,16 @@ export const userUpdateAction = object => dispatch => {
         });
 
         jumpTo(`${client_app_route_url}all-users`);
+
+        dispatch(usersAction());
+        
         return;
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.updateUser.message, error: true }
+        });
+
       }
     })
     .catch(error => {
@@ -135,11 +156,13 @@ export const userDeleteAction = id => dispatch => {
   });
   mutation(DELETE_USER, { id })
     .then(response => {
-      if (response) {
+      if (response.data.deleteUser.success) {
         dispatch({
-          type: USERS_SUCCESS,
-          payload: response.data.deleteUser
+          type: USER_FAIL,
         });
+
+        dispatch(usersAction());
+        
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -148,6 +171,12 @@ export const userDeleteAction = id => dispatch => {
             error: false
           }
         });
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.deleteUser.message, error: true }
+        });
+
       }
     })
     .catch(error => {

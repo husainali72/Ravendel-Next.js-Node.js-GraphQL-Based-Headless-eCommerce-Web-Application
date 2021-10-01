@@ -12,7 +12,6 @@ module.exports = gql`
     date: Date
     updated: Date
   }
-
   type BlogTag {
     id: ID
     name: String
@@ -20,53 +19,56 @@ module.exports = gql`
     date: Date
     updated: Date
   }
-
-  type MessageSchema {
-    message: String
-    statuscode: Int
-  }
-
-  type paginationRES {
-    totalCount: Int
-    page: Int
-  }
-  type blogResponse {
+  type BLOG_PAGINATION_RESPONSE {
     data: [Blog]
-    pagination: paginationRES
-    message: MessageSchema
+    pagination: paginationInfo
+    message: statusSchema
   }
-
-  type blogTagsRes {
+  type TAG_PAGINATION_RESPONSE {
     data: [BlogTag]
-    pagination: paginationRES
-    message: MessageSchema
+    pagination: paginationInfo
+    message: statusSchema
   }
-
-
-  type blogTagsRes {
+  type Blog_response {
+    data: [Blog]
+    message: statusSchema
+  }
+  type BLOG_BY_ID_RESPONSE {
+    data: Blog
+    message: statusSchema
+  }
+  type BLOG_TEG_RESPONSE {
     data: [BlogTag]
-    pagination: paginationRES
+    message: statusSchema
+  }
+  type BLOGS_BY_TAG_RESPONSE {
+    data: Blog
+    message: statusSchema
+  }
+  type BLOG_BY_TAG_URL_RESPONSE {
+    data: [Blog]
+    message: statusSchema
   }
   extend type Query {
-    blogs: [Blog]
+    blogs: Blog_response
     blog_pagination(
       limit: Int
       pageNumber: Int
       search: String
       orderBy: String
       order: String
-    ): blogResponse
-    blog(id: ID!): Blog
-    blogtags: [BlogTag]
+    ): BLOG_PAGINATION_RESPONSE
+    blog(id: ID!): BLOG_BY_ID_RESPONSE
+    blogtags: BLOG_TEG_RESPONSE
     blogTags_pagination(
       limit: Int
       pageNumber: Int
       search: String
       orderBy: String
       order: String
-    ): blogTagsRes
-    blogsbytagid(tag_id: ID!): [Blog]
-    blogsbytagurl(tag_url: String!): [Blog]
+    ): TAG_PAGINATION_RESPONSE
+    blogsbytagid(tag_id: ID!): BLOGS_BY_TAG_RESPONSE
+    blogsbytagurl(tag_url: String!): BLOG_BY_TAG_URL_RESPONSE
   }
 
   extend type Mutation {
@@ -78,7 +80,7 @@ module.exports = gql`
       url: String
       feature_image: Upload
       meta: customObject
-    ): MessageSchema
+    ): statusSchema
     updateBlog(
       id: ID!
       title: String
@@ -88,10 +90,10 @@ module.exports = gql`
       url: String
       updatedImage: Upload
       meta: customObject
-    ): MessageSchema
-    deleteBlog(id: ID!): MessageSchema
-    addBlogTag(name: String, url: String): MessageSchema
-    updateBlogTag(id: ID!, name: String, url: String): MessageSchema
-    deleteBlogTag(id: ID!): MessageSchema
+    ): statusSchema
+    deleteBlog(id: ID!): statusSchema
+    addBlogTag(name: String, url: String): statusSchema
+    updateBlogTag(id: ID!, name: String, url: String): statusSchema
+    deleteBlogTag(id: ID!): statusSchema
   }
 `;

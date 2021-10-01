@@ -1,10 +1,8 @@
 const ProductCat = require("../models/ProductCat");
-const CatTree = require("../models/CatTree");
 const Product = require("../models/Product");
 const Brand = require("../models/Brand");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const ProductAttribute = require("../models/ProductAttribute");
-const { errorName } = require("../constant/status");
 const {
   isEmpty,
   putError,
@@ -18,6 +16,105 @@ const {
 } = require("../config/helpers");
 const validate = require("../validations/product");
 var mongoose = require("mongoose");
+const Messages = require("../config/messages");
+
+const fs = require("fs");
+var pdir = './assets/images/product';
+var pcdir = './assets/images/product/category';
+var fdir = './assets/images/product/feature';
+var gdir = './assets/images/product/gallery';
+var vdir = './assets/images/product/variant';
+
+if (!fs.existsSync(pdir)){
+  fs.mkdirSync(pdir);
+}
+if (!fs.existsSync(pcdir)){
+  fs.mkdirSync(pcdir);
+}
+
+if (!fs.existsSync(fdir)){
+  fs.mkdirSync(fdir);
+}
+if (!fs.existsSync(vdir)){
+  fs.mkdirSync(vdir);
+}
+
+
+var cldir = './assets/images/product/category/large';
+var cmdir = './assets/images/product/category/medium';
+var ctdir = './assets/images/product/category/thumbnail';
+var codir = './assets/images/product/category/original';
+if (!fs.existsSync(cldir)){
+  fs.mkdirSync(cldir);
+}
+if (!fs.existsSync(cmdir)){
+  fs.mkdirSync(cmdir);
+}
+if (!fs.existsSync(codir)){
+  fs.mkdirSync(codir);
+}
+if (!fs.existsSync(ctdir)){
+  fs.mkdirSync(ctdir);
+}
+
+
+
+var fldir = './assets/images/product/feature/large';
+var fmdir = './assets/images/product/feature/medium';
+var ftdir = './assets/images/product/feature/thumbnail';
+var fodir = './assets/images/product/feature/original';
+
+if (!fs.existsSync(fldir)){
+  fs.mkdirSync(fldir);
+}
+if (!fs.existsSync(fmdir)){
+  fs.mkdirSync(fmdir);
+}
+if (!fs.existsSync(ftdir)){
+  fs.mkdirSync(ftdir);
+}
+if (!fs.existsSync(fodir)){
+  fs.mkdirSync(fodir);
+}
+
+
+var gldir = './assets/images/product/gallery/large';
+var gmdir = './assets/images/product/gallery/medium';
+var gtdir = './assets/images/product/gallery/thumbnail';
+var godir = './assets/images/product/gallery/original';
+
+if (!fs.existsSync(gldir)){
+  fs.mkdirSync(gldir);
+}
+if (!fs.existsSync(gmdir)){
+  fs.mkdirSync(gmdir);
+}
+if (!fs.existsSync(godir)){
+  fs.mkdirSync(godir);
+}
+if (!fs.existsSync(gtdir)){
+  fs.mkdirSync(gtdir);
+}
+
+
+var vldir = './assets/images/product/variant/large';
+var vmdir = './assets/images/product/variant/medium';
+var vtdir = './assets/images/product/variant/thumbnail';
+var vodir = './assets/images/product/variant/original';
+
+if (!fs.existsSync(vldir)){
+  fs.mkdirSync(vldir);
+}
+if (!fs.existsSync(gmdir)){
+  fs.mkdirSync(gmdir);
+}
+if (!fs.existsSync(vtdir)){
+  fs.mkdirSync(vtdir);
+}
+if (!fs.existsSync(vodir)){
+  fs.mkdirSync(vodir);
+}
+
 
 /* For Test geting child*/
 let allids = [];
@@ -32,6 +129,7 @@ const getTree = async (id) => {
 };
 
 module.exports = {
+
   Query: {
     productCategories: async (root, args) => {
       try {
@@ -76,14 +174,17 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
-      } else {
-        // return { totalCount: total, productCategories: edges, page: pageNumber };
+      if (!edges.length) {
         return {
-          meta_data: { totalCount: total, page: pageNumber },
+          pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: { message: `${Messages.RETRIEVE_ERROR} productCategories`, success: true },
+        };
+      } else {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: "productCategories list fetched", success: true },
         };
       }
     },
@@ -118,7 +219,7 @@ module.exports = {
       }
     },
 
-    /// get all products by pagination ........................................
+    /// get all products by pagination ........................................,
 
     products_pagination: async (
       root,
@@ -151,13 +252,17 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
+      if (!edges.length) {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: `${Messages.RETRIEVE_ERROR} product`, success: true },
+        };
       } else {
         return {
-          meta_data: { totalCount: total, page: pageNumber },
+          pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: { message: "products list fetched", success: true },
         };
       }
     },
@@ -525,7 +630,7 @@ module.exports = {
           let imgObject = "";
           if (args.image) {
             imgObject = await imageUpload(
-              args.image[0],
+              args.image[0].file,
               "/assets/images/product/category/"
             );
 
@@ -544,11 +649,12 @@ module.exports = {
           });
 
           await newCat.save();
-          return await ProductCat.find({});
+          return { message: "productCategory saved successfully", success: true };
+          // return await ProductCat.find({});
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.CREATE_ERROR} ProductCategory`, success: false };
       }
     },
     updateProductCategory: async (root, args, { id }) => {
@@ -559,7 +665,7 @@ module.exports = {
           let imgObject = "";
           if (args.update_image) {
             imgObject = await imageUpload(
-              args.update_image[0],
+              args.update_image[0].file,
               "/assets/images/product/category/"
             );
 
@@ -583,15 +689,20 @@ module.exports = {
           cat.updated = Date.now();
 
           await cat.save();
-          return await ProductCat.find({});
+          //return await ProductCat.find({});
+          return {
+            message: "productCategory update successfully",
+            success: true,
+          };
         } else {
           throw putError("Category not exist");
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.UPDATE_ERROR} productCategory`, success: false };
       }
     },
+
     deleteProductCategory: async (root, args, { id }) => {
       checkToken(id);
       try {
@@ -600,16 +711,22 @@ module.exports = {
           if (cat.image) {
             imageUnlink(cat.image);
           }
-          const cats = await ProductCat.find({});
-          return cats || [];
+          // const cats = await ProductCat.find({});
+          // return cats || [];
+          return {
+            message: "productCategory deleted successfully",
+            success: true,
+          };
         }
         throw putError("Category not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.DELETE_ERROR} productCategory `, status: 404 };
       }
     },
+
     addProduct: async (root, args, { id }) => {
+     // console.log(args);
       checkToken(id);
       try {
         const errors = validate("addProduct", args);
@@ -624,8 +741,9 @@ module.exports = {
           //const isSku = await Product.findOne({ sku: args.sku });
           let imgObject = "";
           if (args.feature_image) {
+           // console.log('fimage',args.feature_image);
             imgObject = await imageUpload(
-              args.feature_image[0],
+              args.feature_image[0].file,
               "/assets/images/product/feature/"
             );
 
@@ -634,12 +752,14 @@ module.exports = {
             }
           }
 
+        //  console.log(args.gallery_image);
+
           let imgArray = [];
           if (args.gallery_image) {
             let galleryObject = "";
             for (let i in args.gallery_image) {
               galleryObject = await imageUpload(
-                args.gallery_image[i],
+                args.gallery_image[i].file,
                 "/assets/images/product/gallery/"
               );
 
@@ -687,13 +807,17 @@ module.exports = {
           let combinations = [];
           if (args.variant.length && args.combinations.length) {
             combinations = args.combinations;
+            //console.log('ttt',combinations);
+            
             for (const combination of combinations) {
               combination.product_id = lastProduct.id;
 
               let imgObject = "";
+
               if (combination.image && combination.image.file) {
+               
                 imgObject = await imageUpload(
-                  combination.image.file[0],
+                  combination.image.file[0].file,
                   "/assets/images/product/variant/"
                 );
                 combination.image = imgObject.data || imgObject;
@@ -714,12 +838,13 @@ module.exports = {
 
           let result = await ProductAttributeVariation.insertMany(combinations);
 
-          const products = await Product.find({});
-          return products || [];
+          // const products = await Product.find({});
+          // return products || [];
+          return { message: "products added successfully", success: true };
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.CREATE_ERROR} product`, success: false };
       }
     },
     updateProduct: async (root, args, { id }) => {
@@ -741,7 +866,7 @@ module.exports = {
           let imgObject = "";
           if (args.update_feature_image) {
             imgObject = await imageUpload(
-              args.update_feature_image[0],
+              args.update_feature_image[0].file,
               "/assets/images/product/feature/"
             );
 
@@ -762,7 +887,7 @@ module.exports = {
             let galleryObject = "";
             for (let i in args.update_gallery_image) {
               galleryObject = await imageUpload(
-                args.update_gallery_image[i],
+                args.update_gallery_image[i].file,
                 "/assets/images/product/gallery/"
               );
 
@@ -824,7 +949,7 @@ module.exports = {
                 combination.image.hasOwnProperty("file")
               ) {
                 imgObject = await imageUpload(
-                  combination.image.file[0],
+                  combination.image.file[0].file,
                   "/assets/images/product/variant/"
                 );
                 combination.image = imgObject.data || imgObject;
@@ -849,15 +974,16 @@ module.exports = {
 
           let result = await ProductAttributeVariation.insertMany(combinations);
 
-          const products = await Product.find({});
-          return products || [];
+          // const products = await Product.find({});
+          // return products || [];
+          return { message: "products updated successfully", success: true };
         } else {
           throw putError("Product not exist");
         }
       } catch (error) {
         error = checkError(error);
         console.log("error", error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.UPDATE_ERROR} Product `, success: false };
       }
     },
     deleteProduct: async (root, args, { id }) => {
@@ -889,13 +1015,14 @@ module.exports = {
             }
           }
 
-          const products = await Product.find({});
-          return products || [];
+          // const products = await Product.find({});
+          // return products || [];
+          return { message: "products deleted successfully", success: true };
         }
         throw putError("Product not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.DELETE_ERROR} product`, success: false };
       }
     },
   },

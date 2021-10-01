@@ -1,3 +1,5 @@
+const Messages = require("./messages");
+
 const isEmpty = (value) =>
   value === undefined ||
   value === null ||
@@ -15,7 +17,7 @@ const putError = (value) => {
 module.exports.putError = putError;
 /*-------------------------------------------------------------------------------------------------------*/
 const checkError = (error) => {
-  console.log(error);
+  console.log(error.message);
   if (isEmpty(error.custom_message)) {
     error = {};
     error.custom_message = "something went wrong";
@@ -36,6 +38,8 @@ const checkToken = (token) => {
   }
   return;
 };
+
+
 
 module.exports.checkToken = checkToken;
 /*-------------------------------------------------------------------------------------------------------*/
@@ -168,6 +172,7 @@ const imageUpload = async (upload, uploadPath) => {
       let { filename, mimetype, encoding, createReadStream } = await upload;
 
       const extensions = ["gif", "jpeg", "jpg", "png", "webp", "svg"];
+      
       let ext = filename.split(".");
       ext = ext.pop();
       ext = ext.toLowerCase();
@@ -245,6 +250,7 @@ const imageUpload = async (upload, uploadPath) => {
           });
         });
     } catch (error) {
+    //  console.log(error);
       return resolve({
         success: false,
         message: "This image can't be upload 3",
@@ -351,3 +357,12 @@ const getdate = (format, timezone = "UTC", date) => {
 };
 
 module.exports.getdate = getdate;
+
+const MESSAGE_RESPONSE = (type, item, success) => {
+  return {
+    message: Messages[type].replace(":item", item),
+    success: success,
+  };
+};
+
+module.exports.MESSAGE_RESPONSE = MESSAGE_RESPONSE;

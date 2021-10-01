@@ -1,15 +1,10 @@
 const ProductAttribute = require("../models/ProductAttribute");
 const {
-  isEmpty,
   putError,
   checkError,
-  imageUpload,
-  imageUnlink,
   checkToken,
-  stringTourl,
-  updateUrl,
 } = require("../config/helpers");
-//const validate = require("../validations/brand");
+const Messages = require("../config/messages");
 
 module.exports = {
   Query: {
@@ -54,13 +49,17 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
+      if (!edges.length) {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message:  `${Messages.RETRIEVE_ERROR} productAttribute`, success: true },
+        };
       } else {
         return {
-          meta_data: { totalCount: total, page: pageNumber },
+          pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: { message: "productAttribute List", success: true },
         };
       }
     },
@@ -73,7 +72,7 @@ module.exports = {
         return attribute;
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: error.custom_message, status: 404 };
       }
     },
   },
@@ -95,14 +94,15 @@ module.exports = {
 
         let attr = await newAttribute.save();
 
-        return {
-          id: attr.id,
-          success: true,
-          message: "Added Successfuly",
-        };
+        // return {
+        //   id: attr.id,
+        //   success: true,
+        //   message: "Added Successfuly",
+        // };
+        return { message: " Attribute saved successfully", success: true };
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.CREATE_ERROR} productAttribute`, success: false };
       }
     },
     updateAttribute: async (root, args, { id }) => {
@@ -115,17 +115,18 @@ module.exports = {
           update_attr.name = args.attribute.name;
           update_attr.values = args.attribute.values;
           await update_attr.save();
-          return {
-            id: update_attr.id,
-            success: true,
-            message: "Updated Successfuly",
-          };
+          // return {
+          //   id: update_attr.id,
+          //   success: true,
+          //   message: "Updated Successfuly",
+          // };
+          return { message: "Attribute updated successfully", success: true };
         } else {
-          throw putError("Attribute not exist");
+          return { message: "Attribute not exist", status: 404 };
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.UPDATE_ERROR} ProductAttribute`, success: false };
       }
     },
     deleteAttribute: async (root, args, { id }) => {
@@ -133,16 +134,17 @@ module.exports = {
       try {
         const attribute = await ProductAttribute.findByIdAndRemove(args.id);
         if (attribute) {
-          return {
-            id: attribute.id,
-            success: true,
-            message: "Deleted Successfuly",
-          };
+          // return {
+          //   id: attribute.id,
+          //   success: true,
+          //   message: "Deleted Successfuly",
+          // };
+          return { message: "Attribute deleted successfully", success: true };
         }
         throw putError("Attribute not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.DELETE_ERROR} ProductAttribute`, status: 404 };
       }
     },
   },

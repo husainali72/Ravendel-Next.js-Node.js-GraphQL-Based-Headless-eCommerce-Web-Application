@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 
 const PRODUCT_TILE_DATA = gql`
   fragment ProductTile on Product {
-    id
+    _id
     name
     url
     categoryId {
@@ -89,6 +89,35 @@ const GET_CATEGORY = gql`
   }
 `;
 
+// const ADD_CATEGORY = gql`
+//   mutation(
+//     $name: String
+//     $parentId: ID
+//     $url: String
+//     $description: String
+//     $image: Upload
+//     $meta: customObject
+//   ) {
+//     addProductCategory(
+//       name: $name
+//       parentId: $parentId
+//       url: $url
+//       description: $description
+//       image: $image
+//       meta: $meta
+//     ) {
+//       id
+//       name
+//       parentId
+//       url
+//       description
+//       image
+//       meta
+//       date
+//       updated
+//     }
+//   }
+// `;
 const ADD_CATEGORY = gql`
   mutation(
     $name: String
@@ -106,19 +135,43 @@ const ADD_CATEGORY = gql`
       image: $image
       meta: $meta
     ) {
-      id
-      name
-      parentId
-      url
-      description
-      image
-      meta
-      date
-      updated
+      message
+      success
     }
   }
 `;
 
+// const UPDATE_CATEGORY = gql`
+//   mutation(
+//     $id: ID!
+//     $name: String
+//     $parentId: ID
+//     $url: String
+//     $description: String
+//     $update_image: Upload
+//     $meta: customObject
+//   ) {
+//     updateProductCategory(
+//       id: $id
+//       name: $name
+//       parentId: $parentId
+//       url: $url
+//       description: $description
+//       update_image: $update_image
+//       meta: $meta
+//     ) {
+//       id
+//       name
+//       parentId
+//       url
+//       description
+//       image
+//       meta
+//       date
+//       updated
+//     }
+//   }
+// `;
 const UPDATE_CATEGORY = gql`
   mutation(
     $id: ID!
@@ -138,35 +191,44 @@ const UPDATE_CATEGORY = gql`
       update_image: $update_image
       meta: $meta
     ) {
-      id
-      name
-      parentId
-      url
-      description
-      image
-      meta
-      date
-      updated
+      message
+      success
     }
   }
 `;
 
+// const DELETE_CATEGORY = gql`
+//   mutation($id: ID!) {
+//     deleteProductCategory(id: $id) {
+//       id
+//       name
+//       parentId
+//       url
+//       description
+//       image
+//       meta
+//       date
+//       updated
+//     }
+//   }
+// `;
 const DELETE_CATEGORY = gql`
   mutation($id: ID!) {
     deleteProductCategory(id: $id) {
-      id
-      name
-      parentId
-      url
-      description
-      image
-      meta
-      date
-      updated
+      message
+      success
     }
   }
 `;
 
+// const GET_PRODUCTS = gql`
+//   {
+//     products {
+//       ...ProductTile
+//     }
+//   }
+//   ${PRODUCT_TILE_DATA}
+// `;
 const GET_PRODUCTS = gql`
   {
     products {

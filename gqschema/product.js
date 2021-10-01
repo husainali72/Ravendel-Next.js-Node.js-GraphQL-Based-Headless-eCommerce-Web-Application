@@ -122,19 +122,17 @@ module.exports = gql`
   type productMeta {
     meta(key: String, value: String): metaKeyValueArray
   }
-  type PaginationResponse {
-    totalCount: Int
-    page: Int
-  }
 
   type ProductResponse {
     data: [Product]
-    meta_data: PaginationResponse
+    pagination: paginationInfo
+    message: statusSchema
   }
 
   type CategoriesResponse {
     data: [productCategory]
-    meta_data: PaginationResponse
+    pagination: paginationInfo
+    message: statusSchema
   }
  
   extend type Query {
@@ -176,7 +174,7 @@ module.exports = gql`
       description: String
       image: Upload
       meta: customObject
-    ): [productCategory]
+    ): statusSchema
     updateProductCategory(
       id: ID!
       name: String
@@ -185,8 +183,8 @@ module.exports = gql`
       description: String
       update_image: Upload
       meta: customObject
-    ): [productCategory]
-    deleteProductCategory(id: ID!): [productCategory]
+    ): statusSchema
+    deleteProductCategory(id: ID!): statusSchema
     addTree(name: String, parentname: String): productCategory
     addProduct(
       name: String
@@ -210,7 +208,7 @@ module.exports = gql`
       attribute: [customObject]
       variant: customArray
       combinations: [customObject]
-    ): [Product]
+    ): statusSchema
     updateProduct(
       id: ID
       name: String
@@ -235,7 +233,7 @@ module.exports = gql`
       attribute: [customObject]
       variant: customArray
       combinations: [customObject]
-    ): [Product]
-    deleteProduct(id: ID!): [Product]
+    ): statusSchema
+    deleteProduct(id: ID!): statusSchema
   }
 `;

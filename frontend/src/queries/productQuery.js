@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 const GET_FEATURED_PRODUCTS = gql`
   query {
     featureproducts {
-      id
+      _id
       name
       feature_image
       pricing
@@ -23,7 +23,7 @@ const GET_FEATURED_PRODUCTS = gql`
 const GET_RECENT_PRODUCTS = gql`
   query {
     recentproducts {
-      id
+      _id
       name
       feature_image
       pricing
@@ -43,7 +43,7 @@ const GET_RECENT_PRODUCTS = gql`
 const ON_SALE_PRODUCTS = gql`
   query {
     onSaleProducts {
-      id
+      _id
       name
       feature_image
       pricing
@@ -63,7 +63,7 @@ const ON_SALE_PRODUCTS = gql`
 const GET_PRODUCTS_CATID = gql`
   query($id: ID!) {
     productsbycatid(cat_id: $id) {
-      id
+      _id
       name
       feature_image
       pricing
@@ -82,7 +82,7 @@ const GET_PRODUCTS_CATID = gql`
 
 const PRODUCT_TILE_DATA = gql`
   fragment ProductTile on Product {
-    id
+    _id
     name
     url
     pricing

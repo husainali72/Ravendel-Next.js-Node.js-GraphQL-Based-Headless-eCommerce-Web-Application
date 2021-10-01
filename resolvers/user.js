@@ -10,6 +10,30 @@ const {
 const validate = require("../validations/user");
 const bcrypt = require("bcryptjs");
 
+const fs = require("fs");
+
+var udir = './assets/images/user';
+var ldir = './assets/images/user/large';
+var mdir = './assets/images/user/medium';
+var tdir = './assets/images/user/thumbnail';
+var odir = './assets/images/user/original';
+
+if (!fs.existsSync(udir)){
+  fs.mkdirSync(udir);
+}
+if (!fs.existsSync(ldir)){
+  fs.mkdirSync(ldir);
+}
+if (!fs.existsSync(mdir)){
+  fs.mkdirSync(mdir);
+}
+if (!fs.existsSync(odir)){
+  fs.mkdirSync(odir);
+}
+if (!fs.existsSync(tdir)){
+  fs.mkdirSync(tdir);
+}
+
 module.exports = {
   Query: {
     users: async (root, args) => {
@@ -18,7 +42,7 @@ module.exports = {
         return users || [];
       } catch (error) {
         throw new Error("Something went wrong.");
-      }
+      }n
     },
 
     // get all users with pagination.....................
@@ -62,13 +86,17 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
+      if(!edges.length){
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: {message: `${errorRES.RETRIEVE_ERROR} Users`, status: 200}
+        };
       } else {
         return {
           pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: {message: 'Page List', status: 200}
         };
       }
     },
@@ -134,7 +162,9 @@ module.exports = {
         } else {
           let imgObject = "";
           if (args.image) {
-            imgObject = await imageUpload(args.image, "/assets/images/user/");
+            console.log(args.image);
+
+            imgObject = await imageUpload(args.image.file, "/assets/images/user/");
             if (imgObject.success === false) {
               throw putError(imgObject.message);
             }
@@ -150,15 +180,18 @@ module.exports = {
           newUser.password = await bcrypt.hash(args.password, 10);
           const user = await newUser.save();
           //return user;
-          return await User.find({});
+         // return await User.find({});
+         return  {message: 'user saved successfully', status: 200}
         }
       } catch (error) {
         console.log(error);
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: `${errorRES.CREATE_ERROR} Users`, status: 400}
       }
     },
     updateUser: async (root, args, { id }) => {
+
+      //console.log(args);
       checkToken(id);
       try {
         const user = await User.findById({ _id: args.id });
@@ -174,8 +207,9 @@ module.exports = {
           }
 
           if (args.updatedImage) {
+           // console.log(args.updatedImage);
             let imgObject = await imageUpload(
-              args.updatedImage,
+              args.updatedImage.file,
               "/assets/images/user/"
             );
 
@@ -184,6 +218,8 @@ module.exports = {
             } else {
               imageUnlink(user.image);
               user.image = imgObject.data;
+
+
             }
           }
 
@@ -211,13 +247,14 @@ module.exports = {
           }
 
           await user.save();
-          return await User.find({});
+         // return await User.find({});
+         return  {message: 'user update successfully', status: 200}
         } else {
           throw putError("User not exist");
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message:`${errorRES.UPDATE_ERROR} User`, status: 400}
       }
     },
     deleteUser: async (root, args, { id }) => {
@@ -227,13 +264,14 @@ module.exports = {
         if (user) {
           //return true;
           imageUnlink(user.image);
-          const users = await User.find({});
-          return users || [];
+          // const users = await User.find({});
+          // return users || [];
+          return  {message: 'user deleted successfully', status: 200}
         }
         throw putError("User not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: `${errorRES.DELETE_ERROR} User`, status: 400}
       }
     },
   },
