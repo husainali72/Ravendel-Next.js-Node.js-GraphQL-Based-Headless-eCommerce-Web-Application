@@ -111,7 +111,7 @@ module.exports = {
         author: user.id,
       };
       let path = "/assets/images/blog/feature/";
-      return await CREATE_FUNC(user.id, "Blog", Blog, data, "addBlog", path);
+      return await CREATE_FUNC(user.id, "Blog", Blog, data, "addBlog", path.args);
     },
     updateBlog: async (root, args, { id }) => {
       let path = "/assets/images/blog/feature/";
@@ -133,7 +133,8 @@ module.exports = {
         Blog,
         "Blog",
         data,
-        path
+        path,
+        args
       );
     },
 
