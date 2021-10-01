@@ -67,12 +67,10 @@ export const customerAddAction = object => dispatch => {
   });
   mutation(ADD_CUSTOMER, object)
     .then(response => {
-      if (response) {
-        dispatch({
-          type: CUSTOMERS_SUCCESS,
-          payload: response.data.addCustomer
-        });
-
+      dispatch({
+        type: CUSTOMER_FAIL,
+      });
+      if (response.data.addCustomer.success) {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -81,6 +79,12 @@ export const customerAddAction = object => dispatch => {
             error: false
           }
         });
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.addCustomer.message, error: true }
+        });
+
       }
     })
     .catch(error => {
@@ -100,11 +104,10 @@ export const addressbookAddAction = object => dispatch => {
   });
   mutation(ADD_ADDRESSBOOK, object)
     .then(response => {
-      if (response) {
-        dispatch({
-          type: CUSTOMERS_SUCCESS,
-          payload: response.data.addAddressBook
-        });
+      dispatch({
+        type: CUSTOMER_FAIL
+      });
+      if (response.data.addAddressBook.success) {
 
         return dispatch({
           type: ALERT_SUCCESS,
@@ -114,6 +117,12 @@ export const addressbookAddAction = object => dispatch => {
             error: false
           }
         });
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.addAddressBook.message, error: true }
+        });
+
       }
     })
     .catch(error => {
@@ -133,7 +142,10 @@ export const customerUpdateAction = object => dispatch => {
   });
   mutation(UPDATE_CUSTOMER, object)
     .then(response => {
-      if (response) {
+      dispatch({
+        type: CUSTOMER_FAIL
+      });
+      if (response.data.updateCustomer.success) {
         dispatch({
           type: CUSTOMERS_SUCCESS,
           payload: response.data.updateCustomer
@@ -149,6 +161,12 @@ export const customerUpdateAction = object => dispatch => {
         });
 
         return;
+      }else{
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.updateCustomer.message, error: true }
+        });
+
       }
     })
     .catch(error => {
@@ -168,11 +186,10 @@ export const addressbookUpdateAction = object => dispatch => {
   });
   mutation(UPDATE_ADDRESSBOOK, object)
     .then(response => {
-      if (response) {
-        dispatch({
-          type: CUSTOMERS_SUCCESS,
-          payload: response.data.updateAddressBook
-        });
+      dispatch({
+        type: CUSTOMER_FAIL
+      });
+      if (response.data.updateAddressBook.success) {
 
         dispatch({
           type: ALERT_SUCCESS,
@@ -184,6 +201,12 @@ export const addressbookUpdateAction = object => dispatch => {
         });
 
         return;
+      }else {
+
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.updateAddressBook.message, error: true }
+        });
       }
     })
     .catch(error => {
@@ -203,11 +226,13 @@ export const customerDeleteAction = id => dispatch => {
   });
   mutation(DELETE_CUSTOMER, { id })
     .then(response => {
-      if (response) {
-        dispatch({
-          type: CUSTOMERS_SUCCESS,
-          payload: response.data.deleteCustomer
-        });
+      dispatch({
+        type: CUSTOMER_FAIL
+      });
+      if (response.data.deleteCustomer.success) {
+
+        dispatch(customersAction());
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -216,6 +241,12 @@ export const customerDeleteAction = id => dispatch => {
             error: false
           }
         });
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.deleteCustomer.message, error: true }
+        });
+
       }
     })
     .catch(error => {
@@ -235,11 +266,10 @@ export const addressbookDeleteAction = object => dispatch => {
   });
   mutation(DELETE_ADDRESSBOOK, object)
     .then(response => {
-      if (response) {
-        dispatch({
-          type: CUSTOMERS_SUCCESS,
-          payload: response.data.deleteAddressBook
-        });
+      dispatch({
+        type: CUSTOMER_FAIL
+      });
+      if (response.data.deleteAddressBook.success) {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -248,6 +278,12 @@ export const addressbookDeleteAction = object => dispatch => {
             error: false
           }
         });
+      }else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.deleteAddressBook.message, error: true }
+        });
+
       }
     })
     .catch(error => {

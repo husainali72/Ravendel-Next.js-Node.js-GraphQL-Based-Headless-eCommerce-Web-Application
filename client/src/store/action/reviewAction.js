@@ -64,12 +64,11 @@ export const reviewAddAction = object => dispatch => {
   });
   mutation(ADD_REVIEW, object)
     .then(response => {
-      if (response) {
+      if (response.data.addReview.success) {
         dispatch({
-          type: REVIEWS_SUCCESS,
-          payload: response.data.addReview
+          type: REVIEW_FAIL,
         });
-
+        
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -78,6 +77,16 @@ export const reviewAddAction = object => dispatch => {
             error: false
           }
         });
+      }else {
+        dispatch({
+          type: REVIEW_FAIL,
+        });
+
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.addReview.message, error: true }
+        });
+
       }
     })
     .catch(error => {
@@ -97,10 +106,9 @@ export const reviewUpdateAction = object => dispatch => {
   });
   mutation(UPDATE_REVIEW, object)
     .then(response => {
-      if (response) {
+      if (response.data.updateReview.success) {
         dispatch({
-          type: REVIEWS_SUCCESS,
-          payload: response.data.updateReview
+          type: REVIEW_FAIL,
         });
         dispatch({
           type: ALERT_SUCCESS,
@@ -112,6 +120,15 @@ export const reviewUpdateAction = object => dispatch => {
         });
 
         return;
+      }else{ 
+        dispatch({
+          type: REVIEW_FAIL,
+        });
+        
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.updateReview.message, error: true }
+        });
       }
     })
     .catch(error => {
@@ -131,11 +148,13 @@ export const reviewDeleteAction = id => dispatch => {
   });
   mutation(DELETE_REVIEW, { id })
     .then(response => {
-      if (response) {
+      if (response.data.deleteReview.success) {
         dispatch({
-          type: REVIEWS_SUCCESS,
-          payload: response.data.deleteReview
+          type: REVIEW_FAIL,
         });
+
+        dispatch(reviewsAction());
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -143,6 +162,15 @@ export const reviewDeleteAction = id => dispatch => {
             message: "Review deleted successfully",
             error: false
           }
+        });
+      }else {
+        dispatch({
+          type: REVIEW_FAIL,
+        });
+        
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.deleteReview.message, error: true }
         });
       }
     })

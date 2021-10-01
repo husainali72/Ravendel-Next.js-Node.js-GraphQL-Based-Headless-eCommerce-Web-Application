@@ -7,7 +7,8 @@ import {
   TINYMCE_NULL,
   BLOGTAG_LOADING,
   BLOGTAGS_SUCCESS,
-  BLOGTAG_FAIL
+  BLOGTAG_FAIL,
+  BLOGS_UPDATE_SUCCESS
 } from "../action/blogAction";
 
 const initialState = {
@@ -33,6 +34,12 @@ export default (state = initialState, action) => {
         loading: false,
         success: true
       };
+      case BLOGS_UPDATE_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          success: true
+        };
     case BLOG_SUCCESS:
       return {
         ...state,

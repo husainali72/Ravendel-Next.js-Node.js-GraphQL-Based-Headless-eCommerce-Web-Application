@@ -9,6 +9,7 @@ const {
 } = require("../config/helpers");
 const validate = require("../validations/user");
 const bcrypt = require("bcryptjs");
+
 const fs = require("fs");
 
 var udir = './assets/images/user';
@@ -41,7 +42,7 @@ module.exports = {
         return users || [];
       } catch (error) {
         throw new Error("Something went wrong.");
-      }
+      }n
     },
 
     // get all users with pagination.....................
@@ -85,13 +86,17 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
+      if(!edges.length){
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: {message: `${errorRES.RETRIEVE_ERROR} Users`, status: 200}
+        };
       } else {
         return {
           pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: {message: 'Page List', status: 200}
         };
       }
     },
@@ -175,12 +180,13 @@ module.exports = {
           newUser.password = await bcrypt.hash(args.password, 10);
           const user = await newUser.save();
           //return user;
-          return await User.find({});
+         // return await User.find({});
+         return  {message: 'user saved successfully', status: 200}
         }
       } catch (error) {
         console.log(error);
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: `${errorRES.CREATE_ERROR} Users`, status: 400}
       }
     },
     updateUser: async (root, args, { id }) => {
@@ -241,13 +247,14 @@ module.exports = {
           }
 
           await user.save();
-          return await User.find({});
+         // return await User.find({});
+         return  {message: 'user update successfully', status: 200}
         } else {
           throw putError("User not exist");
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message:`${errorRES.UPDATE_ERROR} User`, status: 400}
       }
     },
     deleteUser: async (root, args, { id }) => {
@@ -257,13 +264,14 @@ module.exports = {
         if (user) {
           //return true;
           imageUnlink(user.image);
-          const users = await User.find({});
-          return users || [];
+          // const users = await User.find({});
+          // return users || [];
+          return  {message: 'user deleted successfully', status: 200}
         }
         throw putError("User not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return  {message: `${errorRES.DELETE_ERROR} User`, status: 400}
       }
     },
   },

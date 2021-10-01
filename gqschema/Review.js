@@ -12,14 +12,11 @@ module.exports = gql`
     date: Date
     updated: Date
   }
-  type PageInfo {
-    totalCount: Int
-    page: Int
-  }
 
   type reviewsResponse {
     data: [Review]
-    meta_data: PageInfo
+    pagination: paginationInfo
+    message: statusSchema
   }
 
   extend type Query {
@@ -44,7 +41,7 @@ module.exports = gql`
       review: String
       rating: String
       status: String
-    ): [Review]
+    ): statusSchema
     updateReview(
       id: ID!
       title: String
@@ -54,8 +51,8 @@ module.exports = gql`
       review: String
       rating: String
       status: String
-    ): [Review]
-    deleteReview(id: ID!): [Review]
+    ): statusSchema
+    deleteReview(id: ID!): statusSchema
   }
   
 `;

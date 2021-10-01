@@ -6,11 +6,285 @@ const {
   imageUpload,
   imageUnlink,
   checkToken,
+  updateUrl,
+} = require("../config/helpers");
+const validate = require("../validations/brand");
+const Messages = require("../config/messages");
+
+module.exports = {
+  Query: {
+    brands: async (root, args) => {
+      try {
+        const brands = await Brand.find({});
+        return {
+          message: {
+            message: Messages.RESULT_FOUND.replace(":item", "Brands"),
+            success: true,
+          },
+          data: brands,
+        };
+      } catch (error) {
+        return {
+          message: {
+            message: Messages.RETRIEVE_ERROR.replace(":item", "Brands"),
+            success: false,
+          },
+        };
+      }
+    },
+
+    // get all brands with pagination.......................
+
+    brands_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var sort = orderBy ? orderBy : "_id";
+      var sortDirection = order === "DESC" ? -1 : 1;
+      const [
+        {
+          total: [total = 0],
+          edges,
+        },
+      ] = await Brand.aggregate([
+        {
+          $match: { name: { $regex: search, $options: "i" } },
+        },
+        {
+          $facet: {
+            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
+            edges: [
+              { $sort: { [sort]: sortDirection } },
+              { $skip: limit * (pageNumber - 1) },
+              { $limit: limit },
+            ],
+          },
+        },
+        {
+          $project: {
+            total: "$total.count",
+            edges: "$edges",
+          },
+        },
+      ]);
+      if (!edges.length) {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: {
+            message: Messages.RETRIEVE_ERROR.replace(":item", "Brand"),
+            success: false,
+          },
+        };
+      } else {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: {
+            message: Messages.RESULT_FOUND.replace(":item", "Brand"),
+            success: true,
+          },
+        };
+      }
+    },
+    brand: async (root, args) => {
+      if (!args.id) {
+        return {
+          message: {
+            message: Messages.ID_ERROR.replace(":item", "Brand"),
+            success: false,
+          },
+        };
+      }
+      try {
+        const brand = await Brand.findById(args.id);
+        if (!brand) {
+          return {
+            message: {
+              message: Messages.NOT_EXIST.replace(":item", "Brand"),
+              success: false,
+            },
+          };
+        }return {
+          message: {
+            message: Messages.RESULT_FOUND.replace(":item", "Brand"),
+            success: true,
+          },
+          data: brand,
+        };
+      } catch (error) {
+        error = checkError(error);
+        return {
+          message: {
+            message: Messages.RETRIEVE_ERROR.replace(":item", "Brand"),
+            success: false,
+          },
+        };
+      }
+    },
+  },
+  Mutation: {
+    addBrand: async (root, args, { id }) => {
+      if (!id) {
+        return {
+          message: Messages.TOKEN_REQ.replace(":item", "Brand"),
+          success: false,
+        };
+      }
+      checkToken(id);
+      try {
+        const errors = validate("addBrand", args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        const brands = await Brand.find({});
+        let brandList = brands.map((brand) => brand.name);
+
+        let addBrands = [];
+        for (let i in args.brands) {
+          if (
+            !isEmpty(args.brands[i].name) &&
+            !~brandList.indexOf(args.brands[i].name)
+          ) {
+            args.brands[i].url = await updateUrl(args.brands[i].name, "Brand");
+            args.brands[i].meta = { title: "", description: "", keywords: "" };
+            addBrands.push(args.brands[i]);
+          }
+        }
+        await Brand.insertMany(addBrands);
+        return {
+          message: Messages.AddSuccess.replace(":item", "Brand"),
+          success: true,
+        };
+      } catch (error) {
+        error = checkError(error);
+        return {
+          message: Messages.CREATE_ERROR.replace(":item", "Brand"),
+          success: false,
+        };
+      }
+    },
+    updateBrand: async (root, args, { id }) => {
+      if (!id) {
+        return {
+          message: Messages.TOKEN_REQ.replace(":item", "Brand"),
+          success: false,
+        };
+      }
+      checkToken(id);
+      try {
+        const errors = validate("updateBrand", args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        if (!args.id) {
+          return {
+            message: Messages.ID_ERROR.replace(":item", "Brand"),
+            success: false,
+          };
+        }
+        const brand = await Brand.findById({ _id: args.id });
+        if (brand) {
+          if (args.updated_brand_logo) {
+            let imgObject = await imageUpload(
+              args.updated_brand_logo,
+              "/assets/images/brand/"
+            );
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            } else {
+              imageUnlink(brand.brand_logo);
+              brand.brand_logo = imgObject.data;
+            }
+          }
+
+          let url = await updateUrl(args.url, "Brand");
+
+          brand.name = args.name;
+          brand.url = url;
+          brand.meta = args.meta;
+          brand.updated = Date.now();
+
+          await brand.save();
+          return {
+            message: Messages.UpdateSuccess.replace(":item", "Brand"),
+            success: true,
+          };
+        }
+        return {
+          message: Messages.NOT_EXIST.replace(":item", "Brand"),
+          success: false,
+        };
+      } catch (error) {
+        error = checkError(error);
+        return {
+          message: Messages.UPDATE_ERROR.replace(":item", "Brand"),
+          success: false,
+        };
+      }
+    },
+    deleteBrand: async (root, args, { id }) => {
+      if (!id) {
+        return {
+          message: Messages.TOKEN_REQ.replace(":item", "Brand"),
+          success: false,
+        };
+      }
+      checkToken(id);
+      if (!args.id) {
+        return {
+          message: Messages.ID_ERROR.replace(":item", "Brand"),
+          success: false,
+        };
+      }
+      try {
+        const brand = await Brand.findByIdAndRemove(args.id);
+        if (brand) {
+          if (brand.brand_logo) {
+            imageUnlink(brand.brand_logo);
+          }
+          return {
+            message: Messages.DELETE.replace(":item", "Brand"),
+            success: true,
+          };
+        }
+        return {
+          message: Messages.NOT_EXIST.replace(":item", "Brand"),
+          success: false,
+        };
+      } catch (error) {
+        error = checkError(error);
+        return {
+          message: Messages.DELETE_ERROR.replace(":item", "Brand"),
+          success: false,
+        };
+      }
+    },
+  },
+};
+
+/**
+ * const Brand = require("../models/Brand");
+const {
+  isEmpty,
+  putError,
+  checkError,
+  imageUpload,
+  imageUnlink,
+  checkToken,
   stringTourl,
   updateUrl,
 } = require("../config/helpers");
 const validate = require("../validations/brand");
 const slugify = require("slugify");
+const Messages = require("../error");
+
 
 module.exports = {
   Query: {
@@ -58,14 +332,19 @@ module.exports = {
           },
         },
       ]);
-
-      if (!edges) {
-        throw putError("Brands not fetched");
+      if (!edges.length) {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: `${Messages.RETRIEVE_ERROR} Brands`, status: 200 },
+        };
+      } else {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: "Brands list fetched", status: 200 },
+        };
       }
-      return {
-        meta_data: { totalCount: total, page: pageNumber },
-        data: edges,
-      };
     },
     brand: async (root, args) => {
       try {
@@ -106,10 +385,11 @@ module.exports = {
         }
 
         await Brand.insertMany(addBrands);
-        return await Brand.find({});
+        //return await Brand.find({});
+        return { message: "Brand saved successfully", status: 200 };
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.CREATE_ERROR} Brands`, status: 400 };
       }
     },
     updateBrand: async (root, args, { id }) => {
@@ -144,13 +424,14 @@ module.exports = {
           brand.updated = Date.now();
 
           await brand.save();
-          return await Brand.find({});
+          // return await Brand.find({});
+          return { message: "Brand updated successfully", status: 200 };
         } else {
-          throw putError("Brand not exist");
+          return { message: "Brand not exist", status: 404 };
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.UPDATE_ERROR} Brands`, status: 400 };
       }
     },
     deleteBrand: async (root, args, { id }) => {
@@ -162,14 +443,17 @@ module.exports = {
           if (brand.brand_logo) {
             imageUnlink(brand.brand_logo);
           }
-          const brands = await Brand.find({});
-          return brands || [];
+          // const brands = await Brand.find({});
+          // return brands || [];
+          return { message: "Brand deleted successfully", status: 200 };
         }
         throw putError("Brand not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.DELETE_ERROR} Brands`, status: 404 };
       }
     },
   },
 };
+
+ */

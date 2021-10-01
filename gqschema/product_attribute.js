@@ -32,13 +32,11 @@ module.exports = gql`
     name: String
     values: [customObject]
   }
-  type pagination {
-    totalCount: Int
-    page: Int
-  }
+  
   type productAttributeResponse {
     data: [productAttribute]
-    meta_data: pagination
+    pagination: paginationInfo
+    message: statusSchema
   }
 
   extend type Query {
@@ -54,8 +52,8 @@ module.exports = gql`
   }
 
   extend type Mutation {
-    addAttribute(attribute: AttributeInput): attributeResponse
-    updateAttribute(attribute: AttributeInput): attributeResponse
-    deleteAttribute(id: ID!): attributeResponse
+    addAttribute(attribute: AttributeInput): statusSchema
+    updateAttribute(attribute: AttributeInput): statusSchema
+    deleteAttribute(id: ID!): statusSchema
   }
 `;

@@ -1,10 +1,8 @@
 const ProductCat = require("../models/ProductCat");
-const CatTree = require("../models/CatTree");
 const Product = require("../models/Product");
 const Brand = require("../models/Brand");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const ProductAttribute = require("../models/ProductAttribute");
-const { errorName } = require("../constant/status");
 const {
   isEmpty,
   putError,
@@ -18,6 +16,7 @@ const {
 } = require("../config/helpers");
 const validate = require("../validations/product");
 var mongoose = require("mongoose");
+const Messages = require("../config/messages");
 
 const fs = require("fs");
 var pdir = './assets/images/product';
@@ -175,14 +174,17 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
-      } else {
-        // return { totalCount: total, productCategories: edges, page: pageNumber };
+      if (!edges.length) {
         return {
-          meta_data: { totalCount: total, page: pageNumber },
+          pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: { message: `${Messages.RETRIEVE_ERROR} productCategories`, success: true },
+        };
+      } else {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: "productCategories list fetched", success: true },
         };
       }
     },
@@ -217,7 +219,7 @@ module.exports = {
       }
     },
 
-    /// get all products by pagination ........................................
+    /// get all products by pagination ........................................,
 
     products_pagination: async (
       root,
@@ -250,13 +252,17 @@ module.exports = {
           },
         },
       ]);
-
-      if (edges == null) {
-        return new Error(errorName.NOT_FOUND);
+      if (!edges.length) {
+        return {
+          pagination: { totalCount: total, page: pageNumber },
+          data: edges,
+          message: { message: `${Messages.RETRIEVE_ERROR} product`, success: true },
+        };
       } else {
         return {
-          meta_data: { totalCount: total, page: pageNumber },
+          pagination: { totalCount: total, page: pageNumber },
           data: edges,
+          message: { message: "products list fetched", success: true },
         };
       }
     },
@@ -643,11 +649,12 @@ module.exports = {
           });
 
           await newCat.save();
-          return await ProductCat.find({});
+          return { message: "productCategory saved successfully", success: true };
+          // return await ProductCat.find({});
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.CREATE_ERROR} ProductCategory`, success: false };
       }
     },
     updateProductCategory: async (root, args, { id }) => {
@@ -682,15 +689,20 @@ module.exports = {
           cat.updated = Date.now();
 
           await cat.save();
-          return await ProductCat.find({});
+          //return await ProductCat.find({});
+          return {
+            message: "productCategory update successfully",
+            success: true,
+          };
         } else {
           throw putError("Category not exist");
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.UPDATE_ERROR} productCategory`, success: false };
       }
     },
+
     deleteProductCategory: async (root, args, { id }) => {
       checkToken(id);
       try {
@@ -699,15 +711,20 @@ module.exports = {
           if (cat.image) {
             imageUnlink(cat.image);
           }
-          const cats = await ProductCat.find({});
-          return cats || [];
+          // const cats = await ProductCat.find({});
+          // return cats || [];
+          return {
+            message: "productCategory deleted successfully",
+            success: true,
+          };
         }
         throw putError("Category not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.DELETE_ERROR} productCategory `, status: 404 };
       }
     },
+
     addProduct: async (root, args, { id }) => {
      // console.log(args);
       checkToken(id);
@@ -821,12 +838,13 @@ module.exports = {
 
           let result = await ProductAttributeVariation.insertMany(combinations);
 
-          const products = await Product.find({});
-          return products || [];
+          // const products = await Product.find({});
+          // return products || [];
+          return { message: "products added successfully", success: true };
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.CREATE_ERROR} product`, success: false };
       }
     },
     updateProduct: async (root, args, { id }) => {
@@ -956,15 +974,16 @@ module.exports = {
 
           let result = await ProductAttributeVariation.insertMany(combinations);
 
-          const products = await Product.find({});
-          return products || [];
+          // const products = await Product.find({});
+          // return products || [];
+          return { message: "products updated successfully", success: true };
         } else {
           throw putError("Product not exist");
         }
       } catch (error) {
         error = checkError(error);
         console.log("error", error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.UPDATE_ERROR} Product `, success: false };
       }
     },
     deleteProduct: async (root, args, { id }) => {
@@ -996,13 +1015,14 @@ module.exports = {
             }
           }
 
-          const products = await Product.find({});
-          return products || [];
+          // const products = await Product.find({});
+          // return products || [];
+          return { message: "products deleted successfully", success: true };
         }
         throw putError("Product not exist");
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return { message: `${Messages.DELETE_ERROR} product`, success: false };
       }
     },
   },

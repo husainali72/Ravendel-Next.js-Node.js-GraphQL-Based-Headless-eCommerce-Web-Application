@@ -16,10 +16,18 @@ export const pagesAction = () => (dispatch) => {
   });
   query(GET_PAGES)
     .then((response) => {
-      if (response) {
+      if (response.data.pages.message.success) {
         return dispatch({
           type: PAGES_SUCCESS,
-          payload: response.data.pages,
+          payload: response.data.pages.data,
+        });
+      }else {
+        dispatch({
+          type: PAGE_FAIL,
+        });
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.pages.message.message, error: true },
         });
       }
     })
@@ -40,11 +48,20 @@ export const pageAction = (id) => (dispatch) => {
   });
   query(GET_PAGE, { id: id })
     .then((response) => {
-      if (response) {
+      if (response.data.page.data) {
         return dispatch({
           type: PAGE_SUCCESS,
-          payload: response.data.page,
+          payload: response.data.page.data,
         });
+      }else {
+        dispatch({
+          type: PAGE_FAIL,
+        });
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.page.message.message, error: true },
+        });
+        
       }
     })
     .catch((error) => {
@@ -64,10 +81,9 @@ export const pageAddAction = (object) => (dispatch) => {
   });
   mutation(ADD_PAGE, object)
     .then((response) => {
-      if (response) {
+      if (response.data.addPage.success) {
         dispatch({
-          type: PAGES_SUCCESS,
-          payload: response.data.addPage,
+          type: PAGE_FAIL,
         });
 
         dispatch({
@@ -82,6 +98,14 @@ export const pageAddAction = (object) => (dispatch) => {
             message: "Page added successfully",
             error: false,
           },
+        });
+      }else{
+        dispatch({
+          type: PAGE_FAIL,
+        });
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.addPage.message, error: true },
         });
       }
     })
@@ -102,10 +126,9 @@ export const pageUpdateAction = (object) => (dispatch) => {
   });
   mutation(UPDATE_PAGE, object)
     .then((response) => {
-      if (response) {
+      if (response.data.updatePage.success) {
         dispatch({
-          type: PAGES_SUCCESS,
-          payload: response.data.updatePage,
+          type: PAGE_FAIL,
         });
 
         dispatch({
@@ -114,6 +137,8 @@ export const pageUpdateAction = (object) => (dispatch) => {
         });
 
         jumpTo(`${client_app_route_url}all-pages`);
+
+        dispatch(pagesAction());
 
         dispatch({
           type: ALERT_SUCCESS,
@@ -125,6 +150,14 @@ export const pageUpdateAction = (object) => (dispatch) => {
         });
 
         return;
+      }else {
+        dispatch({
+          type: PAGE_FAIL,
+        });
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.updatePage.message, error: true },
+        });
       }
     })
     .catch((error) => {
@@ -148,11 +181,13 @@ export const pageDeleteAction = (id) => (dispatch) => {
   });
   mutation(DELETE_PAGE, { id })
     .then((response) => {
-      if (response) {
+      if (response.data.deletePage.success) {
         dispatch({
-          type: PAGES_SUCCESS,
-          payload: response.data.deletePage,
+          type: PAGE_FAIL,
         });
+
+        dispatch(pagesAction());
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -160,6 +195,14 @@ export const pageDeleteAction = (id) => (dispatch) => {
             message: "Page deleted successfully",
             error: false,
           },
+        });
+      }else{
+        dispatch({
+          type: PAGE_FAIL,
+        });
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: response.data.deletePage.message, error: true },
         });
       }
     })
