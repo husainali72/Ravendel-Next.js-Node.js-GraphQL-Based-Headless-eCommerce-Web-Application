@@ -35,6 +35,14 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
+  type Customers_response {
+    data: [Customer]
+    message: statusSchema
+  }
+  type Customer_By_Id {
+    data: Customer
+    message: statusSchema
+  }
   extend type Query {
     customers_pagination(
       limit: Int
@@ -43,8 +51,8 @@ module.exports = gql`
       orderBy: String
       order: String
     ): customersResponse
-    customers: [Customer]
-    customer(id: ID!): Customer
+    customers:  Customers_response
+    customer(id: ID!): Customer_By_Id
   }
 
   extend type Mutation {
