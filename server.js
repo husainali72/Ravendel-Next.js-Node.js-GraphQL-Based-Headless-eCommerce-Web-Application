@@ -8,6 +8,9 @@ const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
 const vhost = require("vhost");
+const {
+  graphqlUploadExpress, // A Koa implementation is also exported.
+} = require('graphql-upload');
 
 //connect db
 connectDB();
@@ -23,13 +26,22 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context,
-  uploads: {
-    // https://github.com/jaydenseric/graphql-upload#type-uploadoptions
-    maxFileSize: 5000000, // 5 MB
-    maxFiles: 20,
-  },
-
+  uploads:false
 });
+
+// const server = new ApolloServer({
+//   typeDefs,
+//   resolvers,
+//   context,
+//   uploads: {
+//     // https://github.com/jaydenseric/graphql-upload#type-uploadoptions
+//     maxFileSize: 5000000, // 5 MB
+//     maxFiles: 20,
+//   },
+
+// });
+
+app.use(graphqlUploadExpress({ maxFileSize: 1000000000, maxFiles: 10 }));
 server.applyMiddleware({ app, path: "/graphql" });
 
 // Init Middleware
@@ -37,6 +49,7 @@ app.use(express.json({ extended: false }));
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
+app.use("/api/customers", require("./routes/api/customers"));
 app.use("/assets", express.static(__dirname + "/assets"));
 
 

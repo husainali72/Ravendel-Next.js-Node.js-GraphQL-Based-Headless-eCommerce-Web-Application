@@ -189,7 +189,37 @@ const {
 const validate = require("../validations/blog");
 const errorRES = require("../error");
 
-module.exports = { 
+const fs = require("fs");
+var bdir = './assets/images/blog';
+var bfdir = './assets/images/blog/feature';
+
+if (!fs.existsSync(bdir)){
+  fs.mkdirSync(bdir);
+}
+if (!fs.existsSync(bfdir)){
+  fs.mkdirSync(bfdir);
+}
+
+var bfldir = './assets/images/blog/feature/large';
+var bfmdir = './assets/images/blog/feature/medium';
+var bftdir = './assets/images/blog/feature/thumbnail';
+var bfodir = './assets/images/blog/feature/original';
+
+if (!fs.existsSync(bfldir)){
+  fs.mkdirSync(bfldir);
+}
+if (!fs.existsSync(bfmdir)){
+  fs.mkdirSync(bfmdir);
+}
+if (!fs.existsSync(bftdir)){
+  fs.mkdirSync(bftdir);
+}
+if (!fs.existsSync(bfodir)){
+  fs.mkdirSync(bfodir);
+}
+
+
+module.exports = {
   Query: {
     blogs: async (root, args) => {
       try {

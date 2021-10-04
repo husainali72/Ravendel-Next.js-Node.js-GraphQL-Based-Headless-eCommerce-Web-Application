@@ -10,7 +10,29 @@ const {
 const validate = require("../validations/user");
 const bcrypt = require("bcryptjs");
 
+const fs = require("fs");
 
+var udir = './assets/images/user';
+var ldir = './assets/images/user/large';
+var mdir = './assets/images/user/medium';
+var tdir = './assets/images/user/thumbnail';
+var odir = './assets/images/user/original';
+
+if (!fs.existsSync(udir)){
+  fs.mkdirSync(udir);
+}
+if (!fs.existsSync(ldir)){
+  fs.mkdirSync(ldir);
+}
+if (!fs.existsSync(mdir)){
+  fs.mkdirSync(mdir);
+}
+if (!fs.existsSync(odir)){
+  fs.mkdirSync(odir);
+}
+if (!fs.existsSync(tdir)){
+  fs.mkdirSync(tdir);
+}
 
 module.exports = {
   Query: {
@@ -140,7 +162,9 @@ module.exports = {
         } else {
           let imgObject = "";
           if (args.image) {
-            imgObject = await imageUpload(args.image, "/assets/images/user/");
+            console.log(args.image);
+
+            imgObject = await imageUpload(args.image.file, "/assets/images/user/");
             if (imgObject.success === false) {
               throw putError(imgObject.message);
             }
@@ -166,6 +190,8 @@ module.exports = {
       }
     },
     updateUser: async (root, args, { id }) => {
+
+      //console.log(args);
       checkToken(id);
       try {
         const user = await User.findById({ _id: args.id });
@@ -181,8 +207,9 @@ module.exports = {
           }
 
           if (args.updatedImage) {
+           // console.log(args.updatedImage);
             let imgObject = await imageUpload(
-              args.updatedImage,
+              args.updatedImage.file,
               "/assets/images/user/"
             );
 
@@ -191,6 +218,8 @@ module.exports = {
             } else {
               imageUnlink(user.image);
               user.image = imgObject.data;
+
+
             }
           }
 
