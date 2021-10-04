@@ -111,10 +111,15 @@ export const blogAddAction = (object) => (dispatch) => {
           },
         });
       }else {
+        dispatch({
+          type: BLOG_FAIL,
+        });
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.addBlog.error, error: true },
+          // payload: { boolean: true, message: response.data.addBlog.error, error: true },
+          payload: { boolean: true, message: response.data.addBlog.message || 'Something went wrong', error: true },
         });
+        
       }
     })
     .catch((error) => {

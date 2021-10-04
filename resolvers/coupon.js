@@ -1,6 +1,4 @@
 const Coupon = require("../models/Coupon");
-const { isEmpty, checkError, checkToken } = require("../config/helpers");
-const validate = require("../validations/coupon");
 const {
   DELETE_FUNC,
   GET_BY_PAGINATIONS,
@@ -52,7 +50,16 @@ module.exports = {
         categories: args.categories,
         exclude_categories: args.exclude_categories,
       };
-      return await CREATE_FUNC(id, "Coupon", Coupon, data, "addCoupon");
+      let validation = ["code", "expire"];
+      return await CREATE_FUNC(
+        id,
+        "Coupon",
+        Coupon,
+        data,
+        args,
+        "",
+        validation
+      );
     },
     updateCoupon: async (root, args, { id }) => {
       let data = {
@@ -69,13 +76,16 @@ module.exports = {
         categories: args.categories,
         exclude_categories: args.exclude_categories,
       };
+      let validation = ["code", "expire"];
       return await UPDATE_FUNC(
         id,
-        "updateCoupon",
         args.id,
         Coupon,
         "Coupon",
-        data
+        data,
+        '',
+        args,
+        validation
       );
     },
     deleteCoupon: async (root, args, { id }) => {

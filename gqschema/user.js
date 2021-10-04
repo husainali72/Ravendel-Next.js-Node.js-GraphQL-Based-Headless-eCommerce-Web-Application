@@ -21,12 +21,17 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
-  type allUsers {
-    data: [User]
+  
+  type UserIdRES {
+    data: User
+    message: statusSchema
+  }
+  type UserRES {
+    data:  [User]
     message: statusSchema
   }
   extend type Query {
-    users: allUsers
+    users: UserRES
     users_pagination(
       limit: Int
       pageNumber: Int
@@ -34,7 +39,7 @@ module.exports = gql`
       orderBy: String
       order: String
     ): UserResponse
-    user(id: ID!): User
+    user(id: ID!): UserIdRES
     usersbyMeta(key: String, value: String): [User]
   }
 

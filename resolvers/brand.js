@@ -1,11 +1,6 @@
 const Brand = require("../models/Brand");
 const {
   isEmpty,
-  putError,
-  checkError,
-  imageUpload,
-  imageUnlink,
-  checkToken,
   updateUrl,
 } = require("../config/helpers");
 const {
@@ -13,13 +8,9 @@ const {
   GET_BY_PAGINATIONS,
   GET_SINGLE_FUNC,
   GET_ALL_FUNC,
-  GET_BY_URL,
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
-
-const validate = require("../validations/brand");
-const Messages = require("../config/messages");
 
 module.exports = {
   Query: {

@@ -18,9 +18,16 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
-
+  type ReviewIdRES {
+    data: Review
+    message: statusSchema
+  }
+  type ReviewRES {
+    data: [Review]
+    message: statusSchema
+  }
   extend type Query {
-    reviews: [Review]
+    reviews: ReviewRES
     reviews_pagination(
       limit: Int
       pageNumber: Int
@@ -28,7 +35,7 @@ module.exports = gql`
       orderBy: String
       order: String
     ): reviewsResponse
-    review(id: ID!): Review
+    review(id: ID!): ReviewIdRES
     productwisereview(product_id: ID!): [Review]
   }
 

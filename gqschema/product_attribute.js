@@ -38,7 +38,14 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
-
+  type productAttributeIdRES {
+    data: productAttribute
+    message: statusSchema
+  }
+  type productAttributeRES {
+    data: [productAttribute]
+    message: statusSchema
+  }
   extend type Query {
     productAttribute_pagination(
       limit: Int
@@ -47,8 +54,8 @@ module.exports = gql`
       orderBy: String
       order: String
     ): productAttributeResponse
-    product_attributes: [productAttribute]
-    product_attribute(id: ID!): productAttribute
+    product_attributes: productAttributeRES
+    product_attribute(id: ID!): productAttributeIdRES
   }
 
   extend type Mutation {

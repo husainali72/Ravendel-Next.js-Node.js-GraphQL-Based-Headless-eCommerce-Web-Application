@@ -5,163 +5,88 @@ const {
   checkError,
   checkToken,
 } = require("../config/helpers");
-const validate = require("../validations/customer");
+const {
+  DELETE_FUNC,
+  GET_BY_PAGINATIONS,
+  GET_SINGLE_FUNC,
+  GET_ALL_FUNC,
+  CREATE_FUNC,
+  UPDATE_FUNC,
+} = require("../config/api_functions");
+
 const bcrypt = require("bcryptjs");
-const Messages = require("../config/messages");
 
 module.exports = {
   Query: {
     customers: async (root, args) => {
-      try {
-        const customers = await Customer.find({});
-        return customers || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
-      }
+      return await GET_ALL_FUNC(Customer, "Customers");
     },
-    // get all customers with pagination ........................
-
     customers_pagination: async (
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      var sort = orderBy ? orderBy : "_id";
-      var sortDirection = order === "DESC" ? -1 : 1;
-      const [
-        {
-          total: [total = 0],
-          edges,
-        },
-      ] = await Customer.aggregate([
-        {
-          $match: { first_name: { $regex: search, $options: "i" } },
-        },
-        {
-          $facet: {
-            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
-            edges: [
-              { $sort: { [sort]: sortDirection } },
-              { $skip: limit * (pageNumber - 1) },
-              { $limit: limit },
-            ],
-          },
-        },
-        {
-          $project: {
-            total: "$total.count",
-            edges: "$edges",
-          },
-        },
-      ]);
-      if (!edges.length) {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: { message:  `${Messages.RETRIEVE_ERROR} Customers`, success: true },
-        };
-      } else {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: { message: "Customers list fetched", success: true },
-        };
-      }
+      var searchInFields = { first_name: { $regex: search, $options: "i" } };
+
+      return await GET_BY_PAGINATIONS(
+        limit,
+        pageNumber,
+        orderBy,
+        order,
+        searchInFields,
+        Customer, 
+       "Customers"
+      );
     },
     customer: async (root, args) => {
-      try {
-        const customer = await Customer.findById(args.id);
-        if (!customer) {
-          throw putError("User not found");
-        }
-        return customer;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_SINGLE_FUNC(args.id, Customer, "Customers");
     },
   },
   Mutation: {
     addCustomer: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        // Check Validation
-        const errors = validate("addCustomer", args);
-        if (!isEmpty(errors)) {
-          throw putError(errors);
-        }
-
-        const customer = await Customer.findOne({ email: args.email });
-
-        if (customer) {
-          throw putError("Email already exist.");
-        } else {
-          const newCustomer = new Customer({
+          let data = {
             first_name: args.first_name,
             last_name: args.last_name,
             email: args.email,
             company: args.company || "",
             phone: args.phone || "",
-          });
-
-          newCustomer.password = await bcrypt.hash(args.password, 10);
-          const user = await newCustomer.save();
-          //return user;
-          //return await Customer.find({});
-          return { message: "Customer saved successfully", success: true };
-        }
-      } catch (error) {
-        error = checkError(error);
-        return { message: `${Messages.CREATE_ERROR} Customers`, success: false };
-      }
+            password : args.password
+          } 
+          let validation = ["first_name","last_name","email","password"];
+          return await CREATE_FUNC(
+            id,
+            "Customer",
+            Customer,
+            data,
+            args,
+            '',
+            validation
+          );
     },
     updateCustomer: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const customer = await Customer.findById({ _id: args.id });
-        if (customer) {
-          // Check Validation
-          const errors = validate("updateCustomer", args);
-          if (!isEmpty(errors)) {
-            throw putError(errors);
-          }
-
-          if (!isEmpty(args.password)) {
-            customer.password = await bcrypt.hash(args.password, 10);
-          }
-
-          customer.first_name = args.first_name;
-          customer.last_name = args.last_name;
-          customer.email = args.email;
-          customer.company = args.company;
-          customer.phone = args.phone;
-          //customer.address_book = args.address_book;
-          customer.updated = Date.now();
-
-          await customer.save();
-          //return await Customer.find({});
-          return { message: "Customer updated successfully", success: true };
-        } else {
-          return { message: "Customer not exist", status: 404 };
-        }
-      } catch (error) {
-        error = checkError(error);
-        return { message:  `${Messages.UPDATE_ERROR} Customers`, success: false };
-      }
+      let data = {
+        first_name: args.first_name,
+        last_name: args.last_name,
+        email: args.email,
+        company: args.company || "",
+        phone: args.phone || "",
+        password : args.password,
+        updated : Date.now()
+      } 
+      let validation = ["first_name","last_name","email","password"];
+      return await UPDATE_FUNC(
+        id,
+        args.id,
+        Customer,
+        "Customer",
+        data,
+         '',
+        args,
+        validation
+      );
+             
     },
     deleteCustomer: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const customer = await Customer.findByIdAndRemove(args.id);
-        if (customer) {
-          // const customers = await Customer.find({});
-          // return customers || [];
-          return { message: "customer deleted successfully", success: true };
-        }
-        throw putError("customer not exist");
-      } catch (error) {
-        error = checkError(error);
-        return { message: `${Messages.DELETE_ERROR} Customers`, status: 404 };
-      }
+      return await DELETE_FUNC(id, args.id, Customer, "Customers");
     },
     addAddressBook: async (root, args, { id }) => {
       checkToken(id);
@@ -235,32 +160,7 @@ module.exports = {
       }
     },
     deleteAddressBook: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const customer = await Customer.findById({ _id: args.id });
-
-        if (!customer) {
-          throw putError("Something went wrong.");
-        }
-
-        var customer_address_book = customer.address_book;
-
-        for (let i in customer_address_book) {
-          if (customer_address_book[i]._id == args._id) {
-            customer.address_book = [];
-            delete customer_address_book[i];
-            customer.address_book = customer_address_book;
-            break;
-          }
-        }
-
-        await customer.save();
-       // return await Customer.find({});
-       return { message: "AddressBook deleted successfully", success: true };
-      } catch (error) {
-        error = checkError(error);
-        return { message: `${Messages.DELETE_ERROR} AddressBook`, status: 404 };
-      }
-    },
+      return await DELETE_FUNC(id, args.id, Customer, "AddressBook");
+    }
   },
 };
