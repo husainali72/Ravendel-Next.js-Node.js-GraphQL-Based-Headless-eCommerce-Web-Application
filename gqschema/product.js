@@ -134,9 +134,36 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
- 
+  type productCategoriesRES {
+    data: [productCategory]
+    message: statusSchema
+  }
+  type productCate_by_Id_RES {
+    data: productCategory
+    message: statusSchema
+  }
+  type productsRES {
+    data: [Product]
+    message: statusSchema
+  }
+  type products_with_cat_RES {
+    data: [Product]
+    message: statusSchema
+  }
+  type productCate_by_url {
+    data:Category
+    message: statusSchema
+  }
+  type products_by_url {
+    data:Product
+    message: statusSchema
+  }
+  type products_by_id {
+    data:Product
+    message: statusSchema
+  }
   extend type Query {
-    productCategories: [productCategory]
+    productCategories: productCategoriesRES
     productCategories_pagination(
       limit: Int
       pageNumber: Int
@@ -145,9 +172,9 @@ module.exports = gql`
       order: String
     ): ProductResponse
     productCategoriesByFilter(filter: customObject): [Category]
-    productCategory(id: ID!): productCategory
+    productCategory(id: ID!): productCate_by_Id_RES
     getTree: [cattree]
-    products: [Product]
+    products: productsRES
     products_pagination(
       limit: Int
       pageNumber: Int
@@ -155,13 +182,13 @@ module.exports = gql`
       orderBy: String
       order: String
     ): CategoriesResponse
-    productswithcat: [Product]
+    productswithcat: products_with_cat_RES
     featureproducts: [Product]
     recentproducts: [Product]
-    product(id: ID!): Product
+    product(id: ID!): products_by_id
     productsbycatid(cat_id: ID!): [Product]
-    productsbycaturl(cat_url: String!): Category
-    productbyurl(url: String): Product
+    productsbycaturl(cat_url: String!): productCate_by_url
+    productbyurl(url: String):  products_by_url
     filteredProducts(config: customObject): [Product]
     onSaleProducts: [Product]
   }

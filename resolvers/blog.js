@@ -168,7 +168,7 @@ module.exports = {
         data,
         args,
         "",
-        validation
+        validation,
       );
     },
     updateBlogTag: async (root, args, { id }) => {
@@ -177,7 +177,7 @@ module.exports = {
         name: args.name,
         url: url,
         updated: Date.now(),
-      };
+      }
       let validation = ["name"];
       return await UPDATE_FUNC(
         id,

@@ -5,7 +5,6 @@ const {
   GET_BY_PAGINATIONS,
   GET_SINGLE_FUNC,
   GET_ALL_FUNC,
-  GET_BY_URL,
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
@@ -36,7 +35,6 @@ module.exports = {
   },
   Mutation: {
     addPage: async (root, args, { id }) => {
-      
       let url = "";
       if (args.url || args.title) {
         url = await stringTourl(args.url || args.title);
@@ -80,14 +78,3 @@ module.exports = {
     },
   },
 };
-
-// var url = stringTourl(args.url || args.title);
-//         var duplicate = true;
-//         while (duplicate) {
-//           let page = await Page.findOne({ url: url });
-//           if (page) {
-//             url = validateUrl(url);
-//           } else {
-//             duplicate = false;
-//           }
-//         }

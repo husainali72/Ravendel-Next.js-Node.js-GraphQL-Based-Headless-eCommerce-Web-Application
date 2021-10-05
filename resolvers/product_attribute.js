@@ -31,7 +31,7 @@ module.exports = {
     },
     product_attribute: async (root, args) => {
       return await GET_SINGLE_FUNC(
-        args.tag_id,
+        args.id,
         ProductAttribute,
         "ProductAttribute"
       );
@@ -43,12 +43,15 @@ module.exports = {
         name: args.name,
         values: args.values,
       };
+      let validation = ["name"];
       return await CREATE_FUNC(
         id,
         "ProductAttribute",
         ProductAttribute,
         data,
-        args
+        args,
+        "",
+        validation
       );
     },
     updateAttribute: async (root, args, { id }) => {
@@ -67,7 +70,7 @@ module.exports = {
       );
     },
     deleteAttribute: async (root, args, { id }) => {
-      return await DELETE_FUNC(id, args.id, ProductAttribute, "BlogProductAttribute");
+      return await DELETE_FUNC(id, args.id, ProductAttribute, "ProductAttribute");
     },
   },
 };

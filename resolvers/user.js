@@ -6,90 +6,47 @@ const {
   imageUpload,
   imageUnlink,
   checkToken,
+  MESSAGE_RESPONSE,
 } = require("../config/helpers");
-const validate = require("../validations/user");
-const bcrypt = require("bcryptjs");
-
-
+const {
+  DELETE_FUNC,
+  GET_BY_PAGINATIONS,
+  GET_SINGLE_FUNC,
+  GET_ALL_FUNC,
+  CREATE_FUNC,
+  UPDATE_FUNC,
+} = require("../config/api_functions");
 
 module.exports = {
   Query: {
     users: async (root, args) => {
-      try {
-        const users = await User.find({});
-        return users || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
-      }n
+      return await GET_ALL_FUNC(User, "Users");
     },
-
-    // get all users with pagination.....................
-
     users_pagination: async (
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      var sort = orderBy ? orderBy : "_id";
-      var sortDirection = order === "DESC" ? -1 : 1;
-
-      const [
-        {
-          total: [total = 0],
-          edges,
-        },
-      ] = await User.aggregate([
-        {
-          $match: {
-            $or: [
-              { name: { $regex: search, $options: "i" } },
-              { role: { $regex: search, $options: "i" } },
-              { email: { $regex: search, $options: "i" } },
-            ],
-          },
-        },
-        {
-          $facet: {
-            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
-            edges: [
-              { $sort: { [sort]: sortDirection } },
-              { $skip: limit * (pageNumber - 1) },
-              { $limit: limit },
-            ],
-          },
-        },
-        {
-          $project: {
-            total: "$total.count",
-            edges: "$edges",
-          },
-        },
-      ]);
-      if(!edges.length){
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: {message: `${errorRES.RETRIEVE_ERROR} Users`, status: 200}
-        };
-      } else {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: {message: 'Page List', status: 200}
-        };
-      }
+      var searchInFields = {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { role: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      };
+      return await GET_BY_PAGINATIONS(
+        limit,
+        pageNumber,
+        orderBy,
+        order,
+        searchInFields,
+        User,
+        "Users"
+      );
     },
     user: async (root, args) => {
-      try {
-        const user = await User.findById(args.id);
-        if (!user) {
-          throw putError("User not found");
-        }
-        return user;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_SINGLE_FUNC(args.id, User, "User");
     },
+    //check it..........................
     usersbyMeta: async (root, args) => {
       try {
         const user = await User.find({
@@ -125,55 +82,33 @@ module.exports = {
   },
   Mutation: {
     addUser: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        // Check Validation
-        const errors = validate("addUser", args);
-        if (!isEmpty(errors)) {
-          throw putError(errors);
-        }
-
-        const user = await User.findOne({ email: args.email });
-
-        if (user) {
-          throw putError("Email already exist.");
-        } else {
-          let imgObject = "";
-          if (args.image) {
-            imgObject = await imageUpload(args.image, "/assets/images/user/");
-            if (imgObject.success === false) {
-              throw putError(imgObject.message);
-            }
-          }
-          const newUser = new User({
-            name: args.name,
-            email: args.email,
-            password: args.password,
-            role: args.role,
-            image: imgObject.data || imgObject,
-          });
-
-          newUser.password = await bcrypt.hash(args.password, 10);
-          const user = await newUser.save();
-          //return user;
-         // return await User.find({});
-         return  {message: 'user saved successfully', status: 200}
-        }
-      } catch (error) {
-        console.log(error);
-        error = checkError(error);
-        return  {message: `${errorRES.CREATE_ERROR} Users`, status: 400}
-      }
+      let path = "/assets/images/user/";
+      let data = {
+        name: args.name,
+        email: args.email,
+        password: args.password,
+        role: args.role,
+        image: args.image,
+      };
+      let validation = ["name", "email", "role", "password"];
+      return await CREATE_FUNC(id, "User", User, data, args, path, validation);
     },
     updateUser: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "User", false);
+      }
+      if (!args.id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "User", false);
+      }
       try {
         const user = await User.findById({ _id: args.id });
         if (user) {
-          // Check Validation
           const errors = validate("updateUser", args);
           if (!isEmpty(errors)) {
-            throw putError(errors);
+            return {
+              message: errors,
+              success: false,
+            };
           }
 
           if (!isEmpty(args.password)) {
@@ -216,34 +151,17 @@ module.exports = {
               user.meta.unshift(metArra[i]);
             }
           }
-
           await user.save();
-         // return await User.find({});
-         return  {message: 'user update successfully', status: 200}
+          return MESSAGE_RESPONSE("UpdateSuccess", "User", true);
         } else {
-          throw putError("User not exist");
+          return MESSAGE_RESPONSE("NOT_EXIST", "User", false);
         }
       } catch (error) {
-        error = checkError(error);
-        return  {message:`${errorRES.UPDATE_ERROR} User`, status: 400}
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "User", false);
       }
     },
     deleteUser: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const user = await User.findByIdAndRemove(args.id);
-        if (user) {
-          //return true;
-          imageUnlink(user.image);
-          // const users = await User.find({});
-          // return users || [];
-          return  {message: 'user deleted successfully', status: 200}
-        }
-        throw putError("User not exist");
-      } catch (error) {
-        error = checkError(error);
-        return  {message: `${errorRES.DELETE_ERROR} User`, status: 400}
-      }
+      return await DELETE_FUNC(id, args.id, User, "User");
     },
   },
 };

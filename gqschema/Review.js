@@ -26,6 +26,10 @@ module.exports = gql`
     data: [Review]
     message: statusSchema
   }
+  type productwise_Review {
+    data: [Review]
+    message: statusSchema
+  }
   extend type Query {
     reviews: ReviewRES
     reviews_pagination(
@@ -36,7 +40,7 @@ module.exports = gql`
       order: String
     ): reviewsResponse
     review(id: ID!): ReviewIdRES
-    productwisereview(product_id: ID!): [Review]
+    productwisereview(product_id: ID!): productwise_Review
   }
 
   extend type Mutation {

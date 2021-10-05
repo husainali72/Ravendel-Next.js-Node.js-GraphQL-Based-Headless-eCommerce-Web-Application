@@ -3,98 +3,95 @@ const {
   isEmpty,
   putError,
   checkError,
-  checkToken
+  checkToken,
+  MESSAGE_RESPONSE,
 } = require("../config/helpers");
+const {
+  DELETE_FUNC,
+  GET_BY_PAGINATIONS,
+  GET_SINGLE_FUNC,
+  GET_ALL_FUNC,
+  GET_BY_URL,
+  CREATE_FUNC,
+  UPDATE_FUNC,
+} = require("../config/api_functions");
+
 const validate = require("../validations/order");
 
 module.exports = {
   Query: {
     orders: async (root, args) => {
-      try {
-        return await Order.find({});
-      } catch (error) {
-        throw new Error("Something went wrong.");
-      }
+      return await GET_ALL_FUNC(Order, " Orders");
     },
     order: async (root, args) => {
-      try {
-        const order = await Order.findById(args.id);
-        if (!order) {
-          throw putError("not found");
-        }
-        return order;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_SINGLE_FUNC(args.id, Order, "Order");
     },
     orderbyUser: async (root, args) => {
+      if (!user_id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "Order", false);
+      }
       try {
         const order = await Order.findOne({ user_id: args.user_id });
         if (!order) {
-          throw putError("Order not found");
+          return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
         }
-        return order;
+        return MESSAGE_RESPONSE("RESULT_FOUND", "Order", false);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Order", false);
       }
-    }
+    },
   },
   Mutation: {
     addOrder: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
+      }
       try {
         const newOrder = new Order({
           user_id: args.user_id,
           billing: args.billing,
           shipping: args.shipping,
-          status: args.status
+          status: args.status,
         });
-
-        newOrder.products = [...args.products];
-
+        newOrder.products = args.products;
         await newOrder.save();
-        return await Order.find({});
+        return MESSAGE_RESPONSE("AddSuccess", "Order", true);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        console.log(error.message);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Order", false);
       }
     },
     updateOrder: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
+      }
       try {
-        // Check Validation
         const errors = validate("updateOrder", args);
         if (!isEmpty(errors)) {
-          throw putError(errors);
+          return {
+            message: errors,
+            success: false,
+          };
         }
-
+        if (!args.id) {
+          return MESSAGE_RESPONSE("ID_ERROR", "Order", false);
+        }
         const order = await Order.findById(args.id);
-        if (!order) {
-          throw putError("not found");
+        if (order) {
+          order.status = args.status;
+          order.billing = args.billing;
+          order.shipping = args.shipping;
+          await order.save();
+          return MESSAGE_RESPONSE("UpdateSuccess", "Order", true);
         }
 
-        order.status = args.status;
-        order.billing = args.billing;
-        order.shipping = args.shipping;
-        await order.save();
-
-        return await Order.find({});
+        return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Order", false);
       }
     },
     deleteOrder: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        await Order.findByIdAndRemove(args.id);
-        return await Order.find({});
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    }
-  }
+      return await DELETE_FUNC(id, args.id, Order, "Order");
+    },
+  },
 };

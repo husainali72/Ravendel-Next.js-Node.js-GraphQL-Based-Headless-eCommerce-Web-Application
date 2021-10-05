@@ -1,10 +1,5 @@
 const Customer = require("../models/Customer");
-const {
-  isEmpty,
-  putError,
-  checkError,
-  checkToken,
-} = require("../config/helpers");
+const { isEmpty, checkError, MESSAGE_RESPONSE } = require("../config/helpers");
 const {
   DELETE_FUNC,
   GET_BY_PAGINATIONS,
@@ -13,8 +8,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
-
-const bcrypt = require("bcryptjs");
+const validate = require("../validations/customer");
 
 module.exports = {
   Query: {
@@ -33,8 +27,8 @@ module.exports = {
         orderBy,
         order,
         searchInFields,
-        Customer, 
-       "Customers"
+        Customer,
+        "Customers"
       );
     },
     customer: async (root, args) => {
@@ -43,24 +37,24 @@ module.exports = {
   },
   Mutation: {
     addCustomer: async (root, args, { id }) => {
-          let data = {
-            first_name: args.first_name,
-            last_name: args.last_name,
-            email: args.email,
-            company: args.company || "",
-            phone: args.phone || "",
-            password : args.password
-          } 
-          let validation = ["first_name","last_name","email","password"];
-          return await CREATE_FUNC(
-            id,
-            "Customer",
-            Customer,
-            data,
-            args,
-            '',
-            validation
-          );
+      let data = {
+        first_name: args.first_name,
+        last_name: args.last_name,
+        email: args.email,
+        company: args.company || "",
+        phone: args.phone || "",
+        password: args.password,
+      };
+      let validation = ["first_name", "last_name", "email", "password"];
+      return await CREATE_FUNC(
+        id,
+        "Customer",
+        Customer,
+        data,
+        args,
+        "",
+        validation
+      );
     },
     updateCustomer: async (root, args, { id }) => {
       let data = {
@@ -69,38 +63,39 @@ module.exports = {
         email: args.email,
         company: args.company || "",
         phone: args.phone || "",
-        password : args.password,
-        updated : Date.now()
-      } 
-      let validation = ["first_name","last_name","email","password"];
+        password: args.password,
+        updated: Date.now(),
+      };
+      let validation = ["first_name", "last_name", "email", "password"];
       return await UPDATE_FUNC(
         id,
         args.id,
         Customer,
         "Customer",
         data,
-         '',
+        "",
         args,
         validation
       );
-             
     },
     deleteCustomer: async (root, args, { id }) => {
       return await DELETE_FUNC(id, args.id, Customer, "Customers");
     },
     addAddressBook: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "addAddressBook", false);
+      }
       try {
-        // Check Validation
         const errors = validate("addAddressBook", args);
         if (!isEmpty(errors)) {
-          throw putError(errors);
+          return {
+            message: errors,
+            success: false,
+          };
         }
-
         const customer = await Customer.findById({ _id: args.id });
-
         if (!customer) {
-          throw putError("Something went wrong.");
+          return MESSAGE_RESPONSE("NOT_EXIST", "addAddressBook", false);
         }
 
         if (args.default_address) {
@@ -110,40 +105,37 @@ module.exports = {
             }
           }
         }
-
         delete args.id;
         customer.address_book.push(args);
         customer.updated = Date.now();
-
         await customer.save();
-        //return await Customer.find({});
-        return { message: "AddressBook saved successfully", success: true };
+        return MESSAGE_RESPONSE("AddSuccess", "addAddressBook", true);
       } catch (error) {
         error = checkError(error);
-        return { message: `${Messages.CREATE_ERROR} AddressBook `, success: false };
+        return MESSAGE_RESPONSE("CREATE_ERROR", "addAddressBook", false);
       }
     },
     updateAddressBook: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "addAddressBook", false);
+      }
       try {
-        // Check Validation
         const errors = validate("updateAddressBook", args);
         if (!isEmpty(errors)) {
-          throw putError(errors);
+          return {
+            message: errors,
+            success: false,
+          };
         }
-
         const customer = await Customer.findById({ _id: args.id });
-
         if (!customer) {
-          throw putError("Something went wrong.");
+          return MESSAGE_RESPONSE("NOT_EXIST", "addAddressBook", false);
         }
-        console.log("here comes", args.default_address);
         delete args.id;
         customer.address_book = customer.address_book.map((address) => {
           if (args.default_address) {
             address.default_address = false;
           }
-
           if (address._id == args._id) {
             address = args;
           }
@@ -152,15 +144,13 @@ module.exports = {
 
         customer.updated = Date.now();
         await customer.save();
-        //return await Customer.find({});
-        return { message: "AddressBook updated successfully", success: true };
+        return MESSAGE_RESPONSE("UpdateSuccess", "addAddressBook", true);
       } catch (error) {
-        error = checkError(error);
-        return { message: `${Messages.UPDATE_ERROR} AddressBook`, success: false };
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "addAddressBook", false);
       }
     },
     deleteAddressBook: async (root, args, { id }) => {
       return await DELETE_FUNC(id, args.id, Customer, "AddressBook");
-    }
+    },
   },
 };

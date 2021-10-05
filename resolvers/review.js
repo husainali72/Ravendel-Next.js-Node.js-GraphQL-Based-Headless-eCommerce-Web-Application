@@ -1,7 +1,6 @@
 const Review = require("../models/Review");
 const Product = require("../models/Product");
 const Customer = require("../models/Customer");
-const { checkError } = require("../config/helpers");
 const {
   DELETE_FUNC,
   GET_BY_PAGINATIONS,
@@ -9,6 +8,7 @@ const {
   GET_ALL_FUNC,
   CREATE_FUNC,
   UPDATE_FUNC,
+  MESSAGE_RESPONSE,
 } = require("../config/api_functions");
 
 module.exports = {
@@ -33,26 +33,45 @@ module.exports = {
       );
     },
     review: async (root, args) => {
-      return await GET_SINGLE_FUNC(args.id, Review, " Review");
+      return await GET_SINGLE_FUNC(args.id, Review, "Review");
     },
     ///let check it...................
     productwisereview: async (root, args) => {
+      if (!args.product_id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
+      }
       try {
         const reviews = await Review.find({
           product_id: { $in: args.product_id },
         });
-        return reviews || [];
+        return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
       } catch (error) {
-        throw new Error("Something went wrong.");
+        return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
       }
     },
   },
   Review: {
     product_id: async (root, args) => {
-      return await GET_SINGLE_FUNC(root.product_id, Product, "Product");
+      if (!root.product_id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
+      }
+      try {
+        const product = await Product.findById(root.product_id);
+        return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
+      } catch (error) {
+        return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
+      }
     },
     customer_id: async (root, args) => {
-      return await GET_SINGLE_FUNC(root.customer_id, Customer, "Customer");
+      if (!root.product_id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
+      }
+      try {
+        const customer = await Customer.findById(root.customer_id);
+        return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
+      } catch (error) {
+        return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
+      }
     },
   },
   Mutation: {
@@ -87,7 +106,13 @@ module.exports = {
         rating: args.rating,
         status: args.status,
       };
-      let validation = ["review", "title", "email","product_id","customer_id"];
+      let validation = [
+        "review",
+        "title",
+        "email",
+        "product_id",
+        "customer_id",
+      ];
       return await UPDATE_FUNC(
         id,
         args.id,

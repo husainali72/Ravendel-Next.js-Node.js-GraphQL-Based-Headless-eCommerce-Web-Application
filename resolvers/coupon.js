@@ -58,7 +58,7 @@ module.exports = {
         data,
         args,
         "",
-        validation
+        validation,
       );
     },
     updateCoupon: async (root, args, { id }) => {

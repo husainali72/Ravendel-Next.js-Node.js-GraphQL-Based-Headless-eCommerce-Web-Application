@@ -4,10 +4,9 @@ const {
   imageUpload,
   isEmpty,
   MESSAGE_RESPONSE,
-  _validate
+  _validate,
 } = require("./helpers");
 const bcrypt = require("bcryptjs");
-
 
 const GET_BY_PAGINATIONS = async (
   limit,
@@ -88,6 +87,33 @@ const GET_SINGLE_FUNC = async (id, modal, name) => {
   }
 };
 
+const GET_BY_ROOT_ID = async (id, modal, name) => {
+  if (!id) {
+    return {
+      message: MESSAGE_RESPONSE("ID_ERROR", name, false),
+    };
+  }
+  try {
+    const response = await modal.find({
+      categoryId: { $in: root.id },
+    });
+    if (response) {
+      return {
+        message: MESSAGE_RESPONSE("SINGLE_RESULT_FOUND", name, true),
+        data: response,
+      };
+    } else {
+      return {
+        message: MESSAGE_RESPONSE("RETRIEVE_ERROR", name, false),
+        data: response,
+      };
+    }
+  } catch (error) {
+    return {
+      message: MESSAGE_RESPONSE("RETRIEVE_ERROR", name, false),
+    };
+  }
+};
 const GET_BY_URL = async (modal, url, name) => {
   if (!url) {
     return {
@@ -95,7 +121,7 @@ const GET_BY_URL = async (modal, url, name) => {
     };
   }
   try {
-    const response = await modal.findOne({ url });
+    const response = await modal.findOne({ url: url });
 
     return {
       message: MESSAGE_RESPONSE("RESULT_FOUND", name, true),
@@ -133,8 +159,8 @@ const DELETE_FUNC = async (token, delete_id, modal, name) => {
   try {
     const response = await modal.findByIdAndRemove(delete_id);
     if (response) {
-      if (response.feature_image||response.image) {
-        imageUnlink(response.feature_image||response.feature_image);
+      if (response.feature_image || response.image) {
+        imageUnlink(response.feature_image || response.feature_image);
       }
       return MESSAGE_RESPONSE("DELETE", name, true);
     }
@@ -144,7 +170,15 @@ const DELETE_FUNC = async (token, delete_id, modal, name) => {
   }
 };
 
-const CREATE_FUNC = async (token, name, modal, data, args, path,validation) => {
+const CREATE_FUNC = async (
+  token,
+  name,
+  modal,
+  data,
+  args,
+  path,
+  validation
+) => {
   if (!token) {
     return MESSAGE_RESPONSE("TOKEN_REQ", name, false);
   }
@@ -156,9 +190,10 @@ const CREATE_FUNC = async (token, name, modal, data, args, path,validation) => {
         success: false,
       };
     }
-    if (args.feature_image|| args.image) {
+
+    if (args.feature_image || args.image) {
       let imgObject = "";
-      imgObject = await imageUpload(data.feature_image ||data.image, path);
+      imgObject = await imageUpload(data.feature_image || data.image, path);
 
       if (imgObject.success === false) {
         return {
@@ -170,7 +205,6 @@ const CREATE_FUNC = async (token, name, modal, data, args, path,validation) => {
       }
       data.feature_image = imgObject.data || imgObject;
     }
-  
     if (data.name) {
       const nameresponse = await modal.findOne({ name: data.name });
       if (nameresponse) {
@@ -189,14 +223,15 @@ const CREATE_FUNC = async (token, name, modal, data, args, path,validation) => {
         return MESSAGE_RESPONSE("DUPLICATE", "email", false);
       }
     }
+    
     const response = new modal(data);
-    if(data.password){
+    if (data.password) {
       response.password = await bcrypt.hash(data.password, 10);
     }
     await response.save();
     return MESSAGE_RESPONSE("AddSuccess", name, true);
   } catch (error) {
-    console.log('CREATE_FUNC',error)
+    console.log("CREATE_FUNC", error);
     return MESSAGE_RESPONSE("CREATE_ERROR", name, false);
   }
 };
@@ -211,7 +246,6 @@ const UPDATE_FUNC = async (
   args,
   validation
 ) => {
- 
   if (!token) {
     return MESSAGE_RESPONSE("TOKEN_REQ", name, false);
   }
@@ -247,14 +281,14 @@ const UPDATE_FUNC = async (
         response[key] = value;
       }
       await response.save();
-      if(data.password){
+      if (data.password) {
         response.password = await bcrypt.hash(data.password, 10);
       }
       return MESSAGE_RESPONSE("UpdateSuccess", name, true);
     }
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);
   } catch (error) {
-    console.log('UPDATE_FUNC',error)
+    console.log("UPDATE_FUNC", error);
     return MESSAGE_RESPONSE("UPDATE_ERROR", name, false);
   }
 };
@@ -266,3 +300,4 @@ module.exports.GET_ALL_FUNC = GET_ALL_FUNC;
 module.exports.GET_BY_URL = GET_BY_URL;
 module.exports.GET_BY_PAGINATIONS = GET_BY_PAGINATIONS;
 module.exports.GET_SINGLE_FUNC = GET_SINGLE_FUNC;
+module.exports.GET_BY_ROOT_ID = GET_BY_ROOT_ID;

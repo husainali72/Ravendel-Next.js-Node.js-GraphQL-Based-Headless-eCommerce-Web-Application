@@ -5,6 +5,14 @@ const Tax = require("../models/Tax");
 const Shipping = require("../models/Shipping");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const ProductAttribute = require("../models/ProductAttribute");
+const {
+  DELETE_FUNC,
+  GET_BY_PAGINATIONS,
+  GET_SINGLE_FUNC,
+  GET_ALL_FUNC,
+  CREATE_FUNC,
+  UPDATE_FUNC,
+} = require("../config/api_functions");
 
 const {
   isEmpty,
@@ -17,23 +25,10 @@ const validate = require("../validations/cart");
 module.exports = {
   Query: {
     carts: async (root, args) => {
-      try {
-        return await Cart.find({});
-      } catch (error) {
-        throw new Error("Something went wrong.");
-      }
+      return await GET_ALL_FUNC(Cart, "Carts");
     },
     cart: async (root, args) => {
-      try {
-        const cart = await Cart.findById(args.id);
-        if (!cart) {
-          throw putError("Cart not found");
-        }
-        return cart;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_SINGLE_FUNC(args.id, Cart, "Carts");
     },
     cartbyUser: async (root, args) => {
       try {
@@ -307,7 +302,9 @@ module.exports = {
       }
     },
     addCart: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
+      }
       try {
         const cart = await Cart.findOne({ user_id: args.user_id });
         if (cart) {
@@ -323,30 +320,38 @@ module.exports = {
         });
 
         newCart.products.unshift(args.product);
-        return await newCart.save();
+        await newCart.save();
+        return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
       } catch (error) {
         console.log(error);
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Cart", false);
       }
     },
     updateCart: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
+      }
+      if (!args.id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "Cart", false);
+      }
       try {
         const cart = await Cart.findById({ _id: args.id });
         if (cart) {
           cart.total = args.total;
           cart.products = args.products;
           cart.updated = Date.now();
-          return await cart.save();
+          await cart.save();
+          return MESSAGE_RESPONSE("UpdateSuccess", "Cart", true);
         } else {
-          throw putError("Cart not exist");
+          return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
         }
       } catch (error) {
         error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Cart", false);
       }
     },
+    //,.........................................
     deleteCart: async (root, args, { id }) => {
       checkToken(id);
       const cart = await Cart.findByIdAndRemove(args.id);
