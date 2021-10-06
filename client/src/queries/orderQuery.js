@@ -2,14 +2,20 @@ import gql from "graphql-tag";
 const GET_ORDERS = gql`
   {
     orders {
-      id
-      user_id
-      status
-      shipping
-      billing
-      products
-      date
-      updated
+      data {
+        id
+        user_id
+        status
+        shipping
+        billing
+        products
+        date
+        updated
+      }
+      message{
+        message
+        success
+      }
     }
   }
 `;
@@ -29,21 +35,54 @@ const GET_ORDER = gql`
   }
 `;
 
+// const DELETE_ORDER = gql`
+//   mutation($id: ID!) {
+//     deleteOrder(id: $id) {
+//       id
+//       user_id
+//       status
+//       shipping
+//       billing
+//       products
+//       date
+//       updated
+//     }
+//   }
+// `;
+
 const DELETE_ORDER = gql`
   mutation($id: ID!) {
     deleteOrder(id: $id) {
-      id
-      user_id
-      status
-      shipping
-      billing
-      products
-      date
-      updated
+      message
+      success
     }
   }
 `;
 
+// const UPDATE_ORDER = gql`
+//   mutation(
+//     $id: ID!
+//     $billing: customObject
+//     $shipping: customObject
+//     $status: String
+//   ) {
+//     updateOrder(
+//       id: $id
+//       billing: $billing
+//       shipping: $shipping
+//       status: $status
+//     ) {
+//       id
+//       user_id
+//       status
+//       shipping
+//       billing
+//       products
+//       date
+//       updated
+//     }
+//   }
+// `;
 const UPDATE_ORDER = gql`
   mutation(
     $id: ID!
@@ -57,14 +96,8 @@ const UPDATE_ORDER = gql`
       shipping: $shipping
       status: $status
     ) {
-      id
-      user_id
-      status
-      shipping
-      billing
-      products
-      date
-      updated
+      message
+      success
     }
   }
 `;

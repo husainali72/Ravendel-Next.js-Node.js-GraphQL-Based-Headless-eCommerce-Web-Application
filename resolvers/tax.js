@@ -2,14 +2,10 @@ const Tax = require("../models/Tax");
 const Product = require("../models/Product");
 const {
   isEmpty,
-  putError,
-  checkError,
-  imageUpload,
-  imageUnlink,
-  checkToken
+  MESSAGE_RESPONSE,
+  _validate,
 } = require("../config/helpers");
-const validate = require("../validations/tax");
-//const slugify = require("slugify");
+
 
 module.exports = {
   Query: {
@@ -17,105 +13,115 @@ module.exports = {
       try {
         const tax = await Tax.findOne({});
         if (!tax) {
-          throw putError("not found");
+          return {
+            message: MESSAGE_RESPONSE("NOT_EXIST", "Tax", false),
+          };
         }
-        return tax;
+        return {
+          message: MESSAGE_RESPONSE("RESULT_FOUND", "Tax", true),
+          data: tax,
+        };
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return {
+          message: MESSAGE_RESPONSE("RETRIEVE_ERROR", "Tax", false),
+        };
       }
-    }
+    },
   },
   Mutation: {
     updateGlobalTax: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Tax", false);
+      }
       try {
         // Check Validation
         /* const errors = validate("updateGlobalTax", args.global);
         if (!isEmpty(errors)) {
           throw putError(errors);
         } */
-
         const tax = await Tax.findOne({});
         tax.global = args.global;
         tax.updated = Date.now();
         await tax.save();
-
         if (args.global.is_global && args.global.overwrite) {
           await Product.updateMany(
             {},
             {
-              $set: { tax_class: args.global.tax_class }
+              $set: { tax_class: args.global.tax_class },
             }
           );
         }
-
-        return await Tax.findOne({});
+        return MESSAGE_RESPONSE("UpdateSuccess", "Tax", true);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Tax", false);
       }
     },
     updateOptionTax: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "OptionTax", false);
+      }
       try {
         const tax = await Tax.findOne({});
         tax.is_inclusive = args.is_inclusive;
         tax.updated = Date.now();
         await tax.save();
-        return await Tax.findOne({});
+        return MESSAGE_RESPONSE("UpdateSuccess", "OptionTax", true);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "OptionTax", false);
       }
     },
     addTaxClass: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "TaxClass", false);
+      }
       try {
-        // Check Validation
-        const errors = validate("addTaxClass", args.tax_class);
+        const errors = _validate(["name", "percentage"], args.tax_class);
         if (!isEmpty(errors)) {
-          throw putError(errors);
+          return {
+            message: errors,
+            success: false,
+          };
         }
         const tax = await Tax.findOne({});
         tax.tax_class.push(args.tax_class);
         tax.updated = Date.now();
         await tax.save();
-        return await Tax.findOne({});
+        return MESSAGE_RESPONSE("AddSuccess", "TaxClass", true);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "TaxClass", false);
       }
     },
     updateTaxClass: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "TaxClass", false);
+      }
       try {
-        // Check Validation
-        const errors = validate("updateTaxClass", args.tax_class);
+        const errors = _validate(["name", "percentage"], args.tax_class);
         if (!isEmpty(errors)) {
-          throw putError(errors);
+          return {
+            message: errors,
+            success: false,
+          };
         }
-
         const tax = await Tax.findOne({});
-
         for (let i in tax.tax_class) {
           if (tax.tax_class[i]._id == args.tax_class._id) {
             tax.tax_class[i] = args.tax_class;
             break;
           }
         }
-
         //tax.tax_class.push(args.tax_class);
         tax.updated = Date.now();
         await tax.save();
-        return await Tax.findOne({});
+        return MESSAGE_RESPONSE("UpdateSuccess", "TaxClass", true);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "TaxClass", false);
       }
     },
     deleteTaxClass: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "TaxClass", false);
+      }
       try {
         const tax = await Tax.findOne({});
 
@@ -131,11 +137,10 @@ module.exports = {
         tax.tax_class = TaxClass;
         tax.updated = Date.now();
         await tax.save();
-        return await Tax.findOne({});
+        return MESSAGE_RESPONSE("DELETE", "TaxClass", true);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("DELETE_ERROR", "TaxClass", false);
       }
-    }
-  }
+    },
+  },
 };

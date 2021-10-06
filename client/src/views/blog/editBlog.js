@@ -117,7 +117,7 @@ const EditBlog = (props) => {
   };
 
   const fileChange = (e) => {
-    setBlog({ ...blog, [e.target.name]: e.target.files[0] });
+    setBlog({ ...blog, 'updatedImage': e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };

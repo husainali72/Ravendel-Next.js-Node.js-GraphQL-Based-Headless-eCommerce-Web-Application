@@ -9,21 +9,15 @@ module.exports = gql`
     updated: Date
   }
 
-  type MessageSchemaFaq {
-    message: String
-    statuscode: Int
+  type Faq_RESPONSE {
+    data:  [Faq]
+    pagination: paginationInfo
+    message: statusSchema
   }
-
-  type RESfaq {
-    totalCount: Int
-    page: Int
+  type FAQ_BY_ID_RES{
+    data :Faq
+    message: statusSchema
   }
-  type Responsefaq {
-    data: [Page]
-    pagination: RESfaq
-    message: MessageSchemaFaq
-  }
-
   extend type Query {
     Faq_pagination(
       limit: Int
@@ -31,22 +25,21 @@ module.exports = gql`
       search: String
       orderBy: String
       order: String
-    ): Responsefaq
-    faqs: [Faq]
-    faq(id: ID!): Faq
+    ): Faq_RESPONSE
+    faq(id: ID!): FAQ_BY_ID_RES
   }
   extend type Mutation {
     addFaq(
       title: String
       content: String
       status: String
-    ): MessageSchemaFaq
+    ): statusSchema
     updateFaq(
       id: ID!
       title: String
       content: String
       status: String
-    ): MessageSchemaFaq
-    deleteFaq(id: ID!): MessageSchemaFaq
+    ): statusSchema
+    deleteFaq(id: ID!): statusSchema
   }
 `;

@@ -12,7 +12,6 @@ const FaqSchema = new Schema({
   },
   status: {
     type: String,
-    required: true
   },
   date: {
     type: Date,

@@ -2,15 +2,21 @@ import gql from "graphql-tag";
 const GET_CUSTOMERS = gql`
   {
     customers {
-      id
-      first_name
-      last_name
-      email
-      company
-      phone
-      address_book
-      date
-      updated
+      data {
+        id
+        first_name
+        last_name
+        email
+        company
+        phone
+        address_book
+        date
+        updated
+      }
+      message {
+        message
+        success
+      }
     }
   }
 `;

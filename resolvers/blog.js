@@ -10,7 +10,6 @@ const {
   GET_BY_PAGINATIONS,
   GET_SINGLE_FUNC,
   GET_ALL_FUNC,
-  GET_BY_URL,
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
@@ -71,11 +70,8 @@ module.exports = {
       }
     },
     blogsbytagid: async (root, args) => {
-      return await GET_SINGLE_FUNC(args.tag_id, Blog, "BlogTag");
+      return await GET_SINGLE_FUNC(args.tag_id, BlogTag, "BlogTag");
     },
-    // blogsbytagurl: async (root, args) => {
-    //   return await GET_BY_URL(BlogTag, args.tag_url, "BlogTag");
-    // },
     blogTags_pagination: async (
       root,
       { limit, pageNumber, search, orderBy, order }
@@ -99,7 +95,11 @@ module.exports = {
   },
   Mutation: {
     addBlog: async (root, args, user) => {
-      var url = await updateUrl(args.url || args.title, "Blog");
+      let url = "";
+      if (args.url || args.title) {
+        url = await updateUrl(args.url || args.title, "Blog");
+      }
+      console.log('ar', args)
       let data = {
         title: args.title,
         url: url,
@@ -111,11 +111,24 @@ module.exports = {
         author: user.id,
       };
       let path = "/assets/images/blog/feature/";
-      return await CREATE_FUNC(user.id, "Blog", Blog, data, "addBlog", path.args);
+      let validation = ["title", "status"];
+      return await CREATE_FUNC(
+        user.id,
+        "Blog",
+        Blog,
+        data,
+        args,
+        path,
+        validation
+      );
     },
     updateBlog: async (root, args, { id }) => {
       let path = "/assets/images/blog/feature/";
-      var url = await updateUrl(args.url || args.title, "Blog");
+
+      let url = "";
+      if (args.url || args.title) {
+        url = await updateUrl(args.url || args.title, "Blog");
+      }
 
       let data = {
         title: args.title,
@@ -126,15 +139,16 @@ module.exports = {
         meta: args.meta,
         updated: Date.now(),
       };
+      let validation = ["title", "status"];
       return await UPDATE_FUNC(
         id,
-        "updateBlog",
         args.id,
         Blog,
         "Blog",
         data,
         path,
-        args
+        args,
+        validation
       );
     },
 
@@ -147,7 +161,16 @@ module.exports = {
         name: args.name,
         url: url,
       };
-      return await CREATE_FUNC(user.id, "BlogTag", BlogTag, data, "addBlogTag");
+      let validation = ["name"];
+      return await CREATE_FUNC(
+        user.id,
+        "BlogTag",
+        BlogTag,
+        data,
+        args,
+        "",
+        validation,
+      );
     },
     updateBlogTag: async (root, args, { id }) => {
       let url = stringTourl(args.url || args.name);
@@ -155,406 +178,21 @@ module.exports = {
         name: args.name,
         url: url,
         updated: Date.now(),
-      };
+      }
+      let validation = ["name"];
       return await UPDATE_FUNC(
         id,
-        "updateBlogTag",
         args.id,
         BlogTag,
         "Blog Tag",
-        data
+        data,
+        "",
+        args,
+        validation
       );
     },
     deleteBlogTag: async (root, args, { id }) => {
       return await DELETE_FUNC(id, args.id, BlogTag, "Blog Tag");
     },
   },
-};
-
-/*
-BACKP=============== 27-09-2021
-const Blog = require("../models/Blog");
-const BlogTag = require("../models/BlogTag");
-const {
-  isEmpty,
-  putError,
-  checkError,
-  imageUpload,
-  imageUnlink,
-  checkToken,
-  stringTourl,
-  validateUrl,
-  updateUrl
-} = require("../config/helpers");
-const validate = require("../validations/blog");
-const errorRES = require("../error");
-
-const fs = require("fs");
-var bdir = './assets/images/blog';
-var bfdir = './assets/images/blog/feature';
-
-if (!fs.existsSync(bdir)){
-  fs.mkdirSync(bdir);
-}
-if (!fs.existsSync(bfdir)){
-  fs.mkdirSync(bfdir);
-}
-
-var bfldir = './assets/images/blog/feature/large';
-var bfmdir = './assets/images/blog/feature/medium';
-var bftdir = './assets/images/blog/feature/thumbnail';
-var bfodir = './assets/images/blog/feature/original';
-
-if (!fs.existsSync(bfldir)){
-  fs.mkdirSync(bfldir);
-}
-if (!fs.existsSync(bfmdir)){
-  fs.mkdirSync(bfmdir);
-}
-if (!fs.existsSync(bftdir)){
-  fs.mkdirSync(bftdir);
-}
-if (!fs.existsSync(bfodir)){
-  fs.mkdirSync(bfodir);
-}
-
-
-module.exports = {
-  Query: {
-    blogs: async (root, args) => {
-      try {
-        const blogs = await Blog.find({});
-        return blogs || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
-      }
-    },
-
-    // get all blog with pagination .............................
-
-    blog_pagination: async (
-      root,
-      { limit, pageNumber, search, orderBy, order }
-    ) => {
-      var sort = orderBy ? orderBy : "_id";
-      var sortDirection = order === "DESC" ? -1 : 1;
-
-      const [
-        {
-          total: [total = 0],
-          edges,
-        },
-      ] = await Blog.aggregate([
-        { $match: { title: { $regex: search, $options: "i" } } },
-        {
-          $facet: {
-            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
-            edges: [
-              { $sort: { [sort]: sortDirection } },
-              { $skip: limit * (pageNumber - 1) },
-              { $limit: limit },
-            ],
-          },
-        },
-        {
-          $project: {
-            total: "$total.count",
-            edges: "$edges",
-          },
-        },
-      ]);
-
-      if (!edges.length) {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: { message: `${errorRES.RETRIEVE_ERROR} blog`, status: 200 },
-        };
-      } else {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: { message: "Blog List", status: 200 },
-        };
-      }
-    },
-    blog: async (root, args) => {
-      try {
-        const blog = await Blog.findById(args.id);
-        if (!blog) {
-          throw putError("Blog not found");
-        }
-        return blog;
-        // return { message: '', statuscode: 200, data: blog };
-      } catch (error) {
-        error = checkError(error);
-        return { message: error.custom_message, statuscode: 404 };
-      }
-    },
-    blogsbytagid: async (root, args, { id }) => {
-      try {
-        const blogs = await Blog.find({
-          blog_tag: { $in: args.tag_id },
-        });
-        return blogs || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
-    blogsbytagurl: async (root, args, { id }) => {
-      try {
-        const blogtag = await BlogTag.findOne({ url: args.tag_url });
-        if (!blogtag) {
-          throw putError("404 Not found");
-        }
-        const blogs = await Blog.find({
-          blog_tag: { $in: blogtag.id },
-        });
-        return blogs || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
-
-    // get all blog tag with pagination
-
-    blogTags_pagination: async (
-      root,
-      { limit, pageNumber, search, orderBy, order }
-    ) => {
-      var sort = orderBy ? orderBy : "_id";
-      var sortDirection = order === "DESC" ? -1 : 1;
-
-      const [
-        {
-          total: [total = 0],
-          edges,
-        },
-      ] = await BlogTag.aggregate([
-        { $match: { name: { $regex: search, $options: "i" } } },
-        {
-          $facet: {
-            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
-            edges: [
-              { $sort: { [sort]: sortDirection } },
-              { $skip: limit * (pageNumber - 1) },
-              { $limit: limit },
-            ],
-          },
-        },
-        {
-          $project: {
-            total: "$total.count",
-            edges: "$edges",
-          },
-        },
-      ]);
-      if (!edges.length) {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: { message:  `${errorRES.RETRIEVE_ERROR} blog`, status: 200 },
-        };
-      } else {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: { message: "Tags List", status: 200 },
-        };
-      }
-    },
-
-    blogtags: async (root, args) => {
-      try {
-        const blogtags = await BlogTag.find({});
-        return blogtags || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
-      }
-    },
-  },
-  Mutation: {
-    addBlog: async (root, args, user) => {
-      checkToken(user.id);
-      try {
-        // Check Validation
-        const errors = validate("addBlog", args);
-        if (!isEmpty(errors)) {
-          throw putError(errors);
-        }
-
-        let imgObject = "";
-        if (args.feature_image) {
-          imgObject = await imageUpload(
-            args.feature_image,
-            "/assets/images/blog/feature/"
-          );
-
-          if (imgObject.success === false) {
-            throw putError(imgObject.message);
-          }
-        }
-
-        var url = await updateUrl(args.url || args.title, "Blog");
-
-        const newBlog = new Blog({
-          title: args.title,
-          url: url,
-          content: args.content || "",
-          status: args.status,
-          blog_tag: args.blog_tag,
-          feature_image: imgObject.data || imgObject,
-          meta: args.meta,
-          author: user.id,
-        });
-
-        await newBlog.save();
-        return { message: "Blog saved successfully", status: 200 };
-      } catch (error) {
-        error = checkError(error);
-        return { message:  `${errorRES.CREATE_ERROR} blog`, status: 400 };
-      }
-    },
-    updateBlog: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        // Check Validation
-        const errors = validate("updateBlog", args);
-        if (!isEmpty(errors)) {
-          throw putError(errors);
-        }
-
-        const blog = await Blog.findById({ _id: args.id });
-        if (blog) {
-          if (args.updatedImage) {
-            let imgObject = await imageUpload(
-              args.updatedImage,
-              "/assets/images/blog/feature/"
-            );
-            if (imgObject.success === false) {
-              throw putError(imgObject.message);
-            } else {
-              imageUnlink(blog.feature_image);
-              blog.feature_image = imgObject.data;
-            }
-          }
-
-          var url = await updateUrl(args.url || args.title, "Blog");
-
-          blog.title = args.title;
-          blog.content = args.content;
-          blog.status = args.status;
-          blog.blog_tag = args.blog_tag;
-          blog.url = url;
-          blog.meta = args.meta;
-          blog.updated = Date.now();
-          await blog.save();
-          return { message: "Blog updated successfully", status: 200 };
-        } else {
-          return { message: "Blog not exist", statuscode: 404 };
-        }
-      } catch (error) {
-        error = checkError(error);
-        return { message: `${errorRES.UPDATE_ERROR} blog`, status: 400 };
-      }
-    },
-    deleteBlog: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const blog = await Blog.findByIdAndRemove(args.id);
-        if (blog) {
-          //return true;
-          if (blog.feature_image) {
-            imageUnlink(blog.feature_image);
-          }
-          //const blogs = await Blog.find({});
-          return { message: "Blog deleted successfully", status: 200 };
-        }
-        throw putError("Blog not exist");
-      } catch (error) {
-        error = checkError(error);
-        return { message:  `${errorRES.DELETE_ERROR} blog`, status: 404 };
-      }
-    },
-    addBlogTag: async (root, args, user) => {
-      //checkToken(user.id);
-      console.log('user.id', user.id)
-      if(!user.id){
-        return {message: 'Authentication token is invalid, please log in', status: 401}
-      }
-      try {
-        // Check Validation
-        const errors = validate("addBlogTag", args);
-        if (!isEmpty(errors)) {
-          // throw putError(errors);
-
-          return { message: errors || 'Something went wrong', status: 400 };
-        }
-
-        const blogtag = await BlogTag.findOne({ name: args.name });
-        if (blogtag) {
-          throw putError(
-            "A term with the name provided already exists in this taxonomy."
-          );
-        }
-
-        let url = stringTourl(args.url || args.name);
-
-        const newTag = new BlogTag({
-          name: args.name,
-          url: url,
-        });
-
-        await newTag.save();
-        //return await BlogTag.find({});
-        return { message: "Tag saved successfully", statuscode: 200 };
-      } catch (error) {
-        error = checkError(error);
-        return { message: `${errorRES.CREATE_ERROR} blogTag`, status: 400 };
-      }
-    },
-    updateBlogTag: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        // Check Validation
-        const errors = validate("updateBlogTag", args);
-        if (!isEmpty(errors)) {
-          throw putError(errors);
-        }
-        const blogtag = await BlogTag.findById({ _id: args.id });
-        if (blogtag) {
-          blogtag.name = args.name;
-          let url = stringTourl(args.url || args.name);
-          blogtag.url = url;
-          blogtag.updated = Date.now();
-          await blogtag.save();
-          return { message: "Tag updated successfully", statuscode: 200 };
-        } else {
-          throw putError("Tag not exist");
-        }
-      } catch (error) {
-        error = checkError(error);
-        return { message: `${errorRES.UPDATE_ERROR} blogTag`, statuscode: 404 };
-      }
-    },
-    deleteBlogTag: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const blogtag = await BlogTag.findByIdAndRemove(args.id);
-        if (blogtag) {
-          const blogtags = await BlogTag.find({});
-          return { message: "Tag deleted successfully", statuscode: 200 };
-        }
-        throw putError("Tag not exist");
-      } catch (error) {
-        error = checkError(error);
-        return { message: `${errorRES.DELETE_ERROR} blogTag`, statuscode: 404 };
-      }
-    },
-  },
-};
-
-
-*/
+}; 

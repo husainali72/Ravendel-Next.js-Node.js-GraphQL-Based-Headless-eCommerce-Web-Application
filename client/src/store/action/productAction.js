@@ -20,11 +20,19 @@ export const categoriesAction = () => (dispatch) => {
   });
   query(GET_CATEGORIES)
     .then((response) => {
-      if (response) {
-        return dispatch({
-          type: CATS_SUCCESS,
-          payload: response.data.productCategories,
-        });
+      if (response && response.data && response.data.productCategories) {
+        var productCategories = response.data.productCategories;
+        if(productCategories.message.success){
+          return dispatch({
+            type: CATS_SUCCESS,
+            payload: productCategories.data,
+          });
+        }else {
+          return dispatch({
+            type: ALERT_SUCCESS,
+            payload: { boolean: true, message: productCategories.message.message, error: true }
+          });
+        }
       }
     })
     .catch((error) => {
@@ -164,11 +172,19 @@ export const productsAction = () => (dispatch) => {
   });
   query(GET_PRODUCTS)
     .then((response) => {
-      if (response) {
-        return dispatch({
-          type: PRODUCTS_SUCCESS,
-          payload: response.data.products,
-        });
+      if (response && response.data && response.data.products) {
+        var products = response.data.products;
+        if(products.message.success){
+          return dispatch({
+            type: PRODUCTS_SUCCESS,
+            payload: products.data,
+          });
+        }else {
+          return dispatch({
+            type: ALERT_SUCCESS,
+            payload: { boolean: true, message: products.message.message, error: true }
+          });
+        }
       }
     })
     .catch((error) => {

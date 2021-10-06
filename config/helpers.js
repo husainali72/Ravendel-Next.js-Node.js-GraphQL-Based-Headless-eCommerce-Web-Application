@@ -1,4 +1,5 @@
 const Messages = require("./messages");
+const Validator = require("validator");
 
 const isEmpty = (value) =>
   value === undefined ||
@@ -266,10 +267,7 @@ module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
 const imageUnlink = (imgObject) => {
-  console.log("is here comes", imgObject);
   for (let i in imgObject) {
-    //console.log("here comes", imgObject[i]);
-    //fs.unlinkSync("." + imgObject[i]);
     fs.unlink("." + imgObject[i], function (err) {
       if (err) console.log(err);
     });
@@ -277,6 +275,46 @@ const imageUnlink = (imgObject) => {
 };
 
 module.exports.imageUnlink = imageUnlink;
+
+function capitalize(str) {
+  const lower = str.toLowerCase();
+  return str.charAt(0).toUpperCase() + lower.slice(1);
+}
+
+const _validate = (names, args) => {
+  let errors = "";
+  if(names && names.length > 0){
+    names.map((name) => {   
+      if (!args[name] || Validator.isEmpty(args[name])) {
+        return (errors = `${capitalize(name)} field is required`)
+      }
+
+      if (name === "email" && !Validator.isEmail(args[name])) {
+        return (errors = `${capitalize(name)} is invalid`);
+      }   
+    })
+  }
+  return errors;
+};
+
+const _validatenested = (main,names, args) => {
+  let errors = "";
+  if(names && names.length > 0){
+    names.map((name) => {   
+      if (!args[main][name] || Validator.isEmpty(args[main][name])) {
+        return (errors = `${capitalize(name)} field is required`)
+      }
+
+      if (name === "email" && !Validator.isEmail(args[main][name])) {
+        return (errors = `${capitalize(name)} is invalid`);
+      }   
+    })
+  }
+  return errors;
+};
+
+module.exports._validate = _validate;
+module.exports._validatenested = _validatenested;
 
 /*---------------------------------------------------------------------------------------------------------------*/
 const getdate = (format, timezone = "UTC", date) => {

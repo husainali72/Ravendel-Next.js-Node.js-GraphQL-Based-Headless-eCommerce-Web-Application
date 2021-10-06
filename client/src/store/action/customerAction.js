@@ -19,11 +19,19 @@ export const customersAction = () => dispatch => {
   });
   query(GET_CUSTOMERS)
     .then(response => {
-      if (response) {
-        return dispatch({
-          type: CUSTOMERS_SUCCESS,
-          payload: response.data.customers
-        });
+      if (response && response.data && response.data.customers) {
+        var customers = response.data.customers;
+        if(customers.message.success){
+          return dispatch({
+            type: CUSTOMERS_SUCCESS,
+            payload: customers.data
+          });
+        }else {
+          return dispatch({
+            type: ALERT_SUCCESS,
+            payload: { boolean: true, message: customers.message.message, error: true }
+          });
+        }
       }
     })
     .catch(error => {

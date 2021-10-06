@@ -9,15 +9,22 @@ const {
   checkError,
   imageUpload,
   imageUnlink,
-  checkToken,
-  stringTourl,
-  validateUrl,
   updateUrl,
+  MESSAGE_RESPONSE,
+  _validate
 } = require("../config/helpers");
-const validate = require("../validations/product");
+const {
+  DELETE_FUNC,
+  GET_BY_PAGINATIONS,
+  GET_SINGLE_FUNC,
+  GET_ALL_FUNC,
+  GET_BY_URL,
+  CREATE_FUNC,
+  UPDATE_FUNC,
+} = require("../config/api_functions");
 var mongoose = require("mongoose");
-const Messages = require("../config/messages");
 
+/* =============================WILL FIX LATER============================= */
 const fs = require("fs");
 var pdir = './assets/images/product';
 var pcdir = './assets/images/product/category';
@@ -114,6 +121,7 @@ if (!fs.existsSync(vtdir)){
 if (!fs.existsSync(vodir)){
   fs.mkdirSync(vodir);
 }
+/* =============================WILL FIX LATER============================= */
 
 
 /* For Test geting child*/
@@ -132,61 +140,23 @@ module.exports = {
 
   Query: {
     productCategories: async (root, args) => {
-      try {
-        const cats = await ProductCat.find({});
-        return cats || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
-      }
+      return await GET_ALL_FUNC(ProductCat, "ProductCats");
     },
-
-    // get all productCategories with the pagination...................
-
     productCategories_pagination: async (
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      var sort = orderBy ? orderBy : "_id";
-      var sortDirection = order === "DESC" ? -1 : 1;
-      const [
-        {
-          total: [total = 0],
-          edges,
-        },
-      ] = await ProductCat.aggregate([
-        {
-          $match: { name: { $regex: search, $options: "i" } },
-        },
-        {
-          $facet: {
-            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
-            edges: [
-              { $sort: { [sort]: sortDirection } },
-              { $skip: limit * (pageNumber - 1) },
-              { $limit: limit },
-            ],
-          },
-        },
-        {
-          $project: {
-            total: "$total.count",
-            edges: "$edges",
-          },
-        },
-      ]);
-      if (!edges.length) {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: { message: `${Messages.RETRIEVE_ERROR} productCategories`, success: true },
-        };
-      } else {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: { message: "productCategories list fetched", success: true },
-        };
-      }
+      let searchInFields = { name: { $regex: search, $options: "i" } };
+
+      return await GET_BY_PAGINATIONS(
+        limit,
+        pageNumber,
+        orderBy,
+        order,
+        searchInFields,
+        ProductCat,
+        "ProductCategories"
+      );
     },
 
     productCategoriesByFilter: async (root, args) => {
@@ -198,85 +168,30 @@ module.exports = {
       }
     },
     productCategory: async (root, args) => {
-      try {
-        const cat = await ProductCat.findById(args.id);
-        if (!cat) {
-          throw putError("Category not found");
-        }
-        return cat;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_SINGLE_FUNC(args.id, ProductCat, "ProductCat");
     },
     products: async (root, args, { id }) => {
-      try {
-        const products = await Product.find({});
-        return products || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_ALL_FUNC(Product, "Products");
     },
-
-    /// get all products by pagination ........................................,
-
     products_pagination: async (
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      var sort = orderBy ? orderBy : "_id";
-      var sortDirection = order === "DESC" ? -1 : 1;
+      let searchInFields = { name: { $regex: search, $options: "i" } };
 
-      const [
-        {
-          total: [total = 0],
-          edges,
-        },
-      ] = await Product.aggregate([
-        { $match: { name: { $regex: search, $options: "i" } } },
-        {
-          $facet: {
-            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
-            edges: [
-              { $sort: { [sort]: sortDirection } },
-              { $skip: limit * (pageNumber - 1) },
-              { $limit: limit },
-            ],
-          },
-        },
-        {
-          $project: {
-            total: "$total.count",
-            edges: "$edges",
-          },
-        },
-      ]);
-      if (!edges.length) {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: { message: `${Messages.RETRIEVE_ERROR} product`, success: true },
-        };
-      } else {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: { message: "products list fetched", success: true },
-        };
-      }
+      return await GET_BY_PAGINATIONS(
+        limit,
+        pageNumber,
+        orderBy,
+        order,
+        searchInFields,
+        Product,
+        "Products"
+      );
     },
-
     productswithcat: async (root, args, { id }) => {
-      try {
-        const products = await Product.find({});
-        return products || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_ALL_FUNC(Product, "Productswithcategory");
     },
-
     featureproducts: async (root, args, { id }) => {
       try {
         const products = await Product.find({
@@ -345,30 +260,10 @@ module.exports = {
       }
     },
     productsbycaturl: async (root, args, { id }) => {
-      try {
-        const cat = await ProductCat.findOne({ url: args.cat_url });
-        if (!cat) {
-          throw putError("404 Not found");
-        }
-
-        return cat;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_BY_URL(ProductCat, args.cat_url, "ProductCategory");
     },
     productbyurl: async (root, args, { id }) => {
-      try {
-        const product = await Product.findOne({ url: args.url });
-        if (!product) {
-          throw putError("404 Not found");
-        }
-
-        return product;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_BY_URL(Product, args.url, "Products");
     },
     filteredProducts: async (root, args) => {
       try {
@@ -427,16 +322,7 @@ module.exports = {
       }
     },
     product: async (root, args) => {
-      try {
-        const product = await Product.findById(args.id);
-        if (!product) {
-          throw putError("Product not found");
-        }
-        return product;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_SINGLE_FUNC(args.id, Product, "Product");
     },
   },
   Product: {
@@ -514,8 +400,10 @@ module.exports = {
       }
     },
   },
+  //.............
   Category: {
     products: async (root, args) => {
+      // return await GET_BY_ROOT_ID(root.id, Product, "Products");
       try {
         const products = await Product.find({
           categoryId: { $in: root.id },
@@ -610,135 +498,76 @@ module.exports = {
   },
   Mutation: {
     addProductCategory: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        // Check Validation
-        const errors = validate("addProductCategory", args);
-        if (!isEmpty(errors)) {
-          throw putError(errors);
-        }
-
-        const cat = await ProductCat.findOne({
-          name: args.name,
-          parentId: args.parentId,
-        });
-
-        if (cat) {
-          throw putError("This category is already exist.");
-        } else {
-          let url = await updateUrl(args.url || args.name, "ProductCat");
-          let imgObject = "";
-          if (args.image) {
-            imgObject = await imageUpload(
-              args.image[0].file,
-              "/assets/images/product/category/"
-            );
-
-            if (imgObject.success === false) {
-              throw putError(imgObject.message);
-            }
-          }
-
-          const newCat = new ProductCat({
-            name: args.name,
-            parentId: args.parentId || null,
-            url: url,
-            description: args.description,
-            image: imgObject.data || imgObject,
-            meta: args.meta,
-          });
-
-          await newCat.save();
-          return { message: "productCategory saved successfully", success: true };
-          // return await ProductCat.find({});
-        }
-      } catch (error) {
-        error = checkError(error);
-        return { message: `${Messages.CREATE_ERROR} ProductCategory`, success: false };
+      let path = "/assets/images/product/category/";
+      let url = "";
+      if (args.url || args.title) {
+        url = await updateUrl(args.url || args.name, "ProductCat");
       }
+      let data = {
+        name: args.name,
+        parentId: args.parentId || null,
+        url: url,
+        description: args.description,
+        image: args.image,
+        meta: args.meta,
+      };
+      let validation = ["name"];
+      return await CREATE_FUNC(
+        id,
+        " ProductCategory",
+        ProductCat,
+        data,
+        args,
+        path,
+        validation
+      );
     },
     updateProductCategory: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const cat = await ProductCat.findById({ _id: args.id });
-        if (cat) {
-          let imgObject = "";
-          if (args.update_image) {
-            imgObject = await imageUpload(
-              args.update_image[0].file,
-              "/assets/images/product/category/"
-            );
-
-            if (imgObject.success === false) {
-              throw putError(imgObject.message);
-            }
-
-            if (cat.image) {
-              imageUnlink(cat.image);
-            }
-
-            cat.image = imgObject.data;
-          }
-
-          var url = await updateUrl(args.url || args.name, "ProductCat");
-          cat.name = args.name;
-          cat.parentId = args.parentId || null;
-          cat.url = url;
-          cat.description = args.description;
-          cat.meta = args.meta;
-          cat.updated = Date.now();
-
-          await cat.save();
-          //return await ProductCat.find({});
-          return {
-            message: "productCategory update successfully",
-            success: true,
-          };
-        } else {
-          throw putError("Category not exist");
-        }
-      } catch (error) {
-        error = checkError(error);
-        return { message: `${Messages.UPDATE_ERROR} productCategory`, success: false };
+      let path = "/assets/images/product/category/";
+      let url = "";
+      if (args.url || args.title) {
+        url = await updateUrl(args.url || args.name, "ProductCat");
       }
+      let data = {
+        name: args.name,
+        parentId: args.parentId || null,
+        url: url,
+        description: args.description,
+        image: args.image,
+        meta: args.meta,
+      };
+      let validation = ["name"];
+      return await UPDATE_FUNC(
+        id,
+        args.id,
+        ProductCat,
+        "ProductCategory",
+        data,
+        path,
+        args,
+        validation
+      );
     },
-
     deleteProductCategory: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const cat = await ProductCat.findByIdAndRemove(args.id);
-        if (cat) {
-          if (cat.image) {
-            imageUnlink(cat.image);
-          }
-          // const cats = await ProductCat.find({});
-          // return cats || [];
-          return {
-            message: "productCategory deleted successfully",
-            success: true,
-          };
-        }
-        throw putError("Category not exist");
-      } catch (error) {
-        error = checkError(error);
-        return { message: `${Messages.DELETE_ERROR} productCategory `, status: 404 };
-      }
+      return await DELETE_FUNC(id, args.id, ProductCat, "ProductCat");
     },
 
     addProduct: async (root, args, { id }) => {
-     // console.log(args);
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
+      }
       try {
-        const errors = validate("addProduct", args);
+        const errors = _validate(["name", "categoryId","sku","quantity"], args);
         if (!isEmpty(errors)) {
-          throw putError(errors);
+          return {
+            message: errors,
+            success: false,
+          };
         }
-
         const product = await Product.findOne({ name: args.name });
         if (product) {
-          throw putError("Name already exist.");
+          return MESSAGE_RESPONSE("DUPLICATE", "Name", false);
         } else {
-          //const isSku = await Product.findOne({ sku: args.sku });
           let imgObject = "";
           if (args.feature_image) {
            // console.log('fimage',args.feature_image);
@@ -837,24 +666,28 @@ module.exports = {
           }
 
           let result = await ProductAttributeVariation.insertMany(combinations);
-
-          // const products = await Product.find({});
-          // return products || [];
-          return { message: "products added successfully", success: true };
+          return MESSAGE_RESPONSE("AddSuccess", "Product", true);
         }
       } catch (error) {
-        error = checkError(error);
-        return { message: `${Messages.CREATE_ERROR} product`, success: false };
+        error = checkError(error.message);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Product", false);
       }
     },
     updateProduct: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
+      }
       try {
-        const errors = validate("updateProduct", args);
+        const errors = _validate(["name", "categoryId","sku","quantity"], args);
         if (!isEmpty(errors)) {
-          throw putError(errors);
+          return {
+            message: errors,
+            success: false,
+          };
         }
-
+        if (!args.id) {
+          return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
+        }
         const product = await Product.findById({ _id: args.id });
         if (product) {
           let isSku = false;
@@ -862,7 +695,6 @@ module.exports = {
           if(matchedProduct && matchedProduct._id != args.id){
             isSku = true;
           } */
-
           let imgObject = "";
           if (args.update_feature_image) {
             imgObject = await imageUpload(
@@ -967,27 +799,27 @@ module.exports = {
               },
             ];
           }
-
           await ProductAttributeVariation.deleteMany({
             product_id: args.id,
           });
 
           let result = await ProductAttributeVariation.insertMany(combinations);
-
-          // const products = await Product.find({});
-          // return products || [];
-          return { message: "products updated successfully", success: true };
+          return MESSAGE_RESPONSE("UpdateSuccess", "Product", true);
         } else {
-          throw putError("Product not exist");
+          return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
         }
       } catch (error) {
-        error = checkError(error);
-        console.log("error", error);
-        return { message: `${Messages.UPDATE_ERROR} Product `, success: false };
+        console.log(error.message);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", name, false);
       }
     },
     deleteProduct: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
+      }
+      if (!args.id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
+      }
       try {
         const product = await Product.findByIdAndRemove(args.id);
         if (product) {
@@ -1014,15 +846,11 @@ module.exports = {
               imageUnlink(variation.image);
             }
           }
-
-          // const products = await Product.find({});
-          // return products || [];
-          return { message: "products deleted successfully", success: true };
+          return MESSAGE_RESPONSE("DELETE", "Product", true);
         }
-        throw putError("Product not exist");
+        return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
       } catch (error) {
-        error = checkError(error);
-        return { message: `${Messages.DELETE_ERROR} product`, success: false };
+        return MESSAGE_RESPONSE("DELETE_ERROR", "Product", false);
       }
     },
   },

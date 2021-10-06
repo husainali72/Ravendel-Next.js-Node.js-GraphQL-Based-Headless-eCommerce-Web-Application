@@ -48,17 +48,24 @@ module.exports = gql`
     qty: Int
     combination: [String]
   }
-
+  type CartRES {
+    data:[Cart]
+    message: statusSchema
+  }
+  type Cart_by_id_RES {
+    data:Cart
+    message: statusSchema
+  }
   extend type Query {
-    carts: [Cart]
-    cart(id: ID!): Cart
+    carts: CartRES
+    cart(id: ID!): Cart_by_id_RES 
     cartbyUser(user_id: ID!): Cart
     calculateCart(cart: [cartProduct]): calculatedCart
   }
 
   extend type Mutation {
-    addCart(user_id: ID, total: Float, product: cartProduct): Cart
-    updateCart(id: ID!, total: Float, products: [cartProduct]): Cart
+    addCart(user_id: ID, total: Float, product: cartProduct): statusSchema
+    updateCart(id: ID!, total: Float, products: [cartProduct]): statusSchema
     deleteCart(id: ID!): Boolean!
     deleteCartProduct(id: ID!, object_id: ID!): Cart
     addToCart(customer_id: ID, cart: [cartProduct]): generalResponse

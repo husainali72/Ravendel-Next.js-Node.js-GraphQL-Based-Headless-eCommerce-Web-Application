@@ -16,11 +16,19 @@ export const reviewsAction = () => dispatch => {
   });
   query(GET_REVIEWS)
     .then(response => {
-      if (response) {
-        return dispatch({
-          type: REVIEWS_SUCCESS,
-          payload: response.data.reviews
-        });
+      if (response && response.data && response.data.reviews) {
+        var reviews = response.data.reviews;
+        if(reviews.message.success){
+          return dispatch({
+            type: REVIEWS_SUCCESS,
+            payload: reviews.data
+          });
+        }else {
+          return dispatch({
+            type: ALERT_SUCCESS,
+            payload: { boolean: true, message: reviews.message.message, error: true }
+          });
+        }
       }
     })
     .catch(error => {

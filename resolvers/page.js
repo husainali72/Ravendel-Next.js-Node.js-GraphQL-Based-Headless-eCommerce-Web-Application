@@ -1,271 +1,80 @@
 const Page = require("../models/Page");
+const { stringTourl } = require("../config/helpers");
 const {
-  isEmpty,
-  checkError,
-  checkToken,
-  validateUrl,
-  stringTourl,
-} = require("../config/helpers");
-const validate = require("../validations/page");
-const Messages = require("../config/messages");
+  DELETE_FUNC,
+  GET_BY_PAGINATIONS,
+  GET_SINGLE_FUNC,
+  GET_ALL_FUNC,
+  CREATE_FUNC,
+  UPDATE_FUNC,
+} = require("../config/api_functions");
 
 module.exports = {
   Query: {
     pages: async (root, args) => {
-      try {
-        const allPage = await Page.find({});
-        return {
-          message: {
-            message: Messages.RESULT_FOUND.replace(":item", "Page"),
-            success: true,
-          },
-          data: allPage,
-        };
-      } catch (error) {
-        return {
-          message: {
-            message: Messages.RETRIEVE_ERROR.replace(":item", "Page"),
-            success: false,
-          },
-        };
-      }
+      return await GET_ALL_FUNC(Page, " Pages");
     },
-    // all apge get with pagination.....................
-
     page_pagination: async (
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      var sort = orderBy ? orderBy : "_id";
-      var sortDirection = order === "DESC" ? -1 : 1;
-      const [
-        {
-          total: [total = 0],
-          edges,
-        },
-      ] = await Page.aggregate([
-        {
-          $match: { title: { $regex: search, $options: "i" } },
-        },
-        {
-          $facet: {
-            total: [{ $group: { _id: null, count: { $sum: 1 } } }],
-            edges: [
-              { $sort: { [sort]: sortDirection } },
-              { $skip: limit * (pageNumber - 1) },
-              { $limit: limit },
-            ],
-          },
-        },
-        {
-          $project: {
-            total: "$total.count",
-            edges: "$edges",
-          },
-        },
-      ]);
-
-      if (!edges.length) {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: {
-            message: Messages.RETRIEVE_ERROR.replace(":item", "Page"),
-            success: false,
-          },
-        };
-      } else {
-        return {
-          pagination: { totalCount: total, page: pageNumber },
-          data: edges,
-          message: {
-            message: Messages.RESULT_FOUND.replace(":item", "Page"),
-            success: true,
-          },
-        };
-      }
+      let searchInFields = { title: { $regex: search, $options: "i" } };
+      return await GET_BY_PAGINATIONS(
+        limit,
+        pageNumber,
+        orderBy,
+        order,
+        searchInFields,
+        Page,
+        "Pages"
+      );
     },
     page: async (root, args) => {
-      if (!args.id) {
-        return {
-          message: {
-            message: Messages.ID_ERROR.replace(":item", "Page"),
-            success: false,
-          },
-        };
-      }
-      try {
-        const page = await Page.findById(args.id);
-        if (!page) {
-          return {
-            message: {
-              message: Messages.NOT_EXIST.replace(":item", "page"),
-              success: false,
-            },
-          };
-        }
-        return {
-          message: {
-            message: Messages.RESULT_FOUND.replace(":item", "Page"),
-            success: true,
-          },
-          data: page,
-        };
-      } catch (error) {
-        error = checkError(error);
-        return {
-          message: {
-            message: Messages.RETRIEVE_ERROR.replace(":item", "Page"),
-            success: false,
-          },
-        };
-      }
+      return await GET_SINGLE_FUNC(args.id, Page, "Page");
     },
   },
   Mutation: {
     addPage: async (root, args, { id }) => {
-      if (!id) {
-        return {
-          message: Messages.TOKEN_REQ.replace(":item", "Page"),
-          success: false,
-        };
+      let url = "";
+      if (args.url || args.title) {
+        url = await stringTourl(args.url || args.title);
       }
-      checkToken(id);
-      try {
-        const errors = validate("addPage", args);
-        if (!isEmpty(errors)) {
-          return {
-            message: errors,
-            success: false,
-          };
-        }
-        var url = stringTourl(args.url || args.title);
-        var duplicate = true;
-        while (duplicate) {
-          let page = await Page.findOne({ url: url });
-          if (page) {
-            url = validateUrl(url);
-          } else {
-            duplicate = false;
-          }
-        }
-
-        const newPage = new Page({
-          title: args.title,
-          content: args.content,
-          status: args.status,
-          url: url,
-          meta: args.meta,
-        });
-
-        await newPage.save();
-
-        let pages = await Page.find({});
-        return {
-          message: Messages.AddSuccess.replace(":item", "Page"),
-          success: true,
-        };
-      } catch (error) {
-        error = checkError(error);
-        return {
-          message: Messages.CREATE_ERROR.replace(":item", "Page"),
-          success: false,
-        };
-      }
+      let data = {
+        title: args.title,
+        content: args.content,
+        status: args.status,
+        url: url,
+        meta: args.meta,
+      };
+      let validation = ["title"];
+      return await CREATE_FUNC(id, "Page", Page, data, args, "", validation);
     },
     updatePage: async (root, args, { id }) => {
-      if (!id) {
-        return {
-          message: Messages.TOKEN_REQ.replace(":item", "Page"),
-          success: false,
-        };
+      let url = "";
+      if (args.url || args.title) {
+        url = await stringTourl(args.url || args.title);
       }
-      checkToken(id);
-      if (!args.id) {
-        return {
-          message: Messages.ID_ERROR.replace(":item", "Page"),
-          success: false,
-        };
-      }
-      const errors = validate("updatePage", args);
-      if (!isEmpty(errors)) {
-        return {
-          message: errors,
-          success: false,
-        };
-      }
-      try {
-        const page = await Page.findById({ _id: args.id });
-        if (page) {
-          var url = stringTourl(args.url || args.title);
-          var duplicate = true;
-          while (duplicate) {
-            let page = await Page.findOne({ url: url, _id: { $nin: args.id } });
-            if (page) {
-              url = validateUrl(url);
-            } else {
-              duplicate = false;
-            }
-          }
-
-          page.title = args.title;
-          page.content = args.content;
-          page.status = args.status;
-          page.url = url;
-          page.meta = args.meta;
-          page.updatedAt = Date.now();
-          await page.save();
-          return {
-            message: Messages.UpdateSuccess.replace(":item", "Page"),
-            success: true,
-          };
-        }
-        return {
-          message: Messages.NOT_EXIST.replace(":item", "page"),
-          success: false,
-        };
-      } catch (error) {
-        error = checkError(error);
-        return {
-          message: Messages.UPDATE_ERROR.replace(":item", "Page"),
-          success: false,
-        };
-      }
+      let data = {
+        title: args.title,
+        content: args.content,
+        status: args.status,
+        url: url,
+        meta: args.meta,
+      };
+      let validation = ["title"];
+      return await UPDATE_FUNC(
+        id,
+        args.id,
+        Page,
+        "Page",
+        data,
+        "",
+        args,
+        validation
+      );
     },
     deletePage: async (root, args, { id }) => {
-      if (!id) {
-        return {
-          message: Messages.TOKEN_REQ.replace(":item", "Page"),
-          success: false,
-        };
-      }
-      checkToken(id);
-      if (!args.id) {
-        return {
-          message: Messages.ID_ERROR.replace(":item", "Page"),
-          success: false,
-        };
-      }
-      try {
-        const page = await Page.findByIdAndRemove(args.id);
-        if (page) {
-          let pages = await Page.find({});
-          return {
-            message: Messages.DELETE.replace(":item", "Page"),
-            success: true,
-          };
-        }
-        return {
-          message: Messages.NOT_EXIST.replace(":item", "page"),
-          success: false,
-        };
-      } catch (error) {
-        error = checkError(error);
-        return {
-          message: Messages.DELETE_ERROR.replace(":item", "Page"),
-          success: false,
-        };
-      }
+      return await DELETE_FUNC(id, args.id, Page, "Page");
     },
   },
 };
