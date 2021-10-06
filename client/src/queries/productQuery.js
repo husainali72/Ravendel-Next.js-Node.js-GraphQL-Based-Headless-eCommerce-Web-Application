@@ -57,18 +57,41 @@ const PRODUCT_TILE_DATA = gql`
   }
 `;
 
+// const GET_CATEGORIES = gql`
+//   {
+//     productCategories {
+//       id
+//       name
+//       parentId
+//       url
+//       description
+//       image
+//       meta
+//       date
+//       updated
+//     }
+//   }
+// `;
+
+
 const GET_CATEGORIES = gql`
   {
     productCategories {
-      id
-      name
-      parentId
-      url
-      description
-      image
-      meta
-      date
-      updated
+      data {
+        id
+        name
+        parentId
+        url
+        description
+        image
+        meta
+        date
+        updated
+      }
+      message{
+        message
+        success
+      }
     }
   }
 `;
@@ -229,10 +252,25 @@ const DELETE_CATEGORY = gql`
 //   }
 //   ${PRODUCT_TILE_DATA}
 // `;
+// const GET_PRODUCTS = gql`
+//   {
+//     products {
+//       ...ProductTile
+//     }
+//   }
+//   ${PRODUCT_TILE_DATA}
+// `;
+
 const GET_PRODUCTS = gql`
   {
     products {
-      ...ProductTile
+      data {
+        ...ProductTile
+      }
+      message{
+        message
+        success
+      }
     }
   }
   ${PRODUCT_TILE_DATA}

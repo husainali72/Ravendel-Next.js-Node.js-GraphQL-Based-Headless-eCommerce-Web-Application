@@ -1,14 +1,12 @@
 const Brand = require("../models/Brand");
-const { isEmpty, updateUrl, MESSAGE_RESPONSE } = require("../config/helpers");
+const { isEmpty, updateUrl, MESSAGE_RESPONSE, _validate, imageUpload, imageUnlink } = require("../config/helpers");
 const {
   DELETE_FUNC,
   GET_BY_PAGINATIONS,
   GET_SINGLE_FUNC,
   GET_ALL_FUNC,
-  CREATE_FUNC,
-  UPDATE_FUNC,
 } = require("../config/api_functions");
-const validate = require("../validations/brand");
+
 
 module.exports = {
   Query: {
@@ -36,20 +34,27 @@ module.exports = {
   },
   Mutation: {
     addBrand: async (root, args, { id }) => {
+      console.log('Fired AddBrand');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "brand", false);
       }
       try {
-        const errors = validate("addBrand", args);
-        if (!isEmpty(errors)) {
+
+        if(args.brands && !args.brands.length){
           return {
             message: errors,
             success: false,
           };
         }
+        // const errors = _validate(["brands"], args);
+        // if (!isEmpty(errors)) {
+        //   return {
+        //     message: errors,
+        //     success: false,
+        //   };
+        // }
         const brands = await Brand.find({});
         let brandList = brands.map((brand) => brand.name);
-
         let addBrands = [];
         for (let i in args.brands) {
           if (
@@ -62,20 +67,20 @@ module.exports = {
           }
         }
         await Brand.insertMany(addBrands);
-        return MESSAGE_RESPONSE("AddSuccess", "Order", true);
+        return MESSAGE_RESPONSE("AddSuccess", "Brands", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("CREATE_ERROR", "Order", false);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Brands", false);
       }
     },
     updateBrand: async (root, args, { id }) => {
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Brands", false);
       }
-      if (!args.id) { 
+      if (!args.id) {
         return MESSAGE_RESPONSE("ID_ERROR", "Brands", false);
       }
       try {
-        const errors = validate("updateBrand", args);
+        const errors = _validate(["name", "url"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -86,7 +91,7 @@ module.exports = {
         if (brand) {
           if (args.updated_brand_logo) {
             let imgObject = await imageUpload(
-              args.updated_brand_logo,
+              args.updated_brand_logo.file,
               "/assets/images/brand/"
             );
             if (imgObject.success === false) {
@@ -118,22 +123,3 @@ module.exports = {
     },
   },
 };
-
-// let path = "/assets/images/brand/";
-// let url = await updateUrl(args.url, "Brand");
-
-// let data = {
-//   name: args.name,
-//   url: url,
-//   meta: args.meta,
-//   updated: Date.now(),
-// };
-// return await UPDATE_FUNC(
-//   id,
-//   "updateBrand",
-//   args.id,
-//   Brand,
-//   "Brand",
-//   data,
-//   path
-// );

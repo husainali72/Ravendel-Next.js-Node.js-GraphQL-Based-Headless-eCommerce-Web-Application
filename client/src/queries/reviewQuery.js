@@ -2,24 +2,30 @@ import gql from "graphql-tag";
 const GET_REVIEWS = gql`
   {
     reviews {
-      id
-      title
-      customer_id {
+      data {
         id
-        first_name
+        title
+        customer_id {
+          id
+          first_name
+        }
+        product_id {
+          _id
+          name
+        }
+        email
+        review
+        rating
+        status
+        date
+        updated
       }
-      product_id {
-        _id
-        name
+      message {
+        success
+        message
       }
-      email
-      review
-      rating
-      status
-      date
-      updated
     }
-  }
+  } 
 `;
 // const GET_REVIEWS = gql`
 //   {

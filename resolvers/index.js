@@ -53,6 +53,6 @@ module.exports = [
   couponResolvers,
   reviewResolvers,
   product_attribute,
-  faqResolvers
+  faqResolvers,
   product_attribute
 ];

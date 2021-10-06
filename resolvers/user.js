@@ -7,6 +7,7 @@ const {
   imageUnlink,
   checkToken,
   MESSAGE_RESPONSE,
+  _validate,
 } = require("../config/helpers");
 
 const {
@@ -23,25 +24,25 @@ const bcrypt = require("bcryptjs");
 
 const fs = require("fs");
 
-var udir = './assets/images/user';
-var ldir = './assets/images/user/large';
-var mdir = './assets/images/user/medium';
-var tdir = './assets/images/user/thumbnail';
-var odir = './assets/images/user/original';
+var udir = "./assets/images/user";
+var ldir = "./assets/images/user/large";
+var mdir = "./assets/images/user/medium";
+var tdir = "./assets/images/user/thumbnail";
+var odir = "./assets/images/user/original";
 
-if (!fs.existsSync(udir)){
+if (!fs.existsSync(udir)) {
   fs.mkdirSync(udir);
 }
-if (!fs.existsSync(ldir)){
+if (!fs.existsSync(ldir)) {
   fs.mkdirSync(ldir);
 }
-if (!fs.existsSync(mdir)){
+if (!fs.existsSync(mdir)) {
   fs.mkdirSync(mdir);
 }
-if (!fs.existsSync(odir)){
+if (!fs.existsSync(odir)) {
   fs.mkdirSync(odir);
 }
-if (!fs.existsSync(tdir)){
+if (!fs.existsSync(tdir)) {
   fs.mkdirSync(tdir);
 }
 
@@ -131,7 +132,7 @@ module.exports = {
       try {
         const user = await User.findById({ _id: args.id });
         if (user) {
-          const errors = validate("updateUser", args);
+          const errors = _validate(["name", "email", "role"], args);
           if (!isEmpty(errors)) {
             return {
               message: errors,
@@ -144,7 +145,7 @@ module.exports = {
           }
 
           if (args.updatedImage) {
-           // console.log(args.updatedImage);
+            // console.log(args.updatedImage);
             let imgObject = await imageUpload(
               args.updatedImage.file,
               "/assets/images/user/"
@@ -155,8 +156,6 @@ module.exports = {
             } else {
               imageUnlink(user.image);
               user.image = imgObject.data;
-
-
             }
           }
 

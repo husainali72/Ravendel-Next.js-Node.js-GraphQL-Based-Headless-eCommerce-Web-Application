@@ -8,7 +8,7 @@ module.exports = gql`
     updated: Date
   }
   type shipping_RES {
-    data:Shipping
+    data: Shipping
     message: statusSchema
   }
   extend type Query {
@@ -16,9 +16,9 @@ module.exports = gql`
   }
 
   extend type Mutation {
-    updateGlobalShipping(global: customObject): Shipping
-    addShippingClass(shipping_class: customObject): Shipping
-    updateShippingClass(shipping_class: customObject): Shipping
-    deleteShippingClass(_id: String): Shipping
+    updateGlobalShipping(global: customObject): statusSchema
+    addShippingClass(shipping_class: customObject): statusSchema
+    updateShippingClass(shipping_class: customObject): statusSchema
+    deleteShippingClass(_id: String): statusSchema
   }
 `;

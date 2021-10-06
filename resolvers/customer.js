@@ -1,5 +1,5 @@
 const Customer = require("../models/Customer");
-const { isEmpty, checkError, MESSAGE_RESPONSE } = require("../config/helpers");
+const { isEmpty, checkError, MESSAGE_RESPONSE,_validate } = require("../config/helpers");
 const {
   DELETE_FUNC,
   GET_BY_PAGINATIONS,
@@ -8,7 +8,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
-const validate = require("../validations/customer");
+
 
 module.exports = {
   Query: {
@@ -66,7 +66,7 @@ module.exports = {
         password: args.password,
         updated: Date.now(),
       };
-      let validation = ["first_name", "last_name", "email", "password"];
+      let validation = ["first_name", "last_name", "email"];
       return await UPDATE_FUNC(
         id,
         args.id,
@@ -86,7 +86,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "addAddressBook", false);
       }
       try {
-        const errors = validate("addAddressBook", args);
+        const errors = _validate(["first_name", "last_name","address_line1","pincode","city","country"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -120,7 +120,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "addAddressBook", false);
       }
       try {
-        const errors = validate("updateAddressBook", args);
+        const errors = _validate(["first_name", "last_name","address_line1","pincode","city","country"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,

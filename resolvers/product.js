@@ -10,7 +10,8 @@ const {
   imageUpload,
   imageUnlink,
   updateUrl,
-  MESSAGE_RESPONSE
+  MESSAGE_RESPONSE,
+  _validate
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -18,14 +19,12 @@ const {
   GET_SINGLE_FUNC,
   GET_ALL_FUNC,
   GET_BY_URL,
-  GET_BY_ROOT_ID,
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
-const validate = require("../validations/product");
 var mongoose = require("mongoose");
-const Messages = require("../config/messages");
 
+/* =============================WILL FIX LATER============================= */
 const fs = require("fs");
 var pdir = './assets/images/product';
 var pcdir = './assets/images/product/category';
@@ -122,6 +121,7 @@ if (!fs.existsSync(vtdir)){
 if (!fs.existsSync(vodir)){
   fs.mkdirSync(vodir);
 }
+/* =============================WILL FIX LATER============================= */
 
 
 /* For Test geting child*/
@@ -557,7 +557,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
       try {
-        const errors = validate("addProduct", args);
+        const errors = _validate(["name", "categoryId","sku","quantity"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -678,7 +678,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
       try {
-        const errors = validate("updateProduct", args);
+        const errors = _validate(["name", "categoryId","sku","quantity"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,

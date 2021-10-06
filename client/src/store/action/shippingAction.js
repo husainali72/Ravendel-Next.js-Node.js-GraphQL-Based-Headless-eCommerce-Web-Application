@@ -14,11 +14,19 @@ export const shippingAction = () => dispatch => {
   });
   query(GET_SHIPPING)
     .then(response => {
-      if (response) {
-        return dispatch({
-          type: SHIPPING_SUCCESS,
-          payload: response.data.shipping
-        });
+      if (response && response.data && response.data.shipping) {
+        var shipping = response.data.shipping;
+        if(shipping.message.success){
+          return dispatch({
+            type: SHIPPING_SUCCESS,
+            payload: shipping.data
+          });
+        }else {
+          return dispatch({
+            type: ALERT_SUCCESS,
+            payload: { boolean: true, message: shipping.message.message, error: true }
+          });
+        }
       }
     })
     .catch(error => {
@@ -73,16 +81,16 @@ export const shippingClassAddAction = object => dispatch => {
   mutation(ADD_SHIPPINGCLASS, object)
     .then(response => {
       if (response) {
-        dispatch({
-          type: SHIPPING_SUCCESS,
-          payload: response.data.addShippingClass
-        });
+        // dispatch({
+        //   type: SHIPPING_SUCCESS,
+        //   payload: response.data.addShippingClass
+        // });
 
         dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
-            message: "added successfully",
+            message: "Added successfully",
             error: false
           }
         });
@@ -106,19 +114,23 @@ export const shippingClassUpdateAction = object => dispatch => {
   dispatch({
     type: SHIPPING_LOADING
   });
+  console.log('object',object)
+  if(object && object.shipping_class && object.shipping_class.amount){
+    object.shipping_class.amount = object.shipping_class.amount.toString();
+  }
   mutation(UPDATE_SHIPPINGCLASS, object)
     .then(response => {
       if (response) {
-        dispatch({
-          type: SHIPPING_SUCCESS,
-          payload: response.data.updateShippingClass
-        });
+        // dispatch({
+        //   type: SHIPPING_SUCCESS,
+        //   payload: response.data.updateShippingClass
+        // });
 
         dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
-            message: "updated successfully",
+            message: "Updated successfully",
             error: false
           }
         });
@@ -145,10 +157,10 @@ export const shippingClassDeleteAction = object => dispatch => {
   mutation(DELETE_SHIPPINGCLASS, object)
     .then(response => {
       if (response) {
-        dispatch({
-          type: SHIPPING_SUCCESS,
-          payload: response.data.deleteShippingClass
-        });
+        // dispatch({
+        //   type: SHIPPING_SUCCESS,
+        //   payload: response.data.deleteShippingClass
+        // });
 
         dispatch({
           type: ALERT_SUCCESS,

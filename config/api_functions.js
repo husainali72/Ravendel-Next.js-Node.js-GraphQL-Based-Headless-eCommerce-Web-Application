@@ -45,7 +45,6 @@ const GET_BY_PAGINATIONS = async (
       },
     },
   ]);
-
   if (!edges.length) {
     return {
       pagination: { totalCount: total, page: page },
@@ -193,7 +192,7 @@ const CREATE_FUNC = async (
 
     if (args.feature_image || args.image) {
       let imgObject = "";
-      imgObject = await imageUpload(data.feature_image || data.image, path);
+      imgObject = await imageUpload(data.feature_image.file || data.image, path);
 
       if (imgObject.success === false) {
         return {
@@ -264,7 +263,7 @@ const UPDATE_FUNC = async (
     const response = await modal.findById(updateId);
     if (response) {
       if (args.updatedImage) {
-        let imgObject = await imageUpload(args.updatedImage, path);
+        let imgObject = await imageUpload(args.updatedImage.file, path);
         if (imgObject.success === false) {
           return {
             message:

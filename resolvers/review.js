@@ -8,8 +8,10 @@ const {
   GET_ALL_FUNC,
   CREATE_FUNC,
   UPDATE_FUNC,
-  MESSAGE_RESPONSE,
 } = require("../config/api_functions");
+const {
+  MESSAGE_RESPONSE
+} = require('../config/helpers');
 
 module.exports = {
   Query: {

@@ -81,10 +81,13 @@ const Shipping = () => {
 
   const editShipping = (shipping) => {
     setEditMode(true);
+   
     setcustomShippingClass(shipping);
   };
 
   const updateCustomShipping = () => {
+
+  
     dispatch(
       shippingClassUpdateAction({ shipping_class: customShippingClass })
     );

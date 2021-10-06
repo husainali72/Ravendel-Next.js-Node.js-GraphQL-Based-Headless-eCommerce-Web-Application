@@ -99,6 +99,7 @@ module.exports = {
       if (args.url || args.title) {
         url = await updateUrl(args.url || args.title, "Blog");
       }
+      console.log('ar', args)
       let data = {
         title: args.title,
         url: url,
@@ -194,4 +195,4 @@ module.exports = {
       return await DELETE_FUNC(id, args.id, BlogTag, "Blog Tag");
     },
   },
-};
+}; 

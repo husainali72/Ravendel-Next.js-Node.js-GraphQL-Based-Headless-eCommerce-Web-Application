@@ -8,16 +8,19 @@ module.exports = gql`
     date: Date
     updated: Date
   }
-
+type response{
+  data:Tax
+  message:statusSchema
+}
   extend type Query {
-    tax: Tax
+    tax: response
   }
 
   extend type Mutation {
-    updateGlobalTax(global: customObject): Tax
-    updateOptionTax(is_inclusive: Boolean): Tax
-    addTaxClass(tax_class: customObject): Tax
-    updateTaxClass(tax_class: customObject): Tax
-    deleteTaxClass(_id: String): Tax
+    updateGlobalTax(global: customObject): statusSchema
+    updateOptionTax(is_inclusive: Boolean): statusSchema
+    addTaxClass(tax_class: customObject): statusSchema
+    updateTaxClass(tax_class: customObject): statusSchema
+    deleteTaxClass(_id: String): statusSchema
   }
 `;

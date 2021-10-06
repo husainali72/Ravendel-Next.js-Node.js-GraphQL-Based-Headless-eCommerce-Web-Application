@@ -14,11 +14,19 @@ export const ordersAction = () => dispatch => {
   });
   query(GET_ORDERS)
     .then(response => {
-      if (response) {
-        return dispatch({
-          type: ORDERS_SUCCESS,
-          payload: response.data.orders
-        });
+      if (response && response.data && response.data.orders) {
+        var orders = response.data.orders;
+        if(orders.message.success){
+          return dispatch({
+            type: ORDERS_SUCCESS,
+            payload: orders.data
+          });
+        }else {
+          return dispatch({
+            type: ALERT_SUCCESS,
+            payload: { boolean: true, message: orders.message.message, error: true }
+          });
+        }     
       }
     })
     .catch(error => {
@@ -39,10 +47,10 @@ export const orderAction = () => dispatch => {
   query(GET_ORDER)
     .then(response => {
       if (response) {
-        return dispatch({
-          type: ORDER_SUCCESS,
-          payload: response.data.order
-        });
+        // return dispatch({
+        //   type: ORDER_SUCCESS,
+        //   payload: response.data.order
+        // });
       }
     })
     .catch(error => {
@@ -63,10 +71,10 @@ export const orderDeleteAction = id => dispatch => {
   mutation(DELETE_ORDER, { id })
     .then(response => {
       if (response) {
-        dispatch({
-          type: ORDERS_SUCCESS,
-          payload: response.data.deleteOrder
-        });
+        // dispatch({
+        //   type: ORDERS_SUCCESS,
+        //   payload: response.data.deleteOrder
+        // });
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -95,10 +103,10 @@ export const orderUpdateAction = object => dispatch => {
   mutation(UPDATE_ORDER, object)
     .then(response => {
       if (response) {
-        dispatch({
-          type: ORDERS_SUCCESS,
-          payload: response.data.updateOrder
-        });
+        // dispatch({
+        //   type: ORDERS_SUCCESS,
+        //   payload: response.data.updateOrder
+        // });
 
         dispatch({
           type: ALERT_SUCCESS,

@@ -17,11 +17,20 @@ export const taxAction = () => dispatch => {
   });
   query(GET_TAX)
     .then(response => {
-      if (response) {
-        return dispatch({
-          type: TAX_SUCCESS,
-          payload: response.data.tax
-        });
+      if (response && response.data && response.data.tax) {
+        var tax = response.data.tax;
+
+        if(tax.message.success){
+          return dispatch({
+            type: TAX_SUCCESS,
+            payload: tax.data
+          });
+        }else{
+          return dispatch({
+            type: ALERT_SUCCESS,
+            payload: { boolean: true, message: tax.message.message, error: true }
+          });
+        }      
       }
     })
     .catch(error => {
@@ -42,10 +51,10 @@ export const globalTaxUpdateAction = object => dispatch => {
   mutation(UPDATE_GLOBALTAX, object)
     .then(response => {
       if (response) {
-        dispatch({
-          type: TAX_SUCCESS,
-          payload: response.data.updateGlobalTax
-        });
+        // dispatch({
+        //   type: TAX_SUCCESS,
+        //   payload: response.data.updateGlobalTax
+        // });
 
         return dispatch({
           type: ALERT_SUCCESS,
@@ -76,10 +85,10 @@ export const optionTaxUpdateAction = object => dispatch => {
   mutation(UPDATE_OPTIONTAX, object)
     .then(response => {
       if (response) {
-        dispatch({
-          type: TAX_SUCCESS,
-          payload: response.data.updateOptionTax
-        });
+        // dispatch({
+        //   type: TAX_SUCCESS,
+        //   payload: response.data.updateOptionTax
+        // });
 
         return dispatch({
           type: ALERT_SUCCESS,
@@ -110,10 +119,10 @@ export const taxClassAddAction = object => dispatch => {
   mutation(ADD_TAXCLASS, object)
     .then(response => {
       if (response) {
-        dispatch({
-          type: TAX_SUCCESS,
-          payload: response.data.addTaxClass
-        });
+        // dispatch({
+        //   type: TAX_SUCCESS,
+        //   payload: response.data.addTaxClass
+        // });
 
         dispatch({
           type: ALERT_SUCCESS,
@@ -143,13 +152,19 @@ export const taxClassUpdateAction = object => dispatch => {
   dispatch({
     type: TAX_LOADING
   });
+
+  console.log('object', object)
+
+  if(object && object.tax_class.percentage && object.tax_class.percentage){
+    object.tax_class.percentage =  object.tax_class.percentage.toString();
+  }
   mutation(UPDATE_TAXCLASS, object)
     .then(response => {
       if (response) {
-        dispatch({
-          type: TAX_SUCCESS,
-          payload: response.data.updateTaxClass
-        });
+        // dispatch({
+        //   type: TAX_SUCCESS,
+        //   payload: response.data.updateTaxClass
+        // });
 
         dispatch({
           type: ALERT_SUCCESS,
@@ -182,10 +197,10 @@ export const taxClassDeleteAction = object => dispatch => {
   mutation(DELETE_TAXCLASS, object)
     .then(response => {
       if (response) {
-        dispatch({
-          type: TAX_SUCCESS,
-          payload: response.data.deleteTaxClass
-        });
+        // dispatch({
+        //   type: TAX_SUCCESS,
+        //   payload: response.data.deleteTaxClass
+        // });
 
         dispatch({
           type: ALERT_SUCCESS,

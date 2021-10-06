@@ -1,19 +1,14 @@
 const Order = require("../models/Order");
 const {
   isEmpty,
-  putError,
-  checkError,
-  checkToken,
   MESSAGE_RESPONSE,
+  _validate,
+  _validatenested,
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
-  GET_BY_PAGINATIONS,
   GET_SINGLE_FUNC,
   GET_ALL_FUNC,
-  GET_BY_URL,
-  CREATE_FUNC,
-  UPDATE_FUNC,
 } = require("../config/api_functions");
 
 const validate = require("../validations/order");
@@ -66,8 +61,35 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
       }
       try {
-        const errors = validate("updateOrder", args);
+        const errors = _validatenested(
+          "billing",
+          ["city",
+            "firstname",
+            "lastname",
+            "company",
+            "address",
+            "zip",
+            "country",
+            "state",
+            "email",
+            "phone",
+            "payment_method",
+        ], 
+         "shipping",
+          [
+            "city",
+            "firstname",
+            "lastname",
+            "company",
+            "address",
+            "zip",
+            "country",
+            "state",
+          ],
+          args
+        ); 
         if (!isEmpty(errors)) {
+          
           return {
             message: errors,
             success: false,
