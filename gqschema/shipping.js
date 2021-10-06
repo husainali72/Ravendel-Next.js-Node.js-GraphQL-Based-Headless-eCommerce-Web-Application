@@ -7,9 +7,12 @@ module.exports = gql`
     date: Date
     updated: Date
   }
-
+  type shipping_RES {
+    data:Shipping
+    message: statusSchema
+  }
   extend type Query {
-    shipping: Shipping
+    shipping: shipping_RES
   }
 
   extend type Mutation {
