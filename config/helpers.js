@@ -168,11 +168,13 @@ const jimpResize = (path, i, uploadPath, filename) => {
 };
 
 const imageUpload = async (upload, uploadPath) => {
+ 
   return new Promise(async (resolve, reject) => {
     try {
       let { filename, mimetype, encoding, createReadStream } = await upload;
 
       const extensions = ["gif", "jpeg", "jpg", "png", "webp", "svg"];
+      
       let ext = filename.split(".");
       ext = ext.pop();
       ext = ext.toLowerCase();
@@ -182,6 +184,8 @@ const imageUpload = async (upload, uploadPath) => {
           message: "This extension not allowed",
         });
       }
+
+      // console.log(upload);
 
       let stream = createReadStream();
 
@@ -250,6 +254,7 @@ const imageUpload = async (upload, uploadPath) => {
           });
         });
     } catch (error) {
+    //  console.log(error);
       return resolve({
         success: false,
         message: "This image can't be upload 3",

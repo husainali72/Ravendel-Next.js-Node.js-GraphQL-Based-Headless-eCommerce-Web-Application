@@ -8,6 +8,7 @@ const {
   checkToken,
   MESSAGE_RESPONSE,
 } = require("../config/helpers");
+
 const {
   DELETE_FUNC,
   GET_BY_PAGINATIONS,
@@ -16,6 +17,33 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
+
+const validate = require("../validations/user");
+const bcrypt = require("bcryptjs");
+
+const fs = require("fs");
+
+var udir = './assets/images/user';
+var ldir = './assets/images/user/large';
+var mdir = './assets/images/user/medium';
+var tdir = './assets/images/user/thumbnail';
+var odir = './assets/images/user/original';
+
+if (!fs.existsSync(udir)){
+  fs.mkdirSync(udir);
+}
+if (!fs.existsSync(ldir)){
+  fs.mkdirSync(ldir);
+}
+if (!fs.existsSync(mdir)){
+  fs.mkdirSync(mdir);
+}
+if (!fs.existsSync(odir)){
+  fs.mkdirSync(odir);
+}
+if (!fs.existsSync(tdir)){
+  fs.mkdirSync(tdir);
+}
 
 module.exports = {
   Query: {
@@ -116,8 +144,9 @@ module.exports = {
           }
 
           if (args.updatedImage) {
+           // console.log(args.updatedImage);
             let imgObject = await imageUpload(
-              args.updatedImage,
+              args.updatedImage.file,
               "/assets/images/user/"
             );
 
@@ -126,6 +155,8 @@ module.exports = {
             } else {
               imageUnlink(user.image);
               user.image = imgObject.data;
+
+
             }
           }
 
