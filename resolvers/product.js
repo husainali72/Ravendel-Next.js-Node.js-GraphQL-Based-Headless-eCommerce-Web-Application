@@ -11,7 +11,8 @@ const {
   imageUnlink,
   updateUrl,
   MESSAGE_RESPONSE,
-  _validate
+  _validate,
+  _validatenested,
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -26,103 +27,97 @@ var mongoose = require("mongoose");
 
 /* =============================WILL FIX LATER============================= */
 const fs = require("fs");
-var pdir = './assets/images/product';
-var pcdir = './assets/images/product/category';
-var fdir = './assets/images/product/feature';
-var gdir = './assets/images/product/gallery';
-var vdir = './assets/images/product/variant';
+var pdir = "./assets/images/product";
+var pcdir = "./assets/images/product/category";
+var fdir = "./assets/images/product/feature";
+var gdir = "./assets/images/product/gallery";
+var vdir = "./assets/images/product/variant";
 
-if (!fs.existsSync(pdir)){
+if (!fs.existsSync(pdir)) {
   fs.mkdirSync(pdir);
 }
-if (!fs.existsSync(pcdir)){
+if (!fs.existsSync(pcdir)) {
   fs.mkdirSync(pcdir);
 }
 
-if (!fs.existsSync(fdir)){
+if (!fs.existsSync(fdir)) {
   fs.mkdirSync(fdir);
 }
-if (!fs.existsSync(vdir)){
+if (!fs.existsSync(vdir)) {
   fs.mkdirSync(vdir);
 }
 
-
-var cldir = './assets/images/product/category/large';
-var cmdir = './assets/images/product/category/medium';
-var ctdir = './assets/images/product/category/thumbnail';
-var codir = './assets/images/product/category/original';
-if (!fs.existsSync(cldir)){
+var cldir = "./assets/images/product/category/large";
+var cmdir = "./assets/images/product/category/medium";
+var ctdir = "./assets/images/product/category/thumbnail";
+var codir = "./assets/images/product/category/original";
+if (!fs.existsSync(cldir)) {
   fs.mkdirSync(cldir);
 }
-if (!fs.existsSync(cmdir)){
+if (!fs.existsSync(cmdir)) {
   fs.mkdirSync(cmdir);
 }
-if (!fs.existsSync(codir)){
+if (!fs.existsSync(codir)) {
   fs.mkdirSync(codir);
 }
-if (!fs.existsSync(ctdir)){
+if (!fs.existsSync(ctdir)) {
   fs.mkdirSync(ctdir);
 }
 
+var fldir = "./assets/images/product/feature/large";
+var fmdir = "./assets/images/product/feature/medium";
+var ftdir = "./assets/images/product/feature/thumbnail";
+var fodir = "./assets/images/product/feature/original";
 
-
-var fldir = './assets/images/product/feature/large';
-var fmdir = './assets/images/product/feature/medium';
-var ftdir = './assets/images/product/feature/thumbnail';
-var fodir = './assets/images/product/feature/original';
-
-if (!fs.existsSync(fldir)){
+if (!fs.existsSync(fldir)) {
   fs.mkdirSync(fldir);
 }
-if (!fs.existsSync(fmdir)){
+if (!fs.existsSync(fmdir)) {
   fs.mkdirSync(fmdir);
 }
-if (!fs.existsSync(ftdir)){
+if (!fs.existsSync(ftdir)) {
   fs.mkdirSync(ftdir);
 }
-if (!fs.existsSync(fodir)){
+if (!fs.existsSync(fodir)) {
   fs.mkdirSync(fodir);
 }
 
+var gldir = "./assets/images/product/gallery/large";
+var gmdir = "./assets/images/product/gallery/medium";
+var gtdir = "./assets/images/product/gallery/thumbnail";
+var godir = "./assets/images/product/gallery/original";
 
-var gldir = './assets/images/product/gallery/large';
-var gmdir = './assets/images/product/gallery/medium';
-var gtdir = './assets/images/product/gallery/thumbnail';
-var godir = './assets/images/product/gallery/original';
-
-if (!fs.existsSync(gldir)){
+if (!fs.existsSync(gldir)) {
   fs.mkdirSync(gldir);
 }
-if (!fs.existsSync(gmdir)){
+if (!fs.existsSync(gmdir)) {
   fs.mkdirSync(gmdir);
 }
-if (!fs.existsSync(godir)){
+if (!fs.existsSync(godir)) {
   fs.mkdirSync(godir);
 }
-if (!fs.existsSync(gtdir)){
+if (!fs.existsSync(gtdir)) {
   fs.mkdirSync(gtdir);
 }
 
+var vldir = "./assets/images/product/variant/large";
+var vmdir = "./assets/images/product/variant/medium";
+var vtdir = "./assets/images/product/variant/thumbnail";
+var vodir = "./assets/images/product/variant/original";
 
-var vldir = './assets/images/product/variant/large';
-var vmdir = './assets/images/product/variant/medium';
-var vtdir = './assets/images/product/variant/thumbnail';
-var vodir = './assets/images/product/variant/original';
-
-if (!fs.existsSync(vldir)){
+if (!fs.existsSync(vldir)) {
   fs.mkdirSync(vldir);
 }
-if (!fs.existsSync(gmdir)){
+if (!fs.existsSync(gmdir)) {
   fs.mkdirSync(gmdir);
 }
-if (!fs.existsSync(vtdir)){
+if (!fs.existsSync(vtdir)) {
   fs.mkdirSync(vtdir);
 }
-if (!fs.existsSync(vodir)){
+if (!fs.existsSync(vodir)) {
   fs.mkdirSync(vodir);
 }
 /* =============================WILL FIX LATER============================= */
-
 
 /* For Test geting child*/
 let allids = [];
@@ -137,7 +132,6 @@ const getTree = async (id) => {
 };
 
 module.exports = {
-
   Query: {
     productCategories: async (root, args) => {
       return await GET_ALL_FUNC(ProductCat, "ProductCats");
@@ -557,7 +551,25 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
       try {
-        const errors = _validate(["name", "categoryId","sku","quantity"], args);
+        var errors = _validate(["name", "sku", "quantity"], args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        errors = _validatenested("pricing", ["price", "sellprice"], args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        errors = _validatenested(
+          "shipping",
+          ["height", "width", "depth", "weight", "shipping_class"],
+          args
+        );
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -570,7 +582,7 @@ module.exports = {
         } else {
           let imgObject = "";
           if (args.feature_image) {
-           // console.log('fimage',args.feature_image);
+            // console.log('fimage',args.feature_image);
             imgObject = await imageUpload(
               args.feature_image[0].file,
               "/assets/images/product/feature/"
@@ -581,7 +593,7 @@ module.exports = {
             }
           }
 
-        //  console.log(args.gallery_image);
+          //  console.log(args.gallery_image);
 
           let imgArray = [];
           if (args.gallery_image) {
@@ -591,15 +603,12 @@ module.exports = {
                 args.gallery_image[i].file,
                 "/assets/images/product/gallery/"
               );
-
               if (galleryObject.success) {
                 imgArray.push(galleryObject.data);
               }
             }
           }
-
           let url = await updateUrl(args.url || args.name, "Product");
-
           const newProduct = new Product({
             name: args.name,
             url: url,
@@ -631,20 +640,18 @@ module.exports = {
             attribute: args.attribute,
             variant: args.variant,
           });
-
           let lastProduct = await newProduct.save();
           let combinations = [];
           if (args.variant.length && args.combinations.length) {
             combinations = args.combinations;
             //console.log('ttt',combinations);
-            
+
             for (const combination of combinations) {
               combination.product_id = lastProduct.id;
 
               let imgObject = "";
 
               if (combination.image && combination.image.file) {
-               
                 imgObject = await imageUpload(
                   combination.image.file[0].file,
                   "/assets/images/product/variant/"
@@ -669,7 +676,7 @@ module.exports = {
           return MESSAGE_RESPONSE("AddSuccess", "Product", true);
         }
       } catch (error) {
-        error = checkError(error.message);
+        error = checkError(error)
         return MESSAGE_RESPONSE("CREATE_ERROR", "Product", false);
       }
     },
@@ -678,7 +685,25 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
       try {
-        const errors = _validate(["name", "categoryId","sku","quantity"], args);
+        var errors = _validate(["name", "sku", "quantity"], args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        errors = _validatenested("pricing", ["price", "sellprice"], args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        errors = _validatenested(
+          "shipping",
+          ["height", "width", "depth", "weight", "shipping_class"],
+          args
+        );
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -809,8 +834,7 @@ module.exports = {
           return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
         }
       } catch (error) {
-        console.log(error.message);
-        return MESSAGE_RESPONSE("UPDATE_ERROR", name, false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Product", false);
       }
     },
     deleteProduct: async (root, args, { id }) => {

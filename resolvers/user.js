@@ -18,8 +18,6 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
-
-const validate = require("../validations/user");
 const bcrypt = require("bcryptjs");
 
 const fs = require("fs");

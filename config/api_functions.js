@@ -189,11 +189,17 @@ const CREATE_FUNC = async (
         success: false,
       };
     }
-
     if (args.feature_image || args.image) {
       let imgObject = "";
-      imgObject = await imageUpload(data.feature_image.file || data.image, path);
+      let image = null;
 
+      if (data.feature_image) {
+        image = data.feature_image.file;
+      }
+      if (data.image) {
+        image = data.image[0].file; /// this image are in array let check it
+      }
+      imgObject = await imageUpload(image, path);
       if (imgObject.success === false) {
         return {
           message:
@@ -222,7 +228,7 @@ const CREATE_FUNC = async (
         return MESSAGE_RESPONSE("DUPLICATE", "email", false);
       }
     }
-    
+
     const response = new modal(data);
     if (data.password) {
       response.password = await bcrypt.hash(data.password, 10);

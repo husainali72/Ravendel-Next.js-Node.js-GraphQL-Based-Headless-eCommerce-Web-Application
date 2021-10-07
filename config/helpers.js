@@ -300,7 +300,13 @@ const _validate = (names, args) => {
 const _validatenested = (main,names, args) => {
   let errors = "";
   if(names && names.length > 0){
-    names.map((name) => {   
+    names.map((name) => { 
+      if(!args[main] ){
+        return (errors = `${capitalize(main)} is required`);
+      } 
+      if(!args[main][name] ){
+        return (errors = `${capitalize(name)} is required`);
+      } 
       if (!args[main][name] || Validator.isEmpty(args[main][name])) {
         return (errors = `${capitalize(name)} field is required`)
       }
