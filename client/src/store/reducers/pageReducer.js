@@ -5,6 +5,7 @@ import {
   PAGE_FAIL,
   TINYMCE_SUCCESS,
   TINYMCE_NULL,
+  LOADING_FALSE
 } from "../action/pageAction";
 
 const initialState = {
@@ -57,6 +58,11 @@ export default (state = initialState, action) => {
           ...state.page,
           content: action.payload.content,
         },
+      };
+    case LOADING_FALSE:
+      return {
+        ...state,
+        loading: false,
       };
     default:
       return state;

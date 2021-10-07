@@ -17,14 +17,22 @@ const GET_SHIPPING = gql`
   }
 `;
 
+// const UPDATE_GLOBALSHIPPING = gql`
+//   mutation($global: customObject) {
+//     updateGlobalShipping(global: $global) {
+//       id
+//       global
+//       shipping_class
+//       date
+//       updated
+//     }
+//   }
+// `;
 const UPDATE_GLOBALSHIPPING = gql`
-  mutation($global: customObject) {
+  mutation ($global: customObject) {
     updateGlobalShipping(global: $global) {
-      id
-      global
-      shipping_class
-      date
-      updated
+      message
+      success
     }
   }
 `;

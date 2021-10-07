@@ -2,7 +2,8 @@ import {
   TAX_LOADING,
   TAXS_SUCCESS,
   TAX_FAIL,
-  TAX_SUCCESS
+  TAX_SUCCESS,
+  LOADING_FALSE,
 } from "../action/taxAction";
 
 const initialState = {
@@ -23,27 +24,32 @@ export default (state = initialState, action) => {
       return {
         ...state,
         loading: true,
-        success: false
+        success: false,
       };
     case TAXS_SUCCESS:
       return {
         ...state,
         taxs: action.payload,
         loading: false,
-        success: true
+        success: true,
       };
     case TAX_SUCCESS:
       return {
         ...state,
         tax: action.payload,
         loading: false,
-        success: true
+        success: true,
       };
     case TAX_FAIL:
       return {
         ...state,
         loading: false,
-        success: false
+        success: false,
+      };
+    case LOADING_FALSE:
+      return {
+        ...state,
+        loading: false,
       };
     default:
       return state;

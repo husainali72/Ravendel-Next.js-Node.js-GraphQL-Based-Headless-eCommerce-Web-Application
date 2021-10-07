@@ -129,3 +129,80 @@ export const allPossibleCases = (arr) => {
 };
 
 /*------------------------------------------------------------------------------------------------------------------------------*/
+
+export const getResponseHandler = (response, key) => {
+  let success = false;
+  let error = false;
+  let message = '';
+  let data = [];
+
+  console.log('in response hanler')
+  
+  if (response && response.data && response.data[key]) {
+    console.log('response', response)
+    let res = response.data[key];
+    if (res.message) {
+      console.log(res);
+      if (res.message.success) {
+        if (res.data) {
+          data = res.data
+        }
+        success = true;
+      } else {
+        error = true;
+      }
+      if (res.message.message) {
+        message = res.message.message;
+      } else {
+        message = "Something went wrong!";
+      }
+    } else {
+      error = true;
+      message = "Something went wrong!";
+    }
+  }else {
+    message = 'Something went wrong!';
+  }
+
+  console.log(success);
+
+
+  return [error, success, message, data];
+};
+
+export const mutationResponseHandler = (response, key) => {
+  let success = false;
+  let error = false;
+  let message = '';
+
+  console.log('in response hanler')
+  
+  if (response && response.data && response.data[key]) {
+    console.log('response', response)
+    let res = response.data[key];
+    if (res.message) {
+      console.log(res);
+      if (res.success) {
+        console.log('success', res.success)
+        success = true;
+      } else {
+        error = true;
+      }
+      if (res.message) {
+        message = res.message;
+      } else {
+        message = "Something went wrong!";
+      }
+    } else {
+      error = true;
+      message = "Something went wrong!";
+    }
+  }else {
+    message = 'Something went wrong!';
+  }
+
+  console.log(success);
+
+
+  return [error, success, message];
+};

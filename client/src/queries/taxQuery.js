@@ -18,15 +18,23 @@ const GET_TAX = gql`
   }
 `;
 
+// const UPDATE_GLOBALTAX = gql`
+//   mutation($global: customObject) {
+//     updateGlobalTax(global: $global) {
+//       id
+//       is_inclusive
+//       global
+//       tax_class
+//       date
+//       updated
+//     }
+//   }
+// `;
 const UPDATE_GLOBALTAX = gql`
   mutation($global: customObject) {
     updateGlobalTax(global: $global) {
-      id
-      is_inclusive
-      global
-      tax_class
-      date
-      updated
+      message
+      success
     }
   }
 `;
