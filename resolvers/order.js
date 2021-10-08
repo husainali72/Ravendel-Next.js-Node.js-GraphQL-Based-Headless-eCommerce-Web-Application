@@ -42,8 +42,35 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
       }
       try {
+        var errors = _validate(["customer_id"], args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        errors = _validatenested(
+          "billing",
+          [
+            "city",
+            "firstname",
+            "lastname",
+            "address",
+            "zip",
+            "email",
+            "phone",
+            "payment_method",
+          ],
+          args
+        );
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
         const newOrder = new Order({
-          user_id: args.user_id,
+          customer_id: args.customer_id,
           billing: args.billing,
           shipping: args.shipping,
           status: args.status,
@@ -52,7 +79,6 @@ module.exports = {
         await newOrder.save();
         return MESSAGE_RESPONSE("AddSuccess", "Order", true);
       } catch (error) {
-        console.log(error.message);
         return MESSAGE_RESPONSE("CREATE_ERROR", "Order", false);
       }
     },
@@ -61,21 +87,28 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
       }
       try {
-        const errors = _validatenested(
+        var errors = _validatenested(
           "billing",
-          ["city",
+          [
+            "city",
             "firstname",
             "lastname",
-            "company",
             "address",
             "zip",
-            "country",
-            "state",
             "email",
             "phone",
             "payment_method",
-        ], 
-         "shipping",
+          ],
+          args
+        );
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        errors = _validatenested(
+          "shipping",
           [
             "city",
             "firstname",
@@ -87,9 +120,8 @@ module.exports = {
             "state",
           ],
           args
-        ); 
+        );
         if (!isEmpty(errors)) {
-          
           return {
             message: errors,
             success: false,
