@@ -190,20 +190,41 @@ const CREATE_FUNC = async (
       };
     }
 
-    if (args.feature_image || args.image) {
-      let imgObject = "";
-      imgObject = await imageUpload(data.feature_image.file || data.image, path);
+    // if (args.feature_image || args.image) {
+    //   let imgObject = "";
+    //   imgObject = await imageUpload(data.feature_image.file || data.image, path);
 
-      if (imgObject.success === false) {
-        return {
-          message:
-            imgObject.message ||
-            "Something went wrong with upload featured image",
-          success: false,
-        };
-      }
-      data.feature_image = imgObject.data || imgObject;
-    }
+    //   if (imgObject.success === false) {
+    //     return {
+    //       message:
+    //         imgObject.message ||
+    //         "Something went wrong with upload featured image",
+    //       success: false,
+    //     };
+    //   }
+    //   data.feature_image = imgObject.data || imgObject;
+    // }
+        if (args.feature_image || args.image) {
+          let imgObject = "";
+          let image = null;
+
+          if (data.feature_image) {
+            image = data.feature_image.file;
+          }
+          if (data.image) {
+            image = data.image[0].file; /// this image are in array let check it
+          }
+          imgObject = await imageUpload(image, path);
+          if (imgObject.success === false) {
+            return {
+              message:
+                imgObject.message ||
+                "Something went wrong with upload featured image",
+              success: false,
+            };
+          }
+          data.feature_image = imgObject.data || imgObject;
+        }
     if (data.name) {
       const nameresponse = await modal.findOne({ name: data.name });
       if (nameresponse) {
@@ -262,27 +283,51 @@ const UPDATE_FUNC = async (
     }
     const response = await modal.findById(updateId);
     if (response) {
-      if (args.updatedImage) {
-        let imgObject = await imageUpload(args.updatedImage.file, path);
-        if (imgObject.success === false) {
-          return {
-            message:
-              imgObject.message ||
-              "Something went wrong with upload featured image",
-            success: false,
-          };
-        } else {
-          imageUnlink(response.feature_image);
-          response.feature_image = imgObject.data;
+      console.log("args", args);
+
+        if (args.updatedImage || args.update_image) {
+          let imgObject = "";
+          let image = null;
+
+          if (args.updatedImage) {
+            image = args.updatedImage.file;
+          }
+          if (args.update_image) {
+            image = args.update_image[0].file; /// this image are in array let check it
+          }
+          console.log("image", image);
+          console.log("response", response);
+          
+          imgObject = await imageUpload(image, path);
+           console.log("imgObject", imgObject);
+            if (imgObject.success === false) {
+              return {
+                message:
+                  imgObject.message ||
+                  "Something went wrong with upload featured image",
+                success: false,
+              };
+            } else {
+             
+              if (name && name === "ProductCategory") {
+                 imageUnlink(response.image);
+                data.image = imgObject.data || imgObject;
+              } else {
+                 imageUnlink(response.feature_image);
+                data.feature_image = imgObject.data || imgObject;
+              }
+               console.log("response 2", response);
+            }
         }
-      }
       for (const [key, value] of Object.entries(data)) {
         response[key] = value;
       }
-      await response.save();
+     
       if (data.password) {
         response.password = await bcrypt.hash(data.password, 10);
       }
+      
+      await response.save();
       return MESSAGE_RESPONSE("UpdateSuccess", name, true);
     }
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);

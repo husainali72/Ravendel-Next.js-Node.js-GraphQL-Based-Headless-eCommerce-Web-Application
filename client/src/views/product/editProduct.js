@@ -62,7 +62,7 @@ const EditProduct = (props) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const [product, setProduct] = useState({
-    id: "",
+    _id: "",
     name: "",
     categoryId: [],
     brand: "",

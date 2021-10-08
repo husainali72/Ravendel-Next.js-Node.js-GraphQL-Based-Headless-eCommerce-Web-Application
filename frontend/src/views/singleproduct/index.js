@@ -24,12 +24,13 @@ const SingleProduct = (props) => {
 
   useEffect(() => {
     if (isEmpty(products.products)) {
-      dispatch(productsAction());
+      // dispatch(productsAction());
     }
   }, []);
 
   useEffect(() => {
     var product = products.product;
+    console.log('----------------------', product);
     setSingleProduct(product);
     var allimages = [];
     if (product.feature_image) {

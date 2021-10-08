@@ -122,7 +122,7 @@ const AllProduct = () => {
                                 aria-label='Delete'
                                 className={classes.deleteicon}
                                 onClick={() =>
-                                  dispatch(productDeleteAction(product.id))
+                                  dispatch(productDeleteAction(product._id))
                                 }
                               >
                                 <DeleteIcon />
