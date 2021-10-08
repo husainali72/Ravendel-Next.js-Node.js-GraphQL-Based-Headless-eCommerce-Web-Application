@@ -190,6 +190,7 @@ const CREATE_FUNC = async (
       };
     }
 
+
     // if (args.feature_image || args.image) {
     //   let imgObject = "";
     //   imgObject = await imageUpload(data.feature_image.file || data.image, path);
@@ -204,27 +205,29 @@ const CREATE_FUNC = async (
     //   }
     //   data.feature_image = imgObject.data || imgObject;
     // }
-        if (args.feature_image || args.image) {
-          let imgObject = "";
-          let image = null;
 
-          if (data.feature_image) {
-            image = data.feature_image.file;
-          }
-          if (data.image) {
-            image = data.image[0].file; /// this image are in array let check it
-          }
-          imgObject = await imageUpload(image, path);
-          if (imgObject.success === false) {
-            return {
-              message:
-                imgObject.message ||
-                "Something went wrong with upload featured image",
-              success: false,
-            };
-          }
-          data.feature_image = imgObject.data || imgObject;
-        }
+    if (args.feature_image || args.image) {
+      let imgObject = "";
+      let image = null;
+
+      if (data.feature_image) {
+        image = data.feature_image.file;
+      }
+      if (data.image) {
+        image = data.image[0].file; /// this image are in array let check it
+      }
+      imgObject = await imageUpload(image, path);
+      if (imgObject.success === false) {
+        return {
+          message:
+            imgObject.message ||
+            "Something went wrong with upload featured image",
+          success: false,
+        };
+      }
+      data.feature_image = imgObject.data || imgObject;
+    }
+
     if (data.name) {
       const nameresponse = await modal.findOne({ name: data.name });
       if (nameresponse) {
@@ -243,7 +246,7 @@ const CREATE_FUNC = async (
         return MESSAGE_RESPONSE("DUPLICATE", "email", false);
       }
     }
-    
+
     const response = new modal(data);
     if (data.password) {
       response.password = await bcrypt.hash(data.password, 10);
