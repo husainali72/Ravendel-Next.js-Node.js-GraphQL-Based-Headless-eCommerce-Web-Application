@@ -96,7 +96,6 @@ export const globalTaxUpdateAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -104,7 +103,6 @@ export const globalTaxUpdateAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(taxAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -154,7 +152,6 @@ export const optionTaxUpdateAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -162,7 +159,6 @@ export const optionTaxUpdateAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(taxAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -214,7 +210,6 @@ export const taxClassAddAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -222,7 +217,6 @@ export const taxClassAddAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(taxAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -247,7 +241,6 @@ export const taxClassUpdateAction = object => dispatch => {
     type: TAX_LOADING
   });
 
-  console.log('object', object)
 
   if(object && object.tax_class.percentage && object.tax_class.percentage){
     object.tax_class.percentage =  object.tax_class.percentage.toString();
@@ -280,7 +273,6 @@ export const taxClassUpdateAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -288,7 +280,6 @@ export const taxClassUpdateAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(taxAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -340,7 +331,6 @@ export const taxClassDeleteAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -348,7 +338,6 @@ export const taxClassDeleteAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(taxAction());
         return dispatch({
           type: ALERT_SUCCESS,

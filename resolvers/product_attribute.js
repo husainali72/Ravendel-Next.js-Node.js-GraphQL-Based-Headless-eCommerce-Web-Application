@@ -39,9 +39,10 @@ module.exports = {
   },
   Mutation: {
     addAttribute: async (root, args, { id }) => {
+      console.log(args)
       let data = {
-        name: args.name,
-        values: args.values,
+        name: args.attribute.name,
+        values: args.attribute.values,
       };
       let validation = ["name"];
       return await CREATE_FUNC(
@@ -56,12 +57,12 @@ module.exports = {
     },
     updateAttribute: async (root, args, { id }) => {
       let data = {
-        name: args.name,
-        values: args.values,
+        name: args.attribute.name,
+        values: args.attribute.values,
       };
       return await UPDATE_FUNC(
         id,
-        args.id,
+        args.attribute.id,
         ProductAttribute,
         "ProductAttribute",
         data,

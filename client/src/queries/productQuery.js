@@ -277,9 +277,15 @@ const GET_PRODUCTS = gql`
 `;
 
 const GET_PRODUCT = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     product(id: $id) {
-      ...ProductTile
+      data {
+        ...ProductTile
+      }
+      message {
+        message
+        success
+      }
     }
   }
   ${PRODUCT_TILE_DATA}

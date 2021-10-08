@@ -2,7 +2,8 @@ import {
   BRAND_LOADING,
   BRANDS_SUCCESS,
   BRAND_FAIL,
-  BRAND_SUCCESS
+  BRAND_SUCCESS,
+  LOADING_FALSE,
 } from "../action/brandAction";
 
 const initialState = {
@@ -18,27 +19,32 @@ export default (state = initialState, action) => {
       return {
         ...state,
         loading: true,
-        success: false
+        success: false,
       };
     case BRANDS_SUCCESS:
       return {
         ...state,
         brands: action.payload,
         loading: false,
-        success: true
+        success: true,
       };
     case BRAND_SUCCESS:
       return {
         ...state,
         brand: action.payload,
         loading: false,
-        success: true
+        success: true,
       };
     case BRAND_FAIL:
       return {
         ...state,
         loading: false,
-        success: false
+        success: false,
+      };
+    case LOADING_FALSE:
+      return {
+        ...state,
+        loading: false,
       };
     default:
       return state;

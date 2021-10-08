@@ -111,7 +111,7 @@ const AllProduct = () => {
                               <IconButton
                                 aria-label='Edit'
                                 onClick={() =>
-                                  jumpTo(`${client_app_route_url}edit-product/${product.id}`)
+                                  jumpTo(`${client_app_route_url}edit-product/${product._id}`)
                                 }
                               >
                                 <EditIcon />

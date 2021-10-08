@@ -9,7 +9,7 @@ import {
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
-import { getResponseHandler, mutationResponseHandler } from "../../utils/helper";
+import { client_app_route_url, getResponseHandler, mutationResponseHandler } from "../../utils/helper";
 
 export const reviewsAction = () => dispatch => {
   dispatch({
@@ -148,7 +148,6 @@ export const reviewAddAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -156,7 +155,6 @@ export const reviewAddAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(reviewsAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -214,7 +212,6 @@ export const reviewUpdateAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -223,7 +220,7 @@ export const reviewUpdateAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
+        jumpTo(`${client_app_route_url}reviews`);
         dispatch(reviewsAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -282,7 +279,6 @@ export const reviewDeleteAction = id => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -290,7 +286,6 @@ export const reviewDeleteAction = id => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(reviewsAction());
         return dispatch({
           type: ALERT_SUCCESS,

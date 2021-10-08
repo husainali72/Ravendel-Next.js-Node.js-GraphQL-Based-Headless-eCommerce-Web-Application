@@ -184,7 +184,6 @@ export const blogAddAction = (object) => (dispatch) => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -196,7 +195,6 @@ export const blogAddAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        console.log("Success");
         jumpTo(`${client_app_route_url}all-blogs`);
         dispatch(blogsAction());
         return dispatch({
@@ -268,7 +266,6 @@ export const blogUpdateAction = (object) => (dispatch) => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -280,7 +277,6 @@ export const blogUpdateAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        console.log("Success");
         jumpTo(`${client_app_route_url}all-blogs`);
         dispatch(blogsAction());
         return dispatch({
@@ -341,7 +337,6 @@ export const blogDeleteAction = (id) => (dispatch) => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -353,7 +348,6 @@ export const blogDeleteAction = (id) => (dispatch) => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(blogsAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -420,7 +414,6 @@ export const blogtagAddAction = (object) => (dispatch) => {
   });
   mutation(ADD_BLOGTAG, object)
     .then((response) => {
-      console.log('success response', response);
       // if (response.data.addBlogTag.success) {
       //   dispatch({
       //     type: BLOGS_UPDATE_SUCCESS,
@@ -458,7 +451,6 @@ export const blogtagAddAction = (object) => (dispatch) => {
       });
 
       if (error) {
-        console.log('error');
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -470,7 +462,6 @@ export const blogtagAddAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        console.log('Success')
         dispatch(blogtagsAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -546,7 +537,6 @@ export const blogtagUpdateAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(blogtagsAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -572,7 +562,6 @@ export const blogtagDeleteAction = (id) => (dispatch) => {
   });
   mutation(DELETE_BLOGTAG, { id })
     .then((response) => {
-      console.log('del', response)
       // if (response.data.deleteBlogTag.success) {
       //   dispatch({
       //     type: BLOGS_UPDATE_SUCCESS,
@@ -621,7 +610,6 @@ export const blogtagDeleteAction = (id) => (dispatch) => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(blogtagsAction());
         return dispatch({
           type: ALERT_SUCCESS,
