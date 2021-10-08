@@ -402,7 +402,6 @@ module.exports = {
         const products = await Product.find({
           categoryId: { $in: root.id },
         });
-
         return products || [];
       } catch (error) {
         error = checkError(error);
@@ -543,7 +542,30 @@ module.exports = {
       );
     },
     deleteProductCategory: async (root, args, { id }) => {
-      return await DELETE_FUNC(id, args.id, ProductCat, "ProductCat");
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "ProductCategory", false);
+      }
+      if (!args.id) {
+        return MESSAGE_RESPONSE("ID_ERROR","ProductCategory", false);
+      }
+      try {
+        const cat = await ProductCat.findByIdAndRemove(args.id);
+        if (cat) {
+          if (cat.image) {
+            imageUnlink(cat.image);
+          }
+          let _id = args.id;
+          const product = await Product.updateMany(
+            {},
+            { $pull: { categoryId: { $in: [_id] } } },
+            { multi: true }
+          );
+          return MESSAGE_RESPONSE("DELETE", "ProductCategory", true);
+        }
+        return MESSAGE_RESPONSE("NOT_EXIST", "ProductCategory", false);
+      } catch (error) {
+        return MESSAGE_RESPONSE("DELETE_ERROR", "ProductCategory", false);
+      }
     },
 
     addProduct: async (root, args, { id }) => {
@@ -676,7 +698,7 @@ module.exports = {
           return MESSAGE_RESPONSE("AddSuccess", "Product", true);
         }
       } catch (error) {
-        error = checkError(error)
+        error = checkError(error);
         return MESSAGE_RESPONSE("CREATE_ERROR", "Product", false);
       }
     },

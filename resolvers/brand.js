@@ -1,12 +1,19 @@
 const Brand = require("../models/Brand");
-const { isEmpty, updateUrl, MESSAGE_RESPONSE, _validate, imageUpload, imageUnlink } = require("../config/helpers");
+const Product = require("../models/Product");
+const {
+  isEmpty,
+  updateUrl,
+  MESSAGE_RESPONSE,
+  _validate,
+  imageUpload,
+  imageUnlink,
+} = require("../config/helpers");
 const {
   DELETE_FUNC,
   GET_BY_PAGINATIONS,
   GET_SINGLE_FUNC,
   GET_ALL_FUNC,
 } = require("../config/api_functions");
-
 
 module.exports = {
   Query: {
@@ -34,13 +41,11 @@ module.exports = {
   },
   Mutation: {
     addBrand: async (root, args, { id }) => {
-      console.log('Fired AddBrand');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "brand", false);
       }
       try {
-
-        if(args.brands && !args.brands.length){
+        if (args.brands && !args.brands.length) {
           return {
             message: errors,
             success: false,
@@ -119,7 +124,31 @@ module.exports = {
       }
     },
     deleteBrand: async (root, args, { id }) => {
-      return await DELETE_FUNC(id, args.id, Brand, "Brands");
+      // return await DELETE_FUNC(id, args.id, Brand, "Brands");
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Brand", false);
+      }
+      if (!args.id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "Brand", false);
+      }
+      try {
+        const brand = await Brand.findByIdAndRemove(args.id);
+        if (brand) {
+          if (brand.brand_logo) {
+            imageUnlink(brand.brand_logo);
+          }
+          let _id = args.id;
+          const product = await Product.updateMany(
+            {},
+            { $unset: { brand: _id } }
+          );
+          console.log("dgdfhdgh");
+          return MESSAGE_RESPONSE("DELETE", "Brand", true);
+        }
+        return MESSAGE_RESPONSE("NOT_EXIST", "Brand", false);
+      } catch (error) {
+        return MESSAGE_RESPONSE("DELETE_ERROR", "Brand", false);
+      }
     },
   },
 };

@@ -163,6 +163,7 @@ const DELETE_FUNC = async (token, delete_id, modal, name) => {
       }
       return MESSAGE_RESPONSE("DELETE", name, true);
     }
+    
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);
   } catch (error) {
     return MESSAGE_RESPONSE("DELETE_ERROR", name, false);
