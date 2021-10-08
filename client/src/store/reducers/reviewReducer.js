@@ -2,7 +2,8 @@ import {
   REVIEW_LOADING,
   REVIEWS_SUCCESS,
   REVIEW_SUCCESS,
-  REVIEW_FAIL
+  REVIEW_FAIL,
+  LOADING_FALSE,
 } from "../action/reviewAction";
 
 const initialState = {
@@ -17,24 +18,29 @@ export default (state = initialState, action) => {
     case REVIEW_LOADING:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case REVIEWS_SUCCESS:
       return {
         ...state,
         reviews: action.payload,
-        loading: false
+        loading: false,
       };
     case REVIEW_SUCCESS:
       return {
         ...state,
         review: action.payload,
-        loading: false
+        loading: false,
       };
     case REVIEW_FAIL:
       return {
         ...state,
-        loading: false
+        loading: false,
+      };
+    case LOADING_FALSE:
+      return {
+        ...state,
+        loading: false,
       };
     default:
       return state;

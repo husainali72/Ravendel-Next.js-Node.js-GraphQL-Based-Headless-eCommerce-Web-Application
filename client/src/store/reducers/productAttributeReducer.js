@@ -3,6 +3,7 @@ import {
   ATTRIBUTES_SUCCESS,
   ATTRIBUTE_SUCCESS,
   ATTRIBUTE_FAIL,
+  LOADING_FALSE
 } from "../action/productAttributeAction";
 
 const initialState = {
@@ -42,6 +43,11 @@ export default (state = initialState, action) => {
       return {
         ...initialState,
         render: action.payload,
+      };
+    case LOADING_FALSE:
+      return {
+        ...state,
+        loading: false,
       };
     default:
       return state;

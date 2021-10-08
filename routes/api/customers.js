@@ -4,7 +4,8 @@ const router = express.Router();
 const APP_KEYS = require("../../config/keys");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const auth = require("../../middleware/auth");
+//const auth = require("../../middleware/auth");
+const auth = require("../../middleware/customerauth");
 
 // custmer model
 const Customer = require("../../models/Customer");
@@ -18,24 +19,24 @@ router.post("/register", (req, res) => {
 
 
   if (!req.body.first_name) {
-    return res.status(400).json("First name field is required");
+    return res.status(400).json({success: false,message: 'First name field is required.' });
   }
   if (!req.body.last_name) {
-    return res.status(400).json("Last name field is required");
+    return res.status(400).json({success: false,message: 'Last name field is required.' });
   }
   if (!req.body.email || !/[\w]+?@[\w]+?\.[a-z]{2,4}/.test(req.body.email)) {
-    return res.status(400).json("Email field is required and must be valid");
+    return res.status(400).json({success: false,message: 'Email field is required and must be valid.' });
   }
   if (!req.body.password) {
-    return res.status(400).json("Password field is required");
+    return res.status(400).json({success: false,message: 'Password field is required.' });
   }
   if (req.body.password && req.body.password !== req.body.confirm_password) {
-     return res.status(400).json("Password and confirm field not match");
+     return res.status(400).json({success: false,message: 'Password and confirm field not match".' });
   }
 
   Customer.findOne({ email: req.body.email }).then((customer) => {
     if (customer) {
-      return res.status(400).json("Email already exists");
+      return res.status(400).json({success: false,message: 'Email already exists.' });
     } else {
       const newCustomer = new Customer({
         first_name: req.body.first_name,
@@ -51,11 +52,7 @@ router.post("/register", (req, res) => {
           newCustomer
             .save()
             .then((customer) =>
-              res.json({
-                first_name: customer.first_name,
-                last_name: customer.last_name,
-                email: customer.email,
-              })
+            res.status(200).json({success: true,message: 'Customer registration successfully.',customer })
             )
             .catch((err) => console.log(err));
         });
@@ -75,31 +72,28 @@ router.post("/login", (req, res) => {
   Customer.findOne({ email }).then((customer) => {
     // Check for customer
     if (!customer) {
-      return res.status(404).json("Invalid credentials");
+      return res.status(404).json({success: false,message: 'Invalid credentials.'});
     }
     // Check Password
     bcrypt.compare(password, customer.password).then((isMatch) => {
       if (isMatch) {
         // customer Matched
-        const payload = { id: customer.id, first_name: customer.first_name,last_name: customer.last_name, email: customer.email }; // Create JWT Payload
+        const payload = { id: customer.id, first_name: customer.first_name,last_name: customer.last_name, email: customer.email,role:'customer' }; // Create JWT Payload
         // Sign Token
         jwt.sign(
           payload,
           APP_KEYS.jwtSecret,
           { expiresIn: 36000 },
           (err, token) => {
-            res.json({
+            res.status(200).json({
               success: true,
               token: token,
-              customer_id: customer.id,
-              first_name: customer.first_name,
-              last_name: customer.last_name,
-              email: customer.email,
+              customer,
             });
           }
         );
       } else {
-        return res.status(400).json("Invalid credentials");
+        return res.status(404).json({success: false,message: 'Invalid credentials.'});
       }
     });
   });
@@ -114,13 +108,13 @@ router.post("/login", (req, res) => {
 router.post("/forgotpassword", async (req, res) => {
 
   if (!req.body.email || !/[\w]+?@[\w]+?\.[a-z]{2,4}/.test(req.body.email)) {
-    return res.status(400).json("Email field is required and must be valid");
+    return res.status(400).json({success: false,message: 'Email field is required and must be valid.' });
   }
   
   const setting = await Setting.findOne({});
   Customer.findOne({ email: req.body.email }).then((customer) => {
     if (!customer) {
-      return res.status(400).json("Email not exists");
+      return res.status(404).json({success: false,message: 'Email not exists.' });
     } else {
      let link = "http://" + req.headers.host + "/api/customers/reset/" + customer.id;
      const nodemailer = require('nodemailer');
@@ -144,20 +138,14 @@ router.post("/forgotpassword", async (req, res) => {
                     If you did not request this, please ignore this email and your password will remain unchanged.\n`,
         
     }
-    
     transporter.sendMail(message, function(err, info) {
         if (err) {
-          //console.log(err);
-          return res.status(400).json("Email sending faild");
+          return res.status(400).json({success: false,message: 'Email sending faild.' });
         } else {
-        //  console.log(info);
-          return res.status(200).json("Email send successfully");
+          return res.status(200).json({success: true,message: 'Email sent successfully, registered mail id' });
         }
 
       });
-
-
-     
     }
   });
 });
@@ -191,15 +179,15 @@ router.get("/reset/:custId",  (req, res) => {
 router.post("/resetpassword", (req, res) => {
 
   if (!req.body.customer_id) {
-    return res.status(400).json("Customer Id field is required");
+    return res.status(400).json({success: false,message: 'Customer Id field is required.' });
   }
 
   if (!req.body.password) {
-    return res.status(400).json("Password field is required");
+    return res.status(400).json({success: false,message: 'Password field is required.' });
   }
 
   if (req.body.password && req.body.password !== req.body.confirm_password) {
-     return res.status(400).json("Password and confirm field not match");
+     return res.status(400).json({success: false,message: 'Password and confirm field not match.' });
   }
 
   let  newpassword = '';
@@ -207,28 +195,23 @@ router.post("/resetpassword", (req, res) => {
     bcrypt.hash(req.body.password, salt, (err, hash) => {
       if (err) throw err;
        newpassword = hash;
-
-
        Customer.findByIdAndUpdate(req.body.customer_id, {
         password: newpassword
     }, {new: true})
     .then(customer => {
         if(!customer) {
-          return res.status(404).json("Customer Id not found");
+          return res.status(404).json({success: false,message: 'Customer not found.' });
           
         }
-        return res.status(200).json("New password created successfully");
+        return res.status(200).json({success: true,message: 'New password created successfully.' });
 
     }).catch(err => {
         if(err.kind === 'ObjectId') {
-          return res.status(404).json("Customer Id not found");
-                    
+          return res.status(404).json({success: false,message: 'Customer not found.'});
         }
-
-        return res.status(500).json("Error creating customer password");
+        return res.status(500).json({success: false,message: 'Error creating customer password.'});
         
     });
-
 
         });
   });
@@ -241,23 +224,27 @@ router.post("/resetpassword", (req, res) => {
 // @access  public
 router.post("/changepassword", auth, async (req, res) => {
 
+  if (req.user.role !=='customer') {
+    return res.status(401).json({success: false,message: 'Access Denied.' });
+  }
+
   if (!req.body.customer_id) {
-    return res.status(400).json("Customer Id field is required");
+    return res.status(400).json({success: false,message: 'Customer Id field is required.' });
   }
   if (!req.body.oldpassword) {
-    return res.status(400).json("Old password field is required");
+    return res.status(400).json({success: false,message: 'Old password field is required.' });
   }
   if (!req.body.password) {
-    return res.status(400).json("Password field is required");
+    return res.status(400).json({success: false,message: 'Password field is required.' });
   }
   if (req.body.password && req.body.password !== req.body.confirm_password) {
-     return res.status(400).json("Password and confirm field not match");
+     return res.status(400).json({success: false,message: 'Password and confirm field not match.' });
   }
   const customerid =  req.body.customer_id;
   Customer.findOne({  _id: customerid }).then((customer) => {
     // Check for customer
     if (!customer) {
-      return res.status(404).json("Customer Id not found");
+      return res.status(404).json({success: false,message: 'Customer not found.' });
     }
     // Check Password
     bcrypt.compare(req.body.oldpassword, customer.password).then((isMatch) => {
@@ -272,19 +259,18 @@ router.post("/changepassword", auth, async (req, res) => {
     }, {new: true})
     .then(customer => {
         if(!customer) {
-          return res.status(404).json("Customer Id not found");
-          
+          return res.status(404).json({success: false,message: 'Customer not found.' });
         }
-        return res.status(200).json("password changed successfully");
+        return res.status(200).json({success: true,message: 'Password changed succesfully.' });
+        
 
     }).catch(err => {
         if(err.kind === 'ObjectId') {
-          return res.status(404).json("Customer Id not found");
+          return res.status(404).json({success: false,message: 'Customer not found.' });
                     
         }
-
-        return res.status(500).json("Error creating customer password");
-        
+        return res.status(500).json({success: false,message: 'Error creating customer password.' });
+       
     });
 
 
@@ -292,7 +278,7 @@ router.post("/changepassword", auth, async (req, res) => {
   });
         
       } else {
-        return res.status(400).json("Wrong old password");
+        return res.status(400).json({success: false,message: 'Wrong old password' });
       }
     });
   });
@@ -304,15 +290,19 @@ router.post("/changepassword", auth, async (req, res) => {
 // @access  public
 router.post("/viewprofile", auth, async (req, res) => {
 
+  if (req.user.role !=='customer') {
+    return res.status(401).json({success: false,message: 'Access Denied.' });
+  }
+  
   if (!req.body.customer_id) {
-    return res.status(400).json("Customer Id field is required");
+    return res.status(400).json({success: false,message: 'Customer Id field is required.' });
   }
   
   const customerid =  req.body.customer_id;
   Customer.findOne({  _id: customerid }).then((customer) => {
     // Check for customer
     if (!customer) {
-      return res.status(404).json("Customer Id not found");
+      return res.status(404).json({success: false,message: 'Customer not found.' });
     }
 
     let ccompany ='';
@@ -328,17 +318,7 @@ router.post("/viewprofile", auth, async (req, res) => {
        cphone = '';
     }
 
-    res.json({
-      success: true,
-      customer_id: customer.id,
-      first_name: customer.first_name,
-      last_name: customer.last_name,
-      email: customer.email,
-      company: ccompany,
-      phone: cphone,
-      address_book: customer.address_book,
-    });
- 
+    return res.status(200).json({success: true,customer }); 
   });
 
 });
@@ -349,20 +329,23 @@ router.post("/viewprofile", auth, async (req, res) => {
 // @access  public
 router.post("/updateprofile", auth, async (req, res) => {
 
+  if (req.user.role !=='customer') {
+    return res.status(401).json({success: false,message: 'Access Denied.' });
+  }
   if (!req.body.customer_id) {
-    return res.status(400).json("Customer Id field is required");
+    return res.status(400).json({success: false,message: 'Customer Id field is required.' });
   }
   if (!req.body.first_name) {
-    return res.status(400).json("First name field is required");
+    return res.status(400).json({success: false,message: 'First name field is required.' });
   }
   if (!req.body.last_name) {
-    return res.status(400).json("Last name field is required");
+    return res.status(400).json({success: false,message: 'Last name field is required.' });
   }
   if (!req.body.company) {
-    return res.status(400).json("Company field is required");
+    return res.status(400).json({success: false,message: 'Company field is required.' });
   }
   if (!req.body.phone) {
-    return res.status(400).json("Phone field is required");
+    return res.status(400).json({success: false,message: 'Phone field is required.' });
   }
 
   let updatedate = Date.now();
@@ -374,15 +357,14 @@ router.post("/updateprofile", auth, async (req, res) => {
 }, {new: true})
 .then(customer => {
     if(!customer) {
-      return res.status(404).json("Customer Id not found");
-
+      return res.status(404).json({success: false,message: 'Customer not found.' });
     }
-    res.send(customer);
+    return res.status(200).json({success: true,message: 'Customer updated successfully.',customer });
 }).catch(err => {
-    if(err.kind === 'ObjectId') {
-      return res.status(404).json("Customer Id not found");               
+    if(err.kind === 'ObjectId') {    
+      return res.status(404).json({success: false,message: 'Customer not found.' });          
     }
-    return res.status(500).json("Error updating customer");
+    return res.status(500).json({success: false,message: 'Error updating customer.' });
     
 });
 
@@ -393,45 +375,49 @@ router.post("/updateprofile", auth, async (req, res) => {
 // @access  public
 router.post("/addaddressbook", auth, async (req, res) => {
 
+  if (req.user.role !=='customer') {
+    return res.status(401).json({success: false,message: 'Access Denied.' });
+  }
+
+
   if (!req.body.customer_id) {
-    return res.status(400).json("Customer Id field is required");
+    return res.status(400).json({success: false,message: 'Customer Id field is required.' });    
   }
   if (!req.body.first_name) {
-    return res.status(400).json("First name field is required");
+    return res.status(400).json({success: false,message: 'First name field is required.' });    
   }
   if (!req.body.last_name) {
-    return res.status(400).json("Last name field is required");
+    return res.status(400).json({success: false,message: 'last name field is required.' });    
   }
 
   if (!req.body.address_line1) {
-    return res.status(400).json("Address 1 field is required");
+    return res.status(400).json({success: false,message: 'Address field is required.' });    
   }
 
   if (!req.body.city) {
-    return res.status(400).json("City field is required");
+    return res.status(400).json({success: false,message: 'City field is required.' });    
   }
   if (!req.body.country) {
-    return res.status(400).json("Country field is required");
+    return res.status(400).json({success: false,message: 'Country field is required.' });    
   }
 
   if (!req.body.pincode) {
-    return res.status(400).json("Pincode field is required");
+    return res.status(400).json({success: false,message: 'Pincode field is required.' });    
   }
 
   let updatedate = Date.now();
   const customer = await Customer.findById({ _id: req.body.customer_id });
   if (!customer) {
-    return res.status(404).json("Customer Id not found");
+    return res.status(404).json({success: false,message: 'Customer not found.' });   
   }
-
-  if (req.body.default_address=='true') {
+ 
+  if (req.body.default_address) {
     for (let i in customer.address_book) {
       if (customer.address_book[i].default_address) {
         customer.address_book[i].default_address = false;
       }
     }
   }
-
   const cdata =  {
         first_name: req.body.first_name, 
         last_name: req.body.last_name,
@@ -463,18 +449,7 @@ router.post("/addaddressbook", auth, async (req, res) => {
     }else{
        cphone = '';
     }
-
-    res.json({
-      success: true,
-      customer_id: customer.id,
-      first_name: customer.first_name,
-      last_name: customer.last_name,
-      email: customer.email,
-      company: ccompany,
-      phone: cphone,
-      address_book: customer.address_book,
-    });
- 
+    return res.status(200).json({success: true,message: 'Address book saved successfully.',customer });
   });
 });
 
@@ -485,37 +460,40 @@ router.post("/addaddressbook", auth, async (req, res) => {
 // @access  public
 router.post("/updateaddressbook", auth, async (req, res) => {
 
+  if (req.user.role !=='customer') {
+    return res.status(401).json({success: false,message: 'Access Denied.' });
+  }
   if (!req.body.customer_id) {
-    return res.status(400).json("Customer Id field is required");
+    return res.status(400).json({success: false,message: 'Customer Id field is required.' });    
   }
 
   if (!req.body._id) {
-    return res.status(400).json("Address Id field is required");
+    return res.status(400).json({success: false,message: 'Address id field is required.' });
   }
   if (!req.body.first_name) {
-    return res.status(400).json("First name field is required");
+    return res.status(400).json({success: false,message: 'First nmae field is required.' });
   }
   if (!req.body.last_name) {
-    return res.status(400).json("Last name field is required");
+    return res.status(400).json({success: false,message: 'Last name field is required.' });
   }
   if (!req.body.address_line1) {
-    return res.status(400).json("Address 1 field is required");
+    return res.status(400).json({success: false,message: 'Address1 field is required.' });
   }
   if (!req.body.city) {
-    return res.status(400).json("City field is required");
+    return res.status(400).json({success: false,message: 'City field is required.' });
   }
   if (!req.body.country) {
-    return res.status(400).json("Country field is required");
+    return res.status(400).json({success: false,message: 'Country field is required.' });
   }
 
   if (!req.body.pincode) {
-    return res.status(400).json("Pincode field is required");
+    return res.status(400).json({success: false,message: 'Pincode field is required.' });
   }
 
   let updatedate = Date.now();
   const customer = await Customer.findById({ _id: req.body.customer_id });
   if (!customer) {
-    return res.status(404).json("Customer Id not found");
+    return res.status(404).json({success: false,message: 'Customer not found.' });
   }
 
   const cdata =  {
@@ -533,7 +511,7 @@ router.post("/updateaddressbook", auth, async (req, res) => {
     }
 
     customer.address_book = customer.address_book.map(address => {
-      if (req.body.default_address=='true') {
+      if (req.body.default_address) {
         address.default_address = false;
       }
 
@@ -559,17 +537,7 @@ router.post("/updateaddressbook", auth, async (req, res) => {
        cphone = '';
     }
 
-    res.json({
-      success: true,
-      customer_id: customer.id,
-      first_name: customer.first_name,
-      last_name: customer.last_name,
-      email: customer.email,
-      company: ccompany,
-      phone: cphone,
-      address_book: customer.address_book,
-    });
- 
+    return res.status(200).json({success: true,message: 'Address book updated successfully.',customer });
   });
 });
 
@@ -579,17 +547,19 @@ router.post("/updateaddressbook", auth, async (req, res) => {
 // @access  public
 router.post("/deleteaddressbook", auth, async (req, res) => {
 
-  if (!req.body.customer_id) {
-    return res.status(400).json("Customer Id field is required");
+  if (req.user.role !=='customer') {
+    return res.status(401).json({success: false,message: 'Access Denied.' });
   }
-
+  if (!req.body.customer_id) {
+    return res.status(400).json({success: false,message: 'Customer Id field is required.' });    
+  }
   if (!req.body._id) {
-    return res.status(400).json("Address Id field is required");
+    return res.status(400).json({success: false,message: 'Address id field is required.' });
   }
 
   const customer = await Customer.findById({ _id: req.body.customer_id });
   if (!customer) {
-    return res.status(404).json("Customer Id not found");
+    return res.status(404).json({success: false,message: 'Customer not found.' });
   }
 
   var customer_address_book = customer.address_book;
@@ -616,19 +586,7 @@ router.post("/deleteaddressbook", auth, async (req, res) => {
     }else{
        cphone = '';
     }
-
-    res.json({
-      success: true,
-      customer_id: customer.id,
-      first_name: customer.first_name,
-      last_name: customer.last_name,
-      email: customer.email,
-      company: ccompany,
-      phone: cphone,
-      address_book: customer.address_book,
-    });
-
-   
+    return res.status(200).json({success: true,message: 'Address book deleted successfully.',customer });
   });
 });
 

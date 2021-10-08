@@ -8,7 +8,8 @@ import {
   BLOGTAG_LOADING,
   BLOGTAGS_SUCCESS,
   BLOGTAG_FAIL,
-  BLOGS_UPDATE_SUCCESS
+  BLOGS_UPDATE_SUCCESS,
+  LOADING_FALSE,
 } from "../action/blogAction";
 
 const initialState = {
@@ -87,6 +88,11 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         success: false
+      };
+    case LOADING_FALSE:
+      return {
+        ...state,
+        loading: false,
       };
     default:
       return state;

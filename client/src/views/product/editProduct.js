@@ -62,7 +62,7 @@ const EditProduct = (props) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const [product, setProduct] = useState({
-    id: "",
+    _id: "",
     name: "",
     categoryId: [],
     brand: "",
@@ -215,7 +215,7 @@ const EditProduct = (props) => {
           backLink={`${client_app_route_url}all-products`}
         />
 
-        {!isEmpty(product.id) ? (
+        {!isEmpty(product._id) ? (
           <Grid container spacing={4} className={classes.secondmainrow}>
             <Grid item lg={9} md={12}>
               {/* ===================Information=================== */}

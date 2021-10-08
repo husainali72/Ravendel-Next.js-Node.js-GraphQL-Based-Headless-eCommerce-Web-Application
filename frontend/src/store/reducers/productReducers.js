@@ -14,6 +14,7 @@ import {
   RECENT_PRODUCTS_SUCCESS,
   FEATURED_PRODUCTS_SUCCESS,
   PRODUCTS_CATID_SUCCESS,
+  LOADING_FALSE,
 } from "../action/productAction";
 
 const initialState = {
@@ -132,6 +133,11 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         success: false,
+      };
+    case LOADING_FALSE:
+      return {
+        ...state,
+        loading: false,
       };
     default:
       return state;
