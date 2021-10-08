@@ -2,7 +2,8 @@ import {
   COUPON_LOADING,
   COUPONS_SUCCESS,
   COUPON_SUCCESS,
-  COUPON_FAIL
+  COUPON_FAIL,
+  LOADING_FALSE,
 } from "../action/couponAction";
 
 const initialState = {
@@ -17,24 +18,29 @@ export default (state = initialState, action) => {
     case COUPON_LOADING:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case COUPONS_SUCCESS:
       return {
         ...state,
         coupons: action.payload,
-        loading: false
+        loading: false,
       };
     case COUPON_SUCCESS:
       return {
         ...state,
         coupon: action.payload,
-        loading: false
+        loading: false,
       };
     case COUPON_FAIL:
       return {
         ...state,
-        loading: false
+        loading: false,
+      };
+    case LOADING_FALSE:
+      return {
+        ...state,
+        loading: false,
       };
     default:
       return state;
