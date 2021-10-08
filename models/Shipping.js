@@ -5,36 +5,37 @@ const Schema = mongoose.Schema;
 const ShippingSchema = new Schema({
   global: {
     is_global: {
-      type: Boolean
+      type: Boolean,
     },
     shipping_class: {
-      type: Schema.ObjectId
+      type: Schema.ObjectId,
     },
     is_per_order: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   shipping_class: [
     {
       name: {
-        type: String
+        type: String,
       },
       amount: {
-        type: Number
+        type: Number,
+        min: 0,
       },
       system: {
         type: Number,
-        default: 0
-      }
-    }
+        default: 0,
+      },
+    },
   ],
   date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updated: {
-    type: Date
-  }
+    type: Date,
+  },
 });
 
 var Shipping = (module.exports = mongoose.model("Shipping", ShippingSchema));
@@ -48,15 +49,15 @@ module.exports.createShipping = async () => {
   var newShipping = new Shipping({
     global: {
       is_global: false,
-      is_per_order: false
+      is_per_order: false,
     },
     shipping_class: [
       {
         name: "Free Shipping",
         amount: 0,
-        system: 1
-      }
-    ]
+        system: 1,
+      },
+    ],
   });
 
   newShipping.save(async (err, defaultShipping) => {

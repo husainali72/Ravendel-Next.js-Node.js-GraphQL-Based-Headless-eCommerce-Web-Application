@@ -4,37 +4,38 @@ const Schema = mongoose.Schema;
 // Create Schema
 const TaxSchema = new Schema({
   is_inclusive: {
-    type: Boolean
+    type: Boolean,
   },
   global: {
     is_global: {
-      type: Boolean
+      type: Boolean,
     },
     tax_class: {
-      type: Schema.ObjectId
-    }
+      type: Schema.ObjectId,
+    },
   },
   tax_class: [
     {
       name: {
-        type: String
+        type: String,
       },
       percentage: {
-        type: Number
+        type: Number,
+        min: 0,
       },
       system: {
         type: Number,
-        default: 0
-      }
-    }
+        default: 0,
+      },
+    },
   ],
   date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updated: {
-    type: Date
-  }
+    type: Date,
+  },
 });
 
 var Tax = (module.exports = mongoose.model("Tax", TaxSchema));
@@ -48,15 +49,15 @@ module.exports.createTax = async () => {
   var newTax = new Tax({
     is_inclusive: true,
     global: {
-      is_global: true
+      is_global: true,
     },
     tax_class: [
       {
         name: "Tax Free",
         percentage: 0,
-        system: 1
-      }
-    ]
+        system: 1,
+      },
+    ],
   });
 
   newTax.save(async (err, defaultTax) => {
