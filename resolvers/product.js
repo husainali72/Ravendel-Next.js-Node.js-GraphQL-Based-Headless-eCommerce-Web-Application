@@ -570,6 +570,7 @@ module.exports = {
           ["height", "width", "depth", "weight", "shipping_class"],
           args
         );
+
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -631,9 +632,9 @@ module.exports = {
               width: args.shipping.width || 0,
               depth: args.shipping.depth || 0,
               weight: args.shipping.weight || 0,
-              shipping_class: args.shipping.shipping_class,
+              shipping_class: args.shipping.shipping_class || null,
             },
-            tax_class: args.tax_class,
+            tax_class: args.tax_class || null,
             featured_product: args.featured_product,
             product_type: args.product_type,
             custom_field: args.custom_field,
@@ -676,7 +677,6 @@ module.exports = {
           return MESSAGE_RESPONSE("AddSuccess", "Product", true);
         }
       } catch (error) {
-        error = checkError(error)
         return MESSAGE_RESPONSE("CREATE_ERROR", "Product", false);
       }
     },
@@ -704,6 +704,7 @@ module.exports = {
           ["height", "width", "depth", "weight", "shipping_class"],
           args
         );
+
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -774,7 +775,7 @@ module.exports = {
 
           product.name = args.name;
           product.categoryId = args.categoryId;
-          (product.brand = args.brand || null),
+          (product.brand = args.brand || {}),
             (product.url = await updateUrl(args.url || args.name, "Product"));
           product.short_description = args.short_description;
           product.description = args.description;
@@ -874,6 +875,7 @@ module.exports = {
         }
         return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
       } catch (error) {
+        console.log("DELETE_PRODUCT", error);
         return MESSAGE_RESPONSE("DELETE_ERROR", "Product", false);
       }
     },

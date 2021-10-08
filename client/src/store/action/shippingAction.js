@@ -92,7 +92,6 @@ export const globalShippingUpdateAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -100,7 +99,6 @@ export const globalShippingUpdateAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(shippingAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -152,7 +150,6 @@ export const shippingClassAddAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -160,7 +157,6 @@ export const shippingClassAddAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(shippingAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -184,7 +180,6 @@ export const shippingClassUpdateAction = object => dispatch => {
   dispatch({
     type: SHIPPING_LOADING
   });
-  console.log('object',object)
   if(object && object.shipping_class && object.shipping_class.amount){
     object.shipping_class.amount = object.shipping_class.amount.toString();
   }
@@ -216,7 +211,6 @@ export const shippingClassUpdateAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -224,7 +218,6 @@ export const shippingClassUpdateAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(shippingAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -276,7 +269,6 @@ export const shippingClassDeleteAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -284,7 +276,6 @@ export const shippingClassDeleteAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(shippingAction());
         return dispatch({
           type: ALERT_SUCCESS,

@@ -277,16 +277,22 @@ const GET_PRODUCTS = gql`
 `;
 
 const GET_PRODUCT = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     product(id: $id) {
-      ...ProductTile
+      data {
+        ...ProductTile
+      }
+      message {
+        message
+        success
+      }
     }
   }
   ${PRODUCT_TILE_DATA}
 `;
 
 const ADD_PRODUCT = gql`
-  mutation(
+  mutation (
     $name: String
     $url: String
     $categoryId: customArray
@@ -332,15 +338,15 @@ const ADD_PRODUCT = gql`
       variant: $variant
       combinations: $combinations
     ) {
-      ...ProductTile
+      message
+      success
     }
   }
-  ${PRODUCT_TILE_DATA}
 `;
 
 const UPDATE_PRODUCT = gql`
-  mutation(
-    $id: ID!
+  mutation (
+    $_id: ID!
     $name: String
     $url: String
     $categoryId: customArray
@@ -365,7 +371,7 @@ const UPDATE_PRODUCT = gql`
     $combinations: [customObject]
   ) {
     updateProduct(
-      id: $id
+      id: $_id
       name: $name
       url: $url
       categoryId: $categoryId
@@ -389,19 +395,27 @@ const UPDATE_PRODUCT = gql`
       variant: $variant
       combinations: $combinations
     ) {
-      ...ProductTile
+      message
+      success
     }
   }
-  ${PRODUCT_TILE_DATA}
 `;
 
+// const DELETE_PRODUCT = gql`
+//   mutation ($id: ID!) {
+//     deleteProduct(id: $id) {
+//       ...ProductTile
+//     }
+//   }
+//   ${PRODUCT_TILE_DATA}
+// `;
 const DELETE_PRODUCT = gql`
   mutation($id: ID!) {
     deleteProduct(id: $id) {
-      ...ProductTile
+      message
+      success
     }
   }
-  ${PRODUCT_TILE_DATA}
 `;
 
 export {

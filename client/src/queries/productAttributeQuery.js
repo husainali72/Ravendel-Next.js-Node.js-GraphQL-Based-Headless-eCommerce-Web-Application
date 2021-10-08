@@ -21,16 +21,28 @@ const GENERAL_RESPONSE_TILE = gql`
 const GET_ATTRIBUTES = gql`
   {
     product_attributes {
-      ...AttributeTile
+      data {
+        ...AttributeTile
+      }
+      message {
+        message
+        success
+      }
     }
   }
   ${ATTRIBUTE_TILE}
 `;
 
 const GET_ATTRIBUTE = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     product_attribute(id: $id) {
-      ...AttributeTile
+      data {
+        ...AttributeTile
+      }
+      message {
+        message
+        success
+      }
     }
   }
   ${ATTRIBUTE_TILE}

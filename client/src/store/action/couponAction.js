@@ -149,7 +149,6 @@ export const couponAddAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -157,8 +156,8 @@ export const couponAddAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(couponsAction());
+        jumpTo(`${client_app_route_url}all-coupons`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
@@ -217,7 +216,6 @@ export const couponUpdateAction = object => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -225,8 +223,8 @@ export const couponUpdateAction = object => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(couponsAction());
+        jumpTo(`${client_app_route_url}all-coupons`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
@@ -248,7 +246,6 @@ export const couponDeleteAction = id => dispatch => {
   dispatch({
     type: COUPON_LOADING
   });
-  console.log(id)
   mutation(DELETE_COUPON, { id })
     .then(response => {
       // if (response.data.deleteCoupon.success) {
@@ -282,7 +279,6 @@ export const couponDeleteAction = id => dispatch => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -290,7 +286,6 @@ export const couponDeleteAction = id => dispatch => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(couponsAction());
         return dispatch({
           type: ALERT_SUCCESS,

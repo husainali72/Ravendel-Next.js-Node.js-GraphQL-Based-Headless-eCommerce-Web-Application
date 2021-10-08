@@ -161,7 +161,6 @@ export const pageAddAction = (object) => (dispatch) => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -170,7 +169,6 @@ export const pageAddAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        console.log("Success");
         jumpTo(`${client_app_route_url}all-pages`);
         dispatch(pagesAction());
         return dispatch({
@@ -238,7 +236,6 @@ export const pageUpdateAction = (object) => (dispatch) => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -247,7 +244,6 @@ export const pageUpdateAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        console.log("Success");
         jumpTo(`${client_app_route_url}all-pages`);
         dispatch(pagesAction());
         return dispatch({
@@ -310,7 +306,6 @@ export const pageDeleteAction = (id) => (dispatch) => {
       });
 
       if (error) {
-        console.log("error");
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: true },
@@ -319,7 +314,6 @@ export const pageDeleteAction = (id) => (dispatch) => {
       }
 
       if (success) {
-        console.log("Success");
         dispatch(pagesAction());
         return dispatch({
           type: ALERT_SUCCESS,
