@@ -25,11 +25,11 @@ const CouponSchema = new Schema({
   },
   minimum_spend: {
     type: Number,
-    min : 0
+    // min : 0
   },
   maximum_spend: {
     type: Number,
-    min : 0
+    // min : 0
   },
   products: [],
   exclude_products: [],

@@ -115,6 +115,7 @@ export const couponAddAction = object => dispatch => {
   dispatch({
     type: COUPON_LOADING
   });
+  console.log('couupon add', object)
   mutation(ADD_COUPON, object)
     .then(response => {
       // if (response.data.addCoupon.success) {

@@ -149,11 +149,11 @@ const ADD_COUPON = gql`
     $code: String
     $description: String
     $discount_type: String
-    $discount_value: String
+    $discount_value: Int
     $free_shipping: Boolean
     $expire: String
-    $minimum_spend: String
-    $maximum_spend: String
+    $minimum_spend: Int
+    $maximum_spend: Int
     $products: customArray
     $exclude_products: customArray
     $categories: customArray
@@ -234,11 +234,11 @@ const UPDATE_COUPON = gql`
     $code: String
     $description: String
     $discount_type: String
-    $discount_value: String
+    $discount_value: Int
     $free_shipping: Boolean
     $expire: String
-    $minimum_spend: String
-    $maximum_spend: String
+    $minimum_spend: Int
+    $maximum_spend: Int
     $products: customArray
     $exclude_products: customArray
     $categories: customArray

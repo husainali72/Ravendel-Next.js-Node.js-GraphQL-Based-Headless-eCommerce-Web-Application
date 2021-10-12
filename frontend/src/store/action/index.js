@@ -1,4 +1,4 @@
-import LoginAction from "./loginAction";
+import {LoginAction} from "./loginAction";
 
 import {
   productsAction,

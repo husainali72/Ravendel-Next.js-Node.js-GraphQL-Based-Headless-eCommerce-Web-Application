@@ -7,6 +7,7 @@ const {
   _validate,
   imageUpload,
   imageUnlink,
+  putError
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -120,6 +121,7 @@ module.exports = {
           return MESSAGE_RESPONSE("NOT_EXIST", "Brands", false);
         }
       } catch (error) {
+        console.log(error)
         return MESSAGE_RESPONSE("UPDATE_ERROR", "Brands", false);
       }
     },

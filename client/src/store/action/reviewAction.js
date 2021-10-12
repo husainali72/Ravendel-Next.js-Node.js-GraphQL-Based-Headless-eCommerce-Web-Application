@@ -177,6 +177,7 @@ export const reviewUpdateAction = object => dispatch => {
   dispatch({
     type: REVIEW_LOADING
   });
+  console.log('review----', object)
   mutation(UPDATE_REVIEW, object)
     .then(response => {
       // if (response.data.updateReview.success) {

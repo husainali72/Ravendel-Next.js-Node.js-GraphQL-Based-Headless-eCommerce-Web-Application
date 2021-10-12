@@ -50,6 +50,7 @@ module.exports = {
         }
         return MESSAGE_RESPONSE("UpdateSuccess", "GlobalShipping", true);
       } catch (error) {
+        console.log(error)
         return MESSAGE_RESPONSE("UPDATE_ERROR", "GlobalShipping", false);
       }
     },
@@ -113,6 +114,7 @@ module.exports = {
       }
       try {
         const shipping = await Shipping.findOne({});
+        console.log(shipping)
 
         var ShippingClass = shipping.shipping_class;
         // for (let i in ShippingClass) {
@@ -131,6 +133,7 @@ module.exports = {
         // await Shipping.findOne({});
         return MESSAGE_RESPONSE("DELETE", "ShippingClass", true);
       } catch (error) {
+        console.log('delete', error)
         return MESSAGE_RESPONSE("DELETE_ERROR", "ShippingClass", false);
       }
     },

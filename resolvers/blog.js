@@ -51,6 +51,7 @@ module.exports = {
       }
       try {
         const blogtag = await BlogTag.findOne({ url: args.tag_url });
+        console.log('blogtag----', args.tag_url)
         if (!blogtag) {
           return {
             message: MESSAGE_RESPONSE("NOT_EXIST", "blogTag", false),

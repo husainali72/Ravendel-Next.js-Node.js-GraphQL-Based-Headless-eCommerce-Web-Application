@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-import { connect } from "react-redux";
+import React, { Fragment, useState } from "react";
+import { connect, useSelector, useDispatch } from "react-redux";
 import {
   Typography,
   Box,
@@ -11,10 +11,24 @@ import {
 import { Link } from "react-router-dom";
 import {PageTitle} from '../components';
 import {app_router_base_url} from '../../utils/helper';
+import {LoginAction} from '../../store/action/loginAction';
 
 const Login = props => {
+  const dispatch = useDispatch();
+    const login_loading = useSelector(state => state.login.token_loading)
+
+    const [values, setValues] = useState({
+        email: "",
+        password: ""
+    });    
+
+    const handleChange = prop => event => {
+        setValues({ ...values, [prop]: event.target.value });
+    };
+    
   const doLogin = e => {
     e.preventDefault();
+    dispatch(LoginAction(values.email, values.password));
   };
   return (
     <Fragment>
@@ -44,8 +58,9 @@ const Login = props => {
               <TextField
                 label="Username or Email"
                 variant="outlined"
-                name="username"
-                onChange={e => console.log(e.target.value)}
+                name="email"
+                value={values.email}
+                onChange={handleChange("email")}
                 className="width-100 margin-top-1 margin-bottom-1"
                 size="small"
               />
@@ -55,7 +70,8 @@ const Login = props => {
                 label="Password"
                 variant="outlined"
                 name="password"
-                onChange={e => console.log(e.target.value)}
+                value={values.password}
+                onChange={handleChange("password")}
                 className="width-100 margin-top-1 margin-bottom-2"
                 size="small"
               />
