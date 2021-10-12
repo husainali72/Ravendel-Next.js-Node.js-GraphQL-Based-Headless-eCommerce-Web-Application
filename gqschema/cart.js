@@ -35,7 +35,6 @@ module.exports = gql`
   }
 
   type calculatedCart {
-    items: [cartItem]
     subtotal: Float
     total_shipping: shippingObj
     total_tax: taxObj
@@ -48,6 +47,13 @@ module.exports = gql`
     qty: Int
     combination: [String]
   }
+
+  input cartProducts {
+    product_id: ID
+    qty: Int
+    total: Float
+  }
+
   type CartRES {
     data:[Cart]
     message: statusSchema
@@ -60,7 +66,7 @@ module.exports = gql`
     carts: CartRES
     cart(id: ID!): Cart 
     cartbyUser(user_id: ID!): Cart
-    calculateCart(cart: [cartProduct]): calculatedCart
+    calculateCart(cart: [cartProducts]): calculatedCart
   }
 
   extend type Mutation {

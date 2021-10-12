@@ -179,7 +179,7 @@ module.exports = {
             } else {
               item.price = productById[i].price;
               item.product_id = productById[i].product.product_id;
-              console.log(item);
+              //console.log(item);
             }
 
             if (!tax[0].is_inclusive && !tax[0].global.is_global) {
@@ -268,11 +268,13 @@ module.exports = {
           calculated.total_tax.name = isGlobalTaxObj.name;
         }
 
+        calculated.total_coupon = 0;
         calculated.grand_total =
           calculated.subtotal +
           calculated.total_shipping.amount +
-          calculated.total_tax.amount;
+          calculated.total_tax.amount - calculated.total_coupon ;
 
+        //  console.log(calculated);
         return calculated;
       } catch (error) {
         error = checkError(error);
