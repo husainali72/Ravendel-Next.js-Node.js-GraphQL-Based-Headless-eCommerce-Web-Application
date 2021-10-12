@@ -569,6 +569,7 @@ module.exports = {
     },
 
     addProduct: async (root, args, { id }) => {
+      console.log(args)
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
@@ -699,6 +700,8 @@ module.exports = {
           return MESSAGE_RESPONSE("AddSuccess", "Product", true);
         }
       } catch (error) {
+        console.log('catchhhhhhh')
+        console.log(error)
         return MESSAGE_RESPONSE("CREATE_ERROR", "Product", false);
       }
     },
@@ -723,7 +726,7 @@ module.exports = {
         }
         errors = _validatenested(
           "shipping",
-          ["height", "width", "depth", "weight", "shipping_class"],
+          ["shipping_class"],
           args
         );
 
@@ -857,6 +860,7 @@ module.exports = {
           return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
         }
       } catch (error) {
+        console.log('update---', error)
         return MESSAGE_RESPONSE("UPDATE_ERROR", "Product", false);
       }
     },

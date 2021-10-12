@@ -4,7 +4,7 @@ const GET_ORDERS = gql`
     orders {
       data {
         id
-        user_id
+        customer_id
         status
         shipping
         billing

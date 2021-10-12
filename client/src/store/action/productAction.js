@@ -359,6 +359,7 @@ export const productAddAction = (object) => (dispatch) => {
   if(object.brand && object.brand.value){
     object.brand = object.brand.value;
   }
+  console.log(object)
   mutation(ADD_PRODUCT, object)
     .then((response) => {
       // if (response) {
