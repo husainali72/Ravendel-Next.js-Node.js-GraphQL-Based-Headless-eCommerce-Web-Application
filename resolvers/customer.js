@@ -150,7 +150,25 @@ module.exports = {
       }
     },
     deleteAddressBook: async (root, args, { id }) => {
-      return await DELETE_FUNC(id, args.id, Customer, "AddressBook");
+      //return await DELETE_FUNC(id, args.id, Customer, "AddressBook");
+      const customer = await Customer.findById({ _id: args.id });
+        if (!customer) {
+          //throw putError("Something went wrong.");
+          return MESSAGE_RESPONSE("NOT_EXIST", "addAddressBook", false);
+        }
+
+        var customer_address_book = customer.address_book;
+
+        for (let i in customer_address_book) {
+          if (customer_address_book[i]._id == args._id) {
+            customer.address_book = [];
+            delete customer_address_book[i];
+            customer.address_book = customer_address_book;
+            break;
+          }
+        }
+        await customer.save();
+        return MESSAGE_RESPONSE("DeleteSuccess", "addAddressBook", true);
     },
   },
 };

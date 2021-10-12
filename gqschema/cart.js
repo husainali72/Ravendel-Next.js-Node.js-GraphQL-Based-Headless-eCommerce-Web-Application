@@ -58,16 +58,16 @@ module.exports = gql`
   }
   extend type Query {
     carts: CartRES
-    cart(id: ID!): Cart_by_id_RES 
+    cart(id: ID!): Cart 
     cartbyUser(user_id: ID!): Cart
     calculateCart(cart: [cartProduct]): calculatedCart
   }
 
   extend type Mutation {
-    addCart(user_id: ID, total: Float, product: cartProduct): statusSchema
+    addCart(user_id: ID, total: Float, products: [cartProduct]): statusSchema
     updateCart(id: ID!, total: Float, products: [cartProduct]): statusSchema
-    deleteCart(id: ID!): Boolean!
-    deleteCartProduct(id: ID!, object_id: ID!): Cart
+    deleteCart(id: ID!): statusSchema
+    deleteCartProduct(id: ID!, product_id: ID!): statusSchema
     addToCart(customer_id: ID, cart: [cartProduct]): generalResponse
   }
 `;
