@@ -30,6 +30,8 @@ const OrderSchema = new Schema({
     zip: String,
     country: String,
     state: String,
+    email: String,
+    phone: String,
     notes: String
   },
   products: [
@@ -52,8 +54,30 @@ const OrderSchema = new Schema({
       }
     }
   ],
+  subtotal: {
+        type: Number,
+        required: true
+  },
+  shipping_amount: {
+        type: Number,
+        required: true
+  },
+  tax_amount: {
+        type: Number,
+        required: true
+  },
+  discount_amount: {
+        type: Number,
+        required: true
+      },
+  grand_total: {
+        type: Number,
+        required: true
+  },
   status: {
-    type: String
+    type: String,
+    enum : ['Pending','Failed','Success','Cancelled'],
+    default: 'Pending'
   },
   date: {
     type: Date,

@@ -1,4 +1,5 @@
 const Order = require("../models/Order");
+const Cart = require("../models/Cart");
 const {
   isEmpty,
   MESSAGE_RESPONSE,
@@ -69,13 +70,27 @@ module.exports = {
             success: false,
           };
         }
+        if(args.billing.payment_method ==='Cash On Delivery'){
+          var status = 'Success';
+          var user_id = args.customer_id;
+          const cart = await Cart.findOneAndDelete({user_id: args.customer_id });
+          }else{
+          var status = 'Pending';
+        }
         const newOrder = new Order({
           customer_id: args.customer_id,
           billing: args.billing,
           shipping: args.shipping,
-          status: args.status,
+          status: status,
+          subtotal: args.subtotal,
+          shipping_amount: args.shipping_amount,
+          tax_amount: args.tax_amount,
+          discount_amount: args.discount_amount,
+          grand_total: args.grand_total,
         });
         newOrder.products = args.products;
+
+        //console.log(newOrder);
         await newOrder.save();
         return MESSAGE_RESPONSE("AddSuccess", "Order", true);
       } catch (error) {

@@ -39,7 +39,11 @@ module.exports = gql`
       billing: customObject
       shipping: customObject
       products: customArray
-      status: String
+      subtotal: String
+      shipping_amount: String
+      tax_amount: String
+      discount_amount: String
+      grand_total: String
     ): statusSchema
     updateOrder(
       id: ID
