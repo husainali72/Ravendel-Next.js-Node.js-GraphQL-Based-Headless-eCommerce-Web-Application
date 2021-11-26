@@ -12,6 +12,7 @@ import {
   GET_RECENT_PRODUCTS,
   ON_SALE_PRODUCTS,
 } from "../../queries/productQuery";
+import { getResponseHandler } from "../../utils/helper";
 import { mutation, query } from "../../utils/service";
 // import jumpTo from "../../utils/navigation";
 
@@ -21,10 +22,34 @@ export const productsAction = () => (dispatch) => {
   });
   query(GET_PRODUCTS)
     .then((response) => {
-      if (response) {
+      // if (response) {
+      //   return dispatch({
+      //     type: PRODUCTS_SUCCESS,
+      //     payload: response.data.products,
+      //   });
+      // }
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "products"
+      );
+      console.log('data', data)
+      console.log("success", success);
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: PRODUCT_FAIL,
+        });
+        console.log(error);
+      }
+
+      if (success) {
+        console.log(data)
         return dispatch({
           type: PRODUCTS_SUCCESS,
-          payload: response.data.products,
+          payload: data,
         });
       }
     })
@@ -45,10 +70,34 @@ export const productAction = (id) => (dispatch) => {
   });
   query(GET_PRODUCT, { id: id })
     .then((response) => {
-      if (response) {
+      // if (response) {
+      //   return dispatch({
+      //     type: PRODUCT_SUCCESS,
+      //     payload: response.data.product,
+      //   });
+      // }
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "product"
+      );
+      console.log("data", data);
+      console.log("success", success);
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: PRODUCT_FAIL,
+        });
+        console.log(error);
+      }
+
+      if (success) {
+        console.log(data);
         return dispatch({
           type: PRODUCT_SUCCESS,
-          payload: response.data.product,
+          payload: data,
         });
       }
     })
@@ -69,10 +118,34 @@ export const singleProductAction = (url) => (dispatch) => {
   });
   query(GET_SINGLE_PRODUCT, { url: url })
     .then((response) => {
-      if (response) {
+      // if (response) {
+      //   return dispatch({
+      //     type: PRODUCT_SUCCESS,
+      //     payload: response.data.productbyurl,
+      //   });
+      // }
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "productbyurl"
+      );
+      console.log("data", data);
+      console.log("success", success);
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: PRODUCT_FAIL,
+        });
+        console.log(error);
+      }
+
+      if (success) {
+        console.log(data);
         return dispatch({
           type: PRODUCT_SUCCESS,
-          payload: response.data.productbyurl,
+          payload: data,
         });
       }
     })
@@ -93,10 +166,34 @@ export const categoriesAction = () => (dispatch) => {
   });
   query(GET_CATEGORIES)
     .then((response) => {
-      if (response) {
+      // if (response) {
+      //   return dispatch({
+      //     type: CATS_SUCCESS,
+      //     payload: response.data.productCategories,
+      //   });
+      // }
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "productCategories"
+      );
+      console.log("data", data);
+      console.log("success", success);
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: CAT_FAIL,
+        });
+        console.log(error);
+      }
+
+      if (success) {
+        console.log(data);
         return dispatch({
           type: CATS_SUCCESS,
-          payload: response.data.productCategories,
+          payload: data,
         });
       }
     })
@@ -117,10 +214,31 @@ export const catProductAction = (url) => (dispatch) => {
   });
   query(GET_CAT_PRODUCTS, { url: url })
     .then((response) => {
-      if (response) {
+      // if (response) {
+      //   return dispatch({
+      //     type: CAT_PRODUCTS,
+      //     payload: response.data.productsbycaturl,
+      //   });
+      // }
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "productsbycaturl"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: PRODUCT_FAIL,
+        });
+        console.log(error)
+      }
+
+      if (success) {
         return dispatch({
           type: CAT_PRODUCTS,
-          payload: response.data.productsbycaturl,
+          payload: data,
         });
       }
     })
@@ -307,6 +425,7 @@ export const PRODUCT_FAIL = "PRODUCT_FAIL";
 export const CAT_PRODUCTS = "CAT_PRODUCTS";
 export const PRODUCT_REVIEWS = "PRODUCT_REVIEWS";
 export const ADD_PRODUCT_REVIEWS = "ADD_PRODUCT_REVIEWS";
+export const LOADING_FALSE = "LOADING_FALSE";
 
 export const PRODUCTS_CATID_SUCCESS = "PRODUCTS_CATID_SUCCESS";
 export const FEATURED_PRODUCTS_SUCCESS = "FEATURED_PRODUCTS_SUCCESS";

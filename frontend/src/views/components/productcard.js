@@ -54,10 +54,23 @@ const ProductCard = ({ productDetail, index, GirdProductView }) => {
     >
       {checkProductCart(productDetail)}
       <div className="product-image-wrapper">
-        <img src={JacketImage} alt="product" />
+        {/* <img src={JacketImage} alt="product" /> */}
+        <img
+          src={
+            productDetail.feature_image && productDetail.feature_image.medium
+              ? productDetail.feature_image.medium
+              : PlaceHolder
+          }
+          alt="product"
+        />
         {selectOptions ? (
           <div className="select-option-wrapper">
-            <span className="close-select-option-wrapper" onClick={() => setSelectOptions(false)}>X</span>
+            <span
+              className="close-select-option-wrapper"
+              onClick={() => setSelectOptions(false)}
+            >
+              X
+            </span>
             <div className="options-main-wrapper">
               <p className="option-title">Sizes</p>
               <div className="options-wrapper">
@@ -81,32 +94,31 @@ const ProductCard = ({ productDetail, index, GirdProductView }) => {
           </div>
         ) : null}
 
-        {selectOptions ? null :
-        
-        <Zoom in={index === prodIndex ? true : false}>
-          <div className="hover-content">
-            {/* <Link to={`/product/${productDetail.url}`}>
+        {selectOptions ? null : (
+          <Zoom in={index === prodIndex ? true : false}>
+            <div className="hover-content">
+              <Link to={`/product/${productDetail.url}`}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  color="secondary"
+                  size="small"
+                  className="product-btn"
+                >
+                  View
+                </Button>
+              </Link>
               <Button
-                variant="contained" 
-                size="small" 
-                color="secondary"
+                variant="contained"
+                size="small"
+                color="primary"
                 size="small"
                 className="product-btn"
+                onClick={() => addToCart(productDetail)}
               >
-                View
+                {productDetail.cart ? "Added" : "Add To Cart"}
               </Button>
-            </Link>
-            <Button
-              variant="contained" 
-              size="small" 
-              color="primary"
-              size="small"
-              className="product-btn"
-              onClick={() => addToCart(productDetail)}
-            >
-              {productDetail.cart ? "Added" : "Add To Cart"}
-            </Button> */}
-            {index === 1 || index === 2 || index === 4 ? (
+              {/* {index === 1 || index === 2 || index === 4 ? (
               <button
                 className="product-card-btn"
                 onClick={() => setSelectOptions(true)}
@@ -115,10 +127,10 @@ const ProductCard = ({ productDetail, index, GirdProductView }) => {
               </button>
             ) : (
               <button className="product-card-btn">Add To Cart</button>
-            )}
-          </div>
-        </Zoom>
-        }
+            )} */}
+            </div>
+          </Zoom>
+        )}
       </div>
       <div className="product-details">
         <Rating name="read-only" value={5} readOnly size="small" />
@@ -242,15 +254,15 @@ export default ProductCard;
 //     >
 //       {checkProductCart(productDetail)}
 //       <div className="product-image-wrapper">
-//         <img
-//           src={
-//             productDetail.feature_image &&
-//             productDetail.feature_image.medium
-//               ? productDetail.feature_image.medium
-//               : PlaceHolder
-//           }
-//           alt="product"
-//         />
+        // <img
+        //   src={
+        //     productDetail.feature_image &&
+        //     productDetail.feature_image.medium
+        //       ? productDetail.feature_image.medium
+        //       : PlaceHolder
+        //   }
+        //   alt="product"
+        // />
 //         <Zoom in={index === prodIndex ? true : false}>
 //           <div className="hover-content">
 //             <Link to={`/product/${productDetail.url}`}>

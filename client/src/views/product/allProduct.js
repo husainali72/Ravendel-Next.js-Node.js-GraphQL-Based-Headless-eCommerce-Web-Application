@@ -111,7 +111,7 @@ const AllProduct = () => {
                               <IconButton
                                 aria-label='Edit'
                                 onClick={() =>
-                                  jumpTo(`${client_app_route_url}edit-product/${product.id}`)
+                                  jumpTo(`${client_app_route_url}edit-product/${product._id}`)
                                 }
                               >
                                 <EditIcon />
@@ -122,7 +122,7 @@ const AllProduct = () => {
                                 aria-label='Delete'
                                 className={classes.deleteicon}
                                 onClick={() =>
-                                  dispatch(productDeleteAction(product.id))
+                                  dispatch(productDeleteAction(product._id))
                                 }
                               >
                                 <DeleteIcon />

@@ -83,6 +83,7 @@ module.exports = {
       }
     },
     updateOrder: async (root, args, { id }) => {
+      console.log('firedddd')
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
       }
@@ -141,6 +142,7 @@ module.exports = {
 
         return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
       } catch (error) {
+        console.log(error);
         return MESSAGE_RESPONSE("UPDATE_ERROR", "Order", false);
       }
     },

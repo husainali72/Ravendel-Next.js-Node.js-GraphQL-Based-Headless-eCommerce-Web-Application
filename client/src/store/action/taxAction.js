@@ -10,6 +10,7 @@ import {
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
+import { getResponseHandler, mutationResponseHandler } from "../../utils/helper";
 
 export const taxAction = () => dispatch => {
   dispatch({
@@ -17,20 +18,41 @@ export const taxAction = () => dispatch => {
   });
   query(GET_TAX)
     .then(response => {
-      if (response && response.data && response.data.tax) {
-        var tax = response.data.tax;
+      // if (response && response.data && response.data.tax) {
+      //   var tax = response.data.tax;
 
-        if(tax.message.success){
-          return dispatch({
-            type: TAX_SUCCESS,
-            payload: tax.data
-          });
-        }else{
-          return dispatch({
-            type: ALERT_SUCCESS,
-            payload: { boolean: true, message: tax.message.message, error: true }
-          });
-        }      
+      //   if(tax.message.success){
+      //     return dispatch({
+      //       type: TAX_SUCCESS,
+      //       payload: tax.data
+      //     });
+      //   }else{
+      //     return dispatch({
+      //       type: ALERT_SUCCESS,
+      //       payload: { boolean: true, message: tax.message.message, error: true }
+      //     });
+      //   }      
+      // }
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "tax"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: true },
+        });
+      }
+
+      if (success) {
+        return dispatch({
+          type: TAX_SUCCESS,
+          payload: data,
+        });
       }
     })
     .catch(error => {
@@ -50,19 +72,41 @@ export const globalTaxUpdateAction = object => dispatch => {
   });
   mutation(UPDATE_GLOBALTAX, object)
     .then(response => {
-      if (response) {
-        // dispatch({
-        //   type: TAX_SUCCESS,
-        //   payload: response.data.updateGlobalTax
-        // });
+      // if (response) {
+      //   // dispatch({
+      //   //   type: TAX_SUCCESS,
+      //   //   payload: response.data.updateGlobalTax
+      //   // });
 
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "updated successfully",
+      //       error: false
+      //     }
+      //   });
+      // }
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "updateGlobalTax"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: true },
+        });
+      }
+
+      if (success) {
+        dispatch(taxAction());
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "updated successfully",
-            error: false
-          }
+          payload: { boolean: true, message: message, error: false },
         });
       }
     })
@@ -84,19 +128,41 @@ export const optionTaxUpdateAction = object => dispatch => {
   });
   mutation(UPDATE_OPTIONTAX, object)
     .then(response => {
-      if (response) {
-        // dispatch({
-        //   type: TAX_SUCCESS,
-        //   payload: response.data.updateOptionTax
-        // });
+      // if (response) {
+      //   // dispatch({
+      //   //   type: TAX_SUCCESS,
+      //   //   payload: response.data.updateOptionTax
+      //   // });
 
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "updated successfully",
+      //       error: false
+      //     }
+      //   });
+      // }
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "updateOptionTax"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: true },
+        });
+      }
+
+      if (success) {
+        dispatch(taxAction());
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "updated successfully",
-            error: false
-          }
+          payload: { boolean: true, message: message, error: false },
         });
       }
     })
@@ -118,22 +184,44 @@ export const taxClassAddAction = object => dispatch => {
   });
   mutation(ADD_TAXCLASS, object)
     .then(response => {
-      if (response) {
-        // dispatch({
-        //   type: TAX_SUCCESS,
-        //   payload: response.data.addTaxClass
-        // });
+      // if (response) {
+      //   // dispatch({
+      //   //   type: TAX_SUCCESS,
+      //   //   payload: response.data.addTaxClass
+      //   // });
 
+      //   dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "added successfully",
+      //       error: false
+      //     }
+      //   });
+
+      //   return;
+      // }
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "addTaxClass"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "added successfully",
-            error: false
-          }
+          payload: { boolean: true, message: message, error: true },
         });
+      }
 
-        return;
+      if (success) {
+        dispatch(taxAction());
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
       }
     })
     .catch(error => {
@@ -153,29 +241,50 @@ export const taxClassUpdateAction = object => dispatch => {
     type: TAX_LOADING
   });
 
-  console.log('object', object)
 
   if(object && object.tax_class.percentage && object.tax_class.percentage){
     object.tax_class.percentage =  object.tax_class.percentage.toString();
   }
   mutation(UPDATE_TAXCLASS, object)
     .then(response => {
-      if (response) {
-        // dispatch({
-        //   type: TAX_SUCCESS,
-        //   payload: response.data.updateTaxClass
-        // });
+      // if (response) {
+      //   // dispatch({
+      //   //   type: TAX_SUCCESS,
+      //   //   payload: response.data.updateTaxClass
+      //   // });
 
+      //   dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "updated successfully",
+      //       error: false
+      //     }
+      //   });
+
+      //   return;
+      // }
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "updateTaxClass"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "updated successfully",
-            error: false
-          }
+          payload: { boolean: true, message: message, error: true },
         });
+      }
 
-        return;
+      if (success) {
+        dispatch(taxAction());
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
       }
     })
     .catch(error => {
@@ -196,22 +305,44 @@ export const taxClassDeleteAction = object => dispatch => {
   });
   mutation(DELETE_TAXCLASS, object)
     .then(response => {
-      if (response) {
-        // dispatch({
-        //   type: TAX_SUCCESS,
-        //   payload: response.data.deleteTaxClass
-        // });
+      // if (response) {
+      //   // dispatch({
+      //   //   type: TAX_SUCCESS,
+      //   //   payload: response.data.deleteTaxClass
+      //   // });
 
+      //   dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "Deleted successfully",
+      //       error: false
+      //     }
+      //   });
+
+      //   return;
+      // }
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "deleteTaxClass"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "Deleted successfully",
-            error: false
-          }
+          payload: { boolean: true, message: message, error: true },
         });
+      }
 
-        return;
+      if (success) {
+        dispatch(taxAction());
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
       }
     })
     .catch(error => {
@@ -230,3 +361,4 @@ export const TAX_LOADING = "TAX_LOADING";
 export const TAXS_SUCCESS = "TAXS_SUCCESS";
 export const TAX_SUCCESS = "TAX_SUCCESS";
 export const TAX_FAIL = "TAX_FAIL";
+export const LOADING_FALSE = "LOADING_FALSE";

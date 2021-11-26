@@ -9,7 +9,11 @@ import {
   UPDATE_BLOGTAG,
   DELETE_BLOGTAG,
 } from "../../queries/blogQuery";
-import {client_app_route_url} from '../../utils/helper';
+import {
+  client_app_route_url,
+  getResponseHandler,
+  mutationResponseHandler,
+} from "../../utils/helper";
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
@@ -38,10 +42,35 @@ export const blogsAction = () => (dispatch) => {
   });
   query(GET_BLOGS)
     .then((response) => {
-      if (response) {
+      // if (response) {
+      //   return dispatch({
+      //     type: BLOGS_SUCCESS,
+      //     payload: response.data.blogs.data,
+      //   });
+      // }
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "blogs"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: true },
+        });
+
+        return dispatch({
+          type: BLOGTAG_FAIL,
+        });
+      }
+
+      if (success) {
         return dispatch({
           type: BLOGS_SUCCESS,
-          payload: response.data.blogs.data,
+          payload: data,
         });
       }
     })
@@ -62,15 +91,40 @@ export const blogAction = (id) => (dispatch) => {
   });
   query(GET_BLOG, { id: id })
     .then((response) => {
-      if (response.data.blog.message.success) {
+      // if (response.data.blog.message.success) {
+      //   return dispatch({
+      //     type: BLOG_SUCCESS,
+      //     payload: response.data.blog.data,
+      //   });
+      // }else {
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: { boolean: true, message: response.data.blog.message.message, error: true },
+      //   });
+      // }
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "blog"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: true },
+        });
+
+        return dispatch({
+          type: BLOGTAG_FAIL,
+        });
+      }
+
+      if (success) {
         return dispatch({
           type: BLOG_SUCCESS,
-          payload: response.data.blog.data,
-        });
-      }else {
-        return dispatch({
-          type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.blog.message.message, error: true },
+          payload: data,
         });
       }
     })
@@ -91,35 +145,62 @@ export const blogAddAction = (object) => (dispatch) => {
   });
   mutation(ADD_BLOG, object)
     .then((response) => {
-      if (response.data.addBlog.success) {
-        dispatch({
-          type: BLOGS_UPDATE_SUCCESS,
-          payload: {},
-        });
+      // if (response.data.addBlog.success) {
+      //   dispatch({
+      //     type: BLOGS_UPDATE_SUCCESS,
+      //     payload: {},
+      //   });
 
-        dispatch({
-          type: TINYMCE_NULL,
-          payload: {},
-        });
+      //   dispatch({
+      //     type: TINYMCE_NULL,
+      //     payload: {},
+      //   });
 
-        return dispatch({
-          type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "Blog added successfully",
-            error: false,
-          },
-        });
-      }else {
-        dispatch({
-          type: BLOG_FAIL,
-        });
-        return dispatch({
-          type: ALERT_SUCCESS,
-          // payload: { boolean: true, message: response.data.addBlog.error, error: true },
-          payload: { boolean: true, message: response.data.addBlog.message || 'Something went wrong', error: true },
-        });
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "Blog added successfully",
+      //       error: false,
+      //     },
+      //   });
+      // }else {
+      //   dispatch({
+      //     type: BLOG_FAIL,
+      //   });
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     // payload: { boolean: true, message: response.data.addBlog.error, error: true },
+      //     payload: { boolean: true, message: response.data.addBlog.message || 'Something went wrong', error: true },
+      //   });
         
+      // }
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "addBlog"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: true },
+        });
+
+        return dispatch({
+          type: BLOGTAG_FAIL,
+        });
+      }
+
+      if (success) {
+        jumpTo(`${client_app_route_url}all-blogs`);
+        dispatch(blogsAction());
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
       }
     })
     .catch((error) => {
@@ -145,35 +226,62 @@ export const blogUpdateAction = (object) => (dispatch) => {
   });
   mutation(UPDATE_BLOG, object)
     .then((response) => {
-      if (response.data.updateBlog.success) {
-        jumpTo(`${client_app_route_url}all-blogs`);
-        dispatch({
-          type: BLOGS_UPDATE_SUCCESS,
-          payload: {},
-        });
+      // if (response.data.updateBlog.success) {
+      //   jumpTo(`${client_app_route_url}all-blogs`);
+      //   dispatch({
+      //     type: BLOGS_UPDATE_SUCCESS,
+      //     payload: {},
+      //   });
 
-        dispatch({
-          type: TINYMCE_NULL,
-          payload: {},
-        });
+      //   dispatch({
+      //     type: TINYMCE_NULL,
+      //     payload: {},
+      //   });
 
+      //   dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "Blog updated successfully",
+      //       error: false,
+      //     },
+      //   });
+
+      //   return;
+      // }else {
+      //   dispatch({
+      //     type: BLOG_FAIL,
+      //   });
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: { boolean: true, message: response.data.updateBlog.message, error: true },
+      //   });
+      // }
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "updateBlog"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "Blog updated successfully",
-            error: false,
-          },
+          payload: { boolean: true, message: message, error: true },
         });
 
-        return;
-      }else {
-        dispatch({
-          type: BLOG_FAIL,
+        return dispatch({
+          type: BLOGTAG_FAIL,
         });
+      }
+
+      if (success) {
+        jumpTo(`${client_app_route_url}all-blogs`);
+        dispatch(blogsAction());
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.updateBlog.message, error: true },
+          payload: { boolean: true, message: message, error: false },
         });
       }
     })
@@ -200,24 +308,50 @@ export const blogDeleteAction = (id) => (dispatch) => {
   });
   mutation(DELETE_BLOG, { id })
     .then((response) => {
-      if (response.data.deleteBlog.success) {
+      // if (response.data.deleteBlog.success) {
+      //   dispatch({
+      //     type: BLOGS_UPDATE_SUCCESS,
+      //     payload: {},
+      //   });
+      //   dispatch(blogsAction());
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "Blog deleted successfully",
+      //       error: false,
+      //     },
+      //   });
+      // }else {
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: { boolean: true, message: response.data.deleteBlog.message, error: true },
+      //   });
+      // }
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "deleteBlog"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
         dispatch({
-          type: BLOGS_UPDATE_SUCCESS,
-          payload: {},
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: true },
         });
+
+        return dispatch({
+          type: BLOGTAG_FAIL,
+        });
+      }
+
+      if (success) {
         dispatch(blogsAction());
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "Blog deleted successfully",
-            error: false,
-          },
-        });
-      }else {
-        return dispatch({
-          type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.deleteBlog.message, error: true },
+          payload: { boolean: true, message: message, error: false },
         });
       }
     })
@@ -239,13 +373,29 @@ export const blogtagsAction = () => (dispatch) => {
     type: BLOGTAG_LOADING,
   });
   query(GET_BLOGTAGS)
-    .then((response) => {
-      if (response) {
-        return dispatch({
-          type: BLOGTAGS_SUCCESS,
-          payload: response.data.blogtags.data,
-        });
-      }
+  .then((response) => {
+    const [error, success, message, data] = getResponseHandler(response, 'blogtags');
+    dispatch({
+      type: LOADING_FALSE,
+    });
+
+    if(error){
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: message, error: true },
+      });
+
+      return dispatch({
+        type: BLOGTAG_FAIL,
+      });
+    }
+    
+    if (success) {
+     return dispatch({
+       type: BLOGTAGS_SUCCESS,
+       payload: data,
+     });
+    }
     })
     .catch((error) => {
       dispatch({
@@ -264,33 +414,59 @@ export const blogtagAddAction = (object) => (dispatch) => {
   });
   mutation(ADD_BLOGTAG, object)
     .then((response) => {
-      if (response.data.addBlogTag.success) {
-        dispatch({
-          type: BLOGS_UPDATE_SUCCESS,
-          payload: {},
-        });
+      // if (response.data.addBlogTag.success) {
+      //   dispatch({
+      //     type: BLOGS_UPDATE_SUCCESS,
+      //     payload: {},
+      //   });
 
-        dispatch(blogtagsAction())
+      //   dispatch(blogtagsAction())
 
-        return dispatch({
-          type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "Tag added successfully",
-            error: false,
-          },
-        });
-      }else {
-        dispatch({
-          type: BLOGS_UPDATE_SUCCESS,
-          payload: {},
-        });
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "Tag added successfully",
+      //       error: false,
+      //     },
+      //   });
+      // }else {
+      //   dispatch({
+      //     type: BLOGS_UPDATE_SUCCESS,
+      //     payload: {},
+      //   });
         
-        return dispatch({
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: { boolean: true, message: response.data.addBlogTag.message, error: true },
+      //   });
+
+      // }
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "addBlogTag"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.addBlogTag.message, error: true },
+          payload: { boolean: true, message: message, error: true },
         });
 
+        return dispatch({
+          type: BLOGTAG_FAIL,
+        });
+      }
+
+      if (success) {
+        dispatch(blogtagsAction());
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
       }
     })
     .catch((error) => {
@@ -311,35 +487,61 @@ export const blogtagUpdateAction = (object) => (dispatch) => {
   });
   mutation(UPDATE_BLOGTAG, object)
     .then((response) => {
-      if (response.data.updateBlogTag.success) {
-        dispatch({
-          type: BLOGS_UPDATE_SUCCESS,
-          payload: {},
-        });
+      // if (response.data.updateBlogTag.success) {
+      //   dispatch({
+      //     type: BLOGS_UPDATE_SUCCESS,
+      //     payload: {},
+      //   });
 
+      //   dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "Tag updated successfully",
+      //       error: false,
+      //     },
+      //   });
+
+      //   dispatch(blogtagsAction());
+
+      //   return;
+      // }else {
+      //   dispatch({
+      //     type: BLOGS_UPDATE_SUCCESS,
+      //     payload: {},
+      //   });
+
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: { boolean: true, message: response.data.updateBlogTag.message, error: true },
+      //   });
+
+      // }
+      const [error, success, message] = mutationResponseHandler(
+        response,
+        "updateBlogTag"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "Tag updated successfully",
-            error: false,
-          },
-        });
-
-        dispatch(blogtagsAction());
-
-        return;
-      }else {
-        dispatch({
-          type: BLOGS_UPDATE_SUCCESS,
-          payload: {},
+          payload: { boolean: true, message: message, error: true },
         });
 
         return dispatch({
-          type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.updateBlogTag.message, error: true },
+          type: BLOGTAG_FAIL,
         });
+      }
 
+      if (success) {
+        dispatch(blogtagsAction());
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
       }
     })
     .catch((error) => {
@@ -360,33 +562,59 @@ export const blogtagDeleteAction = (id) => (dispatch) => {
   });
   mutation(DELETE_BLOGTAG, { id })
     .then((response) => {
-      if (response.data.deleteBlogTag.success) {
+      // if (response.data.deleteBlogTag.success) {
+      //   dispatch({
+      //     type: BLOGS_UPDATE_SUCCESS,
+      //     payload: {},
+      //   });
+
+      //   dispatch(blogtagsAction());
+        
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: {
+      //       boolean: true,
+      //       message: "Tag deleted successfully",
+      //       error: false,
+      //     },
+      //   });
+      // } else {
+      //   dispatch({
+      //     type: BLOGS_UPDATE_SUCCESS,
+      //     payload: {},
+      //   });
+        
+      //   return dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: { boolean: true, message: response.data.deleteBlogTag.message, error: true },
+      //   });
+
+      // }
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "deleteBlogTag"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
         dispatch({
-          type: BLOGS_UPDATE_SUCCESS,
-          payload: {},
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: true },
         });
 
+        return dispatch({
+          type: BLOGTAG_FAIL,
+        });
+      }
+
+      if (success) {
         dispatch(blogtagsAction());
-        
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "Tag deleted successfully",
-            error: false,
-          },
+          payload: { boolean: true, message: message, error: false },
         });
-      } else {
-        dispatch({
-          type: BLOGS_UPDATE_SUCCESS,
-          payload: {},
-        });
-        
-        return dispatch({
-          type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.deleteBlogTag.message, error: true },
-        });
-
       }
     })
     .catch((error) => {
@@ -411,3 +639,4 @@ export const BLOGS_UPDATE_SUCCESS = "BLOGS_UPDATE_SUCCESS";
 export const BLOGTAG_LOADING = "BLOGTAG_LOADING";
 export const BLOGTAGS_SUCCESS = "BLOGTAGS_SUCCESS";
 export const BLOGTAG_FAIL = "BLOGTAG_FAIL";
+export const LOADING_FALSE = "LOADING_FALSE";
