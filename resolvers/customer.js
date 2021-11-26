@@ -1,5 +1,10 @@
 const Customer = require("../models/Customer");
-const { isEmpty, checkError, MESSAGE_RESPONSE,_validate } = require("../config/helpers");
+const {
+  isEmpty,
+  checkError,
+  MESSAGE_RESPONSE,
+  _validate,
+} = require("../config/helpers");
 const {
   DELETE_FUNC,
   GET_BY_PAGINATIONS,
@@ -8,7 +13,6 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
-
 
 module.exports = {
   Query: {
@@ -86,7 +90,17 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "addAddressBook", false);
       }
       try {
-        const errors = _validate(["first_name", "last_name","address_line1","pincode","city","country"], args);
+        const errors = _validate(
+          [
+            "first_name",
+            "last_name",
+            "address_line1",
+            "pincode",
+            "city",
+            "country",
+          ],
+          args
+        );
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -120,7 +134,17 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "addAddressBook", false);
       }
       try {
-        const errors = _validate(["first_name", "last_name","address_line1","pincode","city","country"], args);
+        const errors = _validate(
+          [
+            "first_name",
+            "last_name",
+            "address_line1",
+            "pincode",
+            "city",
+            "country",
+          ],
+          args
+        );
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -149,8 +173,46 @@ module.exports = {
         return MESSAGE_RESPONSE("UPDATE_ERROR", "addAddressBook", false);
       }
     },
-    deleteAddressBook: async (root, args, { id }) => {
-      return await DELETE_FUNC(id, args.id, Customer, "AddressBook");
+    deleteAddressBook: async (root, args, { id ,_id}) => {
+      // return await DELETE_FUNC(id, args.id, Customer, "AddressBook");
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "addressBook", false);
+      }
+      if (!args.id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "Customer", false);
+      }
+      try {
+        const customer = await Customer.findById({ _id: args.id });
+        if (!customer) {
+          return MESSAGE_RESPONSE("NOT_EXIST", "addressBook", false);
+        }
+        if (customer) {
+          let customerID = customer._id
+          let addressbook = customer.address_book
+         
+  
+          if (!args._id) {
+            return MESSAGE_RESPONSE("ID_ERROR", "customer", false);
+          }
+          let ids  = args._id;
+          let filteraddressbook = addressbook.filter((e)=> {  e._id == ids  })
+
+          if(!filteraddressbook.length){
+            return MESSAGE_RESPONSE("NOT_EXIST", "addressBook", false);
+          }
+       
+          const address_Book = await Customer.updateOne(
+            { _id: customerID },
+            {
+              $pull: { address_book: { _id: { $in: ids } } },
+            });
+
+          return MESSAGE_RESPONSE("DELETE", "addressBook", true);
+        }
+       
+      } catch (error) {
+        return MESSAGE_RESPONSE("DELETE_ERROR", "addressBook", false);
+      }
     },
   },
 };
