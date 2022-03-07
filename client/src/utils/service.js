@@ -93,8 +93,8 @@ const service = (config) => {
 export default service;
 
 export const login = (email, password) => {
-  // let location = window.location.origin;
-  let location = 'http://localhost:8000';
+  let location = window.location.origin;
+  // let location = 'http://localhost:8000';
   const body = {
     email: email,
     password: password,
