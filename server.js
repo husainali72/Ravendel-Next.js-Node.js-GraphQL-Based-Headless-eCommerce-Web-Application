@@ -1,4 +1,35 @@
 const express = require("express");
+
+
+/*SSL Workout start*/
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
+var credentials = {};
+// Certificate
+if (process.env.NODE_ENV === "production") {
+  const privateKey = fs.readFileSync(
+    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/privkey.pem",
+    "utf8"
+  );
+  const certificate = fs.readFileSync(
+    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/cert.pem",
+    "utf8"
+  );
+  const ca = fs.readFileSync(
+    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/chain.pem",
+    "utf8"
+  );
+
+  credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca: ca,
+  };
+}
+
+/* SSL Workout end */
+
 const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -8,9 +39,13 @@ const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
 const vhost = require("vhost");
+
+const { errorConverter, errorHandler } = require("./middleware/error");
+
 const {
   graphqlUploadExpress, // A Koa implementation is also exported.
 } = require('graphql-upload');
+
 
 //connect db
 connectDB();
@@ -49,7 +84,11 @@ app.use(express.json({ extended: false }));
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
-app.use("/api/customers", require("./routes/api/customers"));
+
+app.use("/api/customer", require("./routes/api/customer"));
+
+//app.use(express.static("public"));
+
 app.use("/assets", express.static(__dirname + "/assets"));
 
 
@@ -114,6 +153,12 @@ if (process.env.NODE_ENV === "production") {
 
 const appFront = express();
 
+// convert error to ApiError, if needed
+app.use(errorConverter);
+
+// handle error
+app.use(errorHandler);
+
 // Server static assets if in production
 if (process.env.NODE_ENV === "production") {
   // Set static folder
@@ -150,7 +195,6 @@ if (process.env.NODE_ENV === "production") {
     console.log("HTTP Server running on port 80");
   });
 
-  
   httpsServer.listen(443, () => {
     console.log("HTTPS Server running on port 443");
   });
