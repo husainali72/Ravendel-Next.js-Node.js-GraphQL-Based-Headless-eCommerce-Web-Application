@@ -50,7 +50,7 @@ const {
 //connect db
 connectDB();
 
-const PORT = process.env.PORT || 8000;
+var port = process.env.PORT || 8000;
 
 //middleware
 const app = express();
@@ -111,7 +111,7 @@ if (process.env.NODE_ENV === "production") {
   app.get("/", (req, res) => res.send(`Ravendel is running on port: ${PORT}`));
 }
 
-app.listen(PORT, () => console.log(`server started on port ${PORT}, ${process.env.NODE_ENV}`));
+app.listen(port, () => console.log(`server started on port ${PORT}, ${process.env.NODE_ENV}`));
 
 /*
 //models
