@@ -1,3 +1,6 @@
+const Messages = require("./messages");
+const Validator = require("validator");
+
 const isEmpty = (value) =>
   value === undefined ||
   value === null ||
@@ -15,7 +18,7 @@ const putError = (value) => {
 module.exports.putError = putError;
 /*-------------------------------------------------------------------------------------------------------*/
 const checkError = (error) => {
-  console.log(error);
+  console.log(error.message);
   if (isEmpty(error.custom_message)) {
     error = {};
     error.custom_message = "something went wrong";
@@ -36,6 +39,8 @@ const checkToken = (token) => {
   }
   return;
 };
+
+
 
 module.exports.checkToken = checkToken;
 /*-------------------------------------------------------------------------------------------------------*/
@@ -163,11 +168,13 @@ const jimpResize = (path, i, uploadPath, filename) => {
 };
 
 const imageUpload = async (upload, uploadPath) => {
+ 
   return new Promise(async (resolve, reject) => {
     try {
       let { filename, mimetype, encoding, createReadStream } = await upload;
 
       const extensions = ["gif", "jpeg", "jpg", "png", "webp", "svg"];
+      
       let ext = filename.split(".");
       ext = ext.pop();
       ext = ext.toLowerCase();
@@ -177,6 +184,8 @@ const imageUpload = async (upload, uploadPath) => {
           message: "This extension not allowed",
         });
       }
+
+      // console.log(upload);
 
       let stream = createReadStream();
 
@@ -245,6 +254,7 @@ const imageUpload = async (upload, uploadPath) => {
           });
         });
     } catch (error) {
+    //  console.log(error);
       return resolve({
         success: false,
         message: "This image can't be upload 3",
@@ -257,10 +267,7 @@ module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
 const imageUnlink = (imgObject) => {
-  console.log("is here comes", imgObject);
   for (let i in imgObject) {
-    //console.log("here comes", imgObject[i]);
-    //fs.unlinkSync("." + imgObject[i]);
     fs.unlink("." + imgObject[i], function (err) {
       if (err) console.log(err);
     });
@@ -268,6 +275,53 @@ const imageUnlink = (imgObject) => {
 };
 
 module.exports.imageUnlink = imageUnlink;
+
+function capitalize(str) {
+  const lower = str.toLowerCase();
+  return str.charAt(0).toUpperCase() + lower.slice(1);
+}
+
+const _validate = (names, args) => {
+  let errors = "";
+  if(names && names.length > 0){
+    names.map((name) => {   
+      if (!args[name] || Validator.isEmpty(args[name])) {
+        return (errors = `${capitalize(name)} field is required`)
+      }
+
+      if (name === "email" && !Validator.isEmail(args[name])) {
+        return (errors = `${capitalize(name)} is invalid`);
+      }   
+    })
+  }
+  return errors;
+};
+
+const _validatenested = (main,names, args) => {
+  let errors = "";
+  if(names && names.length > 0){
+    names.map((name) => { 
+      if(!args[main] ){
+        return (errors = `${capitalize(main)} is required`);
+      } 
+      if(!args[main][name] ){
+        return (errors = `${capitalize(name)} is required`);
+      } 
+      let value = args[main][name]
+      if (!args[main][name] || Validator.isEmpty(value.toString())) {
+        return (errors = `${capitalize(name)} field is required`)
+      }
+
+      if (name === "email" && !Validator.isEmail(args[main][name])) {
+        return (errors = `${capitalize(name)} is invalid`);
+      }   
+    })
+  }
+  return errors;
+};
+
+module.exports._validate = _validate;
+module.exports._validatenested = _validatenested;
 
 /*---------------------------------------------------------------------------------------------------------------*/
 const getdate = (format, timezone = "UTC", date) => {
@@ -351,3 +405,12 @@ const getdate = (format, timezone = "UTC", date) => {
 };
 
 module.exports.getdate = getdate;
+
+const MESSAGE_RESPONSE = (type, item, success) => {
+  return {
+    message: Messages[type].replace(":item", item),
+    success: success,
+  };
+};
+
+module.exports.MESSAGE_RESPONSE = MESSAGE_RESPONSE;

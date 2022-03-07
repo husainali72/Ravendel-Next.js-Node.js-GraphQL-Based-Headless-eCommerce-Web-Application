@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Typography,
   Box,
@@ -8,14 +8,18 @@ import {
   TextField,
   Button,
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import OrderDetails from "./orderdetail";
 import BillingForm from "./billingform";
 import PageTitle from "../components/pageTitle";
 import { useForm } from "react-hook-form";
 import { checkoutDetailsAction } from "../../store/action/checkoutAction";
+import {app_router_base_url} from '../../utils/helper';
 
-const Checkout = (props) => {
+const Checkout = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const cart = useSelector(state => state.cart);
   const { register, errors, handleSubmit } = useForm({
     mode: "onSubmit", // onBlur, onSubmit
   });
@@ -26,9 +30,8 @@ const Checkout = (props) => {
   };
 
   const Billing = (data) => {
-    // console.log("data", JSON.stringify(data));
-    props.checkoutDetailsAction(billingDetails);
-    props.history.push("/thankyou");
+    dispatch(checkoutDetailsAction(billingDetails));
+    history.push("/thankyou");
   };
 
   const getBillingData = (val) => {
@@ -42,7 +45,7 @@ const Checkout = (props) => {
   return (
     <Fragment>
       <PageTitle title="Checkout" />
-      {props.cart.products && props.cart.products.length ? (
+      {cart.products && cart.products.length ? (
         <Container>
           <Box className="checkout-wrapper" component="div">
             <Grid container>
@@ -124,7 +127,7 @@ const Checkout = (props) => {
             <Typography variant="h3" className="margin-bottom-1">
               Your cart is currently empty.
             </Typography>
-            <Link to="/shop">
+            <Link to={`${app_router_base_url}shop`}>
               <Button variant="contained" color="primary">
                 Shop Now
               </Button>
@@ -136,12 +139,4 @@ const Checkout = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  cart: state.cart,
-});
-
-const mapDispatchToProps = {
-  checkoutDetailsAction,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Checkout);
+export default Checkout;

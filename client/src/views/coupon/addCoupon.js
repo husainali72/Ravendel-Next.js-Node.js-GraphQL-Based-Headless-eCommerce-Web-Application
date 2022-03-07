@@ -32,7 +32,7 @@ import {
   couponObj,
   getSelectedName,
 } from "./coupon-components";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 
 const AddCoupon = () => {
   const theme = useTheme();
@@ -71,7 +71,12 @@ const AddCoupon = () => {
   };
 
   const handleChange = (e) => {
-    setCoupon({ ...coupon, [e.target.name]: e.target.value });
+    let name = e.target.name;
+    let value = e.target.value;
+    if(name === 'discount_value'){
+      value = parseInt(value)
+    }
+    setCoupon({ ...coupon, [name]: value });
   };
 
   const selectChange = (e) => {
@@ -128,7 +133,7 @@ const AddCoupon = () => {
         title='Add Coupon'
         onSubmit={addCoupon}
         submitTitle='Add'
-        backLink={"/all-coupons"}
+        backLink={`${client_app_route_url}all-coupons`}
       />
 
       <Grid container spacing={isSmall ? 1 : 4} className={classes.secondmainrow}>
@@ -204,6 +209,7 @@ const AddCoupon = () => {
                     </Grid>
                     <Grid item md={6} sm={12} xs={12}>
                       <TextInput
+                        type="number"
                         value={coupon.discount_value}
                         label='Coupon Amount'
                         name='discount_value'
@@ -246,6 +252,7 @@ const AddCoupon = () => {
                 <TabPanel value={tabVal} index='usage-restriction'>
                   <Box component='div' mb={2}>
                     <TextInput
+                      type="number"
                       value={coupon.minimum_spend}
                       label='Minimum Spend'
                       name='minimum_spend'
@@ -254,6 +261,7 @@ const AddCoupon = () => {
                   </Box>
                   <Box component='div' mb={2}>
                     <TextInput
+                      type="number"
                       value={coupon.maximum_spend}
                       label='Maximum Spend'
                       name='maximum_spend'

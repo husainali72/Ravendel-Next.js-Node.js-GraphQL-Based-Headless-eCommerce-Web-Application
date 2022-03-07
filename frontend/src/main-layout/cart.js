@@ -13,7 +13,7 @@ import { connect } from "react-redux";
 import cookie from "react-cookies";
 import { productsAction } from "../store/action/productAction";
 import { removeCartItemAction } from "../store/action/cartAction";
-import { isEmpty } from "../utils/helper";
+import { isEmpty, app_router_base_url } from "../utils/helper";
 
 const CartSide = (props) => {
   const [cartItems, setCartItems] = useState(props.cartValue);
@@ -231,7 +231,7 @@ const CartSide = (props) => {
                   </Grid>
                 </Grid>
               </Box>
-              <Link to="/checkout">
+              <Link to={`${app_router_base_url}checkout`}>
                 <Button
                   variant="contained"
                   color="primary"
@@ -247,7 +247,7 @@ const CartSide = (props) => {
         <Box display="flex" className="empty-cart-wrapper" p={3} width="100%">
           <Typography variant="h4">Your cart is currently empty.</Typography>
 
-          <Link to="/shop">
+          <Link to={`${app_router_base_url}shop`}>
             <Button
               variant="contained"
               color="primary"

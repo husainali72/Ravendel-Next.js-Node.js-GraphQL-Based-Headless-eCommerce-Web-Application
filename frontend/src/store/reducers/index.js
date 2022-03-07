@@ -10,6 +10,7 @@ import checkoutDetail from "./checkoutReducer";
 import faqs from "./faqReducer";
 import brand from "./brandReducer";
 import attribute from "./attributeReducer";
+import customer from "./customerReducer";
 
 // Combine Reducers
 const MasterReducer = combineReducers({
@@ -23,6 +24,7 @@ const MasterReducer = combineReducers({
   faqs,
   brand,
   attribute,
+  customer
 });
 
 export default MasterReducer;

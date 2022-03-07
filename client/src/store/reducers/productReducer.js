@@ -9,6 +9,7 @@ import {
   CAT_SUCCESS,
   TINYMCE_DESCRIPTION,
   TINYMCE_DESCRIPTION_NULL,
+  LOADING_FALSE
 } from "../action/productAction";
 
 const initialState = {
@@ -95,6 +96,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         products: action.payload,
+      };
+    case LOADING_FALSE:
+      return {
+        ...state,
+        loading: false,
       };
     default:
       return state;

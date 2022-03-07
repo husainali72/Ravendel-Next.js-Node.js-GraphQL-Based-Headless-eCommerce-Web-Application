@@ -1,5 +1,4 @@
 import React, { Fragment } from "react";
-import { connect } from "react-redux";
 import PageTitle from "../components/pageTitle";
 import {
   Container,
@@ -143,8 +142,4 @@ const Contact = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  settings: state.settings
-});
-
-export default connect(mapStateToProps)(Contact);
+export default Contact;

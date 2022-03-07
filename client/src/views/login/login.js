@@ -16,8 +16,8 @@ const Login = () => {
     const login_loading = useSelector(state => state.login.token_loading)
 
     const [values, setValues] = useState({
-        email: "admin@ravendel.com",
-        password: "123456"
+        email: "admin@gmail.com",
+        password: "123"
     });    
 
     const handleChange = prop => event => {

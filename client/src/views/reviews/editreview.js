@@ -17,6 +17,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { StyledRadio, Loading, TopBar, TextInput, CardBlocks } from "../components";
 import viewStyles from "../viewStyles";
+import {client_app_route_url} from '../../utils/helper';
 
 var reviewObj = {
   title: "",
@@ -86,6 +87,8 @@ const EditReview = (props) => {
       };
     });
 
+    console.log('customerArr', customerArr)
+
     setcustomers([...customerArr]);
   }, [customerState.customers]);
 
@@ -108,7 +111,7 @@ const EditReview = (props) => {
         title='Edit Customer Review'
         onSubmit={updateReview}
         submitTitle='Update'
-        backLink={"/reviews"}
+        backLink={`${client_app_route_url}reviews`}
       />
 
       <Grid container spacing={4} className={classes.secondmainrow}>

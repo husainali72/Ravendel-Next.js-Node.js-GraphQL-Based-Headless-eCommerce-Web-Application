@@ -1,36 +1,36 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Grid, Container, Divider } from "@material-ui/core";
-import { connect } from "react-redux";
+import { Grid, Divider } from "@material-ui/core";
+import { useDispatch, useSelector} from "react-redux";
 import {
   productsAction,
-  productAction,
   productReviewsAction,
   singleProductAction
 } from "../../store/action/productAction";
 import { isEmpty } from "../../utils/helper";
 import ProductDetail from "./productdetails";
 import GalleryImages from "./galleryimages";
-import RelatedProducts from "../components/relatedproduct";
-import Loading from "../components/loading";
+import {RelatedProducts, Loading} from "../components";
 
 const SingleProduct = (props) => {
+  const productID = props.match.params.url;
+  const dispatch = useDispatch();
+  const products = useSelector(state => state.products);
   const [singleProduct, setSingleProduct] = useState(null);
   const [sliderImages, setSliderImages] = useState([]);
 
   useEffect(() => {
-    //props.productAction(props.match.params.id);
-    //props.productReviewsAction(props.match.params.id);
-    props.singleProductAction(props.match.params.url)
-  }, [props.match.params.url]);
+    dispatch(singleProductAction(productID));
+  }, [productID]);
 
   useEffect(() => {
-    if (isEmpty(props.products.products)) {
-      props.productsAction();
+    if (isEmpty(products.products)) {
+      // dispatch(productsAction());
     }
   }, []);
 
   useEffect(() => {
-    var product = props.products.product;
+    var product = products.product;
+    console.log('----------------------', product);
     setSingleProduct(product);
     var allimages = [];
     if (product.feature_image) {
@@ -43,14 +43,14 @@ const SingleProduct = (props) => {
     }
 
     if(product.id){
-      props.productReviewsAction(product.id);
+      dispatch(productReviewsAction(product.id));
     }
     setSliderImages(allimages);
-  }, [props.products.product]);
+  }, [products.product]);
 
   return (
     <Fragment>
-      {props.products.loading && <Loading />}
+      {products.loading && <Loading />}
       {isEmpty(singleProduct) ? (
         <Loading />
       ) : (
@@ -63,7 +63,6 @@ const SingleProduct = (props) => {
               xs={12}
               className="singleproduct-col singleproduct-leftside"
             >
-              {/* <GalleryImages galleryImages={singleProduct.gallery_image} /> */}
               <GalleryImages galleryImages={sliderImages} />
             </Grid>
             <Grid
@@ -75,7 +74,7 @@ const SingleProduct = (props) => {
             >
               <ProductDetail
                 details={singleProduct}
-                reviews={props.products.productReviews}
+                reviews={products.productReviews}
               />
             </Grid>
           </Grid>
@@ -88,7 +87,7 @@ const SingleProduct = (props) => {
             className="related-products-wrapper"
           >
             <RelatedProducts
-              relatedProduct={props.products.products}
+              relatedProduct={products.products}
               title="Related Products"
             />
           </Grid>
@@ -98,17 +97,4 @@ const SingleProduct = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    products: state.products,
-  };
-};
-
-const mapDispatchToProps = {
-  productAction,
-  productsAction,
-  productReviewsAction,
-  singleProductAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(SingleProduct);
+export default SingleProduct;

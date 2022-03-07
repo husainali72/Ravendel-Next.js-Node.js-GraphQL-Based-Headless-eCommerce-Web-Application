@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Typography,
   Box,
@@ -44,7 +44,8 @@ var shippingObject = {
 
 var savedShippingInfo;
 
-const BillingForm = (props) => {
+const BillingForm = ({registerRef, errorRef, getBillingInfo}) => {
+  const cart = useSelector((state) => state.cart);
   const [billingInfo, setBillingInfo] = useState(billingInfoObject);
   const [shippingInfo, setShippingInfo] = useState(shippingObject);
   const [createAccount, setCreateAccount] = useState(false);
@@ -56,7 +57,7 @@ const BillingForm = (props) => {
       shipping: shippingInfo,
       shippingAddress: shippingAdd,
     };
-    props.getBillingInfo(allData);
+    getBillingInfo(allData);
   }, [shippingInfo, billingInfo, shippingAdd]);
 
   const checkoutInputs = (type, label, name, value, inputs) => {
@@ -269,18 +270,18 @@ const BillingForm = (props) => {
     const checkValidation = () => {
       var errors;
 
-      switch (props.errorRef[name]?.type) {
+      switch (errorRef[name]?.type) {
         case "minLength":
-          errors = props.errorRef[name].message;
+          errors = errorRef[name].message;
           break;
         case "maxLength":
-          errors = props.errorRef[name].message;
+          errors = errorRef[name].message;
           break;
         case "pattern":
-          errors = props.errorRef[name].message;
+          errors = errorRef[name].message;
           break;
         case "required":
-          errors = props.errorRef[name].message;
+          errors = errorRef[name].message;
           break;
         default:
           errors = "";
@@ -301,9 +302,9 @@ const BillingForm = (props) => {
           variant="outlined"
           size="small"
           className="billing-textfield"
-          inputRef={props.registerRef(validation)}
+          inputRef={registerRef(validation)}
           helperText={checkValidation()}
-          error={props.errorRef[name] ? true : false}
+          error={errorRef[name] ? true : false}
         />
       </Fragment>
     );
@@ -409,7 +410,7 @@ const BillingForm = (props) => {
             variant="outlined"
             className="billing-textfield outlined-select-option margin-top-1 margin-bottom-1"
             size="small"
-            error={props.errorRef.country ? true : false}
+            error={errorRef.country ? true : false}
           >
             <NativeSelect
               value={billingInfo.country}
@@ -418,14 +419,14 @@ const BillingForm = (props) => {
                 name: "country",
                 id: "country-label",
               }}
-              inputRef={props.registerRef({ required: true })}
+              inputRef={registerRef({ required: true })}
             >
               <option value="">Select Country</option>
               <option value="in">India</option>
               <option value="usa">USA</option>
             </NativeSelect>
             <FormHelperText>
-              {props.errorRef.country && "Country is required"}
+              {errorRef.country && "Country is required"}
             </FormHelperText>
           </FormControl>
         </Grid>
@@ -568,7 +569,7 @@ const BillingForm = (props) => {
                   variant="outlined"
                   className="billing-textfield outlined-select-option margin-top-1 margin-bottom-1"
                   size="small"
-                  error={props.errorRef.shippingcountry ? true : false}
+                  error={errorRef.shippingcountry ? true : false}
                 >
                   <NativeSelect
                     value={shippingInfo.shippingcountry}
@@ -577,14 +578,14 @@ const BillingForm = (props) => {
                       name: "shippingcountry",
                       id: "country-label",
                     }}
-                    inputRef={props.registerRef({ required: true })}
+                    inputRef={registerRef({ required: true })}
                   >
                     <option value="">Select Country</option>
                     <option value="in">India</option>
                     <option value="usa">USA</option>
                   </NativeSelect>
                   <FormHelperText>
-                    {props.errorRef.shippingcountry && "Country is required"}
+                    {errorRef.shippingcountry && "Country is required"}
                   </FormHelperText>
                 </FormControl>
               </Grid>
@@ -623,8 +624,4 @@ const BillingForm = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  cart: state.cart,
-});
-
-export default connect(mapStateToProps)(BillingForm);
+export default BillingForm;

@@ -26,19 +26,39 @@ module.exports = gql`
     name: String
   }
 
+  type brandResponse {
+    data: [Brand]
+    pagination: paginationInfo
+    message: statusSchema
+  }
+  type BrandIDRES {
+    data: Brand
+    message: statusSchema
+  }
+  type BrandRES {
+    data: [Brand]
+    message: statusSchema
+  }
   extend type Query {
-    brands: [Brand]
-    brand(id: ID!): Brand
+    brands_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): brandResponse
+    brands: BrandRES
+    brand(id: ID!): BrandIDRES 
   }
   extend type Mutation {
-    addBrand(brands: [BrandField]): [Brand]
+    addBrand(brands: [BrandField]): statusSchema
     updateBrand(
       id: ID!
       name: String
       url: String
       updated_brand_logo: Upload
       meta: customObject
-    ): [Brand]
-    deleteBrand(id: ID!): [Brand]
+    ): statusSchema
+    deleteBrand(id: ID!): statusSchema
   }
 `;

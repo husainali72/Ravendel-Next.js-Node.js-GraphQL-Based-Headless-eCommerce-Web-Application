@@ -10,10 +10,31 @@ module.exports = gql`
     createdAt: Date
     updatedAt: Date
   }
+ 
+  type Response {
+    data: [Page]
+    pagination: paginationInfo
+    message: statusSchema
+  }
 
+  type PageIdRES {
+    data: Page
+    message: statusSchema
+  }
+  type PageRES {
+    data: [Page]
+    message: statusSchema
+  }
   extend type Query {
-    pages: [Page]
-    page(id: ID!): Page
+    page_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): Response
+    pages: PageRES
+    page(id: ID!): PageIdRES
   }
 
   extend type Mutation {
@@ -23,7 +44,7 @@ module.exports = gql`
       status: String
       url: String
       meta: customObject
-    ): [Page]
+    ): statusSchema
     updatePage(
       id: ID!
       title: String
@@ -31,7 +52,7 @@ module.exports = gql`
       status: String
       url: String
       meta: customObject
-    ): [Page]
-    deletePage(id: ID!): [Page]
+    ): statusSchema
+    deletePage(id: ID!): statusSchema
   }
 `;

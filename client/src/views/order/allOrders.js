@@ -18,7 +18,7 @@ import {
 import { connect } from "react-redux";
 import { ordersAction, orderDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import Alert from "../utils/Alert";
 import Loading from "../utils/loading";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -97,7 +97,7 @@ const AllOrders = props => {
                             <Tooltip title="Edit Order" aria-label="edit">
                               <IconButton
                                 aria-label="Edit"
-                                onClick={() => jumpTo(`view-order/${order.id}`)}
+                                onClick={() => jumpTo(`${client_app_route_url}view-order/${order.id}`)}
                               >
                                 <EditIcon />
                               </IconButton>

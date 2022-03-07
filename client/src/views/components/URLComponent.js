@@ -25,7 +25,7 @@ const URLComponent = ({ url, onInputChange, pageUrl, tableUrl }) => {
   };
 
   return (
-    <>
+    <React.Fragment>
       {loading ? <Loading /> : null}
       {!isEmpty(url) ? (
         <span style={{ marginBottom: 10, display: "block" }}>
@@ -56,7 +56,7 @@ const URLComponent = ({ url, onInputChange, pageUrl, tableUrl }) => {
           </Button>
         </span>
       ) : null}
-    </>
+    </React.Fragment>
   );
 };
 

@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { brandUpdateAction } from "../../store/action/";
 import { useDispatch, useSelector } from "react-redux";
 import { Loading, TopBar, Alert, TextInput, CardBlocks } from "../components";
+import {client_app_route_url} from '../../utils/helper';
 
 const EditBrand = (props) => {
   const theme = useTheme();
@@ -65,7 +66,7 @@ const EditBrand = (props) => {
         title='Edit Brands'
         onSubmit={updateBrand}
         submitTitle='Update'
-        backLink={"/all-brands"}
+        backLink={`${client_app_route_url}all-brands`}
       />
       <Grid
         container

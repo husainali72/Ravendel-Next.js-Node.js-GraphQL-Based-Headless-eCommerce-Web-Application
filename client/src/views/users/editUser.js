@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Grid, Box } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { userUpdateAction, usersAction } from "../../store/action";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
   Alert,
@@ -76,7 +76,7 @@ const EditUser = (props) => {
           title='Edit Users'
           onSubmit={updateUser}
           submitTitle='Update'
-          backLink={"/all-users"}
+          backLink={`${client_app_route_url}all-users`}
         />
         <Grid container spacing={3} className={classes.secondmainrow}>
           <Grid item xs={12}>

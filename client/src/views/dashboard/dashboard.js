@@ -27,7 +27,7 @@ const Dashboard = () => {
         data = await getDashboardData();
         setLoader(false);
         setdashBoardCount(data);
-      }catch{
+      }catch(error){
         setLoader(false);
         setdashBoardCount({});
       }

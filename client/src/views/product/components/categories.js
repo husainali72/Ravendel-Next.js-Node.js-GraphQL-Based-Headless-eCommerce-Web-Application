@@ -140,7 +140,7 @@ const CategoriesComponent = ({ onCategoryChange }) => {
     });
   };
 
-  return <>{menuListing(unflatten(productCats))}</>;
+  return <React.Fragment>{menuListing(unflatten(productCats))}</React.Fragment>;
 };
 
 export default CategoriesComponent;

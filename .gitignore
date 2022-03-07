@@ -18,7 +18,7 @@ yarn.lock
 
 # production
 /build
-/assets
+# /assets
 /client-old
 
 # misc

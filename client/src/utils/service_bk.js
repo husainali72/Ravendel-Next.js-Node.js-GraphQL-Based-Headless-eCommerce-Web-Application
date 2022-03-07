@@ -83,7 +83,7 @@ const service = config => {
       }
       if (error.response.status === 401) {
         Auth.logout();
-        jumpTo("/login");
+        jumpTo(`${client_app_route_url}login`);
         throw error;
       }
       return Promise.reject(error);

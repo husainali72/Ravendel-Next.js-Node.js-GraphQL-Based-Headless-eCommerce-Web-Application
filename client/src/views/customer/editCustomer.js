@@ -33,7 +33,7 @@ import BusinessIcon from "@material-ui/icons/Business";
 import PhoneIcon from "@material-ui/icons/Phone";
 import HomeIcon from "@material-ui/icons/Home";
 import Rating from "@material-ui/lab/Rating";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import { Loading, TextInput, PasswordInput, TopBar, Alert, CardBlocks } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -154,7 +154,7 @@ const EditCustomer = (props) => {
           title="Edit Customer"
           onSubmit={updateCustomer}
           submitTitle="Update"
-          backLink={"/all-customer"}
+          backLink={`${client_app_route_url}all-customer`}
         />
 
         {/* ==============Customer Details============== */}

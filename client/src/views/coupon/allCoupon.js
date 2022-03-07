@@ -26,6 +26,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import {Alert, Loading} from '../components';
 import {convertDateToStringFormat} from '../utils/convertDate';
+import {client_app_route_url} from '../../utils/helper';
 
 const AllCoupons = () => {
   const classes = viewStyles();
@@ -58,7 +59,7 @@ const AllCoupons = () => {
             {Coupons.loading && <Loading />}
             <CardHeader
               action={
-                <Link to="/add-coupon">
+                <Link to={`${client_app_route_url}add-coupon`}>
                   <Button
                     color="primary"
                     className={classes.addUserBtn}
@@ -108,7 +109,7 @@ const AllCoupons = () => {
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(`edit-coupon/${coupon.id}`)
+                                  jumpTo(`${client_app_route_url}edit-coupon/${coupon.id}`)
                                 }
                               >
                                 <EditIcon />

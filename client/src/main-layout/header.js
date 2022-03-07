@@ -19,6 +19,7 @@ import palette from "../theme/palette";
 import { Link } from "react-router-dom";
 import { insertToken } from "../store/action/loginAction";
 import { connect } from "react-redux";
+import {client_app_route_url} from '../utils/helper';
 
 const Header = props => {
   const { onSidebarOpen } = props;
@@ -50,7 +51,7 @@ const Header = props => {
   return (
     <AppBar className={classes.header}>
       <Toolbar className={classes.header}>
-        <RouterLink to="/dashboard">
+        <RouterLink to={`${client_app_route_url}dashboard`}>
           <Typography variant="h4" component="h4" className={classes.textWhite}>
             Ravendel
           </Typography>
@@ -80,7 +81,7 @@ const Header = props => {
               onClose={handleClose}
             >
               <MenuItem onClick={handleClose}>
-                <Link to={`/edit-user/${activeUser.user_id}`}>
+                <Link to={`${client_app_route_url}edit-user/${activeUser.user_id}`}>
                   <span className={classes.editProfile}>Edit Profile</span>
                 </Link>
               </MenuItem>

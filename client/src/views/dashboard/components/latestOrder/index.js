@@ -24,6 +24,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import jumpTo from "../../../../utils/navigation";
 import {convertDateToStringFormat} from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
+import {client_app_route_url} from '../../../../utils/helper';
 
 const LatestOrders = ({ ordersState }) => {
   const classes = DashboardStyles();
@@ -69,7 +70,7 @@ const LatestOrders = ({ ordersState }) => {
                     <Tooltip title="Edit Order" aria-label="edit">
                       <IconButton
                         aria-label="Edit"
-                        onClick={() => jumpTo(`view-order/${order.id}`)}
+                        onClick={() => jumpTo(`${client_app_route_url}view-order/${order.id}`)}
                       >
                         <EditIcon />
                       </IconButton>
@@ -89,16 +90,16 @@ const LatestOrders = ({ ordersState }) => {
       </CardContent>
 
       {ordersState.orders.lenght > 0 ? (
-        <>
+        <React.Fragment>
           <Divider />
           <CardActions className="flex-end">
-            <Link to="/all-orders">
+            <Link to={`${client_app_route_url}all-orders`}>
               <Button color="primary" size="small" variant="text">
                 View all <ArrowRightIcon />
               </Button>
             </Link>
           </CardActions>
-        </>
+        </React.Fragment>
       ) : null}
     </Card>
   );

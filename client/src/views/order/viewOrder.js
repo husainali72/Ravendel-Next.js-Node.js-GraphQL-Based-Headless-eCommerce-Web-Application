@@ -41,7 +41,8 @@ import {
 import "../../App.css";
 import {convertDateToStringFormat} from "../utils/convertDate";
 import viewStyles from "../viewStyles";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
+
 const ViewOrder = props => {
   const classes = viewStyles();
   const [editShipping, setEditShipping] = useState(false);
@@ -112,7 +113,7 @@ const ViewOrder = props => {
   };
 
   const getFirstLetter = name => {
-    return name.charAt(0);
+    return name ? name.charAt(0) : name;
   };
 
   const BillingInput = (label, name, type, value) => {
@@ -158,7 +159,7 @@ const ViewOrder = props => {
       <Grid container className="topbar">
         <Grid item lg={6}>
           <Typography variant="h4">
-            <Link to="/all-orders">
+            <Link to={`${client_app_route_url}all-orders`}>
               <IconButton aria-label="Back">
                 <ArrowBackIcon />
               </IconButton>
@@ -176,8 +177,8 @@ const ViewOrder = props => {
             color="primary"
             className={classes.cancelBtn}
           >
-            <Link to="/all-orders" style={{ color: "#fff" }}>
-              Discard
+            <Link to={`${client_app_route_url}all-orders`} style={{ color: "#fff" }}>
+              Cancel
             </Link>
           </Button>
         </Grid>

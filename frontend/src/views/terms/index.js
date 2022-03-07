@@ -1,10 +1,11 @@
 import React, { Fragment } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import PageTitle from "../components/pageTitle";
 import { Container, Grid, Typography, Box } from "@material-ui/core";
 import Logo from "../../assets/images/logo.png";
 
 const TermsAndCondition = (props) => {
+  const settings = useSelector((state) => state.settings);
   return (
     <Fragment>
       <PageTitle title="Terms and Condition" />
@@ -37,8 +38,4 @@ const TermsAndCondition = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  settings: state.settings,
-});
-
-export default connect(mapStateToProps)(TermsAndCondition);
+export default TermsAndCondition;

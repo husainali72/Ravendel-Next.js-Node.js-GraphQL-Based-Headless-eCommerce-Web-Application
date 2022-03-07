@@ -19,7 +19,7 @@ const TinymceEditor = ({ value, onEditorChange }) => {
   }, []);
 
   return (
-    <>
+    <React.Fragment>
       {show ? (
         <Editor
           initialValue={value}
@@ -48,7 +48,7 @@ const TinymceEditor = ({ value, onEditorChange }) => {
           <CircularProgress />
         </Box>
       )}
-    </>
+    </React.Fragment>
   );
 };
 

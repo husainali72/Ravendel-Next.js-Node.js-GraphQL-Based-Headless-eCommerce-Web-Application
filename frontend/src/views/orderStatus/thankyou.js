@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Typography,
   Box,
@@ -17,13 +17,15 @@ import {
 import PageTitle from "../components/pageTitle";
 import { isEmpty } from "../../utils/helper";
 import { Link } from "react-router-dom";
+import {app_router_base_url} from '../../utils/helper';
 
-const Thankyou = (props) => {
+const Thankyou = () => {
+  const checkoutDetail = useSelector(state => state.checkoutDetail);
   const [checkoutDetails, setCheckoutDetails] = useState({});
 
   useEffect(() => {
-    setCheckoutDetails(props.checkoutDetail.chekoutDetails);
-  }, [props.checkoutDetail]);
+    setCheckoutDetails(checkoutDetail.chekoutDetails);
+  }, [checkoutDetail]);
 
   return (
     <Fragment>
@@ -255,7 +257,7 @@ const Thankyou = (props) => {
             <Typography variant="h3" className="margin-bottom-1">
               Your cart is currently empty.
             </Typography>
-            <Link to="/shop">
+            <Link to={`${app_router_base_url}shop`}>
               <Button variant="contained" color="primary">
                 Shop Now
               </Button>
@@ -267,8 +269,4 @@ const Thankyou = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  checkoutDetail: state.checkoutDetail,
-});
-
-export default connect(mapStateToProps)(Thankyou);
+export default Thankyou;

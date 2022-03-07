@@ -18,7 +18,7 @@ import {
 } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 
-const Address = (props) => {
+const Address = () => {
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
 
