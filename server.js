@@ -1,35 +1,4 @@
 const express = require("express");
-
-
-/*SSL Workout start*/
-const fs = require("fs");
-const http = require("http");
-const https = require("https");
-var credentials = {};
-// Certificate
-if (process.env.NODE_ENV === "production") {
-  const privateKey = fs.readFileSync(
-    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/privkey.pem",
-    "utf8"
-  );
-  const certificate = fs.readFileSync(
-    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/cert.pem",
-    "utf8"
-  );
-  const ca = fs.readFileSync(
-    "/etc/letsencrypt/live/ravendel-frontend.hbwebsol.com/chain.pem",
-    "utf8"
-  );
-
-  credentials = {
-    key: privateKey,
-    cert: certificate,
-    ca: ca,
-  };
-}
-
-/* SSL Workout end */
-
 const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -38,12 +7,9 @@ const resolvers = require("./resolvers");
 const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
-const vhost = require("vhost");
-
-const { errorConverter, errorHandler } = require("./middleware/error");
 
 const {
-  graphqlUploadExpress, // A Koa implementation is also exported.
+  graphqlUploadExpress,
 } = require('graphql-upload');
 
 
@@ -114,6 +80,8 @@ if (process.env.NODE_ENV === "production") {
 app.listen(port, () => console.log(`server started on port ${PORT}, ${process.env.NODE_ENV}`));
 
 /*
+const { errorConverter, errorHandler } = require("./middleware/error");
+const vhost = require("vhost");
 //models
 // const Tax = require("./models/Tax");
 // Tax.createTax();
