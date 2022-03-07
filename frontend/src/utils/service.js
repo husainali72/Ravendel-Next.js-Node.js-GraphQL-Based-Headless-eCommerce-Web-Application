@@ -4,6 +4,8 @@ import axios from "axios";
 import { isEmpty } from "./helper";
 import APclient from "../Client";
 
+export const baseUrl = 'http://localhost:8000/';
+
 export const mutation = async (query, variables) => {
   try {
     const response = await APclient.mutate({
@@ -55,6 +57,58 @@ export const query = async (query, variables) => {
     }
     return Promise.reject("Something went wrong");
   }
+};
+
+const service = (config) => {
+  console.log('config', config);
+  //header authorization
+  if (Auth.getToken()) {
+    const token = Auth.getToken();
+    config.headers = {
+      authorization: token,
+    };
+  }
+
+  //interceptors handle network error
+  axios.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    function (error) {
+      console.log(error);
+      if (!error.response) {
+        error.response = {
+          data: "network error",
+          status: 500,
+        };
+      }
+      if (error.response.status === 401) {
+        Auth.logout();
+        jumpTo(`${baseUrl}login`);
+        throw error;
+      }
+      return Promise.reject(error);
+    }
+  );
+  //config.baseURL = baseUrl;
+  return axios(config);
+};
+export default service;
+
+export const login = (email, password) => {
+  const body = {
+    email: email,
+    password: password,
+  };
+  console.log('body', body);
+  return service({
+    method: "POST",
+    url: `${baseUrl}api/customers/login`,
+    data: body,
+  }).then(async(res) => {
+    await Auth.setUserToken(res.data);
+    return res;
+  }); 
 };
 
 /* const service = (config) => {

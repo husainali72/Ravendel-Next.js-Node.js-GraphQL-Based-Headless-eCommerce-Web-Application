@@ -19,6 +19,8 @@ const {
   putError,
   checkError,
   checkToken,
+  MESSAGE_RESPONSE,
+  _validate
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
@@ -177,7 +179,7 @@ module.exports = {
             } else {
               item.price = productById[i].price;
               item.product_id = productById[i].product.product_id;
-              console.log(item);
+              //console.log(item);
             }
 
             if (!tax[0].is_inclusive && !tax[0].global.is_global) {
@@ -266,11 +268,13 @@ module.exports = {
           calculated.total_tax.name = isGlobalTaxObj.name;
         }
 
+        calculated.total_coupon = 0;
         calculated.grand_total =
           calculated.subtotal +
           calculated.total_shipping.amount +
-          calculated.total_tax.amount;
+          calculated.total_tax.amount - calculated.total_coupon ;
 
+        //  console.log(calculated);
         return calculated;
       } catch (error) {
         error = checkError(error);
@@ -279,29 +283,29 @@ module.exports = {
     },
   },
   Mutation: {
-    addToCart: async (root, args, { id }) => {
-      //checkToken(id);
-      try {
-        const customer = await Customer.findById(args.customer_id);
-        if (customer) {
-          customer.cart.items = args.cart;
-          await customer.save();
-          return {
-            success: true,
-            message: "",
-          };
-        }
-        return {
-          success: false,
-          message: "Customer does not exist",
-        };
-      } catch (error) {
-        console.log(error);
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
-    addCart: async (root, args, { id }) => {
+    // addToCart: async (root, args, { id }) => {
+    //   //checkToken(id);
+    //   try {
+    //     const customer = await Customer.findById(args.customer_id);
+    //     if (customer) {
+    //       customer.cart.items = args.cart;
+    //       await customer.save();
+    //       return {
+    //         success: true,
+    //         message: "",
+    //       };
+    //     }
+    //     return {
+    //       success: false,
+    //       message: "Customer does not exist",
+    //     };
+    //   } catch (error) {
+    //     console.log(error);
+    //     error = checkError(error);
+    //     throw new Error(error.custom_message);
+    //   }
+    // },
+    /*addCart: async (root, args, { id }) => {
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -327,8 +331,42 @@ module.exports = {
         error = checkError(error);
         return MESSAGE_RESPONSE("CREATE_ERROR", "Cart", false);
       }
+    },*/
+
+    addCart: async (root, args, { id }) => {
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
+      }
+      try {
+         const cart = await Cart.findOne({ user_id: args.user_id });
+          var carttotal = 0;
+          for (let i in args.products) {
+            if (args.products[i].product_id) {
+              const product = await Product.findById({ _id: args.products[i].product_id });
+              if(product.pricing.sellprice > 0){
+                 args.products[i].total = args.products[i].qty * product.pricing.sellprice;
+              }else{
+                args.products[i].total = args.products[i].qty * product.pricing.price;
+              }
+            }
+            carttotal = carttotal + args.products[i].total;
+          }
+
+           const newCart = new Cart({
+            user_id: args.user_id,
+             total: carttotal,
+             products : args.products
+          });
+        await newCart.save();
+        return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
+      } catch (error) {
+        console.log(error);
+        error = checkError(error);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Cart", false);
+      }
     },
-    updateCart: async (root, args, { id }) => {
+
+    /*updateCart: async (root, args, { id }) => {
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -350,29 +388,101 @@ module.exports = {
         error = checkError(error);
         return MESSAGE_RESPONSE("UPDATE_ERROR", "Cart", false);
       }
+    },*/
+
+    updateCart: async (root, args, { id }) => {
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
+      }
+      if (!args.id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "Cart", false);
+      }
+      try {
+        const cart = await Cart.findById({ _id: args.id });
+        if (cart) {
+         var carttotal = 0;
+          for (let i in args.products) {
+            if (args.products[i].product_id) {
+              const product = await Product.findById({ _id: args.products[i].product_id });
+              
+              if(product.pricing.sellprice > 0){
+                 args.products[i].total = args.products[i].qty * product.pricing.sellprice;
+              }else{
+                args.products[i].total = args.products[i].qty * product.pricing.price;
+              }
+            }
+            carttotal = carttotal + args.products[i].total;
+          }
+          cart.total = carttotal;
+          cart.products = args.products;
+          cart.updated = Date.now();
+          await cart.save();
+          return MESSAGE_RESPONSE("UpdateSuccess", "Cart", true);
+        } else {
+          return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
+        }
+      } catch (error) {
+        error = checkError(error);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Cart", false);
+      }
     },
+
     //,.........................................
     deleteCart: async (root, args, { id }) => {
       checkToken(id);
       const cart = await Cart.findByIdAndRemove(args.id);
       if (cart) {
-        return true;
+        return MESSAGE_RESPONSE("DeleteSuccess", "Cart", true);
+        //return true;
       }
       return false;
     },
     deleteCartProduct: async (root, args, { id }) => {
       checkToken(id);
       const cart = await Cart.findById(args.id);
+      console.log(cart);
       if (cart) {
-        for (let i in cart.products) {
-          if (cart.products[i].id === args.object_id) {
-            cart.products.splice(i, 1);
-            cart.updated = Date.now();
-            return await cart.save();
-          }
+        // for (let i in cart.products) {
+        //   if (cart.products[i].product_id === args.product_id) {
+        //     cart.products.splice(i, 1);
+        //     cart.updated = Date.now();
+        //     return await cart.save();
+        //   }
+        // }
+        var customer_cart = cart.products;
+            for (let i in customer_cart) {
+        if (customer_cart[i].product_id == args.product_id) {
+          cart.products = [];
+          delete customer_cart[i];
+
+          cart.products = customer_cart;
+          break;
         }
+      }
+
+      //console.log(cart.products);
+
+      var carttotal = 0;
+          for (let i in cart.products) {
+            if (cart.products[i].product_id) {
+              const product = await Product.findById({ _id: cart.products[i].product_id });
+              
+              if(product.pricing.sellprice > 0){
+                 cart.products[i].total = cart.products[i].qty * product.pricing.sellprice;
+              }else{
+                cart.products[i].total = cart.products[i].qty * product.pricing.price;
+              }
+            }
+            carttotal = carttotal + cart.products[i].total;
+          }
+          cart.total = carttotal;
+          cart.products = cart.products;
+          cart.updated = Date.now();
+          await cart.save();
+          return MESSAGE_RESPONSE("UpdateSuccess", "Cart", true);
       } else {
-        throw putError("Cart not exist");
+        //throw putError("Cart not exist");
+        return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
       }
     },
   },

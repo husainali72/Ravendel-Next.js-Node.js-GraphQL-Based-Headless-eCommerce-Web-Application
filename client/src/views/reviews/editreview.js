@@ -87,6 +87,8 @@ const EditReview = (props) => {
       };
     });
 
+    console.log('customerArr', customerArr)
+
     setcustomers([...customerArr]);
   }, [customerState.customers]);
 

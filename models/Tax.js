@@ -21,11 +21,11 @@ const TaxSchema = new Schema({
       },
       percentage: {
         type: Number,
-        min: 0,
+        // min: 0,
       },
       system: {
         type: Number,
-        default: 0,
+        // default: 0,
       },
     },
   ],

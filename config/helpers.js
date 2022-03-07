@@ -307,7 +307,8 @@ const _validatenested = (main,names, args) => {
       if(!args[main][name] ){
         return (errors = `${capitalize(name)} is required`);
       } 
-      if (!args[main][name] || Validator.isEmpty(args[main][name])) {
+      let value = args[main][name]
+      if (!args[main][name] || Validator.isEmpty(value.toString())) {
         return (errors = `${capitalize(name)} field is required`)
       }
 
