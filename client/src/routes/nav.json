@@ -132,11 +132,6 @@
       ]
     },
     {
-      "name": "FAQ's",
-      "url": "all-faq",
-      "icon": "help"
-    },
-    {
       "name": "Settings",
       "url": "settings",
       "icon": "settings"

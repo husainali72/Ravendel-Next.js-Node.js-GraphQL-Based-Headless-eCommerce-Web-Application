@@ -800,7 +800,7 @@ module.exports = {
 
           product.name = args.name;
           product.categoryId = args.categoryId;
-          (product.brand = args.brand || {}),
+          (product.brand = args.brand || null),
             (product.url = await updateUrl(args.url || args.name, "Product"));
           product.short_description = args.short_description;
           product.description = args.description;

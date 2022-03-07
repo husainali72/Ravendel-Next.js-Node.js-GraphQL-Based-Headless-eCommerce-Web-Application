@@ -125,6 +125,7 @@ const AllBlog = () => {
                               aria-label="Delete"
                               className={classes.deleteicon}
                               onClick={() => dispatch(blogDeleteAction(blog.id))}
+                              disabled
                             >
                               <DeleteIcon />
                             </IconButton>

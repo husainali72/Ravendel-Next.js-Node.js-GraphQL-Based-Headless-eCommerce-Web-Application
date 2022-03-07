@@ -109,6 +109,7 @@ const AllOrders = props => {
                                 onClick={() =>
                                   props.orderDeleteAction(order.id)
                                 }
+                                disabled
                               >
                                 <DeleteIcon />
                               </IconButton>

@@ -67,6 +67,7 @@ const AllShippingComponent = ({
                             aria-label='Delete'
                             className={classes.deleteicon}
                             onClick={() => deleteShipping(shipping._id)}
+                            disabled
                           >
                             <DeleteIcon />
                           </IconButton>

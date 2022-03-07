@@ -431,6 +431,11 @@ export const productUpdateAction = (object) => (dispatch) => {
   if(object.brand && object.brand.value){
     object.brand = object.brand.value;
   }
+  else{
+    object.brand = null
+  }
+  
+  // {object.brand.length > 0 ? (object.brand = object.brand.value) : (object.brand == null )}
   mutation(UPDATE_PRODUCT, object)
     .then((response) => {
       // if (response) {

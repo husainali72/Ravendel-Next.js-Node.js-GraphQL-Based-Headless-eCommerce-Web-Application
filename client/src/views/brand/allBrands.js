@@ -118,6 +118,7 @@ const AllBrands = props => {
                                 onClick={() =>
                                   dispatch(brandDeleteAction(brand.id))
                                 }
+                                disabled
                               >
                                 <DeleteIcon />
                               </IconButton>

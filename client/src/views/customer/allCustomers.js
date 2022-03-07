@@ -127,6 +127,7 @@ const AllCustomers = () => {
                                 onClick={() =>
                                   dispatch(customerDeleteAction(customer.id))
                                 }
+                                disabled
                               >
                                 <DeleteIcon />
                               </IconButton>

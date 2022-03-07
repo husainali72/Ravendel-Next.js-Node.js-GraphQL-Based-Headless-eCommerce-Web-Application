@@ -120,6 +120,7 @@ const AllAttribute = () => {
                               onClick={() =>
                                 dispatch(attributeDeleteAction(attribute.id))
                               }
+                            disabled
                             >
                               <IconButton
                                 aria-label="Delete"

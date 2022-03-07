@@ -133,6 +133,7 @@ const AllTags = () => {
                               onClick={() =>
                                 dispatch(blogtagDeleteAction(tag.id))
                               }
+                              disabled
                             >
                               <DeleteIcon />
                             </IconButton>

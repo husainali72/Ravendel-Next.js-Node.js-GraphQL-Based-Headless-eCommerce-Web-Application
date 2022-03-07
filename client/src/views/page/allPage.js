@@ -115,6 +115,7 @@ const AllPages = (props) => {
                                 aria-label="Delete"
                                 className={classes.deleteicon}
                                 onClick={() => dispatch(pageDeleteAction(page.id))}
+                                disabled
                               >
                                 <DeleteIcon />
                               </IconButton>

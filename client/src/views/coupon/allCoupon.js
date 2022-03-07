@@ -125,6 +125,7 @@ const AllCoupons = () => {
                                 onClick={() =>
                                   dispatch(couponDeleteAction(coupon.id))
                                 }
+                                disabled
                               >
                                 <DeleteIcon />
                               </IconButton>

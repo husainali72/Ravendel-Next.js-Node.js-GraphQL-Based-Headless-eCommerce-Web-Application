@@ -124,6 +124,8 @@ const AllProduct = () => {
                                 onClick={() =>
                                   dispatch(productDeleteAction(product._id))
                                 }
+                                disabled
+                    
                               >
                                 <DeleteIcon />
                               </IconButton>
