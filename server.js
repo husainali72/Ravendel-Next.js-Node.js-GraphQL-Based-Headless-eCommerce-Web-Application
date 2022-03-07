@@ -16,6 +16,16 @@ const {
 //connect db
 connectDB();
 
+// Default Data
+const Tax = require("./models/Tax");
+Tax.createTax();
+
+const Shipping = require("./models/Shipping");
+Shipping.createShipping();
+
+const Settings = require("./models/Setting");
+Settings.createSettings(); 
+
 var port = process.env.PORT || 8000;
 
 //middleware
