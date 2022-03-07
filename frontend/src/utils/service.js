@@ -60,6 +60,7 @@ export const query = async (query, variables) => {
 };
 
 const service = (config) => {
+  console.log('config', config);
   //header authorization
   if (Auth.getToken()) {
     const token = Auth.getToken();
@@ -99,14 +100,15 @@ export const login = (email, password) => {
     email: email,
     password: password,
   };
+  console.log('body', body);
   return service({
     method: "POST",
-    url: `${baseUrl}api/customer/login`,
+    url: `${baseUrl}api/customers/login`,
     data: body,
   }).then(async(res) => {
     await Auth.setUserToken(res.data);
     return res;
-  });
+  }); 
 };
 
 /* const service = (config) => {
