@@ -74,10 +74,10 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
   });
 } else {
-  app.get("/", (req, res) => res.send(`Ravendel is running on port: ${PORT}`));
+  app.get("/", (req, res) => res.send(`Ravendel is running on port: ${port}`));
 }
 
-app.listen(port, () => console.log(`server started on port ${PORT}, ${process.env.NODE_ENV}`));
+app.listen(port, () => console.log(`server started on port ${port}, ${process.env.NODE_ENV}`));
 
 /*
 const { errorConverter, errorHandler } = require("./middleware/error");
