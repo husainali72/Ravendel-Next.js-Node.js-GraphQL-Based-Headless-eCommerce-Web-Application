@@ -61,7 +61,7 @@ app.use("/api/users", require("./routes/api/users"));
 app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
 
-app.use("/api/customer", require("./routes/api/customer"));
+app.use("/api/customers", require("./routes/api/customers"));
 
 //app.use(express.static("public"));
 
