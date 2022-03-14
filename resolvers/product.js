@@ -23,6 +23,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
+const {checkAwsFolder} = require("../config/aws");
 var mongoose = require("mongoose");
 
 /* =============================WILL FIX LATER============================= */
@@ -491,6 +492,8 @@ module.exports = {
   },
   Mutation: {
     addProductCategory: async (root, args, { id }) => {
+
+      await checkAwsFolder('productcategory');
       let path = "/assets/images/product/category/";
       let url = "";
       if (args.url || args.title) {
@@ -507,7 +510,7 @@ module.exports = {
       let validation = ["name"];
       return await CREATE_FUNC(
         id,
-        " ProductCategory",
+        "ProductCategory",
         ProductCat,
         data,
         args,
@@ -516,6 +519,7 @@ module.exports = {
       );
     },
     updateProductCategory: async (root, args, { id }) => {
+      await checkAwsFolder('productcategory');
       let path = "/assets/images/product/category/";
       let url = "";
       if (args.url || args.title) {
@@ -551,8 +555,11 @@ module.exports = {
       try {
         const cat = await ProductCat.findByIdAndRemove(args.id);
         if (cat) {
+          // if (cat.image) {
+          //   imageUnlink(cat.image);
+          // }
           if (cat.image) {
-            imageUnlink(cat.image);
+            imageUnlink(cat.feature_image);
           }
           let _id = args.id;
           const product = await Product.updateMany(
@@ -570,6 +577,7 @@ module.exports = {
 
     addProduct: async (root, args, { id }) => {
       console.log(args)
+      await checkAwsFolder('product');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
@@ -609,7 +617,7 @@ module.exports = {
             // console.log('fimage',args.feature_image);
             imgObject = await imageUpload(
               args.feature_image[0].file,
-              "/assets/images/product/feature/"
+              "/assets/images/product/feature/","productfeature"
             );
 
             if (imgObject.success === false) {
@@ -625,7 +633,7 @@ module.exports = {
             for (let i in args.gallery_image) {
               galleryObject = await imageUpload(
                 args.gallery_image[i].file,
-                "/assets/images/product/gallery/"
+                "/assets/images/product/gallery/","productgallery"
               );
               if (galleryObject.success) {
                 imgArray.push(galleryObject.data);
@@ -678,7 +686,7 @@ module.exports = {
               if (combination.image && combination.image.file) {
                 imgObject = await imageUpload(
                   combination.image.file[0].file,
-                  "/assets/images/product/variant/"
+                  "/assets/images/product/variant/","productvarient"
                 );
                 combination.image = imgObject.data || imgObject;
               }
@@ -706,6 +714,8 @@ module.exports = {
       }
     },
     updateProduct: async (root, args, { id }) => {
+
+      await checkAwsFolder('product');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
@@ -750,7 +760,7 @@ module.exports = {
           if (args.update_feature_image) {
             imgObject = await imageUpload(
               args.update_feature_image[0].file,
-              "/assets/images/product/feature/"
+              "/assets/images/product/feature/","productfeature"
             );
 
             if (imgObject.success === false) {
@@ -771,7 +781,7 @@ module.exports = {
             for (let i in args.update_gallery_image) {
               galleryObject = await imageUpload(
                 args.update_gallery_image[i].file,
-                "/assets/images/product/gallery/"
+                "/assets/images/product/gallery/","productgallery"
               );
 
               if (galleryObject.success) {
@@ -833,7 +843,7 @@ module.exports = {
               ) {
                 imgObject = await imageUpload(
                   combination.image.file[0].file,
-                  "/assets/images/product/variant/"
+                  "/assets/images/product/variant/","productvarient"
                 );
                 combination.image = imgObject.data || imgObject;
               }

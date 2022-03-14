@@ -190,7 +190,8 @@ const CREATE_FUNC = async (
         success: false,
       };
     }
-
+    //console.log('DATA', data) ;
+    //console.log('ARGUMENT', args) ;
 
     // if (args.feature_image || args.image) {
     //   let imgObject = "";
@@ -214,10 +215,20 @@ const CREATE_FUNC = async (
       if (data.feature_image) {
         image = data.feature_image.file;
       }
-      if (data.image) {
-        image = data.image[0].file; /// this image are in array let check it
+
+      if (name && name === "ProductCategory") {
+            image = data.image[0].file;
       }
-      imgObject = await imageUpload(image, path);
+
+      if (name && name === "User") {
+        image = data.image.file;
+       }
+   
+        
+      // if (data.image) {
+      //      image = data.image[0].file;   /// this image are in array let check it
+      // }
+      imgObject = await imageUpload(image, path,name);
       if (imgObject.success === false) {
         return {
           message:
@@ -226,7 +237,14 @@ const CREATE_FUNC = async (
           success: false,
         };
       }
-      data.feature_image = imgObject.data || imgObject;
+
+      if ( (name && name === "ProductCategory")  || name && name === "User") {
+        data.image = imgObject.data || imgObject;
+      }else{
+        data.feature_image = imgObject.data || imgObject;
+      }
+
+      
     }
 
     if (data.name) {
@@ -247,6 +265,8 @@ const CREATE_FUNC = async (
         return MESSAGE_RESPONSE("DUPLICATE", "email", false);
       }
     }
+
+    //console.log('DATA--------',data);
 
     const response = new modal(data);
     if (data.password) {
@@ -287,7 +307,7 @@ const UPDATE_FUNC = async (
     }
     const response = await modal.findById(updateId);
     if (response) {
-      console.log("args", args);
+    //  console.log("args", args);
 
         if (args.updatedImage || args.update_image) {
           let imgObject = "";
@@ -299,11 +319,10 @@ const UPDATE_FUNC = async (
           if (args.update_image) {
             image = args.update_image[0].file; /// this image are in array let check it
           }
-          console.log("image", image);
-          console.log("response", response);
           
-          imgObject = await imageUpload(image, path);
-           console.log("imgObject", imgObject);
+          
+          imgObject = await imageUpload(image, path,name);
+           
             if (imgObject.success === false) {
               return {
                 message:
@@ -320,7 +339,7 @@ const UPDATE_FUNC = async (
                  imageUnlink(response.feature_image);
                 data.feature_image = imgObject.data || imgObject;
               }
-               console.log("response 2", response);
+              // console.log("response 2", response);
             }
         }
       for (const [key, value] of Object.entries(data)) {

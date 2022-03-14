@@ -21,6 +21,7 @@ const {
 const bcrypt = require("bcryptjs");
 
 const fs = require("fs");
+const {checkAwsFolder} = require("../config/aws");
 
 var udir = "./assets/images/user";
 var ldir = "./assets/images/user/large";
@@ -109,6 +110,7 @@ module.exports = {
   },
   Mutation: {
     addUser: async (root, args, { id }) => {
+      await checkAwsFolder('user');
       let path = "/assets/images/user/";
       let data = {
         name: args.name,
@@ -121,6 +123,8 @@ module.exports = {
       return await CREATE_FUNC(id, "User", User, data, args, path, validation);
     },
     updateUser: async (root, args, { id }) => {
+      await checkAwsFolder('user');
+      console.log('ARGS',args);
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "User", false);
       }
@@ -143,10 +147,10 @@ module.exports = {
           }
 
           if (args.updatedImage) {
-            // console.log(args.updatedImage);
+           //  console.log('wewewewewew',args.updatedImage);
             let imgObject = await imageUpload(
               args.updatedImage.file,
-              "/assets/images/user/"
+              "/assets/images/user/",'User'
             );
 
             if (imgObject.success === false) {
@@ -179,6 +183,8 @@ module.exports = {
               user.meta.unshift(metArra[i]);
             }
           }
+
+        //  console.log('USERDATA',user);
           await user.save();
           return MESSAGE_RESPONSE("UpdateSuccess", "User", true);
         } else {

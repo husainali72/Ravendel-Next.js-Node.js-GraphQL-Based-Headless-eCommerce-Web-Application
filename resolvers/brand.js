@@ -16,6 +16,30 @@ const {
   GET_ALL_FUNC,
 } = require("../config/api_functions");
 
+const {checkAwsFolder} = require("../config/aws");
+const fs = require("fs");
+var sdir = './assets/images/brand';
+var ldir = './assets/images/brand/large';
+var mdir = './assets/images/brand/medium';
+var tdir = './assets/images/brand/thumbnail';
+var odir = './assets/images/brand/original';
+
+if (!fs.existsSync(sdir)){
+  fs.mkdirSync(sdir);
+}
+if (!fs.existsSync(ldir)){
+  fs.mkdirSync(ldir);
+}
+if (!fs.existsSync(mdir)){
+  fs.mkdirSync(mdir);
+}
+if (!fs.existsSync(odir)){
+  fs.mkdirSync(odir);
+}
+if (!fs.existsSync(tdir)){
+  fs.mkdirSync(tdir);
+}
+
 module.exports = {
   Query: {
     brands: async (root, args) => {
@@ -42,6 +66,7 @@ module.exports = {
   },
   Mutation: {
     addBrand: async (root, args, { id }) => {
+      await checkAwsFolder('brand');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "brand", false);
       }
@@ -79,6 +104,7 @@ module.exports = {
       }
     },
     updateBrand: async (root, args, { id }) => {
+      await checkAwsFolder('brand');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Brands", false);
       }
@@ -98,7 +124,7 @@ module.exports = {
           if (args.updated_brand_logo) {
             let imgObject = await imageUpload(
               args.updated_brand_logo.file,
-              "/assets/images/brand/"
+              "/assets/images/brand/",'Brand'
             );
             if (imgObject.success === false) {
               throw putError(imgObject.message);
@@ -114,6 +140,8 @@ module.exports = {
           brand.url = url;
           brand.meta = args.meta;
           brand.updated = Date.now();
+
+          console.log('BRAND',brand);
 
           await brand.save();
           return MESSAGE_RESPONSE("UpdateSuccess", "Brands", true);

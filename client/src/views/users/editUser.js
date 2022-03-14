@@ -52,7 +52,7 @@ const EditUser = (props) => {
   }, [UsersState.users]);
 
   const fileChange = (e) => {
-    setuser({ ...user, [e.target.name]: e.target.files[0] });
+    setuser({ ...user, ['updatedImage']: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };

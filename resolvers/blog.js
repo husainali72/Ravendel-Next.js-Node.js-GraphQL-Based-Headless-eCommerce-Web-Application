@@ -14,6 +14,8 @@ const {
   UPDATE_FUNC,
 } = require("../config/api_functions");
 
+const {checkAwsFolder} = require("../config/aws");
+
 module.exports = {
   Query: {
     blogs: async (root, args) => {
@@ -100,7 +102,9 @@ module.exports = {
       if (args.url || args.title) {
         url = await updateUrl(args.url || args.title, "Blog");
       }
-      console.log('ar', args)
+      //console.log('ar', args);
+      await checkAwsFolder('blog');
+
       let data = {
         title: args.title,
         url: url,
@@ -124,6 +128,8 @@ module.exports = {
       );
     },
     updateBlog: async (root, args, { id }) => {
+
+      await checkAwsFolder('blog');
       let path = "/assets/images/blog/feature/";
 
       let url = "";

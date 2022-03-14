@@ -10,6 +10,7 @@ const {
 } = require("../config/helpers");
 //const setting = require("../validations/setting");
 //const sanitizeHtml = require("sanitize-html");
+const {checkAwsFolder} = require("../config/aws");
 const fs = require("fs");
 var sdir = './assets/images/setting';
 var ldir = './assets/images/setting/large';
@@ -287,7 +288,10 @@ module.exports = {
     updateAppearanceHome: async (root, args, { id }) => {
       checkToken(id);
       try {
+        await checkAwsFolder('setting');
         const setting = await Setting.findOne({});
+        //console.log('Slider',setting.appearance.home.slider);
+        console.log('Argument',args.slider);
 
         var slider = [];
         let imgObject = {};
@@ -295,7 +299,7 @@ module.exports = {
           if (args.slider[i].update_image) {
             imgObject = await imageUpload(
               args.slider[i].update_image[0].file,
-              "/assets/images/setting/"
+              "/assets/images/setting/","Setting"
             );
 
             if (imgObject.success === false) {
@@ -321,12 +325,13 @@ module.exports = {
     updateAppeanranceTheme: async (root, args, { id }) => {
       checkToken(id);
       try {
+        await checkAwsFolder('setting');
         const setting = await Setting.findOne({});
         let imgObject = "";
         if (args.new_logo) {
           imgObject = await imageUpload(
             args.new_logo[0].file,
-            "/assets/images/setting/"
+            "/assets/images/setting/","Setting"
           );
 
           if (imgObject.success === false) {

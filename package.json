@@ -34,6 +34,7 @@
     "apollo-link-http": "^1.5.16",
     "apollo-server-express": "^2.10.1",
     "apollo-upload-client": "^12.1.0",
+    "aws-sdk": "^2.1088.0",
     "bcryptjs": "^2.4.3",
     "concurrently": "^7.0.0",
     "cors": "^2.8.5",
