@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { brandUpdateAction } from "../../store/action/";
 import { useDispatch, useSelector } from "react-redux";
 import { Loading, TopBar, Alert, TextInput, CardBlocks } from "../components";
-import {client_app_route_url} from '../../utils/helper';
+import {client_app_route_url, bucketBaseURL} from '../../utils/helper';
 
 const EditBrand = (props) => {
   const theme = useTheme();
@@ -31,7 +31,7 @@ const EditBrand = (props) => {
       if (editbrand.id === props.match.params.id) {
         setBrand({ ...brand, ...editbrand });
         if (editbrand.brand_logo && editbrand.brand_logo.original) {
-          setLogoImage(editbrand.brand_logo.original);
+          setLogoImage(bucketBaseURL + editbrand.brand_logo.original);
         }
       }
     });

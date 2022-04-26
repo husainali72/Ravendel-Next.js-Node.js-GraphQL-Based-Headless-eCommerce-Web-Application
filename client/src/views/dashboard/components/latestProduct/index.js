@@ -18,7 +18,7 @@ import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import { Link } from "react-router-dom";
 import {convertDateToStringFormat} from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
-import {client_app_route_url} from '../../../../utils/helper';
+import {client_app_route_url, bucketBaseURL} from '../../../../utils/helper';
 
 const LatestProducts = ({ products, loader }) => {
   const classes = DashboardStyles();
@@ -48,7 +48,7 @@ const LatestProducts = ({ products, loader }) => {
                     className={classes.productImage}
                     src={
                       product.feature_image && product.feature_image.thumbnail
-                        ? product.feature_image.thumbnail
+                        ? bucketBaseURL + product.feature_image.thumbnail
                         : "https://www.hbwebsol.com/wp-content/uploads/2020/07/category_dummy.png"
                     }
                   />

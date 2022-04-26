@@ -16,7 +16,7 @@ import {
   blogAction,
 } from "../../store/action/";
 import clsx from "clsx";
-import { isEmpty, client_app_route_url } from "../../utils/helper";
+import { isEmpty, client_app_route_url, bucketBaseURL } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
   Loading,
@@ -64,7 +64,7 @@ const EditBlog = (props) => {
         blogState.blog.feature_image &&
         blogState.blog.feature_image.original
       ) {
-        setfeatureImage(blogState.blog.feature_image.original);
+        setfeatureImage(bucketBaseURL + blogState.blog.feature_image.original);
       }
       dispatch(blogtagsAction());
     }

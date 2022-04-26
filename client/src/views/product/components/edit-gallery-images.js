@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ImageIcon from "@material-ui/icons/Image";
 import viewStyles from "../../viewStyles";
+import { bucketBaseURL } from "../../../utils/helper";
+
 
 const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, product, onRemoveOldImage }) => {
   const classes = viewStyles();
@@ -44,7 +46,7 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
                               x
                             </span>
                             <img
-                              src={img.thumbnail}
+                              src={`${bucketBaseURL}${img.thumbnail}`}
                               className={classes.galleryImg}
                               alt="gallery-img"
                             />

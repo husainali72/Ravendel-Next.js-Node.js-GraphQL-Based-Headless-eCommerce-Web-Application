@@ -27,7 +27,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import { Alert, Loading } from "../components";
-import { client_app_route_url } from "../../utils/helper";
+import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
 
 const AllProduct = () => {
   const classes = viewStyles();
@@ -96,10 +96,10 @@ const AllProduct = () => {
                           <TableCell>
                             <Avatar
                               alt={product.name}
-                              src={
+                              src={`${bucketBaseURL}${
                                 product.feature_image &&
                                 product.feature_image.thumbnail
-                              }
+                              }`}
                             />
                           </TableCell>
                           <TableCell>{product.name}</TableCell>

@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { blogsAction, blogDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, bucketBaseURL } from "../../utils/helper";
 import Alert from "../utils/Alert";
 import PeopleIcon from "@material-ui/icons/People";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -105,10 +105,10 @@ const AllBlog = () => {
                           <TableCell>
                             <Avatar
                               alt={blog.name}
-                              src={
+                              src={`${bucketBaseURL}${
                                 blog.feature_image &&
                                 blog.feature_image.thumbnail
-                              }
+                              }`}
                             />
                           </TableCell>
                           <TableCell>{blog.title}</TableCell>

@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Grid, Box } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { userUpdateAction, usersAction } from "../../store/action";
-import { isEmpty, client_app_route_url } from "../../utils/helper";
+import { isEmpty, client_app_route_url, bucketBaseURL } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
   Alert,
@@ -45,7 +45,7 @@ const EditUser = (props) => {
       if (edituser.id === USER_ID) {
         setuser({ ...edituser });
         if (edituser.image && edituser.image.original) {
-          setfeatureImage(edituser.image.original);
+          setfeatureImage(bucketBaseURL + edituser.image.original);
         }
       }
     });

@@ -26,7 +26,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles.js";
 import { Alert, Loading } from "../components";
-import { client_app_route_url } from "../../utils/helper";
+import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
 
 const AllUsers = () => {
   const classes = viewStyles();
@@ -95,10 +95,12 @@ const AllUsers = () => {
                       )
                       .map((user) => (
                         <TableRow key={user.id} hover>
-                          <TableCell>
+                          <TableCell> 
                             <Avatar
                               alt={user.name}
-                              src={user.image && user.image.thumbnail}
+                              // src={user.image && user.image.thumbnail}
+                              src={`${bucketBaseURL}${user.image && user.image.thumbnail}`}
+                              // src={bucketBaseURL}{}
                             />
                           </TableCell>
                           <TableCell>{user.name}</TableCell>

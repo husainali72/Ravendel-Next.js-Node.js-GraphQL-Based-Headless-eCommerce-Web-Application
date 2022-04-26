@@ -16,6 +16,7 @@ import clsx from "clsx";
 import viewStyles from "../../viewStyles";
 import { appearanceHomeUpdateAction } from "../../../store/action";
 import {useDispatch, useSelector} from 'react-redux';
+import {  bucketBaseURL } from "../../../utils/helper";
 
 const HomeSettings = () => {
   const classes = viewStyles();
@@ -25,10 +26,24 @@ const HomeSettings = () => {
     ...settingState.settings.appearance.home,
   });
 
+  // console.log("setting--", settingHome)
+
   useEffect(() => {
-    setsettingHome({
-      ...settingState.settings.appearance.home,
-    });
+    // setsettingHome({
+    //   ...settingState.settings.appearance.home,
+    // });
+    for(let i in settingState.settings.appearance.home.slider){
+      let newImge =  bucketBaseURL + settingState.settings.appearance.home.slider[i].image.original
+      console.log("slid---", newImge)
+       setsettingHome({
+         ...settingHome,
+         slider: [...settingHome.slider, {
+           image: {
+            original: bucketBaseURL + settingState.settings.appearance.home.slider[i].image.original
+           }
+         }]
+       })
+    }
   }, [settingState.settings.appearance.home]);
 
   const addSlide = () => {
@@ -107,6 +122,7 @@ const HomeSettings = () => {
                 </Typography>
                 <Grid container spacing={2}>
                   {settingHome.slider.map((slide, index) => (
+                    
                     <Grid item md={4} sm={6} xs={12} key={index}>
                       <Box className={classes.sliderImageWrapper}>
                         <Tooltip title='Remove Slide' aria-label='remove-slide'>
@@ -144,7 +160,7 @@ const HomeSettings = () => {
                             className={classes.feautedImage}
                           >
                             {slide.image.original
-                              ? "Change Slider"
+                              ? "Change Slider-"
                               : "Add Slide Image"}
                           </label>
                         </Box>
