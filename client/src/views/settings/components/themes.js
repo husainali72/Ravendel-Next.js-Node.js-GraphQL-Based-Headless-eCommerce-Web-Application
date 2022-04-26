@@ -4,6 +4,7 @@ import viewStyles from "../../viewStyles";
 import { appearanceThemeUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png";
+import { bucketBaseURL } from "../../../utils/helper";
 
 const Themes = () => {
   const classes = viewStyles();
@@ -18,9 +19,10 @@ const Themes = () => {
     themeSetting.new_logo = e.target.files;
     setThemeSetting({
       ...themeSetting,
-      new_logo: themeSetting.new_logo,
+      new_logo:  themeSetting.new_logo,
     });
   };
+    console.log("--set", themeSetting.logo.original)
 
   const updateTheme = () => {
     console.log(themeSetting);
@@ -49,7 +51,7 @@ const Themes = () => {
           <Box className={classes.themeLogoWrapper}>
             {themeSetting.logo.original ? (
               <img
-                src={themeSetting.logo.original}
+                src={`${bucketBaseURL}${themeSetting.logo.original}`}
                 className={classes.themeLogoBoxPreview}
                 alt='Logo'
               />

@@ -26,7 +26,7 @@ import {
   deleteProductVariationImage,
   deleteProductVariation,
 } from "../../utils/service";
-import { isEmpty, client_app_route_url } from "../../utils/helper";
+import { isEmpty, client_app_route_url, bucketBaseURL } from "../../utils/helper";
 import {
   Alert,
   Loading,
@@ -131,7 +131,7 @@ const EditProduct = (props) => {
       });
 
       if (productState.product.feature_image.original) {
-        setfeatureImage(productState.product.feature_image.original);
+        setfeatureImage(bucketBaseURL + productState.product.feature_image.original);
       }
     }
   }, [productState.product]);

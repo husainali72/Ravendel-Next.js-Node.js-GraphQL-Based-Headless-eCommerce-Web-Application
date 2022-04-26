@@ -24,7 +24,7 @@ import {
   categoryUpdateAction,
   categoryAddAction,
 } from "../../../store/action/";
-import { isEmpty } from "../../../utils/helper";
+import { isEmpty, bucketBaseURL } from "../../../utils/helper";
 import { getUpdatedUrl } from "../../../utils/service";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -84,7 +84,7 @@ const AllCategory = (props) => {
     setEditmode(true);
     setfeaturedImage(null);
     if (cat.image && cat.image.original) {
-      setfeaturedImage(cat.image.original);
+      setfeaturedImage( bucketBaseURL + cat.image.original);
     }
     setSingleCategory({ ...singlecategory, ...cat });
   };

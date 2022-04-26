@@ -15,6 +15,14 @@ if (process.env.NODE_ENV === "production") {
 export const baseUrl = "http://localhost:8000";
 export const client_app_route_url = "/admin/";
 
+export var  bucketName = "revendal-image";
+export var bucketBaseURL= `https://${bucketName}.s3.amazonaws.com/`;
+
+if (process.env.NODE_ENV === "production") {
+  bucketName = "revendal-image-prod";
+  bucketBaseURL= `https://${bucketName}.s3.amazonaws.com/`;
+}
+
 /*-------------------------------------------------------------------------------------------------------------------------------------- */
 //simple category array to Tree array
 export const unflatten = (arr) => {
