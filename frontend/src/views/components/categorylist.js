@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import PlaceHolder from "../../assets/images/product-placeholder.jpg";
+import {app_router_base_url} from '../../utils/helper';
 
 const CategoryListing = ({allCategories, title}) => {
   const classes = useStyles();
@@ -34,7 +35,7 @@ const CategoryListing = ({allCategories, title}) => {
                   <Fragment key={index}>
                     {category.parentId === null && (
                       <Grid item lg={3} md={3} sm={6} xs={6}>
-                        <Link to={`/category/${category.url}`}>
+                        <Link to={`${app_router_base_url}category/${category.url}`}>
                           <ButtonBase
                             focusRipple
                             className={classes.image}

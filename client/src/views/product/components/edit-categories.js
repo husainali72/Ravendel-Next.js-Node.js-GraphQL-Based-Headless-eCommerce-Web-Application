@@ -154,7 +154,7 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
     });
   };
 
-  return <>{catList && catList.length ? menuListing(catList) : null}</>;
+  return <React.Fragment>{catList && catList.length ? menuListing(catList) : null}</React.Fragment>;
 };
 
 export default EditCategoriesComponent;

@@ -92,7 +92,7 @@ module.exports = gql`
   }
 
   type Product {
-    id: ID
+    _id: ID
     name: String
     categoryId: [productCategory]
     brand: productBrand
@@ -123,19 +123,72 @@ module.exports = gql`
     meta(key: String, value: String): metaKeyValueArray
   }
 
+  type ProductResponse {
+    data: [Product]
+    pagination: paginationInfo
+    message: statusSchema
+  }
+
+  type CategoriesResponse {
+    data: [productCategory]
+    pagination: paginationInfo
+    message: statusSchema
+  }
+  type productCategoriesRES {
+    data: [productCategory]
+    message: statusSchema
+  }
+  type productCate_by_Id_RES {
+    data: productCategory
+    message: statusSchema
+  }
+  type productsRES {
+    data: [Product]
+    message: statusSchema
+  }
+  type products_with_cat_RES {
+    data: [Product]
+    message: statusSchema
+  }
+  type productCate_by_url {
+    data:Category
+    message: statusSchema
+  }
+  type products_by_url {
+    data:Product
+    message: statusSchema
+  }
+  type products_by_id {
+    data:Product
+    message: statusSchema
+  }
   extend type Query {
-    productCategories: [productCategory]
+    productCategories: productCategoriesRES
+    productCategories_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): ProductResponse
     productCategoriesByFilter(filter: customObject): [Category]
-    productCategory(id: ID!): productCategory
+    productCategory(id: ID!): productCate_by_Id_RES
     getTree: [cattree]
-    products: [Product]
-    productswithcat: [Product]
+    products: productsRES
+    products_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): CategoriesResponse
+    productswithcat: products_with_cat_RES
     featureproducts: [Product]
     recentproducts: [Product]
-    product(id: ID!): Product
+    product(id: ID!): products_by_id
     productsbycatid(cat_id: ID!): [Product]
-    productsbycaturl(cat_url: String!): Category
-    productbyurl(url: String): Product
+    productsbycaturl(cat_url: String!): productCate_by_url
+    productbyurl(url: String):  products_by_url
     filteredProducts(config: customObject): [Product]
     onSaleProducts: [Product]
   }
@@ -148,7 +201,7 @@ module.exports = gql`
       description: String
       image: Upload
       meta: customObject
-    ): [productCategory]
+    ): statusSchema
     updateProductCategory(
       id: ID!
       name: String
@@ -157,8 +210,8 @@ module.exports = gql`
       description: String
       update_image: Upload
       meta: customObject
-    ): [productCategory]
-    deleteProductCategory(id: ID!): [productCategory]
+    ): statusSchema
+    deleteProductCategory(id: ID!): statusSchema
     addTree(name: String, parentname: String): productCategory
     addProduct(
       name: String
@@ -182,7 +235,7 @@ module.exports = gql`
       attribute: [customObject]
       variant: customArray
       combinations: [customObject]
-    ): [Product]
+    ): statusSchema
     updateProduct(
       id: ID
       name: String
@@ -207,7 +260,7 @@ module.exports = gql`
       attribute: [customObject]
       variant: customArray
       combinations: [customObject]
-    ): [Product]
-    deleteProduct(id: ID!): [Product]
+    ): statusSchema
+    deleteProduct(id: ID!): statusSchema
   }
 `;

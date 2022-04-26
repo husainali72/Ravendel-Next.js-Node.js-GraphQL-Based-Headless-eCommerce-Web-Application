@@ -27,6 +27,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import { Alert, Loading } from "../components";
+import { client_app_route_url } from "../../utils/helper";
 
 const AllProduct = () => {
   const classes = viewStyles();
@@ -52,12 +53,12 @@ const AllProduct = () => {
     <Fragment>
       <Alert />
       <Grid container spacing={2} className={classes.mainrow}>
-        <Grid item xl={12}>
+        <Grid item xl={12} md={12}>
           <Card>
             {products.loading ? <Loading /> : null}
             <CardHeader
               action={
-                <Link to='/add-product'>
+                <Link to={`${client_app_route_url}add-product`}>
                   <Button
                     color='primary'
                     className={classes.addUserBtn}
@@ -110,7 +111,7 @@ const AllProduct = () => {
                               <IconButton
                                 aria-label='Edit'
                                 onClick={() =>
-                                  jumpTo(`edit-product/${product.id}`)
+                                  jumpTo(`${client_app_route_url}edit-product/${product._id}`)
                                 }
                               >
                                 <EditIcon />
@@ -121,8 +122,10 @@ const AllProduct = () => {
                                 aria-label='Delete'
                                 className={classes.deleteicon}
                                 onClick={() =>
-                                  dispatch(productDeleteAction(product.id))
+                                  dispatch(productDeleteAction(product._id))
                                 }
+                                disabled
+                    
                               >
                                 <DeleteIcon />
                               </IconButton>

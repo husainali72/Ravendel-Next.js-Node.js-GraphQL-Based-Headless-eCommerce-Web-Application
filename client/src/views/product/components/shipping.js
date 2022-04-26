@@ -31,12 +31,12 @@ const ShippingComponent = ({
 
   useEffect(() => {
     if (shippingState.shipping.shipping_class.length) {
-      // onShippingClassChange(shippingState.shipping.shipping_class[0]._id);
+      onShippingClassChange(shippingState.shipping.shipping_class[0]._id);
     }
   }, [shippingState.shipping]);
 
   return (
-    <>
+    <React.Fragment>
       <Grid container spacing={3}>
         <Grid item md={12}>
           {!shippingState.shipping.global.is_global ? (
@@ -120,7 +120,7 @@ const ShippingComponent = ({
           />
         </Grid>
       </Grid>{" "}
-    </>
+    </React.Fragment>
   );
 };
 

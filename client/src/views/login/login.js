@@ -17,7 +17,7 @@ const Login = () => {
 
     const [values, setValues] = useState({
         email: "admin@ravendel.com",
-        password: "123456"
+        password: "12345678"
     });    
 
     const handleChange = prop => event => {

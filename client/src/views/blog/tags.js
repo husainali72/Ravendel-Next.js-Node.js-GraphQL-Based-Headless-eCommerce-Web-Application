@@ -54,11 +54,17 @@ const AllTags = () => {
     setPage(0);
   };
 
+  // useEffect(() => {
+  //   if (isEmpty(blogState.tags)) {
+  //     dispatch(blogtagsAction());
+  //   }
+  // }, [blogState.tags]);
+
   useEffect(() => {
-    if (isEmpty(blogState.tags)) {
+    
       dispatch(blogtagsAction());
-    }
-  }, [blogState.tags]);
+    
+  }, []);
 
   const editTag = (tag) => {
     setEditmode(true);
@@ -127,6 +133,7 @@ const AllTags = () => {
                               onClick={() =>
                                 dispatch(blogtagDeleteAction(tag.id))
                               }
+                              disabled
                             >
                               <DeleteIcon />
                             </IconButton>

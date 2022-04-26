@@ -19,6 +19,7 @@ import {
   CardBlocks,
   TinymceEditor,
 } from "../components";
+import {client_app_route_url} from '../../utils/helper';
 
 const defaultObj = {
   title: "",
@@ -59,7 +60,7 @@ const AddFAQ = () => {
           title='Add FAQ'
           onSubmit={addFaq}
           submitTitle='Add'
-          backLink={"/all-faq"}
+          backLink={`${client_app_route_url}all-faq`}
         />
 
         <Grid

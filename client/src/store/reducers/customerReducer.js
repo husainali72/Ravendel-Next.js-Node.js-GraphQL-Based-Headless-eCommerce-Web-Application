@@ -2,7 +2,8 @@ import {
   CUSTOMER_LOADING,
   CUSTOMERS_SUCCESS,
   CUSTOMER_FAIL,
-  CUSTOMER_SUCCESS
+  CUSTOMER_SUCCESS,
+  LOADING_FALSE,
 } from "../action/customerAction";
 
 const initialState = {
@@ -17,24 +18,29 @@ export default (state = initialState, action) => {
     case CUSTOMER_LOADING:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case CUSTOMERS_SUCCESS:
       return {
         ...state,
         customers: action.payload,
-        loading: false
+        loading: false,
       };
     case CUSTOMER_SUCCESS:
       return {
         ...state,
         customer: action.payload,
-        loading: false
+        loading: false,
       };
     case CUSTOMER_FAIL:
       return {
         ...state,
-        loading: false
+        loading: false,
+      };
+    case LOADING_FALSE:
+      return {
+        ...state,
+        loading: false,
       };
     default:
       return state;

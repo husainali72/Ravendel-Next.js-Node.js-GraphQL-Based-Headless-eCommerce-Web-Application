@@ -18,7 +18,7 @@ import { Link } from "react-router-dom";
 import BlogSidebar from "../blog/blogSidebar";
 import { blogsAction, tagBlogsAction } from "../../store/action/blogAction";
 import Loading from "../components/loading";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, app_router_base_url } from "../../utils/helper";
 import PlaceHolder from "../../assets/images/placeholder.png";
 
 const Tags = props => {
@@ -38,7 +38,7 @@ const Tags = props => {
                 props.blogs.tagBlogs.map((blog, index) => (
                   <Grid item lg={6} md={6} sm={6} key={index}>
                     <Card className="blog-card">
-                      <Link to={`blog/${blog.id}`}>
+                      <Link to={`${app_router_base_url}blog/${blog.id}`}>
                         <CardActionArea>
                           <CardMedia
                             component="img"
@@ -76,7 +76,7 @@ const Tags = props => {
                         </CardActionArea>
                       </Link>
                       <CardActions>
-                        <Link to={`blog/${blog.id}`}>
+                        <Link to={`${app_router_base_url}blog/${blog.id}`}>
                           <Button size="small" color="primary">
                             Learn More
                           </Button>

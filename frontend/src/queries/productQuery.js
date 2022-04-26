@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 const GET_FEATURED_PRODUCTS = gql`
   query {
     featureproducts {
-      id
+      _id
       name
       feature_image
       pricing
@@ -23,7 +23,7 @@ const GET_FEATURED_PRODUCTS = gql`
 const GET_RECENT_PRODUCTS = gql`
   query {
     recentproducts {
-      id
+      _id
       name
       feature_image
       pricing
@@ -43,7 +43,7 @@ const GET_RECENT_PRODUCTS = gql`
 const ON_SALE_PRODUCTS = gql`
   query {
     onSaleProducts {
-      id
+      _id
       name
       feature_image
       pricing
@@ -63,7 +63,7 @@ const ON_SALE_PRODUCTS = gql`
 const GET_PRODUCTS_CATID = gql`
   query($id: ID!) {
     productsbycatid(cat_id: $id) {
-      id
+      _id
       name
       feature_image
       pricing
@@ -82,7 +82,7 @@ const GET_PRODUCTS_CATID = gql`
 
 const PRODUCT_TILE_DATA = gql`
   fragment ProductTile on Product {
-    id
+    _id
     name
     url
     pricing
@@ -123,29 +123,35 @@ const GET_ATTRIBUTES = gql`
 const GET_PRODUCTS = gql`
   {
     products {
-      id
-      name
-      categoryId {
-        id
+      data {
+        _id
         name
+        categoryId {
+          id
+          name
+        }
+        url
+        sku
+        description
+        quantity
+        pricing
+        feature_image
+        gallery_image
+        meta
+        shipping
+        tax_class
+        status
+        featured_product
+        product_type
+        custom_field
+        date
+        updated
+        short_description
       }
-      url
-      sku
-      description
-      quantity
-      pricing
-      feature_image
-      gallery_image
-      meta
-      shipping
-      tax_class
-      status
-      featured_product
-      product_type
-      custom_field
-      date
-      updated
-      short_description
+      message {
+        success
+        message
+      }
     }
   }
 `;
@@ -153,29 +159,35 @@ const GET_PRODUCTS = gql`
 const GET_PRODUCT = gql`
   query($id: ID!) {
     product(id: $id) {
-      id
-      name
-      url
-      sku
-      description
-      quantity
-      pricing
-      feature_image
-      gallery_image
-      meta
-      shipping
-      tax_class
-      status
-      featured_product
-      product_type
-      custom_field
-      date
-      updated
-      categoryId {
+      data {
         id
         name
+        url
+        sku
+        description
+        quantity
+        pricing
+        feature_image
+        gallery_image
+        meta
+        shipping
+        tax_class
+        status
+        featured_product
+        product_type
+        custom_field
+        date
+        updated
+        categoryId {
+          id
+          name
+        }
+        short_description
       }
-      short_description
+      message {
+        message
+        success
+      }
     }
   }
 `;
@@ -183,30 +195,38 @@ const GET_PRODUCT = gql`
 const GET_SINGLE_PRODUCT = gql`
   query($url: String!) {
     productbyurl(url: $url) {
-      id
-      name
-      url
-      sku
-      description
-      quantity
-      pricing
-      feature_image
-      gallery_image
-      meta
-      shipping
-      tax_class
-      status
-      featured_product
-      product_type
-      custom_field
-      date
-      updated
-      categoryId {
-        id
+      data {
+
+        _id
         name
+        url
+        sku
+        description
+        quantity
+        pricing
+        feature_image
+        gallery_image
+        meta
+        shipping
+        tax_class
+        status
+        featured_product
+        product_type
+        custom_field
+        date
+        updated
+        categoryId {
+          id
+          name
+        }
+        short_description
+        variant
       }
-      short_description
-      variant
+      
+      message {
+        message
+        success
+      }
     }
   }
 `;
@@ -214,13 +234,19 @@ const GET_SINGLE_PRODUCT = gql`
 const GET_CATEGORIES = gql`
   {
     productCategories {
-      id
-      name
-      parentId
-      date
-      updated
-      url
-      image
+      data {
+        id
+        name
+        parentId
+        date
+        updated
+        url
+        image
+      }
+      message {
+        success
+        message
+      }
     }
   }
 `;
@@ -228,34 +254,40 @@ const GET_CATEGORIES = gql`
 const GET_CAT_PRODUCTS = gql`
   query($url: String!) {
     productsbycaturl(cat_url: $url) {
-      id
-      name
-      parentId
-      url
-      description
-      image
-      meta
-      child_cat {
+      data {
         id
         name
+        parentId
         url
-      }
-      filter_brands {
-        brandMaster {
-          _id
+        description
+        image
+        meta
+        child_cat {
+          id
           name
+          url
+        }
+        filter_brands {
+          brandMaster {
+            _id
+            name
+          }
+        }
+        filter_attributes {
+          _id {
+            attribute_id
+            attribute_value_id
+          }
+          attributeMaster {
+            _id
+            name
+            values
+          }
         }
       }
-      filter_attributes {
-        _id {
-          attribute_id
-          attribute_value_id
-        }
-        attributeMaster {
-          _id
-          name
-          values
-        }
+      message {
+        message
+        success
       }
     }
   }

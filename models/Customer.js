@@ -1,94 +1,123 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const bcrypt = require("bcryptjs");
 // Create Schema
 const CustomerSchema = new Schema({
   first_name: {
     type: String,
-    required: true
+    required: true,
   },
   last_name: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   company: {
-    type: String
+    type: String,
   },
   phone: {
-    type: String
+    type: String,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   address_book: [
     {
       first_name: {
-        type: String
+        type: String,
       },
       last_name: {
-        type: String
+        type: String,
       },
       company: {
-        type: String
+        type: String,
       },
       phone: {
-        type: String
+        type: String,
       },
       address_line1: {
-        type: String
+        type: String,
       },
       address_line2: {
-        type: String
+        type: String,
       },
       city: {
-        type: String
+        type: String,
       },
       country: {
-        type: String
+        type: String,
       },
       state: {
-        type: String
+        type: String,
       },
       pincode: {
-        type: String
+        type: String,
       },
       default_address: {
-        type: Boolean
-      }
-    }
+        type: Boolean,
+      },
+    },
   ],
   cart: {
-    items: [      
+    items: [
       {
         product_id: {
           type: Schema.ObjectId,
-          required: true
+          required: true,
         },
         qty: {
           type: Number,
-          required: true
+          required: true,
         },
-        combination:[],      
+        combination: [],
         date: {
           type: Date,
-          default: Date.now
-        }
-      }
-    ],    
+          default: Date.now,
+        },
+      },
+    ],
   },
   date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updated: {
-    type: Date
-  }
+    type: Date,
+  },
 });
+
+/**
+ * Check if email is taken
+ * @param {string} email - The user's email
+ * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+CustomerSchema.statics.isEmailTaken = async function (email, excludeUserId) {
+  const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+  return !!user;
+};
+
+/**
+ * Check if password matches the user's password
+ * @param {string} password
+ * @returns {Promise<boolean>}
+ */
+// CustomerSchema.methods.isPasswordMatch = async function (password) {
+//   const user = this;
+//   return bcrypt.compare(password, user.password);
+// };
+
+// CustomerSchema.pre("save", async function (next) {
+//   const user = this;
+//   if (user.isModified("password")) {
+//     user.password = await bcrypt.hash(user.password, 8);
+//   }
+//   next();
+// });
 
 module.exports = mongoose.model("Customer", CustomerSchema);

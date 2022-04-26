@@ -183,6 +183,7 @@ const AllCategory = (props) => {
                                 onClick={() =>
                                   dispatch(categoryDeleteAction(cat.id))
                                 }
+                                disabled
                               >
                                 <DeleteIcon />
                               </IconButton>

@@ -28,6 +28,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import {convertDateToStringFormat} from "../utils/convertDate";
 import {Loading} from '../components';
+import {client_app_route_url} from '../../utils/helper';
 
 const AllBlog = () => {
   const classes = viewStyles();
@@ -61,7 +62,7 @@ const AllBlog = () => {
 
             <CardHeader
               action={
-                <Link to="/add-blog">
+                <Link to={`${client_app_route_url}add-blog`}>
                   <Button
                     color="primary"
                     className={classes.addUserBtn}
@@ -116,7 +117,7 @@ const AllBlog = () => {
                           <TableCell>
                             <IconButton
                               aria-label="Edit"
-                              onClick={() => jumpTo(`edit-blog/${blog.id}`)}
+                              onClick={() => jumpTo(`${client_app_route_url}edit-blog/${blog.id}`)}
                             >
                               <EditIcon />
                             </IconButton>
@@ -124,6 +125,7 @@ const AllBlog = () => {
                               aria-label="Delete"
                               className={classes.deleteicon}
                               onClick={() => dispatch(blogDeleteAction(blog.id))}
+                              disabled
                             >
                               <DeleteIcon />
                             </IconButton>

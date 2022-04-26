@@ -35,7 +35,6 @@ module.exports = gql`
   }
 
   type calculatedCart {
-    items: [cartItem]
     subtotal: Float
     total_shipping: shippingObj
     total_tax: taxObj
@@ -49,18 +48,32 @@ module.exports = gql`
     combination: [String]
   }
 
+  input cartProducts {
+    product_id: ID
+    qty: Int
+    total: Float
+  }
+
+  type CartRES {
+    data:[Cart]
+    message: statusSchema
+  }
+  type Cart_by_id_RES {
+    data:Cart
+    message: statusSchema
+  }
   extend type Query {
-    carts: [Cart]
-    cart(id: ID!): Cart
+    carts: CartRES
+    cart(id: ID!): Cart 
     cartbyUser(user_id: ID!): Cart
-    calculateCart(cart: [cartProduct]): calculatedCart
+    calculateCart(cart: [cartProducts]): calculatedCart
   }
 
   extend type Mutation {
-    addCart(user_id: ID, total: Float, product: cartProduct): Cart
-    updateCart(id: ID!, total: Float, products: [cartProduct]): Cart
-    deleteCart(id: ID!): Boolean!
-    deleteCartProduct(id: ID!, object_id: ID!): Cart
+    addCart(user_id: ID, total: Float, products: [cartProduct]): statusSchema
+    updateCart(id: ID!, total: Float, products: [cartProduct]): statusSchema
+    deleteCart(id: ID!): statusSchema
+    deleteCartProduct(id: ID!, product_id: ID!): statusSchema
     addToCart(customer_id: ID, cart: [cartProduct]): generalResponse
   }
 `;

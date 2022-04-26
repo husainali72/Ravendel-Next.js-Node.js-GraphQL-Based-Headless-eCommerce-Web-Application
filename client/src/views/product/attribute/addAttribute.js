@@ -5,6 +5,7 @@ import { attributeAddAction } from "../../../store/action/";
 import ReactTags from "react-tag-autocomplete";
 import viewStyles from "../../viewStyles";
 import { Alert, Loading, TopBar, CardBlocks } from "../../components";
+import {client_app_route_url} from '../../../utils/helper';
 
 const delimiters = ["Enter", "Tab"];
 
@@ -39,7 +40,7 @@ const AddAttribute = () => {
           title='Add Attribute'
           onSubmit={onAdd}
           submitTitle='Add'
-          backLink={"/attributes"}
+          backLink={`${client_app_route_url}attributes`}
         />
 
         <Grid container spacing={2} className={classes.secondmainrow}>

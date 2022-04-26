@@ -24,6 +24,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { reviewsAction, reviewDeleteAction } from "../../store/action";
 import { Loading } from "../components";
 import {convertDateToStringFormat} from '../utils/convertDate';
+import {client_app_route_url} from '../../utils/helper';
 
 const AllReviews = () => {
   const classes = viewStyles();
@@ -97,7 +98,7 @@ const AllReviews = () => {
                               <IconButton
                                 aria-label='Edit'
                                 onClick={() =>
-                                  jumpTo(`edit-review/${review.id}`)
+                                  jumpTo(`${client_app_route_url}edit-review/${review.id}`)
                                 }
                               >
                                 <EditIcon />

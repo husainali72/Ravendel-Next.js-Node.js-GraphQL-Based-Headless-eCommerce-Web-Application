@@ -15,10 +15,31 @@ module.exports = gql`
   type userMeta {
     meta(key: String, value: String): metaKeyValueArray
   }
-
+ 
+  type UserResponse {
+    data: [User],
+    pagination: paginationInfo
+    message: statusSchema
+  }
+  
+  type UserIdRES {
+    data: User
+    message: statusSchema
+  }
+  type UserRES {
+    data:  [User]
+    message: statusSchema
+  }
   extend type Query {
-    users: [User]
-    user(id: ID!): User
+    users: UserRES
+    users_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): UserResponse
+    user(id: ID!): UserIdRES
     usersbyMeta(key: String, value: String): [User]
   }
 
@@ -29,7 +50,7 @@ module.exports = gql`
       role: String
       password: String
       image: Upload
-    ): [User]
+    ): statusSchema
     updateUser(
       id: ID!
       name: String
@@ -38,7 +59,7 @@ module.exports = gql`
       password: String
       updatedImage: Upload
       meta: [Meta]
-    ): [User]
-    deleteUser(id: ID!): [User]
+    ): statusSchema
+    deleteUser(id: ID!): statusSchema
   }
 `;

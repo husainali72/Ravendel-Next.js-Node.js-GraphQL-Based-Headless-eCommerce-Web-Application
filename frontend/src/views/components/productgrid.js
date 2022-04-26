@@ -29,7 +29,7 @@ const ProductGrid = ({allProducts, title}) => {
               products.map((product, index) =>
                 product.status === "Publish" ? (
                   <Fragment key={index}>
-                    <Grid item lg={3} md={4} sm={4} xs={6}>
+                    <Grid item lg={3} md={3} sm={4} xs={6}>
                       <ProductCard
                         productDetail={product}
                         index={index}

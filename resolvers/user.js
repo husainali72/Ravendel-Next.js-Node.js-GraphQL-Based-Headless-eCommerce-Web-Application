@@ -5,38 +5,81 @@ const {
   checkError,
   imageUpload,
   imageUnlink,
-  checkToken
+  checkToken,
+  MESSAGE_RESPONSE,
+  _validate,
 } = require("../config/helpers");
-const validate = require("../validations/user");
+
+const {
+  DELETE_FUNC,
+  GET_BY_PAGINATIONS,
+  GET_SINGLE_FUNC,
+  GET_ALL_FUNC,
+  CREATE_FUNC,
+  UPDATE_FUNC,
+} = require("../config/api_functions");
 const bcrypt = require("bcryptjs");
+
+const fs = require("fs");
+const {checkAwsFolder} = require("../config/aws");
+
+var udir = "./assets/images/user";
+var ldir = "./assets/images/user/large";
+var mdir = "./assets/images/user/medium";
+var tdir = "./assets/images/user/thumbnail";
+var odir = "./assets/images/user/original";
+
+if (!fs.existsSync(udir)) {
+  fs.mkdirSync(udir);
+}
+if (!fs.existsSync(ldir)) {
+  fs.mkdirSync(ldir);
+}
+if (!fs.existsSync(mdir)) {
+  fs.mkdirSync(mdir);
+}
+if (!fs.existsSync(odir)) {
+  fs.mkdirSync(odir);
+}
+if (!fs.existsSync(tdir)) {
+  fs.mkdirSync(tdir);
+}
 
 module.exports = {
   Query: {
     users: async (root, args) => {
-      try {
-        const users = await User.find({});
-        return users || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
-      }
+      return await GET_ALL_FUNC(User, "Users");
+    },
+    users_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      var searchInFields = {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { role: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      };
+      return await GET_BY_PAGINATIONS(
+        limit,
+        pageNumber,
+        orderBy,
+        order,
+        searchInFields,
+        User,
+        "Users"
+      );
     },
     user: async (root, args) => {
-      try {
-        const user = await User.findById(args.id);
-        if (!user) {
-          throw putError("User not found");
-        }
-        return user;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_SINGLE_FUNC(args.id, User, "User");
     },
+    //check it..........................
     usersbyMeta: async (root, args) => {
       try {
         const user = await User.find({
           "meta.key": args.key,
-          "meta.value": args.value
+          "meta.value": args.value,
         });
         if (!user) {
           throw putError("User not found");
@@ -46,7 +89,7 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
+    },
   },
   userMeta: {
     meta: async (root, args) => {
@@ -63,58 +106,40 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    }
+    },
   },
   Mutation: {
     addUser: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        // Check Validation
-        const errors = validate("addUser", args);
-        if (!isEmpty(errors)) {
-          throw putError(errors);
-        }
-
-        const user = await User.findOne({ email: args.email });
-
-        if (user) {
-          throw putError("Email already exist.");
-        } else {
-          let imgObject = "";
-          if (args.image) {
-            imgObject = await imageUpload(args.image, "/assets/images/user/");
-            if (imgObject.success === false) {
-              throw putError(imgObject.message);
-            }
-          }
-          const newUser = new User({
-            name: args.name,
-            email: args.email,
-            password: args.password,
-            role: args.role,
-            image: imgObject.data || imgObject
-          });
-
-          newUser.password = await bcrypt.hash(args.password, 10);
-          const user = await newUser.save();
-          //return user;
-          return await User.find({});
-        }
-      } catch (error) {
-        console.log(error);
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      await checkAwsFolder('user');
+      let path = "/assets/images/user/";
+      let data = {
+        name: args.name,
+        email: args.email,
+        password: args.password,
+        role: args.role,
+        image: args.image,
+      };
+      let validation = ["name", "email", "role", "password"];
+      return await CREATE_FUNC(id, "User", User, data, args, path, validation);
     },
     updateUser: async (root, args, { id }) => {
-      checkToken(id);
+      await checkAwsFolder('user');
+      console.log('ARGS',args);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "User", false);
+      }
+      if (!args.id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "User", false);
+      }
       try {
         const user = await User.findById({ _id: args.id });
         if (user) {
-          // Check Validation
-          const errors = validate("updateUser", args);
+          const errors = _validate(["name", "email", "role"], args);
           if (!isEmpty(errors)) {
-            throw putError(errors);
+            return {
+              message: errors,
+              success: false,
+            };
           }
 
           if (!isEmpty(args.password)) {
@@ -122,9 +147,10 @@ module.exports = {
           }
 
           if (args.updatedImage) {
+           //  console.log('wewewewewew',args.updatedImage);
             let imgObject = await imageUpload(
-              args.updatedImage,
-              "/assets/images/user/"
+              args.updatedImage.file,
+              "/assets/images/user/",'User'
             );
 
             if (imgObject.success === false) {
@@ -158,31 +184,18 @@ module.exports = {
             }
           }
 
+        //  console.log('USERDATA',user);
           await user.save();
-          return await User.find({});
+          return MESSAGE_RESPONSE("UpdateSuccess", "User", true);
         } else {
-          throw putError("User not exist");
+          return MESSAGE_RESPONSE("NOT_EXIST", "User", false);
         }
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "User", false);
       }
     },
     deleteUser: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const user = await User.findByIdAndRemove(args.id);
-        if (user) {
-          //return true;
-          imageUnlink(user.image);
-          const users = await User.find({});
-          return users || [];
-        }
-        throw putError("User not exist");
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    }
-  }
+      return await DELETE_FUNC(id, args.id, User, "User");
+    },
+  },
 };

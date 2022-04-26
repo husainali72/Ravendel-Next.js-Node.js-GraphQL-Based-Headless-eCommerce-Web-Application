@@ -37,6 +37,7 @@ import {
   ShippingComponent,
   CategoriesComponent,
 } from "./components";
+import {client_app_route_url} from '../../utils/helper';
 
 const AddProduct = () => {
   const classes = viewStyles();
@@ -80,10 +81,6 @@ const AddProduct = () => {
     sku: "",
     quantity: "",
   });
-
-  // useEffect(() => {
-  //   console.log("product", product);
-  // }, [product]);
 
   const addProduct = (e) => {
     e.preventDefault();
@@ -156,7 +153,7 @@ const AddProduct = () => {
           title='Add product'
           onSubmit={addProduct}
           submitTitle='Add'
-          backLink={"/all-products"}
+          backLink={`${client_app_route_url}all-products`}
         />
 
         <Grid container spacing={4} className={classes.secondmainrow}>

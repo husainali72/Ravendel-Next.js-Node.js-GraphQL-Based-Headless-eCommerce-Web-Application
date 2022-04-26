@@ -28,7 +28,7 @@ const BrandSelection = ({ value, onBrandChange }) => {
   }, [brandState.brands]);
 
   return (
-    <>
+    <React.Fragment>
       {brandState.loading ? (
         <Box component='div' display='flex' justifyContent='center'>
           <CircularProgress />
@@ -41,7 +41,7 @@ const BrandSelection = ({ value, onBrandChange }) => {
           value={value}
         />
       )}
-    </>
+    </React.Fragment>
   );
 };
 

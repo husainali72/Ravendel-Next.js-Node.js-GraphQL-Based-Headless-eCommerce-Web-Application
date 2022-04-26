@@ -32,15 +32,35 @@ module.exports = gql`
     name: String
     values: [customObject]
   }
-
+  
+  type productAttributeResponse {
+    data: [productAttribute]
+    pagination: paginationInfo
+    message: statusSchema
+  }
+  type productAttributeIdRES {
+    data: productAttribute
+    message: statusSchema
+  }
+  type productAttributeRES {
+    data: [productAttribute]
+    message: statusSchema
+  }
   extend type Query {
-    product_attributes: [productAttribute]
-    product_attribute(id: ID!): productAttribute
+    productAttribute_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): productAttributeResponse
+    product_attributes: productAttributeRES
+    product_attribute(id: ID!): productAttributeIdRES
   }
 
   extend type Mutation {
-    addAttribute(attribute: AttributeInput): attributeResponse
-    updateAttribute(attribute: AttributeInput): attributeResponse
-    deleteAttribute(id: ID!): attributeResponse
+    addAttribute(attribute: AttributeInput): statusSchema
+    updateAttribute(attribute: AttributeInput): statusSchema
+    deleteAttribute(id: ID!): statusSchema
   }
 `;

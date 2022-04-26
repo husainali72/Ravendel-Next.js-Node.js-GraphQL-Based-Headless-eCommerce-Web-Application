@@ -16,7 +16,7 @@ import {
   blogAction,
 } from "../../store/action/";
 import clsx from "clsx";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
   Loading,
@@ -117,7 +117,7 @@ const EditBlog = (props) => {
   };
 
   const fileChange = (e) => {
-    setBlog({ ...blog, [e.target.name]: e.target.files[0] });
+    setBlog({ ...blog, 'updatedImage': e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };
@@ -130,7 +130,7 @@ const EditBlog = (props) => {
           title='Edit Blog'
           onSubmit={updateBlog}
           submitTitle='Update'
-          backLink={"/all-blogs"}
+          backLink={`${client_app_route_url}all-blogs`}
         />
 
         <Grid

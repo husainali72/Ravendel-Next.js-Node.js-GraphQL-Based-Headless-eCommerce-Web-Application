@@ -10,7 +10,7 @@ import {
 import { useTheme } from "@material-ui/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { blogUpdateAction, blogAction } from "../../store/action/";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
   Alert,
@@ -68,7 +68,7 @@ const EditFAQ = (props) => {
           title='Edit FAQ'
           onSubmit={updateFaq}
           submitTitle='Update'
-          backLink={"/all-faq"}
+          backLink={`${client_app_route_url}all-faq`}
         />
 
         <Grid

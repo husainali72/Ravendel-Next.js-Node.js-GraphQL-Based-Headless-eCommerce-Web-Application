@@ -16,14 +16,14 @@ import { homepageAction } from "../../store/action/homepageAction";
 import { isEmpty } from "../../utils/helper";
 import Loading from "../components/loading";
 
-const Home = () => {
+const Home = () => { 
   const dispatch = useDispatch();
   const products = useSelector(state => state.products);
   const home = useSelector(state => state.homepage);
-  const featuredProductsState = useSelector(state => state.featuredProducts);
-  const recentProductsState = useSelector(state => state.recentProducts);
-  const productsByCatId = useSelector(state => state.productsByCatId);
-  const onSaleProducts = useSelector(state => state.onSaleProducts);
+  const featuredProductsState = useSelector(state => state.products.featuredProducts);
+  const recentProductsState = useSelector(state => state.products.recentProducts);
+  const productsByCatId = useSelector(state => state.products.productsByCatId);
+  const onSaleProducts = useSelector(state => state.products.onSaleProducts);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [saleProducts, setSaleProducts] = useState([]);
   const [recentProducts, setRecentProducts] = useState([]);

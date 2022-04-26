@@ -3,6 +3,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import Routes from "../routes";
 import DynamicScrollToTop from "../routes/DynamicScrollToTop";
 import NotFound from "../views/notfound";
+import {app_router_base_url} from '../utils/helper';
 
 const Main = () => {
   return (
@@ -19,7 +20,7 @@ const Main = () => {
           />
         ))}
         <Route path="*" component={NotFound} />
-        <Redirect to="/" />
+        <Redirect to={`${app_router_base_url}`} />
       </Switch>
     </main>
   );

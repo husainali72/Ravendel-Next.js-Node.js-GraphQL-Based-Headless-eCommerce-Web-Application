@@ -26,6 +26,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles.js";
 import { Alert, Loading } from "../components";
+import { client_app_route_url } from "../../utils/helper";
 
 const AllUsers = () => {
   const classes = viewStyles();
@@ -58,7 +59,7 @@ const AllUsers = () => {
           <Card>
             <CardHeader
               action={
-                <Link to='/add-user'>
+                <Link to={`${client_app_route_url}add-user`}>
                   <Button
                     color='primary'
                     className={classes.addUserBtn}
@@ -106,7 +107,7 @@ const AllUsers = () => {
                           <TableCell>
                             <IconButton
                               aria-label='Edit'
-                              onClick={() => jumpTo(`edit-user/${user.id}`)}
+                              onClick={() => jumpTo(`${client_app_route_url}edit-user/${user.id}`)}
                             >
                               <EditIcon />
                             </IconButton>
@@ -116,6 +117,7 @@ const AllUsers = () => {
                               onClick={() =>
                                 dispatch(userDeleteAction(user.id))
                               }
+                              disabled
                             >
                               <DeleteIcon />
                             </IconButton>

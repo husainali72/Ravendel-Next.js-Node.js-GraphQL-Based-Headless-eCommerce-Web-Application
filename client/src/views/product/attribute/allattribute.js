@@ -27,6 +27,7 @@ import {
   Alert,
   Loading,
 } from "../../components";
+import { client_app_route_url } from "../../../utils/helper";
 
 const AllAttribute = () => {
   const classes = viewStyles();
@@ -62,7 +63,7 @@ const AllAttribute = () => {
             {attributeState.loading ? <Loading /> : null} 
             <CardHeader
               action={
-                <Link to="/add-attribute">
+                <Link to={`${client_app_route_url}add-attribute`}>
                   <Button
                     color="primary"
                     className={classes.addUserBtn}
@@ -107,7 +108,7 @@ const AllAttribute = () => {
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(`edit-attribute/${attribute.id}`)
+                                  jumpTo(`${client_app_route_url}edit-attribute/${attribute.id}`)
                                 }
                               >
                                 <EditIcon />
@@ -119,6 +120,7 @@ const AllAttribute = () => {
                               onClick={() =>
                                 dispatch(attributeDeleteAction(attribute.id))
                               }
+                            disabled
                             >
                               <IconButton
                                 aria-label="Delete"

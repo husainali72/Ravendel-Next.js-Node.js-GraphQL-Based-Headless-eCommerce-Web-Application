@@ -1,9 +1,9 @@
 import Auth from "./auth";
 import jumpTo from "./navigation";
 import axios from "axios";
-import { isEmpty } from "./helper";
+import { isEmpty, client_app_route_url } from "./helper";
 import APclient from "../Client";
-import gql from "graphql-tag";
+
 export const mutation = async (query, variables) => {
   try {
     const response = await APclient.mutate({
@@ -81,7 +81,7 @@ const service = (config) => {
       }
       if (error.response.status === 401) {
         Auth.logout();
-        jumpTo("/login");
+        jumpTo(`${client_app_route_url}login`);
         throw error;
       }
       return Promise.reject(error);
@@ -93,24 +93,27 @@ const service = (config) => {
 export default service;
 
 export const login = (email, password) => {
+  let location = window.location.origin;
+  // let location = 'http://localhost:8000';
   const body = {
     email: email,
     password: password,
   };
   return service({
     method: "POST",
-    url: "api/users/login",
+    url: `${location}/api/users/login`,
     data: body,
-  }).then((res) => {
-    Auth.setUserToken(res.data);
+  }).then(async(res) => {
+    await Auth.setUserToken(res.data);
     return res;
   });
 };
 
 export const getUpdatedUrl = (table, url) => {
+  let location = window.location.origin;
   return service({ 
     method: "POST",
-    url: "/api/misc/checkurl",
+    url: `${location}/api/misc/checkurl`,
     data: { url: url, table: table },
   }).then((res) => {
     if (res.data.success) {
@@ -120,9 +123,10 @@ export const getUpdatedUrl = (table, url) => {
 };
 
 export const deleteProductVariation = (id) => {
+  let location = window.location.origin;
   return service({
     method: "POST",
-    url: "/api/misc/delete_variation",
+    url: `${location}/api/misc/delete_variation`,
     data: { id: id },
   }).then((res) => {
     if (res.data.success) {
@@ -132,9 +136,10 @@ export const deleteProductVariation = (id) => {
 };
 
 export const deleteProductVariationImage = (obj) => {
+  let location = window.location.origin;
   return service({
     method: "POST",
-    url: "/api/misc/delete_image",
+    url: `${location}/api/misc/delete_image`,
     data: { image: obj },
   }).then((res) => {
     if (res.data.success) {
@@ -144,9 +149,10 @@ export const deleteProductVariationImage = (obj) => {
 };
 
 export const getDashboardData = () => {
+  let location = window.location.origin;
   return service({
     method: "POST",
-    url: "/api/misc/dashboard_data"
+    url: `${location}/api/misc/dashboard_data`
   }).then((res) => {
     if (res.data.success) {
       return Promise.resolve(res.data.dashBoardData);

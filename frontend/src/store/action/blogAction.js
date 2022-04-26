@@ -13,11 +13,17 @@ export const blogsAction = () => dispatch => {
   });
   query(GET_BLOGS)
     .then(response => {
-      if (response) {
+      if (response.data.blogs.message.success) {
         return dispatch({
           type: BLOGS_SUCCESS,
-          payload: response.data.blogs
+          payload: response.data.blogs.data
         });
+      }else {
+        return dispatch({
+          type: BLOG_FAIL,
+          payload: { boolean: true, message: response.data.blogs.message.message, error: true }
+        });
+
       }
     })
     .catch(error => {
@@ -37,11 +43,17 @@ export const blogAction = id => dispatch => {
   });
   query(GET_BLOG, { id: id })
     .then(response => {
-      if (response) {
+      if (response.data.blog.message.success) {
         return dispatch({
           type: BLOG_SUCCESS,
-          payload: response.data.blog
+          payload: response.data.blog.data
         });
+      }else {
+        return dispatch({
+          type: BLOG_FAIL,
+          payload: { boolean: true, message: response.data.blog.message.message, error: true }
+        });
+
       }
     })
     .catch(error => {
@@ -61,10 +73,16 @@ export const blogtagsAction = () => dispatch => {
   });
   query(GET_BLOGTAGS)
     .then(response => {
-      if (response) {
+      if (response.data.blogtags.message.success) {
         return dispatch({
           type: BLOGTAGS_SUCCESS,
-          payload: response.data.blogtags
+          payload: response.data.blogtags.data
+        });
+      }else {
+
+        return dispatch({
+          type: BLOGTAG_FAIL,
+          payload: { boolean: true, message: response.data.blogtags.message.message, error: true }
         });
       }
     })
@@ -85,11 +103,17 @@ export const tagBlogsAction = url => dispatch => {
   });
   query(GET_TAG_BLOGS, { url: url })
     .then(response => {
-      if (response) {
+      if (response.data.blogsbytagurl.message.success) {
         return dispatch({
           type: TAG_BLOGS,
-          payload: response.data.blogsbytagurl
+          payload: response.data.blogsbytagurl.data
         });
+      }else {
+        return dispatch({
+          type: BLOG_FAIL,
+          payload: { boolean: true, message: response.data.blogsbytagurl.message.message, error: true }
+        });
+
       }
     })
     .catch(error => {

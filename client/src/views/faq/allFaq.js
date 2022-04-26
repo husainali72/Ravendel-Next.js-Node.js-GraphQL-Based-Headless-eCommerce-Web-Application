@@ -25,6 +25,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import viewStyles from "../viewStyles";
 import {convertDateToStringFormat} from "../utils/convertDate";
 import {Alert, Loading} from '../components';
+import {client_app_route_url} from '../../utils/helper';
 
 const AllFAQ = (props) => {
   const classes = viewStyles();
@@ -57,7 +58,7 @@ const AllFAQ = (props) => {
           <Card>
             <CardHeader
               action={
-                <Link to="/add-faq">
+                <Link to={`${client_app_route_url}add-faq`}>
                   <Button
                     color="primary"
                     className={classes.addUserBtn}
@@ -98,7 +99,7 @@ const AllFAQ = (props) => {
                           <TableCell>
                             <IconButton
                               aria-label="Edit"
-                              onClick={() => jumpTo(`edit-faq/${blog.id}`)}
+                              onClick={() => jumpTo(`${client_app_route_url}edit-faq/${blog.id}`)}
                             >
                               <EditIcon />
                             </IconButton>
@@ -106,6 +107,7 @@ const AllFAQ = (props) => {
                               aria-label="Delete"
                               className={classes.deleteicon}
                               onClick={() => dispatch(blogDeleteAction(blog.id))}
+                              disabled
                             >
                               <DeleteIcon />
                             </IconButton>

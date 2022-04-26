@@ -37,8 +37,7 @@ import clsx from "clsx";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
 import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTwoTone";
-import { isEmpty } from "../../utils/helper";
-import "../../App.css";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import _ from "lodash";
 import viewStyles from "../viewStyles";
 
@@ -308,7 +307,7 @@ const EditProduct = props => {
         <Grid container className="topbar">
           <Grid item lg={6}>
             <Typography variant="h4">
-              <Link to="/all-products">
+              <Link to={`${client_app_route_url}all-products`}>
                 <IconButton aria-label="Back">
                   <ArrowBackIcon />
                 </IconButton>
@@ -326,7 +325,7 @@ const EditProduct = props => {
               color="primary"
               className={classes.cancelBtn}
             >
-              <Link to="/all-products" style={{ color: "#fff" }}>
+              <Link to={`${client_app_route_url}all-products`} style={{ color: "#fff" }}>
                 Discard
               </Link>
             </Button>

@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import PlaceHolder from "../../../assets/images/placeholder.png";
+import {app_router_base_url} from '../../../utils/helper';
 
 const BlogListing = (props) => {
   // var array = props.recentlyBlogs;
@@ -43,7 +44,7 @@ const BlogListing = (props) => {
                 .map((blog, index) => (
                   <Grid item lg={4} md={6} sm={6} xs={12} key={index}>
                     <Card className="blog-card">
-                      <Link to={`blog/${blog.id}`}>
+                      <Link to={`${app_router_base_url}blog/${blog.id}`}>
                         <CardActionArea>
                           <CardMedia
                             component="img"
@@ -89,7 +90,7 @@ const BlogListing = (props) => {
                         </CardActionArea>
                       </Link>
                       {/* <CardActions>
-                        <Link to={`blog/${blog.id}`}>
+                        <Link to={`${app_router_base_url}blog/${blog.id}`}>
                           <Button size="small" color="primary">
                             Learn More
                           </Button>

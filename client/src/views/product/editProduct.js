@@ -26,7 +26,7 @@ import {
   deleteProductVariationImage,
   deleteProductVariation,
 } from "../../utils/service";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import {
   Alert,
   Loading,
@@ -62,7 +62,7 @@ const EditProduct = (props) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const [product, setProduct] = useState({
-    id: "",
+    _id: "",
     name: "",
     categoryId: [],
     brand: "",
@@ -136,9 +136,9 @@ const EditProduct = (props) => {
     }
   }, [productState.product]);
 
-  useEffect(() => {
-    console.log("product useEffect", product);
-  }, [product]);
+  // useEffect(() => {
+  //   console.log("product useEffect", product);
+  // }, [product]);
 
   const updateProduct = (e) => {
     e.preventDefault();
@@ -154,7 +154,7 @@ const EditProduct = (props) => {
   const onFeatureImageChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    setProduct({ ...product, [e.target.name]: e.target.files });
+    setProduct({ ...product, ['update_feature_image']: e.target.files });
   };
 
   const isUrlExist = async (url) => {
@@ -212,10 +212,10 @@ const EditProduct = (props) => {
           title='Edit Product'
           onSubmit={updateProduct}
           submitTitle='Update'
-          backLink={"/all-products"}
+          backLink={`${client_app_route_url}all-products`}
         />
 
-        {!isEmpty(product.id) ? (
+        {!isEmpty(product._id) ? (
           <Grid container spacing={4} className={classes.secondmainrow}>
             <Grid item lg={9} md={12}>
               {/* ===================Information=================== */}

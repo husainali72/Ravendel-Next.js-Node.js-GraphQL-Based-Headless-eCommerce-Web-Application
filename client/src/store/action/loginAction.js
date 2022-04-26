@@ -2,29 +2,30 @@ import { login } from "../../utils/service";
 import cookie from "react-cookies";
 import jumpTo, { go } from "../../utils/navigation";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
+import {client_app_route_url} from '../../utils/helper';
+
 export const LoginAction = (email, password) => dispatch => {
   dispatch({
     type: POST_TOKEN_BEGIN
   });
   return login(email, password)
     .then(res => {
-      jumpTo("/");
-      return dispatch({
+      dispatch({
         type: POST_TOKEN_SUCCESS,
         payload: res
       });
 
-      //return res;
+      jumpTo(`${client_app_route_url}dashboard`);
     })
     .catch(error => {
       dispatch({
         type: POST_TOKEN_FAIL
-      });
-      //throw error;
-      return dispatch({
-        type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error.response.data, error: true }
-      });
+      }); 
+      throw error;
+      // return dispatch({
+      //   type: ALERT_SUCCESS,
+      //   payload: { boolean: true, message: 'Invalid credentials', error: true }
+      // });
     });
 };
 

@@ -64,6 +64,7 @@ const AllTaxesComponent = ({ taxState, editTaxChange, deleteTaxChange }) => {
                             aria-label='Delete'
                             className={classes.deleteicon}
                             onClick={() => deleteTaxChange(tax._id)}
+                            disabled
                           >
                             <DeleteIcon />
                           </IconButton>

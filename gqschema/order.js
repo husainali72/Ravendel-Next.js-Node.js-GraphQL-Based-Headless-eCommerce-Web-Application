@@ -2,7 +2,7 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Order {
     id: ID
-    user_id: ID
+    customer_id: ID
     status: String
     shipping: customObject
     billing: customObject
@@ -15,27 +15,42 @@ module.exports = gql`
     product_id: ID
     qty: Int
   }
-
+  type OrderIdRES {
+    data: Order
+    message: statusSchema
+  }
+  type OrderRES {
+    data: [Order]
+    message: statusSchema
+  }
+  type OrderByUser {
+    data: Order
+    message: statusSchema
+  }
   extend type Query {
-    orders: [Order]
-    order(id: ID!): Order
-    orderbyUser(user_id: ID!): Order
+    orders: OrderRES
+    order(id: ID!): OrderIdRES
+    orderbyUser(user_id: ID!): OrderByUser
   }
 
   extend type Mutation {
     addOrder(
-      user_id: ID
+      customer_id: ID
       billing: customObject
       shipping: customObject
       products: customArray
-      status: String
-    ): [Order]
+      subtotal: String
+      shipping_amount: String
+      tax_amount: String
+      discount_amount: String
+      grand_total: String
+    ): statusSchema
     updateOrder(
       id: ID
       billing: customObject
       shipping: customObject
       status: String
-    ): [Order]
-    deleteOrder(id: ID!): [Order]
+    ): statusSchema
+    deleteOrder(id: ID!): statusSchema
   }
 `;

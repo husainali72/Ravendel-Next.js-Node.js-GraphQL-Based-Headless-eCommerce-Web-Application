@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Typography, Button, Container, Box } from "@material-ui/core";
 import Slider from "react-slick";
+import {app_router_base_url} from '../../../utils/helper';
 
 const Banner = (props) => {
   const [bannerSlider, setBannerSlider] = useState([]);
@@ -93,7 +94,7 @@ const Banner = (props) => {
             </Typography>
           </Box>
           <Button variant="contained" color="primary">
-            <Link to="/shop">Shop Now</Link>
+            <Link to={`${app_router_base_url}shop`}>Shop Now</Link>
           </Button>
         </Container>
       </Box> */}

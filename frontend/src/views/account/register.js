@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import {PageTitle} from '../components';
+import {app_router_base_url} from '../../utils/helper';
 
 const Register = () => {
   const doRegister = e => {
@@ -65,7 +66,7 @@ const Register = () => {
                 Register
               </Button>
               <Typography variant="button">
-                <Link to="/login">Already member ?</Link>
+                <Link to={`${app_router_base_url}login`}>Already member ?</Link>
               </Typography>
             </form>
           </Grid>

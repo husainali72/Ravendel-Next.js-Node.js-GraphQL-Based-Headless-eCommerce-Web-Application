@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import menuItems from "../routes/nav.json";
 import Icon from "@material-ui/core/Icon";
 import clsx from "clsx";
+import {client_app_route_url} from '../utils/helper';
 
 const MenuBar = () => {
   const classes = useStyles();
@@ -32,7 +33,7 @@ const MenuBar = () => {
     return menus.map(menu => {
       if (!menu.children) {
         return (
-          <Link to={menu.url} key={menu.name}>
+          <Link to={`${client_app_route_url + menu.url}`} key={menu.name}>
             <ListItem className={classes.item} disableGutters>
               <Button className={classes.button}>
                 <ListItemIcon className={classes.icons}>

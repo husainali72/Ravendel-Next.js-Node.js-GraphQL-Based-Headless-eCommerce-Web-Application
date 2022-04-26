@@ -1,5 +1,4 @@
 const ProductCat = require("../models/ProductCat");
-const CatTree = require("../models/CatTree");
 const Product = require("../models/Product");
 const Brand = require("../models/Brand");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
@@ -10,14 +9,118 @@ const {
   checkError,
   imageUpload,
   imageUnlink,
-  checkToken,
-  stringTourl,
-  validateUrl,
   updateUrl,
+  MESSAGE_RESPONSE,
+  _validate,
+  _validatenested,
 } = require("../config/helpers");
-const validate = require("../validations/product");
+const {
+  DELETE_FUNC,
+  GET_BY_PAGINATIONS,
+  GET_SINGLE_FUNC,
+  GET_ALL_FUNC,
+  GET_BY_URL,
+  CREATE_FUNC,
+  UPDATE_FUNC,
+} = require("../config/api_functions");
+const {checkAwsFolder} = require("../config/aws");
 var mongoose = require("mongoose");
-/*geting child*/
+
+/* =============================WILL FIX LATER============================= */
+const fs = require("fs");
+var pdir = "./assets/images/product";
+var pcdir = "./assets/images/product/category";
+var fdir = "./assets/images/product/feature";
+var gdir = "./assets/images/product/gallery";
+var vdir = "./assets/images/product/variant";
+
+if (!fs.existsSync(pdir)) {
+  fs.mkdirSync(pdir);
+}
+if (!fs.existsSync(pcdir)) {
+  fs.mkdirSync(pcdir);
+}
+
+if (!fs.existsSync(fdir)) {
+  fs.mkdirSync(fdir);
+}
+if (!fs.existsSync(vdir)) {
+  fs.mkdirSync(vdir);
+}
+
+var cldir = "./assets/images/product/category/large";
+var cmdir = "./assets/images/product/category/medium";
+var ctdir = "./assets/images/product/category/thumbnail";
+var codir = "./assets/images/product/category/original";
+if (!fs.existsSync(cldir)) {
+  fs.mkdirSync(cldir);
+}
+if (!fs.existsSync(cmdir)) {
+  fs.mkdirSync(cmdir);
+}
+if (!fs.existsSync(codir)) {
+  fs.mkdirSync(codir);
+}
+if (!fs.existsSync(ctdir)) {
+  fs.mkdirSync(ctdir);
+}
+
+var fldir = "./assets/images/product/feature/large";
+var fmdir = "./assets/images/product/feature/medium";
+var ftdir = "./assets/images/product/feature/thumbnail";
+var fodir = "./assets/images/product/feature/original";
+
+if (!fs.existsSync(fldir)) {
+  fs.mkdirSync(fldir);
+}
+if (!fs.existsSync(fmdir)) {
+  fs.mkdirSync(fmdir);
+}
+if (!fs.existsSync(ftdir)) {
+  fs.mkdirSync(ftdir);
+}
+if (!fs.existsSync(fodir)) {
+  fs.mkdirSync(fodir);
+}
+
+var gldir = "./assets/images/product/gallery/large";
+var gmdir = "./assets/images/product/gallery/medium";
+var gtdir = "./assets/images/product/gallery/thumbnail";
+var godir = "./assets/images/product/gallery/original";
+
+if (!fs.existsSync(gldir)) {
+  fs.mkdirSync(gldir);
+}
+if (!fs.existsSync(gmdir)) {
+  fs.mkdirSync(gmdir);
+}
+if (!fs.existsSync(godir)) {
+  fs.mkdirSync(godir);
+}
+if (!fs.existsSync(gtdir)) {
+  fs.mkdirSync(gtdir);
+}
+
+var vldir = "./assets/images/product/variant/large";
+var vmdir = "./assets/images/product/variant/medium";
+var vtdir = "./assets/images/product/variant/thumbnail";
+var vodir = "./assets/images/product/variant/original";
+
+if (!fs.existsSync(vldir)) {
+  fs.mkdirSync(vldir);
+}
+if (!fs.existsSync(gmdir)) {
+  fs.mkdirSync(gmdir);
+}
+if (!fs.existsSync(vtdir)) {
+  fs.mkdirSync(vtdir);
+}
+if (!fs.existsSync(vodir)) {
+  fs.mkdirSync(vodir);
+}
+/* =============================WILL FIX LATER============================= */
+
+/* For Test geting child*/
 let allids = [];
 const getTree = async (id) => {
   let cats = await ProductCat.find({ parentId: id });
@@ -32,13 +135,25 @@ const getTree = async (id) => {
 module.exports = {
   Query: {
     productCategories: async (root, args) => {
-      try {
-        const cats = await ProductCat.find({});
-        return cats || [];
-      } catch (error) {
-        throw new Error("Something went wrong.");
-      }
+      return await GET_ALL_FUNC(ProductCat, "ProductCats");
     },
+    productCategories_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      let searchInFields = { name: { $regex: search, $options: "i" } };
+
+      return await GET_BY_PAGINATIONS(
+        limit,
+        pageNumber,
+        orderBy,
+        order,
+        searchInFields,
+        ProductCat,
+        "ProductCategories"
+      );
+    },
+
     productCategoriesByFilter: async (root, args) => {
       try {
         const cats = await ProductCat.find(args.filter);
@@ -48,34 +163,29 @@ module.exports = {
       }
     },
     productCategory: async (root, args) => {
-      try {
-        const cat = await ProductCat.findById(args.id);
-        if (!cat) {
-          throw putError("Category not found");
-        }
-        return cat;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_SINGLE_FUNC(args.id, ProductCat, "ProductCat");
     },
     products: async (root, args, { id }) => {
-      try {
-        const products = await Product.find({});
-        return products || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_ALL_FUNC(Product, "Products");
+    },
+    products_pagination: async (
+      root,
+      { limit, pageNumber, search, orderBy, order }
+    ) => {
+      let searchInFields = { name: { $regex: search, $options: "i" } };
+
+      return await GET_BY_PAGINATIONS(
+        limit,
+        pageNumber,
+        orderBy,
+        order,
+        searchInFields,
+        Product,
+        "Products"
+      );
     },
     productswithcat: async (root, args, { id }) => {
-      try {
-        const products = await Product.find({});
-        return products || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_ALL_FUNC(Product, "Productswithcategory");
     },
     featureproducts: async (root, args, { id }) => {
       try {
@@ -145,30 +255,10 @@ module.exports = {
       }
     },
     productsbycaturl: async (root, args, { id }) => {
-      try {
-        const cat = await ProductCat.findOne({ url: args.cat_url });
-        if (!cat) {
-          throw putError("404 Not found");
-        }
-
-        return cat;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_BY_URL(ProductCat, args.cat_url, "ProductCategory");
     },
     productbyurl: async (root, args, { id }) => {
-      try {
-        const product = await Product.findOne({ url: args.url });
-        if (!product) {
-          throw putError("404 Not found");
-        }
-
-        return product;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_BY_URL(Product, args.url, "Products");
     },
     filteredProducts: async (root, args) => {
       try {
@@ -214,10 +304,11 @@ module.exports = {
             });
           }
         }
-        
-        const products = (await Product.aggregate(filterArrey)).map((pro)=> {pro.id = pro._id; return pro});        
 
-        
+        const products = (await Product.aggregate(filterArrey)).map((pro) => {
+          pro.id = pro._id;
+          return pro;
+        });
 
         return products || [];
       } catch (error) {
@@ -226,16 +317,7 @@ module.exports = {
       }
     },
     product: async (root, args) => {
-      try {
-        const product = await Product.findById(args.id);
-        if (!product) {
-          throw putError("Product not found");
-        }
-        return product;
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
+      return await GET_SINGLE_FUNC(args.id, Product, "Product");
     },
   },
   Product: {
@@ -275,35 +357,37 @@ module.exports = {
     },
     attribute_master: async (root, args) => {
       try {
-
-        if(!root.attribute && !root.attribute.length){
+        if (!root.attribute && !root.attribute.length) {
           return [];
-        } 
+        }
         let attributes = {};
-        for(let attr of root.attribute){
-          if(!Array.isArray(attributes[attr.attribute_id.toString()])){
+        for (let attr of root.attribute) {
+          if (!Array.isArray(attributes[attr.attribute_id.toString()])) {
             attributes[attr.attribute_id.toString()] = [];
           }
-         
-          attributes[attr.attribute_id.toString()].push(attr.attribute_value_id.toString());
+
+          attributes[attr.attribute_id.toString()].push(
+            attr.attribute_value_id.toString()
+          );
         }
 
-        const attrMaster = await ProductAttribute.find({ _id: {$in: Object.keys(attributes)}});                      
+        const attrMaster = await ProductAttribute.find({
+          _id: { $in: Object.keys(attributes) },
+        });
 
         for (const [i, attr] of attrMaster.entries()) {
           for (const [j, val] of attr.values.entries()) {
             if (~attributes[attr._id.toString()].indexOf(val._id.toString())) {
-              
-              if(!Array.isArray(attrMaster[i].attribute_values)){
-                attrMaster[i].attribute_values = [];                  
+              if (!Array.isArray(attrMaster[i].attribute_values)) {
+                attrMaster[i].attribute_values = [];
               }
               attrMaster[i].attribute_values.push(val);
-            }            
+            }
           }
 
           attrMaster[i].values = [];
         }
-        
+
         return attrMaster || [];
       } catch (error) {
         error = checkError(error);
@@ -311,13 +395,14 @@ module.exports = {
       }
     },
   },
+  //.............
   Category: {
     products: async (root, args) => {
+      // return await GET_BY_ROOT_ID(root.id, Product, "Products");
       try {
         const products = await Product.find({
           categoryId: { $in: root.id },
         });
-
         return products || [];
       } catch (error) {
         error = checkError(error);
@@ -407,152 +492,155 @@ module.exports = {
   },
   Mutation: {
     addProductCategory: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        // Check Validation
-        const errors = validate("addProductCategory", args);
-        if (!isEmpty(errors)) {
-          throw putError(errors);
-        }
 
-        const cat = await ProductCat.findOne({
-          name: args.name,
-          parentId: args.parentId,
-        });
-
-        if (cat) {
-          throw putError("This category is already exist.");
-        } else {
-          let url = await updateUrl(args.url || args.name, "ProductCat");
-          let imgObject = "";
-          if (args.image) {
-            imgObject = await imageUpload(
-              args.image[0],
-              "/assets/images/product/category/"
-            );
-
-            if (imgObject.success === false) {
-              throw putError(imgObject.message);
-            }
-          }
-
-          const newCat = new ProductCat({
-            name: args.name,
-            parentId: args.parentId || null,
-            url: url,
-            description: args.description,
-            image: imgObject.data || imgObject,
-            meta: args.meta,
-          });
-
-          await newCat.save();
-          return await ProductCat.find({});
-        }
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+      await checkAwsFolder('productcategory');
+      let path = "/assets/images/product/category/";
+      let url = "";
+      if (args.url || args.title) {
+        url = await updateUrl(args.url || args.name, "ProductCat");
       }
+      let data = {
+        name: args.name,
+        parentId: args.parentId || null,
+        url: url,
+        description: args.description,
+        image: args.image,
+        meta: args.meta,
+      };
+      let validation = ["name"];
+      return await CREATE_FUNC(
+        id,
+        "ProductCategory",
+        ProductCat,
+        data,
+        args,
+        path,
+        validation
+      );
     },
     updateProductCategory: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const cat = await ProductCat.findById({ _id: args.id });
-        if (cat) {
-          let imgObject = "";
-          if (args.update_image) {
-            imgObject = await imageUpload(
-              args.update_image[0],
-              "/assets/images/product/category/"
-            );
-
-            if (imgObject.success === false) {
-              throw putError(imgObject.message);
-            }
-
-            if (cat.image) {
-              imageUnlink(cat.image);
-            }
-
-            cat.image = imgObject.data;
-          }
-
-          var url = await updateUrl(args.url || args.name, "ProductCat");
-          cat.name = args.name;
-          cat.parentId = args.parentId || null;
-          cat.url = url;
-          cat.description = args.description;
-          cat.meta = args.meta;
-          cat.updated = Date.now();
-
-          await cat.save();
-          return await ProductCat.find({});
-        } else {
-          throw putError("Category not exist");
-        }
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+      await checkAwsFolder('productcategory');
+      let path = "/assets/images/product/category/";
+      let url = "";
+      if (args.url || args.title) {
+        url = await updateUrl(args.url || args.name, "ProductCat");
       }
+      let data = {
+        name: args.name,
+        parentId: args.parentId || null,
+        url: url,
+        description: args.description,
+        image: args.image,
+        meta: args.meta,
+      };
+      let validation = ["name"];
+      return await UPDATE_FUNC(
+        id,
+        args.id,
+        ProductCat,
+        "ProductCategory",
+        data,
+        path,
+        args,
+        validation
+      );
     },
     deleteProductCategory: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "ProductCategory", false);
+      }
+      if (!args.id) {
+        return MESSAGE_RESPONSE("ID_ERROR","ProductCategory", false);
+      }
       try {
         const cat = await ProductCat.findByIdAndRemove(args.id);
         if (cat) {
+          // if (cat.image) {
+          //   imageUnlink(cat.image);
+          // }
           if (cat.image) {
-            imageUnlink(cat.image);
+            imageUnlink(cat.feature_image);
           }
-          const cats = await ProductCat.find({});
-          return cats || [];
+          let _id = args.id;
+          const product = await Product.updateMany(
+            {},
+            { $pull: { categoryId: { $in: [_id] } } },
+            { multi: true }
+          );
+          return MESSAGE_RESPONSE("DELETE", "ProductCategory", true);
         }
-        throw putError("Category not exist");
+        return MESSAGE_RESPONSE("NOT_EXIST", "ProductCategory", false);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("DELETE_ERROR", "ProductCategory", false);
       }
     },
-    addProduct: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const errors = validate("addProduct", args);
-        if (!isEmpty(errors)) {
-          throw putError(errors);
-        }
 
+    addProduct: async (root, args, { id }) => {
+      console.log(args)
+      await checkAwsFolder('product');
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
+      }
+      try {
+        var errors = _validate(["name", "sku", "quantity"], args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        errors = _validatenested("pricing", ["price", "sellprice"], args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        errors = _validatenested(
+          "shipping",
+          ["height", "width", "depth", "weight", "shipping_class"],
+          args
+        );
+
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
         const product = await Product.findOne({ name: args.name });
         if (product) {
-          throw putError("Name already exist.");
+          return MESSAGE_RESPONSE("DUPLICATE", "Name", false);
         } else {
-          //const isSku = await Product.findOne({ sku: args.sku });
           let imgObject = "";
           if (args.feature_image) {
+            // console.log('fimage',args.feature_image);
             imgObject = await imageUpload(
-              args.feature_image[0],
-              "/assets/images/product/feature/"
+              args.feature_image[0].file,
+              "/assets/images/product/feature/","productfeature"
             );
 
             if (imgObject.success === false) {
               throw putError(imgObject.message);
             }
           }
+
+          //  console.log(args.gallery_image);
 
           let imgArray = [];
           if (args.gallery_image) {
             let galleryObject = "";
             for (let i in args.gallery_image) {
               galleryObject = await imageUpload(
-                args.gallery_image[i],
-                "/assets/images/product/gallery/"
+                args.gallery_image[i].file,
+                "/assets/images/product/gallery/","productgallery"
               );
-
               if (galleryObject.success) {
                 imgArray.push(galleryObject.data);
               }
             }
           }
-
           let url = await updateUrl(args.url || args.name, "Product");
-
           const newProduct = new Product({
             name: args.name,
             url: url,
@@ -575,28 +663,30 @@ module.exports = {
               width: args.shipping.width || 0,
               depth: args.shipping.depth || 0,
               weight: args.shipping.weight || 0,
-              shipping_class: args.shipping.shipping_class,
+              shipping_class: args.shipping.shipping_class || null,
             },
-            tax_class: args.tax_class,
+            tax_class: args.tax_class || null,
             featured_product: args.featured_product,
             product_type: args.product_type,
             custom_field: args.custom_field,
             attribute: args.attribute,
             variant: args.variant,
           });
-
           let lastProduct = await newProduct.save();
           let combinations = [];
           if (args.variant.length && args.combinations.length) {
             combinations = args.combinations;
+            //console.log('ttt',combinations);
+
             for (const combination of combinations) {
               combination.product_id = lastProduct.id;
 
               let imgObject = "";
+
               if (combination.image && combination.image.file) {
                 imgObject = await imageUpload(
-                  combination.image.file[0],
-                  "/assets/images/product/variant/"
+                  combination.image.file[0].file,
+                  "/assets/images/product/variant/","productvarient"
                 );
                 combination.image = imgObject.data || imgObject;
               }
@@ -615,23 +705,50 @@ module.exports = {
           }
 
           let result = await ProductAttributeVariation.insertMany(combinations);
-
-          const products = await Product.find({});
-          return products || [];
+          return MESSAGE_RESPONSE("AddSuccess", "Product", true);
         }
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        console.log('catchhhhhhh')
+        console.log(error)
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Product", false);
       }
     },
     updateProduct: async (root, args, { id }) => {
-      checkToken(id);
-      try {
-        const errors = validate("updateProduct", args);
-        if (!isEmpty(errors)) {
-          throw putError(errors);
-        }
 
+      await checkAwsFolder('product');
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
+      }
+      try {
+        var errors = _validate(["name", "sku", "quantity"], args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        errors = _validatenested("pricing", ["price", "sellprice"], args);
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        errors = _validatenested(
+          "shipping",
+          ["shipping_class"],
+          args
+        );
+
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        if (!args.id) {
+          return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
+        }
         const product = await Product.findById({ _id: args.id });
         if (product) {
           let isSku = false;
@@ -639,12 +756,11 @@ module.exports = {
           if(matchedProduct && matchedProduct._id != args.id){
             isSku = true;
           } */
-
           let imgObject = "";
           if (args.update_feature_image) {
             imgObject = await imageUpload(
-              args.update_feature_image[0],
-              "/assets/images/product/feature/"
+              args.update_feature_image[0].file,
+              "/assets/images/product/feature/","productfeature"
             );
 
             if (imgObject.success === false) {
@@ -664,8 +780,8 @@ module.exports = {
             let galleryObject = "";
             for (let i in args.update_gallery_image) {
               galleryObject = await imageUpload(
-                args.update_gallery_image[i],
-                "/assets/images/product/gallery/"
+                args.update_gallery_image[i].file,
+                "/assets/images/product/gallery/","productgallery"
               );
 
               if (galleryObject.success) {
@@ -721,10 +837,13 @@ module.exports = {
               combination.product_id = args.id;
 
               let imgObject = "";
-              if (combination.image && combination.image.hasOwnProperty("file")) {
+              if (
+                combination.image &&
+                combination.image.hasOwnProperty("file")
+              ) {
                 imgObject = await imageUpload(
-                  combination.image.file[0],
-                  "/assets/images/product/variant/"
+                  combination.image.file[0].file,
+                  "/assets/images/product/variant/","productvarient"
                 );
                 combination.image = imgObject.data || imgObject;
               }
@@ -741,26 +860,27 @@ module.exports = {
               },
             ];
           }
-
           await ProductAttributeVariation.deleteMany({
             product_id: args.id,
           });
 
           let result = await ProductAttributeVariation.insertMany(combinations);
-
-          const products = await Product.find({});
-          return products || [];
+          return MESSAGE_RESPONSE("UpdateSuccess", "Product", true);
         } else {
-          throw putError("Product not exist");
+          return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
         }
       } catch (error) {
-        error = checkError(error);
-        console.log("error", error)
-        throw new Error(error.custom_message);
+        console.log('update---', error)
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Product", false);
       }
     },
     deleteProduct: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
+      }
+      if (!args.id) {
+        return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
+      }
       try {
         const product = await Product.findByIdAndRemove(args.id);
         if (product) {
@@ -787,14 +907,12 @@ module.exports = {
               imageUnlink(variation.image);
             }
           }
-
-          const products = await Product.find({});
-          return products || [];
+          return MESSAGE_RESPONSE("DELETE", "Product", true);
         }
-        throw putError("Product not exist");
+        return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        console.log("DELETE_PRODUCT", error);
+        return MESSAGE_RESPONSE("DELETE_ERROR", "Product", false);
       }
     },
   },
