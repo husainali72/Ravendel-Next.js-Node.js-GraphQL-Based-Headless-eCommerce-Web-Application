@@ -17,6 +17,7 @@ import BlogSidebar from "./blogSidebar";
 import { blogAction } from "../../store/action/blogAction";
 import Loading from "../components/loading";
 import PlaceHolder from "../../assets/images/placeholder.png";
+import { bucketBaseURL } from "../../utils/helper";
 
 const SingleBlog = (props) => {
   const singleBlogId = props.match.params.id;
@@ -49,7 +50,7 @@ const SingleBlog = (props) => {
                   <img
                     src={
                       singlePost.feature_image
-                        ? singlePost.feature_image.medium
+                        ? bucketBaseURL + singlePost.feature_image.medium
                         : PlaceHolder
                     }
                     alt="Blog-Featured"

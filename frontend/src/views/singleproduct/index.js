@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Grid, Divider } from "@material-ui/core";
-import { useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   productsAction,
   productReviewsAction,
@@ -9,7 +9,7 @@ import {
 import { isEmpty } from "../../utils/helper";
 import ProductDetail from "./productdetails";
 import GalleryImages from "./galleryimages";
-import {RelatedProducts, Loading} from "../components";
+import { RelatedProducts, Loading } from "../components";
 
 const SingleProduct = (props) => {
   const productID = props.match.params.url;
@@ -30,7 +30,7 @@ const SingleProduct = (props) => {
 
   useEffect(() => {
     var product = products.product;
-    console.log('----------------------', product);
+    // console.log('----------------------', product);
     setSingleProduct(product);
     var allimages = [];
     if (product.feature_image) {
@@ -42,7 +42,7 @@ const SingleProduct = (props) => {
       });
     }
 
-    if(product.id){
+    if (product.id) {
       dispatch(productReviewsAction(product.id));
     }
     setSliderImages(allimages);

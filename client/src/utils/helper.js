@@ -15,12 +15,12 @@ if (process.env.NODE_ENV === "production") {
 export const baseUrl = "http://localhost:8000";
 export const client_app_route_url = "/admin/";
 
-export var  bucketName = "revendal-image";
-export var bucketBaseURL= `https://${bucketName}.s3.amazonaws.com/`;
+export var bucketName = "revendal-image";
+export var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
 
 if (process.env.NODE_ENV === "production") {
   bucketName = "revendal-image-prod";
-  bucketBaseURL= `https://${bucketName}.s3.amazonaws.com/`;
+  bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
 }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------- */
@@ -76,15 +76,12 @@ export const printTree = (tree) => {
   categoriesPrint += "<ul className='category-dropdown'>";
 
   for (let i in tree) {
-    categoriesPrint += `<li className="${
-      tree[i].children && tree[i].children.length ? "has-submenu" : ""
-    }">                               
-                        <label for="${
-                          tree[i].name
-                        }" className="checkmark-container">${tree[i].name}
-                          <input type='checkbox' name="abc" id="${
-                            tree[i].name
-                          }">
+    categoriesPrint += `<li className="${tree[i].children && tree[i].children.length ? "has-submenu" : ""
+      }">                               
+                        <label for="${tree[i].name
+      }" className="checkmark-container">${tree[i].name}
+                          <input type='checkbox' name="abc" id="${tree[i].name
+      }">
                           <span className="checkmark"></span>
                         </label>`;
     if (tree[i].children && tree[i].children.length) {
@@ -145,7 +142,7 @@ export const getResponseHandler = (response, key) => {
   let data = [];
 
   console.log('in response hanler')
-  
+
   if (response && response.data && response.data[key]) {
     console.log('response', response)
     let res = response.data[key];
@@ -168,7 +165,7 @@ export const getResponseHandler = (response, key) => {
       error = true;
       message = "Something went wrong!";
     }
-  }else {
+  } else {
     message = 'Something went wrong!';
   }
 
@@ -184,7 +181,7 @@ export const mutationResponseHandler = (response, key) => {
   let message = '';
 
   console.log('in response hanler')
-  
+
   if (response && response.data && response.data[key]) {
     console.log('response', response)
     let res = response.data[key];
@@ -205,7 +202,7 @@ export const mutationResponseHandler = (response, key) => {
       error = true;
       message = "Something went wrong!";
     }
-  }else {
+  } else {
     message = 'Something went wrong!';
   }
 

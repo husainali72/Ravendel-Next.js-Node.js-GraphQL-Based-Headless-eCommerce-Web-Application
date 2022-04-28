@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Typography, Button, Container, Box } from "@material-ui/core";
 import Slider from "react-slick";
-import {app_router_base_url} from '../../../utils/helper';
-
+import { app_router_base_url } from '../../../utils/helper';
+import { bucketBaseURL } from "../../../utils/helper";
 const Banner = (props) => {
   const [bannerSlider, setBannerSlider] = useState([]);
 
@@ -59,7 +59,7 @@ const Banner = (props) => {
                   <a href={slide.link} target="_blank">
                     {slide.image && (
                       <img
-                        src={slide.image.original}
+                        src={bucketBaseURL + slide.image.original}
                         alt="slide"
                         className="slide-image"
                       />
@@ -69,7 +69,7 @@ const Banner = (props) => {
                   <Link to={slide.link}>
                     {slide.image && (
                       <img
-                        src={slide.image.original}
+                        src={bucketBaseURL + slide.image.original}
                         alt="slide"
                         className="slide-image"
                       />

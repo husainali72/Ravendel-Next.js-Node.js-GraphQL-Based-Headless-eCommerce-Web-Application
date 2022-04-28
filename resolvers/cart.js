@@ -272,7 +272,7 @@ module.exports = {
         calculated.grand_total =
           calculated.subtotal +
           calculated.total_shipping.amount +
-          calculated.total_tax.amount - calculated.total_coupon ;
+          calculated.total_tax.amount - calculated.total_coupon;
 
         //  console.log(calculated);
         return calculated;
@@ -333,30 +333,109 @@ module.exports = {
       }
     },*/
 
+
+    addToCart: async (root, args, { id }) => {
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
+      }
+      try {
+
+        //console.log('args',args);
+        const cart = await Cart.findOne({ user_id: args.user_id });
+
+        if (cart) {
+          delete args.user_id;
+          delete args.total;
+
+          const product = await Product.findById({ _id: args.product_id });
+          if (product.pricing.sellprice > 0) {
+            args.total = args.qty * product.pricing.sellprice;
+          } else {
+            args.total = args.qty * product.pricing.price;
+          }
+          cart.products.push(args);
+          cart.total = cart.total + args.total;
+          cart.updated = Date.now();
+          await cart.save();
+        } else {
+          console.log('nocart',);
+
+
+          const product = await Product.findById({ _id: args.product_id });
+          if (product.pricing.sellprice > 0) {
+            args.total = args.qty * product.pricing.sellprice;
+          } else {
+            args.total = args.qty * product.pricing.price;
+          }
+
+
+          // cart.products.product_id =  args.product_id;
+          // cart.products.qty =  args.qty;
+          // cart.products.total =  args.total;
+          // cart.total =   args.total;
+          // cart.updated = Date.now();
+          // await cart.save();
+
+
+          let prductarry = [
+            {
+              product_id: args.product_id,
+              product_title: args.product_title,
+              product_price: args.product_price,
+              product_image: args.product_image,
+              qty: args.qty,
+              total: args.total,
+            }
+          ]
+
+          const newCart = new Cart({
+            user_id: args.user_id,
+            total: args.total,
+            products: prductarry
+          });
+
+          console.log(newCart)
+          await newCart.save();
+
+
+          return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
+
+        }
+        return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
+
+      } catch (error) {
+        console.log(error);
+        error = checkError(error);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Cart", false);
+      }
+    },
+
+
+
     addCart: async (root, args, { id }) => {
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
       try {
-         const cart = await Cart.findOne({ user_id: args.user_id });
-          var carttotal = 0;
-          for (let i in args.products) {
-            if (args.products[i].product_id) {
-              const product = await Product.findById({ _id: args.products[i].product_id });
-              if(product.pricing.sellprice > 0){
-                 args.products[i].total = args.products[i].qty * product.pricing.sellprice;
-              }else{
-                args.products[i].total = args.products[i].qty * product.pricing.price;
-              }
+        const cart = await Cart.findOne({ user_id: args.user_id });
+        var carttotal = 0;
+        for (let i in args.products) {
+          if (args.products[i].product_id) {
+            const product = await Product.findById({ _id: args.products[i].product_id });
+            if (product.pricing.sellprice > 0) {
+              args.products[i].total = args.products[i].qty * product.pricing.sellprice;
+            } else {
+              args.products[i].total = args.products[i].qty * product.pricing.price;
             }
-            carttotal = carttotal + args.products[i].total;
           }
+          carttotal = carttotal + args.products[i].total;
+        }
 
-           const newCart = new Cart({
-            user_id: args.user_id,
-             total: carttotal,
-             products : args.products
-          });
+        const newCart = new Cart({
+          user_id: args.user_id,
+          total: carttotal,
+          products: args.products
+        });
         await newCart.save();
         return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
       } catch (error) {
@@ -391,6 +470,7 @@ module.exports = {
     },*/
 
     updateCart: async (root, args, { id }) => {
+      console.log("updateCart", args)
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -400,14 +480,14 @@ module.exports = {
       try {
         const cart = await Cart.findById({ _id: args.id });
         if (cart) {
-         var carttotal = 0;
+          var carttotal = 0;
           for (let i in args.products) {
             if (args.products[i].product_id) {
               const product = await Product.findById({ _id: args.products[i].product_id });
-              
-              if(product.pricing.sellprice > 0){
-                 args.products[i].total = args.products[i].qty * product.pricing.sellprice;
-              }else{
+
+              if (product.pricing.sellprice > 0) {
+                args.products[i].total = args.products[i].qty * product.pricing.sellprice;
+              } else {
                 args.products[i].total = args.products[i].qty * product.pricing.price;
               }
             }
@@ -450,36 +530,36 @@ module.exports = {
         //   }
         // }
         var customer_cart = cart.products;
-            for (let i in customer_cart) {
-        if (customer_cart[i].product_id == args.product_id) {
-          cart.products = [];
-          delete customer_cart[i];
+        for (let i in customer_cart) {
+          if (customer_cart[i].product_id == args.product_id) {
+            cart.products = [];
+            delete customer_cart[i];
 
-          cart.products = customer_cart;
-          break;
-        }
-      }
-
-      //console.log(cart.products);
-
-      var carttotal = 0;
-          for (let i in cart.products) {
-            if (cart.products[i].product_id) {
-              const product = await Product.findById({ _id: cart.products[i].product_id });
-              
-              if(product.pricing.sellprice > 0){
-                 cart.products[i].total = cart.products[i].qty * product.pricing.sellprice;
-              }else{
-                cart.products[i].total = cart.products[i].qty * product.pricing.price;
-              }
-            }
-            carttotal = carttotal + cart.products[i].total;
+            cart.products = customer_cart;
+            break;
           }
-          cart.total = carttotal;
-          cart.products = cart.products;
-          cart.updated = Date.now();
-          await cart.save();
-          return MESSAGE_RESPONSE("UpdateSuccess", "Cart", true);
+        }
+
+        //console.log(cart.products);
+
+        var carttotal = 0;
+        for (let i in cart.products) {
+          if (cart.products[i].product_id) {
+            const product = await Product.findById({ _id: cart.products[i].product_id });
+
+            if (product.pricing.sellprice > 0) {
+              cart.products[i].total = cart.products[i].qty * product.pricing.sellprice;
+            } else {
+              cart.products[i].total = cart.products[i].qty * product.pricing.price;
+            }
+          }
+          carttotal = carttotal + cart.products[i].total;
+        }
+        cart.total = carttotal;
+        cart.products = cart.products;
+        cart.updated = Date.now();
+        await cart.save();
+        return MESSAGE_RESPONSE("UpdateSuccess", "Cart", true);
       } else {
         //throw putError("Cart not exist");
         return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);

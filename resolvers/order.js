@@ -23,15 +23,24 @@ module.exports = {
       return await GET_SINGLE_FUNC(args.id, Order, "Order");
     },
     orderbyUser: async (root, args) => {
-      if (!user_id) {
+      console.log("payload", args)
+      if (!args.user_id) {
         return MESSAGE_RESPONSE("ID_ERROR", "Order", false);
       }
       try {
         const order = await Order.findOne({ user_id: args.user_id });
+        console.log("order", order)
         if (!order) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
         }
-        return MESSAGE_RESPONSE("RESULT_FOUND", "Order", false);
+        return {
+          message: {
+            message: "RESULT_FOUND",
+            success: true,
+          },
+          data: order
+        }
+        // return MESSAGE_RESPONSE("RESULT_FOUND", "Order", true);
       } catch (error) {
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Order", false);
       }
@@ -70,11 +79,11 @@ module.exports = {
             success: false,
           };
         }
-        if(args.billing.payment_method ==='Cash On Delivery'){
+        if (args.billing.payment_method === 'Cash On Delivery') {
           var status = 'Success';
           var user_id = args.customer_id;
-          const cart = await Cart.findOneAndDelete({user_id: args.customer_id });
-          }else{
+          const cart = await Cart.findOneAndDelete({ user_id: args.customer_id });
+        } else {
           var status = 'Pending';
         }
         const newOrder = new Order({
@@ -162,6 +171,7 @@ module.exports = {
       }
     },
     deleteOrder: async (root, args, { id }) => {
+      console.log("delete", args)
       return await DELETE_FUNC(id, args.id, Order, "Order");
     },
   },

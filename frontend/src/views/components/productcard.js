@@ -4,11 +4,13 @@ import { Link } from "react-router-dom";
 import Rating from "@material-ui/lab/Rating";
 import { useSelector, useDispatch } from "react-redux";
 import JacketImage from "../../assets/images/jacket.webp";
-import {app_router_base_url} from '../../utils/helper';
-
+import { app_router_base_url } from '../../utils/helper';
+import { bucketBaseURL } from "../../utils/helper";
 var PlaceHolder =
   "https://www.hbwebsol.com/wp-content/uploads/2020/07/category_dummy.png";
+
 const ProductCard = ({ productDetail, index, GirdProductView }) => {
+
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
   const [prodIndex, setProdIndex] = useState("");
@@ -44,7 +46,7 @@ const ProductCard = ({ productDetail, index, GirdProductView }) => {
     }
   };
 
-  const categoryListing = (categoryID) => {};
+  const categoryListing = (categoryID) => { };
 
   return (
     <div
@@ -58,7 +60,7 @@ const ProductCard = ({ productDetail, index, GirdProductView }) => {
         <img
           src={
             productDetail.feature_image && productDetail.feature_image.medium
-              ? productDetail.feature_image.medium
+              ? bucketBaseURL + productDetail.feature_image.medium
               : PlaceHolder
           }
           alt="product"
@@ -169,8 +171,8 @@ const ProductCard = ({ productDetail, index, GirdProductView }) => {
                 <span className="percantage-save">
                   {Math.round(
                     (100 / productDetail.pricing.price) *
-                      (productDetail.pricing.price -
-                        productDetail.pricing.sellprice)
+                    (productDetail.pricing.price -
+                      productDetail.pricing.sellprice)
                   )}
                   % off
                 </span>

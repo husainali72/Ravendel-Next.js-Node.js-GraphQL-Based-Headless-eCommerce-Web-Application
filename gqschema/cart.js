@@ -45,6 +45,9 @@ module.exports = gql`
   input cartProduct {
     product_id: ID
     qty: Int
+    product_title: String
+      product_price: Float
+      product_image: String
     combination: [String]
   }
 
@@ -74,7 +77,15 @@ module.exports = gql`
     updateCart(id: ID!, total: Float, products: [cartProduct]): statusSchema
     deleteCart(id: ID!): statusSchema
     deleteCartProduct(id: ID!, product_id: ID!): statusSchema
-    addToCart(customer_id: ID, cart: [cartProduct]): generalResponse
+    addToCart(
+      user_id: ID
+      total: Float
+      product_id: String
+      product_title: String
+      product_price: Float
+      product_image: String
+      qty: Int
+    ): statusSchema
   }
 `;
 

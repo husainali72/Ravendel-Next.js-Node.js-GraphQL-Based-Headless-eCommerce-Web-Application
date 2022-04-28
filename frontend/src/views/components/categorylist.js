@@ -10,9 +10,9 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import PlaceHolder from "../../assets/images/product-placeholder.jpg";
-import {app_router_base_url} from '../../utils/helper';
+import { app_router_base_url, bucketBaseURL } from '../../utils/helper';
 
-const CategoryListing = ({allCategories, title}) => {
+const CategoryListing = ({ allCategories, title }) => {
   const classes = useStyles();
 
   return (
@@ -44,11 +44,10 @@ const CategoryListing = ({allCategories, title}) => {
                             <span
                               className={classes.imageSrc}
                               style={{
-                                backgroundImage: `url(${
-                                  category.image
-                                    ? category.image.large
-                                    : PlaceHolder
-                                })`,
+                                backgroundImage: `url(${category.image
+                                  ? bucketBaseURL + category.image.large
+                                  : PlaceHolder
+                                  })`,
                               }}
                             />
                             <span className={classes.imageBackdrop} />
@@ -135,9 +134,8 @@ const useStyles = makeStyles((theme) => ({
   },
   imageTitle: {
     position: "relative",
-    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px ${
-      theme.spacing(1) + 6
-    }px`,
+    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px ${theme.spacing(1) + 6
+      }px`,
     fontWeight: "bold",
     textTransform: "uppercase",
   },

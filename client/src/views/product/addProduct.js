@@ -37,7 +37,8 @@ import {
   ShippingComponent,
   CategoriesComponent,
 } from "./components";
-import {client_app_route_url} from '../../utils/helper';
+import { client_app_route_url } from '../../utils/helper';
+import { bucketBaseURL } from '../../utils/helper';
 
 const AddProduct = () => {
   const classes = viewStyles();
@@ -95,6 +96,9 @@ const AddProduct = () => {
   const onFeatureImageChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
+    // if (productState.product.feature_image.original) {
+    // setfeatureImage(bucketBaseURL + e.target.files[0])
+    // }
     setProduct({ ...product, [e.target.name]: e.target.files });
   };
 
@@ -147,7 +151,7 @@ const AddProduct = () => {
   return (
     <Fragment>
       <Alert />
-      {products.loading ? <Loading/> : null}
+      {products.loading ? <Loading /> : null}
       <form>
         <TopBar
           title='Add product'

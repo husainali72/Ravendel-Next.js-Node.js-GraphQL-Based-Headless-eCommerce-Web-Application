@@ -39,6 +39,7 @@ module.exports = {
     },
     ///let check it...................
     productwisereview: async (root, args) => {
+      console.log("Productwisereview===", args.product_id)
       if (!args.product_id) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
@@ -46,19 +47,32 @@ module.exports = {
         const reviews = await Review.find({
           product_id: { $in: args.product_id },
         });
-        return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
-      } catch (error) {
+        console.log("review", reviews);
+
+        // return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
+
+        return {
+          message: {
+            message: "All review are fetched",
+            success: true
+          },
+          data: reviews,
+        }
+      }
+      catch (error) {
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
       }
     },
   },
   Review: {
     product_id: async (root, args) => {
+      console.log("Product", root)
       if (!root.product_id) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
       try {
         const product = await Product.findById(root.product_id);
+        console.log("product found", product)
         return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
       } catch (error) {
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
@@ -78,6 +92,7 @@ module.exports = {
   },
   Mutation: {
     addReview: async (root, args, { id }) => {
+      console.log("addReview")
       let data = {
         title: args.title,
         review: args.review,
@@ -87,6 +102,7 @@ module.exports = {
         rating: args.rating,
         status: args.status,
       };
+      console.log("data==", data)
       let validation = ["review", "title", "email"];
       return await CREATE_FUNC(
         id,

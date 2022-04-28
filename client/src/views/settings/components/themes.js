@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Grid, TextField, Box, Button } from "@material-ui/core";
 import viewStyles from "../../viewStyles";
 import { appearanceThemeUpdateAction } from "../../../store/action";
@@ -13,16 +13,21 @@ const Themes = () => {
   const [themeSetting, setThemeSetting] = useState({
     ...settingState.settings.appearance.theme,
   });
+  const [logoImage, setLogoImage] = useState(bucketBaseURL + themeSetting.logo.original)
+  // console.log("setting", themeSetting)
 
   const fileChange = (e) => {
     themeSetting.logo.original = URL.createObjectURL(e.target.files[0]);
+    console.log("--set", themeSetting.logo.original)
+
     themeSetting.new_logo = e.target.files;
     setThemeSetting({
       ...themeSetting,
-      new_logo:  themeSetting.new_logo,
+      new_logo: themeSetting.new_logo,
     });
+    setLogoImage(URL.createObjectURL(e.target.files[0]))
   };
-    console.log("--set", themeSetting.logo.original)
+  console.log("--set", themeSetting.logo.original)
 
   const updateTheme = () => {
     console.log(themeSetting);
@@ -51,7 +56,7 @@ const Themes = () => {
           <Box className={classes.themeLogoWrapper}>
             {themeSetting.logo.original ? (
               <img
-                src={`${bucketBaseURL}${themeSetting.logo.original}`}
+                src={logoImage}
                 className={classes.themeLogoBoxPreview}
                 alt='Logo'
               />

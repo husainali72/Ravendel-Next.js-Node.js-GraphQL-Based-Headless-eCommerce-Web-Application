@@ -18,7 +18,7 @@ import { Link } from "react-router-dom";
 import { PageTitle, Loading } from "../components";
 import BlogSidebar from "./blogSidebar";
 import { blogsAction } from "../../store/action/blogAction";
-import { isEmpty, app_router_base_url } from "../../utils/helper";
+import { isEmpty, app_router_base_url, bucketBaseURL } from "../../utils/helper";
 import PlaceHolder from "../../assets/images/placeholder.png";
 
 const AllBlogs = () => {
@@ -51,7 +51,7 @@ const AllBlogs = () => {
                             height="175"
                             image={
                               blog.feature_image
-                                ? blog.feature_image.medium
+                                ? bucketBaseURL + blog.feature_image.medium
                                 : PlaceHolder
                             }
                             title={blog.title}
@@ -91,7 +91,7 @@ const AllBlogs = () => {
                   </Grid>
                 ))
               ) : (
-                <Box component="div" display="flex" justifyContent="center" style={{width: "100%"}}>
+                <Box component="div" display="flex" justifyContent="center" style={{ width: "100%" }}>
                   <Typography gutterBottom variant="subtitle2">
                     No blogs found
                   </Typography>

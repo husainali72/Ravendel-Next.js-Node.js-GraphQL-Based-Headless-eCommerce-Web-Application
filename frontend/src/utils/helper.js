@@ -16,6 +16,13 @@ if (process.env.NODE_ENV === "production") {
 export const baseUrl = "http://localhost:8000";
 export const app_router_base_url = '/'
 
+export var bucketName = "revendal-image";
+export var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
+
+if (process.env.NODE_ENV === "production") {
+  bucketName = "revendal-image-prod";
+  bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
+}
 /*-------------------------------------------------------------------------------------------------------------------------------------- */
 //simple category array to Tree array
 export const unflatten = (arr) => {
@@ -69,15 +76,12 @@ export const printTree = (tree) => {
   categoriesPrint += "<ul className='category-dropdown'>";
 
   for (let i in tree) {
-    categoriesPrint += `<li className="${
-      tree[i].children && tree[i].children.length ? "has-submenu" : ""
-    }">                               
-                        <label for="${
-                          tree[i].name
-                        }" className="checkmark-container">${tree[i].name}
-                          <input type='checkbox' name="abc" id="${
-                            tree[i].name
-                          }">
+    categoriesPrint += `<li className="${tree[i].children && tree[i].children.length ? "has-submenu" : ""
+      }">                               
+                        <label for="${tree[i].name
+      }" className="checkmark-container">${tree[i].name}
+                          <input type='checkbox' name="abc" id="${tree[i].name
+      }">
                           <span className="checkmark"></span>
                         </label>`;
     if (tree[i].children && tree[i].children.length) {

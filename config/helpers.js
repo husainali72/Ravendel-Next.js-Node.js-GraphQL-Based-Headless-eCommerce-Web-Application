@@ -1,7 +1,7 @@
 const Messages = require("./messages");
 const Validator = require("validator");
 
-const { uploadFile,FileDelete} = require("../config/aws");
+const { uploadFile, FileDelete } = require("../config/aws");
 
 const isEmpty = (value) =>
   value === undefined ||
@@ -169,14 +169,14 @@ const jimpResize = (path, i, uploadPath, filename) => {
   });
 };
 
-const imageUpload = async (upload, uploadPath,nametype) => {
- 
+const imageUpload = async (upload, uploadPath, nametype) => {
+
   return new Promise(async (resolve, reject) => {
     try {
       let { filename, mimetype, encoding, createReadStream } = await upload;
 
       const extensions = ["gif", "jpeg", "jpg", "png", "webp", "svg"];
-      
+
       let ext = filename.split(".");
       ext = ext.pop();
       ext = ext.toLowerCase();
@@ -224,74 +224,66 @@ const imageUpload = async (upload, uploadPath,nametype) => {
         .on("finish", async () => {
 
           //console.log('nametype',nametype);
-          let awsoriginalpath , awslargepath,awsmediumpath,awsthumbnailpath;
-          if(nametype == 'Blog')
-          {
-               awsoriginalpath = 'blog/feature/original';
-               awslargepath = 'blog/feature/large';
-               awsmediumpath = 'blog/feature/medium';
-               awsthumbnailpath = 'blog/feature/thumbnail';
+          let awsoriginalpath, awslargepath, awsmediumpath, awsthumbnailpath;
+          if (nametype == 'Blog') {
+            awsoriginalpath = 'blog/feature/original';
+            awslargepath = 'blog/feature/large';
+            awsmediumpath = 'blog/feature/medium';
+            awsthumbnailpath = 'blog/feature/thumbnail';
           }
 
-          if(nametype == 'Setting')
-          {
-               awsoriginalpath = 'setting/original';
-               awslargepath = 'setting/large';
-               awsmediumpath = 'setting/medium';
-               awsthumbnailpath = 'setting/thumbnail';
+          if (nametype == 'Setting') {
+            awsoriginalpath = 'setting/original';
+            awslargepath = 'setting/large';
+            awsmediumpath = 'setting/medium';
+            awsthumbnailpath = 'setting/thumbnail';
           }
 
-          if(nametype == 'ProductCategory')
-          {
-               awsoriginalpath = 'product/category/original';
-               awslargepath = 'product/category/large';
-               awsmediumpath = 'product/category/medium';
-               awsthumbnailpath = 'product/category/thumbnail';
+          if (nametype == 'ProductCategory') {
+            awsoriginalpath = 'product/category/original';
+            awslargepath = 'product/category/large';
+            awsmediumpath = 'product/category/medium';
+            awsthumbnailpath = 'product/category/thumbnail';
           }
 
-          if(nametype == 'Brand')
-          {
-               awsoriginalpath = 'brand/original';
-               awslargepath = 'brand/large';
-               awsmediumpath = 'brand/medium';
-               awsthumbnailpath = 'brand/thumbnail';
+          if (nametype == 'Brand') {
+            awsoriginalpath = 'brand/original';
+            awslargepath = 'brand/large';
+            awsmediumpath = 'brand/medium';
+            awsthumbnailpath = 'brand/thumbnail';
           }
 
 
-          if(nametype == 'User')
-          {
-               awsoriginalpath = 'user/original';
-               awslargepath = 'user/large';
-               awsmediumpath = 'user/medium';
-               awsthumbnailpath = 'user/thumbnail';
+          if (nametype == 'User') {
+            awsoriginalpath = 'user/original';
+            awslargepath = 'user/large';
+            awsmediumpath = 'user/medium';
+            awsthumbnailpath = 'user/thumbnail';
           }
 
-          if(nametype == 'productgallery')
-          {
-               awsoriginalpath = 'product/gallery/original';
-               awslargepath = 'product/gallery/large';
-               awsmediumpath = 'product/gallery/medium';
-               awsthumbnailpath = 'product/gallery/thumbnail';
+          if (nametype == 'productgallery') {
+            awsoriginalpath = 'product/gallery/original';
+            awslargepath = 'product/gallery/large';
+            awsmediumpath = 'product/gallery/medium';
+            awsthumbnailpath = 'product/gallery/thumbnail';
           }
 
-          if(nametype == 'productfeature')
-          {
-               awsoriginalpath = 'product/feature/original';
-               awslargepath = 'product/feature/large';
-               awsmediumpath = 'product/feature/medium';
-               awsthumbnailpath = 'product/feature/thumbnail';
+          if (nametype == 'productfeature') {
+            awsoriginalpath = 'product/feature/original';
+            awslargepath = 'product/feature/large';
+            awsmediumpath = 'product/feature/medium';
+            awsthumbnailpath = 'product/feature/thumbnail';
           }
 
-          if(nametype == 'productvarient')
-          {
-               awsoriginalpath = 'product/varient/original';
-               awslargepath = 'product/varient/large';
-               awsmediumpath = 'product/varient/medium';
-               awsthumbnailpath = 'product/varient/thumbnail';
+          if (nametype == 'productvarient') {
+            awsoriginalpath = 'product/varient/original';
+            awslargepath = 'product/varient/large';
+            awsmediumpath = 'product/varient/medium';
+            awsthumbnailpath = 'product/varient/thumbnail';
           }
 
-        const awsoriginal  =  await uploadFile(original, filename, awsoriginalpath); 
-        
+          const awsoriginal = await uploadFile(original, filename, awsoriginalpath);
+
 
           for (let i in sizes) {
             if (ext === "svg") {
@@ -302,7 +294,7 @@ const imageUpload = async (upload, uploadPath,nametype) => {
             let resized = await sharpResize(path, i, uploadPath, filename);
 
             if (resized) {
-              
+
               continue;
             } else {
               //fs.unlinkSync(path);
@@ -316,22 +308,22 @@ const imageUpload = async (upload, uploadPath,nametype) => {
             }
           }
 
-          const awslarge  =     await uploadFile(large, filename, awslargepath);
-          const awsmedium  =     await uploadFile(medium, filename, awsmediumpath);
-          const awsthumbnail  =  await uploadFile(thumbnail, filename, awsthumbnailpath);
+          const awslarge = await uploadFile(large, filename, awslargepath);
+          const awsmedium = await uploadFile(medium, filename, awsmediumpath);
+          const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
 
           return resolve({
             success: true,
             data: {
-              original : awsoriginal,
-              large : awslarge,
+              original: awsoriginal,
+              large: awslarge,
               medium: awsmedium,
-              thumbnail : awsthumbnail,
+              thumbnail: awsthumbnail,
             },
           });
         });
     } catch (error) {
-    //  console.log(error);
+      //  console.log(error);
       return resolve({
         success: false,
         message: "This image can't be upload 3",
@@ -362,30 +354,30 @@ function capitalize(str) {
 
 const _validate = (names, args) => {
   let errors = "";
-  if(names && names.length > 0){
-    names.map((name) => {   
+  if (names && names.length > 0) {
+    names.map((name) => {
       if (!args[name] || Validator.isEmpty(args[name])) {
         return (errors = `${capitalize(name)} field is required`)
       }
 
       if (name === "email" && !Validator.isEmail(args[name])) {
         return (errors = `${capitalize(name)} is invalid`);
-      }   
+      }
     })
   }
   return errors;
 };
 
-const _validatenested = (main,names, args) => {
+const _validatenested = (main, names, args) => {
   let errors = "";
-  if(names && names.length > 0){
-    names.map((name) => { 
-      if(!args[main] ){
+  if (names && names.length > 0) {
+    names.map((name) => {
+      if (!args[main]) {
         return (errors = `${capitalize(main)} is required`);
-      } 
-      if(!args[main][name] ){
+      }
+      if (!args[main][name]) {
         return (errors = `${capitalize(name)} is required`);
-      } 
+      }
       let value = args[main][name]
       if (!args[main][name] || Validator.isEmpty(value.toString())) {
         return (errors = `${capitalize(name)} field is required`)
@@ -393,7 +385,7 @@ const _validatenested = (main,names, args) => {
 
       if (name === "email" && !Validator.isEmail(args[main][name])) {
         return (errors = `${capitalize(name)} is invalid`);
-      }   
+      }
     })
   }
   return errors;

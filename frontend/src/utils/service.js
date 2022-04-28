@@ -105,10 +105,10 @@ export const login = (email, password) => {
     method: "POST",
     url: `${baseUrl}api/customers/login`,
     data: body,
-  }).then(async(res) => {
+  }).then(async (res) => {
     await Auth.setUserToken(res.data);
     return res;
-  }); 
+  });
 };
 
 /* const service = (config) => {

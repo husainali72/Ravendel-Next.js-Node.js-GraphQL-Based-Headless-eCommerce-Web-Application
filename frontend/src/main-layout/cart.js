@@ -14,6 +14,7 @@ import cookie from "react-cookies";
 import { productsAction } from "../store/action/productAction";
 import { removeCartItemAction } from "../store/action/cartAction";
 import { isEmpty, app_router_base_url } from "../utils/helper";
+import { bucketBaseURL } from "../utils/helper";
 
 const CartSide = (props) => {
   const [cartItems, setCartItems] = useState(props.cartValue);
@@ -46,7 +47,7 @@ const CartSide = (props) => {
   };
 
   const increaseItemQty = (item) => {
-    cartItems.map((cart) => { 
+    cartItems.map((cart) => {
       if (cart.id === item.id) {
         cart.cartQty = cart.cartQty + 1;
       }
@@ -110,11 +111,10 @@ const CartSide = (props) => {
                     className="cart-item"
                     key={index}
                     style={{
-                      backgroundImage: `url(${
-                        item.feature_image
-                          ? item.feature_image.thumbnail
-                          : PlaceHolderImg
-                      })`,
+                      backgroundImage: `url(${item.feature_image
+                        ? bucketBaseURL + item.feature_image.thumbnail
+                        : PlaceHolderImg
+                        })`,
                     }}
                   >
                     <div className="item-inner">

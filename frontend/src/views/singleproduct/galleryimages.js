@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import Slider from "react-slick";
 import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 import { GlassMagnifier } from "react-image-magnifiers";
+import { bucketBaseURL } from "../../utils/helper";
 
 const GalleryImagesComponents = (props) => {
   const settings = {
@@ -9,7 +10,7 @@ const GalleryImagesComponents = (props) => {
       return (
         <a>
           <img
-            src={props.galleryImages[i].thumbnail}
+            src={bucketBaseURL + props.galleryImages[i].thumbnail}
             alt="Thumbnail"
             className="thumbnail-image"
           />
@@ -33,9 +34,9 @@ const GalleryImagesComponents = (props) => {
             {props.galleryImages.map((gallery, index) => (
               <div key={index}>
                 <GlassMagnifier
-                  imageSrc={gallery.large}
+                  imageSrc={bucketBaseURL + gallery.large}
                   imageAlt="Example"
-                  largeImageSrc={gallery.large} // Optional
+                  largeImageSrc={bucketBaseURL + gallery.large} // Optional
                   className="gallery-image"
                   magnifierSize={window.innerWidth < 1025 ? "60%" : "30%"}
                   magnifierBorderSize={5}

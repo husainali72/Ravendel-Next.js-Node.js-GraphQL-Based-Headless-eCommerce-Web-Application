@@ -163,7 +163,7 @@ const DELETE_FUNC = async (token, delete_id, modal, name) => {
       }
       return MESSAGE_RESPONSE("DELETE", name, true);
     }
-    
+
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);
   } catch (error) {
     return MESSAGE_RESPONSE("DELETE_ERROR", name, false);
@@ -217,18 +217,18 @@ const CREATE_FUNC = async (
       }
 
       if (name && name === "ProductCategory") {
-            image = data.image[0].file;
+        image = data.image[0].file;
       }
 
       if (name && name === "User") {
         image = data.image.file;
-       }
-   
-        
+      }
+
+
       // if (data.image) {
       //      image = data.image[0].file;   /// this image are in array let check it
       // }
-      imgObject = await imageUpload(image, path,name);
+      imgObject = await imageUpload(image, path, name);
       if (imgObject.success === false) {
         return {
           message:
@@ -238,13 +238,13 @@ const CREATE_FUNC = async (
         };
       }
 
-      if ( (name && name === "ProductCategory")  || name && name === "User") {
+      if ((name && name === "ProductCategory") || name && name === "User") {
         data.image = imgObject.data || imgObject;
-      }else{
+      } else {
         data.feature_image = imgObject.data || imgObject;
       }
 
-      
+
     }
 
     if (data.name) {
@@ -267,8 +267,9 @@ const CREATE_FUNC = async (
     }
 
     //console.log('DATA--------',data);
-
+    console.log('DATA--------', data);
     const response = new modal(data);
+    console.log('RESPONSE--------', response)
     if (data.password) {
       response.password = await bcrypt.hash(data.password, 10);
     }
@@ -307,49 +308,49 @@ const UPDATE_FUNC = async (
     }
     const response = await modal.findById(updateId);
     if (response) {
-    //  console.log("args", args);
+      //  console.log("args", args);
 
-        if (args.updatedImage || args.update_image) {
-          let imgObject = "";
-          let image = null;
+      if (args.updatedImage || args.update_image) {
+        let imgObject = "";
+        let image = null;
 
-          if (args.updatedImage) {
-            image = args.updatedImage.file;
-          }
-          if (args.update_image) {
-            image = args.update_image[0].file; /// this image are in array let check it
-          }
-          
-          
-          imgObject = await imageUpload(image, path,name);
-           
-            if (imgObject.success === false) {
-              return {
-                message:
-                  imgObject.message ||
-                  "Something went wrong with upload featured image",
-                success: false,
-              };
-            } else {
-             
-              if (name && name === "ProductCategory") {
-                 imageUnlink(response.image);
-                data.image = imgObject.data || imgObject;
-              } else {
-                 imageUnlink(response.feature_image);
-                data.feature_image = imgObject.data || imgObject;
-              }
-              // console.log("response 2", response);
-            }
+        if (args.updatedImage) {
+          image = args.updatedImage.file;
         }
+        if (args.update_image) {
+          image = args.update_image[0].file; /// this image are in array let check it
+        }
+
+
+        imgObject = await imageUpload(image, path, name);
+
+        if (imgObject.success === false) {
+          return {
+            message:
+              imgObject.message ||
+              "Something went wrong with upload featured image",
+            success: false,
+          };
+        } else {
+
+          if (name && name === "ProductCategory") {
+            imageUnlink(response.image);
+            data.image = imgObject.data || imgObject;
+          } else {
+            imageUnlink(response.feature_image);
+            data.feature_image = imgObject.data || imgObject;
+          }
+          // console.log("response 2", response);
+        }
+      }
       for (const [key, value] of Object.entries(data)) {
         response[key] = value;
       }
-     
+
       if (data.password) {
         response.password = await bcrypt.hash(data.password, 10);
       }
-      
+
       await response.save();
       return MESSAGE_RESPONSE("UpdateSuccess", name, true);
     }
