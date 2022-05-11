@@ -265,11 +265,9 @@ const CREATE_FUNC = async (
         return MESSAGE_RESPONSE("DUPLICATE", "email", false);
       }
     }
-
     //console.log('DATA--------',data);
-    console.log('DATA--------', data);
     const response = new modal(data);
-    console.log('RESPONSE--------', response)
+    // console.log('RESPONSE--------', response)
     if (data.password) {
       response.password = await bcrypt.hash(data.password, 10);
     }
@@ -309,7 +307,6 @@ const UPDATE_FUNC = async (
     const response = await modal.findById(updateId);
     if (response) {
       //  console.log("args", args);
-
       if (args.updatedImage || args.update_image) {
         let imgObject = "";
         let image = null;

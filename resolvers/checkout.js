@@ -52,7 +52,7 @@ module.exports = {
 
         return await newCheckout.save();
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }

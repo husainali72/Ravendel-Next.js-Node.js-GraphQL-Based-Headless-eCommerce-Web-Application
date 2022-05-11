@@ -10,7 +10,7 @@ import {
 
 const AccountSetting = () => {
   const handleChangedAccount = e => {
-    console.log("e", e.target.name);
+    // console.log("e", e.target.name);
   };
 
   const updateDeatils = () => {

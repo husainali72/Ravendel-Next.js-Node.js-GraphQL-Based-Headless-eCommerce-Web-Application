@@ -141,10 +141,10 @@ export const getResponseHandler = (response, key) => {
   let message = '';
   let data = [];
 
-  console.log('in response hanler')
+  // console.log('in response hanler')
 
   if (response && response.data && response.data[key]) {
-    console.log('response', response)
+    // console.log('response', response)
     let res = response.data[key];
     if (res.message) {
       console.log(res);

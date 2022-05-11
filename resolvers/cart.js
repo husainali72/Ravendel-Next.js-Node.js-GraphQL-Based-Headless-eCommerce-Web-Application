@@ -358,7 +358,7 @@ module.exports = {
           cart.updated = Date.now();
           await cart.save();
         } else {
-          console.log('nocart',);
+          // console.log('nocart',);
 
 
           const product = await Product.findById({ _id: args.product_id });
@@ -387,24 +387,18 @@ module.exports = {
               total: args.total,
             }
           ]
-
           const newCart = new Cart({
             user_id: args.user_id,
             total: args.total,
             products: prductarry
           });
-
-          console.log(newCart)
           await newCart.save();
-
-
           return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
 
         }
         return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
 
       } catch (error) {
-        console.log(error);
         error = checkError(error);
         return MESSAGE_RESPONSE("CREATE_ERROR", "Cart", false);
       }
@@ -439,7 +433,7 @@ module.exports = {
         await newCart.save();
         return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         error = checkError(error);
         return MESSAGE_RESPONSE("CREATE_ERROR", "Cart", false);
       }
@@ -470,7 +464,7 @@ module.exports = {
     },*/
 
     updateCart: async (root, args, { id }) => {
-      console.log("updateCart", args)
+      // console.log("updateCart", args)
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -520,7 +514,7 @@ module.exports = {
     deleteCartProduct: async (root, args, { id }) => {
       checkToken(id);
       const cart = await Cart.findById(args.id);
-      console.log(cart);
+      // console.log(cart);
       if (cart) {
         // for (let i in cart.products) {
         //   if (cart.products[i].product_id === args.product_id) {

@@ -40,21 +40,8 @@ const HomeSettings = () => {
       newSliderArr.push({ image: { original: newImge } })
       // settingState.settings.appearance.home.slider[i].image.original = newImge
     }
-    console.log(newSliderArr)
-
     setSlider(newSliderArr)
-
   }, [settingState.settings.appearance.home.slider])
-
-  console.log("slider", slider)
-  console.log("settingHome", settingHome.slider)
-
-  // useEffect(() => {
-  //   setsettingHome({
-  //     ...settingState.settings.appearance.home,
-  //   });
-  // }, [settingState.settings.appearance.home]);
-
 
   const addSlide = () => {
     setsettingHome({
@@ -91,7 +78,6 @@ const HomeSettings = () => {
     } else {
       settingHome.slider[i].open_in_tab = e.target.checked;
     }
-    console.log("slider", settingHome.slider)
     setsettingHome({
       ...settingHome,
       slider: [...settingHome.slider],
@@ -108,7 +94,6 @@ const HomeSettings = () => {
 
     settingHome.slider[i].update_image = e.target.files;
     slider[i].update_image = e.target.files;
-    console.log("slider add ",)
 
     setsettingHome({
       ...settingHome,

@@ -42,7 +42,7 @@ const Address = () => {
   };
 
   const editAddress = (adress) => {
-    console.log(adress);
+    // console.log(adress);
     setEditMode(true);
     setAddMode(false);
   };

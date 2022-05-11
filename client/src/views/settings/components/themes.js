@@ -18,7 +18,7 @@ const Themes = () => {
 
   const fileChange = (e) => {
     themeSetting.logo.original = URL.createObjectURL(e.target.files[0]);
-    console.log("--set", themeSetting.logo.original)
+    // console.log("--set", themeSetting.logo.original)
 
     themeSetting.new_logo = e.target.files;
     setThemeSetting({
@@ -27,10 +27,10 @@ const Themes = () => {
     });
     setLogoImage(URL.createObjectURL(e.target.files[0]))
   };
-  console.log("--set", themeSetting.logo.original)
+  // console.log("--set", themeSetting.logo.original)
 
   const updateTheme = () => {
-    console.log(themeSetting);
+    // console.log(themeSetting);
     dispatch(appearanceThemeUpdateAction(themeSetting));
   };
 
