@@ -10,6 +10,7 @@ const SEO = () => {
   const [seo, setSeo] = useState({ ...settingState.settings.seo });
 
   const updateSeo = () => {
+    console.log(seo)
     dispatch(seoUpdateAction(seo));
   };
 

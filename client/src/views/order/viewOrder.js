@@ -82,11 +82,11 @@ const ViewOrder = props => {
     if (isEmpty(props.orders.orders)) {
       props.ordersAction();
     }
-
+    console.log("props=========",props)
     for (let i in props.orders.orders) {
       if (props.orders.orders[i].id === props.match.params.id) {
         setorder({ ...props.orders.orders[i] });
-      }
+      } 
     }
   }, [props.orders.orders]);
 
@@ -209,12 +209,16 @@ const ViewOrder = props => {
                       setorder({ ...order, [e.target.name]: e.target.value })
                     }
                   >
-                    <MenuItem value="Pendingpayment">Pending Payment</MenuItem>
+                    {/* <MenuItem value="Pendingpayment">Pending Payment</MenuItem>
                     <MenuItem value="Processing">Processing</MenuItem>
                     <MenuItem value="Onhold">On-Hold</MenuItem>
                     <MenuItem value="Completed">Completed</MenuItem>
                     <MenuItem value="Cancelled">Cancelled</MenuItem>
-                    <MenuItem value="Refunded">Refunded</MenuItem>
+                    <MenuItem value="Refunded">Refunded</MenuItem> */}
+                    <MenuItem value="Pending">Pending Payment</MenuItem>
+                    <MenuItem value="Failed">Failed</MenuItem>
+                    <MenuItem value="Success">Completed</MenuItem>
+                    <MenuItem value="Cancelled">Cancelled</MenuItem>
                   </Select>
                 </FormControl>
               </CardContent>
@@ -578,24 +582,26 @@ const ViewOrder = props => {
                       SubTotal
                     </Typography>
                   </Grid>
-                  <Grid item md={3} className={classes.textRight}>
-                    <Typography variant="h6" className={classes.mtb2}>
-                      $4500.00
-                    </Typography>
-                    <Typography variant="h6" className={classes.mtb2}>
-                      <span className={classes.discount}>- $40.00</span>
-                    </Typography>
-                    <Typography variant="h6" className={classes.mtb2}>
-                      $100.00
-                    </Typography>
-                    <Typography variant="h6" className={classes.mtb2}>
-                      $60.00
-                    </Typography>
-                    <Divider />
-                    <Typography variant="h5" className={classes.mtb2}>
-                      $4560.00
-                    </Typography>
-                  </Grid>
+                  {order.products.map((product, index)=>(
+                    <Grid item md={3} className={classes.textRight}>
+                      <Typography variant="h6" className={classes.mtb2}>
+                        ${product.qty * product.cost}
+                      </Typography>
+                      <Typography variant="h6" className={classes.mtb2}>
+                        <span className={classes.discount}>- $40.00</span>
+                      </Typography>
+                      <Typography variant="h6" className={classes.mtb2}>
+                        $100.00
+                      </Typography>
+                      <Typography variant="h6" className={classes.mtb2}>
+                        $60.00
+                      </Typography>
+                      <Divider />
+                      <Typography variant="h5" className={classes.mtb2}>
+                        ${product.qty * product.cost}
+                      </Typography>
+                    </Grid>
+                  ))}
                 </Grid>
               </CardContent>
             </Card>

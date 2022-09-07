@@ -13,7 +13,6 @@ export const mutation = async (query, variables) => {
     return Promise.resolve(response);
   } catch (error) {
     const errors = JSON.parse(JSON.stringify(error));
-    console.log(errors);
     if (
       errors.graphQLErrors.length &&
       !isEmpty(errors.graphQLErrors[0].message)

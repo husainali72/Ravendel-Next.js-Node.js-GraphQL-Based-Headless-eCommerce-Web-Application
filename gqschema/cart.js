@@ -60,16 +60,23 @@ module.exports = gql`
   type CartRES {
     data:[Cart]
     message: statusSchema
-  }
+  } 
   type Cart_by_id_RES {
     data:Cart
     message: statusSchema
   }
+
+  type calculateCoupon {
+    total_coupon: Float
+    message: String
+  }
+
   extend type Query {
     carts: CartRES
     cart(id: ID!): Cart 
     cartbyUser(user_id: ID!): Cart
-    calculateCart(cart: [cartProducts]): calculatedCart
+    calculateCart(total_coupon : Float, cart: [cartProducts]): calculatedCart
+    calculateCoupon(coupon_code: ID,cart: [cartProducts]): calculateCoupon
   }
 
   extend type Mutation {

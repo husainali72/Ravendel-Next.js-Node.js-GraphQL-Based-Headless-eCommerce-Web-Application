@@ -9,6 +9,11 @@ module.exports = gql`
     products: customArray
     date: Date
     updated: Date
+    subtotal: String
+    shipping_amount: String
+    tax_amount: String
+    discount_amount: String
+    grand_total: String
   }
 
   input orderProduct {
@@ -24,7 +29,7 @@ module.exports = gql`
     message: statusSchema
   }
   type OrderByUser {
-    data: Order
+    data: [Order]
     message: statusSchema
   }
   extend type Query {

@@ -616,7 +616,7 @@ router.post("/addtocart", auth, async (req, res) => {
         qty: req.body.qty
     }
   var customer_cart = customer.cart.items;
-  //console.log(customer_cart);
+  console.log(customer_cart);
 
   if(customer_cart.length === 0){
        customer.cart.items.push(cdata);

@@ -17,7 +17,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { getDatesAction, generalUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 
-const General = () => {
+export const General = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector(state => state.settings);
@@ -98,4 +98,4 @@ const General = () => {
   );
 };
 
-export default General;
+// export default General;

@@ -58,7 +58,7 @@ const EditProduct = props => {
     description: "",
     sku: "",
     quantity: "",
-    pricing: { sellprice: "" },
+    pricing: { sellprice: "0" },
     feature_image: {},
     gallery_image: [],
     status: "Publish"

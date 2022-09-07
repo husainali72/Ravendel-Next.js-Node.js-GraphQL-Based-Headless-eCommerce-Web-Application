@@ -13,7 +13,7 @@ import {
 import { useTheme } from "@material-ui/styles";
 import viewStyles from "../viewStyles";
 import clsx from "clsx";
-import General from "./components/general";
+import {General} from "./components/general";
 import Media from "./components/media";
 import SMTP from "./components/smtp";
 import SEO from "./components/seo";

@@ -179,9 +179,11 @@ const CREATE_FUNC = async (
   path,
   validation
 ) => {
-  if (!token) {
+  /////////////////////////////////////////
+  if (!data.queryName && !token) {
     return MESSAGE_RESPONSE("TOKEN_REQ", name, false);
   }
+  //////////////////////////////////////////
   try {
     const errors = _validate(validation, data);
     if (!isEmpty(errors)) {
