@@ -589,7 +589,8 @@ module.exports = {
             success: false,
           };
         }
-        errors = _validatenested("pricing", ["price", "sellprice"], args);
+        // errors = _validatenested("pricing", ["price", "sellprice"], args);
+        errors = _validatenested("pricing", ["price"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -727,7 +728,8 @@ module.exports = {
             success: false,
           };
         }
-        errors = _validatenested("pricing", ["price", "sellprice"], args);
+        // errors = _validatenested("pricing", ["price", "sellprice"], args);
+        errors = _validatenested("pricing", ["price"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,

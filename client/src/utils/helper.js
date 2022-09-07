@@ -180,7 +180,7 @@ export const mutationResponseHandler = (response, key) => {
   let error = false;
   let message = '';
 
-  console.log('in response hanler')
+  console.log('in response handler')
 
   if (response && response.data && response.data[key]) {
     console.log('response', response)

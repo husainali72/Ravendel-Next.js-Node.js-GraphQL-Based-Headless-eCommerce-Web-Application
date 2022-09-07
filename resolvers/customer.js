@@ -42,6 +42,9 @@ module.exports = {
   Mutation: {
     addCustomer: async (root, args, { id }) => {
       let data = {
+        ///////////////////////////////
+        queryName: "addCustomer",
+        ///////////////////////////////
         first_name: args.first_name,
         last_name: args.last_name,
         email: args.email,

@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
+const Setting = require("../models/Setting");
 const {
   isEmpty,
   MESSAGE_RESPONSE,
@@ -14,6 +15,8 @@ const {
 
 const validate = require("../validations/order");
 
+
+
 module.exports = {
   Query: {
     orders: async (root, args) => {
@@ -23,19 +26,19 @@ module.exports = {
       return await GET_SINGLE_FUNC(args.id, Order, "Order");
     },
     orderbyUser: async (root, args) => {
-      console.log("payload", args)
+      //console.log("payload", args)
       if (!args.user_id) {
         return MESSAGE_RESPONSE("ID_ERROR", "Order", false);
       }
       try {
-        const order = await Order.findOne({ user_id: args.user_id });
+        const order = await Order.find({ customer_id: args.user_id });
         console.log("order", order)
         if (!order) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
         }
         return {
           message: {
-            message: "RESULT_FOUND",
+            message: "Customer order Fetched",
             success: true,
           },
           data: order
@@ -48,9 +51,9 @@ module.exports = {
   },
   Mutation: {
     addOrder: async (root, args, { id }) => {
-      if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
-      }
+      // if (!id) {
+      //   return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
+      // }
       try {
         var errors = _validate(["customer_id"], args);
         if (!isEmpty(errors)) {
@@ -79,13 +82,52 @@ module.exports = {
             success: false,
           };
         }
+
+        const setting = await Setting.findOne({});
+        //console.log('publishable_key',setting.paymnet.stripe.publishable_key);
+        //console.log('secret_key',setting.paymnet.stripe.secret_key);
+        var Secret_Key = setting.paymnet.stripe.secret_key;
+        const stripe = require('stripe')(Secret_Key);
+
+        var c_grand_total = parseFloat(args.subtotal) +  parseFloat(args.shipping_amount) + parseFloat(args.tax_amount) - parseFloat(args.discount_amount);
+        console.log('c_grand_total',c_grand_total);
+
+
         if (args.billing.payment_method === 'Cash On Delivery') {
           var status = 'Success';
           var user_id = args.customer_id;
           const cart = await Cart.findOneAndDelete({ user_id: args.customer_id });
         } else {
-          var status = 'Pending';
-        }
+                
+                let currencycode ;
+                if( setting.store.currency_options.currency == 'eur'){
+                  currencycode = 'EUR'
+                }else if( setting.store.currency_options.currency == 'gbp'){
+                  currencycode = 'GBP';
+                }else if( setting.store.currency_options.currency == 'cad'){
+                  currencycode = 'CAD';
+                }else{
+                  currencycode = 'USD';
+                }
+
+                //console.log('currencycode',currencycode)
+                const payment = await stripe.paymentIntents.create({
+            amount : c_grand_total * 100 ,
+            currency: currencycode,
+            description: args.billing.email,
+            payment_method: args.billing.transaction_id,
+            confirm: true
+          })
+            console.log("Payment", payment);
+            console.log("payment.status", payment.status);
+            if( payment.status == 'succeeded'){
+            status = 'Success';
+          }else{
+            status = 'Pending';
+          }
+
+          const cart = await Cart.findOneAndDelete({ user_id: args.customer_id });
+      }
         const newOrder = new Order({
           customer_id: args.customer_id,
           billing: args.billing,
@@ -95,7 +137,7 @@ module.exports = {
           shipping_amount: args.shipping_amount,
           tax_amount: args.tax_amount,
           discount_amount: args.discount_amount,
-          grand_total: args.grand_total,
+          grand_total: c_grand_total,
         });
         newOrder.products = args.products;
 

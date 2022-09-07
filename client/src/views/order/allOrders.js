@@ -46,6 +46,7 @@ const AllOrders = props => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  console.log(props)
 
   return (
     <Fragment>
@@ -138,7 +139,8 @@ const AllOrders = props => {
 };
 
 const mapStateToProps = state => {
-  return { orders: state.orders };
+  console.log(state)
+  return { orders: state.orders, settings: state.settings }
 };
 
 const mapDispatchToProps = {

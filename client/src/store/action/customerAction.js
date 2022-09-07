@@ -269,6 +269,9 @@ export const customerUpdateAction = object => dispatch => {
         response,
         "updateCustomer"
       );
+      console.log("debug===========================")
+      console.log(error, success, message, data)
+      console.log("debug===========================")
       dispatch({
         type: LOADING_FALSE,
       });

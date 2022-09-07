@@ -29,6 +29,7 @@ const CategoriesComponent = ({ onCategoryChange }) => {
       setproductCats(_.cloneDeep(products.categories));
     }
   }, [products.categories, products.products]);
+  console.log("product cat======", products.categories, "product prod", products.products)
 
   const collapseToggle = (category) => {
     category.open = !category.open;

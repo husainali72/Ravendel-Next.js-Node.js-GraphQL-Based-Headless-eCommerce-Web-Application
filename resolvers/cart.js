@@ -2,6 +2,7 @@ const Cart = require("../models/Cart");
 const Customer = require("../models/Customer");
 const Product = require("../models/Product");
 const Tax = require("../models/Tax");
+const Coupon = require("../models/Coupon");
 const Shipping = require("../models/Shipping");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const ProductAttribute = require("../models/ProductAttribute");
@@ -20,7 +21,7 @@ const {
   checkError,
   checkToken,
   MESSAGE_RESPONSE,
-  _validate
+  _validate,getdate
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
@@ -30,20 +31,113 @@ module.exports = {
       return await GET_ALL_FUNC(Cart, "Carts");
     },
     cart: async (root, args) => {
-      return await GET_SINGLE_FUNC(args.id, Cart, "Carts");
+      return await GET_SINGLE_FUNC(args.id, Cart, "Cart");
     },
     cartbyUser: async (root, args) => {
       try {
+        // console.log("cart by user=======",args.user_id)
         const cart = await Cart.findOne({ user_id: args.user_id });
+        // console.log("cart by user=========",cart)
         if (!cart) {
           throw putError("Cart not found");
         }
-        return cart;
+        return cart; 
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
+
+    calculateCoupon: async (root, args, { id }) => {
+     //checkToken(id);
+    //  console.log("args cart=======", args.cart)
+    
+      try {
+        const coupon = await Coupon.findOne({ code: args.coupon_code });
+        // console.log('coupon',coupon);
+        let calculated = {
+          total_coupon: {},
+          message: '',
+        };
+          let date = getdate('2');
+        if(!coupon){
+          calculated.total_coupon = 0.0;
+          calculated.message = 'Invalid coupon code';
+        }else{
+
+          //console.log('expiredate',coupon.expire);
+          // if(coupon.expire >= date ){
+          if(coupon.expire){
+
+              var carttotal = 0;
+              var discountAmount = 0
+              // for (let i in args.cart) {
+              // carttotal = carttotal + args.cart[i].total;
+              // }
+
+
+            for (let i in args.cart) {
+              if (args.cart[i].product_id) {
+                const product = await Product.findById({ _id: args.cart[i].product_id });
+                // console.log("product===========",product)
+                if (product.pricing.sellprice > 0) {
+                  args.cart[i].total = args.cart[i].qty * product.pricing.sellprice;
+                } else {
+                  args.cart[i].total = args.cart[i].qty * product.pricing.price;
+                }
+              }
+              carttotal = carttotal + args.cart[i].total;
+            }
+
+              //console.log('carttotal',carttotal);
+              if(coupon.discount_type == 'amount-discount'){
+                //console.log('amount');
+                discountAmount = parseFloat(coupon.discount_value);
+              }else{
+                //console.log('percentage');
+                let productDiscountAmt=0
+                if(coupon.categories.length>0 && coupon.exclude_categories.length>0 && 
+                   coupon.products.length>0 && coupon.exclude_products.length>0){
+                    for (let i in args.cart) {
+                      if (args.cart[i].product_id) {
+                        const product = await Product.findById({ _id: args.cart[i].product_id });
+                        // map category ids of product
+                        product.categoryId.map(productCatId=>{
+                          // map product category ids in coupon
+                          coupon.categories.map(couponCatId=>{
+                            console.log("productCatId=",productCatId, "couponCatId=", couponCatId)
+                            // match both ids for discount amt
+                            if(couponCatId===productCatId){
+                              productDiscountAmt+=(parseFloat(args.cart[i].total) / 100) * parseFloat(coupon.discount_value);
+                              console.log("discount on product=",productDiscountAmt)
+                            }
+                          })
+                        })
+                      }
+                    }
+                  }else{
+                    productDiscountAmt+=(parseFloat() / 100) * parseFloat(coupon.discount_value)
+                  }
+                
+                discountAmount = productDiscountAmt
+              }
+              //console.log('discountAmount',Math.round(discountAmount).toFixed(2));
+              calculated.total_coupon = Math.round(discountAmount).toFixed(2);
+              calculated.message = 'Coupon code applied sucessfully';
+
+          }else{
+               calculated.total_coupon = 0.0;
+               calculated.message = 'Coupon code expire';
+
+          }
+        }
+        return calculated;
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+
     calculateCart: async (root, args, { id }) => {
       //checkToken(id);
       try {
@@ -67,7 +161,7 @@ module.exports = {
                 name: taxval.name,
                 percentage: taxval.percentage,
               };
-
+              console.log("global tax=====",isGlobalTaxObj)
               break;
             }
           }
@@ -184,7 +278,7 @@ module.exports = {
 
             if (!tax[0].is_inclusive && !tax[0].global.is_global) {
               for (const taxval of tax[0].tax_class) {
-                //console.log(productById[i]);
+                // console.log(productById[i]);
                 if (
                   productById[i].product.tax_class.toString() ===
                   taxval._id.toString()
@@ -268,15 +362,16 @@ module.exports = {
           calculated.total_tax.name = isGlobalTaxObj.name;
         }
 
-        calculated.total_coupon = 0;
+        calculated.total_coupon = args.total_coupon;
         calculated.grand_total =
           calculated.subtotal +
           calculated.total_shipping.amount +
           calculated.total_tax.amount - calculated.total_coupon;
 
-        //  console.log(calculated);
+        //console.log(calculated);
         return calculated;
       } catch (error) {
+        console.log(error)
         error = checkError(error);
         throw new Error(error.custom_message);
       }
@@ -412,6 +507,7 @@ module.exports = {
       }
       try {
         const cart = await Cart.findOne({ user_id: args.user_id });
+        console.log("args======",args)
         var carttotal = 0;
         for (let i in args.products) {
           if (args.products[i].product_id) {
@@ -464,7 +560,7 @@ module.exports = {
     },*/
 
     updateCart: async (root, args, { id }) => {
-      // console.log("updateCart", args)
+      console.log("updateCart", args)
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -473,6 +569,7 @@ module.exports = {
       }
       try {
         const cart = await Cart.findById({ _id: args.id });
+        console.log("cart========",cart)
         if (cart) {
           var carttotal = 0;
           for (let i in args.products) {

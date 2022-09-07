@@ -271,7 +271,8 @@ const viewStyles = makeStyles((theme) => ({
     textAlign: "right",
   },
   discount: {
-    color: "red",
+    // color: "red",
+    color: "green",
   },
   mtb2: {
     marginTop: 10,

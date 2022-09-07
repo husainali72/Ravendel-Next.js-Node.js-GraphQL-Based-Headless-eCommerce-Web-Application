@@ -154,6 +154,7 @@ export const seoUpdateAction = (object) => (dispatch) => {
   mutation(UPDATE_SEO, object)
     .then((response) => {
       if (response) {
+        console.log(response.data.updateSEO)
         dispatch({
           type: SETTING_SUCCESS,
           payload: response.data.updateSEO,

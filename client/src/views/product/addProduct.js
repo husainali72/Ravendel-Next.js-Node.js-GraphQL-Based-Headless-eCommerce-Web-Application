@@ -54,7 +54,7 @@ const AddProduct = () => {
     brand: null,
     pricing: {
       price: 0,
-      sellprice: 0,
+      sellprice: "0",
     },
     status: "Draft",
     meta: {
@@ -63,10 +63,10 @@ const AddProduct = () => {
       keywords: "",
     },
     shipping: {
-      height: 0,
-      width: 0,
-      depth: 0,
-      weight: 0,
+      height: "0",
+      width: "0",
+      depth: "0",
+      weight: "0",
       shipping_class: "",
     },
     tax_class: "",
@@ -83,6 +83,8 @@ const AddProduct = () => {
     quantity: "",
   });
 
+  console.log("product virtual",product.product_type.virtual)
+  
   const addProduct = (e) => {
     e.preventDefault();
     product.combinations = combination;
