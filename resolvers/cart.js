@@ -49,8 +49,8 @@ module.exports = {
     },
 
     calculateCoupon: async (root, args, { id }) => {
-     //checkToken(id);
-    //  console.log("args cart=======", args.cart)
+      //  checkToken(id);
+      // console.log("args cart=======", args.cart)
     
       try {
         const coupon = await Coupon.findOne({ code: args.coupon_code });
@@ -65,7 +65,7 @@ module.exports = {
           calculated.message = 'Invalid coupon code';
         }else{
 
-          //console.log('expiredate',coupon.expire);
+          // console.log('expiredate',coupon.expire);
           // if(coupon.expire >= date ){
           if(coupon.expire){
 
@@ -89,12 +89,12 @@ module.exports = {
               carttotal = carttotal + args.cart[i].total;
             }
 
-              //console.log('carttotal',carttotal);
+              // console.log('carttotal',carttotal);
               if(coupon.discount_type == 'amount-discount'){
-                //console.log('amount');
+                // console.log('amount');
                 discountAmount = parseFloat(coupon.discount_value);
               }else{
-                //console.log('percentage');
+                // console.log('percentage');
                 let productDiscountAmt=0
                 if(coupon.categories.length>0 && coupon.exclude_categories.length>0 && 
                    coupon.products.length>0 && coupon.exclude_products.length>0){
@@ -116,7 +116,9 @@ module.exports = {
                       }
                     }
                   }else{
-                    productDiscountAmt+=(parseFloat() / 100) * parseFloat(coupon.discount_value)
+                    // console.log(coupon.discount_value)
+                    productDiscountAmt+=(parseFloat(carttotal) / 100) * parseFloat(coupon.discount_value)
+                    console.log(productDiscountAmt)
                   }
                 
                 discountAmount = productDiscountAmt

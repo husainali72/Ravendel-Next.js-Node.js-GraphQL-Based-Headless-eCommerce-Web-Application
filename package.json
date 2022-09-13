@@ -10,7 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "client-install": "npm install --prefix client",
-    "start": "nodemon server.js",
+    "start": "node server.js",
     "server": "export NODE_ENV=production && export PORT=80 && node server &",
     "client": "npm start --prefix client",
     "frontend": "npm start --prefix frontend",
