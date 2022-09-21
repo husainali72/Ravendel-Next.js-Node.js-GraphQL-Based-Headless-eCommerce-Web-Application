@@ -76,7 +76,7 @@ module.exports = gql`
     cart(id: ID!): Cart 
     cartbyUser(user_id: ID!): Cart
     calculateCart(total_coupon : Float, cart: [cartProducts]): calculatedCart
-    calculateCoupon(coupon_code: ID,cart: [cartProducts]): calculateCoupon
+    calculateCoupon(coupon_code: String, cart: [cartProducts]): calculateCoupon
   }
 
   extend type Mutation {

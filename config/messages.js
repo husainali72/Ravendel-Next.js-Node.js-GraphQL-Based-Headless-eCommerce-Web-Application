@@ -6,7 +6,7 @@ module.exports = {
   RETRIEVE_ERROR: ":item Couldn't retrieve",
   UPDATE_ERROR: ":item Couldn't update ",
   UP_ERROR:"Its not exist",
-  DUPLICATE:"This :item is already exist",
+  DUPLICATE:"This :item already exists",
   CREATE_ERROR: ":item Couldn't create ",
   DELETE_ERROR: "Couldn't remove :item",
   DELETE:":item Deleted successfully",

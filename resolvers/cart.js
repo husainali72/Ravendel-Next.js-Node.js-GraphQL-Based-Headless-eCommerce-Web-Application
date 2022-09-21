@@ -49,8 +49,8 @@ module.exports = {
     },
 
     calculateCoupon: async (root, args, { id }) => {
-     //checkToken(id);
-    //  console.log("args cart=======", args.cart)
+      //  checkToken(id);
+      // console.log("args cart=======", args.cart)
     
       try {
         const coupon = await Coupon.findOne({ code: args.coupon_code });
@@ -65,7 +65,7 @@ module.exports = {
           calculated.message = 'Invalid coupon code';
         }else{
 
-          //console.log('expiredate',coupon.expire);
+          // console.log('expiredate',coupon.expire);
           // if(coupon.expire >= date ){
           if(coupon.expire){
 
@@ -89,12 +89,12 @@ module.exports = {
               carttotal = carttotal + args.cart[i].total;
             }
 
-              //console.log('carttotal',carttotal);
+              // console.log('carttotal',carttotal);
               if(coupon.discount_type == 'amount-discount'){
-                //console.log('amount');
+                // console.log('amount');
                 discountAmount = parseFloat(coupon.discount_value);
               }else{
-                //console.log('percentage');
+                // console.log('percentage');
                 let productDiscountAmt=0
                 if(coupon.categories.length>0 && coupon.exclude_categories.length>0 && 
                    coupon.products.length>0 && coupon.exclude_products.length>0){
@@ -105,18 +105,20 @@ module.exports = {
                         product.categoryId.map(productCatId=>{
                           // map product category ids in coupon
                           coupon.categories.map(couponCatId=>{
-                            console.log("productCatId=",productCatId, "couponCatId=", couponCatId)
+                            //console.log("productCatId=",productCatId, "couponCatId=", couponCatId)
                             // match both ids for discount amt
                             if(couponCatId===productCatId){
                               productDiscountAmt+=(parseFloat(args.cart[i].total) / 100) * parseFloat(coupon.discount_value);
-                              console.log("discount on product=",productDiscountAmt)
+                              //console.log("discount on product=",productDiscountAmt)
                             }
                           })
                         })
                       }
                     }
                   }else{
-                    productDiscountAmt+=(parseFloat() / 100) * parseFloat(coupon.discount_value)
+                    // console.log(coupon.discount_value)
+                    productDiscountAmt+=(parseFloat(carttotal) / 100) * parseFloat(coupon.discount_value)
+                    //console.log(productDiscountAmt)
                   }
                 
                 discountAmount = productDiscountAmt
@@ -161,7 +163,7 @@ module.exports = {
                 name: taxval.name,
                 percentage: taxval.percentage,
               };
-              console.log("global tax=====",isGlobalTaxObj)
+              //console.log("global tax=====",isGlobalTaxObj)
               break;
             }
           }
@@ -507,7 +509,7 @@ module.exports = {
       }
       try {
         const cart = await Cart.findOne({ user_id: args.user_id });
-        console.log("args======",args)
+        //console.log("args======",args)
         var carttotal = 0;
         for (let i in args.products) {
           if (args.products[i].product_id) {
@@ -560,7 +562,7 @@ module.exports = {
     },*/
 
     updateCart: async (root, args, { id }) => {
-      console.log("updateCart", args)
+      //console.log("updateCart", args)
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -569,7 +571,7 @@ module.exports = {
       }
       try {
         const cart = await Cart.findById({ _id: args.id });
-        console.log("cart========",cart)
+        //console.log("cart========",cart)
         if (cart) {
           var carttotal = 0;
           for (let i in args.products) {

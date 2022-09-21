@@ -39,7 +39,7 @@ module.exports = {
     },
     ///let check it...................
     productwisereview: async (root, args) => {
-      console.log("Productwisereview===", args.product_id)
+      // console.log("Productwisereview===", args.product_id)
       if (!args.product_id) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
@@ -47,7 +47,7 @@ module.exports = {
         const reviews = await Review.find({
           product_id: { $in: args.product_id },
         });
-        console.log("review", reviews);
+        //console.log("review", reviews);
 
         // return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
 
@@ -66,13 +66,14 @@ module.exports = {
   },
   Review: {
     product_id: async (root, args) => {
-      console.log("Product", root)
+      // console.log("Product", root)
       if (!root.product_id) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
       try {
         const product = await Product.findById(root.product_id);
-        console.log("product found", product)
+        // console.log("product found", product)
+        if(product) return product
         return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
       } catch (error) {
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
@@ -84,6 +85,7 @@ module.exports = {
       }
       try {
         const customer = await Customer.findById(root.customer_id);
+        if(customer) return customer
         return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
       } catch (error) {
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
@@ -92,7 +94,7 @@ module.exports = {
   },
   Mutation: {
     addReview: async (root, args, { id }) => {
-      console.log("addReview")
+      //console.log("addReview")
       let data = {
         title: args.title,
         review: args.review,
@@ -102,7 +104,7 @@ module.exports = {
         rating: args.rating,
         status: args.status,
       };
-      console.log("data==", data)
+      //console.log("data==", data)
       let validation = ["review", "title", "email"];
       return await CREATE_FUNC(
         id,
@@ -115,6 +117,7 @@ module.exports = {
       );
     },
     updateReview: async (root, args, { id }) => {
+      //console.log(args)
       let data = {
         title: args.title,
         review: args.review,

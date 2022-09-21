@@ -53,13 +53,13 @@ const EditReview = (props) => {
           ...review,
           ...reviewState.reviews[i],
           customer_id: reviewState.reviews[i].customer_id.id,
-          product_id: reviewState.reviews[i].product_id.id,
+          product_id: reviewState.reviews[i].product_id._id,
           customer: {
             value: reviewState.reviews[i].customer_id.id,
             label: reviewState.reviews[i].customer_id.first_name,
           },
           product: {
-            value: reviewState.reviews[i].product_id.id,
+            value: reviewState.reviews[i].product_id._id,
             label: reviewState.reviews[i].product_id.name,
           },
         });
@@ -71,11 +71,11 @@ const EditReview = (props) => {
   useEffect(() => {
     const prodcutArr = productState.products.map((product) => {
       return {
-        value: product.id,
+        value: product._id,
         label: product.name,
       };
     });
-
+    //console.log('productArr', prodcutArr)
     setproducts([...prodcutArr]);
   }, [productState.products]);
 
@@ -87,13 +87,13 @@ const EditReview = (props) => {
       };
     });
 
-    console.log('customerArr', customerArr)
+    //console.log('customerArr', customerArr)
 
     setcustomers([...customerArr]);
   }, [customerState.customers]);
 
   const updateReview = () => {
-    console.log(review);
+    //console.log("review===",review)
     dispatch(reviewUpdateAction(review));
   };
 
@@ -136,9 +136,9 @@ const EditReview = (props) => {
           </CardBlocks>
 
           <CardBlocks title='Review Details'>
-            {review.product.value && (
+          {review.product.value && (
               <Box component='div' mb={2}>
-                <Typography component='legend'>Products</Typography>
+                <Typography component='legend'>Product</Typography>
                 <Select
                   value={review.product}
                   name='product_id'
@@ -150,6 +150,7 @@ const EditReview = (props) => {
                     })
                   }
                   options={products}
+                  className={classes.marginBottom}
                 />
               </Box>
             )}

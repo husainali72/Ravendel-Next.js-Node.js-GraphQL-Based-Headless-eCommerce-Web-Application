@@ -135,7 +135,7 @@ const GET_BY_URL = async (modal, url, name) => {
 
 const GET_ALL_FUNC = async (modal, name) => {
   try {
-    const response = await modal.find({});
+    const response = await modal.find({}).sort({date: -1});
     return {
       message: MESSAGE_RESPONSE("RESULT_FOUND", name, true),
       data: response,
@@ -262,8 +262,9 @@ const CREATE_FUNC = async (
       }
     }
     if (data.email) {
-      const emailresponse = await modal.findOne({ email: data.email });
-      if (emailresponse) {
+      const emailresponse = await modal.find({$and: [{product_id: data.product_id},{email: data.email}]});
+      //console.log("emailres===",emailresponse)
+      if (emailresponse.length>0) {
         return MESSAGE_RESPONSE("DUPLICATE", "email", false);
       }
     }
