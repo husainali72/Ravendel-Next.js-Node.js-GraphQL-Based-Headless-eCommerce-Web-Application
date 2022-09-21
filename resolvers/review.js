@@ -47,7 +47,7 @@ module.exports = {
         const reviews = await Review.find({
           product_id: { $in: args.product_id },
         });
-        console.log("review", reviews);
+        //console.log("review", reviews);
 
         // return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
 
@@ -94,7 +94,7 @@ module.exports = {
   },
   Mutation: {
     addReview: async (root, args, { id }) => {
-      console.log("addReview")
+      //console.log("addReview")
       let data = {
         title: args.title,
         review: args.review,
@@ -104,7 +104,7 @@ module.exports = {
         rating: args.rating,
         status: args.status,
       };
-      console.log("data==", data)
+      //console.log("data==", data)
       let validation = ["review", "title", "email"];
       return await CREATE_FUNC(
         id,
@@ -117,7 +117,7 @@ module.exports = {
       );
     },
     updateReview: async (root, args, { id }) => {
-      console.log(args)
+      //console.log(args)
       let data = {
         title: args.title,
         review: args.review,
