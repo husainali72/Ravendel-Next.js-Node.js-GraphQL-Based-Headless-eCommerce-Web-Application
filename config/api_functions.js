@@ -263,7 +263,7 @@ const CREATE_FUNC = async (
     }
     if (data.email) {
       const emailresponse = await modal.find({$and: [{product_id: data.product_id},{email: data.email}]});
-      console.log("emailres===",emailresponse)
+      //console.log("emailres===",emailresponse)
       if (emailresponse.length>0) {
         return MESSAGE_RESPONSE("DUPLICATE", "email", false);
       }
