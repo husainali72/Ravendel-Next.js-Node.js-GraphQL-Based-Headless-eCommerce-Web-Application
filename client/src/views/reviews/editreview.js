@@ -75,7 +75,7 @@ const EditReview = (props) => {
         label: product.name,
       };
     });
-    console.log('productArr', prodcutArr)
+    //console.log('productArr', prodcutArr)
     setproducts([...prodcutArr]);
   }, [productState.products]);
 
@@ -87,13 +87,13 @@ const EditReview = (props) => {
       };
     });
 
-    console.log('customerArr', customerArr)
+    //console.log('customerArr', customerArr)
 
     setcustomers([...customerArr]);
   }, [customerState.customers]);
 
   const updateReview = () => {
-    console.log("review===",review)
+    //console.log("review===",review)
     dispatch(reviewUpdateAction(review));
   };
 
