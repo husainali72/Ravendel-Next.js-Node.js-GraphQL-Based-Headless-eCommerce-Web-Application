@@ -105,11 +105,11 @@ module.exports = {
                         product.categoryId.map(productCatId=>{
                           // map product category ids in coupon
                           coupon.categories.map(couponCatId=>{
-                            console.log("productCatId=",productCatId, "couponCatId=", couponCatId)
+                            //console.log("productCatId=",productCatId, "couponCatId=", couponCatId)
                             // match both ids for discount amt
                             if(couponCatId===productCatId){
                               productDiscountAmt+=(parseFloat(args.cart[i].total) / 100) * parseFloat(coupon.discount_value);
-                              console.log("discount on product=",productDiscountAmt)
+                              //console.log("discount on product=",productDiscountAmt)
                             }
                           })
                         })
@@ -118,7 +118,7 @@ module.exports = {
                   }else{
                     // console.log(coupon.discount_value)
                     productDiscountAmt+=(parseFloat(carttotal) / 100) * parseFloat(coupon.discount_value)
-                    console.log(productDiscountAmt)
+                    //console.log(productDiscountAmt)
                   }
                 
                 discountAmount = productDiscountAmt
@@ -163,7 +163,7 @@ module.exports = {
                 name: taxval.name,
                 percentage: taxval.percentage,
               };
-              console.log("global tax=====",isGlobalTaxObj)
+              //console.log("global tax=====",isGlobalTaxObj)
               break;
             }
           }
@@ -509,7 +509,7 @@ module.exports = {
       }
       try {
         const cart = await Cart.findOne({ user_id: args.user_id });
-        console.log("args======",args)
+        //console.log("args======",args)
         var carttotal = 0;
         for (let i in args.products) {
           if (args.products[i].product_id) {
@@ -562,7 +562,7 @@ module.exports = {
     },*/
 
     updateCart: async (root, args, { id }) => {
-      console.log("updateCart", args)
+      //console.log("updateCart", args)
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -571,7 +571,7 @@ module.exports = {
       }
       try {
         const cart = await Cart.findById({ _id: args.id });
-        console.log("cart========",cart)
+        //console.log("cart========",cart)
         if (cart) {
           var carttotal = 0;
           for (let i in args.products) {
