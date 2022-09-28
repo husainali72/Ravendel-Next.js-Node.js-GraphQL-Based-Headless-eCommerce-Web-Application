@@ -1,5 +1,6 @@
 module.exports = {
   TOKEN_REQ: "Token is required",
+  UpdatePasswordSuccess: "Password updated successfully.",
   UpdateSuccess: ":item updated successfully.",
   DeleteSuccess: ":item deleted successfully.",
   AddSuccess: ":item added successfully.",

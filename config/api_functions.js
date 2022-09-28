@@ -351,6 +351,13 @@ const UPDATE_FUNC = async (
         response.password = await bcrypt.hash(data.password, 10);
       }
 
+      if (data.gender!=="male"&&data.gender!=="female") {
+        return {
+          message: "Invalid gender",
+          success: false,
+        }
+      }
+
       await response.save();
       return MESSAGE_RESPONSE("UpdateSuccess", name, true);
     }
@@ -361,8 +368,56 @@ const UPDATE_FUNC = async (
   }
 };
 
+UPDATE_PASSWORD_FUNC = async (
+  token,
+  updateId,
+  modal,
+  name,
+  data,
+  validation
+) => {
+  if (!token) {
+    return MESSAGE_RESPONSE("TOKEN_REQ", name, false);
+  }
+  checkToken(token);
+  try {
+    const errors = _validate(validation, data);
+    if (!isEmpty(errors)) {
+      return {
+        message: errors,
+        success: false,
+      };
+    }
+    if (!updateId) {
+      return MESSAGE_RESPONSE("ID_ERROR", name, false);
+    }
+    const response = await modal.findById(updateId);
+    if (response) {
+      //  console.log("args", args);
+      if (data.newPassword) {
+        const isMatch=await bcrypt.compare(data.oldPassword, response.password)
+        if(!isMatch){
+          return MESSAGE_RESPONSE("InvalidOldPassword", name, false);
+        }
+        if(data.newPassword===data.oldPassword) {
+          return MESSAGE_RESPONSE("oldNewPasswordNotMatch", name, false);
+        }
+      }
+      response.password = await bcrypt.hash(data.newPassword, 10);
+
+      await response.save();
+      return MESSAGE_RESPONSE("UpdatePasswordSuccess", name, true);
+    }
+    return MESSAGE_RESPONSE("NOT_EXIST", name, false);
+  } catch (error) {
+    console.log("UPDATE_FUNC", error);
+    return MESSAGE_RESPONSE("UPDATE_ERROR", name, false);
+  }
+}
+
 module.exports.DELETE_FUNC = DELETE_FUNC;
 module.exports.UPDATE_FUNC = UPDATE_FUNC;
+module.exports.UPDATE_PASSWORD_FUNC = UPDATE_PASSWORD_FUNC;
 module.exports.CREATE_FUNC = CREATE_FUNC;
 module.exports.GET_ALL_FUNC = GET_ALL_FUNC;
 module.exports.GET_BY_URL = GET_BY_URL;

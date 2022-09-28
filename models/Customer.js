@@ -19,6 +19,9 @@ const CustomerSchema = new Schema({
   company: {
     type: String,
   },
+  gender: {
+    type: String,
+  },
   phone: {
     type: String,
   },

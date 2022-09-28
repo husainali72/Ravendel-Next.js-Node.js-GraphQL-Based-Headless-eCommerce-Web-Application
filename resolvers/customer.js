@@ -12,6 +12,7 @@ const {
   GET_ALL_FUNC,
   CREATE_FUNC,
   UPDATE_FUNC,
+  UPDATE_PASSWORD_FUNC,
 } = require("../config/api_functions");
 
 module.exports = {
@@ -68,9 +69,9 @@ module.exports = {
         first_name: args.first_name,
         last_name: args.last_name,
         email: args.email,
+        gender: args.gender,
         company: args.company || "",
         phone: args.phone || "",
-        password: args.password,
         updated: Date.now(),
       };
       let validation = ["first_name", "last_name", "email"];
@@ -84,6 +85,21 @@ module.exports = {
         args,
         validation
       );
+    },
+    updateCustomerPassword: async (root, args, { id })=>{
+      let data = {
+        oldPassword: args.oldPassword,
+        newPassword: args.newPassword,
+      };
+      let validation = ["oldPassword", "newPassword"];
+      return await UPDATE_PASSWORD_FUNC(
+        id,
+        args.id,
+        Customer,
+        "Customer",
+        data,
+        validation
+      )
     },
     deleteCustomer: async (root, args, { id }) => {
       return await DELETE_FUNC(id, args.id, Customer, "Customers");
