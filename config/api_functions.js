@@ -351,7 +351,7 @@ const UPDATE_FUNC = async (
         response.password = await bcrypt.hash(data.password, 10);
       }
 
-      if (data.gender!=="male"&&data.gender!=="female") {
+      if (data.gender===""&&data.gender===null) {
         return {
           message: "Invalid gender",
           success: false,
@@ -406,7 +406,7 @@ UPDATE_PASSWORD_FUNC = async (
       response.password = await bcrypt.hash(data.newPassword, 10);
 
       await response.save();
-      return MESSAGE_RESPONSE("UpdatePasswordSuccess", name, true);
+      return MESSAGE_RESPONSE("UpdateSuccess", name, true);
     }
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);
   } catch (error) {
