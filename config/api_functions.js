@@ -277,7 +277,7 @@ const CREATE_FUNC = async (
     await response.save();
     return MESSAGE_RESPONSE("AddSuccess", name, true);
   } catch (error) {
-    console.log("CREATE_FUNC", error);
+    // console.log("CREATE_FUNC", error);
     return MESSAGE_RESPONSE("CREATE_ERROR", name, false);
   }
 };
@@ -363,7 +363,7 @@ const UPDATE_FUNC = async (
     }
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);
   } catch (error) {
-    console.log("UPDATE_FUNC", error);
+    // console.log("UPDATE_FUNC", error);
     return MESSAGE_RESPONSE("UPDATE_ERROR", name, false);
   }
 };
@@ -410,7 +410,7 @@ UPDATE_PASSWORD_FUNC = async (
     }
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);
   } catch (error) {
-    console.log("UPDATE_FUNC", error);
+    // console.log("UPDATE_FUNC", error);
     return MESSAGE_RESPONSE("UPDATE_ERROR", name, false);
   }
 }
