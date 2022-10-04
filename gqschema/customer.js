@@ -11,6 +11,7 @@ module.exports = gql`
     address_book: customArray
     date: Date
     updated: Date
+    gender: String
   }
 
   type AddressBook {
@@ -71,7 +72,12 @@ module.exports = gql`
       email: String
       company: String
       phone: String
-      password: String
+      gender: String
+    ): statusSchema
+    updateCustomerPassword(
+      id: ID!
+      oldPassword: String
+      newPassword: String
     ): statusSchema
     deleteCustomer(id: ID!): statusSchema
     addAddressBook(
