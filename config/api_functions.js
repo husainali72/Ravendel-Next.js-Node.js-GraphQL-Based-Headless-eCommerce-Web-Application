@@ -351,7 +351,7 @@ const UPDATE_FUNC = async (
         response.password = await bcrypt.hash(data.password, 10);
       }
 
-      if (data.gender===""&&data.gender===null) {
+      if (data.gender === "" && data.gender === null) {
         return {
           message: "Invalid gender",
           success: false,
@@ -395,11 +395,11 @@ UPDATE_PASSWORD_FUNC = async (
     if (response) {
       //  console.log("args", args);
       if (data.newPassword) {
-        const isMatch=await bcrypt.compare(data.oldPassword, response.password)
+        const isMatch = await bcrypt.compare(data.oldPassword, response.password)
         if(!isMatch){
           return MESSAGE_RESPONSE("InvalidOldPassword", name, false);
         }
-        if(data.newPassword===data.oldPassword) {
+        if(data.newPassword === data.oldPassword) {
           return MESSAGE_RESPONSE("oldNewPasswordNotMatch", name, false);
         }
       }
