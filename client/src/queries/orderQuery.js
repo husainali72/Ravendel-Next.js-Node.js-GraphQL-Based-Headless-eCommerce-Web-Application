@@ -5,10 +5,12 @@ const GET_ORDERS = gql`
       data {
         id
         customer_id
-        status
+        payment_status
+        shipping_status
         shipping
         billing
         products
+        coupon_code
         date
         updated
       }
