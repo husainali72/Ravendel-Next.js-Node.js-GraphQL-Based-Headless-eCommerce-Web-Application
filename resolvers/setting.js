@@ -1,4 +1,5 @@
 const Setting = require("../models/Setting");
+const Categories = require("../models/ProductCat")
 const {
   isEmpty,
   putError,
@@ -291,7 +292,7 @@ module.exports = {
         await checkAwsFolder('setting');
         const setting = await Setting.findOne({});
         //console.log('Slider',setting.appearance.home.slider);
-        console.log('Argument',args.slider);
+        // console.log('Argument',args.slider);
 
         var slider = [];
         let imgObject = {};
@@ -314,8 +315,49 @@ module.exports = {
           });
         }
 
+        if(setting.appearance.home.add_section_in_home.product_from_specific_categories === true) {
+          setting.appearance.home.add_section_in_home.category_id = args.add_section_in_home.category_id
+        }else{
+          setting.appearance.home.add_section_in_home.category_id = ""
+        }
+
         setting.appearance.home.slider = slider;
         setting.appearance.home.add_section_in_home = args.add_section_in_home;
+        return await setting.save();
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    updateAppearanceMobile: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        await checkAwsFolder('setting');
+        const setting = await Setting.findOne({});
+
+        var mobile_section = [];
+        let imgObject = {};
+        for (let i in args.mobile_section) {
+          if (args.mobile_section[i].update_image) {
+            imgObject = await imageUpload(
+              args.mobile_section[i].update_image[0].file,
+              "/assets/images/setting/mobile","MobileSetting"
+            );
+
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            }
+          }
+
+          mobile_section.push({
+            label: args.label,
+            mobile_section: imgObject.data || args.mobile_section[i].image,
+            visible: args.visible,
+            url: args.url,
+          });
+        }
+        
+        setting.appearance.mobile.mobile_add_section_in_home = mobile_section
         return await setting.save();
       } catch (error) {
         error = checkError(error);

@@ -134,6 +134,14 @@ const SETTING_TILE_DATA = gql`
         primary_color
         logo
       }
+      mobile {
+        mobile_add_section_in_home {
+          label
+          section_img
+          visible
+          url
+        }
+      }
     }
     createdAt
     updatedAt
@@ -406,6 +414,17 @@ const UPDATE_APPEARANCE_HOME = gql`
   ${SETTING_TILE_DATA}
 `;
 
+const UPDATE_APPEARANCE_MOBILE = gql`
+  mutation($mobile_add_section_in_home: [mobile_add_section_in_home]) {
+    updateAppearanceMobile(
+      mobile_add_section_in_home: $mobile_add_section_in_home
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
 const UPDATE_APPEARANCE_THEME = gql`
   mutation($primary_color: String, $new_logo: Upload) {
     updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo) {
@@ -432,5 +451,6 @@ export {
   UPDATE_PAYMENT_STRIPE,
   UPDATE_PAYMENT_PAYPAL,
   UPDATE_APPEARANCE_HOME,
+  UPDATE_APPEARANCE_MOBILE,
   UPDATE_APPEARANCE_THEME,
 };

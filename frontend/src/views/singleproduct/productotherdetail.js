@@ -277,10 +277,10 @@ const ProductOtherDetails = (props) => {
                   </Grid>
                 </Collapse>
                 <Grid container spacing={2} className="product-reviews">
-                  {props.reviews &&
-                  props.reviews.filter((review) => review.status === "approved")
+                  {props.reviews && props.reviews.data &&
+                  props.reviews.data.filter((review) => review.status === "approved")
                     .length > 0 ? (
-                    props.reviews
+                    props.reviews.data
                       .filter((review) => review.status === "approved")
                       .map((singleReview, index) => (
                         <Grid
@@ -486,10 +486,10 @@ const ProductOtherDetails = (props) => {
                 </Collapse>
               </Box>
               <Grid container spacing={2} className="product-reviews">
-                {props.reviews &&
-                props.reviews.filter((review) => review.status === "approved")
+                {props.reviews && props.reviews.data &&
+                props.reviews.data.filter((review) => review.status === "approved")
                   .length > 0 ? (
-                  props.reviews 
+                  props.reviews.data 
                     .filter((review) => review.status === "approved")
                     .map((singleReview, index) => (
                       <Grid

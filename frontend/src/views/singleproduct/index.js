@@ -17,7 +17,6 @@ const SingleProduct = (props) => {
   const products = useSelector(state => state.products);
   const [singleProduct, setSingleProduct] = useState(null);
   const [sliderImages, setSliderImages] = useState([]);
-
   useEffect(() => {
     dispatch(singleProductAction(productID));
   }, [productID]);
@@ -32,6 +31,7 @@ const SingleProduct = (props) => {
     var product = products.product;
     // console.log('----------------------', product);
     setSingleProduct(product);
+    // console.log("prod====",product)
     var allimages = [];
     if (product.feature_image) {
       allimages.push(product.feature_image);
@@ -42,8 +42,8 @@ const SingleProduct = (props) => {
       });
     }
 
-    if (product.id) {
-      dispatch(productReviewsAction(product.id));
+    if (product._id) {
+      dispatch(productReviewsAction(product._id));
     }
     setSliderImages(allimages);
   }, [products.product]);

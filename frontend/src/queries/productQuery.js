@@ -61,7 +61,7 @@ const ON_SALE_PRODUCTS = gql`
 `;
 
 const GET_PRODUCTS_CATID = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     productsbycatid(cat_id: $id) {
       _id
       name
@@ -102,7 +102,7 @@ const PRODUCT_TILE_DATA = gql`
 `;
 
 const GET_FILTEREDPRODUCTS = gql`
-  query($config: customObject) {
+  query ($config: customObject) {
     filteredProducts(config: $config) {
       ...ProductTile
     }
@@ -157,7 +157,7 @@ const GET_PRODUCTS = gql`
 `;
 
 const GET_PRODUCT = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     product(id: $id) {
       data {
         id
@@ -193,10 +193,9 @@ const GET_PRODUCT = gql`
 `;
 
 const GET_SINGLE_PRODUCT = gql`
-  query($url: String!) {
+  query ($url: String!) {
     productbyurl(url: $url) {
       data {
-
         _id
         name
         url
@@ -222,7 +221,7 @@ const GET_SINGLE_PRODUCT = gql`
         short_description
         variant
       }
-      
+
       message {
         message
         success
@@ -252,7 +251,7 @@ const GET_CATEGORIES = gql`
 `;
 
 const GET_CAT_PRODUCTS = gql`
-  query($url: String!) {
+  query ($url: String!) {
     productsbycaturl(cat_url: $url) {
       data {
         id
@@ -294,29 +293,31 @@ const GET_CAT_PRODUCTS = gql`
 `;
 
 const GET_PRODUCT_REVIEWS = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     productwisereview(product_id: $id) {
-      title
-      customer_id {
-        id
-        first_name
+      data {
+        title
+        customer_id {
+          id
+          first_name
+        }
+        product_id {
+          _id
+          name
+        }
+        email
+        review
+        rating
+        date
+        updated
+        status
       }
-      product_id {
-        id
-        name
-      }
-      email
-      review
-      rating
-      date
-      updated
-      status
     }
   }
 `;
 
 const ADD_REVIEW = gql`
-  mutation(
+  mutation (
     $title: String
     $customer_id: String
     $product_id: String
