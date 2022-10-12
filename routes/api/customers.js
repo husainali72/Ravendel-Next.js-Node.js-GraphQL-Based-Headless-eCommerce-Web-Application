@@ -69,7 +69,18 @@ router.post("/login", (req, res) => {
   const password = req.body.password;
   const errors = {};
   // Find customer by email
-  Customer.findOne({ email }).then((customer) => {
+  const pipeline = [
+    {$lookup: {
+      from: "carts",
+      localField: "_id",
+      foreignField: "user_id",
+      as: "cartId"
+    }},
+    {$set: {cartId: {$arrayElemAt: ["$cartId._id", 0]}}},
+    {$match: {email: email}}
+  ]
+  Customer.aggregate(pipeline).then((cust) => {
+    let customer = cust[0]
     // Check for customer
     if (!customer) {
       return res.status(404).json({success: false,message: 'Invalid credentials.'});

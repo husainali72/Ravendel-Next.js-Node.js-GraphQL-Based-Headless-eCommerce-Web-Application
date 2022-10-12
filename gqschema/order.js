@@ -3,7 +3,8 @@ module.exports = gql`
   type Order {
     id: ID
     customer_id: ID
-    status: String
+    payment_status: String
+    shipping_status: String
     shipping: customObject
     billing: customObject
     products: customArray
@@ -12,6 +13,7 @@ module.exports = gql`
     subtotal: String
     shipping_amount: String
     tax_amount: String
+    coupon_code: String
     discount_amount: String
     grand_total: String
   }
@@ -47,6 +49,7 @@ module.exports = gql`
       subtotal: String
       shipping_amount: String
       tax_amount: String
+      coupon_code: String
       discount_amount: String
       grand_total: String
     ): statusSchema
@@ -54,7 +57,8 @@ module.exports = gql`
       id: ID
       billing: customObject
       shipping: customObject
-      status: String
+      payment_status: String
+      shipping_status: String
     ): statusSchema
     deleteOrder(id: ID!): statusSchema
   }

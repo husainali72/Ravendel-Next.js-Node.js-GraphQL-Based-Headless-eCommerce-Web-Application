@@ -306,7 +306,39 @@ const SeetingSchema = new Schema(
           product_from_specific_categories: {
             type: Boolean,
           },
+          category_id: {
+            type: String
+          }
         },
+      },
+      mobile: {
+        mobile_add_section_in_home: [
+          {
+            label: {
+              type: String,
+            },
+            section_img: {
+              original: {
+                type: String,
+              },
+              large: {
+                type: String,
+              },
+              medium: {
+                type: String,
+              },
+              thumbnail: {
+                type: String,
+              },
+            },
+            visible: {
+              type: Boolean,
+            },
+            url: {
+              type: String,
+            },
+          }
+        ],
       },
       theme: {
         primary_color: {

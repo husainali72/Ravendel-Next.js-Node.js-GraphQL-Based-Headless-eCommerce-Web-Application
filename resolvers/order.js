@@ -31,7 +31,7 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Order", false);
       }
       try {
-        const order = await Order.find({ customer_id: args.user_id });
+        const order = await Order.find({ customer_id: args.user_id }).sort({date: -1});
         console.log("order", order)
         if (!order) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
@@ -94,7 +94,7 @@ module.exports = {
 
 
         if (args.billing.payment_method === 'Cash On Delivery') {
-          var status = 'Success';
+          var status = 'pending';
           var user_id = args.customer_id;
           const cart = await Cart.findOneAndDelete({ user_id: args.customer_id });
         } else {
@@ -121,9 +121,9 @@ module.exports = {
             console.log("Payment", payment);
             console.log("payment.status", payment.status);
             if( payment.status == 'succeeded'){
-            status = 'Success';
+            status = 'success';
           }else{
-            status = 'Pending';
+            status = 'pending';
           }
 
           const cart = await Cart.findOneAndDelete({ user_id: args.customer_id });
@@ -132,10 +132,12 @@ module.exports = {
           customer_id: args.customer_id,
           billing: args.billing,
           shipping: args.shipping,
-          status: status,
+          payment_status: status,
+          shipping_status: "inprogress",
           subtotal: args.subtotal,
           shipping_amount: args.shipping_amount,
           tax_amount: args.tax_amount,
+          coupon_code: args.coupon_code,
           discount_amount: args.discount_amount,
           grand_total: c_grand_total,
         });
@@ -199,7 +201,8 @@ module.exports = {
         }
         const order = await Order.findById(args.id);
         if (order) {
-          order.status = args.status;
+          order.payment_status = args.payment_status;
+          order.shipping_status = args.shipping_status;
           order.billing = args.billing;
           order.shipping = args.shipping;
           await order.save();

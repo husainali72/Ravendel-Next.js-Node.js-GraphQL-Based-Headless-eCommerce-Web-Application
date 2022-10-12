@@ -66,6 +66,9 @@ const OrderSchema = new Schema({
         type: Number,
         required: true
   },
+  coupon_code: {
+        type: String,
+  },
   discount_amount: {
         type: Number,
         required: true
@@ -74,10 +77,15 @@ const OrderSchema = new Schema({
         type: Number,
         required: true
   },
-  status: {
+  payment_status: {
     type: String,
-    enum : ['Pending','Failed','Success','Cancelled'],
-    default: 'Pending'
+    enum : ['pending','failed','success','cancelled'],
+    default: 'pending'
+  },
+  shipping_status: {
+    type: String,
+    enum : ['inprogress','shipped','outfordelivery','delivered'],
+    default: 'inprogress'
   },
   date: {
     type: Date,
