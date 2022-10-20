@@ -53,7 +53,7 @@ module.exports = {
       // console.log("args cart=======", args.cart)
     
       try {
-        const coupon = await Coupon.findOne({ code: args.coupon_code });
+        const coupon = await Coupon.findOne({ code: {$regex: new RegExp(args.coupon_code, "i")} });
         // console.log('coupon',coupon);
         let calculated = {
           total_coupon: {},
@@ -66,9 +66,7 @@ module.exports = {
         }else{
 
           // console.log('expiredate',coupon.expire);
-          // if(coupon.expire >= date ){
-          if(coupon.expire){
-
+          if(coupon.expire >= date ){
               var carttotal = 0;
               var discountAmount = 0
               // for (let i in args.cart) {
@@ -123,8 +121,10 @@ module.exports = {
                 
                 discountAmount = productDiscountAmt
               }
-              //console.log('discountAmount',Math.round(discountAmount).toFixed(2));
-              calculated.total_coupon = Math.round(discountAmount).toFixed(2);
+              // console.log('discountAmount',Math.round(discountAmount).toFixed(2));
+              // calculated.total_coupon = Math.round(discountAmount).toFixed(2);
+              calculated.total_coupon = Math.trunc(discountAmount*Math.pow(10, 2))/Math.pow(10, 2);
+              console.log('discountAmount', calculated.total_coupon);
               calculated.message = 'Coupon code applied sucessfully';
 
           }else{

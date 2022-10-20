@@ -74,7 +74,8 @@ const ViewOrder = props => {
       notes: ""
     },
     products: [],
-    status: "",
+    payment_status: "",
+    shipping_status: "",
     date: ""
   });
 
@@ -203,7 +204,7 @@ const ViewOrder = props => {
                   <Select
                     labelId="status"
                     id="status"
-                    value={order.status}
+                    value={order.payment_status}
                     name="status"
                     onChange={e =>
                       setorder({ ...order, [e.target.name]: e.target.value })
