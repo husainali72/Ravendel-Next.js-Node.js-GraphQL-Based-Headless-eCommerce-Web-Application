@@ -614,7 +614,7 @@ module.exports = {
       try {
         const cart = await Cart.findOne({ user_id: args.user_id });
         for (let i in cart.products) {
-          console.log(cart.products[i])
+          // console.log(cart.products[i])
           if(cart.products[i].product_id.toString() === args.product_id.toString()){
             cart.products[i].qty = args.qty
           }
