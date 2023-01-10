@@ -1,22 +1,22 @@
-import React, { Fragment, useState } from "react";
-import { Grid, TextField } from "@material-ui/core";
+import React, { useState } from "react";
+import { Grid, TextField } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { attributeAddAction } from "../../../store/action/";
+
 import ReactTags from "react-tag-autocomplete";
 import viewStyles from "../../viewStyles";
 import { Alert, Loading, TopBar, CardBlocks } from "../../components";
-import {client_app_route_url} from '../../../utils/helper';
-
+import { client_app_route_url } from "../../../utils/helper";
+import theme from "../../../theme";
+import { ThemeProvider } from "@mui/material/styles";
 const delimiters = ["Enter", "Tab"];
 
-const AddAttribute = () => {
+const AddAttributeTheme = () => {
   const classes = viewStyles();
   const [attribute, setattribute] = useState({
     name: "",
     values: [],
   });
   const attributeState = useSelector((state) => state.product_attributes);
-  const dispatch = useDispatch();
 
   const onDeleteTag = (i) => {
     attribute.values.splice(i, 1);
@@ -29,34 +29,34 @@ const AddAttribute = () => {
   };
 
   const onAdd = () => {
-    dispatch(attributeAddAction({ attribute: attribute }));
+    // dispatch(attributeAddAction({ attribute: attribute }));
   };
 
   return (
-    <Fragment>
+    <>
       <form>
         <Alert />
         <TopBar
-          title='Add Attribute'
+          title="Add Attribute"
           onSubmit={onAdd}
-          submitTitle='Add'
+          submitTitle="Add"
           backLink={`${client_app_route_url}attributes`}
         />
 
         <Grid container spacing={2} className={classes.secondmainrow}>
           {attributeState.loading ? <Loading /> : null}
           <Grid item lg={6} xs={12}>
-            <CardBlocks title='Attribute Information' nomargin>
+            <CardBlocks title="Attribute Information" nomargin>
               <Grid container>
                 <Grid item xs={12}>
                   <TextField
-                    label='Name'
-                    name='name'
+                    label="Name"
+                    name="name"
                     value={attribute.name}
                     onChange={(e) =>
                       setattribute({ ...attribute, name: e.target.value })
                     }
-                    variant='outlined'
+                    variant="outlined"
                     className={classes.marginBottom}
                     fullWidth
                   />
@@ -79,8 +79,15 @@ const AddAttribute = () => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 
+const AddAttribute = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AddAttributeTheme />
+    </ThemeProvider>
+  );
+};
 export default AddAttribute;

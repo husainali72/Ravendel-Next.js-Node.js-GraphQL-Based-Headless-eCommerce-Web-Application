@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Table,
@@ -12,19 +12,19 @@ import {
   Tooltip,
   TablePagination,
   Box,
-} from "@material-ui/core";
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import viewStyles from "../viewStyles.js";
 import {
-  blogtagsAction,
   blogtagAddAction,
   blogtagUpdateAction,
   blogtagDeleteAction,
 } from "../../store/action/";
-import { isEmpty } from "../../utils/helper";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { convertDateToStringFormat } from "../utils/convertDate";
+import theme from "../../theme/index.js";
+import { ThemeProvider } from "@mui/material/styles";
 import {
   Alert,
   Loading,
@@ -36,14 +36,14 @@ var tagObject = {
   name: "",
   url: "",
 };
-const AllTags = () => {
+const AllTagsComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const blogState = useSelector((state) => state.blogs);
   const [singleTag, setSingleTag] = useState(tagObject);
   const [editMode, setEditmode] = useState(false);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -54,16 +54,8 @@ const AllTags = () => {
     setPage(0);
   };
 
-  // useEffect(() => {
-  //   if (isEmpty(blogState.tags)) {
-  //     dispatch(blogtagsAction());
-  //   }
-  // }, [blogState.tags]);
-
   useEffect(() => {
-    
-      dispatch(blogtagsAction());
-    
+    // dispatch(blogtagsAction());
   }, []);
 
   const editTag = (tag) => {
@@ -93,14 +85,14 @@ const AllTags = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {blogState.loading ? <Loading /> : null}
       <Grid container className={classes.mainrow} spacing={2}>
         <Grid item md={6} xs={12}>
-          <CardBlocks title='All Tags' nomargin>
+          <CardBlocks title="All Tags" nomargin>
             <TableContainer className={classes.container}>
-              <Table stickyHeader aria-label='Tags-table' size='small'>
+              <Table stickyHeader aria-label="Tags-table" size="small">
                 <TableHead>
                   <TableRow>
                     <TableCell>Name</TableCell>
@@ -118,17 +110,17 @@ const AllTags = () => {
                           {convertDateToStringFormat(tag.date)}
                         </TableCell>
                         <TableCell>
-                          <Tooltip title='Edit Tag' aria-label='edit'>
+                          <Tooltip title="Edit Tag" aria-label="edit">
                             <IconButton
-                              aria-label='Edit'
+                              aria-label="Edit"
                               onClick={() => editTag(tag)}
                             >
                               <EditIcon />
                             </IconButton>
                           </Tooltip>
-                          <Tooltip title='Delete Tag' aria-label='delete'>
+                          <Tooltip title="Delete Tag" aria-label="delete">
                             <IconButton
-                              aria-label='Delete'
+                              aria-label="Delete"
                               className={classes.deleteicon}
                               onClick={() =>
                                 dispatch(blogtagDeleteAction(tag.id))
@@ -146,7 +138,7 @@ const AllTags = () => {
             </TableContainer>
             <TablePagination
               rowsPerPageOptions={[5, 10, 20]}
-              component='div'
+              component="div"
               count={blogState.tags.length}
               rowsPerPage={rowsPerPage}
               page={page}
@@ -165,21 +157,21 @@ const AllTags = () => {
               cancelBtnOnChange={cancelTag}
               nomargin
             >
-              <Box component='div' mb={2}>
+              <Box component="div" mb={2}>
                 <TextField
-                  label='Name'
-                  name='name'
-                  variant='outlined'
+                  label="Name"
+                  name="name"
+                  variant="outlined"
                   onChange={handleChange}
                   value={singleTag.name}
                   fullWidth
                 />
               </Box>
-              <Box component='div' mb={2}>
+              <Box component="div" mb={2}>
                 <TextField
-                  label='Url'
-                  name='url'
-                  variant='outlined'
+                  label="Url"
+                  name="url"
+                  variant="outlined"
                   onChange={handleChange}
                   value={singleTag.url}
                   fullWidth
@@ -189,8 +181,15 @@ const AllTags = () => {
           </form>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
+const AllTags = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllTagsComponent />
+    </ThemeProvider>
+  );
+};
 export default AllTags;

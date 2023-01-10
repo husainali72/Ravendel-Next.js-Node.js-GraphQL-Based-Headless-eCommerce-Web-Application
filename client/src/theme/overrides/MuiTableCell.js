@@ -1,9 +1,18 @@
-import palette from '../palette';
-import typography from '../typography';
+import palette from "../palette";
+import typography from "../typography";
 
 export default {
-  root: {
-    ...typography.body1,
-    borderBottom: `1px solid ${palette.divider}`
-  }
+  styleOverrides: {
+    root: ({ ownerState }) => ({
+      ...(ownerState.variant === "contained" &&
+        ownerState.color === "primary" && {
+          backgroundColor: " #F4F6F8",
+        }),
+
+      ...typography.body1,
+      borderBottom: `1px solid ${palette.divider}`,
+
+      padding: "10px",
+    }),
+  },
 };

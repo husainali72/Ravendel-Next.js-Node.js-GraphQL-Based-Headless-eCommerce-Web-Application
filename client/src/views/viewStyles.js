@@ -1,27 +1,34 @@
 import palette from "../theme/palette";
-import { makeStyles } from "@material-ui/styles";
-import { deepPurple } from "@material-ui/core/colors";
-
+import { makeStyles, ThemeProvider } from "@mui/styles";
+import { deepPurple } from "@mui/material/colors";
+import { createTheme } from "@mui/material";
+import MuiButton from "../theme/overrides/MuiButton";
+import typography from "../theme/typography";
 const viewStyles = makeStyles((theme) => ({
   marginTop1: {
     marginTop: 10,
   },
   mainrow: {
-    padding: theme.spacing(4),
-    [theme.breakpoints.down('xs')]: {
-      padding: theme.spacing(2),
+    "&&": {
+      padding: theme.spacing(4),
+      [theme.breakpoints.down("xs")]: {
+        padding: theme.spacing(2),
+      },
     },
   },
   secondmainrow: {
-    padding: theme.spacing(4),
-    marginTop: 40,
-    [theme.breakpoints.down('xs')]: {
-      marginTop: 75,
-      padding: theme.spacing(2),
+    "&&": {
+      padding: theme.spacing(4),
+
+      marginTop: 30,
+      [theme.breakpoints.down("xs")]: {
+        marginTop: 75,
+        padding: theme.spacing(2),
+      },
     },
   },
   deleteicon: {
-    color: palette.error.dark,
+    "&&": {},
   },
   avatar: {
     width: "50px",
@@ -29,32 +36,41 @@ const viewStyles = makeStyles((theme) => ({
     borderRadius: "100%",
   },
   addUserBtn: {
-    background: palette.success.main,
     color: "#fff",
   },
-   backdrop: {
+  backdrop: {
     zIndex: "1101 !important",
     color: "#fff",
   },
-  backdropInnerWrapper:{
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+  backdropInnerWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
-  backdropLoadingText:{
-    color: '#fff',
-    marginTop: '20px !important'
+  backdropLoadingText: {
+    color: "#fff",
+    marginTop: "20px !important",
   },
   avtarTd: {
     width: "50px",
+    backgroundColor: "red",
   },
   container: {
     maxHeight: 600,
   },
   cancelBtn: {
-    background: palette.error.dark,
-    color: "#fff",
-    marginLeft: theme.spacing(2),
+    "&&": {
+      background: palette.error.dark,
+      color: "#fff",
+      marginLeft: "10px",
+    },
+  },
+  addBtn: {
+    "&&": {
+      color: "white",
+
+      marginLeft: "10px",
+    },
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -80,6 +96,7 @@ const viewStyles = makeStyles((theme) => ({
     textDecoration: "underline",
     display: "flex",
     cursor: "pointer",
+    fontSize: "15px",
   },
   feautedImageBox: {
     background: "rgb(240,240,240)",
@@ -132,11 +149,14 @@ const viewStyles = makeStyles((theme) => ({
   sliderImagePreview: {
     maxWidth: "90%",
     maxHeight: "90%",
+    fontSize: "15px",
   },
   slideRemove: {
-    position: "absolute",
-    top: 2,
-    right: 2,
+    "&&": {
+      position: "absolute",
+      top: 2,
+      right: 2,
+    },
   },
   galleryImgOuterBox: {
     display: "flex",
@@ -224,20 +244,18 @@ const viewStyles = makeStyles((theme) => ({
   },
   settingRoot: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
+
     display: "flex",
     height: 600,
     "&: .MuiTabs-flexContainerVertical": {
-      "&: .MuiButtonBase-root.Mui-selected": {
-        backgroundColor: "#000",
-      },
+      "&: .MuiButtonBase-root.Mui-selected": {},
     },
-    [theme.breakpoints.down('md')]: {
-      height: 'auto',
+    [theme.breakpoints.down("md")]: {
+      height: "auto",
     },
   },
   settingsTabs: {
-    //borderRight: `1px solid ${theme.palette.divider}`\
+    borderRight: `1px solid ${theme.palette.divider}`,
   },
   flexGrow1: {
     flexGrow: 1,
@@ -271,7 +289,6 @@ const viewStyles = makeStyles((theme) => ({
     textAlign: "right",
   },
   discount: {
-    // color: "red",
     color: "green",
   },
   mtb2: {
@@ -354,22 +371,24 @@ const viewStyles = makeStyles((theme) => ({
   settingInput: {
     minWidth: "300px !important",
     marginBottom: "25px !important",
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down("md")]: {
       minWidth: "100% !important",
       width: "100% !important",
-      display: "flex !important"
+      display: "flex !important",
     },
   },
   settingSelectInput: {
     minWidth: "300px !important",
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down("md")]: {
       minWidth: "100% !important",
       width: "100% !important",
-      display: "flex !important"
+      display: "flex !important",
     },
   },
   marginBottom1: {
-    marginBottom: "10px !important",
+    "&&": {
+      marginBottom: "10px !important",
+    },
   },
   marginBottom2: {
     marginBottom: "20px !important",
@@ -403,12 +422,12 @@ const viewStyles = makeStyles((theme) => ({
     justifyContent: "center",
     marginBottom: theme.spacing(2),
     padding: theme.spacing(2),
-    flexDirection: 'column'
+    flexDirection: "column",
   },
   themeLogoBoxPreview: {
     maxWidth: "95%",
     maxHeight: "95%",
-    marginBottom: 5
+    marginBottom: 5,
   },
 }));
 

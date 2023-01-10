@@ -5,9 +5,9 @@ import {
   Box,
   RadioGroup,
   FormControlLabel,
-} from "@material-ui/core";
+} from "@mui/material";
 import Select from "react-select";
-import Rating from "@material-ui/lab/Rating";
+import Rating from "@mui/material/Rating";
 import {
   productsAction,
   customersAction,
@@ -15,10 +15,17 @@ import {
   reviewUpdateAction,
 } from "../../store/action";
 import { useSelector, useDispatch } from "react-redux";
-import { StyledRadio, Loading, TopBar, TextInput, CardBlocks } from "../components";
+import {
+  StyledRadio,
+  Loading,
+  TopBar,
+  TextInput,
+  CardBlocks,
+} from "../components";
 import viewStyles from "../viewStyles";
-import {client_app_route_url} from '../../utils/helper';
-
+import { client_app_route_url } from "../../utils/helper";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme";
 var reviewObj = {
   title: "",
   customer_id: "",
@@ -30,7 +37,8 @@ var reviewObj = {
   customer: {},
   product: {},
 };
-const EditReview = (props) => {
+
+const EditReviewComponent = (props) => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const productState = useSelector((state) => state.products);
@@ -75,7 +83,7 @@ const EditReview = (props) => {
         label: product.name,
       };
     });
-    //console.log('productArr', prodcutArr)
+
     setproducts([...prodcutArr]);
   }, [productState.products]);
 
@@ -87,13 +95,10 @@ const EditReview = (props) => {
       };
     });
 
-    //console.log('customerArr', customerArr)
-
     setcustomers([...customerArr]);
   }, [customerState.customers]);
 
   const updateReview = () => {
-    //console.log("review===",review)
     dispatch(reviewUpdateAction(review));
   };
 
@@ -105,43 +110,43 @@ const EditReview = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       {reviewState.loading && <Loading />}
       <TopBar
-        title='Edit Customer Review'
+        title="Edit Customer Review"
         onSubmit={updateReview}
-        submitTitle='Update'
+        submitTitle="Update"
         backLink={`${client_app_route_url}reviews`}
       />
 
       <Grid container spacing={4} className={classes.secondmainrow}>
         <Grid item lg={9} md={12} sm={12} xs={12}>
-          <CardBlocks title='Review Information' nomargin>
-            <Box component='div' mb={2}>
+          <CardBlocks title="Review Information" nomargin>
+            <Box component="div" mb={2}>
               <TextInput
                 value={review.title}
-                label='Title'
-                name='title'
+                label="Title"
+                name="title"
                 onInputChange={handleChange}
               />
             </Box>
-            <Box component='div' mb={2}>
+            <Box component="div" mb={2}>
               <TextInput
                 value={review.review}
-                name='review'
-                label='Review'
+                name="review"
+                label="Review"
                 onInputChange={handleChange}
               />
             </Box>
           </CardBlocks>
 
-          <CardBlocks title='Review Details'>
-          {review.product.value && (
-              <Box component='div' mb={2}>
-                <Typography component='legend'>Product</Typography>
+          <CardBlocks title="Review Details">
+            {review.product.value && (
+              <Box component="div" mb={2}>
+                <Typography component="legend">Product</Typography>
                 <Select
                   value={review.product}
-                  name='product_id'
+                  name="product_id"
                   onChange={(e) =>
                     setreview({
                       ...review,
@@ -156,11 +161,11 @@ const EditReview = (props) => {
             )}
 
             {review.customer.value && (
-              <Box component='div' mb={2}>
-                <Typography component='legend'>Customer</Typography>
+              <Box component="div" mb={2}>
+                <Typography component="legend">Customer</Typography>
                 <Select
                   value={review.customer}
-                  name='customer_id'
+                  name="customer_id"
                   onChange={(e) =>
                     setreview({
                       ...review,
@@ -174,19 +179,19 @@ const EditReview = (props) => {
               </Box>
             )}
 
-            <Box component='div' mb={2}>
+            <Box component="div" mb={2}>
               <TextInput
                 value={review.email}
-                label='Email'
-                name='email'
+                label="Email"
+                name="email"
                 onInputChange={handleChange}
               />
             </Box>
 
-            <Box component='fieldset' mb={3} borderColor='transparent'>
-              <Typography component='legend'>Rating</Typography>
+            <Box component="fieldset" mb={3} borderColor="transparent">
+              <Typography component="legend">Rating</Typography>
               <Rating
-                name='simple-controlled'
+                name="simple-controlled"
                 value={Number(review.rating)}
                 onChange={(event, newValue) => {
                   setreview({
@@ -200,30 +205,37 @@ const EditReview = (props) => {
         </Grid>
 
         <Grid item lg={3} md={12} xs={12}>
-          <CardBlocks title='Status' nomargin>
+          <CardBlocks title="Status" nomargin>
             <RadioGroup
-              defaultValue='Publish'
-              name='status'
+              defaultValue="Publish"
+              name="status"
               onChange={handleChange}
               row
               value={review.status}
             >
               <FormControlLabel
-                value='approved'
+                value="approved"
                 control={<StyledRadio />}
-                label='Approved'
+                label="Approved"
               />
               <FormControlLabel
-                value='pending'
+                value="pending"
                 control={<StyledRadio />}
-                label='Pending'
+                label="Pending"
               />
             </RadioGroup>
           </CardBlocks>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
+const EditReview = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <EditReviewComponent />
+    </ThemeProvider>
+  );
+};
 export default EditReview;

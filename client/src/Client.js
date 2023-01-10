@@ -1,10 +1,11 @@
-import { ApolloClient } from "apollo-client";
+import { ApolloClient } from "@apollo/client";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { createUploadLink } from "apollo-upload-client";
 import { ApolloLink } from "apollo-link";
 import cookie from "react-cookies";
 
-const httpLink = new createUploadLink({ uri: `/graphql` });
+// const httpLink = new createUploadLink({ uri: `/graphql` });
+const httpLink = new createUploadLink({ uri: `http://localhost:8000/graphql` });
 
 const authLink = new ApolloLink((operation, forward) => {
   // Retrieve the authorization token from local storage.

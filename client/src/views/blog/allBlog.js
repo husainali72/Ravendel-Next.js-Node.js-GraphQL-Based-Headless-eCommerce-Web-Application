@@ -15,31 +15,33 @@ import {
   IconButton,
   Avatar,
   Button,
-} from "@material-ui/core";
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { blogsAction, blogDeleteAction } from "../../store/action";
+import { blogDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty, bucketBaseURL } from "../../utils/helper";
 import Alert from "../utils/Alert";
-import PeopleIcon from "@material-ui/icons/People";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import viewStyles from "../viewStyles";
-import {convertDateToStringFormat} from "../utils/convertDate";
-import {Loading} from '../components';
-import {client_app_route_url} from '../../utils/helper';
+import PeopleIcon from "@mui/icons-material/People";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
-const AllBlog = () => {
+import viewStyles from "../viewStyles";
+import { convertDateToStringFormat } from "../utils/convertDate";
+import { Loading } from "../components";
+import { client_app_route_url } from "../../utils/helper";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import theme from "../../theme/index";
+const AllBlogComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
-  const blogs = useSelector(state => state.blogs);
+  const blogs = useSelector((state) => state.blogs);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     if (isEmpty(blogs.blogs)) {
-      dispatch(blogsAction());
+      // dispatch(blogsAction());
     }
   }, []);
 
@@ -47,13 +49,13 @@ const AllBlog = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
@@ -64,7 +66,7 @@ const AllBlog = () => {
               action={
                 <Link to={`${client_app_route_url}add-blog`}>
                   <Button
-                    color="primary"
+                    color="success"
                     className={classes.addUserBtn}
                     size="small"
                     variant="contained"
@@ -78,11 +80,7 @@ const AllBlog = () => {
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table
-                  stickyHeader
-                  aria-label="blogs-table"
-                  size="small"
-                >
+                <Table stickyHeader aria-label="blogs-table" size="small">
                   <TableHead>
                     <TableRow>
                       <TableCell className={classes.avtarTd}>
@@ -100,7 +98,7 @@ const AllBlog = () => {
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map(blog => (
+                      .map((blog) => (
                         <TableRow key={blog.id} hover>
                           <TableCell>
                             <Avatar
@@ -113,18 +111,26 @@ const AllBlog = () => {
                           </TableCell>
                           <TableCell>{blog.title}</TableCell>
                           <TableCell>{blog.status}</TableCell>
-                          <TableCell>{convertDateToStringFormat(blog.date)}</TableCell>
+                          <TableCell>
+                            {convertDateToStringFormat(blog.date)}
+                          </TableCell>
                           <TableCell>
                             <IconButton
                               aria-label="Edit"
-                              onClick={() => jumpTo(`${client_app_route_url}edit-blog/${blog.id}`)}
+                              onClick={() =>
+                                jumpTo(
+                                  `${client_app_route_url}edit-blog/${blog.id}`
+                                )
+                              }
                             >
                               <EditIcon />
                             </IconButton>
                             <IconButton
                               aria-label="Delete"
                               className={classes.deleteicon}
-                              onClick={() => dispatch(blogDeleteAction(blog.id))}
+                              onClick={() =>
+                                dispatch(blogDeleteAction(blog.id))
+                              }
                               disabled
                             >
                               <DeleteIcon />
@@ -148,8 +154,14 @@ const AllBlog = () => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
-export default AllBlog;
+export default function AllBlog() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllBlogComponent />
+    </ThemeProvider>
+  );
+}

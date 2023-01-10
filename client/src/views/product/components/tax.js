@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { taxAction } from "../../../store/action/";
 import viewStyles from "../../viewStyles";
@@ -12,7 +12,7 @@ const TaxComponent = ({ product, onTaxInputChange }) => {
   const [labelWidth, setLabelWidth] = useState(0);
 
   useEffect(() => {
-    if(!taxState.tax.global.is_global){
+    if (!taxState.tax.global.is_global) {
       setLabelWidth(inputLabel.current.offsetWidth);
     }
     dispatch(taxAction());
@@ -21,22 +21,21 @@ const TaxComponent = ({ product, onTaxInputChange }) => {
   useEffect(() => {
     if (taxState.tax.tax_class.length) {
       var taxClass = taxState.tax.tax_class[0]._id;
-      // onTaxInputChange("tax_class", taxClass);
     }
   }, [taxState.tax]);
 
   return (
-    <React.Fragment>
+    <>
       {!taxState.tax.global.is_global ? (
-        <FormControl className={classes.cstmSelect} variant='outlined'>
-          <InputLabel ref={inputLabel} id='tax-name'>
+        <FormControl className={classes.cstmSelect} variant="outlined">
+          <InputLabel ref={inputLabel} id="tax-name">
             Tax Class
           </InputLabel>
           <Select
             labelWidth={labelWidth}
-            labelId='tax-name'
-            id='tax-name'
-            name='tax-name'
+            labelId="tax-name"
+            id="tax-name"
+            name="tax-name"
             value={product.tax_class}
             onChange={(e) => onTaxInputChange("tax_class", e.target.value)}
           >
@@ -55,7 +54,7 @@ const TaxComponent = ({ product, onTaxInputChange }) => {
           individual products, please turn off the global tax option first.
         </em>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
-import React, { Fragment, useState, useEffect } from "react";
-import { Grid, Box } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { Grid, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { userAddAction } from "../../store/action";
 import viewStyles from "../viewStyles";
@@ -13,8 +13,9 @@ import {
   FeaturedImageComponent,
   SelectComponent,
 } from "../components";
-import {client_app_route_url} from '../../utils/helper';
-
+import { client_app_route_url } from "../../utils/helper";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme";
 var defaultObj = {
   id: "",
   name: "",
@@ -24,7 +25,7 @@ var defaultObj = {
   image: "",
 };
 
-const AddUser = () => {
+const AddUserComponent = () => {
   const classes = viewStyles();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const AddUser = () => {
   }, [UsersState.users]);
 
   const fileChange = (e) => {
-    setuser({ ...user, ['image']: e.target.files[0] });
+    setuser({ ...user, ["image"]: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };
@@ -53,20 +54,20 @@ const AddUser = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {UsersState.loading ? <Loading /> : null}
 
       <form>
         <TopBar
-          title='Add User'
+          title="Add User"
           onSubmit={addUser}
-          submitTitle='Add'
+          submitTitle="Add"
           backLink={`${client_app_route_url}all-users`}
         />
         <Grid container spacing={3} className={classes.secondmainrow}>
           <Grid item xs={12}>
-            <CardBlocks title='User Information' nomargin>
+            <CardBlocks title="User Information" nomargin>
               <Grid container spacing={4}>
                 <Grid item xl={2} lg={3} md={4} xs={12}>
                   <FeaturedImageComponent
@@ -76,34 +77,34 @@ const AddUser = () => {
                   />
                 </Grid>
                 <Grid item md={6} xs={12}>
-                  <Box component='div' mb={2}>
+                  <Box component="div" mb={2}>
                     <TextInput
                       value={user.name}
-                      label='Name'
-                      name='name'
+                      label="Name"
+                      name="name"
                       onInputChange={handleChange}
                     />
                   </Box>
-                  <Box component='div' mb={2}>
+                  <Box component="div" mb={2}>
                     <TextInput
-                      type='email'
+                      type="email"
                       value={user.email}
-                      label='Email'
-                      name='email'
+                      label="Email"
+                      name="email"
                       onInputChange={handleChange}
                     />
                   </Box>
-                  <Box component='div' mb={2}>
+                  <Box component="div" mb={2}>
                     <PasswordInput
-                      name='password'
+                      name="password"
                       value={user.password}
-                      label='Password'
+                      label="Password"
                       onInputChange={handleChange}
                     />
                   </Box>
-                  <Box component='div'>
+                  <Box component="div">
                     <SelectComponent
-                      label='Role'
+                      label="Role"
                       onSelecteChange={(val) =>
                         setuser({ ...user, ["role"]: val })
                       }
@@ -114,7 +115,7 @@ const AddUser = () => {
                         "Author",
                         "User",
                       ]}
-                      name='role'
+                      name="role"
                       value={user.role}
                     />
                   </Box>
@@ -124,8 +125,14 @@ const AddUser = () => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 
-export default AddUser;
+export default function AddUser() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AddUserComponent />
+    </ThemeProvider>
+  );
+}

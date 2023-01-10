@@ -11,11 +11,10 @@ import {
   Typography,
   Box,
   Paper,
-} from "@material-ui/core";
+} from "@mui/material";
 import { isEmpty } from "../../utils/helper";
-import {Alert, Loading} from '../components';
+import { Alert, Loading } from "../components";
 import {
-  taxAction,
   globalTaxUpdateAction,
   optionTaxUpdateAction,
   taxClassAddAction,
@@ -29,13 +28,14 @@ import GlobalTaxComponent from "./components/global-tax";
 import AllTaxesComponent from "./components/all-taxes";
 import TaxFormComponent from "./components/tax-form";
 import viewStyles from "../viewStyles.js";
-
+import theme from "../../theme";
+import { ThemeProvider } from "@mui/material/styles";
 var TaxObject = {
   name: "",
   percentage: "",
 };
 
-const Tax = () => {
+const TaxComponent = () => {
   const dispatch = useDispatch();
   const taxState = useSelector((state) => state.taxs);
   const classes = viewStyles();
@@ -51,13 +51,13 @@ const Tax = () => {
 
   useEffect(() => {
     if (isEmpty(taxState.tax.tax_class)) {
-      dispatch(taxAction());
+      // dispatch(taxAction());
     }
   }, []);
 
   useEffect(() => {
     if (taxGlobal.overwrite) {
-      dispatch(productsAction());
+      // dispatch(productsAction());
     }
     settaxOption(taxState.tax.is_inclusive ? "inclusive" : "exclusive");
     settaxGlobal({ ...taxGlobal, ...taxState.tax.global });
@@ -89,7 +89,6 @@ const Tax = () => {
   };
 
   const updateCustomTax = () => {
-    //setEditMode(false);
     dispatch(taxClassUpdateAction({ tax_class: customTaxClass }));
   };
 
@@ -105,7 +104,7 @@ const Tax = () => {
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item md={12} xs={12}>
           <Card>
-            <CardHeader title='Tax' />
+            <CardHeader title="Tax" />
             <Divider />
             <CardContent>
               {/* ===================================Tab Navigation=================================== */}
@@ -113,13 +112,13 @@ const Tax = () => {
                 <Tabs
                   value={value}
                   onChange={handleChange}
-                  aria-label='Tax tab'
-                  indicatorColor='primary'
-                  textColor='primary'
+                  aria-label="Tax tab"
+                  indicatorColor="primary"
+                  textColor="primary"
                 >
-                  <Tab label='Tax Option' {...a11yProps(0)} />
-                  <Tab label='Global Tax' {...a11yProps(1)} />
-                  <Tab label='Custom Tax' {...a11yProps(2)} />
+                  <Tab label="Tax Option" {...a11yProps(0)} />
+                  <Tab label="Global Tax" {...a11yProps(1)} />
+                  <Tab label="Custom Tax" {...a11yProps(2)} />
                 </Tabs>
               </Paper>
               <Box className={classes.taxTabsWrapper}>
@@ -191,8 +190,8 @@ const Tax = () => {
 const TabPanel = ({ children, value, index, ...other }) => {
   return (
     <Typography
-      component='div'
-      role='tabpanel'
+      component="div"
+      role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
@@ -201,7 +200,7 @@ const TabPanel = ({ children, value, index, ...other }) => {
       {value === index && <Box p={3}>{children}</Box>}
     </Typography>
   );
-}
+};
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -209,10 +208,18 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-const a11yProps = index => {
+const a11yProps = (index) => {
   return {
     id: `simple-tab-${index}`,
     "aria-controls": `simple-tabpanel-${index}`,
   };
-}
+};
+
+const Tax = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <TaxComponent />
+    </ThemeProvider>
+  );
+};
 export default Tax;

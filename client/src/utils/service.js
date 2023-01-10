@@ -86,14 +86,13 @@ const service = (config) => {
       return Promise.reject(error);
     }
   );
-  //config.baseURL = baseUrl;
+  // config.baseURL = baseUrl;
   return axios(config);
 };
 export default service;
 
 export const login = (email, password) => {
-  let location = window.location.origin;
-  // let location = 'http://localhost:8000';
+  let location = "http://localhost:8000";
   const body = {
     email: email,
     password: password,
@@ -102,7 +101,7 @@ export const login = (email, password) => {
     method: "POST",
     url: `${location}/api/users/login`,
     data: body,
-  }).then(async(res) => {
+  }).then(async (res) => {
     await Auth.setUserToken(res.data);
     return res;
   });
@@ -110,7 +109,7 @@ export const login = (email, password) => {
 
 export const getUpdatedUrl = (table, url) => {
   let location = window.location.origin;
-  return service({ 
+  return service({
     method: "POST",
     url: `${location}/api/misc/checkurl`,
     data: { url: url, table: table },
@@ -148,10 +147,10 @@ export const deleteProductVariationImage = (obj) => {
 };
 
 export const getDashboardData = () => {
-  let location = window.location.origin;
+  let location = "http://localhost:8000";
   return service({
     method: "POST",
-    url: `${location}/api/misc/dashboard_data`
+    url: `${location}/api/misc/dashboard_data`,
   }).then((res) => {
     if (res.data.success) {
       return Promise.resolve(res.data.dashBoardData);

@@ -7,12 +7,12 @@ import APclient from "../Client";
 export const mutation = (query, variables) => {
   return APclient.mutate({
     mutation: query,
-    variables
+    variables,
   })
-    .then(response => {
+    .then((response) => {
       return Promise.resolve(response);
     })
-    .catch(error => {
+    .catch((error) => {
       const errors = JSON.parse(JSON.stringify(error));
       console.log(errors);
       if (
@@ -35,12 +35,12 @@ export const mutation = (query, variables) => {
 export const query = (query, variables) => {
   return APclient.query({
     query: query,
-    variables
+    variables,
   })
-    .then(response => {
+    .then((response) => {
       return Promise.resolve(response);
     })
-    .catch(error => {
+    .catch((error) => {
       const errors = JSON.parse(JSON.stringify(error));
       console.log(error);
       if (
@@ -60,25 +60,25 @@ export const query = (query, variables) => {
     });
 };
 
-const service = config => {
+const service = (config) => {
   //header authorization
   if (Auth.user_token) {
     const token = Auth.getToken();
     config.headers = {
-      authorization: token
+      authorization: token,
     };
   }
 
   //interceptors handle network error
   axios.interceptors.response.use(
-    response => {
+    (response) => {
       return response;
     },
-    function(error) {
+    function (error) {
       if (!error.response) {
         error.response = {
           data: "net work error",
-          status: 500
+          status: 500,
         };
       }
       if (error.response.status === 401) {
@@ -89,7 +89,7 @@ const service = config => {
       return Promise.reject(error);
     }
   );
-  //config.baseURL = baseUrl;
+
   return axios(config);
 };
 export default service;
@@ -97,13 +97,13 @@ export default service;
 export const login = (email, password) => {
   const body = {
     email: email,
-    password: password
+    password: password,
   };
   return service({
     method: "POST",
     url: "api/users/login",
-    data: body
-  }).then(res => {
+    data: body,
+  }).then((res) => {
     Auth.setUserToken(res.data);
     return res;
   });

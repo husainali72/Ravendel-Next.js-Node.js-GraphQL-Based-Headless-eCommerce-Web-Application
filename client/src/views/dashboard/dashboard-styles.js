@@ -1,23 +1,27 @@
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@mui/styles";
 
 const DashboardStyles = makeStyles((theme) => ({
   dashboardcard: {
     height: "100%",
   },
   dashboardcardtitle: {
-    fontWeight: 700,
+    "&&": {
+      fontWeight: 700,
+    },
   },
   dashboardcardavatar: {
     backgroundColor: `${theme.palette.success.main} !important`,
-    height: "56px !important",
-    width: "56px !important",
+    height: "50px !important",
+    width: "50px !important",
   },
   dashboardcardicon: {
-    height: 32,
-    width: 32,
+    height: 30,
+    width: 30,
   },
   noRecordFound: {
-    color: "red",
+    "&&": {
+      color: "red",
+    },
   },
   content: {
     padding: 0,
@@ -25,7 +29,7 @@ const DashboardStyles = makeStyles((theme) => ({
   productImage: {
     height: 60,
     width: 60,
-    borderRadius: '100%',
+    borderRadius: "100%",
     marginRight: 10,
   },
 }));

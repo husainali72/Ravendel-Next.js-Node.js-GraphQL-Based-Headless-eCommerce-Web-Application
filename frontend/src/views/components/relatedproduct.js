@@ -3,7 +3,7 @@ import { Typography, Box, Container } from "@material-ui/core";
 import Slider from "react-slick";
 import ProductCard from "./productcard";
 
-const RelatedProducts = ({relatedProduct, title}) => {
+const RelatedProducts = ({ relatedProduct, title }) => {
   const settings = {
     infinite: true,
     slidesToShow: 4,

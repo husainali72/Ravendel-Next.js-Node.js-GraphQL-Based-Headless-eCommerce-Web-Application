@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Select, MenuItem, FormControl, InputLabel } from "@material-ui/core";
-import viewStyles from "../viewStyles";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 const SelectComponent = ({
   label,
@@ -10,7 +9,6 @@ const SelectComponent = ({
   value,
   ...rest
 }) => {
-  const classes = viewStyles();
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = useState(0);
 
@@ -19,7 +17,7 @@ const SelectComponent = ({
   }, []);
 
   return (
-    <FormControl variant='outlined' fullWidth>
+    <FormControl variant="outlined" fullWidth>
       <InputLabel ref={inputLabel} id={`select-${label}`}>
         {label}
       </InputLabel>

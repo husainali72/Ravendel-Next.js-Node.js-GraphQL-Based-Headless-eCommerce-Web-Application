@@ -1,48 +1,44 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Grid, TextField, Box, Button } from "@material-ui/core";
+import React, { useState } from "react";
+import { Grid, TextField, Box, Button } from "@mui/material";
 import viewStyles from "../../viewStyles";
-import { appearanceThemeUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png";
 import { bucketBaseURL } from "../../../utils/helper";
-
-const Themes = () => {
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [themeSetting, setThemeSetting] = useState({
     ...settingState.settings.appearance.theme,
   });
-  const [logoImage, setLogoImage] = useState(bucketBaseURL + themeSetting.logo.original)
-  // console.log("setting", themeSetting)
+  const [logoImage, setLogoImage] = useState(
+    bucketBaseURL + themeSetting.logo.original
+  );
 
   const fileChange = (e) => {
     themeSetting.logo.original = URL.createObjectURL(e.target.files[0]);
-    // console.log("--set", themeSetting.logo.original)
 
     themeSetting.new_logo = e.target.files;
     setThemeSetting({
       ...themeSetting,
       new_logo: themeSetting.new_logo,
     });
-    setLogoImage(URL.createObjectURL(e.target.files[0]))
+    setLogoImage(URL.createObjectURL(e.target.files[0]));
   };
-  // console.log("--set", themeSetting.logo.original)
 
-  const updateTheme = () => {
-    // console.log(themeSetting);
-    dispatch(appearanceThemeUpdateAction(themeSetting));
-  };
+  const updateTheme = () => {};
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Box component='div'>
+          <Box component="div">
             <TextField
-              type='color'
-              variant='outlined'
-              label='Primary Color'
+              type="color"
+              variant="outlined"
+              label="Primary Color"
               className={classes.settingInput}
               value={themeSetting.primary_color}
               onChange={(e) =>
@@ -58,42 +54,48 @@ const Themes = () => {
               <img
                 src={logoImage}
                 className={classes.themeLogoBoxPreview}
-                alt='Logo'
+                alt="Logo"
               />
             ) : (
               <img
                 src={NoImagePlaceholder}
                 className={classes.themeLogoBoxPreview}
-                alt='Logo'
+                alt="Logo"
               />
             )}
             <input
-              accept='image/*'
+              accept="image/*"
               className={classes.input}
               style={{ display: "none" }}
-              id='logo'
-              name='logo'
-              type='file'
+              id="logo"
+              name="logo"
+              type="file"
               onChange={(e) => fileChange(e)}
             />
-            <label htmlFor='logo' className={classes.feautedImage}>
+            <label htmlFor="logo" className={classes.feautedImage}>
               {themeSetting.logo.original ? "Change Logo" : "Add Logo"}
             </label>
           </Box>
         </Grid>
         <Grid item xs={12}>
           <Button
-            size='small'
-            color='primary'
-            variant='contained'
+            size="small"
+            color="primary"
+            variant="contained"
             onClick={updateTheme}
           >
             Save Change
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
-export default Themes;
+export default function Themes() {
+  return (
+    <ThemeProvider theme={theme}>
+      <ThemesComponent />
+    </ThemeProvider>
+  );
+}
