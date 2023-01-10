@@ -1,9 +1,10 @@
 //Prodution "mongodb+srv://userMernEcommerce:passwordMernEcommerce@cluster0-nxt3c.mongodb.net/test?retryWrites=true&w=majority",
 //Staging "mongodb+srv://userMernEcommerce:passwordMernEcommerce@cluster0-nxt3c.mongodb.net/test?retryWrites=true&w=majority"
 
-//var URI = 'mongodb+srv://rv-staging:4xPAesU6bu1fELfE@ravendel-staging.2hfno.mongodb.net/rv-staging-database?retryWrites=true&w=majority'; // staging
-var URI = 'mongodb+srv://rv-live:4xPAesU6bu1fELfE@ravendel-live.apytt.mongodb.net/rv-live-database?retryWrites=true&w=majority'; // staging
-//var URI = 'mongodb+srv://ravendel:AhytMhScZbNoByBs@ravendel.k8pbl0q.mongodb.net/ravendel-database?retryWrites=true&w=majority'
+
+// var URI = 'mongodb+srv://rv-live:4xpaesu6bu1felfe@ravendel-live.2hfno.mongodb.net/rv-live-database?retryWrites=true&w=majority' //live
+// var URI = 'mongodb+srv://rv-staging:4xpaesu6bu1felfe@ravendel-staging.2hfno.mongodb.net/rv-staging-database?retryWrites=true&w=majority' //stage
+var URI = 'mongodb+srv://ravendel:AEajXoRfrkxMS7H2@ravendel.k8pbl0q.mongodb.net/ravendel-database?retryWrites=true&w=majority' //local
 var accessKeyId = "AKIA5NPJTJ66BD6LZGU2";
 var secretAccessKey = "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";
 var bucketName = "revendal-image";

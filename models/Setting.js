@@ -310,9 +310,19 @@ const SeetingSchema = new Schema(
             type: String
           }
         },
+        add_section_web: [
+          {
+            label: {
+              type: String
+            },
+            visible: {
+              type: Boolean,
+            },
+          }
+        ]
       },
       mobile: {
-        mobile_add_section_in_home: [
+        mobile_section: [
           {
             label: {
               type: String,

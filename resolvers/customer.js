@@ -4,6 +4,7 @@ const {
   checkError,
   MESSAGE_RESPONSE,
   _validate,
+  duplicateData
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -75,6 +76,8 @@ module.exports = {
         updated: Date.now(),
       };
       let validation = ["first_name", "last_name", "email"];
+      const result = await duplicateData({email: args.email}, Customer, args.id)
+      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
       return await UPDATE_FUNC(
         id,
         args.id,
@@ -172,9 +175,12 @@ module.exports = {
         }
         const customer = await Customer.findById({ _id: args.id });
         if (!customer) {
-          return MESSAGE_RESPONSE("NOT_EXIST", "addAddressBook", false);
+          return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
         }
         delete args.id;
+        if(!customer.address_book.length > 0){
+          return MESSAGE_RESPONSE("NOT_EXIST", "addAddressBook", false);
+        }
         customer.address_book = customer.address_book.map((address) => {
           if (args.default_address) {
             address.default_address = false;
@@ -239,7 +245,7 @@ module.exports = {
       const customer = await Customer.findById({ _id: args.id });
         if (!customer) {
           //throw putError("Something went wrong.");
-          return MESSAGE_RESPONSE("NOT_EXIST", "addAddressBook", false);
+          return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
         }
 
         var customer_address_book = customer.address_book;

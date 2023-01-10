@@ -83,6 +83,13 @@ module.exports = {
           };
         }
         const tax = await Tax.findOne({});
+        let result = tax.tax_class.map(tax=>{
+          if(tax.name === args.tax_class.name){
+            return false
+          }
+          else return true
+        })
+        if(result.includes(false)) return MESSAGE_RESPONSE("DUPLICATE", "Tax", false)
         tax.tax_class.push(args.tax_class);
         tax.updated = Date.now();
         await tax.save();
@@ -104,13 +111,21 @@ module.exports = {
           };
         }
         const tax = await Tax.findOne({});
+        let result = tax.tax_class.map(tax=>{
+          if(tax.name === args.tax_class.name &&
+            tax._id.toString() !== args.tax_class._id.toString()){
+            return false
+          }
+          else return true
+        })
+        if(result.includes(false)) return MESSAGE_RESPONSE("DUPLICATE", "Tax", false)
         for (let i in tax.tax_class) {
           if (tax.tax_class[i]._id == args.tax_class._id) {
             tax.tax_class[i] = args.tax_class;
             break;
           }
         }
-        //tax.tax_class.push(args.tax_class);
+        // tax.tax_class.push(args.tax_class);
         tax.updated = Date.now();
         await tax.save();
         return MESSAGE_RESPONSE("UpdateSuccess", "TaxClass", true);
