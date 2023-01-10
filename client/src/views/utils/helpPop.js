@@ -1,14 +1,12 @@
 import React, { Fragment, useState } from "react";
-import { Typography, Popover, Box } from "@material-ui/core";
-import HelpIcon from "@material-ui/icons/Help";
+import { Typography, Popover, Box } from "@mui/material";
+import HelpIcon from "@mui/icons-material/Help";
 import viewStyles from "../viewStyles.js";
-import renderHTML from "react-render-html";
-
-const HelpPop = props => {
+const HelpPop = (props) => {
   const classes = viewStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handlePopoverOpen = event => {
+  const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -19,7 +17,7 @@ const HelpPop = props => {
   const open = Boolean(anchorEl);
 
   return (
-    <Fragment>
+    <>
       <Typography
         aria-owns={open ? "mouse-over-popover" : undefined}
         aria-haspopup="true"
@@ -34,24 +32,22 @@ const HelpPop = props => {
         id="mouse-over-popover"
         className={classes.infopopover}
         classes={{
-          paper: classes.infopopoverpaper
+          paper: classes.infopopoverpaper,
         }}
         open={open}
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "left"
+          horizontal: "left",
         }}
         transformOrigin={{
           vertical: "top",
-          horizontal: "left"
+          horizontal: "left",
         }}
         onClose={handlePopoverClose}
         disableRestoreFocus
-      >
-        {renderHTML(props.helpmessage)}
-      </Popover>
-    </Fragment>
+      ></Popover>
+    </>
   );
 };
 

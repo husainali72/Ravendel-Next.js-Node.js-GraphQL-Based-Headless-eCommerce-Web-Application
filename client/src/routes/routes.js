@@ -1,5 +1,5 @@
-import React from 'react';
-import { Route, Switch } from "react-router-dom";
+import React from "react";
+
 import Dashboard from "../views/dashboard";
 import { AllUsers, AddUser, EditUser } from "../views/users";
 import { AddBlog, AllBlog, EditBlog, AllTags } from "../views/blog";
@@ -23,31 +23,90 @@ import AllShippings from "../views/shipping";
 import NotFound from "../views/notFound";
 import { AllReviews, EditReview } from "../views/reviews";
 import { AddFAQ, AllFAQ, EditFAQ } from "../views/faq";
-import {client_app_route_url} from '../utils/helper';
+import { client_app_route_url } from "../utils/helper";
+import { Routes, Route } from "react-router-dom";
+import Login from "../views/login";
+import ThemeHelper from "../main-layout";
 
-const Routes = [
-  { path: `${client_app_route_url}`, exact: true, component: Dashboard, name: "Home" },
-  { path: `${client_app_route_url}dashboard`, exact: true, component: Dashboard, name: "Home" },
-  { path: `${client_app_route_url}user`, exact: true, component: AllUsers, name: "Users" },
-  { path: `${client_app_route_url}all-users`, exact: true, component: AllUsers, name: "All Users" },
-  { path: `${client_app_route_url}add-user`, exact: true, component: AddUser, name: "Add User" },
+const RoutesPath = [
+  {
+    path: `${client_app_route_url}login`,
+    exact: true,
+    component: Login,
+    name: "Home",
+  },
+  {
+    path: `${client_app_route_url}`,
+    exact: true,
+    component: Dashboard,
+    name: "Home",
+  },
+  {
+    path: `${client_app_route_url}dashboard`,
+    exact: true,
+    component: Dashboard,
+    name: "Home",
+  },
+  {
+    path: `${client_app_route_url}user`,
+    exact: true,
+    component: AllUsers,
+    name: "Users",
+  },
+  {
+    path: `${client_app_route_url}all-users`,
+    exact: true,
+    component: AllUsers,
+    name: "All Users",
+  },
+  {
+    path: `${client_app_route_url}add-user`,
+    exact: true,
+    component: AddUser,
+    name: "Add User",
+  },
   {
     path: `${client_app_route_url}edit-user/:id`,
     exact: true,
     component: EditUser,
     name: "Edit User",
   },
-  { path: `${client_app_route_url}all-blogs`, exact: true, name: "All Blogs", component: AllBlog },
-  { path: `${client_app_route_url}add-blog`, exact: true, name: "Add Blog", component: AddBlog },
+  {
+    path: `${client_app_route_url}all-blogs`,
+    exact: true,
+    name: "All Blogs",
+    component: AllBlog,
+  },
+  {
+    path: `${client_app_route_url}add-blog`,
+    exact: true,
+    name: "Add Blog",
+    component: AddBlog,
+  },
   {
     path: `${client_app_route_url}edit-blog/:id`,
     exact: true,
     name: "Edit Blog",
     component: EditBlog,
   },
-  { path: `${client_app_route_url}tags`, exact: true, name: "All Tags", component: AllTags },
-  { path: `${client_app_route_url}products`, exact: true, component: Dashboard, name: "Products" },
-  { path: `${client_app_route_url}other`, exact: true, component: Dashboard, name: "Other" },
+  {
+    path: `${client_app_route_url}tags`,
+    exact: true,
+    name: "All Tags",
+    component: AllTags,
+  },
+  {
+    path: `${client_app_route_url}products`,
+    exact: true,
+    component: Dashboard,
+    name: "Products",
+  },
+  {
+    path: `${client_app_route_url}other`,
+    exact: true,
+    component: Dashboard,
+    name: "Other",
+  },
   {
     path: `${client_app_route_url}all-categories`,
     exact: true,
@@ -102,16 +161,42 @@ const Routes = [
     name: "Edit Order",
     component: ViewOrder,
   },
-  { path: `${client_app_route_url}all-pages`, exact: true, name: "All Pages", component: AllPages },
-  { path: `${client_app_route_url}add-page`, exact: true, name: "Add Page", component: AddPage },
+  {
+    path: `${client_app_route_url}mainlayout`,
+    exact: true,
+    name: "All Pages",
+    component: ThemeHelper,
+  },
+  {
+    path: `${client_app_route_url}all-pages`,
+    exact: true,
+    name: "All Pages",
+    component: AllPages,
+  },
+  {
+    path: `${client_app_route_url}add-page`,
+    exact: true,
+    name: "Add Page",
+    component: AddPage,
+  },
   {
     path: `${client_app_route_url}edit-page/:id`,
     exact: true,
     name: "Edit Page",
     component: EditPage,
   },
-  { path: `${client_app_route_url}all-faq`, exact: true, name: "All FAQ", component: AllFAQ },
-  { path: `${client_app_route_url}add-faq`, exact: true, name: "Add FAQ", component: AddFAQ },
+  {
+    path: `${client_app_route_url}all-faq`,
+    exact: true,
+    name: "All FAQ",
+    component: AllFAQ,
+  },
+  {
+    path: `${client_app_route_url}add-faq`,
+    exact: true,
+    name: "Add FAQ",
+    component: AddFAQ,
+  },
   {
     path: `${client_app_route_url}edit-faq/:id`,
     exact: true,
@@ -202,27 +287,30 @@ const Routes = [
     component: EditReview,
     name: "Edit Review",
   },
-   {
+  {
     path: "*",
     component: NotFound,
-    name: 'NotFound'
+    name: "NotFound",
   },
 ];
 
 const AllRoutes = () => {
   return (
-    <Switch>
-         {Routes.map((route, index) => (
-          <Route
-            key={index}
-            exact={route.exact}
-            path={route.path}
-            name={route.name}
-            component={route.component}
-          />
-        ))}
-    </Switch>
-  )
-}
+    <>
+      <Routes>
+        {RoutesPath.map((route, index) => {
+          return (
+            <Route
+              key={index}
+              path={route.path}
+              name={route.name}
+              element={<route.component />}
+            />
+          );
+        })}
+      </Routes>
+    </>
+  );
+};
 
 export default AllRoutes;

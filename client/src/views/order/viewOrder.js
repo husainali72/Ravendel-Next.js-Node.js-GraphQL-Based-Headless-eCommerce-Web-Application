@@ -1,14 +1,13 @@
-import React, { useState, useEffect, Fragment } from "react";
-import { connect } from "react-redux";
+import React, { useState, useEffect } from "react";
+
 import { Link } from "react-router-dom";
 import Alert from "../utils/Alert";
-import { makeStyles } from "@material-ui/styles";
 import { orderUpdateAction, ordersAction } from "../../store/action/";
-import palette from "../../theme/palette";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { deepPurple } from "@material-ui/core/colors";
-import EditIcon from "@material-ui/icons/Edit";
-import CancelIcon from "@material-ui/icons/Cancel";
+
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+import EditIcon from "@mui/icons-material/Edit";
+import CancelIcon from "@mui/icons-material/Cancel";
 import {
   Grid,
   Card,
@@ -36,17 +35,24 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  TextField
-} from "@material-ui/core";
+  TextField,
+} from "@mui/material";
 import "../../App.css";
-import {convertDateToStringFormat} from "../utils/convertDate";
+import { convertDateToStringFormat } from "../utils/convertDate";
 import viewStyles from "../viewStyles";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
-
-const ViewOrder = props => {
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme/index";
+const ViewOrderComponent = (props) => {
   const classes = viewStyles();
   const [editShipping, setEditShipping] = useState(false);
   const [editBilling, setEditBilling] = useState(false);
+
+  const dispatch = useDispatch();
+  const orders = useSelector((state) => state.orders);
+
   const [order, setorder] = useState({
     billing: {
       firstname: "",
@@ -60,7 +66,7 @@ const ViewOrder = props => {
       email: "",
       phone: "",
       payment_method: "",
-      transaction_id: ""
+      transaction_id: "",
     },
     shipping: {
       firstname: "",
@@ -71,48 +77,48 @@ const ViewOrder = props => {
       zip: "",
       country: "",
       state: "",
-      notes: ""
+      notes: "",
     },
     products: [],
     status: "",
-    date: ""
+    date: "",
   });
 
   useEffect(() => {
-    if (isEmpty(props.orders.orders)) {
-      props.ordersAction();
+    if (isEmpty(orders.orders)) {
+      dispatch(ordersAction());
     }
-    console.log("props=========",props)
-    for (let i in props.orders.orders) {
-      if (props.orders.orders[i].id === props.match.params.id) {
-        setorder({ ...props.orders.orders[i] });
-      } 
-    }
-  }, [props.orders.orders]);
 
-  const updateOrder = e => {
+    for (let i in orders.orders) {
+      if (orders.orders[i].id === "63402d07469a96c8a3cb7238") {
+        setorder({ ...orders.orders[i] });
+      }
+    }
+  }, [orders.orders]);
+
+  const updateOrder = (e) => {
     e.preventDefault();
-    //console.log(order);
+
     setEditBilling(false);
     setEditShipping(false);
-    props.orderUpdateAction(order);
+    dispatch(orderUpdateAction(order));
   };
 
-  const changeBilling = e => {
+  const changeBilling = (e) => {
     setorder({
       ...order,
-      billing: { ...order.billing, [e.target.name]: e.target.value }
+      billing: { ...order.billing, [e.target.name]: e.target.value },
     });
   };
 
-  const changeShipping = e => {
+  const changeShipping = (e) => {
     setorder({
       ...order,
-      shipping: { ...order.shipping, [e.target.name]: e.target.value }
+      shipping: { ...order.shipping, [e.target.name]: e.target.value },
     });
   };
 
-  const getFirstLetter = name => {
+  const getFirstLetter = (name) => {
     return name ? name.charAt(0) : name;
   };
 
@@ -147,9 +153,9 @@ const ViewOrder = props => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
-      {props.orders.loading && (
+      {orders.loading && (
         <Backdrop className={classes.backdrop} open={true}>
           <CircularProgress color="inherit" /> <br />
           <Typography variant="h4">Loading</Typography>
@@ -158,7 +164,7 @@ const ViewOrder = props => {
 
       <Grid container className="topbar">
         <Grid item lg={6}>
-          <Typography variant="h4">
+          <Typography variant="body1">
             <Link to={`${client_app_route_url}all-orders`}>
               <IconButton aria-label="Back">
                 <ArrowBackIcon />
@@ -177,7 +183,10 @@ const ViewOrder = props => {
             color="primary"
             className={classes.cancelBtn}
           >
-            <Link to={`${client_app_route_url}all-orders`} style={{ color: "#fff" }}>
+            <Link
+              to={`${client_app_route_url}all-orders`}
+              style={{ color: "#fff" }}
+            >
               Cancel
             </Link>
           </Button>
@@ -192,7 +201,7 @@ const ViewOrder = props => {
               <CardHeader title="Order Details" />
               <Divider />
               <CardContent>
-                <Typography variant="h4">Order: {order.id}</Typography>
+                <Typography variant="body1">Order: {order.id}</Typography>
                 <Typography variant="body1" mt={2}>
                   Payment via {order.billing.payment_method} paid on{" "}
                   {convertDateToStringFormat(order.date)}, Transaction number{" "}
@@ -205,16 +214,10 @@ const ViewOrder = props => {
                     id="status"
                     value={order.status}
                     name="status"
-                    onChange={e =>
+                    onChange={(e) =>
                       setorder({ ...order, [e.target.name]: e.target.value })
                     }
                   >
-                    {/* <MenuItem value="Pendingpayment">Pending Payment</MenuItem>
-                    <MenuItem value="Processing">Processing</MenuItem>
-                    <MenuItem value="Onhold">On-Hold</MenuItem>
-                    <MenuItem value="Completed">Completed</MenuItem>
-                    <MenuItem value="Cancelled">Cancelled</MenuItem>
-                    <MenuItem value="Refunded">Refunded</MenuItem> */}
                     <MenuItem value="Pending">Pending Payment</MenuItem>
                     <MenuItem value="Failed">Failed</MenuItem>
                     <MenuItem value="Success">Completed</MenuItem>
@@ -327,7 +330,7 @@ const ViewOrder = props => {
                     </Grid>
                   </Grid>
                 ) : (
-                  <React.Fragment>
+                  <>
                     <Typography variant="h6">
                       {order.billing.firstname + " " + order.shipping.lastname}
                     </Typography>
@@ -347,7 +350,7 @@ const ViewOrder = props => {
                       {order.billing.state}, {order.billing.country},{" "}
                       {order.billing.zip}
                     </Typography>
-                  </React.Fragment>
+                  </>
                 )}
               </CardContent>
             </Card>
@@ -371,7 +374,7 @@ const ViewOrder = props => {
                     <ListItemText
                       primary={
                         <Typography
-                          variant="h4"
+                          variant="body1"
                           className={classes.inline}
                           color="textPrimary"
                         >
@@ -499,7 +502,7 @@ const ViewOrder = props => {
                     </Grid>
                   </Grid>
                 ) : (
-                  <React.Fragment>
+                  <>
                     <Typography variant="h6">
                       {order.shipping.firstname + " " + order.shipping.lastname}
                     </Typography>
@@ -516,7 +519,7 @@ const ViewOrder = props => {
                     <Typography variant="body1">
                       <b>Note:</b> <i>{order.shipping.notes}</i>
                     </Typography>
-                  </React.Fragment>
+                  </>
                 )}
               </CardContent>
             </Card>
@@ -582,7 +585,7 @@ const ViewOrder = props => {
                       SubTotal
                     </Typography>
                   </Grid>
-                  {order.products.map((product, index)=>(
+                  {order.products.map((product, index) => (
                     <Grid item md={3} className={classes.textRight}>
                       <Typography variant="h6" className={classes.mtb2}>
                         ${product.qty * product.cost}
@@ -608,23 +611,14 @@ const ViewOrder = props => {
           </Box>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
-const mapStateToProps = state => {
-  return { orders: state.orders };
-};
-
-const mapDispatchToProps = {
-  orderUpdateAction,
-  ordersAction
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ViewOrder);
-
-// const ViewOrder =() => {
-//     return('heelo')
-// }
-
-// export default ViewOrder;
+export default function ViewOrder() {
+  return (
+    <ThemeProvider theme={theme}>
+      <ViewOrderComponent />
+    </ThemeProvider>
+  );
+}

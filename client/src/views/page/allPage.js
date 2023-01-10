@@ -15,28 +15,29 @@ import {
   IconButton,
   Button,
   Tooltip,
-} from "@material-ui/core";
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { pagesAction, pageDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles";
-import {convertDateToStringFormat} from "../utils/convertDate";
-import {Alert, Loading} from '../components';
-
-const AllPages = (props) => {
+import { convertDateToStringFormat } from "../utils/convertDate";
+import { Alert, Loading } from "../components";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import theme from "../../theme/index";
+const AllPagesComponent = (props) => {
   const classes = viewStyles();
   const dispatch = useDispatch();
-  const pageState = useSelector(state => state.pages);
+  const pageState = useSelector((state) => state.pages);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     if (isEmpty(pageState.pages)) {
-      dispatch(pagesAction());
+      // dispatch(pagesAction());
     }
   }, []);
 
@@ -50,7 +51,7 @@ const AllPages = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
@@ -61,7 +62,7 @@ const AllPages = (props) => {
               action={
                 <Link to={`${client_app_route_url}add-page`}>
                   <Button
-                    color="primary"
+                    color="success"
                     className={classes.addUserBtn}
                     size="small"
                     variant="contained"
@@ -75,11 +76,7 @@ const AllPages = (props) => {
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table
-                  stickyHeader
-                  aria-label="pages-table"
-                  size="small"
-                >
+                <Table stickyHeader aria-label="pages-table" size="small">
                   <TableHead>
                     <TableRow>
                       <TableCell>Title</TableCell>
@@ -105,7 +102,11 @@ const AllPages = (props) => {
                             <Tooltip title="Edit Page" aria-label="edit">
                               <IconButton
                                 aria-label="Edit"
-                                onClick={() => jumpTo(`${client_app_route_url}edit-page/${page.id}`)}
+                                onClick={() =>
+                                  jumpTo(
+                                    `${client_app_route_url}edit-page/${page.id}`
+                                  )
+                                }
                               >
                                 <EditIcon />
                               </IconButton>
@@ -114,7 +115,9 @@ const AllPages = (props) => {
                               <IconButton
                                 aria-label="Delete"
                                 className={classes.deleteicon}
-                                onClick={() => dispatch(pageDeleteAction(page.id))}
+                                onClick={() =>
+                                  dispatch(pageDeleteAction(page.id))
+                                }
                                 disabled
                               >
                                 <DeleteIcon />
@@ -139,8 +142,14 @@ const AllPages = (props) => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
-export default AllPages;
+export default function AllPages() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllPagesComponent />
+    </ThemeProvider>
+  );
+}

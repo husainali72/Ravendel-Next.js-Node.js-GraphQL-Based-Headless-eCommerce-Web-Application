@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { EditorKey } from "../utils/apikey";
-import { CircularProgress, Box } from "@material-ui/core";
-
-const TinymceEditor = ({ value, onEditorChange }) => {
+import { CircularProgress, Box } from "@mui/material";
+import theme from "../../theme/index.js";
+import { ThemeProvider } from "@mui/material/styles";
+const TinymceEditorComponent = ({ value, onEditorChange }) => {
   const [show, setShow] = useState(false);
   const handleEditorChange = (e) => {
     onEditorChange(e.target.getContent());
@@ -19,7 +20,7 @@ const TinymceEditor = ({ value, onEditorChange }) => {
   }, []);
 
   return (
-    <React.Fragment>
+    <>
       {show ? (
         <Editor
           initialValue={value}
@@ -44,12 +45,19 @@ const TinymceEditor = ({ value, onEditorChange }) => {
           onBlur={handleEditorChange}
         />
       ) : (
-        <Box component='div' display='flex' justifyContent='center'>
+        <Box component="div" display="flex" justifyContent="center">
           <CircularProgress />
         </Box>
       )}
-    </React.Fragment>
+    </>
   );
 };
 
+const TinymceEditor = ({ value, onEditorChange }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <TinymceEditorComponent value={value} onEditorChange={onEditorChange} />
+    </ThemeProvider>
+  );
+};
 export default TinymceEditor;

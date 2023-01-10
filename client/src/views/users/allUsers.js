@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Card,
@@ -15,20 +15,21 @@ import {
   IconButton,
   Avatar,
   Button,
-} from "@material-ui/core";
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { usersAction, userDeleteAction } from "../../store/action";
+import { userDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
-import PeopleIcon from "@material-ui/icons/People";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import PeopleIcon from "@mui/icons-material/People";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles.js";
 import { Alert, Loading } from "../components";
 import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
-
-const AllUsers = () => {
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme/index";
+const AllUsersComponent = () => {
   const classes = viewStyles();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
@@ -46,12 +47,12 @@ const AllUsers = () => {
 
   useEffect(() => {
     if (isEmpty(UsersState.users)) {
-      dispatch(usersAction());
+      // dispatch(usersAction());
     }
   }, []);
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {UsersState.loading ? <Loading /> : null}
       <Grid container spacing={4} className={classes.mainrow}>
@@ -61,21 +62,21 @@ const AllUsers = () => {
               action={
                 <Link to={`${client_app_route_url}add-user`}>
                   <Button
-                    color='primary'
+                    color="success"
                     className={classes.addUserBtn}
-                    size='small'
-                    variant='contained'
+                    size="small"
+                    variant="contained"
                   >
                     Add User
                   </Button>
                 </Link>
               }
-              title='All Users'
+              title="All Users"
             />
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table stickyHeader aria-label='users-table' size='small'>
+                <Table stickyHeader aria-label="users-table" size="small">
                   <TableHead>
                     <TableRow>
                       <TableCell className={classes.avtarTd}>
@@ -95,11 +96,13 @@ const AllUsers = () => {
                       )
                       .map((user) => (
                         <TableRow key={user.id} hover>
-                          <TableCell> 
+                          <TableCell>
                             <Avatar
                               alt={user.name}
                               // src={user.image && user.image.thumbnail}
-                              src={`${bucketBaseURL}${user.image && user.image.thumbnail}`}
+                              src={`${bucketBaseURL}${
+                                user.image && user.image.thumbnail
+                              }`}
                               // src={bucketBaseURL}{}
                             />
                           </TableCell>
@@ -108,13 +111,17 @@ const AllUsers = () => {
                           <TableCell>{user.role}</TableCell>
                           <TableCell>
                             <IconButton
-                              aria-label='Edit'
-                              onClick={() => jumpTo(`${client_app_route_url}edit-user/${user.id}`)}
+                              aria-label="Edit"
+                              onClick={() =>
+                                jumpTo(
+                                  `${client_app_route_url}edit-user/${user.id}`
+                                )
+                              }
                             >
                               <EditIcon />
                             </IconButton>
                             <IconButton
-                              aria-label='Delete'
+                              aria-label="Delete"
                               className={classes.deleteicon}
                               onClick={() =>
                                 dispatch(userDeleteAction(user.id))
@@ -131,7 +138,7 @@ const AllUsers = () => {
               </TableContainer>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
-                component='div'
+                component="div"
                 count={UsersState.users.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
@@ -142,8 +149,14 @@ const AllUsers = () => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
-export default AllUsers;
+export default function AllUsers() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllUsersComponent />
+    </ThemeProvider>
+  );
+}

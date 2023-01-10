@@ -11,37 +11,35 @@ import {
   Typography,
   Box,
   Paper,
-} from "@material-ui/core";
+} from "@mui/material";
 import viewStyles from "../viewStyles.js";
 import { isEmpty } from "../../utils/helper";
 import {
-  shippingAction,
   globalShippingUpdateAction,
   shippingClassAddAction,
   shippingClassUpdateAction,
   shippingClassDeleteAction,
-  productsAction,
 } from "../../store/action/";
 import { useSelector, useDispatch } from "react-redux";
 import { Alert, Loading } from "../components";
 import GlobalShippingComponent from "./components/global-shipping";
 import AllShippingComponent from "./components/all-shippings";
 import ShippingFormComponent from "./components/shipping-form";
-
+import theme from "../../theme/index.js";
+import { ThemeProvider } from "@mui/material/styles";
 var ShippingObject = {
   name: "",
   amount: "",
 };
 
-const Shipping = () => {
+const ShippingComponent = () => {
   const dispatch = useDispatch();
   const shippingState = useSelector((state) => state.shippings);
   const classes = viewStyles();
   const [tabVal, setTabVal] = useState(0);
   const [editMode, setEditMode] = useState(false);
-  const [customShippingClass, setcustomShippingClass] = useState(
-    ShippingObject
-  );
+  const [customShippingClass, setcustomShippingClass] =
+    useState(ShippingObject);
   const [shippingGlobal, setshippingGlobal] = useState({
     is_global: false,
     shipping_class: "",
@@ -51,13 +49,13 @@ const Shipping = () => {
 
   useEffect(() => {
     if (isEmpty(shippingState.shipping.shipping_class)) {
-      dispatch(shippingAction());
+      // dispatch(shippingAction());
     }
   }, []);
 
   useEffect(() => {
     if (shippingGlobal.overwrite) {
-      dispatch(productsAction());
+      // dispatch(productsAction());
     }
     setshippingGlobal({
       ...shippingGlobal,
@@ -81,13 +79,11 @@ const Shipping = () => {
 
   const editShipping = (shipping) => {
     setEditMode(true);
-   
+
     setcustomShippingClass(shipping);
   };
 
   const updateCustomShipping = () => {
-
-  
     dispatch(
       shippingClassUpdateAction({ shipping_class: customShippingClass })
     );
@@ -105,7 +101,7 @@ const Shipping = () => {
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item md={12} sm={12} xs={12}>
           <Card>
-            <CardHeader title='Shipping' />
+            <CardHeader title="Shipping" />
             <Divider />
             <CardContent>
               {/* ===================================Tab Navigation=================================== */}
@@ -113,19 +109,19 @@ const Shipping = () => {
                 <Tabs
                   value={tabVal}
                   onChange={handleChange}
-                  aria-label='Shipping Tab'
-                  indicatorColor='primary'
-                  textColor='primary'
+                  aria-label="Shipping Tab"
+                  indicatorColor="primary"
+                  textColor="primary"
                 >
-                  <Tab label='Global Shipping' {...a11yProps(0)} />
-                  <Tab label='Custom Shipping' {...a11yProps(1)} />
+                  <Tab label="Global Shipping" {...a11yProps(0)} />
+                  <Tab label="Custom Shipping" {...a11yProps(1)} />
                 </Tabs>
               </Paper>
               <Box className={classes.taxTabsWrapper}>
                 {/* ===================================Global Shipping=================================== */}
                 <TabPanel value={tabVal} index={0}>
                   <GlobalShippingComponent
-                  shippingState={shippingState}
+                    shippingState={shippingState}
                     shippingGlobalState={shippingGlobal}
                     onGlobalShippingInputChange={(name, value) =>
                       setshippingGlobal({
@@ -140,7 +136,7 @@ const Shipping = () => {
                 <TabPanel value={tabVal} index={1}>
                   <Grid container spacing={2}>
                     <Grid item lg={6} xs={12}>
-                      <AllShippingComponent 
+                      <AllShippingComponent
                         shippingState={shippingState}
                         editShippingForm={(shipping) => editShipping(shipping)}
                         deleteShipping={(id) => {
@@ -148,19 +144,19 @@ const Shipping = () => {
                             shippingClassDeleteAction({
                               _id: id,
                             })
-                          )
+                          );
                         }}
                       />
                     </Grid>
 
                     <Grid item lg={6} xs={12}>
-                      <ShippingFormComponent 
+                      <ShippingFormComponent
                         formMode={editMode}
                         onInputChange={(name, value) => {
                           setcustomShippingClass({
                             ...customShippingClass,
                             [name]: value,
-                          })
+                          });
                         }}
                         cancelShipping={cancelShipping}
                         updateCustomShipping={updateCustomShipping}
@@ -182,8 +178,8 @@ const Shipping = () => {
 const TabPanel = ({ children, value, index, ...other }) => {
   return (
     <Typography
-      component='div'
-      role='tabpanel'
+      component="div"
+      role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
@@ -207,4 +203,11 @@ const a11yProps = (index) => {
   };
 };
 
+const Shipping = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <ShippingComponent />
+    </ThemeProvider>
+  );
+};
 export default Shipping;

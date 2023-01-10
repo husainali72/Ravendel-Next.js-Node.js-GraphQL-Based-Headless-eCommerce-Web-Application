@@ -8,10 +8,7 @@ const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
 
-const {
-  graphqlUploadExpress,
-} = require('graphql-upload');
-
+const { graphqlUploadExpress } = require("graphql-upload");
 
 //connect db
 connectDB();
@@ -24,7 +21,7 @@ const Shipping = require("./models/Shipping");
 Shipping.createShipping();
 
 const Settings = require("./models/Setting");
-Settings.createSettings(); 
+Settings.createSettings();
 
 var port = process.env.PORT || 8000;
 
@@ -37,7 +34,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context,
-  uploads:false
+  uploads: false,
 });
 
 // const server = new ApolloServer({
@@ -49,7 +46,6 @@ const server = new ApolloServer({
 //     maxFileSize: 5000000, // 5 MB
 //     maxFiles: 20,
 //   },
-
 // });
 
 app.use(graphqlUploadExpress({ maxFileSize: 1000000000, maxFiles: 10 }));
@@ -68,27 +64,28 @@ app.use("/api/customers", require("./routes/api/customers"));
 
 app.use("/assets", express.static(__dirname + "/assets"));
 
-
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "frontend", "build")));
   app.use(express.static(path.join(__dirname, "client", "build")));
-  
-  app.get('/admin', (req, res) => {
+
+  app.get("/admin", (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
-  
-  app.get('/admin/*', (req, res) => {
+
+  app.get("/admin/*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
-  
-  app.get('*', (req, res) => {
+
+  app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
   });
 } else {
   app.get("/", (req, res) => res.send(`Ravendel is running on port: ${port}`));
 }
 
-app.listen(port, () => console.log(`server started on port ${port}, ${process.env.NODE_ENV}`));
+app.listen(port, () =>
+  console.log(`server started on port ${port}, ${process.env.NODE_ENV}`)
+);
 
 /*
 const { errorConverter, errorHandler } = require("./middleware/error");

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Box,
@@ -10,24 +10,25 @@ import {
   Typography,
   TextField,
   Button,
-} from "@material-ui/core";
+} from "@mui/material";
 import viewStyles from "../../viewStyles.js";
 import TimeZones from "./timeZones";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { getDatesAction, generalUpdateAction } from "../../../store/action";
-import { useDispatch, useSelector } from "react-redux";
+import Autocomplete from "@mui/material/Autocomplete";
 
-export const General = () => {
+import { useDispatch, useSelector } from "react-redux";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+export const GeneralTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
-  const settingState = useSelector(state => state.settings);
+  const settingState = useSelector((state) => state.settings);
   const [timeZone, setTimeZone] = useState(15);
   const [general, setgeneral] = useState({
     date_format: settingState.settings.general.date_format,
   });
 
   useEffect(() => {
-    dispatch(getDatesAction());
+    // dispatch(getDatesAction());
   }, []);
 
   const changeTimeZone = (val) => {
@@ -35,11 +36,11 @@ export const General = () => {
   };
 
   const updateGenral = () => {
-    dispatch(generalUpdateAction(general));
+    // dispatch(generalUpdateAction(general));
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item md={12} xs={12}>
           <Box component="div" className={classes.marginBottom2}>
@@ -94,8 +95,14 @@ export const General = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
-// export default General;
+export default function General() {
+  return (
+    <ThemeProvider theme={theme}>
+      <GeneralTheme />
+    </ThemeProvider>
+  );
+}

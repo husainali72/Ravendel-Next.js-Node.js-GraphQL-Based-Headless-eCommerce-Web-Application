@@ -1,30 +1,26 @@
-import React, { Fragment, useState } from "react";
-import {
-  Grid,
-  Box,
-  Button,
-} from "@material-ui/core";
-import { storeMeasuresUpdateAction } from "../../../store/action";
-import { useDispatch, useSelector } from "react-redux";
-import { SettingSelectComponent } from "./setting-components";
+import React, { useState } from "react";
+import { Grid, Box, Button } from "@mui/material";
 
-const Measurements = () => {
-  const dispatch = useDispatch();
+import { useSelector } from "react-redux";
+import { SettingSelectComponent } from "./setting-components";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+const MeasurementsComponent = () => {
   const settingState = useSelector((state) => state.settings);
   const [measurementVal, setMeasurementVal] = useState({
     ...settingState.settings.store.measurements,
   });
   const updateMeasures = () => {
-    dispatch(storeMeasuresUpdateAction(measurementVal));
+    // dispatch(storeMeasuresUpdateAction(measurementVal));
   };
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Box component='div' mb={3}>
+          <Box component="div" mb={3}>
             <SettingSelectComponent
-              label='Weight unit'
-              name='weight-unit'
+              label="Weight unit"
+              name="weight-unit"
               value={measurementVal.weight_unit}
               onSelecteChange={(val) =>
                 setMeasurementVal({
@@ -40,10 +36,10 @@ const Measurements = () => {
               ]}
             />
           </Box>
-          <Box component='div' mb={3}>
+          <Box component="div" mb={3}>
             <SettingSelectComponent
-              label='Dimensions unit'
-              name='dimensions-unit'
+              label="Dimensions unit"
+              name="dimensions-unit"
               value={measurementVal.dimensions_unit}
               onSelecteChange={(val) =>
                 setMeasurementVal({
@@ -63,17 +59,23 @@ const Measurements = () => {
         </Grid>
         <Grid item xs={12}>
           <Button
-            size='small'
-            color='primary'
-            variant='contained'
+            size="small"
+            color="primary"
+            variant="contained"
             onClick={updateMeasures}
           >
             Save Change
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
-export default Measurements;
+export default function Measurements() {
+  return (
+    <ThemeProvider theme={theme}>
+      <MeasurementsComponent />
+    </ThemeProvider>
+  );
+}

@@ -7,14 +7,15 @@ import {
   RadioGroup,
   FormControlLabel,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
-import { blogAddAction, blogtagsAction } from "../../store/action/";
+import { blogAddAction } from "../../store/action/";
 import viewStyles from "../viewStyles";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import { getUpdatedUrl } from "../../utils/service";
+
 import {
   Loading,
   TopBar,
@@ -23,9 +24,10 @@ import {
   CardBlocks,
   FeaturedImageComponent,
   URLComponent,
-  TinymceEditor
+  TinymceEditor,
 } from "../components";
-
+import theme from "../../theme";
+import { ThemeProvider } from "@mui/material/styles";
 var defaultObj = {
   status: "Publish",
   blog_tag: [],
@@ -38,7 +40,7 @@ var defaultObj = {
   },
 };
 
-const AddBlog = () => {
+const AddBlogComponenet = () => {
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -50,7 +52,7 @@ const AddBlog = () => {
   const [clearTags, setclearTags] = useState([]);
 
   useEffect(() => {
-    dispatch(blogtagsAction());
+    // dispatch(blogtagsAction());
   }, []);
 
   useEffect(() => {
@@ -115,9 +117,9 @@ const AddBlog = () => {
       {blogState.loading ? <Loading /> : null}
       <form>
         <TopBar
-          title='Add Blog'
+          title="Add Blog"
           onSubmit={addBlog}
-          submitTitle='Add'
+          submitTitle="Add"
           backLink={`${client_app_route_url}all-blogs`}
         />
 
@@ -127,20 +129,20 @@ const AddBlog = () => {
           className={classes.secondmainrow}
         >
           <Grid item lg={9} md={12} xs={12}>
-            <CardBlocks title='Blog Information' nomargin>
-              <Box component='div' mb={2} >
+            <CardBlocks title="Blog Information" nomargin>
+              <Box component="div" mb={2}>
                 <TextField
-                  label='Title'
-                  name='title'
+                  label="Title"
+                  name="title"
                   onChange={handleChange}
                   onBlur={(e) => !blog.url && isUrlExist(blog.title)}
-                  variant='outlined'
+                  variant="outlined"
                   fullWidth
                 />
               </Box>
 
-              <Box component='div' mb={2}>
-                <URLComponent 
+              <Box component="div" mb={2}>
+                <URLComponent
                   url={blog.url}
                   onInputChange={(updatedUrl) => {
                     setBlog({
@@ -153,23 +155,23 @@ const AddBlog = () => {
                 />
               </Box>
 
-              <Box component='div'>
-                <TinymceEditor 
-                   value={blog.content}
-                   onEditorChange={(value) =>
+              <Box component="div">
+                <TinymceEditor
+                  value={blog.content}
+                  onEditorChange={(value) =>
                     setBlog({ ...blog, ["content"]: value })
-                   }
+                  }
                 />
               </Box>
             </CardBlocks>
 
-            <CardBlocks title='Meta Information'>
+            <CardBlocks title="Meta Information">
               <Grid container spacing={isSmall ? 1 : 2}>
                 <Grid item md={6} xs={12}>
                   <TextInput
                     value={blog.meta.title}
-                    label='Meta Title'
-                    name='title'
+                    label="Meta Title"
+                    name="title"
                     onInputChange={metaChange}
                   />
                 </Grid>
@@ -177,8 +179,8 @@ const AddBlog = () => {
                 <Grid item md={6} xs={12}>
                   <TextInput
                     value={blog.meta.keywords}
-                    label='Meta Keywords'
-                    name='keywords'
+                    label="Meta Keywords"
+                    name="keywords"
                     onInputChange={metaChange}
                   />
                 </Grid>
@@ -186,11 +188,11 @@ const AddBlog = () => {
                 <Grid item xs={12}>
                   <TextInput
                     value={blog.meta.description}
-                    label='Meta Description'
-                    name='description'
+                    label="Meta Description"
+                    name="description"
                     onInputChange={metaChange}
                     multiline
-                    rows='4'
+                    rows="4"
                   />
                 </Grid>
               </Grid>
@@ -198,47 +200,46 @@ const AddBlog = () => {
           </Grid>
 
           <Grid item lg={3} md={12} xs={12}>
-            <CardBlocks title='Status' nomargin>
+            <CardBlocks title="Status" nomargin>
               <RadioGroup
-                defaultValue='Publish'
-                name='status'
+                defaultValue="Publish"
+                name="status"
                 onChange={handleChange}
                 row
               >
                 <FormControlLabel
-                  value='Publish'
+                  value="Publish"
                   control={<StyledRadio />}
-                  label='Publish'
+                  label="Publish"
                 />
                 <FormControlLabel
-                  value='Draft'
+                  value="Draft"
                   control={<StyledRadio />}
-                  label='Draft'
+                  label="Draft"
                 />
               </RadioGroup>
             </CardBlocks>
 
-            <CardBlocks title='Featured Image'>
+            <CardBlocks title="Featured Image">
               <Grid item xs={12}>
-                <FeaturedImageComponent 
+                <FeaturedImageComponent
                   image={featureImage}
                   feautedImageChange={(e) => fileChange(e)}
                 />
               </Grid>
             </CardBlocks>
 
-            <CardBlocks title='Tags'>
-              <Typography variant='subtitle1' className={classes.marginBottom1}>
+            <CardBlocks title="Tags">
+              <Typography variant="subtitle1" className={classes.marginBottom1}>
                 Select Tags
               </Typography>
 
               <Select
                 isMulti
                 value={clearTags}
-                name='blog_tag'
+                name="blog_tag"
                 options={tags}
                 onChange={tagChange}
-                // menuPortalTarget={document.querySelector("body")}
               />
             </CardBlocks>
           </Grid>
@@ -248,4 +249,11 @@ const AddBlog = () => {
   );
 };
 
+const AddBlog = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AddBlogComponenet />
+    </ThemeProvider>
+  );
+};
 export default AddBlog;

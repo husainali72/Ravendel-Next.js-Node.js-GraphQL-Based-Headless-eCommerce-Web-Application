@@ -1,8 +1,12 @@
-import React, { Fragment, useState, useEffect } from "react";
-import { Grid, Box } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { Grid, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { userUpdateAction, usersAction } from "../../store/action";
-import { isEmpty, client_app_route_url, bucketBaseURL } from "../../utils/helper";
+import {
+  isEmpty,
+  client_app_route_url,
+  bucketBaseURL,
+} from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
   Alert,
@@ -14,7 +18,8 @@ import {
   FeaturedImageComponent,
   SelectComponent,
 } from "../components";
-
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme/index";
 var defaultObj = {
   id: "",
   name: "",
@@ -23,7 +28,7 @@ var defaultObj = {
   password: "",
 };
 
-const EditUser = (props) => {
+const EditUserComponent = (props) => {
   const USER_ID =
     props.match.params && props.match.params.id ? props.match.params.id : "";
   const classes = viewStyles();
@@ -52,7 +57,7 @@ const EditUser = (props) => {
   }, [UsersState.users]);
 
   const fileChange = (e) => {
-    setuser({ ...user, ['updatedImage']: e.target.files[0] });
+    setuser({ ...user, ["updatedImage"]: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };
@@ -67,20 +72,20 @@ const EditUser = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {UsersState.loading ? <Loading /> : null}
 
       <form>
         <TopBar
-          title='Edit Users'
+          title="Edit Users"
           onSubmit={updateUser}
-          submitTitle='Update'
+          submitTitle="Update"
           backLink={`${client_app_route_url}all-users`}
         />
         <Grid container spacing={3} className={classes.secondmainrow}>
           <Grid item xs={12}>
-            <CardBlocks title='User Information' nomargin>
+            <CardBlocks title="User Information" nomargin>
               <Grid container spacing={4}>
                 <Grid item xl={2} lg={3} md={4} xs={12}>
                   <FeaturedImageComponent
@@ -90,34 +95,34 @@ const EditUser = (props) => {
                   />
                 </Grid>
                 <Grid item md={6} xs={12}>
-                  <Box component='div' mb={2}>
+                  <Box component="div" mb={2}>
                     <TextInput
                       value={user.name}
-                      label='Name'
-                      name='name'
+                      label="Name"
+                      name="name"
                       onInputChange={handleChange}
                     />
                   </Box>
-                  <Box component='div' mb={2}>
+                  <Box component="div" mb={2}>
                     <TextInput
-                      type='email'
+                      type="email"
                       value={user.email}
-                      label='Email'
-                      name='email'
+                      label="Email"
+                      name="email"
                       onInputChange={handleChange}
                     />
                   </Box>
-                  <Box component='div' mb={2}>
+                  <Box component="div" mb={2}>
                     <PasswordInput
-                      name='password'
+                      name="password"
                       value={user.password}
-                      label='Password'
+                      label="Password"
                       onInputChange={handleChange}
                     />
                   </Box>
-                  <Box component='div'>
+                  <Box component="div">
                     <SelectComponent
-                      label='Role'
+                      label="Role"
                       onSelecteChange={(val) =>
                         setuser({ ...user, ["role"]: val })
                       }
@@ -128,7 +133,7 @@ const EditUser = (props) => {
                         "Author",
                         "User",
                       ]}
-                      name='role'
+                      name="role"
                       value={user.role}
                     />
                   </Box>
@@ -138,8 +143,14 @@ const EditUser = (props) => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 
-export default EditUser;
+export default function EditUser() {
+  return (
+    <ThemeProvider theme={theme}>
+      <EditUserComponent />
+    </ThemeProvider>
+  );
+}

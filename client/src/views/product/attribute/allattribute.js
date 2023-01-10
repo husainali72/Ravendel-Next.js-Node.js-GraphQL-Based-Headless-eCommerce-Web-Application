@@ -15,27 +15,25 @@ import {
   IconButton,
   Button,
   Tooltip,
-} from "@material-ui/core";
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { attributesAction, attributeDeleteAction } from "../../../store/action";
+import { attributeDeleteAction } from "../../../store/action";
 import jumpTo from "../../../utils/navigation";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../../viewStyles";
-import {
-  Alert,
-  Loading,
-} from "../../components";
+import { Alert, Loading } from "../../components";
 import { client_app_route_url } from "../../../utils/helper";
-
-const AllAttribute = () => {
+import theme from "../../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+const AllAttributeComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const attributeState = useSelector((state) => state.product_attributes);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (newPage) => {
     setPage(newPage);
   };
 
@@ -45,27 +43,27 @@ const AllAttribute = () => {
   };
 
   useEffect(() => {
-    dispatch(attributesAction());
+    // dispatch(attributesAction());
   }, []);
 
   useEffect(() => {
     if (attributeState.render) {
-      dispatch(attributesAction());
+      // dispatch(attributesAction());
     }
   }, [attributeState.render]);
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <Grid container spacing={2} className={classes.mainrow}>
         <Grid item xl={12}>
           <Card>
-            {attributeState.loading ? <Loading /> : null} 
+            {attributeState.loading ? <Loading /> : null}
             <CardHeader
               action={
                 <Link to={`${client_app_route_url}add-attribute`}>
                   <Button
-                    color="primary"
+                    color="success"
                     className={classes.addUserBtn}
                     size="small"
                     variant="contained"
@@ -79,11 +77,7 @@ const AllAttribute = () => {
             <Divider />
             <CardContent>
               <TableContainer>
-                <Table
-                  stickyHeader
-                  aria-label="all-attributes"
-                  size="small"
-                >
+                <Table stickyHeader aria-label="all-attributes" size="small">
                   <TableHead>
                     <TableRow>
                       <TableCell>Name</TableCell>
@@ -108,7 +102,9 @@ const AllAttribute = () => {
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(`${client_app_route_url}edit-attribute/${attribute.id}`)
+                                  jumpTo(
+                                    `${client_app_route_url}edit-attribute/${attribute.id}`
+                                  )
                                 }
                               >
                                 <EditIcon />
@@ -120,7 +116,7 @@ const AllAttribute = () => {
                               onClick={() =>
                                 dispatch(attributeDeleteAction(attribute.id))
                               }
-                            disabled
+                              disabled
                             >
                               <IconButton
                                 aria-label="Delete"
@@ -148,8 +144,15 @@ const AllAttribute = () => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
+const AllAttribute = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllAttributeComponent />
+    </ThemeProvider>
+  );
+};
 export default AllAttribute;

@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Grid, useMediaQuery } from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+import { Grid, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { customerAddAction } from "../../store/action/";
 import viewStyles from "../viewStyles.js";
@@ -12,8 +12,9 @@ import {
   Alert,
   CardBlocks,
 } from "../components";
-import {client_app_route_url} from '../../utils/helper';
-
+import { client_app_route_url } from "../../utils/helper";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import theme from "../../theme/index";
 var customerObj = {
   first_name: "",
   last_name: "",
@@ -23,7 +24,7 @@ var customerObj = {
   phone: "",
 };
 
-const AddCustomer = () => {
+const AddCustomerComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
@@ -46,14 +47,14 @@ const AddCustomer = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {Customers.loading && <Loading />}
       <form>
         <TopBar
-          title='Add Customer'
+          title="Add Customer"
           onSubmit={addCustomer}
-          submitTitle='Add'
+          submitTitle="Add"
           backLink={`${client_app_route_url}all-customer`}
         />
         <Grid
@@ -62,54 +63,54 @@ const AddCustomer = () => {
           className={classes.secondmainrow}
         >
           <Grid item lg={12}>
-            <CardBlocks title='Add Customer' nomargin>
+            <CardBlocks title="Add Customer" nomargin>
               <Grid container spacing={4}>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
                     value={customer.first_name}
-                    label='First Name'
-                    name='first_name'
+                    label="First Name"
+                    name="first_name"
                     onInputChange={handleChange}
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
                     value={customer.last_name}
-                    label='Last Name'
-                    name='last_name'
+                    label="Last Name"
+                    name="last_name"
                     onInputChange={handleChange}
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
                     value={customer.email}
-                    type='email'
-                    label='Email'
-                    name='email'
+                    type="email"
+                    label="Email"
+                    name="email"
                     onInputChange={handleChange}
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
                   <PasswordInput
-                    name='password'
+                    name="password"
                     value={customer.password}
-                    label='Password'
+                    label="Password"
                     onInputChange={handleChange}
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
                     value={customer.company}
-                    label='Company'
-                    name='company'
+                    label="Company"
+                    name="company"
                     onInputChange={handleChange}
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
                     value={customer.phone}
-                    label='Phone'
-                    name='phone'
+                    label="Phone"
+                    name="phone"
                     onInputChange={handleChange}
                   />
                 </Grid>
@@ -118,8 +119,14 @@ const AddCustomer = () => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 
-export default AddCustomer;
+export default function AddCustomer() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AddCustomerComponent />
+    </ThemeProvider>
+  );
+}

@@ -9,13 +9,14 @@ import {
   IconButton,
   Tooltip,
   TablePagination,
-} from "@material-ui/core";
+} from "@mui/material";
 import viewStyles from "../../viewStyles.js";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { CardBlocks } from "../../components";
-
-const AllShippingComponent = ({
+import theme from "../../../theme/index.js";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+const AllShippingComponentComponent = ({
   shippingState,
   editShippingForm,
   deleteShipping,
@@ -34,9 +35,9 @@ const AllShippingComponent = ({
   };
 
   return (
-    <CardBlocks title='All Shippings' nomargin>
+    <CardBlocks title="All Shippings" nomargin>
       <TableContainer className={classes.container}>
-        <Table stickyHeader aria-label='shipping-table' size='small'>
+        <Table stickyHeader aria-label="shipping-table" size="small">
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
@@ -53,18 +54,18 @@ const AllShippingComponent = ({
                     <TableCell>{shipping.name}</TableCell>
                     <TableCell>{shipping.amount}</TableCell>
                     <TableCell>
-                      <Tooltip title='Edit shipping' aria-label='edit'>
+                      <Tooltip title="Edit shipping" aria-label="edit">
                         <IconButton
-                          aria-label='Edit'
+                          aria-label="Edit"
                           onClick={() => editShippingForm(shipping)}
                         >
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
                       {!shipping.system && (
-                        <Tooltip title='Delete shipping' aria-label='delete'>
+                        <Tooltip title="Delete shipping" aria-label="delete">
                           <IconButton
-                            aria-label='Delete'
+                            aria-label="Delete"
                             className={classes.deleteicon}
                             onClick={() => deleteShipping(shipping._id)}
                             disabled
@@ -81,7 +82,7 @@ const AllShippingComponent = ({
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5, 10, 20]}
-        component='div'
+        component="div"
         count={shippingState.shipping.shipping_class.length}
         rowsPerPage={rowsPerPage}
         page={page}
@@ -92,4 +93,19 @@ const AllShippingComponent = ({
   );
 };
 
+const AllShippingComponent = ({
+  shippingState,
+  editShippingForm,
+  deleteShipping,
+}) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllShippingComponentComponent
+        shippingState={shippingState}
+        editShippingForm={editShippingForm}
+        deleteShipping={deleteShipping}
+      />
+    </ThemeProvider>
+  );
+};
 export default AllShippingComponent;

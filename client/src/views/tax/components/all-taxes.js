@@ -9,13 +9,14 @@ import {
   Tooltip,
   IconButton,
   TablePagination,
-} from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../../viewStyles";
 import { CardBlocks } from "../../components";
-
-const AllTaxesComponent = ({ taxState, editTaxChange, deleteTaxChange }) => {
+import theme from "../../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
   const classes = viewStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -30,9 +31,9 @@ const AllTaxesComponent = ({ taxState, editTaxChange, deleteTaxChange }) => {
   };
 
   return (
-    <CardBlocks title='All Taxes' nomargin>
+    <CardBlocks title="All Taxes" nomargin>
       <TableContainer className={classes.container}>
-        <Table stickyHeader aria-label='tax-table' size='small'>
+        <Table stickyHeader aria-label="tax-table" size="small">
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
@@ -49,9 +50,9 @@ const AllTaxesComponent = ({ taxState, editTaxChange, deleteTaxChange }) => {
                     <TableCell>{tax.name}</TableCell>
                     <TableCell>{tax.percentage}</TableCell>
                     <TableCell>
-                      <Tooltip title='Edit tax' aria-label='edit'>
+                      <Tooltip title="Edit tax" aria-label="edit">
                         <IconButton
-                          aria-label='Edit'
+                          aria-label="Edit"
                           onClick={() => editTaxChange(tax)}
                         >
                           <EditIcon />
@@ -59,9 +60,9 @@ const AllTaxesComponent = ({ taxState, editTaxChange, deleteTaxChange }) => {
                       </Tooltip>
 
                       {!tax.system && (
-                        <Tooltip title='Delete tax' aria-label='delete'>
+                        <Tooltip title="Delete tax" aria-label="delete">
                           <IconButton
-                            aria-label='Delete'
+                            aria-label="Delete"
                             className={classes.deleteicon}
                             onClick={() => deleteTaxChange(tax._id)}
                             disabled
@@ -78,7 +79,7 @@ const AllTaxesComponent = ({ taxState, editTaxChange, deleteTaxChange }) => {
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5, 10, 20]}
-        component='div'
+        component="div"
         count={taxState.tax.tax_class.length}
         rowsPerPage={rowsPerPage}
         page={page}
@@ -89,4 +90,15 @@ const AllTaxesComponent = ({ taxState, editTaxChange, deleteTaxChange }) => {
   );
 };
 
+const AllTaxesComponent = ({ taxState, editTaxChange, deleteTaxChange }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllTaxesComponents
+        taxState={taxState}
+        editTaxChange={editTaxChange}
+        deleteTaxChange={deleteTaxChange}
+      />
+    </ThemeProvider>
+  );
+};
 export default AllTaxesComponent;
