@@ -13,7 +13,7 @@ import {
   Divider,
   TableHead,
   Button,
-} from "@material-ui/core";
+} from"@mui/material";
 import PageTitle from "../components/pageTitle";
 import { isEmpty } from "../../utils/helper";
 import { Link } from "react-router-dom";

@@ -3,11 +3,19 @@ import { Grid, Box, Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components";
 import { ThemeProvider } from "@mui/material/styles";
+import { useEffect } from "react";
+import {get} from "lodash";
 import theme from "../../../theme/index.js";
 const SEOComponent = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [seo, setSeo] = useState({ ...settingState.settings.seo });
+  const [seo, setSeo] = useState({ 
+    // ...settingState.settings.seo
+   });
+
+   useEffect(() => {
+    get(settingState, "settings.seo")
+    }, [settingState.settings])
 
   const updateSeo = () => {
     // dispatch(seoUpdateAction(seo));

@@ -15,7 +15,7 @@ import {
   TableRow,
   TableBody,
   Box
-} from "@material-ui/core";
+} from"@mui/material";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import palette from "../../../theme/palette";
 

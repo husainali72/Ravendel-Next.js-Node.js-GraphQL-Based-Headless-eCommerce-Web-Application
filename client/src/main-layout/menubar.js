@@ -38,13 +38,14 @@ const MenuBarComponenet = () => {
         return (
           <Link to={`${client_app_route_url + menu.url}`} key={menu.name}>
             <ListItem className={classes.item} disableGutters>
-              <Button className={classes.button}>
+              <Button className={classes.button} style={{color: palette.text.secondary, fontSize: "10px"}}>
                 <ListItemIcon className={classes.icons}>
                   {menu.icon && <menu.icon />}
                 </ListItemIcon>
                 <ListItemText
                   className={classes.itemtext}
                   primary={menu.name}
+                  style={{color: palette.text.secondary, fontSize: "10px"}}
                 />
               </Button>
             </ListItem>
@@ -75,6 +76,7 @@ const MenuBarComponenet = () => {
             timeout="auto"
             unmountOnExit
             className={clsx(classes.collapse, "menu-collapse")}
+            style={{fontSize: "10px"}}
           >
             {menuListing(menu.children)}
           </Collapse>

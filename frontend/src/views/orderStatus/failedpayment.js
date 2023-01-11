@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Typography, Box, Container, Grid } from "@material-ui/core";
+import { Typography, Box, Container, Grid } from"@mui/material";
 import PageTitle from "../components/pageTitle";
 
 const PaymentFailed = () => {

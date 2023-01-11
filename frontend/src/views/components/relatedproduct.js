@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Typography, Box, Container } from "@material-ui/core";
+import { Typography, Box, Container } from"@mui/material";
 import Slider from "react-slick";
 import ProductCard from "./productcard";
 

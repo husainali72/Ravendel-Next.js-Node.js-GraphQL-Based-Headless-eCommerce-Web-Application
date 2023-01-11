@@ -13,7 +13,7 @@ import {
   AccordionDetails,
   Checkbox,
   FormControlLabel,
-} from "@material-ui/core";
+} from"@mui/material";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { useLocation } from "react-router-dom";
 import { getQueryString, isEmpty } from "../../utils/helper";

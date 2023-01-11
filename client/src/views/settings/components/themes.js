@@ -6,12 +6,15 @@ import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png"
 import { bucketBaseURL } from "../../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
+import {get} from "lodash";
 const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
+  // const [themeSetting, setThemeSetting] = useState({});
   const [themeSetting, setThemeSetting] = useState({
     ...settingState.settings.appearance.theme,
+    // get(settingState, "settings.appearance.theme")
   });
   const [logoImage, setLogoImage] = useState(
     bucketBaseURL + themeSetting.logo.original
@@ -29,6 +32,21 @@ const ThemesComponent = () => {
   };
 
   const updateTheme = () => {};
+
+  // useEffect(() => {
+  //   get(settingState, "settings.appearance.theme,")
+  //   }, [settingState.settings])
+
+  // useEffect(() => {
+  //   if (
+  //     settingState.settings &&
+  //     settingState.settings.appearance &&
+  //     settingState.settings.appearance.theme
+  //   ) {
+  //     setThemeSetting({ ...settingState.settings.appearance.theme})
+  //   }
+  // }, [settingState.settings])
+
 
   return (
     <>

@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Container, Grid, Typography } from "@material-ui/core";
+import { Container, Grid, Typography } from"@mui/material";
 import {
   productsAction,
   categoriesAction,

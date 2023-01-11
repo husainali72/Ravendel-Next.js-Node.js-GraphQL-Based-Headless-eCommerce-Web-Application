@@ -12,6 +12,9 @@ import {
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
+import { useNavigate } from "react-router-dom";
+
+
 
 export const ordersAction = () => (dispatch) => {
   dispatch({
@@ -101,6 +104,8 @@ export const orderDeleteAction = (id) => (dispatch) => {
         response,
         "deleteOrder"
       );
+
+      const navigate = useNavigate();
       dispatch({
         type: LOADING_FALSE,
       });
@@ -114,7 +119,7 @@ export const orderDeleteAction = (id) => (dispatch) => {
 
       if (success) {
         dispatch(ordersAction());
-        jumpTo(`${client_app_route_url}all-orders`);
+       navigate(`${client_app_route_url}all-orders`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

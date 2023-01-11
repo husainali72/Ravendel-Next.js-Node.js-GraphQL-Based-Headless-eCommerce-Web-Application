@@ -63,6 +63,7 @@ const App = () => {
       {!isEmpty(login.user_token) ? <ThemeHelper /> : null}
     </>
   );
-};
+ };
 
 export default App;
+

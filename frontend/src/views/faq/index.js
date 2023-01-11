@@ -9,7 +9,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-} from "@material-ui/core";
+} from"@mui/material";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 const FAQ = () => {

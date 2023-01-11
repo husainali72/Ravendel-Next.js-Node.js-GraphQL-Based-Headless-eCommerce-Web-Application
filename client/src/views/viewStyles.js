@@ -228,6 +228,7 @@ const viewStyles = makeStyles((theme) => ({
     margin: "0px 10px",
     overflow: "hidden",
     border: "2px solid #ddd",
+    
   },
   logoImagePreview: {
     width: "100%",
@@ -430,5 +431,14 @@ const viewStyles = makeStyles((theme) => ({
     marginBottom: 5,
   },
 }));
+// const theme = createTheme();
 
-export default viewStyles;
+// export default function viewStyles() {
+//     return (
+//       <ThemeProvider theme={theme}>
+//         <ViewStyleTheme />
+//       </ThemeProvider>
+//     );
+//   }
+
+  export default viewStyles;

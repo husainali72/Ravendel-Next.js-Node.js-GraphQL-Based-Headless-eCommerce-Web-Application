@@ -6,7 +6,7 @@ import {
   Card,
   CardContent,
   CardActions
-} from "@material-ui/core";
+} from"@mui/material";
 
 const AccountSetting = () => {
   const handleChangedAccount = e => {

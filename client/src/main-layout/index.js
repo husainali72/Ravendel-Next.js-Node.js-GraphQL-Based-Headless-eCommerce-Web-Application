@@ -32,7 +32,8 @@ const MainLayout = ({ children }) => {
   };
 
   const shouldOpenSidebar = isDesktop ? true : openSidebar;
-
+console.log(isEmpty(login.user_token))
+console.log("user_token", login.user_token)
   return (
     <div
       className={clsx({
@@ -62,6 +63,7 @@ const MainLayout = ({ children }) => {
   );
 };
 
+const theme = createTheme();
 const useStyles = makeStyles((theme) => ({
   root: {
     "&&": {

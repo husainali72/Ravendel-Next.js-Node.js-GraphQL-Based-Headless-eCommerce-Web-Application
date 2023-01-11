@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Grid, Box, Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import  { get } from "lodash";
 import { SettingSelectComponent } from "./setting-components";
 import { SettingTextInput } from "./setting-components";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -8,8 +9,22 @@ import theme from "../../../theme/index.js";
 const CurrencyOptionsComponent = () => {
   const settingState = useSelector((state) => state.settings);
   const [currencyOption, setCurrencyOption] = useState({
-    ...settingState.settings.store.currency_options,
+    // ...settingState.settings.store.currency_options,
   });
+
+
+  //   // ...settingState.settings.store.currency_options,
+    
+  //   get(settingState, 'settings.store.currency_options')
+
+useEffect(() => {
+   
+    get(settingState, 'settings.store.currency_options')
+  }, [settingState.settings])
+
+
+
+  
 
   const updateStoreCurrency = () => {
     // dispatch(storeCurrencyUpdateAction(currencyOption));
