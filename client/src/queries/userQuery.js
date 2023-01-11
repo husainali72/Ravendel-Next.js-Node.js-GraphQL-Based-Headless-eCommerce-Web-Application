@@ -13,7 +13,7 @@ import gql from "graphql-tag";
 const GET_USERS = gql`
   {
     users {
-    data {
+      data {
         id
         name
         email
@@ -29,7 +29,7 @@ const GET_USERS = gql`
 `;
 
 const GET_USER = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     user(id: $id) {
       id
       name
@@ -63,7 +63,7 @@ const GET_USER = gql`
 //   }
 // `;
 const ADD_USER = gql`
-  mutation(
+  mutation (
     $name: String
     $email: String
     $password: String
@@ -109,7 +109,7 @@ const ADD_USER = gql`
 //   }
 // `;
 const UPDATE_USER = gql`
-  mutation(
+  mutation (
     $id: ID!
     $name: String
     $email: String
@@ -143,7 +143,7 @@ const UPDATE_USER = gql`
 //   }
 // `;
 const DELETE_USER = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     deleteUser(id: $id) {
       message
       success

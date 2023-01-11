@@ -16,7 +16,7 @@ import {
   Avatar,
   Button,
   Tooltip,
-} from"@mui/material";
+} from "@mui/material";
 
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,8 +37,9 @@ const GlobalThemeOverride = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const products = useSelector((state) => state.products);
+
   useEffect(() => {
-     dispatch(productsAction());
+    dispatch(productsAction());
   }, []);
 
   const [page, setPage] = React.useState(0);
@@ -56,9 +57,9 @@ const GlobalThemeOverride = () => {
   return (
     <>
       <Alert />
-      <Grid container spacing={2} className={classes.mainrow} >
+      <Grid container spacing={2} className={classes.mainrow}>
         <Grid item xl={12} md={12}>
-          <Card >
+          <Card>
             {products.loading ? <Loading /> : null}
             <CardHeader
               action={
@@ -124,10 +125,14 @@ const GlobalThemeOverride = () => {
                             <Tooltip title="Edit Product" aria-label="edit">
                               <IconButton
                                 aria-label="Edit"
-                                onClick={() =>
-                                  navigate(
-                                    `${client_app_route_url}edit-product/${product._id}`
-                                  )
+                                onClick={
+                                  () =>
+                                    navigate(
+                                      `${client_app_route_url}edit-product/${product._id}`
+                                    )
+                                  // navigate(
+                                  //   `${client_app_route_url}edit-product/${product._id}`
+                                  // )
                                 }
                               >
                                 <EditIcon />

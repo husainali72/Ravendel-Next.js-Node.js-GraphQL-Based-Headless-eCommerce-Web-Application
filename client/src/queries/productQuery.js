@@ -73,7 +73,6 @@ const PRODUCT_TILE_DATA = gql`
 //   }
 // `;
 
-
 const GET_CATEGORIES = gql`
   {
     productCategories {
@@ -88,7 +87,7 @@ const GET_CATEGORIES = gql`
         date
         updated
       }
-      message{
+      message {
         message
         success
       }
@@ -97,7 +96,7 @@ const GET_CATEGORIES = gql`
 `;
 
 const GET_CATEGORY = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     productCategory(id: $id) {
       id
       name
@@ -142,7 +141,7 @@ const GET_CATEGORY = gql`
 //   }
 // `;
 const ADD_CATEGORY = gql`
-  mutation(
+  mutation (
     $name: String
     $parentId: ID
     $url: String
@@ -196,7 +195,7 @@ const ADD_CATEGORY = gql`
 //   }
 // `;
 const UPDATE_CATEGORY = gql`
-  mutation(
+  mutation (
     $id: ID!
     $name: String
     $parentId: ID
@@ -236,7 +235,7 @@ const UPDATE_CATEGORY = gql`
 //   }
 // `;
 const DELETE_CATEGORY = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     deleteProductCategory(id: $id) {
       message
       success
@@ -267,7 +266,7 @@ const GET_PRODUCTS = gql`
       data {
         ...ProductTile
       }
-      message{
+      message {
         message
         success
       }
@@ -275,7 +274,28 @@ const GET_PRODUCTS = gql`
   }
   ${PRODUCT_TILE_DATA}
 `;
-
+// const GET_ORDER = gql`
+//   query ($id: ID!) {
+//     order(id: $id) {
+//       data {
+//         id
+//         customer_id
+//         payment_status
+//         shipping_status
+//         shipping
+//         billing
+//         products
+//         coupon_code
+//         date
+//         updated
+//       }
+//       message {
+//         message
+//         success
+//       }
+//     }
+//   }
+// `;
 const GET_PRODUCT = gql`
   query ($id: ID!) {
     product(id: $id) {
@@ -410,7 +430,7 @@ const UPDATE_PRODUCT = gql`
 //   ${PRODUCT_TILE_DATA}
 // `;
 const DELETE_PRODUCT = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     deleteProduct(id: $id) {
       message
       success
