@@ -5,6 +5,12 @@ module.exports = gql`
     message: String
     success: Boolean
   }
+  type dashboardDataRES {
+    productCount: Int
+    userCount: Int
+    customerCount: Int
+    latestProducts: customArray
+  }
   type paginationInfo {
     totalCount: Int
     page: Int

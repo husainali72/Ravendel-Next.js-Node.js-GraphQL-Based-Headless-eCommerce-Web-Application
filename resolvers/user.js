@@ -94,6 +94,24 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    dashboardData: async (root, args) => {
+      try {
+        const dashboardData = {}
+        dashboardData.productCount = await Product.countDocuments({
+          status: "Publish",
+        });
+        dashboardData.userCount = await User.countDocuments({});
+        dashboardData.customerCount = await Customer.countDocuments({});
+        dashboardData.latestProducts = await Product.find({})
+          .sort({ date: "desc" })
+          .limit(2);
+
+        return dashboardData
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    }
   },
   userMeta: {
     meta: async (root, args) => {
