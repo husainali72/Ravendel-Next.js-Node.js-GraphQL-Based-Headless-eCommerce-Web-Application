@@ -6,6 +6,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
+const { duplicateData, MESSAGE_RESPONSE } = require("../config/helpers");
 
 module.exports = {
   Query: {
@@ -45,6 +46,8 @@ module.exports = {
         status: args.status,
       };
       let validation = ["title", "content"];
+      const result = await duplicateData({title: data.title}, Faq, args.id)
+      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Faq", false)
       return await UPDATE_FUNC(
         id,
         args.id,

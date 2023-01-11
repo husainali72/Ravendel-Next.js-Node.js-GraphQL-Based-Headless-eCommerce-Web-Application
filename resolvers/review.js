@@ -10,7 +10,8 @@ const {
   UPDATE_FUNC,
 } = require("../config/api_functions");
 const {
-  MESSAGE_RESPONSE
+  MESSAGE_RESPONSE,
+  duplicateData
 } = require('../config/helpers');
 
 module.exports = {
@@ -46,6 +47,7 @@ module.exports = {
       try {
         const reviews = await Review.find({
           product_id: { $in: args.product_id },
+          status: "approved"
         });
         //console.log("review", reviews);
 
@@ -106,6 +108,7 @@ module.exports = {
       };
       //console.log("data==", data)
       let validation = ["review", "title", "email"];
+      let duplicate = ["review"];
       return await CREATE_FUNC(
         id,
         "Review",
@@ -113,7 +116,8 @@ module.exports = {
         data,
         args,
         "",
-        validation
+        validation,
+        duplicate
       );
     },
     updateReview: async (root, args, { id }) => {
@@ -134,6 +138,8 @@ module.exports = {
         "product_id",
         "customer_id",
       ];
+      const result = await duplicateData({review: args.review}, Review, args.id)
+      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
       return await UPDATE_FUNC(
         id,
         args.id,

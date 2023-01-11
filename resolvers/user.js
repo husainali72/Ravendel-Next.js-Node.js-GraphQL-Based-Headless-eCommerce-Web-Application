@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const Product = require("../models/Product");
+const Customer = require("../models/Customer");
 const {
   isEmpty,
   putError,
@@ -8,6 +10,8 @@ const {
   checkToken,
   MESSAGE_RESPONSE,
   _validate,
+  checkRole,
+  duplicateData
 } = require("../config/helpers");
 
 const {
@@ -132,6 +136,14 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "User", false);
       }
       try {
+        const result = await duplicateData({email: args.email}, User, args.id)
+        if(!result) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
+
+        if(args.role){
+          const result = checkRole(args.role)
+          if(result.success) args.role = result.role
+          else return MESSAGE_RESPONSE("InvalidRole", "User", false);
+        }
         const user = await User.findById({ _id: args.id });
         if (user) {
           const errors = _validate(["name", "email", "role"], args);
@@ -183,7 +195,6 @@ module.exports = {
               user.meta.unshift(metArra[i]);
             }
           }
-
         //  console.log('USERDATA',user);
           await user.save();
           return MESSAGE_RESPONSE("UpdateSuccess", "User", true);

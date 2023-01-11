@@ -7,6 +7,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
+const {duplicateData,MESSAGE_RESPONSE} = require("../config/helpers")
 
 module.exports = {
   Query: {
@@ -60,6 +61,8 @@ module.exports = {
         name: args.attribute.name,
         values: args.attribute.values,
       };
+      const result = await duplicateData({name: data.name}, ProductAttribute, args.attribute.id)
+      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "ProductAttribute", false);
       return await UPDATE_FUNC(
         id,
         args.attribute.id,

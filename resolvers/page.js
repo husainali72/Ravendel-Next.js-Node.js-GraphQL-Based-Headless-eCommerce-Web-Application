@@ -1,5 +1,5 @@
 const Page = require("../models/Page");
-const { stringTourl } = require("../config/helpers");
+const { stringTourl, duplicateData, MESSAGE_RESPONSE } = require("../config/helpers");
 const {
   DELETE_FUNC,
   GET_BY_PAGINATIONS,
@@ -62,6 +62,8 @@ module.exports = {
         meta: args.meta,
       };
       let validation = ["title"];
+      const result = await duplicateData({title: args.title}, Page, args.id)
+      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Page", false);
       return await UPDATE_FUNC(
         id,
         args.id,

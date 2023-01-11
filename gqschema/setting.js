@@ -165,6 +165,7 @@ module.exports = gql`
   type APPEARANCE_HOME {
     slider: [SLIDER]
     add_section_in_home: ADD_SECTION_IN_HOME
+    add_section_web: [ADD_SECTION_WEB]
   }
   
   type ADD_SECTION_IN_HOME {
@@ -178,11 +179,16 @@ module.exports = gql`
     category_id: String
   }
   
-  type APPEARANCE_MOBILE {
-    mobile_add_section_in_home: [MOBILE_ADD_SECTION_IN_HOME]
+  type ADD_SECTION_WEB {
+    label: String
+    visible: Boolean
   }
 
-  type MOBILE_ADD_SECTION_IN_HOME {
+  type APPEARANCE_MOBILE {
+    mobile_section: [MOBILE_SECTION]
+  }
+
+  type MOBILE_SECTION {
     label: String
     section_img: customObject
     visible: Boolean
@@ -226,11 +232,17 @@ module.exports = gql`
     category_id: String
   }
 
-  input mobile_add_section_in_home {
+  input mobile_section_input {
+    update_image: Upload
     label: String
     section_img: customObject
     visible: Boolean
     url: String
+  }
+
+  input add_section_web_input {
+    label: String
+    visible: Boolean
   }
 
   extend type Query {
@@ -327,9 +339,10 @@ module.exports = gql`
     updateAppearanceHome(
       slider: [slider_input]
       add_section_in_home: add_section_in_home
+      add_section_web: [add_section_web_input]
     ): Setting
     updateAppearanceMobile(
-      mobile_add_section_in_home: mobile_add_section_in_home
+      mobile_section: [mobile_section_input]
     ): Setting
     updateAppeanranceTheme(primary_color: String, new_logo: Upload): Setting
   }
