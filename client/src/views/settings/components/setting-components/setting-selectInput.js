@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Select, MenuItem, FormControl, InputLabel } from"@mui/material";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import viewStyles from "../../../viewStyles";
-
-const SettingSelectComponent = ({
+import theme from "../../../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+const SettingsSelectComponent = ({
   label,
   onSelecteChange,
   items,
@@ -19,11 +20,16 @@ const SettingSelectComponent = ({
   }, []);
 
   return (
-    <FormControl variant='outlined' size='small' className={classes.settingSelectInput}>
+    <FormControl
+      variant="outlined"
+      size="small"
+      className={classes.settingSelectInput}
+    >
       <InputLabel ref={inputLabel} id={`select-${label}`}>
         {label}
       </InputLabel>
       <Select
+        label={label}
         labelId={`select-${label}`}
         name={name}
         onChange={(e) => onSelecteChange(e.target.value)}
@@ -44,4 +50,24 @@ const SettingSelectComponent = ({
   );
 };
 
+const SettingSelectComponent = ({
+  label,
+  onSelecteChange,
+  items,
+  name,
+  value,
+  ...rest
+}) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <SettingsSelectComponent
+        label={label}
+        onSelecteChange={onSelecteChange}
+        items={items}
+        value={value}
+        rest
+      />
+    </ThemeProvider>
+  );
+};
 export default SettingSelectComponent;

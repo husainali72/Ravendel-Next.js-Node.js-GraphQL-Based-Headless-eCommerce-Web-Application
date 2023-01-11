@@ -1,56 +1,47 @@
 import { login } from "../../utils/service";
 import cookie from "react-cookies";
-import jumpTo, { go } from "../../utils/navigation";
-import { ALERT_SUCCESS } from "../reducers/alertReducer";
-import {client_app_route_url} from '../../utils/helper';
-import { useNavigate } from "react-router-dom";
-// const navigate = useNavigate();
-export const LoginAction = (email, password, navigate) => dispatch => {
- 
+import { client_app_route_url } from "../../utils/helper";
+export const LoginAction = (email, password, navigate) => (dispatch) => {
   dispatch({
-    type: POST_TOKEN_BEGIN
+    type: POST_TOKEN_BEGIN,
   });
   return login(email, password)
-    .then(res => {
+    .then((res) => {
       dispatch({
         type: POST_TOKEN_SUCCESS,
-        payload: res
+        payload: res,
       });
-      console.log("POST_TOKEN_SUCCESS")
-        // jumpTo(`${client_app_route_url}dashboard`);
-      navigate(`${client_app_route_url}dashboard`)
+      console.log("POST_TOKEN_SUCCESS");
+
+      navigate(`${client_app_route_url}dashboard`);
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: POST_TOKEN_FAIL
-      }); 
+        type: POST_TOKEN_FAIL,
+      });
       throw error;
-      // return dispatch({
-      //   type: ALERT_SUCCESS,
-      //   payload: { boolean: true, message: 'Invalid credentials', error: true }
-      // });
     });
 };
 
-export const insertToken = () => dispatch => {
+export const insertToken = () => (dispatch) => {
   let token;
   if (cookie.load("auth")) {
     token = cookie.load("auth");
     dispatch({
       type: INSERT_TOKEN_SUCCESS,
-      payload: token
+      payload: token,
     });
   } else {
     dispatch({
-      type: INSERT_TOKEN_FAIL
+      type: INSERT_TOKEN_FAIL,
     });
   }
 };
 
-export const logoutAction = () => dispatch => {
+export const logoutAction = () => (dispatch) => {
   cookie.remove("auth");
   dispatch({
-    type: LOGOUT_SUCCESS
+    type: LOGOUT_SUCCESS,
   });
 };
 

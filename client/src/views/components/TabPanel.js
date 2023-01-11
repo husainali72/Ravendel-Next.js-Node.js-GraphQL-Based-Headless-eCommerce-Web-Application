@@ -1,11 +1,11 @@
 import React from "react";
-import { Typography, Box } from"@mui/material";
+import { Typography, Box } from "@mui/material";
 
 const TabPanel = ({ children, value, index, ...other }) => {
   return (
     <Typography
-      component='div'
-      role='tabpanel'
+      component="div"
+      role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Box,
@@ -10,18 +10,18 @@ import {
   Typography,
   TextField,
   Button,
-} from"@mui/material";
+} from "@mui/material";
 import viewStyles from "../../viewStyles.js";
 import TimeZones from "./timeZones";
-import Autocomplete from '@mui/material/Autocomplete';
-import { getDatesAction, generalUpdateAction } from "../../../store/action";
-import { useDispatch, useSelector } from "react-redux";
+import Autocomplete from "@mui/material/Autocomplete";
 import { get } from "lodash";
-
-export const General = () => {
+import { useDispatch, useSelector } from "react-redux";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+export const GeneralTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
-  const settingState = useSelector(state => state.settings);
+  const settingState = useSelector((state) => state.settings);
   const [timeZone, setTimeZone] = useState(15);
   const [general, setgeneral] = useState({
     // date_format: settingState.settings.general.date_format,
@@ -101,4 +101,10 @@ get (settingState, "settings.general.date_format")
   );
 };
 
-// export default General;
+export default function General() {
+  return (
+    <ThemeProvider theme={theme}>
+      <GeneralTheme />
+    </ThemeProvider>
+  );
+}

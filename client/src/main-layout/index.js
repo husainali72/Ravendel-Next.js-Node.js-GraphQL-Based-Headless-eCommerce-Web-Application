@@ -1,21 +1,20 @@
 import React, { useState } from "react";
-import { makeStyles } from"@mui/styles";
-import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
+import { makeStyles } from "@mui/styles";
+import { ThemeProvider, useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 import clsx from "clsx";
-import AllRoutes from '../routes/routes';
+import AllRoutes from "../routes/routes";
 import Header from "./Header";
-import SideBarTheme from "./Sidebar";
 import Footer from "./Footer";
 import Alert from "../views/utils/Alert";
 import Login from "../views/login";
 import { useSelector } from "react-redux";
 import { isEmpty } from "../utils/helper";
-
-
+import SideBar from "./Sidebar";
+import theme from "../theme";
 const MainLayout = ({ children }) => {
   const classes = useStyles();
-  const theme =  useTheme();
+  const theme = useTheme();
   const login = useSelector((state) => state.login);
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"), {
     defaultMatches: true,
@@ -41,25 +40,24 @@ console.log("user_token", login.user_token)
         [classes.shiftContent]: isDesktop,
       })}
     >
-    {!isEmpty(login.user_token)?
-      <>
-        <Header onSidebarOpen={handleSidebarOpen} />
-        <SideBarTheme
-          onClose={handleSidebarClose}
-          open={shouldOpenSidebar}
-          variant={isDesktop ? "persistent" : "temporary"}
-        /> 
-        <main className={classes.content}>
-          <Alert />
-          {children}
-          <AllRoutes />
-        </main>
-      </> 
-      : 
-        <Login/>
-      }
-    <Footer /> 
-  
+      {!isEmpty(login.user_token) ? (
+        <>
+          <Header onSidebarOpen={handleSidebarOpen} />
+          <SideBar
+            onClose={handleSidebarClose}
+            open={shouldOpenSidebar}
+            variant={isDesktop ? "persistent" : "temporary"}
+          />
+          <main className={classes.content}>
+            <Alert />
+            {children}
+            <AllRoutes />
+          </main>
+        </>
+      ) : (
+        <Login />
+      )}
+      <Footer />
     </div>
   );
 };
@@ -67,30 +65,32 @@ console.log("user_token", login.user_token)
 const theme = createTheme();
 const useStyles = makeStyles((theme) => ({
   root: {
- "&&": {
-    paddingTop: 56,
-    height: "100%",
-    [theme.breakpoints.up("sm")]: {
-      paddingTop: 50,
-    },}
+    "&&": {
+      paddingTop: 56,
+      height: "100%",
+      [theme.breakpoints.up("sm")]: {
+        paddingTop: 50,
+      },
+    },
   },
-  shiftContent: {"&&": {
-    paddingLeft: 175,}
+  shiftContent: {
+    "&&": {
+      paddingLeft: 175,
+    },
   },
-  content: {"&&": {
-    height: "calc(100% - 58px)",
-    overflowY: "auto",
-    overflowX: "hidden",}
+  content: {
+    "&&": {
+      height: "calc(100% - 58px)",
+      overflowY: "auto",
+      overflowX: "hidden",
+    },
   },
 }));
 
-
 export default function ThemeHelper() {
-    return (
-      <ThemeProvider theme={theme}>
-        <MainLayout />
-      </ThemeProvider>
-    );
-  }
-
-// export default MainLayout;
+  return (
+    <ThemeProvider theme={theme}>
+      <MainLayout />
+    </ThemeProvider>
+  );
+}

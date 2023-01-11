@@ -15,9 +15,9 @@ import {
   IconButton,
   Button,
   Tooltip,
-  useMediaQuery
-} from"@mui/material";
-import {  useTheme } from '@mui/styles';
+  useMediaQuery,
+} from "@mui/material";
+import { useTheme } from "@mui/styles";
 import { Link } from "react-router-dom";
 import { customersAction, customerDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
@@ -25,14 +25,15 @@ import { isEmpty } from "../../utils/helper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles";
-import {convertDateToStringFormat} from "../utils/convertDate";
+import { convertDateToStringFormat } from "../utils/convertDate";
 import { useDispatch, useSelector } from "react-redux";
-import {Alert, Loading} from '../components';
-import {client_app_route_url} from '../../utils/helper';
-
-const AllCustomers = () => {
+import { Alert, Loading } from "../components";
+import { client_app_route_url } from "../../utils/helper";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import theme from "../../theme/index";
+const AllCustomersComponent = () => {
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
   const dispatch = useDispatch();
   const Customers = useSelector((state) => state.customers);
@@ -66,7 +67,7 @@ const AllCustomers = () => {
               action={
                 <Link to={`${client_app_route_url}add-customer`}>
                   <Button
-                    color="primary"
+                    color="success"
                     className={classes.addUserBtn}
                     size="small"
                     variant="contained"
@@ -80,17 +81,21 @@ const AllCustomers = () => {
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table
-                  stickyHeader
-                  aria-label="customers-table"
-                  size="small"
-                >
+                <Table stickyHeader aria-label="customers-table" size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Name
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Email
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Date
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Actions
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -105,13 +110,17 @@ const AllCustomers = () => {
                             {customer.first_name + " " + customer.last_name}
                           </TableCell>
                           <TableCell>{customer.email}</TableCell>
-                          <TableCell>{convertDateToStringFormat(customer.date)}</TableCell>
+                          <TableCell>
+                            {convertDateToStringFormat(customer.date)}
+                          </TableCell>
                           <TableCell>
                             <Tooltip title="Edit Customer" aria-label="edit">
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(`${client_app_route_url}edit-customer/${customer.id}`)
+                                  jumpTo(
+                                    `${client_app_route_url}edit-customer/${customer.id}`
+                                  )
                                 }
                               >
                                 <EditIcon />
@@ -155,4 +164,10 @@ const AllCustomers = () => {
   );
 };
 
-export default AllCustomers;
+export default function AllCustomers() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllCustomersComponent />
+    </ThemeProvider>
+  );
+}

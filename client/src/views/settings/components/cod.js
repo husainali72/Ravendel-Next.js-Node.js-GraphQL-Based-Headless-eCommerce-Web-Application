@@ -1,20 +1,13 @@
-import React, { Fragment, useState, useEffect } from "react";
-import {
-  Grid,
-  Box,
-  FormControlLabel,
-  Checkbox,
-  Button,
-} from"@mui/material";
+import React, { useState, useEffect } from "react";
+import { Grid, Box, FormControlLabel, Checkbox, Button } from "@mui/material";
 import viewStyles from "../../viewStyles.js";
-import { paymentCodUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
-import {SettingTextInput} from './setting-components/';
+import { SettingTextInput } from "./setting-components/";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
 import  { get } from "lodash";
-
-const CashOnDelivery = (props) => {
+const CashOnDeliveryTheme = () => {
   const classes = viewStyles();
-  const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [codInfo, setCodInfo] = useState({});
   // const [codInfo, setCodInfo] = useState({
@@ -36,25 +29,25 @@ const CashOnDelivery = (props) => {
     <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Box component='div' className={classes.marginBottom2}>
+          <Box component="div" className={classes.marginBottom2}>
             <FormControlLabel
               control={
                 <Checkbox
-                  color='primary'
+                  color="primary"
                   checked={codInfo.enable}
                   onChange={(e) =>
                     setCodInfo({ ...codInfo, enable: e.target.checked })
                   }
                 />
               }
-              label='Enable cash on delivery'
+              label="Enable cash on delivery"
             />
           </Box>
           {codInfo.enable && (
             <Box>
-              <Box component='div'>
+              <Box component="div">
                 <SettingTextInput
-                  label='Title'
+                  label="Title"
                   value={codInfo.title}
                   onSettingInputChange={(val) =>
                     setCodInfo({ ...codInfo, title: val })
@@ -62,9 +55,9 @@ const CashOnDelivery = (props) => {
                 />
               </Box>
 
-              <Box component='div'>
+              <Box component="div">
                 <SettingTextInput
-                  label='Description'
+                  label="Description"
                   value={codInfo.description}
                   onSettingInputChange={(val) =>
                     setCodInfo({ ...codInfo, description: val })
@@ -72,9 +65,9 @@ const CashOnDelivery = (props) => {
                 />
               </Box>
 
-              <Box component='div'>
+              <Box component="div">
                 <SettingTextInput
-                  label='Instructions'
+                  label="Instructions"
                   value={codInfo.instructions}
                   onSettingInputChange={(val) =>
                     setCodInfo({ ...codInfo, instructions: val })
@@ -86,9 +79,9 @@ const CashOnDelivery = (props) => {
         </Grid>
         <Grid item xs={12}>
           <Button
-            size='small'
-            color='primary'
-            variant='contained'
+            size="small"
+            color="primarygh"
+            variant="contained"
             onClick={updateCOD}
           >
             Save Change
@@ -98,5 +91,10 @@ const CashOnDelivery = (props) => {
     </>
   );
 };
-
-export default CashOnDelivery;
+export default function CashOnDelivery() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CashOnDeliveryTheme />
+    </ThemeProvider>
+  );
+}

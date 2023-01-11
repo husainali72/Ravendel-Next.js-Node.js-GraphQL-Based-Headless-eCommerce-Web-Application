@@ -13,19 +13,24 @@ import {
   CircularProgress,
   Box,
   Typography,
-} from"@mui/material";
+} from "@mui/material";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { Link } from "react-router-dom";
-import {convertDateToStringFormat} from "../../../utils/convertDate";
+import { convertDateToStringFormat } from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
-import {client_app_route_url, bucketBaseURL} from '../../../../utils/helper';
-
-const LatestProducts = ({ products, loader }) => {
+import { client_app_route_url, bucketBaseURL } from "../../../../utils/helper";
+import theme from "../../../../theme";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+const LatestProductsTheme = ({ products, loader }) => {
   const classes = DashboardStyles();
 
   return (
     <Card className={classes.root}>
-      <CardHeader title="Latest Products" />
+      <CardHeader
+        title="Latest Products"
+        titleTypographyProps={{ variant: "subtitle" }}
+        className={classes.Cardheader}
+      />
       <Divider />
       <CardContent className={classes.content}>
         {loader ? (
@@ -55,7 +60,9 @@ const LatestProducts = ({ products, loader }) => {
                 </ListItemAvatar>
                 <ListItemText
                   primary={product.name}
-                  secondary={`Updated ${convertDateToStringFormat(product.date)}`}
+                  secondary={`Updated ${convertDateToStringFormat(
+                    product.date
+                  )}`}
                 />
               </ListItem>
             ))}
@@ -78,4 +85,11 @@ const LatestProducts = ({ products, loader }) => {
   );
 };
 
+const LatestProducts = ({ products, loader }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <LatestProductsTheme products={products} loader={loader} />
+    </ThemeProvider>
+  );
+};
 export default LatestProducts;

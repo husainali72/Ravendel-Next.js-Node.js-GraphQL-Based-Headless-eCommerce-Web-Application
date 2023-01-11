@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Card,
@@ -14,24 +14,25 @@ import {
   TablePagination,
   IconButton,
   Button,
-  Tooltip
-} from"@mui/material";
+  Tooltip,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { couponsAction, couponDeleteAction } from "../../store/action";
+import { couponDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles";
-import {Alert, Loading} from '../components';
-import {convertDateToStringFormat} from '../utils/convertDate';
-import {client_app_route_url} from '../../utils/helper';
-
-const AllCoupons = () => {
+import { Alert, Loading } from "../components";
+import { convertDateToStringFormat } from "../utils/convertDate";
+import { client_app_route_url } from "../../utils/helper";
+import theme from "../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+const AllCouponsTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
-  const Coupons = useSelector(state => state.coupons)
+  const Coupons = useSelector((state) => state.coupons);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -45,7 +46,7 @@ const AllCoupons = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
@@ -61,7 +62,7 @@ const AllCoupons = () => {
               action={
                 <Link to={`${client_app_route_url}add-coupon`}>
                   <Button
-                    color="primary"
+                    color="success"
                     className={classes.addUserBtn}
                     size="small"
                     variant="contained"
@@ -75,11 +76,7 @@ const AllCoupons = () => {
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table
-                  stickyHeader
-                  aria-label="allcoupons-table"
-                  size="small"
-                >
+                <Table stickyHeader aria-label="allcoupons-table" size="small">
                   <TableHead>
                     <TableRow>
                       <TableCell>Code</TableCell>
@@ -95,12 +92,14 @@ const AllCoupons = () => {
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map(coupon => (
+                      .map((coupon) => (
                         <TableRow key={coupon.id} hover>
                           <TableCell>{coupon.code}</TableCell>
                           <TableCell>{coupon.discount_type}</TableCell>
                           <TableCell>{coupon.discount_value}</TableCell>
-                          <TableCell>{convertDateToStringFormat(coupon.expire)}</TableCell>
+                          <TableCell>
+                            {convertDateToStringFormat(coupon.expire)}
+                          </TableCell>
                           <TableCell>
                             <Tooltip
                               title="Edit Coupon"
@@ -109,7 +108,9 @@ const AllCoupons = () => {
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(`${client_app_route_url}edit-coupon/${coupon.id}`)
+                                  jumpTo(
+                                    `${client_app_route_url}edit-coupon/${coupon.id}`
+                                  )
                                 }
                               >
                                 <EditIcon />
@@ -153,4 +154,11 @@ const AllCoupons = () => {
   );
 };
 
+const AllCoupons = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllCouponsTheme />
+    </ThemeProvider>
+  );
+};
 export default AllCoupons;

@@ -1,10 +1,11 @@
-import React, { Fragment, useState } from "react";
-import { Grid, Paper, Tab, Tabs, Box } from"@mui/material";
+import React, { useState } from "react";
+import { Grid, Paper, Tab, Tabs, Box } from "@mui/material";
 import HomeSettings from "./home";
 import Themes from "./themes";
 import { TabPanel, TabProps } from "../../components";
-
-const Appearance = () => {
+import theme from "../../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+const AppearanceComponent = () => {
   const [tabVal, setTabVal] = useState(0);
   const handleChange = (event, newValue) => {
     setTabVal(newValue);
@@ -18,13 +19,13 @@ const Appearance = () => {
             <Tabs
               value={tabVal}
               onChange={handleChange}
-              aria-label='Shipping Tab'
-              indicatorColor='primary'
-              textColor='primary'
-              variant='scrollable'
+              aria-label="Shipping Tab"
+              indicatorColor="primary"
+              textColor="primary"
+              variant="scrollable"
             >
-              <Tab label='Home' {...TabProps(0)} />
-              <Tab label='Theme' {...TabProps(1)} />
+              <Tab label="Home" {...TabProps(0)} />
+              <Tab label="Theme" {...TabProps(1)} />
             </Tabs>
           </Paper>
           <TabPanel value={tabVal} index={0}>
@@ -41,4 +42,11 @@ const Appearance = () => {
   );
 };
 
+const Appearance = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AppearanceComponent />
+    </ThemeProvider>
+  );
+};
 export default Appearance;

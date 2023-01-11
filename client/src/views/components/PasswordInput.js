@@ -5,13 +5,14 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
-} from"@mui/material";
+} from "@mui/material";
 import viewStyles from "../viewStyles";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import clsx from "clsx";
-
-const PasswordInput = ({ name, value, label, onInputChange }) => {
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme/index.js";
+const PasswordInputComponent = ({ name, value, label, onInputChange }) => {
   const classes = viewStyles();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -48,15 +49,22 @@ const PasswordInput = ({ name, value, label, onInputChange }) => {
           </InputAdornment>
         }
         labelWidth={70}
-        autoComplete='off'
-        // inputProps={{
-        //     autocomplete: 'new-password',
-        //     form: {
-        //       autocomplete: 'off',
-        //     },
-        //   }}
+        autoComplete="off"
       />
     </FormControl>
+  );
+};
+
+const PasswordInput = ({ name, value, label, onInputChange }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <PasswordInputComponent
+        name={name}
+        value={value}
+        label={label}
+        onInputChange={onInputChange}
+      />
+    </ThemeProvider>
   );
 };
 

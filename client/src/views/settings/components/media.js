@@ -1,13 +1,13 @@
 import React, { Fragment, useState } from "react";
-import { Grid, Box, Button, useMediaQuery } from"@mui/material";
-import { useTheme } from"@mui/styles";
+import { Grid, Box, Button, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/styles";
 import viewStyles from "../../viewStyles";
-import { mediaUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput, SettingBlock } from "./setting-components";
-import { useEffect } from "react";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
 import {get} from "lodash";
-const Media = () => {
+const MediaComponent = () => {
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -36,11 +36,11 @@ const Media = () => {
     <>
       <Grid container spacing={2}>
         <Grid item md={12} xs={12}>
-          <SettingBlock label='Thumbnail Size'>
-            <Box display='flex' flexDirection={isSmall ? "column" : "row"}>
+          <SettingBlock label="Thumbnail Size">
+            <Box display="flex" flexDirection={isSmall ? "column" : "row"}>
               <SettingTextInput
                 value={media.thumbnail.width}
-                label='Width'
+                label="Width"
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
@@ -51,11 +51,11 @@ const Media = () => {
                   });
                 }}
                 otherClass={classes.marginRight2}
-                type='number'
+                type="number"
               />
               <SettingTextInput
                 value={media.thumbnail.height}
-                label='Height'
+                label="Height"
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
@@ -65,15 +65,15 @@ const Media = () => {
                     },
                   });
                 }}
-                type='number'
+                type="number"
               />
             </Box>
           </SettingBlock>
-          <SettingBlock label='Medium size'>
-            <Box display='flex' flexDirection={isSmall ? "column" : "row"}>
+          <SettingBlock label="Medium size">
+            <Box display="flex" flexDirection={isSmall ? "column" : "row"}>
               <SettingTextInput
                 value={media.medium.width}
-                label='Max Width'
+                label="Max Width"
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
@@ -83,12 +83,12 @@ const Media = () => {
                     },
                   });
                 }}
-                type='number'
+                type="number"
                 otherClass={classes.marginRight2}
               />
               <SettingTextInput
                 value={media.medium.height}
-                label='Max Height'
+                label="Max Height"
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
@@ -98,16 +98,16 @@ const Media = () => {
                     },
                   });
                 }}
-                type='number'
+                type="number"
               />
             </Box>
           </SettingBlock>
 
-          <SettingBlock label='Large Size'>
-            <Box display='flex' flexDirection={isSmall ? "column" : "row"}>
+          <SettingBlock label="Large Size">
+            <Box display="flex" flexDirection={isSmall ? "column" : "row"}>
               <SettingTextInput
                 value={media.large.width}
-                label='Max Width'
+                label="Max Width"
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
@@ -117,12 +117,12 @@ const Media = () => {
                     },
                   });
                 }}
-                type='number'
+                type="number"
                 otherClass={classes.marginRight2}
               />
               <SettingTextInput
                 value={media.large.height}
-                label='Max Height'
+                label="Max Height"
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
@@ -132,16 +132,16 @@ const Media = () => {
                     },
                   });
                 }}
-                type='number'
+                type="number"
               />
             </Box>
           </SettingBlock>
         </Grid>
         <Grid item md={12} xs={12}>
           <Button
-            size='small'
-            color='primary'
-            variant='contained'
+            size="small"
+            color="primary"
+            variant="contained"
             onClick={updateGeneral}
           >
             Save Change
@@ -152,4 +152,10 @@ const Media = () => {
   );
 };
 
-export default Media;
+export default function Media() {
+  return (
+    <ThemeProvider theme={theme}>
+      <MediaComponent />
+    </ThemeProvider>
+  );
+}

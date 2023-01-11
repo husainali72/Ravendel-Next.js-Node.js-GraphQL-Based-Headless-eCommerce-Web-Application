@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Button,
@@ -6,10 +6,9 @@ import {
   RadioGroup,
   FormControlLabel,
   useMediaQuery,
-} from"@mui/material";
-import { useTheme } from"@mui/styles";
+} from "@mui/material";
+import { useTheme } from "@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { pageAddAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
 import {
   Alert,
@@ -20,8 +19,9 @@ import {
   CardBlocks,
 } from "../components";
 import viewStyles from "../viewStyles";
-import {client_app_route_url} from '../../utils/helper';
-
+import { client_app_route_url } from "../../utils/helper";
+import theme from "../../theme";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 var defaultObj = {
   status: "Publish",
   title: "",
@@ -32,11 +32,10 @@ var defaultObj = {
   },
 };
 
-const AddPage = (props) => {
+const AddPageTheme = (props) => {
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const dispatch = useDispatch();
   const pageState = useSelector((state) => state.pages);
   const [editPremalink, setEditPermalink] = useState(false);
   const [page, setPage] = useState(defaultObj);
@@ -85,9 +84,9 @@ const AddPage = (props) => {
       {pageState.loading ? <Loading /> : null}
       <form>
         <TopBar
-          title='Add Page'
+          title="Add Page"
           onSubmit={addPage}
-          submitTitle='Add'
+          submitTitle="Add"
           backLink={`${client_app_route_url}all-pages`}
         />
 
@@ -97,17 +96,17 @@ const AddPage = (props) => {
           className={classes.secondmainrow}
         >
           <Grid item lg={9} md={12} xs={12}>
-            <CardBlocks title='Page Information' nomargin>
-              <Box component='div' mb={2}>
+            <CardBlocks title="Page Information" nomargin>
+              <Box component="div" mb={2}>
                 <TextInput
                   value={page.title}
-                  label='Title'
-                  name='title'
+                  label="Title"
+                  name="title"
                   onInputChange={handleChange}
                 />
               </Box>
 
-              <Box component='div' mb={2}>
+              <Box component="div" mb={2}>
                 {page.title ? (
                   <span style={{ marginBottom: 10, display: "block" }}>
                     <strong>Link: </strong>
@@ -115,17 +114,17 @@ const AddPage = (props) => {
                     {editPremalink === false && page.url}
                     {editPremalink === true && (
                       <input
-                        id='url'
-                        name='url'
+                        id="url"
+                        name="url"
                         value={page.url}
                         onChange={handleChange}
-                        variant='outlined'
+                        variant="outlined"
                         className={classes.editpermalinkInput}
                       />
                     )}
                     <Button
-                      color='primary'
-                      variant='contained'
+                      color="primary"
+                      variant="contained"
                       onClick={changePermalink}
                       className={classes.editpermalinkInputBtn}
                     >
@@ -135,17 +134,17 @@ const AddPage = (props) => {
                 ) : null}
               </Box>
 
-              <Box component='div'>
+              <Box component="div">
                 <TinymceEditor />
               </Box>
             </CardBlocks>
 
-            <CardBlocks title='Meta Information'>
+            <CardBlocks title="Meta Information">
               <Grid container spacing={3}>
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    label='Meta Title'
-                    name='title'
+                    label="Meta Title"
+                    name="title"
                     value={page.meta.title}
                     onInputChange={metaChange}
                   />
@@ -153,8 +152,8 @@ const AddPage = (props) => {
 
                 <Grid item md={6} xs={12}>
                   <TextInput
-                    label='Meta Keyword'
-                    name='keywords'
+                    label="Meta Keyword"
+                    name="keywords"
                     value={page.meta.keywords}
                     onInputChange={metaChange}
                   />
@@ -162,12 +161,12 @@ const AddPage = (props) => {
 
                 <Grid item md={12} xs={12}>
                   <TextInput
-                    label='Description'
-                    name='description'
+                    label="Description"
+                    name="description"
                     value={page.meta.description}
                     onInputChange={metaChange}
                     multiline
-                    rows='4'
+                    rows="4"
                   />
                 </Grid>
               </Grid>
@@ -175,22 +174,22 @@ const AddPage = (props) => {
           </Grid>
 
           <Grid item lg={3} md={12} xs={12}>
-            <CardBlocks title='Status' nomargin>
+            <CardBlocks title="Status" nomargin>
               <RadioGroup
-                defaultValue='Publish'
-                name='status'
+                defaultValue="Publish"
+                name="status"
                 onChange={handleChange}
                 row
               >
                 <FormControlLabel
-                  value='Publish'
+                  value="Publish"
                   control={<StyledRadio />}
-                  label='Publish'
+                  label="Publish"
                 />
                 <FormControlLabel
-                  value='Draft'
+                  value="Draft"
                   control={<StyledRadio />}
-                  label='Draft'
+                  label="Draft"
                 />
               </RadioGroup>
             </CardBlocks>
@@ -201,4 +200,12 @@ const AddPage = (props) => {
   );
 };
 
+// export default AddPage;
+const AddPage = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AddPageTheme />
+    </ThemeProvider>
+  );
+};
 export default AddPage;

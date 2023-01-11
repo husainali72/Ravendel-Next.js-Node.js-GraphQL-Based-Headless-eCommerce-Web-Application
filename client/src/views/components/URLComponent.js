@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { isEmpty } from "../../utils/helper";
-import { Button } from"@mui/material";
+import { Button } from "@mui/material";
 import { getUpdatedUrl } from "../../utils/service";
 import viewStyles from "../viewStyles";
 import Loading from "./Loading";
 
-const URLComponent = ({ url, onInputChange, pageUrl, tableUrl }) => {
+import theme from "../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl }) => {
   const classes = viewStyles();
   const [editPremalink, setEditPermalink] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -30,25 +32,24 @@ const URLComponent = ({ url, onInputChange, pageUrl, tableUrl }) => {
       {!isEmpty(url) ? (
         <span style={{ marginBottom: 10, display: "block" }}>
           <strong>Link: </strong>
-          {window.location.origin}/{pageUrl}/
-          {editPremalink === false && url}
+          {window.location.origin}/{pageUrl}/{editPremalink === false && url}
           {editPremalink === true && (
             <input
-              id='url'
-              name='url'
+              id="url"
+              name="url"
               value={url}
               onChange={(e) => {
-                if(!isEmpty(e.target.value)){
-                  onInputChange(e.target.value)
+                if (!isEmpty(e.target.value)) {
+                  onInputChange(e.target.value);
                 }
               }}
-              variant='outlined'
+              variant="outlined"
               className={classes.editpermalinkInput}
             />
           )}
           <Button
-            color='primary'
-            variant='contained'
+            color="primary"
+            variant="contained"
             onClick={changePermalink}
             className={classes.editpermalinkInputBtn}
           >
@@ -60,4 +61,16 @@ const URLComponent = ({ url, onInputChange, pageUrl, tableUrl }) => {
   );
 };
 
+const URLComponent = ({ url, onInputChange, pageUrl, tableUrl }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <URLComponentTheme
+        url={url}
+        onInputChange={onInputChange}
+        pageUrl={pageUrl}
+        tableUrl={tableUrl}
+      />
+    </ThemeProvider>
+  );
+};
 export default URLComponent;

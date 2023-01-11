@@ -3,30 +3,23 @@ import {
   GET_COUPON,
   ADD_COUPON,
   UPDATE_COUPON,
-  DELETE_COUPON
+  DELETE_COUPON,
 } from "../../queries/couponQuery";
-import {client_app_route_url, getResponseHandler, mutationResponseHandler} from '../../utils/helper';
+import {
+  client_app_route_url,
+  getResponseHandler,
+  mutationResponseHandler,
+} from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
 
-export const couponsAction = () => dispatch => {
+export const couponsAction = () => (dispatch) => {
   dispatch({
-    type: COUPON_LOADING
+    type: COUPON_LOADING,
   });
   query(GET_COUPONS)
-    .then(response => {
-      // if (response.data.coupons.message.success) {
-      //   return dispatch({
-      //     type: COUPONS_SUCCESS,
-      //     payload: response.data.coupons.data
-      //   });
-      // }else {
-      //   return dispatch({
-      //     type: ALERT_SUCCESS,
-      //     payload: { boolean: true, message: response.data.coupons.message.message, error: true }
-      //   });
-      // }
+    .then((response) => {
       const [error, success, message, data] = getResponseHandler(
         response,
         "coupons"
@@ -49,35 +42,23 @@ export const couponsAction = () => dispatch => {
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: COUPON_FAIL
+        type: COUPON_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const couponAction = id => dispatch => {
+export const couponAction = (id) => (dispatch) => {
   dispatch({
-    type: COUPON_LOADING
+    type: COUPON_LOADING,
   });
   query(GET_COUPON, { id: id })
-    .then(response => {
-      // if (response.data.coupon.message.success) {
-      //   return dispatch({
-      //     type: COUPON_SUCCESS,
-      //     payload: response.data.coupon.data
-      //   });
-      // }else {
-      //   return dispatch({
-      //     type: ALERT_SUCCESS,
-      //     payload: { boolean: true, message: response.data.coupon.message.message, error: true }
-      //   });
-
-      // }
+    .then((response) => {
       const [error, success, message, data] = getResponseHandler(
         response,
         "coupon"
@@ -100,47 +81,24 @@ export const couponAction = id => dispatch => {
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: COUPON_FAIL
+        type: COUPON_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const couponAddAction = object => dispatch => {
+export const couponAddAction = (object) => (dispatch) => {
   dispatch({
-    type: COUPON_LOADING
+    type: COUPON_LOADING,
   });
-  console.log('couupon add', object)
+  console.log("couupon add", object);
   mutation(ADD_COUPON, object)
-    .then(response => {
-      // if (response.data.addCoupon.success) {
-      //   dispatch({
-      //     type: COUPON_FAIL
-      //   });
-
-      //   return dispatch({
-      //     type: ALERT_SUCCESS,
-      //     payload: {
-      //       boolean: true,
-      //       message: "Coupon added successfully",
-      //       error: false
-      //     }
-      //   });
-      // }else {
-      //   dispatch({
-      //     type: COUPON_FAIL
-      //   });
-      //   return dispatch({
-      //     type: ALERT_SUCCESS,
-      //     payload: { boolean: true, message: response.data.addCoupon.message, error: true }
-      //   });
-
-      // }
+    .then((response) => {
       const [error, success, message, data] = mutationResponseHandler(
         response,
         "addCoupon"
@@ -165,49 +123,23 @@ export const couponAddAction = object => dispatch => {
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: COUPON_FAIL
+        type: COUPON_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const couponUpdateAction = object => dispatch => {
+export const couponUpdateAction = (object) => (dispatch) => {
   dispatch({
-    type: COUPON_LOADING
+    type: COUPON_LOADING,
   });
   mutation(UPDATE_COUPON, object)
-    .then(response => {
-      // if (response.data.updateCoupon.success) {
-      //   dispatch({
-      //     type: COUPON_FAIL
-      //   });
-
-      //   dispatch(couponsAction());
-
-      //   jumpTo(`${client_app_route_url}all-coupons`);
-
-      //   dispatch({
-      //     type: ALERT_SUCCESS,
-      //     payload: {
-      //       boolean: true,
-      //       message: "Coupon updated successfully",
-      //       error: false
-      //     }
-      //   });
-
-      //   return;
-      // }else{
-      //   return dispatch({
-      //     type: ALERT_SUCCESS,
-      //     payload: { boolean: true, message: response.data.updateCoupon.message, error: true }
-      //   });
-
-      // }
+    .then((response) => {
       const [error, success, message, data] = mutationResponseHandler(
         response,
         "updateCoupon"
@@ -232,45 +164,23 @@ export const couponUpdateAction = object => dispatch => {
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: COUPON_FAIL
+        type: COUPON_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const couponDeleteAction = id => dispatch => {
+export const couponDeleteAction = (id) => (dispatch) => {
   dispatch({
-    type: COUPON_LOADING
+    type: COUPON_LOADING,
   });
   mutation(DELETE_COUPON, { id })
-    .then(response => {
-      // if (response.data.deleteCoupon.success) {
-      //   dispatch({
-      //     type: COUPON_FAIL,
-      //   });
-
-      //   dispatch(couponsAction());
-
-      //   return dispatch({
-      //     type: ALERT_SUCCESS,
-      //     payload: {
-      //       boolean: true,
-      //       message: "Coupon deleted successfully",
-      //       error: false
-      //     }
-      //   });
-      // }else{
-      //   return dispatch({
-      //     type: ALERT_SUCCESS,
-      //     payload: { boolean: true, message: response.data.deleteCoupon.message, error: true }
-      //   });
-
-      // }
+    .then((response) => {
       const [error, success, message, data] = mutationResponseHandler(
         response,
         "deleteCoupon"
@@ -294,13 +204,13 @@ export const couponDeleteAction = id => dispatch => {
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: COUPON_FAIL
+        type: COUPON_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };

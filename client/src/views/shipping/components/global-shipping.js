@@ -7,52 +7,53 @@ import {
   RadioGroup,
   Radio,
   Button,
-  Checkbox, 
+  Checkbox,
   MenuItem,
-  useMediaQuery
-} from"@mui/material";
-import {  useTheme } from '@mui/material/styles';
+  useMediaQuery,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import viewStyles from "../../viewStyles.js";
-
-const GlobalShippingComponent = ({
+import theme from "../../../theme/index.js";
+import { ThemeProvider } from "@mui/material/styles";
+const GlobalShippingComponentComponent = ({
   shippingGlobalState,
   onGlobalShippingInputChange,
   saveGlobal,
-  shippingState
+  shippingState,
 }) => {
   const classes = viewStyles();
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <>
       <Grid container spacing={1} className={classes.marginBottom}>
         <Grid item md={6} sm={12} xs={12}>
           <Grid container spacing={1}>
-            <Grid item >
+            <Grid item>
               <FormControlLabel
                 control={
                   <Checkbox
-                    color='primary'
+                    color="primary"
                     checked={shippingGlobalState.is_global}
                     onChange={(e) =>
                       onGlobalShippingInputChange("is_global", e.target.checked)
                     }
                   />
                 }
-                label='Global Shipping'
+                label="Global Shipping"
               />
             </Grid>
             <Grid item md={6} sm={12} xs={12}>
               <FormControl
-                variant='outlined'
-                size='small'
+                variant="outlined"
+                size="small"
                 fullWidth
                 style={{ marginBottom: isSmall ? 20 : 0 }}
               >
                 <Select
-                  labelId='Shipping-name'
-                  id='Shipping-name'
-                  name='Shipping-name'
+                  labelId="Shipping-name"
+                  id="Shipping-name"
+                  name="Shipping-name"
                   value={shippingGlobalState.shipping_class}
                   onChange={(e) =>
                     onGlobalShippingInputChange(
@@ -76,8 +77,10 @@ const GlobalShippingComponent = ({
           </Grid>
           <Grid item md={12} sm={12} xs={12}>
             <RadioGroup
-              aria-label='taxOption'
-              value={shippingGlobalState.is_per_order ? "per_order" : "per_product"}
+              aria-label="taxOption"
+              value={
+                shippingGlobalState.is_per_order ? "per_order" : "per_product"
+              }
               onChange={(e) =>
                 onGlobalShippingInputChange(
                   "is_per_order",
@@ -86,14 +89,14 @@ const GlobalShippingComponent = ({
               }
             >
               <FormControlLabel
-                value='per_order'
-                control={<Radio color='primary' />}
-                label='Per Order'
+                value="per_order"
+                control={<Radio color="primary" />}
+                label="Per Order"
               />
               <FormControlLabel
-                value='per_product'
-                control={<Radio color='primary' />}
-                label='Per Product'
+                value="per_product"
+                control={<Radio color="primary" />}
+                label="Per Product"
               />
             </RadioGroup>
           </Grid>
@@ -103,14 +106,14 @@ const GlobalShippingComponent = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    color='primary'
+                    color="primary"
                     checked={shippingGlobalState.overwrite}
                     onChange={(e) =>
                       onGlobalShippingInputChange("overwrite", e.target.checked)
                     }
                   />
                 }
-                label='Do you want to override the current shipping class selection in the existing products?'
+                label="Do you want to override the current shipping class selection in the existing products?"
               />
             </Grid>
           )}
@@ -118,10 +121,10 @@ const GlobalShippingComponent = ({
       </Grid>
 
       <Button
-        size='small'
-        color='primary'
+        size="small"
+        color="primary"
         onClick={saveGlobal}
-        variant='contained'
+        variant="contained"
       >
         Save Changes
       </Button>
@@ -129,4 +132,21 @@ const GlobalShippingComponent = ({
   );
 };
 
+const GlobalShippingComponent = ({
+  shippingGlobalState,
+  onGlobalShippingInputChange,
+  saveGlobal,
+  shippingState,
+}) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <GlobalShippingComponentComponent
+        shippingGlobalState={shippingGlobalState}
+        onGlobalShippingInputChange={onGlobalShippingInputChange}
+        saveGlobal={saveGlobal}
+        shippingState={shippingState}
+      />
+    </ThemeProvider>
+  );
+};
 export default GlobalShippingComponent;

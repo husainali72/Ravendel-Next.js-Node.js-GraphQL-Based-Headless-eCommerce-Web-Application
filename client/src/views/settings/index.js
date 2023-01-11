@@ -9,11 +9,11 @@ import {
   CardHeader,
   Divider,
   useMediaQuery,
-} from"@mui/material";
-import { useTheme } from"@mui/styles";
+} from "@mui/material";
+import { useTheme } from "@mui/styles";
 import viewStyles from "../viewStyles";
 import clsx from "clsx";
-import {General} from "./components/general";
+
 import Media from "./components/media";
 import SMTP from "./components/smtp";
 import SEO from "./components/seo";
@@ -23,8 +23,10 @@ import Payment from "./components/payment";
 import { TabPanel, TabProps } from "../components";
 import { getSettings } from "../../store/action";
 import { useDispatch } from "react-redux";
-
-const Settings = () => {
+import General from "./components/general";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme";
+const SettingsComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -43,38 +45,38 @@ const Settings = () => {
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item xs={12}>
           <Card>
-            <CardHeader title='Settings' />
+            <CardHeader title="Settings" />
             <Divider />
             <CardContent>
               <div className={classes.settingRoot}>
                 <Box
-                  display='flex'
+                  display="flex"
                   flexDirection={isSmall ? "column" : "row"}
                   className={classes.width100}
                 >
                   <Box className={classes.settingLeft}>
                     <Tabs
                       orientation={isSmall ? "horizontal" : "vertical"}
-                      variant='scrollable'
+                      variant="scrollable"
                       value={value}
                       onChange={handleChange}
-                      aria-label='Vertical tabs example'
+                      aria-label="Vertical tabs example"
                       className={classes.settingsTabs}
-                      indicatorColor='primary'
+                      indicatorColor="primary"
                     >
-                      <Tab label='General' {...TabProps(0)} />
-                      <Tab label='Media' {...TabProps(1)} />
-                      <Tab label='SMTP' {...TabProps(2)} />
-                      <Tab label='SEO' {...TabProps(3)} />
-                      <Tab label='Store' {...TabProps(4)} />
-                      <Tab label='Payment' {...TabProps(5)} />
-                      <Tab label='Appearance' {...TabProps(6)} />
+                      <Tab label="General" {...TabProps(0)} />
+                      <Tab label="Media" {...TabProps(1)} />
+                      <Tab label="SMTP" {...TabProps(2)} />
+                      <Tab label="SEO" {...TabProps(3)} />
+                      <Tab label="Store" {...TabProps(4)} />
+                      <Tab label="Payment" {...TabProps(5)} />
+                      <Tab label="Appearance" {...TabProps(6)} />
                     </Tabs>
                   </Box>
                   <Box
                     className={clsx(classes.flexGrow1, classes.settingRight)}
                   >
-                    <Box component='div' className='setting-content'>
+                    <Box component="div" className="setting-content">
                       <TabPanel value={value} index={0}>
                         <General />
                       </TabPanel>
@@ -108,4 +110,10 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default function Settings() {
+  return (
+    <ThemeProvider theme={theme}>
+      <SettingsComponent />
+    </ThemeProvider>
+  );
+}

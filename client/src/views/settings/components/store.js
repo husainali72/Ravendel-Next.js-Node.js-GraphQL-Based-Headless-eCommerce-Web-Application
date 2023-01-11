@@ -1,14 +1,15 @@
-import React, { Fragment, useState } from "react";
-import { Grid, Box, Paper, Tab, Tabs } from"@mui/material";
+import React, { useState } from "react";
+import { Grid, Box, Paper, Tab, Tabs } from "@mui/material";
 import Inventory from "./inventory";
 import Measurements from "./measurements";
 import StoreAddress from "./storeAddress";
 import CurrencyOptions from "./currencyOption";
 import { TabPanel, TabProps } from "../../components";
-
-const Store = () => {
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+const StoreComponent = () => {
   const [tabVal, setTabVal] = useState(0);
-  const handleChange = (event, newValue) => {
+  const handleChange = (newValue) => {
     setTabVal(newValue);
   };
   return (
@@ -19,15 +20,15 @@ const Store = () => {
             <Tabs
               value={tabVal}
               onChange={handleChange}
-              aria-label='Shipping Tab'
-              indicatorColor='primary'
-              textColor='primary'
-              variant='scrollable'
+              aria-label="Shipping Tab"
+              indicatorColor="primary"
+              textColor="primary"
+              variant="scrollable"
             >
-              <Tab label='Currency options' {...TabProps(0)} />
-              <Tab label='Store Address' {...TabProps(1)} />
-              <Tab label='Measurements' {...TabProps(2)} />
-              <Tab label='Inventory' {...TabProps(3)} />
+              <Tab label="Currency options" {...TabProps(0)} />
+              <Tab label="Store Address" {...TabProps(1)} />
+              <Tab label="Measurements" {...TabProps(2)} />
+              <Tab label="Inventory" {...TabProps(3)} />
             </Tabs>
           </Paper>
           <Box>
@@ -58,4 +59,10 @@ const Store = () => {
   );
 };
 
-export default Store;
+export default function Store() {
+  return (
+    <ThemeProvider theme={theme}>
+      <StoreComponent />
+    </ThemeProvider>
+  );
+}

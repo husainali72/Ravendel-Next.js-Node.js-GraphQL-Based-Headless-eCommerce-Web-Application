@@ -16,26 +16,27 @@ import {
   Button,
   Tooltip,
   TextField,
-  CardActions
-} from"@mui/material";
+  CardActions,
+} from "@mui/material";
 import Alert from "../utils/Alert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
 import clsx from "clsx";
-
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme";
 var ShippingObject = {
   name: "",
-  price: ""
+  price: "",
 };
-const AllShippings = props => {
+const AllShippingsComponent = (props) => {
   const classes = viewStyles();
   const [editMode, setEditMode] = useState(false);
   const [shippings, setShippings] = useState([
     { id: 1, name: "abc", price: 10 },
     { id: 2, name: "xyz", price: 20 },
-    { id: 3, name: "dca", price: 36 }
+    { id: 3, name: "dca", price: 36 },
   ]);
   const [singleShipping, setSingleShipping] = useState(ShippingObject);
   const [page, setPage] = useState(0);
@@ -45,16 +46,16 @@ const AllShippings = props => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setSingleShipping({ ...singleShipping, [e.target.name]: e.target.value });
   };
 
-  const editShipping = shipping => {
+  const editShipping = (shipping) => {
     setEditMode(true);
     setSingleShipping(shipping);
   };
@@ -103,7 +104,7 @@ const AllShippings = props => {
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map(shipping => (
+                      .map((shipping) => (
                         <TableRow key={shipping.id} hover>
                           <TableCell>{shipping.name}</TableCell>
                           <TableCell>{shipping.price}</TableCell>
@@ -196,4 +197,12 @@ const AllShippings = props => {
   );
 };
 
+// export default AllShippings;
+const AllShippings = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllShippingsComponent />
+    </ThemeProvider>
+  );
+};
 export default AllShippings;

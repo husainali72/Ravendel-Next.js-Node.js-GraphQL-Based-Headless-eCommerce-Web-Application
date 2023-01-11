@@ -10,8 +10,9 @@ import DirectBankTransfer from "./directBankTransfer";
 import Paypal from "./paypal";
 import Stripe from "./stripe";
 import { TabPanel, TabProps } from "../../components";
-
-const Payment = () => {
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+const PaymentComponent = () => {
   const [tabVal, setTabVal] = useState(0);
   const handleChange = (event, newValue) => {
     setTabVal(newValue);
@@ -53,4 +54,10 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default function Payment() {
+  return (
+    <ThemeProvider theme={theme}>
+      <PaymentComponent />
+    </ThemeProvider>
+  );
+}

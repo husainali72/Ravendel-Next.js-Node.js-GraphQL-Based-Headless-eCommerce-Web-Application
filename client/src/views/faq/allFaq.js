@@ -14,7 +14,7 @@ import {
   TablePagination,
   IconButton,
   Button,
-} from"@mui/material";
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { blogsAction, blogDeleteAction } from "../../store/action";
@@ -23,14 +23,15 @@ import { isEmpty } from "../../utils/helper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles";
-import {convertDateToStringFormat} from "../utils/convertDate";
-import {Alert, Loading} from '../components';
-import {client_app_route_url} from '../../utils/helper';
-
-const AllFAQ = (props) => {
+import { convertDateToStringFormat } from "../utils/convertDate";
+import { Alert, Loading } from "../components";
+import { client_app_route_url } from "../../utils/helper";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme";
+const AllFAQComponent = (props) => {
   const classes = viewStyles();
   const dispatch = useDispatch();
-  const blogs = useSelector(state => state.blogs);
+  const blogs = useSelector((state) => state.blogs);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -52,7 +53,7 @@ const AllFAQ = (props) => {
   return (
     <>
       <Alert />
-      {blogs.loading ? <Loading /> : null }
+      {blogs.loading ? <Loading /> : null}
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
@@ -74,11 +75,7 @@ const AllFAQ = (props) => {
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table
-                  stickyHeader
-                  aria-label="faq-table"
-                  size="small"
-                >
+                <Table stickyHeader aria-label="faq-table" size="small">
                   <TableHead>
                     <TableRow>
                       <TableCell>Title</TableCell>
@@ -95,18 +92,26 @@ const AllFAQ = (props) => {
                       .map((blog) => (
                         <TableRow key={blog.id} hover>
                           <TableCell>{blog.title}</TableCell>
-                          <TableCell>{convertDateToStringFormat(blog.date)}</TableCell>
+                          <TableCell>
+                            {convertDateToStringFormat(blog.date)}
+                          </TableCell>
                           <TableCell>
                             <IconButton
                               aria-label="Edit"
-                              onClick={() => jumpTo(`${client_app_route_url}edit-faq/${blog.id}`)}
+                              onClick={() =>
+                                jumpTo(
+                                  `${client_app_route_url}edit-faq/${blog.id}`
+                                )
+                              }
                             >
                               <EditIcon />
                             </IconButton>
                             <IconButton
                               aria-label="Delete"
                               className={classes.deleteicon}
-                              onClick={() => dispatch(blogDeleteAction(blog.id))}
+                              onClick={() =>
+                                dispatch(blogDeleteAction(blog.id))
+                              }
                               disabled
                             >
                               <DeleteIcon />
@@ -134,4 +139,12 @@ const AllFAQ = (props) => {
   );
 };
 
+// export default AllFAQ;
+const AllFAQ = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllFAQComponent />
+    </ThemeProvider>
+  );
+};
 export default AllFAQ;

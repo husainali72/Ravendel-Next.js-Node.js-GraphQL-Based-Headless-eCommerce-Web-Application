@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Grid,
-  Box,
-  FormControlLabel,
-  Checkbox,
-  Collapse,
-} from"@mui/material";
+import { Grid, Box, FormControlLabel, Checkbox, Collapse } from "@mui/material";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import FiberManualRecordTwoToneIcon from "@mui/icons-material/FiberManualRecordTwoTone";
@@ -19,7 +13,6 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
   const products = useSelector((state) => state.products);
   const [catList, setCatList] = useState([]);
   const [collapseCategory, setcollapseCategory] = useState({});
-  const [productCats, setproductCats] = useState([]);
 
   useEffect(() => {
     dispatch(categoriesAction());
@@ -28,9 +21,7 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
   useEffect(() => {
     if (products.categories.length && selectedCategories.length) {
       //var selectedCat = _.cloneDeep(props.productState.categories);
-      var selectedCat = JSON.parse(
-        JSON.stringify(products.categories)
-      );
+      var selectedCat = JSON.parse(JSON.stringify(products.categories));
       if (selectedCat && selectedCat.length) {
         selectedCat.map((cat) => {
           if (~selectedCategories.indexOf(cat.id)) {
@@ -77,7 +68,7 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
     return categories.map((cat) => {
       if (!cat.children.length) {
         return (
-          <Grid container alignItems='center' key={cat.name}>
+          <Grid container alignItems="center" key={cat.name}>
             <Grid item>
               <Box mr={2}>
                 <FiberManualRecordTwoToneIcon />
@@ -87,9 +78,9 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    color='primary'
+                    color="primary"
                     checked={cat.checked}
-                    name='categoryIds'
+                    name="categoryIds"
                     onChange={(e) => handleCategeryCheckbox(cat)}
                     value={cat.id}
                   />
@@ -102,22 +93,22 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
       }
       return (
         <Grid key={cat.name}>
-          <Grid container alignItems='center' className='category-dropdown'>
+          <Grid container alignItems="center" className="category-dropdown">
             <Grid item>
               <Box mr={2}>
                 <span
-                  className='toggle-icon'
+                  className="toggle-icon"
                   onClick={() => collapseToggle(cat)}
                 >
                   {collapseCategory[cat.id] ? (
                     <RemoveCircleRoundedIcon
                       style={{ fontSize: 22 }}
-                      className='expand-right'
+                      className="expand-right"
                     />
                   ) : (
                     <AddCircleRoundedIcon
                       style={{ fontSize: 22 }}
-                      className='expand-right'
+                      className="expand-right"
                     />
                   )}
                 </span>
@@ -127,9 +118,9 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    color='primary'
+                    color="primary"
                     checked={cat.checked}
-                    name='categoryIds'
+                    name="categoryIds"
                     onChange={(e) => handleCategeryCheckbox(cat)}
                     value={cat.id}
                     indeterminate={checkedChildernChecked(cat)}
@@ -142,9 +133,9 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
           <Box ml={4}>
             <Collapse
               in={collapseCategory[cat.id]}
-              timeout='auto'
+              timeout="auto"
               unmountOnExit
-              className='submenu-sidebar'
+              className="submenu-sidebar"
             >
               {menuListing(cat.children)}
             </Collapse>

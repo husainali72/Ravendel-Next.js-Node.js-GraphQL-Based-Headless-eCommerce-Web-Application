@@ -14,19 +14,20 @@ import {
   TablePagination,
   IconButton,
   Tooltip,
-} from"@mui/material";
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles.js";
 import jumpTo from "../../utils/navigation";
-import Rating from '@mui/material/Rating';
+import Rating from "@mui/material/Rating";
 import { useSelector, useDispatch } from "react-redux";
 import { reviewsAction, reviewDeleteAction } from "../../store/action";
 import { Loading } from "../components";
-import {convertDateToStringFormat} from '../utils/convertDate';
-import {client_app_route_url} from '../../utils/helper';
-
-const AllReviews = () => {
+import { convertDateToStringFormat } from "../utils/convertDate";
+import { client_app_route_url } from "../../utils/helper";
+import theme from "../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+const AllReviewsComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const reviewState = useSelector((state) => state.reviews);
@@ -54,19 +55,32 @@ const AllReviews = () => {
         <Grid item lg={12}>
           <Card>
             {reviewState.loading ? <Loading /> : null}
-            <CardHeader title='All Reviews' />
+            <CardHeader title="All Reviews" />
             <Divider />
             <CardContent>
               <TableContainer className={classes.container}>
-                <Table stickyHeader aria-label='reviews-table' size='small'>
+                <Table stickyHeader aria-label="reviews-table" size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Title</TableCell>
-                      <TableCell>Customer</TableCell>
-                      <TableCell>Last Modified</TableCell>
-                      <TableCell>Reviewed Product</TableCell>
-                      <TableCell>Rating</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Title
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Customer
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Last Modified
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Reviewed Product
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Rating
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        {" "}
+                        Actions
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -88,25 +102,27 @@ const AllReviews = () => {
                           <TableCell> {review.product_id.name}</TableCell>
                           <TableCell>
                             <Rating
-                              name='read-only'
+                              name="read-only"
                               value={Number(review.rating)}
                               readOnly
                             />
                           </TableCell>
                           <TableCell>
-                            <Tooltip title='Edit Review' aria-label='delete'>
+                            <Tooltip title="Edit Review" aria-label="delete">
                               <IconButton
-                                aria-label='Edit'
+                                aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(`${client_app_route_url}edit-review/${review.id}`)
+                                  jumpTo(
+                                    `${client_app_route_url}edit-review/${review.id}`
+                                  )
                                 }
                               >
                                 <EditIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title='Delete Review' aria-label='delete'>
+                            <Tooltip title="Delete Review" aria-label="delete">
                               <IconButton
-                                aria-label='Delete'
+                                aria-label="Delete"
                                 className={classes.deleteicon}
                                 onClick={() =>
                                   dispatch(reviewDeleteAction(review.id))
@@ -123,7 +139,7 @@ const AllReviews = () => {
               </TableContainer>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
-                component='div'
+                component="div"
                 count={reviewState.reviews.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
@@ -138,4 +154,11 @@ const AllReviews = () => {
   );
 };
 
+const AllReviews = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllReviewsComponent />
+    </ThemeProvider>
+  );
+};
 export default AllReviews;

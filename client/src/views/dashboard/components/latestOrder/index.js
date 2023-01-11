@@ -17,21 +17,26 @@ import {
   IconButton,
   Box,
   Typography,
-} from"@mui/material";
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+} from "@mui/material";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { Link } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import jumpTo from "../../../../utils/navigation";
-import {convertDateToStringFormat} from "../../../utils/convertDate";
+import { convertDateToStringFormat } from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
-import {client_app_route_url} from '../../../../utils/helper';
-
-const LatestOrders = ({ ordersState }) => {
+import { client_app_route_url } from "../../../../utils/helper";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../../theme/index";
+const LatestOrdersTheme = ({ ordersState }) => {
   const classes = DashboardStyles();
 
   return (
     <Card className={classes.root}>
-      <CardHeader title="Latest Orders" />
+      <CardHeader
+        title="Latest Orders"
+        titleTypographyProps={{ variant: "subtitle" }}
+        className={classes.Cardheader}
+      />
       <Divider />
       <CardContent className={classes.content}>
         {ordersState.loading ? (
@@ -70,7 +75,11 @@ const LatestOrders = ({ ordersState }) => {
                     <Tooltip title="Edit Order" aria-label="edit">
                       <IconButton
                         aria-label="Edit"
-                        onClick={() => jumpTo(`${client_app_route_url}view-order/${order.id}`)}
+                        onClick={() =>
+                          jumpTo(
+                            `${client_app_route_url}view-order/${order.id}`
+                          )
+                        }
                       >
                         <EditIcon />
                       </IconButton>
@@ -94,7 +103,7 @@ const LatestOrders = ({ ordersState }) => {
           <Divider />
           <CardActions className="flex-end">
             <Link to={`${client_app_route_url}all-orders`}>
-              <Button color="primary" size="small" variant="text">
+              <Button color="primary" size="small" variant="primary">
                 View all <ArrowRightIcon />
               </Button>
             </Link>
@@ -105,4 +114,11 @@ const LatestOrders = ({ ordersState }) => {
   );
 };
 
+const LatestOrders = ({ ordersState }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <LatestOrdersTheme ordersState={ordersState} />
+    </ThemeProvider>
+  );
+};
 export default LatestOrders;

@@ -9,30 +9,29 @@ import {
   MenuItem,
   Menu,
   Avatar,
-  Box
-} from "@mui/material"; 
-import { makeStyles } from '@mui/styles';
-import { Link as RouterLink } from "react-router-dom";
-import MenuIcon from '@mui/icons-material/Menu';
+  Box,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import MenuIcon from "@mui/icons-material/Menu";
 import Auth from "../utils/auth";
 import palette from "../theme/palette";
-import { Link, Route,Routes} from "react-router-dom";
-import { insertToken } from "../store/action/loginAction";
-import { connect } from "react-redux";
-import {client_app_route_url} from '../utils/helper';
-import { ThemeProvider,createTheme } from "@mui/material";
-
-const Header = props => {
-  const { onSidebarOpen } = props;
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { client_app_route_url } from "../utils/helper";
+import { ThemeProvider } from "@mui/material";
+import theme from "../theme";
+const HeaderComponenet = () => {
   const classes = useStyles();
+  const login = useSelector((state) => state.login);
+  const { onSidebarOpen } = login;
   const [activeUser, setActiveUser] = useState({
     name: "",
     user_id: "",
-    image: { thumbnail: "" }
+    image: { thumbnail: "" },
   });
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -46,19 +45,18 @@ const Header = props => {
   };
 
   useEffect(() => {
-    setActiveUser(props.login.user_token);
-  }, [props.login.user_token]);
+    setActiveUser(login.user_token);
+  }, [login.user_token]);
 
   return (
     <AppBar className={classes.header} >
       <Toolbar className={classes.header}>
-        
         <Link to={`${client_app_route_url}dashboard`}>
-          <Typography variant="h4" component="h4" className={classes.textWhite}>
+          <Typography variant="h6" component="h1" className={classes.textWhite}>
             Ravendel
           </Typography>
         </Link>
-        
+
         <div className={classes.flexGrow} />
         {activeUser && (
           <Hidden mdDown>
@@ -84,7 +82,9 @@ const Header = props => {
               onClose={handleClose}
             >
               <MenuItem onClick={handleClose}>
-                <Link to={`${client_app_route_url}edit-user/${activeUser.user_id}`}>
+                <Link
+                  to={`${client_app_route_url}edit-user/${activeUser.user_id}`}
+                >
                   <span className={classes.editProfile}>Edit Profile</span>
                 </Link>
               </MenuItem>
@@ -102,59 +102,56 @@ const Header = props => {
   );
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   header: {
     "&&": {
-    boxShadow: "none",
-    minHeight: "50px !important",
-    maxHeight: "50px !important",
-  backgroundColor:palette.text.secondary,
-    zIndex: 1100}
+      boxShadow: "none",
+      minHeight: "50px !important",
+      maxHeight: "50px !important",
+      backgroundColor: palette.primary.dark,
+      zIndex: 1100,
+    },
   },
   flexGrow: {
     "&&": {
-    flexGrow: 1}
+      flexGrow: 1,
+    },
   },
   signOutButton: {
     "&&": {
-    marginLeft: theme.spacing(1)}
+      marginLeft: theme.spacing(1),
+    },
   },
-  textWhite: { "&&": {
-    color: "#fff"}
+  textWhite: {
+    "&&": {
+      color: "#fff",
+    },
   },
-  logout: { "&&": {
-    color: "#fff",
-    marginLeft: "10px",
-    paddingTop: "7px"}
+  logout: {
+    "&&": {
+      color: "#fff",
+      marginLeft: "10px",
+      paddingTop: "7px",
+    },
   },
-  userName: { "&&": {
-    marginLeft: 10,
-    color: palette.white,
-    textTransform: "none"}
+  userName: {
+    "&&": {
+      marginLeft: 10,
+      color: palette.white,
+      textTransform: "none",
+    },
   },
-  editProfile: { "&&": {
-    color: palette.black}
-  }
+  editProfile: {
+    "&&": {
+      color: palette.black,
+    },
+  },
 }));
 
-const mapStateToProps = state => ({
-  login: state.login
-});
-
-const mapDispatchToProps = {
-  insertToken
-};
-
-  export default connect(mapStateToProps, mapDispatchToProps)(Header);
-
-// const theme = createTheme(palette);
-// export default function Header() {
-//   return (
-    
-//     <ThemeProvider theme={theme}>
-//       {connect(mapStateToProps, mapDispatchToProps)(Header);}
-//       {/* < HeaderTheme /> */}
-//     </ThemeProvider>
-//   );
-// }
-
+export default function Header() {
+  return (
+    <ThemeProvider theme={theme}>
+      <HeaderComponenet />
+    </ThemeProvider>
+  );
+}

@@ -21,8 +21,8 @@ import {
   FormControl,
   Select,
   MenuItem,
-  InputLabel
-} from"@mui/material";
+  InputLabel,
+} from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ImageIcon from "@mui/icons-material/Image";
@@ -41,7 +41,7 @@ import { isEmpty, client_app_route_url } from "../../utils/helper";
 import _ from "lodash";
 import viewStyles from "../viewStyles";
 
-const EditProduct = props => {
+const EditProduct = (props) => {
   const classes = viewStyles();
   const [tax, setTax] = useState("Global");
   const [shippingClass, setShippingClass] = useState("Global");
@@ -61,14 +61,14 @@ const EditProduct = props => {
     pricing: { sellprice: "0" },
     feature_image: {},
     gallery_image: [],
-    status: "Publish"
+    status: "Publish",
   });
 
   useEffect(() => {
     setCatList("");
     props.categoriesAction();
-    props.products.products.map(editproduct => {
-      if (editproduct.id == props.match.params.id) {
+    props.products.products.map((editproduct) => {
+      if (editproduct.id == "63402d07469a96c8a3cb7238") {
         setProduct({ ...editproduct });
         if (editproduct.feature_image.original) {
           setfeatureImage(editproduct.feature_image.original);
@@ -91,7 +91,7 @@ const EditProduct = props => {
   const selectedCat = () => {
     var selectedCat = _.cloneDeep(props.products.categories);
     if (selectedCat && selectedCat.length) {
-      selectedCat.map(cat => {
+      selectedCat.map((cat) => {
         if (~product.categoryId.indexOf(cat.id)) {
           cat.checked = true;
         }
@@ -104,7 +104,7 @@ const EditProduct = props => {
     if (!isEmpty(props.products.product.description)) {
       setProduct({
         ...product,
-        description: props.products.product.description
+        description: props.products.product.description,
       });
     }
   }, [props.products.product.description]);
@@ -134,26 +134,26 @@ const EditProduct = props => {
   //     setProduct({ ...product, slug: slugVal.toLowerCase() });
   //   }, [product.name]);
 
-  const updateProduct = e => {
+  const updateProduct = (e) => {
     e.preventDefault();
     props.productUpdateAction(product);
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
-  const handleChangeCheckbox = e => {
+  const handleChangeCheckbox = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.checked });
   };
 
-  const fileChange = e => {
+  const fileChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
     setProduct({ ...product, [e.target.name]: e.target.files });
   };
 
-  const updategalleryImg = e => {
+  const updategalleryImg = (e) => {
     var imagesRes = e.target.files;
     var images = [];
 
@@ -165,12 +165,12 @@ const EditProduct = props => {
     setProduct({ ...product, [e.target.name]: e.target.files });
   };
 
-  const removeImage = img => {
+  const removeImage = (img) => {
     console.log("img", img);
     //setGallery(gallery.filter(galleryImg => galleryImg !== img))
   };
 
-  const collapseToggle = category => {
+  const collapseToggle = (category) => {
     category.open = !category.open;
     setcollapseCategory({ ...collapseCategory, [category.id]: category.open });
   };
@@ -192,8 +192,8 @@ const EditProduct = props => {
     setEditPermalink(!editPremalink);
   };
 
-  const checkedChildernChecked = menu => {
-    var checked = menu.children.filter(child => child.checked === true);
+  const checkedChildernChecked = (menu) => {
+    var checked = menu.children.filter((child) => child.checked === true);
     if (!menu.checked) {
       if (checked.length) {
         return true;
@@ -205,8 +205,8 @@ const EditProduct = props => {
     }
   };
 
-  const menuListing = values => {
-    return values.map(menu => {
+  const menuListing = (values) => {
+    return values.map((menu) => {
       if (!menu.children.length) {
         return (
           <Grid container alignItems="center" key={menu.name}>
@@ -221,7 +221,7 @@ const EditProduct = props => {
                   <Checkbox
                     checked={menu.checked}
                     name="categoryIds"
-                    onChange={e => handleCategeryCheckbox(menu, e)}
+                    onChange={(e) => handleCategeryCheckbox(menu, e)}
                     value={menu.id}
                   />
                 }
@@ -260,7 +260,7 @@ const EditProduct = props => {
                   <Checkbox
                     checked={menu.checked}
                     name="categoryIds"
-                    onChange={e => handleCategeryCheckbox(menu, e)}
+                    onChange={(e) => handleCategeryCheckbox(menu, e)}
                     value={menu.id}
                     indeterminate={checkedChildernChecked(menu)}
                   />
@@ -284,7 +284,7 @@ const EditProduct = props => {
     });
   };
 
-  const StyledRadio = props => {
+  const StyledRadio = (props) => {
     const classes = viewStyles();
     return (
       <Radio
@@ -325,7 +325,10 @@ const EditProduct = props => {
               color="primary"
               className={classes.cancelBtn}
             >
-              <Link to={`${client_app_route_url}all-products`} style={{ color: "#fff" }}>
+              <Link
+                to={`${client_app_route_url}all-products`}
+                style={{ color: "#fff" }}
+              >
                 Discard
               </Link>
             </Button>
@@ -489,7 +492,7 @@ const EditProduct = props => {
                       <RadioGroup
                         value={shippingClass}
                         name="status"
-                        onChange={e => setShippingClass(e.target.value)}
+                        onChange={(e) => setShippingClass(e.target.value)}
                         row
                       >
                         <FormControlLabel
@@ -510,7 +513,7 @@ const EditProduct = props => {
                             labelId="Shipping-name"
                             id="Shipping-name"
                             name="Shipping-name"
-                            onChange={e => console.log(e)}
+                            onChange={(e) => console.log(e)}
                           >
                             <MenuItem value="Shipping-1">Shipping 1</MenuItem>
                             <MenuItem value="Shipping-2">Shipping 2</MenuItem>
@@ -579,7 +582,7 @@ const EditProduct = props => {
                   <RadioGroup
                     value={tax}
                     name="status"
-                    onChange={e => setTax(e.target.value)}
+                    onChange={(e) => setTax(e.target.value)}
                     row
                   >
                     <FormControlLabel
@@ -600,7 +603,7 @@ const EditProduct = props => {
                         labelId="tax-name"
                         id="tax-name"
                         name="tax-name"
-                        onChange={e => console.log(e)}
+                        onChange={(e) => console.log(e)}
                       >
                         <MenuItem value="Tax-1">Tax 1</MenuItem>
                         <MenuItem value="Tax-2">Tax 2</MenuItem>
@@ -808,13 +811,13 @@ const EditProduct = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return { products: state.products };
 };
 
 const mapDispatchToProps = {
   productUpdateAction,
-  categoriesAction
+  categoriesAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProduct);

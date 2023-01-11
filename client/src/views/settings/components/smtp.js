@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Box,
@@ -6,15 +6,16 @@ import {
   Button,
   FormControl,
   InputLabel,
-} from"@mui/material";
+} from "@mui/material";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
-import { smtpUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {get} from "lodash";
 import { useEffect } from "react";
-const SMTP = () => {
+import theme from "../../../theme/index.js";
+const SMTPComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
@@ -35,41 +36,41 @@ const SMTP = () => {
     <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Box component='div'>
+          <Box component="div">
             <SettingTextInput
-              label='SMTP server'
+              label="SMTP server"
               value={smtp.server}
               onSettingInputChange={(val) => setSmptp({ ...smtp, server: val })}
             />
           </Box>
-          <Box component='div'>
+          <Box component="div">
             <SettingTextInput
-              label='SMTP username'
+              label="SMTP username"
               value={smtp.username}
               onSettingInputChange={(val) =>
                 setSmptp({ ...smtp, username: val })
               }
             />
           </Box>
-          <Box component='div'>
+          <Box component="div">
             <SettingTextInput
-              label='SMTP username'
+              label="SMTP username"
               value={smtp.password}
               onSettingInputChange={(val) =>
                 setSmptp({ ...smtp, password: val })
               }
             />
           </Box>
-          <Box component='div'>
+          <Box component="div">
             <FormControl
-              variant='outlined'
+              variant="outlined"
               className={clsx(classes.settingInput)}
-              size='small'
+              size="small"
             >
-              <InputLabel htmlFor='smtp-port'>SMTP Port</InputLabel>
+              <InputLabel htmlFor="smtp-port">SMTP Port</InputLabel>
               <Select
                 native
-                label='SMTP Port '
+                label="SMTP Port "
                 inputProps={{
                   name: "smtp-port",
                   id: "smtp-port",
@@ -87,9 +88,9 @@ const SMTP = () => {
         </Grid>
         <Grid item xs={12}>
           <Button
-            size='small'
-            color='primary'
-            variant='contained'
+            size="small"
+            color="primary"
+            variant="contained"
             onClick={updateSmtp}
           >
             Save Change
@@ -100,4 +101,11 @@ const SMTP = () => {
   );
 };
 
-export default SMTP;
+// export default SMTP;
+export default function SMTP() {
+  return (
+    <ThemeProvider theme={theme}>
+      <SMTPComponent />
+    </ThemeProvider>
+  );
+}
