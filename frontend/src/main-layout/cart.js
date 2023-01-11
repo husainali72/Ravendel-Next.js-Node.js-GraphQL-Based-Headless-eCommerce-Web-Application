@@ -6,7 +6,7 @@ import {
   Grid,
   Button,
   ButtonGroup,
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import PlaceHolderImg from "../assets/images/placeholder.png";
 import { connect } from "react-redux";

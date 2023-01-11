@@ -1,4 +1,4 @@
-import { createMuiTheme } from "@material-ui/core";
+
 import { createTheme } from "@mui/material";
 
 import palette from "./palette";

@@ -9,7 +9,7 @@ import {
   MenuItem,
   TextField,
   Icon,
-} from "@material-ui/core";
+} from"@mui/material";
 import { useSelector, useDispatch} from "react-redux";
 import ProductOtherDetails from "./productotherdetail";
 

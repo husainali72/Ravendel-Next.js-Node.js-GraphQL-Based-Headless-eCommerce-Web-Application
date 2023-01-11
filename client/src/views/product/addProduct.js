@@ -40,10 +40,9 @@ import theme from "../../theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 const AddProductTheme = () => {
   const classes = viewStyles();
-  const dispatch = useDispatch();
+   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const [product, setProduct] = useState({
@@ -84,7 +83,7 @@ const AddProductTheme = () => {
   const addProduct = (e) => {
     e.preventDefault();
     product.combinations = combination;
-    dispatch(productAddAction(product));
+     dispatch(productAddAction(product));
   };
 
   const handleChange = (e) => {
@@ -145,7 +144,6 @@ const AddProductTheme = () => {
   return (
     <>
       <Alert />
-
       <form>
         <TopBar
           title="Add product"

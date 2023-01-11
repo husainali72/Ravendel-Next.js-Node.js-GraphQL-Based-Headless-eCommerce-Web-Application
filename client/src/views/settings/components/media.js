@@ -6,11 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput, SettingBlock } from "./setting-components";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
+import {get} from "lodash";
 const MediaComponent = () => {
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
+ 
   const settingState = useSelector((state) => state.settings);
   const [media, setMedia] = useState({
     thumbnail: settingState.settings.media.thumbnail,
@@ -21,6 +23,14 @@ const MediaComponent = () => {
   const updateGeneral = () => {
     // dispatch(mediaUpdateAction(media));
   };
+
+  // useEffect(() => {
+  //   get(settingState, "settings.media.thumbnail")
+  //   get(settingState, "settings.media.medium")
+  //   get(settingState, "settings.media.large")
+  //   }, [settingState.settings])
+ 
+    
 
   return (
     <>

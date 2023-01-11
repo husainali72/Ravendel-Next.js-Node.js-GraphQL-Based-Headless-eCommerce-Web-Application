@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Container, Grid, Typography, Box } from "@material-ui/core";
+import { Container, Grid, Typography, Box } from"@mui/material";
 import PageTitle from "../components/pageTitle";
 import ProductGrid from "../components/productgrid";
 import Logo from "../../assets/images/logo.png";

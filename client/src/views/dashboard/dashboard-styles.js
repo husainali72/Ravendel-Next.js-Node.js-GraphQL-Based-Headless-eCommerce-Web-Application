@@ -34,4 +34,12 @@ const DashboardStyles = makeStyles((theme) => ({
   },
 }));
 
+// export default function DashboardStyles() {
+
+//     return (
+//       <ThemeProvider theme={theme}>
+//         < DashboardTheme />
+//       </ThemeProvider>
+//     );
+//   }
 export default DashboardStyles;

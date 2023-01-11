@@ -7,6 +7,8 @@ export default {
       ...(ownerState.variant === "contained" &&
         ownerState.color === "primary" && {
           backgroundColor: " #F4F6F8",
+          fontWeight: "550",
+          color: palette.primary.main,
         }),
 
       ...typography.body1,

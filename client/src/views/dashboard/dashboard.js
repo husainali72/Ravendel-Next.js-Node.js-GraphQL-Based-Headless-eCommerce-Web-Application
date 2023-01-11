@@ -37,6 +37,7 @@ const DashboardComponent = () => {
   }, []);
 
   return (
+   
     <Box component="div" p={isSmall ? 1 : 4}>
       <Grid container spacing={isSmall ? 1 : 4}>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
@@ -86,6 +87,7 @@ const DashboardComponent = () => {
           />
         </Grid>
         <Grid item lg={8} xl={9} md={12} xs={12}>
+
           <LatestOrder ordersState={Orders} />
         </Grid>
       </Grid>

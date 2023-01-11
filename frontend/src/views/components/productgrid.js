@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Typography, Box, Grid, Container } from "@material-ui/core";
+import { Typography, Box, Grid, Container } from"@mui/material";
 import ProductCard from "./productcard";
 import { isEmpty } from "../../utils/helper";
 import Loading from "./loading";

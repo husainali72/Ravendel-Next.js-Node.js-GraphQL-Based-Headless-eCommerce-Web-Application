@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { Typography, Button, Container, Box } from "@material-ui/core";
+import { Typography, Button, Container, Box } from"@mui/material";
 import Slider from "react-slick";
 import { app_router_base_url } from '../../../utils/helper';
 import { bucketBaseURL } from "../../../utils/helper";

@@ -13,7 +13,7 @@ import {
   Hidden,
   Divider,
   Box
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import { PageTitle, Loading } from "../components";
 import BlogSidebar from "./blogSidebar";

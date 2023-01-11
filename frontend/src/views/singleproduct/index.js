@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Grid, Divider } from "@material-ui/core";
+import { Grid, Divider } from"@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   productsAction,

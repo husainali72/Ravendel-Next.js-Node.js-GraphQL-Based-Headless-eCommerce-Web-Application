@@ -12,12 +12,21 @@ import viewStyles from "../../viewStyles.js";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import {get} from "lodash";
+import { useEffect } from "react";
 import theme from "../../../theme/index.js";
 const SMTPComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [smtp, setSmptp] = useState({ ...settingState.settings.smtp });
+  const [smtp, setSmptp] = useState({ 
+    // ...settingState.settings.smtp 
+  });
+
+  useEffect(() => {
+    get(settingState, "settings.smtp")
+    }, [settingState.settings])
+
 
   const updateSmtp = () => {
     // dispatch(smtpUpdateAction(smtp));

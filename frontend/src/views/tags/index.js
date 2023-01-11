@@ -12,7 +12,7 @@ import {
   CardActionArea,
   Hidden,
   Divider
-} from "@material-ui/core";
+} from"@mui/material";
 import PageTitle from "../components/pageTitle";
 import { Link } from "react-router-dom";
 import BlogSidebar from "../blog/blogSidebar";

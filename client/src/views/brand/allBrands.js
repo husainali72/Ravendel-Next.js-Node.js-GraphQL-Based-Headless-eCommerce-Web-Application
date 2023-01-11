@@ -41,7 +41,7 @@ const AllbrandComponent = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (isEmpty(Brands.brands)) {
-      dispatch(brandsAction());
+      // dispatch(brandsAction());
     }
   }, []);
 

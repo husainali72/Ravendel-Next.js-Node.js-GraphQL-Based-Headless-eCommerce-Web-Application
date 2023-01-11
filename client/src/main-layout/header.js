@@ -49,7 +49,7 @@ const HeaderComponenet = () => {
   }, [login.user_token]);
 
   return (
-    <AppBar className={classes.header}>
+    <AppBar className={classes.header} >
       <Toolbar className={classes.header}>
         <Link to={`${client_app_route_url}dashboard`}>
           <Typography variant="h6" component="h1" className={classes.textWhite}>

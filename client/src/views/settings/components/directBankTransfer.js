@@ -13,14 +13,30 @@ import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput, SettingBlock } from "./setting-components/";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
+import { useEffect } from "react";
+import  { get } from "lodash";
 const DirectBankTransferTheme = () => {
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const settingState = useSelector((state) => state.settings);
   const [bankTransferInfo, setBankTransferInfo] = useState({
-    ...settingState.settings.paymnet.bank_transfer,
+    // ...settingState.settings.paymnet.bank_transfer,
   });
+    // ...settingState.settings.paymnet.bank_transfer,
+    // useEffect(() => {
+   
+    //   get(settingState, "settings.paymnet.bank_transfer")
+    // }, [settingState.settings])
+   
+useEffect(() => {
+  if (
+    settingState.settings && settingState.settings.paymnet.bank_transfer
+  ){
+    setBankTransferInfo ({ ...settingState.settings.paymnet.bank_transfer,})
+  }
+}, [settingState.settings])
+ 
 
   const updateBank = () => {
     delete bankTransferInfo.account_details.__typename;
