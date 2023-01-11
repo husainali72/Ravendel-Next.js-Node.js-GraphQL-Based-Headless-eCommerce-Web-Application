@@ -5,27 +5,34 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
-} from "@material-ui/core";
+} from"@mui/material";
 
 import viewStyles from "../../viewStyles";
 import { paymentStripeUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components/";
+import {get} from "lodash";
+import { useEffect } from "react";
 
 const Stripe = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [stripeInfo, setstripeInfo] = useState({
-    ...settingState.settings.paymnet.stripe,
+    // ...settingState.settings.paymnet.stripe,
   });
 
+  useEffect(() => {
+    get(settingState, "settings.paymnet.stripe")
+    }, [settingState.settings])
+
+
   const updateStripe = () => {
-    dispatch(paymentStripeUpdateAction(stripeInfo));
+    // dispatch(paymentStripeUpdateAction(stripeInfo));
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item md={6} sm={12} xs={12}>
           <Box component='div' className={classes.marginBottom2}>
@@ -190,7 +197,7 @@ const Stripe = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

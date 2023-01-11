@@ -5,7 +5,7 @@ import {
   Select,
   MenuItem,
   Grid,
-} from "@material-ui/core";
+} from"@mui/material";
 import { TextInput } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { shippingAction } from "../../../store/action/";
@@ -36,7 +36,7 @@ const ShippingComponent = ({
   }, [shippingState.shipping]);
 
   return (
-    <React.Fragment>
+    <>
       <Grid container spacing={3}>
         <Grid item md={12}>
           {!shippingState.shipping.global.is_global ? (
@@ -120,7 +120,7 @@ const ShippingComponent = ({
           />
         </Grid>
       </Grid>{" "}
-    </React.Fragment>
+    </>
   );
 };
 

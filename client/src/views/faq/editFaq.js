@@ -6,8 +6,8 @@ import {
   RadioGroup,
   FormControlLabel,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from"@mui/material";
+import { useTheme } from "@mui/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { blogUpdateAction, blogAction } from "../../store/action/";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
@@ -60,7 +60,7 @@ const EditFAQ = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {blogState.loading ? <Loading /> : null}
       <form>
@@ -126,7 +126,7 @@ const EditFAQ = (props) => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

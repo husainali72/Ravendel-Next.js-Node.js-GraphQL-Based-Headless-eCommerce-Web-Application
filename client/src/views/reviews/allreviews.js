@@ -14,12 +14,12 @@ import {
   TablePagination,
   IconButton,
   Tooltip,
-} from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+} from"@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles.js";
 import jumpTo from "../../utils/navigation";
-import Rating from "@material-ui/lab/Rating";
+import Rating from '@mui/material/Rating';
 import { useSelector, useDispatch } from "react-redux";
 import { reviewsAction, reviewDeleteAction } from "../../store/action";
 import { Loading } from "../components";
@@ -35,7 +35,7 @@ const AllReviews = () => {
 
   useEffect(() => {
     if (!reviewState.reviews.length) {
-      dispatch(reviewsAction());
+      // dispatch(reviewsAction());
     }
   }, []);
 
@@ -49,7 +49,7 @@ const AllReviews = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>
@@ -134,7 +134,7 @@ const AllReviews = () => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

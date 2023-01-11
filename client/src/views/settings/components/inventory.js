@@ -9,23 +9,25 @@ import {
   Select,
   FormControl,
   Button,
-} from "@material-ui/core";
+} from"@mui/material";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
 import { storeInventoryUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import {
   SettingTextInput,
   SettingSelectComponent,
   SettingBlock,
 } from "./setting-components";
+import {get} from "lodash";
 
 const Inventory = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [inventory, setinventory] = useState({
-    ...settingState.settings.store.inventory,
+    // ...settingState.settings.store.inventory,
     notifications: {
       show_out_of_stock:
         settingState.settings.store.inventory.notifications.show_out_of_stock,
@@ -35,12 +37,18 @@ const Inventory = () => {
     },
   });
 
+  useEffect(() => {
+   
+    get(settingState, "settings.store.inventory")
+  }, [settingState.settings])
+ 
+
   const updateInventory = () => {
-    dispatch(storeInventoryUpdateAction(inventory));
+    // dispatch(storeInventoryUpdateAction(inventory));
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <SettingBlock label='Manage stock' noBottomMargin>
@@ -203,7 +211,7 @@ const Inventory = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

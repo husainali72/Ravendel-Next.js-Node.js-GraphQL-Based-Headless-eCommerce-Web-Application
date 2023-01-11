@@ -16,25 +16,26 @@ import {
   Avatar,
   Button,
   Tooltip,
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { productsAction, productDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
-import ImageIcon from "@material-ui/icons/Image";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import ImageIcon from "@mui/icons-material/Image";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import { Alert, Loading } from "../components";
 import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
+
 
 const AllProduct = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
   useEffect(() => {
-    dispatch(productsAction());
+     dispatch(productsAction());
   }, []);
 
   const [page, setPage] = React.useState(0);
@@ -50,11 +51,12 @@ const AllProduct = () => {
   };
 
   return (
-    <Fragment>
+    <>
+    
       <Alert />
-      <Grid container spacing={2} className={classes.mainrow}>
+      <Grid container spacing={2} className={classes.mainrow} >
         <Grid item xl={12} md={12}>
-          <Card>
+          <Card >
             {products.loading ? <Loading /> : null}
             <CardHeader
               action={
@@ -64,6 +66,7 @@ const AllProduct = () => {
                     className={classes.addUserBtn}
                     size='small'
                     variant='contained'
+                
                   >
                     Add Product
                   </Button>
@@ -149,7 +152,7 @@ const AllProduct = () => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ import {
   Typography,
   TextField,
   Box,
-} from "@material-ui/core";
+} from"@mui/material";
 import HelpPop from "../utils/helpPop.js";
 import viewStyles from "../viewStyles.js";
 import clsx from "clsx";
@@ -34,7 +34,7 @@ const AddBrands = () => {
   };
 
   return (
-    <Fragment>
+    <>
       {Brands.loading && <Loading />}
       <Alert />
       <TopBar
@@ -77,7 +77,7 @@ const AddBrands = () => {
           </CardBlocks>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField } from "@material-ui/core";
+import { TextField } from"@mui/material";
 import viewStyles from "../../../viewStyles";
 import clsx from "clsx";
 
@@ -28,4 +28,4 @@ const SettingTextInput = ({
   );
 };
 
-export default SettingTextInput;
+export default SettingTextInput ;

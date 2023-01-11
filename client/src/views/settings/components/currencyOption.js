@@ -3,28 +3,46 @@ import {
   Grid,
   Box,
   Button,
-} from "@material-ui/core";
-import viewStyles from "../../viewStyles.js";
+} from"@mui/material";
+ import  { get } from "lodash";
+// import _ from 'lodash';
+
 import { storeCurrencyUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  SettingTextInput,
-  SettingSelectComponent,
-} from "./setting-components";
-
+// import {
+//   SettingTextInput,
+//   SettingSelectComponent,
+// } from "./setting-components/";
+import { SettingSelectComponent } from "./setting-components";
+import { useEffect } from "react";
+import {SettingTextInput} from "./setting-components";
 const CurrencyOptions = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [currencyOption, setCurrencyOption] = useState({
-    ...settingState.settings.store.currency_options,
+    // ...settingState.settings.store.currency_options,
   });
 
+
+  //   // ...settingState.settings.store.currency_options,
+    
+  //   get(settingState, 'settings.store.currency_options')
+
+useEffect(() => {
+   
+    get(settingState, 'settings.store.currency_options')
+  }, [settingState.settings])
+
+
+
+  
+
   const updateStoreCurrency = () => {
-    dispatch(storeCurrencyUpdateAction(currencyOption));
+    // dispatch(storeCurrencyUpdateAction(currencyOption));
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component='div' mb={3}>
@@ -115,7 +133,7 @@ const CurrencyOptions = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

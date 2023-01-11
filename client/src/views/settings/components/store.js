@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Grid, Box, Paper, Tab, Tabs } from "@material-ui/core";
+import { Grid, Box, Paper, Tab, Tabs } from"@mui/material";
 import Inventory from "./inventory";
 import Measurements from "./measurements";
 import StoreAddress from "./storeAddress";
@@ -12,7 +12,7 @@ const Store = () => {
     setTabVal(newValue);
   };
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Paper square>
@@ -54,7 +54,7 @@ const Store = () => {
           </Box>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

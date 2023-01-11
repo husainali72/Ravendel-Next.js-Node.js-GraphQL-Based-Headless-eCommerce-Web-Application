@@ -12,8 +12,8 @@ import {
   Tooltip,
   Icon,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from "@mui/material";
+import { useTheme } from"@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { productAddAction } from "../../store/action/";
 import { getUpdatedUrl } from "../../utils/service";
@@ -38,14 +38,14 @@ import {
   CategoriesComponent,
 } from "./components";
 import { client_app_route_url } from '../../utils/helper';
-import { bucketBaseURL } from '../../utils/helper';
+
 
 const AddProduct = () => {
   const classes = viewStyles();
-  const dispatch = useDispatch();
+   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const products = useSelector((state) => state.products);
+   const products = useSelector((state) => state.products);
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const [product, setProduct] = useState({
@@ -88,7 +88,7 @@ const AddProduct = () => {
   const addProduct = (e) => {
     e.preventDefault();
     product.combinations = combination;
-    dispatch(productAddAction(product));
+     dispatch(productAddAction(product));
   };
 
   const handleChange = (e) => {
@@ -133,10 +133,10 @@ const AddProduct = () => {
   };
 
   const isUrlExist = async (url) => {
-    let updatedUrl = await getUpdatedUrl("Product", url);
+  //  let updatedUrl = await getUpdatedUrl("Product", url);
     setProduct({
       ...product,
-      url: updatedUrl,
+      // url: updatedUrl,
     });
   };
 
@@ -151,9 +151,9 @@ const AddProduct = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
-      {products.loading ? <Loading /> : null}
+      {/* {products.loading ? <Loading /> : null} */}
       <form>
         <TopBar
           title='Add product'
@@ -573,7 +573,7 @@ const AddProduct = () => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

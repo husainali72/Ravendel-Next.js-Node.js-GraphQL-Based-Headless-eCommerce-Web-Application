@@ -8,7 +8,7 @@ import {
   Hidden,
   Divider,
   Icon,
-} from "@material-ui/core";
+} from"@mui/material";
 import Facebook from "../../assets/images/facebook.png";
 import Linkedin from "../../assets/images/linkedin.png";
 import Twitter from "../../assets/images/twitter.png";

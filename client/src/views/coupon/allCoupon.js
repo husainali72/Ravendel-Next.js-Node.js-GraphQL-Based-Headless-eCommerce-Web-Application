@@ -15,14 +15,14 @@ import {
   IconButton,
   Button,
   Tooltip
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { couponsAction, couponDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles";
 import {Alert, Loading} from '../components';
 import {convertDateToStringFormat} from '../utils/convertDate';
@@ -37,7 +37,7 @@ const AllCoupons = () => {
 
   useEffect(() => {
     if (isEmpty(Coupons.coupons)) {
-      dispatch(couponsAction());
+      // dispatch(couponsAction());
     }
   }, []);
 
@@ -51,7 +51,7 @@ const AllCoupons = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
@@ -149,7 +149,7 @@ const AllCoupons = () => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

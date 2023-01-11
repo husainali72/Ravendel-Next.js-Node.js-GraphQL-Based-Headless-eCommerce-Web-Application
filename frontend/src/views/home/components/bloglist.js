@@ -10,7 +10,7 @@ import {
   Card,
   Container,
   CardActionArea,
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import PlaceHolder from "../../../assets/images/placeholder.png";
 import {app_router_base_url} from '../../../utils/helper';

@@ -15,8 +15,8 @@ import {
   Checkbox,
   TextField,
   useMediaQuery
-} from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
+} from"@mui/material";
+import {  useTheme } from '@mui/styles';
 import clsx from "clsx";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -51,10 +51,10 @@ const AddCoupon = () => {
 
   useEffect(() => {
     if (isEmpty(Products.products)) {
-      dispatch(productsAction());
+      // dispatch(productsAction());
     }
     if (isEmpty(Products.categories)) {
-      dispatch(categoriesAction());
+      // dispatch(categoriesAction());
     }
   }, []);
 
@@ -126,7 +126,7 @@ const AddCoupon = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {Products.loading || Coupons.loading ? <Loading /> : null}
       <TopBar
@@ -325,7 +325,7 @@ const AddCoupon = () => {
           </CardBlocks>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

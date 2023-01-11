@@ -86,14 +86,14 @@ const service = (config) => {
       return Promise.reject(error);
     }
   );
-  //config.baseURL = baseUrl;
+  // config.baseURL = baseUrl;
   return axios(config);
 };
 export default service;
 
 export const login = (email, password) => {
-  let location = window.location.origin;
-  // let location = 'http://localhost:8000';
+  // let location = window.location.origin;
+  let location = 'http://localhost:8000';
   const body = {
     email: email,
     password: password,
@@ -148,7 +148,8 @@ export const deleteProductVariationImage = (obj) => {
 };
 
 export const getDashboardData = () => {
-  let location = window.location.origin;
+  // let location = window.location.origin;
+  let location = 'http://localhost:8000';
   return service({
     method: "POST",
     url: `${location}/api/misc/dashboard_data`

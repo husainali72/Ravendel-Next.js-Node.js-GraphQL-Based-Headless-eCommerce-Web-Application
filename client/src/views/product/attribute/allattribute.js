@@ -15,13 +15,13 @@ import {
   IconButton,
   Button,
   Tooltip,
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { attributesAction, attributeDeleteAction } from "../../../store/action";
 import jumpTo from "../../../utils/navigation";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../../viewStyles";
 import {
   Alert,
@@ -45,17 +45,17 @@ const AllAttribute = () => {
   };
 
   useEffect(() => {
-    dispatch(attributesAction());
+    // dispatch(attributesAction());
   }, []);
 
   useEffect(() => {
     if (attributeState.render) {
-      dispatch(attributesAction());
+      // dispatch(attributesAction());
     }
   }, [attributeState.render]);
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <Grid container spacing={2} className={classes.mainrow}>
         <Grid item xl={12}>
@@ -148,7 +148,7 @@ const AllAttribute = () => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

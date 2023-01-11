@@ -12,7 +12,7 @@ import {
   Tooltip,
   TablePagination,
   Box,
-} from "@material-ui/core";
+} from"@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import viewStyles from "../viewStyles.js";
 import {
@@ -22,8 +22,8 @@ import {
   blogtagDeleteAction,
 } from "../../store/action/";
 import { isEmpty } from "../../utils/helper";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import {
   Alert,
@@ -42,8 +42,8 @@ const AllTags = () => {
   const blogState = useSelector((state) => state.blogs);
   const [singleTag, setSingleTag] = useState(tagObject);
   const [editMode, setEditmode] = useState(false);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] =useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -62,7 +62,7 @@ const AllTags = () => {
 
   useEffect(() => {
     
-      dispatch(blogtagsAction());
+      // dispatch(blogtagsAction());
     
   }, []);
 
@@ -93,7 +93,7 @@ const AllTags = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {blogState.loading ? <Loading /> : null}
       <Grid container className={classes.mainrow} spacing={2}>
@@ -189,7 +189,7 @@ const AllTags = () => {
           </form>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

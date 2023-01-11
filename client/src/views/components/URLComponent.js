@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { isEmpty } from "../../utils/helper";
-import { Button } from "@material-ui/core";
+import { Button } from"@mui/material";
 import { getUpdatedUrl } from "../../utils/service";
 import viewStyles from "../viewStyles";
 import Loading from "./Loading";
@@ -25,7 +25,7 @@ const URLComponent = ({ url, onInputChange, pageUrl, tableUrl }) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       {loading ? <Loading /> : null}
       {!isEmpty(url) ? (
         <span style={{ marginBottom: 10, display: "block" }}>
@@ -56,7 +56,7 @@ const URLComponent = ({ url, onInputChange, pageUrl, tableUrl }) => {
           </Button>
         </span>
       ) : null}
-    </React.Fragment>
+    </>
   );
 };
 

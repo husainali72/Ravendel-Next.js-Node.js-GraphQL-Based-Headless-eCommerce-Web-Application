@@ -19,11 +19,11 @@ import {
   MenuItem,
   TextField,
   CircularProgress,
-} from "@material-ui/core";
+} from"@mui/material";
 import ReactSelect from "react-select";
 import { useSelector, useDispatch } from "react-redux";
-import ImageIcon from "@material-ui/icons/Image";
-import DeleteIcon from "@material-ui/icons/Delete";
+import ImageIcon from "@mui/icons-material/Image";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { isEmpty, allPossibleCases } from "../../../utils/helper";
 import { CardBlocks } from "../../components";
 import { attributesAction } from "../../../store/action/";
@@ -285,13 +285,13 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
   };
 
   return (
-    <React.Fragment>
+    <>
       {loading ? (
         <Box component='div' display='flex' justifyContent='center'>
           <CircularProgress />
         </Box>
       ) : (
-        <React.Fragment>
+        <>
           <Grid container spacing={1} alignItems='center'>
             <Grid item>
               <FormControl style={{ width: 250 }} variant='outlined'>
@@ -337,7 +337,7 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
           </Grid>
 
           {currentAttribute.attribute_list.length > 0 ? (
-            <React.Fragment>
+            <>
               <CardBlocks title='Attributes'>
                 <TableContainer>
                   <Table
@@ -418,7 +418,7 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
                   Save Attribute
                 </Button>
               </Box>
-            </React.Fragment>
+            </>
           ) : (
             ""
           )}
@@ -534,9 +534,9 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
           ) : (
             ""
           )}
-        </React.Fragment>
+        </>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

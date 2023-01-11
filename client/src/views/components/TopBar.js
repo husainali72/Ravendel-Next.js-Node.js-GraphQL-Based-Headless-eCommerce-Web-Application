@@ -1,23 +1,28 @@
 import React from "react";
-import { Grid, Button, IconButton, Typography } from "@material-ui/core";
+import { Grid, Button, IconButton, Typography } from"@mui/material";
 import { Link } from "react-router-dom";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import viewStyles from "../viewStyles.js";
-
+import MuiButton from "../../theme/overrides/MuiButton.js";
+import typography from "../../theme/typography.js";
+import palette from "../../theme/palette.js";
+// import "./App.css";
 const TopBar = ({ title, onSubmit, backLink, submitTitle }) => {
   const classes = viewStyles();
 
   return (
-    <Grid container className="topbar">
+    <Grid container className="topbar"
+      // style={{backgroundColor: MuiButton.contained.backgroundColor , boxShadow: MuiButton.contained.boxShadow}}
+      >
       <Grid item lg={6} md={6} sm={6} xs={12}>
-        <Typography variant="h4">
-          <Link to={backLink}>
+        {/* <Typography variant="h6"> */}
+          <Link to={backLink} >
             <IconButton aria-label="Back">
-              <ArrowBackIcon />
+              <ArrowBackIcon style={{color: palette.text.secondary}} />
             </IconButton>
           </Link>
-          <span style={{ paddingTop: 10 }}>{title}</span>
-        </Typography>
+          <span >{title}</span>
+        {/* </Typography> */}
       </Grid>
 
       <Grid item lg={6} md={6} sm={6} xs={12} className="topbar-action">
@@ -29,7 +34,7 @@ const TopBar = ({ title, onSubmit, backLink, submitTitle }) => {
           color="primary"
           className={classes.cancelBtn}
         >
-          <Link to={backLink} style={{ color: "#fff" }}>
+          <Link to={backLink} style={{ color: "#fff"}}>
            Cancel
           </Link>
         </Button>

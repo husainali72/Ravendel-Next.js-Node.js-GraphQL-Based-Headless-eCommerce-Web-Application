@@ -9,10 +9,10 @@ import {
   IconButton,
   Tooltip,
   TablePagination,
-} from "@material-ui/core";
+} from"@mui/material";
 import viewStyles from "../../viewStyles.js";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { CardBlocks } from "../../components";
 
 const AllShippingComponent = ({

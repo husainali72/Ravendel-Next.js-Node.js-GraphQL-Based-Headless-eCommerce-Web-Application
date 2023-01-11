@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import PageTitle from "../components/pageTitle";
-import { Container, Grid, Typography, Box } from "@material-ui/core";
+import { Container, Grid, Typography, Box } from"@mui/material";
 import Logo from "../../assets/images/logo.png";
 
 const ReturnsAndRefunds = props => {

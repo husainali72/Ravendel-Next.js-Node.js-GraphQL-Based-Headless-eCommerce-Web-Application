@@ -9,8 +9,8 @@ import {
   CardHeader,
   Divider,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from"@mui/material";
+import { useTheme } from"@mui/styles";
 import viewStyles from "../viewStyles";
 import clsx from "clsx";
 import {General} from "./components/general";
@@ -39,7 +39,7 @@ const Settings = () => {
   }, []);
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item xs={12}>
           <Card>
@@ -104,7 +104,7 @@ const Settings = () => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

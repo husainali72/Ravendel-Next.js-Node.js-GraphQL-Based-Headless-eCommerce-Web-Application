@@ -1,5 +1,7 @@
 export default {
-  gutterBottom: {
-    marginBottom: 8
-  }
-};
+  
+    gutterBottom: {
+      marginBottom: 8
+    }
+  };
+  

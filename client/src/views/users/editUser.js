@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Grid, Box } from "@material-ui/core";
+import { Grid, Box } from"@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { userUpdateAction, usersAction } from "../../store/action";
 import { isEmpty, client_app_route_url, bucketBaseURL } from "../../utils/helper";
@@ -67,7 +67,7 @@ const EditUser = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {UsersState.loading ? <Loading /> : null}
 
@@ -138,7 +138,7 @@ const EditUser = (props) => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

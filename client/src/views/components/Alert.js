@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/lab/Alert";
 import { useSelector, useDispatch } from "react-redux";
 
 function CustomAlert(props) {
@@ -26,7 +26,7 @@ const Alert = () => {
   }, [alert.success]);
 
   return (
-    <Fragment>
+    <>
       
         <Snackbar
         autoHideDuration={3000}
@@ -45,7 +45,7 @@ const Alert = () => {
         }
       </Snackbar>
        
-    </Fragment>
+    </>
   );
 };
 

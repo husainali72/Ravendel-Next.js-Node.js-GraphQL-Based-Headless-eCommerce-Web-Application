@@ -11,7 +11,7 @@ import {
   Typography,
   Box,
   Paper,
-} from "@material-ui/core";
+} from"@mui/material";
 import viewStyles from "../viewStyles.js";
 import { isEmpty } from "../../utils/helper";
 import {
@@ -51,13 +51,13 @@ const Shipping = () => {
 
   useEffect(() => {
     if (isEmpty(shippingState.shipping.shipping_class)) {
-      dispatch(shippingAction());
+      // dispatch(shippingAction());
     }
   }, []);
 
   useEffect(() => {
     if (shippingGlobal.overwrite) {
-      dispatch(productsAction());
+      // dispatch(productsAction());
     }
     setshippingGlobal({
       ...shippingGlobal,

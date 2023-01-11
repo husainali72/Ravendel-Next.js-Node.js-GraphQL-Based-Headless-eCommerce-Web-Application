@@ -14,7 +14,7 @@ import {
   Tooltip,
   Box,
   TablePagination,
-} from "@material-ui/core";
+} from"@mui/material";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import viewStyles from "../../viewStyles.js";
@@ -26,8 +26,8 @@ import {
 } from "../../../store/action/";
 import { isEmpty, bucketBaseURL } from "../../../utils/helper";
 import { getUpdatedUrl } from "../../../utils/service";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { convertDateToStringFormat } from "../../utils/convertDate";
 import {
   Alert,
@@ -71,7 +71,7 @@ const AllCategory = (props) => {
 
   useEffect(() => {
     if (!products.categories.length) {
-      dispatch(categoriesAction());
+      // dispatch(categoriesAction());
     }
   }, []);
 
@@ -132,7 +132,7 @@ const AllCategory = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {products.loading ? <Loading /> : null}
       <Grid container className={classes.mainrow} spacing={2}>
@@ -381,7 +381,7 @@ const AllCategory = (props) => {
           </form>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

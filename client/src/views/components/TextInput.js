@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField } from "@material-ui/core";
+import { TextField } from"@mui/material";
 import viewStyles from "../viewStyles.js";
 
 const TextInput = ({ name, value, label, onInputChange, type, sizeSmall, ...other }) => {

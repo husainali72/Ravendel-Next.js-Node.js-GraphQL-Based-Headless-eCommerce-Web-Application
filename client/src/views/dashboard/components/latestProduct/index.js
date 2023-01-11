@@ -13,8 +13,8 @@ import {
   CircularProgress,
   Box,
   Typography,
-} from "@material-ui/core";
-import ArrowRightIcon from "@material-ui/icons/ArrowRight";
+} from"@mui/material";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { Link } from "react-router-dom";
 import {convertDateToStringFormat} from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
@@ -63,7 +63,7 @@ const LatestProducts = ({ products, loader }) => {
         )}
       </CardContent>
       {products ? (
-        <React.Fragment>
+        <>
           <Divider />
           <CardActions className="flex-end">
             <Link to={`${client_app_route_url}all-products`}>
@@ -72,7 +72,7 @@ const LatestProducts = ({ products, loader }) => {
               </Button>
             </Link>
           </CardActions>
-        </React.Fragment>
+        </>
       ) : null}
     </Card>
   );

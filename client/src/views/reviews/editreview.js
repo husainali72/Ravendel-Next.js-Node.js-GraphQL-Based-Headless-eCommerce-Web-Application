@@ -5,9 +5,9 @@ import {
   Box,
   RadioGroup,
   FormControlLabel,
-} from "@material-ui/core";
+} from"@mui/material";
 import Select from "react-select";
-import Rating from "@material-ui/lab/Rating";
+import Rating from '@mui/material/Rating';
 import {
   productsAction,
   customersAction,
@@ -105,7 +105,7 @@ const EditReview = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       {reviewState.loading && <Loading />}
       <TopBar
         title='Edit Customer Review'
@@ -222,7 +222,7 @@ const EditReview = (props) => {
           </CardBlocks>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

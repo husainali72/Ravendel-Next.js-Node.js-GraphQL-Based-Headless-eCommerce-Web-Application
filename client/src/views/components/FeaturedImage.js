@@ -1,6 +1,6 @@
 import React from "react";
-import { Box } from "@material-ui/core";
-import ImageIcon from "@material-ui/icons/Image";
+import { Box } from"@mui/material";
+import ImageIcon from '@mui/icons-material/Image';
 import viewStyles from "../viewStyles";
 import { isEmpty, bucketBaseURL } from "../../utils/helper";
 import NoImagePlaceholder from '../../assets/images/no-image-placeholder.png'
@@ -10,7 +10,7 @@ const FeaturedImageComponent = ({ image, feautedImageChange, user }) => {
   const classes = viewStyles();
 
   return (
-    <React.Fragment>
+    <>
       <Box className={classes.feautedImageBox}>
         {!isEmpty(image) ? (
           <img
@@ -43,7 +43,7 @@ const FeaturedImageComponent = ({ image, feautedImageChange, user }) => {
         <ImageIcon />{" "}
         {!isEmpty(image) ? "Change Featured Image" : "Set Featured Image"}
       </label>
-    </React.Fragment>
+    </>
   );
 };
 

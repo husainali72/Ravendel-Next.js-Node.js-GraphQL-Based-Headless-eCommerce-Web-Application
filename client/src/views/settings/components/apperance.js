@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Grid, Paper, Tab, Tabs, Box } from "@material-ui/core";
+import { Grid, Paper, Tab, Tabs, Box } from"@mui/material";
 import HomeSettings from "./home";
 import Themes from "./themes";
 import { TabPanel, TabProps } from "../../components";
@@ -11,7 +11,7 @@ const Appearance = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Paper square>
@@ -37,7 +37,7 @@ const Appearance = () => {
           </TabPanel>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

@@ -6,12 +6,14 @@ import {
   Checkbox,
   Button,
   useMediaQuery
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from"@mui/material";
+import { useTheme } from"@mui/styles";
 import viewStyles from "../../viewStyles";
 import { paymentBankUpdateAction } from "../../../store/action";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput, SettingBlock } from "./setting-components/";
+import  { get } from "lodash";
 
 const DirectBankTransfer = (props) => {
   const classes = viewStyles();
@@ -20,16 +22,30 @@ const DirectBankTransfer = (props) => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [bankTransferInfo, setBankTransferInfo] = useState({
-    ...settingState.settings.paymnet.bank_transfer,
+    // ...settingState.settings.paymnet.bank_transfer,
   });
+    // ...settingState.settings.paymnet.bank_transfer,
+    // useEffect(() => {
+   
+    //   get(settingState, "settings.paymnet.bank_transfer")
+    // }, [settingState.settings])
+   
+useEffect(() => {
+  if (
+    settingState.settings && settingState.settings.paymnet.bank_transfer
+  ){
+    setBankTransferInfo ({ ...settingState.settings.paymnet.bank_transfer,})
+  }
+}, [settingState.settings])
+ 
 
   const updateBank = () => {
     delete bankTransferInfo.account_details.__typename;
-    dispatch(paymentBankUpdateAction(bankTransferInfo));
+    // dispatch(paymentBankUpdateAction(bankTransferInfo));
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component='div' className={classes.marginBottom2}>
@@ -204,7 +220,7 @@ const DirectBankTransfer = (props) => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

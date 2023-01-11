@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Card, Divider, CardHeader, CardContent } from "@material-ui/core";
+import { Box, Card, Divider, CardHeader, CardContent } from"@mui/material";
 
 const CardBlocks = ({ title, children, nomargin, ...other }) => {
   return (

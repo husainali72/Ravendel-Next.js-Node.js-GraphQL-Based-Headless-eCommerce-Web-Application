@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Grid, TextField } from "@material-ui/core";
+import { Grid, TextField } from"@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { attributeUpdateAction, attributeAction } from "../../../store/action/";
 import { isEmpty, client_app_route_url } from "../../../utils/helper";
@@ -52,7 +52,7 @@ const EditAttribute = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <form>
         <TopBar
@@ -99,7 +99,7 @@ const EditAttribute = (props) => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

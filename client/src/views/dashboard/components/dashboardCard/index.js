@@ -6,7 +6,7 @@ import {
   Typography,
   Avatar,
   CircularProgress,
-} from "@material-ui/core";
+} from"@mui/material";
 import DashboardStyles from "../../dashboard-styles";
 
 const DashboardCard = ({ count, title, Icon, loader }) => {
@@ -16,7 +16,7 @@ const DashboardCard = ({ count, title, Icon, loader }) => {
     <Card className={classes.dashboardcardroot}>
       <CardContent>
         <Grid container justify="space-between">
-          <Grid item>
+          <Grid item style={{width: "150px"}} >
             <Typography
               className={classes.dashboardcardtitle}
               color="textSecondary"
@@ -32,10 +32,10 @@ const DashboardCard = ({ count, title, Icon, loader }) => {
                 No records found
               </Typography>
             ) : (
-              <Typography variant="h3">{count}</Typography>
+              <Typography variant="h5">{count}</Typography>
             )}
           </Grid>
-          <Grid item>
+          <Grid item style={{marginLeft: "160px"}}>
             <Avatar className={classes.dashboardcardavatar}>
               <Icon className={classes.dashboardcardicon} />
             </Avatar>

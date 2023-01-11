@@ -1,13 +1,13 @@
 import React, { Fragment, useState, useEffect } from "react";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from '@mui/material/Alert';
 import { connect } from "react-redux";
 
 function CustomAlert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
+  return <Alert elevation={6} variant="filled" {...props} />;
 }
 
-const Alert = props => {
+const Alerts = props => {
   const [isOpen, setisOpen] = useState(false);
   useEffect(() => {
     if (props.alert.success) {
@@ -23,7 +23,7 @@ const Alert = props => {
   }, [props.alert.success]);
 
   return (
-    <Fragment>
+    <>
       <Snackbar
         autoHideDuration={3000}
         open={isOpen}
@@ -36,7 +36,7 @@ const Alert = props => {
           {props.alert.message}
         </CustomAlert>
       </Snackbar>
-    </Fragment>
+    </>
   );
 };
 
@@ -46,4 +46,4 @@ const mapStateToProps = state => {
 
 //const mapDispatchToProps = dispatch => {};
 
-export default connect(mapStateToProps)(Alert);
+export default connect(mapStateToProps)(Alerts);

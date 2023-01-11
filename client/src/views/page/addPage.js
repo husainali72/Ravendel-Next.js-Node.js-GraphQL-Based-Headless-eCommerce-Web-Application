@@ -6,8 +6,8 @@ import {
   RadioGroup,
   FormControlLabel,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from"@mui/material";
+import { useTheme } from"@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { pageAddAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
@@ -61,7 +61,7 @@ const AddPage = (props) => {
 
   const addPage = (e) => {
     e.preventDefault();
-    dispatch(pageAddAction(page));
+    // dispatch(pageAddAction(page));
   };
 
   const handleChange = (e) => {
@@ -80,7 +80,7 @@ const AddPage = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {pageState.loading ? <Loading /> : null}
       <form>
@@ -197,7 +197,7 @@ const AddPage = (props) => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

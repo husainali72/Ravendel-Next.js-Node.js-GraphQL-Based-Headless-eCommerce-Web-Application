@@ -9,4 +9,3 @@ export const convertDateToStringFormat = (date) => {
   }
   return convertedDate;
 };
-

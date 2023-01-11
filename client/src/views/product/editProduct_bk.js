@@ -22,21 +22,21 @@ import {
   Select,
   MenuItem,
   InputLabel
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import ImageIcon from "@material-ui/icons/Image";
+} from"@mui/material";
+
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ImageIcon from "@mui/icons-material/Image";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import palette from "../../theme/palette";
+
 import TinymceEditor from "./TinymceEditor.js";
 import { categoriesAction, productUpdateAction } from "../../store/action/";
 import Alert from "../utils/Alert";
 import { unflatten } from "../../utils/helper";
 import clsx from "clsx";
-import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
-import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
-import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTwoTone";
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+import FiberManualRecordTwoToneIcon from "@mui/icons-material/FiberManualRecordTwoTone";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import _ from "lodash";
 import viewStyles from "../viewStyles";
@@ -301,7 +301,7 @@ const EditProduct = props => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <form>
         <Grid container className="topbar">
@@ -804,7 +804,7 @@ const EditProduct = props => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

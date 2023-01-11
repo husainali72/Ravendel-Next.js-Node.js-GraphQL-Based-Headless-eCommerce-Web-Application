@@ -16,10 +16,10 @@ import {
   Button,
   Tooltip,
   useMediaQuery
-} from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+} from"@mui/material";
+import {  useTheme } from '@mui/material/styles';
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router-dom";
 import jumpTo from "../../utils/navigation";
 import viewStyles from "../viewStyles.js";
@@ -41,7 +41,7 @@ const AllBrands = props => {
 
   useEffect(() => {
     if (isEmpty(Brands.brands)) {
-      dispatch(brandsAction());
+      // dispatch(brandsAction());
     }
   }, []);
 
@@ -55,7 +55,7 @@ const AllBrands = props => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <Grid container spacing={isSmall ? 2 : 4} className={classes.mainrow}>
         <Grid item lg={12}>
@@ -142,7 +142,7 @@ const AllBrands = props => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

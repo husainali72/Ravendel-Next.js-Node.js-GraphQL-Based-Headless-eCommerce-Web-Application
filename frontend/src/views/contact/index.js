@@ -7,7 +7,7 @@ import {
   Button,
   TextField,
   Divider
-} from "@material-ui/core";
+} from"@mui/material";
 
 const Contact = props => {
   return (

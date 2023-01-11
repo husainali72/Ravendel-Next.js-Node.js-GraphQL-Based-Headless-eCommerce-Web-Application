@@ -3,22 +3,29 @@ import {
   Grid,
   Box,
   Button,
-} from "@material-ui/core";
+} from"@mui/material";
 import { storeMeasuresUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingSelectComponent } from "./setting-components";
+import { useEffect } from "react";
+import {get} from "lodash";
 
 const Measurements = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [measurementVal, setMeasurementVal] = useState({
-    ...settingState.settings.store.measurements,
+    // ...settingState.settings.store.measurements,
   });
+
+  useEffect(() => {
+   get(settingState, "settings.store.measurements")
+  }, [settingState.settings])
+
   const updateMeasures = () => {
-    dispatch(storeMeasuresUpdateAction(measurementVal));
+    // dispatch(storeMeasuresUpdateAction(measurementVal));
   };
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component='div' mb={3}>
@@ -72,7 +79,7 @@ const Measurements = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

@@ -5,10 +5,10 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
-} from "@material-ui/core";
+} from"@mui/material";
 import viewStyles from "../viewStyles";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import clsx from "clsx";
 
 const PasswordInput = ({ name, value, label, onInputChange }) => {
@@ -43,7 +43,7 @@ const PasswordInput = ({ name, value, label, onInputChange }) => {
               onMouseDown={handleMouseDownPassword}
               edge="end"
             >
-              {showPassword ? <Visibility /> : <VisibilityOff />}
+              {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
             </IconButton>
           </InputAdornment>
         }

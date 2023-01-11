@@ -7,7 +7,7 @@ import {
   List,
   ListItem,
   ListItemText,
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import {app_router_base_url} from '../utils/helper';
 

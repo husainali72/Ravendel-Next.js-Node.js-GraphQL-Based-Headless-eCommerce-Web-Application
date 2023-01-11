@@ -17,10 +17,10 @@ import {
   IconButton,
   Box,
   Typography,
-} from "@material-ui/core";
-import ArrowRightIcon from "@material-ui/icons/ArrowRight";
+} from"@mui/material";
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { Link } from "react-router-dom";
-import EditIcon from "@material-ui/icons/Edit";
+import EditIcon from "@mui/icons-material/Edit";
 import jumpTo from "../../../../utils/navigation";
 import {convertDateToStringFormat} from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
@@ -90,7 +90,7 @@ const LatestOrders = ({ ordersState }) => {
       </CardContent>
 
       {ordersState.orders.lenght > 0 ? (
-        <React.Fragment>
+        <>
           <Divider />
           <CardActions className="flex-end">
             <Link to={`${client_app_route_url}all-orders`}>
@@ -99,7 +99,7 @@ const LatestOrders = ({ ordersState }) => {
               </Button>
             </Link>
           </CardActions>
-        </React.Fragment>
+        </>
       ) : null}
     </Card>
   );

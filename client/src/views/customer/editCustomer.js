@@ -16,8 +16,8 @@ import {
   FormControlLabel,
   Checkbox,
   useMediaQuery
-} from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
+} from"@mui/material";
+import {  useTheme } from '@mui/styles';
 import {
   customerUpdateAction,
   addressbookAddAction,
@@ -26,13 +26,13 @@ import {
   customersAction,
 } from "../../store/action/";
 import viewStyles from "../viewStyles.js";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import BusinessIcon from "@material-ui/icons/Business";
-import PhoneIcon from "@material-ui/icons/Phone";
-import HomeIcon from "@material-ui/icons/Home";
-import Rating from "@material-ui/lab/Rating";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import BusinessIcon from "@mui/icons-material/Business";
+import PhoneIcon from "@mui/icons-material/Phone";
+import HomeIcon from "@mui/icons-material/Home";
+import Rating from '@mui/material/Rating';
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import { Loading, TextInput, PasswordInput, TopBar, Alert, CardBlocks } from "../components";
 import { useDispatch, useSelector } from "react-redux";
@@ -146,7 +146,7 @@ const EditCustomer = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {Customers.loading && <Loading />}
       <form>
@@ -386,7 +386,7 @@ const EditCustomer = (props) => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

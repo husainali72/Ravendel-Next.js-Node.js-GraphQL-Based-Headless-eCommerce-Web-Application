@@ -1,5 +1,5 @@
 import React from "react";
-import {Radio} from "@material-ui/core";
+import {Radio} from"@mui/material";
 
 const StyledRadio = (props) => {
   return (

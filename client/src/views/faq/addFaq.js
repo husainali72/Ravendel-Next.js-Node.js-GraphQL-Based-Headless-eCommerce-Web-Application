@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   TextField,
@@ -6,8 +6,8 @@ import {
   RadioGroup,
   FormControlLabel,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from"@mui/material";
+import { useTheme } from"@mui/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { blogAddAction } from "../../store/action/";
 import viewStyles from "../viewStyles";
@@ -52,7 +52,7 @@ const AddFAQ = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {blogState.loading && <Loading />}
       <form>
@@ -115,7 +115,7 @@ const AddFAQ = () => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

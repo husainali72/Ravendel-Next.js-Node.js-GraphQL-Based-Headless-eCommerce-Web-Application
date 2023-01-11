@@ -5,26 +5,33 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
-} from "@material-ui/core";
+} from"@mui/material";
 import viewStyles from "../../viewStyles";
 import { paymentPaypalUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components/";
+import { useEffect } from "react";
+import { get } from "lodash";
 
 const Paypal = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [paypalInfo, setPaypalInfo] = useState({
-    ...settingState.settings.paymnet.paypal,
+    // ...settingState.settings.paymnet.paypal,
   });
 
+  useEffect(() => {
+   get(settingState, "settings.paymnet.paypal")
+   }, [settingState.settings])
+ 
+
   const updatePaypal = () => {
-    dispatch(paymentPaypalUpdateAction(paypalInfo));
+    // dispatch(paymentPaypalUpdateAction(paypalInfo));
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item md={6} sm={12} xs={12}>
           <Box component='div' className={classes.marginBottom2}>
@@ -195,7 +202,7 @@ const Paypal = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

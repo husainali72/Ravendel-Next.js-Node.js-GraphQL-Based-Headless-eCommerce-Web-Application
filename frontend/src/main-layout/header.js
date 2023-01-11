@@ -12,7 +12,7 @@ import {
   DialogContentText,
   Button,
   Tooltip,
-} from "@material-ui/core";
+} from"@mui/material";
 import { withStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";

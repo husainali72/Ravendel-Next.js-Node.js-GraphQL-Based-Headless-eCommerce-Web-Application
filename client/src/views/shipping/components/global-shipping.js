@@ -10,8 +10,8 @@ import {
   Checkbox, 
   MenuItem,
   useMediaQuery
-} from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
+} from"@mui/material";
+import {  useTheme } from '@mui/material/styles';
 import viewStyles from "../../viewStyles.js";
 
 const GlobalShippingComponent = ({
@@ -24,7 +24,7 @@ const GlobalShippingComponent = ({
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   return (
-    <React.Fragment>
+    <>
       <Grid container spacing={1} className={classes.marginBottom}>
         <Grid item md={6} sm={12} xs={12}>
           <Grid container spacing={1}>
@@ -125,7 +125,7 @@ const GlobalShippingComponent = ({
       >
         Save Changes
       </Button>
-    </React.Fragment>
+    </>
   );
 };
 

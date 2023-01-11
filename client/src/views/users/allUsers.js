@@ -15,15 +15,15 @@ import {
   IconButton,
   Avatar,
   Button,
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { usersAction, userDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
-import PeopleIcon from "@material-ui/icons/People";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import PeopleIcon from "@mui/icons-material/People";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles.js";
 import { Alert, Loading } from "../components";
 import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
@@ -46,12 +46,12 @@ const AllUsers = () => {
 
   useEffect(() => {
     if (isEmpty(UsersState.users)) {
-      dispatch(usersAction());
+      // dispatch(usersAction());
     }
   }, []);
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {UsersState.loading ? <Loading /> : null}
       <Grid container spacing={4} className={classes.mainrow}>
@@ -142,7 +142,7 @@ const AllUsers = () => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

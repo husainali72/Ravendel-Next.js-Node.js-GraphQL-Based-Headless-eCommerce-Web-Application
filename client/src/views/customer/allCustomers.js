@@ -16,14 +16,14 @@ import {
   Button,
   Tooltip,
   useMediaQuery
-} from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
+} from"@mui/material";
+import {  useTheme } from '@mui/styles';
 import { Link } from "react-router-dom";
 import { customersAction, customerDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles";
 import {convertDateToStringFormat} from "../utils/convertDate";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,7 +41,7 @@ const AllCustomers = () => {
 
   useEffect(() => {
     if (isEmpty(Customers.customers)) {
-      dispatch(customersAction());
+      // dispatch(customersAction());
     }
   }, []);
 
@@ -55,7 +55,7 @@ const AllCustomers = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <Grid container spacing={isSmall ? 2 : 4} className={classes.mainrow}>
         <Grid item lg={12}>
@@ -151,7 +151,7 @@ const AllCustomers = () => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

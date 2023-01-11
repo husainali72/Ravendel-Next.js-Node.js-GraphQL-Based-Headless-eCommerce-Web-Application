@@ -1,6 +1,7 @@
 import palette from '../palette';
 
 export default {
+  styleOverrides: {
   root: {
     '&$selected': {
       backgroundColor: palette.background.default
@@ -10,5 +11,5 @@ export default {
         backgroundColor: palette.background.default
       }
     }
-  }
+  }}
 };

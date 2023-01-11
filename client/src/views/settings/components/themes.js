@@ -1,17 +1,20 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Grid, TextField, Box, Button } from "@material-ui/core";
+import { Grid, TextField, Box, Button } from"@mui/material";
 import viewStyles from "../../viewStyles";
 import { appearanceThemeUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png";
 import { bucketBaseURL } from "../../../utils/helper";
+import {get} from "lodash";
 
 const Themes = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
+  // const [themeSetting, setThemeSetting] = useState({});
   const [themeSetting, setThemeSetting] = useState({
     ...settingState.settings.appearance.theme,
+    // get(settingState, "settings.appearance.theme")
   });
   const [logoImage, setLogoImage] = useState(bucketBaseURL + themeSetting.logo.original)
   // console.log("setting", themeSetting)
@@ -31,11 +34,26 @@ const Themes = () => {
 
   const updateTheme = () => {
     // console.log(themeSetting);
-    dispatch(appearanceThemeUpdateAction(themeSetting));
+    // dispatch(appearanceThemeUpdateAction(themeSetting));
   };
 
+  // useEffect(() => {
+  //   get(settingState, "settings.appearance.theme,")
+  //   }, [settingState.settings])
+
+  // useEffect(() => {
+  //   if (
+  //     settingState.settings &&
+  //     settingState.settings.appearance &&
+  //     settingState.settings.appearance.theme
+  //   ) {
+  //     setThemeSetting({ ...settingState.settings.appearance.theme})
+  //   }
+  // }, [settingState.settings])
+
+
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component='div'>
@@ -92,7 +110,7 @@ const Themes = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

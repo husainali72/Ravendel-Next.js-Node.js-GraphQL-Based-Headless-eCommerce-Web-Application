@@ -1,9 +1,9 @@
-import { colors } from '@material-ui/core';
+import { colors } from '@mui/material';
 
 const white = '#FFFFFF';
 const black = '#000000';
 
-export default {
+export default  {
   black,
   white,
   primary: {
@@ -44,7 +44,8 @@ export default {
   },
   text: {
     primary: colors.blueGrey[900],
-    secondary: colors.blueGrey[600],
+    // secondary: colors.blueGrey[600],
+    secondary: "#154050",
     link: colors.blue[600]
   },
   background: {

@@ -14,8 +14,8 @@ import {
   FormControlLabel,
   Checkbox,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from"@mui/material";
+import { useTheme } from"@mui/styles";
 import clsx from "clsx";
 import {
   categoriesAction,
@@ -127,7 +127,7 @@ const EditCoupon = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {Products.loading || Coupons.loading ? <Loading /> : null}
       <TopBar
@@ -330,7 +330,7 @@ const EditCoupon = (props) => {
           </Grid>
         </Grid>
       )}
-    </Fragment>
+    </>
   );
 };
 

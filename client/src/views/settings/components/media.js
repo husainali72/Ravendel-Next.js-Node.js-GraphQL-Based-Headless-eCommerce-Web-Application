@@ -1,16 +1,18 @@
 import React, { Fragment, useState } from "react";
-import { Grid, Box, Button, useMediaQuery } from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+import { Grid, Box, Button, useMediaQuery } from"@mui/material";
+import { useTheme } from"@mui/styles";
 import viewStyles from "../../viewStyles";
 import { mediaUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput, SettingBlock } from "./setting-components";
-
+import { useEffect } from "react";
+import {get} from "lodash";
 const Media = () => {
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
+ 
   const settingState = useSelector((state) => state.settings);
   const [media, setMedia] = useState({
     thumbnail: settingState.settings.media.thumbnail,
@@ -19,11 +21,19 @@ const Media = () => {
   });
 
   const updateGeneral = () => {
-    dispatch(mediaUpdateAction(media));
+    // dispatch(mediaUpdateAction(media));
   };
 
+  // useEffect(() => {
+  //   get(settingState, "settings.media.thumbnail")
+  //   get(settingState, "settings.media.medium")
+  //   get(settingState, "settings.media.large")
+  //   }, [settingState.settings])
+ 
+    
+
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item md={12} xs={12}>
           <SettingBlock label='Thumbnail Size'>
@@ -138,7 +148,7 @@ const Media = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

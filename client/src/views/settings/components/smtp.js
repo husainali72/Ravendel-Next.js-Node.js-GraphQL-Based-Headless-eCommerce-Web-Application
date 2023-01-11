@@ -6,25 +6,33 @@ import {
   Button,
   FormControl,
   InputLabel,
-} from "@material-ui/core";
+} from"@mui/material";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
 import { smtpUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components";
-
+import {get} from "lodash";
+import { useEffect } from "react";
 const SMTP = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [smtp, setSmptp] = useState({ ...settingState.settings.smtp });
+  const [smtp, setSmptp] = useState({ 
+    // ...settingState.settings.smtp 
+  });
+
+  useEffect(() => {
+    get(settingState, "settings.smtp")
+    }, [settingState.settings])
+
 
   const updateSmtp = () => {
-    dispatch(smtpUpdateAction(smtp));
+    // dispatch(smtpUpdateAction(smtp));
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component='div'>
@@ -88,7 +96,7 @@ const SMTP = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

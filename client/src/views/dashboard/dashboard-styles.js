@@ -1,33 +1,58 @@
-import { makeStyles } from "@material-ui/styles";
-
+import { makeStyles, ThemeProvider } from"@mui/styles";
+import { createTheme } from "@mui/material"; 
 const DashboardStyles = makeStyles((theme) => ({
   dashboardcard: {
+    
+
     height: "100%",
   },
   dashboardcardtitle: {
-    fontWeight: 700,
+    "&&":{
+      
+    fontWeight: 700,}
   },
   dashboardcardavatar: {
-    backgroundColor: `${theme.palette.success.main} !important`,
-    height: "56px !important",
-    width: "56px !important",
+     backgroundColor: `${theme.palette.success.main} !important`,
+   
+      //  marginLeft: "160px",
+    
+  
+     height: "50px !important",
+     width: "50px !important",
   },
   dashboardcardicon: {
-    height: 32,
-    width: 32,
+   
+    height: 30,
+    width: 30,
+   
   },
   noRecordFound: {
-    color: "red",
+
+    "&&":{
+    color: "red",}
   },
   content: {
+   
+  
     padding: 0,
   },
   productImage: {
+    
+    
     height: 60,
     width: 60,
     borderRadius: '100%',
     marginRight: 10,
   },
 }));
+const theme = createTheme();
 
-export default DashboardStyles;
+// export default function DashboardStyles() {
+   
+//     return (
+//       <ThemeProvider theme={theme}>
+//         < DashboardTheme />
+//       </ThemeProvider>
+//     );
+//   }
+ export default DashboardStyles;

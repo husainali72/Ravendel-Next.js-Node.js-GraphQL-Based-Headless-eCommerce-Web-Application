@@ -10,16 +10,17 @@ import {
   Menu,
   Avatar,
   Box
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
+} from "@mui/material"; 
+import { makeStyles } from '@mui/styles';
 import { Link as RouterLink } from "react-router-dom";
-import MenuIcon from "@material-ui/icons/Menu";
+import MenuIcon from '@mui/icons-material/Menu';
 import Auth from "../utils/auth";
 import palette from "../theme/palette";
-import { Link } from "react-router-dom";
+import { Link, Route,Routes} from "react-router-dom";
 import { insertToken } from "../store/action/loginAction";
 import { connect } from "react-redux";
 import {client_app_route_url} from '../utils/helper';
+import { ThemeProvider,createTheme } from "@mui/material";
 
 const Header = props => {
   const { onSidebarOpen } = props;
@@ -49,13 +50,15 @@ const Header = props => {
   }, [props.login.user_token]);
 
   return (
-    <AppBar className={classes.header}>
+    <AppBar className={classes.header} >
       <Toolbar className={classes.header}>
-        <RouterLink to={`${client_app_route_url}dashboard`}>
+        
+        <Link to={`${client_app_route_url}dashboard`}>
           <Typography variant="h4" component="h4" className={classes.textWhite}>
             Ravendel
           </Typography>
-        </RouterLink>
+        </Link>
+        
         <div className={classes.flexGrow} />
         {activeUser && (
           <Hidden mdDown>
@@ -101,32 +104,36 @@ const Header = props => {
 
 const useStyles = makeStyles(theme => ({
   header: {
+    "&&": {
     boxShadow: "none",
     minHeight: "50px !important",
     maxHeight: "50px !important",
-    zIndex: 1100
+  backgroundColor:palette.text.secondary,
+    zIndex: 1100}
   },
   flexGrow: {
-    flexGrow: 1
+    "&&": {
+    flexGrow: 1}
   },
   signOutButton: {
-    marginLeft: theme.spacing(1)
+    "&&": {
+    marginLeft: theme.spacing(1)}
   },
-  textWhite: {
-    color: "#fff"
+  textWhite: { "&&": {
+    color: "#fff"}
   },
-  logout: {
+  logout: { "&&": {
     color: "#fff",
     marginLeft: "10px",
-    paddingTop: "7px"
+    paddingTop: "7px"}
   },
-  userName: {
+  userName: { "&&": {
     marginLeft: 10,
     color: palette.white,
-    textTransform: "none"
+    textTransform: "none"}
   },
-  editProfile: {
-    color: palette.black
+  editProfile: { "&&": {
+    color: palette.black}
   }
 }));
 
@@ -138,4 +145,16 @@ const mapDispatchToProps = {
   insertToken
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+  export default connect(mapStateToProps, mapDispatchToProps)(Header);
+
+// const theme = createTheme(palette);
+// export default function Header() {
+//   return (
+    
+//     <ThemeProvider theme={theme}>
+//       {connect(mapStateToProps, mapDispatchToProps)(Header);}
+//       {/* < HeaderTheme /> */}
+//     </ThemeProvider>
+//   );
+// }
+

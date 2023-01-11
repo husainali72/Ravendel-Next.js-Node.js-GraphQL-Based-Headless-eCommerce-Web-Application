@@ -1,6 +1,6 @@
-import React, { Fragment, useState, useEffect } from "react";
-import { Grid, TextField, Box, useMediaQuery } from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+import React, { useState, useEffect } from "react";
+import { Grid, TextField, Box, useMediaQuery } from"@mui/material";
+import { useTheme } from"@mui/styles";
 import viewStyles from "../viewStyles.js";
 import clsx from "clsx";
 import { brandUpdateAction } from "../../store/action/";
@@ -59,7 +59,7 @@ const EditBrand = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       {Brands.loading && <Loading />}
       <Alert />
       <TopBar
@@ -162,7 +162,7 @@ const EditBrand = (props) => {
           </CardBlocks>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

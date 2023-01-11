@@ -1,7 +1,8 @@
-import { colors } from '@material-ui/core';
+import { colors } from '@mui/material';
 
 export default {
+  styleOverrides: {
   root: {
     backgroundColor: colors.grey[50]
-  }
+  }}
 };

@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {  Routes, Route } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { isEmpty } from "./utils/helper";
 import { registerNav } from "./utils/navigation";
@@ -9,6 +9,10 @@ import Login from "./views/login";
 import { client_app_route_url } from "./utils/helper";
 import "./assets/scss/index.css";
 import "./App.css";
+import SideBarTheme from "./main-layout/Sidebar";
+import Dashboard from "./views/dashboard";
+import AllRoutes from "./routes/routes";
+import ThemeHelper from "./main-layout";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -47,23 +51,19 @@ const App = () => {
   }
 
   return (
-    <Fragment>
-      <BrowserRouter ref={registerNav}>
-        <Switch>
-          <Route
-            exact={true}
-            path={`${client_app_route_url}login`}
-            component={Login}
-          />
-           {isEmpty(login.user_token) ? (
-            <Redirect to={`${client_app_route_url}login`} />
-          ) : null}
-
-          <MainLayout />
-        </Switch>
-      </BrowserRouter>
-    </Fragment>
+    <>
+      <Routes>
+        <Route
+          exact={true}
+          path={`${client_app_route_url}login`}
+          element={<Login/>}
+        ></Route>
+        
+      </Routes> 
+      <ThemeHelper />
+    </>
   );
-};
+ };
 
 export default App;
+

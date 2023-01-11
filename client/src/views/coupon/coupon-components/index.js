@@ -2,7 +2,7 @@ import React from "react";
 import {
   Typography,
   Box,
-} from "@material-ui/core";
+} from"@mui/material";
 
 /* ==================Component for Tabpanel===================== */
 

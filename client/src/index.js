@@ -1,24 +1,44 @@
+
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import * as serviceWorker from "./serviceWorker";
+import reportWebVitals from './reportWebVitals';
 import store from "./store";
 import { Provider } from "react-redux";
 import { ApolloProvider } from "@apollo/react-hooks";
 import APclient from "./Client";
-import { ThemeProvider } from "@material-ui/styles";
+import { ThemeProvider } from"@mui/material/styles";
 import theme from "./theme";
+import { BrowserRouter } from 'react-router-dom';
+import { registerNav } from './utils/navigation';
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+  <BrowserRouter forwardRef={registerNav} >
   <Provider store={store}>
     <ThemeProvider theme={theme}>
       <ApolloProvider client={APclient}>
+      
         <App />
+        
       </ApolloProvider>
     </ThemeProvider>
-  </Provider>,
-  document.getElementById("root")
+  </Provider>
+  </BrowserRouter>
+  </React.StrictMode>
+  // <Provider store={store}>
+  //   <ThemeProvider theme={theme}>
+  //     <ApolloProvider client={APclient}>
+  //     <BrowserRouter forwardRef={registerNav}>
+  //       <App />
+  //       </BrowserRouter>
+  //     </ApolloProvider>
+  //   </ThemeProvider>
+  // </Provider>
+ ,
+
 );
 
-serviceWorker.unregister();
+reportWebVitals();

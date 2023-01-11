@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from"@mui/styles";
 import {
   Button,
   ListItem,
@@ -7,17 +7,25 @@ import {
   Collapse,
   colors,
   ListItemIcon,
-  ListItemText
-} from "@material-ui/core";
-import ExpandLess from "@material-ui/icons/ExpandLess";
-import ExpandMore from "@material-ui/icons/ExpandMore";
+  ListItemText,
+  Icon
+} from "@mui/material";
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Link } from "react-router-dom";
-import menuItems from "../routes/nav.json";
-import Icon from "@material-ui/core/Icon";
+// import menuItems from "../routes/nav.json";
+// import Icon from "@mui/icons-material/Icon";
+import typography from "../theme/typography";
+import menuItems from "../routes/nav";
+
 import clsx from "clsx";
 import {client_app_route_url} from '../utils/helper';
-
+import palette from "../theme/palette";
+import { createTheme, ThemeProvider } from "@mui/material";
+import { red } from "@mui/material/colors";
 const MenuBar = () => {
+   
+
   const classes = useStyles();
   const [menuName, setMenuName] = useState("");
 
@@ -30,18 +38,21 @@ const MenuBar = () => {
   };
 
   const menuListing = menus => {
+    console.log(menus)
     return menus.map(menu => {
       if (!menu.children) {
         return (
           <Link to={`${client_app_route_url + menu.url}`} key={menu.name}>
             <ListItem className={classes.item} disableGutters>
-              <Button className={classes.button}>
+              <Button className={classes.button} style={{color: palette.text.secondary, fontSize: "10px"}}>
                 <ListItemIcon className={classes.icons}>
-                  {menu.icon && <Icon fontSize="small">{menu.icon}</Icon>}
+                  {/* {menu.icon && <Icon fontSize="small">{menu.icon}</Icon>} */}
+                  {menu.icon && <menu.icon fontSize="small"/>}
                 </ListItemIcon>
                 <ListItemText
                   className={classes.itemtext}
                   primary={menu.name}
+                  style={{color: palette.text.secondary, fontSize: "10px"}}
                 />
               </Button>
             </ListItem>
@@ -55,12 +66,15 @@ const MenuBar = () => {
             className={classes.item}
             disableGutters
           >
-            <Button className={classes.button}>
-              <ListItemIcon className={classes.icons}>
-                {menu.icon && <Icon fontSize="small">{menu.icon}</Icon>}
+            <Button className={classes.button} >
+              <ListItemIcon className={classes.icons} >
+              
+                {/* {menu.icon && <Icon fontSize="small">{menu.icon}</Icon>} */}
+                {menu.icon && <menu.icon fontSize="small"/>}
               </ListItemIcon>
               <ListItemText className={classes.itemtext} primary={menu.name} />
-              {menuName === menu.name ? <ExpandLess  fontSize="small"/> : <ExpandMore  fontSize="small"/>}
+              {menuName === menu.name ? <ExpandLessIcon  fontSize="small"/> : <ExpandMoreIcon  fontSize="small"/>}
+             
             </Button>
           </ListItem>
           <Collapse
@@ -68,6 +82,7 @@ const MenuBar = () => {
             timeout="auto"
             unmountOnExit
             className={clsx(classes.collapse, "menu-collapse")}
+            style={{fontSize: "10px"}}
           >
             {menuListing(menu.children)}
           </Collapse>
@@ -76,36 +91,61 @@ const MenuBar = () => {
     });
   };
 
-  return <List component="nav">{menuListing(menuItems.menu)}</List>;
+  return <List component="nav">{menuListing(menuItems)}</List>;
 };
+
 
 const useStyles = makeStyles(theme => ({
   item: {
-    display: "flex",
-    paddingTop: 0,
-    paddingBottom: 0
+    "&&": {
+      display: "flex",
+      paddingTop: 0,
+      paddingBottom: 0,
+    }
+   
+
   },
   button: {
-    color: colors.blueGrey[800],
-    padding: "4px",
-    justifyContent: "flex-start",
-    textTransform: "none",
-    letterSpacing: 0,
-    width: "100%",
-    fontWeight: theme.typography.fontWeightMedium,
+    "&&": {
+    
+      color: colors.blueGrey[800],
+      justifyContent: "flex-start",
+      textTransform: "none",
+      letterSpacing: 0,
+      width: "100%",
+      fontWeight: theme.typography.fontWeightMedium,
+    },
+   
+  
   },
   icons: {
+    "&&": {
     minWidth: "30px !important"
+    }
   },
   itemtext: {
+    "&&": {
+      
     textAlign: "left !important",
-    fontSize: 10
+    }
   },
   collapse: {
-    backgroundColor: "#f5f5f5",
-    padding: "0px 10px",
-    paddingLeft: 25
+   
+    "&&": {
+    
+     backgroundColor: "#f5f5f5",
+    fontSize: "10px",
+    // padding: "0px 10px",
+    paddingLeft: 15}
   }
 }));
 
-export default MenuBar;
+const theme= createTheme();
+export default function MenuTheme() {
+    
+    return (
+      <ThemeProvider theme={theme}>
+        < MenuBar />
+      </ThemeProvider>
+    );
+  }

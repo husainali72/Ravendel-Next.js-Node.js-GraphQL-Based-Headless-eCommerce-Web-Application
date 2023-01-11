@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Grid, TextField } from "@material-ui/core";
+import { Grid, TextField } from"@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { attributeAddAction } from "../../../store/action/";
 import ReactTags from "react-tag-autocomplete";
@@ -29,11 +29,11 @@ const AddAttribute = () => {
   };
 
   const onAdd = () => {
-    dispatch(attributeAddAction({ attribute: attribute }));
+    // dispatch(attributeAddAction({ attribute: attribute }));
   };
 
   return (
-    <Fragment>
+    <>
       <form>
         <Alert />
         <TopBar
@@ -79,7 +79,7 @@ const AddAttribute = () => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

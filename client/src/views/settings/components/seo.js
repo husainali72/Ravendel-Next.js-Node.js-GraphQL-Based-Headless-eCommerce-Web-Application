@@ -1,21 +1,29 @@
 import React, { Fragment, useState } from "react";
-import { Grid, Box, Button } from "@material-ui/core";
+import { Grid, Box, Button } from"@mui/material";
 import { seoUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components";
+import { useEffect } from "react";
+import {get} from "lodash";
 
 const SEO = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [seo, setSeo] = useState({ ...settingState.settings.seo });
+  const [seo, setSeo] = useState({ 
+    // ...settingState.settings.seo
+   });
+
+   useEffect(() => {
+    get(settingState, "settings.seo")
+    }, [settingState.settings])
 
   const updateSeo = () => {
     console.log(seo)
-    dispatch(seoUpdateAction(seo));
+    // dispatch(seoUpdateAction(seo));
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component='div'>
@@ -57,7 +65,7 @@ const SEO = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

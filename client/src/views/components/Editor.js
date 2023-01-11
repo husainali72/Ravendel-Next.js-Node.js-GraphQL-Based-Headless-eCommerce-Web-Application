@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { EditorKey } from "../utils/apikey";
-import { CircularProgress, Box } from "@material-ui/core";
+import { CircularProgress, Box } from"@mui/material";
 
 const TinymceEditor = ({ value, onEditorChange }) => {
   const [show, setShow] = useState(false);
@@ -19,7 +19,7 @@ const TinymceEditor = ({ value, onEditorChange }) => {
   }, []);
 
   return (
-    <React.Fragment>
+    <>
       {show ? (
         <Editor
           initialValue={value}
@@ -48,7 +48,7 @@ const TinymceEditor = ({ value, onEditorChange }) => {
           <CircularProgress />
         </Box>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

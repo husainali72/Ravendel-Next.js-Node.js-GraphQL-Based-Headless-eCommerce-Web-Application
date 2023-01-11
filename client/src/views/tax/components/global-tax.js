@@ -8,8 +8,8 @@ import {
   Select,
   MenuItem,
   useMediaQuery
-} from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
+} from"@mui/material";
+import {  useTheme } from '@mui/material/styles';
 import viewStyles from "../../viewStyles.js";
 
 const GlobalTaxComponent = ({ taxGlobalState, taxState, saveGlobal, changeGlobalState }) => {
@@ -18,7 +18,7 @@ const GlobalTaxComponent = ({ taxGlobalState, taxState, saveGlobal, changeGlobal
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <React.Fragment>
+    <>
       <Grid container spacing={2} className={classes.marginBottom}>
         <Grid item md={6} sm={12} xs={12}>
           <Grid container spacing={2}>
@@ -84,7 +84,7 @@ const GlobalTaxComponent = ({ taxGlobalState, taxState, saveGlobal, changeGlobal
       >
         Save Changes
       </Button>
-    </React.Fragment>
+    </>
   );
 };
 

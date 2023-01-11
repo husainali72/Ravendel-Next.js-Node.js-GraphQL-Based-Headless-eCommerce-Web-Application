@@ -15,14 +15,14 @@ import {
   IconButton,
   Button,
   Tooltip,
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { pagesAction, pageDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles";
 import {convertDateToStringFormat} from "../utils/convertDate";
 import {Alert, Loading} from '../components';
@@ -36,7 +36,7 @@ const AllPages = (props) => {
 
   useEffect(() => {
     if (isEmpty(pageState.pages)) {
-      dispatch(pagesAction());
+      // dispatch(pagesAction());
     }
   }, []);
 
@@ -50,7 +50,7 @@ const AllPages = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
@@ -139,7 +139,8 @@ const AllPages = (props) => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+      
+    </>
   );
 };
 

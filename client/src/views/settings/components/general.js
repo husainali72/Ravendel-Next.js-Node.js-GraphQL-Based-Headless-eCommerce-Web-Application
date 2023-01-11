@@ -10,12 +10,13 @@ import {
   Typography,
   TextField,
   Button,
-} from "@material-ui/core";
+} from"@mui/material";
 import viewStyles from "../../viewStyles.js";
 import TimeZones from "./timeZones";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Autocomplete from '@mui/material/Autocomplete';
 import { getDatesAction, generalUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
+import { get } from "lodash";
 
 export const General = () => {
   const classes = viewStyles();
@@ -23,23 +24,25 @@ export const General = () => {
   const settingState = useSelector(state => state.settings);
   const [timeZone, setTimeZone] = useState(15);
   const [general, setgeneral] = useState({
-    date_format: settingState.settings.general.date_format,
+    // date_format: settingState.settings.general.date_format,
   });
 
   useEffect(() => {
-    dispatch(getDatesAction());
-  }, []);
+// dispatch(getDatesAction());
+
+get (settingState, "settings.general.date_format")
+  }, [settingState.settings]);
 
   const changeTimeZone = (val) => {
     setgeneral({ ...general, time_zone: val.value });
   };
 
   const updateGenral = () => {
-    dispatch(generalUpdateAction(general));
+    // dispatch(generalUpdateAction(general));
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item md={12} xs={12}>
           <Box component="div" className={classes.marginBottom2}>
@@ -94,7 +97,7 @@ export const General = () => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

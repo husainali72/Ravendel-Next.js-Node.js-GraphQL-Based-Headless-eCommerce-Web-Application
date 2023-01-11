@@ -3,10 +3,10 @@ import { connect } from "react-redux";
 import MainLayout from "./main-layout";
 import "./App.css";
 import { ApolloProvider } from "@apollo/react-hooks";
-import { ThemeProvider } from "@material-ui/styles";
+import { ThemeProvider } from"@mui/styles";
 import APclient from "./Client";
 
-import { createMuiTheme } from "@material-ui/core";
+import { createMuiTheme } from"@mui/material";
 import palette from "./theme/palette";
 import typography from "./theme/typography";
 import overrides from "./theme/overrides";

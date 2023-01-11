@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Grid, useMediaQuery } from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+import { Grid, useMediaQuery } from"@mui/material";
+import { useTheme } from"@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { customerAddAction } from "../../store/action/";
 import viewStyles from "../viewStyles.js";
@@ -46,14 +46,14 @@ const AddCustomer = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {Customers.loading && <Loading />}
       <form>
         <TopBar
           title='Add Customer'
           onSubmit={addCustomer}
-          submitTitle='Add'
+         submitTitle='Add'
           backLink={`${client_app_route_url}all-customer`}
         />
         <Grid
@@ -118,7 +118,7 @@ const AddCustomer = () => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

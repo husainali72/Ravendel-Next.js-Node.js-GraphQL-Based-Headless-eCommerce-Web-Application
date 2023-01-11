@@ -1,30 +1,39 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Grid,
   Box,
   FormControlLabel,
   Checkbox,
   Button,
-} from "@material-ui/core";
+} from"@mui/material";
 import viewStyles from "../../viewStyles.js";
 import { paymentCodUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import {SettingTextInput} from './setting-components/';
+import  { get } from "lodash";
 
 const CashOnDelivery = (props) => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [codInfo, setCodInfo] = useState({
-    ...settingState.settings.paymnet.cash_on_delivery,
-  });
+  const [codInfo, setCodInfo] = useState({});
+  // const [codInfo, setCodInfo] = useState({
+  //   ...settingState.settings.paymnet.cash_on_delivery,
+  // });
+
+  useEffect(() => {
+    // if(settingState.settings && settingState.settings.paymnet && settingState.settings.paymnet.cash_on_delivery){
+    //   setCodInfo({ ...settingState.settings.paymnet.cash_on_delivery })
+    // }
+    get(settingState, 'settings.paymnet.cash_on_delivery')
+  }, [settingState.settings])
 
   const updateCOD = () => {
-    dispatch(paymentCodUpdateAction(codInfo));
+    // dispatch(paymentCodUpdateAction(codInfo));
   };
 
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component='div' className={classes.marginBottom2}>
@@ -86,7 +95,7 @@ const CashOnDelivery = (props) => {
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

@@ -3,8 +3,10 @@ import cookie from "react-cookies";
 import jumpTo, { go } from "../../utils/navigation";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import {client_app_route_url} from '../../utils/helper';
-
-export const LoginAction = (email, password) => dispatch => {
+import { useNavigate } from "react-router-dom";
+// const navigate = useNavigate();
+export const LoginAction = (email, password, navigate) => dispatch => {
+ 
   dispatch({
     type: POST_TOKEN_BEGIN
   });
@@ -14,8 +16,9 @@ export const LoginAction = (email, password) => dispatch => {
         type: POST_TOKEN_SUCCESS,
         payload: res
       });
-
-      jumpTo(`${client_app_route_url}dashboard`);
+      console.log("POST_TOKEN_SUCCESS")
+        // jumpTo(`${client_app_route_url}dashboard`);
+      navigate(`${client_app_route_url}dashboard`)
     })
     .catch(error => {
       dispatch({

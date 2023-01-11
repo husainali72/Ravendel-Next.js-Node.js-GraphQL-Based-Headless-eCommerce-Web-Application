@@ -12,8 +12,8 @@ import {
   Tooltip,
   Icon,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from"@mui/material";
+import { useTheme } from"@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
   categoriesAction,
@@ -204,7 +204,7 @@ const EditProduct = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {productState.loading ? <Loading /> : null}
       <form>
@@ -644,7 +644,7 @@ const EditProduct = (props) => {
           </Grid>
         ) : null}
       </form>
-    </Fragment>
+    </>
   );
 };
 

@@ -30,28 +30,28 @@ export const pagesAction = () => (dispatch) => {
       //     payload: { boolean: true, message: response.data.pages.message.message, error: true },
       //   });
       // }
-      const [error, success, message, data] = getResponseHandler(
-        response,
-        "pages"
-      );
-      dispatch({
-        type: LOADING_FALSE,
-      });
+      // const [error, success, message, data] = getResponseHandler(
+      //   response,
+      //   "pages"
+      // );
+      // dispatch({
+      //   type: LOADING_FALSE,
+      // });
 
-      if (error) {
-        dispatch({
-          type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
-        });
+      // if (error) {
+      //   dispatch({
+      //     type: ALERT_SUCCESS,
+      //     payload: { boolean: true, message: message, error: true },
+      //   });
 
-      }
+      // }
 
-      if (success) {
-        return dispatch({
-          type: PAGES_SUCCESS,
-          payload: data,
-        });
-      }
+      // if (success) {
+      //   return dispatch({
+      //     type: PAGES_SUCCESS,
+      //     payload: data,
+      //   });
+      // }
     })
     .catch((error) => {
       dispatch({

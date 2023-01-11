@@ -5,10 +5,10 @@ import {
   FormControlLabel,
   Checkbox,
   Collapse,
-} from "@material-ui/core";
-import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
-import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
-import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTwoTone";
+} from"@mui/material";
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+import FiberManualRecordTwoToneIcon from "@mui/icons-material/FiberManualRecordTwoTone";
 import { useSelector, useDispatch } from "react-redux";
 import { unflatten } from "../../../utils/helper";
 import { categoriesAction } from "../../../store/action/";
@@ -141,7 +141,7 @@ const CategoriesComponent = ({ onCategoryChange }) => {
     });
   };
 
-  return <React.Fragment>{menuListing(unflatten(productCats))}</React.Fragment>;
+  return <>{menuListing(unflatten(productCats))}</>;
 };
 
 export default CategoriesComponent;

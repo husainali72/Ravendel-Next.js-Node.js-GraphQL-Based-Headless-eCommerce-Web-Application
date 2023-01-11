@@ -13,7 +13,7 @@ import {
   DialogContentText,
   DialogTitle,
   Button,
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {app_router_base_url} from '../utils/helper';

@@ -11,7 +11,7 @@ import {
   Typography,
   Box,
   Paper,
-} from "@material-ui/core";
+} from"@mui/material";
 import { isEmpty } from "../../utils/helper";
 import {Alert, Loading} from '../components';
 import {
@@ -51,13 +51,13 @@ const Tax = () => {
 
   useEffect(() => {
     if (isEmpty(taxState.tax.tax_class)) {
-      dispatch(taxAction());
+      // dispatch(taxAction());
     }
   }, []);
 
   useEffect(() => {
     if (taxGlobal.overwrite) {
-      dispatch(productsAction());
+      // dispatch(productsAction());
     }
     settaxOption(taxState.tax.is_inclusive ? "inclusive" : "exclusive");
     settaxGlobal({ ...taxGlobal, ...taxState.tax.global });

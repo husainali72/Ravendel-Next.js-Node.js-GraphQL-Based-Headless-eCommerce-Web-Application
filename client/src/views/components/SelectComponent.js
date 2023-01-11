@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Select, MenuItem, FormControl, InputLabel } from "@material-ui/core";
+import { Select, MenuItem, FormControl, InputLabel } from"@mui/material";
 import viewStyles from "../viewStyles";
 
 const SelectComponent = ({

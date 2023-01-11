@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from "react-router-dom";
+
 import Dashboard from "../views/dashboard";
 import { AllUsers, AddUser, EditUser } from "../views/users";
 import { AddBlog, AllBlog, EditBlog, AllTags } from "../views/blog";
@@ -24,8 +24,17 @@ import NotFound from "../views/notFound";
 import { AllReviews, EditReview } from "../views/reviews";
 import { AddFAQ, AllFAQ, EditFAQ } from "../views/faq";
 import {client_app_route_url} from '../utils/helper';
+import { Routes, Route } from 'react-router-dom';
+import Login from '../views/login';
+import ThemeHelper from '../main-layout';
 
-const Routes = [
+const RoutesPath = [
+  {
+    path: `/`,
+    exact: true,
+    component: Login,
+    name: "Home",
+  },
   { path: `${client_app_route_url}`, exact: true, component: Dashboard, name: "Home" },
   { path: `${client_app_route_url}dashboard`, exact: true, component: Dashboard, name: "Home" },
   { path: `${client_app_route_url}user`, exact: true, component: AllUsers, name: "Users" },
@@ -102,6 +111,7 @@ const Routes = [
     name: "Edit Order",
     component: ViewOrder,
   },
+  { path: `${client_app_route_url}mainlayout`, exact: true, name: "All Pages", component: ThemeHelper },
   { path: `${client_app_route_url}all-pages`, exact: true, name: "All Pages", component: AllPages },
   { path: `${client_app_route_url}add-page`, exact: true, name: "Add Page", component: AddPage },
   {
@@ -210,18 +220,22 @@ const Routes = [
 ];
 
 const AllRoutes = () => {
+  console.log("AllRoutes")
   return (
-    <Switch>
-         {Routes.map((route, index) => (
-          <Route
+    <>
+    <Routes>
+         {RoutesPath.map((route, index) => {
+
+        return ( <Route
             key={index}
-            exact={route.exact}
+            
             path={route.path}
             name={route.name}
-            component={route.component}
-          />
-        ))}
-    </Switch>
+            element={<route.component />}
+          />)
+         })}
+    </Routes>
+    </>
   )
 }
 

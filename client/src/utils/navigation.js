@@ -1,5 +1,7 @@
 let history;
-export const registerNav = ref => {
+export const registerNav = (ref) => {
+    console.log(ref)
+  
   if (ref && ref.history) {
     history = ref.history;
   }

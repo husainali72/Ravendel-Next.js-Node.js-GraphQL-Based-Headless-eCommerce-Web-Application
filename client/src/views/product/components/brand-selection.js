@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CircularProgress, Box } from "@material-ui/core";
+import { CircularProgress, Box } from"@mui/material";
 import ReactSelect from "react-select";
 import { isEmpty } from "../../../utils/helper";
 import { useSelector, useDispatch } from "react-redux";
@@ -28,7 +28,7 @@ const BrandSelection = ({ value, onBrandChange }) => {
   }, [brandState.brands]);
 
   return (
-    <React.Fragment>
+    <>
       {brandState.loading ? (
         <Box component='div' display='flex' justifyContent='center'>
           <CircularProgress />
@@ -41,7 +41,7 @@ const BrandSelection = ({ value, onBrandChange }) => {
           value={value}
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 

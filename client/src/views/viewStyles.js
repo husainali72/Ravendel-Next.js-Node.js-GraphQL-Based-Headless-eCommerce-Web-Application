@@ -1,18 +1,22 @@
 import palette from "../theme/palette";
-import { makeStyles } from "@material-ui/styles";
-import { deepPurple } from "@material-ui/core/colors";
+import { makeStyles, ThemeProvider } from"@mui/styles";
+import { deepPurple } from "@mui/material/colors";
+import { createTheme } from "@mui/material";
 
 const viewStyles = makeStyles((theme) => ({
   marginTop1: {
     marginTop: 10,
   },
   mainrow: {
+  
+    
     padding: theme.spacing(4),
     [theme.breakpoints.down('xs')]: {
       padding: theme.spacing(2),
     },
   },
   secondmainrow: {
+  
     padding: theme.spacing(4),
     marginTop: 40,
     [theme.breakpoints.down('xs')]: {
@@ -21,7 +25,8 @@ const viewStyles = makeStyles((theme) => ({
     },
   },
   deleteicon: {
-    color: palette.error.dark,
+    "&&": {
+    color: palette.error.dark,}
   },
   avatar: {
     width: "50px",
@@ -29,7 +34,8 @@ const viewStyles = makeStyles((theme) => ({
     borderRadius: "100%",
   },
   addUserBtn: {
-    background: palette.success.main,
+    
+     background: palette.success.main,
     color: "#fff",
   },
    backdrop: {
@@ -52,9 +58,10 @@ const viewStyles = makeStyles((theme) => ({
     maxHeight: 600,
   },
   cancelBtn: {
+   "&&": {
     background: palette.error.dark,
     color: "#fff",
-    marginLeft: theme.spacing(2),
+    marginLeft: "10px"}
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -134,9 +141,10 @@ const viewStyles = makeStyles((theme) => ({
     maxHeight: "90%",
   },
   slideRemove: {
+    "&&": {
     position: "absolute",
     top: 2,
-    right: 2,
+    right: 2,}
   },
   galleryImgOuterBox: {
     display: "flex",
@@ -208,6 +216,7 @@ const viewStyles = makeStyles((theme) => ({
     margin: "0px 10px",
     overflow: "hidden",
     border: "2px solid #ddd",
+    
   },
   logoImagePreview: {
     width: "100%",
@@ -229,7 +238,7 @@ const viewStyles = makeStyles((theme) => ({
     height: 600,
     "&: .MuiTabs-flexContainerVertical": {
       "&: .MuiButtonBase-root.Mui-selected": {
-        backgroundColor: "#000",
+        // backgroundColor: "#000",
       },
     },
     [theme.breakpoints.down('md')]: {
@@ -369,7 +378,8 @@ const viewStyles = makeStyles((theme) => ({
     },
   },
   marginBottom1: {
-    marginBottom: "10px !important",
+    "&&": {
+    marginBottom: "10px !important",}
   },
   marginBottom2: {
     marginBottom: "20px !important",
@@ -411,5 +421,14 @@ const viewStyles = makeStyles((theme) => ({
     marginBottom: 5
   },
 }));
+// const theme = createTheme();
 
-export default viewStyles;
+// export default function viewStyles() {
+//     return (
+//       <ThemeProvider theme={theme}>
+//         <ViewStyleTheme />
+//       </ThemeProvider>
+//     );
+//   }
+
+  export default viewStyles;

@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Grid, Box } from "@material-ui/core";
+import { Grid, Box } from"@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { userAddAction } from "../../store/action";
 import viewStyles from "../viewStyles";
@@ -53,7 +53,7 @@ const AddUser = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {UsersState.loading ? <Loading /> : null}
 
@@ -124,7 +124,7 @@ const AddUser = () => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 

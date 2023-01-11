@@ -15,7 +15,7 @@ import {
   Tabs,
   Tab,
   Collapse,
-} from "@material-ui/core";
+} from"@mui/material";
 import Rating from "@material-ui/lab/Rating";
 import convertDate from "../../utils/convertDate";
 import { connect } from "react-redux";

@@ -17,10 +17,10 @@ import {
   Tooltip,
   TextField,
   CardActions
-} from "@material-ui/core";
+} from"@mui/material";
 import Alert from "../utils/Alert";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles.js";
 import Loading from "../utils/loading";
 import clsx from "clsx";
@@ -74,7 +74,7 @@ const AllShippings = props => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={6}>
@@ -192,7 +192,7 @@ const AllShippings = props => {
           </Card>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ import {
   Paper,
   Tab,
   Tabs,
-} from "@material-ui/core";
+} from"@mui/material";
 import CashOnDelivery from "./cod";
 import DirectBankTransfer from "./directBankTransfer";
 import Paypal from "./paypal";
@@ -17,7 +17,7 @@ const Payment = () => {
     setTabVal(newValue);
   };
   return (
-    <Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Paper square>
@@ -49,7 +49,7 @@ const Payment = () => {
           </TabPanel>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
