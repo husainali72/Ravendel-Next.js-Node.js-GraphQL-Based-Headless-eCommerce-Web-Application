@@ -4,16 +4,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { isEmpty } from "./utils/helper";
 import { registerNav } from "./utils/navigation";
 import { insertToken } from "./store/action/loginAction";
-import MainLayout from "./main-layout";
+
 import Login from "./views/login";
 import { client_app_route_url } from "./utils/helper";
 import "./assets/scss/index.css";
 import "./App.css";
-import SideBarTheme from "./main-layout/Sidebar";
-import Dashboard from "./views/dashboard";
-import AllRoutes from "./routes/routes";
+
 import ThemeHelper from "./main-layout";
-import { TopBar } from "./views/components";
 
 const App = () => {
   const dispatch = useDispatch();

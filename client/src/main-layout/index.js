@@ -5,6 +5,7 @@ import { useMediaQuery } from "@mui/material";
 import clsx from "clsx";
 import AllRoutes from "../routes/routes";
 import Header from "./Header";
+
 import Footer from "./Footer";
 import Alert from "../views/utils/Alert";
 import Login from "../views/login";
