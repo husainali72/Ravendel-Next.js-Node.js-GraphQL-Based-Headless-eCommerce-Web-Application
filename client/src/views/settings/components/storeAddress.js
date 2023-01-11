@@ -3,14 +3,14 @@ import { Grid, TextField, Box, Button, Typography } from"@mui/material";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles.js";
 import { storeAddressUpdateAction } from "../../../store/action";
-import { SettingTextInput, SettingBlock } from "./setting-components";
+
 import { useDispatch, useSelector } from "react-redux";
 import {get} from "lodash";
 import { useEffect } from "react";
 
 import { SettingTextInput } from "./setting-components";
 import { ThemeProvider } from "@mui/material/styles";
-import { useSelector } from "react-redux";
+
 import theme from "../../../theme/index.js";
 const StoreAddressComponent = () => {
   const settingState = useSelector((state) => state.settings);

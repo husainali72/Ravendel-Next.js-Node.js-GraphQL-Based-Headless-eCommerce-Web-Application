@@ -21,6 +21,7 @@ import { get } from "lodash";
 // import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Draggable } from "react-drag-reorder";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { useRef } from "react";
 
 import theme from "../../../theme";
 const HomeSettingsTheme = () => {

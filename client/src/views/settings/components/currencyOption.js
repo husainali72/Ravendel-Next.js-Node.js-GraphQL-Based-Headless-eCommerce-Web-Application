@@ -6,6 +6,7 @@ import { SettingSelectComponent } from "./setting-components";
 import { SettingTextInput } from "./setting-components";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
+import { useEffect } from "react";
 const CurrencyOptionsComponent = () => {
   const settingState = useSelector((state) => state.settings);
   const [currencyOption, setCurrencyOption] = useState({
