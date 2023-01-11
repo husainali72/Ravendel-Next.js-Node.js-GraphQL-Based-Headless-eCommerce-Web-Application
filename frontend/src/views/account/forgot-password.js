@@ -6,7 +6,7 @@ import {
   Grid,
   TextField,
   Button
-} from "@material-ui/core";
+} from"@mui/material";
 import {PageTitle} from '../components';
 
 const ForgotPassword = () => {

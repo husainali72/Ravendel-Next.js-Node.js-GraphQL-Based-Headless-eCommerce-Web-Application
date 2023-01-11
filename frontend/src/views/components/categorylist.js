@@ -7,7 +7,7 @@ import {
   Grid,
   Box,
   Container,
-} from "@material-ui/core";
+} from"@mui/material";
 import { Link } from "react-router-dom";
 import PlaceHolder from "../../assets/images/product-placeholder.jpg";
 import { app_router_base_url, bucketBaseURL } from "../../utils/helper";

@@ -15,7 +15,7 @@ import {
   FormControlLabel,
   Checkbox,
   Tooltip,
-} from "@material-ui/core";
+} from"@mui/material";
 import Rating from "@material-ui/lab/Rating";
 
 const Address = () => {

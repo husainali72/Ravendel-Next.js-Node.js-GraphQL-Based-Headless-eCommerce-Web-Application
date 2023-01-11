@@ -1,15 +1,26 @@
-import React, { useState } from "react";
-import { Grid, Box, Button } from "@mui/material";
+import React, { Fragment, useState } from "react";
+import { Grid, TextField, Box, Button, Typography } from"@mui/material";
+import clsx from "clsx";
+import viewStyles from "../../viewStyles.js";
+import { storeAddressUpdateAction } from "../../../store/action";
+
+import { useDispatch, useSelector } from "react-redux";
+import {get} from "lodash";
+import { useEffect } from "react";
 
 import { SettingTextInput } from "./setting-components";
 import { ThemeProvider } from "@mui/material/styles";
-import { useSelector } from "react-redux";
+
 import theme from "../../../theme/index.js";
 const StoreAddressComponent = () => {
   const settingState = useSelector((state) => state.settings);
   const [address, setAddress] = useState({
-    ...settingState.settings.store.store_address,
+    // ...settingState.settings.store.store_address,
   });
+
+  useEffect(() => {
+    get(settingState, "settings.store.store_address")
+    }, [settingState.settings])
 
   const updateStoreAddress = () => {
     // dispatch(storeAddressUpdateAction(address));

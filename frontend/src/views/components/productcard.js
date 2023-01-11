@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from "react";
-import { Button, Zoom, Icon } from "@material-ui/core";
+import { Button, Zoom, Icon } from"@mui/material";
 import { Link } from "react-router-dom";
 import Rating from "@material-ui/lab/Rating";
 import { useSelector, useDispatch } from "react-redux";
@@ -197,7 +197,7 @@ const ProductCard = ({ productDetail, index, GirdProductView }) => {
 export default ProductCard;
 
 // import React, { useState, useEffect, Fragment } from "react";
-// import { Button, Zoom, Icon } from "@material-ui/core";
+// import { Button, Zoom, Icon } from"@mui/material";
 // import { Link } from "react-router-dom";
 // import { useSelector, useDispatch } from "react-redux";
 

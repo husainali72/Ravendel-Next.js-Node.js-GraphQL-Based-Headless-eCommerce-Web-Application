@@ -14,7 +14,7 @@ import {
 import viewStyles from "../../viewStyles.js";
 import TimeZones from "./timeZones";
 import Autocomplete from "@mui/material/Autocomplete";
-
+import { get } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
@@ -24,12 +24,14 @@ export const GeneralTheme = () => {
   const settingState = useSelector((state) => state.settings);
   const [timeZone, setTimeZone] = useState(15);
   const [general, setgeneral] = useState({
-    date_format: settingState.settings.general.date_format,
+    // date_format: settingState.settings.general.date_format,
   });
 
   useEffect(() => {
-    // dispatch(getDatesAction());
-  }, []);
+// dispatch(getDatesAction());
+
+get (settingState, "settings.general.date_format")
+  }, [settingState.settings]);
 
   const changeTimeZone = (val) => {
     setgeneral({ ...general, time_zone: val.value });

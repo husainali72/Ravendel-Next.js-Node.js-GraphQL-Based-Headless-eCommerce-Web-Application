@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Typography, Box, Container } from "@material-ui/core";
+import { Typography, Box, Container } from"@mui/material";
 import Slider from "react-slick";
 import ProductCard from "./productcard";
 import SectionLoading from "./sectionLoading";

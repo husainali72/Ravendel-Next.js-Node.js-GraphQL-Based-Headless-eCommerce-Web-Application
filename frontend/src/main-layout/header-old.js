@@ -9,7 +9,7 @@ import {
   Drawer,
   Badge,
   Typography,
-} from "@material-ui/core";
+} from"@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import CartSide from "./cart";
 import { Link } from "react-router-dom";

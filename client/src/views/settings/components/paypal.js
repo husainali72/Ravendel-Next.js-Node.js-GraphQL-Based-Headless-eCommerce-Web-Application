@@ -4,14 +4,21 @@ import viewStyles from "../../viewStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components/";
 import { ThemeProvider } from "@mui/material/styles";
+import { useEffect } from "react";
+import { get } from "lodash";
 import theme from "../../../theme/index.js";
 const PaypalComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [paypalInfo, setPaypalInfo] = useState({
-    ...settingState.settings.paymnet.paypal,
+    // ...settingState.settings.paymnet.paypal,
   });
+
+  useEffect(() => {
+   get(settingState, "settings.paymnet.paypal")
+   }, [settingState.settings])
+ 
 
   const updatePaypal = () => {
     // dispatch(paymentPaypalUpdateAction(paypalInfo));

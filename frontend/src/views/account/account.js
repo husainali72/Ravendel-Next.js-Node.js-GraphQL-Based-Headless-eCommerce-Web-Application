@@ -5,7 +5,7 @@ import {
   Container,
   Grid,
   Paper
-} from "@material-ui/core";
+} from"@mui/material";
 import Orders from "./components/orders";
 import Address from "./components/address";
 import RecentlyViewed from "./components/recently-viewed";

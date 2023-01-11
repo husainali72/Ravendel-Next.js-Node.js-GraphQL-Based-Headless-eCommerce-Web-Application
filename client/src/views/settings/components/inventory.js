@@ -7,14 +7,16 @@ import {
   SettingSelectComponent,
   SettingBlock,
 } from "./setting-components";
+import { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
+import {get} from "lodash";
 import theme from "../../../theme/index.js";
 const InventoryComponent = () => {
   const classes = viewStyles();
 
   const settingState = useSelector((state) => state.settings);
   const [inventory, setinventory] = useState({
-    ...settingState.settings.store.inventory,
+    // ...settingState.settings.store.inventory,
     notifications: {
       show_out_of_stock:
         settingState.settings.store.inventory.notifications.show_out_of_stock,
@@ -23,6 +25,12 @@ const InventoryComponent = () => {
           .alert_for_minimum_stock,
     },
   });
+
+  useEffect(() => {
+   
+    get(settingState, "settings.store.inventory")
+  }, [settingState.settings])
+ 
 
   const updateInventory = () => {
     // dispatch(storeInventoryUpdateAction(inventory));

@@ -6,13 +6,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components/";
 import theme from "../../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
+import {get} from "lodash";
+import { useEffect } from "react";
 const StripeComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [stripeInfo, setstripeInfo] = useState({
-    ...settingState.settings.paymnet.stripe,
+    // ...settingState.settings.paymnet.stripe,
   });
+
+  useEffect(() => {
+    get(settingState, "settings.paymnet.stripe")
+    }, [settingState.settings])
+
 
   const updateStripe = () => {
     // dispatch(paymentStripeUpdateAction(stripeInfo));

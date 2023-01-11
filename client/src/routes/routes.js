@@ -295,6 +295,7 @@ const RoutesPath = [
 ];
 
 const AllRoutes = () => {
+  
   return (
     <>
       <Routes>

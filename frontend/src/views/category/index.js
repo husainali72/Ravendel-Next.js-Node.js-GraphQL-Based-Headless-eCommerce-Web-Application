@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { catProductAction, filterProductAction } from "../../store/action";
-import { Typography, Box, Container, Grid } from "@material-ui/core";
+import { Typography, Box, Container, Grid } from"@mui/material";
 import { isEmpty } from "../../utils/helper";
 import { Helmet } from "react-helmet";
 import {PageTitle, Loading, ProductCard, FilterSideBar} from '../components';
