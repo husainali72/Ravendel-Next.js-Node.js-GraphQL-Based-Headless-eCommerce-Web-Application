@@ -4,6 +4,7 @@ import {get} from "lodash";
 
 import { useSelector } from "react-redux";
 import { SettingSelectComponent } from "./setting-components";
+import { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 const MeasurementsComponent = () => {

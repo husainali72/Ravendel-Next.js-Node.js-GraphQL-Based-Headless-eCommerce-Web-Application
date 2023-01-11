@@ -7,6 +7,7 @@ import {
   SettingSelectComponent,
   SettingBlock,
 } from "./setting-components";
+import { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import {get} from "lodash";
 import theme from "../../../theme/index.js";

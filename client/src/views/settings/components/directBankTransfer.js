@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput, SettingBlock } from "./setting-components/";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
+import { useEffect } from "react";
 import  { get } from "lodash";
 const DirectBankTransferTheme = () => {
   const classes = viewStyles();
