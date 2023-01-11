@@ -79,11 +79,21 @@ const AllCouponsTheme = () => {
                 <Table stickyHeader aria-label="allcoupons-table" size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Code</TableCell>
-                      <TableCell>Coupon type</TableCell>
-                      <TableCell>Coupon Amount</TableCell>
-                      <TableCell>Expiry date</TableCell>
-                      <TableCell>Action</TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Code
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Coupon type
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Coupon Amount
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Expiry date
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Action
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

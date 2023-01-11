@@ -2,7 +2,7 @@ import React from "react";
 import clsx from "clsx";
 import { makeStyles } from "@mui/styles";
 import { Drawer } from "@mui/material";
-import MenuBar from "./Menubar";
+import MenuBar from "./menubar";
 import theme from "../theme";
 import { ThemeProvider } from "@mui/material/styles";
 const useStyles = makeStyles((theme) => ({

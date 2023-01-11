@@ -19,7 +19,7 @@ import {
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { pagesAction, pageDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
+import { useNavigate } from "react-router-dom";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -34,7 +34,7 @@ const AllPagesComponent = (props) => {
   const pageState = useSelector((state) => state.pages);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (isEmpty(pageState.pages)) {
       // dispatch(pagesAction());
@@ -79,10 +79,18 @@ const AllPagesComponent = (props) => {
                 <Table stickyHeader aria-label="pages-table" size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Title</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Created</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Title
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Status
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Created
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Actions
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -103,7 +111,7 @@ const AllPagesComponent = (props) => {
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(
+                                  navigate(
                                     `${client_app_route_url}edit-page/${page.id}`
                                   )
                                 }

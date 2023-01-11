@@ -72,10 +72,18 @@ const AllOrdersComponent = () => {
                 >
                   <TableHead>
                     <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Name
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Date
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Status
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Actions
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

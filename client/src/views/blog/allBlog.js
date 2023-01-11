@@ -83,13 +83,25 @@ const AllBlogComponent = () => {
                 <Table stickyHeader aria-label="blogs-table" size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.avtarTd}>
+                      <TableCell
+                        className={classes.avtarTd}
+                        variant="contained"
+                        color="primary"
+                      >
                         <PeopleIcon />
                       </TableCell>
-                      <TableCell>Title</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Title
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Status
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Date
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Actions
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

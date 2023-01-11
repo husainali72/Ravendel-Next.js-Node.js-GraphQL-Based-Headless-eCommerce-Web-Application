@@ -2,8 +2,6 @@ import { makeStyles } from "@mui/styles";
 
 const DashboardStyles = makeStyles((theme) => ({
   dashboardcard: {
-    
-
     height: "100%",
   },
   dashboardcardtitle: {
@@ -26,27 +24,22 @@ const DashboardStyles = makeStyles((theme) => ({
     },
   },
   content: {
-   
-  
     padding: 0,
   },
   productImage: {
-    
-    
     height: 60,
     width: 60,
     borderRadius: "100%",
     marginRight: 10,
   },
 }));
-const theme = createTheme();
 
 // export default function DashboardStyles() {
-   
+
 //     return (
 //       <ThemeProvider theme={theme}>
 //         < DashboardTheme />
 //       </ThemeProvider>
 //     );
 //   }
- export default DashboardStyles;
+export default DashboardStyles;
