@@ -86,16 +86,8 @@ export default {
     color: palette.text.secondary,
     fontSize: "11px",
     fontWeight: 500,
-<<<<<<< HEAD
-    letterSpacing: '0.33px',
-    lineHeight: '13px',
-    textTransform: 'uppercase'
-  }
-};
-=======
     letterSpacing: "0.33px",
     lineHeight: "13px",
     textTransform: "uppercase",
   },
 };
->>>>>>> dcfef4b9dc5b378cdc4be3a6a997f06bb3a26e09

@@ -1,16 +1,5 @@
 // import palette from "../palette";
 
-<<<<<<< HEAD
-export default {
-  styleOverrides: {
-  root: {
-    color: palette.icon,
-    '&:hover': {
-      backgroundColor: 'rgba(0, 0, 0, 0.03)'
-    }
-  }}
-};
-=======
 // export default {
 //   root: {
 //     color: palette.icon,
@@ -36,4 +25,3 @@ export default {
 //     // },
 //   },
 // };
->>>>>>> dcfef4b9dc5b378cdc4be3a6a997f06bb3a26e09

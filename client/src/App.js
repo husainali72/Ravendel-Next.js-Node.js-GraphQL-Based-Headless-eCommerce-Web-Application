@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-<<<<<<< HEAD
-import {  Routes, Route } from "react-router-dom";
-=======
 import { Routes, Route, useNavigate } from "react-router-dom";
->>>>>>> dcfef4b9dc5b378cdc4be3a6a997f06bb3a26e09
 import { useSelector, useDispatch } from "react-redux";
 import { isEmpty } from "./utils/helper";
 import { registerNav } from "./utils/navigation";
@@ -17,10 +13,6 @@ import SideBarTheme from "./main-layout/Sidebar";
 import Dashboard from "./views/dashboard";
 import AllRoutes from "./routes/routes";
 import ThemeHelper from "./main-layout";
-<<<<<<< HEAD
-=======
-import { TopBar } from "./views/components";
->>>>>>> dcfef4b9dc5b378cdc4be3a6a997f06bb3a26e09
 
 const App = () => {
   const dispatch = useDispatch();
@@ -62,16 +54,6 @@ const App = () => {
   return (
     <>
       <Routes>
-<<<<<<< HEAD
-        <Route
-          exact={true}
-          path={`${client_app_route_url}login`}
-          element={<Login/>}
-        ></Route>
-        
-      </Routes> 
-      <ThemeHelper />
-=======
         <Route exact={true} path={`/`} element={<Login />}></Route>
         <Route
           exact={true}
@@ -81,7 +63,6 @@ const App = () => {
       </Routes>
       {console.log(isEmpty(login.user_token))}
       {!isEmpty(login.user_token) ? <ThemeHelper /> : null}
->>>>>>> dcfef4b9dc5b378cdc4be3a6a997f06bb3a26e09
     </>
   );
  };
