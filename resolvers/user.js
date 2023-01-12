@@ -112,7 +112,7 @@ module.exports = {
           totalSales += orderSale.grand_total
         })
         dashboardData.totalSales = totalSales
-        return dashboardData
+        return dashboardData 
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);

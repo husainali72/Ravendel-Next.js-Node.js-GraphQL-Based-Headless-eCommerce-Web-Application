@@ -9,7 +9,7 @@ module.exports = gql`
     productCount: Int
     userCount: Int
     customerCount: Int
-    latestProducts: customArray
+    latestProducts: customArray 
     totalSales: Int
   }
   type paginationInfo {
