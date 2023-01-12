@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Product = require("../models/Product");
 const Customer = require("../models/Customer");
+const Order = require("../models/Order");
 const {
   isEmpty,
   putError,
@@ -97,6 +98,7 @@ module.exports = {
     dashboardData: async (root, args) => {
       try {
         const dashboardData = {}
+        let totalSales = 0;
         dashboardData.productCount = await Product.countDocuments({
           status: "Publish",
         });
@@ -105,7 +107,11 @@ module.exports = {
         dashboardData.latestProducts = await Product.find({})
           .sort({ date: "desc" })
           .limit(2);
-
+        let existingOrderSales = await Order.find({})
+        existingOrderSales = existingOrderSales.map(orderSale=>{
+          totalSales += orderSale.grand_total
+        })
+        dashboardData.totalSales = totalSales
         return dashboardData
       } catch (error) {
         error = checkError(error);
