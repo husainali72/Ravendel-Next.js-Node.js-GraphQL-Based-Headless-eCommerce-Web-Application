@@ -1,11 +1,16 @@
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Setting = require("../models/Setting");
+const Shipping = require("../models/Shipping");
+const Tax = require("../models/Tax");
+const Coupon = require("../models/Coupon");
 const {
   isEmpty,
   MESSAGE_RESPONSE,
   _validate,
   _validatenested,
+  subTotalDetailsEntry,
+  subTotalSummaryEntry
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -118,8 +123,8 @@ module.exports = {
             payment_method: args.billing.transaction_id,
             confirm: true
           })
-            console.log("Payment", payment);
-            console.log("payment.status", payment.status);
+            // console.log("Payment", payment);
+            // console.log("payment.status", payment.status);
             if( payment.status == 'succeeded'){
             status = 'success';
           }else{
@@ -142,11 +147,16 @@ module.exports = {
           grand_total: c_grand_total,
         });
         newOrder.products = args.products;
-
+        const subTotalDetails = await subTotalDetailsEntry(args.coupon_code, Coupon, Shipping, Tax)
+        const subTotalSummary = await subTotalSummaryEntry(args.products, args.coupon_code, Coupon, Shipping, Tax)
+        newOrder.sub_total_details = subTotalDetails
+        newOrder.sub_total_summary = subTotalSummary
+        // console.log(newOrder.sub_total_details)
         //console.log(newOrder);
         await newOrder.save();
         return MESSAGE_RESPONSE("AddSuccess", "Order", true);
       } catch (error) {
+        console.log(error)
         return MESSAGE_RESPONSE("CREATE_ERROR", "Order", false);
       }
     },
