@@ -509,26 +509,35 @@ module.exports = {
       }
       try {
         const cart = await Cart.findOne({ user_id: args.user_id });
-        //console.log("args======",args)
+        const existingProducts = cart && cart.products ? cart.products : []
         var carttotal = 0;
         for (let i in args.products) {
           if (args.products[i].product_id) {
             const product = await Product.findById({ _id: args.products[i].product_id });
-            if (product.pricing.sellprice > 0) {
-              args.products[i].total = args.products[i].qty * product.pricing.sellprice;
-            } else {
-              args.products[i].total = args.products[i].qty * product.pricing.price;
-            }
+            // assign product name
+            args.products[i].product_title = product.name
+            // assign product image
+            args.products[i].product_image = product.feature_image.thumbnail
+            // assign product price 
+            args.products[i].product_price = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price
+            // calculate total of individual product
+            args.products[i].total = product.pricing.sellprice > 0 ? args.products[i].qty * product.pricing.sellprice : args.products[i].qty * product.pricing.price;
           }
           carttotal = carttotal + args.products[i].total;
+          existingProducts.push(args.products[i])
         }
-
-        const newCart = new Cart({
-          user_id: args.user_id,
-          total: carttotal,
-          products: args.products
-        });
-        await newCart.save();
+        if(cart) {
+          cart.total += carttotal
+          cart.products = existingProducts
+          await cart.save();
+        }else{
+          const newCart = new Cart({
+            user_id: args.user_id,
+            total: carttotal,
+            products: existingProducts
+          });
+          await newCart.save();
+        }
         return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
       } catch (error) {
         // console.log(error);
@@ -594,6 +603,24 @@ module.exports = {
         } else {
           return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
         }
+      } catch (error) {
+        error = checkError(error);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Cart", false);
+      }
+    },
+
+    changeQty: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        const cart = await Cart.findOne({ user_id: args.user_id });
+        for (let i in cart.products) {
+          // console.log(cart.products[i])
+          if(cart.products[i].product_id.toString() === args.product_id.toString()){
+            cart.products[i].qty = args.qty
+          }
+        }
+        await cart.save()
+        return MESSAGE_RESPONSE("UpdateSuccess", "Quantity", true);
       } catch (error) {
         error = checkError(error);
         return MESSAGE_RESPONSE("UPDATE_ERROR", "Cart", false);
