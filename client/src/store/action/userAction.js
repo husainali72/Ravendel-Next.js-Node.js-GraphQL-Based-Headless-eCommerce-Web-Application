@@ -3,73 +3,77 @@ import {
   GET_USER,
   ADD_USER,
   UPDATE_USER,
-  DELETE_USER
+  DELETE_USER,
+  GET_DASHBOARDDATA,
 } from "../../queries/userQuery";
-import {client_app_route_url} from '../../utils/helper';
+import { client_app_route_url } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
 
-export const usersAction = () => dispatch => {
+export const usersAction = () => (dispatch) => {
   dispatch({
-    type: USER_LOADING
+    type: USER_LOADING,
   });
   query(GET_USERS)
-    .then(response => {
+    .then((response) => {
       if (response.data.users.message.success) {
         return dispatch({
           type: USERS_SUCCESS,
-          payload: response.data.users.data
+          payload: response.data.users.data,
         });
-      }else {
+      } else {
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.users.message.message, error: true }
+          payload: {
+            boolean: true,
+            message: response.data.users.message.message,
+            error: true,
+          },
         });
-
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: USER_FAIL
+        type: USER_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const userAction = id => dispatch => {
+export const userAction = (id) => (dispatch) => {
   dispatch({
-    type: USER_LOADING
+    type: USER_LOADING,
   });
   query(GET_USER, { id: id })
-    .then(response => {
+    .then((response) => {
       if (response) {
         return dispatch({
           type: USER_SUCCESS,
-          payload: response.data.user
+          payload: response.data.user,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: USER_FAIL
+        type: USER_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const userAddAction = object => dispatch => {
+export const userAddAction = (object) => (dispatch) => {
   dispatch({
-    type: USER_LOADING
+    type: USER_LOADING,
   });
   mutation(ADD_USER, object)
-    .then(response => {
+    .then((response) => {
       if (response.data.addUser.success) {
         dispatch({
           type: USER_FAIL,
@@ -84,37 +88,40 @@ export const userAddAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "User added successfully",
-            error: false
-          }
+            error: false,
+          },
         });
-      }else {
+      } else {
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.addUser.error, error: true }
+          payload: {
+            boolean: true,
+            message: response.data.addUser.error,
+            error: true,
+          },
         });
-
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: USER_FAIL
+        type: USER_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const userUpdateAction = object => dispatch => {
+export const userUpdateAction = (object) => (dispatch) => {
   dispatch({
-    type: USER_LOADING
+    type: USER_LOADING,
   });
   mutation(UPDATE_USER, object)
-    .then(response => {
+    .then((response) => {
       if (response.data.updateUser.success) {
         dispatch({
-          type: USER_FAIL
+          type: USER_FAIL,
         });
 
         dispatch({
@@ -122,74 +129,150 @@ export const userUpdateAction = object => dispatch => {
           payload: {
             boolean: true,
             message: "User updated successfully",
-            error: false
-          }
+            error: false,
+          },
         });
 
         jumpTo(`${client_app_route_url}all-users`);
 
         dispatch(usersAction());
-        
+
         return;
-      }else {
+      } else {
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.updateUser.message, error: true }
+          payload: {
+            boolean: true,
+            message: response.data.updateUser.message,
+            error: true,
+          },
         });
-
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: USER_FAIL
+        type: USER_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
 
-export const userDeleteAction = id => dispatch => {
+export const userDeleteAction = (id) => (dispatch) => {
   dispatch({
-    type: USER_LOADING
+    type: USER_LOADING,
   });
   mutation(DELETE_USER, { id })
-    .then(response => {
+    .then((response) => {
       if (response.data.deleteUser.success) {
         dispatch({
           type: USER_FAIL,
         });
 
         dispatch(usersAction());
-        
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
             message: "User deleted successfully",
-            error: false
-          }
+            error: false,
+          },
         });
-      }else {
+      } else {
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: response.data.deleteUser.message, error: true }
+          payload: {
+            boolean: true,
+            message: response.data.deleteUser.message,
+            error: true,
+          },
         });
-
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: USER_FAIL
+        type: USER_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: true, message: error, error: true },
       });
     });
 };
+// export const dashboardAction = () => (dispatch) => {
+//   dispatch({
+//     type: USER_LOADING,
+//   });
+//   query(GET_DASHBOARDDATA)
+//     .then((response) => {
+//       const [error, success, message, data] = getResponseHandler(
+//         response,
+//         "dashboard"
+//       );
+//       dispatch({
+//         type: LOADING_FALSE,
+//       });
 
+//       if (error) {
+//         dispatch({
+//           type: ALERT_SUCCESS,
+//           payload: { boolean: true, message: message, error: true },
+//         });
+//       }
+
+//       if (success) {
+//         return dispatch({
+//           type: USER_SUCCESS,
+//           payload: data,
+//         });
+//       }
+//     })
+//     .catch((error) => {
+//       dispatch({
+//         type: USER_FAIL,
+//       });
+//       return dispatch({
+//         type: ALERT_SUCCESS,
+//         payload: { boolean: true, message: error, error: true },
+//       });
+//     });
+// };
+export const dashboardAction = () => (dispatch) => {
+  dispatch({
+    type: USER_LOADING,
+  });
+  query(GET_DASHBOARDDATA)
+    .then((response) => {
+      console.log("response----dashboard", response);
+      if (response.data.dashboardData) {
+        return dispatch({
+          type: USERS_SUCCESS,
+          payload: response.data.dashboardData,
+        });
+      } else {
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: true,
+            message: response.data.dashboardData,
+            error: true,
+          },
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: USER_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: true, message: error, error: true },
+      });
+    });
+};
 export const USER_LOADING = "USER_LOADING";
 export const USERS_SUCCESS = "USERS_SUCCESS";
 export const USER_SUCCESS = "USER_SUCCESS";

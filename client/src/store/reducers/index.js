@@ -15,7 +15,7 @@ import reviews from "./reviewReducer";
 import pages from "./pageReducer";
 import settings from "./settingReducer";
 import product_attributes from "./productAttributeReducer";
-
+import dashboardReducer from "./dashboardReducer";
 // Combine Reducers
 const MasterReducer = combineReducers({
   login,
@@ -33,6 +33,7 @@ const MasterReducer = combineReducers({
   pages,
   settings,
   product_attributes,
+  dashboardReducer,
 });
 
 export default MasterReducer;

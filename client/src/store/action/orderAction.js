@@ -14,8 +14,6 @@ import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
 import { useNavigate } from "react-router-dom";
 
-
-
 export const ordersAction = () => (dispatch) => {
   dispatch({
     type: ORDER_LOADING,
@@ -119,7 +117,7 @@ export const orderDeleteAction = (id) => (dispatch) => {
 
       if (success) {
         dispatch(ordersAction());
-       navigate(`${client_app_route_url}all-orders`);
+        navigate(`${client_app_route_url}all-orders`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

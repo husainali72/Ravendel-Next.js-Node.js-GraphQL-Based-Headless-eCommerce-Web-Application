@@ -5,8 +5,6 @@ const {
   isEmpty,
   MESSAGE_RESPONSE,
   _validate,
-  checkRole,
-  _duplicate
 } = require("./helpers");
 const bcrypt = require("bcryptjs");
 
@@ -179,8 +177,7 @@ const CREATE_FUNC = async (
   data,
   args,
   path,
-  validation,
-  duplicate
+  validation
 ) => {
   /////////////////////////////////////////
   if (!data.queryName && !token) {
@@ -192,14 +189,6 @@ const CREATE_FUNC = async (
     if (!isEmpty(errors)) {
       return {
         message: errors,
-        success: false,
-      };
-    }
-
-    const duplicateErrors = await _duplicate(duplicate, data, modal);
-    if (!isEmpty(duplicateErrors)) {
-      return {
-        message: duplicateErrors,
         success: false,
       };
     }
@@ -260,43 +249,25 @@ const CREATE_FUNC = async (
 
     }
 
-    if(name && name === "User" && data.role){
-      const result = checkRole(data.role)
-      if(result.success) data.role = result.role
-      else return MESSAGE_RESPONSE("InvalidRole", name, false);
+    if (data.name) {
+      const nameresponse = await modal.findOne({ name: data.name });
+      if (nameresponse) {
+        return MESSAGE_RESPONSE("DUPLICATE", "Name", false);
+      }
     }
-
-    // if (data.title) {
-    //   const titleresponse = await modal.findOne({ title: data.title });
-    //   if (titleresponse) {
-    //     return MESSAGE_RESPONSE("DUPLICATE", "Title", false);
-    //   }
-    // }
-    // if (data.url) {
-    //   const urlresponse = await modal.findOne({ url: data.url });
-    //   if (urlresponse) {
-    //     return MESSAGE_RESPONSE("DUPLICATE", "Url", false);
-    //   }
-    // }
-    // if (data.name) {
-    //   const nameresponse = await modal.findOne({ name: data.name });
-    //   if (nameresponse) {
-    //     return MESSAGE_RESPONSE("DUPLICATE", "Name", false);
-    //   }
-    // }
-    // if (data.code) {
-    //   const unitresponse = await modal.findOne({ code: data.code });
-    //   if (unitresponse) {
-    //     return MESSAGE_RESPONSE("DUPLICATE", "Code", false);
-    //   }
-    // }
-    // if (data.email) {
-    //   const emailresponse = await modal.find({$and: [{product_id: data.product_id},{email: data.email}]});
-    //   //console.log("emailres===",emailresponse)
-    //   if (emailresponse.length>0) {
-    //     return MESSAGE_RESPONSE("DUPLICATE", "email", false);
-    //   }
-    // }
+    if (data.code) {
+      const unitresponse = await modal.findOne({ code: data.code });
+      if (unitresponse) {
+        return MESSAGE_RESPONSE("DUPLICATE", "Code", false);
+      }
+    }
+    if (data.email) {
+      const emailresponse = await modal.find({$and: [{product_id: data.product_id},{email: data.email}]});
+      //console.log("emailres===",emailresponse)
+      if (emailresponse.length>0) {
+        return MESSAGE_RESPONSE("DUPLICATE", "email", false);
+      }
+    }
     //console.log('DATA--------',data);
     const response = new modal(data);
     // console.log('RESPONSE--------', response)
@@ -336,8 +307,7 @@ const UPDATE_FUNC = async (
     if (!updateId) {
       return MESSAGE_RESPONSE("ID_ERROR", name, false);
     }
-    
-    let response = await modal.findById(updateId);
+    const response = await modal.findById(updateId);
     if (response) {
       //  console.log("args", args);
       if (args.updatedImage || args.update_image) {

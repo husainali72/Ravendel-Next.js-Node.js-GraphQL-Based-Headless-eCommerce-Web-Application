@@ -4,45 +4,43 @@ import { useTheme } from "@mui/styles";
 import LatestOrder from "./components/latestOrder";
 import LatestProducts from "./components/latestProduct";
 import DashboardCard from "./components/dashboardCard";
-import { getDashboardData } from "../../utils/service";
+
 import { useSelector, useDispatch } from "react-redux";
 import theme from "../../theme";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import { ThemeProvider } from "@mui/material/styles";
+import { dashboardAction } from "../../store/action/dashboardAction";
+import { isEmpty } from "lodash";
+import dashboardReducer from "../../store/reducers/dashboardReducer";
 const DashboardComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
   const Orders = useSelector((state) => state.orders);
-  const [dashBoardCount, setdashBoardCount] = useState({});
-  const [loader, setLoader] = useState(true);
+  const data = useSelector((state) => state.dashboardReducer.dashboard_data);
 
+  const [dashBoardCount, setdashBoardCount] = useState({});
+  const loader = useSelector((state) => state.dashboardReducer.loading);
+  console.log(data);
   useEffect(() => {
-    async function fetchData() {
-      setLoader(true);
-      var data = {};
-      try {
-        data = await getDashboardData();
-        setLoader(false);
-        setdashBoardCount(data);
-      } catch (error) {
-        setLoader(false);
-        setdashBoardCount({});
-      }
+    if (isEmpty(data)) {
+      // setLoader(true);
+      dispatch(dashboardAction());
+    } else {
+      console.log(data);
+      //  / setLoader(false);
+      setdashBoardCount({ ...data });
     }
-    fetchData();
-    // dispatch(ordersAction())
-  }, []);
+  }, [data]);
 
   return (
-   
     <Box component="div" p={isSmall ? 1 : 4}>
       <Grid container spacing={isSmall ? 1 : 4}>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <DashboardCard
-            count={dashBoardCount.user_count}
+            count={dashBoardCount.userCount}
             title={"TOTAL USERS"}
             Icon={({ className }) => (
               <PeopleAltOutlinedIcon className={className} />
@@ -52,7 +50,7 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <DashboardCard
-            count={dashBoardCount.product_count}
+            count={dashBoardCount.productCount}
             title={"TOTAL PRODUCTS"}
             Icon={({ className }) => (
               <StorefrontOutlinedIcon className={className} />
@@ -62,7 +60,7 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <DashboardCard
-            count={dashBoardCount.customer_count}
+            count={dashBoardCount.customerCount}
             title={"TOTAL CUSTOMERS"}
             Icon={({ className }) => (
               <PeopleAltOutlinedIcon className={className} />
@@ -82,12 +80,11 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={4} xl={3} md={12} xs={12}>
           <LatestProducts
-            products={dashBoardCount.latest_products}
+            products={dashBoardCount.latestProducts}
             loader={loader}
           />
         </Grid>
         <Grid item lg={8} xl={9} md={12} xs={12}>
-
           <LatestOrder ordersState={Orders} />
         </Grid>
       </Grid>
