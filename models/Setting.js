@@ -315,6 +315,9 @@ const SeetingSchema = new Schema(
             label: {
               type: String
             },
+            url: {
+              type: String
+            },
             visible: {
               type: Boolean,
             },
