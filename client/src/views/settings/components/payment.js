@@ -1,10 +1,5 @@
 import React, { Fragment, useState } from "react";
-import {
-  Grid,
-  Paper,
-  Tab,
-  Tabs,
-} from"@mui/material";
+import { Grid, Paper, Tab, Tabs } from "@mui/material";
 import CashOnDelivery from "./cod";
 import DirectBankTransfer from "./directBankTransfer";
 import Paypal from "./paypal";
@@ -36,9 +31,9 @@ const PaymentComponent = () => {
               <Tab label="Paypal" {...TabProps(3)} />
             </Tabs>
           </Paper>
-          <TabPanel value={tabVal} index={0}>
+          {/* <TabPanel value={tabVal} index={0}>
             <CashOnDelivery />
-          </TabPanel>
+          </TabPanel> */}
           <TabPanel value={tabVal} index={1}>
             <DirectBankTransfer />
           </TabPanel>

@@ -85,11 +85,12 @@ const ViewOrderComponent = ({ params }) => {
   });
 
   useEffect(() => {
-    console.log(singleOrder);
+    console.log("singleOrder---", singleOrder);
     if (isEmpty(singleOrder)) {
       dispatch(orderAction(params.id));
     } else {
       setorder({ ...singleOrder });
+      console.log(singleOrder);
     }
 
     // for (let i in orders.orders) {
@@ -577,41 +578,52 @@ const ViewOrderComponent = ({ params }) => {
                       Total
                     </Typography>
                     <Typography variant="body1" className={classes.mtb2}>
-                      Coupon code <b>ABC</b> 10%
+                      {/* Coupon code{" "} */}
+                      <b>{singleOrder.sub_total_details.coupon_code}</b> 10%
                     </Typography>
                     <Typography variant="body1" className={classes.mtb2}>
-                      Shipping Name
+                      {/* Shipping Name */}
+                      {singleOrder.sub_total_details.shipping_name}
                     </Typography>
                     <Typography variant="body1" className={classes.mtb2}>
-                      Tax Name
+                      {/* Tax Name */}
+                      {singleOrder.sub_total_details.tax_name}
                     </Typography>
                     <Divider />
-                    <Typography variant="h5" className={classes.mtb2}>
+                    <Typography variant="body1" className={classes.mtb2}>
                       SubTotal
                     </Typography>
                   </Grid>
-                  {order.products.map((product, index) => (
-                    <>
-                      <Grid item md={3} className={classes.textRight}>
-                        <Typography variant="h6" className={classes.mtb2}>
-                          ${product.qty * product.cost}
-                        </Typography>
-                        <Typography variant="h6" className={classes.mtb2}>
-                          <span className={classes.discount}>- $40.00</span>
-                        </Typography>
-                        <Typography variant="h6" className={classes.mtb2}>
-                          $100.00
-                        </Typography>
-                        <Typography variant="h6" className={classes.mtb2}>
-                          $60.00
-                        </Typography>
-                        <Divider />
-                        <Typography variant="h5" className={classes.mtb2}>
-                          ${product.qty * product.cost}
-                        </Typography>
-                      </Grid>
-                    </>
-                  ))}
+                  {singleOrder.sub_total_summary &&
+                  singleOrder.sub_total_summary.length
+                    ? singleOrder.sub_total_summary.map((product, index) => (
+                        <>
+                          <Grid item md={3} className={classes.textRight}>
+                            <Typography variant="h6" className={classes.mtb2}>
+                              ${product.qty * product.cost}
+                              {product.total}
+                            </Typography>
+                            <Typography variant="h6" className={classes.mtb2}>
+                              <span className={classes.discount}>
+                                - {product.coupon_value}
+                              </span>
+                            </Typography>
+                            <Typography variant="h6" className={classes.mtb2}>
+                              $100.00
+                              {product.shipping_value}
+                            </Typography>
+                            <Typography variant="h6" className={classes.mtb2}>
+                              {/* $60.00 */}
+                              {product.tax_value}
+                            </Typography>
+                            <Divider />
+                            <Typography variant="h5" className={classes.mtb2}>
+                              {product.sub_total}
+                            </Typography>
+                          </Grid>
+                        </>
+                      ))
+                    : "No data"}
                 </Grid>
               </CardContent>
             </Card>
