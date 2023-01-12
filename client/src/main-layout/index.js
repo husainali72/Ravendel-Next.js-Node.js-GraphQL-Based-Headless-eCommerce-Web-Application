@@ -4,17 +4,17 @@ import { ThemeProvider, useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 import clsx from "clsx";
 import AllRoutes from "../routes/routes";
-import Header from "./Header";
-import Footer from "./Footer";
+import Header from "./header";
+import Footer from "./footer";
 import Alert from "../views/utils/Alert";
 import Login from "../views/login";
 import { useSelector } from "react-redux";
 import { isEmpty } from "../utils/helper";
-import SideBar from "./Sidebar";
+import SideBar from "./sidebar";
 import theme from "../theme";
 const MainLayout = ({ children }) => {
   const classes = useStyles();
-  const theme = useTheme();
+  // const theme = useTheme();
   const login = useSelector((state) => state.login);
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"), {
     defaultMatches: true,
@@ -62,7 +62,7 @@ console.log("user_token", login.user_token)
   );
 };
 
-const theme = createTheme();
+// const theme = createTheme();
 const useStyles = makeStyles((theme) => ({
   root: {
     "&&": {
