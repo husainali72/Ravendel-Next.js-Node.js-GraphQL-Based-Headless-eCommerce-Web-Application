@@ -150,7 +150,9 @@ module.exports = {
         const subTotalDetails = await subTotalDetailsEntry(args.coupon_code, Coupon, Shipping, Tax)
         const subTotalSummary = await subTotalSummaryEntry(args.products, args.coupon_code, Coupon, Shipping, Tax)
         newOrder.sub_total_details = subTotalDetails
-        newOrder.sub_total_summary = subTotalSummary
+        newOrder.sub_total_summary = subTotalSummary.subTotalSummary
+        newOrder.subtotal = subTotalSummary.orderSubTotal
+        newOrder.grand_total = subTotalSummary.orderGrandTotal
         // console.log(newOrder.sub_total_details)
         //console.log(newOrder);
         await newOrder.save();

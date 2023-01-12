@@ -541,16 +541,17 @@ module.exports.subTotalDetailsEntry = subTotalDetailsEntry
 
 const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingModel, taxModel) => {
   const subTotalSummary = []
+  let orderSubTotal = 0, orderGrandTotal = 0;
   let shippingValue, taxValue, couponValue, couponType;
   // assign shipping_value
   let shipping = await shippingModel.findOne({})
   shipping = shipping.shipping_class.filter(shipClass => {
-    if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) return shippingValue = 10
+    if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) return shippingValue = shipClass.amount
   })
   // assign tax_value
   let tax = await taxModel.findOne({})
   tax = tax.tax_class.filter(taxClass => {
-    if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return taxValue = 20
+    if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return taxValue = taxClass.percentage
   })
   // assign coupon_code, amount, type
   const coupon = await couponModel.findOne({code: couponCode})
@@ -582,8 +583,17 @@ const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingMo
     else if(couponType === "amount-discount") couponCalc = couponValue !== 0 ? couponValue : 0
     // add tax add shipping subtract coupon
     subTotalSummaryItem.total = subTotal + taxCalc + shippingCalc - couponCalc
+    // add subtotal value for order subtotal
+    orderSubTotal += subTotal
+    // add grandtotal value for order grandtotal
+    orderGrandTotal += subTotalSummaryItem.total
+    // push item to orderSummary array
     subTotalSummary.push(subTotalSummaryItem)
   })
-  return subTotalSummary
+  return {
+    subTotalSummary,
+    orderSubTotal,
+    orderGrandTotal
+  }
 }
 module.exports.subTotalSummaryEntry = subTotalSummaryEntry
