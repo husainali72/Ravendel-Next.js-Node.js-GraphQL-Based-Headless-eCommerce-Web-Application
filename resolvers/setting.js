@@ -321,8 +321,18 @@ module.exports = {
           setting.appearance.home.add_section_in_home.category_id = ""
         }
 
+        var add_section_web = [];
+        for (let i in args.add_section_web) {
+          add_section_web.push({
+            label: args.add_section_web[i].label,
+            url: args.add_section_web[i].url,
+            visible: args.add_section_web[i].visible
+          });
+        }
+
         setting.appearance.home.slider = slider;
         setting.appearance.home.add_section_in_home = args.add_section_in_home;
+        setting.appearance.home.add_section_web = args.add_section_web;
         return await setting.save();
       } catch (error) {
         error = checkError(error);
@@ -341,7 +351,7 @@ module.exports = {
           if (args.mobile_section[i].update_image) {
             imgObject = await imageUpload(
               args.mobile_section[i].update_image[0].file,
-              "/assets/images/setting/mobile","MobileSetting"
+              "/assets/images/setting/","Setting"
             );
 
             if (imgObject.success === false) {
@@ -350,14 +360,14 @@ module.exports = {
           }
 
           mobile_section.push({
-            label: args.label,
-            mobile_section: imgObject.data || args.mobile_section[i].image,
-            visible: args.visible,
-            url: args.url,
+            label: args.mobile_section[i].label,
+            section_img: imgObject.data || args.mobile_section[i].section_img,
+            url: args.mobile_section[i].url,
+            visible: args.mobile_section[i].visible,
           });
         }
         
-        setting.appearance.mobile.mobile_add_section_in_home = mobile_section
+        setting.appearance.mobile.mobile_section = mobile_section;
         return await setting.save();
       } catch (error) {
         error = checkError(error);

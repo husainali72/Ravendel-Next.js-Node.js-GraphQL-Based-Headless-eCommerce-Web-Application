@@ -13,6 +13,7 @@ const {
   MESSAGE_RESPONSE,
   _validate,
   _validatenested,
+  duplicateData
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -534,6 +535,8 @@ module.exports = {
         meta: args.meta,
       };
       let validation = ["name"];
+      const result = await duplicateData({name: data.name}, ProductCat, args.id)
+      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "ProductCategory", false);
       return await UPDATE_FUNC(
         id,
         args.id,
@@ -751,6 +754,10 @@ module.exports = {
         if (!args.id) {
           return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
         }
+
+        const result = await duplicateData({name: args.name}, Product, args.id)
+        if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Product", false);
+
         const product = await Product.findById({ _id: args.id });
         if (product) {
           let isSku = false;

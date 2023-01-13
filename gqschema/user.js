@@ -41,6 +41,7 @@ module.exports = gql`
     ): UserResponse
     user(id: ID!): UserIdRES
     usersbyMeta(key: String, value: String): [User]
+    dashboardData: dashboardDataRES
   }
 
   extend type Mutation {

@@ -147,6 +147,8 @@ module.exports = {
         updated: Date.now(),
       };
       let validation = ["title", "status"];
+      const result = await duplicateData({title: args.title}, Blog, args.id)
+      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Blog", false);
       return await UPDATE_FUNC(
         id,
         args.id,
@@ -187,6 +189,8 @@ module.exports = {
         updated: Date.now(),
       }
       let validation = ["name"];
+      const result = await duplicateData({title: args.title}, BlogTag, args.id)
+      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "BlogTag", false);
       return await UPDATE_FUNC(
         id,
         args.id,

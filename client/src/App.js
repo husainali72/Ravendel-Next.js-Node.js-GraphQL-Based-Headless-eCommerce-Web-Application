@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { isEmpty } from "./utils/helper";
 import { registerNav } from "./utils/navigation";
 import { insertToken } from "./store/action/loginAction";
-import MainLayout from "./main-layout";
+
 import Login from "./views/login";
 import { client_app_route_url } from "./utils/helper";
 import "./assets/scss/index.css";

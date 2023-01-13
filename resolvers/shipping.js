@@ -67,6 +67,12 @@ module.exports = {
           };
         }
         const shipping = await Shipping.findOne({});
+        const result = shipping.shipping_class.map(shipping=>{
+          if(shipping.name === args.shipping_class.name){
+            return false
+          } else return true
+        })
+        if(result.includes(false)) return MESSAGE_RESPONSE("DUPLICATE", "Shipping", false)
         shipping.shipping_class.push(args.shipping_class);
         shipping.updated = Date.now();
         await shipping.save();
@@ -90,7 +96,14 @@ module.exports = {
         }
 
         const shipping = await Shipping.findOne({});
-
+        const result = shipping.shipping_class.map(shipping=>{
+          if(shipping.name === args.shipping_class.name && 
+            shipping._id.toString() !== args.shipping_class._id.toString()){
+            return false
+          } else return true
+        })
+        console.log(result)
+        if(result.includes(false)) return MESSAGE_RESPONSE("DUPLICATE", "Shipping", false)
         for (let i in shipping.shipping_class) {
           if (shipping.shipping_class[i]._id == args.shipping_class._id) {
             shipping.shipping_class[i] = args.shipping_class;
