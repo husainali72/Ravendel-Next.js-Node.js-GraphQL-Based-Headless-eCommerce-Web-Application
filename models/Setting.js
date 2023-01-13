@@ -315,7 +315,7 @@ const SeetingSchema = new Schema(
             label: {
               type: String
             },
-            url: {
+            name: {
               type: String
             },
             visible: {

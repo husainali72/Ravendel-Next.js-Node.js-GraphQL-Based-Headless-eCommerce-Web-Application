@@ -243,7 +243,7 @@ module.exports = gql`
 
   input add_section_web_input {
     label: String
-    url: String
+    name: String
     visible: Boolean
   }
 
