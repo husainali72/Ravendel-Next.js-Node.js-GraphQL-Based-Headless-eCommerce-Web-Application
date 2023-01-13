@@ -23,14 +23,11 @@ const DashboardComponent = () => {
 
   const [dashBoardCount, setdashBoardCount] = useState({});
   const loader = useSelector((state) => state.dashboardReducer.loading);
-  console.log(data);
+
   useEffect(() => {
     if (isEmpty(data)) {
-      // setLoader(true);
       dispatch(dashboardAction());
     } else {
-      console.log(data);
-      //  / setLoader(false);
       setdashBoardCount({ ...data });
     }
   }, [data]);
