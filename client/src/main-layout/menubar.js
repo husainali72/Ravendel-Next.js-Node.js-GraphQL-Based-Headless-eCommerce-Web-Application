@@ -9,7 +9,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import palette from "../theme/palette";
+
 import theme from "../theme/index";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";

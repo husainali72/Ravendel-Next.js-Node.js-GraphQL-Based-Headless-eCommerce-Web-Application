@@ -25,6 +25,8 @@ import theme from "../../../theme";
 import { select } from "react-cookies";
 import { appearanceHomeUpdateAction } from "../../../store/action";
 import { set } from "mongoose";
+import { SETTING_SUCCESS } from "../../../store/action/settingAction";
+// import { application } from "express";
 const HomeSettingsTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -34,9 +36,22 @@ const HomeSettingsTheme = () => {
   const [settingHome, setsettingHome] = useState({
     ...settingState.settings.appearance.home,
   });
+  const [sectionData, setSectionData] = useState([]);
   const [slider, setSlider] = useState({
     ...settingState.settings.appearance.home.slider,
   });
+
+
+  console.log('settingState', settingState)
+
+  // doubt
+  useEffect(() => {
+    if(settingState.settings.appearance.home && settingState.settings.appearance.home.add_section_web && settingState.settings.appearance.home.add_section_web.length > 0){
+      setSectionData(settingState.settings.appearance.home.add_section_web)
+    }
+  }, [settingState.settings.appearance.home])
+
+
   useEffect(() => {
     setsettingHome({
       ...settingState.settings.appearance.home,
@@ -56,7 +71,9 @@ const HomeSettingsTheme = () => {
         settingState.settings.appearance.home.slider[i].image.original;
       newSliderArr.push({ image: { original: newImge } });
     }
-    setSlider(newSliderArr)
+    setSlider(newSliderArr) 
+    console.log('settingHome===========>',settingHome)
+    console.log("settingState", settingState)
   },
     [settingState.settings.appearance.home.slider]
     // [settingState.settings]
@@ -121,20 +138,40 @@ const HomeSettingsTheme = () => {
     });
   };
 
-  const updateHome = () => {
+  // const updateHome = () => {
 
-    for (let i in settingHome.slider) {
-      delete settingHome.slider[i].__typename;
-    }
-    delete settingHome.add_section_in_home.__typename;
-    // delete settingHome.add_section_web.__typename;
-    console.log('updateHo')
-   dispatch(appearanceHomeUpdateAction(settingHome));
-  };
-  console.log(updateHome);
-  // const updateChanges = () => {
-  //   settingHome.
-  // }
+  //   for (let i in settingHome.slider) {
+  //     delete settingHome.slider[i].__typename;
+  //   } 
+  //   delete settingHome.add_section_in_home.__typename;
+   
+   
+  //  dispatch(appearanceHomeUpdateAction(settingHome));
+  // };
+
+
+  const updateHome = () => {
+    // setSectionData(settingState.settings.appearance.home.add_section_web)
+    let item = sectionData
+    console.log(item, "setSectionData")
+    dispatch({
+      type: SETTING_SUCCESS,
+      payload: sectionData
+    })
+    // fetch("sectionData", {
+    //   method: "PUT",
+    //   headers: {
+    //     "Accept":" application/json",
+    //     "Content-type": "application/json"
+    //   },
+    //   body:JSON.stringify(item)
+    // }).then((result) => {
+    //   result.json().then((resp) => {
+    //     console.log(resp)
+    //     setSectionData()
+    //   })
+    // })
+  }
 
 
 
@@ -160,43 +197,7 @@ const HomeSettingsTheme = () => {
 
 
  
-  const [sectionData, setSectionData] = useState([
-    {
-      id: 1,
-      name: "feature_product",
-      label: "Featured product"
-    },
-    {
-      id: 2,
-      name: "recently_added_products",
-      label: "Recently Added Products"
-    },
-    {
-      id: 3,
-      name: "most_viewed_products",
-      label: "Most Viewed Products"
-    },
-    {
-      id: 4,
-      name: "recently_bought_products",
-      label: "Recently Bought Products"
-    },
-    {
-      id: 5,
-      name: "product_recommendation",
-      label: "Product Recommendation (Based on Your Browsing History)"
-    },
-    {
-      id: 6,
-      name: "products_on_sales",
-      label: "Products on Sales"
-    },
-    {
-      id: 7,
-      name: "product_from_specific_categories",
-      label: "Product from Specific Categories"
-    }
-  ]);
+  
   const [settingSection, setSettingSection] = useState(sectionData);
 
 
@@ -335,7 +336,6 @@ const HomeSettingsTheme = () => {
                     return (
                       <table>
                         <tr style={{ lineHeight: "35px", fontSize: "14px" }}
-
                         >
                           {select.label}
                         </tr>
@@ -362,8 +362,8 @@ const HomeSettingsTheme = () => {
                       control={
                         <Checkbox
                           color="success"
-                          checked={settingHome.add_section_in_home[select.name]}
-                          onChange={(e) => checkBoxOnChange(select.name, e.target.checked)}
+                          checked={settingHome.add_section_in_home[select.visible]}
+                          onChange={(e) => checkBoxOnChange(select.visible, e.target.checked)}
                         />
                       }
                       label={select.label}

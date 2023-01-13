@@ -129,13 +129,18 @@ const SETTING_TILE_DATA = gql`
           products_on_sales
           product_from_specific_categories
         }
+        add_section_web {
+          label
+          url
+          visible
+        }
       }
       theme {
         primary_color
         logo
       }
       mobile {
-        mobile_add_section_in_home {
+        mobile_section {
           label
           section_img
           visible
