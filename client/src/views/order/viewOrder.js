@@ -195,7 +195,7 @@ const ViewOrderComponent = (props) => {
 
       <Grid container spacing={2} className={classes.secondmainrow}>
         <Grid item md={6}>
-          {/ ===============Orders Details====================== /}
+          {/* {/ ===============Orders Details====================== /} */}
           <Box component="span">
             <Card className={classes.upperCard}>
               <CardHeader title="Order Details" />
@@ -227,7 +227,7 @@ const ViewOrderComponent = (props) => {
               </CardContent>
             </Card>
           </Box>
-          {/ ===============Billing Address====================== /}
+          {/* {/ ===============Billing Address====================== /} */}
 
           <Box component="span" m={1}>
             <Card className={classes.downCard}>
@@ -358,7 +358,7 @@ const ViewOrderComponent = (props) => {
         </Grid>
 
         <Grid item md={6}>
-          {/ ===============Customer Details====================== /}
+          {/* {/ ===============Customer Details====================== /} */}
           <Box component="span">
             <Card className={classes.upperCard}>
               <CardHeader title="Customer Details" />
@@ -410,7 +410,7 @@ const ViewOrderComponent = (props) => {
               </CardContent>
             </Card>
           </Box>
-          {/ ===============Shipping Address====================== /}
+          {/* {/ ===============Shipping Address====================== /} */}
 
           <Box component="span" m={1}>
             <Card className={classes.downCard}>
@@ -527,7 +527,7 @@ const ViewOrderComponent = (props) => {
         </Grid>
 
         <Grid item md={6}>
-          {/ ===============Products====================== /}
+          {/* {/ ===============Products====================== /} */}
           <Box component="span">
             <Card>
               <CardHeader title="Products" />
