@@ -45,6 +45,7 @@ const GET_DASHBOARDDATA = gql`
       userCount
       customerCount
       latestProducts
+      totalSales
     }
   }
 `;

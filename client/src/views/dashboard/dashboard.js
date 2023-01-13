@@ -67,7 +67,7 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <DashboardCard
-            count={"$23,000"}
+            count={`$${dashBoardCount.totalSales}`}
             title={"TOTAL SALES"}
             Icon={({ className }) => (
               <AttachMoneyOutlinedIcon className={className} />
