@@ -13,7 +13,15 @@ import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import { ThemeProvider } from "@mui/material/styles";
 import { dashboardAction } from "../../store/action/dashboardAction";
 import { isEmpty } from "lodash";
-import dashboardReducer from "../../store/reducers/dashboardReducer";
+
+import Paper from "@mui/material/Paper";
+import {
+  ArgumentAxis,
+  ValueAxis,
+  Chart,
+  BarSeries,
+} from "@devexpress/dx-react-chart-material-ui";
+
 const DashboardComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -23,7 +31,20 @@ const DashboardComponent = () => {
 
   const [dashBoardCount, setdashBoardCount] = useState({});
   const loader = useSelector((state) => state.dashboardReducer.loading);
-
+  const chartdata = [
+    { argument: "Jan", value: 30 },
+    { argument: "Feb", value: 20 },
+    { argument: "Mar", value: 10 },
+    { argument: "Apr", value: 50 },
+    { argument: "May", value: 60 },
+    { argument: "Jun", value: 60 },
+    { argument: "Jul", value: 60 },
+    { argument: "Aug", value: 60 },
+    { argument: "Sep", value: 60 },
+    { argument: "Oct", value: 60 },
+    { argument: "Nov", value: 60 },
+    { argument: "Dec", value: 60 },
+  ];
   useEffect(() => {
     if (isEmpty(data)) {
       dispatch(dashboardAction());
@@ -83,6 +104,20 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={8} xl={9} md={12} xs={12}>
           <LatestOrder ordersState={Orders} />
+        </Grid>
+        <Grid item lg={8} xl={9} md={0} xs={12} ml={15}>
+          <Paper>
+            <Chart data={chartdata} style={{ width: "50%" }}>
+              <ArgumentAxis />
+              <ValueAxis />
+              <BarSeries
+                valueField="value"
+                argumentField="argument"
+                color="#154050"
+                className="barChart"
+              />
+            </Chart>
+          </Paper>
         </Grid>
       </Grid>
     </Box>
