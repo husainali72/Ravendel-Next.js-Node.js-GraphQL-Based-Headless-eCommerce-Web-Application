@@ -509,10 +509,23 @@ module.exports = {
       }
       try {
         const cart = await Cart.findOne({ user_id: args.user_id });
-        const existingProducts = cart && cart.products ? cart.products : []
-        var carttotal = 0;
+        let existingProducts = cart && cart.products ? cart.products : []
+        let carttotal = 0;
         for (let i in args.products) {
-          if (args.products[i].product_id) {
+          if(existingProducts.length > 0){
+            let productPosition;
+            /* if product exists in cart and local storage then update quantity 
+            and delete product from existingProducts
+            else add total in carttotal*/
+            for(let j in existingProducts){
+              if(existingProducts[j].product_id.toString() === args.products[i].product_id.toString()){
+                args.products[i].qty += existingProducts[j].qty
+                productPosition = j
+              }else carttotal += existingProducts[j].total
+            }
+            if(productPosition !== undefined) existingProducts.splice(productPosition, 1)
+          }
+          if(args.products[i].product_id) {
             const product = await Product.findById({ _id: args.products[i].product_id });
             // assign product name
             args.products[i].product_title = product.name
@@ -527,7 +540,7 @@ module.exports = {
           existingProducts.push(args.products[i])
         }
         if(cart) {
-          cart.total += carttotal
+          cart.total = carttotal
           cart.products = existingProducts
           await cart.save();
         }else{
