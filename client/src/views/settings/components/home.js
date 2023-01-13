@@ -23,6 +23,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { useRef } from "react";
 import theme from "../../../theme";
 import { select } from "react-cookies";
+import { appearanceHomeUpdateAction } from "../../../store/action";
 import { set } from "mongoose";
 const HomeSettingsTheme = () => {
   const classes = viewStyles();
@@ -126,8 +127,16 @@ const HomeSettingsTheme = () => {
       delete settingHome.slider[i].__typename;
     }
     delete settingHome.add_section_in_home.__typename;
-    // dispatch(appearanceHomeUpdateAction(settingHome));
+    // delete settingHome.add_section_web.__typename;
+    console.log('updateHo')
+   dispatch(appearanceHomeUpdateAction(settingHome));
   };
+  console.log(updateHome);
+  // const updateChanges = () => {
+  //   settingHome.
+  // }
+
+
 
   const reOrder = () => {
     reOrderList ? setReOrderList(false) : setReOrderList(true)

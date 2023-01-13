@@ -414,6 +414,20 @@ const UPDATE_APPEARANCE_HOME = gql`
   ${SETTING_TILE_DATA}
 `;
 
+
+const UPDATE_APPEARANCE_HOME_NEW = gql`
+mutation($slider: [slider_input], $add_section_in_home: add_section_in_home, $add_section_web: [add_section_web_input]) {
+  updateAppearanceHome(
+    slider: $slider
+    add_section_in_home: $add_section_in_home
+    add_section_web: $add_section_web
+  ) {
+    ...SettingTile
+  }
+}
+  ${SETTING_TILE_DATA}
+`;
+
 const UPDATE_APPEARANCE_MOBILE = gql`
   mutation($mobile_add_section_in_home: [mobile_add_section_in_home]) {
     updateAppearanceMobile(
@@ -453,4 +467,5 @@ export {
   UPDATE_APPEARANCE_HOME,
   UPDATE_APPEARANCE_MOBILE,
   UPDATE_APPEARANCE_THEME,
+  UPDATE_APPEARANCE_HOME_NEW 
 };

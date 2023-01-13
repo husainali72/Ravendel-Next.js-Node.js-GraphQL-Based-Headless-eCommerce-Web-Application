@@ -15,6 +15,7 @@ import {
   UPDATE_PAYMENT_PAYPAL,
   UPDATE_APPEARANCE_HOME,
   UPDATE_APPEARANCE_THEME,
+  UPDATE_APPEARANCE_HOME_NEW 
 } from "../../queries/settingQuery";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
@@ -446,11 +447,13 @@ export const paymentPaypalUpdateAction = (object) => (dispatch) => {
 };
 
 export const appearanceHomeUpdateAction = (object) => (dispatch) => {
+  console.log(object,'objjjj')
   dispatch({
     type: SETING_LOADING,
   });
-  mutation(UPDATE_APPEARANCE_HOME, object)
+  mutation(UPDATE_APPEARANCE_HOME_NEW, object)
     .then((response) => {
+      console.log(response,'response from appearanceHomeUpdateAction ')
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
