@@ -535,6 +535,28 @@ module.exports.createSettings = async () => {
           products_on_sales: false,
           product_from_specific_categories: false,
         },
+        add_section_web: [
+          {
+            label: "Featured Product",
+            name: "feature_product",
+            visible: true,
+          },
+          {
+            label: "Recently Added Products",
+            name: "recently_added_products",
+            visible: true,
+          },
+          {
+            label: "Products On Sales",
+            name: "products_on_sales",
+            visible: true,
+          },
+          {
+            label: "Product Recommendation",
+            name: "product_recommendation",
+            visible: true,
+          },
+        ],
       },
       theme: {
         primary_color: "#154050",
@@ -547,6 +569,54 @@ module.exports.createSettings = async () => {
             "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
         },
       },
+      mobile: {
+        mobile_section: [
+          {
+            label: "Featured Product",
+            section_img: {
+              original: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              medium: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+            },
+            visible: "true",
+            url: "feature_product",
+          },
+          {
+            label: "Recently Added Products",
+            section_img: {
+              original: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              medium: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+            },
+            visible: "true",
+            url: "recently_added_products",
+          },
+          {
+            label: "Products On Sales",
+            section_img: {
+              original: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              medium: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+            },
+            visible: "true",
+            url: "products_on_sales",
+          },
+          {
+            label: "Product Recommendation",
+            section_img: {
+              original: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              medium: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+            },
+            visible: "true",
+            url: "product_recommendation",
+          },
+        ],
+      }
     },
   });
 
