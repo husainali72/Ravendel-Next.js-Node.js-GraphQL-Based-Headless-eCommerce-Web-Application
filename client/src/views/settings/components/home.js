@@ -31,12 +31,14 @@ const HomeSettingsTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const [reOrderList, setReOrderList] = useState();
+ 
   const [dragItem, updateDragItem] = useState();
+
   const settingState = useSelector((state) => state.settings);
   const [settingHome, setsettingHome] = useState({
     ...settingState.settings.appearance.home,
   });
-  const [sectionData, setSectionData] = useState([]);
+  // const [sectionData, setSectionData] = useState([]);
   const [slider, setSlider] = useState({
     ...settingState.settings.appearance.home.slider,
   });
@@ -138,40 +140,42 @@ const HomeSettingsTheme = () => {
     });
   };
 
-  // const updateHome = () => {
-
-  //   for (let i in settingHome.slider) {
-  //     delete settingHome.slider[i].__typename;
-  //   } 
-  //   delete settingHome.add_section_in_home.__typename;
-   
-   
-  //  dispatch(appearanceHomeUpdateAction(settingHome));
-  // };
-
-
   const updateHome = () => {
-    // setSectionData(settingState.settings.appearance.home.add_section_web)
-    let item = sectionData
-    console.log(item, "setSectionData")
-    dispatch({
-      type: SETTING_SUCCESS,
-      payload: sectionData
-    })
-    // fetch("sectionData", {
-    //   method: "PUT",
-    //   headers: {
-    //     "Accept":" application/json",
-    //     "Content-type": "application/json"
-    //   },
-    //   body:JSON.stringify(item)
-    // }).then((result) => {
-    //   result.json().then((resp) => {
-    //     console.log(resp)
-    //     setSectionData()
-    //   })
-    // })
-  }
+
+    for (let i in settingHome.slider) {
+      delete settingHome.slider[i].__typename;
+    } 
+   
+    // delete settingHome.add_section_in_home.__typename;
+   delete settingHome.add_section_web.__typename;
+   
+   dispatch(appearanceHomeUpdateAction(settingHome));
+  };
+
+
+  // const updateHome = () => {
+  //   // setSectionData(settingState.settings.appearance.home.add_section_web)
+  //   let item = sectionData
+  //   console.log(item, "setSectionData")
+  //   // dispatch(appearanceHomeUpdateAction(sectionData))
+  //   // dispatch({
+  //   //   type: SETTING_SUCCESS,
+  //   //   payload: sectionData
+  //   // })
+  //   // fetch("sectionData", {
+  //   //   method: "PUT",
+  //   //   headers: {
+  //   //     "Accept":" application/json",
+  //   //     "Content-type": "application/json"
+  //   //   },
+  //   //   body:JSON.stringify(item)
+  //   // }).then((result) => {
+  //   //   result.json().then((resp) => {
+  //   //     console.log(resp)
+  //   //     setSectionData()
+  //   //   })
+  //   // })
+  // }
 
 
 
@@ -179,22 +183,64 @@ const HomeSettingsTheme = () => {
     reOrderList ? setReOrderList(false) : setReOrderList(true)
   }
 
+ 
   const onSave = () => {
     dragItem ? setReOrderList(true) : setReOrderList(false)
   }
 
+ 
+
   const checkBoxOnChange = (name, value) => {
     setsettingHome({
       ...settingHome,
-      add_section_in_home: {
-        ...settingHome.add_section_in_home,
+      // add_section_in_home: {
+        // ...settingHome.add_section_in_home,
+        add_section_web: {
+          ...settingHome.add_section_web,
         [name]: value,
       },
     });
   };
 
+  
 
-
+  const [sectionData, setSectionData] = useState([
+    {
+      id: 1,
+      name: "feature_product",
+      label: "Featured product"
+    },
+    {
+      id: 2,
+      name: "recently_added_products",
+      label: "Recently Added Products"
+    },
+    {
+      id: 3,
+      name: "most_viewed_products",
+      label: "Most Viewed Products"
+    },
+    {
+      id: 4,
+      name: "recently_bought_products",
+      label: "Recently Bought Products"
+    },
+    {
+      id: 5,
+      name: "product_recommendation",
+      label: "Product Recommendation (Based on Your Browsing History)"
+    },
+    {
+      id: 6,
+      name: "products_on_sales",
+      label: "Products on Sales"
+    },
+    {
+      id: 7,
+      name: "product_from_specific_categories",
+      label: "Product from Specific Categories"
+    }
+  ]);
 
  
   
@@ -321,6 +367,9 @@ const HomeSettingsTheme = () => {
               </Grid>
             </Grid>
           </Box>
+
+{/* Add section for Website  */}
+
           <Box component="div" className={classes.marginBottom2}>
             <Typography variant="h5" className={classes.paddingBottom1}>
               Add Section in Home Page
@@ -362,8 +411,9 @@ const HomeSettingsTheme = () => {
                       control={
                         <Checkbox
                           color="success"
-                          checked={settingHome.add_section_in_home[select.visible]}
-                          onChange={(e) => checkBoxOnChange(select.visible, e.target.checked)}
+                          // checked={settingHome.add_section_in_home[select.name]}
+                          checked={settingHome.add_section_web[select.name]}
+                          onChange={(e) => checkBoxOnChange(select.name, e.target.checked)}
                         />
                       }
                       label={select.label}
@@ -395,6 +445,9 @@ const HomeSettingsTheme = () => {
               </div>
             }
           </Box>
+
+
+        
         </Grid>
         {/* <Grid item xs={12}>
         <Button

@@ -444,6 +444,17 @@ const UPDATE_APPEARANCE_MOBILE = gql`
   ${SETTING_TILE_DATA}
 `;
 
+const UPDATE_APPEARANCE_MOBILE_NEW = gql`
+  mutation($mobile_section: [mobile_section_input]) {
+    updateAppearanceMobile(
+      mobile_section: $mobile_section
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
 const UPDATE_APPEARANCE_THEME = gql`
   mutation($primary_color: String, $new_logo: Upload) {
     updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo) {
@@ -472,5 +483,6 @@ export {
   UPDATE_APPEARANCE_HOME,
   UPDATE_APPEARANCE_MOBILE,
   UPDATE_APPEARANCE_THEME,
-  UPDATE_APPEARANCE_HOME_NEW 
+  UPDATE_APPEARANCE_HOME_NEW,
+  UPDATE_APPEARANCE_MOBILE_NEW 
 };

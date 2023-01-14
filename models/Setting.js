@@ -532,6 +532,13 @@ module.exports.createSettings = async () => {
           products_on_sales: false,
           product_from_specific_categories: false,
         },
+        // add_section_web: [
+        //   {
+        //     label: " feature_product",
+        //     url: "Featured Product",
+        //     visible: false
+        //   }
+        // ]
       },
       theme: {
         primary_color: "#154050",
