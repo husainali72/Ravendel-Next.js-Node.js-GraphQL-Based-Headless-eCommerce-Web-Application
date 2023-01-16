@@ -1,16 +1,11 @@
 import React, { Fragment, useState } from "react";
-import {
-  Grid,
-  Paper,
-  Tab,
-  Tabs,
-} from"@mui/material";
+import { Grid, Paper, Tab, Tabs } from "@mui/material";
 import CashOnDelivery from "./cod";
 import DirectBankTransfer from "./directBankTransfer";
 import Paypal from "./paypal";
 import Stripe from "./stripe";
 import { TabPanel, TabProps } from "../../components";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 const PaymentComponent = () => {
   const [tabVal, setTabVal] = useState(0);

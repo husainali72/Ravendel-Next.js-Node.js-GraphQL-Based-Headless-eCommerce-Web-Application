@@ -16,7 +16,7 @@ import {
   Avatar,
   Button,
   Tooltip,
-} from"@mui/material";
+} from "@mui/material";
 
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,7 +38,7 @@ const GlobalThemeOverride = () => {
   const navigate = useNavigate();
   const products = useSelector((state) => state.products);
   useEffect(() => {
-     dispatch(productsAction());
+    dispatch(productsAction());
   }, []);
 
   const [page, setPage] = React.useState(0);
@@ -56,9 +56,9 @@ const GlobalThemeOverride = () => {
   return (
     <>
       <Alert />
-      <Grid container spacing={2} className={classes.mainrow} >
+      <Grid container spacing={2} className={classes.mainrow}>
         <Grid item xl={12} md={12}>
-          <Card >
+          <Card>
             {products.loading ? <Loading /> : null}
             <CardHeader
               action={

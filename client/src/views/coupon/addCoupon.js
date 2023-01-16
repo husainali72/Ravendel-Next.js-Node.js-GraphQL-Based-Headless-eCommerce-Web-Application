@@ -192,6 +192,7 @@ const AddCouponComponent = () => {
                         Discount Type
                       </InputLabel>
                       <Select
+                        label=" Discount Type"
                         labelWidth={labelWidth}
                         onChange={handleChange}
                         inputProps={{
