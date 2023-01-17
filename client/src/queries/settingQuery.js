@@ -448,9 +448,15 @@ const UPDATE_APPEARANCE_MOBILE_NEW = gql`
   mutation($mobile_section: [mobile_section_input]) {
     updateAppearanceMobile(
       mobile_section: $mobile_section
-    ) {
+    ) mobile_section {
+      label
+      section_img
+      visible
+      url
+
       ...SettingTile
     }
+
   }
   ${SETTING_TILE_DATA}
 `;

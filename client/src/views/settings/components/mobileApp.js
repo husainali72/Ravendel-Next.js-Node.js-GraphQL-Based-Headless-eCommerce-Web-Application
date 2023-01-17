@@ -21,6 +21,11 @@ import { Draggable } from "react-drag-reorder";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../../theme";
 import { appearanceMobileUpdateAction } from "../../../store/action/settingAction";
+
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
       
 const MobileAppSetting = () => {
     const classes = viewStyles();
@@ -34,7 +39,7 @@ const MobileAppSetting = () => {
       ...settingState.settings.appearance.mobile,
     });
   
-    
+    const [category, setCategory] = useState(false);
   
   
   
@@ -46,11 +51,11 @@ const MobileAppSetting = () => {
     // }, [settingState.settings.appearance.home])
   
   
-    useEffect(() => {
-        setSettingMobile({
-        ...settingState.settings.appearance.mobile,
-     });
-  })
+  //   useEffect(() => {
+  //       setSettingMobile({
+  //       ...settingState.settings.appearance.mobile,
+  //    });
+  // })
   
     const updateMobileApp = () => {
      dispatch(appearanceMobileUpdateAction(settingMobile));
@@ -75,6 +80,9 @@ const MobileAppSetting = () => {
       });
     };
   
+    const handleChangeCategory = (event) => {
+      setCategory(event.target.value);
+    };
     
     const [sectionData, setSectionData] = useState([
       {
@@ -117,7 +125,8 @@ const MobileAppSetting = () => {
    
     
     const [settingSection, setSettingSection] = useState(sectionData);
-  
+
+    
   
   
    
@@ -162,10 +171,12 @@ const MobileAppSetting = () => {
                     {sectionData.map((select, index) => {
                       return (
                         <table>
+                          <tbody>
                           <tr style={{ lineHeight: "35px", fontSize: "14px" }}
                           >
                             {select.label}
                           </tr>
+                          </tbody>
                         </table>
                       );
                     })}
@@ -189,14 +200,45 @@ const MobileAppSetting = () => {
                         control={
                           <Checkbox
                             color="success"
+                            // checked={settingMobile.mobile_section[select.name]}
                             checked={settingMobile.mobile_section[select.name]}
-                            onChange={(e) => onCheckBoxChange(select.name, e.target.checked)}
+                            onChange={(e) => {
+                              if (select.id == 7 && e.target.checked === (true)){
+                              category?  setCategory(false):setCategory(true)
+                              // onCheckBoxChange(select.name, e.target.checked)
+                              }else{
+                                setCategory(false)
+                          //  onCheckBoxChange(select.name, e.target.checked)
+                          }
+                          onCheckBoxChange(select.name, e.target.checked)}
+                              }
                           />
                         }
                         label={select.label}
                       />
   
                     )}
+                    {category?
+               
+                   
+                    <Box sx={{ minWidth: 120 }} style = {{paddingRight: "1200px"}}>
+                    <FormControl fullWidth >
+                      <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={category}
+                        label="Category"
+                        onChange={handleChangeCategory}
+                        style={{paddingTop: "-20px"}}
+                      >
+                        <MenuItem value="men">Men</MenuItem>
+                        <MenuItem value="women">Women</MenuItem>
+                        <MenuItem value="children">Children</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                                : null} 
   
                   </FormGroup>
                   <Grid item xs={12}>
