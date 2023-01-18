@@ -10,7 +10,13 @@ export default {
         lineHeight: typography.h3.lineHeight,
         fontSize: typography.h3.fontSize,
       }),
-
+      ...(ownerState.variant === "h4" && {
+        color: palette.text.main,
+        fontWeight: typography.h4.fontWeight,
+        letterSpacing: typography.h3.letterSpacing,
+        lineHeight: typography.h3.lineHeight,
+        fontSize: typography.h3.fontSize,
+      }),
       ...(ownerState.variant === "body1" && {
         color: palette.text.main,
         fontWeight: typography.h4.fontWeight,

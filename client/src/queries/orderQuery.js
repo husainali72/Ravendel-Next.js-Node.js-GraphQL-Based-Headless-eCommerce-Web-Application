@@ -36,8 +36,7 @@ const GET_ORDER = gql`
         coupon_code
         date
         updated
-        sub_total_details
-        sub_total_summary
+
       }
       message {
         message

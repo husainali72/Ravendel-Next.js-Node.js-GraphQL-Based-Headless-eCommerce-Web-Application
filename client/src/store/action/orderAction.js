@@ -58,8 +58,8 @@ export const orderAction = (id) => (dispatch) => {
     type: ORDER_LOADING,
   });
 
-  query(GET_ORDER, { id: id })
-    .then((response) => {
+  query(GET_ORDER, id)
+      .then((response) => {
       console.log(response);
       const [error, success, message, data] = getResponseHandler(
         response,
