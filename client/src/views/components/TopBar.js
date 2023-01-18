@@ -34,7 +34,7 @@ const TopBarTheme = ({ title, onSubmit, backLink, submitTitle }) => {
         >
           {submitTitle}
         </Button>
-        <Button className={classes.cancelBtn}>
+        <Button className={classes.cancelBtn} variant="contained" color="error">
           <Link to={backLink} style={{ color: "#fff" }}>
             Cancel
           </Link>

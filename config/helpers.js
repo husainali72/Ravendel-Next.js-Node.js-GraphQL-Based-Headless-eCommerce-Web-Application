@@ -485,4 +485,110 @@ const MESSAGE_RESPONSE = (type, item, success) => {
   };
 };
 
+
+const checkRole = (role) => {
+  const userRoles = ["ADMIN", "USER"]
+  role = role.toUpperCase()
+  if(userRoles.includes(role)) return {role: role, success: true}
+  else return {success: false}
+}
+module.exports.checkRole = checkRole;
+
+const duplicateData = async(args, model, updateId) => {
+  let docs = await model.find(args)
+  docs = docs.filter(doc=>{
+    if(doc._id.toString() !== updateId.toString()) return doc
+  })
+  if(docs.length > 0) return false
+  else return true
+}
+module.exports.duplicateData = duplicateData
+
+const subTotalDetailsEntry = async(couponCode, couponModel, shippingModel, taxModel) => {
+  const subTotalDetails = {}
+  // assign shipping_name
+  let shipping = await shippingModel.findOne({})
+  shipping = shipping.shipping_class.filter(shipClass => {
+    if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) return subTotalDetails.shipping_name = shipClass.name
+  })
+  // assign tax_name
+  let tax = await taxModel.findOne({})
+  tax = tax.tax_class.filter(taxClass => {
+    if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return subTotalDetails.tax_name = taxClass.name
+  })
+  // assign coupon_code, amount, type
+  const coupon = await couponModel.findOne({code: couponCode})
+  if(!coupon) {
+    subTotalDetails.coupon_code = "None"
+    subTotalDetails.coupon_type = ""
+    subTotalDetails.coupon_value = 0
+  } else {
+    subTotalDetails.coupon_code = couponCode
+    subTotalDetails.coupon_type = coupon.discount_type
+    subTotalDetails.coupon_value = coupon.discount_value
+  } 
+  return subTotalDetails
+}
+module.exports.subTotalDetailsEntry = subTotalDetailsEntry
+
+const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingModel, taxModel) => {
+  const subTotalSummary = []
+  let orderSubTotal = 0, orderGrandTotal = 0;
+  let shippingValue, taxValue, couponValue, couponType;
+  // assign shipping_value
+  let shipping = await shippingModel.findOne({})
+  shipping = shipping.shipping_class.filter(shipClass => {
+    if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) return shippingValue = shipClass.amount
+  })
+  // assign tax_value
+  let tax = await taxModel.findOne({})
+  tax = tax.tax_class.filter(taxClass => {
+    if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return taxValue = taxClass.percentage
+  })
+  // assign coupon_code, amount, type
+  const coupon = await couponModel.findOne({code: couponCode})
+  if(!coupon) {
+    couponType = ""
+    couponValue = 0
+  } else {
+    couponType = coupon.discount_type
+    couponValue = coupon.discount_value
+  } 
+  // assign total and subtotal for individual product
+  products.map(product=>{
+    // console.log(product)
+    let subTotalSummaryItem = {}
+    let subTotal, taxCalc, shippingCalc, couponCalc;
+    subTotalSummaryItem.coupon_type = couponType
+    subTotalSummaryItem.coupon_value = couponValue
+    subTotalSummaryItem.shipping_value = shippingValue
+    subTotalSummaryItem.tax_value = taxValue
+    subTotal = product.cost * product.qty
+    subTotalSummaryItem.sub_total = subTotal
+    // calculate tax
+    taxCalc = taxValue !== 0 ? subTotal*taxValue/100 : 0
+    // calculate shipping
+    shippingCalc = shippingValue !== 0 ? subTotal*shippingValue/100 : 0
+    // calculate coupon
+    if(!couponType || !couponValue) couponCalc = 0
+    else if(couponType === "precantage-discount") couponCalc = couponValue !== 0 ? subTotal*couponValue/100 : 0
+    else if(couponType === "amount-discount") couponCalc = couponValue !== 0 ? couponValue : 0
+    // add tax add shipping subtract coupon
+    subTotalSummaryItem.total = subTotal + taxCalc + shippingCalc - couponCalc
+    // add subtotal value for order subtotal
+    orderSubTotal += subTotal
+    // add grandtotal value for order grandtotal
+    orderGrandTotal += subTotalSummaryItem.total
+    // push item to orderSummary array
+    subTotalSummary.push(subTotalSummaryItem)
+  })
+  return {
+    subTotalSummary,
+    orderSubTotal,
+    orderGrandTotal
+  }
+}
+module.exports.subTotalSummaryEntry = subTotalSummaryEntry
+
 module.exports.MESSAGE_RESPONSE = MESSAGE_RESPONSE;
+

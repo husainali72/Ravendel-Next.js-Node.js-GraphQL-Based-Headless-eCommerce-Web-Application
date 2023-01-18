@@ -28,6 +28,13 @@ export default {
           color: palette.text.primary,
           "&:hover": {},
         }),
+      ...(ownerState.variant === "contained" &&
+        ownerState.color === "error" && {
+          color: palette.error.dark,
+          "&:hover": {
+            color: palette.error.dark,
+          },
+        }),
     }),
   },
 };

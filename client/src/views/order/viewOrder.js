@@ -45,7 +45,7 @@ import { isEmpty, client_app_route_url } from "../../utils/helper";
 import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
-import { currencyFormat } from "./currencyFormat";
+import { currencyFormat } from "./CurrencyFormat";
 const ViewOrderComponent = ({ params }) => {
   const classes = viewStyles();
   const [editShipping, setEditShipping] = useState(false);
@@ -53,7 +53,7 @@ const ViewOrderComponent = ({ params }) => {
 
   const dispatch = useDispatch();
   const singleOrder = useSelector((state) => state.order);
-
+  console.log(singleOrder);
   const [order, setorder] = useState({
     billing: {
       firstname: "",
