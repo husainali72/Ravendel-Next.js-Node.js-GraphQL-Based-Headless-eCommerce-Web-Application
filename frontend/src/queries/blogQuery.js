@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+//test2
 // const GET_BLOGS = gql`
 //   {
 //     blogs {
