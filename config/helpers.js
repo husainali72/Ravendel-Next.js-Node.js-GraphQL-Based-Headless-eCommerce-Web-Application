@@ -352,12 +352,6 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + lower.slice(1);
 }
 
-const _duplicate = async(items, args, modal) => {
-  let error = "";
-  
-  return error;
-}
-
 const _validate = (names, args) => {
   let errors = "";
   if (names && names.length > 0) {
@@ -398,7 +392,6 @@ const _validatenested = (main, names, args) => {
   return errors;
 };
 
-module.exports._duplicate = _duplicate;
 module.exports._validate = _validate;
 module.exports._validatenested = _validatenested;
 
@@ -492,7 +485,6 @@ const MESSAGE_RESPONSE = (type, item, success) => {
   };
 };
 
-module.exports.MESSAGE_RESPONSE = MESSAGE_RESPONSE;
 
 const checkRole = (role) => {
   const userRoles = ["ADMIN", "USER"]
@@ -597,3 +589,6 @@ const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingMo
   }
 }
 module.exports.subTotalSummaryEntry = subTotalSummaryEntry
+
+module.exports.MESSAGE_RESPONSE = MESSAGE_RESPONSE;
+

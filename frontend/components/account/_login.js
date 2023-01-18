@@ -1,0 +1,169 @@
+import { useState } from "react";
+import { useRouter } from "next/router"
+// import { loginAction, customerAction } from "../../redux/actions/loginAction";
+import { useDispatch, useSelector } from "react-redux";
+import { signIn, useSession, getSession } from 'next-auth/react'
+import { addToCart } from "../../redux/actions/cartAction";
+import { GET_USER_CART, UPDATE_CART_PRODUCT } from "../../queries/cartquery";
+import { query, mutation } from "../../utills/helpers"
+import { userCartAction } from "../../redux/actions/userCartAction";
+import Link from "next/link";
+
+const loginObject = {
+    email: "",
+    password: "",
+}
+
+const LogIn = () => {
+    const session = useSession()
+    const router = useRouter();
+    const dispatch = useDispatch();
+    const localCartItem = useSelector(state => state.cart)
+    // console.log("localCartItem", localCartItem)
+    const [loginUser, setLoginUser] = useState(loginObject);
+    const [loginSuccess, setLoginSuccess] = useState(false);
+    const [cart_id, setCart_Id] = useState("")
+    const [error, setError] = useState(false)
+
+    const doLogin = async (e) => {
+        e.preventDefault();
+        // console.log("Login", loginUser);
+        const res = await signIn('credentials', {
+            email: loginUser.email,
+            password: loginUser.password,
+            redirect: false,
+        })
+        console.log("res=====",res)
+        const session = await getSession()
+        console.log("Session======session", session)
+        if (res?.error) {
+            setError(res.error);
+        } else {
+            setError(null);
+        }
+        console.log("Successfully logged in", res)
+        console.log("session==========",session)
+        if (res?.ok) {
+            /////////////////////////////////////////////////////////////
+            const productsInCart=JSON.parse(localStorage.getItem("persistantState"))
+            console.log("product in cart======", productsInCart.cart)
+            /////////////////////////////////////////////////////////////
+            const id = session?.user.accessToken.customer._id
+            const token = session?.user.accessToken.token
+            query(GET_USER_CART, id, token).then(async (response) => {//brings cart from database
+                var userCart = [];
+                userCart = await response.data.cartbyUser.products
+                const cart_id = response.data.cartbyUser.id
+                setCart_Id(cart_id)
+                dispatch(userCartAction(cart_id));
+                // console.log("userCart", userCart)
+                if (userCart && userCart?.length > 0) {
+                    console.log("UserCart===========",userCart)
+                    if(productsInCart.cart && productsInCart.cart?.length>0){
+                        console.log("greater than zero")
+                        var cart = productsInCart.cart.map(product => {
+                            return {
+                                feature_image: { original: product.feature_image.original },
+                                name: product.name,
+                                pricing: { price: 0, sellprice: product.pricing.sellprice },
+                                quantity: product.quantity,
+                                _id: product._id,
+                            }
+                        })
+                    }else{
+                        console.log("equal to zero")
+                        var cart = userCart.map(product => {
+                            return {
+                                feature_image: { original: product.product_image },
+                                name: product.product_title,
+                                pricing: { price: 0, sellprice: product.product_price },
+                                quantity: product.qty,
+                                _id: product.product_id,
+                            }
+                        })
+                    }
+                    console.log("Cart???????===========",cart)
+                    let list = cart.map((item) => {
+                        console.log("item============", item)
+                        let quantity = item.quantity
+                        dispatch(addToCart(item, quantity, token, id))
+
+                    })
+                    const newCartList = await Promise.all(list)
+                    // console.log(newCartList)
+                    // localStorage.setItem("userCart", JSON.stringify(userCart))
+                } else {
+                    if(productsInCart.cart?.length > 0){
+                        console.log("greater than zero")
+                        var localCart = productsInCart.cart.map(product => {
+                            return {
+                                product_id: product._id,
+                                qty: product.quantity,
+                                product_title: product.name,
+                                product_image: product.feature_image.original,
+                                product_price: product.pricing.sellprice,
+                            }
+                        });
+                    }else{
+                        console.log("equal to zero")
+                        var localCart = localCartItem.map(product => {
+                            return {
+                                product_id: product._id,
+                                qty: product.quantity,
+                                product_title: product.name,
+                                product_image: product.feature_image.original,
+                                product_price: product.pricing.sellprice,
+                            }
+                        });
+                    }
+                        let variables = {
+                            id: cart_id,
+                            products: localCart,
+                            total: 0,
+                        }
+                        mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("update res", res))
+                }
+            })
+        }
+        if (res.url) await router.push("/");
+
+
+    }
+    return (
+        <div className="login-box ">
+            <h4>Login</h4>
+            <form onSubmit={doLogin}>
+                <input
+                    type="email"
+                    className="form-control"
+                    id="exampleFormControlInput1"
+                    placeholder="Your Email"
+                    name={loginUser.email}
+                    onChange={(e) => setLoginUser({ ...loginUser, email: e.target.value })}
+                />
+                <input
+                    type="password"
+                    style={{ marginTop: 8 }}
+                    className="form-control"
+                    id="password"
+                    placeholder="Password"
+                    name={loginUser.password}
+                    onChange={(e) => setLoginUser({ ...loginUser, password: e.target.value })}
+                />
+                <div className="form-check" style={{ marginTop: 12 }}>
+                    <input className="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate" />
+                    <label className="form-check-label">
+                        Remember me
+                    </label>
+                    <Link href="/account/forgetpassword">
+                        <span style={{ float: 'right' }}>forget password ?</span>
+                    </Link>
+                </div>
+                <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178" }}>Login</button>
+                {loginSuccess ? (<h4>login success full</h4>) : null}
+                {error ? <p style={{ color: "red" }}>{error}</p> : null}
+            </form>
+        </div>
+    )
+}
+export default LogIn;

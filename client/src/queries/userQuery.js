@@ -38,6 +38,16 @@ const GET_USER = gql`
     }
   }
 `;
+const GET_DASHBOARDDATA = gql`
+  {
+    dashboardData {
+      productCount
+      userCount
+      customerCount
+      latestProducts
+    }
+  }
+`;
 
 // const ADD_USER = gql`
 //   mutation(
@@ -151,4 +161,11 @@ const DELETE_USER = gql`
   }
 `;
 
-export { GET_USERS, GET_USER, ADD_USER, UPDATE_USER, DELETE_USER };
+export {
+  GET_USERS,
+  GET_USER,
+  ADD_USER,
+  UPDATE_USER,
+  DELETE_USER,
+  GET_DASHBOARDDATA,
+};

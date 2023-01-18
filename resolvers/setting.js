@@ -325,6 +325,7 @@ module.exports = {
         for (let i in args.add_section_web) {
           add_section_web.push({
             label: args.add_section_web[i].label,
+            name: args.add_section_web[i].name,
             visible: args.add_section_web[i].visible
           });
         }

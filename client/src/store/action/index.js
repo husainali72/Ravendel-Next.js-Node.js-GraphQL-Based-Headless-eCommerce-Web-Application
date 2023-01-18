@@ -19,7 +19,7 @@ import {
   blogtagDeleteAction,
   blogclearAction,
 } from "./blogAction";
-
+import { dashboardAction } from "./dashboardAction";
 import {
   categoriesAction,
   categoryAddAction,
@@ -209,6 +209,7 @@ export {
   paymentPaypalUpdateAction,
   appearanceHomeUpdateAction,
   appearanceThemeUpdateAction,
+  dashboardAction,
   attributesAction,
   attributeAction,
   attributeAddAction,
