@@ -41,11 +41,11 @@ import "../../App.css";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import viewStyles from "../viewStyles";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
-import { useNavigate } from "react-router-dom";
+
 import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
-
+import { currencyFormat } from "./currencyFormat";
 const ViewOrderComponent = ({ params }) => {
   const classes = viewStyles();
   const [editShipping, setEditShipping] = useState(false);
@@ -93,7 +93,6 @@ const ViewOrderComponent = ({ params }) => {
       dispatch(orderAction(params));
     } else {
       setorder({ ...singleOrder.order });
-      console.log(singleOrder.order);
     }
   }, [singleOrder.order]);
 
@@ -152,9 +151,7 @@ const ViewOrderComponent = ({ params }) => {
       />
     );
   };
-  function currencyFormat(num) {
-    return "$" + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-  }
+
   return (
     <>
       <Alert />
