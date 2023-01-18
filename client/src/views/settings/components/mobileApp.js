@@ -40,7 +40,9 @@ const MobileAppSetting = () => {
     });
   
     const [category, setCategory] = useState(false);
-  
+    const [categoryValue, setCategoryValue] = useState("");
+ const [checked, setChecked] = useState(false);
+  const [status, setStatus] = useState(true);
   
   
     // doubt
@@ -81,7 +83,7 @@ const MobileAppSetting = () => {
     };
   
     const handleChangeCategory = (event) => {
-      setCategory(event.target.value);
+      setCategoryValue(event.target.value);
     };
     
     const [sectionData, setSectionData] = useState([
@@ -195,7 +197,10 @@ const MobileAppSetting = () => {
                 :
                 <div>
                   <FormGroup>
-                    {sectionData.map((select) =>
+                    {sectionData.map((select) => {
+                      return (
+                        <>
+                       <div style={{display: "flex"}}>
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -203,11 +208,13 @@ const MobileAppSetting = () => {
                             // checked={settingMobile.mobile_section[select.name]}
                             checked={settingMobile.mobile_section[select.name]}
                             onChange={(e) => {
-                              if (select.id == 7 && e.target.checked === (true)){
-                              category?  setCategory(false):setCategory(true)
+                              if (select.label === "Product from Specific Categories" && (e.target.checked === (true)||e.target.checked === (false))){
+                                setChecked(!checked);
+                                status? setStatus(false)
+                                : setStatus(true)
                               // onCheckBoxChange(select.name, e.target.checked)
                               }else{
-                                setCategory(false)
+                                setChecked(checked);
                           //  onCheckBoxChange(select.name, e.target.checked)
                           }
                           onCheckBoxChange(select.name, e.target.checked)}
@@ -217,20 +224,21 @@ const MobileAppSetting = () => {
                         label={select.label}
                       />
   
-                    )}
-                    {category?
+                 
+                    {select.label === "Product from Specific Categories" ?
                
                    
-                    <Box sx={{ minWidth: 120 }} style = {{paddingRight: "1200px"}}>
-                    <FormControl fullWidth >
+                    <Box sx={{ minWidth: 120 }}>
+                    <FormControl fullWidth size="small">
                       <InputLabel id="demo-simple-select-label">Category</InputLabel>
                       <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={category}
+                        value={categoryValue}
                         label="Category"
                         onChange={handleChangeCategory}
                         style={{paddingTop: "-20px"}}
+                        disabled={status}
                       >
                         <MenuItem value="men">Men</MenuItem>
                         <MenuItem value="women">Women</MenuItem>
@@ -239,7 +247,11 @@ const MobileAppSetting = () => {
                     </FormControl>
                   </Box>
                                 : null} 
-  
+                                </div>
+                                 </>
+                      )
+                    }
+                    )}
                   </FormGroup>
                   <Grid item xs={12}>
                     <Button

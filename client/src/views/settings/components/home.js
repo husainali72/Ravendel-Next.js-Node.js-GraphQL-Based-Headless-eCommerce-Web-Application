@@ -26,14 +26,20 @@ import { select } from "react-cookies";
 import { appearanceHomeUpdateAction } from "../../../store/action";
 import { set } from "mongoose";
 import { SETTING_SUCCESS } from "../../../store/action/settingAction";
+import Card from '@mui/material/Card';
+import Paper from '@mui/material/Paper';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 // import { application } from "express";
 const HomeSettingsTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const [reOrderList, setReOrderList] = useState();
- 
+  const [categories, setCategories] = useState(false);
   const [dragItem, updateDragItem] = useState();
-
+ 
   const settingState = useSelector((state) => state.settings);
   const [settingHome, setsettingHome] = useState({
     ...settingState.settings.appearance.home,
@@ -42,16 +48,17 @@ const HomeSettingsTheme = () => {
   const [slider, setSlider] = useState({
     ...settingState.settings.appearance.home.slider,
   });
-
-
-  console.log('settingState', settingState)
+ const [value, setValue] = useState("");
+ const [checked, setChecked] = useState(false);
+  const [status, setStatus] = useState(true);
+  // console.log('settingState', settingState)
 
   // doubt
-  useEffect(() => {
-    if(settingState.settings.appearance.home && settingState.settings.appearance.home.add_section_web && settingState.settings.appearance.home.add_section_web.length > 0){
-      setSectionData(settingState.settings.appearance.home.add_section_web)
-    }
-  }, [settingState.settings.appearance.home])
+  // useEffect(() => {
+  //   if(settingState.settings.appearance.home && settingState.settings.appearance.home.add_section_web && settingState.settings.appearance.home.add_section_web.length > 0){
+  //     setSectionData(settingState.settings.appearance.home.add_section_web)
+  //   }
+  // }, [settingState.settings.appearance.home])
 
 
   useEffect(() => {
@@ -193,22 +200,38 @@ const HomeSettingsTheme = () => {
   const checkBoxOnChange = (name, value) => {
     setsettingHome({
       ...settingHome,
-      // add_section_in_home: {
-        // ...settingHome.add_section_in_home,
-        add_section_web: {
-          ...settingHome.add_section_web,
+      add_section_in_home: {
+        ...settingHome.add_section_in_home,
+        // add_section_web: {
+        //   ...settingHome.add_section_web,
         [name]: value,
       },
     });
   };
 
+  const handleChangeCategories = (event) => {
+    setValue(event.target.value);
+  };
   
+  // const disable = (event) => {
+  //   if (event.target.checked === (true)){
+  //     setDisabled(false)
+  //   } else {
+  //     setDisabled(true)
+  //   }
+  // }
+
+  const onChangeHandler = () => {
+    setChecked(!checked);
+    setStatus(false);
+  };
 
   const [sectionData, setSectionData] = useState([
     {
       id: 1,
       name: "feature_product",
-      label: "Featured product"
+      label: "Featured product",
+      categories: true
     },
     {
       id: 2,
@@ -278,7 +301,11 @@ const HomeSettingsTheme = () => {
     <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
+        {/* <Paper variant="outlined" /> */}
+        {/* <Paper elevation={0} > */}
+        {/* <Card style={{paddingTop: "10px", paddingLeft: "15px", paddingBottom: "10px"}}> */}
           <Box component="div" className={classes.marginBottom3}>
+         
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Typography variant="h5" className={classes.paddingBottom1}>
@@ -384,10 +411,12 @@ const HomeSettingsTheme = () => {
                   {sectionData.map((select, index) => {
                     return (
                       <table>
+                        <tbody>
                         <tr style={{ lineHeight: "35px", fontSize: "14px" }}
                         >
                           {select.label}
                         </tr>
+                        </tbody>
                       </table>
                     );
                   })}
@@ -406,21 +435,63 @@ const HomeSettingsTheme = () => {
               :
               <div>
                 <FormGroup>
-                  {sectionData.map((select) =>
-                    <FormControlLabel
-                      control={
+                 
+                  {sectionData.map((select) => {
+                    return ( 
+                      <>
+                       <div style={{display: "flex"}}>
+                       <FormControlLabel
+                       control={
                         <Checkbox
                           color="success"
-                          // checked={settingHome.add_section_in_home[select.name]}
-                          checked={settingHome.add_section_web[select.name]}
-                          onChange={(e) => checkBoxOnChange(select.name, e.target.checked)}
+                          checked={settingHome.add_section_in_home[select.name]}
+                          // checked={settingHome.add_section_web[select.name]}
+                          onChange={(e) => {
+                            if (select.label === "Product from Specific Categories" && (e.target.checked === (true)||e.target.checked === (false))){
+                       console.log(status, "status")
+                         setChecked(!checked);
+                        status? setStatus(false)
+                        : setStatus(true)
+                            } else {
+                        
+                              setChecked(checked);
+                              
+                            }
+                            checkBoxOnChange(select.name, e.target.checked)
+                          
+                          }
+                       
+                          }
+                         
                         />
                       }
-                      label={select.label}
+                    label={select.label}
                     />
-
-                  )}
-
+                     {select.label === "Product from Specific Categories"  ?
+                     
+                    <Box sx={{ minWidth: 120 }}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={value}
+                          label="Categories"
+                          onChange={handleChangeCategories}
+                          disabled={status}
+                        >
+                          <MenuItem value="men">Men</MenuItem>
+                          <MenuItem value="women">Women</MenuItem>
+                          <MenuItem value="children">Children</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Box>
+                                  : null}
+                                      </div>
+</>
+                    )}
+                      )}
+             
                 </FormGroup>
                 <Grid item xs={12}>
                   <Button
@@ -444,10 +515,11 @@ const HomeSettingsTheme = () => {
                 </Grid>
               </div>
             }
+           
           </Box>
-
-
-        
+          {/* </Paper> */}
+          {/* <Paper variant="outlined" square /> */}
+        {/* </Card> */}
         </Grid>
         {/* <Grid item xs={12}>
         <Button
