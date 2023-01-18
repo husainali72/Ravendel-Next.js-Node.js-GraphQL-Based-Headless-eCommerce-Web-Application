@@ -3,6 +3,7 @@
 
 //var URI = 'mongodb+srv://rv-staging:4xPAesU6bu1fELfE@ravendel-staging.2hfno.mongodb.net/rv-staging-database?retryWrites=true&w=majority'; // staging
 var URI = 'mongodb+srv://rv-live:4xPAesU6bu1fELfE@ravendel-live.apytt.mongodb.net/rv-live-database?retryWrites=true&w=majority'; // staging
+
 //var URI = 'mongodb+srv://ravendel:AhytMhScZbNoByBs@ravendel.k8pbl0q.mongodb.net/ravendel-database?retryWrites=true&w=majority'
 var accessKeyId = "AKIA5NPJTJ66BD6LZGU2";
 var secretAccessKey = "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";
@@ -27,5 +28,7 @@ module.exports = {
   accessKeyId : accessKeyId,
   secretAccessKey : secretAccessKey,
   bucketName : bucketName,
-  bucketBaseURL : bucketBaseURL,
+  bucketBaseURL : bucketBaseURL
 };
+
+

@@ -14,7 +14,7 @@ const GET_ORDERS = gql`
         date
         updated
       }
-      message{
+      message {
         message
         success
       }
@@ -23,27 +23,28 @@ const GET_ORDERS = gql`
 `;
 
 const GET_ORDER = gql`
-  
-  query($id: ID!){
-    order(id: $id){
-        data{
-          id
-          customer_id
-          payment_status
-          shipping_status
-          shipping
-          billing
-          products
-          coupon_code
-          date
-          updated
-        }
-        message{
-          message
-          success
-        }
+  query ($id: ID!) {
+    order(id: $id) {
+      data {
+        id
+        customer_id
+        payment_status
+        shipping_status
+        shipping
+        billing
+        products
+        coupon_code
+        date
+        updated
+        sub_total_details
+        sub_total_summary
+      }
+      message {
+        message
+        success
       }
     }
+  }
 `;
 
 // query($id: ID!) {
@@ -58,7 +59,6 @@ const GET_ORDER = gql`
 //     updated
 //   }
 // }
-
 
 // const DELETE_ORDER = gql`
 //   mutation($id: ID!) {
@@ -76,7 +76,7 @@ const GET_ORDER = gql`
 // `;
 
 const DELETE_ORDER = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     deleteOrder(id: $id) {
       message
       success
@@ -110,26 +110,24 @@ const DELETE_ORDER = gql`
 // `;
 
 // mutation(
-  //   $id: ID!
-  //   $billing: customObject
-  //   $shipping: customObject
-  //   $status: String
-  // ) {
-  //   updateOrder(
-  //     id: $id
-  //     billing: $billing
-  //     shipping: $shipping
-  //     status: $status
-  //   ) {
-  //     message
-  //     success
-  //   }
-  // }
+//   $id: ID!
+//   $billing: customObject
+//   $shipping: customObject
+//   $status: String
+// ) {
+//   updateOrder(
+//     id: $id
+//     billing: $billing
+//     shipping: $shipping
+//     status: $status
+//   ) {
+//     message
+//     success
+//   }
+// }
 
 const UPDATE_ORDER = gql`
-  
-
-  mutation(
+  mutation (
     $id: ID!
     $billing: customObject
     $shipping: customObject
@@ -148,7 +146,5 @@ const UPDATE_ORDER = gql`
     }
   }
 `;
-
-
 
 export { GET_ORDERS, GET_ORDER, DELETE_ORDER, UPDATE_ORDER };

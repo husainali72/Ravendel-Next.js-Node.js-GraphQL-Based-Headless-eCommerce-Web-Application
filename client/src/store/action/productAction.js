@@ -229,11 +229,13 @@ export const productsAction = () => (dispatch) => {
 };
 
 export const productAction = (id) => (dispatch) => {
+  console.log("productAction" + " " + id);
   dispatch({
     type: PRODUCT_LOADING,
   });
   query(GET_PRODUCT, { id: id })
     .then((response) => {
+      console.log(response);
       const [error, success, message, data] = getResponseHandler(
         response,
         "product"

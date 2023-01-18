@@ -53,12 +53,14 @@ export const ordersAction = () => (dispatch) => {
     });
 };
 
-export const orderAction = () => (dispatch) => {
+export const orderAction = (id) => (dispatch) => {
   dispatch({
     type: ORDER_LOADING,
   });
-  query(GET_ORDER)
+
+  query(GET_ORDER, { id: id })
     .then((response) => {
+      console.log(response);
       const [error, success, message, data] = getResponseHandler(
         response,
         "order"
@@ -82,6 +84,7 @@ export const orderAction = () => (dispatch) => {
       }
     })
     .catch((error) => {
+      console.log("error");
       dispatch({
         type: ORDER_FAIL,
       });

@@ -60,11 +60,10 @@ const viewStyles = makeStyles((theme) => ({
   },
   cancelBtn: {
     "&&": {
-      background: palette.error.dark,
-      color: "#fff",
       marginLeft: "10px",
     },
   },
+
   addBtn: {
     "&&": {
       color: "white",
@@ -228,7 +227,6 @@ const viewStyles = makeStyles((theme) => ({
     margin: "0px 10px",
     overflow: "hidden",
     border: "2px solid #ddd",
-    
   },
   logoImagePreview: {
     width: "100%",
@@ -441,4 +439,4 @@ const viewStyles = makeStyles((theme) => ({
 //     );
 //   }
 
-  export default viewStyles;
+export default viewStyles;

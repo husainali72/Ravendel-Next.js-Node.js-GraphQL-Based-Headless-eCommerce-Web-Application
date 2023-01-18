@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Alert from "../utils/Alert";
-import { orderUpdateAction, ordersAction } from "../../store/action/";
+import { orderUpdateAction, orderAction } from "../../store/action/";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
@@ -41,17 +41,17 @@ import "../../App.css";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import viewStyles from "../viewStyles";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
-import { useNavigate } from "react-router-dom";
+
 import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
-const ViewOrderComponent = (props) => {
+const ViewOrderComponent = ({ params }) => {
   const classes = viewStyles();
   const [editShipping, setEditShipping] = useState(false);
   const [editBilling, setEditBilling] = useState(false);
 
   const dispatch = useDispatch();
-  const orders = useSelector((state) => state.orders);
+  const singleOrder = useSelector((state) => state.orders.order);
 
   const [order, setorder] = useState({
     billing: {
@@ -85,23 +85,27 @@ const ViewOrderComponent = (props) => {
   });
 
   useEffect(() => {
-    if (isEmpty(orders.orders)) {
-      dispatch(ordersAction());
+    console.log("singleOrder---", singleOrder);
+    if (isEmpty(singleOrder)) {
+      dispatch(orderAction(params.id));
+    } else {
+      setorder({ ...singleOrder });
+      console.log(singleOrder);
     }
 
-    for (let i in orders.orders) {
-      if (orders.orders[i].id === "63402d07469a96c8a3cb7238") {
-        setorder({ ...orders.orders[i] });
-      }
-    }
-  }, [orders.orders]);
+    // for (let i in orders.orders) {
+    //   if (orders.orders[i].id === params.id) {
+    //     setorder({ ...orders.orders[i] });
+    //   }
+    // }
+  }, [singleOrder]);
 
   const updateOrder = (e) => {
     e.preventDefault();
 
     setEditBilling(false);
     setEditShipping(false);
-    dispatch(orderUpdateAction(order));
+    //dispatch(orderUpdateAction(order));
   };
 
   const changeBilling = (e) => {
@@ -155,7 +159,7 @@ const ViewOrderComponent = (props) => {
   return (
     <>
       <Alert />
-      {orders.loading && (
+      {singleOrder.loading && (
         <Backdrop className={classes.backdrop} open={true}>
           <CircularProgress color="inherit" /> <br />
           <Typography variant="h4">Loading</Typography>
@@ -180,7 +184,7 @@ const ViewOrderComponent = (props) => {
           </Button>
           <Button
             variant="contained"
-            color="primary"
+            color="error"
             className={classes.cancelBtn}
           >
             <Link
@@ -208,8 +212,9 @@ const ViewOrderComponent = (props) => {
                   {order.billing.transaction_id}
                 </Typography>
                 <FormControl className={classes.statusSelect}>
-                  <InputLabel id="status">Status</InputLabel>
+                  <InputLabel id="status">{order.payment_status}</InputLabel>
                   <Select
+                    label={order.payment_status}
                     labelId="status"
                     id="status"
                     value={order.status}
@@ -217,6 +222,7 @@ const ViewOrderComponent = (props) => {
                     onChange={(e) =>
                       setorder({ ...order, [e.target.name]: e.target.value })
                     }
+                    style={{ color: "black" }}
                   >
                     <MenuItem value="Pending">Pending Payment</MenuItem>
                     <MenuItem value="Failed">Failed</MenuItem>
@@ -516,9 +522,9 @@ const ViewOrderComponent = (props) => {
                       {order.shipping.state}, {order.shipping.country},{" "}
                       {order.shipping.zip}
                     </Typography>
-                    <Typography variant="body1">
+                    {/* <Typography variant="body1">
                       <b>Note:</b> <i>{order.shipping.notes}</i>
-                    </Typography>
+                    </Typography> */}
                   </>
                 )}
               </CardContent>
@@ -572,39 +578,52 @@ const ViewOrderComponent = (props) => {
                       Total
                     </Typography>
                     <Typography variant="body1" className={classes.mtb2}>
-                      Coupon code <b>ABC</b> 10%
+                      {/* Coupon code{" "} */}
+                      <b>{singleOrder.sub_total_details.coupon_code}</b> 10%
                     </Typography>
                     <Typography variant="body1" className={classes.mtb2}>
-                      Shipping Name
+                      {/* Shipping Name */}
+                      {singleOrder.sub_total_details.shipping_name}
                     </Typography>
                     <Typography variant="body1" className={classes.mtb2}>
-                      Tax Name
+                      {/* Tax Name */}
+                      {singleOrder.sub_total_details.tax_name}
                     </Typography>
                     <Divider />
-                    <Typography variant="h5" className={classes.mtb2}>
+                    <Typography variant="body1" className={classes.mtb2}>
                       SubTotal
                     </Typography>
                   </Grid>
-                  {order.products.map((product, index) => (
-                    <Grid item md={3} className={classes.textRight}>
-                      <Typography variant="h6" className={classes.mtb2}>
-                        ${product.qty * product.cost}
-                      </Typography>
-                      <Typography variant="h6" className={classes.mtb2}>
-                        <span className={classes.discount}>- $40.00</span>
-                      </Typography>
-                      <Typography variant="h6" className={classes.mtb2}>
-                        $100.00
-                      </Typography>
-                      <Typography variant="h6" className={classes.mtb2}>
-                        $60.00
-                      </Typography>
-                      <Divider />
-                      <Typography variant="h5" className={classes.mtb2}>
-                        ${product.qty * product.cost}
-                      </Typography>
-                    </Grid>
-                  ))}
+                  {singleOrder.sub_total_summary &&
+                  singleOrder.sub_total_summary.length
+                    ? singleOrder.sub_total_summary.map((product, index) => (
+                        <>
+                          <Grid item md={3} className={classes.textRight}>
+                            <Typography variant="h6" className={classes.mtb2}>
+                              ${product.qty * product.cost}
+                              {product.total}
+                            </Typography>
+                            <Typography variant="h6" className={classes.mtb2}>
+                              <span className={classes.discount}>
+                                - {product.coupon_value}
+                              </span>
+                            </Typography>
+                            <Typography variant="h6" className={classes.mtb2}>
+                              $100.00
+                              {product.shipping_value}
+                            </Typography>
+                            <Typography variant="h6" className={classes.mtb2}>
+                              {/* $60.00 */}
+                              {product.tax_value}
+                            </Typography>
+                            <Divider />
+                            <Typography variant="h5" className={classes.mtb2}>
+                              {product.sub_total}
+                            </Typography>
+                          </Grid>
+                        </>
+                      ))
+                    : "No data"}
                 </Grid>
               </CardContent>
             </Card>
@@ -616,9 +635,10 @@ const ViewOrderComponent = (props) => {
 };
 
 export default function ViewOrder() {
+  const params = useParams();
   return (
     <ThemeProvider theme={theme}>
-      <ViewOrderComponent />
+      <ViewOrderComponent params={params} />
     </ThemeProvider>
   );
 }
