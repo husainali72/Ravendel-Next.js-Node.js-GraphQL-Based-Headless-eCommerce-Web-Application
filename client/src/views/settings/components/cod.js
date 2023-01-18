@@ -13,7 +13,7 @@ const CashOnDeliveryTheme = () => {
   // const [codInfo, setCodInfo] = useState({
   //   ...settingState.settings.paymnet.cash_on_delivery,
   // });
-  console.log(settingState);
+
   useEffect(() => {
     if (
       settingState.settings &&
