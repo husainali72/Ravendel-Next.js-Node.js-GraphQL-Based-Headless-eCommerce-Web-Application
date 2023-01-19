@@ -194,6 +194,7 @@ module.exports = gql`
     label: String
     section_img: customObject
     visible: Boolean
+    category: String
     url: String
   }
 
@@ -240,6 +241,7 @@ module.exports = gql`
     section_img: customObject
     visible: Boolean
     url: String
+    category: String
   }
 
   input add_section_web_input {

@@ -364,6 +364,7 @@ module.exports = {
             section_img: imgObject.data || args.mobile_section[i].section_img,
             url: args.mobile_section[i].url,
             visible: args.mobile_section[i].visible,
+            category: args.mobile_section[i].category ? args.mobile_section[i].category : null
           });
         }
         

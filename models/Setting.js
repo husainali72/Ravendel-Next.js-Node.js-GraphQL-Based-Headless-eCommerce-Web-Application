@@ -310,7 +310,22 @@ const SeetingSchema = new Schema(
             type: String
           }
         },
-        add_section_web: []
+        add_section_web: [
+          {
+            label: {
+              type: String
+            },
+            name: {
+              type: String
+            },
+            category: {
+              type: String
+            },
+            visible: {
+              type: Boolean
+            },
+          }
+        ]
       },
       mobile: {
         mobile_section: [
@@ -338,6 +353,9 @@ const SeetingSchema = new Schema(
             url: {
               type: String,
             },
+            category: {
+              type: String
+            }
           }
         ],
       },
@@ -573,7 +591,7 @@ module.exports.createSettings = async () => {
               large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
               thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
             },
-            visible: "true",
+            visible: false,
             url: "feature_product",
           },
           {
@@ -584,7 +602,7 @@ module.exports.createSettings = async () => {
               large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
               thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
             },
-            visible: "true",
+            visible: false,
             url: "recently_added_products",
           },
           {
@@ -595,7 +613,7 @@ module.exports.createSettings = async () => {
               large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
               thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
             },
-            visible: "true",
+            visible: false,
             url: "products_on_sales",
           },
           {
@@ -606,8 +624,20 @@ module.exports.createSettings = async () => {
               large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
               thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
             },
-            visible: "true",
+            visible: false,
             url: "product_recommendation",
+          },
+          {
+            label: "Product from Specific Categories",
+            section_img: {
+              original: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              medium: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+            },
+            visible: false,
+            url: "product_from_specific_categories",
+            category: null
           },
         ],
       }
