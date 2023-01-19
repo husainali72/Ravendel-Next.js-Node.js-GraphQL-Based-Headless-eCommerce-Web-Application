@@ -181,8 +181,9 @@ module.exports = gql`
   
   type ADD_SECTION_WEB {
     label: String
-    url: String
+    name: String
     visible: Boolean
+    category: String
   }
 
   type APPEARANCE_MOBILE {
@@ -244,6 +245,7 @@ module.exports = gql`
   input add_section_web_input {
     label: String
     name: String
+    category: String
     visible: Boolean
   }
 

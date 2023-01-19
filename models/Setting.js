@@ -310,19 +310,7 @@ const SeetingSchema = new Schema(
             type: String
           }
         },
-        add_section_web: [
-          {
-            label: {
-              type: String
-            },
-            name: {
-              type: String
-            },
-            visible: {
-              type: Boolean,
-            },
-          }
-        ]
+        add_section_web: []
       },
       mobile: {
         mobile_section: [
@@ -554,6 +542,12 @@ module.exports.createSettings = async () => {
           {
             label: "Product Recommendation",
             name: "product_recommendation",
+            visible: true,
+          },
+          {
+            label: "Product from Specific Category",
+            name: "product_from_specific_category",
+            category: null,
             visible: true,
           },
         ],
