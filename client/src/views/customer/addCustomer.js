@@ -39,6 +39,7 @@ const AddCustomerComponent = () => {
 
   const addCustomer = (e) => {
     e.preventDefault();
+
     dispatch(customerAddAction(customer));
   };
 

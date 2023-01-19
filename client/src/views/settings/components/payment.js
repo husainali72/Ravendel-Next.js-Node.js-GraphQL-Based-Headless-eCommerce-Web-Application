@@ -5,7 +5,7 @@ import DirectBankTransfer from "./directBankTransfer";
 import Paypal from "./paypal";
 import Stripe from "./stripe";
 import { TabPanel, TabProps } from "../../components";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 const PaymentComponent = () => {
   const [tabVal, setTabVal] = useState(0);
