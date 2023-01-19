@@ -49,15 +49,15 @@ import {
 } from "./components";
 import viewStyles from "../viewStyles";
 import theme from "../../theme";
+import { useParams } from "react-router-dom";
 
 //var catIds = [];
-const EditProductComponent = () => {
-  var productId = "63402d07469a96c8a3cb7238";
+const EditProductComponent = ({ params }) => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const productState = useSelector((state) => state.products);
+  const productState = useSelector((state) => state.products.product);
 
   const brandState = useSelector((state) => state.brands);
   const [featureImage, setfeatureImage] = useState(null);
@@ -101,8 +101,9 @@ const EditProductComponent = () => {
   });
 
   useEffect(() => {
-    if (!isEmpty(productId)) {
-      dispatch(productAction(productId));
+    if (isEmpty(productState)) {
+      console.log("isEmpty");
+      // dispatch(productAction(params));
     }
     dispatch(brandsAction());
     dispatch(categoriesAction());
@@ -111,7 +112,7 @@ const EditProductComponent = () => {
   useEffect(() => {
     if (!isEmpty(productState.product)) {
       let defaultBrand = {};
-
+      console.log(brandState.brands[0].id);
       if (productState.product.brand) {
         for (let i in brandState.brands) {
           if (brandState.brands[i].id === productState.product.brand.id) {
@@ -257,7 +258,6 @@ const EditProductComponent = () => {
                   />
                 </Box>
               </CardBlocks>
-
               {/* ===================Categories=================== */}
               <CardBlocks title="Categories">
                 <EditCategoriesComponent
@@ -267,7 +267,6 @@ const EditProductComponent = () => {
                   }}
                 />
               </CardBlocks>
-
               {/* ===================Pricing=================== */}
               <CardBlocks title="Pricing">
                 <Grid container spacing={3}>
@@ -311,7 +310,6 @@ const EditProductComponent = () => {
                   </Grid>
                 </Grid>
               </CardBlocks>
-
               {/* ===================Product Type=================== */}
               <CardBlocks title="Product Type">
                 <Grid container spacing={3}>
@@ -361,7 +359,6 @@ const EditProductComponent = () => {
                   </Grid>
                 </Grid>
               </CardBlocks>
-
               {/* ===================Shipping=================== */}
               {!product.product_type.virtual && (
                 <CardBlocks title="Shipping">
@@ -388,7 +385,6 @@ const EditProductComponent = () => {
                   />
                 </CardBlocks>
               )}
-
               {/* ===================Tax=================== */}
               <CardBlocks title="Tax">
                 <TaxComponent
@@ -401,7 +397,6 @@ const EditProductComponent = () => {
                   }}
                 />
               </CardBlocks>
-
               {/* ===================Inventory=================== */}
               <CardBlocks title="Inventory">
                 <Grid container spacing={3}>
@@ -426,8 +421,7 @@ const EditProductComponent = () => {
                   </Grid>
                 </Grid>
               </CardBlocks>
-
-              {/* ===================Attributes=================== */}
+              ===================Attributes===================
               <CardBlocks title="Attribute selection">
                 <Attributes
                   EditMode
@@ -442,7 +436,6 @@ const EditProductComponent = () => {
                   }}
                 />
               </CardBlocks>
-
               {/* ===================Custom Fields=================== */}
               <CardBlocks title="Custom Fields">
                 <Grid container spacing={2}>
@@ -497,7 +490,6 @@ const EditProductComponent = () => {
                   </Grid>
                 </Grid>
               </CardBlocks>
-
               {/* ===================Short Description=================== */}
               <CardBlocks title="Short Description">
                 <TextInput
@@ -509,7 +501,6 @@ const EditProductComponent = () => {
                   rows="4"
                 />
               </CardBlocks>
-
               {/* ===================Meta Information=================== */}
               <CardBlocks title="Meta Information">
                 <Grid container spacing={isSmall ? 1 : 2}>
@@ -568,7 +559,6 @@ const EditProductComponent = () => {
                   </RadioGroup>
                 </CardBlocks>
               </Box>
-
               {/* ===================Featured Product=================== */}
               <Box component="span" m={1}>
                 <CardBlocks title="Featured Product">
@@ -591,7 +581,6 @@ const EditProductComponent = () => {
                   </FormGroup>
                 </CardBlocks>
               </Box>
-
               {/* ===================Featured Image=================== */}
               <Box component="span" m={1}>
                 <CardBlocks title="Featured Image">
@@ -601,7 +590,6 @@ const EditProductComponent = () => {
                   />
                 </CardBlocks>
               </Box>
-
               {/* ===================Gallery Images=================== */}
               <Box component="span" m={1}>
                 <CardBlocks title="Gallery Image">
@@ -626,8 +614,7 @@ const EditProductComponent = () => {
                   />
                 </CardBlocks>
               </Box>
-
-              {/* ===================Brands=================== */}
+              ===================Brands===================
               <Box component="span" m={1}>
                 <CardBlocks title="Brands">
                   <BrandSelection
@@ -647,7 +634,10 @@ const EditProductComponent = () => {
 };
 
 export default function EditProduct() {
-  <ThemeProvider theme={theme}>
-    <EditProductComponent />
-  </ThemeProvider>;
+  const params = useParams();
+  return (
+    <ThemeProvider theme={theme}>
+      <EditProductComponent params={params} />
+    </ThemeProvider>
+  );
 }

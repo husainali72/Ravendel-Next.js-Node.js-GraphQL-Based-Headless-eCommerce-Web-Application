@@ -181,8 +181,9 @@ module.exports = gql`
   
   type ADD_SECTION_WEB {
     label: String
-    url: String
+    name: String
     visible: Boolean
+    category: String
   }
 
   type APPEARANCE_MOBILE {
@@ -193,6 +194,7 @@ module.exports = gql`
     label: String
     section_img: customObject
     visible: Boolean
+    category: String
     url: String
   }
 
@@ -239,11 +241,13 @@ module.exports = gql`
     section_img: customObject
     visible: Boolean
     url: String
+    category: String
   }
 
   input add_section_web_input {
     label: String
-    url: String
+    name: String
+    category: String
     visible: Boolean
   }
 

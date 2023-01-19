@@ -46,8 +46,8 @@ module.exports = gql`
     product_id: ID
     qty: Int
     product_title: String
-      product_price: Float
-      product_image: String
+    product_price: Float
+    product_image: String
     combination: [String]
   }
 
@@ -82,6 +82,7 @@ module.exports = gql`
   extend type Mutation {
     addCart(user_id: ID, total: Float, products: [cartProduct]): statusSchema
     updateCart(id: ID!, total: Float, products: [cartProduct]): statusSchema
+    changeQty(user_id: ID!, product_id: ID!, qty: Int!): statusSchema
     deleteCart(id: ID!): statusSchema
     deleteCartProduct(id: ID!, product_id: ID!): statusSchema
     addToCart(

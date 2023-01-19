@@ -31,8 +31,7 @@ const MainLayout = ({ children }) => {
   };
 
   const shouldOpenSidebar = isDesktop ? true : openSidebar;
-  console.log(isEmpty(login.user_token));
-  console.log("user_token", login.user_token);
+
   return (
     <div
       className={clsx({

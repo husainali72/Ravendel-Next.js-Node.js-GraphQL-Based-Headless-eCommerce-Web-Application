@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components/";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
-import  { get } from "lodash";
+import { get } from "lodash";
 const CashOnDeliveryTheme = () => {
   const classes = viewStyles();
   const settingState = useSelector((state) => state.settings);
@@ -15,11 +15,16 @@ const CashOnDeliveryTheme = () => {
   // });
 
   useEffect(() => {
-    // if(settingState.settings && settingState.settings.paymnet && settingState.settings.paymnet.cash_on_delivery){
-    //   setCodInfo({ ...settingState.settings.paymnet.cash_on_delivery })
-    // }
-    get(settingState, 'settings.paymnet.cash_on_delivery')
-  }, [settingState.settings])
+    if (
+      settingState.settings &&
+      settingState.settings.paymnet &&
+      settingState.settings.paymnet.cash_on_delivery
+    ) {
+      setCodInfo({ ...settingState.settings.paymnet.cash_on_delivery });
+    }
+    // get(settingState, "settings.paymnet.cash_on_delivery");
+    // setCodInfo({ ...settingState.settings.paymnet.cash_on_delivery });
+  }, [settingState.settings]);
 
   const updateCOD = () => {
     // dispatch(paymentCodUpdateAction(codInfo));
@@ -80,9 +85,9 @@ const CashOnDeliveryTheme = () => {
         <Grid item xs={12}>
           <Button
             size="small"
-            color="primarygh"
+            color="primary"
             variant="contained"
-            onClick={updateCOD}
+            // onClick={updateCOD}
           >
             Save Change
           </Button>

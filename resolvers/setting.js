@@ -315,20 +315,20 @@ module.exports = {
           });
         }
 
-        if(setting.appearance.home.add_section_in_home.product_from_specific_categories === true) {
-          setting.appearance.home.add_section_in_home.category_id = args.add_section_in_home.category_id
-        }else{
-          setting.appearance.home.add_section_in_home.category_id = ""
-        }
+        // if(setting.appearance.home.add_section_in_home.product_from_specific_categories === true) {
+        //   setting.appearance.home.add_section_in_home.category_id = args.add_section_in_home.category_id
+        // }else{
+        //   setting.appearance.home.add_section_in_home.category_id = ""
+        // }
 
-        var add_section_web = [];
-        for (let i in args.add_section_web) {
-          add_section_web.push({
-            label: args.add_section_web[i].label,
-            url: args.add_section_web[i].url,
-            visible: args.add_section_web[i].visible
-          });
-        }
+        // var add_section_web = [];
+        // for (let i in args.add_section_web) {
+        //   add_section_web.push({
+        //     label: args.add_section_web[i].label,
+        //     name: args.add_section_web[i].name,
+        //     visible: args.add_section_web[i].visible
+        //   });
+        // }
 
         setting.appearance.home.slider = slider;
         setting.appearance.home.add_section_in_home = args.add_section_in_home;
@@ -364,6 +364,7 @@ module.exports = {
             section_img: imgObject.data || args.mobile_section[i].section_img,
             url: args.mobile_section[i].url,
             visible: args.mobile_section[i].visible,
+            category: args.mobile_section[i].category ? args.mobile_section[i].category : null
           });
         }
         

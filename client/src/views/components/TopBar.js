@@ -14,7 +14,7 @@ const TopBarTheme = ({ title, onSubmit, backLink, submitTitle }) => {
   return (
     <Grid container className="topbar">
       <Grid item lg={6} md={6} sm={6} xs={12} p={1}>
-        <Typography variant="body1">
+        <Typography variant="h5">
           <Link to={backLink}>
             <IconButton aria-label="Back">
               <ArrowBackIcon style={{ color: palette.text.secondary }} />
@@ -34,7 +34,7 @@ const TopBarTheme = ({ title, onSubmit, backLink, submitTitle }) => {
         >
           {submitTitle}
         </Button>
-        <Button className={classes.cancelBtn}>
+        <Button className={classes.cancelBtn} variant="contained" color="error">
           <Link to={backLink} style={{ color: "#fff" }}>
             Cancel
           </Link>
