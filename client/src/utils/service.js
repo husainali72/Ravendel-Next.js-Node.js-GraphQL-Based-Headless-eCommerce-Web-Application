@@ -5,12 +5,16 @@ import { isEmpty, client_app_route_url } from "./helper";
 import APclient from "../Client";
 
 export const mutation = async (query, variables) => {
+  console.log(APclient,'APclient')
   try {
     const response = await APclient.mutate({
       mutation: query,
       variables,
+      fetchPolicy: "no-cache", 
     });
+    console.log(response,'in mutate')
     return Promise.resolve(response);
+   
   } catch (error) {
     const errors = JSON.parse(JSON.stringify(error));
     if (

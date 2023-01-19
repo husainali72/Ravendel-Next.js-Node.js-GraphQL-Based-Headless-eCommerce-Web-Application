@@ -18,29 +18,55 @@ import { useDispatch, useSelector } from "react-redux";
 import { bucketBaseURL } from "../../../utils/helper";
 import CloseIcon from '@mui/icons-material/Close';
 import { get } from "lodash";
-// import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Draggable } from "react-drag-reorder";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { useRef } from "react";
-
 import theme from "../../../theme";
+import { select } from "react-cookies";
+import { appearanceHomeUpdateAction } from "../../../store/action";
+import { set } from "mongoose";
+import { SETTING_SUCCESS } from "../../../store/action/settingAction";
+import Card from '@mui/material/Card';
+import Paper from '@mui/material/Paper';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+// import { application } from "express";
 const HomeSettingsTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const [reOrderList, setReOrderList] = useState();
+  const [categories, setCategories] = useState(false);
+  const [dragItem, updateDragItem] = useState();
+ 
   const settingState = useSelector((state) => state.settings);
   const [settingHome, setsettingHome] = useState({
     ...settingState.settings.appearance.home,
   });
+  // const [sectionData, setSectionData] = useState([]);
   const [slider, setSlider] = useState({
     ...settingState.settings.appearance.home.slider,
   });
+ const [value, setValue] = useState("");
+ const [checked, setChecked] = useState(false);
+  const [status, setStatus] = useState(true);
+  // console.log('settingState', settingState)
+
+  // doubt
+  // useEffect(() => {
+  //   if(settingState.settings.appearance.home && settingState.settings.appearance.home.add_section_web && settingState.settings.appearance.home.add_section_web.length > 0){
+  //     setSectionData(settingState.settings.appearance.home.add_section_web)
+  //   }
+  // }, [settingState.settings.appearance.home])
+
+
   useEffect(() => {
     setsettingHome({
       ...settingState.settings.appearance.home,
       // get (settingState, "settings.appearance.home")
       // get (settingState, "settings.appearance.home.slider")
-      
+
     });
 
     var newSliderArr = [];
@@ -54,10 +80,12 @@ const HomeSettingsTheme = () => {
         settingState.settings.appearance.home.slider[i].image.original;
       newSliderArr.push({ image: { original: newImge } });
     }
-    setSlider(newSliderArr)
-  }, 
-  [settingState.settings.appearance.home.slider]
-  // [settingState.settings]
+    setSlider(newSliderArr) 
+    console.log('settingHome===========>',settingHome)
+    console.log("settingState", settingState)
+  },
+    [settingState.settings.appearance.home.slider]
+    // [settingState.settings]
   )
 
   const addSlide = () => {
@@ -123,160 +151,161 @@ const HomeSettingsTheme = () => {
 
     for (let i in settingHome.slider) {
       delete settingHome.slider[i].__typename;
-    }
-    delete settingHome.add_section_in_home.__typename;
-    // dispatch(appearanceHomeUpdateAction(settingHome));
+    } 
+   
+    // delete settingHome.add_section_in_home.__typename;
+   delete settingHome.add_section_web.__typename;
+   
+   dispatch(appearanceHomeUpdateAction(settingHome));
   };
 
+
+  // const updateHome = () => {
+  //   // setSectionData(settingState.settings.appearance.home.add_section_web)
+  //   let item = sectionData
+  //   console.log(item, "setSectionData")
+  //   // dispatch(appearanceHomeUpdateAction(sectionData))
+  //   // dispatch({
+  //   //   type: SETTING_SUCCESS,
+  //   //   payload: sectionData
+  //   // })
+  //   // fetch("sectionData", {
+  //   //   method: "PUT",
+  //   //   headers: {
+  //   //     "Accept":" application/json",
+  //   //     "Content-type": "application/json"
+  //   //   },
+  //   //   body:JSON.stringify(item)
+  //   // }).then((result) => {
+  //   //   result.json().then((resp) => {
+  //   //     console.log(resp)
+  //   //     setSectionData()
+  //   //   })
+  //   // })
+  // }
+
+
+
   const reOrder = () => {
-   reOrderList? setReOrderList(false): setReOrderList(true)
+    reOrderList ? setReOrderList(false) : setReOrderList(true)
   }
+
+ 
+  const onSave = () => {
+    dragItem ? setReOrderList(true) : setReOrderList(false)
+  }
+
+ 
 
   const checkBoxOnChange = (name, value) => {
     setsettingHome({
       ...settingHome,
       add_section_in_home: {
         ...settingHome.add_section_in_home,
+        // add_section_web: {
+        //   ...settingHome.add_section_web,
         [name]: value,
       },
     });
   };
 
-  const [settingSectionDatas, setSettingSectionDatas] = useState([
-//   {id : <FormControlLabel
-//               control={
-//                 <Checkbox
-//                   color='primary'
-//                   checked={settingHome.add_section_in_home.feature_product}
-//                   onChange={(e) => checkBoxOnChange('feature_product', e.target.checked)}
-                  
-//                 />
-              
-//               }
-              
-//               label='Featured product'
-//             />},
-             
-//              {id:  <FormControlLabel
-//                 control={
-//                   <Checkbox
-//                     color='primary'
-//                     checked={
-//                       settingHome.add_section_in_home.recently_added_products
-//                     }
-//                     onChange={(e) => checkBoxOnChange('recently_added_products', e.target.checked)}
-//                   />
-//                 }
-//                 label='Recently Added Products'
-//               />},
+  const handleChangeCategories = (event) => {
+    setValue(event.target.value);
+  };
+  
+  // const disable = (event) => {
+  //   if (event.target.checked === (true)){
+  //     setDisabled(false)
+  //   } else {
+  //     setDisabled(true)
+  //   }
+  // }
 
-//               {id: <FormControlLabel
-//                 control={
-//                   <Checkbox
-//                     color='primary'
-//                     checked={
-//                       settingHome.add_section_in_home.most_viewed_products
-//                     }
-//                     onChange={(e) => checkBoxOnChange('most_viewed_products', e.target.checked)}
-//                   />
-//                 }
-//                 label='Most Viewed Products'
-//               />},
+  const onChangeHandler = () => {
+    setChecked(!checked);
+    setStatus(false);
+  };
 
-//               {id: <FormControlLabel
-//                 control={
-//                   <Checkbox
-//                     color='primary'
-//                     checked={
-//                       settingHome.add_section_in_home.recently_bought_products
-//                     }
-//                     onChange={(e) => checkBoxOnChange('recently_bought_products', e.target.checked)}
-//                   />
-//                 }
-//                 label='Recently Bought Products'
-//               />},
+  const [sectionData, setSectionData] = useState([
+    {
+      id: 1,
+      name: "feature_product",
+      label: "Featured product",
+      categories: true
+    },
+    {
+      id: 2,
+      name: "recently_added_products",
+      label: "Recently Added Products"
+    },
+    {
+      id: 3,
+      name: "most_viewed_products",
+      label: "Most Viewed Products"
+    },
+    {
+      id: 4,
+      name: "recently_bought_products",
+      label: "Recently Bought Products"
+    },
+    {
+      id: 5,
+      name: "product_recommendation",
+      label: "Product Recommendation (Based on Your Browsing History)"
+    },
+    {
+      id: 6,
+      name: "products_on_sales",
+      label: "Products on Sales"
+    },
+    {
+      id: 7,
+      name: "product_from_specific_categories",
+      label: "Product from Specific Categories"
+    }
+  ]);
 
-//              { id: <FormControlLabel
-//                 control={
-//                   <Checkbox
-//                     color='primary'
-//                     checked={
-//                       settingHome.add_section_in_home.product_recommendation
-//                     }
-//                     onChange={(e) => checkBoxOnChange('product_recommendation', e.target.checked)}
-//                   />
-//                 }
-//                 label='Product Recommendation (Based on Your Browsing History)'
-//               />},
+ 
+  
+  const [settingSection, setSettingSection] = useState(sectionData);
 
-//              { id: <FormControlLabel
-//                 control={
-//                   <Checkbox
-//                     color='primary'
-//                     checked={settingHome.add_section_in_home.products_on_sales}
-//                     onChange={(e) => checkBoxOnChange('products_on_sales', e.target.checked)}
-//                   />
-//                 }
-//                 label='Products on Sales'
-//               />
-// },
-//               {id: <FormControlLabel
-//                 control={
-//                   <Checkbox
-//                     color='primary'
-//                     checked={
-//                       settingHome.add_section_in_home
-//                         .product_from_specific_categories
-//                     }
-//                     onChange={(e) =>{
-//                       console.log(e)
-//                       return checkBoxOnChange('product_from_specific_categories', e.target.checked)}}
-//                   />
-//                 }
-//                 label='Product from Specific Categories'
-//               />
-// } 
-"Recently added Products",
-  " Most viewed Products",
-  " Recently Bought Products",
-   "Product Recommendation (Based on Your Browsing History)",
-   "Products on Sales",
-   "Product from Specific Categories",
-  ])
 
+
+  // const handleDrop = (droppedItem) => {
+  //   if (!droppedItem.destination) return;
+  // var updatedList = [...settingSection];
+  // const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
+  // updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
+  // setSettingSection(updatedList);
+  // setReOrderList(true);
+  // };
 
   const getChangedPos = (currentPos, newPos) => {
     console.log(currentPos, newPos);
+    const reorderedItem = sectionData[currentPos];
+    sectionData[currentPos]=sectionData[newPos];
+    sectionData[newPos] = reorderedItem
+    let list = sectionData;
+    // console.log(reorderedItem)
+    // list.splice(newPos, 0, reorderedItem);
+    // console.log(list)
+    setSectionData([...list])
+    // updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
+    // setSettingSection(updatedList);
+    // setReOrderList(true);
+
   };
 
-  const dragItem = useRef();
-  const dragOverItem = useRef();
 
-  const dragStart = (e, position) => {
-    dragItem.current = position;
-    console.log(e.target.innerHTML);
-  };
- 
-  const dragEnter = (e, position) => {
-    dragOverItem.current = position;
-    console.log(e.target.innerHTML);
-  };
- 
-  const drop = (e) => {
-    const copyListItems = [...settingSectionDatas];
-    const dragItemContent = copyListItems[dragItem.current];
-    copyListItems.splice(dragItem.current, 1);
-    copyListItems.splice(dragOverItem.current, 0, dragItemContent);
-    dragItem.current = null;
-    dragOverItem.current = null;
-    setSettingSectionDatas(copyListItems);
-  };
- const index = 0;
   return (
     <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
+        {/* <Paper variant="outlined" /> */}
+        {/* <Paper elevation={0} > */}
+        {/* <Card style={{paddingTop: "10px", paddingLeft: "15px", paddingBottom: "10px"}}> */}
           <Box component="div" className={classes.marginBottom3}>
+         
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Typography variant="h5" className={classes.paddingBottom1}>
@@ -295,7 +324,7 @@ const HomeSettingsTheme = () => {
                               classes.deleteicon,
                               classes.slideRemove
                             )}
-                            // className= {classes.deleteicon}
+                          // className= {classes.deleteicon}
                           >
                             <CloseIcon />
                           </IconButton>
@@ -366,234 +395,133 @@ const HomeSettingsTheme = () => {
             </Grid>
           </Box>
 
+{/* Add section for Website  */}
+
           <Box component="div" className={classes.marginBottom2}>
             <Typography variant="h5" className={classes.paddingBottom1}>
               Add Section in Home Page
             </Typography>
-        
-           
 
-          
-           
-        {/* {settingSectionDatas.map((settingSectionData, idx) => {
-          return (
-            // <div key={idx} className="flex-item">
-              <table>
-                <tr>
-                  {settingSectionData.id}
-                </tr>
-              </table>
-            // </div>
-          );
-        })} */}
 
-{/* {
-  settingSectionDatas&&
-    settingSectionDatas.map((item, index) => (
-      <div key={index} className="flex-item">
-              <table>
-                <tr
-        onDragStart={(e) => dragStart(e, index)}
-        onDragEnter={(e) => dragEnter(e, index)}
-        onDragEnd={drop}
-        key={index}
-        draggable
-        >
-          {item.id}
-          </tr>
-              </table>
-      </div>
-      ))}
-   */}
-   {reOrderList?
- 
-     
-    // <table>
-    //    <Draggable onPosChange={getChangedPos}>
-    // <tr style={{lineHeight: "45px"}}>Featured Product</tr>
-    // <tr style={{lineHeight: "45px"}}>Recently added Products</tr>
-    // <tr style={{lineHeight: "45px"}}>Most viewed Products</tr>
-    // <tr style={{lineHeight: "45px"}}>Recently Bought Products</tr>
-    // <tr style={{lineHeight: "45px"}}>Product Recommendation (Based on Your Browsing History)</tr>
-    // <tr style={{lineHeight: "45px"}}>Products on Sales</tr>
-    // <tr style={{lineHeight: "45px"}}>Product from Specific Categories</tr>
-    // </Draggable>
-    // </table>
-    <div>
-    <Draggable onPosChange={getChangedPos}>
-    {settingSectionDatas.map((settingSectionData) => {
-      return (
-        // <div key={idx} className="flex-item">
-          <table>
-            <tr style={{lineHeight: "45px"}}>
-              {settingSectionData}
-            </tr>
-          </table>
-        // </div>
-      );
-    })}
-       </Draggable>
-       <Button
-            
-            color='primary'
-            variant='contained'
-            onClick={reOrder}
-            style={{padding: "1px"}}
-          >
-            Save 
-          </Button>
-       </div>
-  
-    // settingSectionDatas&&
-    //   settingSectionDatas.map((item, index) => (
-    //     <div key={index} className="flex-item">
-    //             <table>
-    //               <tr
-    //       // onDragStart={(e) => dragStart(e, index)}
-    //       // onDragEnter={(e) => dragEnter(e, index)}
-    //       // onDragEnd={drop}
-    //       // key={index}
-    //       // draggable
-    //       >
-    //         {item.id}
-    //         </tr>
-    //             </table>
-    //     </div>
-    //     ))
-  
-   :
-        
-   <FormGroup>
-               <FormControlLabel
-                control={
-                  <Checkbox
-                    color="success"
-                    checked={settingHome.add_section_in_home.feature_product}
-                    onChange={(e) => checkBoxOnChange('feature_product', e.target.checked)}
-                   
-                  />
-                
-                }
-                
-                label='Featured product'
+
+            {reOrderList ?
+
+              <div>
+                <Draggable onPosChange={getChangedPos}>
+                  {sectionData.map((select, index) => {
+                    return (
+                      <table>
+                        <tbody>
+                        <tr style={{ lineHeight: "35px", fontSize: "14px" }}
+                        >
+                          {select.label}
+                        </tr>
+                        </tbody>
+                      </table>
+                    );
+                  })}
+                </Draggable>
+                <Button
+              
+                  color='primary'
+                  variant='contained'
+                  onClick={onSave}
+                  style={{ padding: "5px", marginTop: "25px" }}
+                >
+                  Save
+                </Button>
+              </div>
+
+              :
+              <div>
+                <FormGroup>
+                 
+                  {sectionData.map((select) => {
+                    return ( 
+                      <>
+                       <div style={{display: "flex"}}>
+                       <FormControlLabel
+                       control={
+                        <Checkbox
+                          color="success"
+                          checked={settingHome.add_section_in_home[select.name]}
+                          // checked={settingHome.add_section_web[select.name]}
+                          onChange={(e) => {
+                            if (select.label === "Product from Specific Categories" && (e.target.checked === (true)||e.target.checked === (false))){
+                       console.log(status, "status")
+                         setChecked(!checked);
+                        status? setStatus(false)
+                        : setStatus(true)
+                            } else {
+                        
+                              setChecked(checked);
+                              
+                            }
+                            checkBoxOnChange(select.name, e.target.checked)
+                          
+                          }
+                       
+                          }
+                         
+                        />
+                      }
+                    label={select.label}
+                    />
+                     {select.label === "Product from Specific Categories"  ?
+                     
+                    <Box sx={{ minWidth: 120 }}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={value}
+                          label="Categories"
+                          onChange={handleChangeCategories}
+                          disabled={status}
+                        >
+                          <MenuItem value="men">Men</MenuItem>
+                          <MenuItem value="women">Women</MenuItem>
+                          <MenuItem value="children">Children</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Box>
+                                  : null}
+                                      </div>
+</>
+                    )}
+                      )}
              
-              />
+                </FormGroup>
+                <Grid item xs={12}>
+                  <Button
+                    size='small'
+                    color='primary'
+                    variant='contained'
+                    style={{ marginTop: "25px" }}
+                    onClick={reOrder}
+                  >
+                    Re-order
+                  </Button>
+                  <Button
+                    size='small'
+                    color='primary'
+                    variant='contained'
+                    style={{ marginLeft: "20px", marginTop: "25px" }}
+                    onClick={updateHome}
+                  >
+                    Save Change
+                  </Button>
+                </Grid>
+              </div>
+            }
            
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color="primary"
-                    checked={
-                      settingHome.add_section_in_home.recently_added_products
-                    }
-                    onChange={(e) =>
-                      checkBoxOnChange(
-                        "recently_added_products",
-                        e.target.checked
-                      )
-                    }
-                  />
-                }
-                label='Recently Added Products'
-        
-              />
-
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color="primary"
-                    checked={
-                      settingHome.add_section_in_home.most_viewed_products
-                    }
-                    onChange={(e) =>
-                      checkBoxOnChange("most_viewed_products", e.target.checked)
-                    }
-                  />
-                }
-                label="Most Viewed Products"
-              />
-
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    variant="check"
-                    color="primary"
-                    checked={
-                      settingHome.add_section_in_home.recently_bought_products
-                    }
-                    onChange={(e) =>
-                      checkBoxOnChange(
-                        "recently_bought_products",
-                        e.target.checked
-                      )
-                    }
-                  />
-                }
-                label="Recently Bought Products"
-              />
-
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color="primary"
-                    checked={
-                      settingHome.add_section_in_home.product_recommendation
-                    }
-                    onChange={(e) =>
-                      checkBoxOnChange(
-                        "product_recommendation",
-                        e.target.checked
-                      )
-                    }
-                  />
-                }
-                label="Product Recommendation (Based on Your Browsing History)"
-              />
-
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color="primary"
-                    checked={settingHome.add_section_in_home.products_on_sales}
-                    onChange={(e) =>
-                      checkBoxOnChange("products_on_sales", e.target.checked)
-                    }
-                  />
-                }
-                label="Products on Sales"
-              />
-
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color="primary"
-                    checked={
-                      settingHome.add_section_in_home
-                        .product_from_specific_categories
-                    }
-                    onChange={(e) =>
-                      checkBoxOnChange(
-                        "product_from_specific_categories",
-                        e.target.checked
-                      )
-                    }
-                  />
-                }
-                label='Product from Specific Categories'
-              /> 
-
-</FormGroup>
-}
-
-           
-            
-         
           </Box>
+          {/* </Paper> */}
+          {/* <Paper variant="outlined" square /> */}
+        {/* </Card> */}
         </Grid>
-     
-
-
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
         <Button
             size='small'
             color='primary'
@@ -611,7 +539,7 @@ const HomeSettingsTheme = () => {
           >
             Save Change
           </Button>
-        </Grid>
+          </Grid> */}
       </Grid>
     </>
   );

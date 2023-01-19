@@ -5,7 +5,6 @@ import { useMediaQuery } from "@mui/material";
 import clsx from "clsx";
 import AllRoutes from "../routes/routes";
 import Header from "./header";
-
 import Footer from "./footer";
 import Alert from "../views/utils/Alert";
 import Login from "../views/login";
@@ -15,7 +14,7 @@ import SideBar from "./sidebar";
 import theme from "../theme";
 const MainLayout = ({ children }) => {
   const classes = useStyles();
-  const theme = useTheme();
+  // const theme = useTheme();
   const login = useSelector((state) => state.login);
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"), {
     defaultMatches: true,
@@ -61,6 +60,7 @@ const MainLayout = ({ children }) => {
     </div>
   );
 };
+
 
 const useStyles = makeStyles((theme) => ({
   root: {

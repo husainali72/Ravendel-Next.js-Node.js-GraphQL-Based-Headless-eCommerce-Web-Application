@@ -129,13 +129,18 @@ const SETTING_TILE_DATA = gql`
           products_on_sales
           product_from_specific_categories
         }
+        add_section_web {
+          label
+          url
+          visible
+        }
       }
       theme {
         primary_color
         logo
       }
       mobile {
-        mobile_add_section_in_home {
+        mobile_section {
           label
           section_img
           visible
@@ -414,6 +419,20 @@ const UPDATE_APPEARANCE_HOME = gql`
   ${SETTING_TILE_DATA}
 `;
 
+
+const UPDATE_APPEARANCE_HOME_NEW = gql`
+mutation($slider: [slider_input], $add_section_in_home: add_section_in_home, $add_section_web: [add_section_web_input]) {
+  updateAppearanceHome(
+    slider: $slider
+    add_section_in_home: $add_section_in_home
+    add_section_web: $add_section_web
+  ) {
+    ...SettingTile
+  }
+}
+  ${SETTING_TILE_DATA}
+`;
+
 const UPDATE_APPEARANCE_MOBILE = gql`
   mutation($mobile_add_section_in_home: [mobile_add_section_in_home]) {
     updateAppearanceMobile(
@@ -421,6 +440,23 @@ const UPDATE_APPEARANCE_MOBILE = gql`
     ) {
       ...SettingTile
     }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
+const UPDATE_APPEARANCE_MOBILE_NEW = gql`
+  mutation($mobile_section: [mobile_section_input]) {
+    updateAppearanceMobile(
+      mobile_section: $mobile_section
+    ) mobile_section {
+      label
+      section_img
+      visible
+      url
+
+      ...SettingTile
+    }
+
   }
   ${SETTING_TILE_DATA}
 `;
@@ -453,4 +489,6 @@ export {
   UPDATE_APPEARANCE_HOME,
   UPDATE_APPEARANCE_MOBILE,
   UPDATE_APPEARANCE_THEME,
+  UPDATE_APPEARANCE_HOME_NEW,
+  UPDATE_APPEARANCE_MOBILE_NEW 
 };

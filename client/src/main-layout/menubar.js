@@ -9,13 +9,13 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import palette from "../theme/palette";
+
 import theme from "../theme/index";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Link } from "react-router-dom";
 import menuItems from "../routes/nav";
-
+import palette from "../theme/palette";
 import clsx from "clsx";
 import { client_app_route_url } from "../utils/helper";
 

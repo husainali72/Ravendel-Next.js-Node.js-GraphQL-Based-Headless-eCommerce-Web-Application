@@ -541,6 +541,7 @@ module.exports.createSettings = async () => {
           products_on_sales: false,
           product_from_specific_categories: false,
         },
+
         add_section_web: [
           {
             label: "Featured Product",
@@ -569,6 +570,7 @@ module.exports.createSettings = async () => {
             visible: true,
           },
         ],
+
       },
       theme: {
         primary_color: "#154050",

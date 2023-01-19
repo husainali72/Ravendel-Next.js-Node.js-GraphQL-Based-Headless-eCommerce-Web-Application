@@ -24,5 +24,3 @@ module.exports = {
   bucketName : bucketName,
   bucketBaseURL : bucketBaseURL
 };
-
-
