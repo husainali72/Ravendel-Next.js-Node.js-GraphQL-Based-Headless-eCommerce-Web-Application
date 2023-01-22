@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { isEmpty } from "./utils/helper";
-import { registerNav } from "./utils/navigation";
 import { insertToken } from "./store/action/loginAction";
-
 import Login from "./views/login";
-import { client_app_route_url } from "./utils/helper";
+import { client_app_route_url, isEmpty } from "./utils/helper";
+import ThemeHelper from "./main-layout";
 import "./assets/scss/index.css";
 import "./App.css";
-import SideBarTheme from "./main-layout/sidebar";
-import Dashboard from "./views/dashboard";
-import AllRoutes from "./routes/routes";
-import ThemeHelper from "./main-layout";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -53,16 +47,19 @@ const App = () => {
 
   return (
     <>
-      <Routes>
-        <Route exact={true} path={`/`} element={<Login />}></Route>
-        <Route
-          exact={true}
-          path={`${client_app_route_url}login`}
-          element={<Login />}
-        ></Route>
-      </Routes>
-
-      {!isEmpty(login.user_token) ? <ThemeHelper /> : null}
+      {!isEmpty(login.user_token) ?
+        <ThemeHelper /> 
+      : 
+        <Routes>
+          {/* <Route exact={true} path={`/`} element={<Login />}></Route> */}
+          <Route
+            exact={true}
+            path={`${client_app_route_url}login`}
+            element={<Login />}
+          ></Route>
+          <Route path='*' element={<Navigate to={`${client_app_route_url}login`} />} />
+        </Routes>
+      }
     </>
   );
 };

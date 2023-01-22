@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { isEmpty } from "../utils/helper";
 import SideBar from "./sidebar";
 import theme from "../theme";
+
 const MainLayout = ({ children }) => {
   const classes = useStyles();
   // const theme = useTheme();

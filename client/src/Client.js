@@ -4,12 +4,13 @@ import { createUploadLink } from "apollo-upload-client";
 import { ApolloLink } from "apollo-link";
 import cookie from "react-cookies";
 
-// const httpLink = new createUploadLink({ uri: `/graphql` });
-const httpLink = new createUploadLink({ uri: `http://localhost:8000/graphql` });
+const httpLink = new createUploadLink({ uri: `/graphql` });
+// const httpLink = new createUploadLink({ uri: `http://localhost:8000/graphql` });
 
 const authLink = new ApolloLink((operation, forward) => {
   // Retrieve the authorization token from local storage.
   const token = cookie.load("auth").token || "";
+  console.log("TOJEN", token);
   // Use the setContext method to set the HTTP headers.
   operation.setContext({
     headers: {

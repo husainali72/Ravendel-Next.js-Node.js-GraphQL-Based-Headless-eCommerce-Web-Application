@@ -57,7 +57,7 @@ const EditProductComponent = ({ params }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const productState = useSelector((state) => state.products.product);
+  const productState = useSelector((state) => state.products);
 
   const brandState = useSelector((state) => state.brands);
   const [featureImage, setfeatureImage] = useState(null);
@@ -101,9 +101,8 @@ const EditProductComponent = ({ params }) => {
   });
 
   useEffect(() => {
-    if (isEmpty(productState)) {
-      console.log("isEmpty");
-      // dispatch(productAction(params));
+    if (isEmpty(productState.product)) {
+      dispatch(productAction(params.id));
     }
     dispatch(brandsAction());
     dispatch(categoriesAction());
@@ -112,7 +111,6 @@ const EditProductComponent = ({ params }) => {
   useEffect(() => {
     if (!isEmpty(productState.product)) {
       let defaultBrand = {};
-      console.log(brandState.brands[0].id);
       if (productState.product.brand) {
         for (let i in brandState.brands) {
           if (brandState.brands[i].id === productState.product.brand.id) {
@@ -138,7 +136,7 @@ const EditProductComponent = ({ params }) => {
         );
       }
     }
-  }, [productState.product]);
+  }, [productState]);
 
   const updateProduct = (e) => {
     e.preventDefault();
@@ -421,7 +419,7 @@ const EditProductComponent = ({ params }) => {
                   </Grid>
                 </Grid>
               </CardBlocks>
-              ===================Attributes===================
+              {/* ===================Attributes=================== */}
               <CardBlocks title="Attribute selection">
                 <Attributes
                   EditMode
@@ -614,7 +612,7 @@ const EditProductComponent = ({ params }) => {
                   />
                 </CardBlocks>
               </Box>
-              ===================Brands===================
+              {/* ===================Brands=================== */}
               <Box component="span" m={1}>
                 <CardBlocks title="Brands">
                   <BrandSelection

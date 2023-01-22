@@ -4,15 +4,16 @@ import axios from "axios";
 import { isEmpty, client_app_route_url } from "./helper";
 import APclient from "../Client";
 
+const location = window.location.origin;
+// const location = "http://localhost:8000";
+
 export const mutation = async (query, variables) => {
-  console.log(APclient,'APclient')
   try {
     const response = await APclient.mutate({
       mutation: query,
       variables,
       fetchPolicy: "no-cache", 
     });
-    console.log(response,'in mutate')
     return Promise.resolve(response);
    
   } catch (error) {
@@ -96,7 +97,6 @@ const service = (config) => {
 export default service;
 
 export const login = (email, password) => {
-  let location = "http://localhost:8000";
   const body = {
     email: email,
     password: password,
@@ -106,13 +106,13 @@ export const login = (email, password) => {
     url: `${location}/api/users/login`,
     data: body,
   }).then(async (res) => {
+    console.log("res", res)
     await Auth.setUserToken(res.data);
     return res;
   });
 };
 
 export const getUpdatedUrl = (table, url) => {
-  let location = window.location.origin;
   return service({
     method: "POST",
     url: `${location}/api/misc/checkurl`,
@@ -125,7 +125,6 @@ export const getUpdatedUrl = (table, url) => {
 };
 
 export const deleteProductVariation = (id) => {
-  let location = window.location.origin;
   return service({
     method: "POST",
     url: `${location}/api/misc/delete_variation`,
@@ -138,7 +137,6 @@ export const deleteProductVariation = (id) => {
 };
 
 export const deleteProductVariationImage = (obj) => {
-  let location = window.location.origin;
   return service({
     method: "POST",
     url: `${location}/api/misc/delete_image`,
@@ -146,18 +144,6 @@ export const deleteProductVariationImage = (obj) => {
   }).then((res) => {
     if (res.data.success) {
       return Promise.resolve(true);
-    }
-  });
-};
-
-export const getDashboardData = () => {
-  let location = "http://localhost:8000";
-  return service({
-    method: "POST",
-    url: `${location}/api/misc/dashboard_data`,
-  }).then((res) => {
-    if (res.data.success) {
-      return Promise.resolve(res.data.dashBoardData);
     }
   });
 };

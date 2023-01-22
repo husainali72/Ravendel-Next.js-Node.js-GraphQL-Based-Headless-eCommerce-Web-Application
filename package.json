@@ -38,7 +38,7 @@
     "bcryptjs": "^2.4.3",
     "concurrently": "^7.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.1",
+    "dotenv": "^16.0.3",
     "easygraphql-format-error": "0.0.3",
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",

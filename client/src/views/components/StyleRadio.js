@@ -2,8 +2,8 @@ import React from "react";
 import { Radio } from "@mui/material";
 import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
+
 const StyledRadioConmponent = (props) => {
-  console.log(props);
   return (
     <Radio
       className="radioRoot"

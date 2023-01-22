@@ -1,3 +1,5 @@
+const dotenv = require('dotenv');
+dotenv.config({path:'./.env'});
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
@@ -7,9 +9,8 @@ const resolvers = require("./resolvers");
 const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
-
 const { graphqlUploadExpress } = require("graphql-upload");
-
+// console.log("dotenv", process.env)
 //connect db
 connectDB();
 
@@ -24,6 +25,7 @@ const Settings = require("./models/Setting");
 Settings.createSettings();
 
 var port = process.env.PORT || 8000;
+console.log('por', port);
 
 //middleware
 const app = express();

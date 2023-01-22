@@ -122,7 +122,6 @@ export const getResponseHandler = (response, key) => {
   if (response && response.data && response.data[key]) {
     let res = response.data[key];
     if (res.message) {
-      console.log(res);
       if (res.message.success) {
         if (res.data) {
           data = res.data;
@@ -144,8 +143,6 @@ export const getResponseHandler = (response, key) => {
     message = "Something went wrong!";
   }
 
-  console.log(success);
-
   return [error, success, message, data];
 };
 
@@ -154,15 +151,11 @@ export const mutationResponseHandler = (response, key) => {
   let error = false;
   let message = "";
 
-  console.log("in response handler");
-
   if (response && response.data && response.data[key]) {
-    console.log("response", response);
     let res = response.data[key];
     if (res.message) {
       console.log(res);
       if (res.success) {
-        console.log("success", res.success);
         success = true;
       } else {
         error = true;

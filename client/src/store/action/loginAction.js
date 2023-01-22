@@ -7,6 +7,7 @@ export const LoginAction = (email, password, navigate) => (dispatch) => {
   });
   return login(email, password)
     .then((res) => {
+      console.log("res", res)
       dispatch({
         type: POST_TOKEN_SUCCESS,
         payload: res,

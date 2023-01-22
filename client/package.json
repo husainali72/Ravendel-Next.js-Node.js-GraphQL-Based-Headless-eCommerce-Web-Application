@@ -5,8 +5,10 @@
   "dependencies": {
     "@apollo/client": "^3.7.3",
     "@apollo/react-hooks": "^4.0.0",
+    "@devexpress/dx-core": "^4.0.2",
     "@devexpress/dx-react-chart": "^4.0.2",
     "@devexpress/dx-react-chart-material-ui": "^4.0.2",
+    "@devexpress/dx-react-core": "^4.0.2",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
@@ -42,6 +44,7 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.7.0",
     "react-tag-autocomplete": "^6.3.0",
+    "recharts": "^2.3.2",
     "redux": "^4.2.0",
     "styled-components": "^5.3.6",
     "web-vitals": "^2.1.4"

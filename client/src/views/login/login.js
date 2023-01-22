@@ -26,6 +26,7 @@ const LoginComponent = () => {
     e.preventDefault();
     dispatch(LoginAction(values.email, values.password, navigate));
   };
+  
 
   return (
     <div className={classes.root}>
