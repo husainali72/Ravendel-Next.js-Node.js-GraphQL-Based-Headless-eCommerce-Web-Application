@@ -147,32 +147,38 @@ export const getResponseHandler = (response, key) => {
 };
 
 export const mutationResponseHandler = (response, key) => {
+  console.log("asdfdsfsdfs")
+  console.log("Fired mutationResponseHandler", key)
+  console.log("Fired mutationResponseHandler", response)
   let success = false;
   let error = false;
   let message = "";
 
-  if (response && response.data && response.data[key]) {
-    let res = response.data[key];
-    if (res.message) {
-      console.log(res);
-      if (res.success) {
-        success = true;
+  try {
+    if (response && response.data && response.data[key]) {
+      let res = response.data[key];
+      if (res.message) {
+        console.log(res);
+        if (res.success) {
+          success = true;
+        } else {
+          error = true;
+        }
+        if (res.message) {
+          message = res.message;
+        } else {
+          message = "Something went wrong!";
+        }
       } else {
         error = true;
-      }
-      if (res.message) {
-        message = res.message;
-      } else {
         message = "Something went wrong!";
       }
     } else {
-      error = true;
       message = "Something went wrong!";
     }
-  } else {
-    message = "Something went wrong!";
+  } catch (e) {
+    console.log("er", e)
   }
-
   console.log(success);
 
   return [error, success, message];

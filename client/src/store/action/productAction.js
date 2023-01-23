@@ -318,6 +318,7 @@ export const productAddAction = (object) => (dispatch) => {
 };
 
 export const productUpdateAction = (object) => (dispatch) => {
+  console.log("productUpdateAction", )
   dispatch({
     type: PRODUCT_LOADING,
   });
@@ -337,6 +338,8 @@ export const productUpdateAction = (object) => (dispatch) => {
         type: LOADING_FALSE,
       });
 
+   
+
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
@@ -346,18 +349,19 @@ export const productUpdateAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(productsAction());
-        return dispatch({
+        dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
         });
       }
     })
     .catch((error) => {
+      console.log("Catd E", error)
       dispatch({
         type: PRODUCT_FAIL,
       });
 
-      return dispatch({
+      dispatch({
         type: ALERT_SUCCESS,
         payload: { boolean: true, message: error, error: true },
       });
