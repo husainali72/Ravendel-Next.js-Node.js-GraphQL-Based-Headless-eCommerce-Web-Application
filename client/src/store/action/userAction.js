@@ -76,10 +76,10 @@ export const userAddAction = (object) => (dispatch) => {
     .then((response) => {
       if (response.data.addUser.success) {
         dispatch({
-          type: USER_FAIL,
+          type: USER_SUCCESS,
         });
 
-        jumpTo(`${client_app_route_url}all-users`);
+        // jumpTo(`${client_app_route_url}all-users`);
 
         dispatch(usersAction());
 
@@ -92,11 +92,14 @@ export const userAddAction = (object) => (dispatch) => {
           },
         });
       } else {
+        dispatch({
+          type: USER_FAIL,
+        });
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
-            message: response.data.addUser.error,
+            message: response.data.addUser.message,
             error: true,
           },
         });
@@ -202,51 +205,12 @@ export const userDeleteAction = (id) => (dispatch) => {
       });
     });
 };
-// export const dashboardAction = () => (dispatch) => {
-//   dispatch({
-//     type: USER_LOADING,
-//   });
-//   query(GET_DASHBOARDDATA)
-//     .then((response) => {
-//       const [error, success, message, data] = getResponseHandler(
-//         response,
-//         "dashboard"
-//       );
-//       dispatch({
-//         type: LOADING_FALSE,
-//       });
-
-//       if (error) {
-//         dispatch({
-//           type: ALERT_SUCCESS,
-//           payload: { boolean: true, message: message, error: true },
-//         });
-//       }
-
-//       if (success) {
-//         return dispatch({
-//           type: USER_SUCCESS,
-//           payload: data,
-//         });
-//       }
-//     })
-//     .catch((error) => {
-//       dispatch({
-//         type: USER_FAIL,
-//       });
-//       return dispatch({
-//         type: ALERT_SUCCESS,
-//         payload: { boolean: true, message: error, error: true },
-//       });
-//     });
-// };
 export const dashboardAction = () => (dispatch) => {
   dispatch({
     type: USER_LOADING,
   });
   query(GET_DASHBOARDDATA)
     .then((response) => {
-      console.log("response----dashboard", response);
       if (response.data.dashboardData) {
         return dispatch({
           type: USERS_SUCCESS,

@@ -12,7 +12,6 @@ import {
 } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import jumpTo from "../../utils/navigation";
 
 export const couponsAction = () => (dispatch) => {
   dispatch({
@@ -96,7 +95,7 @@ export const couponAddAction = (object) => (dispatch) => {
   dispatch({
     type: COUPON_LOADING,
   });
-  console.log("couupon add", object);
+
   mutation(ADD_COUPON, object)
     .then((response) => {
       const [error, success, message, data] = mutationResponseHandler(
@@ -116,7 +115,7 @@ export const couponAddAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(couponsAction());
-        jumpTo(`${client_app_route_url}all-coupons`);
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
@@ -157,7 +156,7 @@ export const couponUpdateAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(couponsAction());
-        jumpTo(`${client_app_route_url}all-coupons`);
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

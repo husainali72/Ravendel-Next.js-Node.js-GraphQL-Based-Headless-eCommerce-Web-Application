@@ -22,7 +22,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { ThemeProvider } from "@mui/material/styles";
 import { ordersAction, orderDeleteAction } from "../../store/action";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
-import Alert from "../utils/Alert";
+import Alerts from "../components/Alert";
 import Loading from "../utils/loading";
 import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
@@ -55,7 +55,7 @@ const AllOrdersComponent = () => {
 
   return (
     <>
-      <Alert />
+      <Alerts />
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>

@@ -9,7 +9,7 @@ import {
   CAT_SUCCESS,
   TINYMCE_DESCRIPTION,
   TINYMCE_DESCRIPTION_NULL,
-  LOADING_FALSE
+  LOADING_FALSE,
 } from "../action/productAction";
 
 const initialState = {
@@ -92,7 +92,6 @@ export default (state = initialState, action) => {
         },
       };
     case "PRODUCT_RESET":
-      console.log("payload", action.payload);
       return {
         ...state,
         products: action.payload,

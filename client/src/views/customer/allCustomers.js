@@ -42,7 +42,7 @@ const AllCustomersComponent = () => {
 
   useEffect(() => {
     if (isEmpty(Customers.customers)) {
-      // dispatch(customersAction());
+      dispatch(customersAction());
     }
   }, []);
 

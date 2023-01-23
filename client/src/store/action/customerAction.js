@@ -11,7 +11,7 @@ import {
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import jumpTo from "../../utils/navigation";
+
 import {
   client_app_route_url,
   getResponseHandler,
@@ -123,7 +123,7 @@ export const customerAddAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(customersAction());
-        jumpTo(`${client_app_route_url}all-customer`);
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
@@ -200,9 +200,7 @@ export const customerUpdateAction = (object) => (dispatch) => {
         response,
         "updateCustomer"
       );
-      console.log("debug===========================");
-      console.log(error, success, message, data);
-      console.log("debug===========================");
+
       dispatch({
         type: LOADING_FALSE,
       });
@@ -216,7 +214,7 @@ export const customerUpdateAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(customersAction());
-        jumpTo(`${client_app_route_url}all-customer`);
+        // jumpTo(`${client_app_route_url}all-customer`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
@@ -306,7 +304,7 @@ export const customerDeleteAction = (id) => (dispatch) => {
 
       if (success) {
         dispatch(customersAction());
-        jumpTo(`${client_app_route_url}all-customer`);
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

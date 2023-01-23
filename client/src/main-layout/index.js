@@ -6,7 +6,7 @@ import clsx from "clsx";
 import AllRoutes from "../routes/routes";
 import Header from "./header";
 import Footer from "./footer";
-import Alert from "../views/utils/Alert";
+
 import Login from "../views/login";
 import { useSelector } from "react-redux";
 import { isEmpty } from "../utils/helper";
@@ -15,7 +15,7 @@ import theme from "../theme";
 
 const MainLayout = ({ children }) => {
   const classes = useStyles();
-  // const theme = useTheme();
+
   const login = useSelector((state) => state.login);
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"), {
     defaultMatches: true,
@@ -49,7 +49,7 @@ const MainLayout = ({ children }) => {
             variant={isDesktop ? "persistent" : "temporary"}
           />
           <main className={classes.content}>
-            <Alert />
+            {/* <Alert /> */}
             {children}
             <AllRoutes />
           </main>
@@ -61,7 +61,6 @@ const MainLayout = ({ children }) => {
     </div>
   );
 };
-
 
 const useStyles = makeStyles((theme) => ({
   root: {

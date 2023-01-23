@@ -35,7 +35,8 @@ import {
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
-const EditCouponComponent = (props) => {
+import { useParams } from "react-router-dom";
+const EditCouponComponent = ({ params }) => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const Products = useSelector((state) => state.products);
@@ -51,7 +52,7 @@ const EditCouponComponent = (props) => {
   useEffect(() => {
     if (!isEmpty(Coupons.coupons)) {
       Coupons.coupons.map((editcoupon) => {
-        if (editcoupon.id === props.match.params.id) {
+        if (editcoupon.id === params.id) {
           setCoupon({ ...coupon, ...editcoupon });
         }
       });
@@ -336,9 +337,10 @@ const EditCouponComponent = (props) => {
 };
 
 const EditCoupon = () => {
+  const params = useParams();
   return (
     <ThemeProvider theme={theme}>
-      <EditCouponComponent />
+      <EditCouponComponent params={params} />
     </ThemeProvider>
   );
 };

@@ -1,17 +1,18 @@
 import React, { Fragment, useState, useEffect } from "react";
 import Snackbar from "@mui/material/Snackbar";
-// import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import { useSelector, useDispatch } from "react-redux";
+// import Alert from "@mui/material/Alert";
+import { connect, useDispatch, useSelector } from "react-redux";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
 
-// function CustomAlert(props) {
-//   return <MuiAlert elevation={6} variant="filled" {...props} />;
-// }
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
-const Alert = () => {
-  const dispatch = useDispatch();
-  const alert = useSelector(state => state.alert);
+const Alerts = () => {
   const [isOpen, setisOpen] = useState(false);
+  const alert = useSelector((state) => state.alert);
 
+  const dispatch = useDispatch();
   useEffect(() => {
     if (alert.success) {
       setisOpen(true);
@@ -19,84 +20,33 @@ const Alert = () => {
         setisOpen(false);
         dispatch({
           type: "ALERT_SUCCESS",
-          payload: { boolean: false, message: "", error: false }
+          payload: { boolean: false, message: "", error: false },
         });
       }, 3000);
     }
   }, [alert.success]);
 
   return (
-    <>
-      
-        <Snackbar
-        autoHideDuration={3000}
-        open={isOpen}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right"
-        }}
-      >
-        {
-        isOpen ?
-          <p>{alert.message}</p>
-         :null
-        }
-      </Snackbar>
-       
-    </>
+    <Snackbar
+      open={isOpen}
+      autoHideDuration={6000}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "right",
+      }}
+      sx={{ mt: "100px" }}
+    >
+      {alert.error && alert.message ? (
+        <Alert severity="error" sx={{ width: "100%" }}>
+          {alert.message}
+        </Alert>
+      ) : alert.success && alert.message ? (
+        <Alert severity="success" sx={{ width: "100%" }}>
+          {alert.message}
+        </Alert>
+      ) : null}
+    </Snackbar>
   );
 };
 
-export default Alert;
-// import React, { Fragment, useState, useEffect } from "react";
-// import Snackbar from "@mui/material/Snackbar";
-// import MuiAlert from "@mui/lab/Alert";
-// import { useSelector, useDispatch } from "react-redux";
-
-// function CustomAlert(props) {
-//   return <MuiAlert elevation={6} variant="filled" {...props} />;
-// }
-
-// const Alert = () => {
-//   const dispatch = useDispatch();
-//   const alert = useSelector(state => state.alert);
-//   const [isOpen, setisOpen] = useState(false);
-
-//   useEffect(() => {
-//     if (alert.success) {
-//       setisOpen(true);
-//       window.setTimeout(() => {
-//         setisOpen(false);
-//         dispatch({
-//           type: "ALERT_SUCCESS",
-//           payload: { boolean: false, message: "", error: false }
-//         });
-//       }, 3000);
-//     }
-//   }, [alert.success]);
-
-//   return (
-//     <>
-      
-//         <Snackbar
-//         autoHideDuration={3000}
-//         open={isOpen}
-//         anchorOrigin={{
-//           vertical: "top",
-//           horizontal: "right"
-//         }}
-//       >
-//         {
-//         isOpen ?
-//         <CustomAlert severity={alert.error ? "error" : "success"}>
-//           {alert.message}
-//         </CustomAlert>
-//          :null
-//         }
-//       </Snackbar>
-       
-//     </>
-//   );
-// };
-
-// export default Alert;
+export default Alerts;

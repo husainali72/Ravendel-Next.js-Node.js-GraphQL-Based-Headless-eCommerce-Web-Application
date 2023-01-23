@@ -35,9 +35,10 @@ const AllPagesComponent = (props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
+
   useEffect(() => {
     if (isEmpty(pageState.pages)) {
-      // dispatch(pagesAction());
+      dispatch(pagesAction());
     }
   }, []);
 

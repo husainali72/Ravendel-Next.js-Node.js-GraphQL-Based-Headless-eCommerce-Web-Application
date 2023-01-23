@@ -16,10 +16,10 @@ import {
   Button,
   Tooltip,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { couponDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
+
 import { isEmpty } from "../../utils/helper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -35,7 +35,7 @@ const AllCouponsTheme = () => {
   const Coupons = useSelector((state) => state.coupons);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (isEmpty(Coupons.coupons)) {
       // dispatch(couponsAction());
@@ -118,7 +118,7 @@ const AllCouponsTheme = () => {
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(
+                                  navigate(
                                     `${client_app_route_url}edit-coupon/${coupon.id}`
                                   )
                                 }

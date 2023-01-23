@@ -13,13 +13,37 @@ import {
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
+import { useNavigate } from "react-router-dom";
 
 export const pagesAction = () => (dispatch) => {
   dispatch({
     type: PAGE_LOADING,
   });
   query(GET_PAGES)
-    .then((response) => {})
+    .then((response) => {
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "Pages"
+      );
+
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: true },
+        });
+      }
+
+      if (success) {
+        return dispatch({
+          type: PAGES_SUCCESS,
+          payload: data,
+        });
+      }
+    })
     .catch((error) => {
       dispatch({
         type: PAGE_FAIL,
@@ -92,7 +116,8 @@ export const pageAddAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        jumpTo(`${client_app_route_url}all-pages`);
+        // jumpTo(`${client_app_route_url}all-pages`);
+
         dispatch(pagesAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -133,7 +158,7 @@ export const pageUpdateAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        jumpTo(`${client_app_route_url}all-pages`);
+        // jumpTo(`${client_app_route_url}all-pages`);
         dispatch(pagesAction());
         return dispatch({
           type: ALERT_SUCCESS,

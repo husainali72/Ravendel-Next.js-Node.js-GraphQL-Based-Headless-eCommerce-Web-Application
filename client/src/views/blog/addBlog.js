@@ -15,7 +15,7 @@ import { blogAddAction } from "../../store/action/";
 import viewStyles from "../viewStyles";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import { getUpdatedUrl } from "../../utils/service";
-
+import Alerts from "../components/Alert";
 import {
   Loading,
   TopBar,
@@ -122,7 +122,8 @@ const AddBlogComponenet = () => {
           submitTitle="Add"
           backLink={`${client_app_route_url}all-blogs`}
         />
-
+        <Alerts />
+        {/* <h1>dkjfjh</h1> */}
         <Grid
           container
           spacing={isSmall ? 2 : 3}
