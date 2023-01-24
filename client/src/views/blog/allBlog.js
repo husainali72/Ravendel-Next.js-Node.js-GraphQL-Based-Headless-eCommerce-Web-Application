@@ -32,6 +32,7 @@ import { Loading } from "../components";
 import { client_app_route_url } from "../../utils/helper";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../theme/index";
+import { blogsAction } from "../../store/action";
 const AllBlogComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ const AllBlogComponent = () => {
 
   useEffect(() => {
     if (isEmpty(blogs.blogs)) {
-      // dispatch(blogsAction());
+      dispatch(blogsAction());
     }
   }, []);
 

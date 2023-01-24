@@ -33,7 +33,7 @@ import {
   URLComponent,
   TinymceEditor,
 } from "../components";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const defaultObj = {
   title: "",
@@ -57,7 +57,7 @@ const EditBlogComponenet = (props) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (!isEmpty(props.match.params.id)) {
       dispatch(blogAction(props.match.params.id));
@@ -109,7 +109,7 @@ const EditBlogComponenet = (props) => {
 
   const updateBlog = (e) => {
     e.preventDefault();
-    dispatch(blogUpdateAction(blog));
+    dispatch(blogUpdateAction(blog, navigate));
   };
 
   const handleChange = (e) => {
@@ -268,7 +268,7 @@ const EditBlogComponenet = (props) => {
 
 const EditBlog = (props) => {
   const params = useParams();
-  console.log(params);
+
   return (
     <ThemeProvider theme={theme}>
       <EditBlogComponenet params={params} />

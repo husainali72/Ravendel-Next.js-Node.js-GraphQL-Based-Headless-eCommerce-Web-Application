@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Grid, TextField } from"@mui/material";
+import { Grid, TextField } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { attributeUpdateAction, attributeAction } from "../../../store/action/";
 import { isEmpty, client_app_route_url } from "../../../utils/helper";
@@ -38,13 +38,11 @@ const EditAttribute = (props) => {
   const onDeleteTag = (i) => {
     attribute.values.splice(i, 1);
     setattribute({ ...attribute });
-    console.log(attribute);
   };
 
   const onAddTag = (tag) => {
     attribute.values.push(tag);
     setattribute({ ...attribute });
-    console.log(attribute);
   };
 
   const onUpdate = () => {
@@ -56,27 +54,27 @@ const EditAttribute = (props) => {
       <Alert />
       <form>
         <TopBar
-          title='Edit Attribute'
+          title="Edit Attribute"
           onSubmit={onUpdate}
-          submitTitle='Update'
+          submitTitle="Update"
           backLink={`${client_app_route_url}attributes`}
         />
 
         <Grid container spacing={2} className={classes.secondmainrow}>
           {attributeState.loading ? <Loading /> : null}
           <Grid item lg={6} xs={12}>
-            <CardBlocks title='Attribute Information' nomargin>
+            <CardBlocks title="Attribute Information" nomargin>
               <Grid container>
                 <Grid item xs={12}>
                   <TextField
-                    id='name'
-                    label='Name'
-                    name='name'
+                    id="name"
+                    label="Name"
+                    name="name"
                     value={attribute.name}
                     onChange={(e) =>
                       setattribute({ ...attribute, name: e.target.value })
                     }
-                    variant='outlined'
+                    variant="outlined"
                     className={classes.marginBottom}
                     fullWidth
                   />

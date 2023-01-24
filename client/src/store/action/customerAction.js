@@ -186,10 +186,11 @@ export const addressbookAddAction = (object) => (dispatch) => {
     });
 };
 
-export const customerUpdateAction = (object) => (dispatch) => {
+export const customerUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: CUSTOMER_LOADING,
   });
+
   mutation(UPDATE_CUSTOMER, object)
     .then((response) => {
       dispatch({
@@ -215,6 +216,7 @@ export const customerUpdateAction = (object) => (dispatch) => {
       if (success) {
         dispatch(customersAction());
         // jumpTo(`${client_app_route_url}all-customer`);
+        navigate(`${client_app_route_url}all-customer`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

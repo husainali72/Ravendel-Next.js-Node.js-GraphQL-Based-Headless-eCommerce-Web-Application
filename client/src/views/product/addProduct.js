@@ -38,7 +38,9 @@ import {
 import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 const AddProductTheme = () => {
+  const navigate = useNavigate;
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -84,7 +86,7 @@ const AddProductTheme = () => {
     e.preventDefault();
     product.combinations = combination;
 
-    dispatch(productAddAction(product));
+    dispatch(productAddAction(product, navigate));
   };
 
   const handleChange = (e) => {

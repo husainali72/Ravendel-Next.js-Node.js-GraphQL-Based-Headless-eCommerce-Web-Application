@@ -36,7 +36,7 @@ const AllReviewsComponent = () => {
 
   useEffect(() => {
     if (!reviewState.reviews.length) {
-      // dispatch(reviewsAction());
+      dispatch(reviewsAction());
     }
   }, []);
 

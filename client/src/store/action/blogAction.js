@@ -172,7 +172,7 @@ export const blogAddAction = (object) => (dispatch) => {
     });
 };
 
-export const blogUpdateAction = (object) => (dispatch) => {
+export const blogUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: BLOG_LOADING,
   });
@@ -198,7 +198,8 @@ export const blogUpdateAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        jumpTo(`${client_app_route_url}all-blogs`);
+        // jumpTo(`${client_app_route_url}all-blogs`);
+        navigate(`${client_app_route_url}all-blogs`);
         dispatch(blogsAction());
         return dispatch({
           type: ALERT_SUCCESS,

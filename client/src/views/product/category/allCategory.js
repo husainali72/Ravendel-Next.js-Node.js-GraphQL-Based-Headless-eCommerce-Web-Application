@@ -38,6 +38,7 @@ import {
 } from "../../components";
 import theme from "../../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
+import { categoriesAction } from "../../../store/action/";
 var categoryObject = {
   name: "",
   parentId: null,
@@ -71,7 +72,7 @@ const AllCategoryComponent = () => {
 
   useEffect(() => {
     if (!products.categories.length) {
-      // dispatch(categoriesAction());
+      dispatch(categoriesAction());
     }
   }, []);
 
@@ -205,8 +206,8 @@ const AllCategoryComponent = () => {
               count={categories.length}
               rowsPerPage={rowsPerPage}
               page={page}
-              onChangePage={handleChangePage}
-              onChangeRowsPerPage={handleChangeRowsPerPage}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </CardBlocks>
         </Grid>

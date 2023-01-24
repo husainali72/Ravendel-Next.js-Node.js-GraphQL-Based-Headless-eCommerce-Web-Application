@@ -18,7 +18,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { customersAction, customerDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
@@ -39,7 +39,7 @@ const AllCustomersComponent = () => {
   const Customers = useSelector((state) => state.customers);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (isEmpty(Customers.customers)) {
       dispatch(customersAction());
@@ -118,7 +118,7 @@ const AllCustomersComponent = () => {
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(
+                                  navigate(
                                     `${client_app_route_url}edit-customer/${customer.id}`
                                   )
                                 }

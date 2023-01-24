@@ -23,9 +23,9 @@ export const pagesAction = () => (dispatch) => {
     .then((response) => {
       const [error, success, message, data] = getResponseHandler(
         response,
-        "Pages"
+        "pages"
       );
-
+      console.log(data);
       dispatch({
         type: LOADING_FALSE,
       });
@@ -94,7 +94,7 @@ export const pageAction = (id) => (dispatch) => {
     });
 };
 
-export const pageAddAction = (object) => (dispatch) => {
+export const pageAddAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: PAGE_LOADING,
   });
@@ -116,8 +116,8 @@ export const pageAddAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        // jumpTo(`${client_app_route_url}all-pages`);
-
+        //  jumpTo(`${client_app_route_url}all-pages`);
+        navigate(`${client_app_route_url}all-pages`);
         dispatch(pagesAction());
         return dispatch({
           type: ALERT_SUCCESS,

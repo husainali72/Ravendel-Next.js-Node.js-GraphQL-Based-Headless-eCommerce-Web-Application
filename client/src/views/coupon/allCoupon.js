@@ -29,6 +29,7 @@ import { convertDateToStringFormat } from "../utils/convertDate";
 import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
+import { couponsAction } from "../../store/action";
 const AllCouponsTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const AllCouponsTheme = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (isEmpty(Coupons.coupons)) {
-      // dispatch(couponsAction());
+      dispatch(couponsAction());
     }
   }, []);
 
