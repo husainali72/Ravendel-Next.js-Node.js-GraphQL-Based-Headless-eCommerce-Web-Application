@@ -4,13 +4,19 @@ import PageTitle from "../../components/PageTitle";
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import { Container, Dropdown } from "react-bootstrap";
 import OnSaleProductCard from "../../components/category/onSaleProductCard";
-import { GET_SINGLE_PRODUCT, GET_FILTEREDPRODUCTS } from "../../queries/shopquery";
+import { GET_SINGLE_PRODUCT, GET_FILTEREDPRODUCTS, GET_BRANDS_QUERY } from "../../queries/shopquery";
 import { useRouter } from 'next/router';
 import { GET_HOMEPAGE_DATA_QUERY, GET_CATEGORIES_QUERY } from '../../queries/home';
 import { useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts";
-const SingleCategoryProduct = ({ singlecategory, fillterProduct, paths }) => {
-    const category = useSelector(state => state.brand)
+const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduct}) => {
+    console.log('singleCategorg==>', singlecategory)
+    console.log('brandProduct==>', brandProduct)
+    // console.log('singleCategorg==> filterProduct', fillterProduct)
+   
+    const [cats,setCats] = useState({})
+    
+    // console.log('categoryyy', category);
     const [products, setProducts] = useState([]);
     const [categoryDetail, setCategoryDetail] = useState({
         name: "",
@@ -28,18 +34,44 @@ const SingleCategoryProduct = ({ singlecategory, fillterProduct, paths }) => {
     if (router.isFallback) {
         return <div>loading...</div>
     }
-
+    const category = useSelector(state => state.brand)
+    useEffect(() => {
+        setCats(category);
+    }, [category]);
     useEffect(() => {
         setCategoryDetail(singlecategory);
     }, [singlecategory]);
 
-    useEffect(() => {
-        setProducts(fillterProduct)
-    }, [products])
+    useEffect(async  () => {  let config = { category: [singlecategory.id], brand: [], attribute: [], price: [] }
+    console.log('useEffect called')
+        // console.log('singlecategory.id',singlecategory.id)
+    try { 
+        // console.log('query run')
+        const { data: fillterPrroducts } = await client.query({
+            query: GET_FILTEREDPRODUCTS,
+            variables: {  config },
+        })
+        // .then(data => console.log('useEffect config',config.category, 'useEffect fetched filter product~!!!!',data.data.filteredProducts));
+        let fillterProduct = fillterPrroducts.filteredProducts
+        setProducts(fillterProduct )
+        console.log('useEffect config',config.category)
+        console.log('useEffect called filterpro',fillterPrroducts.filteredProducts)
+        // console.log('useEffect called product',products)
+        // // console.log('singleCategorg==> filterProduct', fillterProduct.length)
+    }
+    catch (e) {
+        console.log("fillerProduct ERRoR : ", e);
+    }
+        
+    }, [setCategoryDetail,products]);   
+
+    // useEffect(() => {
+    //     setProducts(fillterProduct)
+    // }, [products])                           
 
     return (
         <div>
-            <PageTitle title={"categry"} />
+            <PageTitle title={"category"} />
             <BreadCrumb title={`category  >  ${categoryDetail.name}`} />
             <Container>
                 <div className="single-category-page">
@@ -66,8 +98,8 @@ const SingleCategoryProduct = ({ singlecategory, fillterProduct, paths }) => {
                                 </div>
                             </div>
                         </div> */}
-                        <ShopProducts category={category.category} name={"Category"} />
-                        <ShopProducts brandProduct={category.brand} name={"Brand"} brands />
+                        <ShopProducts category={shopProduct?.data} name={"Category"} />
+                        <ShopProducts brandProduct={brandProduct} name={"Brand"} brands />
                     </div>
                     <div className="single-category">
                         <strong style={{ display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>{categoryDetail.name}</strong>
@@ -102,10 +134,12 @@ export async function getStaticPaths() {
         console.log("ShopProduct Error===", e)
     }
 
-    const paths = shopProduct.data.map((curElem) => ({
-        params: { categorys: curElem.url.toString() }
-
-    }))
+    const paths = shopProduct?.data?.map((curElem) => {
+        return{
+            params: { categorys: curElem.url.toString() }
+        }
+    })
+    console.log('pathssss',paths)
 
     // console.log("paths=+", paths);
     // console.log("paths", paths.filter(({ params }) => !params))
@@ -123,6 +157,8 @@ export async function getStaticProps({ params }) {
     var homepageData = [];
     var singlecategory = [];
     var fillterProduct = [];
+    var brandProduct = [];
+    var shopProduct = [];
     /* ===============================================Get HomepageData Settings ===============================================*/
 
     try {
@@ -153,19 +189,47 @@ export async function getStaticProps({ params }) {
 
     /* ===============================================Get fillter Product Category ===============================================*/
 
-    let config = { category: [singlecategory.id], brand: [], attribute: [], price: [] }
+  
+    // console.log("fillerProduct", fillterProduct);
 
     try {
-        const { data: fillterProducts } = await client.query({
-            query: GET_FILTEREDPRODUCTS,
-            variables: { config },
+        const { data: shopproductcategory } = await client.query({
+            query: GET_CATEGORIES_QUERY
         });
-        fillterProduct = fillterProducts.filteredProducts
+        shopProduct = shopproductcategory.productCategories;
     }
     catch (e) {
-        console.log("fillerProduct ERRoR : ", e);
+        console.log("ShopProduct Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
     }
-    // console.log("fillerProduct", fillterProduct);
+    // console.log("shopproductcategory", shopProduct);
+    
+    
+    /* ===============================================Get Brand Data Settings ===============================================*/
+    
+    try {
+        const { data: brandproductData } = await client.query({
+            query: GET_BRANDS_QUERY
+        })
+        brandProduct = brandproductData.brands.data;
+    }
+    catch (e) {
+        console.log("===brand", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
+    }
+
+
+
+    // try {
+    //     const { data: brandproductData } = await client.query({
+    //         query: GET_BRANDS_QUERY
+    //     })
+    //     brandProduct = brandproductData.brands.data;
+    // }
+    // catch (e) {
+    //     console.log("===brand", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
+    // }
+    // // console.log("brandProduct", brandProduct);
+
+
 
 
     return {
@@ -173,7 +237,9 @@ export async function getStaticProps({ params }) {
             homepageData,
             singlecategory,
             url,
-            fillterProduct,
+            brandProduct,
+            shopProduct
+            // fillterProduct,
         },
         revalidate: 10,
     }

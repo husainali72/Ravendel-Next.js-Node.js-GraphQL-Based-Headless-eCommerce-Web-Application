@@ -14,12 +14,14 @@ import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
 import { getAllProductsAction } from "../redux/actions/productAction";
-
-const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice || 0 * product.quantity), 0)
+import useSWR from "swr";
+import { GraphQLClient } from "graphql-request";
+import getStripe from "../lib/getStripe";
+const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice  * product.quantity || 0 * product.quantity), 0)
 const cartitems2 = []     
 
-const YourCard = ({ customercart, cart_id }) => {
-    // console.log("cartbyUser", customercart);
+const YourCard = ({ customercart, cart_id,CartsDataa }) => {
+ 
     console.log(" cart_id..", cart_id);
     const session = useSession();
     const cartProducts = useSelector(state => state.cart);
@@ -38,23 +40,66 @@ const YourCard = ({ customercart, cart_id }) => {
     if (currencyType?.currency === "gbp") { currency = <i className="fas fa-pound-sign"></i> }
     if (currencyType?.currency === "cad") { currency = "CA$" }
 
+    const [CART_ID, setCARTID] = useState([]);
     const [cartItems, setCartItems] = useState([]);
     const [quantityy, setQuantity] = useState();
     const dispatch = useDispatch();
     const [press, setPress] = useState(false);
     const [couponCode, setCouponCode] = useState("")
     
-    
+    const[products,setProducts] = useState([])
     var cartitems3 = []
     // const [userCart, setUserCart] = useState(cart_id);
-    // console.log("cartItems", cartItems);
+
 
     var id = "";
     var token = "";
 
-    useEffect(() => {
+
+    useEffect( () => {
+        setCARTID(cart_id)
+    }, [cart_id]);
+    useEffect( async () => {
         console.log('allProducts', allProducts)
     }, [allProducts]);
+
+ const handlePayment = async () =>{
+
+    const stripe = await getStripe();
+
+    const response = await fetch('/api/stripe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(cartItems),
+    });
+
+    if(response.statusCode === 500) return;
+    
+    const data = await response.json();
+
+    // toast.loading('Redirecting...');
+
+    stripe.redirectToCheckout({ sessionId: data.id });
+
+    // console.log('helloooo')
+    // const stripe = await getStripe()
+    // const response = await fetch('/api/stripe',{
+    //     method:'POST',
+    //     headers:{
+            
+    //         'Content-Type':'application/json'
+    //     },
+    //     body: JSON.stringify(cartItems)
+    // })
+    // console.log('resopnseeee',response)
+    // if(response.statusCode === 500) return
+    // const data = await response.json();
+    
+    // stripe.rederictToCheckout({sessionId : data.id})
+
+ }
 
     // useEffect(() => {
     //     if (session.status === "authenticated") {
@@ -156,7 +201,7 @@ const YourCard = ({ customercart, cart_id }) => {
     }
 
     // useEffect(() => {
-    //     const productsCard = JSON.parse(localStorage.getItem("cart"))
+    //     const productsCard = JSON.parse(localStorage.getItem("cart"))    
     //     setCartItems(productsCard || cartProducts);
     // }, [])
 
@@ -164,23 +209,40 @@ const YourCard = ({ customercart, cart_id }) => {
     console.log('redy to insert user cart', cartitems2);
     console.log('cart3t', cartitems3);
     
-    const AllCartItemsClear = () => {
+    const AllCartItemsClear = async () => {
         setCartItems([])
-        let variables = {
-            id: cart_id,
-            products: [],
-            total: 0
-        }
-        var token = ""
+
+
+        // let variables = {
+        //     id: CART_ID,
+        //     products: [],
+        //     total: 0
+        // }
+       
         if (session.status === "authenticated") {
-            token = session.data.user.accessToken.token
-            mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("res", res))
+            let id = session.data.user.accessToken.customer._id
+            let token = session.data.user.accessToken.token
+
+            query(GET_USER_CART, id, token).then(res => {
+                cart_id = res.data.cartbyUser.id
+                let variables = {
+                    id: cart_id,
+                    products: [],
+                    total: 0
+                }
+                mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("delet res while auth ", res))
+            })
+
+            // mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("res", res))
         }
 
         localStorage.setItem("cart", JSON.stringify([]))
         // dispatch(RemoveAllCartItemsAction([]));
     }
-    const IncreaseQuantity = (item) => {
+
+
+
+    const IncreaseQuantity = async (item) => {
         console.log('itemQuant',item.quantity)
         console.log('dynamic irtem calue',cartItems[1])
         setCartItems([...cartItems],cartItems.filter(itemm => itemm._id===item._id ? (itemm.quantity+=1):itemm.qyantity))   
@@ -284,29 +346,61 @@ const YourCard = ({ customercart, cart_id }) => {
 
        
 
-        let product = item._id
-        let token = ""
-        if (session.status === "authenticated") {
-            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== product)
-            // dispatch(removeCartItemAction(product));
-            setCartItems(cartItemsfilter);
-            // console.log('cart item after deleting an element', cartItems)
-            token = session.data.user.accessToken.token
-            let variables = {
-                id: cart_id,
-                product_id: item._id,
-            }
-            mutation(DELETE_CART_PRODUCTS, variables, token).then(res => {
-                console.log("res delete", res)
-                // if (res.data.deleteCartProduct.success) {
-                //     let cartItemsfilter = cartItems.filter(item => item._id !== product);
-                //     localStorage.setItem("cart", JSON.stringify(cartItemsfilter))
-                //     setCartItems(cartItemsfilter);
-                //     // dispatch(removeCartItemAction(cartItemsfilter)); 
-                // }
-            });
-            console.log('huaaaaa else')
+
+
+
+       
+            const prod = cartItems.find(cart => cart._id === item._id);
+          
+            // const qty = prod.quantity;
+            // console.log('Product to change quantity',qty)
+            if (session?.status === "authenticated") {
+                let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id)
+                setCartItems(cartItemsfilter);
+                let id = session.data.user.accessToken.customer._id
+                let token = session.data.user.accessToken.token
+                query(GET_USER_CART, id, token).then(res => {
+                // console.log("productUser", res.data.cartbyUser.products)
+                cart_id = res.data.cartbyUser.id
+                // state.cart_id = res.data.cartbyUser.id
+                
+                let variables = {
+                    id: cart_id,
+                    product_id: item._id,
+                }
+                // console.log("updatecart", variables);
+                mutation(DELETE_CART_PRODUCTS, variables, token).then(res => console.log("delet res while auth ", res))
+            })
         }
+        
+
+
+
+
+        // let product = item._id
+        // let token = ""
+        // if (session.status === "authenticated") {
+        //     let cartItemsfilter = cartItems.filter(itemm => itemm._id !== product)
+        //     // dispatch(removeCartItemAction(product));
+        //     setCartItems(cartItemsfilter);
+        //     // console.log('cart item after deleting an element', cartItems)
+        //     token = session.data.user.accessToken.token
+        //     let variables = {
+        //         id: cart_id,
+        //         product_id: item._id,
+        //     }
+        //     console.log("res delete", variables)
+        //     mutation(DELETE_CART_PRODUCTS, variables, token).then(res => {
+                
+        //         // if (res.data.deleteCartProduct.success) {
+        //         //     let cartItemsfilter = cartItems.filter(item => item._id !== product);
+        //         //     localStorage.setItem("cart", JSON.stringify(cartItemsfilter))
+        //         //     setCartItems(cartItemsfilter);
+        //         //     // dispatch(removeCartItemAction(cartItemsfilter)); 
+        //         // }
+        //     });
+        //     console.log('huaaaaa else')
+        // }
         else {
             let cartItemsfilter = cartItems.filter(item => item._id !== product)
             dispatch(removeCartItemAction(product));
@@ -465,9 +559,9 @@ const YourCard = ({ customercart, cart_id }) => {
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <Link href="#">
-                                                <a className="card-btons" ><i className="fas fa-archive"></i> Proceed To CheckOut</a>
-                                            </Link>
+                                            {/* <Link href="#"> */}
+                                                <a className="card-btons" onClick={handlePayment} ><i className="fas fa-archive"></i> Proceed To CheckOut</a>
+                                            {/* </Link> */}
                                         </div>
                                     </div>
                                 </div>
@@ -488,6 +582,7 @@ const YourCard = ({ customercart, cart_id }) => {
 export default YourCard;
 
 export async function getServerSideProps(context) {
+    
 
     const session = await getSession(context)
     // console.log("session", session)
@@ -495,6 +590,7 @@ export async function getServerSideProps(context) {
     // let id = "622ae63d3aa0f0f63835ef8e"
     var customercart = [];
     var cart_id = ""
+    var CartsDataa ={}
     if (session !== null) {
 
         /* ----------------------- GET USER CART -----------------------------*/
@@ -502,13 +598,13 @@ export async function getServerSideProps(context) {
         try {
             const { data: CartsData } = await client.query({
                 query: GET_USER_CART,
-                variables: { id: id }
+                variables: { id: id }   
             })
-
+            CartsDataa =CartsData
             console.log('CartsData', CartsData.products)
             cart_id = CartsData.cartbyUser.id
             let customercarts = CartsData?.cartbyUser.products
-            let cartitems = customercarts.map(product => {
+            let cartitems = await customercarts.map(product => {
                 console.log('Product', product)
                 return {
                     _id: product?.product_id,
@@ -522,6 +618,7 @@ export async function getServerSideProps(context) {
             })
             customercart = cartitems
             console.log("Carts==================", customercart)
+            console.log('getServerSideCalled',customercart.length)
         }
         catch (e) {
             console.log("error==", e)
@@ -531,7 +628,8 @@ export async function getServerSideProps(context) {
     return {
         props: {
             customercart,
-            cart_id
+            cart_id,
+            CartsDataa
         },
        
 

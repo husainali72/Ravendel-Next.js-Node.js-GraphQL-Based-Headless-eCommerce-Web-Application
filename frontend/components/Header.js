@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { OpenNav } from '../utills/app';
 import { CloseNav } from '../utills/app';
 import ShopCartProducts from "./cardcomponent/ShopCartProduct"
@@ -8,21 +8,60 @@ import { useSelector, useDispatch } from "react-redux";
 import { useSession, signOut } from "next-auth/react";
 import { NavLink } from 'react-bootstrap';
 import { logoutDispatch } from "../redux/actions/userlogoutAction"
+import { GET_USER_CART } from '../queries/cartquery';
+import { query } from '../utills/helpers';
 export default function Header({cartData}) {
     const data = useSession();
-    console.log('sesionn', data)
+    console.log('sesionnInHeader', data)
     const cartItem = useSelector(state => state.cart)
     console.log('cartInHeader', cartData)
 
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
+    const [cartLengthh,setCartLength] = useState(0);
+    const [cart,setCart] = useState(null);
     const LogOutUser = async () => {
         const data = await signOut({ redirect: false, callbackUrl: "/" })
         // console.log("datasignout", data)
         localStorage.setItem("userCart", JSON.stringify([]));
         localStorage.setItem("cart", JSON.stringify([]));
         dispatch(logoutDispatch())
+
+   
+
+       
+          
+
     }
+
+
+    console.log('cartLegthInHeader',cartLengthh)
+
+    const getCartLength = async ()=>{
+        let userCart 
+        if (data.status === "authenticated") {
+            
+        let id = data.data.user.accessToken.customer._id
+        let token = data.data.user.accessToken.token
+
+        query(GET_USER_CART, id, token).then(res => {
+            // let cartLength = res.data.cartbyUser.length
+            userCart = res.data.cartbyUser;
+            setCart(userCart);
+            // console.log('infunlength', cartLength)
+            // setCartLength(cartLength)
+        })
+
+        // mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("res", res))
+    }
+
+    }
+
+    useEffect(() => {
+        // console.log('cartLegthInHeader',cartLengthh)
+        getCartLength()
+      }, [data])
+      console.log('userCartInHeader', cart?.products?.length)
 
     return (
         <header className="header-area header-style-5 mt-0">
@@ -157,8 +196,9 @@ export default function Header({cartData}) {
                                     </Link>{
                                         
                                     }
-                                    {cartData && cartData?.length > 0 ? (
-                                        <span className="pro-count blue">{cartData?.length}</span>
+                                     
+                                    {data.status === "authenticated" ? (
+                                        <span className="pro-count blue">{cart?.products?.length}</span>
                                     ) :  (
                                         <span className="pro-count blue">{cartItem?.length}</span>
                                     )}
