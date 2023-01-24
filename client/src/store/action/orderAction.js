@@ -59,8 +59,7 @@ export const orderAction = (id) => (dispatch) => {
   });
 
   query(GET_ORDER, id)
-      .then((response) => {
-      console.log(response);
+    .then((response) => {
       const [error, success, message, data] = getResponseHandler(
         response,
         "order"
@@ -84,7 +83,6 @@ export const orderAction = (id) => (dispatch) => {
       }
     })
     .catch((error) => {
-      console.log("error");
       dispatch({
         type: ORDER_FAIL,
       });
@@ -161,7 +159,7 @@ export const orderUpdateAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(ordersAction());
-        jumpTo(`${client_app_route_url}all-orders`);
+        // jumpTo(`${client_app_route_url}all-orders`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

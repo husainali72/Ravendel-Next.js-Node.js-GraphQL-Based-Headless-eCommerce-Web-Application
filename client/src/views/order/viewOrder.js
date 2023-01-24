@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { Link, useParams } from "react-router-dom";
-import Alert from "../utils/Alert";
+import Alerts from "../components/Alert";
 import { orderUpdateAction, orderAction } from "../../store/action/";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -53,7 +53,7 @@ const ViewOrderComponent = ({ params }) => {
 
   const dispatch = useDispatch();
   const singleOrder = useSelector((state) => state.order);
-  console.log(singleOrder);
+
   const [order, setorder] = useState({
     billing: {
       firstname: "",
@@ -154,7 +154,7 @@ const ViewOrderComponent = ({ params }) => {
 
   return (
     <>
-      <Alert />
+      <Alerts />
       {singleOrder.order.loading && (
         <Backdrop className={classes.backdrop} open={true}>
           <CircularProgress color="inherit" /> <br />
@@ -598,7 +598,7 @@ const ViewOrderComponent = ({ params }) => {
               </Box>
             </Grid>
 
-            {/* <Grid item md={6}>
+            <Grid item md={6}>
               <Box component="span">
                 <Card>
                   <CardHeader title="Subtotal" />
@@ -620,7 +620,7 @@ const ViewOrderComponent = ({ params }) => {
                           {singleOrder.order.sub_total_details.shipping_name}
                         </Typography>
                         <Typography variant="h5" className={classes.mtb2}>
-                          {singleOrder.order.sub_total_details.tax_name}
+                          {singleOrder.order.tax_name}
                         </Typography>
                         <Divider />
                         <Typography variant="h5" className={classes.mtb2}>
@@ -653,7 +653,7 @@ const ViewOrderComponent = ({ params }) => {
                   </CardContent>
                 </Card>
               </Box>
-            </Grid> */}
+            </Grid>
           </Grid>
         </>
       ) : (

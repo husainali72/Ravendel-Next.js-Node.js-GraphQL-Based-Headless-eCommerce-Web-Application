@@ -5,11 +5,14 @@ import {
   UPDATE_BRAND,
   DELETE_BRAND,
 } from "../../queries/brandQuery";
-import {client_app_route_url, getResponseHandler, mutationResponseHandler} from '../../utils/helper';
+import {
+  client_app_route_url,
+  getResponseHandler,
+  mutationResponseHandler,
+} from "../../utils/helper";
 
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import jumpTo from "../../utils/navigation";
 
 export const brandsAction = () => (dispatch) => {
   dispatch({
@@ -66,31 +69,38 @@ export const brandAddAction = (object) => (dispatch) => {
   dispatch({
     type: BRAND_LOADING,
   });
+
   mutation(ADD_BRAND, object)
     .then((response) => {
-      // if (response.data.addBrand.success) {
-      //   dispatch({
-      //     type: BRAND_FAIL,
-      //   });
+      if (response.data.addBrand.success) {
+        dispatch({
+          type: BRAND_FAIL,
+        });
 
-      //   jumpTo(`${client_app_route_url}all-brands`);
-      //   dispatch(brandsAction());
+        dispatch(brandsAction());
 
-      //   return dispatch({
-      //     type: ALERT_SUCCESS,
-      //     payload: {
-      //       boolean: true,
-      //       message: "added successfully",
-      //       error: false,
-      //     },
-      //   });
-      // }else {
-      //   return dispatch({
-      //     type: ALERT_SUCCESS,
-      //     payload: { boolean: true, message: response.data.addBrand.message, error: true },
-      //   });
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: true,
+            message: response.data.addBrand.message,
+            error: false,
+          },
+        });
+      } else {
+        dispatch({
+          type: BRAND_FAIL,
+        });
 
-      // }
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: true,
+            message: response.data.addBrand.message,
+            error: true,
+          },
+        });
+      }
       const [error, success, message, data] = mutationResponseHandler(
         response,
         "addBrand"
@@ -108,7 +118,7 @@ export const brandAddAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(brandsAction());
-        jumpTo(`${client_app_route_url}all-brands`);
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
@@ -138,7 +148,7 @@ export const brandUpdateAction = (object) => (dispatch) => {
       //       type: BRAND_FAIL,
       //     });
 
-      //   jumpTo(`${client_app_route_url}all-brands`);
+      //
 
       //   dispatch(brandsAction());
 
@@ -175,7 +185,7 @@ export const brandUpdateAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(brandsAction());
-        jumpTo(`${client_app_route_url}all-brands`);
+
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

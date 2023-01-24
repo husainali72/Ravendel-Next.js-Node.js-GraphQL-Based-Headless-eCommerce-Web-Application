@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { blogDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
 import { isEmpty, bucketBaseURL } from "../../utils/helper";
-import Alert from "../utils/Alert";
+import Alerts from "../components/Alert";
 import PeopleIcon from "@mui/icons-material/People";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -32,6 +32,7 @@ import { Loading } from "../components";
 import { client_app_route_url } from "../../utils/helper";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../theme/index";
+import { blogsAction } from "../../store/action";
 const AllBlogComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ const AllBlogComponent = () => {
 
   useEffect(() => {
     if (isEmpty(blogs.blogs)) {
-      // dispatch(blogsAction());
+      dispatch(blogsAction());
     }
   }, []);
 
@@ -56,7 +57,7 @@ const AllBlogComponent = () => {
 
   return (
     <>
-      <Alert />
+      <Alerts />
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>

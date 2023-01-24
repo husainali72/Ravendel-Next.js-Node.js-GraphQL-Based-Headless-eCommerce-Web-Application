@@ -19,9 +19,11 @@ import {
   CardBlocks,
 } from "../components";
 import viewStyles from "../viewStyles";
+import { pageAddAction } from "../../store/action/pageAction.js";
 import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { Navigate, useNavigate } from "react-router-dom";
 var defaultObj = {
   status: "Publish",
   title: "",
@@ -37,9 +39,11 @@ const AddPageTheme = (props) => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const pageState = useSelector((state) => state.pages);
+
   const [editPremalink, setEditPermalink] = useState(false);
   const [page, setPage] = useState(defaultObj);
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   useEffect(() => {
     if (pageState.page.content !== undefined) {
       setPage({ ...page, content: pageState.page.content });
@@ -60,7 +64,7 @@ const AddPageTheme = (props) => {
 
   const addPage = (e) => {
     e.preventDefault();
-    // dispatch(pageAddAction(page));
+    dispatch(pageAddAction(page, navigate));
   };
 
   const handleChange = (e) => {

@@ -8,9 +8,11 @@ import { Alert, Loading, TopBar, CardBlocks } from "../../components";
 import { client_app_route_url } from "../../../utils/helper";
 import theme from "../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
+import { attributeAddAction } from "../../../store/action";
 const delimiters = ["Enter", "Tab"];
 
 const AddAttributeTheme = () => {
+  const dispatch = useDispatch();
   const classes = viewStyles();
   const [attribute, setattribute] = useState({
     name: "",
@@ -29,7 +31,7 @@ const AddAttributeTheme = () => {
   };
 
   const onAdd = () => {
-    // dispatch(attributeAddAction({ attribute: attribute }));
+    dispatch(attributeAddAction({ attribute: attribute }));
   };
 
   return (
