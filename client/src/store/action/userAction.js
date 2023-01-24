@@ -26,7 +26,7 @@ export const usersAction = () => (dispatch) => {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
-            boolean: true,
+            boolean: false,
             message: response.data.users.message.message,
             error: true,
           },
@@ -39,7 +39,7 @@ export const usersAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -63,7 +63,7 @@ export const userAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -98,7 +98,7 @@ export const userAddAction = (object) => (dispatch) => {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
-            boolean: true,
+            boolean: false,
             message: response.data.addUser.message,
             error: true,
           },
@@ -111,7 +111,7 @@ export const userAddAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -136,7 +136,7 @@ export const userUpdateAction = (object) => (dispatch) => {
           },
         });
 
-        jumpTo(`${client_app_route_url}all-users`);
+        // jumpTo(`${client_app_route_url}all-users`);
 
         dispatch(usersAction());
 
@@ -145,7 +145,7 @@ export const userUpdateAction = (object) => (dispatch) => {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
-            boolean: true,
+            boolean: false,
             message: response.data.updateUser.message,
             error: true,
           },
@@ -158,7 +158,7 @@ export const userUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -188,7 +188,7 @@ export const userDeleteAction = (id) => (dispatch) => {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
-            boolean: true,
+            boolean: false,
             message: response.data.deleteUser.message,
             error: true,
           },
@@ -201,7 +201,7 @@ export const userDeleteAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -220,7 +220,7 @@ export const dashboardAction = () => (dispatch) => {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
-            boolean: true,
+            boolean: false,
             message: response.data.dashboardData,
             error: true,
           },
@@ -233,7 +233,7 @@ export const dashboardAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };

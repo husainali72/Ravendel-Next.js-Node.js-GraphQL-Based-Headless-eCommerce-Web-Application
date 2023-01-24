@@ -28,6 +28,8 @@ import {
 } from "../components";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
+import { blogtagsAction } from "../../store/action/";
+import { useNavigate } from "react-router-dom";
 var defaultObj = {
   status: "Publish",
   blog_tag: [],
@@ -41,6 +43,7 @@ var defaultObj = {
 };
 
 const AddBlogComponenet = () => {
+  const navigate = useNavigate();
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -52,7 +55,7 @@ const AddBlogComponenet = () => {
   const [clearTags, setclearTags] = useState([]);
 
   useEffect(() => {
-    // dispatch(blogtagsAction());
+    dispatch(blogtagsAction());
   }, []);
 
   useEffect(() => {
@@ -77,7 +80,7 @@ const AddBlogComponenet = () => {
 
   const addBlog = (e) => {
     e.preventDefault();
-    dispatch(blogAddAction(blog));
+    dispatch(blogAddAction(blog, navigate));
   };
 
   const handleChange = (e) => {
@@ -123,7 +126,7 @@ const AddBlogComponenet = () => {
           backLink={`${client_app_route_url}all-blogs`}
         />
         <Alerts />
-        {/* <h1>dkjfjh</h1> */}
+
         <Grid
           container
           spacing={isSmall ? 2 : 3}

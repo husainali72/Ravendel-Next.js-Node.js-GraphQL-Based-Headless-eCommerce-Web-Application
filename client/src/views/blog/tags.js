@@ -31,7 +31,7 @@ import {
   CardBlocks,
   CardBlocksWithAction,
 } from "../components";
-
+import { blogtagsAction } from "../../store/action/";
 var tagObject = {
   name: "",
   url: "",
@@ -55,7 +55,7 @@ const AllTagsComponent = () => {
   };
 
   useEffect(() => {
-    // dispatch(blogtagsAction());
+    dispatch(blogtagsAction());
   }, []);
 
   const editTag = (tag) => {

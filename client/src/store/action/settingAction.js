@@ -17,7 +17,7 @@ import {
   UPDATE_APPEARANCE_THEME,
   UPDATE_APPEARANCE_HOME_NEW,
   UPDATE_APPEARANCE_MOBILE,
-  UPDATE_APPEARANCE_MOBILE_NEW
+  UPDATE_APPEARANCE_MOBILE_NEW,
 } from "../../queries/settingQuery";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
@@ -79,7 +79,7 @@ export const generalUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -112,7 +112,7 @@ export const mediaUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -145,7 +145,7 @@ export const smtpUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -157,7 +157,7 @@ export const seoUpdateAction = (object) => (dispatch) => {
   mutation(UPDATE_SEO, object)
     .then((response) => {
       if (response) {
-        console.log(response.data.updateSEO)
+        console.log(response.data.updateSEO);
         dispatch({
           type: SETTING_SUCCESS,
           payload: response.data.updateSEO,
@@ -179,7 +179,7 @@ export const seoUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -212,7 +212,7 @@ export const storeCurrencyUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -245,7 +245,7 @@ export const storeAddressUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -278,7 +278,7 @@ export const storeMeasuresUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -311,7 +311,7 @@ export const storeInventoryUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -344,7 +344,7 @@ export const paymentCodUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -377,7 +377,7 @@ export const paymentBankUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -410,7 +410,7 @@ export const paymentStripeUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -443,19 +443,17 @@ export const paymentPaypalUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
 export const appearanceHomeUpdateAction = (object) => (dispatch) => {
- 
   dispatch({
     type: SETING_LOADING,
   });
   mutation(UPDATE_APPEARANCE_HOME_NEW, object)
     .then((response) => {
-    
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
@@ -478,19 +476,17 @@ export const appearanceHomeUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
 export const appearanceMobileUpdateAction = (object) => (dispatch) => {
- 
   dispatch({
     type: SETING_LOADING,
   });
   mutation(UPDATE_APPEARANCE_MOBILE_NEW, object)
     .then((response) => {
-    
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
@@ -513,7 +509,7 @@ export const appearanceMobileUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -546,7 +542,7 @@ export const appearanceThemeUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };

@@ -11,7 +11,7 @@ const Alerts = () => {
   const [isOpen, setisOpen] = useState(false);
   const alert = useSelector((state) => state.alert);
   const dispatch = useDispatch();
-
+  console.log(alert);
   useEffect(() => {
     if (alert.success) {
       setisOpen(true);
@@ -24,7 +24,6 @@ const Alerts = () => {
       }, 3000);
     }
   }, [alert.success]);
-
 
   useEffect(() => {
     if (alert.error) {
@@ -49,11 +48,14 @@ const Alerts = () => {
       }}
       sx={{ mt: "100px" }}
     >
-      {(alert.error || alert.success) && alert.message ? 
-        <Alert severity={alert.success ? 'success' : 'error'} sx={{ width: "100%" }}>
+      {(alert.error || alert.success) && alert.message ? (
+        <Alert
+          severity={alert.success ? "success" : "error"}
+          sx={{ width: "100%" }}
+        >
           {alert.message}
         </Alert>
-      : null}
+      ) : null}
     </Snackbar>
   );
 };

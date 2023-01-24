@@ -28,6 +28,7 @@ import viewStyles from "../viewStyles.js";
 import { Alert, Loading } from "../components";
 import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
+import { usersAction } from "../../store/action";
 import theme from "../../theme/index";
 const AllUsersComponent = () => {
   const classes = viewStyles();
@@ -47,7 +48,7 @@ const AllUsersComponent = () => {
 
   useEffect(() => {
     if (isEmpty(UsersState.users)) {
-      // dispatch(usersAction());
+      dispatch(usersAction());
     }
   }, []);
 

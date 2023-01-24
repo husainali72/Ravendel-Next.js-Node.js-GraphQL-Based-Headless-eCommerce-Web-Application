@@ -9,7 +9,8 @@ import { Loading, TopBar, Alert, TextInput, CardBlocks } from "../components";
 import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
-const EditBrandComponenet = () => {
+import { useParams } from "react-router-dom";
+const EditBrandComponenet = ({ params }) => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
@@ -17,6 +18,8 @@ const EditBrandComponenet = () => {
   const Brands = useSelector((state) => state.brands);
   const [logoImage, setLogoImage] = useState(null);
   const [brand, setBrand] = useState({
+    id: "",
+    _id: "",
     name: "",
     url: "",
     brand_logo: "",
@@ -29,7 +32,8 @@ const EditBrandComponenet = () => {
 
   useEffect(() => {
     Brands.brands.map((editbrand) => {
-      if (editbrand.id === "63402d07469a96c8a3cb7238") {
+      if (editbrand.id === params.id) {
+        brand.id = editbrand.id;
         setBrand({ ...brand, ...editbrand });
         if (editbrand.brand_logo && editbrand.brand_logo.original) {
           setLogoImage(bucketBaseURL + editbrand.brand_logo.original);
@@ -168,9 +172,10 @@ const EditBrandComponenet = () => {
 };
 
 export default function EditBrand() {
+  const params = useParams();
   return (
     <ThemeProvider theme={theme}>
-      <EditBrandComponenet />
+      <EditBrandComponenet params={params} />
     </ThemeProvider>
   );
 }
