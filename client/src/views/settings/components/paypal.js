@@ -7,12 +7,13 @@ import { ThemeProvider } from "@mui/material/styles";
 import { useEffect } from "react";
 import { get } from "lodash";
 import theme from "../../../theme/index.js";
+import { paymentPaypalUpdateAction } from "../../../store/action";
 const PaypalComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [paypalInfo, setPaypalInfo] = useState({
-    // ...settingState.settings.paymnet.paypal,
+    ...settingState.settings.paymnet.paypal,
   });
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const PaypalComponent = () => {
  
 
   const updatePaypal = () => {
-    // dispatch(paymentPaypalUpdateAction(paypalInfo));
+    dispatch(paymentPaypalUpdateAction(paypalInfo));
   };
 
   return (

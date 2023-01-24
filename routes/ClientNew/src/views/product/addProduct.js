@@ -42,10 +42,10 @@ import { client_app_route_url } from '../../utils/helper';
 
 const AddProduct = () => {
   const classes = viewStyles();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  // const products = useSelector((state) => state.products);
+  const products = useSelector((state) => state.products);
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const [product, setProduct] = useState({
@@ -88,7 +88,7 @@ const AddProduct = () => {
   const addProduct = (e) => {
     e.preventDefault();
     product.combinations = combination;
-    // dispatch(productAddAction(product));
+    dispatch(productAddAction(product));
   };
 
   const handleChange = (e) => {

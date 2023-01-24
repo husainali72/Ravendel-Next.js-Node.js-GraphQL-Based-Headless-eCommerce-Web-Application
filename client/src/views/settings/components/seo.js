@@ -6,11 +6,12 @@ import { ThemeProvider } from "@mui/material/styles";
 import { useEffect } from "react";
 import {get} from "lodash";
 import theme from "../../../theme/index.js";
+import { seoUpdateAction } from "../../../store/action";
 const SEOComponent = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [seo, setSeo] = useState({ 
-    // ...settingState.settings.seo
+    ...settingState.settings.seo
    });
 
    useEffect(() => {
@@ -18,7 +19,7 @@ const SEOComponent = () => {
     }, [settingState.settings])
 
   const updateSeo = () => {
-    // dispatch(seoUpdateAction(seo));
+    dispatch(seoUpdateAction(seo));
   };
 
   return (

@@ -15,12 +15,13 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {get} from "lodash";
 import { useEffect } from "react";
 import theme from "../../../theme/index.js";
+import { smtpUpdateAction } from "../../../store/action/settingAction.js";
 const SMTPComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [smtp, setSmptp] = useState({ 
-    // ...settingState.settings.smtp 
+    ...settingState.settings.smtp 
   });
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const SMTPComponent = () => {
 
 
   const updateSmtp = () => {
-    // dispatch(smtpUpdateAction(smtp));
+    dispatch(smtpUpdateAction(smtp));
   };
 
   return (

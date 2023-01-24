@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Grid, Box, Button, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import viewStyles from "../../viewStyles";
@@ -7,6 +7,7 @@ import { SettingTextInput, SettingBlock } from "./setting-components";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import {get} from "lodash";
+import { mediaUpdateAction } from "../../../store/action";
 const MediaComponent = () => {
   const classes = viewStyles();
   const theme = useTheme();
@@ -21,14 +22,14 @@ const MediaComponent = () => {
   });
 
   const updateGeneral = () => {
-    // dispatch(mediaUpdateAction(media));
+    dispatch(mediaUpdateAction(media));
   };
 
-  // useEffect(() => {
-  //   get(settingState, "settings.media.thumbnail")
-  //   get(settingState, "settings.media.medium")
-  //   get(settingState, "settings.media.large")
-  //   }, [settingState.settings])
+  useEffect(() => {
+    get(settingState, "settings.media.thumbnail")
+    get(settingState, "settings.media.medium")
+    get(settingState, "settings.media.large")
+    }, [settingState.settings])
  
     
 

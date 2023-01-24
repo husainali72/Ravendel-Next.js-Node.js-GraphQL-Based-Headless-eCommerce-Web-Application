@@ -71,7 +71,7 @@ const AllCategory = (props) => {
 
   useEffect(() => {
     if (!products.categories.length) {
-      // dispatch(categoriesAction());
+      dispatch(categoriesAction());
     }
   }, []);
 
