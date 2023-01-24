@@ -35,6 +35,7 @@ const HomeSettingsTheme = () => {
   const [dragItem, updateDragItem] = useState();
  
   const settingState = useSelector((state) => state.settings);
+  console.log("setting state settings===",settingState.settings.appearance.home)
   const [settingHome, setsettingHome] = useState({
     ...settingState.settings.appearance.home,
   });
@@ -145,9 +146,11 @@ const HomeSettingsTheme = () => {
     for (let i in settingHome.slider) {
       delete settingHome.slider[i].__typename;
     }
+    for (let i in settingHome.add_section_web) {
+      delete settingHome.add_section_web[i].__typename;
+    }
 
-    // delete settingHome.add_section_in_home.__typename;
-    delete settingHome.add_section_web.__typename;
+    delete settingHome.add_section_in_home.__typename;
 
     dispatch(appearanceHomeUpdateAction(settingHome));
   };

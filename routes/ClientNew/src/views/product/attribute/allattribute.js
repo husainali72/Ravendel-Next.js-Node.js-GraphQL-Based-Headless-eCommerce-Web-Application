@@ -45,12 +45,12 @@ const AllAttribute = () => {
   };
 
   useEffect(() => {
-    // dispatch(attributesAction());
+    dispatch(attributesAction());
   }, []);
 
   useEffect(() => {
     if (attributeState.render) {
-      // dispatch(attributesAction());
+      dispatch(attributesAction());
     }
   }, [attributeState.render]);
 

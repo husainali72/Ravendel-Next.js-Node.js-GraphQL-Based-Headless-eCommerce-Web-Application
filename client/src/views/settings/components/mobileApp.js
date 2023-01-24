@@ -36,6 +36,7 @@ const MobileAppSetting = () => {
   const [sectionData, setSectionData] = useState([]);
   const [dragComponents, setDragComponents] = useState();
   const settingState = useSelector((state) => state.settings);
+  console.log("mobile section settings state===", settingState.settings.appearance.mobile)
   const [settingMobile, setSettingMobile] = useState({
     ...settingState.settings.appearance.mobile,
   });
@@ -48,13 +49,16 @@ const MobileAppSetting = () => {
   }, [settingState.settings.appearance.mobile])
 
 
-  //   useEffect(() => {
-  //       setSettingMobile({
-  //       ...settingState.settings.appearance.mobile,
-  //    });
-  // })
+    useEffect(() => {
+        setSettingMobile({
+        ...settingState.settings.appearance.mobile,
+     });
+  }, [])
 
   const updateMobileApp = () => {
+    for (let i in settingMobile.mobile_section) {
+      delete settingMobile.mobile_section[i].__typename;
+    }
     dispatch(appearanceMobileUpdateAction(settingMobile));
   };
 

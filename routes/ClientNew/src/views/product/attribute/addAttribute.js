@@ -29,7 +29,7 @@ const AddAttribute = () => {
   };
 
   const onAdd = () => {
-    // dispatch(attributeAddAction({ attribute: attribute }));
+    dispatch(attributeAddAction({ attribute: attribute }));
   };
 
   return (
