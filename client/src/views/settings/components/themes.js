@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, TextField, Box, Button } from "@mui/material";
 import viewStyles from "../../viewStyles";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,8 @@ import { bucketBaseURL } from "../../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import {get} from "lodash";
+import { appearanceThemeUpdateAction } from "../../../store/action";
+
 const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -31,21 +33,23 @@ const ThemesComponent = () => {
     setLogoImage(URL.createObjectURL(e.target.files[0]));
   };
 
-  const updateTheme = () => {};
+  const updateTheme = () => {
+    dispatch(appearanceThemeUpdateAction(themeSetting));
+  };
 
-  // useEffect(() => {
-  //   get(settingState, "settings.appearance.theme,")
-  //   }, [settingState.settings])
+  useEffect(() => {
+    get(settingState, "settings.appearance.theme,")
+    }, [settingState.settings])
 
-  // useEffect(() => {
-  //   if (
-  //     settingState.settings &&
-  //     settingState.settings.appearance &&
-  //     settingState.settings.appearance.theme
-  //   ) {
-  //     setThemeSetting({ ...settingState.settings.appearance.theme})
-  //   }
-  // }, [settingState.settings])
+  useEffect(() => {
+    if (
+      settingState.settings &&
+      settingState.settings.appearance &&
+      settingState.settings.appearance.theme
+    ) {
+      setThemeSetting({ ...settingState.settings.appearance.theme})
+    }
+  }, [settingState.settings])
 
 
   return (

@@ -15,8 +15,10 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { useEffect } from "react";
 import  { get } from "lodash";
+import { paymentBankUpdateAction } from "../../../store/action";
 const DirectBankTransferTheme = () => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const settingState = useSelector((state) => state.settings);
@@ -40,7 +42,7 @@ useEffect(() => {
 
   const updateBank = () => {
     delete bankTransferInfo.account_details.__typename;
-    // dispatch(paymentBankUpdateAction(bankTransferInfo));
+    dispatch(paymentBankUpdateAction(bankTransferInfo));
   };
 
   return (

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Grid, Box, FormControlLabel, Checkbox, Button } from "@mui/material";
 import viewStyles from "../../viewStyles.js";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   SettingTextInput,
   SettingSelectComponent,
@@ -11,12 +11,13 @@ import { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import {get} from "lodash";
 import theme from "../../../theme/index.js";
+import { storeInventoryUpdateAction } from "../../../store/action/settingAction.js";
 const InventoryComponent = () => {
   const classes = viewStyles();
-
+  const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [inventory, setinventory] = useState({
-    // ...settingState.settings.store.inventory,
+    ...settingState.settings.store.inventory,
     notifications: {
       show_out_of_stock:
         settingState.settings.store.inventory.notifications.show_out_of_stock,
@@ -33,7 +34,7 @@ const InventoryComponent = () => {
  
 
   const updateInventory = () => {
-    // dispatch(storeInventoryUpdateAction(inventory));
+    dispatch(storeInventoryUpdateAction(inventory));
   };
 
   return (

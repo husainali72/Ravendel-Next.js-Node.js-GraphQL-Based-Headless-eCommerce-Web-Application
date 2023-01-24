@@ -18,27 +18,33 @@ import { get } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
+import { generalUpdateAction, getDatesAction } from "../../../store/action/settingAction.js";
 export const GeneralTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [timeZone, setTimeZone] = useState(15);
   const [general, setgeneral] = useState({
-    // date_format: settingState.settings.general.date_format,
+    date_format: settingState.settings.general.date_format,
   });
 
-  useEffect(() => {
+//   useEffect(() => {
 // dispatch(getDatesAction());
 
-get (settingState, "settings.general.date_format")
-  }, [settingState.settings]);
+// get (settingState, "settings.general.date_format")
+//   }, [settingState.settings]);
+
+  useEffect(() => {
+    dispatch(getDatesAction())
+  }, []);
 
   const changeTimeZone = (val) => {
     setgeneral({ ...general, time_zone: val.value });
+    setTimeZone()
   };
 
   const updateGenral = () => {
-    // dispatch(generalUpdateAction(general));
+    dispatch(generalUpdateAction(general));
   };
 
   return (

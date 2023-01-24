@@ -6,8 +6,11 @@ import { SettingTextInput } from "./setting-components/";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { get } from "lodash";
+import { paymentCodUpdateAction } from "../../../store/action/settingAction.js";
+import Alerts from "../../components/Alert.js";
 const CashOnDeliveryTheme = () => {
   const classes = viewStyles();
+  const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [codInfo, setCodInfo] = useState({});
   // const [codInfo, setCodInfo] = useState({
@@ -27,11 +30,12 @@ const CashOnDeliveryTheme = () => {
   }, [settingState.settings]);
 
   const updateCOD = () => {
-    // dispatch(paymentCodUpdateAction(codInfo));
+    dispatch(paymentCodUpdateAction(codInfo));
   };
 
   return (
     <>
+    <Alerts/>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>
@@ -87,7 +91,7 @@ const CashOnDeliveryTheme = () => {
             size="small"
             color="primary"
             variant="contained"
-            // onClick={updateCOD}
+            onClick={updateCOD}
           >
             Save Change
           </Button>
