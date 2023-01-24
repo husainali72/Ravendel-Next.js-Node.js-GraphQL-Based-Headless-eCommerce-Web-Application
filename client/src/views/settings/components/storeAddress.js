@@ -14,8 +14,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 const StoreAddressComponent = () => {
   const settingState = useSelector((state) => state.settings);
+  const dispatch = useDispatch();
   const [address, setAddress] = useState({
-    // ...settingState.settings.store.store_address,
+    ...settingState.settings.store.store_address,
   });
 
   useEffect(() => {
@@ -23,7 +24,7 @@ const StoreAddressComponent = () => {
     }, [settingState.settings])
 
   const updateStoreAddress = () => {
-    // dispatch(storeAddressUpdateAction(address));
+    dispatch(storeAddressUpdateAction(address));
   };
 
   return (

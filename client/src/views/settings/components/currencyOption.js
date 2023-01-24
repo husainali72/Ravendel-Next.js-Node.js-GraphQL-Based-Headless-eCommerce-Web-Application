@@ -7,22 +7,26 @@ import { SettingTextInput } from "./setting-components";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { useEffect } from "react";
+import { storeCurrencyUpdateAction } from "../../../store/action";
+
+
 const CurrencyOptionsComponent = () => {
   const settingState = useSelector((state) => state.settings);
+  const dispatch = useDispatch();
   const [currencyOption, setCurrencyOption] = useState({
-    // ...settingState.settings.store.currency_options,
+    ...settingState.settings.store.currency_options,
   });
 
-  //   // ...settingState.settings.store.currency_options,
+    // ...settingState.settings.store.currency_options,
 
-  //   get(settingState, 'settings.store.currency_options')
+    // get(settingState, 'settings.store.currency_options')
 
   useEffect(() => {
     get(settingState, "settings.store.currency_options");
   }, [settingState.settings]);
 
   const updateStoreCurrency = () => {
-    // dispatch(storeCurrencyUpdateAction(currencyOption));
+    dispatch(storeCurrencyUpdateAction(currencyOption));
   };
 
   return (

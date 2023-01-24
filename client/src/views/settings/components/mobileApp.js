@@ -21,275 +21,355 @@ import { Draggable } from "react-drag-reorder";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../../theme";
 import { appearanceMobileUpdateAction } from "../../../store/action/settingAction";
-
+import Stack from '@mui/material/Stack';
+import AddIcon from '@mui/icons-material/Add';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-      
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+
 const MobileAppSetting = () => {
-    const classes = viewStyles();
-    const dispatch = useDispatch();
-    
-    const [reOrderMobileList, setReOrderMobileList] = useState();
-   
-    const [dragComponents, setDragComponents] = useState();
-    const settingState = useSelector((state) => state.settings);
-    const [settingMobile, setSettingMobile] = useState({
-      ...settingState.settings.appearance.mobile,
-    });
-  
-    const [category, setCategory] = useState(false);
-    const [categoryValue, setCategoryValue] = useState("");
- const [checked, setChecked] = useState(false);
-  const [status, setStatus] = useState(true);
-  
-  
-    // doubt
-    // useEffect(() => {
-    //   if(settingState.settings.appearance.home && settingState.settings.appearance.home.add_section_web && settingState.settings.appearance.home.add_section_web.length > 0){
-    //     setSectionData(settingState.settings.appearance.home.add_section_web)
-    //   }
-    // }, [settingState.settings.appearance.home])
-  
-  
-  //   useEffect(() => {
-  //       setSettingMobile({
-  //       ...settingState.settings.appearance.mobile,
-  //    });
-  // })
-  
-    const updateMobileApp = () => {
-     dispatch(appearanceMobileUpdateAction(settingMobile));
-    };
+  const classes = viewStyles();
+  const dispatch = useDispatch();
+  const [reOrderMobileList, setReOrderMobileList] = useState();
+  const [sectionData, setSectionData] = useState([]);
+  const [dragComponents, setDragComponents] = useState();
+  const settingState = useSelector((state) => state.settings);
+  console.log("mobile section settings state===", settingState.settings.appearance.mobile)
+  const [settingMobile, setSettingMobile] = useState({
+    ...settingState.settings.appearance.mobile,
+  });
 
-    const reArrange = () => {
-        reOrderMobileList ? setReOrderMobileList(false) : setReOrderMobileList(true)
+  // doubt
+  useEffect(() => {
+    if(settingState.settings.appearance.mobile && settingState.settings.appearance.mobile.mobile_section && settingState.settings.appearance.mobile.mobile_section.length > 0){
+      setSectionData(settingState.settings.appearance.mobile.mobile_section)
     }
-   
-    const onSavechange = () => {
-        dragComponents ? setReOrderMobileList(true) : setReOrderMobileList(false)
-    }
-  
+  }, [settingState.settings.appearance.mobile])
 
-    const onCheckBoxChange = (name, value) => {
+
+    useEffect(() => {
         setSettingMobile({
-        ...settingMobile,
-        mobile_section: {
-          ... settingMobile.mobile_section,
-          [name]: value,
-        },
-      });
-    };
-  
-    const handleChangeCategory = (event) => {
-      setCategoryValue(event.target.value);
-    };
-    
-    const [sectionData, setSectionData] = useState([
-      {
-        id: 1,
-        name: "feature_product",
-        label: "Featured product"
-      },
-      {
-        id: 2,
-        name: "recently_added_products",
-        label: "Recently Added Products"
-      },
-      {
-        id: 3,
-        name: "most_viewed_products",
-        label: "Most Viewed Products"
-      },
-      {
-        id: 4,
-        name: "recently_bought_products",
-        label: "Recently Bought Products"
-      },
-      {
-        id: 5,
-        name: "product_recommendation",
-        label: "Product Recommendation (Based on Your Browsing History)"
-      },
-      {
-        id: 6,
-        name: "products_on_sales",
-        label: "Products on Sales"
-      },
-      {
-        id: 7,
-        name: "product_from_specific_categories",
-        label: "Product from Specific Categories"
-      }
-    ]);
-  
-   
-    
-    const [settingSection, setSettingSection] = useState(sectionData);
+        ...settingState.settings.appearance.mobile,
+     });
+  }, [])
 
-    
-  
-  
-   
-  
-    const getChangedPosition = (currentPos, newPos) => {
-      console.log(currentPos, newPos);
-      const reorderedItem = sectionData[currentPos];
-      sectionData[currentPos] = sectionData[newPos];
-      sectionData[newPos] = reorderedItem
-    // const reorderedItem = sectionData[newPos];
-    // sectionData[newPos] = sectionData[currentPos];
-    // sectionData[currentPos] = reorderedItem
-    // console.log(reorderedItem, "reorder---")
-    //   let list = sectionData;
-    // [sectionData[currentPos], sectionData.length[newPos]] = [sectionData[newPos], sectionData[currentPos]]
-    // [sectionData[currentPos], sectionData[sectionData.length-newPos]] = [sectionData[sectionData.length-newPos], sectionData[currentPos]]
-    // const reorderedItem =   [sectionData[currentPos], sectionData[sectionData.length-newPos]];
-    // [sectionData[currentPos], sectionData[sectionData.length-newPos]] = [sectionData[sectionData.length-newPos], sectionData[currentPos]];
-    // [sectionData[sectionData.length-newPos], sectionData[currentPos]] = reorderedItem;
-      setSectionData(...reorderedItem) 
-    // setSectionData(...reorderedItem);
-    };
-  
-  
-    return (
-      <>
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
-          
-  
-            <Box component="div" className={classes.marginBottom2}>
-              <Typography variant="h5" className={classes.paddingBottom1}>
-                Add Section in Mobile App
-              </Typography>
-  
-  
-  
-              {reOrderMobileList ?
-  
-                <div>
-                  <Draggable onPosChange={getChangedPosition}>
-                    {sectionData.map((select, index) => {
-                      return (
-                        <table>
-                          <tbody>
-                          <tr style={{ lineHeight: "35px", fontSize: "14px" }}
-                          >
-                            {select.label}
+  const updateMobileApp = () => {
+    for (let i in settingMobile.mobile_section) {
+      delete settingMobile.mobile_section[i].__typename;
+    }
+    dispatch(appearanceMobileUpdateAction(settingMobile));
+  };
+
+  const reArrange = () => {
+    reOrderMobileList ? setReOrderMobileList(false) : setReOrderMobileList(true)
+  }
+
+  const onSavechange = () => {
+    dragComponents ? setReOrderMobileList(true) : setReOrderMobileList(false)
+  }
+
+  const onCheckBoxChange = (name, value, index) => {
+    let data = sectionData;
+    data[index].visible = !data[index].visible
+    console.log(data, "dataaaa")
+    setSectionData([...data]);
+  };
+
+  // const [sectionData, setSectionData] = useState([
+  //   {
+  //     id: 1,
+  //     name: "feature_product",
+  //     label: "Featured product",
+  //     visible: false,
+  //     sectionImg: {
+  //       preview: "",
+  //       raw: ""
+  //     },
+  //   },
+
+  //   {
+  //     id: 2,
+  //     name: "recently_added_products",
+  //     label: "Recently Added Products",
+  //     visible: false,
+  //     sectionImg: {
+  //       preview: "",
+  //       raw: ""
+  //     },
+  //   },
+
+  //   {
+  //     id: 3,
+  //     name: "most_viewed_products",
+  //     label: "Most Viewed Products",
+  //     visible: false,
+  //     sectionImg: {
+  //       preview: "",
+  //       raw: ""
+  //     },
+  //   },
+
+  //   {
+  //     id: 4,
+  //     name: "recently_bought_products",
+  //     label: "Recently Bought Products",
+  //     visible: false,
+  //     sectionImg: {
+  //       preview: "",
+  //       raw: ""
+  //     },
+  //   },
+
+  //   {
+  //     id: 5,
+  //     name: "product_recommendation",
+  //     label: "Product Recommendation (Based on Your Browsing History)",
+  //     visible: false,
+  //     sectionImg: {
+  //       preview: "",
+  //       raw: ""
+  //     },
+  //   },
+
+  //   {
+  //     id: 6,
+  //     name: "products_on_sales",
+  //     label: "Products on Sales",
+  //     visible: false,
+  //     sectionImg: {
+  //       preview: "",
+  //       raw: ""
+  //     },
+  //   },
+
+  //   {
+  //     id: 7,
+  //     name: "product_from_specific_categories",
+  //     label: "Product from Specific Categories",
+  //     visible: false,
+  //     sectionImg: {
+  //       prview: "",
+  //       raw: ""
+  //     },
+  //     category: null
+  //   }
+  // ]);
+
+  const handleChangeCategory = (event, index) => {
+    let data = sectionData;
+    data[index].category = event.target.value
+    console.log(data)
+    setSectionData([...data]);
+  };
+
+  const addCategory = () => {
+    setSectionData([
+      ...sectionData,
+      {
+        id: 8,
+        name: "product_from_specific_categories",
+        label: "Product from Specific Categories",
+        visible: false,
+        sectionImg: {
+          preview: "",
+          raw: ""
+        },
+        category: null
+      }
+    ]
+    )
+  }
+
+  const removeCategory = (i) => {
+    console.log(i, "iiiiiiiiiii");
+    sectionData.splice(i, 1);
+    setSectionData([...sectionData]);
+  }
+
+  const handleImageChange = (event, index) => {
+    let data = sectionData;
+    data[index].sectionImg = {
+      preview: URL.createObjectURL(event.target.files[0]),
+      raw: event.target.files[0]
+    }
+    setSectionData([...data]);
+    console.log(index, "iiii")
+  };
+
+  const getChangedPosition = (currentPos, newPos) => {
+    const reorderedItem = sectionData[currentPos];
+    sectionData[currentPos] = sectionData[newPos];
+    sectionData[newPos] = reorderedItem
+    setSectionData(...reorderedItem)
+  };
+
+
+  return (
+    <>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Box component="div" className={classes.marginBottom2}>
+
+            <Typography variant="h5" className={classes.paddingBottom1}>
+              Add Section in Mobile App
+            </Typography>
+
+            {reOrderMobileList ?
+              <div>
+
+                <Draggable onPosChange={getChangedPosition}>
+                  {sectionData.map((select, index) => {
+                    return (
+                      <table>
+                        <tbody>
+                          <tr style={{ lineHeight: "35px", fontSize: "14px" }}>
+                            {select.label}  - {select.category}
                           </tr>
-                          </tbody>
-                        </table>
-                      );
-                    })}
-                  </Draggable>
+                        </tbody>
+                      </table>
+                    );
+                  })}
+                </Draggable>
+
+                <Button
+                  color='primary'
+                  variant='contained'
+                  onClick={onSavechange}
+                  style={{ padding: "5px", marginTop: "25px" }}
+                >
+                  Save
+                </Button>
+
+              </div>
+
+              :
+
+              <div>
+
+                <FormGroup>
+                  {sectionData.map((select, index) => {
+                    return (
+                      <>
+                        <div style={{ display: "flex" }}>
+
+                          <FormControlLabel
+                            control={
+
+                              <>
+                                <Checkbox
+                                  color="success"
+                                  checked={select.visible}
+                                  onChange={(e) => { onCheckBoxChange(select.name, e.target.checked, index) }}
+                                />
+                              </>
+
+                            }
+                            label={select.label}
+                          />
+
+                          {select.label === "Product from Specific Categories" ?
+                            <> <Box sx={{ minWidth: 120 }}>
+                              <FormControl fullWidth size="small">
+                                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                                <Select
+                                  labelId="demo-simple-select-label"
+                                  id="demo-simple-select"
+                                  value={select.category}
+                                  label="Category"
+                                  onChange={(e) => handleChangeCategory(e, index)}
+                                  style={{ paddingTop: "-20px" }}
+                                  disabled={!select.visible}
+                                >
+                                  <MenuItem value="men">Men</MenuItem>
+                                  <MenuItem value="women">Women</MenuItem>
+                                  <MenuItem value="girl">Girl</MenuItem>
+                                  <MenuItem value="boy">Boy</MenuItem>
+                                  <MenuItem value="newborn">Newborn</MenuItem>
+                                </Select>
+                              </FormControl>
+                            </Box>
+
+                              <Stack direction="row" spacing={1}>
+                                <IconButton color="success" aria-label="add" onClick={addCategory}>
+                                  <AddIcon />
+                                </IconButton>
+                              </Stack>
+
+                              <Stack direction="row" spacing={1}>
+                                <IconButton color="error" aria-label="delete" onClick={(e) => removeCategory(index)}>
+                                  <CloseIcon />
+                                </IconButton>
+                              </Stack>
+                            </>
+
+                            : null}
+
+                          {/* <label htmlFor={`htmltag${index}`}>
+                            {select.sectionImg.thumbnail ? (
+                              <img src={select.sectionImg.thumbnail} alt="dummy" width="50" height="50" />
+                            ) : (
+                              <>
+                                <h6><AddPhotoAlternateIcon color="action" style={{ marginTop: "8px" }} /></h6>
+                              </>
+                            )}
+                          </label>
+
+                          <input
+                            key={index}
+                            type="file"
+                            accept="image/*"
+                            id={`htmltag${index}`}
+                            style={{ display: "none" }}
+                            onChange={(e) => handleImageChange(e, index)}
+                          /> */}
+
+                        </div>
+
+                      </>
+
+                    )
+                  }
+                  )}
+                </FormGroup>
+
+                <Grid item xs={12}>
                   <Button
-                
+                    size='small'
                     color='primary'
                     variant='contained'
-                    onClick={onSavechange}
-                    style={{ padding: "5px", marginTop: "25px" }}
+                    style={{ marginTop: "25px" }}
+                    onClick={reArrange}
                   >
-                    Save
+                    Re-order
                   </Button>
-                </div>
-  
-                :
-                <div>
-                  <FormGroup>
-                    {sectionData.map((select) => {
-                      return (
-                        <>
-                       <div style={{display: "flex"}}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            color="success"
-                            // checked={settingMobile.mobile_section[select.name]}
-                            checked={settingMobile.mobile_section[select.name]}
-                            onChange={(e) => {
-                              if (select.label === "Product from Specific Categories" && (e.target.checked === (true)||e.target.checked === (false))){
-                                setChecked(!checked);
-                                status? setStatus(false)
-                                : setStatus(true)
-                              // onCheckBoxChange(select.name, e.target.checked)
-                              }else{
-                                setChecked(checked);
-                          //  onCheckBoxChange(select.name, e.target.checked)
-                          }
-                          onCheckBoxChange(select.name, e.target.checked)}
-                              }
-                          />
-                        }
-                        label={select.label}
-                      />
-  
-                 
-                    {select.label === "Product from Specific Categories" ?
-               
-                   
-                    <Box sx={{ minWidth: 120 }}>
-                    <FormControl fullWidth size="small">
-                      <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={categoryValue}
-                        label="Category"
-                        onChange={handleChangeCategory}
-                        style={{paddingTop: "-20px"}}
-                        disabled={status}
-                      >
-                        <MenuItem value="men">Men</MenuItem>
-                        <MenuItem value="women">Women</MenuItem>
-                        <MenuItem value="children">Children</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box>
-                                : null} 
-                                </div>
-                                 </>
-                      )
-                    }
-                    )}
-                  </FormGroup>
-                  <Grid item xs={12}>
-                    <Button
-                      size='small'
-                      color='primary'
-                      variant='contained'
-                      style={{ marginTop: "25px" }}
-                      onClick={reArrange}
-                    >
-                      Re-order
-                    </Button>
-                    <Button
-                      size='small'
-                      color='primary'
-                      variant='contained'
-                      style={{ marginLeft: "20px", marginTop: "25px" }}
-                      onClick={updateMobileApp}
-                    >
-                      Save Change
-                    </Button>
-                  </Grid>
-                </div>
-              }
-            </Box>
-  
-  
-          
-          </Grid>
-          
+
+                  <Button
+                    size='small'
+                    color='primary'
+                    variant='contained'
+                    style={{ marginLeft: "20px", marginTop: "25px" }}
+                    onClick={updateMobileApp}
+                  >
+                    Save Change
+                  </Button>
+
+                </Grid>
+              </div>
+            }
+          </Box>
         </Grid>
-      </>
-    );
-  };
-  export default function MobileSettings() {
-    return (
-      <ThemeProvider theme={theme}>
-        <MobileAppSetting />
-      </ThemeProvider>
-    );
-  }
-  
+      </Grid>
+    </>
+  );
+};
+
+
+export default function MobileSettings() {
+  return (
+    <ThemeProvider theme={theme}>
+      <MobileAppSetting />
+    </ThemeProvider>
+  );
+}

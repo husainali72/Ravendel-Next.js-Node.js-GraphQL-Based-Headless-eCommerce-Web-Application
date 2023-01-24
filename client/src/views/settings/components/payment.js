@@ -31,9 +31,9 @@ const PaymentComponent = () => {
               <Tab label="Paypal" {...TabProps(3)} />
             </Tabs>
           </Paper>
-          {/* <TabPanel value={tabVal} index={0}>
+          <TabPanel value={tabVal} index={0}>
             <CashOnDelivery />
-          </TabPanel> */}
+          </TabPanel>
           <TabPanel value={tabVal} index={1}>
             <DirectBankTransfer />
           </TabPanel>

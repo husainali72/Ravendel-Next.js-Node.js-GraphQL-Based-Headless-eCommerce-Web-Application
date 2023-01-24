@@ -2,15 +2,18 @@ import React, { useState } from "react";
 import { Grid, Box, Button } from "@mui/material";
 import {get} from "lodash";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { SettingSelectComponent } from "./setting-components";
 import { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
+import { storeMeasuresUpdateAction } from "../../../store/action";
+
 const MeasurementsComponent = () => {
   const settingState = useSelector((state) => state.settings);
+  const dispatch = useDispatch();
   const [measurementVal, setMeasurementVal] = useState({
-    // ...settingState.settings.store.measurements,
+    ...settingState.settings.store.measurements,
   });
 
   useEffect(() => {
@@ -18,7 +21,7 @@ const MeasurementsComponent = () => {
   }, [settingState.settings])
 
   const updateMeasures = () => {
-    // dispatch(storeMeasuresUpdateAction(measurementVal));
+    dispatch(storeMeasuresUpdateAction(measurementVal));
   };
   return (
     <>
