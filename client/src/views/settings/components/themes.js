@@ -22,13 +22,18 @@ const ThemesComponent = () => {
     bucketBaseURL + themeSetting.logo.original
   );
 
+
   const fileChange = (e) => {
     themeSetting.logo.original = URL.createObjectURL(e.target.files[0]);
 
-    themeSetting.new_logo = e.target.files;
     setThemeSetting({
       ...themeSetting,
-      new_logo: themeSetting.new_logo,
+      new_logo: {
+        type:  e.target.files[0].type,
+        name:  e.target.files[0].name,
+        filename:  e.target.files[0].name,
+        size:  e.target.files[0].size
+      },
     });
     setLogoImage(URL.createObjectURL(e.target.files[0]));
   };

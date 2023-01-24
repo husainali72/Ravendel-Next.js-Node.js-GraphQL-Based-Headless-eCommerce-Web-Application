@@ -76,7 +76,7 @@ export const categoryAddAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -89,13 +89,14 @@ export const categoryAddAction = (object) => (dispatch) => {
       }
     })
     .catch((error) => {
+      console.log("err", error)
       dispatch({
         type: CAT_FAIL,
       });
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: false },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };

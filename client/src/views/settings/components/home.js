@@ -151,8 +151,9 @@ const HomeSettingsTheme = () => {
     }
 
     delete settingHome.add_section_in_home.__typename;
-
-    dispatch(appearanceHomeUpdateAction(settingHome));
+    let data = settingHome;
+    data.add_section_web = sectionData
+    dispatch(appearanceHomeUpdateAction(data));
   };
 
   const reOrder = () => {
@@ -187,60 +188,6 @@ const HomeSettingsTheme = () => {
     setSectionData([...data]);
   };
 
-  const onChangeHandler = () => {
-    setChecked(!checked);
-    setStatus(false);
-  };
-
- 
-
-  // const [sectionData, setSectionData] = useState([
-  //   {
-  //     id: 1,
-  //     name: "feature_product",
-  //     label: "Featured product",
-  //     visible: false
-
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "recently_added_products",
-  //     label: "Recently Added Products",
-  //     visible: false
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "most_viewed_products",
-  //     label: "Most Viewed Products",
-  //     visible: false
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "recently_bought_products",
-  //     label: "Recently Bought Products",
-  //     visible: false
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "product_recommendation",
-  //     label: "Product Recommendation (Based on Your Browsing History)",
-  //     visible: false
-  //   },
-  //   {
-  //     id: 6,
-  //     name: "products_on_sales",
-  //     label: "Products on Sales",
-  //     visible: false
-  //   },
-  //   {
-  //     id: 7,
-  //     name: "product_from_specific_categories",
-  //     label: "Product from Specific Categories",
-  //     visible: false,
-  //     category: null
-  //   }
-  // ]);
-
   const [settingSection, setSettingSection] = useState(sectionData);
   console.log(sectionData, "reorder=====")
 
@@ -249,7 +196,6 @@ const HomeSettingsTheme = () => {
     setSectionData([
  ...sectionData,
   {
-    id: 8,
     name: "product_from_specific_category",
     label: "Product from Specific Category",
     visible: false,
@@ -450,17 +396,16 @@ setSectionData([...sectionData]);
                               </FormControl>
                             </Box>
                             <Stack direction="row" spacing={1}>
-     
-      <IconButton  color="success" aria-label="add" onClick= {addCategory}>
-        <AddIcon />
-      </IconButton>
-    </Stack>
-    <Stack direction="row" spacing={1}>
-     
-     <IconButton  color="error" aria-label="delete" onClick= {(e) => removeCategory(index)}>
-       <CloseIcon />
-     </IconButton>
-   </Stack>
+                                    <IconButton  color="success" aria-label="add" onClick= {addCategory}>
+                                      <AddIcon />
+                                    </IconButton>
+                                  </Stack>
+                                  <Stack direction="row" spacing={1}>
+                                  
+                                  <IconButton  color="error" aria-label="delete" onClick= {(e) => removeCategory(index)}>
+                                    <CloseIcon />
+                                  </IconButton>
+                              </Stack>
                             </>
                             : null}
                         </div>

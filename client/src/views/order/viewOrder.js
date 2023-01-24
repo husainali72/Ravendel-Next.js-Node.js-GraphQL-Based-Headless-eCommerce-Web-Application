@@ -598,7 +598,7 @@ const ViewOrderComponent = ({ params }) => {
               </Box>
             </Grid>
 
-            <Grid item md={6}>
+            {/* <Grid item md={6}>
               <Box component="span">
                 <Card>
                   <CardHeader title="Subtotal" />
@@ -653,7 +653,7 @@ const ViewOrderComponent = ({ params }) => {
                   </CardContent>
                 </Card>
               </Box>
-            </Grid>
+            </Grid> */}
           </Grid>
         </>
       ) : (
