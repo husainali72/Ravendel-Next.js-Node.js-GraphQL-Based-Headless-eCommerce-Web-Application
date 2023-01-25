@@ -116,6 +116,7 @@ module.exports.updateUrl = updateUrl;
 const fs = require("fs");
 const Jimp = require("jimp");
 const sharp = require("sharp");
+const imgType = ["original", "large", "medium", "thumbnail"]
 
 //const path = require("path");
 //const pathToFile = path.dirname(require.main.filename);
@@ -311,7 +312,13 @@ const imageUpload = async (upload, uploadPath, nametype) => {
           const awslarge = await uploadFile(large, filename, awslargepath);
           const awsmedium = await uploadFile(medium, filename, awsmediumpath);
           const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
-
+          // delete file once uploaded on AWS
+          if(!awsoriginal || awsoriginal) {
+            imgType.map(type => {
+              let filePath = `.${uploadPath}${type}/${filename}`;
+              fs.unlinkSync(filePath);
+            })
+          }
           return resolve({
             success: true,
             data: {
