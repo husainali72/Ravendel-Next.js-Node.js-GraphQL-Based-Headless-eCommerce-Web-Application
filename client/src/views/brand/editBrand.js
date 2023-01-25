@@ -9,8 +9,9 @@ import { Loading, TopBar, Alert, TextInput, CardBlocks } from "../components";
 import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 const EditBrandComponenet = ({ params }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
@@ -43,7 +44,7 @@ const EditBrandComponenet = ({ params }) => {
   }, []);
 
   const updateBrand = () => {
-    dispatch(brandUpdateAction(brand));
+    dispatch(brandUpdateAction(brand, navigate));
   };
 
   const handleChange = (e) => {

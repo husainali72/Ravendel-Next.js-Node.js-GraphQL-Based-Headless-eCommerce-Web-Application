@@ -31,7 +31,7 @@ export const ordersAction = () => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -48,7 +48,7 @@ export const ordersAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -136,10 +136,11 @@ export const orderDeleteAction = (id) => (dispatch) => {
     });
 };
 
-export const orderUpdateAction = (object) => (dispatch) => {
+export const orderUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: ORDER_LOADING,
   });
+
   mutation(UPDATE_ORDER, object)
     .then((response) => {
       const [error, success, message, data] = mutationResponseHandler(
@@ -159,6 +160,7 @@ export const orderUpdateAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(ordersAction());
+        // navigate(`${client_app_route_url}all-orders`);
         // jumpTo(`${client_app_route_url}all-orders`);
         return dispatch({
           type: ALERT_SUCCESS,

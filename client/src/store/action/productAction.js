@@ -10,6 +10,7 @@ import {
   DELETE_PRODUCT,
 } from "../../queries/productQuery";
 import {
+  client_app_route_url,
   getResponseHandler,
   mutationResponseHandler,
 } from "../../utils/helper";
@@ -318,7 +319,7 @@ export const productAddAction = (object) => (dispatch) => {
     });
 };
 
-export const productUpdateAction = (object) => (dispatch) => {
+export const productUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: PRODUCT_LOADING,
   });
@@ -347,7 +348,7 @@ export const productUpdateAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(productsAction());
-
+        navigate(`${client_app_route_url}all-products`);
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

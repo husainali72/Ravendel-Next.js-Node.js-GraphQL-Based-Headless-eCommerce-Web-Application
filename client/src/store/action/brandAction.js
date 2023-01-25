@@ -96,7 +96,7 @@ export const brandAddAction = (object) => (dispatch) => {
     });
 };
 
-export const brandUpdateAction = (object) => (dispatch) => {
+export const brandUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: BRAND_LOADING,
   });
@@ -119,7 +119,7 @@ export const brandUpdateAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(brandsAction());
-
+        navigate(`${client_app_route_url}all-brands`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

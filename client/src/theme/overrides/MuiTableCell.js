@@ -13,7 +13,7 @@ export default {
 
       ...typography.body1,
       borderBottom: `1px solid ${palette.divider}`,
-
+      textTransform: "capitalize",
       padding: "10px",
     }),
   },

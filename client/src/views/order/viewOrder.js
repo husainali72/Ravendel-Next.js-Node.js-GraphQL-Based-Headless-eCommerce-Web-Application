@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
 import { orderUpdateAction, orderAction } from "../../store/action/";
 
@@ -40,17 +40,18 @@ import {
 import "../../App.css";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import viewStyles from "../viewStyles";
-import { isEmpty, client_app_route_url } from "../../utils/helper";
+import { client_app_route_url } from "../../utils/helper";
 
 import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { currencyFormat } from "./CurrencyFormat";
+
 const ViewOrderComponent = ({ params }) => {
   const classes = viewStyles();
   const [editShipping, setEditShipping] = useState(false);
   const [editBilling, setEditBilling] = useState(false);
-
+  const navigate = useNavigate;
   const dispatch = useDispatch();
   const singleOrder = useSelector((state) => state.order);
 
@@ -81,7 +82,7 @@ const ViewOrderComponent = ({ params }) => {
       notes: "",
     },
     products: [],
-    status: "",
+    payment_status: "",
     sub_total_details: {},
     sub_total_summary: [],
 
@@ -89,19 +90,20 @@ const ViewOrderComponent = ({ params }) => {
   });
 
   useEffect(() => {
-    if (isEmpty(singleOrder.order)) {
+    if (singleOrder.order.id !== params.id) {
       dispatch(orderAction(params));
-    } else {
-      setorder({ ...singleOrder.order });
     }
+    setorder({ ...order, ...singleOrder.order });
   }, [singleOrder.order]);
 
   const updateOrder = (e) => {
     e.preventDefault();
 
+    delete order.__typename;
+
     setEditBilling(false);
     setEditShipping(false);
-    dispatch(orderUpdateAction(order));
+    dispatch(orderUpdateAction(order, navigate));
   };
 
   const changeBilling = (e) => {
@@ -155,13 +157,13 @@ const ViewOrderComponent = ({ params }) => {
   return (
     <>
       <Alerts />
-      {singleOrder.order.loading && (
+      {singleOrder.loading && (
         <Backdrop className={classes.backdrop} open={true}>
           <CircularProgress color="inherit" /> <br />
           <Typography variant="h4">Loading</Typography>
         </Backdrop>
       )}
-      {singleOrder.order ? (
+      {order ? (
         <>
           <Grid container className="topbar">
             <Grid item lg={6}>
@@ -210,25 +212,27 @@ const ViewOrderComponent = ({ params }) => {
                     </Typography>
                     <FormControl className={classes.statusSelect}>
                       <InputLabel id="status">
-                        {singleOrder.order.payment_status}
+                        {order.payment_status}
                       </InputLabel>
                       <Select
-                        label={singleOrder.order.payment_status}
-                        labelId="status"
-                        id="status"
-                        value={order.status}
-                        name="status"
-                        onChange={(e) =>
+                        label={order.payment_status}
+                        labelId="payment_status
+                        "
+                        id="payment_status
+                        "
+                        value={order.payment_status}
+                        name="payment_status"
+                        onChange={(e) => {
                           setorder({
                             ...order,
                             [e.target.name]: e.target.value,
-                          })
-                        }
+                          });
+                        }}
                       >
-                        <MenuItem value="Pending">Pending Payment</MenuItem>
-                        <MenuItem value="Failed">Failed</MenuItem>
-                        <MenuItem value="Success">Completed</MenuItem>
-                        <MenuItem value="Cancelled">Cancelled</MenuItem>
+                        <MenuItem value="pending">Pending Payment</MenuItem>
+                        <MenuItem value="failed">Failed</MenuItem>
+                        <MenuItem value="success">Completed</MenuItem>
+                        <MenuItem value="cancelled">Cancelled</MenuItem>
                       </Select>
                     </FormControl>
                   </CardContent>
@@ -598,7 +602,7 @@ const ViewOrderComponent = ({ params }) => {
               </Box>
             </Grid>
 
-            {/* <Grid item md={6}>
+            <Grid item md={6}>
               <Box component="span">
                 <Card>
                   <CardHeader title="Subtotal" />
@@ -610,17 +614,14 @@ const ViewOrderComponent = ({ params }) => {
                           Total
                         </Typography>
                         <Typography variant="h5" className={classes.mtb2}>
-                          Coupon{" "}
-                          <b>
-                            {singleOrder.order.sub_total_details.coupon_code}
-                          </b>{" "}
-                          {singleOrder.order.sub_total_details.coupon_value}%
+                          Coupon <b>{order.sub_total_details.coupon_code}</b>{" "}
+                          {order.sub_total_details.coupon_value}%
                         </Typography>
                         <Typography variant="h5" className={classes.mtb2}>
-                          {singleOrder.order.sub_total_details.shipping_name}
+                          {order.sub_total_details.shipping_name}
                         </Typography>
                         <Typography variant="h5" className={classes.mtb2}>
-                          {singleOrder.order.tax_name}
+                          {order.tax_name}
                         </Typography>
                         <Divider />
                         <Typography variant="h5" className={classes.mtb2}>
@@ -653,7 +654,7 @@ const ViewOrderComponent = ({ params }) => {
                   </CardContent>
                 </Card>
               </Box>
-            </Grid> */}
+            </Grid>
           </Grid>
         </>
       ) : (

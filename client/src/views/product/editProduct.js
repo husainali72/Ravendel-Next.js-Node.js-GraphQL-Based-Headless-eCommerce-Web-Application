@@ -49,7 +49,7 @@ import {
 } from "./components";
 import viewStyles from "../viewStyles";
 import theme from "../../theme";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 //var catIds = [];
 const EditProductComponent = ({ params }) => {
@@ -58,7 +58,7 @@ const EditProductComponent = ({ params }) => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const productState = useSelector((state) => state.products);
-
+  const navigate = useNavigate();
   const brandState = useSelector((state) => state.brands);
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
@@ -101,7 +101,7 @@ const EditProductComponent = ({ params }) => {
   });
 
   useEffect(() => {
-    if (isEmpty(productState.product)) {
+    if (productState.product !== params.id) {
       dispatch(productAction(params.id));
     }
     dispatch(brandsAction());
@@ -142,7 +142,7 @@ const EditProductComponent = ({ params }) => {
     e.preventDefault();
     product.combinations = combination;
 
-    dispatch(productUpdateAction(product));
+    dispatch(productUpdateAction(product, navigate));
   };
 
   const handleChange = (e) => {

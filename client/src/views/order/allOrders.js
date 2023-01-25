@@ -79,7 +79,10 @@ const AllOrdersComponent = () => {
                         Date
                       </TableCell>
                       <TableCell variant="contained" color="primary">
-                        Status
+                        Payment Status
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">
+                        Shipping Status
                       </TableCell>
                       <TableCell variant="contained" color="primary">
                         Actions
@@ -106,7 +109,14 @@ const AllOrdersComponent = () => {
                             <span
                               className={"product-status-chip " + order.status}
                             >
-                              {order.status}
+                              {order.payment_status}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className={"product-status-chip " + order.status}
+                            >
+                              {order.shipping_status}
                             </span>
                           </TableCell>
                           <TableCell>

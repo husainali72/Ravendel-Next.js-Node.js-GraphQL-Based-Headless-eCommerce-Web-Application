@@ -15,7 +15,7 @@ import { isEmpty, client_app_route_url } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Alert,
   Loading,
@@ -43,10 +43,10 @@ const EditPageComponent = ({ params }) => {
   const pageState = useSelector((state) => state.pages);
   const [editPremalink, setEditPermalink] = useState(false);
   const [page, setPage] = useState(defaultObj);
-
+  const navigate = useNavigate();
   useEffect(() => {
-    if (params) {
-      dispatch(pageAction(params));
+    if (params.id !== pageState.id) {
+      dispatch(pageAction(params.id));
     }
   }, [params]);
 
@@ -58,7 +58,7 @@ const EditPageComponent = ({ params }) => {
 
   const updatePage = (e) => {
     e.preventDefault();
-    dispatch(pageUpdateAction(page));
+    dispatch(pageUpdateAction(page, navigate));
   };
 
   const handleChange = (e) => {

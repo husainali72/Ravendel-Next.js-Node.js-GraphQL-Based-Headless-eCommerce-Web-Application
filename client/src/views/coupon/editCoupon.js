@@ -35,8 +35,9 @@ import {
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 const EditCouponComponent = ({ params }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const Products = useSelector((state) => state.products);
@@ -77,7 +78,7 @@ const EditCouponComponent = ({ params }) => {
   };
 
   const updateCoupon = () => {
-    dispatch(couponUpdateAction(coupon));
+    dispatch(couponUpdateAction(coupon, navigate));
   };
 
   const handleChange = (e) => {

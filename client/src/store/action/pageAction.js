@@ -25,7 +25,7 @@ export const pagesAction = () => (dispatch) => {
         response,
         "pages"
       );
-      console.log(data);
+
       dispatch({
         type: LOADING_FALSE,
       });
@@ -136,7 +136,7 @@ export const pageAddAction = (object, navigate) => (dispatch) => {
     });
 };
 
-export const pageUpdateAction = (object) => (dispatch) => {
+export const pageUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: PAGE_LOADING,
   });
@@ -159,6 +159,7 @@ export const pageUpdateAction = (object) => (dispatch) => {
 
       if (success) {
         // jumpTo(`${client_app_route_url}all-pages`);
+        navigate(`${client_app_route_url}all-pages`);
         dispatch(pagesAction());
         return dispatch({
           type: ALERT_SUCCESS,
