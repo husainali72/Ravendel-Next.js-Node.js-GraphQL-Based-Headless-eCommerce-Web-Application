@@ -140,7 +140,7 @@ export const attributeAddAction = (object) => (dispatch) => {
     });
 };
 
-export const attributeUpdateAction = (object) => (dispatch) => {
+export const attributeUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: ATTRIBUTE_LOADING,
     payload: true,
@@ -168,7 +168,7 @@ export const attributeUpdateAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(attributesAction());
-        jumpTo(`${client_app_route_url}attributes`);
+        navigate(`${client_app_route_url}attributes`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

@@ -86,8 +86,8 @@ const AllShippingComponentComponent = ({
         count={shippingState.shipping.shipping_class.length}
         rowsPerPage={rowsPerPage}
         page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </CardBlocks>
   );

@@ -20,6 +20,7 @@ import {
 } from "../components";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
+import { useNavigate, useParams } from "react-router-dom";
 var defaultObj = {
   id: "",
   name: "",
@@ -28,10 +29,9 @@ var defaultObj = {
   password: "",
 };
 
-const EditUserComponent = (props) => {
-  const USER_ID =
-    props.match.params && props.match.params.id ? props.match.params.id : "";
+const EditUserComponent = ({ params }) => {
   const classes = viewStyles();
+  const navigate = useNavigate();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const [user, setuser] = useState(defaultObj);
@@ -47,7 +47,7 @@ const EditUserComponent = (props) => {
     document.forms[0].reset();
     setuser(defaultObj);
     UsersState.users.map((edituser) => {
-      if (edituser.id === USER_ID) {
+      if (edituser.id === params.id) {
         setuser({ ...edituser });
         if (edituser.image && edituser.image.original) {
           setfeatureImage(bucketBaseURL + edituser.image.original);
@@ -64,7 +64,7 @@ const EditUserComponent = (props) => {
 
   const updateUser = (e) => {
     e.preventDefault();
-    dispatch(userUpdateAction(user));
+    dispatch(userUpdateAction(user, navigate));
   };
 
   const handleChange = (e) => {
@@ -148,9 +148,10 @@ const EditUserComponent = (props) => {
 };
 
 export default function EditUser() {
+  const params = useParams();
   return (
     <ThemeProvider theme={theme}>
-      <EditUserComponent />
+      <EditUserComponent params={params} />
     </ThemeProvider>
   );
 }

@@ -116,7 +116,7 @@ export const userAddAction = (object) => (dispatch) => {
     });
 };
 
-export const userUpdateAction = (object) => (dispatch) => {
+export const userUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: USER_LOADING,
   });
@@ -136,7 +136,7 @@ export const userUpdateAction = (object) => (dispatch) => {
           },
         });
 
-        // jumpTo(`${client_app_route_url}all-users`);
+        navigate(`${client_app_route_url}all-users`);
 
         dispatch(usersAction());
 

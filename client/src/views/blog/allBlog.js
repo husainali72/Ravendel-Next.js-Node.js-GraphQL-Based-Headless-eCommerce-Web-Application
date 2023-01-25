@@ -16,7 +16,7 @@ import {
   Avatar,
   Button,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { blogDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
@@ -39,7 +39,7 @@ const AllBlogComponent = () => {
   const blogs = useSelector((state) => state.blogs);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (isEmpty(blogs.blogs)) {
       dispatch(blogsAction());
@@ -131,7 +131,7 @@ const AllBlogComponent = () => {
                             <IconButton
                               aria-label="Edit"
                               onClick={() =>
-                                jumpTo(
+                                navigate(
                                   `${client_app_route_url}edit-blog/${blog.id}`
                                 )
                               }
@@ -160,8 +160,8 @@ const AllBlogComponent = () => {
                 count={blogs.blogs.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </CardContent>
           </Card>

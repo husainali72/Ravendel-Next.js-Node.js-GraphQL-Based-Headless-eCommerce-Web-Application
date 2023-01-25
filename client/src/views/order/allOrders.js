@@ -153,9 +153,9 @@ const AllOrdersComponent = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={orders.orders.length || 0}
-                rowsPerPage={rowsPerPage || 10}
-                page={page || 1}
+                count={orders.orders.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />

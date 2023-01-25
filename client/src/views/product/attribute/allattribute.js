@@ -16,9 +16,9 @@ import {
   Button,
   Tooltip,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { attributeDeleteAction } from "../../../store/action";
+import { attributeDeleteAction, attributesAction } from "../../../store/action";
 import jumpTo from "../../../utils/navigation";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -28,12 +28,13 @@ import { client_app_route_url } from "../../../utils/helper";
 import theme from "../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 const AllAttributeComponent = () => {
+  const navigate = useNavigate();
   const classes = viewStyles();
   const dispatch = useDispatch();
   const attributeState = useSelector((state) => state.product_attributes);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const handleChangePage = (newPage) => {
+  const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
@@ -43,12 +44,12 @@ const AllAttributeComponent = () => {
   };
 
   useEffect(() => {
-    // dispatch(attributesAction());
+    dispatch(attributesAction());
   }, []);
 
   useEffect(() => {
     if (attributeState.render) {
-      // dispatch(attributesAction());
+      dispatch(attributesAction());
     }
   }, [attributeState.render]);
 
@@ -102,7 +103,7 @@ const AllAttributeComponent = () => {
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(
+                                  navigate(
                                     `${client_app_route_url}edit-attribute/${attribute.id}`
                                   )
                                 }
@@ -137,8 +138,8 @@ const AllAttributeComponent = () => {
                 count={attributeState.attributes.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </CardContent>
           </Card>

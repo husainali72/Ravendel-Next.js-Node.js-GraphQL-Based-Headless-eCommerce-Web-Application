@@ -16,7 +16,7 @@ import {
   Avatar,
   Button,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
@@ -31,6 +31,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { usersAction } from "../../store/action";
 import theme from "../../theme/index";
 const AllUsersComponent = () => {
+  const navigate = useNavigate();
   const classes = viewStyles();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
@@ -114,7 +115,7 @@ const AllUsersComponent = () => {
                             <IconButton
                               aria-label="Edit"
                               onClick={() =>
-                                jumpTo(
+                                navigate(
                                   `${client_app_route_url}edit-user/${user.id}`
                                 )
                               }

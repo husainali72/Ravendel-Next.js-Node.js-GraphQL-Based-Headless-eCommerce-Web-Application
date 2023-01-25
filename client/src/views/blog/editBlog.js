@@ -34,6 +34,7 @@ import {
   TinymceEditor,
 } from "../components";
 import { useNavigate, useParams } from "react-router-dom";
+import Alerts from "../components/Alert";
 
 const defaultObj = {
   title: "",
@@ -48,8 +49,9 @@ const defaultObj = {
     keywords: "",
   },
 };
-const EditBlogComponenet = (props) => {
+const EditBlogComponenet = ({ params }) => {
   const classes = viewStyles();
+
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
@@ -59,8 +61,8 @@ const EditBlogComponenet = (props) => {
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
   const navigate = useNavigate();
   useEffect(() => {
-    if (!isEmpty(props.match.params.id)) {
-      dispatch(blogAction(props.match.params.id));
+    if (params.id !== blogState.id) {
+      dispatch(blogAction(params.id));
     }
   }, []);
 
@@ -131,6 +133,7 @@ const EditBlogComponenet = (props) => {
 
   return (
     <Fragment>
+      <Alerts />
       {blogState.loading ? <Loading /> : null}
       <form>
         <TopBar

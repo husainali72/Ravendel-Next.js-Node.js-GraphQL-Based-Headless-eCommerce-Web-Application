@@ -45,7 +45,7 @@ const AllbrandComponent = () => {
     }
   }, []);
 
-  const handleChangePage = (newPage) => {
+  const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
@@ -137,12 +137,13 @@ const AllbrandComponent = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
+
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={Brands.brands.length || 0}
-                rowsPerPage={rowsPerPage || 10}
-                page={page || 1}
+                count={Brands.brands.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />

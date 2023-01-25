@@ -6,11 +6,14 @@ import { isEmpty, client_app_route_url } from "../../../utils/helper";
 import ReactTags from "react-tag-autocomplete";
 import viewStyles from "../../viewStyles";
 import { Alert, Loading, TopBar, CardBlocks } from "../../components";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme";
 const delimiters = ["Enter", "Tab"];
 
-const EditAttribute = (props) => {
+const EditAttributeComponent = ({ params }) => {
   const classes = viewStyles();
+  const navigate = useNavigate();
   const [attribute, setattribute] = useState({
     name: "",
     values: [],
@@ -19,8 +22,8 @@ const EditAttribute = (props) => {
   const attributeState = useSelector((state) => state.product_attributes);
 
   useEffect(() => {
-    if (!isEmpty(props.match.params.id)) {
-      dispatch(attributeAction(props.match.params.id));
+    if (attributeState.id !== params.id) {
+      dispatch(attributeAction(params.id));
     }
   }, []);
 
@@ -46,7 +49,7 @@ const EditAttribute = (props) => {
   };
 
   const onUpdate = () => {
-    dispatch(attributeUpdateAction({ attribute: attribute }));
+    dispatch(attributeUpdateAction({ attribute: attribute }, navigate));
   };
 
   return (
@@ -101,4 +104,11 @@ const EditAttribute = (props) => {
   );
 };
 
-export default EditAttribute;
+export default function EditAttribute() {
+  const params = useParams();
+  return (
+    <ThemeProvider theme={theme}>
+      <EditAttributeComponent params={params} />
+    </ThemeProvider>
+  );
+}
