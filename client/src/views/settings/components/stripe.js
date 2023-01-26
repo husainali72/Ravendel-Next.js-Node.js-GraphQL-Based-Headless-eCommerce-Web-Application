@@ -9,6 +9,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import {get} from "lodash";
 import { useEffect } from "react";
 import { paymentStripeUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
 const StripeComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const StripeComponent = () => {
 
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item md={6} sm={12} xs={12}>
           <Box component="div" className={classes.marginBottom2}>

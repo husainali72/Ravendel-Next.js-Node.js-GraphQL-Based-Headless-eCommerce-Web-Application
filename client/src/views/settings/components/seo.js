@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import {get} from "lodash";
 import theme from "../../../theme/index.js";
 import { seoUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
 const SEOComponent = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
@@ -24,6 +25,7 @@ const SEOComponent = () => {
 
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div">

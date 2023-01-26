@@ -8,6 +8,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import {get} from "lodash";
 import { appearanceThemeUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
 
 const ThemesComponent = () => {
   const classes = viewStyles();
@@ -39,6 +40,7 @@ const ThemesComponent = () => {
   };
 
   const updateTheme = () => {
+  
     dispatch(appearanceThemeUpdateAction(themeSetting));
   };
 
@@ -59,6 +61,7 @@ const ThemesComponent = () => {
 
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div">

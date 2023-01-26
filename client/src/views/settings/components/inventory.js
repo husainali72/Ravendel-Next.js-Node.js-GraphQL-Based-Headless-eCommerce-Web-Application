@@ -12,6 +12,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import {get} from "lodash";
 import theme from "../../../theme/index.js";
 import { storeInventoryUpdateAction } from "../../../store/action/settingAction.js";
+import Alerts from "../../components/Alert.js";
 const InventoryComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ const InventoryComponent = () => {
 
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <SettingBlock label="Manage stock" noBottomMargin>

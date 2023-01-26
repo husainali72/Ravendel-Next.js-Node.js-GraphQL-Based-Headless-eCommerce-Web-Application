@@ -16,6 +16,7 @@ import theme from "../../../theme/index.js";
 import { useEffect } from "react";
 import  { get } from "lodash";
 import { paymentBankUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
 const DirectBankTransferTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ useEffect(() => {
 
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>

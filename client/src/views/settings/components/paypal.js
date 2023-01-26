@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { get } from "lodash";
 import theme from "../../../theme/index.js";
 import { paymentPaypalUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
 const PaypalComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ const PaypalComponent = () => {
 
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item md={6} sm={12} xs={12}>
           <Box component="div" className={classes.marginBottom2}>

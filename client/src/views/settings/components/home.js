@@ -28,14 +28,19 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import AddIcon from '@mui/icons-material/Add';
+import { categoriesAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
+import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
+
+
 const HomeSettingsTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const [reOrderList, setReOrderList] = useState();
   const [dragItem, updateDragItem] = useState();
- 
+  const category = useSelector((state) => state.products);
   const settingState = useSelector((state) => state.settings);
-  console.log("setting state settings===",settingState.settings.appearance.home)
+  console.log("setting state settings===", settingState.settings.appearance.home)
   const [settingHome, setsettingHome] = useState({
     ...settingState.settings.appearance.home,
   });
@@ -50,18 +55,21 @@ const HomeSettingsTheme = () => {
 
   // doubt
   useEffect(() => {
-    if(settingState.settings.appearance.home && settingState.settings.appearance.home.add_section_web && settingState.settings.appearance.home.add_section_web.length > 0){
+    if (settingState.settings.appearance.home && settingState.settings.appearance.home.add_section_web && settingState.settings.appearance.home.add_section_web.length > 0) {
       setSectionData(settingState.settings.appearance.home.add_section_web)
     }
   }, [settingState.settings.appearance.home])
 
+  useEffect(() => {
+    if (!category.categories.length) {
+      dispatch(categoriesAction());
+    }
+  }, []);
 
+  
   useEffect(() => {
     setsettingHome({
       ...settingState.settings.appearance.home,
-      // get (settingState, "settings.appearance.home")
-      // get (settingState, "settings.appearance.home.slider")
-
     });
 
     var newSliderArr = [];
@@ -152,8 +160,23 @@ const HomeSettingsTheme = () => {
 
     delete settingHome.add_section_in_home.__typename;
     let data = settingHome;
-    data.add_section_web = sectionData
-    dispatch(appearanceHomeUpdateAction(data));
+    data.add_section_web = sectionData;
+
+    let error = false;
+    sectionData.map(select => {
+      if (select.category == null && select.label === "Product from Specific Category") {
+        error = true
+      }
+    })
+    if (error) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: "Category is required", error: true },
+      });
+    } else {
+
+    dispatch(appearanceHomeUpdateAction(data));}
+   
   };
 
   const reOrder = () => {
@@ -166,7 +189,7 @@ const HomeSettingsTheme = () => {
   }
 
   const checkBoxOnChange = (name, value, index) => {
-    let data=sectionData;
+    let data = sectionData;
     data[index].visible = !data[index].visible
     console.log(data)
     setSectionData([...data]);
@@ -182,34 +205,33 @@ const HomeSettingsTheme = () => {
   };
 
   const handleChangeCategories = (event, index) => {
-    let data=sectionData;
+    let data = sectionData;
     data[index].category = event.target.value
     console.log(data)
     setSectionData([...data]);
   };
 
   const [settingSection, setSettingSection] = useState(sectionData);
-  console.log(sectionData, "reorder=====")
-
+  
 
   const addCategory = () => {
     setSectionData([
- ...sectionData,
-  {
-    name: "product_from_specific_category",
-    label: "Product from Specific Category",
-    visible: false,
-    category: null
-  }
-]
+      ...sectionData,
+      {
+        name: "product_from_specific_category",
+        label: "Product from Specific Category",
+        visible: false,
+        category: null
+      }
+    ]
     )
   }
 
- const removeCategory = (i) => {
-console.log(i, "iiiiiiiiiii");
-sectionData.splice(i, 1);
-setSectionData([...sectionData]);
- }
+  const removeCategory = (i) => {
+    console.log(i, "iiiiiiiiiii");
+    sectionData.splice(i, 1);
+    setSectionData([...sectionData]);
+  }
 
   const getChangedPos = (currentPos, newPos) => {
     console.log(currentPos, newPos);
@@ -223,13 +245,11 @@ setSectionData([...sectionData]);
 
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-        {/* <Paper variant="outlined" /> */}
-        {/* <Paper elevation={0} > */}
-        {/* <Card style={{paddingTop: "10px", paddingLeft: "15px", paddingBottom: "10px"}}> */}
           <Box component="div" className={classes.marginBottom3}>
-         
+
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Typography variant="h5" className={classes.paddingBottom1}>
@@ -329,12 +349,13 @@ setSectionData([...sectionData]);
               <div>
                 <Draggable onPosChange={getChangedPos}>
                   {sectionData.map((select, index) => {
+                    let cat = category.categories.filter(cat => cat.id == select.category)
                     return (
                       <table>
                         <tbody>
                           <tr style={{ lineHeight: "35px", fontSize: "14px" }}
                           >
-                            {select.label} - {select.category}
+                            {select.label} - {!cat.length ? "" : cat[0].name}
                           </tr>
                         </tbody>
                       </table>
@@ -355,74 +376,78 @@ setSectionData([...sectionData]);
                 <FormGroup>
                   {sectionData.map((select, index) => {
                     return (
-                        <div style={{ display: "flex" }} key={index}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                color="success"
-                                checked={select.visible}
-                                // checked={settingHome.add_section_web[select.name]}
-                                onChange={(e) => {
-                                  // if (select.label === "Product from Specific Categories") {
-                                  //   console.log(status, "status")
-                                  //   setChecked(!checked);
-                                  //   status ? setStatus(false)
-                                  //     : setStatus(true)
-                                  // } else {
-                                  //   setChecked(checked);
-                                  // }
-                                  checkBoxOnChange(select.name, e.target.checked, index)
-                                }}
-                              />
-                            }
-                            label={select.label}
-                          />
-                          {select.label === "Product from Specific Category" ?
-                            <> <Box sx={{ minWidth: 120 }}>
-                              <FormControl fullWidth size="small">
-                                <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                                <Select
-                                  labelId="demo-simple-select-label"
-                                  id="demo-simple-select"
-                                  value={select.category}
-                                  label="Categories"
-                                  onChange={(e) => handleChangeCategories(e, index)}
-                                  disabled={!select.visible}
-                                >
-                                  <MenuItem value="men">Men</MenuItem>
-                                  <MenuItem value="women">Women</MenuItem>
-                                  <MenuItem value="children">Children</MenuItem>
-                                </Select>
-                              </FormControl>
-                            </Box>
+                      <div style={{ display: "flex" }} key={index}>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              color="success"
+                              checked={select.visible}
+                              onChange={(e) => {
+                                checkBoxOnChange(select.name, e.target.checked, index)
+                              }}
+                            />
+                          }
+                          label={select.label}
+                        />
+                        {select.label === "Product from Specific Category" ?
+                          <> <Box sx={{ minWidth: 120 }}>
+                            <FormControl fullWidth size="small">
+                              {/* <InputLabel id="demo-simple-select-label">Category</InputLabel> */}
+                              <Select
+                                // labelId="demo-simple-select-label"
+                                // id="demo-simple-select"
+                                value={select.category}
+                                // label="Categories"
+                                onChange={(e) => { handleChangeCategories(e, index) }}
+                                disabled={!select.visible}
+                                displayEmpty
+                                  inputProps={{ 'aria-label': 'Without label' }}
+                              >
+                                {category.categories.map(cat => {
+                                  return (
+                                    <MenuItem value={cat.id}>{cat.name}</MenuItem>
+                                  )
+                                })}
+      
+                              
+                              </Select>
+                            </FormControl>
+                          </Box>
+                          
                             <Stack direction="row" spacing={1}>
-                                    <IconButton  color="success" aria-label="add" onClick= {addCategory}>
-                                      <AddIcon />
-                                    </IconButton>
-                                  </Stack>
-                                  <Stack direction="row" spacing={1}>
-                                  
-                                  <IconButton  color="error" aria-label="delete" onClick= {(e) => removeCategory(index)}>
-                                    <CloseIcon />
-                                  </IconButton>
-                              </Stack>
-                            </>
-                            : null}
-                        </div>
+                              <IconButton color="error" aria-label="delete" onClick={(e) => removeCategory(index)}>
+                                <CloseIcon />
+                              </IconButton>
+                            </Stack>
+                          </>
+                          : null}
+
+                      </div>
                     )
                   }
                   )}
                 </FormGroup>
                 <Grid item xs={12}>
-                  <Button
+                <Button
                     size='small'
                     color='primary'
                     variant='contained'
                     style={{ marginTop: "25px" }}
+                    onClick={addCategory}
+                  >
+                   Add Category 
+                  </Button>
+
+                  <Button
+                    size='small'
+                    color='primary'
+                    variant='contained'
+                    style={{ marginLeft: "20px", marginTop: "25px" }}
                     onClick={reOrder}
                   >
-                    Re-order
+                  Re-order 
                   </Button>
+
                   <Button
                     size='small'
                     color='primary'
@@ -430,15 +455,17 @@ setSectionData([...sectionData]);
                     style={{ marginLeft: "20px", marginTop: "25px" }}
                     onClick={updateHome}
                   >
-                    Save Change
+                    Save Change 
                   </Button>
                 </Grid>
+
               </div>
             }
 
           </Box>
         </Grid>
       </Grid>
+
     </>
   );
 };

@@ -7,6 +7,7 @@ import Stripe from "./stripe";
 import { TabPanel, TabProps } from "../../components";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
+import Alerts from "../../components/Alert";
 const PaymentComponent = () => {
   const [tabVal, setTabVal] = useState(0);
   const handleChange = (event, newValue) => {
@@ -14,6 +15,7 @@ const PaymentComponent = () => {
   };
   return (
     <>
+     <Alerts />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Paper square>

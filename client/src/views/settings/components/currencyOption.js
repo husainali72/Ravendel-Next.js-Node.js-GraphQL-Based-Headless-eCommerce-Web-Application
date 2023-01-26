@@ -8,6 +8,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { useEffect } from "react";
 import { storeCurrencyUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
 
 
 const CurrencyOptionsComponent = () => {
@@ -31,6 +32,7 @@ const CurrencyOptionsComponent = () => {
 
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" mb={3}>

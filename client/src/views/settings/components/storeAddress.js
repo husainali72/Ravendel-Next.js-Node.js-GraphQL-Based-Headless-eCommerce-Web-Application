@@ -12,6 +12,7 @@ import { SettingTextInput } from "./setting-components";
 import { ThemeProvider } from "@mui/material/styles";
 
 import theme from "../../../theme/index.js";
+import Alerts from "../../components/Alert.js";
 const StoreAddressComponent = () => {
   const settingState = useSelector((state) => state.settings);
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const StoreAddressComponent = () => {
 
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div">

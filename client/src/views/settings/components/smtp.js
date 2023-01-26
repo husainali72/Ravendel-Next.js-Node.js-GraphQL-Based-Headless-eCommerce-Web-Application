@@ -16,6 +16,7 @@ import {get} from "lodash";
 import { useEffect } from "react";
 import theme from "../../../theme/index.js";
 import { smtpUpdateAction } from "../../../store/action/settingAction.js";
+import Alerts from "../../components/Alert.js";
 const SMTPComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ const SMTPComponent = () => {
 
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div">

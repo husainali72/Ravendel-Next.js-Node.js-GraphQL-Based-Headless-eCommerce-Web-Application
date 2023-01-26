@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { storeMeasuresUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
 
 const MeasurementsComponent = () => {
   const settingState = useSelector((state) => state.settings);
@@ -25,6 +26,7 @@ const MeasurementsComponent = () => {
   };
   return (
     <>
+     <Alerts/>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" mb={3}>
