@@ -509,45 +509,54 @@ module.exports = {
       }
       try {
         const cart = await Cart.findOne({ user_id: args.user_id });
-        let existingProducts = cart && cart.products ? cart.products : []
+        let existingCartProducts = cart && cart.products ? cart.products : []
         let carttotal = 0;
-        for (let i in args.products) {
-          if(existingProducts.length > 0){
-            let productPosition;
-            /* if product exists in cart and local storage then update quantity 
-            and delete product from existingProducts
-            else add total in carttotal*/
-            for(let j in existingProducts){
-              if(existingProducts[j].product_id.toString() === args.products[i].product_id.toString()){
-                args.products[i].qty += existingProducts[j].qty
-                productPosition = j
-              }else carttotal += existingProducts[j].total
+        // if local products exists then only run loop for adding products in customer cart
+        if(args.products)
+        for(let localProd of args.products){
+          let product = await Product.findById({ _id: localProd.product_id });
+          // declare variables to be used for adding product to cart
+          let product_price = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price
+          let total = product.pricing.sellprice > 0 ? localProd.qty * product.pricing.sellprice : localProd.qty * product.pricing.price
+          let product_image = product.feature_image.thumbnail
+          let product_id = localProd.product_id
+          let product_title = product.name
+          let qty = localProd.qty
+          // if customer cart is empty then add product from local
+          if(!existingCartProducts.length){
+            existingCartProducts.push({product_id, product_title, product_image, product_price, qty, total})
+          }
+          // else update customer cart with local
+          else{
+            // check local product id with customer cart product id
+            let existingProduct = existingCartProducts.find(prod=>prod.product_id.toString() === localProd.product_id.toString() ? product : false)
+            // if matches then update customer cart product with local product
+            if(existingProduct){
+              existingProduct.qty += localProd.qty
+              existingProduct.total = existingProduct.product_price * existingProduct.qty
             }
-            if(productPosition !== undefined) existingProducts.splice(productPosition, 1)
+            // else add local product to customer cart
+            else{
+              existingCartProducts.push({product_id, product_title, product_image, product_price, qty, total})
+            }
           }
-          if(args.products[i].product_id) {
-            const product = await Product.findById({ _id: args.products[i].product_id });
-            // assign product name
-            args.products[i].product_title = product.name
-            // assign product image
-            args.products[i].product_image = product.feature_image.thumbnail
-            // assign product price 
-            args.products[i].product_price = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price
-            // calculate total of individual product
-            args.products[i].total = product.pricing.sellprice > 0 ? args.products[i].qty * product.pricing.sellprice : args.products[i].qty * product.pricing.price;
-          }
-          carttotal = carttotal + args.products[i].total;
-          existingProducts.push(args.products[i])
         }
+        // calculate carttotal from total of all products in customer cart
+        existingCartProducts.map(cartProduct=>{
+          carttotal += cartProduct.total
+        })
+        // if customer cart exists then update
         if(cart) {
           cart.total = carttotal
-          cart.products = existingProducts
+          cart.products = existingCartProducts
           await cart.save();
-        }else{
+        }
+        // else create new cart
+        else{
           const newCart = new Cart({
             user_id: args.user_id,
             total: carttotal,
-            products: existingProducts
+            products: existingCartProducts
           });
           await newCart.save();
         }
