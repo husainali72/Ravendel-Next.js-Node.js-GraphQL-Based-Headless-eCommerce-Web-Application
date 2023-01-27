@@ -28,7 +28,7 @@ import { convertDateToStringFormat } from "../utils/convertDate";
 import { Alert, Loading } from "../components";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../theme/index";
-const AllPagesComponent = (props) => {
+const AllPagesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const pageState = useSelector((state) => state.pages);
@@ -141,9 +141,9 @@ const AllPagesComponent = (props) => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={pageState.pages.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
+                count={pageState.pages.length || 0}
+                rowsPerPage={rowsPerPage || 10}
+                page={page || 0}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />

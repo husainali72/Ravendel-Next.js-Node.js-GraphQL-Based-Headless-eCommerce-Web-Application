@@ -51,8 +51,8 @@ import viewStyles from "../viewStyles";
 import theme from "../../theme";
 import { useNavigate, useParams } from "react-router-dom";
 
-//var catIds = [];
 const EditProductComponent = ({ params }) => {
+  const Product_id = params.id || "-";
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -101,9 +101,10 @@ const EditProductComponent = ({ params }) => {
   });
 
   useEffect(() => {
-    if (productState.product !== params.id) {
-      dispatch(productAction(params.id));
+    if (product.id !== Product_id) {
+      dispatch(productAction(Product_id));
     }
+
     dispatch(brandsAction());
     dispatch(categoriesAction());
   }, []);

@@ -156,13 +156,13 @@ const GlobalThemeOverride = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-              {console.log(products.products.length)}
+
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={products.products.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
+                count={products.products.length || 0}
+                rowsPerPage={rowsPerPage || 10}
+                page={page || 0}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />

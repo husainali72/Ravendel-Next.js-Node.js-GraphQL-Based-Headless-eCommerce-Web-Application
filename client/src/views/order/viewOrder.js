@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useNavigation, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
 import { orderUpdateAction, orderAction } from "../../store/action/";
 
@@ -46,15 +46,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { currencyFormat } from "./CurrencyFormat";
-
+import _ from "lodash";
 const ViewOrderComponent = ({ params }) => {
+  const ORDERID = params.id || "-";
   const classes = viewStyles();
   const [editShipping, setEditShipping] = useState(false);
   const [editBilling, setEditBilling] = useState(false);
-  const navigate = useNavigate;
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const singleOrder = useSelector((state) => state.order);
-
+  const [loading, setloading] = useState(false);
   const [order, setorder] = useState({
     billing: {
       firstname: "",
@@ -90,16 +91,19 @@ const ViewOrderComponent = ({ params }) => {
   });
 
   useEffect(() => {
-    if (singleOrder.order.id !== params.id) {
-      dispatch(orderAction(params));
+    if (order.id !== ORDERID) {
+      dispatch(orderAction(ORDERID));
     }
-    setorder({ ...order, ...singleOrder.order });
-  }, [singleOrder.order]);
 
+    const singleorder = _.get(singleOrder, "order");
+
+    setorder({ ...order, ...singleorder });
+  }, [_.get(singleOrder, "order")]);
+  useEffect(() => {
+    setloading(_.get(singleOrder, "loading"));
+  }, [_.get(singleOrder, "loading")]);
   const updateOrder = (e) => {
     e.preventDefault();
-
-    delete order.__typename;
 
     setEditBilling(false);
     setEditShipping(false);
@@ -157,7 +161,7 @@ const ViewOrderComponent = ({ params }) => {
   return (
     <>
       <Alerts />
-      {singleOrder.loading && (
+      {loading && (
         <Backdrop className={classes.backdrop} open={true}>
           <CircularProgress color="inherit" /> <br />
           <Typography variant="h4">Loading</Typography>
@@ -183,7 +187,7 @@ const ViewOrderComponent = ({ params }) => {
               </Button>
               <Button
                 variant="contained"
-                color="primary"
+                color="error"
                 className={classes.cancelBtn}
               >
                 <Link

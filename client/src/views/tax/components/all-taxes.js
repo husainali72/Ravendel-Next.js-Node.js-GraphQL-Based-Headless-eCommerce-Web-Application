@@ -80,11 +80,11 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 20]}
         component="div"
-        count={taxState.tax.tax_class.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        count={taxState.tax.tax_class.length || 0}
+        rowsPerPage={rowsPerPage || 10}
+        page={page || 0}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </CardBlocks>
   );

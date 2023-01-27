@@ -51,7 +51,7 @@ const defaultObj = {
 };
 const EditBlogComponenet = ({ params }) => {
   const classes = viewStyles();
-
+  const Id = params.id || "-";
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
@@ -61,8 +61,8 @@ const EditBlogComponenet = ({ params }) => {
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
   const navigate = useNavigate();
   useEffect(() => {
-    if (params.id !== blogState.id) {
-      dispatch(blogAction(params.id));
+    if (Id !== blog.id) {
+      dispatch(blogAction(Id));
     }
   }, []);
 
@@ -269,7 +269,7 @@ const EditBlogComponenet = ({ params }) => {
   );
 };
 
-const EditBlog = (props) => {
+const EditBlog = () => {
   const params = useParams();
 
   return (

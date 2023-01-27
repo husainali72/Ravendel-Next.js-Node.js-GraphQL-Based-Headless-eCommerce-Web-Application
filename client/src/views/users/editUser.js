@@ -30,6 +30,7 @@ var defaultObj = {
 };
 
 const EditUserComponent = ({ params }) => {
+  const User_id = params.id || "-";
   const classes = viewStyles();
   const navigate = useNavigate();
   const UsersState = useSelector((state) => state.users);
@@ -47,7 +48,7 @@ const EditUserComponent = ({ params }) => {
     document.forms[0].reset();
     setuser(defaultObj);
     UsersState.users.map((edituser) => {
-      if (edituser.id === params.id) {
+      if (edituser.id === User_id) {
         setuser({ ...edituser });
         if (edituser.image && edituser.image.original) {
           setfeatureImage(bucketBaseURL + edituser.image.original);

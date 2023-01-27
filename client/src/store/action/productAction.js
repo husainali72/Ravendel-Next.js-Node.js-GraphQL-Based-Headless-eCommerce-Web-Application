@@ -96,7 +96,7 @@ export const categoryAddAction = (object) => (dispatch) => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: false, message: error, error: false },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };

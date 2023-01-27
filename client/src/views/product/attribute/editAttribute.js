@@ -12,6 +12,7 @@ import theme from "../../../theme";
 const delimiters = ["Enter", "Tab"];
 
 const EditAttributeComponent = ({ params }) => {
+  const ATTRIBUTE_ID = params.id || "-";
   const classes = viewStyles();
   const navigate = useNavigate();
   const [attribute, setattribute] = useState({
@@ -22,8 +23,8 @@ const EditAttributeComponent = ({ params }) => {
   const attributeState = useSelector((state) => state.product_attributes);
 
   useEffect(() => {
-    if (attributeState.id !== params.id) {
-      dispatch(attributeAction(params.id));
+    if (attribute.id !== ATTRIBUTE_ID) {
+      dispatch(attributeAction(ATTRIBUTE_ID));
     }
   }, []);
 

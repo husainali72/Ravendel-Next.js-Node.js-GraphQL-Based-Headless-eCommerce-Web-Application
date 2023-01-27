@@ -71,6 +71,7 @@ var customerObj = {
 };
 
 const EditCustomerComponent = ({ params }) => {
+  const ID = params.id || "-";
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
@@ -89,7 +90,7 @@ const EditCustomerComponent = ({ params }) => {
     }
 
     for (let i in Customers.customers) {
-      if (Customers.customers[i].id === params.id) {
+      if (Customers.customers[i].id === ID) {
         SingleCustomerObject.id = Customers.customers[i].id;
         setSingleCustomer(SingleCustomerObject);
         setcustomer({ ...customer, ...Customers.customers[i] });

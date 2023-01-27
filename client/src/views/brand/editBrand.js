@@ -11,6 +11,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { useParams, useNavigate } from "react-router-dom";
 const EditBrandComponenet = ({ params }) => {
+  const ID = params.id || "-";
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -33,7 +34,7 @@ const EditBrandComponenet = ({ params }) => {
 
   useEffect(() => {
     Brands.brands.map((editbrand) => {
-      if (editbrand.id === params.id) {
+      if (editbrand.id === ID) {
         brand.id = editbrand.id;
         setBrand({ ...brand, ...editbrand });
         if (editbrand.brand_logo && editbrand.brand_logo.original) {

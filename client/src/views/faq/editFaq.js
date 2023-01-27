@@ -27,8 +27,8 @@ const defaultObj = {
   content: "",
   status: "Publish",
 };
-const EditFAQComponenet = (props) => {
-  const FAQId = props.match.params.id;
+const EditFAQComponenet = ({ params }) => {
+  const FAQId = params.id || "-";
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -37,7 +37,7 @@ const EditFAQComponenet = (props) => {
   const [faq, setFaq] = useState(defaultObj);
 
   useEffect(() => {
-    if (!isEmpty(FAQId)) {
+    if (blogState.id !== FAQId) {
       dispatch(blogAction(FAQId));
     }
     return () => {

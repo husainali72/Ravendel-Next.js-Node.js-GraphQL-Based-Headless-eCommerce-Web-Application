@@ -15,6 +15,7 @@ import { isEmpty, client_app_route_url } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
+import _ from "lodash";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Alert,
@@ -36,6 +37,7 @@ var defaultObj = {
 };
 
 const EditPageComponent = ({ params }) => {
+  const PAGEID = params.id || "-";
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
@@ -44,17 +46,23 @@ const EditPageComponent = ({ params }) => {
   const [editPremalink, setEditPermalink] = useState(false);
   const [page, setPage] = useState(defaultObj);
   const navigate = useNavigate();
+  const [loading, setloading] = useState(false);
+
   useEffect(() => {
-    if (params.id !== pageState.id) {
-      dispatch(pageAction(params.id));
+    if (PAGEID !== page.id) {
+      dispatch(pageAction(PAGEID));
     }
   }, [params]);
 
   useEffect(() => {
-    if (!isEmpty(pageState.page)) {
-      setPage({ ...pageState.page });
+    if (_.get(pageState, "page")) {
+      setPage({ ...page, ...pageState.page });
     }
-  }, [pageState.page]);
+  }, [_.get(pageState, "page")]);
+
+  useEffect(() => {
+    setloading(_.get(pageState, "loading"));
+  }, [_.get(pageState, "loading")]);
 
   const updatePage = (e) => {
     e.preventDefault();
@@ -79,7 +87,7 @@ const EditPageComponent = ({ params }) => {
   return (
     <>
       <Alert />
-      {pageState.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
       <form>
         <TopBar
           title="Edit Page"

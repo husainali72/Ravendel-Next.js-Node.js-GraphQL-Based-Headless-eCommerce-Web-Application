@@ -26,6 +26,8 @@ import viewStyles from "../viewStyles";
 import { client_app_route_url } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme";
+import { useNavigate, useParams } from "react-router-dom";
+import Alerts from "../components/Alert";
 var reviewObj = {
   title: "",
   customer_id: "",
@@ -38,7 +40,9 @@ var reviewObj = {
   product: {},
 };
 
-const EditReviewComponent = (props) => {
+const EditReviewComponent = ({ params }) => {
+  const Review_id = params.id || "-";
+  const navigate = useNavigate();
   const classes = viewStyles();
   const dispatch = useDispatch();
   const productState = useSelector((state) => state.products);
@@ -54,24 +58,26 @@ const EditReviewComponent = (props) => {
     }
 
     for (let i in reviewState.reviews) {
-      if (reviewState.reviews[i].id === props.match.params.id) {
-        dispatch(customersAction());
-        dispatch(productsAction());
-        setreview({
-          ...review,
-          ...reviewState.reviews[i],
-          customer_id: reviewState.reviews[i].customer_id.id,
-          product_id: reviewState.reviews[i].product_id._id,
-          customer: {
-            value: reviewState.reviews[i].customer_id.id,
-            label: reviewState.reviews[i].customer_id.first_name,
-          },
-          product: {
-            value: reviewState.reviews[i].product_id._id,
-            label: reviewState.reviews[i].product_id.name,
-          },
-        });
-        break;
+      if (reviewState.reviews && reviewState.reviews.length > 0) {
+        if (reviewState.reviews[i].id === Review_id) {
+          dispatch(customersAction());
+          dispatch(productsAction());
+          setreview({
+            ...review,
+            ...reviewState.reviews[i],
+            customer_id: reviewState.reviews[i].customer_id.id,
+            product_id: reviewState.reviews[i].product_id._id,
+            customer: {
+              value: reviewState.reviews[i].customer_id.id,
+              label: reviewState.reviews[i].customer_id.first_name,
+            },
+            product: {
+              value: reviewState.reviews[i].product_id._id,
+              label: reviewState.reviews[i].product_id.name,
+            },
+          });
+          break;
+        }
       }
     }
   }, [reviewState.reviews]);
@@ -99,7 +105,7 @@ const EditReviewComponent = (props) => {
   }, [customerState.customers]);
 
   const updateReview = () => {
-    dispatch(reviewUpdateAction(review));
+    dispatch(reviewUpdateAction(review, navigate));
   };
 
   const handleChange = (e) => {
@@ -118,7 +124,7 @@ const EditReviewComponent = (props) => {
         submitTitle="Update"
         backLink={`${client_app_route_url}reviews`}
       />
-
+      <Alerts />
       <Grid container spacing={4} className={classes.secondmainrow}>
         <Grid item lg={9} md={12} sm={12} xs={12}>
           <CardBlocks title="Review Information" nomargin>
@@ -232,9 +238,10 @@ const EditReviewComponent = (props) => {
 };
 
 const EditReview = () => {
+  const params = useParams();
   return (
     <ThemeProvider theme={theme}>
-      <EditReviewComponent />
+      <EditReviewComponent params={params} />
     </ThemeProvider>
   );
 };

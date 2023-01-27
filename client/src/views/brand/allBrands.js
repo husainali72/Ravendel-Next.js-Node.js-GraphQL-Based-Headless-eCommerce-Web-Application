@@ -141,9 +141,9 @@ const AllbrandComponent = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={Brands.brands.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
+                count={Brands.brands.length || 0}
+                rowsPerPage={rowsPerPage || 10}
+                page={page || 0}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />

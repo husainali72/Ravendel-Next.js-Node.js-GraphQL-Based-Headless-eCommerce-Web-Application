@@ -11,7 +11,7 @@ const Alerts = () => {
   const [isOpen, setisOpen] = useState(false);
   const alert = useSelector((state) => state.alert);
   const dispatch = useDispatch();
-  console.log(alert);
+
   useEffect(() => {
     if (alert.success) {
       setisOpen(true);

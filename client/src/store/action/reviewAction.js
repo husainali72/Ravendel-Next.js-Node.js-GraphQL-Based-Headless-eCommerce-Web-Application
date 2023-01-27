@@ -133,7 +133,7 @@ export const reviewAddAction = (object) => (dispatch) => {
     });
 };
 
-export const reviewUpdateAction = (object) => (dispatch) => {
+export const reviewUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: REVIEW_LOADING,
   });
@@ -156,7 +156,7 @@ export const reviewUpdateAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        jumpTo(`${client_app_route_url}reviews`);
+        navigate(`${client_app_route_url}reviews`);
         dispatch(reviewsAction());
         return dispatch({
           type: ALERT_SUCCESS,

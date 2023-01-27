@@ -135,9 +135,9 @@ const AllAttributeComponent = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={attributeState.attributes.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
+                count={attributeState.attributes.length || 0}
+                rowsPerPage={rowsPerPage || 10}
+                page={page || 0}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />

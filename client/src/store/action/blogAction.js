@@ -176,6 +176,7 @@ export const blogUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: BLOG_LOADING,
   });
+
   mutation(UPDATE_BLOG, object)
     .then((response) => {
       const [error, success, message, data] = mutationResponseHandler(
@@ -198,7 +199,6 @@ export const blogUpdateAction = (object, navigate) => (dispatch) => {
       }
 
       if (success) {
-        // jumpTo(`${client_app_route_url}all-blogs`);
         navigate(`${client_app_route_url}all-blogs`);
         dispatch(blogsAction());
         return dispatch({
