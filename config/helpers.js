@@ -1,5 +1,6 @@
 const Messages = require("./messages");
 const Validator = require("validator");
+const moment = require("moment")
 
 const { uploadFile, FileDelete } = require("../config/aws");
 
@@ -589,6 +590,39 @@ const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingMo
   }
 }
 module.exports.subTotalSummaryEntry = subTotalSummaryEntry
+
+const populateYearMonth = (order, orderYear, orderMonth, paymentSuccessSubTotal, paymentSuccessGrandTotal, year) => {
+  let monthObj = {
+    month: moment(orderMonth+1, "MM").format("MMM"),
+    orders: [order],
+    GrossSales: order.subtotal,
+    NetSales: order.grand_total,
+    paymentSuccessGrossSales: paymentSuccessSubTotal,
+    paymentSuccessNetSales: paymentSuccessGrandTotal
+  }
+  let yearObj = {
+    year: orderYear,
+    months: [monthObj],
+    GrossSales: order.subtotal,
+    NetSales: order.grand_total,
+    paymentSuccessGrossSales: paymentSuccessSubTotal,
+    paymentSuccessNetSales: paymentSuccessGrandTotal
+  }
+  if(year){
+    return yearObj
+  }else{
+    return monthObj
+  }
+}
+module.exports.populateYearMonth = populateYearMonth;
+
+const populateSales = (data, order, paymentSuccessSubTotal, paymentSuccessGrandTotal) => {
+  data.GrossSales += order.subtotal
+  data.NetSales += order.grand_total
+  data.paymentSuccessGrossSales += paymentSuccessSubTotal
+  data.paymentSuccessNetSales += paymentSuccessGrandTotal
+}
+module.exports.populateSales = populateSales;
 
 module.exports.MESSAGE_RESPONSE = MESSAGE_RESPONSE;
 
