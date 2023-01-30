@@ -15,7 +15,7 @@ import { isEmpty, client_app_route_url } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
-import _ from "lodash";
+import { get } from "lodash";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Alert,
@@ -37,7 +37,7 @@ var defaultObj = {
 };
 
 const EditPageComponent = ({ params }) => {
-  const PAGEID = params.id || "-";
+  const PAGEID = params.id || "";
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
@@ -55,14 +55,14 @@ const EditPageComponent = ({ params }) => {
   }, [params]);
 
   useEffect(() => {
-    if (_.get(pageState, "page")) {
+    if (!isEmpty(get(pageState, "page"))) {
       setPage({ ...page, ...pageState.page });
     }
-  }, [_.get(pageState, "page")]);
+  }, [get(pageState, "page")]);
 
   useEffect(() => {
-    setloading(_.get(pageState, "loading"));
-  }, [_.get(pageState, "loading")]);
+    setloading(get(pageState, "loading"));
+  }, [get(pageState, "loading")]);
 
   const updatePage = (e) => {
     e.preventDefault();

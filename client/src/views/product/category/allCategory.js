@@ -39,6 +39,8 @@ import {
 import theme from "../../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
 import { categoriesAction } from "../../../store/action/";
+import { isEmpty } from "../../../utils/helper";
+import { get } from "lodash";
 var categoryObject = {
   name: "",
   parentId: null,
@@ -60,7 +62,7 @@ const AllCategoryComponent = () => {
   const [featuredImage, setfeaturedImage] = useState(null);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+  const [loading, setloading] = useState(false);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -71,15 +73,21 @@ const AllCategoryComponent = () => {
   };
 
   useEffect(() => {
-    if (!products.categories.length) {
+    if (isEmpty(get(products, "categories"))) {
       dispatch(categoriesAction());
     }
   }, []);
 
   useEffect(() => {
-    setCategories(products.categories);
-    cancelCat();
-  }, [products.categories]);
+    if (!isEmpty(get(products, "categories"))) {
+      setCategories(products.categories);
+      cancelCat();
+    }
+  }, [get(products, "categories")]);
+
+  useEffect(() => {
+    setloading(get(products, "loading"));
+  }, [get(products, "loading")]);
 
   const editCategory = (cat) => {
     setEditmode(true);
@@ -135,7 +143,7 @@ const AllCategoryComponent = () => {
   return (
     <>
       <Alert />
-      {products.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
       <Grid container className={classes.mainrow} spacing={2}>
         <Grid item md={6} xs={12}>
           <CardBlocks

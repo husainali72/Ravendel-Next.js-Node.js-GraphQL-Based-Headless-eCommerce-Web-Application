@@ -3,15 +3,21 @@ import { Grid, TextField, Box, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import viewStyles from "../viewStyles.js";
 import clsx from "clsx";
-import { brandUpdateAction } from "../../store/action/";
+import { brandUpdateAction, brandsAction } from "../../store/action/";
 import { useDispatch, useSelector } from "react-redux";
 import { Loading, TopBar, Alert, TextInput, CardBlocks } from "../components";
-import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
+import {
+  client_app_route_url,
+  bucketBaseURL,
+  isEmpty,
+} from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
+
+import { get } from "lodash";
 import { useParams, useNavigate } from "react-router-dom";
 const EditBrandComponenet = ({ params }) => {
-  const ID = params.id || "-";
+  const ID = params.id || "";
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -19,6 +25,8 @@ const EditBrandComponenet = ({ params }) => {
   const dispatch = useDispatch();
   const Brands = useSelector((state) => state.brands);
   const [logoImage, setLogoImage] = useState(null);
+  const productState = useSelector((state) => state.products);
+  const [loading, setloading] = useState(false);
   const [brand, setBrand] = useState({
     id: "",
     _id: "",
@@ -33,17 +41,28 @@ const EditBrandComponenet = ({ params }) => {
   });
 
   useEffect(() => {
-    Brands.brands.map((editbrand) => {
-      if (editbrand.id === ID) {
-        brand.id = editbrand.id;
-        setBrand({ ...brand, ...editbrand });
-        if (editbrand.brand_logo && editbrand.brand_logo.original) {
-          setLogoImage(bucketBaseURL + editbrand.brand_logo.original);
-        }
+    if (!isEmpty(get(Brands, "brands"))) {
+      if (Brands.brands && Brands.brands.length > 0) {
+        Brands.brands.map((editbrand) => {
+          if (editbrand.id === ID) {
+            brand.id = editbrand.id;
+            setBrand({ ...brand, ...editbrand });
+            if (editbrand.brand_logo && editbrand.brand_logo.original) {
+              setLogoImage(bucketBaseURL + editbrand.brand_logo.original);
+            }
+          }
+        });
       }
-    });
+    }
+  }, [get(Brands, "brands")]);
+  useEffect(() => {
+    setloading(get(Brands, "loading"));
+  }, [get(Brands, "loading")]);
+  useEffect(() => {
+    if (isEmpty(Brands.brands)) {
+      dispatch(brandsAction());
+    }
   }, []);
-
   const updateBrand = () => {
     dispatch(brandUpdateAction(brand, navigate));
   };
@@ -67,7 +86,7 @@ const EditBrandComponenet = ({ params }) => {
 
   return (
     <>
-      {Brands.loading && <Loading />}
+      {loading && <Loading />}
       <Alert />
       <TopBar
         title="Edit Brands"

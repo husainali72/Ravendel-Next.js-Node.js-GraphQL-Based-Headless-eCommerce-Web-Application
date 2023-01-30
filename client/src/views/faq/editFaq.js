@@ -22,20 +22,22 @@ import {
 } from "../components";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme";
+import { get } from "lodash";
 const defaultObj = {
   title: "",
   content: "",
   status: "Publish",
 };
+
 const EditFAQComponenet = ({ params }) => {
-  const FAQId = params.id || "-";
+  const FAQId = params.id || "";
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
   const blogState = useSelector((state) => state.blogs);
   const [faq, setFaq] = useState(defaultObj);
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
     if (blogState.id !== FAQId) {
       dispatch(blogAction(FAQId));
@@ -46,10 +48,14 @@ const EditFAQComponenet = ({ params }) => {
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(blogState.blog)) {
+    setloading(get(blogState, "loading"));
+  }, [get(blogState, "loading")]);
+
+  useEffect(() => {
+    if (!isEmpty(get(blogState, "blog"))) {
       setFaq({ ...faq, ...blogState.blog });
     }
-  }, [blogState.blog]);
+  }, [get(blogState, "blog")]);
 
   const updateFaq = (e) => {
     e.preventDefault();
@@ -63,7 +69,7 @@ const EditFAQComponenet = ({ params }) => {
   return (
     <>
       <Alert />
-      {blogState.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
       <form>
         <TopBar
           title="Edit FAQ"

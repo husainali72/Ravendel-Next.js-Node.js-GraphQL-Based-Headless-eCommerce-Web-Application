@@ -12,8 +12,6 @@ import {
 } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import jumpTo from "../../utils/navigation";
-import { useNavigate } from "react-router-dom";
 
 export const pagesAction = () => (dispatch) => {
   dispatch({
@@ -116,7 +114,6 @@ export const pageAddAction = (object, navigate) => (dispatch) => {
       }
 
       if (success) {
-        //  jumpTo(`${client_app_route_url}all-pages`);
         navigate(`${client_app_route_url}all-pages`);
         dispatch(pagesAction());
         return dispatch({
@@ -158,7 +155,6 @@ export const pageUpdateAction = (object, navigate) => (dispatch) => {
       }
 
       if (success) {
-        // jumpTo(`${client_app_route_url}all-pages`);
         navigate(`${client_app_route_url}all-pages`);
         dispatch(pagesAction());
         return dispatch({

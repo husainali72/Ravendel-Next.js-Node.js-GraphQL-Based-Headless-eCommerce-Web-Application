@@ -30,6 +30,7 @@ import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { blogtagsAction } from "../../store/action/";
 import { useNavigate } from "react-router-dom";
+import { get } from "lodash";
 var defaultObj = {
   status: "Publish",
   blog_tag: [],
@@ -53,30 +54,36 @@ const AddBlogComponenet = () => {
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState([]);
   const [clearTags, setclearTags] = useState([]);
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
     dispatch(blogtagsAction());
   }, []);
 
   useEffect(() => {
-    const tagObj = blogState.tags.map((tag) => {
-      return {
-        value: tag.id,
-        label: tag.name,
-      };
-    });
+    if (!isEmpty(get(blogState, "tags"))) {
+      const tagObj = blogState.tags.map((tag) => {
+        return {
+          value: tag.id,
+          label: tag.name,
+        };
+      });
 
-    setTags([...tagObj]);
-  }, [blogState.tags]);
+      setTags([...tagObj]);
+    }
+  }, [get(blogState, "tags")]);
 
   useEffect(() => {
-    if (blogState.success) {
+    if (isEmpty(get(blogState, "success"))) {
       document.forms[0].reset();
       setBlog(defaultObj);
       setfeatureImage(null);
       setclearTags([]);
     }
-  }, [blogState.success]);
+  }, [get(blogState, "success")]);
+
+  useEffect(() => {
+    setloading(get(blogState, "loading"));
+  }, [get(blogState, "loading")]);
 
   const addBlog = (e) => {
     e.preventDefault();
@@ -117,7 +124,7 @@ const AddBlogComponenet = () => {
 
   return (
     <Fragment>
-      {blogState.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
       <form>
         <TopBar
           title="Add Blog"

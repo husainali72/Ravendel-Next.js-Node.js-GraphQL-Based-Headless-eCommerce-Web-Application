@@ -9,10 +9,11 @@ import { Alert, Loading, TopBar, CardBlocks } from "../../components";
 import { useNavigate, useParams } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme";
+import { get } from "lodash";
 const delimiters = ["Enter", "Tab"];
 
 const EditAttributeComponent = ({ params }) => {
-  const ATTRIBUTE_ID = params.id || "-";
+  const ATTRIBUTE_ID = params.id || "";
   const classes = viewStyles();
   const navigate = useNavigate();
   const [attribute, setattribute] = useState({
@@ -21,7 +22,7 @@ const EditAttributeComponent = ({ params }) => {
   });
   const dispatch = useDispatch();
   const attributeState = useSelector((state) => state.product_attributes);
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
     if (attribute.id !== ATTRIBUTE_ID) {
       dispatch(attributeAction(ATTRIBUTE_ID));
@@ -29,15 +30,21 @@ const EditAttributeComponent = ({ params }) => {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(attributeState.attribute).length) {
-      setattribute({
-        ...attribute,
-        id: attributeState.attribute.id,
-        name: attributeState.attribute.name,
-        values: attributeState.attribute.values,
-      });
+    if (!isEmpty(get(attributeState, "attribute"))) {
+      if (Object.keys(attributeState.attribute).length) {
+        setattribute({
+          ...attribute,
+          id: attributeState.attribute.id,
+          name: attributeState.attribute.name,
+          values: attributeState.attribute.values,
+        });
+      }
     }
-  }, [attributeState]);
+  }, [get(attributeState, "attribute")]);
+
+  useEffect(() => {
+    setloading(get(attributeState, "loading"));
+  }, [get(attributeState, "loading")]);
 
   const onDeleteTag = (i) => {
     attribute.values.splice(i, 1);
@@ -65,7 +72,7 @@ const EditAttributeComponent = ({ params }) => {
         />
 
         <Grid container spacing={2} className={classes.secondmainrow}>
-          {attributeState.loading ? <Loading /> : null}
+          {loading ? <Loading /> : null}
           <Grid item lg={6} xs={12}>
             <CardBlocks title="Attribute Information" nomargin>
               <Grid container>

@@ -19,13 +19,11 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { blogDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
 import { isEmpty, bucketBaseURL } from "../../utils/helper";
 import Alerts from "../components/Alert";
 import PeopleIcon from "@mui/icons-material/People";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-
 import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import { Loading } from "../components";
@@ -157,9 +155,9 @@ const AllBlogComponent = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={blogs.blogs.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
+                count={blogs.blogs.length || 0}
+                rowsPerPage={rowsPerPage || 10}
+                page={page || 0}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />

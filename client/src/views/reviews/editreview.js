@@ -15,6 +15,7 @@ import {
   reviewUpdateAction,
 } from "../../store/action";
 import { useSelector, useDispatch } from "react-redux";
+import { get } from "lodash";
 import {
   StyledRadio,
   Loading,
@@ -23,7 +24,7 @@ import {
   CardBlocks,
 } from "../components";
 import viewStyles from "../viewStyles";
-import { client_app_route_url } from "../../utils/helper";
+import { client_app_route_url, isEmpty } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme";
 import { useNavigate, useParams } from "react-router-dom";
@@ -41,7 +42,7 @@ var reviewObj = {
 };
 
 const EditReviewComponent = ({ params }) => {
-  const Review_id = params.id || "-";
+  const Review_id = params.id || "";
   const navigate = useNavigate();
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -51,36 +52,41 @@ const EditReviewComponent = ({ params }) => {
   const [review, setreview] = useState(reviewObj);
   const [products, setproducts] = useState([]);
   const [customers, setcustomers] = useState([]);
+  const [loading, setloading] = useState(false);
 
   useEffect(() => {
-    if (!reviewState.reviews.length) {
-      dispatch(reviewsAction());
-    }
+    setloading(get(reviewState, "loading"));
+  }, [get(reviewState, "loading")]);
 
-    for (let i in reviewState.reviews) {
-      if (reviewState.reviews && reviewState.reviews.length > 0) {
-        if (reviewState.reviews[i].id === Review_id) {
-          dispatch(customersAction());
-          dispatch(productsAction());
-          setreview({
-            ...review,
-            ...reviewState.reviews[i],
-            customer_id: reviewState.reviews[i].customer_id.id,
-            product_id: reviewState.reviews[i].product_id._id,
-            customer: {
-              value: reviewState.reviews[i].customer_id.id,
-              label: reviewState.reviews[i].customer_id.first_name,
-            },
-            product: {
-              value: reviewState.reviews[i].product_id._id,
-              label: reviewState.reviews[i].product_id.name,
-            },
-          });
-          break;
+  useEffect(() => {
+    if (isEmpty(get(reviewState, "reviews"))) {
+      dispatch(reviewsAction());
+    } else {
+      for (let i in reviewState.reviews) {
+        if (reviewState.reviews && reviewState.reviews.length > 0) {
+          if (reviewState.reviews[i].id === Review_id) {
+            dispatch(customersAction());
+            dispatch(productsAction());
+            setreview({
+              ...review,
+              ...reviewState.reviews[i],
+              customer_id: reviewState.reviews[i].customer_id.id,
+              product_id: reviewState.reviews[i].product_id._id,
+              customer: {
+                value: reviewState.reviews[i].customer_id.id,
+                label: reviewState.reviews[i].customer_id.first_name,
+              },
+              product: {
+                value: reviewState.reviews[i].product_id._id,
+                label: reviewState.reviews[i].product_id.name,
+              },
+            });
+            break;
+          }
         }
       }
     }
-  }, [reviewState.reviews]);
+  }, [get(reviewState, "reviews")]);
 
   useEffect(() => {
     const prodcutArr = productState.products.map((product) => {
@@ -117,7 +123,7 @@ const EditReviewComponent = ({ params }) => {
 
   return (
     <>
-      {reviewState.loading && <Loading />}
+      {loading && <Loading />}
       <TopBar
         title="Edit Customer Review"
         onSubmit={updateReview}

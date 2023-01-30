@@ -35,7 +35,7 @@ import {
 } from "../components";
 import { useNavigate, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
-
+import { get } from "lodash";
 const defaultObj = {
   title: "",
   url: "",
@@ -51,7 +51,7 @@ const defaultObj = {
 };
 const EditBlogComponenet = ({ params }) => {
   const classes = viewStyles();
-  const Id = params.id || "-";
+  const Id = params.id || "";
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
@@ -59,15 +59,17 @@ const EditBlogComponenet = ({ params }) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
+  const [loading, setloading] = useState(false);
   const navigate = useNavigate();
+
   useEffect(() => {
-    if (Id !== blog.id) {
+    if (Id !== blogState.blog.id) {
       dispatch(blogAction(Id));
     }
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(blogState.blog)) {
+    if (!isEmpty(get(blogState, "blog"))) {
       setBlog({ ...blog, ...blogState.blog });
       if (
         blogState.blog.feature_image &&
@@ -77,10 +79,13 @@ const EditBlogComponenet = ({ params }) => {
       }
       dispatch(blogtagsAction());
     }
-  }, [blogState.blog]);
+  }, [get(blogState, "blog")]);
+  useEffect(() => {
+    setloading(get(blogState, "loading"));
+  }, [get(blogState, "loading")]);
 
   useEffect(() => {
-    if (!isEmpty(blogState.tags)) {
+    if (!isEmpty(get(blogState, "tags"))) {
       setTimeout(() => {
         var defaultTags = [];
         const tagObj = blogState.tags.map((tag) => {
@@ -99,7 +104,7 @@ const EditBlogComponenet = ({ params }) => {
         setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
       }, 1000);
     }
-  }, [blogState.tags]);
+  }, [get(blogState, "tags")]);
 
   const tagChange = (e) => {
     setBlog({
@@ -134,7 +139,8 @@ const EditBlogComponenet = ({ params }) => {
   return (
     <Fragment>
       <Alerts />
-      {blogState.loading ? <Loading /> : null}
+
+      {loading ? <Loading /> : null}
       <form>
         <TopBar
           title="Edit Blog"

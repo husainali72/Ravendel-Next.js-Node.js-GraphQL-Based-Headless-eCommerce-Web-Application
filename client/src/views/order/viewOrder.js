@@ -46,9 +46,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { currencyFormat } from "./CurrencyFormat";
-import _ from "lodash";
+import { get } from "lodash";
 const ViewOrderComponent = ({ params }) => {
-  const ORDERID = params.id || "-";
+  const ORDERID = params.id || "";
   const classes = viewStyles();
   const [editShipping, setEditShipping] = useState(false);
   const [editBilling, setEditBilling] = useState(false);
@@ -56,6 +56,7 @@ const ViewOrderComponent = ({ params }) => {
   const dispatch = useDispatch();
   const singleOrder = useSelector((state) => state.order);
   const [loading, setloading] = useState(false);
+
   const [order, setorder] = useState({
     billing: {
       firstname: "",
@@ -94,17 +95,16 @@ const ViewOrderComponent = ({ params }) => {
     if (order.id !== ORDERID) {
       dispatch(orderAction(ORDERID));
     }
-
-    const singleorder = _.get(singleOrder, "order");
-
+    const singleorder = get(singleOrder, "order");
     setorder({ ...order, ...singleorder });
-  }, [_.get(singleOrder, "order")]);
+  }, [get(singleOrder, "order")]);
+
   useEffect(() => {
-    setloading(_.get(singleOrder, "loading"));
-  }, [_.get(singleOrder, "loading")]);
+    setloading(get(singleOrder, "loading"));
+  }, [get(singleOrder, "loading")]);
+
   const updateOrder = (e) => {
     e.preventDefault();
-
     setEditBilling(false);
     setEditShipping(false);
     dispatch(orderUpdateAction(order, navigate));
@@ -161,6 +161,7 @@ const ViewOrderComponent = ({ params }) => {
   return (
     <>
       <Alerts />
+
       {loading && (
         <Backdrop className={classes.backdrop} open={true}>
           <CircularProgress color="inherit" /> <br />

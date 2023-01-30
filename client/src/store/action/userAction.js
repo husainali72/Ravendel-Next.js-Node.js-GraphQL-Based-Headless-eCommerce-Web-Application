@@ -9,8 +9,6 @@ import {
 import { client_app_route_url } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import jumpTo from "../../utils/navigation";
-
 export const usersAction = () => (dispatch) => {
   dispatch({
     type: USER_LOADING,
@@ -72,14 +70,13 @@ export const userAddAction = (object) => (dispatch) => {
   dispatch({
     type: USER_LOADING,
   });
+
   mutation(ADD_USER, object)
     .then((response) => {
       if (response.data.addUser.success) {
         dispatch({
           type: USER_SUCCESS,
         });
-
-        // jumpTo(`${client_app_route_url}all-users`);
 
         dispatch(usersAction());
 
@@ -120,13 +117,13 @@ export const userUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: USER_LOADING,
   });
+
   mutation(UPDATE_USER, object)
     .then((response) => {
+      dispatch({
+        type: USER_FAIL,
+      });
       if (response.data.updateUser.success) {
-        dispatch({
-          type: USER_FAIL,
-        });
-
         dispatch({
           type: ALERT_SUCCESS,
           payload: {

@@ -139,7 +139,6 @@ const AllFAQComponent = (props) => {
   );
 };
 
-// export default AllFAQ;
 const AllFAQ = () => {
   return (
     <ThemeProvider theme={theme}>

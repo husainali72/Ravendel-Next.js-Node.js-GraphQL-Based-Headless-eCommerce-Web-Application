@@ -21,6 +21,7 @@ import {
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { useNavigate, useParams } from "react-router-dom";
+import { get } from "lodash";
 var defaultObj = {
   id: "",
   name: "",
@@ -30,32 +31,38 @@ var defaultObj = {
 };
 
 const EditUserComponent = ({ params }) => {
-  const User_id = params.id || "-";
+  const User_id = params.id || "";
   const classes = viewStyles();
   const navigate = useNavigate();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
-    if (isEmpty(UsersState.users)) {
+    if (isEmpty(get(UsersState, "users"))) {
       dispatch(usersAction());
     }
   }, []);
 
   useEffect(() => {
+    setloading(get(UsersState, "loading"));
+  }, [get(UsersState, "loading")]);
+
+  useEffect(() => {
     document.forms[0].reset();
     setuser(defaultObj);
-    UsersState.users.map((edituser) => {
-      if (edituser.id === User_id) {
-        setuser({ ...edituser });
-        if (edituser.image && edituser.image.original) {
-          setfeatureImage(bucketBaseURL + edituser.image.original);
+    if (!isEmpty(get(UsersState, "users"))) {
+      UsersState.users.map((edituser) => {
+        if (edituser.id === User_id) {
+          setuser({ ...edituser });
+          if (edituser.image && edituser.image.original) {
+            setfeatureImage(bucketBaseURL + edituser.image.original);
+          }
         }
-      }
-    });
-  }, [UsersState.users]);
+      });
+    }
+  }, [get(UsersState, "users")]);
 
   const fileChange = (e) => {
     setuser({ ...user, ["updatedImage"]: e.target.files[0] });
@@ -75,7 +82,7 @@ const EditUserComponent = ({ params }) => {
   return (
     <>
       <Alert />
-      {UsersState.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
 
       <form>
         <TopBar
@@ -132,7 +139,7 @@ const EditUserComponent = ({ params }) => {
                         "Manager",
                         "Editor",
                         "Author",
-                        "User",
+                        "USER",
                       ]}
                       name="role"
                       value={user.role}
