@@ -117,6 +117,7 @@ module.exports.updateUrl = updateUrl;
 const fs = require("fs");
 const Jimp = require("jimp");
 const sharp = require("sharp");
+const imgType = ["original", "large", "medium", "thumbnail"]
 
 //const path = require("path");
 //const pathToFile = path.dirname(require.main.filename);
@@ -312,7 +313,13 @@ const imageUpload = async (upload, uploadPath, nametype) => {
           const awslarge = await uploadFile(large, filename, awslargepath);
           const awsmedium = await uploadFile(medium, filename, awsmediumpath);
           const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
-
+          // delete file once uploaded on AWS
+          if(!awsoriginal || awsoriginal) {
+            imgType.map(type => {
+              let filePath = `.${uploadPath}${type}/${filename}`;
+              fs.unlinkSync(filePath);
+            })
+          }
           return resolve({
             success: true,
             data: {
@@ -487,10 +494,9 @@ const MESSAGE_RESPONSE = (type, item, success) => {
 };
 
 
-const checkRole = (role) => {
-  const userRoles = ["ADMIN", "USER"]
+const checkRole = (role, roleOptions) => {
   role = role.toUpperCase()
-  if(userRoles.includes(role)) return {role: role, success: true}
+  if(roleOptions.includes(role)) return {role: role, success: true}
   else return {success: false}
 }
 module.exports.checkRole = checkRole;
