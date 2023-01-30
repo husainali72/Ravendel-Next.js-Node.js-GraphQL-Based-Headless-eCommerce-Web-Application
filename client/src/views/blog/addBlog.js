@@ -28,6 +28,9 @@ import {
 } from "../components";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
+import { blogtagsAction } from "../../store/action/";
+import { useNavigate } from "react-router-dom";
+import { get } from "lodash";
 var defaultObj = {
   status: "Publish",
   blog_tag: [],
@@ -41,6 +44,7 @@ var defaultObj = {
 };
 
 const AddBlogComponenet = () => {
+  const navigate = useNavigate();
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -50,34 +54,40 @@ const AddBlogComponenet = () => {
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState([]);
   const [clearTags, setclearTags] = useState([]);
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
-    // dispatch(blogtagsAction());
+    dispatch(blogtagsAction());
   }, []);
 
   useEffect(() => {
-    const tagObj = blogState.tags.map((tag) => {
-      return {
-        value: tag.id,
-        label: tag.name,
-      };
-    });
+    if (!isEmpty(get(blogState, "tags"))) {
+      const tagObj = blogState.tags.map((tag) => {
+        return {
+          value: tag.id,
+          label: tag.name,
+        };
+      });
 
-    setTags([...tagObj]);
-  }, [blogState.tags]);
+      setTags([...tagObj]);
+    }
+  }, [get(blogState, "tags")]);
 
   useEffect(() => {
-    if (blogState.success) {
+    if (isEmpty(get(blogState, "success"))) {
       document.forms[0].reset();
       setBlog(defaultObj);
       setfeatureImage(null);
       setclearTags([]);
     }
-  }, [blogState.success]);
+  }, [get(blogState, "success")]);
+
+  useEffect(() => {
+    setloading(get(blogState, "loading"));
+  }, [get(blogState, "loading")]);
 
   const addBlog = (e) => {
     e.preventDefault();
-    dispatch(blogAddAction(blog));
+    dispatch(blogAddAction(blog, navigate));
   };
 
   const handleChange = (e) => {
@@ -114,7 +124,7 @@ const AddBlogComponenet = () => {
 
   return (
     <Fragment>
-      {blogState.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
       <form>
         <TopBar
           title="Add Blog"
@@ -123,7 +133,7 @@ const AddBlogComponenet = () => {
           backLink={`${client_app_route_url}all-blogs`}
         />
         <Alerts />
-        {/* <h1>dkjfjh</h1> */}
+
         <Grid
           container
           spacing={isSmall ? 2 : 3}

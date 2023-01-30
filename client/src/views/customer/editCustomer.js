@@ -46,6 +46,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
+import { get } from "lodash";
 var SingleCustomerObject = {
   id: "",
   _id: "",
@@ -71,6 +72,7 @@ var customerObj = {
 };
 
 const EditCustomerComponent = ({ params }) => {
+  const ID = params.id || "";
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
@@ -79,26 +81,31 @@ const EditCustomerComponent = ({ params }) => {
   const [editMode, setEditMode] = useState(false);
   const [singleCustomer, setSingleCustomer] = useState(SingleCustomerObject);
   const [customer, setcustomer] = useState(customerObj);
+  const [loading, setloading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setloading(get(Customers, "loading"));
+  }, [get(Customers, "loading")]);
   useEffect(() => {
     document.forms[0].reset();
     setcustomer(customerObj);
 
-    if (isEmpty(Customers.customers)) {
+    if (isEmpty(get(Customers, "customers"))) {
       dispatch(customersAction());
-    }
-
-    for (let i in Customers.customers) {
-      if (Customers.customers[i].id === params.id) {
-        SingleCustomerObject.id = Customers.customers[i].id;
-        setSingleCustomer(SingleCustomerObject);
-        setcustomer({ ...customer, ...Customers.customers[i] });
-        break;
+    } else {
+      for (let i in Customers.customers) {
+        if (Customers.customers[i].id === ID) {
+          SingleCustomerObject.id = Customers.customers[i].id;
+          setSingleCustomer(SingleCustomerObject);
+          setcustomer({ ...customer, ...Customers.customers[i] });
+          break;
+        }
       }
-    }
 
-    setEditMode(false);
-  }, [Customers.customers]);
+      setEditMode(false);
+    }
+  }, [get(Customers, "customers")]);
 
   const updateCustomer = (e) => {
     e.preventDefault();
@@ -157,7 +164,7 @@ const EditCustomerComponent = ({ params }) => {
   return (
     <>
       <Alert />
-      {Customers.loading && <Loading />}
+      {loading && <Loading />}
       <form>
         <TopBar
           title="Edit Customer"

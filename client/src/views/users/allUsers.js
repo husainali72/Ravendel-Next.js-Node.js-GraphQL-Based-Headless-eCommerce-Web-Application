@@ -16,7 +16,7 @@ import {
   Avatar,
   Button,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userDeleteAction } from "../../store/action";
 import jumpTo from "../../utils/navigation";
@@ -28,8 +28,10 @@ import viewStyles from "../viewStyles.js";
 import { Alert, Loading } from "../components";
 import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
+import { usersAction } from "../../store/action";
 import theme from "../../theme/index";
 const AllUsersComponent = () => {
+  const navigate = useNavigate();
   const classes = viewStyles();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
@@ -47,7 +49,7 @@ const AllUsersComponent = () => {
 
   useEffect(() => {
     if (isEmpty(UsersState.users)) {
-      // dispatch(usersAction());
+      dispatch(usersAction());
     }
   }, []);
 
@@ -113,7 +115,7 @@ const AllUsersComponent = () => {
                             <IconButton
                               aria-label="Edit"
                               onClick={() =>
-                                jumpTo(
+                                navigate(
                                   `${client_app_route_url}edit-user/${user.id}`
                                 )
                               }
@@ -139,9 +141,9 @@ const AllUsersComponent = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={UsersState.users.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
+                count={UsersState.users.length || 0}
+                rowsPerPage={rowsPerPage || 10}
+                page={page || 0}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
               />

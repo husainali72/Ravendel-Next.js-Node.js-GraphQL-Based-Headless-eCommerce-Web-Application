@@ -20,6 +20,8 @@ import {
 } from "../components";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
+import { useNavigate, useParams } from "react-router-dom";
+import { get } from "lodash";
 var defaultObj = {
   id: "",
   name: "",
@@ -28,33 +30,39 @@ var defaultObj = {
   password: "",
 };
 
-const EditUserComponent = (props) => {
-  const USER_ID =
-    props.match.params && props.match.params.id ? props.match.params.id : "";
+const EditUserComponent = ({ params }) => {
+  const User_id = params.id || "";
   const classes = viewStyles();
+  const navigate = useNavigate();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
-    if (isEmpty(UsersState.users)) {
+    if (isEmpty(get(UsersState, "users"))) {
       dispatch(usersAction());
     }
   }, []);
 
   useEffect(() => {
+    setloading(get(UsersState, "loading"));
+  }, [get(UsersState, "loading")]);
+
+  useEffect(() => {
     document.forms[0].reset();
     setuser(defaultObj);
-    UsersState.users.map((edituser) => {
-      if (edituser.id === USER_ID) {
-        setuser({ ...edituser });
-        if (edituser.image && edituser.image.original) {
-          setfeatureImage(bucketBaseURL + edituser.image.original);
+    if (!isEmpty(get(UsersState, "users"))) {
+      UsersState.users.map((edituser) => {
+        if (edituser.id === User_id) {
+          setuser({ ...edituser });
+          if (edituser.image && edituser.image.original) {
+            setfeatureImage(bucketBaseURL + edituser.image.original);
+          }
         }
-      }
-    });
-  }, [UsersState.users]);
+      });
+    }
+  }, [get(UsersState, "users")]);
 
   const fileChange = (e) => {
     setuser({ ...user, ["updatedImage"]: e.target.files[0] });
@@ -64,7 +72,7 @@ const EditUserComponent = (props) => {
 
   const updateUser = (e) => {
     e.preventDefault();
-    dispatch(userUpdateAction(user));
+    dispatch(userUpdateAction(user, navigate));
   };
 
   const handleChange = (e) => {
@@ -74,7 +82,7 @@ const EditUserComponent = (props) => {
   return (
     <>
       <Alert />
-      {UsersState.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
 
       <form>
         <TopBar
@@ -131,7 +139,7 @@ const EditUserComponent = (props) => {
                         "Manager",
                         "Editor",
                         "Author",
-                        "User",
+                        "USER",
                       ]}
                       name="role"
                       value={user.role}
@@ -148,9 +156,10 @@ const EditUserComponent = (props) => {
 };
 
 export default function EditUser() {
+  const params = useParams();
   return (
     <ThemeProvider theme={theme}>
-      <EditUserComponent />
+      <EditUserComponent params={params} />
     </ThemeProvider>
   );
 }

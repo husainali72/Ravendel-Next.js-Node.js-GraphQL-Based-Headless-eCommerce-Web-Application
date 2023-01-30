@@ -30,7 +30,7 @@ export const couponsAction = () => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -47,7 +47,7 @@ export const couponsAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -69,7 +69,7 @@ export const couponAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -86,7 +86,7 @@ export const couponAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -109,7 +109,7 @@ export const couponAddAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -128,12 +128,12 @@ export const couponAddAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
-export const couponUpdateAction = (object) => (dispatch) => {
+export const couponUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: COUPON_LOADING,
   });
@@ -150,13 +150,13 @@ export const couponUpdateAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
       if (success) {
         dispatch(couponsAction());
-
+        navigate(`${client_app_route_url}all-coupons`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
@@ -169,7 +169,7 @@ export const couponUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -191,7 +191,7 @@ export const couponDeleteAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -209,7 +209,7 @@ export const couponDeleteAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };

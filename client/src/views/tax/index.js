@@ -29,6 +29,7 @@ import AllTaxesComponent from "./components/all-taxes";
 import TaxFormComponent from "./components/tax-form";
 import viewStyles from "../viewStyles.js";
 import theme from "../../theme";
+import { taxAction } from "../../store/action/";
 import { ThemeProvider } from "@mui/material/styles";
 var TaxObject = {
   name: "",
@@ -51,13 +52,13 @@ const TaxComponent = () => {
 
   useEffect(() => {
     if (isEmpty(taxState.tax.tax_class)) {
-      // dispatch(taxAction());
+      dispatch(taxAction());
     }
   }, []);
 
   useEffect(() => {
     if (taxGlobal.overwrite) {
-      // dispatch(productsAction());
+      dispatch(productsAction());
     }
     settaxOption(taxState.tax.is_inclusive ? "inclusive" : "exclusive");
     settaxGlobal({ ...taxGlobal, ...taxState.tax.global });

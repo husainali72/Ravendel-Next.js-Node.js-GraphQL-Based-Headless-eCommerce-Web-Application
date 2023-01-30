@@ -83,11 +83,11 @@ const AllShippingComponentComponent = ({
       <TablePagination
         rowsPerPageOptions={[5, 10, 20]}
         component="div"
-        count={shippingState.shipping.shipping_class.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        count={shippingState.shipping.shipping_class.length || 0}
+        rowsPerPage={rowsPerPage || 10}
+        page={page || 0}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </CardBlocks>
   );

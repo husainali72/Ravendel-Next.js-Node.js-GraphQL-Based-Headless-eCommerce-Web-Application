@@ -11,7 +11,7 @@ import {
 } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import jumpTo from "../../utils/navigation";
+
 import { useNavigate } from "react-router-dom";
 
 export const ordersAction = () => (dispatch) => {
@@ -31,7 +31,7 @@ export const ordersAction = () => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -48,7 +48,7 @@ export const ordersAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -58,7 +58,7 @@ export const orderAction = (id) => (dispatch) => {
     type: ORDER_LOADING,
   });
 
-  query(GET_ORDER, id)
+  query(GET_ORDER, { id: id })
     .then((response) => {
       const [error, success, message, data] = getResponseHandler(
         response,
@@ -71,7 +71,7 @@ export const orderAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -88,7 +88,7 @@ export const orderAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -112,7 +112,7 @@ export const orderDeleteAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -131,15 +131,16 @@ export const orderDeleteAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
-export const orderUpdateAction = (object) => (dispatch) => {
+export const orderUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: ORDER_LOADING,
   });
+
   mutation(UPDATE_ORDER, object)
     .then((response) => {
       const [error, success, message, data] = mutationResponseHandler(
@@ -153,13 +154,13 @@ export const orderUpdateAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
       if (success) {
+        navigate(`${client_app_route_url}all-orders`);
         dispatch(ordersAction());
-        // jumpTo(`${client_app_route_url}all-orders`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
@@ -172,7 +173,7 @@ export const orderUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };

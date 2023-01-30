@@ -25,7 +25,6 @@ const Alerts = () => {
     }
   }, [alert.success]);
 
-
   useEffect(() => {
     if (alert.error) {
       setisOpen(true);
@@ -49,11 +48,14 @@ const Alerts = () => {
       }}
       sx={{ mt: "100px" }}
     >
-      {(alert.error || alert.success) && alert.message ? 
-        <Alert severity={alert.success ? 'success' : 'error'} sx={{ width: "100%" }}>
+      {(alert.error || alert.success) && alert.message ? (
+        <Alert
+          severity={alert.success ? "success" : "error"}
+          sx={{ width: "100%" }}
+        >
           {alert.message}
         </Alert>
-      : null}
+      ) : null}
     </Snackbar>
   );
 };

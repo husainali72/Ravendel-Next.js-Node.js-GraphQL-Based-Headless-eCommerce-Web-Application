@@ -31,7 +31,7 @@ import {
   CardBlocks,
   CardBlocksWithAction,
 } from "../components";
-
+import { blogtagsAction } from "../../store/action/";
 var tagObject = {
   name: "",
   url: "",
@@ -55,7 +55,7 @@ const AllTagsComponent = () => {
   };
 
   useEffect(() => {
-    // dispatch(blogtagsAction());
+    dispatch(blogtagsAction());
   }, []);
 
   const editTag = (tag) => {
@@ -139,11 +139,11 @@ const AllTagsComponent = () => {
             <TablePagination
               rowsPerPageOptions={[5, 10, 20]}
               component="div"
-              count={blogState.tags.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onChangePage={handleChangePage}
-              onChangeRowsPerPage={handleChangeRowsPerPage}
+              count={blogState.tags.length || 0}
+              rowsPerPage={rowsPerPage || 10}
+              page={page || 0}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </CardBlocks>
         </Grid>

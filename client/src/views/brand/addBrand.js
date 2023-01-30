@@ -9,6 +9,7 @@ import { Loading, TopBar, Alert, CardBlocks } from "../components";
 import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer.js";
 const AddBrandsComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -17,12 +18,23 @@ const AddBrandsComponent = () => {
 
   const addBrands = () => {
     var string = newBrands;
-    var newBrandArr = string.split("\n").map((brand) => {
-      return {
-        name: brand,
-      };
-    });
-    dispatch(brandAddAction({ brands: newBrandArr }));
+    if (string) {
+      var newBrandArr = string.split("\n").map((brand) => {
+        return {
+          name: brand,
+        };
+      });
+      dispatch(brandAddAction({ brands: newBrandArr }));
+    } else {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: "please fill the required field",
+          error: true,
+        },
+      });
+    }
   };
 
   const handleChange = (e) => {

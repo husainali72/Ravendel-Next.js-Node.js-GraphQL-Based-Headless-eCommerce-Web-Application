@@ -16,16 +16,14 @@ import {
   Avatar,
   Button,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { blogDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
 import { isEmpty, bucketBaseURL } from "../../utils/helper";
 import Alerts from "../components/Alert";
 import PeopleIcon from "@mui/icons-material/People";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-
 import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import { Loading } from "../components";
@@ -39,7 +37,7 @@ const AllBlogComponent = () => {
   const blogs = useSelector((state) => state.blogs);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (isEmpty(blogs.blogs)) {
       dispatch(blogsAction());
@@ -131,7 +129,7 @@ const AllBlogComponent = () => {
                             <IconButton
                               aria-label="Edit"
                               onClick={() =>
-                                jumpTo(
+                                navigate(
                                   `${client_app_route_url}edit-blog/${blog.id}`
                                 )
                               }
@@ -157,11 +155,11 @@ const AllBlogComponent = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={blogs.blogs.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
+                count={blogs.blogs.length || 0}
+                rowsPerPage={rowsPerPage || 10}
+                page={page || 0}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </CardContent>
           </Card>

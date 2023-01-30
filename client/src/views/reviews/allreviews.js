@@ -26,8 +26,10 @@ import { Loading } from "../components";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
+import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 const AllReviewsComponent = () => {
+  const navigate = useNavigate();
   const classes = viewStyles();
   const dispatch = useDispatch();
   const reviewState = useSelector((state) => state.reviews);
@@ -112,7 +114,7 @@ const AllReviewsComponent = () => {
                               <IconButton
                                 aria-label="Edit"
                                 onClick={() =>
-                                  jumpTo(
+                                  navigate(
                                     `${client_app_route_url}edit-review/${review.id}`
                                   )
                                 }
@@ -140,11 +142,11 @@ const AllReviewsComponent = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={reviewState.reviews.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
+                count={reviewState.reviews.length || 0}
+                rowsPerPage={rowsPerPage || 10}
+                page={page || 0}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </CardContent>
           </Card>
