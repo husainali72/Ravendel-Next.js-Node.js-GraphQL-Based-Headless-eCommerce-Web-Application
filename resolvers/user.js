@@ -12,7 +12,9 @@ const {
   MESSAGE_RESPONSE,
   _validate,
   checkRole,
-  duplicateData
+  duplicateData,
+  populateYearMonth,
+  populateSales
 } = require("../config/helpers");
 
 const {
@@ -24,7 +26,7 @@ const {
   UPDATE_FUNC,
 } = require("../config/api_functions");
 const bcrypt = require("bcryptjs");
-
+const moment = require('moment')
 const fs = require("fs");
 const {checkAwsFolder} = require("../config/aws");
 
@@ -33,6 +35,8 @@ var ldir = "./assets/images/user/large";
 var mdir = "./assets/images/user/medium";
 var tdir = "./assets/images/user/thumbnail";
 var odir = "./assets/images/user/original";
+
+const roleOptions = ["USER", "AUTHOR", "SUBSCRIBER", "MANAGER", "EDITOR"]
 
 if (!fs.existsSync(udir)) {
   fs.mkdirSync(udir);
@@ -97,21 +101,75 @@ module.exports = {
     },
     dashboardData: async (root, args) => {
       try {
-        const dashboardData = {}
+        // calculate total sales
         let totalSales = 0;
-        dashboardData.productCount = await Product.countDocuments({
-          status: "Publish",
-        });
-        dashboardData.userCount = await User.countDocuments({});
-        dashboardData.customerCount = await Customer.countDocuments({});
-        dashboardData.latestProducts = await Product.find({})
-          .sort({ date: "desc" })
-          .limit(2);
-        let existingOrderSales = await Order.find({})
-        existingOrderSales = existingOrderSales.map(orderSale=>{
+        const existingOrders = await Order.find({})
+        existingOrders.map(orderSale=>{
           totalSales += orderSale.grand_total
         })
+        // orders and sales by year and month
+        const ordersByYearMonth = []
+        for(let order of existingOrders){
+          let paymentSuccessSubTotal = order.payment_status !== "success" ? 0 : order.subtotal
+          let paymentSuccessGrandTotal = order.payment_status !== "success" ? 0 : order.grand_total
+          let orderMonth = order.date.getMonth()
+          let orderYear = order.date.getFullYear()
+          // if year array is empty add new year with month
+          if(!ordersByYearMonth.length){
+            let populateYear = populateYearMonth(order, orderYear, orderMonth, paymentSuccessSubTotal, paymentSuccessGrandTotal, true)
+            ordersByYearMonth.push(populateYear)
+          }
+          // else add data in existing year array
+          else{
+            // find existing year
+            let existingYear = ordersByYearMonth.find(year=>(year.year === orderYear) ? year : false)
+            // if existing year and order year matches then
+            if(existingYear){
+              // find existing month
+              let existingMonth = existingYear.months.find(month=>(month.month === moment(orderMonth+1, "MM").format("MMM")) ? month : false)
+              // if existing month and order month matches then add order in that month
+              if(existingMonth){
+                existingMonth.orders.push(order)
+                // set sales figure in month
+                populateSales(existingMonth, order, paymentSuccessSubTotal, paymentSuccessGrandTotal)
+              }
+              // else add new month
+              else{
+                let populateMonth = populateYearMonth(order, orderYear, orderMonth, paymentSuccessSubTotal, paymentSuccessGrandTotal, false)
+                existingYear.months.push(populateMonth)
+              }
+              // set sales figure in year
+              populateSales(existingYear, order, paymentSuccessSubTotal, paymentSuccessGrandTotal)
+            }
+            // else add new year with month
+            else{
+              let populateYear = populateYearMonth(order, orderYear, orderMonth, paymentSuccessSubTotal, paymentSuccessGrandTotal, true)
+              ordersByYearMonth.push(populateYear)
+            }
+          }
+        }
+        // sort year and months
+        ordersByYearMonth.sort((year1, year2)=>{
+          year1.months.sort((month1, month2)=>{
+            // sort months in ascending order - jan, feb, mar...
+            return moment().month(month1.month).format("M") - moment().month(month2.month).format("M")
+          })
+          year2.months.sort((month1, month2)=>{
+            // sort months in ascending order - jan, feb, mar...
+            return moment().month(month1.month).format("M") - moment().month(month2.month).format("M")
+          })
+          // sort years in decsending order - 2023, 2022, 2021...
+          return Number.parseInt(year2.year) - Number.parseInt(year1.year)
+        })
+        // insert values to dashboard object
+        const dashboardData = {}
+        dashboardData.productCount = await Product.countDocuments({status: "Publish"});
+        dashboardData.userCount = await User.countDocuments({});
+        dashboardData.customerCount = await Customer.countDocuments({});
+        dashboardData.latestProducts = await Product.find({}).sort({ date: "desc" }).limit(2);
+        dashboardData.latestOrders = existingOrders.reverse().splice(0, 2)
         dashboardData.totalSales = totalSales
+        dashboardData.ordersByYearMonth = ordersByYearMonth
         return dashboardData 
       } catch (error) {
         error = checkError(error);
@@ -140,6 +198,8 @@ module.exports = {
     addUser: async (root, args, { id }) => {
       await checkAwsFolder('user');
       let path = "/assets/images/user/";
+      const result = checkRole(args.role, roleOptions)
+      if(result.success) args.role = result.role
       let data = {
         name: args.name,
         email: args.email,
@@ -164,7 +224,7 @@ module.exports = {
         if(!result) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
 
         if(args.role){
-          const result = checkRole(args.role)
+          const result = checkRole(args.role, roleOptions)
           if(result.success) args.role = result.role
           else return MESSAGE_RESPONSE("InvalidRole", "User", false);
         }

@@ -310,54 +310,10 @@ const SeetingSchema = new Schema(
             type: String
           }
         },
-        add_section_web: [
-          {
-            label: {
-              type: String
-            },
-            name: {
-              type: String
-            },
-            category: {
-              type: String
-            },
-            visible: {
-              type: Boolean
-            },
-          }
-        ]
+        add_section_web: []
       },
       mobile: {
-        mobile_section: [
-          {
-            label: {
-              type: String,
-            },
-            section_img: {
-              original: {
-                type: String,
-              },
-              large: {
-                type: String,
-              },
-              medium: {
-                type: String,
-              },
-              thumbnail: {
-                type: String,
-              },
-            },
-            visible: {
-              type: Boolean,
-            },
-            url: {
-              type: String,
-            },
-            category: {
-              type: String
-            }
-          }
-        ],
+        mobile_section: [],
       },
       theme: {
         primary_color: {
@@ -588,10 +544,10 @@ module.exports.createSettings = async () => {
           {
             label: "Featured Product",
             section_img: {
-              original: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              medium: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              original: "",
+              medium: "",
+              large: "",
+              thumbnail: "",
             },
             visible: false,
             url: "feature_product",
@@ -599,10 +555,10 @@ module.exports.createSettings = async () => {
           {
             label: "Recently Added Products",
             section_img: {
-              original: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              medium: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              original: "",
+              medium: "",
+              large: "",
+              thumbnail: "",
             },
             visible: false,
             url: "recently_added_products",
@@ -610,10 +566,10 @@ module.exports.createSettings = async () => {
           {
             label: "Products On Sales",
             section_img: {
-              original: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              medium: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              original: "",
+              medium: "",
+              large: "",
+              thumbnail: "",
             },
             visible: false,
             url: "products_on_sales",
@@ -621,10 +577,10 @@ module.exports.createSettings = async () => {
           {
             label: "Product Recommendation",
             section_img: {
-              original: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              medium: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              original: "",
+              medium: "",
+              large: "",
+              thumbnail: "",
             },
             visible: false,
             url: "product_recommendation",
@@ -632,10 +588,10 @@ module.exports.createSettings = async () => {
           {
             label: "Product from Specific Categories",
             section_img: {
-              original: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              medium: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              large: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              thumbnail: "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
+              original: "",
+              medium: "",
+              large: "",
+              thumbnail: "",
             },
             visible: false,
             url: "product_from_specific_categories",

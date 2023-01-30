@@ -113,7 +113,7 @@ const AddUserComponent = () => {
                         "Manager",
                         "Editor",
                         "Author",
-                        "User",
+                        "USER",
                       ]}
                       name="role"
                       value={user.role}

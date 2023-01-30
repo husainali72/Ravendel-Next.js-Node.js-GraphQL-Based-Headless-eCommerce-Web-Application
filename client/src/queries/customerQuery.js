@@ -22,7 +22,7 @@ const GET_CUSTOMERS = gql`
 `;
 
 const GET_CUSTOMER = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     customer(id: $id) {
       id
       first_name
@@ -67,7 +67,7 @@ const GET_CUSTOMER = gql`
 //   }
 // `;
 const ADD_CUSTOMER = gql`
-  mutation(
+  mutation (
     $first_name: String
     $last_name: String
     $email: String
@@ -131,7 +131,7 @@ const ADD_CUSTOMER = gql`
 //   }
 // `;
 const ADD_ADDRESSBOOK = gql`
-  mutation(
+  mutation (
     $id: ID!
     $first_name: String
     $last_name: String
@@ -197,14 +197,13 @@ const ADD_ADDRESSBOOK = gql`
 //   }
 // `;
 const UPDATE_CUSTOMER = gql`
-  mutation(
+  mutation (
     $id: ID!
     $first_name: String
     $last_name: String
     $email: String
     $company: String
     $phone: String
-    $password: String
   ) {
     updateCustomer(
       id: $id
@@ -213,7 +212,6 @@ const UPDATE_CUSTOMER = gql`
       email: $email
       company: $company
       phone: $phone
-      password: $password
     ) {
       message
       success
@@ -265,7 +263,7 @@ const UPDATE_CUSTOMER = gql`
 //   }
 // `;
 const UPDATE_ADDRESSBOOK = gql`
-  mutation(
+  mutation (
     $id: ID!
     $_id: ID!
     $first_name: String
@@ -317,7 +315,7 @@ const UPDATE_ADDRESSBOOK = gql`
 //   }
 // `;
 const DELETE_CUSTOMER = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     deleteCustomer(id: $id) {
       message
       success
@@ -341,7 +339,7 @@ const DELETE_CUSTOMER = gql`
 //   }
 // `;
 const DELETE_ADDRESSBOOK = gql`
-  mutation($id: ID!, $_id: ID!) {
+  mutation ($id: ID!, $_id: ID!) {
     deleteAddressBook(id: $id, _id: $_id) {
       message
       success
@@ -357,5 +355,5 @@ export {
   DELETE_CUSTOMER,
   ADD_ADDRESSBOOK,
   UPDATE_ADDRESSBOOK,
-  DELETE_ADDRESSBOOK
+  DELETE_ADDRESSBOOK,
 };

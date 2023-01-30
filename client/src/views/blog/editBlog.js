@@ -34,7 +34,8 @@ import {
   TinymceEditor,
 } from "../components";
 import { useNavigate, useParams } from "react-router-dom";
-
+import Alerts from "../components/Alert";
+import { get } from "lodash";
 const defaultObj = {
   title: "",
   url: "",
@@ -48,8 +49,9 @@ const defaultObj = {
     keywords: "",
   },
 };
-const EditBlogComponenet = (props) => {
+const EditBlogComponenet = ({ params }) => {
   const classes = viewStyles();
+  const Id = params.id || "";
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
@@ -57,15 +59,17 @@ const EditBlogComponenet = (props) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
+  const [loading, setloading] = useState(false);
   const navigate = useNavigate();
+
   useEffect(() => {
-    if (!isEmpty(props.match.params.id)) {
-      dispatch(blogAction(props.match.params.id));
+    if (Id !== blogState.blog.id) {
+      dispatch(blogAction(Id));
     }
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(blogState.blog)) {
+    if (!isEmpty(get(blogState, "blog"))) {
       setBlog({ ...blog, ...blogState.blog });
       if (
         blogState.blog.feature_image &&
@@ -75,10 +79,13 @@ const EditBlogComponenet = (props) => {
       }
       dispatch(blogtagsAction());
     }
-  }, [blogState.blog]);
+  }, [get(blogState, "blog")]);
+  useEffect(() => {
+    setloading(get(blogState, "loading"));
+  }, [get(blogState, "loading")]);
 
   useEffect(() => {
-    if (!isEmpty(blogState.tags)) {
+    if (!isEmpty(get(blogState, "tags"))) {
       setTimeout(() => {
         var defaultTags = [];
         const tagObj = blogState.tags.map((tag) => {
@@ -97,7 +104,7 @@ const EditBlogComponenet = (props) => {
         setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
       }, 1000);
     }
-  }, [blogState.tags]);
+  }, [get(blogState, "tags")]);
 
   const tagChange = (e) => {
     setBlog({
@@ -131,7 +138,9 @@ const EditBlogComponenet = (props) => {
 
   return (
     <Fragment>
-      {blogState.loading ? <Loading /> : null}
+      <Alerts />
+
+      {loading ? <Loading /> : null}
       <form>
         <TopBar
           title="Edit Blog"
@@ -266,7 +275,7 @@ const EditBlogComponenet = (props) => {
   );
 };
 
-const EditBlog = (props) => {
+const EditBlog = () => {
   const params = useParams();
 
   return (

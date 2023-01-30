@@ -35,7 +35,7 @@ export const customersAction = () => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -52,7 +52,7 @@ export const customersAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -74,7 +74,7 @@ export const customerAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -91,7 +91,7 @@ export const customerAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -117,7 +117,7 @@ export const customerAddAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -136,7 +136,7 @@ export const customerAddAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -162,7 +162,7 @@ export const addressbookAddAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -181,7 +181,7 @@ export const addressbookAddAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -205,11 +205,11 @@ export const customerUpdateAction = (object, navigate) => (dispatch) => {
       dispatch({
         type: LOADING_FALSE,
       });
-
+      console.log(error, message);
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -229,7 +229,7 @@ export const customerUpdateAction = (object, navigate) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -255,7 +255,7 @@ export const addressbookUpdateAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -274,7 +274,7 @@ export const addressbookUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -300,7 +300,7 @@ export const customerDeleteAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -319,7 +319,7 @@ export const customerDeleteAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -345,7 +345,7 @@ export const addressbookDeleteAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -363,7 +363,7 @@ export const addressbookDeleteAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };

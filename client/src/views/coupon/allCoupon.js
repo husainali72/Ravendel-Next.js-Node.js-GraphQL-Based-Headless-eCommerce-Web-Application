@@ -151,9 +151,9 @@ const AllCouponsTheme = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={Coupons.coupons.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
+                count={Coupons.coupons.length || 0}
+                rowsPerPage={rowsPerPage || 10}
+                page={page || 0}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
               />

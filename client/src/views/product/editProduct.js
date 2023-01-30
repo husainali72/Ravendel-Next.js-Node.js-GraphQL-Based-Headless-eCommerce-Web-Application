@@ -49,19 +49,20 @@ import {
 } from "./components";
 import viewStyles from "../viewStyles";
 import theme from "../../theme";
-import { useParams } from "react-router-dom";
-
-//var catIds = [];
+import { useNavigate, useParams } from "react-router-dom";
+import { get } from "lodash";
 const EditProductComponent = ({ params }) => {
+  const Product_id = params.id || "";
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const productState = useSelector((state) => state.products);
-
+  const navigate = useNavigate();
   const brandState = useSelector((state) => state.brands);
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
+  const [loading, setloading] = useState(false);
   const [product, setProduct] = useState({
     _id: "",
     name: "",
@@ -101,48 +102,56 @@ const EditProductComponent = ({ params }) => {
   });
 
   useEffect(() => {
-    if (isEmpty(productState.product)) {
-      dispatch(productAction(params.id));
+    if (product.id !== Product_id) {
+      dispatch(productAction(Product_id));
     }
+
     dispatch(brandsAction());
     dispatch(categoriesAction());
   }, []);
+  useEffect(() => {
+    setloading(get(productState, "loading"));
+  }, [get(productState, "loading")]);
 
   useEffect(() => {
-    if (!isEmpty(productState.product)) {
-      let defaultBrand = {};
-      if (productState.product.brand) {
-        for (let i in brandState.brands) {
-          if (brandState.brands[i].id === productState.product.brand.id) {
-            defaultBrand = {
-              value: brandState.brands[i].id,
-              label: brandState.brands[i].name,
-            };
+    if (!isEmpty(get(productState, "product"))) {
+      if (!isEmpty(productState.product)) {
+        let defaultBrand = {};
+        if (productState.product.brand) {
+          if (!isEmpty(get(brandState, "brands"))) {
+            for (let i in brandState.brands) {
+              if (brandState.brands[i].id === productState.product.brand.id) {
+                defaultBrand = {
+                  value: brandState.brands[i].id,
+                  label: brandState.brands[i].name,
+                };
 
-            break;
+                break;
+              }
+            }
           }
         }
-      }
-      setProduct({
-        ...product,
-        ...productState.product,
-        categoryId: productState.product.categoryId.map((cat) => cat.id),
-        brand: defaultBrand || "",
-      });
+        setProduct({
+          ...product,
+          ...productState.product,
+          categoryId: productState.product.categoryId.map((cat) => cat.id),
+          brand: defaultBrand || "",
+        });
 
-      if (productState.product.feature_image.original) {
-        setfeatureImage(
-          bucketBaseURL + productState.product.feature_image.original
-        );
+        if (productState.product.feature_image.original) {
+          setfeatureImage(
+            bucketBaseURL + productState.product.feature_image.original
+          );
+        }
       }
     }
-  }, [productState]);
+  }, [get(productState, "product")]);
 
   const updateProduct = (e) => {
     e.preventDefault();
     product.combinations = combination;
 
-    dispatch(productUpdateAction(product));
+    dispatch(productUpdateAction(product, navigate));
   };
 
   const handleChange = (e) => {
@@ -204,7 +213,7 @@ const EditProductComponent = ({ params }) => {
   return (
     <>
       <Alert />
-      {productState.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
       <form>
         <TopBar
           title="Edit Product"

@@ -19,6 +19,8 @@ import {
   shippingClassAddAction,
   shippingClassUpdateAction,
   shippingClassDeleteAction,
+  shippingAction,
+  productsAction,
 } from "../../store/action/";
 import { useSelector, useDispatch } from "react-redux";
 import { Alert, Loading } from "../components";
@@ -27,6 +29,7 @@ import AllShippingComponent from "./components/all-shippings";
 import ShippingFormComponent from "./components/shipping-form";
 import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
+
 var ShippingObject = {
   name: "",
   amount: "",
@@ -49,13 +52,13 @@ const ShippingComponent = () => {
 
   useEffect(() => {
     if (isEmpty(shippingState.shipping.shipping_class)) {
-      // dispatch(shippingAction());
+      dispatch(shippingAction());
     }
   }, []);
 
   useEffect(() => {
     if (shippingGlobal.overwrite) {
-      // dispatch(productsAction());
+      dispatch(productsAction());
     }
     setshippingGlobal({
       ...shippingGlobal,

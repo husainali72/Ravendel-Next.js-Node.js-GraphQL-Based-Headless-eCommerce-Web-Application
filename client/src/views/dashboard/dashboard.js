@@ -35,6 +35,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { currencyFormat } from "../order/CurrencyFormat";
 const chartdata = [
   { year: "1950", population: 2.525 },
   { year: "1960", population: 3.018 },
@@ -189,8 +190,10 @@ const DashboardComponent = () => {
           />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
+          {/* count={currencyFormat(dashBoardCount.totalSales)} */}
+
           <DashboardCard
-            count={`$${dashBoardCount.totalSales}`}
+            count={currencyFormat(dashBoardCount.totalSales)}
             title={"TOTAL SALES"}
             Icon={({ className }) => (
               <AttachMoneyOutlinedIcon className={className} />

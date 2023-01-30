@@ -32,7 +32,7 @@ export const reviewsAction = () => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -49,7 +49,7 @@ export const reviewsAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -71,7 +71,7 @@ export const reviewAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -88,7 +88,7 @@ export const reviewAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -110,7 +110,7 @@ export const reviewAddAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -128,12 +128,12 @@ export const reviewAddAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
-export const reviewUpdateAction = (object) => (dispatch) => {
+export const reviewUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: REVIEW_LOADING,
   });
@@ -151,12 +151,12 @@ export const reviewUpdateAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
       if (success) {
-        jumpTo(`${client_app_route_url}reviews`);
+        navigate(`${client_app_route_url}reviews`);
         dispatch(reviewsAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -170,7 +170,7 @@ export const reviewUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -192,7 +192,7 @@ export const reviewDeleteAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -210,7 +210,7 @@ export const reviewDeleteAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };

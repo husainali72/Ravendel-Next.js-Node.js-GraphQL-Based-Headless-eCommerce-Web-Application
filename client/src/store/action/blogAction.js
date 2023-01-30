@@ -52,7 +52,7 @@ export const blogsAction = () => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
 
         return dispatch({
@@ -73,7 +73,7 @@ export const blogsAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -95,7 +95,7 @@ export const blogAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
 
         return dispatch({
@@ -116,12 +116,12 @@ export const blogAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
-export const blogAddAction = (object) => (dispatch) => {
+export const blogAddAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: BLOG_LOADING,
   });
@@ -138,7 +138,7 @@ export const blogAddAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
 
         return dispatch({
@@ -147,58 +147,6 @@ export const blogAddAction = (object) => (dispatch) => {
       }
 
       if (success) {
-        // navigate(`${client_app_route_url}all-blogs`);
-        dispatch(blogsAction());
-        return dispatch({
-          type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: false },
-        });
-      }
-    })
-    .catch((error) => {
-      dispatch({
-        type: BLOG_FAIL,
-      });
-
-      dispatch({
-        type: TINYMCE_NULL,
-        payload: {},
-      });
-
-      return dispatch({
-        type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
-      });
-    });
-};
-
-export const blogUpdateAction = (object, navigate) => (dispatch) => {
-  dispatch({
-    type: BLOG_LOADING,
-  });
-  mutation(UPDATE_BLOG, object)
-    .then((response) => {
-      const [error, success, message, data] = mutationResponseHandler(
-        response,
-        "updateBlog"
-      );
-      dispatch({
-        type: LOADING_FALSE,
-      });
-
-      if (error) {
-        dispatch({
-          type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
-        });
-
-        return dispatch({
-          type: BLOGTAG_FAIL,
-        });
-      }
-
-      if (success) {
-        // jumpTo(`${client_app_route_url}all-blogs`);
         navigate(`${client_app_route_url}all-blogs`);
         dispatch(blogsAction());
         return dispatch({
@@ -219,7 +167,59 @@ export const blogUpdateAction = (object, navigate) => (dispatch) => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
+
+export const blogUpdateAction = (object, navigate) => (dispatch) => {
+  dispatch({
+    type: BLOG_LOADING,
+  });
+
+  mutation(UPDATE_BLOG, object)
+    .then((response) => {
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "updateBlog"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: false, message: message, error: true },
+        });
+
+        return dispatch({
+          type: BLOGTAG_FAIL,
+        });
+      }
+
+      if (success) {
+        navigate(`${client_app_route_url}all-blogs`);
+        dispatch(blogsAction());
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: BLOG_FAIL,
+      });
+
+      dispatch({
+        type: TINYMCE_NULL,
+        payload: {},
+      });
+
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -241,7 +241,7 @@ export const blogDeleteAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
 
         return dispatch({
@@ -263,7 +263,7 @@ export const blogDeleteAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -287,7 +287,7 @@ export const blogtagsAction = () => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
 
         return dispatch({
@@ -308,7 +308,7 @@ export const blogtagsAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -330,7 +330,7 @@ export const blogtagAddAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
 
         return dispatch({
@@ -353,7 +353,7 @@ export const blogtagAddAction = (object) => (dispatch) => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -375,7 +375,7 @@ export const blogtagUpdateAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
 
         return dispatch({
@@ -398,7 +398,7 @@ export const blogtagUpdateAction = (object) => (dispatch) => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -420,7 +420,7 @@ export const blogtagDeleteAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
 
         return dispatch({
@@ -442,7 +442,7 @@ export const blogtagDeleteAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };

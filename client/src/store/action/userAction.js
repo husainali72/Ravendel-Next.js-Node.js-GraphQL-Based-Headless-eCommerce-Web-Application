@@ -9,8 +9,6 @@ import {
 import { client_app_route_url } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import jumpTo from "../../utils/navigation";
-
 export const usersAction = () => (dispatch) => {
   dispatch({
     type: USER_LOADING,
@@ -26,7 +24,7 @@ export const usersAction = () => (dispatch) => {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
-            boolean: true,
+            boolean: false,
             message: response.data.users.message.message,
             error: true,
           },
@@ -39,7 +37,7 @@ export const usersAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -63,7 +61,7 @@ export const userAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -72,14 +70,13 @@ export const userAddAction = (object) => (dispatch) => {
   dispatch({
     type: USER_LOADING,
   });
+
   mutation(ADD_USER, object)
     .then((response) => {
       if (response.data.addUser.success) {
         dispatch({
           type: USER_SUCCESS,
         });
-
-        // jumpTo(`${client_app_route_url}all-users`);
 
         dispatch(usersAction());
 
@@ -98,7 +95,7 @@ export const userAddAction = (object) => (dispatch) => {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
-            boolean: true,
+            boolean: false,
             message: response.data.addUser.message,
             error: true,
           },
@@ -111,22 +108,22 @@ export const userAddAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
-export const userUpdateAction = (object) => (dispatch) => {
+export const userUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: USER_LOADING,
   });
+
   mutation(UPDATE_USER, object)
     .then((response) => {
+      dispatch({
+        type: USER_FAIL,
+      });
       if (response.data.updateUser.success) {
-        dispatch({
-          type: USER_FAIL,
-        });
-
         dispatch({
           type: ALERT_SUCCESS,
           payload: {
@@ -136,7 +133,7 @@ export const userUpdateAction = (object) => (dispatch) => {
           },
         });
 
-        jumpTo(`${client_app_route_url}all-users`);
+        navigate(`${client_app_route_url}all-users`);
 
         dispatch(usersAction());
 
@@ -145,7 +142,7 @@ export const userUpdateAction = (object) => (dispatch) => {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
-            boolean: true,
+            boolean: false,
             message: response.data.updateUser.message,
             error: true,
           },
@@ -158,7 +155,7 @@ export const userUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -188,7 +185,7 @@ export const userDeleteAction = (id) => (dispatch) => {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
-            boolean: true,
+            boolean: false,
             message: response.data.deleteUser.message,
             error: true,
           },
@@ -201,7 +198,7 @@ export const userDeleteAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -220,7 +217,7 @@ export const dashboardAction = () => (dispatch) => {
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {
-            boolean: true,
+            boolean: false,
             message: response.data.dashboardData,
             error: true,
           },
@@ -233,7 +230,7 @@ export const dashboardAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };

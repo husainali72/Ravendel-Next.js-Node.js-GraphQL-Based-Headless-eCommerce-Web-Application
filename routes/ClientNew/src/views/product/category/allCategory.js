@@ -14,7 +14,7 @@ import {
   Tooltip,
   Box,
   TablePagination,
-} from"@mui/material";
+} from "@mui/material";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import viewStyles from "../../viewStyles.js";
@@ -35,7 +35,7 @@ import {
   URLComponent,
   TextInput,
   CardBlocks,
-  CardBlocksWithAction
+  CardBlocksWithAction,
 } from "../../components";
 
 var categoryObject = {
@@ -84,7 +84,7 @@ const AllCategory = (props) => {
     setEditmode(true);
     setfeaturedImage(null);
     if (cat.image && cat.image.original) {
-      setfeaturedImage( bucketBaseURL + cat.image.original);
+      setfeaturedImage(bucketBaseURL + cat.image.original);
     }
     setSingleCategory({ ...singlecategory, ...cat });
   };
@@ -137,12 +137,12 @@ const AllCategory = (props) => {
       {products.loading ? <Loading /> : null}
       <Grid container className={classes.mainrow} spacing={2}>
         <Grid item md={6} xs={12}>
-          <CardBlocks title='All Categories' nomargin>
+          <CardBlocks title="All Categories" nomargin>
             <TableContainer className={classes.container}>
               <Table
                 stickyHeader
-                aria-label='All-Categories-Table'
-                size='small'
+                aria-label="All-Categories-Table"
+                size="small"
               >
                 <TableHead>
                   <TableRow>
@@ -165,20 +165,20 @@ const AllCategory = (props) => {
                             {convertDateToStringFormat(cat.date)}
                           </TableCell>
                           <TableCell>
-                            <Tooltip title='Edit Category' aria-label='edit'>
+                            <Tooltip title="Edit Category" aria-label="edit">
                               <IconButton
-                                aria-label='Edit'
+                                aria-label="Edit"
                                 onClick={() => editCategory(cat)}
                               >
                                 <EditIcon />
                               </IconButton>
                             </Tooltip>
                             <Tooltip
-                              title='Delete Category'
-                              aria-label='delete'
+                              title="Delete Category"
+                              aria-label="delete"
                             >
                               <IconButton
-                                aria-label='Delete'
+                                aria-label="Delete"
                                 className={classes.deleteicon}
                                 onClick={() =>
                                   dispatch(categoryDeleteAction(cat.id))
@@ -196,10 +196,10 @@ const AllCategory = (props) => {
             </TableContainer>
             <TablePagination
               rowsPerPageOptions={[5, 10, 20]}
-              component='div'
-              count={categories.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
+              component="div"
+              count={categories.length || 0}
+              rowsPerPage={rowsPerPage || 10}
+              page={page || 0}
               onChangePage={handleChangePage}
               onChangeRowsPerPage={handleChangeRowsPerPage}
             />
@@ -216,9 +216,9 @@ const AllCategory = (props) => {
               nomargin
             >
               <TextField
-                label='Name'
-                name='name'
-                variant='outlined'
+                label="Name"
+                name="name"
+                variant="outlined"
                 className={clsx(classes.marginBottom, classes.width100)}
                 onChange={handleChange}
                 value={singlecategory.name}
@@ -227,7 +227,7 @@ const AllCategory = (props) => {
                 }
               />
 
-              <Box component='div' mb={singlecategory.url ? 2 : 0}>
+              <Box component="div" mb={singlecategory.url ? 2 : 0}>
                 <URLComponent
                   url={singlecategory.url}
                   onInputChange={(updatedUrl) => {
@@ -238,8 +238,8 @@ const AllCategory = (props) => {
                 />
               </Box>
 
-              <Box component='div' mb={2}>
-                <FormControl variant='outlined' fullWidth>
+              <Box component="div" mb={2}>
+                <FormControl variant="outlined" fullWidth>
                   <span className={classes.selectCatLabel}>Parent</span>
                   <Select
                     native
@@ -253,7 +253,7 @@ const AllCategory = (props) => {
                       name: "parentId",
                     }}
                   >
-                    <option value=''>---Select---</option>
+                    <option value="">---Select---</option>
                     {categories &&
                       categories.map((cat) => (
                         <option
@@ -276,29 +276,29 @@ const AllCategory = (props) => {
                 <Grid item className={classes.flex1}>
                   {editMode ? (
                     <TextField
-                      helperText='Featured Image'
-                      name='update_image'
-                      variant='outlined'
+                      helperText="Featured Image"
+                      name="update_image"
+                      variant="outlined"
                       className={clsx(
                         classes.marginBottom,
                         classes.width100,
                         "top-helper"
                       )}
                       onChange={fileChange}
-                      type='file'
+                      type="file"
                     />
                   ) : (
                     <TextField
-                      helperText='Featured Image'
-                      name='image'
-                      variant='outlined'
+                      helperText="Featured Image"
+                      name="image"
+                      variant="outlined"
                       className={clsx(
                         classes.marginBottom,
                         classes.width100,
                         "top-helper"
                       )}
                       onChange={fileChange}
-                      type='file'
+                      type="file"
                     />
                   )}
                 </Grid>
@@ -315,9 +315,9 @@ const AllCategory = (props) => {
               </Grid>
 
               <TextField
-                label='Short Description'
-                name='description'
-                variant='outlined'
+                label="Short Description"
+                name="description"
+                variant="outlined"
                 className={clsx(classes.marginBottom, classes.width100)}
                 multiline
                 rows={3}
@@ -325,11 +325,11 @@ const AllCategory = (props) => {
                 onChange={handleChange}
               />
 
-              <Box component='div' mb={2}>
+              <Box component="div" mb={2}>
                 <TextInput
                   value={singlecategory.meta.title}
-                  label='Meta Title'
-                  name='metatitle'
+                  label="Meta Title"
+                  name="metatitle"
                   onInputChange={(e) => {
                     setSingleCategory({
                       ...singlecategory,
@@ -342,11 +342,11 @@ const AllCategory = (props) => {
                 />
               </Box>
 
-              <Box component='div' mb={2}>
+              <Box component="div" mb={2}>
                 <TextInput
                   value={singlecategory.meta.keywords}
-                  label='Meta Keyword'
-                  name='metakeyword'
+                  label="Meta Keyword"
+                  name="metakeyword"
                   onInputChange={(e) => {
                     setSingleCategory({
                       ...singlecategory,
@@ -359,11 +359,11 @@ const AllCategory = (props) => {
                 />
               </Box>
 
-              <Box component='div' mb={2}>
+              <Box component="div" mb={2}>
                 <TextInput
                   value={singlecategory.meta.description}
-                  label='Meta Description'
-                  name='metadescription'
+                  label="Meta Description"
+                  name="metadescription"
                   onInputChange={(e) => {
                     setSingleCategory({
                       ...singlecategory,

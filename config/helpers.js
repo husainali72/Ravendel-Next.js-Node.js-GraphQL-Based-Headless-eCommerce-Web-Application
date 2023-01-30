@@ -1,5 +1,6 @@
 const Messages = require("./messages");
 const Validator = require("validator");
+const moment = require("moment")
 
 const { uploadFile, FileDelete } = require("../config/aws");
 
@@ -116,6 +117,7 @@ module.exports.updateUrl = updateUrl;
 const fs = require("fs");
 const Jimp = require("jimp");
 const sharp = require("sharp");
+const imgType = ["original", "large", "medium", "thumbnail"]
 
 //const path = require("path");
 //const pathToFile = path.dirname(require.main.filename);
@@ -311,7 +313,13 @@ const imageUpload = async (upload, uploadPath, nametype) => {
           const awslarge = await uploadFile(large, filename, awslargepath);
           const awsmedium = await uploadFile(medium, filename, awsmediumpath);
           const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
-
+          // delete file once uploaded on AWS
+          if(!awsoriginal || awsoriginal) {
+            imgType.map(type => {
+              let filePath = `.${uploadPath}${type}/${filename}`;
+              fs.unlinkSync(filePath);
+            })
+          }
           return resolve({
             success: true,
             data: {
@@ -486,10 +494,9 @@ const MESSAGE_RESPONSE = (type, item, success) => {
 };
 
 
-const checkRole = (role) => {
-  const userRoles = ["ADMIN", "USER"]
+const checkRole = (role, roleOptions) => {
   role = role.toUpperCase()
-  if(userRoles.includes(role)) return {role: role, success: true}
+  if(roleOptions.includes(role)) return {role: role, success: true}
   else return {success: false}
 }
 module.exports.checkRole = checkRole;
@@ -589,6 +596,39 @@ const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingMo
   }
 }
 module.exports.subTotalSummaryEntry = subTotalSummaryEntry
+
+const populateYearMonth = (order, orderYear, orderMonth, paymentSuccessSubTotal, paymentSuccessGrandTotal, year) => {
+  let monthObj = {
+    month: moment(orderMonth+1, "MM").format("MMM"),
+    orders: [order],
+    GrossSales: order.subtotal,
+    NetSales: order.grand_total,
+    paymentSuccessGrossSales: paymentSuccessSubTotal,
+    paymentSuccessNetSales: paymentSuccessGrandTotal
+  }
+  let yearObj = {
+    year: orderYear,
+    months: [monthObj],
+    GrossSales: order.subtotal,
+    NetSales: order.grand_total,
+    paymentSuccessGrossSales: paymentSuccessSubTotal,
+    paymentSuccessNetSales: paymentSuccessGrandTotal
+  }
+  if(year){
+    return yearObj
+  }else{
+    return monthObj
+  }
+}
+module.exports.populateYearMonth = populateYearMonth;
+
+const populateSales = (data, order, paymentSuccessSubTotal, paymentSuccessGrandTotal) => {
+  data.GrossSales += order.subtotal
+  data.NetSales += order.grand_total
+  data.paymentSuccessGrossSales += paymentSuccessSubTotal
+  data.paymentSuccessNetSales += paymentSuccessGrandTotal
+}
+module.exports.populateSales = populateSales;
 
 module.exports.MESSAGE_RESPONSE = MESSAGE_RESPONSE;
 

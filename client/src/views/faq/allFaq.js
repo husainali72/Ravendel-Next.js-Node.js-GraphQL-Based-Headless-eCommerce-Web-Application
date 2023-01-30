@@ -125,9 +125,9 @@ const AllFAQComponent = (props) => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={blogs.blogs.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
+                count={blogs.blogs.length || 0}
+                rowsPerPage={rowsPerPage || 10}
+                page={page || 0}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
               />
@@ -139,7 +139,6 @@ const AllFAQComponent = (props) => {
   );
 };
 
-// export default AllFAQ;
 const AllFAQ = () => {
   return (
     <ThemeProvider theme={theme}>

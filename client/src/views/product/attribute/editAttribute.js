@@ -6,34 +6,45 @@ import { isEmpty, client_app_route_url } from "../../../utils/helper";
 import ReactTags from "react-tag-autocomplete";
 import viewStyles from "../../viewStyles";
 import { Alert, Loading, TopBar, CardBlocks } from "../../components";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme";
+import { get } from "lodash";
 const delimiters = ["Enter", "Tab"];
 
-const EditAttribute = (props) => {
+const EditAttributeComponent = ({ params }) => {
+  const ATTRIBUTE_ID = params.id || "";
   const classes = viewStyles();
+  const navigate = useNavigate();
   const [attribute, setattribute] = useState({
     name: "",
     values: [],
   });
   const dispatch = useDispatch();
   const attributeState = useSelector((state) => state.product_attributes);
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
-    if (!isEmpty(props.match.params.id)) {
-      dispatch(attributeAction(props.match.params.id));
+    if (attribute.id !== ATTRIBUTE_ID) {
+      dispatch(attributeAction(ATTRIBUTE_ID));
     }
   }, []);
 
   useEffect(() => {
-    if (Object.keys(attributeState.attribute).length) {
-      setattribute({
-        ...attribute,
-        id: attributeState.attribute.id,
-        name: attributeState.attribute.name,
-        values: attributeState.attribute.values,
-      });
+    if (!isEmpty(get(attributeState, "attribute"))) {
+      if (Object.keys(attributeState.attribute).length) {
+        setattribute({
+          ...attribute,
+          id: attributeState.attribute.id,
+          name: attributeState.attribute.name,
+          values: attributeState.attribute.values,
+        });
+      }
     }
-  }, [attributeState]);
+  }, [get(attributeState, "attribute")]);
+
+  useEffect(() => {
+    setloading(get(attributeState, "loading"));
+  }, [get(attributeState, "loading")]);
 
   const onDeleteTag = (i) => {
     attribute.values.splice(i, 1);
@@ -46,7 +57,7 @@ const EditAttribute = (props) => {
   };
 
   const onUpdate = () => {
-    dispatch(attributeUpdateAction({ attribute: attribute }));
+    dispatch(attributeUpdateAction({ attribute: attribute }, navigate));
   };
 
   return (
@@ -61,7 +72,7 @@ const EditAttribute = (props) => {
         />
 
         <Grid container spacing={2} className={classes.secondmainrow}>
-          {attributeState.loading ? <Loading /> : null}
+          {loading ? <Loading /> : null}
           <Grid item lg={6} xs={12}>
             <CardBlocks title="Attribute Information" nomargin>
               <Grid container>
@@ -101,4 +112,11 @@ const EditAttribute = (props) => {
   );
 };
 
-export default EditAttribute;
+export default function EditAttribute() {
+  const params = useParams();
+  return (
+    <ThemeProvider theme={theme}>
+      <EditAttributeComponent params={params} />
+    </ThemeProvider>
+  );
+}

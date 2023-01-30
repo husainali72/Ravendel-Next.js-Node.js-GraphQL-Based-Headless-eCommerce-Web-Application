@@ -12,8 +12,6 @@ import {
 } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import jumpTo from "../../utils/navigation";
-import { useNavigate } from "react-router-dom";
 
 export const pagesAction = () => (dispatch) => {
   dispatch({
@@ -25,7 +23,7 @@ export const pagesAction = () => (dispatch) => {
         response,
         "pages"
       );
-      console.log(data);
+
       dispatch({
         type: LOADING_FALSE,
       });
@@ -33,7 +31,7 @@ export const pagesAction = () => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -50,7 +48,7 @@ export const pagesAction = () => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -72,7 +70,7 @@ export const pageAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -89,7 +87,7 @@ export const pageAction = (id) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -111,12 +109,11 @@ export const pageAddAction = (object, navigate) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
       if (success) {
-        //  jumpTo(`${client_app_route_url}all-pages`);
         navigate(`${client_app_route_url}all-pages`);
         dispatch(pagesAction());
         return dispatch({
@@ -131,12 +128,12 @@ export const pageAddAction = (object, navigate) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
-export const pageUpdateAction = (object) => (dispatch) => {
+export const pageUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: PAGE_LOADING,
   });
@@ -153,12 +150,12 @@ export const pageUpdateAction = (object) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
       if (success) {
-        // jumpTo(`${client_app_route_url}all-pages`);
+        navigate(`${client_app_route_url}all-pages`);
         dispatch(pagesAction());
         return dispatch({
           type: ALERT_SUCCESS,
@@ -176,7 +173,7 @@ export const pageUpdateAction = (object) => (dispatch) => {
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -198,7 +195,7 @@ export const pageDeleteAction = (id) => (dispatch) => {
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: { boolean: true, message: message, error: true },
+          payload: { boolean: false, message: message, error: true },
         });
       }
 
@@ -222,7 +219,7 @@ export const pageDeleteAction = (id) => (dispatch) => {
 
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true },
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
