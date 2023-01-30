@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Grid, Box, FormControlLabel, Checkbox, Button } from "@mui/material";
-
 import viewStyles from "../../viewStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components/";
@@ -9,17 +8,23 @@ import { ThemeProvider } from "@mui/material/styles";
 import {get} from "lodash";
 import { useEffect } from "react";
 import { paymentStripeUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
+import Loading from "../../components/Loading.js";
+
 const StripeComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [stripeInfo, setstripeInfo] = useState({
-    ...settingState.settings.paymnet.stripe,
-  });
+  const [stripeInfo, setstripeInfo] = useState({});
+  const striped = get(settingState, "settings.paymnet.stripe")
 
   useEffect(() => {
-    get(settingState, "settings.paymnet.stripe")
-    }, [settingState.settings])
+    if(settingState.settings.paymnet.stripe){
+      setstripeInfo({
+        ...settingState.settings.paymnet.stripe,
+      })
+    }
+    }, [striped])
 
 
   const updateStripe = () => {
@@ -28,6 +33,8 @@ const StripeComponent = () => {
 
   return (
     <>
+     <Alerts/>
+     {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item md={6} sm={12} xs={12}>
           <Box component="div" className={classes.marginBottom2}>

@@ -16,17 +16,20 @@ import {get} from "lodash";
 import { useEffect } from "react";
 import theme from "../../../theme/index.js";
 import { smtpUpdateAction } from "../../../store/action/settingAction.js";
+import Alerts from "../../components/Alert.js";
+import Loading from "../../components/Loading.js";
+
 const SMTPComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [smtp, setSmptp] = useState({ 
-    ...settingState.settings.smtp 
-  });
+  const [smtp, setSmptp] = useState({});
 
   useEffect(() => {
-    get(settingState, "settings.smtp")
-    }, [settingState.settings])
+    if(settingState, "settings.smtp"){
+      setSmptp({  ...settingState.settings.smtp })
+    }
+    }, [get(settingState, "settings")])
 
 
   const updateSmtp = () => {
@@ -35,6 +38,8 @@ const SMTPComponent = () => {
 
   return (
     <>
+     <Alerts/>
+     {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div">
@@ -102,7 +107,6 @@ const SMTPComponent = () => {
   );
 };
 
-// export default SMTP;
 export default function SMTP() {
   return (
     <ThemeProvider theme={theme}>

@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Grid, Box, Button } from "@mui/material";
 import {get} from "lodash";
-
 import { useSelector, useDispatch } from "react-redux";
 import { SettingSelectComponent } from "./setting-components";
 import { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { storeMeasuresUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
+import Loading from "../../components/Loading.js";
 
 const MeasurementsComponent = () => {
   const settingState = useSelector((state) => state.settings);
@@ -23,8 +24,12 @@ const MeasurementsComponent = () => {
   const updateMeasures = () => {
     dispatch(storeMeasuresUpdateAction(measurementVal));
   };
+
+  
   return (
     <>
+     <Alerts/>
+     {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" mb={3}>

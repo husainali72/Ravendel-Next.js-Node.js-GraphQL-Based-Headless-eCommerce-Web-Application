@@ -7,6 +7,7 @@ import CurrencyOptions from "./currencyOption";
 import { ThemeProvider } from "@mui/material/styles";
 import { TabPanel, TabProps } from "../../components";
 import theme from "../../../theme/index.js";
+import Alerts from "../../components/Alert";
 
 const StoreComponent = () => {
   const [tabVal, setValue] = React.useState(0);
@@ -16,6 +17,8 @@ const StoreComponent = () => {
   };
 
   return (
+    <>
+     <Alerts/>
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <Paper square>
@@ -57,6 +60,7 @@ const StoreComponent = () => {
         </Box>
       </Grid>
     </Grid>
+    </>
   );
 };
 export default function Store() {
