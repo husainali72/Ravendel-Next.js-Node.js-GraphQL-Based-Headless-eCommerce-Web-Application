@@ -493,10 +493,9 @@ const MESSAGE_RESPONSE = (type, item, success) => {
 };
 
 
-const checkRole = (role) => {
-  const userRoles = ["ADMIN", "USER"]
+const checkRole = (role, roleOptions) => {
   role = role.toUpperCase()
-  if(userRoles.includes(role)) return {role: role, success: true}
+  if(roleOptions.includes(role)) return {role: role, success: true}
   else return {success: false}
 }
 module.exports.checkRole = checkRole;
