@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { Grid, Paper, Tab, Tabs } from "@mui/material";
 import CashOnDelivery from "./cod";
 import DirectBankTransfer from "./directBankTransfer";
@@ -8,6 +8,7 @@ import { TabPanel, TabProps } from "../../components";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import Alerts from "../../components/Alert";
+
 const PaymentComponent = () => {
   const [tabVal, setTabVal] = useState(0);
   const handleChange = (event, newValue) => {

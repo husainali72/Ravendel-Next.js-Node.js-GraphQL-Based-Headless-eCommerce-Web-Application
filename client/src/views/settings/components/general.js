@@ -19,8 +19,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { generalUpdateAction, getDatesAction } from "../../../store/action/settingAction.js";
-import Alerts from "../../components/Alert.js";
-export const GeneralTheme = () => {
+import Alerts from "../../components/Alert.js"
+import Loading from "../../components/Loading.js";
+
+const GeneralTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
@@ -30,20 +32,15 @@ export const GeneralTheme = () => {
     time_zone: settingState.settings.general.time_zone,
   });
 
-//   useEffect(() => {
-// dispatch(getDatesAction());
-
-// get (settingState, "settings.general.date_format")
-//   }, [settingState.settings]);
 
   useEffect(() => {
     let timezzz = TimeZones.findIndex((tz) => tz.value === general.time_zone)
     setTimeZone(timezzz);
     dispatch(getDatesAction())
-  }, [settingState.settings.general]);
+  }, [get(settingState, "settings.general")]);
 
   const changeTimeZone = (val, e) => {
-    setgeneral({...general, time_zone: val.value});
+    setgeneral({ ...general, time_zone: val.value });
   };
 
   const updateGenral = () => {
@@ -52,7 +49,8 @@ export const GeneralTheme = () => {
 
   return (
     <>
-     <Alerts/>
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item md={12} xs={12}>
           <Box component="div" className={classes.marginBottom2}>
@@ -79,25 +77,25 @@ export const GeneralTheme = () => {
               </RadioGroup>
             </FormControl>
           </Box>
-          {timeZone ?   
-           <Box component="div" className={classes.marginBottom2}>
-           <Typography variant="h5" className={classes.marginBottom2}>
-             Time Zone
-           </Typography>
-           <Autocomplete
-             id="combo-box-demo"
-             options={TimeZones}
-             getOptionLabel={(option) => option.name}
-             style={{ width: 300 }}
-             defaultValue={TimeZones[timeZone]}
-             onChange={(event, value) => changeTimeZone(value)}
-             renderInput={(params) => (
-               <TextField {...params} variant="outlined" />
-             )}
-           />
-         </Box> 
-          : null}
-         
+          {timeZone ?
+            <Box component="div" className={classes.marginBottom2}>
+              <Typography variant="h5" className={classes.marginBottom2}>
+                Time Zone
+              </Typography>
+              <Autocomplete
+                id="combo-box-demo"
+                options={TimeZones}
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                defaultValue={TimeZones[timeZone]}
+                onChange={(event, value) => changeTimeZone(value)}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+              />
+            </Box>
+            : null}
+
         </Grid>
         <Grid item md={12} xs={12}>
           <Button

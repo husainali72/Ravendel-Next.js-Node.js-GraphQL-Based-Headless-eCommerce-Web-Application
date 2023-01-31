@@ -8,22 +8,17 @@ import {
   FormControlLabel,
   Checkbox,
   FormGroup,
-  Tooltip,
   IconButton,
-  Icon,
 } from "@mui/material";
-import clsx from "clsx";
 import viewStyles from "../../viewStyles";
+import { get } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
-import { bucketBaseURL } from "../../../utils/helper";
 import CloseIcon from '@mui/icons-material/Close';
 import { Draggable } from "react-drag-reorder";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme";
 import { appearanceMobileUpdateAction } from "../../../store/action/settingAction";
 import Stack from '@mui/material/Stack';
-import AddIcon from '@mui/icons-material/Add';
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -31,6 +26,7 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { categoriesAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
+import Loading from "../../components/Loading.js";
 
 const MobileAppSetting = () => {
   const classes = viewStyles();
@@ -40,17 +36,15 @@ const MobileAppSetting = () => {
   const [dragComponents, setDragComponents] = useState();
   const category = useSelector((state) => state.products);
   const settingState = useSelector((state) => state.settings);
-  console.log("mobile section settings state===", settingState.settings.appearance.mobile)
   const [settingMobile, setSettingMobile] = useState({
     ...settingState.settings.appearance.mobile,
   });
-console.log(category, "===cat")
-  // doubt
+
   useEffect(() => {
-    if(settingState.settings.appearance.mobile && settingState.settings.appearance.mobile.mobile_section && settingState.settings.appearance.mobile.mobile_section.length > 0){
+    if (settingState.settings.appearance.mobile && settingState.settings.appearance.mobile.mobile_section && settingState.settings.appearance.mobile.mobile_section.length > 0) {
       setSectionData(settingState.settings.appearance.mobile.mobile_section)
     }
-  }, [settingState.settings.appearance.mobile])
+  }, [get(settingState, "settings.appearance.mobile")])
 
   useEffect(() => {
     if (!category.categories.length) {
@@ -58,10 +52,10 @@ console.log(category, "===cat")
     }
   }, []);
 
-    useEffect(() => {
-        setSettingMobile({
-        ...settingState.settings.appearance.mobile,
-     });
+  useEffect(() => {
+    setSettingMobile({
+      ...settingState.settings.appearance.mobile,
+    });
   }, [])
 
   const updateMobileApp = () => {
@@ -71,8 +65,7 @@ console.log(category, "===cat")
     delete settingMobile.mobile_section.__typename;
     let data = settingMobile;
     data.mobile_section = sectionData;
-   
-// category.categories.id = sectionData.category
+
     let error = false;
     sectionData.map(select => {
       if (select.category == null && select.label === "Product from Specific Categories") {
@@ -80,16 +73,15 @@ console.log(category, "===cat")
       }
     })
     if (error) {
-      // alert("category required")
-      // <Alert />
       dispatch({
         type: ALERT_SUCCESS,
         payload: { boolean: false, message: "Category is required", error: true },
-        
+
       });
     }
-else{
-    dispatch(appearanceMobileUpdateAction(data));}
+    else {
+      dispatch(appearanceMobileUpdateAction(data));
+    }
   };
 
   const reArrange = () => {
@@ -103,19 +95,19 @@ else{
   const onCheckBoxChange = (name, value, index) => {
     let data = sectionData;
     data[index].visible = !data[index].visible
-    console.log(data, "dataaaa")
     setSectionData([...data]);
   };
 
 
   const handleChangeCategory = (event, index) => {
     let data = sectionData;
-    console.log(index)
     data[index].category = event.target.value
-    // data[index].categoryName = category.categories.filter(cat => cat.id == event.target.value[0].id || "-")
-    console.log(data)
     setSectionData([...data]);
   };
+
+  const isCategoryUsed = (cat) => {
+    return sectionData.find((data) => data.category == cat ? true : false)
+  }
 
   const addCategory = () => {
     setSectionData([
@@ -127,7 +119,7 @@ else{
         section_img: {
           thumbnail: "",
           large: "",
-          medium: "", 
+          medium: "",
           original: ""
         },
         category: null
@@ -137,7 +129,6 @@ else{
   }
 
   const removeCategory = (i) => {
-    console.log(i, "iiiiiiiiiii");
     sectionData.splice(i, 1);
     setSectionData([...sectionData]);
   }
@@ -145,11 +136,9 @@ else{
   const handleImageChange = (event, index) => {
     let data = sectionData;
     data[index].section_img = {
-     thumbnail: URL.createObjectURL(event.target.files[0]),
-    //  large: event.target.files[0]
+      thumbnail: URL.createObjectURL(event.target.files[0]),
     }
     setSectionData([...data]);
-    console.log(index, "iiii")
   };
 
   const getChangedPosition = (currentPos, newPos) => {
@@ -162,7 +151,8 @@ else{
 
   return (
     <>
-    <Alerts />
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>
@@ -176,12 +166,12 @@ else{
 
                 <Draggable onPosChange={getChangedPosition}>
                   {sectionData.map((select, index) => {
-                  let cat = category.categories.filter(cat => cat.id == select.category)
+                    let cat = category.categories.filter(cat => cat.id == select.category)
                     return (
                       <table>
                         <tbody>
                           <tr style={{ lineHeight: "35px", fontSize: "14px" }}>
-                            {select.label}  - {!cat.length ? "" : cat[0].name} 
+                            {select.label}  - {!cat.length ? "" : cat[0].name}
                           </tr>
                         </tbody>
                       </table>
@@ -228,42 +218,27 @@ else{
                           {select.label === "Product from Specific Categories" ?
                             <> <Box sx={{ minWidth: 120 }}>
                               <FormControl fullWidth size="small">
-                                {/* <InputLabel id="demo-simple-select-label">Category</InputLabel> */}
                                 <Select
-                                  // labelId="demo-simple-select-label" 
-                                  // id="demo-simple-select"
                                   value={select.category}
-                                  // label="Category"
                                   onChange={(e) => handleChangeCategory(e, index)}
-                                  // style={{ paddingTop: "-20px" }}
                                   displayEmpty
                                   inputProps={{ 'aria-label': 'Without label' }}
                                   disabled={!select.visible}
                                 >
-                                  {/* <MenuItem value="">
-                                    <em>Category</em>
-                                  </MenuItem> */}
-                                   {category.categories.map(cat => {
-                                    if (!category.categories.includes(cat.id)){
-                                      
-                                      return (
-                                        <MenuItem value={cat.id}>{cat.name}</MenuItem>
-                                      )
-                                    }
-                                  // return (
-                                  //   <MenuItem value={cat.id}>{cat.name}</MenuItem>
-                                  // )
-                                })}
-      
+                                  {category.categories.map(cat => {
+                                    return (
+                                      <MenuItem
+                                        value={cat.id}
+                                        disabled={isCategoryUsed(cat.id)}>
+                                        {cat.name}
+                                      </MenuItem>
+                                    )
+                                  })}
+
                                 </Select>
                               </FormControl>
                             </Box>
 
-                              {/* <Stack direction="row" spacing={1}>
-                                <IconButton color="success" aria-label="add" onClick={addCategory}>
-                                  <AddIcon />
-                                </IconButton>
-                              </Stack> */}
 
                               <Stack direction="row" spacing={1}>
                                 <IconButton color="error" aria-label="delete" onClick={(e) => removeCategory(index)}>
@@ -276,7 +251,10 @@ else{
 
                           <label htmlFor={`htmltag${index}`}>
                             {select.section_img.thumbnail ? (
-                              <img src={select.section_img.thumbnail} alt="img" width="50" height="50" />
+                              <img src={select.section_img && select.section_img.thumbnail}
+                                alt="img"
+                                width="50"
+                                height="50" />
                             ) : (
                               <>
                                 <h6><AddPhotoAlternateIcon color="action" style={{ marginTop: "8px" }} /></h6>
@@ -310,7 +288,7 @@ else{
                     style={{ marginTop: "25px" }}
                     onClick={addCategory}
                   >
-                   Add Category 
+                    Add Category
                   </Button>
 
                   <Button
@@ -320,7 +298,7 @@ else{
                     style={{ marginLeft: "20px", marginTop: "25px" }}
                     onClick={reArrange}
                   >
-                  Re-order 
+                    Re-order
                   </Button>
 
                   <Button
@@ -330,7 +308,7 @@ else{
                     style={{ marginLeft: "20px", marginTop: "25px" }}
                     onClick={updateMobileApp}
                   >
-                    Save Change 
+                    Save Change
                   </Button>
 
 

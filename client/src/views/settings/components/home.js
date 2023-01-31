@@ -10,7 +10,6 @@ import {
   FormGroup,
   Tooltip,
   IconButton,
-  Icon,
 } from "@mui/material";
 import clsx from "clsx";
 import viewStyles from "../../viewStyles";
@@ -22,16 +21,14 @@ import { Draggable } from "react-drag-reorder";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../../theme";
 import { appearanceHomeUpdateAction } from "../../../store/action";
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
-import AddIcon from '@mui/icons-material/Add';
 import { categoriesAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
+import { Loading } from "../../components";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
-
 
 const HomeSettingsTheme = () => {
   const classes = viewStyles();
@@ -40,25 +37,24 @@ const HomeSettingsTheme = () => {
   const [dragItem, updateDragItem] = useState();
   const category = useSelector((state) => state.products);
   const settingState = useSelector((state) => state.settings);
-  console.log("setting state settings===", settingState.settings.appearance.home)
-  const [settingHome, setsettingHome] = useState({
-    ...settingState.settings.appearance.home,
-  });
   const [sectionData, setSectionData] = useState([]);
-
-  const [slider, setSlider] = useState({
-    ...settingState.settings.appearance.home.slider,
+  const [slider, setSlider] = useState({});
+  const [settingHome, setsettingHome] = useState({
+    ...settingState.settings.appearance.home
   });
-  const [value, setValue] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [status, setStatus] = useState(true);
 
-  // doubt
   useEffect(() => {
     if (settingState.settings.appearance.home && settingState.settings.appearance.home.add_section_web && settingState.settings.appearance.home.add_section_web.length > 0) {
       setSectionData(settingState.settings.appearance.home.add_section_web)
     }
-  }, [settingState.settings.appearance.home])
+  }, [get(settingState, "settings.appearance.home")])
+
+  useEffect(() => {
+    if (settingState.settings.appearance.home && settingState.settings.appearance.home.slider && settingState.settings.appearance.home.slider.length > 0) {
+      setSlider(settingState.settings.appearance.home.slider)
+    }
+  }, [get(settingState, "settings.appearance.home")])
+
 
   useEffect(() => {
     if (!category.categories.length) {
@@ -66,12 +62,11 @@ const HomeSettingsTheme = () => {
     }
   }, []);
 
-  
+
   useEffect(() => {
     setsettingHome({
       ...settingState.settings.appearance.home,
     });
-
     var newSliderArr = [];
     for (
       let i = 0;
@@ -84,11 +79,10 @@ const HomeSettingsTheme = () => {
       newSliderArr.push({ image: { original: newImge } });
     }
     setSlider(newSliderArr)
-    console.log('settingHome===========>', settingHome)
-    console.log("settingState", settingState)
   },
     [settingState.settings.appearance.home.slider]
   )
+
 
   const addSlide = () => {
     setsettingHome({
@@ -112,6 +106,7 @@ const HomeSettingsTheme = () => {
     ]);
   };
 
+
   const removeSlide = (i) => {
     settingHome.slider.splice(i, 1);
     slider.splice(i, 1);
@@ -121,6 +116,7 @@ const HomeSettingsTheme = () => {
     });
     setSlider([...slider]);
   };
+
 
   const handleChange = (e, i) => {
     if (e.target.name === "link") {
@@ -134,34 +130,31 @@ const HomeSettingsTheme = () => {
     });
   };
 
+
   const fileChange = (e, i) => {
     settingHome.slider[i].image.original = URL.createObjectURL(
       e.target.files[0]
     );
     slider[i].image.original = URL.createObjectURL(e.target.files[0]);
-
     settingHome.slider[i].update_image = e.target.files;
     slider[i].update_image = e.target.files;
-
     setsettingHome({
       ...settingHome,
       slider: [...settingHome.slider],
     });
   };
 
-  const updateHome = () => {
 
+  const updateHome = () => {
     for (let i in settingHome.slider) {
       delete settingHome.slider[i].__typename;
     }
     for (let i in settingHome.add_section_web) {
       delete settingHome.add_section_web[i].__typename;
     }
-
     delete settingHome.add_section_in_home.__typename;
     let data = settingHome;
     data.add_section_web = sectionData;
-
     let error = false;
     sectionData.map(select => {
       if (select.category == null && select.label === "Product from Specific Category") {
@@ -174,10 +167,10 @@ const HomeSettingsTheme = () => {
         payload: { boolean: false, message: "Category is required", error: true },
       });
     } else {
-
-    dispatch(appearanceHomeUpdateAction(data));}
-   
+      dispatch(appearanceHomeUpdateAction(data));
+    }
   };
+
 
   const reOrder = () => {
     reOrderList ? setReOrderList(false) : setReOrderList(true)
@@ -188,31 +181,23 @@ const HomeSettingsTheme = () => {
     dragItem ? setReOrderList(true) : setReOrderList(false)
   }
 
+
   const checkBoxOnChange = (name, value, index) => {
     let data = sectionData;
     data[index].visible = !data[index].visible
-    console.log(data)
     setSectionData([...data]);
-    // setsettingHome({
-    //   ...settingHome,
-    //   add_section_in_home: {
-    //     ...settingHome.add_section_in_home,
-    //     // add_section_web: {
-    //     //   ...settingHome.add_section_web,
-    //     [name]: value
-    //   },
-    // });
   };
 
-  const handleChangeCategories = (event, index) => {
+  const isCategoryUsed = (cat) => {
+    return sectionData.find((data) => data.category == cat ? true : false)
+  }
+
+  const handleChangeCategories = (event, index, val) => {
     let data = sectionData;
     data[index].category = event.target.value
-    console.log(data)
     setSectionData([...data]);
   };
 
-  const [settingSection, setSettingSection] = useState(sectionData);
-  
 
   const addCategory = () => {
     setSectionData([
@@ -223,18 +208,17 @@ const HomeSettingsTheme = () => {
         visible: false,
         category: null
       }
-    ]
-    )
+    ])
   }
 
+
   const removeCategory = (i) => {
-    console.log(i, "iiiiiiiiiii");
     sectionData.splice(i, 1);
     setSectionData([...sectionData]);
   }
 
+
   const getChangedPos = (currentPos, newPos) => {
-    console.log(currentPos, newPos);
     const reorderedItem = sectionData[currentPos];
     sectionData[currentPos] = sectionData[newPos];
     sectionData[newPos] = reorderedItem
@@ -245,11 +229,14 @@ const HomeSettingsTheme = () => {
 
   return (
     <>
-     <Alerts/>
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
+
+      {/* ============SLIDER============ */}
+
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom3}>
-
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Typography variant="h5" className={classes.paddingBottom1}>
@@ -275,7 +262,7 @@ const HomeSettingsTheme = () => {
                         <Box className={classes.sliderImagePreviewWrapper}>
                           {slide.image.original && (
                             <img
-                              src={slider[index].image.original}
+                              src={slider[index] && slider[index].image && slider[index].image.original}
                               className={classes.sliderImagePreview}
                               alt="Featured"
                             />
@@ -290,6 +277,7 @@ const HomeSettingsTheme = () => {
                             type="file"
                             onChange={(e) => fileChange(e, index)}
                           />
+
                           <label
                             htmlFor={`slide-${index}`}
                             className={classes.feautedImage}
@@ -298,7 +286,10 @@ const HomeSettingsTheme = () => {
                               ? "Change Slider"
                               : "Add Slide Image"}
                           </label>
+
                         </Box>
+
+
                         <Box className={classes.slidesInfo}>
                           <TextField
                             label="Slide Link"
@@ -309,6 +300,7 @@ const HomeSettingsTheme = () => {
                             onChange={(e) => handleChange(e, index)}
                             size="small"
                           />
+
                           <FormControlLabel
                             control={
                               <Checkbox
@@ -338,12 +330,14 @@ const HomeSettingsTheme = () => {
             </Grid>
           </Box>
 
-          {/* Add section for Website  */}
+          {/* ===========Add section for Website===========  */}
 
           <Box component="div" className={classes.marginBottom2}>
             <Typography variant="h5" className={classes.paddingBottom1}>
               Add Section in Home Page
             </Typography>
+
+            {/* =========REORDER==========  */}
 
             {reOrderList ?
               <div>
@@ -389,37 +383,41 @@ const HomeSettingsTheme = () => {
                           }
                           label={select.label}
                         />
+
+                        {/* ===========DROPDOWN=========== */}
+
                         {select.label === "Product from Specific Category" ?
-                          <> <Box sx={{ minWidth: 120 }}>
-                            <FormControl fullWidth size="small">
-                              {/* <InputLabel id="demo-simple-select-label">Category</InputLabel> */}
-                              <Select
-                                // labelId="demo-simple-select-label"
-                                // id="demo-simple-select"
-                                value={select.category}
-                                // label="Categories"
-                                onChange={(e) => { handleChangeCategories(e, index) }}
-                                disabled={!select.visible}
-                                displayEmpty
+                          <>
+
+                            <Box sx={{ minWidth: 120 }}>
+                              <FormControl fullWidth size="small">
+                                <Select
+                                  value={select.category}
+                                  onChange={(e) => { handleChangeCategories(e, index) }}
+                                  disabled={!select.visible}
                                   inputProps={{ 'aria-label': 'Without label' }}
-                              >
-                                {category.categories.map(cat => {
-                                  return (
-                                    <MenuItem value={cat.id}>{cat.name}</MenuItem>
-                                  )
-                                })}
-      
-                              
-                              </Select>
-                            </FormControl>
-                          </Box>
-                          
+                                  displayEmpty
+                                >
+                                  {category.categories.map(cat => {
+                                    return (
+                                      <MenuItem
+                                        value={cat.id}
+                                        disabled={isCategoryUsed(cat.id)}>
+                                        {cat.name}
+                                      </MenuItem>
+                                    )
+                                  })}
+                                </Select>
+                              </FormControl>
+                            </Box>
+
                             <Stack direction="row" spacing={1}>
                               <IconButton color="error" aria-label="delete" onClick={(e) => removeCategory(index)}>
                                 <CloseIcon />
                               </IconButton>
                             </Stack>
                           </>
+
                           : null}
 
                       </div>
@@ -428,14 +426,15 @@ const HomeSettingsTheme = () => {
                   )}
                 </FormGroup>
                 <Grid item xs={12}>
-                <Button
+
+                  <Button
                     size='small'
                     color='primary'
                     variant='contained'
                     style={{ marginTop: "25px" }}
                     onClick={addCategory}
                   >
-                   Add Category 
+                    Add Category
                   </Button>
 
                   <Button
@@ -445,7 +444,7 @@ const HomeSettingsTheme = () => {
                     style={{ marginLeft: "20px", marginTop: "25px" }}
                     onClick={reOrder}
                   >
-                  Re-order 
+                    Re-order
                   </Button>
 
                   <Button
@@ -455,7 +454,7 @@ const HomeSettingsTheme = () => {
                     style={{ marginLeft: "20px", marginTop: "25px" }}
                     onClick={updateHome}
                   >
-                    Save Change 
+                    Save Change
                   </Button>
                 </Grid>
 

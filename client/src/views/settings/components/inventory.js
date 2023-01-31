@@ -9,10 +9,12 @@ import {
 } from "./setting-components";
 import { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
-import {get} from "lodash";
+import { get } from "lodash";
 import theme from "../../../theme/index.js";
 import { storeInventoryUpdateAction } from "../../../store/action/settingAction.js";
 import Alerts from "../../components/Alert.js";
+import Loading from "../../components/Loading.js";
+
 const InventoryComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -29,10 +31,9 @@ const InventoryComponent = () => {
   });
 
   useEffect(() => {
-   
     get(settingState, "settings.store.inventory")
   }, [settingState.settings])
- 
+
 
   const updateInventory = () => {
     dispatch(storeInventoryUpdateAction(inventory));
@@ -40,7 +41,8 @@ const InventoryComponent = () => {
 
   return (
     <>
-     <Alerts/>
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <SettingBlock label="Manage stock" noBottomMargin>

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid, Box, Button, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import viewStyles from "../../viewStyles";
@@ -8,6 +8,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import {get} from "lodash";
 import { mediaUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert.js";
+import Loading from "../../components/Loading.js";
+
 const MediaComponent = () => {
   const classes = viewStyles();
   const theme = useTheme();
@@ -30,11 +33,11 @@ const MediaComponent = () => {
     get(settingState, "settings.media.medium")
     get(settingState, "settings.media.large")
     }, [settingState.settings])
- 
-    
 
   return (
     <>
+    <Alerts/>
+     {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item md={12} xs={12}>
           <SettingBlock label="Thumbnail Size">

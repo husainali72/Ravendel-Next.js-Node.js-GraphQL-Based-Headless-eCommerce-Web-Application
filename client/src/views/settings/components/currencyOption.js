@@ -9,7 +9,7 @@ import theme from "../../../theme/index.js";
 import { useEffect } from "react";
 import { storeCurrencyUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
-
+import Loading from "../../components/Loading.js";
 
 const CurrencyOptionsComponent = () => {
   const settingState = useSelector((state) => state.settings);
@@ -17,10 +17,6 @@ const CurrencyOptionsComponent = () => {
   const [currencyOption, setCurrencyOption] = useState({
     ...settingState.settings.store.currency_options,
   });
-
-    // ...settingState.settings.store.currency_options,
-
-    // get(settingState, 'settings.store.currency_options')
 
   useEffect(() => {
     get(settingState, "settings.store.currency_options");
@@ -33,6 +29,7 @@ const CurrencyOptionsComponent = () => {
   return (
     <>
      <Alerts/>
+     {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" mb={3}>

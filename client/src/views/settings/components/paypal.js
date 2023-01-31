@@ -9,17 +9,19 @@ import { get } from "lodash";
 import theme from "../../../theme/index.js";
 import { paymentPaypalUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
+import Loading from "../../components/Loading.js";
+
 const PaypalComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [paypalInfo, setPaypalInfo] = useState({
-    ...settingState.settings.paymnet.paypal,
-  });
+  const [paypalInfo, setPaypalInfo] = useState({});
 
   useEffect(() => {
-   get(settingState, "settings.paymnet.paypal")
-   }, [settingState.settings])
+    if (settingState.settings && settingState.settings.paymnet && settingState.settings.paymnet.paypal){
+      setPaypalInfo({...settingState.settings.paymnet.paypal})
+    }
+   }, [get(settingState,"settings")])
  
 
   const updatePaypal = () => {
@@ -29,6 +31,7 @@ const PaypalComponent = () => {
   return (
     <>
      <Alerts/>
+     {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item md={6} sm={12} xs={12}>
           <Box component="div" className={classes.marginBottom2}>

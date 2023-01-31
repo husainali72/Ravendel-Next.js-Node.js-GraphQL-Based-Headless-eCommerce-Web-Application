@@ -8,15 +8,14 @@ import theme from "../../../theme/index.js";
 import { get } from "lodash";
 import { paymentCodUpdateAction } from "../../../store/action/settingAction.js";
 import Alerts from "../../components/Alert.js";
+import Loading from "../../components/Loading.js";
+
 const CashOnDeliveryTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [codInfo, setCodInfo] = useState({});
-  // const [codInfo, setCodInfo] = useState({
-  //   ...settingState.settings.paymnet.cash_on_delivery,
-  // });
-
+  
   useEffect(() => {
     if (
       settingState.settings &&
@@ -25,9 +24,7 @@ const CashOnDeliveryTheme = () => {
     ) {
       setCodInfo({ ...settingState.settings.paymnet.cash_on_delivery });
     }
-    // get(settingState, "settings.paymnet.cash_on_delivery");
-    // setCodInfo({ ...settingState.settings.paymnet.cash_on_delivery });
-  }, [settingState.settings]);
+  }, [get(settingState, "settings")]);
 
   const updateCOD = () => {
     dispatch(paymentCodUpdateAction(codInfo));
@@ -36,6 +33,7 @@ const CashOnDeliveryTheme = () => {
   return (
     <>
     <Alerts/>
+    {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>

@@ -8,16 +8,18 @@ import {get} from "lodash";
 import theme from "../../../theme/index.js";
 import { seoUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
+import Loading from "../../components/Loading.js";
+
 const SEOComponent = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [seo, setSeo] = useState({ 
-    ...settingState.settings.seo
-   });
+  const [seo, setSeo] = useState({});
 
    useEffect(() => {
-    get(settingState, "settings.seo")
-    }, [settingState.settings])
+    if(settingState, "settings.seo"){
+      setSeo({...settingState.settings.seo})
+    }
+    }, [get(settingState, "settings")])
 
   const updateSeo = () => {
     dispatch(seoUpdateAction(seo));
@@ -26,6 +28,7 @@ const SEOComponent = () => {
   return (
     <>
      <Alerts/>
+     {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div">
@@ -71,7 +74,6 @@ const SEOComponent = () => {
   );
 };
 
-// export default SEO;
 export default function SEO() {
   return (
     <ThemeProvider theme={theme}>

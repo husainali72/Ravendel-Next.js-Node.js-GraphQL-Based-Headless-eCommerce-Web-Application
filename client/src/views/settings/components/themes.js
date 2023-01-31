@@ -9,23 +9,39 @@ import theme from "../../../theme/index.js";
 import {get} from "lodash";
 import { appearanceThemeUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
+import Loading from "../../components/Loading.js";
 
 const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  // const [themeSetting, setThemeSetting] = useState({});
+
   const [themeSetting, setThemeSetting] = useState({
-    ...settingState.settings.appearance.theme,
+    // ...settingState.settings.appearance.theme,
     // get(settingState, "settings.appearance.theme")
   });
+
   const [logoImage, setLogoImage] = useState(
-    bucketBaseURL + themeSetting.logo.original
+    bucketBaseURL + themeSetting.logo
   );
 
+  useEffect(() => {
+    if (
+      settingState.settings &&
+      settingState.settings.appearance &&
+      settingState.settings.appearance.theme 
+    ) {
+      setThemeSetting({...settingState.settings.appearance.theme})
+    }
+  }, [get(settingState, "settings.appearance.theme")])
+
+  const updateTheme = () => {
+    delete theme.__typename;
+    dispatch(appearanceThemeUpdateAction(themeSetting));
+  };
 
   const fileChange = (e) => {
-    themeSetting.logo.original = URL.createObjectURL(e.target.files[0]);
+    themeSetting.log = URL.createObjectURL(e.target.files[0]);
 
     setThemeSetting({
       ...themeSetting,
@@ -39,29 +55,17 @@ const ThemesComponent = () => {
     setLogoImage(URL.createObjectURL(e.target.files[0]));
   };
 
-  const updateTheme = () => {
-  
-    dispatch(appearanceThemeUpdateAction(themeSetting));
-  };
+  // useEffect(() => {
+  //   get(settingState, "settings.appearance.theme,")
+  //   }, [settingState.settings])
 
-  useEffect(() => {
-    get(settingState, "settings.appearance.theme,")
-    }, [settingState.settings])
-
-  useEffect(() => {
-    if (
-      settingState.settings &&
-      settingState.settings.appearance &&
-      settingState.settings.appearance.theme
-    ) {
-      setThemeSetting({ ...settingState.settings.appearance.theme})
-    }
-  }, [settingState.settings])
+ 
 
 
   return (
     <>
      <Alerts/>
+     {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div">
@@ -80,11 +84,11 @@ const ThemesComponent = () => {
             />
           </Box>
           <Box className={classes.themeLogoWrapper}>
-            {themeSetting.logo.original ? (
+            {themeSetting.logo? (
               <img
                 src={logoImage}
                 className={classes.themeLogoBoxPreview}
-                alt="Logo"
+                alt="Hello"
               />
             ) : (
               <img
@@ -103,7 +107,7 @@ const ThemesComponent = () => {
               onChange={(e) => fileChange(e)}
             />
             <label htmlFor="logo" className={classes.feautedImage}>
-              {themeSetting.logo.original ? "Change Logo" : "Add Logo"}
+              {themeSetting.logo? "Change Logo" : "Add Logo"}
             </label>
           </Box>
         </Grid>
