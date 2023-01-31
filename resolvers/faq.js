@@ -46,8 +46,8 @@ module.exports = {
         status: args.status,
       };
       let validation = ["title", "content"];
-      const result = await duplicateData({title: data.title}, Faq, args.id)
-      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Faq", false)
+      const duplicate = await duplicateData({title: data.title}, Faq, args.id)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Faq", false)
       return await UPDATE_FUNC(
         id,
         args.id,

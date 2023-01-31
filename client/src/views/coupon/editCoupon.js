@@ -92,7 +92,12 @@ const EditCouponComponent = ({ params }) => {
   };
 
   const handleChange = (e) => {
-    setCoupon({ ...coupon, [e.target.name]: e.target.value });
+    let name = e.target.name;
+    let value = e.target.value;
+    if (name === "discount_value" || name === "minimum_spend" || name === "maximum_spend") {
+      value = parseInt(value);
+    }
+    setCoupon({ ...coupon, [name]: value });
   };
 
   const selectChange = (e) => {

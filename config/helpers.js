@@ -313,11 +313,13 @@ const imageUpload = async (upload, uploadPath, nametype) => {
           const awslarge = await uploadFile(large, filename, awslargepath);
           const awsmedium = await uploadFile(medium, filename, awsmediumpath);
           const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
-          // delete file once uploaded on AWS
+          // delete file if uploaded on AWS and exists in local
           if(!awsoriginal || awsoriginal) {
             imgType.map(type => {
               let filePath = `.${uploadPath}${type}/${filename}`;
-              fs.unlinkSync(filePath);
+              if(fs.existsSync(filePath)){
+                fs.unlinkSync(filePath);
+              }
             })
           }
           return resolve({
@@ -502,12 +504,17 @@ const checkRole = (role, roleOptions) => {
 module.exports.checkRole = checkRole;
 
 const duplicateData = async(args, model, updateId) => {
-  let docs = await model.find(args)
-  docs = docs.filter(doc=>{
-    if(doc._id.toString() !== updateId.toString()) return doc
-  })
-  if(docs.length > 0) return false
-  else return true
+  let docs
+  if(!updateId){
+    docs = await model.find(args)
+  }else{
+    docs = await model.find(args)
+    docs = docs.filter(doc=>{
+      if(doc._id.toString() !== updateId.toString()) return doc
+    })
+  }
+  if(docs.length) return true
+  else return false
 }
 module.exports.duplicateData = duplicateData
 

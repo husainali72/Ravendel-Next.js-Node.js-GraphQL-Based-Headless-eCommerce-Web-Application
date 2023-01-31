@@ -255,13 +255,7 @@ const CREATE_FUNC = async (
         return MESSAGE_RESPONSE("DUPLICATE", "Name", false);
       }
     }
-    if (data.code) {
-      const unitresponse = await modal.findOne({ code: data.code });
-      if (unitresponse) {
-        return MESSAGE_RESPONSE("DUPLICATE", "Code", false);
-      }
-    }
-    if (data.email) {
+    if (data.email && name !== "Review") {
       const emailresponse = await modal.find({$and: [{product_id: data.product_id},{email: data.email}]});
       //console.log("emailres===",emailresponse)
       if (emailresponse.length>0) {

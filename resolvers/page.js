@@ -47,6 +47,8 @@ module.exports = {
         meta: args.meta,
       };
       let validation = ["title"];
+      const duplicate = await duplicateData({title: args.title}, Page)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Page", false);
       return await CREATE_FUNC(id, "Page", Page, data, args, "", validation);
     },
     updatePage: async (root, args, { id }) => {
@@ -62,8 +64,8 @@ module.exports = {
         meta: args.meta,
       };
       let validation = ["title"];
-      const result = await duplicateData({title: args.title}, Page, args.id)
-      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Page", false);
+      const duplicate = await duplicateData({title: args.title}, Page, args.id)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Page", false);
       return await UPDATE_FUNC(
         id,
         args.id,
