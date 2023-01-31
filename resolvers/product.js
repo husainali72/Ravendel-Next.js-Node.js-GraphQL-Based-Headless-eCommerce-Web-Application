@@ -508,6 +508,8 @@ module.exports = {
         image: args.image,
         meta: args.meta,
       };
+      const duplicate = await duplicateData({name: data.name}, ProductCat)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "ProductCategory", false);
       let validation = ["name"];
       return await CREATE_FUNC(
         id,
@@ -535,8 +537,8 @@ module.exports = {
         meta: args.meta,
       };
       let validation = ["name"];
-      const result = await duplicateData({name: data.name}, ProductCat, args.id)
-      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "ProductCategory", false);
+      const duplicate = await duplicateData({name: data.name}, ProductCat, args.id)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "ProductCategory", false);
       return await UPDATE_FUNC(
         id,
         args.id,
@@ -579,7 +581,6 @@ module.exports = {
     },
 
     addProduct: async (root, args, { id }) => {
-      console.log(args)
       await checkAwsFolder('product');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
@@ -645,6 +646,8 @@ module.exports = {
             }
           }
           let url = await updateUrl(args.url || args.name, "Product");
+          const duplicate = await duplicateData({name: args.name}, Product)
+          if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product", false);
           const newProduct = new Product({
             name: args.name,
             url: url,
@@ -755,8 +758,8 @@ module.exports = {
           return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
         }
 
-        const result = await duplicateData({name: args.name}, Product, args.id)
-        if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Product", false);
+        const duplicate = await duplicateData({name: args.name}, Product, args.id)
+        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product", false);
 
         const product = await Product.findById({ _id: args.id });
         if (product) {
