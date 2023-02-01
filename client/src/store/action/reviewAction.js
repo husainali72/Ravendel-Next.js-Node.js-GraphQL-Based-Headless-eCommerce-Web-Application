@@ -140,6 +140,7 @@ export const reviewUpdateAction = (object, navigate) => (dispatch) => {
 
   mutation(UPDATE_REVIEW, object)
     .then((response) => {
+
       const [error, success, message, data] = mutationResponseHandler(
         response,
         "updateReview"
@@ -156,8 +157,9 @@ export const reviewUpdateAction = (object, navigate) => (dispatch) => {
       }
 
       if (success) {
-        navigate(`${client_app_route_url}reviews`);
+
         dispatch(reviewsAction());
+        navigate(`${client_app_route_url}reviews`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
@@ -165,6 +167,7 @@ export const reviewUpdateAction = (object, navigate) => (dispatch) => {
       }
     })
     .catch((error) => {
+
       dispatch({
         type: REVIEW_FAIL,
       });

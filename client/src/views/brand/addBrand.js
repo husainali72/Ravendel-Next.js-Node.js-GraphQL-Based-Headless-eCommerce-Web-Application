@@ -30,7 +30,7 @@ const AddBrandsComponent = () => {
         type: ALERT_SUCCESS,
         payload: {
           boolean: false,
-          message: "please fill the required field",
+          message: "Brand Field Is Required",
           error: true,
         },
       });

@@ -31,6 +31,8 @@ import viewStyles from "../viewStyles.js";
 import theme from "../../theme";
 import { taxAction } from "../../store/action/";
 import { ThemeProvider } from "@mui/material/styles";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 var TaxObject = {
   name: "",
   percentage: "",
@@ -81,7 +83,22 @@ const TaxComponent = () => {
   };
 
   const addCustomTax = () => {
-    dispatch(taxClassAddAction({ tax_class: customTaxClass }));
+    var errors = validate(["name", "percentage"], customTaxClass);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(taxClassAddAction({ tax_class: customTaxClass }));
+    }
+
   };
 
   const editTax = (tax) => {
@@ -90,7 +107,22 @@ const TaxComponent = () => {
   };
 
   const updateCustomTax = () => {
-    dispatch(taxClassUpdateAction({ tax_class: customTaxClass }));
+    var errors = validate(["name", "percentage"], customTaxClass);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(taxClassUpdateAction({ tax_class: customTaxClass }));
+    }
+
   };
 
   const cancelTax = () => {

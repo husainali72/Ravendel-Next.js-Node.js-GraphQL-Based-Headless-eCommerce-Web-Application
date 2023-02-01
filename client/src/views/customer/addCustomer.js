@@ -15,6 +15,10 @@ import {
 import { client_app_route_url } from "../../utils/helper";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../theme/index";
+import { validate } from "../components/validate";
+import { isEmpty } from "../../utils/helper";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { useNavigate } from "react-router-dom";
 var customerObj = {
   first_name: "",
   last_name: "",
@@ -31,7 +35,7 @@ const AddCustomerComponent = () => {
   const dispatch = useDispatch();
   const Customers = useSelector((state) => state.customers);
   const [customer, setcustomer] = useState(customerObj);
-
+  const navigate = useNavigate()
   useEffect(() => {
     document.forms[0].reset();
     setcustomer(customerObj);
@@ -40,7 +44,26 @@ const AddCustomerComponent = () => {
   const addCustomer = (e) => {
     e.preventDefault();
 
-    dispatch(customerAddAction(customer));
+    var errors = validate(['company', "phone", "email", "last_name", "first_name"], customer);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+
+    if (isEmpty(errors)) {
+      dispatch(customerAddAction(customer, navigate));
+    }
+
+
+
+
   };
 
   const handleChange = (e) => {

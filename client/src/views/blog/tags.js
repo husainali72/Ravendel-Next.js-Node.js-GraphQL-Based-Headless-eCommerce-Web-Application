@@ -20,11 +20,14 @@ import {
   blogtagUpdateAction,
   blogtagDeleteAction,
 } from "../../store/action/";
+import { isEmpty } from "../../utils/helper.js";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import {
   Alert,
   Loading,
@@ -68,14 +71,42 @@ const AllTagsComponent = () => {
   };
 
   const updateTag = () => {
-    dispatch(blogtagUpdateAction(singleTag));
-    setEditmode(false);
-    setSingleTag(tagObject);
+    var errors = validate(["url", "name"], singleTag);
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(blogtagUpdateAction(singleTag));
+      setEditmode(false);
+      setSingleTag(tagObject);
+    }
+
   };
 
   const addTag = () => {
-    dispatch(blogtagAddAction(singleTag));
-    setSingleTag(tagObject);
+    var errors = validate(["url", "name"], singleTag);
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(blogtagAddAction(singleTag));
+      setSingleTag(tagObject);
+    }
+
   };
 
   const cancelTag = () => {

@@ -39,9 +39,8 @@ const EditFAQComponenet = ({ params }) => {
   const [faq, setFaq] = useState(defaultObj);
   const [loading, setloading] = useState(false);
   useEffect(() => {
-    if (blogState.id !== FAQId) {
-      dispatch(blogAction(FAQId));
-    }
+    dispatch(blogAction(FAQId));
+
     return () => {
       setFaq(defaultObj);
     };

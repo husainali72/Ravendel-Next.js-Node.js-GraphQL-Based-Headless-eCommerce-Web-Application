@@ -22,8 +22,11 @@ import viewStyles from "../viewStyles";
 import { pageAddAction } from "../../store/action/pageAction.js";
 import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Navigate, useNavigate } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { validate } from "../components/validate";
+import { isEmpty } from "../../utils/helper";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 var defaultObj = {
   status: "Publish",
   title: "",
@@ -64,7 +67,23 @@ const AddPageTheme = (props) => {
 
   const addPage = (e) => {
     e.preventDefault();
-    dispatch(pageAddAction(page, navigate));
+    var errors = validate(["title"], page);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(pageAddAction(page, navigate));
+
+    }
+
   };
 
   const handleChange = (e) => {

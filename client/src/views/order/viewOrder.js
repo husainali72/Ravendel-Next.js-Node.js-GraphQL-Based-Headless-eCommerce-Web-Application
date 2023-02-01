@@ -47,6 +47,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { currencyFormat } from "./CurrencyFormat";
 import { get } from "lodash";
+import { validatenested } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { isEmpty } from "../../utils/helper";
 const ViewOrderComponent = ({ params }) => {
   const ORDERID = params.id || "";
   const classes = viewStyles();
@@ -92,9 +95,10 @@ const ViewOrderComponent = ({ params }) => {
   });
 
   useEffect(() => {
-    if (order.id !== ORDERID) {
-      dispatch(orderAction(ORDERID));
-    }
+    dispatch(orderAction(ORDERID));
+  }, []);
+
+  useEffect(() => {
     const singleorder = get(singleOrder, "order");
     setorder({ ...order, ...singleorder });
   }, [get(singleOrder, "order")]);
@@ -105,9 +109,37 @@ const ViewOrderComponent = ({ params }) => {
 
   const updateOrder = (e) => {
     e.preventDefault();
-    setEditBilling(false);
-    setEditShipping(false);
-    dispatch(orderUpdateAction(order, navigate));
+
+    var errors = validatenested("billing", ["payment_method", "phone", "email", "state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    var Errors = validatenested("shipping", ["state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
+    if (!isEmpty(Errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: Errors,
+          error: true,
+        },
+      });
+    }
+    if (isEmpty(Errors) && isEmpty(errors)) {
+      setEditBilling(false);
+      setEditShipping(false);
+      dispatch(orderUpdateAction(order, navigate));
+    }
+
+
   };
 
   const changeBilling = (e) => {
@@ -171,14 +203,14 @@ const ViewOrderComponent = ({ params }) => {
       {order ? (
         <>
           <Grid container className="topbar">
-            <Grid item lg={6}>
+            <Grid item lg={6} md={6} sm={6} xs={12} p={1}>
               <Typography variant="h5">
                 <Link to={`${client_app_route_url}all-orders`}>
                   <IconButton aria-label="Back">
                     <ArrowBackIcon />
                   </IconButton>
                 </Link>
-                <span style={{ paddingTop: 10 }}>View Orders</span>
+                <span style={{ paddingTop: 10 }}>View Order</span>
               </Typography>
             </Grid>
 

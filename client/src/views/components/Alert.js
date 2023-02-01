@@ -51,7 +51,7 @@ const Alerts = () => {
       {(alert.error || alert.success) && alert.message ? (
         <Alert
           severity={alert.success ? "success" : "error"}
-          sx={{ width: "100%" }}
+          sx={{ width: "100%" ,textTransform:"capitalize"}}
         >
           {alert.message}
         </Alert>

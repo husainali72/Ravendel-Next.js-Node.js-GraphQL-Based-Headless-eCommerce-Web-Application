@@ -14,6 +14,7 @@ import {
   TablePagination,
   IconButton,
   Tooltip,
+  Badge
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +28,7 @@ import Loading from "../utils/loading";
 import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import theme from "../../theme/index";
-
+import { badgeColor } from "../components/BadgeColor";
 const AllOrdersComponent = () => {
   const classes = viewStyles();
   const navigate = useNavigate();
@@ -106,18 +107,11 @@ const AllOrdersComponent = () => {
                             {convertDateToStringFormat(order.date)}
                           </TableCell>
                           <TableCell>
-                            <span
-                              className={"product-status-chip " + order.status}
-                            >
-                              {order.payment_status}
-                            </span>
+                            <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} sx={{ ml: '40px' }} className={"product-status-chip " + order.status} />
+
                           </TableCell>
                           <TableCell>
-                            <span
-                              className={"product-status-chip " + order.status}
-                            >
-                              {order.shipping_status}
-                            </span>
+                            <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} sx={{ ml: '40px' }} className={"product-status-chip " + order.status} />
                           </TableCell>
                           <TableCell>
                             <Tooltip title="Edit Order" aria-label="edit">

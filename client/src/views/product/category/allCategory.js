@@ -41,6 +41,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import { categoriesAction } from "../../../store/action/";
 import { isEmpty } from "../../../utils/helper";
 import { get } from "lodash";
+import { validate } from "../../components/validate";
+import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 var categoryObject = {
   name: "",
   parentId: null,
@@ -107,13 +109,43 @@ const AllCategoryComponent = () => {
   };
 
   const updateCat = () => {
-    dispatch(categoryUpdateAction(singlecategory));
-    setEditmode(false);
-    setSingleCategory(categoryObject);
+    var errors = validate(["name"], singlecategory);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(categoryUpdateAction(singlecategory));
+      setEditmode(false);
+      setSingleCategory(categoryObject);
+    }
+
   };
 
   const addCat = () => {
-    dispatch(categoryAddAction(singlecategory));
+    var errors = validate(["name"], singlecategory);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(categoryAddAction(singlecategory));
+    }
+
   };
 
   const cancelCat = () => {
