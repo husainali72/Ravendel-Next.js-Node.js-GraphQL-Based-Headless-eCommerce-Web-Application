@@ -334,11 +334,9 @@ module.exports = {
     },
     brand: async (root, args) => {
       try {
-        if (isEmpty(root.brand)) {
-          return "";
-        }
-        const brands = await Brand.findById(root.brand);
-        return brands;
+        if(!root.brand) return ""
+        const brand = await Brand.findById(root.brand);
+        return brand;
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
