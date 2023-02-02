@@ -5,6 +5,7 @@ const APP_KEYS = require("../../config/keys");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("../../middleware/auth");
+const { sendEmail } = require("../../config/helpers");
 
 // user model
 const User = require("../../models/User");
@@ -30,13 +31,20 @@ router.post("/register", (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then((user) =>
+            .then((user) =>{
               res.json({
                 name: user.name,
                 email: user.email,
                 role: user.role,
               })
-            )
+
+              // send registration email
+              mailData = {
+                subject: `Welcome To Ravendel ${user.name}`, 
+                mailTemplate: "template"
+              }
+              sendEmail(mailData, APP_KEYS.smptUser, user.email, res)
+            })
             .catch((err) => console.log(err));
         });
       });

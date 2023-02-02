@@ -1,6 +1,8 @@
 const Messages = require("./messages");
 const Validator = require("validator");
 const moment = require("moment")
+const nodemailer = require('nodemailer')
+const APP_KEYS = require('../config/keys')
 
 const { uploadFile, FileDelete } = require("../config/aws");
 
@@ -495,6 +497,8 @@ const MESSAGE_RESPONSE = (type, item, success) => {
   };
 };
 
+module.exports.MESSAGE_RESPONSE = MESSAGE_RESPONSE;
+
 
 const checkRole = (role, roleOptions) => {
   role = role.toUpperCase()
@@ -637,5 +641,30 @@ const populateSales = (data, order, paymentSuccessSubTotal, paymentSuccessGrandT
 }
 module.exports.populateSales = populateSales;
 
-module.exports.MESSAGE_RESPONSE = MESSAGE_RESPONSE;
+const sendEmail = (mailData, from, to, res)  => {
+  const transporter = nodemailer.createTransport({
+    service: 'smtp@gmail.com',
+    port: 465,
+    secure: true,
+    requireTLS: true,
+    auth: {
+      user: `${APP_KEYS.smptUser}`,
+      pass: `${APP_KEYS.smptPass}`
+    }
+  })
+  const mailOptions = {
+    from: `${from}`,
+    to: `${to}`,
+    subject: mailData.subject,
+    html: `${mailData}`
+  }
+  transporter.sendMail(mailOptions, (err, info)=>{
+    if (err && res) {
+      return res.status(400).json({success: false,message: 'Email sending faild.' });
+    } else {
+      return res.status(200).json({success: true,message: 'Email sent successfully.' });
+    }
+  })
+}
+module.exports.sendEmail = sendEmail
 

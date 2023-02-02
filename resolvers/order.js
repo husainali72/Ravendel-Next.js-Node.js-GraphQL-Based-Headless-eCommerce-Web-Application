@@ -2,6 +2,7 @@ const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Setting = require("../models/Setting");
 const Shipping = require("../models/Shipping");
+const Customer = require("../models/Customer");
 const Tax = require("../models/Tax");
 const Coupon = require("../models/Coupon");
 const {
@@ -10,14 +11,15 @@ const {
   _validate,
   _validatenested,
   subTotalDetailsEntry,
-  subTotalSummaryEntry
+  subTotalSummaryEntry,
+  sendEmail
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
   GET_SINGLE_FUNC,
   GET_ALL_FUNC,
 } = require("../config/api_functions");
-
+const APP_KEYS = require('../config/keys')
 const validate = require("../validations/order");
 
 
@@ -156,6 +158,15 @@ module.exports = {
         // console.log(newOrder.sub_total_details)
         //console.log(newOrder);
         await newOrder.save();
+        // send order create email
+        const customer = await Customer.findById(args.customer_id);
+        mailData = {
+          subject: `Order Placed`, 
+          mailTemplate: "template",
+          order: newOrder
+        }
+        sendEmail(mailData, APP_KEYS.smptUser, customer.email)
+
         return MESSAGE_RESPONSE("AddSuccess", "Order", true);
       } catch (error) {
         console.log(error)
@@ -218,6 +229,15 @@ module.exports = {
           order.billing = args.billing;
           order.shipping = args.shipping;
           await order.save();
+          // send order create email
+          const customer = await Customer.findById(args.customer_id);
+          mailData = {
+            subject: `Order Updated`, 
+            mailTemplate: "template",
+            order: order
+          }
+          sendEmail(mailData, APP_KEYS.smptUser, customer.email)
+
           return MESSAGE_RESPONSE("UpdateSuccess", "Order", true);
         }
 
