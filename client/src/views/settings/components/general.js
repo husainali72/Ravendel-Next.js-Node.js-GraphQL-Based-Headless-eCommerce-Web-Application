@@ -34,13 +34,23 @@ const GeneralTheme = () => {
 
 
   useEffect(() => {
-    let timezzz = TimeZones.findIndex((tz) => tz.value === general.time_zone)
-    setTimeZone(timezzz);
+    if (general.time_zone === null) {
+      setTimeZone(-1);
+    } else {
+      let timeIndex = TimeZones.findIndex((tz) => tz.value === general.time_zone)
+      setTimeZone(timeIndex);
+    }
     dispatch(getDatesAction())
   }, [get(settingState, "settings.general")]);
 
+
   const changeTimeZone = (val, e) => {
-    setgeneral({ ...general, time_zone: val.value });
+    if (val == null) {
+      setgeneral({ ...general, time_zone: null });
+    }
+    else {
+      setgeneral({ ...general, time_zone: val.value });
+    }
   };
 
   const updateGenral = () => {
@@ -82,16 +92,17 @@ const GeneralTheme = () => {
               <Typography variant="h5" className={classes.marginBottom2}>
                 Time Zone
               </Typography>
+
               <Autocomplete
+                disablePortal
                 id="combo-box-demo"
                 options={TimeZones}
                 getOptionLabel={(option) => option.name}
-                style={{ width: 300 }}
-                defaultValue={TimeZones[timeZone]}
-                onChange={(event, value) => changeTimeZone(value)}
-                renderInput={(params) => (
-                  <TextField {...params} variant="outlined" />
-                )}
+                value={TimeZones[timeZone]}
+                sx={{ width: 300 }}
+                onChange={(event, value) =>
+                  changeTimeZone(value)}
+                renderInput={(params) => <TextField {...params} label="Select Timezone" />}
               />
             </Box>
             : null}

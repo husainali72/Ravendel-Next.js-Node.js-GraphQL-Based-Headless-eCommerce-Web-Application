@@ -15,7 +15,7 @@ const PaypalComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [paypalInfo, setPaypalInfo] = useState({});
+  const [paypalInfo, setPaypalInfo] = useState({enable: false});
 
   useEffect(() => {
     if (settingState.settings && settingState.settings.paymnet && settingState.settings.paymnet.paypal){
