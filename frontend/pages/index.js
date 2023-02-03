@@ -129,7 +129,8 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
       {homePageInfo && homePageInfo.slider && homePageInfo.slider?.length > 0 ?
         <Homebanner slider={homePageInfo.slider} Image={Image} />
         : null}
-         {category?.length > 0 ? <Category category={category} /> : null}
+
+      {category?.length > 0 ? <Category category={category} /> : null}
       
       {brands?.length > 0 ? <FeatureBrand brands = {brands} /> : null}
       <RavendelBanner />

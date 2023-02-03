@@ -1,10 +1,8 @@
 const KEY = process.env.STRIPE_SECRET_KEY;
 const stripe = require('stripe')(KEY);
 export default async function handler(req, res) {
-  console.log('items',req.body)
   if (req.method === 'POST') {
     try {
-      console.log('cartInStripe',req.body)
       const params ={
         line_items: req.body.map((item) => {
           return {
@@ -12,9 +10,9 @@ export default async function handler(req, res) {
               currency: 'usd',
               product_data: { 
                 name: item.name,
-                images: [item.feature_image.original],
+                images: [item?.feature_image?.original],
               },
-              unit_amount: item.pricing.sellprice * 100,
+              unit_amount: item?.pricing?.sellprice * 100,
             },
             // adjustable_quantity: {
             //   enabled:true,

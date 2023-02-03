@@ -8,7 +8,7 @@ import OnSaleProductCard from './category/onSaleProductCard'
 const SpecificProducts = ({section}) => {
 
 
-    const [pro,setPro] = useState([]) 
+    const [products,setProducts] = useState([]) 
     const [category,setCategory] = useState({}) 
     let config = { category: [section.category], brand: [], attribute: [], price: [] }
     const getProducts = async () =>{
@@ -19,9 +19,8 @@ const SpecificProducts = ({section}) => {
             })
             let fillterProduct = fillterPrroducts?.filteredProducts
             if(fillterProduct.length>0){
-                const pro = fillterProduct.map(product =>{
-                    return{
-                        brand: product.brand,
+                 fillterProduct.map(product =>{
+                    setProducts((prev)=>[...prev,{brand: product.brand,
                         categoryId: product.categoryId,
                         feature_image: product.feature_image,
                         name:product.name,
@@ -30,10 +29,8 @@ const SpecificProducts = ({section}) => {
                         status:product.status,
                         url:product.url,
                         __typename: product.__typename,
-                        _id:product._id
-                    }
+                        _id:product._id} ])
                 } )
-                setPro(pro)
             }
         }
         catch (e) {
@@ -64,14 +61,14 @@ const SpecificProducts = ({section}) => {
    
   return (
        <div>
-        {pro?.length > 0 ?  <Container>
-        <h4 style={{ color: "#088178" }}>Products For <span style={{ color: "black" }}>{category?.name}</span></h4>
-         <OnSaleProductCard
-        onSaleProduct={pro}
-        hidetitle
-     /> 
-     </Container> : null }
-       
+            {products?.length > 0 ?  <Container>
+                <h4 className='theme-color' >Products For <span className='black-color' >{category?.name}</span></h4>
+                    <OnSaleProductCard
+                        onSaleProduct={products}
+                        hidetitle
+                    /> 
+            </Container> : null }
+        
        </div>
   )
 }

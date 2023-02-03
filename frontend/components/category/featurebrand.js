@@ -5,7 +5,7 @@ const FeatureBrand = ({brands}) => {
     return (
         <section className="product-cart-section">
             <Container>
-                <h4 style={{ color: "#088178" }}>Feature <span style={{ color: "black" }}>Brand</span></h4>
+                <h4 className='theme-color'>Feature <span className='black-color'>Brand</span></h4>
                 <div className="category brand-container">
                         {brands.map((item, i) => ( 
                             <div className="brand-card-container" key={i}>
@@ -21,8 +21,8 @@ const FeatureBrand = ({brands}) => {
                                 </div>
                                 <div className="card-body">
                                     <p
-                                        className="card-title"
-                                        style={{ display: "flex", justifyContent: 'center', margin: "20px 0" }}>
+                                        className="card-title category-card-title" 
+                                        >
                                         {item?.name}
                                     </p>
                                 </div>

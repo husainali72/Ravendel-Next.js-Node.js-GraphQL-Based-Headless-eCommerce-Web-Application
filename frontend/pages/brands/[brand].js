@@ -7,7 +7,7 @@ const Brand = ({brand}) => {
   return (
     <Container>
         <div className='brand-page'> 
-            <h3 style={{ color: "#088178" }}> {brand?.name}<span style={{ color: "black" }}> here</span></h3>
+            <h3 className='theme-color' > {brand?.name}<span className='black-color'> here</span></h3>
         </div>
     </Container>
   )
@@ -24,7 +24,6 @@ export async function getStaticPaths(){
             query: GET_BRANDS_QUERY
         })
         brands = brandproductData.brands.data;
-        console.log('brandsTest',brands)
      
     }
     catch (e) {
@@ -33,10 +32,9 @@ export async function getStaticPaths(){
 
     const paths = brands?.map((brand) => {
         return{
-            params: { brand: brand.url.toString() }
+            params: { brand: brand?.url?.toString() }
         }
     })
-    console.log('paths',pathss)
     return {
         paths,
         fallback: false,
@@ -44,7 +42,7 @@ export async function getStaticPaths(){
 }
 
 export async function getStaticProps({ params }) {
-    const url = params.brand  
+    const url = params?.brand  
     var brands = []
     var brand = null
 
@@ -54,7 +52,7 @@ export async function getStaticProps({ params }) {
     const { data: brandproductData } = await client.query({
         query: GET_BRANDS_QUERY
     })
-    brands = brandproductData.brands.data;
+    brands = brandproductData?.brands?.data;
    
 }
 catch (e) {

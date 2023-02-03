@@ -558,7 +558,15 @@ color: #696969;
   object-fit:cover;
 }
 
+.theme-color{color: #088178}
+.black-color{  color: black }
+.category-card-title
+{
+  display: flex;
+  justify-content: center;
+  margin: 20px 0px !important;  
 
+}
 .categoryShow{
   /* grid-gap: 100px; */
   background-color: transparent;
@@ -2909,9 +2917,9 @@ header {
   .account-coupon-box .col-md-6 {
     padding: 0 8px;
   }
-  /* .category {
+  .brand-container {
     grid-template-columns: repeat(3, 1fr);
-  } */
+  }
   .banner-container {
     padding: 60px 0;
   }
@@ -3001,6 +3009,9 @@ header {
     padding: 12px;
     margin-top: 30px;
   }
+  .brand-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
   /* 
   --Ravendel
     Contact Page Completed
@@ -3076,6 +3087,15 @@ header {
     margin-bottom: 24px;
   }
 }
+
+
+@media screen and (max-width: 276px){
+  .brand-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+
 @media screen and (max-width: 576px) {
   .header-top .col-sm-6 {
     width: 50% !important;

@@ -45,9 +45,9 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
             })
             let fillterProduct = fillterPrroducts.filteredProducts
             if(fillterProduct.length>0){
-                const pro = fillterProduct.map(product =>{
-                    return{
-                        brand: product.brand,
+            
+                fillterProduct.map(product =>{
+                    setProducts((prev)=>[...prev,{brand: product.brand,
                         categoryId: product.categoryId,
                         feature_image: product.feature_image,
                         name:product.name,
@@ -56,11 +56,9 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
                         status:product.status,
                         url:product.url,
                         __typename: product.__typename,
-                        _id:product._id
-                    }
+                        _id:product._id} ])
                 } )
-                setProducts(pro)
-            }
+            }   
             // setProducts(fillterProduct )
         }
         catch (e) {
