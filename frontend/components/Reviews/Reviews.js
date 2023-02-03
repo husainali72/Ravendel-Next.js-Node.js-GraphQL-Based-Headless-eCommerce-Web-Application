@@ -12,15 +12,8 @@ import moment from 'moment';
   }
   return convertedDate;
 };
-
-
 const Reviews = ({singleProductReview}) => {
-
-    const[reviews,setReviews] = useState([])
-
-
-    console.log('singleproductreview....',singleProductReview)
-    console.log('state....',reviews)
+const[reviews,setReviews] = useState([])
 useEffect(() => {
   setReviews(singleProductReview)
 },[singleProductReview])

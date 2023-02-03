@@ -9,7 +9,6 @@ var placeholder = "https://dummyimage.com/300";
 
 const PruductCart = ({ productDetail, featureproducts }) => {
     const dispatch = useDispatch();
-console.log('productDetail', productDetail)
     const [items, setItems] = useState([]);
     useEffect(() => {
         setItems(featureproducts)

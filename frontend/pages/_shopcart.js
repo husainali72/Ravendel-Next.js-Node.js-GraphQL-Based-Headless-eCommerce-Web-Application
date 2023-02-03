@@ -17,7 +17,7 @@ import { APPLY_COUPON_CODE } from "../queries/couponquery";
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity), 0)
 
 const YourCard = ({ customercart, cart_id }) => {
-    console.log("cartbyUser";
+ 
     // console.log(" cart_id", cart_id);
 
     const session = useSession();

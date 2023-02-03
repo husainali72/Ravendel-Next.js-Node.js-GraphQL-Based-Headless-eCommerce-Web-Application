@@ -15,8 +15,7 @@ const GalleryImagesComponents = (props) => {
     const session = useSession()
     const router = useRouter();
     const { singleproducts } = props;
-    // console.log("single", singleproducts)
-    console.log('galleryImages', props.galleryImages)
+    
     const settings = {
         customPaging: function (i) {
             return (
@@ -37,8 +36,7 @@ const GalleryImagesComponents = (props) => {
         slidesToShow: 1,
         slidesToScroll: 1,
         touchMove: false,
-    };
-    // console.log("galleryImage", props.galleryImages)
+        };
     const addToCartProduct = (product) => {
         let quantity = 1
 
@@ -140,6 +138,13 @@ const GalleryImagesComponents = (props) => {
                             className="btn btn-success button button-add-to-cart"
                             style={{ marginTop: 12, backgroundColor: "#088178" }}
                             onClick={() => addToCartProduct(singleproducts)}>Add to Cart</button>
+                            {singleproducts.custom_field.map(field => (<div>
+                                <ul className="product-meta font-xs color-grey mt-50">
+                                <p >
+                                    {`${field.key} - ${' '}`} <strong> {field.value}</strong>
+                                </p>
+                                </ul>
+                            </div>))}
                         <ul className="product-meta font-xs color-grey mt-50">
                             <p className="">SKU: {singleproducts.sku}</p>
                             <p className="">Tags: {singleproducts.__typename}</p>

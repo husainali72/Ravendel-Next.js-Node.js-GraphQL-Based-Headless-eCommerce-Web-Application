@@ -5,13 +5,13 @@ import client from "../../apollo-client";
 import { Container } from "react-bootstrap";
 import { GET_HOMEPAGE_DATA_QUERY, GET_RECENT_PRODUCTS_QUERY } from "../../queries/home";
 import { GET_SINGLE_PRODUCT, GET_PRODUCT_REVIEWS, GET_REVIEWS } from "../../queries/productquery";
+import { GET_PRODUCTS_QUERY} from "../../queries/shopquery";
 import { Tab, Col, Nav } from 'react-bootstrap';
 import GalleryImagesComponents from "../../components/category/GalleryImage";
 import OnSaleProductCard from "../../components/category/onSaleProductCard";
 import ReviewForm from "../../components/singleproductcomponent/ReviewForm";
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react";
-
 import Loading from "../../components/breadcrumb/loading";
 import { useSelector } from "react-redux";
 import Reviews from "../../components/Reviews/Reviews";
@@ -21,29 +21,18 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
     const router = useRouter();
     const session = useSession()
     if (router.isFallback) {
-        return <div>Loading...</div>
+        return <div>Loading...</div>    
     }
-    
     const [singleProduct, setSingleProduct] = useState(null);
-    // const [allReviews,setAllReviews] = useState([]);
     const [sliderImages, setSliderImages] = useState([]);
     const [singleProductReview,setSingleProductReview] = useState([])
-    const productss = useSelector(state => state.products )  
-    console.log('Products all revires',productss)
+    const productss = useSelector(state => state.products ) 
     console.log("single productttt", singleProduct);
-   
-// console.log('router',router.query)
     useEffect(() => {
-       
-       
-        console.log('product changed')
-        // console.log('productReview', productReview.reviews.data)
         const alll = productReview.reviews.data.filter(reviews => reviews.product_id._id === singleproducts._id);
         setSingleProductReview(alll) 
-
     }, [productReview,singleproducts])
     
-
     useEffect(() => {
         var product = singleproducts;
         setSingleProduct(product);
@@ -58,10 +47,6 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
         }
         setSliderImages(allimages);
     }, [singleproducts]);
-    // console.log("singleproduct.loading", singleproducts.loading);
-
-    console.log('Saree reviews:--',singleProductReview)
-    // console.log('all product only reviews:--', allReviews)
 
     return (
         <div>
@@ -76,11 +61,9 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
                     <meta name="keywords" content={singleproducts.meta.keywords} />
                     : null}
             </Head>
-
             <BreadCrumb title={`product`} />
             <section className="product-cart-section">
                 <Container>
-
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="product-detail accordion-detail">
@@ -127,7 +110,6 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
                                     hidetitle
                                 />
                             </div>
-
                         </div>
                         {/* <div className="col-lg-3">
                             <h1>product category</h1>
@@ -143,25 +125,22 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
 }
 export default SingleProduct;
 
-
 export async function getStaticPaths() {
-    var allProduct = [];
-    try {
-        const { data: shopproductcategory } = await client.query({
-            query: GET_RECENT_PRODUCTS_QUERY
+    var allProduct =[];
+       try {
+        const { data: shopproducts } = await client.query({
+            query: GET_PRODUCTS_QUERY
         });
-        allProduct = shopproductcategory.recentproducts;
+        allProduct = shopproducts.products.data;
     }
     catch (e) {
-        console.log("ShopProduct Error===", e)
+        console.log("ShopProduct Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
     }
-    console.log("allProduct", allProduct);
 
     const paths = allProduct.map((curElem) => ({
         params: { singleproduct: curElem.url.toString() }
 
     }))
-
     console.log("paths", paths);
     return {
         paths,
@@ -169,9 +148,7 @@ export async function getStaticPaths() {
     }
 }
 export async function getStaticProps({ params }) {
-    // console.log("params", params);
     const url = params.singleproduct
-    // console.log("url", url);
     let homepageData = [];
     let singleproducts = [];
     let allProduct = [];
@@ -190,7 +167,6 @@ export async function getStaticProps({ params }) {
         console.log("Reviews Error=======", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
       }
     
-
     /* ========================================= get HomePage Data========================================*/
 
     try {
@@ -215,11 +191,6 @@ export async function getStaticProps({ params }) {
     catch (e) {
         console.log("ShopProduct Error===", e.networkError.result.errors)
     }
-    // console.log("singleproducts", singleproducts);
-
-
-
-
     /* ========================================= get featureProduct ========================================*/
     try {
         const { data: shopproductcategory } = await client.query({
@@ -230,8 +201,6 @@ export async function getStaticProps({ params }) {
     catch (e) {
         console.log("ShopProduct Error===", e)
     }
-    // console.log("allProduct", allProduct);
-
     const id = singleproducts._id
 
     try {
@@ -243,7 +212,6 @@ export async function getStaticProps({ params }) {
     catch (e) {
         console.log("review Error", e.networkError.result.errors);
     }
-    // console.log("review", productReview);
 
     return {
         props: {

@@ -18,9 +18,7 @@ import { CloseSortMenu } from '../utills/app';
 
 const Shop = ({ shopProducts, brandProduct, shopProduct }) => {
     const dispatch = useDispatch();
-    // console.log("shopProduct", shopProducts);
     const usercart = useSelector(state => state.userCart)
-    // console.log("userCart", usercart);
     const [rangevalue, setRangevalue] = useState('');
     let onSaleProduct = [];
     var number = 0;

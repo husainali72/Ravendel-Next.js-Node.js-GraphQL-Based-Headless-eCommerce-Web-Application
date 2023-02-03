@@ -29,6 +29,7 @@ export const getImage = (img, type) => {
         imagaPath = bucketBaseURL + img[type]
     }
     return imagaPath;
+  
 }
 
 /* -------------------------------Graphql query function ------------------------------- */
@@ -71,8 +72,6 @@ export const query = async (query, id) => {
 
 export const mutation = async (query, variables) => {
     const session = await getSession();
-
-    console.log('Mutation', variables);
 
     const token = session?.user?.accessToken?.token;
     try {

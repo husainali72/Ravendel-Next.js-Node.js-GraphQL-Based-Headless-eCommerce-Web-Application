@@ -2,8 +2,6 @@ import Link from "next/link";
 import { useState, useEffect } from "react"
 import Table from 'react-bootstrap/Table';
 import { getImage } from '../../utills/helpers';
-// import { removeToCart } from "../../redux/actions/cartAction";
-// import { useDispatch } from "react-redux";
 const CartTable = (props) => {
     // const dispatch = useDispatch();
     const { cartItems,
@@ -16,7 +14,6 @@ const CartTable = (props) => {
         updateCartProduct, currency 
     } = props;
 
-    console.log('cartItemsss', cartItems);
     return (
 
         <div>

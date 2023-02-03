@@ -1,5 +1,3 @@
-
-//its updated 1
 import client from "../apollo-client";
 import Head from 'next/head';
 import Image from 'next/image';
@@ -11,50 +9,31 @@ import FeatureBrand from "../components/category/featurebrand";
 import OnSaleProductCard from "../components/category/onSaleProductCard";
 import { GET_HOMEPAGE_DATA_QUERY, FEATURE_PRODUCT_QUERY, GET_RECENT_PRODUCTS_QUERY, GET_CATEGORIES_QUERY, ON_SALE_PRODUCTS_QUERY ,GET_REVIEWS} from '../queries/home';
 import { useSession } from 'next-auth/react';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { mutation } from "../utills/helpers";
 import { UPDATE_CART_PRODUCT } from "../queries/cartquery";
 import { useSelector, useDispatch } from "react-redux";
 import { settingActionCreator, stripePaymentKeyAction } from "../redux/actions/settingAction"
-import { userCarts } from "../redux/actions/userCartAction";
 import { loadReviewAction } from "../redux/actions/productAction";
+import { GET_BRANDS_QUERY } from "../queries/shopquery";
+import SpecificProducts from "../components/SpecificProducts";
 
-export default function Home({ homepageData, seoInfo, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts,allReviews }) {
-  // console.log("homepage data", stripe_Public_key);
+export default function Home({ homepageData, seoInfo,brands, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts,allReviews }) {
+
   const [press, setPress] = useState(false);
   const initialRender = useRef(true)
   const dispatch = useDispatch()
-
   const session = useSession()
-  // console.log('sessionnnnnn',session);
   const userCart = useSelector(state => state.userCart)
   const cart = useSelector(state => state.cart)
-  // console.log("userCart: ", userCart)
   const productss = useSelector(state => state.products )  
-
   useEffect(() => {
     dispatch(stripePaymentKeyAction(stripe_Public_key))
     dispatch(settingActionCreator(currencyStore.currency_options))
-    // const dataToCheck = [1,2,3,4,5,6,7,8];
-  
-    
-
   }, [])
-  console.log('checkProducts',productss);
   useEffect(()=>{
     dispatch(loadReviewAction(allReviews?.reviews?.data)) ;
   },[allReviews])
-
-
-  console.log('onSaleProductssss',onSaleProducts);
-  // console.log('All reviews',allReviews);
-  // useEffect(() => {
-  //   if (session.status === "authenticated") {
-  //     let id = session.data.user.accessToken.customer._id
-  //     let token = session.data.user.accessToken.token
-  //     dispatch(userCarts(id, token))
-  //   }
-  // }, [])
 
   useEffect(() => {
     if (initialRender.current) {
@@ -85,14 +64,48 @@ export default function Home({ homepageData, seoInfo, homePageInfo, currencyStor
       products: Cart,
       total: 0,
     }
-    // console.log("variables", variables)
     if (userCart.card_id === undefined) {
       return undefined;
     } else {
       await mutation(UPDATE_CART_PRODUCT, variables, token).then(res => res)
     }
   }
+  const HomePageSeq = 
+  useMemo(() => homepageData?.getSettings?.appearance?.home?.add_section_web, [homepageData])
+  const renderSwitch = (section)=> {
+    switch(section.name) {
+      case 'products_on_sales':
+        if(section.visible){
+          return (onSaleProducts?.length > 0 ?
+            <>
+              <OnSaleProductCard onSaleProduct={onSaleProducts} />
+            </>
+            : null)
+        }
+        break;
+    
+      case 'feature_product':
+        if(section.visible){
+          return(  featureproducts?.length > 0 ?
+            <>
+              <PruductCart productDetail={featureproducts} featureproducts={featureproducts} />
+            </>
+            : null)
+        }
+      
+        break;
 
+      case 'product_from_specific_category':
+        if(section.visible && section.category){
+          return <SpecificProducts section = {section} />
+        }
+      break;
+        
+      default:
+        break;
+    }
+  }
+ 
   return (
     <div>
       <Head>
@@ -116,24 +129,15 @@ export default function Home({ homepageData, seoInfo, homePageInfo, currencyStor
       {homePageInfo && homePageInfo.slider && homePageInfo.slider?.length > 0 ?
         <Homebanner slider={homePageInfo.slider} Image={Image} />
         : null}
-
-      {category?.length > 0 ? <Category category={category} /> : null}
-
+         {category?.length > 0 ? <Category category={category} /> : null}
+      
+      {brands?.length > 0 ? <FeatureBrand brands = {brands} /> : null}
       <RavendelBanner />
 
-      {recentproducts?.length > 0 ?
-        <>
-          <PruductCart productDetail={recentproducts} featureproducts={featureproducts} />
-        </>
-        : null}
-      {onSaleProducts?.length > 0 ?
-        <>
-          {/* <RavendelBanner /> */}
-          <OnSaleProductCard onSaleProduct={onSaleProducts} />
-        </>
-        : null}
-
-      {/* <FeatureBrand /> */}
+          {HomePageSeq.map(section => (
+            renderSwitch(section)
+          ))}
+      
     </div>
   )
 };
@@ -147,21 +151,21 @@ export async function getStaticProps() {
   var currencyStore = [];
   var allReviews = {};
   let stripe_Public_key = '';
+  var brands = [];
   /* ===============================================Get HomepageData Settings ===============================================*/
 
   try {
     const { data: homepagedata } = await client.query({
       query: GET_HOMEPAGE_DATA_QUERY
     })
-    console.log("homepage dataaaa===", homepagedata);
     homepageData = homepagedata
+    
     currencyStore = homepagedata?.getSettings?.store
     stripe_Public_key = homepagedata?.getSettings?.paymnet?.stripe
   }
   catch (e) {
     console.log("homepage Error===", e);
   }
-  // console.log("homepage", homepageData);
 
   /* ===============================================Get Settings ===============================================*/
   if (homepageData?.getSettings?.appearance.home.add_section_in_home.feature_product) {
@@ -188,7 +192,6 @@ export async function getStaticProps() {
       console.log('Recent Product Error===============', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
     }
   }
-  // console.log("recentproduct===", recentproducts);
 
   /* ===============================================Get Category Prdouct ===============================================*/
 
@@ -201,7 +204,17 @@ export async function getStaticProps() {
   catch (e) {
     console.log("Categories Error=======", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
   }
+  /* ===============================================Get Brands Prdouct ===============================================*/
 
+  try {
+    const { data: brandproductData } = await client.query({
+        query: GET_BRANDS_QUERY
+    })
+    brands = brandproductData.brands.data;
+}
+catch (e) {
+    console.log("===brand", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
+}
 
   /* ===============================================Get All product Reviews  ===============================================*/
 
@@ -215,13 +228,9 @@ export async function getStaticProps() {
     console.log("Reviews Error=======", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
   }
 
-
-
-
-
   /* ===============================================Get OnSale Product  ===============================================*/
 
-  console.log('onsale Slider check',homepageData?.getSettings?.appearance.home.add_section_in_home)
+
   if (!homepageData?.getSettings?.appearance.home.add_section_in_home.products_on_sales) {           //dont know why in this if condition the product on sale is false so I have to change the if conditon to work if it is false which is not good I think
     try {
       const { data: onSaleProductsData } = await client.query({
@@ -263,7 +272,8 @@ export async function getStaticProps() {
       recentproducts,
       category,
       onSaleProducts,
-      allReviews
+      allReviews,
+      brands
     },
     revalidate: 10,
   };
