@@ -13,7 +13,8 @@ import {
 } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
-
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { get } from "lodash";
 import { useParams, useNavigate } from "react-router-dom";
 const EditBrandComponenet = ({ params }) => {
@@ -25,7 +26,6 @@ const EditBrandComponenet = ({ params }) => {
   const dispatch = useDispatch();
   const Brands = useSelector((state) => state.brands);
   const [logoImage, setLogoImage] = useState(null);
-  const productState = useSelector((state) => state.products);
   const [loading, setloading] = useState(false);
   const [brand, setBrand] = useState({
     id: "",
@@ -43,28 +43,48 @@ const EditBrandComponenet = ({ params }) => {
   useEffect(() => {
     if (!isEmpty(get(Brands, "brands"))) {
       if (Brands.brands && Brands.brands.length > 0) {
-        Brands.brands.map((editbrand) => {
-          if (editbrand.id === ID) {
-            brand.id = editbrand.id;
-            setBrand({ ...brand, ...editbrand });
-            if (editbrand.brand_logo && editbrand.brand_logo.original) {
-              setLogoImage(bucketBaseURL + editbrand.brand_logo.original);
+        if (Array.isArray(Brands.brands)) {
+          Brands.brands.map((editbrand) => {
+            if (editbrand.id === ID) {
+              brand.id = editbrand.id;
+              setBrand({ ...brand, ...editbrand });
+              if (editbrand.brand_logo && editbrand.brand_logo.original) {
+                setLogoImage(bucketBaseURL + editbrand.brand_logo.original);
+              }
             }
-          }
-        });
+          });
+        }
       }
     }
   }, [get(Brands, "brands")]);
+
   useEffect(() => {
     setloading(get(Brands, "loading"));
   }, [get(Brands, "loading")]);
+
   useEffect(() => {
-    if (isEmpty(Brands.brands)) {
+    if (isEmpty(get(Brands, "brands"))) {
       dispatch(brandsAction());
     }
   }, []);
   const updateBrand = () => {
-    dispatch(brandUpdateAction(brand, navigate));
+    var errors = validate(["name", 'url'], brand);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(brandUpdateAction(brand, navigate));
+    }
+
+
   };
 
   const handleChange = (e) => {

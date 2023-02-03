@@ -39,14 +39,18 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
 
     const ProductAdd = async (product) => {
         let quantity = 1
-
+        let href = '/shopcart'
         if (session.status === "authenticated") {
-            dispatch(addToCart(product, quantity, token, id))
-            router.push("/shopcart")
+           dispatch(addToCart(product, quantity, token, id))  
+            // router.push(href)
+            await router.push("/shopcart")
+
         }
         else {
             dispatch(addToCart(product))
+            // router.push(href)
             router.push("/shopcart")
+
         }
     }
 
@@ -148,10 +152,14 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
                                                     }
                                                 >
                                                     <div className="add-to-cart">
-                                                        {/* <Link href="/shopcart"> */}
-                                                        <a className="cart-icon" onClick={() => ProductAdd(product)}>
+                                                        {/* <Link href="/shopcart"> */}{
+                                                            session.status === "authenticated" ? ( <a  className="cart-icon" onClick={() => ProductAdd(product)}>
                                                             <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
-                                                        </a>
+                                                        </a>):( <a  className="cart-icon" onClick={() => ProductAdd(product)}>
+                                                            <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
+                                                        </a>)
+                                                        }
+                                                       
                                                         {/* </Link> */}
                                                     </div>
                                                 </OverlayTrigger>

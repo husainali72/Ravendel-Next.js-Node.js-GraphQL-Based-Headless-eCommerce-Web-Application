@@ -32,6 +32,8 @@ import {
   getSelectedName,
   MenuProps,
 } from "./coupon-components";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
@@ -89,17 +91,34 @@ const EditCouponComponent = ({ params }) => {
   };
 
   const updateCoupon = () => {
-    dispatch(couponUpdateAction(coupon, navigate));
+    var errors = validate(["code", "expire"], coupon);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(couponUpdateAction(coupon, navigate));
+    }
+
   };
 
   const handleChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
+
     if (name === "discount_value" || name === "minimum_spend" || name === "maximum_spend") {
       value = parseInt(value);
     }
 
     setCoupon({ ...coupon, [name]: value });
+
   };
 
   const selectChange = (e) => {

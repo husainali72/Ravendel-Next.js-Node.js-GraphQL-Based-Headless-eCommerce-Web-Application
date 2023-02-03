@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const nodemailer = require('nodemailer')
 
 const APP_KEYS = require("../../config/keys");
 const bcrypt = require("bcryptjs");
@@ -9,8 +10,10 @@ const auth = require("../../middleware/customerauth");
 
 // custmer model
 const Customer = require("../../models/Customer");
-
+const Cart = require("../../models/Cart");
 const Setting = require("../../models/Setting");
+const { sendEmail } = require("../../config/helpers");
+const { default: mongoose } = require("mongoose");
 
 // @route   Post api/posts
 // @desc    Registering customer
@@ -51,9 +54,16 @@ router.post("/register", (req, res) => {
           newCustomer.password = hash;
           newCustomer
             .save()
-            .then((customer) =>
-            res.status(200).json({success: true,message: 'Customer registration successfully.',customer })
-            )
+            .then((customer) =>{
+              res.status(200).json({success: true,message: 'Customer registration successfully.',customer })
+              
+              // send registration email
+              mailData = {
+                subject: "Welcome To Ravendel", 
+                mailTemplate: "template"
+              }
+              sendEmail(mailData, APP_KEYS.smptUser, newCustomer.email, res)
+            })
             .catch((err) => console.log(err));
         });
       });
@@ -127,36 +137,14 @@ router.post("/forgotpassword", async (req, res) => {
     if (!customer) {
       return res.status(404).json({success: false,message: 'Email not exists.' });
     } else {
-     let link = "http://" + req.headers.host + "/api/customers/reset/" + customer.id;
-     const nodemailer = require('nodemailer');
-      let transporter = nodemailer.createTransport({
-              host: setting.smtp.server,
-              port: setting.smtp.port,
-              auth: {
-                  user: setting.smtp.username,
-                  pass: setting.smtp.password
-              }
-      });
-
-      let customername =  customer.first_name + " " + customer.last_name;
-
-      message = {
-        from: "no-reply@mail.com",
-        to: req.body.email,
-        subject: "Reset Password",
-        text: `Hi ${customername} \n 
-                    Please click on the following link ${link} to reset your password. \n
-                    If you did not request this, please ignore this email and your password will remain unchanged.\n`,
-        
-    }
-    transporter.sendMail(message, function(err, info) {
-        if (err) {
-          return res.status(400).json({success: false,message: 'Email sending faild.' });
-        } else {
-          return res.status(200).json({success: true,message: 'Email sent successfully, registered mail id' });
-        }
-
-      });
+      let link = "http://" + req.headers.host + "/api/customers/reset/" + customer.id;
+      // send forgot password link
+      mailData = {
+        subject: "Forgot Password!", 
+        mailTemplate: "template",
+        link: link
+      }
+      sendEmail(mailData, APP_KEYS.smptUser, req.body.email, res)
     }
   });
 });
@@ -180,6 +168,12 @@ router.get("/reset/:custId",  (req, res) => {
         last_name: customer.last_name,
         email: customer.email,
       });
+      // send reset password email
+      mailData = {
+        subject: "Reset Password!", 
+        mailTemplate: "template",
+      }
+      sendEmail(mailData, APP_KEYS.smptUser, customer.email, res)
     })
     .catch((err) => res.status(404).json(err));
 });
@@ -759,5 +753,27 @@ router.post("/getcart", auth, async (req, res) => {
    });
   
 });
+
+// @route   GET api/customers/remindCart
+// @desc    send email regarding cart
+// @access  Public
+router.post('/remindCart/:custId', auth, async(req, res) => {
+  try {
+    if(!mongoose.Types.ObjectId.isValid(req.params.custId) || !req.params.custId)
+      return res.status(400).json({message: "Something is missing", succes: false})
+    
+    const existingCustomer = await Customer.findById(req.params.custId)
+    const customerCart = await Cart.findOne({ user_id: req.params.custId })
+    const mailData ={
+      subject: "Checkout Cart",
+      mailTemplate: "template",
+      cart: customerCart
+    }
+    sendEmail(mailData, APP_KEYS.smptUser, existingCustomer.email, res)
+  } catch (err) {
+    // console.log(err)
+    res.status(500).json({message: "Server Error", succes: false})
+  }
+})
 
 module.exports = router;

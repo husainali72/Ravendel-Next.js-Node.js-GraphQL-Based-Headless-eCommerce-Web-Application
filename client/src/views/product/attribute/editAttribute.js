@@ -10,6 +10,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme";
 import { get } from "lodash";
+import { validate } from "../../components/validate";
+import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 const delimiters = ["Enter", "Tab"];
 
 const EditAttributeComponent = ({ params }) => {
@@ -24,9 +26,7 @@ const EditAttributeComponent = ({ params }) => {
   const attributeState = useSelector((state) => state.product_attributes);
   const [loading, setloading] = useState(false);
   useEffect(() => {
-    if (attribute.id !== ATTRIBUTE_ID) {
-      dispatch(attributeAction(ATTRIBUTE_ID));
-    }
+    dispatch(attributeAction(ATTRIBUTE_ID));
   }, []);
 
   useEffect(() => {
@@ -57,7 +57,24 @@ const EditAttributeComponent = ({ params }) => {
   };
 
   const onUpdate = () => {
-    dispatch(attributeUpdateAction({ attribute: attribute }, navigate));
+    var errors = validate(["name"], attribute);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(attributeUpdateAction({ attribute: attribute }, navigate));
+    }
+
+
+
   };
 
   return (

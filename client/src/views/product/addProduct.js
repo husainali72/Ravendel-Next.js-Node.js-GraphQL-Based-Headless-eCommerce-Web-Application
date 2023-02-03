@@ -16,6 +16,8 @@ import {
 import { useTheme } from "@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { productAddAction } from "../../store/action/";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { isEmpty } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
   Alert,
@@ -26,6 +28,7 @@ import {
   FeaturedImageComponent,
   URLComponent,
   TextInput,
+  Loading,
 } from "../components";
 import {
   BrandSelection,
@@ -37,18 +40,22 @@ import {
 } from "./components";
 import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { validate, validatenested } from "../components/validate";
 const AddProductTheme = () => {
-  const navigate = useNavigate;
+  const navigate = useNavigate();
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
+  const loading = useSelector((state) => state.products.loading);
+
   const [product, setProduct] = useState({
     name: "",
+    description: "",
     categoryId: [],
     brand: null,
     pricing: {
@@ -83,10 +90,39 @@ const AddProductTheme = () => {
   });
 
   const addProduct = (e) => {
-    e.preventDefault();
-    product.combinations = combination;
 
-    dispatch(productAddAction(product, navigate));
+    e.preventDefault();
+
+    var Errors = validatenested("pricing", ["price", "sellprice"], product);
+    if (!isEmpty(Errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: Errors,
+          error: true,
+        },
+      });
+    }
+    var errors = validate(["quantity", "sku", "short_description", 'categoryId', "description", "name"], product);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+
+    if (isEmpty(errors) && isEmpty(Errors)) {
+      product.combinations = combination;
+      dispatch(productAddAction(product, navigate));
+    }
+
+
   };
 
   const handleChange = (e) => {
@@ -147,6 +183,7 @@ const AddProductTheme = () => {
   return (
     <>
       <Alert />
+      {loading ? <Loading /> : null}
       <form>
         <TopBar
           title="Add product"
@@ -189,6 +226,7 @@ const AddProductTheme = () => {
 
               {/* ===================Description=================== */}
               <Box component="div">
+
                 <TinymceEditor
                   value={product.description}
                   onEditorChange={(value) =>

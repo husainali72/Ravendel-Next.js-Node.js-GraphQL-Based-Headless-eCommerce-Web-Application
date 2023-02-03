@@ -7,5 +7,7 @@ module.exports = {
   accessKeyId : process.env.ACCESS_KEY_ID,
   secretAccessKey : process.env.SECRET_ACCESS_KEY,
   bucketName : process.env.BUCKET_NAME,
-  bucketBaseURL : process.env.BUCKET_BASE_URL
+  bucketBaseURL : process.env.BUCKET_BASE_URL,
+  smptUser: process.env.SMTP_USERNAME,
+  smptPass: process.env.SMTP_PASSWORD
 };

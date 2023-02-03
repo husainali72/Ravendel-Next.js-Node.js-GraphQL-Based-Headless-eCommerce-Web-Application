@@ -23,6 +23,8 @@ import {
   productAction,
 } from "../../store/action/";
 import { getUpdatedUrl } from "../../utils/service";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { validate, validatenested } from "../components/validate";
 import {
   isEmpty,
   client_app_route_url,
@@ -66,9 +68,11 @@ const EditProductComponent = ({ params }) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const [loading, setloading] = useState(false);
+
   const [product, setProduct] = useState({
     _id: "",
     name: "",
+
     categoryId: [],
     brand: "",
     sku: "",
@@ -105,13 +109,11 @@ const EditProductComponent = ({ params }) => {
   });
 
   useEffect(() => {
-    if (product.id !== Product_id) {
-      dispatch(productAction(Product_id));
-    }
-
+    dispatch(productAction(Product_id));
     dispatch(brandsAction());
     dispatch(categoriesAction());
   }, []);
+
   useEffect(() => {
     setloading(get(productState, "loading"));
   }, [get(productState, "loading")]);
@@ -151,10 +153,37 @@ const EditProductComponent = ({ params }) => {
   }, [get(productState, "product")]);
 
   const updateProduct = (e) => {
-    e.preventDefault();
-    product.combinations = combination;
 
-    dispatch(productUpdateAction(product, navigate));
+    e.preventDefault();
+    var Errors = validatenested("pricing", ["price", "sellprice"], product);
+    if (!isEmpty(Errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: Errors,
+          error: true,
+        },
+      });
+    }
+    var errors = validate(["name", "sku", "short_description", "description", 'quantity', "categoryId"], product);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+
+    if (isEmpty(errors) && isEmpty(Errors)) {
+      product.combinations = combination;
+
+      dispatch(productUpdateAction(product, navigate));
+    }
   };
 
   const handleChange = (e) => {

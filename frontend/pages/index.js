@@ -42,11 +42,11 @@ export default function Home({ homepageData, seoInfo, homePageInfo, currencyStor
   }, [])
   console.log('checkProducts',productss);
   useEffect(()=>{
-    dispatch(loadReviewAction(allReviews.reviews.data)) ;
+    dispatch(loadReviewAction(allReviews?.reviews?.data)) ;
   },[allReviews])
 
 
-  // console.log('onSaleProductssss',onSaleProducts);
+  console.log('onSaleProductssss',onSaleProducts);
   // console.log('All reviews',allReviews);
   // useEffect(() => {
   //   if (session.status === "authenticated") {
@@ -221,7 +221,7 @@ export async function getStaticProps() {
 
   /* ===============================================Get OnSale Product  ===============================================*/
 
-  console.log('onsale Slider check',homepageData?.getSettings?.appearance.home.slider[0].image)
+  console.log('onsale Slider check',homepageData?.getSettings?.appearance.home.add_section_in_home)
   if (!homepageData?.getSettings?.appearance.home.add_section_in_home.products_on_sales) {           //dont know why in this if condition the product on sale is false so I have to change the if conditon to work if it is false which is not good I think
     try {
       const { data: onSaleProductsData } = await client.query({

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "client-install": "npm install --prefix client",
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "server": "export NODE_ENV=production && export PORT=80 && node server &",
     "client": "npm start --prefix client",
     "frontend": "npm start --prefix frontend",
@@ -54,6 +54,7 @@
     "lodash": "^4.17.15",
     "moment": "^2.29.1",
     "mongoose": "^6.2.4",
+    "node-cron": "^3.0.2",
     "node-pre-gyp": "^0.14.0",
     "nodemailer": "^6.6.3",
     "nodemon": "^2.0.2",

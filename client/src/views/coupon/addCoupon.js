@@ -31,6 +31,9 @@ import {
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { useNavigate } from "react-router-dom";
 const AddCouponComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -42,6 +45,7 @@ const AddCouponComponent = () => {
   const [coupon, setCoupon] = useState(couponObj);
   const inputLabel = useRef(null);
   const [labelWidth, setLabelWidth] = useState(0);
+  const navigate = useNavigate()
   useEffect(() => {
     setLabelWidth(inputLabel.current.offsetWidth);
   }, []);
@@ -64,16 +68,32 @@ const AddCouponComponent = () => {
   };
 
   const addCoupon = () => {
-    dispatch(couponAddAction(coupon));
+    var errors = validate(["code", "expire"], coupon);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(couponAddAction(coupon, navigate));
+    }
   };
 
   const handleChange = (e) => {
+
     let name = e.target.name;
     let value = e.target.value;
     if (name === "discount_value" || name === "minimum_spend" || name === "maximum_spend") {
       value = parseInt(value);
     }
     setCoupon({ ...coupon, [name]: value });
+
   };
 
   const selectChange = (e) => {
@@ -83,6 +103,7 @@ const AddCouponComponent = () => {
   /* ==================Component for Select===================== */
 
   const SelectOptionField = ({ label, name, value, children, id }) => {
+
     return (
       <FormControl
         variant="outlined"
