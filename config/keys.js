@@ -9,5 +9,6 @@ module.exports = {
   bucketName : process.env.BUCKET_NAME,
   bucketBaseURL : process.env.BUCKET_BASE_URL,
   smptUser: process.env.SMTP_USERNAME,
-  smptPass: process.env.SMTP_PASSWORD
+  smptPass: process.env.SMTP_PASSWORD,
+  codeString: process.env.SECRET_STRING
 };
