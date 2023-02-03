@@ -269,7 +269,7 @@ const AttributesComponent = ({
   };
 
   const variantChange = (e, index) => {
-    console.log(currentVariants);
+
     if (e.target.name === "image") {
       currentVariants.combinations[index][e.target.name].file = e.target.files;
       currentVariants.combinations[index][e.target.name].view =
@@ -304,6 +304,7 @@ const AttributesComponent = ({
                   Select Attribute
                 </InputLabel>
                 <Select
+                  label="Select Attribute"
                   labelWidth={labelWidth}
                   labelId="attribute-name"
                   value={currentAttribute.id}
@@ -369,7 +370,7 @@ const AttributesComponent = ({
                                 value={attribute.selected_values}
                                 options={attribute.values}
                                 onChange={(e) => {
-                                  console.log("e", e);
+
                                   changeSelectedValue(e, index);
                                 }}
                                 styles={{
