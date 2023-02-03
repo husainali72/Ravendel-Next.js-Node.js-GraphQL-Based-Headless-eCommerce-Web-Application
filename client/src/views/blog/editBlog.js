@@ -36,6 +36,9 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
 import { get } from "lodash";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+
 const defaultObj = {
   title: "",
   url: "",
@@ -63,9 +66,7 @@ const EditBlogComponenet = ({ params }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (Id !== blogState.blog.id) {
-      dispatch(blogAction(Id));
-    }
+    dispatch(blogAction(Id));
   }, []);
 
   useEffect(() => {
@@ -116,7 +117,21 @@ const EditBlogComponenet = ({ params }) => {
 
   const updateBlog = (e) => {
     e.preventDefault();
-    dispatch(blogUpdateAction(blog, navigate));
+    var errors = validate(["title"], blog);
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(blogUpdateAction(blog, navigate));
+    }
+
   };
 
   const handleChange = (e) => {

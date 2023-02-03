@@ -5,14 +5,19 @@ import { useSelector, useDispatch } from "react-redux";
 import ReactTags from "react-tag-autocomplete";
 import viewStyles from "../../viewStyles";
 import { Alert, Loading, TopBar, CardBlocks } from "../../components";
-import { client_app_route_url } from "../../../utils/helper";
+import { client_app_route_url, isEmpty } from "../../../utils/helper";
 import theme from "../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { attributeAddAction } from "../../../store/action";
+import { validate } from "../../components/validate";
+import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
+import { useNavigate } from "react-router-dom";
+
 const delimiters = ["Enter", "Tab"];
 
 const AddAttributeTheme = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const classes = viewStyles();
   const [attribute, setattribute] = useState({
     name: "",
@@ -31,7 +36,23 @@ const AddAttributeTheme = () => {
   };
 
   const onAdd = () => {
-    dispatch(attributeAddAction({ attribute: attribute }));
+    var errors = validate(["name"], attribute);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(attributeAddAction({ attribute: attribute }, navigate));
+    }
+
+
   };
 
   return (

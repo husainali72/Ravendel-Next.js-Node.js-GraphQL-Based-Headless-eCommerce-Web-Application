@@ -91,7 +91,8 @@ export const couponAction = (id) => (dispatch) => {
     });
 };
 
-export const couponAddAction = (object) => (dispatch) => {
+export const couponAddAction = (object, navigate) => (dispatch) => {
+
   dispatch({
     type: COUPON_LOADING,
   });
@@ -115,7 +116,7 @@ export const couponAddAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(couponsAction());
-
+        navigate(`${client_app_route_url}all-coupons`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

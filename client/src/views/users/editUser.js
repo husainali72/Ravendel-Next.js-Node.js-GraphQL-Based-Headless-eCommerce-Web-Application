@@ -22,6 +22,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 var defaultObj = {
   id: "",
   name: "",
@@ -62,6 +64,7 @@ const EditUserComponent = ({ params }) => {
         }
       });
     }
+
   }, [get(UsersState, "users")]);
 
   const fileChange = (e) => {
@@ -72,7 +75,23 @@ const EditUserComponent = ({ params }) => {
 
   const updateUser = (e) => {
     e.preventDefault();
-    dispatch(userUpdateAction(user, navigate));
+    var errors = validate(["password", "role", 'email', "name"], user);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(userUpdateAction(user, navigate));
+
+    }
+
   };
 
   const handleChange = (e) => {

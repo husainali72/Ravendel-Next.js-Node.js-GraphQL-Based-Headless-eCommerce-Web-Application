@@ -29,7 +29,8 @@ import AllShippingComponent from "./components/all-shippings";
 import ShippingFormComponent from "./components/shipping-form";
 import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
-
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 var ShippingObject = {
   name: "",
   amount: "",
@@ -77,7 +78,23 @@ const ShippingComponent = () => {
   };
 
   const addCustomShipping = () => {
-    dispatch(shippingClassAddAction({ shipping_class: customShippingClass }));
+    var errors = validate(["name", "amount"], customShippingClass);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(shippingClassAddAction({ shipping_class: customShippingClass }));
+    }
+
+
   };
 
   const editShipping = (shipping) => {
@@ -87,9 +104,26 @@ const ShippingComponent = () => {
   };
 
   const updateCustomShipping = () => {
-    dispatch(
-      shippingClassUpdateAction({ shipping_class: customShippingClass })
-    );
+    var errors = validate(["name", "amount"], customShippingClass);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(
+        shippingClassUpdateAction({ shipping_class: customShippingClass })
+      );
+    }
+
+
+
   };
 
   const cancelShipping = () => {

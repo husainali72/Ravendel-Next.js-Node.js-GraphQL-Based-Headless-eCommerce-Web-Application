@@ -268,7 +268,7 @@ export const productAction = (id) => (dispatch) => {
     });
 };
 
-export const productAddAction = (object) => (dispatch) => {
+export const productAddAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: PRODUCT_LOADING,
   });
@@ -295,7 +295,7 @@ export const productAddAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(productsAction());
-
+        navigate(`${client_app_route_url}all-products`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

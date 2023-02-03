@@ -17,6 +17,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { get } from "lodash";
 import { useNavigate, useParams } from "react-router-dom";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import {
   Alert,
   Loading,
@@ -49,9 +51,7 @@ const EditPageComponent = ({ params }) => {
   const [loading, setloading] = useState(false);
 
   useEffect(() => {
-    if (PAGEID !== page.id) {
-      dispatch(pageAction(PAGEID));
-    }
+    dispatch(pageAction(PAGEID));
   }, [params]);
 
   useEffect(() => {
@@ -66,7 +66,22 @@ const EditPageComponent = ({ params }) => {
 
   const updatePage = (e) => {
     e.preventDefault();
-    dispatch(pageUpdateAction(page, navigate));
+    var errors = validate(["title"], page);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(pageUpdateAction(page, navigate));
+    }
+
   };
 
   const handleChange = (e) => {

@@ -111,10 +111,9 @@ const GlobalThemeOverride = () => {
                           <TableCell>
                             <Avatar
                               alt={product.name}
-                              src={`${bucketBaseURL}${
-                                product.feature_image &&
+                              src={`${bucketBaseURL}${product.feature_image &&
                                 product.feature_image.thumbnail
-                              }`}
+                                }`}
                             />
                           </TableCell>
                           <TableCell>{product.name}</TableCell>
@@ -130,9 +129,7 @@ const GlobalThemeOverride = () => {
                                     navigate(
                                       `${client_app_route_url}edit-product/${product._id}`
                                     )
-                                  // navigate(
-                                  //   `${client_app_route_url}edit-product/${product._id}`
-                                  // )
+
                                 }
                               >
                                 <EditIcon />

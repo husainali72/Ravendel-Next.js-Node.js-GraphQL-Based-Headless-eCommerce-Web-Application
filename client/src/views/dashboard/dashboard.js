@@ -10,20 +10,10 @@ import theme from "../../theme";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
-import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material/styles";
 import { dashboardAction } from "../../store/action/dashboardAction";
 import { isEmpty } from "lodash";
-
 import Paper from "@mui/material/Paper";
-import {
-  ArgumentAxis,
-  ValueAxis,
-  Chart,
-  BarSeries,
-  Title,
-} from "@devexpress/dx-react-chart-material-ui";
-import { Animation } from "@devexpress/dx-react-chart";
 import {
   BarChart,
   Bar,
@@ -33,129 +23,131 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
+
 } from "recharts";
 import { currencyFormat } from "../order/CurrencyFormat";
-const chartdata = [
-  { year: "1950", population: 2.525 },
-  { year: "1960", population: 3.018 },
-  { year: "1970", population: 3.682 },
-  { year: "1980", population: 4.44 },
-  { year: "1990", population: 5.31 },
-  { year: "2000", population: 6.127 },
-  { year: "2010", population: 6.93 },
-];
+import { get } from "lodash";
+
 const DashboardComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
   const Orders = useSelector((state) => state.orders);
-  const data = useSelector((state) => state.dashboardReducer.dashboard_data);
+  const data = useSelector((state) => state.dashboardReducer);
 
   const [dashBoardCount, setdashBoardCount] = useState({});
   const loader = useSelector((state) => state.dashboardReducer.loading);
-  const chardata = [
+  const chartData = [
     {
-      name: "Jan",
-      profit: 4000,
-      loss: 2400,
-      MonthOrders: 2400,
-      investment: 2300,
+      month: "Jan",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "Feb",
-      profit: 3000,
-      loss: 1398,
-      MonthOrders: 2210,
-      investment: 2100,
+      month: "Feb",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "Mar",
-      profit: 2000,
-      loss: 9800,
-      MonthOrders: 2290,
-      investment: 2200,
+      month: "Mar",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "Apr",
-      profit: 2780,
-      loss: 3908,
-      MonthOrders: 2000,
-      investment: 1000,
+      month: "Apr",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "May",
-      profit: 1890,
-      loss: 4800,
-      MonthOrders: 2181,
-      investment: 2000,
+      month: "May",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "Jun",
-      profit: 2390,
-      loss: 3800,
-      MonthOrders: 2500,
-      investment: 2200,
+      month: "Jun",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "Jul",
-      profit: 3490,
-      loss: 4300,
-      MonthOrders: 2100,
-      investment: 2000,
+      month: "Jul",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "Aug",
-      profit: 3490,
-      loss: 4300,
-      MonthOrders: 2100,
-      investment: 2000,
+      month: "Aug",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "Sep",
-      profit: 3490,
-      loss: 4300,
-      MonthOrders: 2100,
-      investment: 1800,
+      month: "sep",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "Oct",
-      profit: 3490,
-      loss: 4300,
-      MonthOrders: 2100,
-      investment: 1900,
+      month: "Oct",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "Nov",
-      profit: 3490,
-      loss: 3400,
-      MonthOrders: 4300,
-      investment: 2100,
+      month: "Nov",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
     {
-      name: "Dec",
-      profit: 3490,
-      loss: 4300,
-      MonthOrders: 2100,
-      investment: 1700,
+      month: "Dec",
+      GrossSales: 675,
+      NetSales: 756,
+      count: 1000,
+      paymentSuccessGrossSales: 2000,
+      paymentSuccessNetSales: 3000,
     },
   ];
+
   useEffect(() => {
-    if (isEmpty(data)) {
+    if (isEmpty(get(data, "dashboard_data"))) {
       dispatch(dashboardAction());
-    } else {
-      setdashBoardCount({ ...data });
     }
-  }, [data]);
-  const options = {
-    scales: {
-      XAxis: [
-        {
-          color: "red",
-        },
-      ],
-    },
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!isEmpty(get(data, "dashboard_data"))) {
+      setdashBoardCount({ ...dashBoardCount, ...get(data, "dashboard_data") });
+    }
+  }, [get(data, "dashboard_data")]);
+
   return (
     <Box component="div" p={isSmall ? 1 : 4}>
       <Grid container spacing={isSmall ? 1 : 4}>
@@ -190,8 +182,6 @@ const DashboardComponent = () => {
           />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-          {/* count={currencyFormat(dashBoardCount.totalSales)} */}
-
           <DashboardCard
             count={currencyFormat(dashBoardCount.totalSales)}
             title={"TOTAL SALES"}
@@ -202,25 +192,18 @@ const DashboardComponent = () => {
           />
         </Grid>
         <Grid item lg={8} xl={12} md={12} xs={12}>
-          <LatestOrder ordersState={Orders} />
+          <LatestOrder
+            latestOrders={dashBoardCount.latestOrders || []}
+            loader={loader}
+          />
         </Grid>
 
         <Grid item lg={8} xl={9} xs={12} ml={0}>
-          {/* <Paper>
-            <Chart data={chartdata}>
-              <ArgumentAxis />
-              <ValueAxis />
-
-              <BarSeries valueField="population" argumentField="year" />
-              <Title text="World population" />
-              <Animation />
-            </Chart>
-          </Paper> */}
           <Paper>
             <BarChart
               width={1200}
               height={500}
-              data={chardata}
+              data={chartData}
               margin={{
                 top: 20,
                 right: 30,
@@ -229,26 +212,31 @@ const DashboardComponent = () => {
               }}
             >
               <CartesianGrid height={10} />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
               <Legend />
-              {/* <Bar dataKey="profit" stackId="a" fill="#00E7FF" width={10} /> */}
-              {/* <Bar
-                dataKey="loss"
+              <Bar dataKey="profit" stackId="a" fill="#00E7FF" width={10} />
+              <Bar
+                dataKey="GrossSales"
                 stackId="a"
                 fill="rgb(19, 108, 190)"
                 width={10}
               />
-
-              <Bar dataKey="MonthOrders" stackId="a" fill="#154050" /> */}
-              <Bar dataKey="MonthOrders" fill="#154050" />
+              <Bar dataKey="NetSales" stackId="a" fill="#154050" />
+              <Bar dataKey="count" stackId="a" fill="#FE938C" />
+              <Bar
+                dataKey="paymentSuccessGrossSales"
+                stackId="a"
+                fill="#D496A7"
+              />
+              <Bar dataKey="paymentSuccessNetSales" fill="#5D576B" />
             </BarChart>{" "}
           </Paper>
         </Grid>
         <Grid item lg={4} xl={3} xs={12}>
           <LatestProducts
-            products={dashBoardCount.latestProducts}
+            products={dashBoardCount.latestProducts || []}
             loader={loader}
           />
         </Grid>

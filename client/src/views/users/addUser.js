@@ -13,8 +13,12 @@ import {
   FeaturedImageComponent,
   SelectComponent,
 } from "../components";
+import { useNavigate } from "react-router-dom";
 import { client_app_route_url } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
+import { validate } from "../components/validate";
+import { isEmpty } from "../../utils/helper";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import theme from "../../theme";
 var defaultObj = {
   id: "",
@@ -31,7 +35,7 @@ const AddUserComponent = () => {
   const dispatch = useDispatch();
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     document.forms[0].reset();
     setfeatureImage(null);
@@ -46,7 +50,22 @@ const AddUserComponent = () => {
 
   const addUser = (e) => {
     e.preventDefault();
-    dispatch(userAddAction(user));
+    var errors = validate(["password", "role", 'email', "name"], user);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(userAddAction(user, navigate));
+
+    }
   };
 
   const handleChange = (e) => {

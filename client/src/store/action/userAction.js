@@ -66,7 +66,7 @@ export const userAction = (id) => (dispatch) => {
     });
 };
 
-export const userAddAction = (object) => (dispatch) => {
+export const userAddAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: USER_LOADING,
   });
@@ -79,7 +79,7 @@ export const userAddAction = (object) => (dispatch) => {
         });
 
         dispatch(usersAction());
-
+        navigate(`${client_app_route_url}all-users`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: {

@@ -31,6 +31,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import { blogtagsAction } from "../../store/action/";
 import { useNavigate } from "react-router-dom";
 import { get } from "lodash";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+
 var defaultObj = {
   status: "Publish",
   blog_tag: [],
@@ -87,7 +90,20 @@ const AddBlogComponenet = () => {
 
   const addBlog = (e) => {
     e.preventDefault();
-    dispatch(blogAddAction(blog, navigate));
+    var errors = validate(["title"], blog);
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(blogAddAction(blog, navigate));
+    }
   };
 
   const handleChange = (e) => {

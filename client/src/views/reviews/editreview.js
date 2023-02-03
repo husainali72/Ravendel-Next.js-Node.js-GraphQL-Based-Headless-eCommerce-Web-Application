@@ -29,6 +29,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme";
 import { useNavigate, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 var reviewObj = {
   title: "",
   customer_id: "",
@@ -111,7 +113,21 @@ const EditReviewComponent = ({ params }) => {
   }, [customerState.customers]);
 
   const updateReview = () => {
-    dispatch(reviewUpdateAction(review, navigate));
+    var errors = validate(['email', 'review', "title"], review);
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(reviewUpdateAction(review, navigate));
+    }
+
   };
 
   const handleChange = (e) => {
