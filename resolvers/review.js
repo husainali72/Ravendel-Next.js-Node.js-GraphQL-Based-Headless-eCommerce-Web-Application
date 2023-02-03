@@ -108,7 +108,8 @@ module.exports = {
       };
       //console.log("data==", data)
       let validation = ["review", "title", "email"];
-      let duplicate = ["review"];
+      const duplicate = await duplicateData({review: args.review, customer_id: args.customer_id}, Review)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
       return await CREATE_FUNC(
         id,
         "Review",
@@ -116,8 +117,7 @@ module.exports = {
         data,
         args,
         "",
-        validation,
-        duplicate
+        validation
       );
     },
     updateReview: async (root, args, { id }) => {
@@ -138,8 +138,8 @@ module.exports = {
         "product_id",
         "customer_id",
       ];
-      const result = await duplicateData({review: args.review}, Review, args.id)
-      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
+      const duplicate = await duplicateData({review: args.review, customer_id: args.customer_id}, Review, args.id)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
       return await UPDATE_FUNC(
         id,
         args.id,

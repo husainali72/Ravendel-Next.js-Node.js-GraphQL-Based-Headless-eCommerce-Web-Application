@@ -143,8 +143,8 @@ module.exports = {
           brand.updated = Date.now();
 
           console.log('BRAND',brand);
-          const result = await duplicateData({name: args.name}, Brand, args.id)
-          if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Brand", false)
+          const duplicate = await duplicateData({name: args.name}, Brand, args.id)
+          if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Brand", false)
           await brand.save();
           return MESSAGE_RESPONSE("UpdateSuccess", "Brands", true);
         } else {

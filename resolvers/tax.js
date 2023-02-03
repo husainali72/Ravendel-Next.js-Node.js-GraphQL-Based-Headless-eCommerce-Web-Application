@@ -84,7 +84,7 @@ module.exports = {
         }
         const tax = await Tax.findOne({});
         let result = tax.tax_class.map(tax=>{
-          if(tax.name === args.tax_class.name){
+          if(tax.name.toLowerCase() === args.tax_class.name.toLowerCase()){
             return false
           }
           else return true
@@ -112,7 +112,7 @@ module.exports = {
         }
         const tax = await Tax.findOne({});
         let result = tax.tax_class.map(tax=>{
-          if(tax.name === args.tax_class.name &&
+          if(tax.name.toLowerCase() === args.tax_class.name.toLowerCase() &&
             tax._id.toString() !== args.tax_class._id.toString()){
             return false
           }

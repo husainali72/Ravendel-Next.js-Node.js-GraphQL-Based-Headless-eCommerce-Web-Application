@@ -33,7 +33,7 @@ module.exports = {
   InvalidWebite: "Please enter valid website link",
   Alphanumeric: "Only alphanumeric characters are allowed",
   InvalidOldPassword: "Current password didn't match",
- 
+  InvalidField: "Invalid :item",
   minLengthPassword: "Password should be at least 8 characters long",
   passwordNotMatch: "Password didn't match",
   NumberLengthError: ":item must be between :min to :max numbers",

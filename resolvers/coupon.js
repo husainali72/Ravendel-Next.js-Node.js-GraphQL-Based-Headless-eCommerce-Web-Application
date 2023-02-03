@@ -7,6 +7,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
+const { duplicateData } = require("../config/helpers");
 
 module.exports = {
   Query: {
@@ -51,6 +52,8 @@ module.exports = {
         exclude_categories: args.exclude_categories,
       };
       let validation = ["code", "expire"];
+      const duplicate = await duplicateData({code: data.code}, Coupon)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Coupon", false);
       return await CREATE_FUNC(
         id,
         "Coupon",
@@ -77,6 +80,8 @@ module.exports = {
         exclude_categories: args.exclude_categories,
       };
       let validation = ["code", "expire"];
+      const duplicate = await duplicateData({code: data.code}, Coupon, args.id)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Coupon", false);
       return await UPDATE_FUNC(
         id,
         args.id,

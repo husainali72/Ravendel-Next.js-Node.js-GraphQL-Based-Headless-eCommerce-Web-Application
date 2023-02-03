@@ -36,6 +36,8 @@ var mdir = "./assets/images/user/medium";
 var tdir = "./assets/images/user/thumbnail";
 var odir = "./assets/images/user/original";
 
+const roleOptions = ["USER", "AUTHOR", "SUBSCRIBER", "MANAGER", "EDITOR"]
+
 if (!fs.existsSync(udir)) {
   fs.mkdirSync(udir);
 }
@@ -196,6 +198,10 @@ module.exports = {
     addUser: async (root, args, { id }) => {
       await checkAwsFolder('user');
       let path = "/assets/images/user/";
+      const duplicate = await duplicateData({email: args.email}, User)
+        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
+      const result = checkRole(args.role, roleOptions)
+      if(result.success) args.role = result.role
       let data = {
         name: args.name,
         email: args.email,
@@ -216,11 +222,11 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "User", false);
       }
       try {
-        const result = await duplicateData({email: args.email}, User, args.id)
-        if(!result) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
+        const duplicate = await duplicateData({email: args.email}, User, args.id)
+        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
 
         if(args.role){
-          const result = checkRole(args.role)
+          const result = checkRole(args.role, roleOptions)
           if(result.success) args.role = result.role
           else return MESSAGE_RESPONSE("InvalidRole", "User", false);
         }
@@ -239,18 +245,11 @@ module.exports = {
           }
 
           if (args.updatedImage) {
-           //  console.log('wewewewewew',args.updatedImage);
             let imgObject = await imageUpload(
               args.updatedImage.file,
               "/assets/images/user/",'User'
             );
-
-            if (imgObject.success === false) {
-              throw putError(imgObject.message);
-            } else {
-              imageUnlink(user.image);
-              user.image = imgObject.data;
-            }
+            user.image = imgObject.data;
           }
 
           user.name = args.name;

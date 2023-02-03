@@ -38,7 +38,7 @@ module.exports = gql`
     server: String
     username: String
     password: String
-    port: String
+    port: Int
   }
 
   type SEO {

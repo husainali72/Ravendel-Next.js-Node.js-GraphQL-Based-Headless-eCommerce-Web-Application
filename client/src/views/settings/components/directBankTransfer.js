@@ -16,28 +16,24 @@ import theme from "../../../theme/index.js";
 import { useEffect } from "react";
 import  { get } from "lodash";
 import { paymentBankUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
+import Loading from "../../components/Loading.js";
+
 const DirectBankTransferTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const settingState = useSelector((state) => state.settings);
-  const [bankTransferInfo, setBankTransferInfo] = useState({
-    // ...settingState.settings.paymnet.bank_transfer,
-  });
-    // ...settingState.settings.paymnet.bank_transfer,
-    // useEffect(() => {
-   
-    //   get(settingState, "settings.paymnet.bank_transfer")
-    // }, [settingState.settings])
+  const [bankTransferInfo, setBankTransferInfo] = useState({});
    
 useEffect(() => {
   if (
     settingState.settings && settingState.settings.paymnet.bank_transfer
   ){
-    setBankTransferInfo ({ ...settingState.settings.paymnet.bank_transfer,})
+    setBankTransferInfo({...settingState.settings.paymnet.bank_transfer})
   }
-}, [settingState.settings])
+}, [get(settingState, "settings")])
  
 
   const updateBank = () => {
@@ -47,6 +43,8 @@ useEffect(() => {
 
   return (
     <>
+     <Alerts/>
+     {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>

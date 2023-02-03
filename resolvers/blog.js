@@ -4,6 +4,7 @@ const {
   stringTourl,
   updateUrl,
   MESSAGE_RESPONSE,
+  duplicateData
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -117,6 +118,8 @@ module.exports = {
       };
       let path = "/assets/images/blog/feature/";
       let validation = ["title", "status"];
+      const duplicate = await duplicateData({title: args.title}, Blog)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "BlogTag", false);
       return await CREATE_FUNC(
         user.id,
         "Blog",
@@ -147,8 +150,8 @@ module.exports = {
         updated: Date.now(),
       };
       let validation = ["title", "status"];
-      const result = await duplicateData({title: args.title}, Blog, args.id)
-      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "Blog", false);
+      const duplicate = await duplicateData({title: args.title}, Blog, args.id)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog", false);
       return await UPDATE_FUNC(
         id,
         args.id,
@@ -171,6 +174,8 @@ module.exports = {
         url: url,
       };
       let validation = ["name"];
+      const duplicate = await duplicateData({name: args.name}, BlogTag)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "BlogTag", false);
       return await CREATE_FUNC(
         user.id,
         "BlogTag",
@@ -189,8 +194,8 @@ module.exports = {
         updated: Date.now(),
       }
       let validation = ["name"];
-      const result = await duplicateData({title: args.title}, BlogTag, args.id)
-      if(!result) return MESSAGE_RESPONSE("DUPLICATE", "BlogTag", false);
+      const duplicate = await duplicateData({name: args.name}, BlogTag, args.id)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "BlogTag", false);
       return await UPDATE_FUNC(
         id,
         args.id,
