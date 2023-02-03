@@ -15,15 +15,7 @@ const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-
-  const [themeSetting, setThemeSetting] = useState({
-    // ...settingState.settings.appearance.theme,
-    // get(settingState, "settings.appearance.theme")
-  });
-
-  const [logoImage, setLogoImage] = useState(
-    bucketBaseURL + themeSetting.logo
-  );
+  const [themeSetting, setThemeSetting] = useState({});
 
   useEffect(() => {
     if (
@@ -41,26 +33,10 @@ const ThemesComponent = () => {
   };
 
   const fileChange = (e) => {
-    themeSetting.log = URL.createObjectURL(e.target.files[0]);
-
-    setThemeSetting({
-      ...themeSetting,
-      new_logo: {
-        type:  e.target.files[0].type,
-        name:  e.target.files[0].name,
-        filename:  e.target.files[0].name,
-        size:  e.target.files[0].size
-      },
-    });
-    setLogoImage(URL.createObjectURL(e.target.files[0]));
+    themeSetting.logo.original = URL.createObjectURL(e.target.files[0]);
+    themeSetting.new_logo = e.target.files
+    setThemeSetting({...themeSetting})
   };
-
-  // useEffect(() => {
-  //   get(settingState, "settings.appearance.theme,")
-  //   }, [settingState.settings])
-
- 
-
 
   return (
     <>
@@ -84,11 +60,11 @@ const ThemesComponent = () => {
             />
           </Box>
           <Box className={classes.themeLogoWrapper}>
-            {themeSetting.logo? (
+            {themeSetting.logo && themeSetting.logo.original? (
               <img
-                src={logoImage}
+                src={themeSetting.logo.original.startsWith("blob") ? themeSetting.logo.original : bucketBaseURL + themeSetting.logo.original}
                 className={classes.themeLogoBoxPreview}
-                alt="Hello"
+                alt="img"
               />
             ) : (
               <img

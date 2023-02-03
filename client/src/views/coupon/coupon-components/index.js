@@ -47,7 +47,7 @@ export const MenuProps = {
 export const getSelectedName = (id, element, products, categories) => {
   if (element === "products" || element === "exclude_products") {
     for (let i in products) {
-      if (id === products[i].id) {
+      if (id === products[i]._id) {
         return products[i].name;
       }
     }
@@ -59,6 +59,7 @@ export const getSelectedName = (id, element, products, categories) => {
     }
   }
 };
+
 
 export const couponObj = {
   code: "",

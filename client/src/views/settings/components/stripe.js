@@ -15,7 +15,7 @@ const StripeComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [stripeInfo, setstripeInfo] = useState({});
+  const [stripeInfo, setstripeInfo] = useState({enable: false});
   const striped = get(settingState, "settings.paymnet.stripe")
 
   useEffect(() => {

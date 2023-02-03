@@ -50,10 +50,12 @@ import {
   EditCategoriesComponent,
 } from "./components";
 import viewStyles from "../viewStyles";
-import ClearIcon from '@mui/icons-material/Clear';
+import Stack from '@mui/material/Stack';
+import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme";
 import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
+
 const EditProductComponent = ({ params }) => {
   const Product_id = params.id || "";
   const classes = viewStyles();
@@ -504,14 +506,11 @@ const EditProductComponent = ({ params }) => {
                           size="small"
                         />
                         <Tooltip title="Remove Field" aria-label="remove-field">
-                          <IconButton
-                            aria-label="remove-field"
-                            onClick={(e) => removeCustomField(index)}
-                            size="small"
-                            className={classes.deleteicon}
-                          >
-                            <Icon><ClearIcon /></Icon>
-                          </IconButton>
+                           <Stack direction="row" spacing={1}>
+                              <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
+                                <CloseIcon />
+                              </IconButton>
+                            </Stack>
                         </Tooltip>
                       </Box>
                     ))}

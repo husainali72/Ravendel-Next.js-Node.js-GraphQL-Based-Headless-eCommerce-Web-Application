@@ -25,7 +25,7 @@ const DirectBankTransferTheme = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const settingState = useSelector((state) => state.settings);
-  const [bankTransferInfo, setBankTransferInfo] = useState({});
+  const [bankTransferInfo, setBankTransferInfo] = useState({enable: false});
    
 useEffect(() => {
   if (

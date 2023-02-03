@@ -39,6 +39,7 @@ import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { useParams, useNavigate } from "react-router-dom";
 import { get } from "lodash";
+
 const EditCouponComponent = ({ params }) => {
   const ID = params.id || "";
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ const EditCouponComponent = ({ params }) => {
     }
   }, []);
 
-  const tabChange = (newValue) => {
+  const tabChange = (event, newValue) => {
     setTabVal(newValue);
   };
 
@@ -115,6 +116,7 @@ const EditCouponComponent = ({ params }) => {
     if (name === "discount_value" || name === "minimum_spend" || name === "maximum_spend") {
       value = parseInt(value);
     }
+
     setCoupon({ ...coupon, [name]: value });
 
   };
@@ -251,7 +253,7 @@ const EditCouponComponent = ({ params }) => {
                   </Grid>
                   <Grid item md={6} sm={12} xs={12}>
                     <TextInput
-                      type="number"
+                     type="number"
                       value={coupon.discount_value}
                       label="Coupon Amount"
                       name="discount_value"
@@ -260,10 +262,13 @@ const EditCouponComponent = ({ params }) => {
                   </Grid>
                   <Grid item md={6} sm={12} xs={12}>
                     <TextInput
+                      id="coupon_expiry"
                       value={coupon.expire}
                       label="Coupon Expiry"
                       name="expire"
                       onInputChange={handleChange}
+                      variant="outlined"
+                      className={clsx(classes.width100, "top-helper")}
                       type="date"
                     />
                   </Grid>
@@ -291,6 +296,7 @@ const EditCouponComponent = ({ params }) => {
               <TabPanel value={tabVal} index="usage-restriction">
                 <Box component="div" mb={2}>
                   <TextInput
+                     type="Number"
                     value={coupon.minimum_spend}
                     label="Minimum Spend"
                     name="minimum_spend"
@@ -299,6 +305,7 @@ const EditCouponComponent = ({ params }) => {
                 </Box>
                 <Box component="div" mb={2}>
                   <TextInput
+                   type="Number"
                     value={coupon.maximum_spend}
                     label="Maximum Spend"
                     name="maximum_spend"
@@ -314,7 +321,7 @@ const EditCouponComponent = ({ params }) => {
                   id="products"
                 >
                   {Products.products.map((product) => (
-                    <MenuItem value={product.id} key={product.id}>
+                    <MenuItem value={product._id} key={product._id}>
                       {product.name}
                     </MenuItem>
                   ))}
@@ -328,7 +335,7 @@ const EditCouponComponent = ({ params }) => {
                   id="exclude_products"
                 >
                   {Products.products.map((product) => (
-                    <MenuItem value={product.id} key={product.id}>
+                    <MenuItem value={product._id} key={product._id}>
                       {product.name}
                     </MenuItem>
                   ))}

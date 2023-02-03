@@ -19,7 +19,7 @@ import {
 import { useTheme } from "@mui/styles";
 import clsx from "clsx";
 import { useSelector, useDispatch } from "react-redux";
-import { couponAddAction, productsAction, categoriesAction } from "../../store/action/";
+import { categoriesAction, couponAddAction, productsAction } from "../../store/action/";
 import { Alert, Loading, TopBar, TextInput, CardBlocks } from "../components";
 import {
   TabPanel,
@@ -275,7 +275,7 @@ const AddCouponComponent = () => {
               <TabPanel value={tabVal} index="usage-restriction">
                 <Box component="div" mb={2}>
                   <TextInput
-                    type="number"
+                    type="Number"
                     value={coupon.minimum_spend}
                     label="Minimum Spend"
                     name="minimum_spend"
@@ -284,7 +284,7 @@ const AddCouponComponent = () => {
                 </Box>
                 <Box component="div" mb={2}>
                   <TextInput
-                    type="number"
+                    type="Number"
                     value={coupon.maximum_spend}
                     label="Maximum Spend"
                     name="maximum_spend"
@@ -299,20 +299,20 @@ const AddCouponComponent = () => {
                   value={coupon.products}
                 >
                   {Products.products.map((product) => (
-                    <MenuItem value={product.id} key={product.id}>
+                    <MenuItem value={product._id} key={product._id}>
                       {product.name}
                     </MenuItem>
                   ))}
                 </SelectOptionField>
-
+    
                 {/* ================== Exclude Products Select ================== */}
                 <SelectOptionField
                   name="exclude_products"
                   label="Exclude Products"
                   value={coupon.exclude_products}
-                >
+                > 
                   {Products.products.map((product) => (
-                    <MenuItem value={product.id} key={product.id}>
+                    <MenuItem value={product._id} key={product._id}>
                       {product.name}
                     </MenuItem>
                   ))}
@@ -336,7 +336,7 @@ const AddCouponComponent = () => {
                   name="exclude_categories"
                   label="Exclude Categories"
                   value={coupon.exclude_categories}
-                >
+              > 
                   {Products.categories.map((category) => (
                     <MenuItem value={category.id} key={category.id}>
                       {category.name}

@@ -14,8 +14,10 @@ const CashOnDeliveryTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [codInfo, setCodInfo] = useState({});
-  
+  const [codInfo, setCodInfo] = useState({
+    enable: false
+  });
+
   useEffect(() => {
     if (
       settingState.settings &&
@@ -30,28 +32,46 @@ const CashOnDeliveryTheme = () => {
     dispatch(paymentCodUpdateAction(codInfo));
   };
 
+  const checkBoxOnChange = (index) => {
+
+    let data = codInfo;
+    console.log(index, "hhkkkk")
+    data.enable = !data.enable
+    // if(data.enable == true){
+    //   setCodInfo([...data])
+    // } else {
+    //   setCodInfo([""])
+    // }
+    // console.log(codInfo)
+    setCodInfo({ ...data })
+  };
+
   return (
     <>
-    <Alerts/>
-    {settingState.loading ? <Loading /> : null}
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>
+            {console.log(codInfo.enable, "codInfo.enable")}
             <FormControlLabel
               control={
+
                 <Checkbox
                   color="primary"
                   checked={codInfo.enable}
-                  onChange={(e) =>
-                    setCodInfo({ ...codInfo, enable: e.target.checked })
-                  }
+                  onChange={(e) => {
+                    checkBoxOnChange(e.target.checked)
+                  }}
+
                 />
               }
               label="Enable cash on delivery"
             />
           </Box>
-          {codInfo.enable && (
-            <Box>
+
+          {codInfo.enable ? (
+            <Box  >
               <Box component="div">
                 <SettingTextInput
                   label="Title"
@@ -82,7 +102,7 @@ const CashOnDeliveryTheme = () => {
                 />
               </Box>
             </Box>
-          )}
+          ) : null}
         </Grid>
         <Grid item xs={12}>
           <Button
