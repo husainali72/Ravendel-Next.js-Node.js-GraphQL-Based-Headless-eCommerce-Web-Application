@@ -295,8 +295,8 @@ module.exports = {
         // console.log('Argument',args.slider);
 
         var slider = [];
-        let imgObject = {};
         for (let i in args.slider) {
+          let imgObject = {};
           if (args.slider[i].update_image) {
             imgObject = await imageUpload(
               args.slider[i].update_image[0].file,
@@ -346,8 +346,8 @@ module.exports = {
         const setting = await Setting.findOne({});
 
         var mobile_section = [];
-        let imgObject = {};
         for (let i in args.mobile_section) {
+          let imgObject = {};
           if (args.mobile_section[i].update_image) {
             imgObject = await imageUpload(
               args.mobile_section[i].update_image[0].file,

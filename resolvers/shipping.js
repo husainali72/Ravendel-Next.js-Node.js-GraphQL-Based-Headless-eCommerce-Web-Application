@@ -68,7 +68,7 @@ module.exports = {
         }
         const shipping = await Shipping.findOne({});
         const result = shipping.shipping_class.map(shipping=>{
-          if(shipping.name === args.shipping_class.name){
+          if(shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase()){
             return false
           } else return true
         })
@@ -97,7 +97,7 @@ module.exports = {
 
         const shipping = await Shipping.findOne({});
         const result = shipping.shipping_class.map(shipping=>{
-          if(shipping.name === args.shipping_class.name && 
+          if(shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase() && 
             shipping._id.toString() !== args.shipping_class._id.toString()){
             return false
           } else return true

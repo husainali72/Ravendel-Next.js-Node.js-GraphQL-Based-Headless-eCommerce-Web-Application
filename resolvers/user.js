@@ -198,6 +198,8 @@ module.exports = {
     addUser: async (root, args, { id }) => {
       await checkAwsFolder('user');
       let path = "/assets/images/user/";
+      const duplicate = await duplicateData({email: args.email}, User)
+        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
       const result = checkRole(args.role, roleOptions)
       if(result.success) args.role = result.role
       let data = {
@@ -220,8 +222,8 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "User", false);
       }
       try {
-        const result = await duplicateData({email: args.email}, User, args.id)
-        if(!result) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
+        const duplicate = await duplicateData({email: args.email}, User, args.id)
+        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
 
         if(args.role){
           const result = checkRole(args.role, roleOptions)
@@ -243,18 +245,11 @@ module.exports = {
           }
 
           if (args.updatedImage) {
-           //  console.log('wewewewewew',args.updatedImage);
             let imgObject = await imageUpload(
               args.updatedImage.file,
               "/assets/images/user/",'User'
             );
-
-            if (imgObject.success === false) {
-              throw putError(imgObject.message);
-            } else {
-              imageUnlink(user.image);
-              user.image = imgObject.data;
-            }
+            user.image = imgObject.data;
           }
 
           user.name = args.name;
