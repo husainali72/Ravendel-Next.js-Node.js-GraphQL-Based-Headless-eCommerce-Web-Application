@@ -156,6 +156,7 @@ module.exports = {
         await newOrder.save();
         // send order create email
         const customer = await Customer.findById(args.customer_id);
+        console.log(customer)
         mailData = {
           subject: `Order Placed`, 
           mailTemplate: "template",
@@ -226,13 +227,12 @@ module.exports = {
           order.shipping = args.shipping;
           await order.save();
           // send order create email
-          const customer = await Customer.findById(args.customer_id);
           mailData = {
             subject: `Order Updated`, 
             mailTemplate: "template",
             order: order
           }
-          sendEmail(mailData, APP_KEYS.smptUser, customer.email)
+          sendEmail(mailData, APP_KEYS.smptUser, args.billing.email)
 
           return MESSAGE_RESPONSE("UpdateSuccess", "Order", true);
         }
