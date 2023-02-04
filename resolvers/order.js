@@ -40,7 +40,6 @@ module.exports = {
       }
       try {
         const order = await Order.find({ customer_id: args.user_id }).sort({date: -1});
-        console.log("order", order)
         if (!order) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
         }
