@@ -16,6 +16,7 @@ import {
   Button,
   Tooltip,
   useMediaQuery,
+  TableSortLabel
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -30,6 +31,7 @@ import { convertDateToStringFormat } from "../utils/convertDate";
 import { client_app_route_url } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
+import { stableSort, getComparator } from "../components/sorting";
 const AllbrandComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -39,6 +41,8 @@ const AllbrandComponent = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('date');
   useEffect(() => {
     if (isEmpty(Brands.brands)) {
       dispatch(brandsAction());
@@ -83,29 +87,45 @@ const AllbrandComponent = () => {
                 <Table stickyHeader aria-label="brands-table" size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell variant="contained" color="primary">
-                        Brand Name
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("date")
+                          }}>
+                            Date
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Date
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("name")
+                          }}>
+                            Brand Name
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
+
                       <TableCell variant="contained" color="primary">
                         Actions
                       </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {Brands.brands
+                    {stableSort(Brands.brands, getComparator(order, orderBy))
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
                       .map((brand) => (
                         <TableRow key={brand.id} hover>
-                          <TableCell>{brand.name}</TableCell>
                           <TableCell>
                             {convertDateToStringFormat(brand.date)}
                           </TableCell>
+                          <TableCell>{brand.name}</TableCell>
+
                           <TableCell>
                             <Tooltip title="Edit Brand" aria-label="edit">
                               <IconButton
