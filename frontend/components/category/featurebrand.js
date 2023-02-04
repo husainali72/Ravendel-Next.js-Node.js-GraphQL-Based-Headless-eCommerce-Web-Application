@@ -1,39 +1,34 @@
+import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
-const FeatureBrand = () => {
+import { getImage } from '../../utills/helpers';
+const FeatureBrand = ({brands}) => {
     return (
         <section className="product-cart-section">
             <Container>
-                <h4 style={{ color: "#088178" }}>Feature <span style={{ color: "black" }}>Brand</span></h4>
-                <div className="feature-brand mt-5 mb-4">
-                    <img
-                        className=""
-                        src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/banner/brand-2.png"
-                        width="auto"
-                        height="100"
-                        onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
-                    />
-                    <img
-                        className=""
-                        src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/banner/brand-2.png"
-                        width="auto"
-                        height="100"
-                        onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
-                    />
-                    <img
-                        className=""
-                        src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/banner/brand-2.png"
-                        width="auto"
-                        height="100"
-                        onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
-                    />
-                    <img
-                        className=""
-                        src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/banner/brand-2.png"
-                        width="auto"
-                        height="100"
-                        onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
-                    />
-                </div>
+                <h4 className='theme-color'>Feature <span className='black-color'>Brand</span></h4>
+                <div className="category brand-container">
+                        {brands.map((item, i) => ( 
+                            <div className="brand-card-container" key={i}>
+                                <div className="category-card-image brand-card-image">
+                                    <Link href={`/brands/[brand]?url=${item.url}`} as={`/brands/${item.url}`}>
+                                        <img
+                                            src={getImage(item?.brand_logo , 'original')}
+                                            className="category-card-img"
+                                            onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
+                                            alt={item?.name}
+                                        />
+                                    </Link>
+                                </div>
+                                <div className="card-body">
+                                    <p
+                                        className="card-title category-card-title" 
+                                        >
+                                        {item?.name}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
             </Container>
         </section>
     )

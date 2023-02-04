@@ -40,7 +40,6 @@ const productReducer = (state = initialState, action) => {
                 success: false,
               };
         case LOAD_REVIEW:
-            console.log('andar dispatch ke ', action.payload)
             return{
                 ...state,
                 loading: false,

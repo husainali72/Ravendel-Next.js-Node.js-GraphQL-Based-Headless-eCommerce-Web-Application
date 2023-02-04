@@ -16,10 +16,7 @@ const options = {
             async authorize(credentials, req) {
                 // const url = "https://ravendel.herokuapp.com/api/customers/login";
                 const { email, password } = credentials
-                console.log("Fired ")
-
                 const url = "http://localhost:8000/api/customers/login";
-
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
@@ -28,7 +25,6 @@ const options = {
                     },
                     body: JSON.stringify(credentials),
                 })
-
                 const user = await response.json()
                 console.log("user", user);
                 if (response.status === 200) {
@@ -56,21 +52,17 @@ const options = {
         },
 
         async jwt({ token, user, account }) {
-            // console.log("jwt", { token, user })
             if (account && user) {
                 return {
                     ...token,
                     token: user,
                     accessToken: user,
                     refreshToken: user,
-                    // user: user,
                 };
             }
             return token;
         },
     },
     secret: process.env.JWT_SECRET,
-
-
 }
 export default (req, res) => NextAuth(req, res, options)

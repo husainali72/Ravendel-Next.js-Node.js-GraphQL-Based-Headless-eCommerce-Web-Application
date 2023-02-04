@@ -7,17 +7,14 @@ import StarRating from "../breadcrumb/rating";
 import { getImage } from "../../utills/helpers";
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
-// import { ADD_TO_CART_QUERY, GET_CART_ITEM_QUERY, ADD_TO_CART_SINGLE_PRODUCT, ADD_TO_CART } from "../../queries/cartquery"
 import { useSession } from "next-auth/react";
 
 var placeholder = "https://dummyimage.com/300";
 
 
 const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
-    // console.log("onSaleProducts", onSaleProduct);
     const settings = useSelector(state => state.setting)
     const currencyType = settings.currencyOption
-    // console.log("currencyType", currencyType)
     let currency = "$"
     if (currencyType?.currency === "dollar") { currency = "$" }
     if (currencyType?.currency === "eur") { currency = <i className="fas fa-euro-sign"></i> }
@@ -32,7 +29,6 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
     if (session.status === "authenticated") {
         id = session.data.user.accessToken.customer._id
         token = session.data.user.accessToken.token
-        // console.log("token", token)
     }
 
     const dispatch = useDispatch();
@@ -42,13 +38,11 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
         let href = '/shopcart'
         if (session.status === "authenticated") {
            dispatch(addToCart(product, quantity, token, id))  
-            // router.push(href)
             await router.push("/shopcart")
 
         }
         else {
             dispatch(addToCart(product))
-            // router.push(href)
             router.push("/shopcart")
 
         }
@@ -69,10 +63,6 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
                                 (
                                     <div className="on-sale-product-card" key={i}>
                                         <div className="on-sale-image-wrapper">
-
-
-                                         {/* Intentionally not using link but useing anchor tag as it shows the review of prev product when we redirect */}
-
                                             <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
                                                 <img
                                                     className="img-on-sale"
@@ -82,16 +72,6 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
                                                     onError={(e) => e.type === 'error' ? e.target.src = placeholder : null}
                                                 />
                                             </Link>
-                                     {/* So instead using anchor tag */}
-                                            {/* <a href={`/product/${product.url}`}>
-                                                <img
-                                                    className="img-on-sale"
-                                                    src={getImage(product.feature_image, 'original')}
-                                                    height="280px"
-                                                    width="100%"
-                                                    onError={(e) => e.type === 'error' ? e.target.src = placeholder : null}
-                                                />
-                                            </a> */}
 
 
                                         </div>
@@ -151,25 +131,11 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
                                                         </Tooltip>
                                                     }
                                                 >
-                                                    <div className="add-to-cart">
-                                                        {/* <Link href="/shopcart"> */}{
-                                                            session.status === "authenticated" ? ( <a  className="cart-icon" onClick={() => ProductAdd(product)}>
+                                                    <div className="add-to-cart"> <a className="cart-icon" onClick={() => ProductAdd(product)}>
                                                             <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
-                                                        </a>):( <a  className="cart-icon" onClick={() => ProductAdd(product)}>
-                                                            <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
-                                                        </a>)
-                                                        }
-                                                       
-                                                        {/* </Link> */}
+                                                            </a>
                                                     </div>
                                                 </OverlayTrigger>
-                                                {/* <div className="add-to-cart"> */}
-                                                {/* <Link href="/shopcart">
-                                            <a className="cart-icon" onClick={() => ProductAdd(product)}>
-                                                <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
-                                            </a>
-                                            </Link>
-                                        </div> */}
 
                                             </div>
                                         </div>
