@@ -116,6 +116,7 @@ module.exports = gql`
     variant: customArray
     variation_master: [ProductVariations]
     date: Date
+    rating: Float
     updated: Date
   }
 
