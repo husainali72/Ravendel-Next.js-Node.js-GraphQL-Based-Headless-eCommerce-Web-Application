@@ -55,7 +55,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme";
 import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
-
+import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
 const EditProductComponent = ({ params }) => {
   const Product_id = params.id || "";
   const classes = viewStyles();
@@ -123,30 +123,40 @@ const EditProductComponent = ({ params }) => {
       if (!isEmpty(productState.product)) {
         let defaultBrand = {};
         if (productState.product.brand) {
+
           if (!isEmpty(get(brandState, "brands"))) {
             for (let i in brandState.brands) {
+
               if (brandState.brands[i].id === productState.product.brand.id) {
                 defaultBrand = {
                   value: brandState.brands[i].id,
                   label: brandState.brands[i].name,
                 };
 
+
                 break;
               }
             }
           }
         }
+
         setProduct({
           ...product,
           ...productState.product,
           categoryId: productState.product.categoryId.map((cat) => cat.id),
           brand: defaultBrand || "",
+
         });
 
         if (productState.product.feature_image.original) {
           setfeatureImage(
             bucketBaseURL + productState.product.feature_image.original
           );
+        } else {
+          setfeatureImage(
+            NoImagePlaceHolder
+          );
+
         }
       }
     }
@@ -506,11 +516,11 @@ const EditProductComponent = ({ params }) => {
                           size="small"
                         />
                         <Tooltip title="Remove Field" aria-label="remove-field">
-                           <Stack direction="row" spacing={1}>
-                              <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
-                                <CloseIcon />
-                              </IconButton>
-                            </Stack>
+                          <Stack direction="row" spacing={1}>
+                            <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
+                              <CloseIcon />
+                            </IconButton>
+                          </Stack>
                         </Tooltip>
                       </Box>
                     ))}
@@ -536,6 +546,7 @@ const EditProductComponent = ({ params }) => {
                   multiline
                   rows="4"
                 />
+
               </CardBlocks>
               {/* ===================Meta Information=================== */}
               <CardBlocks title="Meta Information">
@@ -577,7 +588,7 @@ const EditProductComponent = ({ params }) => {
               <Box component="span">
                 <CardBlocks title="Status" nomargin>
                   <RadioGroup
-                    defaultValue="Draft"
+                    defaultValue={product.status}
                     name="status"
                     onChange={handleChange}
                     row
@@ -656,6 +667,7 @@ const EditProductComponent = ({ params }) => {
                   <BrandSelection
                     value={product.brand}
                     onBrandChange={(brand) => {
+
                       setProduct({ ...product, brand });
                     }}
                   />
