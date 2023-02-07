@@ -155,7 +155,6 @@ module.exports = {
         await newOrder.save();
         // send order create email
         const customer = await Customer.findById(args.customer_id);
-        console.log(customer)
         mailData = {
           subject: `Order Placed`, 
           mailTemplate: "template",

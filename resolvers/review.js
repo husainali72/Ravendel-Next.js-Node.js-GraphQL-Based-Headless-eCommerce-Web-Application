@@ -68,7 +68,6 @@ module.exports = {
   },
   Review: {
     product_id: async (root, args) => {
-      // console.log("Product", root)
       if (!root.product_id) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
@@ -82,7 +81,7 @@ module.exports = {
       }
     },
     customer_id: async (root, args) => {
-      if (!root.product_id) {
+      if (!root.customer_id) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
       try {
@@ -148,7 +147,8 @@ module.exports = {
         data,
         "",
         args,
-        validation
+        validation,
+        Product
       );
     },
     deleteReview: async (root, args, { id }) => {
