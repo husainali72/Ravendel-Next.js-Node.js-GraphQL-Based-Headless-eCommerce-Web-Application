@@ -43,6 +43,9 @@ import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { validate, validatenested } from "../components/validate";
+import Stack from '@mui/material/Stack';
+import CloseIcon from '@mui/icons-material/Close';
+
 const AddProductTheme = () => {
   const navigate = useNavigate();
   const classes = viewStyles();
@@ -448,14 +451,11 @@ const AddProductTheme = () => {
                         size="small"
                       />
                       <Tooltip title="Remove Field" aria-label="remove-field">
-                        <IconButton
-                          aria-label="remove-field"
-                          onClick={(e) => removeCustomField(index)}
-                          size="small"
-                          className={classes.deleteicon}
-                        >
-                          <Icon>clear</Icon>
-                        </IconButton>
+                      <Stack direction="row" spacing={1}>
+                              <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
+                                <CloseIcon />
+                              </IconButton>
+                            </Stack>
                       </Tooltip>
                     </Box>
                   ))}
