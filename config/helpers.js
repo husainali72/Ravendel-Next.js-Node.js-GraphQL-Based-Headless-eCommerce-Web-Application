@@ -659,10 +659,12 @@ const sendEmail = (mailData, from, to, res)  => {
     html: `${mailData}`
   }
   transporter.sendMail(mailOptions, (err, info)=>{
-    if (err && res) {
-      return res.status(400).json({success: false,message: 'Email sending faild.' });
-    } else {
-      return res.status(200).json({success: true,message: 'Email sent successfully.' });
+    if (res) {
+      if(err){
+        return res.status(400).json({success: false,message: 'Email sending faild.' });
+      } else {
+        return res.status(200).json({success: true,message: 'Email sent successfully.' });
+      }
     }
   })
 }
