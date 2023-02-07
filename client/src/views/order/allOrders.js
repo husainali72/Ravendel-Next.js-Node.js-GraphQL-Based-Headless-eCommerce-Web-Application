@@ -38,7 +38,6 @@ const AllOrdersComponent = () => {
   const orders = useSelector((state) => state.orders);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('date');
-
   useEffect(() => {
     if (isEmpty(orders.orders)) {
       dispatch(ordersAction());
@@ -81,6 +80,16 @@ const AllOrdersComponent = () => {
                         <Tooltip enterDelay={300} title="Sort">
                           <TableSortLabel active direction={order} onClick={() => {
                             setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("order_number")
+                          }}>
+                            Order Number
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
                             setOrderBy("date")
                           }}>
                             Date
@@ -93,7 +102,7 @@ const AllOrdersComponent = () => {
                             setOrder(order === "asc" ? "desc" : "asc")
                             setOrderBy("firstname")
                           }}>
-                            Name
+                            Customer Name
                           </TableSortLabel>
                         </Tooltip>
                       </TableCell>
@@ -111,13 +120,17 @@ const AllOrdersComponent = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {stableSort(orders.orders, getComparator(order, orderBy))
+
+                    {stableSort(orders.orders, getComparator(order, orderBy, orderBy === "firstname" ? "orderByName" : ""))
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
                       .map((order) => (
                         <TableRow key={order.id} hover>
+                          <TableCell>
+                            {order.order_number}
+                          </TableCell>
                           <TableCell>
                             {convertDateToStringFormat(order.date)}
                           </TableCell>
@@ -128,11 +141,12 @@ const AllOrdersComponent = () => {
                           </TableCell>
 
                           <TableCell>
-                            <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} sx={{ ml: '40px' }} className={"product-status-chip " + order.status} />
+
+                            <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} className={classes.badge} sx={{ "& .MuiBadge-badge": { width: "80px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
 
                           </TableCell>
                           <TableCell>
-                            <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} sx={{ ml: '40px' }} className={"product-status-chip " + order.status} />
+                            <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} className={classes.badge} sx={{ "& .MuiBadge-badge": { width: "80px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
                           </TableCell>
                           <TableCell>
                             <Tooltip title="Edit Order" aria-label="edit">
@@ -152,7 +166,7 @@ const AllOrdersComponent = () => {
                                 aria-label="Delete"
                                 className={classes.deleteicon}
                                 onClick={() =>
-                                  dispatch(orderDeleteAction(order.id))
+                                  dispatch(orderDeleteAction(order.id, navigate))
                                 }
                                 disabled
                               >
@@ -160,6 +174,7 @@ const AllOrdersComponent = () => {
                               </IconButton>
                             </Tooltip>
                           </TableCell>
+
                         </TableRow>
                       ))}
                   </TableBody>

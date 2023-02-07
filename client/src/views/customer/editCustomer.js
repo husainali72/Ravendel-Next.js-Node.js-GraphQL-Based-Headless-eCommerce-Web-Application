@@ -47,6 +47,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { get } from "lodash";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 var SingleCustomerObject = {
   id: "",
   _id: "",
@@ -109,7 +111,26 @@ const EditCustomerComponent = ({ params }) => {
 
   const updateCustomer = (e) => {
     e.preventDefault();
-    dispatch(customerUpdateAction(customer, navigate));
+
+
+    var errors = validate(['company', "phone", "email", "last_name", "first_name"], customer);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+
+    else {
+      dispatch(customerUpdateAction(customer, navigate));
+    }
+
+
   };
 
   const handleChange = (e) => {
@@ -117,6 +138,7 @@ const EditCustomerComponent = ({ params }) => {
   };
 
   const editAddress = (address) => {
+
     setEditMode(true);
     setSingleCustomer({ ...SingleCustomerObject, ...address });
   };
@@ -216,6 +238,7 @@ const EditCustomerComponent = ({ params }) => {
                     onInputChange={handleChange}
                   />
                 </Grid>
+
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
                     value={customer.company}

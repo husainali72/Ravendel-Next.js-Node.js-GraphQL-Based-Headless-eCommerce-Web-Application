@@ -2,7 +2,7 @@ import typography from "../typography";
 import palette from "../palette";
 export default {
   styleOverrides: {
-    root: {},
+
     title: {
       color: palette.text.main,
       fontWeight: typography.h5.fontWeight,

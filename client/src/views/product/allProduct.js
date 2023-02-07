@@ -30,6 +30,7 @@ import { convertDateToStringFormat } from "../utils/convertDate";
 import { Alert, Loading } from "../components";
 import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider, } from "@mui/material/styles";
+import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
 import { useNavigate } from "react-router-dom";
 import { stableSort, getComparator } from "../components/sorting";
 import theme from "../../theme/index";
@@ -133,9 +134,8 @@ const GlobalThemeOverride = () => {
                             <TableCell>
                               <Avatar
                                 alt={product.name}
-                                src={`${bucketBaseURL}${product.feature_image &&
-                                  product.feature_image.thumbnail
-                                  }`}
+                                src={product.feature_image && product.feature_image.thumbnail ? bucketBaseURL + product.feature_image.thumbnail : NoImagePlaceHolder
+                                }
                               />
                             </TableCell>
                             <TableCell>
