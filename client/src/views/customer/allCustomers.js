@@ -143,8 +143,9 @@ const AllCustomersComponent = () => {
                           <TableCell>
                             {customer.first_name + " " + customer.last_name}
                           </TableCell>
-                          <TableCell>{customer.email}</TableCell>
-
+                          <TableCell style={{textTransform: "lowercase"}}>{customer.email}</TableCell>
+                          
+                       
                           <TableCell>
                             <Tooltip title="Edit Customer" aria-label="edit">
                               <IconButton
