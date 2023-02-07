@@ -3,25 +3,13 @@ import client from "../../apollo-client";
 import PageTitle from "../../components/PageTitle";
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import { Container } from "react-bootstrap";
+import OnSaleProductCard from "../../components/category/onSaleProductCard";
 import { GET_SINGLE_PRODUCT, GET_FILTEREDPRODUCTS, GET_BRANDS_QUERY } from "../../queries/shopquery";
 import { useRouter } from 'next/router';
 import { GET_HOMEPAGE_DATA_QUERY, GET_CATEGORIES_QUERY } from '../../queries/home';
 import { useSelector } from "react-redux";
-import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import { getImage } from "../../utills/helpers";
-import Link from 'next/link';
-import { useRef } from 'react';
-const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduct,url}) => {
-
-    const slider = useRef();
-    const slideLeft =()=>{
-        slider.current.scrollLeft = slider.current.scrollLeft - 500;
-    }
-    const slideRight =()=>{
-        slider.current.scrollLeft = slider.current.scrollLeft + 500;
-    }
+import ShopProducts from "../../components/shoppage/shopProducts";
+const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduct}) => {
     const [cats,setCats] = useState({})
     const [products, setProducts] = useState([]);
     const [categoryDetail, setCategoryDetail] = useState({
@@ -47,8 +35,6 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
     useEffect(() => {
         setCategoryDetail(singlecategory);
     }, [singlecategory]);
-    const  catId = shopProduct.data.filter(product => product.url === url)[0].id
-    const subCat = shopProduct.data.filter(cat=> cat.parentId === catId)
 
     const getProducts = async ()=>{
         let config = { category: [singlecategory.id], brand: [], attribute: [], price: [] }
@@ -59,9 +45,9 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
             })
             let fillterProduct = fillterPrroducts.filteredProducts
             if(fillterProduct.length>0){
-                const pro = fillterProduct.map(product =>{
-                    return{
-                        brand: product.brand,
+            
+                fillterProduct.map(product =>{
+                    setProducts((prev)=>[...prev,{brand: product.brand,
                         categoryId: product.categoryId,
                         feature_image: product.feature_image,
                         name:product.name,
@@ -70,11 +56,9 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
                         status:product.status,
                         url:product.url,
                         __typename: product.__typename,
-                        _id:product._id
-                    }
+                        _id:product._id} ])
                 } )
-                setProducts(pro)
-            }
+            }   
             // setProducts(fillterProduct )
         }
         catch (e) {
@@ -86,55 +70,33 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
         getProducts()
     }, [setCategoryDetail])
 
-   
-    const rederict = async () =>{
-    await router.push(`/subcategorys/${url}`)
-    } 
-    if(subCat.length <= 0){
-        rederict()
-    }
     return (
-        <>
-        
-        {subCat.length >0 ?  <div >
-             <BreadCrumb title={`category  >  ${categoryDetail.name}`} />
-            <Container style={{ display:'flex',flexDirection:'column', alignItems:'center', justifyContent:'center'}}>
-                <h2 style={{ color: "#088178" , margin:"40px" }}><strong>{categoryDetail.name}</strong></h2>
-                {subCat.length >0 ? 
-                <Row xs={1} md={1} lg={2} className="g-4">
-                {subCat.map((cat, idx) => (
-                <Col>
-                <Card
-                    bg='light' 
-                    style={{display:"flex", flexDirection:"row", height:"100%"}}>
-                        <img 
-                            src={getImage(cat?.image, 'original')}
-                            className='cat-images'
-                            onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
-                            alt={cat?.name}
-                        />
-                    <Card.Body style={{flexGrow:"2"}}>
-                        <Card.Title>{cat?.name}</Card.Title>
-                            <Card.Text>
-                                This is a longer card with supporting text below as a natural
-                                lead-in to additional content. This content is a little bit
-                                longer.
-                            </Card.Text>
-                        <Link href={`/subcategorys/[categorys]?url=${cat.url}`} as={`/subcategorys/${cat.url}`}>
-                            <button type="button"
-                                        className="btn btn-success button button-add-to-cart"
-                                        style={{ marginTop: 12, backgroundColor: "#088178" }}
-                                        >Explore Products
-                            </button>
-                        </Link>
-                    </Card.Body>
-                </Card>
-                </Col>
-            ))}
-        </Row> : <h2>{url}</h2>}
+        <div>
+            <PageTitle title={"category"} />
+            <BreadCrumb title={`category  >  ${categoryDetail.name}`} />
+            <Container>
+                <div className="single-category-page">
+                    <div className="category-option">
+                        <ShopProducts category={shopProduct?.data} name={"Category"} />
+                        <ShopProducts brandProduct={brandProduct} name={"Brand"} brands />
+                    </div>
+                    <div className="single-category">
+                        <strong style={{ display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>{categoryDetail.name}</strong>
+                        {products && products?.length > 0 ? (
+                            <OnSaleProductCard
+                                onSaleProduct={products}
+                                hidetitle
+                            />
+                        ) : (
+                            <div style={{ padding: "50px" }}>
+                                <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>Category Product not available</p>
+                            </div>
+                        )}
+
+                    </div>
+                </div>
             </Container>
-        </div> : null }
-        </>
+        </div>
     )
 }
 export default SingleCategoryProduct;

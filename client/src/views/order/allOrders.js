@@ -14,7 +14,8 @@ import {
   TablePagination,
   IconButton,
   Tooltip,
-  Badge
+  Badge,
+  TableSortLabel
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -29,12 +30,14 @@ import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import theme from "../../theme/index";
 import { badgeColor } from "../components/BadgeColor";
+import { stableSort, getComparator } from "../components/sorting";
 const AllOrdersComponent = () => {
   const classes = viewStyles();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders);
-  const settings = useSelector((state) => state.settings);
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('date');
 
   useEffect(() => {
     if (isEmpty(orders.orders)) {
@@ -72,13 +75,30 @@ const AllOrdersComponent = () => {
                   size="small"
                 >
                   <TableHead>
+
                     <TableRow>
-                      <TableCell variant="contained" color="primary">
-                        Name
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("date")
+                          }}>
+                            Date
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Date
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("firstname")
+                          }}>
+                            Name
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
+
+
                       <TableCell variant="contained" color="primary">
                         Payment Status
                       </TableCell>
@@ -91,7 +111,7 @@ const AllOrdersComponent = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {orders.orders
+                    {stableSort(orders.orders, getComparator(order, orderBy))
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -99,13 +119,14 @@ const AllOrdersComponent = () => {
                       .map((order) => (
                         <TableRow key={order.id} hover>
                           <TableCell>
+                            {convertDateToStringFormat(order.date)}
+                          </TableCell>
+                          <TableCell>
                             {order.shipping.firstname +
                               " " +
                               order.shipping.lastname}
                           </TableCell>
-                          <TableCell>
-                            {convertDateToStringFormat(order.date)}
-                          </TableCell>
+
                           <TableCell>
                             <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} sx={{ ml: '40px' }} className={"product-status-chip " + order.status} />
 

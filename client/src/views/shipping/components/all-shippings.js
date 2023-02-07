@@ -9,13 +9,15 @@ import {
   IconButton,
   Tooltip,
   TablePagination,
+  TableSortLabel
 } from "@mui/material";
 import viewStyles from "../../viewStyles.js";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { CardBlocks } from "../../components";
 import theme from "../../../theme/index.js";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider, } from "@mui/material/styles";
+import { stableSort, getComparator } from "../../components/sorting";
 const AllShippingComponentComponent = ({
   shippingState,
   editShippingForm,
@@ -24,7 +26,8 @@ const AllShippingComponentComponent = ({
   const classes = viewStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('name');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -40,14 +43,35 @@ const AllShippingComponentComponent = ({
         <Table stickyHeader aria-label="shipping-table" size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Amount</TableCell>
+              <TableCell sortDirection="desc" >
+                <Tooltip enterDelay={300} title="Sort">
+                  <TableSortLabel active direction={order} onClick={() => {
+                    setOrder(order === "asc" ? "desc" : "asc")
+                    setOrderBy("name")
+                  }}>
+                    Name
+                  </TableSortLabel>
+                </Tooltip>
+              </TableCell>
+              <TableCell sortDirection="desc" >
+                <Tooltip enterDelay={300} title="Sort">
+                  <TableSortLabel active direction={order} onClick={() => {
+                    setOrder(order === "asc" ? "desc" : "asc")
+                    setOrderBy("amount")
+                  }}>
+                    Ammount
+                  </TableSortLabel>
+                </Tooltip>
+              </TableCell>
+
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
+
             {shippingState.shipping.shipping_class &&
-              shippingState.shipping.shipping_class
+              stableSort(shippingState.shipping.shipping_class, getComparator(order, orderBy))
+
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((shipping) => (
                   <TableRow key={shipping._id} hover>

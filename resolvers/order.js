@@ -12,7 +12,8 @@ const {
   _validatenested,
   subTotalDetailsEntry,
   subTotalSummaryEntry,
-  sendEmail
+  sendEmail,
+  generateOrderNumber
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -39,7 +40,6 @@ module.exports = {
       }
       try {
         const order = await Order.find({ customer_id: args.user_id }).sort({date: -1});
-        console.log("order", order)
         if (!order) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
         }
@@ -80,9 +80,7 @@ module.exports = {
             "email",
             "phone",
             "payment_method",
-          ],
-          args
-        );
+          ], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -97,45 +95,42 @@ module.exports = {
         const stripe = require('stripe')(Secret_Key);
 
         var c_grand_total = parseFloat(args.subtotal) +  parseFloat(args.shipping_amount) + parseFloat(args.tax_amount) - parseFloat(args.discount_amount);
-        console.log('c_grand_total',c_grand_total);
-
+        // console.log('c_grand_total',c_grand_total);
 
         if (args.billing.payment_method === 'Cash On Delivery') {
           var status = 'pending';
           var user_id = args.customer_id;
           const cart = await Cart.findOneAndDelete({ user_id: args.customer_id });
         } else {
-                
-                let currencycode ;
-                if( setting.store.currency_options.currency == 'eur'){
-                  currencycode = 'EUR'
-                }else if( setting.store.currency_options.currency == 'gbp'){
-                  currencycode = 'GBP';
-                }else if( setting.store.currency_options.currency == 'cad'){
-                  currencycode = 'CAD';
-                }else{
-                  currencycode = 'USD';
-                }
-
-                //console.log('currencycode',currencycode)
-                const payment = await stripe.paymentIntents.create({
+          let currencycode ;
+          if( setting.store.currency_options.currency == 'eur'){
+            currencycode = 'EUR'
+          }else if( setting.store.currency_options.currency == 'gbp'){
+            currencycode = 'GBP';
+          }else if( setting.store.currency_options.currency == 'cad'){
+            currencycode = 'CAD';
+          }else{
+            currencycode = 'USD';
+          }
+            const payment = await stripe.paymentIntents.create({
             amount : c_grand_total * 100 ,
             currency: currencycode,
             description: args.billing.email,
             payment_method: args.billing.transaction_id,
             confirm: true
           })
-            // console.log("Payment", payment);
-            // console.log("payment.status", payment.status);
             if( payment.status == 'succeeded'){
             status = 'success';
           }else{
             status = 'pending';
           }
-
           const cart = await Cart.findOneAndDelete({ user_id: args.customer_id });
-      }
+        }
+
+        const orderNumber = generateOrderNumber()
+
         const newOrder = new Order({
+          order_number: orderNumber,
           customer_id: args.customer_id,
           billing: args.billing,
           shipping: args.shipping,
@@ -160,6 +155,7 @@ module.exports = {
         await newOrder.save();
         // send order create email
         const customer = await Customer.findById(args.customer_id);
+        console.log(customer)
         mailData = {
           subject: `Order Placed`, 
           mailTemplate: "template",
@@ -230,13 +226,12 @@ module.exports = {
           order.shipping = args.shipping;
           await order.save();
           // send order create email
-          const customer = await Customer.findById(args.customer_id);
           mailData = {
             subject: `Order Updated`, 
             mailTemplate: "template",
             order: order
           }
-          sendEmail(mailData, APP_KEYS.smptUser, customer.email)
+          sendEmail(mailData, APP_KEYS.smptUser, args.billing.email)
 
           return MESSAGE_RESPONSE("UpdateSuccess", "Order", true);
         }

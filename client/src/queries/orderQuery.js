@@ -4,6 +4,7 @@ const GET_ORDERS = gql`
     orders {
       data {
         id
+        order_number
         customer_id
         payment_status
         shipping_status
@@ -27,6 +28,7 @@ const GET_ORDER = gql`
     order(id: $id) {
       data {
         id
+        order_number
         customer_id
         payment_status
         shipping_status

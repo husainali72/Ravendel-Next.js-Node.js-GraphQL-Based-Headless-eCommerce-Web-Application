@@ -16,11 +16,11 @@ import {
   Button,
   Tooltip,
   useMediaQuery,
+  TableSortLabel
 } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import { Link, useNavigate } from "react-router-dom";
 import { customersAction, customerDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -29,7 +29,8 @@ import { convertDateToStringFormat } from "../utils/convertDate";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert, Loading } from "../components";
 import { client_app_route_url } from "../../utils/helper";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider, } from "@mui/material/styles";
+import { stableSort, getComparator } from "../components/sorting";
 import theme from "../../theme/index";
 const AllCustomersComponent = () => {
   const theme = useTheme();
@@ -40,6 +41,8 @@ const AllCustomersComponent = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('date');
   useEffect(() => {
     if (isEmpty(Customers.customers)) {
       dispatch(customersAction());
@@ -54,6 +57,7 @@ const AllCustomersComponent = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
 
   return (
     <>
@@ -84,22 +88,49 @@ const AllCustomersComponent = () => {
                 <Table stickyHeader aria-label="customers-table" size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell variant="contained" color="primary">
-                        Name
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("date")
+
+
+                          }}>
+                            Date
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Email
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("first_name")
+                          }}>
+
+                            Name
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Date
+
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("email")
+                          }}>
+                            Email
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
+
                       <TableCell variant="contained" color="primary">
                         Actions
                       </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {Customers.customers
+
+                    {stableSort(Customers.customers, getComparator(order, orderBy))
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -107,12 +138,14 @@ const AllCustomersComponent = () => {
                       .map((customer) => (
                         <TableRow key={customer.id} hover>
                           <TableCell>
+                            {convertDateToStringFormat(customer.date)}
+                          </TableCell>
+                          <TableCell>
                             {customer.first_name + " " + customer.last_name}
                           </TableCell>
                           <TableCell style={{textTransform: "lowercase"}}>{customer.email}</TableCell>
-                          <TableCell>
-                            {convertDateToStringFormat(customer.date)}
-                          </TableCell>
+                          
+                       
                           <TableCell>
                             <Tooltip title="Edit Customer" aria-label="edit">
                               <IconButton

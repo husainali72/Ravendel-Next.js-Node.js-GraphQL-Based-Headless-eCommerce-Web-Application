@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import { Container, Row, Col } from "react-bootstrap";
 import Form from 'react-bootstrap/Form'
 import BreadCrumb from "../components/breadcrumb/breadcrumb";
@@ -8,65 +7,36 @@ import CartTable from "../components/cardcomponent/CardDetail";
 import { removeCartItemAction, RemoveAllCartItemsAction, increaseQuantity, decreaseQuantity } from "../redux/actions/cartAction";
 import { mutation, query } from "../utills/helpers";
 import { DELETE_CART_PRODUCTS, UPDATE_CART_PRODUCT, GET_USER_CART } from "../queries/cartquery";
-import { CHECKOUT_ORDER_QUERY } from "../queries/checkoutquery";
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
-import { getAllProductsAction } from "../redux/actions/productAction";
-import useSWR from "swr";
-import { GraphQLClient } from "graphql-request";
-import getStripe from "../lib/getStripe";
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice  * product.quantity || 0 * product.quantity), 0)
 const cartitems2 = []     
 
 const YourCard = ({ customercart, cart_id,CartsDataa }) => {
- 
-    console.log(" cart_id..", cart_id);
+
     const session = useSession();
     const cartProducts = useSelector(state => state.cart);
     const allProducts = useSelector(state => state.products);
-    
-    // console.log("cart_products", cartProducts);
     const usercart = useSelector(state => state.userCart);
-    console.log("usercart", usercart)
     const initialRender = useRef(true);
     const settings = useSelector(state => state.setting)
     const currencyType = settings.currencyOption
-
     let currency = "$"
     if (currencyType?.currency === "dollar") { currency = "$" }
     if (currencyType?.currency === "eur") { currency = <i className="fas fa-euro-sign"></i> }
     if (currencyType?.currency === "gbp") { currency = <i className="fas fa-pound-sign"></i> }
     if (currencyType?.currency === "cad") { currency = "CA$" }
-
-    const [CART_ID, setCARTID] = useState([]);
     const [cartItems, setCartItems] = useState([]);
     const [quantityy, setQuantity] = useState();
     const dispatch = useDispatch();
-    const [press, setPress] = useState(false);
     const [couponCode, setCouponCode] = useState("")
-    
-    const[products,setProducts] = useState([])
-    var cartitems3 = []
-    // const [userCart, setUserCart] = useState(cart_id);
-
-
     var id = "";
     var token = "";
 
 
-    useEffect( () => {
-        setCARTID(cart_id)
-    }, [cart_id]);
-    useEffect( async () => {
-        console.log('allProducts', allProducts)
-    }, [allProducts]);
-
  const handlePayment = async () =>{
-
-    const stripe = await getStripe();
-
     const response = await fetch('/api/stripe', {
       method: 'POST',
       headers: {
@@ -74,100 +44,33 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
       },
       body: JSON.stringify(cartItems),
     });
-
-    if(response.statusCode === 500) return;
-    
     const data = await response.json();
-
-    // toast.loading('Redirecting...');
-
-    stripe.redirectToCheckout({ sessionId: data.id });
-
-    // console.log('helloooo')
-    // const stripe = await getStripe()
-    // const response = await fetch('/api/stripe',{
-    //     method:'POST',
-    //     headers:{
-            
-    //         'Content-Type':'application/json'
-    //     },
-    //     body: JSON.stringify(cartItems)
-    // })
-    // console.log('resopnseeee',response)
-    // if(response.statusCode === 500) return
-    // const data = await response.json();
-    
-    // stripe.rederictToCheckout({sessionId : data.id})
-
+ 
+    window.location.href = data.url
+    if(response.statusCode === 500) return;
  }
-
-    // useEffect(() => {
-    //     if (session.status === "authenticated") {
-    //         console.log('customercart', customercart);
-    //         console.log('cartProducts', cartProducts);
-
-    //         if (initialRender.current) {
-    //             initialRender.current = false;
-    //             {
-    //                 console.log('customercart', customercart)
-    //                 customercart && customercart?.length > 0 ? (
-    //                     setCartItems(customercart || [])
-    //                 ) : setCartItems(cartProducts || [])
-    //             }
-    //             setCartItems(cartProducts || [])
-    //         } else {
-    //             // setPress(true);
-    //             setCartItems(cartProducts)
-    //         }
-    //     }
-    //     else {
-    //         // setPress(true);
-    //         setCartItems(cartProducts)
-    //     }
-
-    // }, [cartProducts]);
-
-    // useEffect(() => {
-    //     getProducts();
-    // }, [cartProducts]);
-
-    console.log('allProducts.success', allProducts.success)
     useEffect(() => {
         if(allProducts.success) {
             getProducts();
         }
-    }, [allProducts, cartProducts,customercart]);
+    }, [allProducts, cartProducts,customercart.length]);
 
     const getProducts = async () => {
         const productsCard = JSON.parse(localStorage.getItem("cart"))  
-        console.log('allProducts', allProducts)
-        console.log("productsCard", productsCard)
         if (session?.status === "authenticated") {
             id = session.data.user.accessToken.customer._id
             token = session.data.user.accessToken.token
-            // console.log("id", id)
-            // console.log("token", token)
             try {
                 const { data: CartsData } = await client.query({
                     query: GET_USER_CART,
                     variables: { id: id }
                 })
-                // let carts = customercart;
-                let carts = CartsData.cartbyUser.products;
-                
-                console.log('cartFromServerOfUsser----', carts);
-                console.log("productsCard", productsCard)
-
-
-
-                let cartitems = [];
+            
+                let carts = await CartsData.cartbyUser.products;
                 
                 let cartitems2 = [];
                 carts.map(cart=>{
-                    // console.log('allproduct=', allProducts.products);
-                    console.log('current cart=', cart);
                     const originalProduct = allProducts.products.find(prod => prod._id === cart.product_id);
-                    console.log('originalProduct=', originalProduct);
                     const cartProduct = {
                         _id: originalProduct._id,
                         quantity:parseInt(cart.qty) ,
@@ -177,17 +80,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
                     }
                     cartitems2.push(cartProduct);
                 })
-
-                console.log('redy to insert user cart', cartitems2);
                 setCartItems(cartitems2) 
-                console.log('cart itemmmmms2222', cartitems2)
-                console.log('prod itemmmmmmm', productsCard)
-
-                // carts.forEach(cartProduct => {
-                //     cartitems.push(...allProducts.products.filter(product => product._id === cartProduct.product_id))
-                // })
-                // console.log('cart itemmmmm', cartitems)
-                // setCartItems(cartitems) 
             }
             catch (e) {
                 setCartItems(productsCard || []);  
@@ -196,29 +89,11 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
         }
         else {
             setCartItems(productsCard || []);
-            console.log('procard itemmmmm', productsCard)
         }
     }
-
-    // useEffect(() => {
-    //     const productsCard = JSON.parse(localStorage.getItem("cart"))    
-    //     setCartItems(productsCard || cartProducts);
-    // }, [])
-
-    // console.log("CartItems", cartItems);
-    console.log('redy to insert user cart', cartitems2);
-    console.log('cart3t', cartitems3);
-    
     const AllCartItemsClear = async () => {
         setCartItems([])
 
-
-        // let variables = {
-        //     id: CART_ID,
-        //     products: [],
-        //     total: 0
-        // }
-       
         if (session.status === "authenticated") {
             let id = session.data.user.accessToken.customer._id
             let token = session.data.user.accessToken.token
@@ -232,19 +107,12 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
                 }
                 mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("delet res while auth ", res))
             })
-
-            // mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("res", res))
         }
 
         localStorage.setItem("cart", JSON.stringify([]))
-        // dispatch(RemoveAllCartItemsAction([]));
     }
 
-
-
     const IncreaseQuantity = async (item) => {
-        console.log('itemQuant',item.quantity)
-        console.log('dynamic irtem calue',cartItems[1])
         setCartItems([...cartItems],cartItems.filter(itemm => itemm._id===item._id ? (itemm.quantity+=1):itemm.qyantity))   
         setQuantity(item.quantity)
         if (session?.status !== "authenticated"){         
@@ -253,14 +121,11 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
         else{
             const prod = cartItems.find(cart => cart._id === item._id);
             const qty = prod.quantity;
-            // console.log('Product to change quantity',qty)
             if (session?.status === "authenticated") {
                 let id = session.data.user.accessToken.customer._id
                 let token = session.data.user.accessToken.token
                 query(GET_USER_CART, id, token).then(res => {
-                // console.log("productUser", res.data.cartbyUser.products)
                 cart_id = res.data.cartbyUser.id
-                // state.cart_id = res.data.cartbyUser.id
                 const cCartItems = [...cartItems];
 
                 const Cartt = cCartItems.map(product => {
@@ -278,24 +143,14 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
                     products: Cartt,
                     total: 0,
                 }
-                // console.log("updatecart", variables);
                 mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("update res while increasing qtyyyy", res))
             })
         }
         }
     }
     const DecreaseQuantity = (item) => {
-        // let qty = parseInt(item.quantity);
-        // console.log('item==',qty)
-        // if (qty > 1) {
-        //     qty -= 1;
-        //     setQuantity(qty - 1);
-        //     item.quantity = qty
-        //     dispatch(decreaseQuantity(item._id))
-        // }
         if (item.quantity > 1) {
             setCartItems([...cartItems],cartItems.filter(itemm => itemm._id===item._id ? (itemm.quantity-=1):itemm.qyantity))
-            // item.quantity -= 1;
             setQuantity(item.quantity)
             if (session?.status !== "authenticated"){
 
@@ -303,16 +158,12 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
             }  else{
                 const prod = cartItems.find(cart => cart._id === item._id);
                 const qty = prod.quantity;
-                // console.log('Product to change quantity',qty)
                 if (session?.status === "authenticated") {
                     let id = session.data.user.accessToken.customer._id
                     let token = session.data.user.accessToken.token
                     query(GET_USER_CART, id, token).then(res => {
-                    // console.log("productUser", res.data.cartbyUser.products)
                     cart_id = res.data.cartbyUser.id
-                    // state.cart_id = res.data.cartbyUser.id
                     const cCartItems = [...cartItems];
-    
                     const Cartt = cCartItems.map(product => {
                         return {
                             product_id: product._id,
@@ -328,79 +179,31 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
                         products: Cartt,
                         total: 0,
                     }
-                    // console.log("updatecart", variables);
                     mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("update res while decreasing qtyyyy", res))
                 })
             }
             }
         }
     }
-  
-
+    
     const removeToCart = async (item) => {
         let idx = cartItems.findIndex(cartItem => cartItem._id === item._id)
-        // console.log('indecx to delete an item', idx)
-        // const ProductsCard = JSON.parse(localStorage.getItem("cart"))  
-        // setCartItems(ProductsCard)
-        // console.log('cart item after deleting an element', cartItems)
-
-       
-
-
-
-
-       
             const prod = cartItems.find(cart => cart._id === item._id);
-          
-            // const qty = prod.quantity;
-            // console.log('Product to change quantity',qty)
             if (session?.status === "authenticated") {
                 let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id)
                 setCartItems(cartItemsfilter);
                 let id = session.data.user.accessToken.customer._id
                 let token = session.data.user.accessToken.token
                 query(GET_USER_CART, id, token).then(res => {
-                // console.log("productUser", res.data.cartbyUser.products)
                 cart_id = res.data.cartbyUser.id
-                // state.cart_id = res.data.cartbyUser.id
                 
                 let variables = {
                     id: cart_id,
                     product_id: item._id,
                 }
-                // console.log("updatecart", variables);
                 mutation(DELETE_CART_PRODUCTS, variables, token).then(res => console.log("delet res while auth ", res))
             })
         }
-        
-
-
-
-
-        // let product = item._id
-        // let token = ""
-        // if (session.status === "authenticated") {
-        //     let cartItemsfilter = cartItems.filter(itemm => itemm._id !== product)
-        //     // dispatch(removeCartItemAction(product));
-        //     setCartItems(cartItemsfilter);
-        //     // console.log('cart item after deleting an element', cartItems)
-        //     token = session.data.user.accessToken.token
-        //     let variables = {
-        //         id: cart_id,
-        //         product_id: item._id,
-        //     }
-        //     console.log("res delete", variables)
-        //     mutation(DELETE_CART_PRODUCTS, variables, token).then(res => {
-                
-        //         // if (res.data.deleteCartProduct.success) {
-        //         //     let cartItemsfilter = cartItems.filter(item => item._id !== product);
-        //         //     localStorage.setItem("cart", JSON.stringify(cartItemsfilter))
-        //         //     setCartItems(cartItemsfilter);
-        //         //     // dispatch(removeCartItemAction(cartItemsfilter)); 
-        //         // }
-        //     });
-        //     console.log('huaaaaa else')
-        // }
         else {
             let cartItemsfilter = cartItems.filter(item => item._id !== product)
             dispatch(removeCartItemAction(product));
@@ -434,14 +237,10 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
                 total: product.pricing.sellprice * product.quantity
             }
         })
-        // console.log("carts", carts)
         let variables = {
             user_id: id,
             products: carts,
-            // total: CalculateProductTotal(cartItems)
         }
-        // console.log("checkout variable", variables)
-        // mutation(CHECKOUT_ORDER_QUERY, variables, token).then(res => console.log("res", res))
     }
 
     const updateCartProduct = () => {
@@ -462,35 +261,28 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
                 product_id: product._id,
                 qty: product.quantity,
                 product_title: product.name,
-                // product_image: product.gallery_image[0].original||"",
                 product_image: product.feature_image.original,
                 product_price: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price
             }
         })
-        // console.log("carts", carts)
         let variables = {
             id: cart_id,
             products: carts,
-            // total: CalculateProductTotal(cartItems)
         }
         console.log("update", variables)
        
         mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("res", res))
     }
-    console.log("ab dekh cart", cartitems2)
     return (
         <>
-        {console.log('cartItems at cart page', cartItems)}
             <BreadCrumb title={"Cart"} />
             <section className="shopcart-table">
-
                 <Container>
                     {cartItems?.length > 0 ? (
                         <div className="row">
                             <div className="col-12">
                                 <CartTable
                                     cartItems={cartItems}
-                                    // cartItems={cartitems2}
                                     quantity={quantityy}
                                     IncreaseQuantity={IncreaseQuantity}
                                     DecreaseQuantity={DecreaseQuantity}
@@ -500,9 +292,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
                                     updateCartProduct={updateCartProduct}
                                     currency={currency}
                                 />
-
                                 <div className="devider"></div>
-
                                 <div className="card-other-information">
                                     <div className="col-lg-6 col-md-12">
                                         <h4>Shopping Calculation</h4>
@@ -542,7 +332,6 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
                                                         <tr>
                                                             <td className="cart_total_label">Cart Subtotal</td>
                                                             <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
-                                                                {console.log('cartItems', cartItems)}
                                                                 {currency}  {CalculateProductTotal(cartItems).toFixed(2)}
                                                             </span></td>
                                                         </tr>
@@ -559,7 +348,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            {/* <Link href="#"> */}
+                                            {/* <Link href="/checkoutt"> */}
                                                 <a className="card-btons" onClick={handlePayment} ><i className="fas fa-archive"></i> Proceed To CheckOut</a>
                                             {/* </Link> */}
                                         </div>
@@ -585,9 +374,7 @@ export async function getServerSideProps(context) {
     
 
     const session = await getSession(context)
-    // console.log("session", session)
     let id = session?.user?.accessToken?.customer._id
-    // let id = "622ae63d3aa0f0f63835ef8e"
     var customercart = [];
     var cart_id = ""
     var CartsDataa ={}

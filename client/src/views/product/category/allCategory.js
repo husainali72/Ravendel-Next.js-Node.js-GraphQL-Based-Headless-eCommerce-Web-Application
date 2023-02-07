@@ -14,6 +14,7 @@ import {
   Tooltip,
   Box,
   TablePagination,
+  TableSortLabel
 } from "@mui/material";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,6 +44,7 @@ import { isEmpty } from "../../../utils/helper";
 import { get } from "lodash";
 import { validate } from "../../components/validate";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
+import { stableSort, getComparator } from "../../components/sorting";
 var categoryObject = {
   name: "",
   parentId: null,
@@ -65,6 +67,8 @@ const AllCategoryComponent = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [loading, setloading] = useState(false);
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('date');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -192,24 +196,48 @@ const AllCategoryComponent = () => {
               >
                 <TableHead>
                   <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Actions</TableCell>
+                    <TableCell sortDirection="desc" variant="contained" color="primary">
+                      <Tooltip enterDelay={300} title="Sort">
+                        <TableSortLabel active direction={order} onClick={() => {
+                          setOrder(order === "asc" ? "desc" : "asc")
+                          setOrderBy("date")
+                        }}>
+                          Date
+                        </TableSortLabel>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell sortDirection="desc" variant="contained" color="primary">
+                      <Tooltip enterDelay={300} title="Sort">
+                        <TableSortLabel active direction={order} onClick={() => {
+                          setOrder(order === "asc" ? "desc" : "asc")
+                          setOrderBy("name")
+                        }}>
+                          Name
+                        </TableSortLabel>
+                      </Tooltip>
+                    </TableCell>
+
+
+                    <TableCell variant="contained" color="primary">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
+
                   {categories &&
-                    categories
+                    stableSort(categories, getComparator(order, orderBy))
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
                       .map((cat) => (
+
                         <TableRow key={cat.id} hover>
-                          <TableCell>{cat.name}</TableCell>
+
                           <TableCell>
                             {convertDateToStringFormat(cat.date)}
                           </TableCell>
+                          <TableCell>{cat.name}</TableCell>
+
                           <TableCell>
                             <Tooltip title="Edit Category" aria-label="edit">
                               <IconButton

@@ -7,6 +7,10 @@ const OrderSchema = new Schema({
     type: Schema.ObjectId,
     required: true
   },
+  order_number: {
+    type: String,
+    required: true
+  },
   billing: {
     firstname: String,
     lastname: String,

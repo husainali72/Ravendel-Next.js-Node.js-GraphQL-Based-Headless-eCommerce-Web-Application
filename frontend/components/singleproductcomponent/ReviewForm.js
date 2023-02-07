@@ -18,7 +18,6 @@ const Star = ({ starId, marked }) => {
 };
 
 const ReviewForm = ({ productId }) => {
-    // console.log("productId", productId);
     var reviewObject = {
         title: "",
         email: "ravendel@test.com",

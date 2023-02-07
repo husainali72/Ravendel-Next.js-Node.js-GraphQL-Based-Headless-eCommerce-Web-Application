@@ -3,7 +3,6 @@ import Carousel from 'react-bootstrap/Carousel';
 import { getImage } from '../../utills/helpers';
 
 const Homebanner = ({ slider, Image }) => {
-    console.log('sliderrr', slider)
     return (
         <>
             <Carousel>

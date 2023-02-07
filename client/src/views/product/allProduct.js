@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Grid,
   Card,
@@ -16,12 +16,12 @@ import {
   Avatar,
   Button,
   Tooltip,
+  TableSortLabel
 } from "@mui/material";
 
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { productsAction, productDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -29,15 +29,17 @@ import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import { Alert, Loading } from "../components";
 import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider, } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { stableSort, getComparator } from "../components/sorting";
 import theme from "../../theme/index";
 const GlobalThemeOverride = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const products = useSelector((state) => state.products);
-
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('date');
   useEffect(() => {
     dispatch(productsAction());
   }, []);
@@ -89,67 +91,88 @@ const GlobalThemeOverride = () => {
                       >
                         <ImageIcon />
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Name
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("date")
+                          }}>
+                            Date
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Date
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("name")
+                          }}>
+                            Name
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
+
+
+                      <TableCell variant="contained" color="primary" >
                         Actions
                       </TableCell>
                     </TableRow>
                   </TableHead>
-                  <TableBody className={classes.container}>
-                    {products.products
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((product) => (
-                        <TableRow key={product.id} hover>
-                          <TableCell>
-                            <Avatar
-                              alt={product.name}
-                              src={`${bucketBaseURL}${product.feature_image &&
-                                product.feature_image.thumbnail
-                                }`}
-                            />
-                          </TableCell>
-                          <TableCell>{product.name}</TableCell>
-                          <TableCell>
-                            {convertDateToStringFormat(product.date)}
-                          </TableCell>
-                          <TableCell>
-                            <Tooltip title="Edit Product" aria-label="edit">
-                              <IconButton
-                                aria-label="Edit"
-                                onClick={
-                                  () =>
-                                    navigate(
-                                      `${client_app_route_url}edit-product/${product._id}`
-                                    )
 
-                                }
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Delete Product" aria-label="delete">
-                              <IconButton
-                                aria-label="Delete"
-                                className={classes.deleteicon}
-                                onClick={() =>
-                                  dispatch(productDeleteAction(product._id))
-                                }
-                                disabled
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                  <TableBody className={classes.container}>
+                    {
+
+                      stableSort(products.products, getComparator(order, orderBy))
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((product) => (
+                          <TableRow key={product.id} hover>
+
+                            <TableCell>
+                              <Avatar
+                                alt={product.name}
+                                src={`${bucketBaseURL}${product.feature_image &&
+                                  product.feature_image.thumbnail
+                                  }`}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              {convertDateToStringFormat(product.date)}
+                            </TableCell>
+                            <TableCell>{product.name}</TableCell>
+
+                            <TableCell>
+                              <Tooltip title="Edit Product" aria-label="edit">
+                                <IconButton
+                                  aria-label="Edit"
+                                  onClick={
+                                    () =>
+                                      navigate(
+                                        `${client_app_route_url}edit-product/${product._id}`
+                                      )
+
+                                  }
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Delete Product" aria-label="delete">
+                                <IconButton
+                                  aria-label="Delete"
+                                  className={classes.deleteicon}
+                                  onClick={() =>
+                                    dispatch(productDeleteAction(product._id))
+                                  }
+                                  disabled
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                   </TableBody>
                 </Table>
               </TableContainer>

@@ -668,3 +668,17 @@ const sendEmail = (mailData, from, to, res)  => {
 }
 module.exports.sendEmail = sendEmail
 
+const generateOrderNumber = () => {
+  const date = new Date()
+  const codeString = APP_KEYS.codeString
+  let digit = 0, code = ""
+  while(digit != 4){
+    let index = Math.floor(Math.random() * codeString.length)
+    code += codeString.charAt(index)
+    digit++
+  }
+  code = `${date.getFullYear()+date.getSeconds()}-${code}-${date.getMonth()+date.getSeconds()}${date.getDate()+date.getSeconds()}`
+
+  return code
+}
+module.exports.generateOrderNumber = generateOrderNumber

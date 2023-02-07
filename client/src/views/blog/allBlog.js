@@ -15,6 +15,8 @@ import {
   IconButton,
   Avatar,
   Button,
+  Tooltip,
+  TableSortLabel
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,6 +33,7 @@ import { client_app_route_url } from "../../utils/helper";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { blogsAction } from "../../store/action";
+import { stableSort, getComparator } from "../components/sorting";
 const AllBlogComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -38,6 +41,8 @@ const AllBlogComponent = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('date');
   useEffect(() => {
     if (isEmpty(blogs.blogs)) {
       dispatch(blogsAction());
@@ -89,22 +94,44 @@ const AllBlogComponent = () => {
                       >
                         <PeopleIcon />
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Title
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("title")
+                          }}>
+                            Title
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Status
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("date")
+                          }}>
+                            Date
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Date
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("status")
+                          }}>
+                            Status
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
                       <TableCell variant="contained" color="primary">
                         Actions
                       </TableCell>
                     </TableRow>
                   </TableHead>
+
                   <TableBody>
-                    {blogs.blogs
+                    {stableSort(blogs.blogs, getComparator(order, orderBy))
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -114,17 +141,17 @@ const AllBlogComponent = () => {
                           <TableCell>
                             <Avatar
                               alt={blog.name}
-                              src={`${bucketBaseURL}${
-                                blog.feature_image &&
+                              src={`${bucketBaseURL}${blog.feature_image &&
                                 blog.feature_image.thumbnail
-                              }`}
+                                }`}
                             />
                           </TableCell>
                           <TableCell>{blog.title}</TableCell>
-                          <TableCell>{blog.status}</TableCell>
                           <TableCell>
                             {convertDateToStringFormat(blog.date)}
                           </TableCell>
+                          <TableCell>{blog.status}</TableCell>
+
                           <TableCell>
                             <IconButton
                               aria-label="Edit"

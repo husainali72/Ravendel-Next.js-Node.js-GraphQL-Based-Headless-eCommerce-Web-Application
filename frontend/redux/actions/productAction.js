@@ -44,7 +44,6 @@ export const getAllProductsAction = () => (dispatch) => {
     query(GET_PRODUCTS)
       .then((response) => {
           if (response) {
-            console.log('response', response)
           return dispatch({
             type: PRODUCTS_SUCCESS,
             payload: response.data.products.data,
