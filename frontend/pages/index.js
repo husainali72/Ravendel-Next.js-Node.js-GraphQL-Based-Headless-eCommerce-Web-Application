@@ -136,7 +136,7 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
       {brands?.length > 0 ? <FeatureBrand brands = {brands} /> : null}
       <RavendelBanner />
 
-          {HomePageSeq.map(section => (
+          {HomePageSeq?.map(section => (
             renderSwitch(section)
           ))}
       

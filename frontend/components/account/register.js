@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { ADD_CUSTOMER } from "../../queries/customerquery";
 import client from "../../apollo-client";
 import Link from "next/link";
 import { mutation } from "../../utills/helpers";
-// import PhoneInput from 'react-phone-number-input'
-// import 'react-phone-number-input/style.css'
-import LoadingSpinner from "../breadcrumb/loading";
-import LoadingSpinnerFull from "../breadcrumb/fullPageLoading";
-import Alert from 'react-bootstrap/Alert';
 import { Spinner, Toast } from "react-bootstrap";
 import toast, { Toaster } from 'react-hot-toast';
 import PhoneInput from "react-phone-input-2";
@@ -40,7 +35,6 @@ const Register = () => {
         e.preventDefault();
         const errors = Validation(registerUser);
         setErrors((prevErrors)=> ({...prevErrors,...errors}))
-        console.log('errrrr',Object.keys(Errors).length,Errors )
         if(Object.keys(errors).length === 0 && Errors !== {} ){
             setLoading(true)
             mutation(ADD_CUSTOMER, registerUser).then(res => {
@@ -80,7 +74,6 @@ const Register = () => {
         <>
         <Toaster />
         <div className="p-30 register-box registerContainer">
-        {/* {loading && <LoadingSpinnerFull />} */}
             <h4>Create your Account</h4>
             <p style={{ marginTop: 12 }} className="mb-50">Your personal data will be used to support your experience throughout this website, to manage
                 access to your account, and for other purposes described in our privacy policy
