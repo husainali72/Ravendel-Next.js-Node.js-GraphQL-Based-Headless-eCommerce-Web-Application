@@ -3,6 +3,7 @@ import { Grid, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { customerAddAction } from "../../store/action/";
+import MuiPhoneNumber from "material-ui-phone-number";
 import viewStyles from "../viewStyles.js";
 import {
   Loading,
@@ -25,7 +26,7 @@ var customerObj = {
   email: "",
   password: "",
   company: "",
-  phone: "",
+  phone_number: "",
 };
 
 const AddCustomerComponent = () => {
@@ -35,7 +36,9 @@ const AddCustomerComponent = () => {
   const dispatch = useDispatch();
   const Customers = useSelector((state) => state.customers);
   const [customer, setcustomer] = useState(customerObj);
+  const [phoneValue, setPhoneValue] = useState("");
   const navigate = useNavigate()
+
   useEffect(() => {
     document.forms[0].reset();
     setcustomer(customerObj);
@@ -44,7 +47,7 @@ const AddCustomerComponent = () => {
   const addCustomer = (e) => {
     e.preventDefault();
 
-    var errors = validate(['company', "phone", "email", "last_name", "first_name"], customer);
+    var errors = validate(['company', "phone_number", "email", "last_name", "first_name"], customer);
 
     if (!isEmpty(errors)) {
       dispatch({
@@ -58,16 +61,21 @@ const AddCustomerComponent = () => {
     }
 
     if (isEmpty(errors)) {
-      dispatch(customerAddAction(customer, navigate));
+      customer.phone = phoneValue
+      dispatch(customerAddAction(customer, navigate(`${client_app_route_url}all-customer`)));
     }
-
-
-
-
   };
 
   const handleChange = (e) => {
     setcustomer({ ...customer, [e.target.name]: e.target.value });
+  };
+
+  const handleOnChange = (value) => {
+    setPhoneValue(value);
+  }
+
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
   };
 
   return (
@@ -112,6 +120,7 @@ const AddCustomerComponent = () => {
                     label="Email"
                     name="email"
                     onInputChange={handleChange}
+                    onInput={toInputLowercase}
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
@@ -131,11 +140,13 @@ const AddCustomerComponent = () => {
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
-                  <TextInput
-                    value={customer.phone}
+                  <MuiPhoneNumber 
+                    value= {customer.phone}
+                    defaultCountry={"us"}
                     label="Phone"
                     name="phone"
-                    onInputChange={handleChange}
+                    variant="outlined"
+                    onChange={handleOnChange}
                   />
                 </Grid>
               </Grid>

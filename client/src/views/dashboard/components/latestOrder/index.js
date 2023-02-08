@@ -53,7 +53,16 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
           <Table aria-label="sticky table and Dense Table" size="small">
             <TableHead>
               <TableRow>
-
+                <TableCell sortDirection="desc" variant="contained" color="primary">
+                  <Tooltip enterDelay={300} title="Sort">
+                    <TableSortLabel active direction={order} onClick={() => {
+                      setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("order_number")
+                    }}>
+                      Order Number
+                    </TableSortLabel>
+                  </Tooltip>
+                </TableCell>
                 <TableCell sortDirection="desc" variant="contained" color="primary">
                   <Tooltip enterDelay={300} title="Sort">
                     <TableSortLabel active direction={order} onClick={() => {
@@ -70,7 +79,7 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
                       setOrder(order === "asc" ? "desc" : "asc")
                       setOrderBy("firstname")
                     }}>
-                      Name
+                      Customer Name
                     </TableSortLabel>
                   </Tooltip>
                 </TableCell>
@@ -81,8 +90,11 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
               </TableRow>
             </TableHead>
             <TableBody>
+
               {stableSort(latestOrders, getComparator(order, orderBy, orderBy === "firstname" ? "shipping" : "")).slice(0, 2).map((order) => (
+
                 <TableRow hover key={order.id}>
+                  <TableCell>{order.order_number}</TableCell>
                   <TableCell>{convertDateToStringFormat(order.date)}</TableCell>
 
                   <TableCell>
@@ -90,11 +102,11 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
                   </TableCell>
 
                   <TableCell>
-                    <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} sx={{ ml: '40px' }} className={"product-status-chip " + order.status} />
+                    <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} sx={{ ml: '40px', "& .MuiBadge-badge": { width: "80px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
 
                   </TableCell>
                   <TableCell>
-                    <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} sx={{ ml: '40px' }} className={"product-status-chip " + order.status} />
+                    <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} sx={{ ml: '40px', "& .MuiBadge-badge": { width: "80px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
 
                   </TableCell>
                   <TableCell>

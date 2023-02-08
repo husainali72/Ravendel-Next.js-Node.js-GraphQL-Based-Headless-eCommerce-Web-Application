@@ -140,8 +140,8 @@ const AllUsersComponent = () => {
                             />
                           </TableCell>
                           <TableCell>{user.name}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>{user.role}</TableCell>
+                          <TableCell style={{textTransform: "lowercase"}}>{user.email}</TableCell>
+                          <TableCell style={{textTransform: "capitalize"}}>{user.role}</TableCell>
                           <TableCell>
                             <IconButton
                               aria-label="Edit"

@@ -1,12 +1,14 @@
-import palette from "../theme/palette";
-import { makeStyles, ThemeProvider } from "@mui/styles";
+
+import { makeStyles } from "@mui/styles";
 import { deepPurple } from "@mui/material/colors";
-import { createTheme } from "@mui/material";
-import MuiButton from "../theme/overrides/MuiButton";
-import typography from "../theme/typography";
+
+
 const viewStyles = makeStyles((theme) => ({
   marginTop1: {
     marginTop: 10,
+  },
+  badge: {
+    marginLeft: "40px"
   },
   mainrow: {
     "&&": {
@@ -53,7 +55,7 @@ const viewStyles = makeStyles((theme) => ({
   },
   avtarTd: {
     width: "50px",
-    backgroundColor: "red",
+
   },
   container: {
     maxHeight: 600,
@@ -277,6 +279,7 @@ const viewStyles = makeStyles((theme) => ({
   statusSelect: {
     marginTop: 25,
     width: 300,
+
   },
   fullWidth: {
     width: "100%",
@@ -285,6 +288,7 @@ const viewStyles = makeStyles((theme) => ({
     display: "block",
   },
   textRight: {
+
     textAlign: "right",
   },
   discount: {

@@ -5,15 +5,19 @@ function descendingComparator(a, b, orderBy, key) {
             return b[key][orderBy] < a[key][orderBy] ? -1 : 1;
         } else if (typeof a[key][orderBy] === "string" && typeof b[key][orderBy] === "string") {
 
+
             return b[key][orderBy].toLowerCase() < a[key][orderBy].toLowerCase() ? -1 : 1
+
         }
         else {
             return 0;
         }
     } else {
+
         if (typeof a[orderBy] === "number" && typeof b[orderBy] === "number") {
             return b[orderBy] < a[orderBy] ? -1 : 1;
         } else if (typeof a[orderBy] === "string" && typeof b[orderBy] === "string") {
+
             return b[orderBy].toLowerCase() < a[orderBy].toLowerCase() ? -1 : 1
         }
         else {

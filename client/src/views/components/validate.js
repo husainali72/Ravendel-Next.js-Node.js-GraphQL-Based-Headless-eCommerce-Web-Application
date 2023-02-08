@@ -6,9 +6,12 @@ export const validate = (names, args) => {
 
     names.map((name) => {
       if (!args[name]) {
-        return (errors = `${name} field is required`)
+        const txt = name.replaceAll('_', ' ') + " is required"
+        const str = txt.charAt(0).toUpperCase() + txt.slice(1);
+        return (errors = str)
       }
       if (Array.isArray(args[name])) {
+       
         if (args[name].length <= 0) {
           return (errors = `Category  field is required`)
         }

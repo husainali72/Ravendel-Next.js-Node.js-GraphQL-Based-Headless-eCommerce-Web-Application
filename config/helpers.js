@@ -659,10 +659,12 @@ const sendEmail = (mailData, from, to, res)  => {
     html: `${mailData}`
   }
   transporter.sendMail(mailOptions, (err, info)=>{
-    if (err && res) {
-      return res.status(400).json({success: false,message: 'Email sending faild.' });
-    } else {
-      return res.status(200).json({success: true,message: 'Email sent successfully.' });
+    if (res) {
+      if(err){
+        return res.status(400).json({success: false, message: 'Email not sent.' });
+      } else {
+        return res.status(200).json({success: true, message: 'Email sent successfully.' });
+      }
     }
   })
 }
@@ -682,3 +684,16 @@ const generateOrderNumber = () => {
   return code
 }
 module.exports.generateOrderNumber = generateOrderNumber
+
+const prodAvgRating = async(productID, reviewModel, productModel) => {
+  let avgRating = 0
+  const reviews = await reviewModel.find({product_id: productID, status: {$ne: "pending"}})
+  reviews.map(review => {
+    avgRating += review.rating
+  })
+  avgRating /= reviews.length
+  const product = await productModel.findById(productID)
+  product.rating = avgRating.toFixed(1)
+  await product.save()
+}
+module.exports.prodAvgRating = prodAvgRating

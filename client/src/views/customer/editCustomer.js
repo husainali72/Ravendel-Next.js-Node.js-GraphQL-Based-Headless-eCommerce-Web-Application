@@ -34,6 +34,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import HomeIcon from "@mui/icons-material/Home";
 import Rating from "@mui/material/Rating";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
+import MuiPhoneNumber from "material-ui-phone-number";
 import {
   Loading,
   TextInput,
@@ -47,6 +48,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { get } from "lodash";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 var SingleCustomerObject = {
   id: "",
   _id: "",
@@ -81,6 +84,7 @@ const EditCustomerComponent = ({ params }) => {
   const [editMode, setEditMode] = useState(false);
   const [singleCustomer, setSingleCustomer] = useState(SingleCustomerObject);
   const [customer, setcustomer] = useState(customerObj);
+  const [phoneValue, setPhoneValue] = useState("");
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
 
@@ -96,27 +100,51 @@ const EditCustomerComponent = ({ params }) => {
     } else {
       for (let i in Customers.customers) {
         if (Customers.customers[i].id === ID) {
-          SingleCustomerObject.id = Customers.customers[i].id;
+          SingleCustomerObject.id = Customers.customers[i].id; 
           setSingleCustomer(SingleCustomerObject);
           setcustomer({ ...customer, ...Customers.customers[i] });
           break;
         }
       }
-
       setEditMode(false);
     }
   }, [get(Customers, "customers")]);
-
+ 
   const updateCustomer = (e) => {
+    customer.phone = phoneValue
     e.preventDefault();
-    dispatch(customerUpdateAction(customer, navigate));
+
+
+    var errors = validate(['company', "phone", "email", "last_name", "first_name"], customer);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+
+    else {
+      dispatch(customerUpdateAction(customer, navigate));
+    }
+
+
   };
 
   const handleChange = (e) => {
     setcustomer({ ...customer, [e.target.name]: e.target.value });
   };
 
+  const handleOnChange = (value) => {
+    setPhoneValue(value)
+  };
+
   const editAddress = (address) => {
+
     setEditMode(true);
     setSingleCustomer({ ...SingleCustomerObject, ...address });
   };
@@ -159,6 +187,10 @@ const EditCustomerComponent = ({ params }) => {
   const cancelAddress = () => {
     setEditMode(false);
     setSingleCustomer(SingleCustomerObject);
+  };
+
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
   };
 
   return (
@@ -206,6 +238,7 @@ const EditCustomerComponent = ({ params }) => {
                     name="email"
                     onInputChange={handleChange}
                     type="email"
+                    onInput={toInputLowercase}
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
@@ -216,6 +249,7 @@ const EditCustomerComponent = ({ params }) => {
                     onInputChange={handleChange}
                   />
                 </Grid>
+
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
                     value={customer.company}
@@ -225,12 +259,14 @@ const EditCustomerComponent = ({ params }) => {
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
-                  <TextInput
+                  <MuiPhoneNumber
                     value={customer.phone}
+                    defaultCountry={"us"}
                     label="Phone"
                     name="phone"
-                    onInputChange={handleChange}
-                  />
+                    variant="outlined"
+                    onChange={handleOnChange}
+                  />   
                 </Grid>
               </Grid>
             </CardBlocks>
@@ -304,8 +340,8 @@ const EditCustomerComponent = ({ params }) => {
               {customer &&
                 customer.address_book &&
                 customer.address_book.map((address, index) => (
-                  <Grid item md={6} sm={6} xs={12} key={index}>
-                    <Box>
+                  <Grid item md={6} sm={6} xs={12} key={index} >
+                    <Box style={{ marginTop: "22px" }}>
                       <Card>
                         <CardHeader
                           title="Address"

@@ -17,8 +17,8 @@ const DashboardCardComponent = ({ count, title, Icon, loader }) => {
   return (
     <Card className={classes.dashboardcardroot}>
       <CardContent>
-        <Grid container justify="space-between">
-          <Grid item style={{ width: "150px" }}>
+        <Grid container justifyContent="space-between" >
+          <Grid item >
             <Typography
               className={classes.dashboardcardtitle}
               color="textSecondary"
@@ -37,10 +37,12 @@ const DashboardCardComponent = ({ count, title, Icon, loader }) => {
               <Typography variant="h5">{count}</Typography>
             )}
           </Grid>
-          <Grid item style={{ marginLeft: "160px" }}>
+          <Grid item >
+
             <Avatar className={classes.dashboardcardavatar}>
               <Icon className={classes.dashboardcardicon} />
             </Avatar>
+
           </Grid>
         </Grid>
       </CardContent>

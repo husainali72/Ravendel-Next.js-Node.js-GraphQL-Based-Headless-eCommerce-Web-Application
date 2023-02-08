@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Box, useMediaQuery } from "@mui/material";
+import { Grid, Box, useMediaQuery, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import LatestOrder from "./components/latestOrder";
 import LatestProducts from "./components/latestProduct";
@@ -15,14 +15,14 @@ import { dashboardAction } from "../../store/action/dashboardAction";
 import { isEmpty } from "lodash";
 import Paper from "@mui/material/Paper";
 import {
-  BarChart,
-  Bar,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Legend
 
 } from "recharts";
 import { currencyFormat } from "../order/CurrencyFormat";
@@ -32,110 +32,11 @@ const DashboardComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
-  const Orders = useSelector((state) => state.orders);
+  const [year, setYear] = useState(2023)
   const data = useSelector((state) => state.dashboardReducer);
-
-  const [dashBoardCount, setdashBoardCount] = useState({});
+  const [chartdata, setChartdata] = useState([])
+  const [dashBoardData, setdashBoardData] = useState({});
   const loader = useSelector((state) => state.dashboardReducer.loading);
-  const chartData = [
-    {
-      month: "Jan",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "Feb",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "Mar",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "Apr",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "May",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "Jun",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "Jul",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "Aug",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "sep",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "Oct",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "Nov",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-    {
-      month: "Dec",
-      GrossSales: 675,
-      NetSales: 756,
-      count: 1000,
-      paymentSuccessGrossSales: 2000,
-      paymentSuccessNetSales: 3000,
-    },
-  ];
-
   useEffect(() => {
     if (isEmpty(get(data, "dashboard_data"))) {
       dispatch(dashboardAction());
@@ -144,16 +45,39 @@ const DashboardComponent = () => {
 
   useEffect(() => {
     if (!isEmpty(get(data, "dashboard_data"))) {
-      setdashBoardCount({ ...dashBoardCount, ...get(data, "dashboard_data") });
+
+      setdashBoardData({ ...dashBoardData, ...get(data, "dashboard_data") });
+      const OrderChartData = get(data, "dashboard_data.ordersByYearMonth")
+      if (!isEmpty(OrderChartData))
+
+        OrderChartData.map((OrderChart) => {
+          if (OrderChart.year === year) {
+            setChartdata(OrderChart.months)
+          }
+        })
+
     }
   }, [get(data, "dashboard_data")]);
+
+  const handleChangeChart = (e) => {
+    const { value } = e.target
+
+    setYear(value)
+    dashBoardData.ordersByYearMonth.map((arr) => {
+
+      if (arr.year == value) {
+        setChartdata(arr.months)
+      }
+    })
+
+  }
 
   return (
     <Box component="div" p={isSmall ? 1 : 4}>
       <Grid container spacing={isSmall ? 1 : 4}>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <DashboardCard
-            count={dashBoardCount.userCount}
+            count={dashBoardData.userCount}
             title={"TOTAL USERS"}
             Icon={({ className }) => (
               <PeopleAltOutlinedIcon className={className} />
@@ -163,7 +87,7 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <DashboardCard
-            count={dashBoardCount.productCount}
+            count={dashBoardData.productCount}
             title={"TOTAL PRODUCTS"}
             Icon={({ className }) => (
               <StorefrontOutlinedIcon className={className} />
@@ -173,7 +97,7 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <DashboardCard
-            count={dashBoardCount.customerCount}
+            count={dashBoardData.customerCount}
             title={"TOTAL CUSTOMERS"}
             Icon={({ className }) => (
               <PeopleAltOutlinedIcon className={className} />
@@ -183,7 +107,7 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <DashboardCard
-            count={currencyFormat(dashBoardCount.totalSales)}
+            count={currencyFormat(dashBoardData.totalSales)}
             title={"TOTAL SALES"}
             Icon={({ className }) => (
               <AttachMoneyOutlinedIcon className={className} />
@@ -193,55 +117,65 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={8} xl={12} md={12} xs={12}>
           <LatestOrder
-            latestOrders={dashBoardCount.latestOrders || []}
+            latestOrders={dashBoardData.latestOrders || []}
             loader={loader}
           />
         </Grid>
 
-        <Grid item lg={8} xl={9} xs={12} ml={0}>
+        <Grid item lg={8} xl={9} xs={12} ml={0} >
+
           <Paper>
-            <BarChart
-              width={1200}
-              height={500}
-              data={chartData}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid height={10} />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="profit" stackId="a" fill="#00E7FF" width={10} />
-              <Bar
-                dataKey="GrossSales"
-                stackId="a"
-                fill="rgb(19, 108, 190)"
-                width={10}
-              />
-              <Bar dataKey="NetSales" stackId="a" fill="#154050" />
-              <Bar dataKey="count" stackId="a" fill="#FE938C" />
-              <Bar
-                dataKey="paymentSuccessGrossSales"
-                stackId="a"
-                fill="#D496A7"
-              />
-              <Bar dataKey="paymentSuccessNetSales" fill="#5D576B" />
-            </BarChart>{" "}
+
+            <Box sx={{ width: 120, }}>
+
+              <FormControl fullWidth size="small" sx={{ width: 120, m: 3 }}>
+
+                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                <Select
+
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={year}
+                  label="Categories"
+                  onChange={(e) => handleChangeChart(e)}
+
+                >
+                  {dashBoardData.ordersByYearMonth && dashBoardData.ordersByYearMonth.length > 0 ? dashBoardData.ordersByYearMonth.map((chart) => {
+
+                    return <MenuItem value={chart.year}>{chart.year}</MenuItem>
+                  }) : null}
+
+
+
+                </Select>
+              </FormControl>
+            </Box>
+
+
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={chartdata} margins={{ top: 50, right: 0, bottom: 100, left: 0 }} >
+                <XAxis dataKey="month" />
+                <YAxis />
+                <CartesianGrid />
+                <Legend />
+                <Tooltip offset={10} />
+                <Bar dataKey="paymentSuccessNetSales" stackId="a" fill="#82AAE3" barSize={30} />
+                <Bar dataKey="NetSales" barSize={9} stackId="a" fill="#91D8E4" />
+                <Bar dataKey="paymentSuccessNetSales" stackId="a" fill="#1D7874" barSize={30} />
+                <Bar dataKey="GrossSales" stackId="a" barSize={30} fill="#FCAC89" />
+              </BarChart>
+            </ResponsiveContainer>
           </Paper>
+
         </Grid>
         <Grid item lg={4} xl={3} xs={12}>
           <LatestProducts
-            products={dashBoardCount.latestProducts || []}
+            products={dashBoardData.latestProducts || []}
             loader={loader}
           />
         </Grid>
       </Grid>
-    </Box>
+    </Box >
   );
 };
 

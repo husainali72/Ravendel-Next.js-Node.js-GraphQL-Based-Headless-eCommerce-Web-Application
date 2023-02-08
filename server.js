@@ -10,6 +10,7 @@ const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
 const { graphqlUploadExpress } = require("graphql-upload");
+const { updateAdminProductLowStock, updateCustomerCheckoutCart } = require('./config/crons')
 // console.log("dotenv", process.env)
 //connect db
 connectDB();
@@ -31,6 +32,8 @@ console.log('por', port);
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+updateAdminProductLowStock(app)
+updateCustomerCheckoutCart(app)
 
 const server = new ApolloServer({
   typeDefs,
