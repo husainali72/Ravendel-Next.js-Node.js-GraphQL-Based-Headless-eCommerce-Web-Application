@@ -39,7 +39,7 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
         <Table stickyHeader aria-label="tax-table" size="small">
           <TableHead>
             <TableRow>
-              <TableCell sortDirection="desc" >
+              <TableCell sortDirection="desc" variant="contained" color="primary">
                 <Tooltip enterDelay={300} title="Sort">
                   <TableSortLabel active direction={order} onClick={() => {
                     setOrder(order === "asc" ? "desc" : "asc")
@@ -49,7 +49,7 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
                   </TableSortLabel>
                 </Tooltip>
               </TableCell>
-              <TableCell sortDirection="desc" >
+              <TableCell sortDirection="desc" variant="contained" color="primary" >
                 <Tooltip enterDelay={300} title="Sort">
                   <TableSortLabel active direction={order} onClick={() => {
                     setOrder(order === "asc" ? "desc" : "asc")
@@ -60,7 +60,7 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
                 </Tooltip>
               </TableCell>
 
-              <TableCell>Actions</TableCell>
+              <TableCell variant="contained" color="primary">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

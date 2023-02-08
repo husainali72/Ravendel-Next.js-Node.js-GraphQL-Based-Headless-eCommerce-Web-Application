@@ -4,6 +4,7 @@ export default {
     root: {
       borderBottom: `1px solid ${palette.divider}`,
       backgroundColor: " #F4F6F8",
+      width: '200px'
     },
   },
 };

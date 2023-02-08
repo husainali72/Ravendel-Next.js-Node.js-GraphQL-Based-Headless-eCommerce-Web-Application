@@ -181,7 +181,7 @@ const EditCouponComponent = ({ params }) => {
         spacing={isSmall ? 1 : 4}
         className={classes.secondmainrow}
       >
-        <Grid item md={6} sm={12} xs={12}>
+        <Grid item md={5} sm={12} xs={12}>
           <CardBlocks title="Coupon Information" nomargin>
             <Box component="div" mb={2}>
               <TextInput
@@ -204,7 +204,7 @@ const EditCouponComponent = ({ params }) => {
           </CardBlocks>
         </Grid>
 
-        <Grid md={6} sm={12} xs={12}>
+        <Grid md={6} sm={12} xs={12} m={4}>
           <CardBlocks title="Coupon Data" nomargin>
             <Box component="div" className={classes.tabsHeader}>
               <Tabs
@@ -235,6 +235,7 @@ const EditCouponComponent = ({ params }) => {
                         Discount Type
                       </InputLabel>
                       <Select
+                        label="Discount Type"
                         labelWidth={labelWidth}
                         onChange={handleChange}
                         inputProps={{
@@ -253,7 +254,7 @@ const EditCouponComponent = ({ params }) => {
                   </Grid>
                   <Grid item md={6} sm={12} xs={12}>
                     <TextInput
-                     type="number"
+                      type="number"
                       value={coupon.discount_value}
                       label="Coupon Amount"
                       name="discount_value"
@@ -296,7 +297,7 @@ const EditCouponComponent = ({ params }) => {
               <TabPanel value={tabVal} index="usage-restriction">
                 <Box component="div" mb={2}>
                   <TextInput
-                     type="Number"
+                    type="Number"
                     value={coupon.minimum_spend}
                     label="Minimum Spend"
                     name="minimum_spend"
@@ -305,7 +306,7 @@ const EditCouponComponent = ({ params }) => {
                 </Box>
                 <Box component="div" mb={2}>
                   <TextInput
-                   type="Number"
+                    type="Number"
                     value={coupon.maximum_spend}
                     label="Maximum Spend"
                     name="maximum_spend"

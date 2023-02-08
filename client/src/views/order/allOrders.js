@@ -111,7 +111,7 @@ const AllOrdersComponent = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {stableSort(orders.orders, getComparator(order, orderBy))
+                    {stableSort(orders.orders, getComparator(order, orderBy, orderBy === "firstname" ? "shipping" : ""))
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage

@@ -68,7 +68,7 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
                   <Tooltip enterDelay={300} title="Sort">
                     <TableSortLabel active direction={order} onClick={() => {
                       setOrder(order === "asc" ? "desc" : "asc")
-                      setOrderBy("name")
+                      setOrderBy("firstname")
                     }}>
                       Name
                     </TableSortLabel>
@@ -81,7 +81,7 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {stableSort(latestOrders, getComparator(order, orderBy)).slice(0, 2).map((order) => (
+              {stableSort(latestOrders, getComparator(order, orderBy, orderBy === "firstname" ? "shipping" : "")).slice(0, 2).map((order) => (
                 <TableRow hover key={order.id}>
                   <TableCell>{convertDateToStringFormat(order.date)}</TableCell>
 
