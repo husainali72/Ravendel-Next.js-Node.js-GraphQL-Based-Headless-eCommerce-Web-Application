@@ -27,7 +27,6 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
     const [sliderImages, setSliderImages] = useState([]);
     const [singleProductReview,setSingleProductReview] = useState([])
     const productss = useSelector(state => state.products ) 
-    console.log("single productttt", singleProduct);
     useEffect(() => {
         const alll = productReview.reviews.data.filter(reviews => reviews.product_id._id === singleproducts._id);
         setSingleProductReview(alll) 
@@ -104,7 +103,7 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
                                     </Col>
                                 </Tab.Container>
                                 <hr></hr>
-                                <h3>Related Products</h3>
+                                <h4 className='theme-color'>Related <span className='black-color'>Products</span></h4>
                                 <OnSaleProductCard
                                     onSaleProduct={allProduct}
                                     hidetitle
@@ -141,7 +140,6 @@ export async function getStaticPaths() {
         params: { singleproduct: curElem.url.toString() }
 
     }))
-    console.log("paths", paths);
     return {
         paths,
         fallback: false,
