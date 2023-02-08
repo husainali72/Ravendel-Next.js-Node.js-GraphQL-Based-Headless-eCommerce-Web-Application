@@ -353,6 +353,7 @@ const UPDATE_FUNC = async (
           success: false,
         }
       }
+      if(name !== "Page" && name !== "ProductAttribute") response.updated = Date.now()
 
       await response.save();
       // update average rating of product related to reviews
