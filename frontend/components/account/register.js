@@ -1,9 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ADD_CUSTOMER } from "../../queries/customerquery";
 import client from "../../apollo-client";
 import Link from "next/link";
 import { mutation } from "../../utills/helpers";
-
+// import PhoneInput from 'react-phone-number-input'
+// import 'react-phone-number-input/style.css'
+import LoadingSpinner from "../breadcrumb/loading";
+import LoadingSpinnerFull from "../breadcrumb/fullPageLoading";
+import Alert from 'react-bootstrap/Alert';
+import { Spinner, Toast } from "react-bootstrap";
+import toast, { Toaster } from 'react-hot-toast';
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import Validation from "../../utills/Validation";
 const registerObject = {
     ///////////////////////////////
     queryName: "addCustomer",
@@ -15,16 +24,43 @@ const registerObject = {
     company: "",
     phone: "",
 }
+const notify = (message,success) => {
+    if(success){
+       return toast.success(message);
+    }
+    else{
+        return toast.error(message);
+    }
+}
 const Register = () => {
     const [registerUser, setRegisterUser] = useState(registerObject);
-
+    const [loading, setLoading] = useState(false);
+    const[Errors,setErrors] = useState({})
     const doRegister = (e) => {
         e.preventDefault();
-        // console.log('register', registerUser);
-        mutation(ADD_CUSTOMER, registerUser).then(res => console.log('register', res))
-        // registerCustomer(registerUser);
+        const errors = Validation(registerUser);
+        setErrors((prevErrors)=> ({...prevErrors,...errors}))
+        console.log('errrrr',Object.keys(Errors).length,Errors )
+        if(Object.keys(errors).length === 0 && Errors !== {} ){
+            setLoading(true)
+            mutation(ADD_CUSTOMER, registerUser).then(res => {
+                console.log('register', res)
+                if(res?.data?.addCustomer){
+                    notify(res?.data?.addCustomer?.message,res?.data?.addCustomer?.success)
+                }
+                setLoading(false)
+            }).catch((error)=>{
+                console.log(error)
+                setLoading(false)
+            }).finally(()=>{
+                setRegisterUser(registerObject)
+                setErrors({})
+            })
+        }
+       
+        
     }
-
+    
     async function registerCustomer(registerUser) {
         var registerUsers = [];
         try {
@@ -37,11 +73,14 @@ const Register = () => {
         catch (e) {
             console.log("error", e);
         }
-        // console.log("registerUser", registerUsers)
     }
+    const [value,setValue] = useState();
 
     return (
-        <div className="p-30 register-box">
+        <>
+        <Toaster />
+        <div className="p-30 register-box registerContainer">
+        {/* {loading && <LoadingSpinnerFull />} */}
             <h4>Create your Account</h4>
             <p style={{ marginTop: 12 }} className="mb-50">Your personal data will be used to support your experience throughout this website, to manage
                 access to your account, and for other purposes described in our privacy policy
@@ -56,6 +95,9 @@ const Register = () => {
                         value={registerUser.first_name}
                         onChange={(e) => setRegisterUser({ ...registerUser, first_name: e.target.value })}
                     />
+                    <div className="error-message" >
+                    <small>{Errors?.first_name && Errors?.first_name}</small>
+                    </div>
                     <input
                         type="last_name"
                         className="form-control"
@@ -64,6 +106,9 @@ const Register = () => {
                         value={registerUser.last_name}
                         onChange={(e) => setRegisterUser({ ...registerUser, last_name: e.target.value })}
                     />
+                     <div className="error-message" >
+                    <small>{Errors?.last_name && Errors?.last_name}</small>
+                    </div>
                     <input
                         type="login-email"
                         style={{ marginTop: 12, }}
@@ -73,14 +118,19 @@ const Register = () => {
                         value={registerUser.email}
                         onChange={(e) => setRegisterUser({ ...registerUser, email: e.target.value })}
                     />
-                    <input
-                        type="number"
-                        style={{ marginTop: 12, }}
-                        className="form-control"
-                        id="email"
-                        placeholder="Mobile no."
+                     <div className="error-message" >
+                    <small>{Errors?.email && Errors?.email}</small>
+                    </div>
+                    <PhoneInput
+                        enableSearch = 'true'
+                        country={'in'}
+                        inputClass={'custom-input'}
+                        buttonClass={'select-flag'}
+                        placeholder="Enter phone number"
                         value={registerUser.phone}
-                        onChange={(e) => setRegisterUser({ ...registerUser, phone: e.target.value })}
+                        onChange={(value) => setRegisterUser({ ...registerUser, phone: value })}
+                        style={{ marginTop: 12, }}
+                        
                     />
                     <input
                         type="text"
@@ -98,8 +148,14 @@ const Register = () => {
                         id="password"
                         placeholder="Password"
                         value={registerUser.password}
-                        onChange={(e) => setRegisterUser({ ...registerUser, password: e.target.value })}
+                        onChange={(e) => {
+                            setRegisterUser({ ...registerUser, password: e.target.value })
+                            setErrors({})
+                        }}
                     />
+                    <div className="error-message" >
+                    <small>{Errors?.password && Errors?.password}</small>
+                    </div>
                     {/* <input
                         type="password"
                         className="form-control"
@@ -118,10 +174,17 @@ const Register = () => {
                         </Link>
                         {/* <a href="#" style={{ float: 'right' }}>learn more</a> */}
                     </div>
-                    <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178" }}>Register</button>
+                    <button disabled={registerUser.first_name == "" ||  registerUser.last_name == "" || registerUser.email == "" 
+                                     || registerUser.password == "" || registerUser.company == "" || registerUser.phone == ""
+                                   }
+                             type="submit" 
+                             className="btn btn-success loading-btn" 
+                             style={{ marginTop: 12, backgroundColor: "#088178" }}>
+                        {loading ? <Spinner animation="border"  size="sm" role="status" /> : "Register"}</button>
                 </form>
             </div>
-        </div>
+         </div>
+        </>
     )
 }
 export default Register;

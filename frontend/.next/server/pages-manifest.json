@@ -2,8 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
+  "/product/[singleproduct]": "pages/product/[singleproduct].js",
   "/": "pages/index.js",
-  "/shop": "pages/shop.js",
-  "/shopcart": "pages/shopcart.js"
+  "/subcategorys/[categorys]": "pages/subcategorys/[categorys].js",
+  "/categorys/[categorys]": "pages/categorys/[categorys].js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js"
 }

@@ -67,6 +67,7 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
     if (userCart.card_id === undefined) {
       return undefined;
     } else {
+      // console.log('idx var', variables)
       await mutation(UPDATE_CART_PRODUCT, variables, token).then(res => res)
     }
   }
