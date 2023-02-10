@@ -12,11 +12,14 @@ import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
 import { getAllProductsAction } from "../redux/actions/productAction";
+import { useRouter } from "next/router";
+
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice  * product.quantity || 0 * product.quantity), 0)
 const cartitems2 = []     
 
 const YourCard = ({ customercart, cart_id,CartsDataa }) => {
 
+    const router = useRouter();
     const session = useSession();
     const cartProducts = useSelector(state => state.cart);
     const allProducts = useSelector(state => state.products);
@@ -36,17 +39,22 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
     var id = "";
     var token = "";
  const handlePayment = async () =>{
-    const response = await fetch('/api/stripe', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(cartItems),
-    });
-    const data = await response.json();
- 
-    window.location.href = data.url
-    if(response.statusCode === 500) return;
+    if (session?.status !== "authenticated"){
+        router.push("/account")
+    }
+    else  if (session?.status === "authenticated"){
+        const response = await fetch('/api/stripe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(cartItems),
+        });
+        const data = await response.json();
+     
+        window.location.href = data.url
+        if(response.statusCode === 500) return;
+    }
  }
 
  useEffect(() => {

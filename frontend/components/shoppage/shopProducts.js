@@ -23,7 +23,9 @@ const ShopProducts = ({ shopcategory, name, brandProduct, brands, category, blog
                                 <ul className="categories-shop">
                                     {brandProduct && brandProduct?.length > 0 ? brandProduct.map((brand, i) => (
                                         <li className="category-type" key={i}>
-                                            {brand.name}
+                                         <Link href={`/brands/[brand]?url=${brand.url}`} as={`/brands/${brand.url}`}>
+                                         <span value={brand.url}>{brand.name}</span>
+                                        </Link>
                                         </li>
                                     )) : null
                                     }</ul>) : null}
