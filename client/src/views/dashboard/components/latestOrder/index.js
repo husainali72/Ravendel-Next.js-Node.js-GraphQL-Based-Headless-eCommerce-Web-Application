@@ -91,7 +91,8 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
             </TableHead>
             <TableBody>
 
-              {stableSort(latestOrders, getComparator(order, orderBy, orderBy === "firstname" ? "orderByName" : "")).slice(0, 2).map((order) => (
+              {stableSort(latestOrders, getComparator(order, orderBy, orderBy === "firstname" ? "shipping" : "")).slice(0, 2).map((order) => (
+
                 <TableRow hover key={order.id}>
                   <TableCell>{order.order_number}</TableCell>
                   <TableCell>{convertDateToStringFormat(order.date)}</TableCell>

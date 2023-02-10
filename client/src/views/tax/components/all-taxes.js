@@ -49,6 +49,7 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
                   </TableSortLabel>
                 </Tooltip>
               </TableCell>
+
               <TableCell sortDirection="desc" variant="contained" color="primary">
                 <Tooltip enterDelay={300} title="Sort">
                   <TableSortLabel active direction={order} onClick={() => {

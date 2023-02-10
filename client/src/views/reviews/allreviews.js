@@ -29,6 +29,7 @@ import theme from "../../theme";
 import { useNavigate } from "react-router-dom";
 import { stableSort, getComparator } from "../components/sorting";
 import { ThemeProvider } from "@mui/material/styles";
+import Alerts from "../components/Alert.js";
 const AllReviewsComponent = () => {
   const navigate = useNavigate();
   const classes = viewStyles();
@@ -56,6 +57,8 @@ const AllReviewsComponent = () => {
 
   return (
     <>
+
+      <Alerts />
 
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
@@ -88,13 +91,27 @@ const AllReviewsComponent = () => {
                           </TableSortLabel>
                         </Tooltip>
                       </TableCell>
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("updated")
+                          }}>
+                            Last Modified
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("name")
+                          }}>
+                            Reviewed Product
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
 
-                      <TableCell variant="contained" color="primary">
-                        Last Modified
-                      </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Reviewed Product
-                      </TableCell>
                       <TableCell sortDirection="desc" variant="contained" color="primary">
                         <Tooltip enterDelay={300} title="Sort">
                           <TableSortLabel active direction={order} onClick={() => {
@@ -113,7 +130,7 @@ const AllReviewsComponent = () => {
                   </TableHead>
                   <TableBody>
 
-                    {stableSort(reviewState.reviews, getComparator(order, orderBy))
+                    {stableSort(reviewState.reviews, getComparator(order, orderBy, orderBy === "name" ? "product_id" : ""))
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
