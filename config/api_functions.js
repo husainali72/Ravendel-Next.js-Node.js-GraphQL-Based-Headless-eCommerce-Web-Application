@@ -5,6 +5,7 @@ const {
   isEmpty,
   MESSAGE_RESPONSE,
   _validate,
+  prodAvgRating
 } = require("./helpers");
 const bcrypt = require("bcryptjs");
 
@@ -284,7 +285,8 @@ const UPDATE_FUNC = async (
   data,
   path,
   args,
-  validation
+  validation,
+  modal2
 ) => {
   if (!token) {
     return MESSAGE_RESPONSE("TOKEN_REQ", name, false);
@@ -351,8 +353,13 @@ const UPDATE_FUNC = async (
           success: false,
         }
       }
+      if(name !== "Page" && name !== "ProductAttribute") response.updated = Date.now()
 
       await response.save();
+      // update average rating of product related to reviews
+      if(name === "Review"){
+        await prodAvgRating(data.product_id, modal, modal2)
+      }
       return MESSAGE_RESPONSE("UpdateSuccess", name, true);
     }
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);

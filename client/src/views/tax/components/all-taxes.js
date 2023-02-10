@@ -9,18 +9,21 @@ import {
   Tooltip,
   IconButton,
   TablePagination,
+  TableSortLabel
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../../viewStyles";
 import { CardBlocks } from "../../components";
 import theme from "../../../theme";
+import { stableSort, getComparator } from "../../components/sorting";
 import { ThemeProvider } from "@mui/material/styles";
 const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
   const classes = viewStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('name');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -36,14 +39,34 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
         <Table stickyHeader aria-label="tax-table" size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Percentage</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell sortDirection="desc" variant="contained" color="primary">
+                <Tooltip enterDelay={300} title="Sort">
+                  <TableSortLabel active direction={order} onClick={() => {
+                    setOrder(order === "asc" ? "desc" : "asc")
+                    setOrderBy("name")
+                  }}>
+                    Name
+                  </TableSortLabel>
+                </Tooltip>
+              </TableCell>
+              <TableCell sortDirection="desc" variant="contained" color="primary" >
+                <Tooltip enterDelay={300} title="Sort">
+                  <TableSortLabel active direction={order} onClick={() => {
+                    setOrder(order === "asc" ? "desc" : "asc")
+                    setOrderBy("percentage")
+                  }}>
+                    Percentage
+                  </TableSortLabel>
+                </Tooltip>
+              </TableCell>
+
+              <TableCell variant="contained" color="primary">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {taxState.tax.tax_class &&
-              taxState.tax.tax_class
+
+              stableSort(taxState.tax.tax_class, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((tax) => (
                   <TableRow key={tax._id} hover>

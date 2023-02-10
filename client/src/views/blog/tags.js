@@ -12,6 +12,7 @@ import {
   Tooltip,
   TablePagination,
   Box,
+  TableSortLabel
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import viewStyles from "../viewStyles.js";
@@ -28,6 +29,7 @@ import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { stableSort, getComparator } from "../components/sorting";
 import {
   Alert,
   Loading,
@@ -47,7 +49,8 @@ const AllTagsComponent = () => {
   const [editMode, setEditmode] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('date');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -126,20 +129,41 @@ const AllTagsComponent = () => {
               <Table stickyHeader aria-label="Tags-table" size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Date</TableCell>
+                    <TableCell sortDirection="desc" variant="contained" color="primary">
+                      <Tooltip enterDelay={300} title="Sort">
+                        <TableSortLabel active direction={order} onClick={() => {
+                          setOrder(order === "asc" ? "desc" : "asc")
+                          setOrderBy("date")
+                        }}>
+                          Date
+                        </TableSortLabel>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell sortDirection="desc" variant="contained" color="primary">
+                      <Tooltip enterDelay={300} title="Sort">
+                        <TableSortLabel active direction={order} onClick={() => {
+                          setOrder(order === "asc" ? "desc" : "asc")
+                          setOrderBy("name")
+                        }}>
+                          Name
+                        </TableSortLabel>
+                      </Tooltip>
+                    </TableCell>
+
+
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {blogState.tags
+                  {stableSort(blogState.tags, getComparator(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((tag) => (
                       <TableRow key={tag.id} hover>
-                        <TableCell>{tag.name}</TableCell>
                         <TableCell>
                           {convertDateToStringFormat(tag.date)}
                         </TableCell>
+                        <TableCell>{tag.name}</TableCell>
+
                         <TableCell>
                           <Tooltip title="Edit Tag" aria-label="edit">
                             <IconButton

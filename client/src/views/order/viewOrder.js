@@ -248,15 +248,15 @@ const ViewOrderComponent = ({ params }) => {
                       number {order.billing.transaction_id}
                     </Typography>
                     <FormControl className={classes.statusSelect}>
-                      <InputLabel id="status">
+                      <InputLabel id="status" sx={{ marginTop: '20px' }} >
                         {order.payment_status}
                       </InputLabel>
                       <Select
                         label={order.payment_status}
                         labelId="payment_status
                         "
-                        id="payment_status
-                        "
+                        id="payment_status"
+                        sx={{ marginTop: '20px' }}
                         value={order.payment_status}
                         name="payment_status"
                         onChange={(e) => {
@@ -265,8 +265,10 @@ const ViewOrderComponent = ({ params }) => {
                             [e.target.name]: e.target.value,
                           });
                         }}
+
                       >
-                        <MenuItem value="pending">Pending Payment</MenuItem>
+
+                        <MenuItem value="pending">Pending </MenuItem>
                         <MenuItem value="failed">Failed</MenuItem>
                         <MenuItem value="success">Completed</MenuItem>
                         <MenuItem value="cancelled">Cancelled</MenuItem>
@@ -568,7 +570,7 @@ const ViewOrderComponent = ({ params }) => {
                       </Grid>
                     ) : (
                       <>
-                        <Typography variant="h6">
+                        <Typography variant="body1">
                           {order.shipping.firstname +
                             " " +
                             order.shipping.lastname}
@@ -647,46 +649,58 @@ const ViewOrderComponent = ({ params }) => {
                   <CardContent>
                     <Grid container justify="flex-end">
                       <Grid item className={classes.textRight}>
-                        <Typography variant="h5" className={classes.mtb2}>
+                        <Typography variant="body1" className={classes.mtb2}>
                           Total
                         </Typography>
-                        <Typography variant="h5" className={classes.mtb2}>
-                          Coupon <b>{order.sub_total_details.coupon_code}</b>{" "}
-                          {order.sub_total_details.coupon_value}%
-                        </Typography>
-                        <Typography variant="h5" className={classes.mtb2}>
+                        <Typography variant="body1" className={classes.mtb2}>
                           {order.sub_total_details.shipping_name}
                         </Typography>
-                        <Typography variant="h5" className={classes.mtb2}>
-                          {order.tax_name}
+                        <Typography variant="body1" className={classes.mtb2}>
+                          {order.sub_total_details.tax_name}
                         </Typography>
                         <Divider />
-                        <Typography variant="h5" className={classes.mtb2}>
+                        <Typography variant="body1" className={classes.mtb2}>
                           SubTotal
                         </Typography>
                       </Grid>
-                      {order.sub_total_summary.map((subTotal, index) => (
+
+
+
+                      {order.sub_total_summary && order.sub_total_summary.length > 0 ? order.sub_total_summary.map((subTotal, index) => (
                         <Grid item md={3} className={classes.textRight}>
-                          <Typography variant="h4" className={classes.mtb2}>
-                            {currencyFormat(subTotal.sub_total)}
+
+                          <Typography variant="body2" className={classes.mtb2}>
+                            {subTotal.sub_total ? currencyFormat(subTotal.sub_total) : 0}
                           </Typography>
-                          <Typography variant="h4" className={classes.mtb2}>
-                            <span className={classes.discount}>
-                              {subTotal.coupon_value}
-                            </span>
+
+                          <Typography variant="body2" className={classes.mtb2}>
+                            {subTotal.shipping_value ? subTotal.shipping_value : 0}
                           </Typography>
-                          <Typography variant="h4" className={classes.mtb2}>
-                            {subTotal.shipping_value}
-                          </Typography>
-                          <Typography variant="h4" className={classes.mtb2}>
-                            {subTotal.tax_value}
+                          <Typography variant="body2" className={classes.mtb2}>
+                            {subTotal.tax_value ? subTotal.tax_value : 0}
                           </Typography>
                           <Divider />
-                          <Typography variant="h4" className={classes.mtb2}>
-                            {currencyFormat(subTotal.total)}
+                          <Typography variant="body2" className={classes.mtb2}>
+                            {subTotal.total ? currencyFormat(subTotal.total) : 0}
                           </Typography>
                         </Grid>
-                      ))}
+                      )) : <Grid item md={3} className={classes.textRight}>
+
+                        <Typography variant="body2" className={classes.mtb2}>
+                          0
+                        </Typography>
+
+                        <Typography variant="body2" className={classes.mtb2}>
+                          0
+                        </Typography>
+                        <Typography variant="body2" className={classes.mtb2}>
+                          0
+                        </Typography>
+                        <Divider />
+                        <Typography variant="body2" className={classes.mtb2}>
+                          0
+                        </Typography>
+                      </Grid>}
                     </Grid>
                   </CardContent>
                 </Card>
@@ -696,7 +710,8 @@ const ViewOrderComponent = ({ params }) => {
         </>
       ) : (
         "No data"
-      )}
+      )
+      }
     </>
   );
 };

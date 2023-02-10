@@ -2,6 +2,7 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Order {
     id: ID
+    order_number: String
     customer_id: ID
     payment_status: String
     shipping_status: String
@@ -45,6 +46,7 @@ module.exports = gql`
   extend type Mutation {
     addOrder(
       customer_id: ID
+      order_number: String
       billing: customObject
       shipping: customObject
       products: customArray

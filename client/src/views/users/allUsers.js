@@ -15,11 +15,12 @@ import {
   IconButton,
   Avatar,
   Button,
+  Tooltip,
+  TableSortLabel
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
 import { isEmpty } from "../../utils/helper";
 import PeopleIcon from "@mui/icons-material/People";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -30,14 +31,17 @@ import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import { usersAction } from "../../store/action";
 import theme from "../../theme/index";
+import { stableSort, getComparator } from "../components/sorting";
 const AllUsersComponent = () => {
+
   const navigate = useNavigate();
   const classes = viewStyles();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('name');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -84,14 +88,42 @@ const AllUsersComponent = () => {
                       <TableCell className={classes.avtarTd}>
                         <PeopleIcon />
                       </TableCell>
-                      <TableCell>Username</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Role</TableCell>
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("name")
+                          }}>
+                            Username
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("email")
+                          }}>
+                            Email
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("role")
+                          }}>
+                            Role
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
+
                       <TableCell>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {UsersState.users
+                    {stableSort(UsersState.users, getComparator(order, orderBy))
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -101,16 +133,15 @@ const AllUsersComponent = () => {
                           <TableCell>
                             <Avatar
                               alt={user.name}
-                              // src={user.image && user.image.thumbnail}
-                              src={`${bucketBaseURL}${
-                                user.image && user.image.thumbnail
-                              }`}
-                              // src={bucketBaseURL}{}
+
+                              src={`${bucketBaseURL}${user.image && user.image.thumbnail
+                                }`}
+
                             />
                           </TableCell>
                           <TableCell>{user.name}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>{user.role}</TableCell>
+                          <TableCell style={{textTransform: "lowercase"}}>{user.email}</TableCell>
+                          <TableCell style={{textTransform: "capitalize"}}>{user.role}</TableCell>
                           <TableCell>
                             <IconButton
                               aria-label="Edit"
@@ -144,8 +175,8 @@ const AllUsersComponent = () => {
                 count={UsersState.users.length || 0}
                 rowsPerPage={rowsPerPage || 10}
                 page={page || 0}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </CardContent>
           </Card>

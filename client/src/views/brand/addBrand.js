@@ -10,9 +10,12 @@ import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer.js";
+import { useNavigate } from "react-router-dom";
+
 const AddBrandsComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const Brands = useSelector((state) => state.brands);
   const [newBrands, setNewBrands] = useState(null);
 
@@ -24,13 +27,13 @@ const AddBrandsComponent = () => {
           name: brand,
         };
       });
-      dispatch(brandAddAction({ brands: newBrandArr }));
+      dispatch(brandAddAction({ brands: newBrandArr }, navigate(`${client_app_route_url}all-brands`)));
     } else {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
           boolean: false,
-          message: "Brand Field Is Required",
+          message: "Brand name is required",
           error: true,
         },
       });

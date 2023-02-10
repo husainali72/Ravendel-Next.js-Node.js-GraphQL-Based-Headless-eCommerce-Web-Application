@@ -116,6 +116,7 @@ module.exports = gql`
     variant: customArray
     variation_master: [ProductVariations]
     date: Date
+    rating: Float
     updated: Date
   }
 
@@ -189,7 +190,7 @@ module.exports = gql`
     productsbycatid(cat_id: ID!): [Product]
     productsbycaturl(cat_url: String!): productCate_by_url
     productbyurl(url: String):  products_by_url
-    filteredProducts(config: customObject): [Product]
+    filteredProducts(filter: customObject): [Product]
     onSaleProducts: [Product]
   }
 

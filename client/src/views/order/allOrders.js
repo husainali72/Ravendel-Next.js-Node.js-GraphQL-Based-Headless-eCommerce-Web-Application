@@ -14,7 +14,8 @@ import {
   TablePagination,
   IconButton,
   Tooltip,
-  Badge
+  Badge,
+  TableSortLabel
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -29,13 +30,14 @@ import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import theme from "../../theme/index";
 import { badgeColor } from "../components/BadgeColor";
+import { stableSort, getComparator } from "../components/sorting";
 const AllOrdersComponent = () => {
   const classes = viewStyles();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders);
-  const settings = useSelector((state) => state.settings);
-
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('date');
   useEffect(() => {
     if (isEmpty(orders.orders)) {
       dispatch(ordersAction());
@@ -72,13 +74,40 @@ const AllOrdersComponent = () => {
                   size="small"
                 >
                   <TableHead>
+
                     <TableRow>
-                      <TableCell variant="contained" color="primary">
-                        Name
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("order_number")
+                          }}>
+                            Order Number
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Date
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("date")
+                          }}>
+                            Date
+                          </TableSortLabel>
+                        </Tooltip>
                       </TableCell>
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("firstname")
+                          }}>
+                            Customer Name
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
+
+
                       <TableCell variant="contained" color="primary">
                         Payment Status
                       </TableCell>
@@ -91,7 +120,9 @@ const AllOrdersComponent = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {orders.orders
+
+                    {stableSort(orders.orders, getComparator(order, orderBy, orderBy === "firstname" ? "shipping" : ""))
+
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -99,19 +130,24 @@ const AllOrdersComponent = () => {
                       .map((order) => (
                         <TableRow key={order.id} hover>
                           <TableCell>
-                            {order.shipping.firstname +
-                              " " +
-                              order.shipping.lastname}
+                            {order.order_number}
                           </TableCell>
                           <TableCell>
                             {convertDateToStringFormat(order.date)}
                           </TableCell>
                           <TableCell>
-                            <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} sx={{ ml: '40px' }} className={"product-status-chip " + order.status} />
+                            {order.shipping.firstname +
+                              " " +
+                              order.shipping.lastname}
+                          </TableCell>
+
+                          <TableCell>
+
+                            <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} className={classes.badge} sx={{ "& .MuiBadge-badge": { width: "80px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
 
                           </TableCell>
                           <TableCell>
-                            <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} sx={{ ml: '40px' }} className={"product-status-chip " + order.status} />
+                            <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} className={classes.badge} sx={{ "& .MuiBadge-badge": { width: "80px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
                           </TableCell>
                           <TableCell>
                             <Tooltip title="Edit Order" aria-label="edit">
@@ -131,7 +167,7 @@ const AllOrdersComponent = () => {
                                 aria-label="Delete"
                                 className={classes.deleteicon}
                                 onClick={() =>
-                                  dispatch(orderDeleteAction(order.id))
+                                  dispatch(orderDeleteAction(order.id, navigate))
                                 }
                                 disabled
                               >
@@ -139,6 +175,7 @@ const AllOrdersComponent = () => {
                               </IconButton>
                             </Tooltip>
                           </TableCell>
+
                         </TableRow>
                       ))}
                   </TableBody>

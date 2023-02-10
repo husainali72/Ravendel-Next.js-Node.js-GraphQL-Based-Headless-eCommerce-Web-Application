@@ -93,18 +93,17 @@ export const orderAction = (id) => (dispatch) => {
     });
 };
 
-export const orderDeleteAction = (id) => (dispatch) => {
+export const orderDeleteAction = (id, navigate) => (dispatch) => {
   dispatch({
     type: ORDER_LOADING,
   });
-  mutation(DELETE_ORDER, { id })
+  mutation(DELETE_ORDER, { id: id })
     .then((response) => {
       const [error, success, message, data] = mutationResponseHandler(
         response,
         "deleteOrder"
       );
 
-      const navigate = useNavigate();
       dispatch({
         type: LOADING_FALSE,
       });

@@ -263,55 +263,46 @@ module.exports = {
     },
     filteredProducts: async (root, args) => {
       try {
-        let filterArrey = [
-          {
-            $match: {
-              status: "Publish",
-            },
-          },
-        ];
+        const category = args.filter.category 
+        const brand = args.filter.brand 
+        const most_reviewed = args.filter.most_reviewed 
+        const search = args.filter.search 
+        const product_type = args.filter.product_type 
+        const rating = args.filter.rating 
+        const price = args.filter.price 
 
-        if (args.config.category.length) {
-          let cats = await getTree(args.config.category[0]);
-          cats = cats.length ? cats : args.config.category;
-          filterArrey[0]["$match"].categoryId = {
-            $in: cats,
-          };
-        }
-
-        if (args.config.brand.length) {
-          filterArrey[0]["$match"].brand = {
-            $in: args.config.brand.map((id) => mongoose.Types.ObjectId(id)),
-            /* $in: args.config.brand.map((id) => id), */
-          };
-        }
-
-        if (args.config.attribute.length) {
-          for (let attr of args.config.attribute) {
-            filterArrey.push({
-              $match: {
-                "attribute.attribute_id": mongoose.Types.ObjectId(
-                  attr.attribute_id
-                ),
-              },
-            });
-
-            filterArrey.push({
-              $match: {
-                "attribute.attribute_value_id": mongoose.Types.ObjectId(
-                  attr.attribute_value_id
-                ),
-              },
-            });
+        const pipeline=[
+          {$match: {
+            $and: [
+              {name: {$regex: search, $options: "i"}},
+            ]
+          }},
+        ]
+        // category filter
+        if(category) pipeline[0].$match.$and.push({categoryId: {$in: [`${category}`]}})
+        // brand filter
+        if(brand) pipeline[0].$match.$and.push({brand: brand})
+        // product type filter
+        if(product_type === "virtual") pipeline[0].$match.$and.push({'product_type.virtual': true})
+        else if(product_type === "downloadable") pipeline[0].$match.$and.push({'product_type.downloadable': true})
+        // price filter
+        if(price){
+          if(price.min && price.max){
+            pipeline[0].$match.$and.push({'pricing.price': {$gt: price.min, $lt: price.max}})
           }
         }
-
-        const products = (await Product.aggregate(filterArrey)).map((pro) => {
-          pro.id = pro._id;
-          return pro;
-        });
-
+        // most reviewed products filter
+        // if(most_reviewed) pipeline[0].$match.$and.push({})
+        // rating filter
+        // if(rating){
+        //   if(rating.min && rating.max){
+        //     pipeline[0].$match.$and.push({rating: {$gt: rating.min, $lt: rating.max}})
+        //   }
+        // }
+        // retrieve filtered products
+        let products = await Product.aggregate(pipeline)
         return products || [];
+
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
