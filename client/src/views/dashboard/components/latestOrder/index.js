@@ -101,11 +101,11 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
                   </TableCell>
 
                   <TableCell>
-                    <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} sx={{ ml: '40px', "& .MuiBadge-badge": { width: "80px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
+                    <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} sx={{ ml: '40px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
 
                   </TableCell>
                   <TableCell>
-                    <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} sx={{ ml: '40px', "& .MuiBadge-badge": { width: "80px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
+                    <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} sx={{ ml: '40px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
 
                   </TableCell>
                   <TableCell>

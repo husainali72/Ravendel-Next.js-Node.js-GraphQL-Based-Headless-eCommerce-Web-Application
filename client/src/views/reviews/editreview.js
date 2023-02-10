@@ -137,6 +137,10 @@ const EditReviewComponent = ({ params }) => {
     });
   };
 
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
+  };
+
   return (
     <>
       {loading && <Loading />}
@@ -213,6 +217,7 @@ const EditReviewComponent = ({ params }) => {
                 label="Email"
                 name="email"
                 onInputChange={handleChange}
+                onInput={toInputLowercase}
               />
             </Box>
 

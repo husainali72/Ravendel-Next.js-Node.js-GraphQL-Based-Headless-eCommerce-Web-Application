@@ -104,6 +104,10 @@ const EditBrandComponenet = ({ params }) => {
     setBrand({ ...brand, [e.target.name]: e.target.files[0] });
   };
 
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
+  };
+
   return (
     <>
       {loading && <Loading />}
@@ -136,6 +140,7 @@ const EditBrandComponenet = ({ params }) => {
                   label="Url"
                   name="url"
                   onInputChange={handleChange}
+                  onInput={toInputLowercase}
                 />
               </Grid>
               <Grid item xs={12}>
