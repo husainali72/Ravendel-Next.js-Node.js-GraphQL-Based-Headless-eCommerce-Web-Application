@@ -3,7 +3,7 @@ import { colors } from "@mui/material";
 const white = "#FFFFFF";
 const black = "#000000";
 
-export default  {
+export default {
   black,
   white,
   primary: {
@@ -15,8 +15,14 @@ export default  {
   secondary: {
     contrastText: white,
     dark: colors.blue[900],
-    main: colors.blue["A400"], 
+    main: colors.blue["A400"],
     light: colors.blue["A400"],
+  },
+  shipped: {
+    contrastText: white,
+    dark: "#85CDFD",
+    main: "#85CDFD",
+    light: "#85CDFD",
   },
   success: {
     contrastText: white,
