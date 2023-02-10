@@ -22,7 +22,7 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
   const classes = viewStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [order, setOrder] = React.useState('asc');
+  const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('name');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -49,7 +49,8 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
                   </TableSortLabel>
                 </Tooltip>
               </TableCell>
-              <TableCell sortDirection="desc" variant="contained" color="primary" >
+
+              <TableCell sortDirection="desc" variant="contained" color="primary">
                 <Tooltip enterDelay={300} title="Sort">
                   <TableSortLabel active direction={order} onClick={() => {
                     setOrder(order === "asc" ? "desc" : "asc")

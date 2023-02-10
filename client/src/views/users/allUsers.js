@@ -40,7 +40,7 @@ const AllUsersComponent = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [order, setOrder] = React.useState('asc');
+  const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('name');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -140,8 +140,8 @@ const AllUsersComponent = () => {
                             />
                           </TableCell>
                           <TableCell>{user.name}</TableCell>
-                          <TableCell style={{textTransform: "lowercase"}}>{user.email}</TableCell>
-                          <TableCell style={{textTransform: "capitalize"}}>{user.role}</TableCell>
+                          <TableCell style={{ textTransform: "lowercase" }}>{user.email}</TableCell>
+                          <TableCell style={{ textTransform: "capitalize" }}>{user.role}</TableCell>
                           <TableCell>
                             <IconButton
                               aria-label="Edit"

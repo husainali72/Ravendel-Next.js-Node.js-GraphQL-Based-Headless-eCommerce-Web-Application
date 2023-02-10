@@ -15,11 +15,12 @@ import {
   IconButton,
   Button,
   Tooltip,
+  TableSortLabel
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { attributeDeleteAction, attributesAction } from "../../../store/action";
-import jumpTo from "../../../utils/navigation";
+import { stableSort, getComparator } from "../../components/sorting";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../../viewStyles";
@@ -34,6 +35,8 @@ const AllAttributeComponent = () => {
   const attributeState = useSelector((state) => state.product_attributes);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [order, setOrder] = React.useState('desc');
+  const [orderBy, setOrderBy] = React.useState('date');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -81,13 +84,23 @@ const AllAttributeComponent = () => {
                 <Table stickyHeader aria-label="all-attributes" size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Values</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                        <Tooltip enterDelay={300} title="Sort">
+                          <TableSortLabel active direction={order} onClick={() => {
+                            setOrder(order === "asc" ? "desc" : "asc")
+                            setOrderBy("name")
+                          }}>
+                            Name
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell variant="contained" color="primary">Values</TableCell>
+
+                      <TableCell variant="contained" color="primary">Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody className={classes.container}>
-                    {attributeState.attributes
+                    {stableSort(attributeState.attributes, getComparator(order, orderBy))
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage

@@ -31,6 +31,7 @@ const PasswordInputComponent = ({ name, value, label, onInputChange }) => {
     >
       <InputLabel htmlFor="password-field">{label}</InputLabel>
       <OutlinedInput
+        label={label}
         id="password-field"
         type={showPassword ? "text" : "password"}
         name={name}

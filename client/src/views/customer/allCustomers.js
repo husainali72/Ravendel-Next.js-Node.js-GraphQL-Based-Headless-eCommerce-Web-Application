@@ -41,7 +41,7 @@ const AllCustomersComponent = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
-  const [order, setOrder] = React.useState('asc');
+  const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('date');
   useEffect(() => {
     if (isEmpty(Customers.customers)) {
@@ -143,9 +143,9 @@ const AllCustomersComponent = () => {
                           <TableCell>
                             {customer.first_name + " " + customer.last_name}
                           </TableCell>
-                          <TableCell style={{textTransform: "lowercase"}}>{customer.email}</TableCell>
-                          
-                       
+                          <TableCell style={{ textTransform: "lowercase", }}>{customer.email}</TableCell>
+
+
                           <TableCell>
                             <Tooltip title="Edit Customer" aria-label="edit">
                               <IconButton

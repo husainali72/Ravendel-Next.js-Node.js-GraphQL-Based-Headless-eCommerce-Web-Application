@@ -27,7 +27,7 @@ const AddBrandsComponent = () => {
           name: brand,
         };
       });
-      dispatch(brandAddAction({ brands: newBrandArr }, navigate(`${client_app_route_url}all-brands`)));
+      dispatch(brandAddAction({ brands: newBrandArr }, navigate));
     } else {
       dispatch({
         type: ALERT_SUCCESS,

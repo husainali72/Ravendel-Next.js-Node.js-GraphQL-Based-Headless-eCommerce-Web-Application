@@ -12,7 +12,7 @@ const App = () => {
   const dispatch = useDispatch();
   const login = useSelector((state) => state.login);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+
   useEffect(() => {
     dispatch(insertToken());
   }, []);
@@ -51,7 +51,7 @@ const App = () => {
         <ThemeHelper /> 
       : 
         <Routes>
-          {/* <Route exact={true} path={`/`} element={<Login />}></Route> */}
+        
           <Route
             exact={true}
             path={`${client_app_route_url}login`}

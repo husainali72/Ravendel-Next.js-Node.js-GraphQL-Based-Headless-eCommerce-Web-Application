@@ -27,7 +27,7 @@ import { categoriesAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 import Loading from "../../components/Loading.js";
-import { bucketBaseURL } from "../../../utils/helper"; 
+import { bucketBaseURL } from "../../../utils/helper";
 
 const MobileAppSetting = () => {
   const classes = viewStyles();
@@ -134,12 +134,6 @@ const MobileAppSetting = () => {
     setSectionData([...sectionData]);
   }
 
-  // const handleImageChange = (event, index) => {
-  //   let data = sectionData;
-  //   data[index].section_img.original =  URL.createObjectURL(event.target.files[0]),
-  //   data[index].section_img.update_img = event.target.files
-  //   setSectionData([...data]);
-  // };
 
   const handleImageChange = (event, index) => {
     let data = sectionData;
@@ -259,10 +253,12 @@ const MobileAppSetting = () => {
 
                           <label htmlFor={`htmltag${index}`}>
                             {select.section_img && select.section_img.original ? (
-                              <img src={select.section_img.original.startsWith("blob") ? select.section_img.original : bucketBaseURL + select.section_img.original}
-                                alt="img"
-                                width="50"
-                                height="50" />
+                              <Box className={classes.logoImageBox}>
+                                <img src={select.section_img.original.startsWith("blob") ? select.section_img.original : bucketBaseURL + select.section_img.original}
+                                  alt="img"
+                                  width="50"
+                                  height="50" />
+                              </Box>
                             ) : (
                               <>
                                 <h6><AddPhotoAlternateIcon color="action" style={{ marginTop: "8px" }} /></h6>

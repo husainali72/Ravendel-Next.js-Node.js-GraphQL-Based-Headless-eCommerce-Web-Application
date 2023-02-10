@@ -26,6 +26,7 @@
     "apollo-upload-client": "^17.0.0",
     "axios": "^1.2.2",
     "clsx": "^1.2.1",
+    "google-libphonenumber": "^3.2.32",
     "graphql": "^16.6.0",
     "graphql-react": "^20.0.0",
     "graphql-tag": "^2.12.6",
