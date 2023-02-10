@@ -33,7 +33,7 @@ import { getComparator } from "../../../components/sorting"
 const LatestOrdersTheme = ({ latestOrders, loader }) => {
   const classes = DashboardStyles();
   const navigate = useNavigate();
-  const [order, setOrder] = React.useState('asc');
+  const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('date');
 
   return (

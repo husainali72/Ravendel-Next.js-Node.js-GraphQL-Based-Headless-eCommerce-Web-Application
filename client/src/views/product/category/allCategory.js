@@ -67,7 +67,7 @@ const AllCategoryComponent = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [loading, setloading] = useState(false);
-  const [order, setOrder] = React.useState('asc');
+  const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('date');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

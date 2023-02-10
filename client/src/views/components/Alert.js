@@ -37,27 +37,30 @@ const Alerts = () => {
       }, 3000);
     }
   }, [alert.error]);
+  if (alert.message !== "") {
 
-  return (
-    <Snackbar
-      open={isOpen}
-      autoHideDuration={6000}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      sx={{ mt: "100px" }}
-    >
-      {(alert.error || alert.success) && alert.message ? (
-        <Alert
-          severity={alert.success ? "success" : "error"}
-          sx={{ width: "100%" }}
-        >
-          {alert.message}
-        </Alert>
-      ) : null}
-    </Snackbar>
-  );
+
+    return (
+      <Snackbar
+        open={isOpen}
+        autoHideDuration={6000}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        sx={{ mt: "100px" }}
+      >
+        {(alert.error || alert.success) && alert.message ? (
+          <Alert
+            severity={alert.success ? "success" : "error"}
+            sx={{ width: "100%" }}
+          >
+            {alert.message}
+          </Alert>
+        ) : null}
+      </Snackbar>
+    );
+  }
 };
 
 export default Alerts;

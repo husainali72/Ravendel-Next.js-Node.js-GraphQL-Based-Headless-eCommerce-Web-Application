@@ -49,7 +49,7 @@ const MainLayout = ({ children }) => {
             variant={isDesktop ? "persistent" : "temporary"}
           />
           <main className={classes.content}>
-            {/* <Alert /> */}
+
             {children}
             <AllRoutes />
           </main>

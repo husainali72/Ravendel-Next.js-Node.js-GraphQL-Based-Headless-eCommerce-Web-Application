@@ -39,7 +39,7 @@ const GlobalThemeOverride = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const products = useSelector((state) => state.products);
-  const [order, setOrder] = React.useState('asc');
+  const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('date');
   useEffect(() => {
     dispatch(productsAction());

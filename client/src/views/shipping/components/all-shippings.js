@@ -26,7 +26,7 @@ const AllShippingComponentComponent = ({
   const classes = viewStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [order, setOrder] = React.useState('asc');
+  const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('name');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -43,7 +43,7 @@ const AllShippingComponentComponent = ({
         <Table stickyHeader aria-label="shipping-table" size="small">
           <TableHead>
             <TableRow>
-              <TableCell sortDirection="desc" >
+              <TableCell sortDirection="desc" variant="contained" color="primary">
                 <Tooltip enterDelay={300} title="Sort">
                   <TableSortLabel active direction={order} onClick={() => {
                     setOrder(order === "asc" ? "desc" : "asc")
@@ -53,7 +53,7 @@ const AllShippingComponentComponent = ({
                   </TableSortLabel>
                 </Tooltip>
               </TableCell>
-              <TableCell sortDirection="desc" >
+              <TableCell sortDirection="desc" variant="contained" color="primary">
                 <Tooltip enterDelay={300} title="Sort">
                   <TableSortLabel active direction={order} onClick={() => {
                     setOrder(order === "asc" ? "desc" : "asc")
@@ -64,7 +64,7 @@ const AllShippingComponentComponent = ({
                 </Tooltip>
               </TableCell>
 
-              <TableCell>Actions</TableCell>
+              <TableCell variant="contained" color="primary">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

@@ -36,7 +36,7 @@ const AllReviewsComponent = () => {
   const reviewState = useSelector((state) => state.reviews);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [order, setOrder] = React.useState('asc');
+  const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('date');
 
   useEffect(() => {
@@ -56,6 +56,7 @@ const AllReviewsComponent = () => {
 
   return (
     <>
+
       <Grid container spacing={4} className={classes.mainrow}>
         <Grid item lg={12}>
           <Card>

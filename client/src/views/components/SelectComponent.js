@@ -22,6 +22,7 @@ const SelectComponent = ({
         {label}
       </InputLabel>
       <Select
+        label={label}
         labelId={`select-${label}`}
         name={name}
         onChange={(e) => onSelecteChange(e.target.value)}
@@ -32,10 +33,10 @@ const SelectComponent = ({
       >
         {items.length > 0
           ? items.map((item, i) => (
-              <MenuItem value={item} key={i}>
-                {item}
-              </MenuItem>
-            ))
+            <MenuItem value={item} key={i}>
+              {item}
+            </MenuItem>
+          ))
           : null}
       </Select>
     </FormControl>

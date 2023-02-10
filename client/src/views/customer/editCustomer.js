@@ -34,7 +34,6 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import HomeIcon from "@mui/icons-material/Home";
 import Rating from "@mui/material/Rating";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
-import MuiPhoneNumber from "material-ui-phone-number";
 import {
   Loading,
   TextInput,
@@ -48,8 +47,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { get } from "lodash";
-import { validate } from "../components/validate";
+import { validate, validatePhone } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import PhoneNumber from "../components/phoneNumberValidation";
 var SingleCustomerObject = {
   id: "",
   _id: "",
@@ -100,23 +100,25 @@ const EditCustomerComponent = ({ params }) => {
     } else {
       for (let i in Customers.customers) {
         if (Customers.customers[i].id === ID) {
-          SingleCustomerObject.id = Customers.customers[i].id; 
+          SingleCustomerObject.id = Customers.customers[i].id;
           setSingleCustomer(SingleCustomerObject);
           setcustomer({ ...customer, ...Customers.customers[i] });
+          setPhoneValue(Customers.customers[i].phone)
+
           break;
         }
       }
       setEditMode(false);
     }
   }, [get(Customers, "customers")]);
- 
+
   const updateCustomer = (e) => {
     customer.phone = phoneValue
     e.preventDefault();
 
 
-    var errors = validate(['company', "phone", "email", "last_name", "first_name"], customer);
-
+    var errors = validate(['company', "email", "last_name", "first_name"], customer);
+    var phoneNumberError = validatePhone(["phone"], customer)
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -127,8 +129,19 @@ const EditCustomerComponent = ({ params }) => {
         },
       });
     }
+    else if (!isEmpty(phoneNumberError)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: phoneNumberError,
+          error: true,
+        },
+      });
+    }
 
     else {
+
       dispatch(customerUpdateAction(customer, navigate));
     }
 
@@ -259,14 +272,7 @@ const EditCustomerComponent = ({ params }) => {
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
-                  <MuiPhoneNumber
-                    value={customer.phone}
-                    defaultCountry={"us"}
-                    label="Phone"
-                    name="phone"
-                    variant="outlined"
-                    onChange={handleOnChange}
-                  />   
+                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={phoneValue} />
                 </Grid>
               </Grid>
             </CardBlocks>

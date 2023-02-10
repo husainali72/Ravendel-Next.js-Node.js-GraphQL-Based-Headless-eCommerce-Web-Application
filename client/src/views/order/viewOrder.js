@@ -47,9 +47,10 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { currencyFormat } from "./CurrencyFormat";
 import { get } from "lodash";
-import { validatenested } from "../components/validate";
+import { validatenested, validateNestedPhone } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { isEmpty } from "../../utils/helper";
+import PhoneNumber from "../components/phoneNumberValidation";
 const ViewOrderComponent = ({ params }) => {
   const ORDERID = params.id || "";
   const classes = viewStyles();
@@ -59,6 +60,7 @@ const ViewOrderComponent = ({ params }) => {
   const dispatch = useDispatch();
   const singleOrder = useSelector((state) => state.order);
   const [loading, setloading] = useState(false);
+  const [phoneValue, setPhoneValue] = useState("");
 
   const [order, setorder] = useState({
     billing: {
@@ -96,11 +98,19 @@ const ViewOrderComponent = ({ params }) => {
 
   useEffect(() => {
     dispatch(orderAction(ORDERID));
+
+
   }, []);
 
   useEffect(() => {
-    const singleorder = get(singleOrder, "order");
-    setorder({ ...order, ...singleorder });
+
+    if (!isEmpty(get(singleOrder, "order"))) {
+      const singleorder = get(singleOrder, "order");
+      setorder({ ...order, ...singleorder });
+
+      setPhoneValue(singleorder.billing.phone)
+    }
+
   }, [get(singleOrder, "order")]);
 
   useEffect(() => {
@@ -108,10 +118,14 @@ const ViewOrderComponent = ({ params }) => {
   }, [get(singleOrder, "loading")]);
 
   const updateOrder = (e) => {
+    order.billing.phone = phoneValue
+
     e.preventDefault();
 
-    var errors = validatenested("billing", ["payment_method", "phone", "email", "state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
+    var errors = validatenested("billing", ["payment_method", "email", "state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
+    var Errors = validatenested("shipping", ["state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
 
+    var phoneNumberError = validateNestedPhone("billing", ["phone"], order)
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -122,8 +136,8 @@ const ViewOrderComponent = ({ params }) => {
         },
       });
     }
-    var Errors = validatenested("shipping", ["state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
-    if (!isEmpty(Errors)) {
+
+    else if (!isEmpty(Errors)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -133,13 +147,24 @@ const ViewOrderComponent = ({ params }) => {
         },
       });
     }
-    if (isEmpty(Errors) && isEmpty(errors)) {
+    else if (!isEmpty(phoneNumberError)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: phoneNumberError,
+          error: true,
+        },
+      });
+    }
+
+    else {
       setEditBilling(false);
       setEditShipping(false);
       dispatch(orderUpdateAction(order, navigate));
+
+      setPhoneValue("")
     }
-
-
   };
 
   const changeBilling = (e) => {
@@ -175,6 +200,9 @@ const ViewOrderComponent = ({ params }) => {
     );
   };
 
+  const handleOnChange = (value) => {
+    setPhoneValue(value)
+  };
   const ShippingInput = (label, name, type, value) => {
     return (
       <TextField
@@ -373,12 +401,8 @@ const ViewOrderComponent = ({ params }) => {
                           )}
                         </Grid>
                         <Grid item md={4}>
-                          {BillingInput(
-                            "Phone",
-                            "phone",
-                            "tel",
-                            order.billing.phone
-                          )}
+                          <PhoneNumber handleOnChange={handleOnChange} phoneValue={phoneValue} />
+
                         </Grid>
                         <Grid item md={4}>
                           {BillingInput(

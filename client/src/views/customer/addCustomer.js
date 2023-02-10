@@ -16,17 +16,18 @@ import {
 import { client_app_route_url } from "../../utils/helper";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import theme from "../../theme/index";
-import { validate } from "../components/validate";
+import { validate, validatePhone } from "../components/validate";
 import { isEmpty } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { useNavigate } from "react-router-dom";
+import PhoneNumber from "../components/phoneNumberValidation";
 var customerObj = {
   first_name: "",
   last_name: "",
   email: "",
   password: "",
   company: "",
-  phone_number: "",
+  phone: "",
 };
 
 const AddCustomerComponent = () => {
@@ -46,9 +47,10 @@ const AddCustomerComponent = () => {
 
   const addCustomer = (e) => {
     e.preventDefault();
+    customer.phone = phoneValue
 
-    var errors = validate(['company', "phone_number", "email", "last_name", "first_name"], customer);
-
+    var errors = validate(['company', "email", "last_name", "password", "first_name"], customer);
+    var phoneError = validatePhone(["phone"], customer)
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -59,9 +61,18 @@ const AddCustomerComponent = () => {
         },
       });
     }
+    else if (!isEmpty(phoneError)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: phoneError,
+          error: true,
+        },
+      });
+    }
+    else {
 
-    if (isEmpty(errors)) {
-      customer.phone = phoneValue
       dispatch(customerAddAction(customer, navigate(`${client_app_route_url}all-customer`)));
     }
   };
@@ -140,14 +151,7 @@ const AddCustomerComponent = () => {
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
-                  <MuiPhoneNumber 
-                    value= {customer.phone}
-                    defaultCountry={"us"}
-                    label="Phone"
-                    name="phone"
-                    variant="outlined"
-                    onChange={handleOnChange}
-                  />
+                  <PhoneNumber handleOnChange={handleOnChange} />
                 </Grid>
               </Grid>
             </CardBlocks>

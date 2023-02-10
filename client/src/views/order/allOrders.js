@@ -36,7 +36,7 @@ const AllOrdersComponent = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders);
-  const [order, setOrder] = React.useState('asc');
+  const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('date');
   useEffect(() => {
     if (isEmpty(orders.orders)) {

@@ -62,7 +62,9 @@ const EditCouponComponent = ({ params }) => {
           setCoupon({ ...coupon, ...editcoupon });
         }
       });
-      setLabelWidth(inputLabel.current.offsetWidth);
+      if (isEmpty(get(inputLabel, "current.offsetWidth"))) {
+        setLabelWidth(get(inputLabel, "current.offsetWidth"));
+      }
     }
   }, [get(Coupons, "coupons")]);
 
@@ -84,6 +86,7 @@ const EditCouponComponent = ({ params }) => {
     if (isEmpty(get(Coupons, "coupons"))) {
       dispatch(couponsAction());
     }
+
   }, []);
 
   const tabChange = (event, newValue) => {
@@ -122,8 +125,52 @@ const EditCouponComponent = ({ params }) => {
   };
 
   const selectChange = (e) => {
+
+
     setCoupon({ ...coupon, [e.target.name]: e.target.value });
   };
+  const IncludeProduct = (id) => {
+
+
+    const included_products = coupon.products
+    for (var i = 0; i < included_products.length; i++) {
+      if (included_products[i] === id) {
+        return true;
+      }
+
+    }
+  }
+  const ExcludeProduct = (id) => {
+    const excluded_products = coupon.exclude_products
+    for (var i = 0; i < excluded_products.length; i++) {
+      if (excluded_products[i] === id) {
+        return true;
+      }
+
+    }
+
+  }
+  const IncludeCategories = (id) => {
+
+
+    const included_categories = coupon.categories
+    for (var i = 0; i < included_categories.length; i++) {
+      if (included_categories[i] === id) {
+        return true;
+      }
+
+    }
+  }
+  const ExcludeCategories = (id) => {
+    const excluded_categories = coupon.exclude_categories
+    for (var i = 0; i < excluded_categories.length; i++) {
+      if (excluded_categories[i] === id) {
+        return true;
+      }
+
+    }
+
+  }
 
   const SelectOptionField = ({ label, name, value, children, id }) => {
     return (
@@ -131,6 +178,7 @@ const EditCouponComponent = ({ params }) => {
         variant="outlined"
         className={classes.marginBottom}
         fullWidth
+
       >
         <InputLabel id={id}>{label}</InputLabel>
         <Select
@@ -140,11 +188,13 @@ const EditCouponComponent = ({ params }) => {
           input={<Input id="select-multiple-chip" variant="outlined" />}
           value={value}
           name={name}
+
           renderValue={(selected) => (
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", }} >
               {selected.map((value) => (
                 <Chip
                   key={value}
+
                   label={getSelectedName(
                     value,
                     name,
@@ -152,6 +202,7 @@ const EditCouponComponent = ({ params }) => {
                     Products.categories
                   )}
                   style={{ margin: 2 }}
+
                 />
               ))}
             </div>
@@ -253,7 +304,7 @@ const EditCouponComponent = ({ params }) => {
                   </Grid>
                   <Grid item md={6} sm={12} xs={12}>
                     <TextInput
-                     type="number"
+                      type="number"
                       value={coupon.discount_value}
                       label="Coupon Amount"
                       name="discount_value"
@@ -296,7 +347,7 @@ const EditCouponComponent = ({ params }) => {
               <TabPanel value={tabVal} index="usage-restriction">
                 <Box component="div" mb={2}>
                   <TextInput
-                     type="Number"
+                    type="Number"
                     value={coupon.minimum_spend}
                     label="Minimum Spend"
                     name="minimum_spend"
@@ -305,7 +356,7 @@ const EditCouponComponent = ({ params }) => {
                 </Box>
                 <Box component="div" mb={2}>
                   <TextInput
-                   type="Number"
+                    type="Number"
                     value={coupon.maximum_spend}
                     label="Maximum Spend"
                     name="maximum_spend"
@@ -319,12 +370,15 @@ const EditCouponComponent = ({ params }) => {
                   label="Products"
                   value={coupon.products}
                   id="products"
+
                 >
-                  {Products.products.map((product) => (
-                    <MenuItem value={product._id} key={product._id}>
-                      {product.name}
-                    </MenuItem>
-                  ))}
+                  {Products.products.map((product) => {
+                    if (!ExcludeProduct(product._id)) {
+                      return < MenuItem value={product._id} key={product._id} >
+                        {product.name}
+                      </MenuItem>
+                    }
+                  })}
                 </SelectOptionField>
 
                 {/* ================== Exclude Products Select ================== */}
@@ -334,11 +388,14 @@ const EditCouponComponent = ({ params }) => {
                   value={coupon.exclude_products}
                   id="exclude_products"
                 >
-                  {Products.products.map((product) => (
-                    <MenuItem value={product._id} key={product._id}>
-                      {product.name}
-                    </MenuItem>
-                  ))}
+                  {Products.products.map((product) => {
+                    if (!IncludeProduct(product._id)) {
+                      return <MenuItem value={product._id} key={product._id} >
+
+                        {product.name}
+                      </MenuItem>
+                    }
+                  })}
                 </SelectOptionField>
 
                 {/*  ================== Category Select ==================*/}
@@ -348,11 +405,14 @@ const EditCouponComponent = ({ params }) => {
                   value={coupon.categories}
                   id="categories"
                 >
-                  {Products.categories.map((category) => (
-                    <MenuItem value={category.id} key={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
+                  {Products.categories.map((category) => {
+                    if (!ExcludeCategories(category.id)) {
+                      return <MenuItem value={category.id} key={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    }
+
+                  })}
                 </SelectOptionField>
 
                 {/* ================== Exclude Category Select ===================== */}
@@ -362,11 +422,13 @@ const EditCouponComponent = ({ params }) => {
                   value={coupon.exclude_categories}
                   id="exclude_categories"
                 >
-                  {Products.categories.map((category) => (
-                    <MenuItem value={category.id} key={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
+                  {Products.categories.map((category) => {
+                    if (!IncludeCategories(category.id)) {
+                      return <MenuItem value={category.id} key={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    }
+                  })}
                 </SelectOptionField>
               </TabPanel>
             </Box>
