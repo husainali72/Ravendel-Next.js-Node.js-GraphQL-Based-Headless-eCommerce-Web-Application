@@ -49,7 +49,7 @@ const LogIn = () => {
             const productsInCart = JSON.parse(localStorage.getItem("cart"))
             const id = session?.user.accessToken.customer._id;
 
-            const products =  productsInCart.map(prod => {
+            const products =  productsInCart?.map(prod => {
                 return{
                     product_id: prod._id,
                     qty: prod.quantity

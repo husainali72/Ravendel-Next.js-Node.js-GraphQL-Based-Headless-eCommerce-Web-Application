@@ -67,6 +67,7 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
     if (userCart.card_id === undefined) {
       return undefined;
     } else {
+      // console.log('idx var', variables)
       await mutation(UPDATE_CART_PRODUCT, variables, token).then(res => res)
     }
   }
@@ -135,7 +136,7 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
       {brands?.length > 0 ? <FeatureBrand brands = {brands} /> : null}
       <RavendelBanner />
 
-          {HomePageSeq.map(section => (
+          {HomePageSeq?.map(section => (
             renderSwitch(section)
           ))}
       

@@ -150,18 +150,18 @@ const EditUserComponent = ({ params }) => {
                   <Box component="div">
                     <SelectComponent
                       label="Role"
+                      value={user.role}
                       onSelecteChange={(val) =>
                         setuser({ ...user, ["role"]: val })
                       }
                       items={[
-                        "Subscriber",
-                        "Manager",
-                        "Editor",
-                        "Author",
+                        "SUBSCRIBER",
+                        "MANAGER",
+                        "EDITOR",
+                        "AUTHOR",
                         "USER",
                       ]}
                       name="role"
-                      value={user.role}
                     />
                   </Box>
                 </Grid>

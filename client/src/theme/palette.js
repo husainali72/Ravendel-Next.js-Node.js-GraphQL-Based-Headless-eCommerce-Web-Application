@@ -30,6 +30,26 @@ export default {
     main: colors.green[600],
     light: colors.green[400],
   },
+  failed: {
+    contrastText: white,
+    dark: "#A9294F",
+    main: "#A9294F",
+    light: "#A9294F",
+  },
+  outfordelivery: {
+    contrastText: white,
+    dark: "#FDB44B",
+    main: "#FDB44B",
+    light: "#FDB44B",
+    width: "120px",
+  },
+  delivered: {
+    contrastText: white,
+    dark: "#00B7A8",
+    main: "#00B7A8",
+    light: "#00B7A8",
+    width: "120px",
+  },
   info: {
     contrastText: white,
     dark: colors.blue[900],
