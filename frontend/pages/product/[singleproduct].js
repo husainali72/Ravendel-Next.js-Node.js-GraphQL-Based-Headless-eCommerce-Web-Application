@@ -32,7 +32,7 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
     console.log('Products all revires',productss)
     console.log("single productttt", singleProduct);
    
-// console.log('router',router.query)
+
     useEffect(() => {
        
        
@@ -161,8 +161,6 @@ export async function getStaticPaths() {
         params: { singleproduct: curElem.url.toString() }
 
     }))
-
-    console.log("paths", paths);
     return {
         paths,
         fallback: false,

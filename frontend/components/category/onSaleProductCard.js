@@ -41,12 +41,15 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
         let quantity = 1
 
         if (session.status === "authenticated") {
-            dispatch(addToCart(product, quantity, token, id))
-            router.push("/shopcart")
+
+            dispatch(addToCart(product, quantity, token, id))  
+            await router.push("/shopcart")
+
         }
         else {
             dispatch(addToCart(product))
             router.push("/shopcart")
+
         }
     }
 

@@ -15,7 +15,8 @@ import { query2 } from "../utills/cartHelperfun";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
 import { getAllProductsAction } from "../redux/actions/productAction";
 
-const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice || 0 * product.quantity), 0)
+const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice  * product.quantity || 0 * product.quantity), 0)
+
 const cartitems2 = []     
 
 const YourCard = ({ customercart, cart_id }) => {
@@ -52,6 +53,7 @@ const YourCard = ({ customercart, cart_id }) => {
     var id = "";
     var token = "";
 
+<<<<<<< HEAD
     useEffect(() => {
         console.log('allProducts', allProducts)
     }, [allProducts]);
@@ -102,11 +104,39 @@ const YourCard = ({ customercart, cart_id }) => {
             token = session.data.user.accessToken.token
             // console.log("id", id)
             // console.log("token", token)
+=======
+
+ const handlePayment = async () =>{
+    const response = await fetch('/api/stripe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(cartItems),
+    });
+    const data = await response.json();
+ 
+    window.location.href = data.url
+    if(response.statusCode === 500) return;
+ }
+    useEffect(() => {
+        if(allProducts.success) {
+            getProducts();
+        }
+    }, [allProducts, cartProducts,customercart.length]);
+
+    const getProducts = async () => {
+        const productsCard = JSON.parse(localStorage.getItem("cart"))  
+        if (session?.status === "authenticated") {
+            id = session.data.user.accessToken.customer._id
+            token = session.data.user.accessToken.token
+>>>>>>> parent of d2dc340 (FrontEnd Changes)
             try {
                 const { data: CartsData } = await client.query({
                     query: GET_USER_CART,
                     variables: { id: id }
                 })
+<<<<<<< HEAD
                 // let carts = customercart;
                 let carts = CartsData.cartbyUser.products;
                 
@@ -123,6 +153,14 @@ const YourCard = ({ customercart, cart_id }) => {
                     console.log('current cart=', cart);
                     const originalProduct = allProducts.products.find(prod => prod._id === cart.product_id);
                     console.log('originalProduct=', originalProduct);
+=======
+            
+                let carts = await CartsData.cartbyUser.products;
+                
+                let cartitems2 = [];
+                carts.map(cart=>{
+                    const originalProduct = allProducts.products.find(prod => prod._id === cart.product_id);
+>>>>>>> parent of d2dc340 (FrontEnd Changes)
                     const cartProduct = {
                         _id: originalProduct._id,
                         quantity:parseInt(cart.qty) ,
@@ -132,6 +170,7 @@ const YourCard = ({ customercart, cart_id }) => {
                     }
                     cartitems2.push(cartProduct);
                 })
+<<<<<<< HEAD
 
                 console.log('redy to insert user cart', cartitems2);
                 setCartItems(cartitems2) 
@@ -143,6 +182,9 @@ const YourCard = ({ customercart, cart_id }) => {
                 // })
                 // console.log('cart itemmmmm', cartitems)
                 // setCartItems(cartitems) 
+=======
+                setCartItems(cartitems2) 
+>>>>>>> parent of d2dc340 (FrontEnd Changes)
             }
             catch (e) {
                 setCartItems(productsCard || []);  
@@ -151,6 +193,7 @@ const YourCard = ({ customercart, cart_id }) => {
         }
         else {
             setCartItems(productsCard || []);
+<<<<<<< HEAD
             console.log('procard itemmmmm', productsCard)
         }
     }
@@ -165,6 +208,11 @@ const YourCard = ({ customercart, cart_id }) => {
     console.log('cart3t', cartitems3);
     
     const AllCartItemsClear = () => {
+=======
+        }
+    }
+    const AllCartItemsClear = async () => {
+>>>>>>> parent of d2dc340 (FrontEnd Changes)
         setCartItems([])
         let variables = {
             id: cart_id,
@@ -241,7 +289,10 @@ const YourCard = ({ customercart, cart_id }) => {
             }  else{
                 const prod = cartItems.find(cart => cart._id === item._id);
                 const qty = prod.quantity;
+<<<<<<< HEAD
                 // console.log('Product to change quantity',qty)
+=======
+>>>>>>> parent of d2dc340 (FrontEnd Changes)
                 if (session?.status === "authenticated") {
                     let id = session.data.user.accessToken.customer._id
                     let token = session.data.user.accessToken.token
@@ -368,7 +419,10 @@ const YourCard = ({ customercart, cart_id }) => {
                 product_id: product._id,
                 qty: product.quantity,
                 product_title: product.name,
+<<<<<<< HEAD
                 // product_image: product.gallery_image[0].original||"",
+=======
+>>>>>>> parent of d2dc340 (FrontEnd Changes)
                 product_image: product.feature_image.original,
                 product_price: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price
             }
@@ -504,11 +558,19 @@ export async function getServerSideProps(context) {
                 query: GET_USER_CART,
                 variables: { id: id }
             })
+<<<<<<< HEAD
 
             console.log('CartsData', CartsData.products)
             cart_id = CartsData.cartbyUser.id
             let customercarts = CartsData?.cartbyUser.products
             let cartitems = customercarts.map(product => {
+=======
+            CartsDataa =CartsData
+            console.log('CartsData', CartsData.products)
+            cart_id = CartsData.cartbyUser.id
+            let customercarts = CartsData?.cartbyUser.products
+            let cartitems = await customercarts.map(product => {
+>>>>>>> parent of d2dc340 (FrontEnd Changes)
                 console.log('Product', product)
                 return {
                     _id: product?.product_id,
@@ -522,6 +584,10 @@ export async function getServerSideProps(context) {
             })
             customercart = cartitems
             console.log("Carts==================", customercart)
+<<<<<<< HEAD
+=======
+            console.log('getServerSideCalled',customercart.length)
+>>>>>>> parent of d2dc340 (FrontEnd Changes)
         }
         catch (e) {
             console.log("error==", e)
