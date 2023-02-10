@@ -61,7 +61,7 @@ app.use(express.json({ extended: false }));
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
-app.use("/api/stripe", require("./routes/api/stripe"));
+// app.use("/api/stripe", require("./routes/api/stripe"));
 
 app.use("/api/customers", require("./routes/api/customers"));
 

@@ -85,7 +85,7 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
     return (
         <div>
             <PageTitle title={"category"} />
-            <BreadCrumb title={`category  >  ${categoryDetail.name}`} />
+            <BreadCrumb title={`category  > Subcategory > ${categoryDetail.name}`} />
             <Container>
                 <div className="single-category-page">
                     <div className="category-option">
