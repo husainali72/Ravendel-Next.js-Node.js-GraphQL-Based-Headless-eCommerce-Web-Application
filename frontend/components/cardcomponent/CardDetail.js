@@ -90,7 +90,7 @@ const CartTable = (props) => {
                 </Table>
             </div>
             <div className="cart-action text-end">
-                {/* <a className="card-btons disable-btn  mr-10 mb-sm-15" onClick={() => updateCartProduct()}><i className="fas fa-random"></i> Update Cart</a> */}
+                <a className="card-btons  mr-10 mb-sm-15" onClick={() => updateCartProduct()}><i className="fas fa-random"></i> Update Cart</a>
                 <Link href="/shop"><a className="card-btons "><i className="fas fa-shopping-bag"></i> Continue Shopping</a></Link>
             </div>
 
