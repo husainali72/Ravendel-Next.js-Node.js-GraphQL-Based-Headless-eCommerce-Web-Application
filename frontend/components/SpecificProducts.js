@@ -11,11 +11,27 @@ const SpecificProducts = ({section}) => {
     const [products,setProducts] = useState([]) 
     const [category,setCategory] = useState({}) 
     let config = { category: [section.category], brand: [], attribute: [], price: [] }
+    
+
+    let filter = {  category: section?.category,
+        brand: "",
+        most_reviewed: false,
+        product_type: "",
+        rating: {
+          min: 0,
+          max: 5
+        },
+        price: {
+          min: 1,
+          max: 100000
+        },
+        search: ""}
+
     const getProducts = async () =>{
         try { 
             const { data: fillterPrroducts } = await client.query({
                 query: GET_FILTEREDPRODUCTS,
-                variables: {  config },
+                variables: {  filter },
             })
             let fillterProduct = fillterPrroducts?.filteredProducts
             if(fillterProduct.length>0){

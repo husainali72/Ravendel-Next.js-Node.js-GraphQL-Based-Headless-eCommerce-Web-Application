@@ -148,6 +148,7 @@ const EditPageComponent = ({ params }) => {
                       variant="contained"
                       onClick={changePermalink}
                       className={classes.editpermalinkInputBtn}
+                      style={{marginLeft: "20px"}}
                     >
                       {editPremalink ? "Ok" : "Edit"}
                     </Button>

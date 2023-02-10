@@ -130,8 +130,8 @@ export const GET_CATEGORY = gql`
   }
 `;
 export const GET_FILTEREDPRODUCTS = gql`
-  query ($config: customObject) {
-  filteredProducts(config: $config) {
+  query ($filter: customObject) {
+  filteredProducts(filter: $filter) {
     ...ProductTile
     __typename
   }

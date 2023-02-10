@@ -72,6 +72,10 @@ const AddUserComponent = () => {
     setuser({ ...user, [e.target.name]: e.target.value });
   };
 
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
+  };
+
   return (
     <>
       <Alert />
@@ -111,6 +115,7 @@ const AddUserComponent = () => {
                       label="Email"
                       name="email"
                       onInputChange={handleChange}
+                      onInput={toInputLowercase}
                     />
                   </Box>
                   <Box component="div" mb={2}>

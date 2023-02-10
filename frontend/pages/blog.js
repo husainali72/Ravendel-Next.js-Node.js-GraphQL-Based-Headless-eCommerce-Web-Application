@@ -62,9 +62,9 @@ const Blog = (blogData, blogTagsData) => {
                                 ))}
                             </div>
                         </div>
-                        <div className="blog-category">
+                        {/* <div className="blog-category">
                             <ShopProducts name={"Tags"} blogTagsData={tags} />
-                        </div>
+                        </div> */}
                     </div>
                 ) : (<h1>no blog available</h1>)}
             </Container>

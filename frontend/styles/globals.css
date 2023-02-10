@@ -2245,6 +2245,13 @@ position: relative;
   align-items: center;
   justify-content: center;
 }
+.shopcart-table .table td .td-flex i {
+cursor: pointer;
+}
+.shopcart-table .table td .td-flex i:hover {
+  cursor: pointer;
+  color:#046963 ;
+  }
 .shopcart-table .table td {
   font-size: 15px;
   position: relative;

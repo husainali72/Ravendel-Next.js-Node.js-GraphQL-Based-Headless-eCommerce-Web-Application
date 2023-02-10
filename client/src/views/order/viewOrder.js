@@ -218,6 +218,10 @@ const ViewOrderComponent = ({ params }) => {
     );
   };
 
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
+  };
+
   return (
     <>
       <Alerts />
@@ -352,7 +356,7 @@ const ViewOrderComponent = ({ params }) => {
                             order.billing.lastname
                           )}
                         </Grid>
-                        <Grid item md={4}>
+                        <Grid item md={4}  onInput={toInputLowercase}>
                           {BillingInput(
                             "Email",
                             "email",
