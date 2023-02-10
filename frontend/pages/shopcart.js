@@ -11,8 +11,10 @@ import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
+
 import { getAllProductsAction } from "../redux/actions/productAction";
 import { useRouter } from "next/router";
+
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice  * product.quantity || 0 * product.quantity), 0)
 const cartitems2 = []     
 
@@ -37,6 +39,8 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
     const [couponCode, setCouponCode] = useState("")
     var id = "";
     var token = "";
+
+
  const handlePayment = async () =>{
     if (session?.status !== "authenticated"){
         router.push("/account")
@@ -55,97 +59,48 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
         if(response.statusCode === 500) return;
     }
  }
-
- useEffect(() => {
-    dispatch(getAllProductsAction());
-}, []);
-
     useEffect(() => {
-            const getProducts = async () => {
-                const productsCard = JSON.parse(localStorage.getItem("cart"))  
-                if (session?.status === "authenticated") {
-                    
-                    id = session.data.user.accessToken.customer._id
-                    token = session.data.user.accessToken.token;
-                    let variables= { id: id }
-                    mutation(GET_USER_CART, variables).then(res => {
-                        let carts =  res?.data?.cartbyUser?.products;
-                        const cartProducts = [...carts];
-                        let cartitems2 = [];
-                        carts?.map(cart=>{
-                            const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-                            const cartProduct = {
-                                _id: originalProduct?._id,
-                                quantity:parseInt(cart?.qty) ,
-                                name:originalProduct?.name,
-                                pricing: originalProduct?.pricing,
-                                feature_image:originalProduct?.feature_image
-                            }
-                            // setCartItems((prev) => [...prev, cartProduct]) 
-                           
-                            cartitems2.push(cartProduct);
-                        })
-
-
-
-                        // carts.map(cart=>{
-                        //         const cartProduct = {
-                        //             _id: cart?.product_id,
-                        //             quantity:parseInt(cart?.qty) ,
-                        //             name:cart?.product_title,
-                        //             pricing: cart?.product_price,
-                        //             feature_image:{original : cart?.product_image,
-                        //                            large: cart?.product_image ,
-                        //                            medium: cart?.product_image,
-                        //                            thumnail: cart?.product_image   
-                        //                         }
-                        //         }
-                        //         // setCartItems((prev) => [...prev, cartProduct]) 
-                               
-                        //         cartitems2.push(cartProduct);
-                        //     })
-
-
-                        setCartItems([...cartitems2]) 
-                    })
-                        
-                    // try {
-                    //     console.log('api usercart')
-                    //     const { data: CartsData } = await client.query({
-                    //         query: GET_USER_CART,
-                    //         variables: { id: id }
-                    //     })
-                    
-                    //     let carts = await CartsData?.cartbyUser?.products;
-                    //     console.log('carts',CartsData?.cartbyUser?.products)
-                    //     let cartitems2 = [];
-                    //     carts.map(cart=>{
-                    //         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-                    //         const cartProduct = {
-                    //             _id: originalProduct._id,
-                    //             quantity:parseInt(cart.qty) ,
-                    //             name:originalProduct.name,
-                    //             pricing: originalProduct.pricing,
-                    //             feature_image:originalProduct.feature_image
-                    //         }
-                    //         cartitems2.push(cartProduct);
-                    //     })
-                    //     setCartItems(cartitems2) 
-                    // // }
-                    // catch (e) {
-                    //     setCartItems(productsCard || []);  
-                    //     console.log('typt errr', e)
-                    // }
-                }
-                else {
-                    setCartItems(productsCard || []);
-                }
-            }
+        if(allProducts.success) {
             getProducts();
-        
+        }
     }, [allProducts, cartProducts,customercart.length]);
 
-  
+    const getProducts = async () => {
+        const productsCard = JSON.parse(localStorage.getItem("cart"))  
+        if (session?.status === "authenticated") {
+            id = session.data.user.accessToken.customer._id
+            token = session.data.user.accessToken.token
+            try {
+                const { data: CartsData } = await client.query({
+                    query: GET_USER_CART,
+                    variables: { id: id }
+                })
+            
+                let carts = await CartsData.cartbyUser.products;
+                
+                let cartitems2 = [];
+                carts.map(cart=>{
+                    const originalProduct = allProducts.products.find(prod => prod._id === cart.product_id);
+                    const cartProduct = {
+                        _id: originalProduct._id,
+                        quantity:parseInt(cart.qty) ,
+                        name:originalProduct.name,
+                        pricing: originalProduct.pricing,
+                        feature_image:originalProduct.feature_image
+                    }
+                    cartitems2.push(cartProduct);
+                })
+                setCartItems(cartitems2) 
+            }
+            catch (e) {
+                setCartItems(productsCard || []);  
+                console.log('typt errr', e)
+            }
+        }
+        else {
+            setCartItems(productsCard || []);
+        }
+    }
     const AllCartItemsClear = async () => {
         setCartItems([])
 
@@ -213,7 +168,6 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
             }  else{
                 const prod = cartItems.find(cart => cart._id === item._id);
                 const qty = prod.quantity;
-                
                 if (session?.status === "authenticated") {
                     let id = session.data.user.accessToken.customer._id
                     let token = session.data.user.accessToken.token
@@ -268,14 +222,17 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
 
     }
     const doApplyCouponCode = () => {
+        console.log("coupn value", couponCode)
         let cart = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity } })
         let variables = {
             coupon_code: couponCode, cart: cart
         }
+        console.log("variable", variables)
         query2(APPLY_COUPON_CODE, variables, token).then(res => console.log("res", res))
     }
     const ProcessToCheckOut = () => {
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))
+        console.log("ProcessToCheckOut", productsCard.cart)
         var id = ''
         var token = ""
         if (session.status === "authenticated") {
@@ -297,26 +254,32 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
     }
 
     const updateCartProduct = () => {
+        console.log("updateCartProduct")
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))
+        console.log("updateCheckOut", productsCard.cart)
         var id = ''
         var token = ""
         if (session.status === "authenticated") {
             id = session.data.user.accessToken.customer._id
             token = session.data.user.accessToken.token
         }
+
+        console.log('productsCard', productsCard)
         let carts = productsCard.cart.map(product => {
+            console.log('product.pricing', )
             return {
-                product_id: product?._id,
-                qty: product?.quantity,
-                product_title: product?.name,
-                product_image: product?.feature_image?.original,
-                product_price: product?.pricing?.sellprice ? product?.pricing?.sellprice : product?.pricing?.price
+                product_id: product._id,
+                qty: product.quantity,
+                product_title: product.name,
+                product_image: product.feature_image.original,
+                product_price: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price
             }
         })
         let variables = {
             id: cart_id,
             products: carts,
         }
+        console.log("update", variables)
        
         mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("res", res))
     }
@@ -435,9 +398,11 @@ export async function getServerSideProps(context) {
                 variables: { id: id }   
             })
             CartsDataa =CartsData
+            console.log('CartsData', CartsData.products)
             cart_id = CartsData.cartbyUser.id
             let customercarts = CartsData?.cartbyUser.products
             let cartitems = await customercarts.map(product => {
+                console.log('Product', product)
                 return {
                     _id: product?.product_id,
                     name: product?.product_title,
@@ -449,6 +414,8 @@ export async function getServerSideProps(context) {
                 }
             })
             customercart = cartitems
+            console.log("Carts==================", customercart)
+            console.log('getServerSideCalled',customercart.length)
         }
         catch (e) {
             console.log("error==", e)

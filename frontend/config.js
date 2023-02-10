@@ -8,8 +8,7 @@ export const API_BASE_URL = "http://localhost:8000/api";
 
 /* -------------------------------  imageURl changes to bucketURL ------------------------- */
 
-// export var bucketName = "revendal-image-prod";
-export var bucketName = "revendal-image";
+export var bucketName = "revendal-image-prod";
 export var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
 
 // if (process.env.NODE_ENV === "production") {

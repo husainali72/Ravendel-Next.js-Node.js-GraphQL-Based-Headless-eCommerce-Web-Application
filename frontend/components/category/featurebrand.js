@@ -6,7 +6,7 @@ const FeatureBrand = ({brands}) => {
         <section className="product-cart-section">
             <Container>
                 <h4 className='theme-color'>Feature <span className='black-color'>Brand</span></h4>
-                <div className="brand-container">
+                <div className="category brand-container">
                         {brands.map((item, i) => ( 
                             <div className="brand-card-container" key={i}>
                                 <div className="category-card-image brand-card-image">
@@ -19,9 +19,9 @@ const FeatureBrand = ({brands}) => {
                                         />
                                     </Link>
                                 </div>
-                                <div >
+                                <div className="card-body">
                                     <p
-                                        className="brand-card-title" 
+                                        className="card-title category-card-title" 
                                         >
                                         {item?.name}
                                     </p>
