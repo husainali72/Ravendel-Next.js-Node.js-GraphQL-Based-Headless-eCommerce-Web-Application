@@ -1,5 +1,3 @@
-
-
 body {
   padding: 0;
   margin: 0;
@@ -450,9 +448,7 @@ color: #696969;
   display: inline-block;
   /* width: 41.6666666667%; */
 }
-.registerContainer{
-  position: relative;
-}
+
 .register-form {
   align-items: center;
   justify-content: center;
@@ -539,19 +535,7 @@ color: #696969;
   border-radius: 50px;
   cursor: pointer;
 }
-.brand-container{
-  display:inline-grid;
-  grid-template-columns:repeat( auto-fit, minmax(200px, 1fr) );
-  grid-gap: 16px;
-  border-radius: 50px;
-  cursor: pointer;
-  background-color: #fafafa;
-  padding-top: 8%;
-  padding-left: 6%;
-  padding-right: 2%;
-  width: 100%;
- }
- 
+
 .pro-cat {
   background-color: #fafafa;
   display: grid;
@@ -641,14 +625,21 @@ color: #696969;
 
 .brand-card-container{
  
-  padding: 10px;
+   padding: 10px;
   position: relative;
   background:transparent;
   text-align: center;
+  /* border: 1px solid #cce7d0;
+  border-radius: 20px; */
   margin-bottom: 30px;
 }
 
-
+.brand-container{
+ background-color: #fafafa;
+ padding-top: 8%;
+ padding-left: 6%;
+ padding-right: 2%;
+}
 
 .category-cards{
   /* padding: 10px; */
@@ -673,24 +664,13 @@ color: #696969;
  
   
 }
-.brand-card-title{
-  background-color: transparent;
-  color: #1a1a1a;
-  padding: 4px 0px;
-  border-radius: 0.3rem;
-  font-weight: 600 !important;
-  line-height: 1.4 !important;
-  justify-content: center;
-  
-}
+
 .brand-card-image{
-  overflow: hidden;
-  border-radius: 100%;
-  transition: 0.3s;
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  margin: 0 auto;
+overflow: hidden;
+border-radius: 100%;
+transition: 0.3s;
+width: 60%;
+height: 60%;
 }
 .brand-card-image:hover{
   border: solid #088178 1.5px;
@@ -700,15 +680,6 @@ color: #696969;
 }
 
 .category-card-image img {
-  -moz-transition: all 0.5s ease-in-out;
-  -webkit-transition: all 0.5s ease-in-out;
-  transition: all 0.3s ease-in-out;
-  border-radius: .5rem;
-  width: 100%;
-  object-fit: cover;
-  height: 100%;
-}
-.brand-card-image img{
   -moz-transition: all 0.5s ease-in-out;
   -webkit-transition: all 0.5s ease-in-out;
   transition: all 0.3s ease-in-out;
@@ -1151,22 +1122,7 @@ footer .follow h5 {
 .on-sale-product-card:hover {
   box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.15);
 }
-.disable-btn{
-  border: 1px solid #cccccc !important ;
-  background-color: #cccccc !important ;
-  color: #666666 !important ;
-}
 
-.phonee input{
-  /* width: 28%
-  padding 6%; */
-  
-  border: none;
-  outline: none;
-}
-.phonee select :focus{
-  color: #046963;
-}
 .on-sale-product-card-body {
   padding: 16px;
 }
@@ -1178,20 +1134,18 @@ footer .follow h5 {
   max-height: 320px;
   cursor: pointer;
 }
-/* 
 .img-on-sale {
   width: 100%;
   height: 100%;
-  border-radius: 25px; */
+  border-radius: 25px;
   /* object-fit: cover */
-/* } */
-
-.img-on-sale {
+}
+/* .img-on-sale {
   width: 280px;
   height: 280px;
   border-radius: 25px;
   object-fit: cover
-}
+} */
 .on-sale-image-wrapper {
   border-radius: 20px;
   width: 100%;
@@ -2586,16 +2540,6 @@ header {
   background: #046963 !important;
 }
 
-.error-message small{
-  color: red;
-  margin-top:-16px;
-  /* margin-left: 8px; */
-  font-size: small;
-}
-.loading-btn{
-  min-width: 122px;
-}
-
 .gallery-image {
   text-align: center;
 }
@@ -2973,9 +2917,9 @@ header {
   .account-coupon-box .col-md-6 {
     padding: 0 8px;
   }
-  /* .brand-container {
+  .brand-container {
     grid-template-columns: repeat(3, 1fr);
-  } */
+  }
   .banner-container {
     padding: 60px 0;
   }
@@ -3065,9 +3009,9 @@ header {
     padding: 12px;
     margin-top: 30px;
   }
-  /* .brand-container {
+  .brand-container {
     grid-template-columns: repeat(2, 1fr);
-  } */
+  }
   /* 
   --Ravendel
     Contact Page Completed
@@ -3146,9 +3090,9 @@ header {
 
 
 @media screen and (max-width: 276px){
-  /* .brand-container {
+  .brand-container {
     grid-template-columns: repeat(1, 1fr);
-  } */
+  }
 }
 
 
@@ -3233,21 +3177,7 @@ header {
     transform: rotate(360deg);
   }
 }
-.select-flag{
-  outline: none;
-  background-color: white !important;
-  background: white;
-}
-.select-flag :hover{
-  border-color: #088178;
-  box-shadow: unset;
-  outline: none;
-}
-.custom-input{
-  width: 100% !important;
-  height: 48.9px !important;
-  /* margin: 12px 0px 16px 41px !important; */
-}
+
 .loading-spinner {
   width: 50px;
   height: 50px;
@@ -3263,11 +3193,7 @@ header {
       margin: 0;
       margin-left: 20px;
     }
-.loading-text-full{
-  color:transparent;
-  margin: 0;
-  margin-left: 20px;
-}
+
 /*  print Css*/
 @media print {
   body,
