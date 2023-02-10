@@ -31,6 +31,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { customStyles } from "../../theme/ReactSelectCustomStyles";
 var reviewObj = {
   title: "",
   customer_id: "",
@@ -143,18 +144,22 @@ const EditReviewComponent = ({ params }) => {
 
   return (
     <>
+      <Alerts />
       {loading && <Loading />}
+
       <TopBar
         title="Edit Customer Review"
         onSubmit={updateReview}
         submitTitle="Update"
         backLink={`${client_app_route_url}reviews`}
       />
-      <Alerts />
+
+
       <Grid container spacing={4} className={classes.secondmainrow}>
         <Grid item lg={9} md={12} sm={12} xs={12}>
           <CardBlocks title="Review Information" nomargin>
             <Box component="div" mb={2}>
+
               <TextInput
                 value={review.title}
                 label="Title"
@@ -175,7 +180,7 @@ const EditReviewComponent = ({ params }) => {
           <CardBlocks title="Review Details">
             {review.product.value && (
               <Box component="div" mb={2}>
-                <Typography component="legend">Product</Typography>
+                <Typography variant="h3">Product</Typography>
                 <Select
                   value={review.product}
                   name="product_id"
@@ -187,6 +192,7 @@ const EditReviewComponent = ({ params }) => {
                     })
                   }
                   options={products}
+                  styles={customStyles}
                   className={classes.marginBottom}
                 />
               </Box>
@@ -194,7 +200,8 @@ const EditReviewComponent = ({ params }) => {
 
             {review.customer.value && (
               <Box component="div" mb={2}>
-                <Typography component="legend">Customer</Typography>
+                <Typography variant="h3">Customer</Typography>
+
                 <Select
                   value={review.customer}
                   name="customer_id"
@@ -206,6 +213,7 @@ const EditReviewComponent = ({ params }) => {
                     })
                   }
                   options={customers}
+                  styles={customStyles}
                   className={classes.marginBottom}
                 />
               </Box>

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput, SettingBlock } from "./setting-components";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
-import {get} from "lodash";
+import { get } from "lodash";
 import { mediaUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert.js";
 import Loading from "../../components/Loading.js";
@@ -16,7 +16,7 @@ const MediaComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
- 
+
   const settingState = useSelector((state) => state.settings);
   const [media, setMedia] = useState({
     thumbnail: settingState.settings.media.thumbnail,
@@ -32,12 +32,12 @@ const MediaComponent = () => {
     get(settingState, "settings.media.thumbnail")
     get(settingState, "settings.media.medium")
     get(settingState, "settings.media.large")
-    }, [settingState.settings])
+  }, [settingState.settings])
 
   return (
     <>
-    <Alerts/>
-     {settingState.loading ? <Loading /> : null}
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item md={12} xs={12}>
           <SettingBlock label="Thumbnail Size">
@@ -115,8 +115,8 @@ const MediaComponent = () => {
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
-                    thumbnail: {
-                      ...media.thumbnail,
+                    large: {
+                      ...media.large,
                       width: val,
                     },
                   });
