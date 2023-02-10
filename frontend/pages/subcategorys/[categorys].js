@@ -37,11 +37,23 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
     }, [singlecategory]);
 
     const getProducts = async ()=>{
-        let config = { category: [singlecategory.id], brand: [], attribute: [], price: [] }
+        let filter = {  category: singlecategory.id,
+        brand: "",
+        most_reviewed: false,
+        product_type: "",
+        rating: {
+          min: 0,
+          max: 5
+        },
+        price: {
+          min: 1,
+          max: 100000
+        },
+        search: ""}
         try { 
             const { data: fillterPrroducts } = await client.query({
                 query: GET_FILTEREDPRODUCTS,
-                variables: {  config },
+                variables: {  filter },
             })
             let fillterProduct = fillterPrroducts.filteredProducts
             if(fillterProduct.length>0){
