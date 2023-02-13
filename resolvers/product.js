@@ -281,24 +281,24 @@ module.exports = {
         // category filter
         if(category) pipeline[0].$match.$and.push({categoryId: {$in: [`${category}`]}})
         // brand filter
-        if(brand) pipeline[0].$match.$and.push({brand: brand})
+        if(brand) pipeline[0].$match.$and.push({brand: mongoose.Types.ObjectId(brand)})
         // product type filter
         if(product_type === "virtual") pipeline[0].$match.$and.push({'product_type.virtual': true})
         else if(product_type === "downloadable") pipeline[0].$match.$and.push({'product_type.downloadable': true})
         // price filter
         if(price){
           if(price.min && price.max){
-            pipeline[0].$match.$and.push({'pricing.price': {$gt: price.min, $lt: price.max}})
+            pipeline[0].$match.$and.push({'pricing.price': {$gte: price.min, $lte: price.max}})
           }
         }
         // most reviewed products filter
         // if(most_reviewed) pipeline[0].$match.$and.push({})
         // rating filter
-        // if(rating){
-        //   if(rating.min && rating.max){
-        //     pipeline[0].$match.$and.push({rating: {$gt: rating.min, $lt: rating.max}})
-        //   }
-        // }
+        if(rating){
+          if(rating.min && rating.max){
+            pipeline[0].$match.$and.push({rating: {$gte: rating.min, $lte: rating.max}})
+          }
+        }
         // retrieve filtered products
         let products = await Product.aggregate(pipeline)
         return products || [];
