@@ -68,7 +68,8 @@ module.exports = {
         }
         const shipping = await Shipping.findOne({});
         const result = shipping.shipping_class.map(shipping=>{
-          if(shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase()){
+          if(shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase() || 
+          shipping.amount === parseInt(args.shipping_class.amount)){
             return false
           } else return true
         })
@@ -87,7 +88,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "ShippingClass", false);
       }
       try {
-        const errors = _validate(["name", "amount"], args.shipping_class);
+        const errors = _validate(["name"], args.shipping_class);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -97,7 +98,8 @@ module.exports = {
 
         const shipping = await Shipping.findOne({});
         const result = shipping.shipping_class.map(shipping=>{
-          if(shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase() && 
+          if((shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase() || 
+            shipping.amount === parseInt(args.shipping_class.amount)) && 
             shipping._id.toString() !== args.shipping_class._id.toString()){
             return false
           } else return true
