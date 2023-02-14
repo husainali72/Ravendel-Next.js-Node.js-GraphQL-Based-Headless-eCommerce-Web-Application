@@ -262,19 +262,22 @@ const SeetingSchema = new Schema(
       home: {
         slider: [
           {
+            // image: {
+            //   original: {
+            //     type: String,
+            //   },
+            //   large: {
+            //     type: String,
+            //   },
+            //   medium: {
+            //     type: String,
+            //   },
+            //   thumbnail: {
+            //     type: String,
+            //   },
+            // },
             image: {
-              original: {
-                type: String,
-              },
-              large: {
-                type: String,
-              },
-              medium: {
-                type: String,
-              },
-              thumbnail: {
-                type: String,
-              },
+              type: String
             },
             link: {
               type: String,
@@ -319,19 +322,22 @@ const SeetingSchema = new Schema(
         primary_color: {
           type: String,
         },
+        // logo: {
+        //   original: {
+        //     type: String,
+        //   },
+        //   large: {
+        //     type: String,
+        //   },
+        //   medium: {
+        //     type: String,
+        //   },
+        //   thumbnail: {
+        //     type: String,
+        //   },
+        // },
         logo: {
-          original: {
-            type: String,
-          },
-          large: {
-            type: String,
-          },
-          medium: {
-            type: String,
-          },
-          thumbnail: {
-            type: String,
-          },
+          type: String
         },
       },
     },
@@ -464,26 +470,12 @@ module.exports.createSettings = async () => {
       home: {
         slider: [
           {
-            image: {
-              original: "",
-              large: "",
-              medium:
-                "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              thumbnail:
-                "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-            },
+            image: "",
             link: "https://www.google.com/",
             open_in_tab: true,
           },
           {
-            image: {
-              original: "",
-              large: "",
-              medium:
-                "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              thumbnail:
-                "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-            },
+            image: "",
             link: "https://www.google.com/",
             open_in_tab: true,
           },
@@ -530,69 +522,37 @@ module.exports.createSettings = async () => {
       },
       theme: {
         primary_color: "#154050",
-        logo: {
-          original: "",
-          large: "",
-          medium:
-            "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-          thumbnail:
-            "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-        },
+        logo: "",
       },
       mobile: {
         mobile_section: [
           {
             label: "Featured Product",
-            section_img: {
-              original: "",
-              medium: "",
-              large: "",
-              thumbnail: "",
-            },
+            section_img: "",
             visible: false,
             url: "feature_product",
           },
           {
             label: "Recently Added Products",
-            section_img: {
-              original: "",
-              medium: "",
-              large: "",
-              thumbnail: "",
-            },
+            section_img: "",
             visible: false,
             url: "recently_added_products",
           },
           {
             label: "Products On Sales",
-            section_img: {
-              original: "",
-              medium: "",
-              large: "",
-              thumbnail: "",
-            },
+            section_img: "",
             visible: false,
             url: "products_on_sales",
           },
           {
             label: "Product Recommendation",
-            section_img: {
-              original: "",
-              medium: "",
-              large: "",
-              thumbnail: "",
-            },
+            section_img: "",
             visible: false,
             url: "product_recommendation",
           },
           {
             label: "Product from Specific Categories",
-            section_img: {
-              original: "",
-              medium: "",
-              large: "",
-              thumbnail: "",
-            },
+            section_img: "",
             visible: false,
             url: "product_from_specific_categories",
             category: null
