@@ -7,7 +7,7 @@ module.exports = gql`
     status: String
     blog_tag: customArray
     url: String
-    feature_image: customObject
+    feature_image: String
     meta: customObject
     date: Date
     updated: Date

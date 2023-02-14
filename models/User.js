@@ -22,7 +22,8 @@ const UserSchema = new Schema({
     required: true,
     default: "USER"
   },
-  image: {},
+  // image: {},
+  image: String,
   meta: [
     {
       key: {

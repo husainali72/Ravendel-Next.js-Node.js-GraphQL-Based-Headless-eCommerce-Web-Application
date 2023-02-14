@@ -10,7 +10,8 @@ const BrandSchema = new Schema({
   url: {
     type: String
   },
-  brand_logo: {},
+  // brand_logo: {},
+  brand_logo: String,
   meta: {
     title: {
       type: String

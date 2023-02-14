@@ -51,23 +51,23 @@ module.exports = {
             }
           );
         }
-        return MESSAGE_RESPONSE("UpdateSuccess", "Tax", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "GlobalTax", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "Tax", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "GlobalTax", false);
       }
     },
     updateOptionTax: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "OptionTax", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "TaxOption", false);
       }
       try {
         const tax = await Tax.findOne({});
         tax.is_inclusive = args.is_inclusive;
         tax.updated = Date.now();
         await tax.save();
-        return MESSAGE_RESPONSE("UpdateSuccess", "OptionTax", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "TaxOption", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "OptionTax", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "TaxOption", false);
       }
     },
     addTaxClass: async (root, args, { id }) => {
