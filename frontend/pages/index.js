@@ -30,7 +30,7 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
   useEffect(() => {
     dispatch(stripePaymentKeyAction(stripe_Public_key))
     dispatch(settingActionCreator(currencyStore.currency_options))
-  }, [])
+  }, [currencyStore.currency_options])
   useEffect(()=>{
     dispatch(loadReviewAction(allReviews?.reviews?.data)) ;
   },[allReviews])
@@ -84,12 +84,22 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
             : null)
         }
         break;
+        
+      case 'recently_added_products':
+        if(section.visible){
+          return (recentproducts?.length > 0 ?
+            <>
+              <OnSaleProductCard onSaleProduct={recentproducts} titleShow={"Recent"} />
+            </>
+            : null)
+        }
+        break;
     
       case 'feature_product':
         if(section.visible){
           return(  featureproducts?.length > 0 ?
             <>
-              <PruductCart productDetail={featureproducts} featureproducts={featureproducts} />
+              <PruductCart productDetail={recentproducts} featureproducts={featureproducts} />
             </>
             : null)
         }
@@ -170,7 +180,7 @@ export async function getStaticProps() {
   }
 
   /* ===============================================Get Settings ===============================================*/
-  if (homepageData?.getSettings?.appearance.home.add_section_in_home.feature_product) {
+  // if (homepageData?.getSettings?.appearance.home.add_section_in_home.feature_product) {
     try {
       const { data: featureproductsData } = await client.query({
         query: FEATURE_PRODUCT_QUERY
@@ -180,10 +190,9 @@ export async function getStaticProps() {
     } catch (e) {
       console.log('homepage Setting Error===============', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
     }
-  }
-
+  // }
   /* ===============================================Get Recent Prdouct ===============================================*/
-  if (homepageData?.getSettings?.appearance.home.add_section_in_home.recently_added_products) {
+  // if (homepageData?.getSettings?.appearance.home.add_section_in_home?.recently_added_products) {
     try {
       const { data: recentprductData } = await client.query({
         query: GET_RECENT_PRODUCTS_QUERY
@@ -193,7 +202,7 @@ export async function getStaticProps() {
     catch (e) {
       console.log('Recent Product Error===============', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
     }
-  }
+  // }
 
   /* ===============================================Get Category Prdouct ===============================================*/
 
@@ -233,7 +242,7 @@ catch (e) {
   /* ===============================================Get OnSale Product  ===============================================*/
 
 
-  if (!homepageData?.getSettings?.appearance.home.add_section_in_home.products_on_sales) {           //dont know why in this if condition the product on sale is false so I have to change the if conditon to work if it is false which is not good I think
+  // if (!homepageData?.getSettings?.appearance.home.add_section_in_home.products_on_sales) {           //dont know why in this if condition the product on sale is false so I have to change the if conditon to work if it is false which is not good I think
     try {
       const { data: onSaleProductsData } = await client.query({
         query: ON_SALE_PRODUCTS_QUERY
@@ -244,7 +253,7 @@ catch (e) {
     catch (e) {
       console.log("=======", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
     }
-  }
+  // }
 
   let seoInfo = {};
   let homePageInfo = {}

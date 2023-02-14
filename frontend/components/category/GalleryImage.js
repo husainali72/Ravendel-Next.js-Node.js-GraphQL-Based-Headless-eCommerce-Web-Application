@@ -1,11 +1,11 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Slider from "react-slick";
 import { GlassMagnifier } from "react-image-magnifiers";
-import { getImage } from "../../utills/helpers";
+import { currencySetter, getImage } from "../../utills/helpers";
 import Carousel from 'react-bootstrap/Carousel'
 import StarRating from "../../components/breadcrumb/rating";
 import { addToCart } from "../../redux/actions/cartAction";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 var placeholder = "https://dummyimage.com/300";
@@ -14,7 +14,9 @@ const GalleryImagesComponents = (props) => {
     const dispatch = useDispatch();
     const session = useSession()
     const router = useRouter();
-    const { singleproducts } = props;
+    const { singleproducts , currency } = props;
+
+ 
     
     const settings = {
         customPaging: function (i) {
@@ -99,7 +101,7 @@ const GalleryImagesComponents = (props) => {
                                 <span className=" mx-2">
                                     {singleproducts.pricing.sellprice ? (
                                         <strong className="sale-price" style={{ fontSize: "25px" }}>
-                                            ${singleproducts.pricing.sellprice.toFixed(2)}
+                                             {currency}{" "}{singleproducts.pricing.sellprice.toFixed(2)}
                                         </strong>
                                     ) : (
                                         ""
@@ -109,7 +111,7 @@ const GalleryImagesComponents = (props) => {
                                         singleproducts.pricing.sellprice ? "has-sale-price mx-2" : ""
                                     } style={{ fontSize: "17px" }}
                                 >
-                                    ${singleproducts.pricing.price.toFixed(2)}
+                                    {currency}{singleproducts.pricing.price.toFixed(2)}
                                 </span>
                                 <span className=" mx-2">
                                     {Math.round(

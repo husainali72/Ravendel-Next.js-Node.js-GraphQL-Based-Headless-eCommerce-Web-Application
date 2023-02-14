@@ -91,7 +91,7 @@ function cartReducer(state = [], action) {
                     mutation(ADD_TO_CART_QUERY, variables, token).then(res => console.log("Product Add successfully", res))
                     productInCart.push(productToAdd);
                 }
-                localStorage.setItem("cart", JSON.stringify(productInCart));
+                // localStorage.setItem("cart", JSON.stringify(productInCart));
 
                 return productInCart
             }
