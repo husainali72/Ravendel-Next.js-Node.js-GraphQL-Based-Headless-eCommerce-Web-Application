@@ -63,9 +63,8 @@ const CartTable = (props) => {
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        {/* item.pricing?.sellprice not showing correct price so manually ading price multiply by quantity */}
-                                        {/* <span>{currency} {((item.pricing?.sellprice ? item.pricing?.sellprice : item.pricing?.price * item.quantity) || 0).toFixed(2)}</span> */}
-                                        <span>{currency} {((item.pricing?.sellprice ? item.pricing?.price * item.quantity : item.pricing?.sellprice ) || 0).toFixed(2)}</span>
+                                        <span>{currency} {((item.pricing?.sellprice ? item.pricing?.sellprice  * item.quantity : item.pricing?.price * item.quantity) || 0).toFixed(2)}</span>
+                                        {/* <span>{currency} {((item.pricing?.sellprice ? item.pricing?.price * item.quantity : item.pricing?.sellprice ) || 0).toFixed(2)}</span> */}
                                     </div>
                                 </td>
                                 <td>

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import client from "../../apollo-client"
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Container, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 import StarRating from "../breadcrumb/rating";
-import { getImage, mutation } from "../../utills/helpers";
+import { currencySetter, getImage, mutation } from "../../utills/helpers";
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
 import { useSession } from "next-auth/react";
@@ -14,14 +14,22 @@ import { query } from "../../utills/helpers";
 var placeholder = "https://dummyimage.com/300";
 
 
-const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
-    const settings = useSelector(state => state.setting)
-    const currencyType = settings.currencyOption
-    let currency = "$"
-    if (currencyType?.currency === "dollar") { currency = "$" }
-    if (currencyType?.currency === "eur") { currency = <i className="fas fa-euro-sign"></i> }
-    if (currencyType?.currency === "gbp") { currency = <i className="fas fa-pound-sign"></i> }
-    if (currencyType?.currency === "cad") { currency = "CA$" }
+const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp }) => {
+
+    const [currency, setCurrency] = useState("$")
+
+    const settings =   useSelector(state => state.setting);
+    // console.log('currendy in setting',settings?.currencyOption)
+
+    useEffect(() => {
+        currencySetter(settings,setCurrency);
+        if(currencyProp){
+            setCurrency(currencyProp)
+        }
+
+}, [settings?.currencyOption,currencyProp])
+   
+    // console.log('currence',currency)
 
     const router = useRouter()
     const session = useSession();
@@ -39,8 +47,6 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
         let quantity = 1
         let href = '/shopcart'
         if (session.status === "authenticated") {
-
-
             let productInCart = false;
             query(GET_USER_CART, id, token).then(res => {
                 let cart_id = res?.data?.cartbyUser?.id
@@ -99,8 +105,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
                 }
             })
             
-        //    dispatch(addToCart(product, quantity, token, id))  
-        //    router.push("/shopcart")
+ 
         }
         else {
             dispatch(addToCart(product))
@@ -110,9 +115,9 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
 
     return (
         <section className="product-cart-section" >
-            <Container >
+            <Container style={{padding:'0'}}>
                 {!hidetitle ? <div>
-                    <h4 style={{ color: "#088178" }}>On Sale <span style={{ color: "black" }}>Product</span></h4>
+                    <h4 style={{ color: "#088178" }}>{titleShow ? titleShow : "On Sale"} <span style={{ color: "black" }}>Product</span></h4>
                 </div>
                     : null}
                 <div>
@@ -132,8 +137,6 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
                                                     onError={(e) => e.type === 'error' ? e.target.src = placeholder : null}
                                                 />
                                             </Link>
-
-
                                         </div>
                                         <div className="on-sale-product-card-body">
                                             <div className="save-price">
@@ -180,7 +183,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle }) => {
                                                             product.pricing.sellprice ? "has-sale-price" : ""
                                                         }
                                                     >
-                                                        ${product.pricing.price.toFixed(2)}
+                                                        {currency} {product.pricing.price.toFixed(2)}
                                                     </span>
                                                 </div>
                                                 <OverlayTrigger style={{ backgroundColor: "#088178" }}

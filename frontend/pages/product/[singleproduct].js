@@ -15,9 +15,11 @@ import { useSession } from "next-auth/react";
 import Loading from "../../components/breadcrumb/loading";
 import { useSelector } from "react-redux";
 import Reviews from "../../components/Reviews/Reviews";
+import { currencySetter } from "../../utills/helpers";
 
 
-const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }) => {
+const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,currencyStore }) => {
+    const currencyOpt = currencyStore?.currency_options?.currency
     const router = useRouter();
     const session = useSession()
     if (router.isFallback) {
@@ -27,6 +29,16 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
     const [sliderImages, setSliderImages] = useState([]);
     const [singleProductReview,setSingleProductReview] = useState([])
     const productss = useSelector(state => state.products ) 
+
+    const settingss =  useSelector(state => state.setting);
+
+    const [currency, setCurrency] = useState("$")
+
+
+    useEffect(() => {
+        currencySetter(currencyOpt,setCurrency);
+}, [])
+
     useEffect(() => {
         const alll = productReview.reviews.data.filter(reviews => reviews.product_id._id === singleproducts._id);
         setSingleProductReview(alll) 
@@ -46,6 +58,8 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
         }
         setSliderImages(allimages);
     }, [singleproducts]);
+
+
 
     return (
         <div>
@@ -67,7 +81,7 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
                         <div className="col-lg-12">
                             <div className="product-detail accordion-detail">
                                 <div>
-                                    <GalleryImagesComponents galleryImages={sliderImages} singleproducts={singleproducts} />
+                                    <GalleryImagesComponents galleryImages={sliderImages} singleproducts={singleproducts} currency = {currency} />
                                 </div>
                             </div>
                             <div>
@@ -107,6 +121,7 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss }
                                 <OnSaleProductCard
                                     onSaleProduct={allProduct}
                                     hidetitle
+                                    currencyProp={currency}
                                 />
                             </div>
                         </div>
@@ -152,6 +167,7 @@ export async function getStaticProps({ params }) {
     let allProduct = [];
     let productReview = [];
     let allReviewss = {};
+    var currencyStore =[]
    
        /* ========================================= get all review ========================================*/
 
@@ -172,6 +188,7 @@ export async function getStaticProps({ params }) {
             query: GET_HOMEPAGE_DATA_QUERY
         })
         homepageData = homepagedata
+        currencyStore = homepagedata?.getSettings?.store
     }
     catch (e) {
         console.log("homepage Error===", e);
@@ -217,7 +234,8 @@ export async function getStaticProps({ params }) {
             allProduct,
             productReview,
             allReviewss,
-            homepageData
+            homepageData,
+            currencyStore
         },
         revalidate: 10,
     }

@@ -138,3 +138,12 @@ export const stripeCheckout=(billDetails, cartItems, baseUrl)=>{
     }).catch(err=>console.log(err.message))
 }
 
+/* ------------------------------- set currency  ------------------------------- */
+
+export const currencySetter=(settings,setCurrency) =>{
+    const currency = settings?.currencyOption?.currency || settings 
+    if (currency === "dollar") {  setCurrency("$") }
+        if (currency === "eur") { setCurrency(<i className="fas fa-euro-sign"></i>)  }
+        if (currency === "gbp") { setCurrency(<i className="fas fa-pound-sign"></i>) }
+        if (currency === "cad") { setCurrency("CA$") }
+}
