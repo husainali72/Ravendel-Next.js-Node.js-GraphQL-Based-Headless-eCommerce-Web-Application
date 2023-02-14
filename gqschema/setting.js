@@ -157,7 +157,7 @@ module.exports = gql`
   }
 
   type SLIDER {
-    image: customObject
+    image: String
     link: String
     open_in_tab: Boolean
   }
@@ -192,7 +192,7 @@ module.exports = gql`
 
   type MOBILE_SECTION {
     label: String
-    section_img: customObject
+    section_img: String
     visible: Boolean
     category: String
     url: String
@@ -219,7 +219,7 @@ module.exports = gql`
 
   input slider_input {
     update_image: Upload
-    image: customObject
+    image: String
     link: String
     open_in_tab: Boolean
   }
@@ -238,7 +238,7 @@ module.exports = gql`
   input mobile_section_input {
     update_image: Upload
     label: String
-    section_img: customObject
+    section_img: String
     visible: Boolean
     url: String
     category: String

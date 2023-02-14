@@ -13,27 +13,28 @@ const {
 //const sanitizeHtml = require("sanitize-html");
 const {checkAwsFolder} = require("../config/aws");
 const fs = require("fs");
+
 var sdir = './assets/images/setting';
-var ldir = './assets/images/setting/large';
-var mdir = './assets/images/setting/medium';
-var tdir = './assets/images/setting/thumbnail';
-var odir = './assets/images/setting/original';
+// var ldir = './assets/images/setting/large';
+// var mdir = './assets/images/setting/medium';
+// var tdir = './assets/images/setting/thumbnail';
+// var odir = './assets/images/setting/original';
 
 if (!fs.existsSync(sdir)){
   fs.mkdirSync(sdir);
 }
-if (!fs.existsSync(ldir)){
-  fs.mkdirSync(ldir);
-}
-if (!fs.existsSync(mdir)){
-  fs.mkdirSync(mdir);
-}
-if (!fs.existsSync(odir)){
-  fs.mkdirSync(odir);
-}
-if (!fs.existsSync(tdir)){
-  fs.mkdirSync(tdir);
-}
+// if (!fs.existsSync(ldir)){
+//   fs.mkdirSync(ldir);
+// }
+// if (!fs.existsSync(mdir)){
+//   fs.mkdirSync(mdir);
+// }
+// if (!fs.existsSync(odir)){
+//   fs.mkdirSync(odir);
+// }
+// if (!fs.existsSync(tdir)){
+//   fs.mkdirSync(tdir);
+// }
 
 module.exports = {
   Query: {

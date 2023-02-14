@@ -29,11 +29,12 @@ var mongoose = require("mongoose");
 
 /* =============================WILL FIX LATER============================= */
 const fs = require("fs");
+
 var pdir = "./assets/images/product";
 var pcdir = "./assets/images/product/category";
-var fdir = "./assets/images/product/feature";
+var pfdir = "./assets/images/product/feature";
 var gdir = "./assets/images/product/gallery";
-var vdir = "./assets/images/product/variant";
+var pvdir = "./assets/images/product/variant";
 
 if (!fs.existsSync(pdir)) {
   fs.mkdirSync(pdir);
@@ -41,84 +42,86 @@ if (!fs.existsSync(pdir)) {
 if (!fs.existsSync(pcdir)) {
   fs.mkdirSync(pcdir);
 }
-
-if (!fs.existsSync(fdir)) {
-  fs.mkdirSync(fdir);
+if (!fs.existsSync(gdir)) {
+  fs.mkdirSync(gdir);
 }
-if (!fs.existsSync(vdir)) {
-  fs.mkdirSync(vdir);
+if (!fs.existsSync(pfdir)) {
+  fs.mkdirSync(pfdir);
 }
-
-var cldir = "./assets/images/product/category/large";
-var cmdir = "./assets/images/product/category/medium";
-var ctdir = "./assets/images/product/category/thumbnail";
-var codir = "./assets/images/product/category/original";
-if (!fs.existsSync(cldir)) {
-  fs.mkdirSync(cldir);
-}
-if (!fs.existsSync(cmdir)) {
-  fs.mkdirSync(cmdir);
-}
-if (!fs.existsSync(codir)) {
-  fs.mkdirSync(codir);
-}
-if (!fs.existsSync(ctdir)) {
-  fs.mkdirSync(ctdir);
+if (!fs.existsSync(pvdir)) {
+  fs.mkdirSync(pvdir);
 }
 
-var fldir = "./assets/images/product/feature/large";
-var fmdir = "./assets/images/product/feature/medium";
-var ftdir = "./assets/images/product/feature/thumbnail";
-var fodir = "./assets/images/product/feature/original";
+// var cldir = "./assets/images/product/category/large";
+// var cmdir = "./assets/images/product/category/medium";
+// var ctdir = "./assets/images/product/category/thumbnail";
+// var codir = "./assets/images/product/category/original";
+// if (!fs.existsSync(cldir)) {
+//   fs.mkdirSync(cldir);
+// }
+// if (!fs.existsSync(cmdir)) {
+//   fs.mkdirSync(cmdir);
+// }
+// if (!fs.existsSync(codir)) {
+//   fs.mkdirSync(codir);
+// }
+// if (!fs.existsSync(ctdir)) {
+//   fs.mkdirSync(ctdir);
+// }
 
-if (!fs.existsSync(fldir)) {
-  fs.mkdirSync(fldir);
-}
-if (!fs.existsSync(fmdir)) {
-  fs.mkdirSync(fmdir);
-}
-if (!fs.existsSync(ftdir)) {
-  fs.mkdirSync(ftdir);
-}
-if (!fs.existsSync(fodir)) {
-  fs.mkdirSync(fodir);
-}
+// var fldir = "./assets/images/product/feature/large";
+// var fmdir = "./assets/images/product/feature/medium";
+// var ftdir = "./assets/images/product/feature/thumbnail";
+// var fodir = "./assets/images/product/feature/original";
 
-var gldir = "./assets/images/product/gallery/large";
-var gmdir = "./assets/images/product/gallery/medium";
-var gtdir = "./assets/images/product/gallery/thumbnail";
-var godir = "./assets/images/product/gallery/original";
+// if (!fs.existsSync(fldir)) {
+//   fs.mkdirSync(fldir);
+// }
+// if (!fs.existsSync(fmdir)) {
+//   fs.mkdirSync(fmdir);
+// }
+// if (!fs.existsSync(ftdir)) {
+//   fs.mkdirSync(ftdir);
+// }
+// if (!fs.existsSync(fodir)) {
+//   fs.mkdirSync(fodir);
+// }
 
-if (!fs.existsSync(gldir)) {
-  fs.mkdirSync(gldir);
-}
-if (!fs.existsSync(gmdir)) {
-  fs.mkdirSync(gmdir);
-}
-if (!fs.existsSync(godir)) {
-  fs.mkdirSync(godir);
-}
-if (!fs.existsSync(gtdir)) {
-  fs.mkdirSync(gtdir);
-}
+// var gldir = "./assets/images/product/gallery/large";
+// var gmdir = "./assets/images/product/gallery/medium";
+// var gtdir = "./assets/images/product/gallery/thumbnail";
+// var godir = "./assets/images/product/gallery/original";
 
-var vldir = "./assets/images/product/variant/large";
-var vmdir = "./assets/images/product/variant/medium";
-var vtdir = "./assets/images/product/variant/thumbnail";
-var vodir = "./assets/images/product/variant/original";
+// if (!fs.existsSync(gldir)) {
+//   fs.mkdirSync(gldir);
+// }
+// if (!fs.existsSync(gmdir)) {
+//   fs.mkdirSync(gmdir);
+// }
+// if (!fs.existsSync(godir)) {
+//   fs.mkdirSync(godir);
+// }
+// if (!fs.existsSync(gtdir)) {
+//   fs.mkdirSync(gtdir);
+// }
 
-if (!fs.existsSync(vldir)) {
-  fs.mkdirSync(vldir);
-}
-if (!fs.existsSync(gmdir)) {
-  fs.mkdirSync(gmdir);
-}
-if (!fs.existsSync(vtdir)) {
-  fs.mkdirSync(vtdir);
-}
-if (!fs.existsSync(vodir)) {
-  fs.mkdirSync(vodir);
-}
+// var vldir = "./assets/images/product/variant/large";
+// var vmdir = "./assets/images/product/variant/medium";
+// var vtdir = "./assets/images/product/variant/thumbnail";
+// var vodir = "./assets/images/product/variant/original";
+
+// if (!fs.existsSync(vldir)) {
+//   fs.mkdirSync(vldir);
+// }
+// if (!fs.existsSync(gmdir)) {
+//   fs.mkdirSync(gmdir);
+// }
+// if (!fs.existsSync(vtdir)) {
+//   fs.mkdirSync(vtdir);
+// }
+// if (!fs.existsSync(vodir)) {
+//   fs.mkdirSync(vodir);
+// }
 /* =============================WILL FIX LATER============================= */
 
 /* For Test geting child*/
@@ -682,7 +685,7 @@ module.exports = {
               if (combination.image && combination.image.file) {
                 imgObject = await imageUpload(
                   combination.image.file[0].file,
-                  "/assets/images/product/variant/","productvarient"
+                  "/assets/images/product/variant/","productvariant"
                 );
                 combination.image = imgObject.data || imgObject;
               }
@@ -844,7 +847,7 @@ module.exports = {
               ) {
                 imgObject = await imageUpload(
                   combination.image.file[0].file,
-                  "/assets/images/product/variant/","productvarient"
+                  "/assets/images/product/variant/","productvariant"
                 );
                 combination.image = imgObject.data || imgObject;
               }

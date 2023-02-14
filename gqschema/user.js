@@ -6,7 +6,7 @@ module.exports = gql`
     name: String
     role: String
     password: String
-    image: customObject
+    image: String
     meta: userMeta
     date: Date
     updated: Date

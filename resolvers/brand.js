@@ -19,27 +19,28 @@ const {
 
 const {checkAwsFolder} = require("../config/aws");
 const fs = require("fs");
+
 var sdir = './assets/images/brand';
-var ldir = './assets/images/brand/large';
-var mdir = './assets/images/brand/medium';
-var tdir = './assets/images/brand/thumbnail';
-var odir = './assets/images/brand/original';
+// var ldir = './assets/images/brand/large';
+// var mdir = './assets/images/brand/medium';
+// var tdir = './assets/images/brand/thumbnail';
+// var odir = './assets/images/brand/original';
 
 if (!fs.existsSync(sdir)){
   fs.mkdirSync(sdir);
 }
-if (!fs.existsSync(ldir)){
-  fs.mkdirSync(ldir);
-}
-if (!fs.existsSync(mdir)){
-  fs.mkdirSync(mdir);
-}
-if (!fs.existsSync(odir)){
-  fs.mkdirSync(odir);
-}
-if (!fs.existsSync(tdir)){
-  fs.mkdirSync(tdir);
-}
+// if (!fs.existsSync(ldir)){
+//   fs.mkdirSync(ldir);
+// }
+// if (!fs.existsSync(mdir)){
+//   fs.mkdirSync(mdir);
+// }
+// if (!fs.existsSync(odir)){
+//   fs.mkdirSync(odir);
+// }
+// if (!fs.existsSync(tdir)){
+//   fs.mkdirSync(tdir);
+// }
 
 module.exports = {
   Query: {
@@ -142,7 +143,7 @@ module.exports = {
           brand.meta = args.meta;
           brand.updated = Date.now();
 
-          console.log('BRAND',brand);
+          // console.log('BRAND',brand);
           const duplicate = await duplicateData({name: args.name}, Brand, args.id)
           if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Brand", false)
           await brand.save();

@@ -18,7 +18,8 @@ const BlogSchema = new Schema({
   url: {
     type: String
   },
-  feature_image: {},
+  // feature_image: {},
+  feature_image: String,
   author: {
     type: Schema.ObjectId,
     default: null
