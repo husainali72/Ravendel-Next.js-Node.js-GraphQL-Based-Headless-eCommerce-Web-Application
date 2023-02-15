@@ -220,9 +220,9 @@ const EditReviewComponent = ({ params }) => {
             )}
 
             <Box component="div" mb={2}>
+            <Typography variant="h3">Email</Typography>
               <TextInput
                 value={review.email}
-                label="Email"
                 name="email"
                 onInputChange={handleChange}
                 onInput={toInputLowercase}

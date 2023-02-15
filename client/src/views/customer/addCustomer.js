@@ -4,6 +4,7 @@ import { useTheme } from "@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { customerAddAction } from "../../store/action/";
 import MuiPhoneNumber from "material-ui-phone-number";
+import "../../App.css"
 import viewStyles from "../viewStyles.js";
 import {
   Loading,
@@ -151,9 +152,9 @@ const AddCustomerComponent = () => {
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
-                  <PhoneNumber handleOnChange={handleOnChange} />
+                  <PhoneNumber handleOnChange={handleOnChange}  width= "100%"/>
                 </Grid>
-              </Grid>
+              </Grid>                                                                                 
             </CardBlocks>
           </Grid>
         </Grid>

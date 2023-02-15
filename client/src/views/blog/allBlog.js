@@ -124,7 +124,7 @@ const AllBlogComponent = () => {
                           </TableSortLabel>
                         </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
+                      <TableCell variant="contained" color="primary" style={{paddingLeft: "20px"}}>
                         Actions
                       </TableCell>
                     </TableRow>

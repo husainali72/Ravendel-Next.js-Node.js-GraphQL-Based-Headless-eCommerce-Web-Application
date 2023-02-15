@@ -61,7 +61,7 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
                 </Tooltip>
               </TableCell>
 
-              <TableCell variant="contained" color="primary">Actions</TableCell>
+              <TableCell variant="contained" color="primary" style={{paddingLeft: "30px"}}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -72,7 +72,7 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
                 .map((tax) => (
                   <TableRow key={tax._id} hover>
                     <TableCell>{tax.name}</TableCell>
-                    <TableCell>{tax.percentage}</TableCell>
+                    <TableCell style={{paddingLeft: "50px"}}>{tax.percentage}</TableCell>
                     <TableCell>
                       <Tooltip title="Edit tax" aria-label="edit">
                         <IconButton

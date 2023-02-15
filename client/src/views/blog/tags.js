@@ -151,7 +151,7 @@ const AllTagsComponent = () => {
                     </TableCell>
 
 
-                    <TableCell>Actions</TableCell>
+                    <TableCell variant="contained" color="primary" style={{paddingLeft: "20px"}}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>

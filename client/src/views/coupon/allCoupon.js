@@ -131,7 +131,7 @@ const AllCouponsTheme = () => {
                           </TableSortLabel>
                         </Tooltip>
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
+                      <TableCell variant="contained" color="primary" style={{paddingLeft: "30px"}}>
                         Action
                       </TableCell>
                     </TableRow>
@@ -148,7 +148,7 @@ const AllCouponsTheme = () => {
                           <TableRow key={coupon.id} hover>
                             <TableCell>{coupon.code}</TableCell>
                             <TableCell>{coupon.discount_type}</TableCell>
-                            <TableCell>{coupon.discount_value}</TableCell>
+                            <TableCell style={{paddingLeft: "50px"}}>{coupon.discount_value}</TableCell>
                             <TableCell>
                               {convertDateToStringFormat(coupon.expire)}
                             </TableCell>

@@ -92,7 +92,7 @@ const GlobalThemeOverride = () => {
                       >
                         <ImageIcon />
                       </TableCell>
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
+                      <TableCell sortDirection="desc" variant="contained" color="primary" style={{paddingLeft: "20px"}}>
                         <Tooltip enterDelay={300} title="Sort">
                           <TableSortLabel active direction={order} onClick={() => {
                             setOrder(order === "asc" ? "desc" : "asc")
@@ -114,7 +114,7 @@ const GlobalThemeOverride = () => {
                       </TableCell>
 
 
-                      <TableCell variant="contained" color="primary" >
+                      <TableCell variant="contained" color="primary" style={{paddingLeft: "20px"}}>
                         Actions
                       </TableCell>
                     </TableRow>

@@ -119,7 +119,7 @@ const AllUsersComponent = () => {
                         </Tooltip>
                       </TableCell>
 
-                      <TableCell>Actions</TableCell>
+                      <TableCell variant="contained" color="primary" style={{paddingLeft: "20px"}}>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -140,7 +140,7 @@ const AllUsersComponent = () => {
                             />
                           </TableCell>
                           <TableCell>{user.name}</TableCell>
-                          <TableCell style={{ textTransform: "lowercase" }}>{user.email}</TableCell>
+                          <TableCell style={{ textTransform: "lowercase"}}>{user.email}</TableCell>
                           <TableCell style={{ textTransform: "capitalize" }}>{user.role}</TableCell>
                           <TableCell>
                             <IconButton

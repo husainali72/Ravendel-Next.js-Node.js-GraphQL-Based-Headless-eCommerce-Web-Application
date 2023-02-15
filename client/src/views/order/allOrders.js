@@ -114,7 +114,7 @@ const AllOrdersComponent = () => {
                       <TableCell variant="contained" color="primary">
                         Shipping Status
                       </TableCell>
-                      <TableCell variant="contained" color="primary">
+                      <TableCell variant="contained" color="primary" style={{paddingLeft: "20px"}}>
                         Actions
                       </TableCell>
                     </TableRow>
@@ -141,13 +141,13 @@ const AllOrdersComponent = () => {
                               order.shipping.lastname}
                           </TableCell>
 
-                          <TableCell>
+                          <TableCell style={{paddingLeft: "20px"}}>
 
-                            <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} className={classes.badge} sx={{ "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
+                            <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} className={classes.badge} sx={{ "& .MuiBadge-badge": { width: "80px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
 
                           </TableCell>
-                          <TableCell>
-                            <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} className={classes.badge} sx={{ "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
+                          <TableCell style={{paddingLeft: "26px"}}>
+                            <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} className={classes.badge} sx={{ "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, marginLeft: "100px"} }} />
                           </TableCell>
                           <TableCell>
                             <Tooltip title="Edit Order" aria-label="edit">
@@ -169,7 +169,7 @@ const AllOrdersComponent = () => {
                                 onClick={() =>
                                   dispatch(orderDeleteAction(order.id, navigate))
                                 }
-                                // disabled
+                                disabled
                               >
                                 <DeleteIcon />
                               </IconButton>
