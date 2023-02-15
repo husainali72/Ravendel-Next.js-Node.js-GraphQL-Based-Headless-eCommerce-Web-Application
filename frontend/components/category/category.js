@@ -37,7 +37,7 @@ const bool =  slider?.current?.offsetWidth < slider?.current?.scrollWidth;
                              {category.map((item, i) => (
                                  item.parentId === null && (<div className=" category-cards" key={i}>
                                      <div className="category-card-image">
-                                         <Link href={`/categorys/[categorys]?url=${item.url}`} as={`/categorys/${item.url}`}>
+                                         <Link href={`/category/[category]?url=${item.url}`} as={`/category/${item.url}`}>
                                          <img
                                             src={getImage(item?.image, 'original')}
                                             className="  cimg"
