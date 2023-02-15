@@ -103,7 +103,7 @@ module.exports = gql`
     quantity: String
     pricing: customObject
     feature_image: String
-    gallery_image: String
+    gallery_image: customArray
     meta: customObject
     shipping: customObject
     tax_class: String

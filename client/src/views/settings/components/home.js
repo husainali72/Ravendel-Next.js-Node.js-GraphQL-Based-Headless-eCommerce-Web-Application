@@ -75,8 +75,8 @@ const HomeSettingsTheme = () => {
     ) {
       let newImge =
         bucketBaseURL +
-        settingState.settings.appearance.home.slider[i].image.original;
-      newSliderArr.push({ image: { original: newImge } });
+        settingState.settings.appearance.home.slider[i].image;
+      newSliderArr.push({ image: newImge  });
     }
     setSlider(newSliderArr)
   },
@@ -90,7 +90,7 @@ const HomeSettingsTheme = () => {
       slider: [
         ...settingHome.slider,
         {
-          image: {},
+          image: "",
           link: "",
           open_in_tab: false,
         },
@@ -99,7 +99,7 @@ const HomeSettingsTheme = () => {
     setSlider([
       ...slider,
       {
-        image: {},
+        image: "",
         link: "",
         open_in_tab: false,
       },
@@ -132,10 +132,10 @@ const HomeSettingsTheme = () => {
 
 
   const fileChange = (e, i) => {
-    settingHome.slider[i].image.original = URL.createObjectURL(
+    settingHome.slider[i].image = URL.createObjectURL(
       e.target.files[0]
     );
-    slider[i].image.original = URL.createObjectURL(e.target.files[0]);
+    slider[i].image = URL.createObjectURL(e.target.files[0]);
     settingHome.slider[i].update_image = e.target.files;
     slider[i].update_image = e.target.files;
     setsettingHome({
@@ -260,9 +260,9 @@ const HomeSettingsTheme = () => {
                           </IconButton>
                         </Tooltip>
                         <Box className={classes.sliderImagePreviewWrapper}>
-                          {slide.image.original && (
+                          {slide.image && (
                             <img
-                              src={slider[index] && slider[index].image && slider[index].image.original}
+                              src={slider[index] && slider[index].image}
                               className={classes.sliderImagePreview}
                               alt="Featured"
                             />
@@ -282,7 +282,7 @@ const HomeSettingsTheme = () => {
                             htmlFor={`slide-${index}`}
                             className={classes.feautedImage}
                           >
-                            {slide.image.original
+                            {slide.image
                               ? "Change Slider"
                               : "Add Slide Image"}
                           </label>

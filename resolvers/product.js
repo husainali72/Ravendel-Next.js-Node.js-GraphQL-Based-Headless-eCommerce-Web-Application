@@ -698,7 +698,7 @@ module.exports = {
                 sku: args.sku,
                 quantity: args.quantity,
                 price: args.pricing.sellprice || args.pricing.price,
-                image: {},
+                image: "",
               },
             ];
           }
@@ -771,9 +771,9 @@ module.exports = {
               throw putError(imgObject.message);
             }
 
-            if (product.feature_image) {
-              imageUnlink(product.feature_image);
-            }
+            // if (product.feature_image) {
+            //   imageUnlink(product.feature_image);
+            // }
 
             product.feature_image = imgObject.data;
           }
@@ -800,13 +800,8 @@ module.exports = {
                 gallery_images[i]._id &&
                 ~args.removed_image.indexOf(String(gallery_images[i]._id))
               ) {
-                let imgObject = {
-                  large: gallery_images[i].large,
-                  medium: gallery_images[i].medium,
-                  original: gallery_images[i].original,
-                  thumbnail: gallery_images[i].thumbnail,
-                };
-                imageUnlink(imgObject);
+                let imgObject = gallery_images[i]
+                // imageUnlink(imgObject);
                 delete gallery_images[i];
               }
             }
@@ -860,7 +855,7 @@ module.exports = {
                 sku: args.sku,
                 quantity: args.quantity,
                 price: args.pricing.sellprice || args.pricing.price,
-                image: {},
+                image: "",
               },
             ];
           }

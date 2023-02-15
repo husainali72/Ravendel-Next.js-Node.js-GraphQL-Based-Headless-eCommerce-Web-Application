@@ -134,8 +134,7 @@ const GlobalThemeOverride = () => {
                             <TableCell>
                               <Avatar
                                 alt={product.name}
-                                src={product.feature_image && product.feature_image.thumbnail ? bucketBaseURL + product.feature_image.thumbnail : NoImagePlaceHolder
-                                }
+                                src={product.feature_image ? bucketBaseURL + product.feature_image : NoImagePlaceHolder}
                               />
                             </TableCell>
                             <TableCell>
