@@ -59,7 +59,7 @@ const AllShippingComponentComponent = ({
                     setOrder(order === "asc" ? "desc" : "asc")
                     setOrderBy("amount")
                   }}>
-                    Ammount
+                    Amount
                   </TableSortLabel>
                 </Tooltip>
               </TableCell>
@@ -67,7 +67,7 @@ const AllShippingComponentComponent = ({
               <TableCell variant="contained" color="primary">Actions</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody  style={{marginLeft: "100px"}}>
 
             {shippingState.shipping.shipping_class &&
               stableSort(shippingState.shipping.shipping_class, getComparator(order, orderBy))
@@ -76,10 +76,10 @@ const AllShippingComponentComponent = ({
                 .map((shipping) => (
                   <TableRow key={shipping._id} hover>
                     <TableCell>{shipping.name}</TableCell>
-                    <TableCell>{shipping.amount}</TableCell>
+                    <TableCell style={{paddingLeft: "30px"}}>{shipping.amount}</TableCell>
                     <TableCell>
                       <Tooltip title="Edit shipping" aria-label="edit">
-                        <IconButton
+                        <IconButton  style={{paddingLeft: "0px"}}
                           aria-label="Edit"
                           onClick={() => editShippingForm(shipping)}
                         >
@@ -88,7 +88,7 @@ const AllShippingComponentComponent = ({
                       </Tooltip>
                       {!shipping.system && (
                         <Tooltip title="Delete shipping" aria-label="delete">
-                          <IconButton
+                          <IconButton style={{paddingRight: "170px"}}
                             aria-label="Delete"
                             className={classes.deleteicon}
                             onClick={() => deleteShipping(shipping._id)}

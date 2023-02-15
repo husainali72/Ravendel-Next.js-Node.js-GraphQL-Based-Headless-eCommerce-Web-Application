@@ -349,3 +349,11 @@
     padding-right: 0;
   }
 }
+
+.phoneValidation svg {
+   width: 24px;
+}
+
+.phoneValidation input{
+  padding: 10px
+}

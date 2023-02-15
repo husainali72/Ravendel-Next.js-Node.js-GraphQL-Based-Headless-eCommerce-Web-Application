@@ -174,6 +174,7 @@ const AllReviewsComponent = () => {
                                 onClick={() =>
                                   dispatch(reviewDeleteAction(review.id))
                                 }
+                                disabled
                               >
                                 <DeleteIcon />
                               </IconButton>
