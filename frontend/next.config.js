@@ -12,7 +12,7 @@ module.exports = {
   assetPrefix: '',
   basepath: "/out",
   images: {
-    domains: ['ravendel.herokuapp.com', 'adinahealth.com'],
+    domains: ['demo1.ravendel.io'],
     loader: "imgix",
     path: "",
   },
@@ -55,7 +55,7 @@ module.exports = {
   assetPrefix: '',
   basepath: "/",
   images: {
-    domains: ['ravendel.herokuapp.com', 'adinahealth.com'],
+    domains: ['demo1.ravendel.io'],
     loader: "imgix",
     path: "",
   },

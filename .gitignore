@@ -35,3 +35,7 @@ yarn-error.log*
 /desktop.ini
 /client/package-lock.json
 /frontend/package-lock.json
+
+/frontend/.next
+
+assets
