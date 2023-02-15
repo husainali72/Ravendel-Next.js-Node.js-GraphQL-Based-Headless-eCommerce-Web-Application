@@ -75,7 +75,7 @@ const EditUserComponent = ({ params }) => {
 
   const updateUser = (e) => {
     e.preventDefault();
-    var errors = validate(["password", "role", 'email', "name"], user);
+    let errors = validate(["role", "password", 'email', "name"], user);
 
     if (!isEmpty(errors)) {
       dispatch({

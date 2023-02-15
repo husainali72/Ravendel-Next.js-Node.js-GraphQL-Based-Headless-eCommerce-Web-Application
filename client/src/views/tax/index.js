@@ -83,7 +83,7 @@ const TaxComponent = () => {
   };
 
   const addCustomTax = () => {
-    var errors = validate(["name", "percentage"], customTaxClass);
+    let errors = validate(["percentage", "name"], customTaxClass);
 
     if (!isEmpty(errors)) {
       dispatch({
@@ -107,7 +107,7 @@ const TaxComponent = () => {
   };
 
   const updateCustomTax = () => {
-    var errors = validate(["name", "percentage"], customTaxClass);
+    let errors = validate(["percentage", "name"], customTaxClass);
 
     if (!isEmpty(errors)) {
       dispatch({
@@ -198,6 +198,7 @@ const TaxComponent = () => {
                       <TaxFormComponent
                         formMode={editMode}
                         onInputChange={(name, value) => {
+
                           setcustomTaxClass({
                             ...customTaxClass,
                             [name]: value,

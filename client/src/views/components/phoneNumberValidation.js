@@ -1,11 +1,11 @@
 import MuiPhoneNumber from "material-ui-phone-number";
 
 
-const PhoneNumber = ({ handleOnChange, phoneValue }) => {
+const PhoneNumber = ({ handleOnChange, phoneValue, width }) => {
 
-    const handleChange = (value) => {
+    const handleChange = (value, name) => {
 
-        handleOnChange(value)
+        handleOnChange(value, name)
 
 
     };
@@ -13,12 +13,13 @@ const PhoneNumber = ({ handleOnChange, phoneValue }) => {
         <>
 
             <MuiPhoneNumber
+                sx={{ width: width, }}
                 value={phoneValue}
                 defaultCountry={"us"}
                 label="Phone"
                 name="phone"
                 variant="outlined"
-                onChange={handleChange}
+                onChange={(value) => handleChange(value, "phone")}
                 isValid={(value, country) => {
 
                     if (value.length === 0) {

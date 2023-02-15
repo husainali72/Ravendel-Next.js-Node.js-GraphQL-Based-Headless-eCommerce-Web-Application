@@ -46,6 +46,7 @@ import { validate, validatenested } from "../components/validate";
 import Stack from '@mui/material/Stack';
 import CloseIcon from '@mui/icons-material/Close';
 
+
 const AddProductTheme = () => {
   const navigate = useNavigate();
   const classes = viewStyles();
@@ -95,20 +96,8 @@ const AddProductTheme = () => {
   const addProduct = (e) => {
 
     e.preventDefault();
-
-    var Errors = validatenested("pricing", ["price", "sellprice"], product);
-    if (!isEmpty(Errors)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: Errors,
-          error: true,
-        },
-      });
-    }
-    var errors = validate(["quantity", "sku", "short_description", 'categoryId', "description", "name"], product);
-
+    let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
+    let Errors = validatenested("pricing", ["price", "sellprice"], product);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -119,8 +108,17 @@ const AddProductTheme = () => {
         },
       });
     }
-
-    if (isEmpty(errors) && isEmpty(Errors)) {
+    else if (!isEmpty(Errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: Errors,
+          error: true,
+        },
+      });
+    }
+    else {
       product.combinations = combination;
       dispatch(productAddAction(product, navigate));
     }
@@ -258,6 +256,7 @@ const AddProductTheme = () => {
                     variant="outlined"
                     fullWidth
                     type="number"
+
                     onChange={(e) =>
                       setProduct({
                         ...product,
@@ -276,6 +275,7 @@ const AddProductTheme = () => {
                     variant="outlined"
                     fullWidth
                     type="number"
+
                     onChange={(e) =>
                       setProduct({
                         ...product,
@@ -399,6 +399,7 @@ const AddProductTheme = () => {
                     name="quantity"
                     onChange={handleChange}
                     type="number"
+
                     value={product.quantity}
                   />
                 </Grid>
@@ -451,11 +452,11 @@ const AddProductTheme = () => {
                         size="small"
                       />
                       <Tooltip title="Remove Field" aria-label="remove-field">
-                      <Stack direction="row" spacing={1}>
-                              <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
-                                <CloseIcon />
-                              </IconButton>
-                            </Stack>
+                        <Stack direction="row" spacing={1}>
+                          <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
+                            <CloseIcon />
+                          </IconButton>
+                        </Stack>
                       </Tooltip>
                     </Box>
                   ))}

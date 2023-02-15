@@ -56,6 +56,7 @@ import theme from "../../theme";
 import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
 import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
+
 const EditProductComponent = ({ params }) => {
   const Product_id = params.id || "";
   const classes = viewStyles();
@@ -165,19 +166,8 @@ const EditProductComponent = ({ params }) => {
   const updateProduct = (e) => {
 
     e.preventDefault();
-    var Errors = validatenested("pricing", ["price", "sellprice"], product);
-    if (!isEmpty(Errors)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: Errors,
-          error: true,
-        },
-      });
-    }
-    var errors = validate(["name", "sku", "short_description", "description", 'quantity', "categoryId"], product);
-
+    let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
+    let Errors = validatenested("pricing", ["price", "sellprice"], product);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -188,12 +178,24 @@ const EditProductComponent = ({ params }) => {
         },
       });
     }
-
-    if (isEmpty(errors) && isEmpty(Errors)) {
+    else if (!isEmpty(Errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: Errors,
+          error: true,
+        },
+      });
+    }
+    else {
       product.combinations = combination;
 
       dispatch(productUpdateAction(product, navigate));
     }
+
+
+
   };
 
   const handleChange = (e) => {
@@ -326,6 +328,7 @@ const EditProductComponent = ({ params }) => {
                       variant="outlined"
                       fullWidth
                       type="number"
+
                       value={product.pricing.price}
                       onChange={(e) =>
                         setProduct({
@@ -345,6 +348,7 @@ const EditProductComponent = ({ params }) => {
                       variant="outlined"
                       fullWidth
                       type="number"
+
                       value={product.pricing.sellprice}
                       onChange={(e) =>
                         setProduct({
@@ -465,6 +469,7 @@ const EditProductComponent = ({ params }) => {
                       name="quantity"
                       onChange={handleChange}
                       type="number"
+
                       value={product.quantity}
                     />
                   </Grid>

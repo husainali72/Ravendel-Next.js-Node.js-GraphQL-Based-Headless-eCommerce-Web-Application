@@ -95,7 +95,48 @@ const AddCouponComponent = () => {
     setCoupon({ ...coupon, [name]: value });
 
   };
+  const IncludeProduct = (id) => {
 
+
+    let included_products = coupon.products
+    for (var i = 0; i < included_products.length; i++) {
+      if (included_products[i] === id) {
+        return true;
+      }
+
+    }
+  }
+  const ExcludeProduct = (id) => {
+    let excluded_products = coupon.exclude_products
+    for (var i = 0; i < excluded_products.length; i++) {
+      if (excluded_products[i] === id) {
+        return true;
+      }
+
+    }
+
+  }
+  const IncludeCategories = (id) => {
+
+
+    let included_categories = coupon.categories
+    for (var i = 0; i < included_categories.length; i++) {
+      if (included_categories[i] === id) {
+        return true;
+      }
+
+    }
+  }
+  const ExcludeCategories = (id) => {
+    let excluded_categories = coupon.exclude_categories
+    for (var i = 0; i < excluded_categories.length; i++) {
+      if (excluded_categories[i] === id) {
+        return true;
+      }
+
+    }
+
+  }
   const selectChange = (e) => {
     setCoupon({ ...coupon, [e.target.name]: e.target.value });
   };
@@ -237,6 +278,7 @@ const AddCouponComponent = () => {
                       label="Coupon Amount"
                       name="discount_value"
                       onInputChange={handleChange}
+
                     />
                   </Grid>
                   <Grid item md={6} sm={12} xs={12}>
@@ -280,6 +322,7 @@ const AddCouponComponent = () => {
                     label="Minimum Spend"
                     name="minimum_spend"
                     onInputChange={handleChange}
+
                   />
                 </Box>
                 <Box component="div" mb={2}>
@@ -289,6 +332,7 @@ const AddCouponComponent = () => {
                     label="Maximum Spend"
                     name="maximum_spend"
                     onInputChange={handleChange}
+
                   />
                 </Box>
 
@@ -298,24 +342,28 @@ const AddCouponComponent = () => {
                   label="Products"
                   value={coupon.products}
                 >
-                  {Products.products.map((product) => (
-                    <MenuItem value={product._id} key={product._id}>
-                      {product.name}
-                    </MenuItem>
-                  ))}
+                  {Products.products.map((product) => {
+                    if (!ExcludeProduct(product._id)) {
+                      return <MenuItem value={product._id} key={product._id}>
+                        {product.name}
+                      </MenuItem>
+                    }
+                  })}
                 </SelectOptionField>
-    
+
                 {/* ================== Exclude Products Select ================== */}
                 <SelectOptionField
                   name="exclude_products"
                   label="Exclude Products"
                   value={coupon.exclude_products}
-                > 
-                  {Products.products.map((product) => (
-                    <MenuItem value={product._id} key={product._id}>
-                      {product.name}
-                    </MenuItem>
-                  ))}
+                >
+                  {Products.products.map((product) => {
+                    if (!IncludeProduct(product._id)) {
+                      return <MenuItem value={product._id} key={product._id}>
+                        {product.name}
+                      </MenuItem>
+                    }
+                  })}
                 </SelectOptionField>
 
                 {/*  ==================Category Select  ==================*/}
@@ -324,11 +372,13 @@ const AddCouponComponent = () => {
                   label="Categories"
                   value={coupon.categories}
                 >
-                  {Products.categories.map((category) => (
-                    <MenuItem value={category.id} key={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
+                  {Products.categories.map((category) => {
+                    if (!ExcludeCategories(category.id)) {
+                      return <MenuItem value={category.id} key={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    }
+                  })}
                 </SelectOptionField>
 
                 {/* ==================Exclude Category Select===================== */}
@@ -336,12 +386,14 @@ const AddCouponComponent = () => {
                   name="exclude_categories"
                   label="Exclude Categories"
                   value={coupon.exclude_categories}
-              > 
-                  {Products.categories.map((category) => (
-                    <MenuItem value={category.id} key={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
+                >
+                  {Products.categories.map((category) => {
+                    if (!IncludeCategories(category.id)) {
+                      return <MenuItem value={category.id} key={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    }
+                  })}
                 </SelectOptionField>
               </TabPanel>
             </Box>

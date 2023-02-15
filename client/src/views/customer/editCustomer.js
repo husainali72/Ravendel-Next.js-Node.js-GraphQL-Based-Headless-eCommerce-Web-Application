@@ -84,8 +84,9 @@ const EditCustomerComponent = ({ params }) => {
   const [editMode, setEditMode] = useState(false);
   const [singleCustomer, setSingleCustomer] = useState(SingleCustomerObject);
   const [customer, setcustomer] = useState(customerObj);
-  const [phoneValue, setPhoneValue] = useState("");
+
   const [loading, setloading] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -103,7 +104,7 @@ const EditCustomerComponent = ({ params }) => {
           SingleCustomerObject.id = Customers.customers[i].id;
           setSingleCustomer(SingleCustomerObject);
           setcustomer({ ...customer, ...Customers.customers[i] });
-          setPhoneValue(Customers.customers[i].phone)
+
 
           break;
         }
@@ -113,12 +114,12 @@ const EditCustomerComponent = ({ params }) => {
   }, [get(Customers, "customers")]);
 
   const updateCustomer = (e) => {
-    customer.phone = phoneValue
+
     e.preventDefault();
 
 
-    var errors = validate(['company', "email", "last_name", "first_name"], customer);
-    var phoneNumberError = validatePhone(["phone"], customer)
+    let errors = validate(['company', "email", "last_name", "first_name"], customer);
+    let phoneNumberError = validatePhone(["phone"], customer)
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -152,8 +153,8 @@ const EditCustomerComponent = ({ params }) => {
     setcustomer({ ...customer, [e.target.name]: e.target.value });
   };
 
-  const handleOnChange = (value) => {
-    setPhoneValue(value)
+  const handleOnChange = (value, name) => {
+    setcustomer({ ...customer, [name]: value });
   };
 
   const editAddress = (address) => {
@@ -165,27 +166,91 @@ const EditCustomerComponent = ({ params }) => {
   const handleAddressInputField = (e) => {
     setSingleCustomer({ ...singleCustomer, [e.target.name]: e.target.value });
   };
+  const AddressBookPhonehandlechange = (value, name) => {
+
+    setSingleCustomer({ ...singleCustomer, [name]: value });
+  };
 
   const addressInput = (label, name) => {
+
     return (
       <Grid item md={12} sm={6} xs={12}>
-        <TextInput
-          label={label}
-          name={name}
-          value={singleCustomer[name]}
-          onInputChange={handleAddressInputField}
-          sizeSmall
-        />
+        {label === 'Phone' ? <PhoneNumber handleOnChange={AddressBookPhonehandlechange} phoneValue={singleCustomer.phone} width="100%" /> :
+          <TextInput
+            label={label}
+            name={name}
+            value={singleCustomer[name]}
+            onInputChange={handleAddressInputField}
+
+            sizeSmall
+          />}
       </Grid>
     );
   };
 
   const updateAddress = () => {
-    dispatch(addressbookUpdateAction(singleCustomer));
+
+
+    let errors = validate(['pincode', 'country', 'state', 'city', 'address_line1', "company", "last_name", "first_name"], singleCustomer);
+    let phoneError = validatePhone(["phone"], singleCustomer)
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(phoneError)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: phoneError,
+          error: true,
+        },
+      });
+    }
+    else {
+
+      dispatch(addressbookUpdateAction(singleCustomer));
+    }
+
   };
 
   const addAddress = () => {
-    dispatch(addressbookAddAction(singleCustomer));
+    let errors = validate(['pincode', 'country', 'state', 'city', 'address_line1', "company", "last_name", "first_name"], singleCustomer);
+    let phoneError = validatePhone(["phone"], singleCustomer)
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(phoneError)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: phoneError,
+          error: true,
+        },
+      });
+    }
+    else {
+
+      dispatch(addressbookAddAction(singleCustomer));
+    }
+
+
   };
 
   const deleteAddressBook = (_id) => {
@@ -272,7 +337,8 @@ const EditCustomerComponent = ({ params }) => {
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
-                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={phoneValue} />
+
+                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={customer.phone} />
                 </Grid>
               </Grid>
             </CardBlocks>

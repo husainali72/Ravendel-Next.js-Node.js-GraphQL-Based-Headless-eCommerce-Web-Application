@@ -132,7 +132,7 @@ const EditCouponComponent = ({ params }) => {
   const IncludeProduct = (id) => {
 
 
-    const included_products = coupon.products
+    let included_products = coupon.products
     for (var i = 0; i < included_products.length; i++) {
       if (included_products[i] === id) {
         return true;
@@ -141,7 +141,7 @@ const EditCouponComponent = ({ params }) => {
     }
   }
   const ExcludeProduct = (id) => {
-    const excluded_products = coupon.exclude_products
+    let excluded_products = coupon.exclude_products
     for (var i = 0; i < excluded_products.length; i++) {
       if (excluded_products[i] === id) {
         return true;
@@ -153,7 +153,7 @@ const EditCouponComponent = ({ params }) => {
   const IncludeCategories = (id) => {
 
 
-    const included_categories = coupon.categories
+    let included_categories = coupon.categories
     for (var i = 0; i < included_categories.length; i++) {
       if (included_categories[i] === id) {
         return true;
@@ -162,7 +162,7 @@ const EditCouponComponent = ({ params }) => {
     }
   }
   const ExcludeCategories = (id) => {
-    const excluded_categories = coupon.exclude_categories
+    let excluded_categories = coupon.exclude_categories
     for (var i = 0; i < excluded_categories.length; i++) {
       if (excluded_categories[i] === id) {
         return true;
@@ -310,6 +310,7 @@ const EditCouponComponent = ({ params }) => {
                       label="Coupon Amount"
                       name="discount_value"
                       onInputChange={handleChange}
+
                     />
                   </Grid>
                   <Grid item md={6} sm={12} xs={12}>
@@ -322,6 +323,7 @@ const EditCouponComponent = ({ params }) => {
                       variant="outlined"
                       className={clsx(classes.width100, "top-helper")}
                       type="date"
+
                     />
                   </Grid>
                 </Grid>
@@ -353,6 +355,7 @@ const EditCouponComponent = ({ params }) => {
                     label="Minimum Spend"
                     name="minimum_spend"
                     onInputChange={handleChange}
+
                   />
                 </Box>
                 <Box component="div" mb={2}>
@@ -362,6 +365,7 @@ const EditCouponComponent = ({ params }) => {
                     label="Maximum Spend"
                     name="maximum_spend"
                     onInputChange={handleChange}
+
                   />
                 </Box>
 
