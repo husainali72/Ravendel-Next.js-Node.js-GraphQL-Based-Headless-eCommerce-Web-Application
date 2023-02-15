@@ -28,8 +28,8 @@ const CurrencyOptionsComponent = () => {
 
   return (
     <>
-     <Alerts/>
-     {settingState.loading ? <Loading /> : null}
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" mb={3}>
@@ -106,6 +106,8 @@ const CurrencyOptionsComponent = () => {
                 });
               }}
               type="number"
+              onKeyDown={(e) =>
+                ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
             />
           </Box>
         </Grid>

@@ -28,6 +28,8 @@ const TaxFormComponents = ({
           onChange={(e) => onInputChange("name", e.target.value)}
           value={customTaxClassState.name}
           fullWidth
+          onKeyDown={(e) =>
+            ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
         />
       </Box>
       <Box component="div" mb={2}>
@@ -38,7 +40,10 @@ const TaxFormComponents = ({
           variant="outlined"
           onChange={(e) => onInputChange("percentage", e.target.value)}
           value={customTaxClassState.percentage}
+          onKeyDown={(e) =>
+            ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
           fullWidth
+
         />
       </Box>
     </CardBlocksWithAction>

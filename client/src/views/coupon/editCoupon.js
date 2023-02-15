@@ -310,6 +310,8 @@ const EditCouponComponent = ({ params }) => {
                       label="Coupon Amount"
                       name="discount_value"
                       onInputChange={handleChange}
+                      onKeyDown={(e) =>
+                        ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                     />
                   </Grid>
                   <Grid item md={6} sm={12} xs={12}>
@@ -322,6 +324,8 @@ const EditCouponComponent = ({ params }) => {
                       variant="outlined"
                       className={clsx(classes.width100, "top-helper")}
                       type="date"
+                      onKeyDown={(e) =>
+                        ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                     />
                   </Grid>
                 </Grid>
@@ -353,6 +357,8 @@ const EditCouponComponent = ({ params }) => {
                     label="Minimum Spend"
                     name="minimum_spend"
                     onInputChange={handleChange}
+                    onKeyDown={(e) =>
+                      ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                   />
                 </Box>
                 <Box component="div" mb={2}>
@@ -362,6 +368,8 @@ const EditCouponComponent = ({ params }) => {
                     label="Maximum Spend"
                     name="maximum_spend"
                     onInputChange={handleChange}
+                    onKeyDown={(e) =>
+                      ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                   />
                 </Box>
 

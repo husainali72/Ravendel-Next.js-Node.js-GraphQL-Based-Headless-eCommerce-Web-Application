@@ -50,7 +50,7 @@ const AddUserComponent = () => {
 
   const addUser = (e) => {
     e.preventDefault();
-    var errors = validate(["password", "role", 'email', "name"], user);
+    var errors = validate(["role", "password", 'email', "name"], user);
 
     if (!isEmpty(errors)) {
       dispatch({

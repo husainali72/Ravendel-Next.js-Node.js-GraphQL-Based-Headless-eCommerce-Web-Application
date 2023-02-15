@@ -165,19 +165,8 @@ const EditProductComponent = ({ params }) => {
   const updateProduct = (e) => {
 
     e.preventDefault();
+    var errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     var Errors = validatenested("pricing", ["price", "sellprice"], product);
-    if (!isEmpty(Errors)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: Errors,
-          error: true,
-        },
-      });
-    }
-    var errors = validate(["name", "sku", "short_description", "description", 'quantity', "categoryId"], product);
-
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -188,12 +177,24 @@ const EditProductComponent = ({ params }) => {
         },
       });
     }
-
-    if (isEmpty(errors) && isEmpty(Errors)) {
+    else if (!isEmpty(Errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: Errors,
+          error: true,
+        },
+      });
+    }
+    else {
       product.combinations = combination;
 
       dispatch(productUpdateAction(product, navigate));
     }
+
+
+
   };
 
   const handleChange = (e) => {
@@ -326,6 +327,8 @@ const EditProductComponent = ({ params }) => {
                       variant="outlined"
                       fullWidth
                       type="number"
+                      onKeyDown={(e) =>
+                        ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                       value={product.pricing.price}
                       onChange={(e) =>
                         setProduct({
@@ -345,6 +348,8 @@ const EditProductComponent = ({ params }) => {
                       variant="outlined"
                       fullWidth
                       type="number"
+                      onKeyDown={(e) =>
+                        ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                       value={product.pricing.sellprice}
                       onChange={(e) =>
                         setProduct({
@@ -465,6 +470,8 @@ const EditProductComponent = ({ params }) => {
                       name="quantity"
                       onChange={handleChange}
                       type="number"
+                      onKeyDown={(e) =>
+                        ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                       value={product.quantity}
                     />
                   </Grid>

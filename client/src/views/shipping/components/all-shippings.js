@@ -26,7 +26,7 @@ const AllShippingComponentComponent = ({
   const classes = viewStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [order, setOrder] = React.useState('desc');
+  const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('name');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

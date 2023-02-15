@@ -356,7 +356,7 @@ const AttributesComponent = ({
                         <TableCell>Name</TableCell>
                         <TableCell>Values</TableCell>
                         <TableCell>Variation</TableCell>
-                        <TableCell>Remove</TableCell>
+                        <TableCell>Action</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody className={classes.container}>
@@ -432,7 +432,7 @@ const AttributesComponent = ({
             <Box component="span" m={1}>
               <CardBlocks title="Variants">
                 <TableContainer>
-                  <Table stickyHeader aria-label="variant-table" size="small">
+                  <Table aria-label="variant-table" size="small">
                     <TableHead>
                       <TableRow>
                         <TableCell>Variant</TableCell>
@@ -458,6 +458,8 @@ const AttributesComponent = ({
                               name="price"
                               fullWidth
                               type="number"
+                              onKeyDown={(e) =>
+                                ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                               value={variant.price}
                               onChange={(e) => variantChange(e, index)}
                               size="small"
@@ -469,6 +471,8 @@ const AttributesComponent = ({
                               variant="outlined"
                               fullWidth
                               type="number"
+                              onKeyDown={(e) =>
+                                ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                               name="quantity"
                               value={variant.quantity}
                               onChange={(e) => variantChange(e, index)}

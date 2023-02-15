@@ -141,15 +141,15 @@ const AllOrdersComponent = () => {
                               order.shipping.lastname}
                           </TableCell>
 
-                          <TableCell>
+                          <TableCell >
 
-                            <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} className={classes.badge} sx={{ "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
+                            <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
 
                           </TableCell>
-                          <TableCell>
-                            <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} className={classes.badge} sx={{ "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
+                          <TableCell >
+                            <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
                           </TableCell>
-                          <TableCell>
+                          <TableCell >
                             <Tooltip title="Edit Order" aria-label="edit">
                               <IconButton
                                 aria-label="Edit"
@@ -169,7 +169,7 @@ const AllOrdersComponent = () => {
                                 onClick={() =>
                                   dispatch(orderDeleteAction(order.id, navigate))
                                 }
-                                // disabled
+                                disabled
                               >
                                 <DeleteIcon />
                               </IconButton>

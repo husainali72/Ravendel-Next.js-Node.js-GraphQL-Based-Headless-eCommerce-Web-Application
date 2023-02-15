@@ -56,6 +56,8 @@ const MediaComponent = () => {
                 }}
                 otherClass={classes.marginRight2}
                 type="number"
+                onKeyDown={(e) =>
+                  ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
               />
               <SettingTextInput
                 value={media.thumbnail.height}
@@ -70,6 +72,8 @@ const MediaComponent = () => {
                   });
                 }}
                 type="number"
+                onKeyDown={(e) =>
+                  ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
               />
             </Box>
           </SettingBlock>
@@ -88,6 +92,8 @@ const MediaComponent = () => {
                   });
                 }}
                 type="number"
+                onKeyDown={(e) =>
+                  ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                 otherClass={classes.marginRight2}
               />
               <SettingTextInput
@@ -102,6 +108,8 @@ const MediaComponent = () => {
                     },
                   });
                 }}
+                onKeyDown={(e) =>
+                  ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                 type="number"
               />
             </Box>
@@ -122,6 +130,8 @@ const MediaComponent = () => {
                   });
                 }}
                 type="number"
+                onKeyDown={(e) =>
+                  ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                 otherClass={classes.marginRight2}
               />
               <SettingTextInput
@@ -136,6 +146,8 @@ const MediaComponent = () => {
                     },
                   });
                 }}
+                onKeyDown={(e) =>
+                  ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
                 type="number"
               />
             </Box>

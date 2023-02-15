@@ -39,6 +39,8 @@ const ShippingsFormComponent = ({
           onChange={(e) => onInputChange("amount", e.target.value)}
           value={customShippingClass.amount}
           fullWidth
+          onKeyDown={(e) =>
+            ["ArrowUp", "ArrowDown", "e", "E", "+", "-", '.'].includes(e.key) && e.preventDefault()}
         />
       </Box>
     </CardBlocksWithAction>

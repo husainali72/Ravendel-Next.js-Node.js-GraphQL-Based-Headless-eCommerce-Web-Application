@@ -37,7 +37,6 @@ const AddCustomerComponent = () => {
   const dispatch = useDispatch();
   const Customers = useSelector((state) => state.customers);
   const [customer, setcustomer] = useState(customerObj);
-  const [phoneValue, setPhoneValue] = useState("");
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -47,9 +46,9 @@ const AddCustomerComponent = () => {
 
   const addCustomer = (e) => {
     e.preventDefault();
-    customer.phone = phoneValue
 
-    var errors = validate(['company', "email", "last_name", "password", "first_name"], customer);
+
+    var errors = validate(['company', "password", "email", "last_name", "first_name"], customer);
     var phoneError = validatePhone(["phone"], customer)
     if (!isEmpty(errors)) {
       dispatch({
@@ -73,7 +72,7 @@ const AddCustomerComponent = () => {
     }
     else {
 
-      dispatch(customerAddAction(customer, navigate(`${client_app_route_url}all-customer`)));
+      dispatch(customerAddAction(customer, navigate));
     }
   };
 
@@ -81,8 +80,8 @@ const AddCustomerComponent = () => {
     setcustomer({ ...customer, [e.target.name]: e.target.value });
   };
 
-  const handleOnChange = (value) => {
-    setPhoneValue(value);
+  const handleOnChange = (value, name) => {
+    setcustomer({ ...customer, [name]: value });
   }
 
   const toInputLowercase = e => {
