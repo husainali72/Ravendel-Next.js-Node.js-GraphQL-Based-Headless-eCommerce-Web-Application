@@ -795,16 +795,30 @@ module.exports = {
           }
 
           if (args.removed_image.length) {
-            for (let i in gallery_images) {
-              if (
-                gallery_images[i]._id &&
-                ~args.removed_image.indexOf(String(gallery_images[i]._id))
-              ) {
-                let imgObject = gallery_images[i]
-                // imageUnlink(imgObject);
-                delete gallery_images[i];
+            gallery_images = gallery_images.filter((gImage => {
+              if(args.removed_image.includes(gImage)){
+                imageUnlink(gImage);
+              }else{
+                return gImage
               }
-            }
+            }))
+            // for (let i in gallery_images) {
+            //   console.log("run for")
+            //   console.log(gallery_images[i], args.removed_image)
+            //   if(args.removed_image.includes(gallery_images[i])){
+            //     console.log("match")
+            //     let imgObject = gallery_images[i]
+            //     imageUnlink(imgObject);
+            //     gallery_images.splice(i, 1)
+            //   }
+              // if(gallery_images[i] && ~args.removed_image.indexOf(String(gallery_images[i])))
+              // if (gallery_images[i] === args.removed_image.gallery_images[i]){
+              //   let imgObject = gallery_images[i]
+              //   imageUnlink(imgObject);
+              //   gallery_images.splice(i, 1)
+              //   // delete gallery_images[i];
+              // }
+            // }
           }
 
           product.name = args.name;
