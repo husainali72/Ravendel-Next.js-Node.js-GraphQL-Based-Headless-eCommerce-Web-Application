@@ -322,6 +322,18 @@ const SeetingSchema = new Schema(
         primary_color: {
           type: String,
         },
+        playstore: {
+          type: String
+        },
+        appstore: {
+          type: String
+        },
+        phone_number: {
+          type: String
+        },
+        email: {
+          type: String
+        },
         // logo: {
         //   original: {
         //     type: String,
@@ -474,11 +486,6 @@ module.exports.createSettings = async () => {
             link: "https://www.google.com/",
             open_in_tab: true,
           },
-          {
-            image: "",
-            link: "https://www.google.com/",
-            open_in_tab: true,
-          },
         ],
         add_section_in_home: {
           feature_product: true,
@@ -522,6 +529,10 @@ module.exports.createSettings = async () => {
       },
       theme: {
         primary_color: "#154050",
+        playstore: "https://play.google.com/store/apps/details?id=com.ravendel",
+        appstore: "https://apps.apple.com/us/app/ravendel/id1351162341",
+        phone_number: "9797979797",
+        email: "abc@gmail.com",
         logo: "",
       },
       mobile: {

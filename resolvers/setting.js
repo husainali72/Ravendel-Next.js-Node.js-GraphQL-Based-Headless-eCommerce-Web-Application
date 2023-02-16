@@ -393,8 +393,16 @@ module.exports = {
           }
         }
 
-        setting.appearance.theme.primary_color = args.primary_color;
-        setting.appearance.theme.logo = imgObject.data || args.logo;
+        const theme = {
+          primary_color: args.primary_color,
+          playstore: args.playstore,
+          appstore: args.appstore,
+          phone_number: args.phone_number,
+          email: args.email,
+          logo: imgObject.data || args.logo
+        };
+
+        setting.appearance.theme = theme
         return await setting.save();
       } catch (error) {
         error = checkError(error);

@@ -350,6 +350,17 @@
   }
 }
 
+
+.ravendelLogo{
+  width: 100px;
+}
+
+.mobileImage {
+  object-fit: contain; 
+  height: 100%;
+  width: 100%;
+}
+
 .phoneValidation svg {
    width: 24px;
 }
@@ -357,3 +368,4 @@
 .phoneValidation input{
   padding: 10px
 }
+
