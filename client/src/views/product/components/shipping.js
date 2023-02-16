@@ -5,7 +5,7 @@ import {
   Select,
   MenuItem,
   Grid,
-} from"@mui/material";
+} from "@mui/material";
 import { TextInput } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { shippingAction } from "../../../store/action/";
@@ -45,6 +45,7 @@ const ShippingComponent = ({
                 Shipping
               </InputLabel>
               <Select
+                label='Shipping'
                 labelWidth={labelWidth}
                 labelId='Shipping-name'
                 id='Shipping-name'

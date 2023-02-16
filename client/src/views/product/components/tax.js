@@ -32,6 +32,7 @@ const TaxComponent = ({ product, onTaxInputChange }) => {
             Tax Class
           </InputLabel>
           <Select
+            label="Tax Class"
             labelWidth={labelWidth}
             labelId="tax-name"
             id="tax-name"

@@ -130,46 +130,26 @@ const EditCouponComponent = ({ params }) => {
     setCoupon({ ...coupon, [e.target.name]: e.target.value });
   };
   const IncludeProduct = (id) => {
+    return coupon.products.some((included_product) => {
+      return included_product === id
+    })
 
-
-    const included_products = coupon.products
-    for (var i = 0; i < included_products.length; i++) {
-      if (included_products[i] === id) {
-        return true;
-      }
-
-    }
   }
   const ExcludeProduct = (id) => {
-    const excluded_products = coupon.exclude_products
-    for (var i = 0; i < excluded_products.length; i++) {
-      if (excluded_products[i] === id) {
-        return true;
-      }
-
-    }
-
+    return coupon.exclude_products.some((excluded_product) => {
+      return excluded_product === id
+    })
   }
   const IncludeCategories = (id) => {
 
-
-    const included_categories = coupon.categories
-    for (var i = 0; i < included_categories.length; i++) {
-      if (included_categories[i] === id) {
-        return true;
-      }
-
-    }
+    return coupon.categories.some((included_categorie) => {
+      return included_categorie === id
+    })
   }
   const ExcludeCategories = (id) => {
-    const excluded_categories = coupon.exclude_categories
-    for (var i = 0; i < excluded_categories.length; i++) {
-      if (excluded_categories[i] === id) {
-        return true;
-      }
-
-    }
-
+    return coupon.exclude_categories.some((excluded_categorie) => {
+      return excluded_categorie === id
+    })
   }
 
   const SelectOptionField = ({ label, name, value, children, id }) => {
@@ -310,6 +290,7 @@ const EditCouponComponent = ({ params }) => {
                       label="Coupon Amount"
                       name="discount_value"
                       onInputChange={handleChange}
+
                     />
                   </Grid>
                   <Grid item md={6} sm={12} xs={12}>
@@ -322,6 +303,7 @@ const EditCouponComponent = ({ params }) => {
                       variant="outlined"
                       className={clsx(classes.width100, "top-helper")}
                       type="date"
+
                     />
                   </Grid>
                 </Grid>
@@ -353,6 +335,7 @@ const EditCouponComponent = ({ params }) => {
                     label="Minimum Spend"
                     name="minimum_spend"
                     onInputChange={handleChange}
+
                   />
                 </Box>
                 <Box component="div" mb={2}>
@@ -362,6 +345,7 @@ const EditCouponComponent = ({ params }) => {
                     label="Maximum Spend"
                     name="maximum_spend"
                     onInputChange={handleChange}
+
                   />
                 </Box>
 
@@ -373,13 +357,13 @@ const EditCouponComponent = ({ params }) => {
                   id="products"
 
                 >
-                  {Products.products.map((product) => {
-                    if (!ExcludeProduct(product._id)) {
-                      return < MenuItem value={product._id} key={product._id} >
+                  {Products.products.map((product) =>
+                    !ExcludeProduct(product._id) ?
+                      < MenuItem value={product._id} key={product._id} >
                         {product.name}
                       </MenuItem>
-                    }
-                  })}
+                      : null
+                  )}
                 </SelectOptionField>
 
                 {/* ================== Exclude Products Select ================== */}
@@ -389,14 +373,14 @@ const EditCouponComponent = ({ params }) => {
                   value={coupon.exclude_products}
                   id="exclude_products"
                 >
-                  {Products.products.map((product) => {
-                    if (!IncludeProduct(product._id)) {
-                      return <MenuItem value={product._id} key={product._id} >
+                  {Products.products.map((product) =>
+                    !IncludeProduct(product._id) ?
+                      <MenuItem value={product._id} key={product._id} >
 
                         {product.name}
-                      </MenuItem>
-                    }
-                  })}
+                      </MenuItem> : null
+
+                  )}
                 </SelectOptionField>
 
                 {/*  ================== Category Select ==================*/}
@@ -406,14 +390,12 @@ const EditCouponComponent = ({ params }) => {
                   value={coupon.categories}
                   id="categories"
                 >
-                  {Products.categories.map((category) => {
-                    if (!ExcludeCategories(category.id)) {
-                      return <MenuItem value={category.id} key={category.id}>
+                  {Products.categories.map((category) =>
+                    !ExcludeCategories(category.id) ?
+                      <MenuItem value={category.id} key={category.id}>
                         {category.name}
-                      </MenuItem>
-                    }
-
-                  })}
+                      </MenuItem> : null
+                  )}
                 </SelectOptionField>
 
                 {/* ================== Exclude Category Select ===================== */}
@@ -423,13 +405,13 @@ const EditCouponComponent = ({ params }) => {
                   value={coupon.exclude_categories}
                   id="exclude_categories"
                 >
-                  {Products.categories.map((category) => {
-                    if (!IncludeCategories(category.id)) {
-                      return <MenuItem value={category.id} key={category.id}>
+                  {Products.categories.map((category) =>
+                    !IncludeCategories(category.id) ?
+                      <MenuItem value={category.id} key={category.id}>
                         {category.name}
-                      </MenuItem>
-                    }
-                  })}
+                      </MenuItem> : null
+
+                  )}
                 </SelectOptionField>
               </TabPanel>
             </Box>

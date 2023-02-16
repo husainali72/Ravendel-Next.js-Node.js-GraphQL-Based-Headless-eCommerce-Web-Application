@@ -84,8 +84,9 @@ const EditCustomerComponent = ({ params }) => {
   const [editMode, setEditMode] = useState(false);
   const [singleCustomer, setSingleCustomer] = useState(SingleCustomerObject);
   const [customer, setcustomer] = useState(customerObj);
-  const [phoneValue, setPhoneValue] = useState("");
+
   const [loading, setloading] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -103,7 +104,7 @@ const EditCustomerComponent = ({ params }) => {
           SingleCustomerObject.id = Customers.customers[i].id;
           setSingleCustomer(SingleCustomerObject);
           setcustomer({ ...customer, ...Customers.customers[i] });
-          setPhoneValue(Customers.customers[i].phone)
+
 
           break;
         }
@@ -113,11 +114,12 @@ const EditCustomerComponent = ({ params }) => {
   }, [get(Customers, "customers")]);
 
   const updateCustomer = (e) => {
-    customer.phone = phoneValue
+
     e.preventDefault();
 
 
-    let errors = validate(["email", 'company',  "last_name", "first_name"], customer);
+    let errors = validate(['company', "email", "last_name", "first_name"], customer);
+
     let phoneNumberError = validatePhone(["phone"], customer)
     if (!isEmpty(errors)) {
       dispatch({
@@ -152,8 +154,8 @@ const EditCustomerComponent = ({ params }) => {
     setcustomer({ ...customer, [e.target.name]: e.target.value });
   };
 
-  const handleOnChange = (value) => {
-    setPhoneValue(value)
+  const handleOnChange = (value, name) => {
+    setcustomer({ ...customer, [name]: value });
   };
 
   const editAddress = (address) => {
@@ -165,6 +167,10 @@ const EditCustomerComponent = ({ params }) => {
   const handleAddressInputField = (e) => {
     setSingleCustomer({ ...singleCustomer, [e.target.name]: e.target.value });
   };
+  const AddressBookPhonehandlechange = (value, name) => {
+
+    setSingleCustomer({ ...singleCustomer, [name]: value });
+  };
 
   const AddressBookPhonehandlechange = (value, name) => {
 
@@ -175,7 +181,9 @@ const EditCustomerComponent = ({ params }) => {
 
     return (
       <Grid item md={12} sm={6} xs={12}>
+
         {label === 'Phone' ? <PhoneNumber handleOnChange={AddressBookPhonehandlechange} phoneValue={singleCustomer.phone} width="100%" className="phoneValidation"/> :
+
           <TextInput
             label={label}
             name={name}
@@ -188,6 +196,7 @@ const EditCustomerComponent = ({ params }) => {
   };
 
   const updateAddress = () => {
+
     let phoneNumberError = validatePhone(["phone"], singleCustomer)
     let errors = validate(["pincode", "country", "state", "city", "address_line1", 'company',"last_name", "first_name",], singleCustomer);
     if (!isEmpty(errors)) {
@@ -239,6 +248,7 @@ const EditCustomerComponent = ({ params }) => {
     dispatch(addressbookAddAction(singleCustomer))
  };
    
+
   };
 
   const deleteAddressBook = (_id) => {
@@ -326,8 +336,10 @@ const EditCustomerComponent = ({ params }) => {
                     onInputChange={handleChange}
                   />
                 </Grid>
+
                 <Grid item md={3} sm={6} xs={12} >
                   <PhoneNumber handleOnChange={handleOnChange} phoneValue={phoneValue} width= "100%"/>
+
                 </Grid>
               </Grid>
             </CardBlocks>

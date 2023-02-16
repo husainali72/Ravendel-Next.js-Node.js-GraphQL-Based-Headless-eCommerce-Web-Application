@@ -96,7 +96,7 @@ export const customerAction = (id) => (dispatch) => {
     });
 };
 
-export const customerAddAction = (object) => (dispatch) => {
+export const customerAddAction = (object, navigate) => (dispatch) => {
   dispatch({
     type: CUSTOMER_LOADING,
   });
@@ -115,6 +115,7 @@ export const customerAddAction = (object) => (dispatch) => {
       });
 
       if (error) {
+
         dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: false, message: message, error: true },
@@ -123,7 +124,7 @@ export const customerAddAction = (object) => (dispatch) => {
 
       if (success) {
         dispatch(customersAction());
-
+        navigate(`${client_app_route_url}all-customer`)
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },
@@ -205,7 +206,7 @@ export const customerUpdateAction = (object, navigate) => (dispatch) => {
       dispatch({
         type: LOADING_FALSE,
       });
-      console.log(error, message);
+
       if (error) {
         dispatch({
           type: ALERT_SUCCESS,

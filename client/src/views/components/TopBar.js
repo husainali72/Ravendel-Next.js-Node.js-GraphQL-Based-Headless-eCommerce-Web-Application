@@ -34,11 +34,13 @@ const TopBarTheme = ({ title, onSubmit, backLink, submitTitle }) => {
         >
           {submitTitle}
         </Button>
-        <Button className={classes.cancelBtn} variant="contained" color="error">
-          <Link to={backLink} style={{ color: "#fff" }}>
+        <Link to={backLink} style={{ color: "#fff" }}>
+          <Button className={classes.cancelBtn} variant="contained" color="error">
+
             Cancel
-          </Link>
-        </Button>
+
+          </Button>
+        </Link>
       </Grid>
     </Grid>
   );

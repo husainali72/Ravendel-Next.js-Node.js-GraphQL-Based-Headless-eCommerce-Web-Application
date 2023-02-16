@@ -250,18 +250,20 @@ const ViewOrderComponent = ({ params }) => {
               <Button color="primary" variant="contained" onClick={updateOrder}>
                 Save
               </Button>
-              <Button
-                variant="contained"
-                color="error"
-                className={classes.cancelBtn}
+              <Link
+                to={`${client_app_route_url}all-orders`}
+                style={{ color: "#fff" }}
               >
-                <Link
-                  to={`${client_app_route_url}all-orders`}
-                  style={{ color: "#fff" }}
+                <Button
+                  variant="contained"
+                  color="error"
+                  className={classes.cancelBtn}
                 >
+
                   Cancel
-                </Link>
-              </Button>
+
+                </Button>
+              </Link>
             </Grid>
           </Grid>
 
@@ -356,7 +358,7 @@ const ViewOrderComponent = ({ params }) => {
                             order.billing.lastname
                           )}
                         </Grid>
-                        <Grid item md={4}  onInput={toInputLowercase}>
+                        <Grid item md={4} onInput={toInputLowercase}>
                           {BillingInput(
                             "Email",
                             "email",

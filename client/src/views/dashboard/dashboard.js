@@ -32,7 +32,7 @@ const DashboardComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
-  const [year, setYear] = useState(2023)
+  const [year, setYear] = useState("")
   const data = useSelector((state) => state.dashboardReducer);
   const [chartdata, setChartdata] = useState([])
   const [dashBoardData, setdashBoardData] = useState({});
@@ -48,13 +48,11 @@ const DashboardComponent = () => {
 
       setdashBoardData({ ...dashBoardData, ...get(data, "dashboard_data") });
       const OrderChartData = get(data, "dashboard_data.ordersByYearMonth")
-      if (!isEmpty(OrderChartData))
+      if (!isEmpty(OrderChartData)) {
+        setChartdata(OrderChartData[0].months)
+        setYear(OrderChartData[0].year)
+      }
 
-        OrderChartData.map((OrderChart) => {
-          if (OrderChart.year === year) {
-            setChartdata(OrderChart.months)
-          }
-        })
 
     }
   }, [get(data, "dashboard_data")]);
@@ -122,9 +120,9 @@ const DashboardComponent = () => {
           />
         </Grid>
 
-        <Grid item lg={8} xl={9} xs={12} ml={0} >
+        <Grid item lg={8} xl={9} xs={12}  >
 
-          <Paper>
+          <Paper sx={{ paddingRight: "15px" }} >
 
             <Box sx={{ width: 120, }}>
 
@@ -153,16 +151,16 @@ const DashboardComponent = () => {
 
 
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={chartdata} margins={{ top: 50, right: 0, bottom: 100, left: 0 }} >
+              <BarChart data={chartdata} margins={{ top: 50, right: 1, bottom: 100, left: 1 }} >
                 <XAxis dataKey="month" />
                 <YAxis />
                 <CartesianGrid />
                 <Legend />
                 <Tooltip offset={10} />
-                <Bar dataKey="paymentSuccessNetSales" stackId="a" fill="#82AAE3" barSize={30} />
-                <Bar dataKey="NetSales" barSize={9} stackId="a" fill="#91D8E4" />
-                <Bar dataKey="paymentSuccessNetSales" stackId="a" fill="#1D7874" barSize={30} />
-                <Bar dataKey="GrossSales" stackId="a" barSize={30} fill="#FCAC89" />
+                <Bar dataKey="paymentSuccessNetSales" stackId="x" fill="#FFB26B" barSize={30} />
+                <Bar dataKey="NetSales" barSize={9} stackId="x" fill="#89C4E1" />
+                <Bar dataKey="paymentSuccessNetSales" stackId="x" fill="#0081B4" barSize={30} />
+                <Bar dataKey="GrossSales" stackId="x" barSize={30} fill="#F55050" />
               </BarChart>
             </ResponsiveContainer>
           </Paper>

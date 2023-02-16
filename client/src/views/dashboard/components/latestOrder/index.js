@@ -76,6 +76,7 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
                 <TableCell sortDirection="desc" variant="contained" color="primary">
                   <Tooltip enterDelay={300} title="Sort">
                     <TableSortLabel active direction={order} onClick={() => {
+
                       setOrder(order === "asc" ? "desc" : "asc")
                       setOrderBy("firstname")
                     }}>
@@ -91,22 +92,23 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
             </TableHead>
             <TableBody>
 
-              {stableSort(latestOrders, getComparator(order, orderBy, orderBy === "firstname" ? "shipping" : "")).slice(0, 2).map((order) => (
+              {stableSort(latestOrders, getComparator(order, orderBy, orderBy === "firstname" ? "shipping" : "")).slice(0, 2).map((latestorder) => (
 
-                <TableRow hover key={order.id}>
-                  <TableCell>{order.order_number}</TableCell>
-                  <TableCell>{convertDateToStringFormat(order.date)}</TableCell>
+                <TableRow hover key={latestorder.id}>
+
+                  <TableCell>{latestorder.order_number}</TableCell>
+                  <TableCell>{convertDateToStringFormat(latestorder.date)}</TableCell>
 
                   <TableCell>
-                    {order.shipping.firstname + " " + order.shipping.lastname}
+                    {latestorder.shipping.firstname + " " + latestorder.shipping.lastname}
                   </TableCell>
 
                   <TableCell>
-                    <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} sx={{ ml: '40px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
+                    <Badge badgeContent={latestorder.payment_status} color={badgeColor(latestorder.payment_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
 
                   </TableCell>
                   <TableCell>
-                    <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} sx={{ ml: '40px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
+                    <Badge badgeContent={latestorder.shipping_status} color={badgeColor(latestorder.shipping_status)} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
 
                   </TableCell>
                   <TableCell>
@@ -115,7 +117,7 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
                         aria-label="Edit"
                         onClick={() =>
                           navigate(
-                            `${client_app_route_url}view-order/${order._id}`
+                            `${client_app_route_url}view-order/${latestorder._id}`
                           )
                         }
                       >

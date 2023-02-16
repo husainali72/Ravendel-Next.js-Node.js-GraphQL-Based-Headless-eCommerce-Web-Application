@@ -10,6 +10,7 @@ export const customStyles = {
 
         '&:hover': {
             border: `1px solid #154050`,
+
         }
     }),
     option: (provided, state) => ({
@@ -19,6 +20,8 @@ export const customStyles = {
         fontSize: "14px",
         letterSpacing: "-0.04px",
         lineHeight: "18px",
-
+        '&:hover': {
+            backgroundColor: "lightgrey"
+        }
     }),
 };
