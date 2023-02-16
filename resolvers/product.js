@@ -311,6 +311,29 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    relatedProducts: async (root, args) => {
+      try {
+        let category = args.category
+        // if product belongs to subcat then show parentcat products else show subcat products
+        let existingCategory = await ProductCat.findById(category)
+        if(existingCategory.parentId) category = existingCategory.parentId
+        const pipeline=[
+          {$match: {
+            $and: [
+              {categoryId: {$in: [`${category}`]}}
+            ]
+          }},
+          {$limit: 4}
+        ]
+        // retrieve related products
+        let products = await Product.aggregate(pipeline)
+        return products || [];
+
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     product: async (root, args) => {
       return await GET_SINGLE_FUNC(args.id, Product, "Product");
     },
