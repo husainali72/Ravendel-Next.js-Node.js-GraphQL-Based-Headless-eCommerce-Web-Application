@@ -7,7 +7,7 @@ import { client_app_route_url, isEmpty } from "./utils/helper";
 import ThemeHelper from "./main-layout";
 import "./assets/scss/index.css";
 import "./App.css";
-
+import cookie from "react-cookies";
 const App = () => {
   const dispatch = useDispatch();
   const login = useSelector((state) => state.login);
@@ -47,11 +47,11 @@ const App = () => {
 
   return (
     <>
-      {!isEmpty(login.user_token) ?
-        <ThemeHelper /> 
-      : 
+      {!isEmpty(login.user_token) && cookie.load("auth").token ?
+        <ThemeHelper />
+        :
         <Routes>
-        
+
           <Route
             exact={true}
             path={`${client_app_route_url}login`}

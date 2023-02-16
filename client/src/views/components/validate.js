@@ -27,25 +27,13 @@ export const validatenested = (main, names, args) => {
 
   let errors = "";
   if (names && names.length > 0) {
-
     names.map((name) => {
-
       if (args[main] === '') {
         return (errors = `${main} is required`);
       }
-
-      if (!args[main][name]) {
-
-
+      if (args[main][name] === '') {
         return (errors = `${name} is required`);
       }
-
-
-      if (!args[main][name]) {
-        return (errors = `${name} field is required`)
-      }
-
-
     })
   }
   return errors;

@@ -6,10 +6,11 @@ import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png"
 import { bucketBaseURL } from "../../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
-import {get} from "lodash";
+import { get } from "lodash";
 import { appearanceThemeUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
+import PhoneNumber from "../../components/phoneNumberValidation";
 
 const ThemesComponent = () => {
   const classes = viewStyles();
@@ -21,27 +22,32 @@ const ThemesComponent = () => {
     if (
       settingState.settings &&
       settingState.settings.appearance &&
-      settingState.settings.appearance.theme 
+      settingState.settings.appearance.theme
     ) {
-      setThemeSetting({...settingState.settings.appearance.theme})
+      setThemeSetting({ ...settingState.settings.appearance.theme })
     }
   }, [get(settingState, "settings.appearance.theme")])
 
   const updateTheme = () => {
+
     delete theme.__typename;
+
     dispatch(appearanceThemeUpdateAction(themeSetting));
   };
 
   const fileChange = (e) => {
     themeSetting.logo = URL.createObjectURL(e.target.files[0]);
     themeSetting.new_logo = e.target.files
-    setThemeSetting({...themeSetting})
+    setThemeSetting({ ...themeSetting })
   };
+  const handleOnChange = (value) => {
+    setThemeSetting({ ...themeSetting, ["phone_number"]: value })
+  }
 
   return (
     <>
-     <Alerts/>
-     {settingState.loading ? <Loading /> : null}
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div">
@@ -83,9 +89,61 @@ const ThemesComponent = () => {
               onChange={(e) => fileChange(e)}
             />
             <label htmlFor="logo" className={classes.feautedImage}>
-              {themeSetting.logo? "Change Logo" : "Add Logo"}
+              {themeSetting.logo ? "Change Logo" : "Add Logo"}
             </label>
           </Box>
+          <Box component="div">
+            <TextField
+              type="text"
+              variant="outlined"
+              label="Playstore url"
+              className={classes.settingInput}
+              value={themeSetting.playstore}
+              onChange={(e) =>
+                setThemeSetting({
+                  ...themeSetting,
+                  playstore: e.target.value,
+                })
+              }
+            />
+          </Box>
+
+          <Box component="div">
+            <TextField
+              type="text"
+              variant="outlined"
+              label="Applestore url "
+              className={classes.settingInput}
+              value={themeSetting.appstore}
+              onChange={(e) =>
+                setThemeSetting({
+                  ...themeSetting,
+                  appstore: e.target.value,
+                })
+              }
+            />
+          </Box>
+
+          <Box component="div" mb={3}>
+            <PhoneNumber handleOnChange={handleOnChange} phoneValue={themeSetting.phone_number} width="300px" />
+          </Box>
+          <Box component="div">
+
+            <TextField
+              type="text"
+              variant="outlined"
+              label="Email"
+              className={classes.settingInput}
+              value={themeSetting.email}
+              onChange={(e) =>
+                setThemeSetting({
+                  ...themeSetting,
+                  email: e.target.value,
+                })
+              }
+            />
+          </Box>
+
         </Grid>
         <Grid item xs={12}>
           <Button
