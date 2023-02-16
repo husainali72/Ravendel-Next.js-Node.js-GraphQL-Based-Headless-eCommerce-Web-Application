@@ -36,7 +36,7 @@ const AddAttributeTheme = () => {
   };
 
   const onAdd = () => {
-    var errors = validate(["name"], attribute);
+    let errors = validate(["name"], attribute);
 
     if (!isEmpty(errors)) {
       dispatch({

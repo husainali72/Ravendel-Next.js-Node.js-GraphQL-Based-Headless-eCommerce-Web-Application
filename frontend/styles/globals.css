@@ -566,9 +566,13 @@ color: #696969;
 
 }
 .cat-images{
-
   width: 40%;
   height: 100%;
+  object-fit:cover;
+}
+.subcat-img{
+  width: 40%;
+  min-height: 264px;
   object-fit:cover;
 }
 

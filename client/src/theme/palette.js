@@ -30,6 +30,12 @@ export default {
     main: colors.green[600],
     light: colors.green[400],
   },
+  pending: {
+    contrastText: white,
+    dark: "#FC7300",
+    main: "#FC7300",
+    light: "#FC7300",
+  },
   failed: {
     contrastText: white,
     dark: "#A9294F",

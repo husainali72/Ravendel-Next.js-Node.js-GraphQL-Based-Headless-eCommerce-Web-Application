@@ -27,7 +27,7 @@ const SingleBlogPages = ({ singleBlog }) => {
                         <hr></hr>
                         <img src={getImage(singleBlog.feature_image, 'original')} width={"100%"} />
                         <div>
-                            <p>{singleBlog?.content.replace(/(<([^>]+)>)/ig, '')}</p>
+                            <p>{singleBlog?.content?.replace(/(<([^>]+)>)/ig, '')}</p>
                         </div>
                         <div className="d-flex entry-bottom mt-50 mb-30 wow fadeIn   animated" >
                             <div className="tags w-50 w-sm-100">
@@ -100,7 +100,6 @@ export async function getStaticProps({ params }) {
     catch (e) {
         console.log("Bolg SinglePage ERROR==", e)
     }
-    console.log("singleBlog", singleBlog)
     return {
         props: {
             singleBlog,

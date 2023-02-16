@@ -149,7 +149,6 @@ function cartReducer(state = [], action) {
         case INCRESE_QUANTITY:
         
             const cart = JSON.parse(localStorage.getItem("cart"))   //api for increasing particulat users carts items quantity if user is authhenticated
-            console.log('1 cart ',cart)
             let isExisted = cart.some(item => item._id === action.payload._id)
             if (isExisted ) {
                 for(let item of cart) {
@@ -164,7 +163,6 @@ function cartReducer(state = [], action) {
 
         case DECREASE_QUANTITY:
             const CardItem = JSON.parse(localStorage.getItem("cart"))
-            console.log('1 cart ',CardItem)
             let isExisteds = CardItem.filter(item => item._id === action.payload._id)
 
             if (isExisteds) {
@@ -177,7 +175,6 @@ function cartReducer(state = [], action) {
             }
 
             localStorage.setItem("cart", JSON.stringify(CardItem))
-            console.log('1 cart after ',CardItem)
             return CardItem;
         
         default:

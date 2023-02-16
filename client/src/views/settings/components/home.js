@@ -29,6 +29,8 @@ import { categoriesAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import { Loading } from "../../components";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
+import AddIcon from '@mui/icons-material/Add';
+import ReorderIcon from '@mui/icons-material/Reorder';
 
 const HomeSettingsTheme = () => {
   const classes = viewStyles();
@@ -431,27 +433,27 @@ const HomeSettingsTheme = () => {
                     size='small'
                     color='primary'
                     variant='contained'
-                    style={{ marginTop: "25px" }}
+                    style={{ marginTop: "25px", minWidth: "30px" }}
                     onClick={addCategory}
                   >
-                    Add Category
+                    <AddIcon />
                   </Button>
 
                   <Button
                     size='small'
                     color='primary'
                     variant='contained'
-                    style={{ marginLeft: "20px", marginTop: "25px" }}
+                    style={{ marginLeft: "20px", marginTop: "25px", minWidth: "40px"}}
                     onClick={reOrder}
                   >
-                    Re-order
+                    <ReorderIcon />
                   </Button>
 
                   <Button
                     size='small'
                     color='primary'
                     variant='contained'
-                    style={{ marginLeft: "20px", marginTop: "25px" }}
+                    style={{ marginLeft: "20px", marginTop: "25px"}}
                     onClick={updateHome}
                   >
                     Save Change
