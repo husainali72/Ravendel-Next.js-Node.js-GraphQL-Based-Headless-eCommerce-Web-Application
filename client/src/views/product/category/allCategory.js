@@ -98,7 +98,7 @@ const AllCategoryComponent = () => {
   const editCategory = (cat) => {
     setEditmode(true);
     setfeaturedImage(null);
-    if (cat.image && cat.image) {
+    if (cat.image) {
       setfeaturedImage(bucketBaseURL + cat.image);
     }
     setSingleCategory({ ...singlecategory, ...cat });

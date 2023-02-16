@@ -358,7 +358,7 @@ const EditProductComponent = ({ params }) => {
                           type: ALERT_SUCCESS,
                           payload: {
                             boolean: false,
-                            message: "Sale price couldn't exceed Original price",
+                            message: "Sale price couldn't exceed original price",
                             error: true,
                           },
                         })
