@@ -9,6 +9,10 @@ const {
 } = require("./helpers");
 const bcrypt = require("bcryptjs");
 
+const Product = require("../models/Product");
+const Customer = require("../models/Customer");
+const mongoose = require("mongoose");
+
 const GET_BY_PAGINATIONS = async (
   limit,
   pageNumber,
@@ -193,6 +197,13 @@ const CREATE_FUNC = async (
         success: false,
       };
     }
+
+    if(name === "Review"){
+      const customer = await Customer.findById(mongoose.Types.ObjectId(data.customer_id))
+      if(!customer) return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
+      const product = await Product.findById(mongoose.Types.ObjectId(data.product_id))
+      if(!product) return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
+    }
     //console.log('DATA', data) ;
     //console.log('ARGUMENT', args) ;
 
@@ -269,6 +280,9 @@ const CREATE_FUNC = async (
     if (data.password) {
       response.password = await bcrypt.hash(data.password, 10);
     }
+
+    if(name !== "Page" && name !== "ProductAttribute") response.updated = Date.now()
+
     await response.save();
     return MESSAGE_RESPONSE("AddSuccess", name, true);
   } catch (error) {

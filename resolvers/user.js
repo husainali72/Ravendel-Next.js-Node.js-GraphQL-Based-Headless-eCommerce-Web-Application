@@ -27,32 +27,31 @@ const {
 } = require("../config/api_functions");
 const bcrypt = require("bcryptjs");
 const moment = require('moment')
-const fs = require("fs");
 const {checkAwsFolder} = require("../config/aws");
+const roleOptions = ["USER", "AUTHOR", "SUBSCRIBER", "MANAGER", "EDITOR"]
+const fs = require("fs");
 
 var udir = "./assets/images/user";
-var ldir = "./assets/images/user/large";
-var mdir = "./assets/images/user/medium";
-var tdir = "./assets/images/user/thumbnail";
-var odir = "./assets/images/user/original";
-
-const roleOptions = ["USER", "AUTHOR", "SUBSCRIBER", "MANAGER", "EDITOR"]
+// var ldir = "./assets/images/user/large";
+// var mdir = "./assets/images/user/medium";
+// var tdir = "./assets/images/user/thumbnail";
+// var odir = "./assets/images/user/original";
 
 if (!fs.existsSync(udir)) {
   fs.mkdirSync(udir);
 }
-if (!fs.existsSync(ldir)) {
-  fs.mkdirSync(ldir);
-}
-if (!fs.existsSync(mdir)) {
-  fs.mkdirSync(mdir);
-}
-if (!fs.existsSync(odir)) {
-  fs.mkdirSync(odir);
-}
-if (!fs.existsSync(tdir)) {
-  fs.mkdirSync(tdir);
-}
+// if (!fs.existsSync(ldir)) {
+//   fs.mkdirSync(ldir);
+// }
+// if (!fs.existsSync(mdir)) {
+//   fs.mkdirSync(mdir);
+// }
+// if (!fs.existsSync(odir)) {
+//   fs.mkdirSync(odir);
+// }
+// if (!fs.existsSync(tdir)) {
+//   fs.mkdirSync(tdir);
+// }
 
 module.exports = {
   Query: {
@@ -214,7 +213,7 @@ module.exports = {
     },
     updateUser: async (root, args, { id }) => {
       await checkAwsFolder('user');
-      console.log('ARGS',args);
+      // console.log('ARGS',args);
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "User", false);
       }

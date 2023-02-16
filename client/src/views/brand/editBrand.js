@@ -48,8 +48,8 @@ const EditBrandComponenet = ({ params }) => {
             if (editbrand.id === ID) {
               brand.id = editbrand.id;
               setBrand({ ...brand, ...editbrand });
-              if (editbrand.brand_logo && editbrand.brand_logo.original) {
-                setLogoImage(bucketBaseURL + editbrand.brand_logo.original);
+              if (editbrand.brand_logo ) {
+                setLogoImage(bucketBaseURL + editbrand.brand_logo);
               }
             }
           });

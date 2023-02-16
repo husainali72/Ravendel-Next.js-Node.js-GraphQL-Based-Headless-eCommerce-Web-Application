@@ -5,40 +5,35 @@ import BreadCrumb from "../components/breadcrumb/breadcrumb";
 import { useSelector, useDispatch } from "react-redux";
 import CartTable from "../components/cardcomponent/CardDetail";
 import { removeCartItemAction, RemoveAllCartItemsAction, increaseQuantity, decreaseQuantity } from "../redux/actions/cartAction";
-import { mutation, query } from "../utills/helpers";
+import { currencySetter, mutation, query } from "../utills/helpers";
 import { DELETE_CART_PRODUCTS, UPDATE_CART_PRODUCT, GET_USER_CART } from "../queries/cartquery";
+import { GET_HOMEPAGE_DATA_QUERY} from '../queries/home';
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
 import { getAllProductsAction } from "../redux/actions/productAction";
 import { useRouter } from "next/router";
+import { settingActionCreator } from "../redux/actions/settingAction";
 
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice  * product.quantity || 0 * product.quantity), 0)
 const cartitems2 = []     
 
-const YourCard = ({ customercart, cart_id,CartsDataa }) => {
-
+const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
     const router = useRouter();
     const session = useSession();
     const cartProducts = useSelector(state => state.cart);
     const allProducts = useSelector(state => state.products);
     const usercart = useSelector(state => state.userCart);
     const initialRender = useRef(true);
-    const settings = useSelector(state => state.setting)
-    const currencyType = settings.currencyOption
-    let currency = "$"
-    if (currencyType?.currency === "dollar") { currency = "$" }
-    if (currencyType?.currency === "eur") { currency = <i className="fas fa-euro-sign"></i> }
-    if (currencyType?.currency === "gbp") { currency = <i className="fas fa-pound-sign"></i> }
-    if (currencyType?.currency === "cad") { currency = "CA$" }
+
     const [cartItems, setCartItems] = useState([]);
     const [quantityy, setQuantity] = useState();
     const dispatch = useDispatch();
     const [couponCode, setCouponCode] = useState("")
     var id = "";
     var token = "";
- const handlePayment = async () =>{
+    const handlePayment = async () =>{
     if (session?.status !== "authenticated"){
         router.push("/account")
     }
@@ -58,10 +53,21 @@ const YourCard = ({ customercart, cart_id,CartsDataa }) => {
  }
 
  useEffect(() => {
+    dispatch(settingActionCreator(currencyStore.currency_options))
+  }, [currencyStore.currency_options])
+
+ const [currency, setCurrency] = useState("$")
+
+
+ const settings = useSelector(state => state.setting);
+ useEffect(() => {
+     currencySetter(settings,setCurrency);
+}, [settings?.currencyOption])
+
+ useEffect(() => {
     dispatch(getAllProductsAction());
 }, []);
-
-    useEffect(() => {
+ useEffect(() => {
             const getProducts = async () => {
                 const productsCard = JSON.parse(localStorage.getItem("cart"))  
                 if (session?.status === "authenticated") {
@@ -426,6 +432,8 @@ export async function getServerSideProps(context) {
     var customercart = [];
     var cart_id = ""
     var CartsDataa ={}
+    var homepageData = [];
+    var currencyStore = [];
     if (session !== null) {
 
         /* ----------------------- GET USER CART -----------------------------*/
@@ -456,11 +464,26 @@ export async function getServerSideProps(context) {
         }
     }
 
+   /* ----------------------- GEt currency -----------------------------*/
+    try {
+        const { data: homepagedata } = await client.query({
+          query: GET_HOMEPAGE_DATA_QUERY
+        })
+        homepageData = homepagedata
+        
+        currencyStore = homepagedata?.getSettings?.store
+      }
+      catch (e) {
+        console.log("homepage Error===", e);
+      }
+
+
     return {
         props: {
             customercart,
             cart_id,
-            CartsDataa
+            CartsDataa,
+            currencyStore
         },
        
 

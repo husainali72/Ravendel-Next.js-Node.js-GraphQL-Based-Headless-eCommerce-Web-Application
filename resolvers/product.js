@@ -29,11 +29,12 @@ var mongoose = require("mongoose");
 
 /* =============================WILL FIX LATER============================= */
 const fs = require("fs");
+
 var pdir = "./assets/images/product";
 var pcdir = "./assets/images/product/category";
-var fdir = "./assets/images/product/feature";
+var pfdir = "./assets/images/product/feature";
 var gdir = "./assets/images/product/gallery";
-var vdir = "./assets/images/product/variant";
+var pvdir = "./assets/images/product/variant";
 
 if (!fs.existsSync(pdir)) {
   fs.mkdirSync(pdir);
@@ -41,84 +42,86 @@ if (!fs.existsSync(pdir)) {
 if (!fs.existsSync(pcdir)) {
   fs.mkdirSync(pcdir);
 }
-
-if (!fs.existsSync(fdir)) {
-  fs.mkdirSync(fdir);
+if (!fs.existsSync(gdir)) {
+  fs.mkdirSync(gdir);
 }
-if (!fs.existsSync(vdir)) {
-  fs.mkdirSync(vdir);
+if (!fs.existsSync(pfdir)) {
+  fs.mkdirSync(pfdir);
 }
-
-var cldir = "./assets/images/product/category/large";
-var cmdir = "./assets/images/product/category/medium";
-var ctdir = "./assets/images/product/category/thumbnail";
-var codir = "./assets/images/product/category/original";
-if (!fs.existsSync(cldir)) {
-  fs.mkdirSync(cldir);
-}
-if (!fs.existsSync(cmdir)) {
-  fs.mkdirSync(cmdir);
-}
-if (!fs.existsSync(codir)) {
-  fs.mkdirSync(codir);
-}
-if (!fs.existsSync(ctdir)) {
-  fs.mkdirSync(ctdir);
+if (!fs.existsSync(pvdir)) {
+  fs.mkdirSync(pvdir);
 }
 
-var fldir = "./assets/images/product/feature/large";
-var fmdir = "./assets/images/product/feature/medium";
-var ftdir = "./assets/images/product/feature/thumbnail";
-var fodir = "./assets/images/product/feature/original";
+// var cldir = "./assets/images/product/category/large";
+// var cmdir = "./assets/images/product/category/medium";
+// var ctdir = "./assets/images/product/category/thumbnail";
+// var codir = "./assets/images/product/category/original";
+// if (!fs.existsSync(cldir)) {
+//   fs.mkdirSync(cldir);
+// }
+// if (!fs.existsSync(cmdir)) {
+//   fs.mkdirSync(cmdir);
+// }
+// if (!fs.existsSync(codir)) {
+//   fs.mkdirSync(codir);
+// }
+// if (!fs.existsSync(ctdir)) {
+//   fs.mkdirSync(ctdir);
+// }
 
-if (!fs.existsSync(fldir)) {
-  fs.mkdirSync(fldir);
-}
-if (!fs.existsSync(fmdir)) {
-  fs.mkdirSync(fmdir);
-}
-if (!fs.existsSync(ftdir)) {
-  fs.mkdirSync(ftdir);
-}
-if (!fs.existsSync(fodir)) {
-  fs.mkdirSync(fodir);
-}
+// var fldir = "./assets/images/product/feature/large";
+// var fmdir = "./assets/images/product/feature/medium";
+// var ftdir = "./assets/images/product/feature/thumbnail";
+// var fodir = "./assets/images/product/feature/original";
 
-var gldir = "./assets/images/product/gallery/large";
-var gmdir = "./assets/images/product/gallery/medium";
-var gtdir = "./assets/images/product/gallery/thumbnail";
-var godir = "./assets/images/product/gallery/original";
+// if (!fs.existsSync(fldir)) {
+//   fs.mkdirSync(fldir);
+// }
+// if (!fs.existsSync(fmdir)) {
+//   fs.mkdirSync(fmdir);
+// }
+// if (!fs.existsSync(ftdir)) {
+//   fs.mkdirSync(ftdir);
+// }
+// if (!fs.existsSync(fodir)) {
+//   fs.mkdirSync(fodir);
+// }
 
-if (!fs.existsSync(gldir)) {
-  fs.mkdirSync(gldir);
-}
-if (!fs.existsSync(gmdir)) {
-  fs.mkdirSync(gmdir);
-}
-if (!fs.existsSync(godir)) {
-  fs.mkdirSync(godir);
-}
-if (!fs.existsSync(gtdir)) {
-  fs.mkdirSync(gtdir);
-}
+// var gldir = "./assets/images/product/gallery/large";
+// var gmdir = "./assets/images/product/gallery/medium";
+// var gtdir = "./assets/images/product/gallery/thumbnail";
+// var godir = "./assets/images/product/gallery/original";
 
-var vldir = "./assets/images/product/variant/large";
-var vmdir = "./assets/images/product/variant/medium";
-var vtdir = "./assets/images/product/variant/thumbnail";
-var vodir = "./assets/images/product/variant/original";
+// if (!fs.existsSync(gldir)) {
+//   fs.mkdirSync(gldir);
+// }
+// if (!fs.existsSync(gmdir)) {
+//   fs.mkdirSync(gmdir);
+// }
+// if (!fs.existsSync(godir)) {
+//   fs.mkdirSync(godir);
+// }
+// if (!fs.existsSync(gtdir)) {
+//   fs.mkdirSync(gtdir);
+// }
 
-if (!fs.existsSync(vldir)) {
-  fs.mkdirSync(vldir);
-}
-if (!fs.existsSync(gmdir)) {
-  fs.mkdirSync(gmdir);
-}
-if (!fs.existsSync(vtdir)) {
-  fs.mkdirSync(vtdir);
-}
-if (!fs.existsSync(vodir)) {
-  fs.mkdirSync(vodir);
-}
+// var vldir = "./assets/images/product/variant/large";
+// var vmdir = "./assets/images/product/variant/medium";
+// var vtdir = "./assets/images/product/variant/thumbnail";
+// var vodir = "./assets/images/product/variant/original";
+
+// if (!fs.existsSync(vldir)) {
+//   fs.mkdirSync(vldir);
+// }
+// if (!fs.existsSync(gmdir)) {
+//   fs.mkdirSync(gmdir);
+// }
+// if (!fs.existsSync(vtdir)) {
+//   fs.mkdirSync(vtdir);
+// }
+// if (!fs.existsSync(vodir)) {
+//   fs.mkdirSync(vodir);
+// }
 /* =============================WILL FIX LATER============================= */
 
 /* For Test geting child*/
@@ -281,25 +284,48 @@ module.exports = {
         // category filter
         if(category) pipeline[0].$match.$and.push({categoryId: {$in: [`${category}`]}})
         // brand filter
-        if(brand) pipeline[0].$match.$and.push({brand: brand})
+        if(brand) pipeline[0].$match.$and.push({brand: mongoose.Types.ObjectId(brand)})
         // product type filter
         if(product_type === "virtual") pipeline[0].$match.$and.push({'product_type.virtual': true})
         else if(product_type === "downloadable") pipeline[0].$match.$and.push({'product_type.downloadable': true})
         // price filter
         if(price){
           if(price.min && price.max){
-            pipeline[0].$match.$and.push({'pricing.price': {$gt: price.min, $lt: price.max}})
+            pipeline[0].$match.$and.push({'pricing.price': {$gte: price.min, $lte: price.max}})
           }
         }
         // most reviewed products filter
         // if(most_reviewed) pipeline[0].$match.$and.push({})
         // rating filter
-        // if(rating){
-        //   if(rating.min && rating.max){
-        //     pipeline[0].$match.$and.push({rating: {$gt: rating.min, $lt: rating.max}})
-        //   }
-        // }
+        if(rating){
+          if(rating.min && rating.max){
+            pipeline[0].$match.$and.push({rating: {$gte: rating.min, $lte: rating.max}})
+          }
+        }
         // retrieve filtered products
+        let products = await Product.aggregate(pipeline)
+        return products || [];
+
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    relatedProducts: async (root, args) => {
+      try {
+        let category = args.category
+        // if product belongs to subcat then show parentcat products else show subcat products
+        let existingCategory = await ProductCat.findById(category)
+        if(existingCategory.parentId) category = existingCategory.parentId
+        const pipeline=[
+          {$match: {
+            $and: [
+              {categoryId: {$in: [`${category}`]}}
+            ]
+          }},
+          {$limit: 4}
+        ]
+        // retrieve related products
         let products = await Product.aggregate(pipeline)
         return products || [];
 
@@ -682,7 +708,7 @@ module.exports = {
               if (combination.image && combination.image.file) {
                 imgObject = await imageUpload(
                   combination.image.file[0].file,
-                  "/assets/images/product/variant/","productvarient"
+                  "/assets/images/product/variant/","productvariant"
                 );
                 combination.image = imgObject.data || imgObject;
               }
@@ -695,7 +721,7 @@ module.exports = {
                 sku: args.sku,
                 quantity: args.quantity,
                 price: args.pricing.sellprice || args.pricing.price,
-                image: {},
+                image: "",
               },
             ];
           }
@@ -768,9 +794,9 @@ module.exports = {
               throw putError(imgObject.message);
             }
 
-            if (product.feature_image) {
-              imageUnlink(product.feature_image);
-            }
+            // if (product.feature_image) {
+            //   imageUnlink(product.feature_image);
+            // }
 
             product.feature_image = imgObject.data;
           }
@@ -792,21 +818,30 @@ module.exports = {
           }
 
           if (args.removed_image.length) {
-            for (let i in gallery_images) {
-              if (
-                gallery_images[i]._id &&
-                ~args.removed_image.indexOf(String(gallery_images[i]._id))
-              ) {
-                let imgObject = {
-                  large: gallery_images[i].large,
-                  medium: gallery_images[i].medium,
-                  original: gallery_images[i].original,
-                  thumbnail: gallery_images[i].thumbnail,
-                };
-                imageUnlink(imgObject);
-                delete gallery_images[i];
+            gallery_images = gallery_images.filter((gImage => {
+              if(args.removed_image.includes(gImage)){
+                imageUnlink(gImage);
+              }else{
+                return gImage
               }
-            }
+            }))
+            // for (let i in gallery_images) {
+            //   console.log("run for")
+            //   console.log(gallery_images[i], args.removed_image)
+            //   if(args.removed_image.includes(gallery_images[i])){
+            //     console.log("match")
+            //     let imgObject = gallery_images[i]
+            //     imageUnlink(imgObject);
+            //     gallery_images.splice(i, 1)
+            //   }
+              // if(gallery_images[i] && ~args.removed_image.indexOf(String(gallery_images[i])))
+              // if (gallery_images[i] === args.removed_image.gallery_images[i]){
+              //   let imgObject = gallery_images[i]
+              //   imageUnlink(imgObject);
+              //   gallery_images.splice(i, 1)
+              //   // delete gallery_images[i];
+              // }
+            // }
           }
 
           product.name = args.name;
@@ -844,7 +879,7 @@ module.exports = {
               ) {
                 imgObject = await imageUpload(
                   combination.image.file[0].file,
-                  "/assets/images/product/variant/","productvarient"
+                  "/assets/images/product/variant/","productvariant"
                 );
                 combination.image = imgObject.data || imgObject;
               }
@@ -857,7 +892,7 @@ module.exports = {
                 sku: args.sku,
                 quantity: args.quantity,
                 price: args.pricing.sellprice || args.pricing.price,
-                image: {},
+                image: "",
               },
             ];
           }

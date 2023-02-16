@@ -22,7 +22,8 @@ const ProductAttributeVariationSchema = new Schema(
       type: String,
       default: 0,
     },
-    image: {},
+    // image: {},
+    image: String,
   },
   {
     timestamps: true,

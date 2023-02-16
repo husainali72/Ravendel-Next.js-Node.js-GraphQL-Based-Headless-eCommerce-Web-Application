@@ -39,7 +39,7 @@ module.exports = gql`
     parentId: ID
     url: String
     description: String
-    image: customObject
+    image: String
     meta: customObject
     date: Date
     updated: Date
@@ -68,7 +68,7 @@ module.exports = gql`
     parentId: ID
     url: String
     description: String
-    image: customObject
+    image: String
     products: [Product]
     child_cat: [ChildCat]
     filter_attributes: [FILTER_ATTRIBUTE]
@@ -86,7 +86,7 @@ module.exports = gql`
     pricing: customObject
     quantity: Float
     sku: String
-    image: customObject
+    image: String
     createdAt: Date
     updatedAt: Date
   }
@@ -102,8 +102,8 @@ module.exports = gql`
     description: String
     quantity: String
     pricing: customObject
-    feature_image: customObject
-    gallery_image: customObject
+    feature_image: String
+    gallery_image: customArray
     meta: customObject
     shipping: customObject
     tax_class: String
@@ -191,6 +191,7 @@ module.exports = gql`
     productsbycaturl(cat_url: String!): productCate_by_url
     productbyurl(url: String):  products_by_url
     filteredProducts(filter: customObject): [Product]
+    relatedProducts(category: String): [Product]
     onSaleProducts: [Product]
   }
 

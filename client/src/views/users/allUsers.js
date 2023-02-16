@@ -119,7 +119,7 @@ const AllUsersComponent = () => {
                         </Tooltip>
                       </TableCell>
 
-                      <TableCell>Actions</TableCell>
+                      <TableCell variant="contained" color="primary">Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -134,8 +134,7 @@ const AllUsersComponent = () => {
                             <Avatar
                               alt={user.name}
 
-                              src={`${bucketBaseURL}${user.image && user.image.thumbnail
-                                }`}
+                              src={`${bucketBaseURL}${user.image}`}
 
                             />
                           </TableCell>

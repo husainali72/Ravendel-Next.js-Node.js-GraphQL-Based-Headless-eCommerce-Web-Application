@@ -17,6 +17,7 @@ module.exports = {
   NOT_EXIST: ":item not exist",
   SINGLE_RESULT_FOUND: ":item are fetched",
   Required: ":item is required",
+  InvalidRole: "Please enter a valid :item Role",
   InvalidEmail: "Please enter valid email address",
   InvalidName: ":item must contain alphabets only",
   InvalidUrl: ":item url not accepted please enter valid url",

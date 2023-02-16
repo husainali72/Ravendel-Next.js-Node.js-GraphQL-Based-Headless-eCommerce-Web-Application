@@ -16,6 +16,13 @@ const {
 } = require("../config/api_functions");
 
 const {checkAwsFolder} = require("../config/aws");
+const fs = require('fs')
+
+var bdir = './assets/images/blog';
+
+if (!fs.existsSync(bdir)){
+  fs.mkdirSync(bdir);
+}
 
 module.exports = {
   Query: {
@@ -116,7 +123,7 @@ module.exports = {
         meta: args.meta,
         author: user.id,
       };
-      let path = "/assets/images/blog/feature/";
+      let path = "/assets/images/blog/";
       let validation = ["title", "status"];
       const duplicate = await duplicateData({title: args.title}, Blog)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "BlogTag", false);
@@ -133,7 +140,7 @@ module.exports = {
     updateBlog: async (root, args, { id }) => {
 
       await checkAwsFolder('blog');
-      let path = "/assets/images/blog/feature/";
+      let path = "/assets/images/blog/";
 
       let url = "";
       if (args.url || args.title) {
@@ -146,6 +153,7 @@ module.exports = {
         status: args.status,
         blog_tag: args.blog_tag,
         url: url,
+        updatedImage: args.updatedImage,
         meta: args.meta,
         updated: Date.now(),
       };

@@ -33,7 +33,7 @@ const ThemesComponent = () => {
   };
 
   const fileChange = (e) => {
-    themeSetting.logo.original = URL.createObjectURL(e.target.files[0]);
+    themeSetting.logo = URL.createObjectURL(e.target.files[0]);
     themeSetting.new_logo = e.target.files
     setThemeSetting({...themeSetting})
   };
@@ -60,9 +60,9 @@ const ThemesComponent = () => {
             />
           </Box>
           <Box className={classes.themeLogoWrapper}>
-            {themeSetting.logo && themeSetting.logo.original? (
+            {themeSetting.logo ? (
               <img
-                src={themeSetting.logo.original.startsWith("blob") ? themeSetting.logo.original : bucketBaseURL + themeSetting.logo.original}
+                src={themeSetting.logo.startsWith("blob") ? themeSetting.logo : bucketBaseURL + themeSetting.logo}
                 className={classes.themeLogoBoxPreview}
                 alt="img"
               />

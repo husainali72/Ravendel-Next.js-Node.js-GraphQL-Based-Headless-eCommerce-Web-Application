@@ -4,7 +4,7 @@ module.exports = gql`
     id: ID
     name: String
     url: String
-    brand_logo: customObject
+    brand_logo: String
     meta: BrandMeta
     date: Date
     updated: Date

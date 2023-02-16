@@ -122,10 +122,10 @@ const ViewOrderComponent = ({ params }) => {
 
     e.preventDefault();
 
-    var errors = validatenested("billing", ["payment_method", "email", "state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
-    var Errors = validatenested("shipping", ["state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
+    let errors = validatenested("billing", ["payment_method", "email", "state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
+    let Errors = validatenested("shipping", ["state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
 
-    var phoneNumberError = validateNestedPhone("billing", ["phone"], order)
+    let phoneNumberError = validateNestedPhone("billing", ["phone"], order)
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -283,10 +283,10 @@ const ViewOrderComponent = ({ params }) => {
                     </Typography>
                     <FormControl className={classes.statusSelect}>
                       <InputLabel id="status" sx={{ marginTop: '20px' }} >
-                        {order.payment_status}
+                        Payment Status
                       </InputLabel>
                       <Select
-                        label={order.payment_status}
+                        label="Payment Status"
                         labelId="payment_status
                         "
                         id="payment_status"
@@ -407,7 +407,7 @@ const ViewOrderComponent = ({ params }) => {
                           )}
                         </Grid>
                         <Grid item md={4}>
-                          <PhoneNumber handleOnChange={handleOnChange} phoneValue={phoneValue} />
+                          <PhoneNumber className="phoneValidation" handleOnChange={handleOnChange} phoneValue={phoneValue} width= "100%"/>
 
                         </Grid>
                         <Grid item md={4}>
@@ -673,7 +673,7 @@ const ViewOrderComponent = ({ params }) => {
 
             <Grid item md={6}>
               <Box component="span">
-                <Card>
+                <Card style={{height: "219px"}}>
                   <CardHeader title="Subtotal" />
                   <Divider />
                   <CardContent>
@@ -688,7 +688,7 @@ const ViewOrderComponent = ({ params }) => {
                         <Typography variant="body1" className={classes.mtb2}>
                           {order.sub_total_details.tax_name}
                         </Typography>
-                        <Divider />
+                        <Divider style={{marginTop: "10px"}}/>
                         <Typography variant="body1" className={classes.mtb2}>
                           SubTotal
                         </Typography>
@@ -709,7 +709,7 @@ const ViewOrderComponent = ({ params }) => {
                           <Typography variant="body2" className={classes.mtb2}>
                             {subTotal.tax_value ? subTotal.tax_value : 0}
                           </Typography>
-                          <Divider />
+                          <Divider style={{marginTop: "10px"}}/>
                           <Typography variant="body2" className={classes.mtb2}>
                             {subTotal.total ? currencyFormat(subTotal.total) : 0}
                           </Typography>
@@ -726,7 +726,7 @@ const ViewOrderComponent = ({ params }) => {
                         <Typography variant="body2" className={classes.mtb2}>
                           0
                         </Typography>
-                        <Divider />
+                        <Divider style={{marginTop: "10px"}}/>
                         <Typography variant="body2" className={classes.mtb2}>
                           0
                         </Typography>

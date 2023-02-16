@@ -70,3 +70,7 @@ node_modules/
 _static
 
 /node_modules/
+
+.next
+
+/.next/

@@ -1,10 +1,10 @@
 // export const IMAGE_BASE_URL = "https://ravendel.herokuapp.com";
-export const IMAGE_BASE_URL = "http://localhost:8000";
+export const IMAGE_BASE_URL = "https://demo1.ravendel.io";
 // export const IMAGE_BASE_URL = "http://localhost:3000"
 
 
 // export const API_BASE_URL = "http://localhost:3001/api";
-export const API_BASE_URL = "http://localhost:8000/api";
+export const API_BASE_URL = "https://demo1.ravendel.io/api";
 
 /* -------------------------------  imageURl changes to bucketURL ------------------------- */
 

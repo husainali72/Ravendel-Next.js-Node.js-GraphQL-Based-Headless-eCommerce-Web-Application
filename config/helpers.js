@@ -125,9 +125,10 @@ const imgType = ["original", "large", "medium", "thumbnail"]
 //const pathToFile = path.dirname(require.main.filename);
 
 const sizes = {
-  thumbnail: [150, 150],
-  medium: [300, 300],
-  large: [1024, 1024],
+  // thumbnail: [150, 150],
+  // medium: [300, 300],
+  // large: [1024, 1024],
+  original: [768, 768]
 };
 
 const sharpResize = (path, i, uploadPath, filename) => {
@@ -137,7 +138,8 @@ const sharpResize = (path, i, uploadPath, filename) => {
         .resize(sizes[i][0], sizes[i][1])
         .toBuffer()
         .then((data) => {
-          fs.writeFileSync(`.${uploadPath + i}/${filename}`, data);
+          // fs.writeFileSync(`.${uploadPath + i}/${filename}`, data);
+          fs.writeFileSync(`.${uploadPath}${filename}`, data);
           return resolve(true);
         })
         .catch((err) => {
@@ -197,13 +199,14 @@ const imageUpload = async (upload, uploadPath, nametype) => {
       filename = slugify(filename, { lower: true, replacement: "-" });
       filename = Date.now() + "-" + filename;
 
-      let original = uploadPath + "original/" + filename;
-      let large = uploadPath + "large/" + filename;
-      let medium = uploadPath + "medium/" + filename;
-      let thumbnail = uploadPath + "thumbnail/" + filename;
-      let path = "." + original;
+      // let original = uploadPath + "original/" + filename;
+      // let large = uploadPath + "large/" + filename;
+      // let medium = uploadPath + "medium/" + filename;
+      // let thumbnail = uploadPath + "thumbnail/" + filename;
+      let path = "." + uploadPath + filename;
 
-      if (!fs.existsSync("." + uploadPath + "original/")) {
+      // if (!fs.existsSync("." + uploadPath + "original/")) {
+      if (!fs.existsSync("." + uploadPath)) {
         return resolve({
           success: false,
           message: "Path does not exist",
@@ -228,65 +231,75 @@ const imageUpload = async (upload, uploadPath, nametype) => {
         .on("finish", async () => {
 
           //console.log('nametype',nametype);
-          let awsoriginalpath, awslargepath, awsmediumpath, awsthumbnailpath;
+          // let awsoriginalpath, awslargepath, awsmediumpath, awsthumbnailpath;
+          let awsFilePath
           if (nametype == 'Blog') {
-            awsoriginalpath = 'blog/feature/original';
-            awslargepath = 'blog/feature/large';
-            awsmediumpath = 'blog/feature/medium';
-            awsthumbnailpath = 'blog/feature/thumbnail';
+            // awsoriginalpath = 'blog/feature/original';
+            // awslargepath = 'blog/feature/large';
+            // awsmediumpath = 'blog/feature/medium';
+            // awsthumbnailpath = 'blog/feature/thumbnail';
+            awsFilePath = 'blog'
           }
 
           if (nametype == 'Setting') {
-            awsoriginalpath = 'setting/original';
-            awslargepath = 'setting/large';
-            awsmediumpath = 'setting/medium';
-            awsthumbnailpath = 'setting/thumbnail';
+            // awsoriginalpath = 'setting/original';
+            // awslargepath = 'setting/large';
+            // awsmediumpath = 'setting/medium';
+            // awsthumbnailpath = 'setting/thumbnail';
+            awsFilePath = 'setting'
           }
 
           if (nametype == 'ProductCategory') {
-            awsoriginalpath = 'product/category/original';
-            awslargepath = 'product/category/large';
-            awsmediumpath = 'product/category/medium';
-            awsthumbnailpath = 'product/category/thumbnail';
+            // awsoriginalpath = 'product/category/original';
+            // awslargepath = 'product/category/large';
+            // awsmediumpath = 'product/category/medium';
+            // awsthumbnailpath = 'product/category/thumbnail';
+            awsFilePath = 'product/category'
           }
 
           if (nametype == 'Brand') {
-            awsoriginalpath = 'brand/original';
-            awslargepath = 'brand/large';
-            awsmediumpath = 'brand/medium';
-            awsthumbnailpath = 'brand/thumbnail';
+            // awsoriginalpath = 'brand/original';
+            // awslargepath = 'brand/large';
+            // awsmediumpath = 'brand/medium';
+            // awsthumbnailpath = 'brand/thumbnail';
+            awsFilePath = 'brand'
           }
 
 
           if (nametype == 'User') {
-            awsoriginalpath = 'user/original';
-            awslargepath = 'user/large';
-            awsmediumpath = 'user/medium';
-            awsthumbnailpath = 'user/thumbnail';
+            // awsoriginalpath = 'user/original';
+            // awslargepath = 'user/large';
+            // awsmediumpath = 'user/medium';
+            // awsthumbnailpath = 'user/thumbnail';
+            awsFilePath = 'user'
           }
 
           if (nametype == 'productgallery') {
-            awsoriginalpath = 'product/gallery/original';
-            awslargepath = 'product/gallery/large';
-            awsmediumpath = 'product/gallery/medium';
-            awsthumbnailpath = 'product/gallery/thumbnail';
+            // awsoriginalpath = 'product/gallery/original';
+            // awslargepath = 'product/gallery/large';
+            // awsmediumpath = 'product/gallery/medium';
+            // awsthumbnailpath = 'product/gallery/thumbnail';
+            awsFilePath = 'product/gallery'
           }
 
           if (nametype == 'productfeature') {
-            awsoriginalpath = 'product/feature/original';
-            awslargepath = 'product/feature/large';
-            awsmediumpath = 'product/feature/medium';
-            awsthumbnailpath = 'product/feature/thumbnail';
+            // awsoriginalpath = 'product/feature/original';
+            // awslargepath = 'product/feature/large';
+            // awsmediumpath = 'product/feature/medium';
+            // awsthumbnailpath = 'product/feature/thumbnail';
+            awsFilePath = 'product/feature'
           }
 
-          if (nametype == 'productvarient') {
-            awsoriginalpath = 'product/varient/original';
-            awslargepath = 'product/varient/large';
-            awsmediumpath = 'product/varient/medium';
-            awsthumbnailpath = 'product/varient/thumbnail';
+          if (nametype == 'productvariant') {
+            // awsoriginalpath = 'product/varient/original';
+            // awslargepath = 'product/varient/large';
+            // awsmediumpath = 'product/varient/medium';
+            // awsthumbnailpath = 'product/varient/thumbnail';
+            awsFilePath = 'product/variant'
           }
 
-          const awsoriginal = await uploadFile(original, filename, awsoriginalpath);
+          // const awsoriginal = await uploadFile(original, filename, awsoriginalpath);
+          const awsFile = await uploadFile(path, filename, awsFilePath);
 
 
           for (let i in sizes) {
@@ -312,26 +325,34 @@ const imageUpload = async (upload, uploadPath, nametype) => {
             }
           }
 
-          const awslarge = await uploadFile(large, filename, awslargepath);
-          const awsmedium = await uploadFile(medium, filename, awsmediumpath);
-          const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
+          // const awslarge = await uploadFile(large, filename, awslargepath);
+          // const awsmedium = await uploadFile(medium, filename, awsmediumpath);
+          // const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
           // delete file if uploaded on AWS and exists in local
-          if(!awsoriginal || awsoriginal) {
-            imgType.map(type => {
-              let filePath = `.${uploadPath}${type}/${filename}`;
-              if(fs.existsSync(filePath)){
-                fs.unlinkSync(filePath);
-              }
-            })
+          // if(!awsoriginal || awsoriginal) {
+          //   imgType.map(type => {
+          //     let filePath = `.${uploadPath}${type}/${filename}`;
+          //     if(fs.existsSync(filePath)){
+          //       fs.unlinkSync(filePath);
+          //     }
+          //   })
+          // }
+
+          if(!awsFile || awsFile) {
+            let filePath = `.${uploadPath}${filename}`;
+            if(fs.existsSync(filePath)){
+              fs.unlinkSync(filePath);
+            }
           }
           return resolve({
             success: true,
-            data: {
-              original: awsoriginal,
-              large: awslarge,
-              medium: awsmedium,
-              thumbnail: awsthumbnail,
-            },
+            // data: {
+            //   original: awsoriginal,
+            //   large: awslarge,
+            //   medium: awsmedium,
+            //   thumbnail: awsthumbnail,
+            // },
+            data: awsFile
           });
         });
     } catch (error) {
@@ -348,13 +369,14 @@ module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
 const imageUnlink = (imgObject) => {
-  for (let i in imgObject) {
+  // for (let i in imgObject) {
+    // console.log(imgObject)
     //console.log('IMAGEOBJECT',imgObject[i]);
-    FileDelete(imgObject[i]);
-    fs.unlink("./assets/images/" + imgObject[i], function (err) {
-      if (err) console.log(err);
-    });
-  }
+    FileDelete(imgObject);
+    // fs.unlink("./assets/images/" + imgObject[i], function (err) {
+    //   if (err) console.log(err);
+    // });
+  // }
 };
 
 module.exports.imageUnlink = imageUnlink;

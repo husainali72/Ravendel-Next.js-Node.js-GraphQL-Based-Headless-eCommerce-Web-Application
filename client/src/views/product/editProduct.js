@@ -149,9 +149,9 @@ const EditProductComponent = ({ params }) => {
 
         });
 
-        if (productState.product.feature_image.original) {
+        if (productState.product.feature_image) {
           setfeatureImage(
-            bucketBaseURL + productState.product.feature_image.original
+            bucketBaseURL + productState.product.feature_image
           );
         } else {
           setfeatureImage(

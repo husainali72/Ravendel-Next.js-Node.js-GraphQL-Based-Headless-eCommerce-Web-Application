@@ -58,8 +58,8 @@ const EditUserComponent = ({ params }) => {
       UsersState.users.map((edituser) => {
         if (edituser.id === User_id) {
           setuser({ ...edituser });
-          if (edituser.image && edituser.image.original) {
-            setfeatureImage(bucketBaseURL + edituser.image.original);
+          if (edituser.image) {
+            setfeatureImage(bucketBaseURL + edituser.image);
           }
         }
       });

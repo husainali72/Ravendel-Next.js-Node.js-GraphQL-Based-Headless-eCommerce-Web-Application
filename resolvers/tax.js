@@ -51,23 +51,23 @@ module.exports = {
             }
           );
         }
-        return MESSAGE_RESPONSE("UpdateSuccess", "Tax", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "GlobalTax", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "Tax", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "GlobalTax", false);
       }
     },
     updateOptionTax: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "OptionTax", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "TaxOption", false);
       }
       try {
         const tax = await Tax.findOne({});
         tax.is_inclusive = args.is_inclusive;
         tax.updated = Date.now();
         await tax.save();
-        return MESSAGE_RESPONSE("UpdateSuccess", "OptionTax", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "TaxOption", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "OptionTax", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "TaxOption", false);
       }
     },
     addTaxClass: async (root, args, { id }) => {
@@ -84,7 +84,8 @@ module.exports = {
         }
         const tax = await Tax.findOne({});
         let result = tax.tax_class.map(tax=>{
-          if(tax.name.toLowerCase() === args.tax_class.name.toLowerCase()){
+          if(tax.name.toLowerCase() === args.tax_class.name.toLowerCase() ||
+            tax.percentage === parseInt(args.tax_class.percentage)){
             return false
           }
           else return true
@@ -103,7 +104,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "TaxClass", false);
       }
       try {
-        const errors = _validate(["name", "percentage"], args.tax_class);
+        const errors = _validate(["name"], args.tax_class);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -112,7 +113,8 @@ module.exports = {
         }
         const tax = await Tax.findOne({});
         let result = tax.tax_class.map(tax=>{
-          if(tax.name.toLowerCase() === args.tax_class.name.toLowerCase() &&
+          if((tax.name.toLowerCase() === args.tax_class.name.toLowerCase() ||
+            tax.percentage === parseInt(args.tax_class.percentage)) &&
             tax._id.toString() !== args.tax_class._id.toString()){
             return false
           }

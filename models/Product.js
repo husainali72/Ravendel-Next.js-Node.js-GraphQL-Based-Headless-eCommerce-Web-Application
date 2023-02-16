@@ -56,23 +56,26 @@ const ProductSchema = new Schema({
       type: String,
     },
   },
-  feature_image: {},
-  gallery_image: [
-    {
-      original: {
-        type: String,
-      },
-      large: {
-        type: String,
-      },
-      medium: {
-        type: String,
-      },
-      thumbnail: {
-        type: String,
-      },
-    },
-  ],
+  // feature_image: {},
+  // gallery_image: [
+  //   {
+  //     original: {
+  //       type: String,
+  //     },
+  //     large: {
+  //       type: String,
+  //     },
+  //     medium: {
+  //       type: String,
+  //     },
+  //     thumbnail: {
+  //       type: String,
+  //     },
+  //   },
+  // ],
+  feature_image: String,
+  gallery_image: [String],
+  
   status: {
     type: String,
   },

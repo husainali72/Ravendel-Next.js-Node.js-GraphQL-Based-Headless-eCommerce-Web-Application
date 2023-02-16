@@ -119,6 +119,7 @@ const EditCustomerComponent = ({ params }) => {
 
 
     let errors = validate(['company', "email", "last_name", "first_name"], customer);
+
     let phoneNumberError = validatePhone(["phone"], customer)
     if (!isEmpty(errors)) {
       dispatch({
@@ -171,17 +172,23 @@ const EditCustomerComponent = ({ params }) => {
     setSingleCustomer({ ...singleCustomer, [name]: value });
   };
 
+  const AddressBookPhonehandlechange = (value, name) => {
+
+    setSingleCustomer({ ...singleCustomer, [name]: value });
+  };
+
   const addressInput = (label, name) => {
 
     return (
       <Grid item md={12} sm={6} xs={12}>
-        {label === 'Phone' ? <PhoneNumber handleOnChange={AddressBookPhonehandlechange} phoneValue={singleCustomer.phone} width="100%" /> :
+
+        {label === 'Phone' ? <PhoneNumber handleOnChange={AddressBookPhonehandlechange} phoneValue={singleCustomer.phone} width="100%" className="phoneValidation"/> :
+
           <TextInput
             label={label}
             name={name}
             value={singleCustomer[name]}
             onInputChange={handleAddressInputField}
-
             sizeSmall
           />}
       </Grid>
@@ -190,66 +197,57 @@ const EditCustomerComponent = ({ params }) => {
 
   const updateAddress = () => {
 
-
-    let errors = validate(['pincode', 'country', 'state', 'city', 'address_line1', "company", "last_name", "first_name"], singleCustomer);
-    let phoneError = validatePhone(["phone"], singleCustomer)
-
+    let phoneNumberError = validatePhone(["phone"], singleCustomer)
+    let errors = validate(["pincode", "country", "state", "city", "address_line1", 'company',"last_name", "first_name",], singleCustomer);
     if (!isEmpty(errors)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: errors,
-          error: true,
-        },
-      });
-    }
-    else if (!isEmpty(phoneError)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: phoneError,
-          error: true,
-        },
-      });
-    }
-    else {
-
-      dispatch(addressbookUpdateAction(singleCustomer));
-    }
-
+     dispatch({
+       type: ALERT_SUCCESS,
+       payload: {
+         boolean: false,
+         message: errors,
+         error: true,
+       },
+     });
+   } else if (!isEmpty(phoneNumberError)) {
+    dispatch({
+      type: ALERT_SUCCESS,
+      payload: {
+        boolean: false,
+        message: phoneNumberError,
+        error: true,
+      },
+    });
+  }
+   else {
+    dispatch(addressbookUpdateAction(singleCustomer))}
   };
 
   const addAddress = () => {
-    let errors = validate(['pincode', 'country', 'state', 'city', 'address_line1', "company", "last_name", "first_name"], singleCustomer);
-    let phoneError = validatePhone(["phone"], singleCustomer)
-
+    let phoneNumberError = validatePhone(["phone"], singleCustomer)
+    let errors = validate(["pincode", "country", "state", "city", "address_line1", 'company',"last_name", "first_name",], singleCustomer);
     if (!isEmpty(errors)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: errors,
-          error: true,
-        },
-      });
-    }
-    else if (!isEmpty(phoneError)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: phoneError,
-          error: true,
-        },
-      });
-    }
-    else {
-
-      dispatch(addressbookAddAction(singleCustomer));
-    }
-
+     dispatch({
+       type: ALERT_SUCCESS,
+       payload: {
+         boolean: false,
+         message: errors,
+         error: true,
+       },
+     });
+   }  else if (!isEmpty(phoneNumberError)) {
+    dispatch({
+      type: ALERT_SUCCESS,
+      payload: {
+        boolean: false,
+        message: phoneNumberError,
+        error: true,
+      },
+    });
+  }
+   else {
+    dispatch(addressbookAddAction(singleCustomer))
+ };
+   
 
   };
 
@@ -270,6 +268,8 @@ const EditCustomerComponent = ({ params }) => {
   const toInputLowercase = e => {
     e.target.value = ("" + e.target.value).toLowerCase();
   };
+
+
 
   return (
     <>
@@ -336,9 +336,10 @@ const EditCustomerComponent = ({ params }) => {
                     onInputChange={handleChange}
                   />
                 </Grid>
-                <Grid item md={3} sm={6} xs={12}>
 
-                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={customer.phone} />
+                <Grid item md={3} sm={6} xs={12} >
+                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={phoneValue} width= "100%"/>
+
                 </Grid>
               </Grid>
             </CardBlocks>

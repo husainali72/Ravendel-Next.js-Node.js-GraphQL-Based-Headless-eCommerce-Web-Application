@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getImage } from "../utills/helpers";
+import { currencySetter, getImage } from "../utills/helpers";
 import client from "../apollo-client";
 import StarRating from "../components/breadcrumb/rating";
 import MultiRangeSlider from "../components/breadcrumb/multirangeSlider";
@@ -16,7 +16,7 @@ import { CloseMenu } from '../utills/app';
 import { OpenSortMenu } from '../utills/app';
 import { CloseSortMenu } from '../utills/app';
 
-const Shop = ({ shopProducts, brandProduct, shopProduct }) => {
+const Shop = ({ shopProducts, brandProduct, shopProduct,currencyStore }) => {
     const dispatch = useDispatch();
     const usercart = useSelector(state => state.userCart)
     const [rangevalue, setRangevalue] = useState('');
@@ -29,6 +29,12 @@ const Shop = ({ shopProducts, brandProduct, shopProduct }) => {
     else {
         <h1>loading...</h1>
     }
+
+    const currencyOpt = currencyStore?.currency_options?.currency
+    const [currency, setCurrency] = useState("$")
+      useEffect(() => {
+          currencySetter(currencyOpt,setCurrency);
+        }, [])
 
     useEffect(() => {
         if (brandProduct) {
@@ -54,7 +60,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct }) => {
                                             max={1000}
                                             onChange={({ min, max }) => setRangevalue(`${min}-${max}`)}
                                         />
-                                        <p style={{ paddingTop: "10px", fontWeight: "600" }}>range : ${rangevalue}</p>
+                                        <p style={{ paddingTop: "10px", fontWeight: "600" }}>range : {currency} {rangevalue}</p>
                                     </div>
                                     <div className="fillter-by-price-checkbox">
                                         <h5>Color</h5>
@@ -90,7 +96,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct }) => {
                                                         <strong>{product.name}</strong>
                                                     )}
                                                     <StarRating stars={"5"} />
-                                                    <p style={{ marginTop: 0 }}>${product.pricing.sellprice}</p>
+                                                    <p style={{ marginTop: 0 }}>{currency} {product.pricing.sellprice}</p>
                                                 </div>
                                             </div>
                                         ))
@@ -165,6 +171,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct }) => {
                                 <OnSaleProductCard
                                     onSaleProduct={onSaleProduct}
                                     hidetitle
+                                    currencyProp ={currency}
                                 />
                             </div>) :
                             <div style={{ padding: "50px" }}>
@@ -185,6 +192,7 @@ export async function getStaticProps() {
     var shopProducts = [];
     var brandProduct = [];
     var shopProduct = [];
+    var  currencyStore = [];
     /* ===============================================Get HomepageData Settings ===============================================*/
 
     try {
@@ -192,6 +200,7 @@ export async function getStaticProps() {
             query: GET_HOMEPAGE_DATA_QUERY
         })
         homepageData = homepagedata
+        currencyStore = homepagedata?.getSettings?.store
     }
     catch (e) {
         console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
@@ -241,6 +250,7 @@ export async function getStaticProps() {
             shopProducts,
             shopProduct,
             brandProduct,
+            currencyStore
         },
         revalidate: 10,
     }
