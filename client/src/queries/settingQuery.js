@@ -138,6 +138,10 @@ const SETTING_TILE_DATA = gql`
       }
       theme {
         primary_color
+        playstore
+        appstore
+        phone_number
+        email
         logo
       }
       mobile {
@@ -459,8 +463,8 @@ const UPDATE_APPEARANCE_MOBILE_NEW = gql`
 `;
 
 const UPDATE_APPEARANCE_THEME = gql`
-  mutation($primary_color: String, $new_logo: Upload) {
-    updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo) {
+  mutation($primary_color: String, $new_logo: Upload, $playstore: String, $appstore: String, $phone_number: String, $email: String) {
+    updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo, playstore: $playstore, appstore: $appstore, phone_number: $phone_number, email: $email) {
       ...SettingTile
     }
   }
@@ -487,5 +491,5 @@ export {
   UPDATE_APPEARANCE_MOBILE,
   UPDATE_APPEARANCE_THEME,
   UPDATE_APPEARANCE_HOME_NEW,
-  UPDATE_APPEARANCE_MOBILE_NEW 
+  UPDATE_APPEARANCE_MOBILE_NEW
 };

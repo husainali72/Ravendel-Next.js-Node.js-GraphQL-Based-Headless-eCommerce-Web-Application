@@ -200,6 +200,10 @@ module.exports = gql`
 
   type APPEARANCE_THEME {
     primary_color: String
+    playstore: String
+    appstore: String
+    phone_number: String
+    email: String
     logo: customObject
   }
 
@@ -350,6 +354,13 @@ module.exports = gql`
     updateAppearanceMobile(
       mobile_section: [mobile_section_input]
     ): Setting
-    updateAppeanranceTheme(primary_color: String, new_logo: Upload): Setting
+    updateAppeanranceTheme(
+      primary_color: String, 
+      playstore: String
+      appstore: String
+      phone_number: String
+      email: String
+      new_logo: Upload
+    ): Setting
   }
 `;
