@@ -346,12 +346,20 @@ const EditProductComponent = ({ params }) => {
                       fullWidth
                       type="number"
                       value={product.pricing.sellprice}
-                      onChange={(e) =>
+                      onChange={(e) => e.target.value < product.pricing.price ?
                         setProduct({
                           ...product,
                           pricing: {
                             ...product.pricing,
                             sellprice: Number(e.target.value),
+                          },
+                        })
+                        :   dispatch({
+                          type: ALERT_SUCCESS,
+                          payload: {
+                            boolean: false,
+                            message: "Sale price couldn't exceed Original price",
+                            error: true,
                           },
                         })
                       }
