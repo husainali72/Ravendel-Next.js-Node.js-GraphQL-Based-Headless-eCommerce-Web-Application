@@ -114,7 +114,7 @@ const EditReviewComponent = ({ params }) => {
   }, [customerState.customers]);
 
   const updateReview = () => {
-    var errors = validate(['email', 'review', "title"], review);
+    let errors = validate(['email', 'review', "title"], review);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -220,9 +220,9 @@ const EditReviewComponent = ({ params }) => {
             )}
 
             <Box component="div" mb={2}>
+            <Typography variant="h3">Email</Typography>
               <TextInput
                 value={review.email}
-                label="Email"
                 name="email"
                 onInputChange={handleChange}
                 onInput={toInputLowercase}

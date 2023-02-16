@@ -28,6 +28,8 @@ import Alerts from "../../components/Alert";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 import Loading from "../../components/Loading.js";
 import { bucketBaseURL } from "../../../utils/helper";
+import AddIcon from '@mui/icons-material/Add';
+import ReorderIcon from '@mui/icons-material/Reorder';
 
 const MobileAppSetting = () => {
   const classes = viewStyles();
@@ -37,6 +39,7 @@ const MobileAppSetting = () => {
   const [dragComponents, setDragComponents] = useState();
   const category = useSelector((state) => state.products);
   const settingState = useSelector((state) => state.settings);
+  const [loading, setloading] = useState(false);
   const [settingMobile, setSettingMobile] = useState({
     ...settingState.settings.appearance.mobile,
   });
@@ -46,6 +49,10 @@ const MobileAppSetting = () => {
       setSectionData(settingState.settings.appearance.mobile.mobile_section)
     }
   }, [get(settingState, "settings.appearance.mobile")])
+
+  useEffect(() => {
+    setloading(get(settingState, "loading"));
+  }, [get(settingState, "loading")]);
 
   useEffect(() => {
     if (!category.categories.length) {
@@ -154,7 +161,7 @@ const MobileAppSetting = () => {
   return (
     <>
       <Alerts />
-      {settingState.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>
@@ -289,20 +296,20 @@ const MobileAppSetting = () => {
                     size='small'
                     color='primary'
                     variant='contained'
-                    style={{ marginTop: "25px" }}
+                    style={{ marginTop: "25px", minWidth: "30px" }}
                     onClick={addCategory}
                   >
-                    Add Category
+                      <AddIcon />
                   </Button>
 
                   <Button
                     size='small'
                     color='primary'
                     variant='contained'
-                    style={{ marginLeft: "20px", marginTop: "25px" }}
+                    style={{ marginLeft: "20px", marginTop: "25px", minWidth: "40px" }}
                     onClick={reArrange}
                   >
-                    Re-order
+                    <ReorderIcon />
                   </Button>
 
                   <Button

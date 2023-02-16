@@ -64,7 +64,7 @@ export const validatePhone = (names, args) => {
       }
 
       try {
-        var valid = false
+        let valid = false
         const phoneUtil = PhoneNumberUtil.getInstance();
         valid = phoneUtil.isValidNumber(phoneUtil.parse(args[name]));
         if (!valid) {
@@ -93,7 +93,7 @@ export const validateNestedPhone = (main, names, args) => {
       }
 
       try {
-        var valid = false
+        let valid = false
         const phoneUtil = PhoneNumberUtil.getInstance();
         valid = phoneUtil.isValidNumber(phoneUtil.parse(args[main][name]));
         if (!valid) {
