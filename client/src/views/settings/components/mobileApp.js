@@ -28,6 +28,7 @@ import Alerts from "../../components/Alert";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 import Loading from "../../components/Loading.js";
 import { bucketBaseURL } from "../../../utils/helper";
+import NoImagePlaceHolder from "../../../assets/images/NoImagePlaceHolder.png";
 
 const MobileAppSetting = () => {
   const classes = viewStyles();
@@ -145,6 +146,9 @@ const MobileAppSetting = () => {
     setSectionData(...reorderedItem)
   };
 
+  const imageOnError = (event) => {
+    event.target.src = NoImagePlaceHolder
+  }
 
   return (
     <>
@@ -249,10 +253,13 @@ const MobileAppSetting = () => {
                           <label htmlFor={`htmltag${index}`}>
                             {select.section_img  ? (
                               <Box className={classes.logoImageBox}>
-                                <img src={select.section_img.startsWith("blob") ? select.section_img : bucketBaseURL + select.section_img}
-                                  alt="img"
-                                  width="50"
-                                  height="50" />
+                               
+                                <img 
+                                  className= "mobileImage"
+                                  src={select.section_img.startsWith("blob") ? select.section_img : (bucketBaseURL + select.section_img )}
+                                  onError={imageOnError}
+                                   />
+                                 
                               </Box>
                             ) : (
                               <>

@@ -20,6 +20,8 @@ import { useSelector } from "react-redux";
 import { client_app_route_url } from "../utils/helper";
 import { ThemeProvider } from "@mui/material";
 import theme from "../theme";
+import RavendelLogo from "../assets/images/RavendelLogo.png"
+import "../App.css"
 const HeaderComponenet = () => {
   const classes = useStyles();
   const login = useSelector((state) => state.login);
@@ -53,7 +55,7 @@ const HeaderComponenet = () => {
       <Toolbar className={classes.header}>
         <Link to={`${client_app_route_url}dashboard`}>
           <Typography variant="h6" component="h1" className={classes.textWhite}>
-            Ravendel
+            <img src={RavendelLogo} className="ravendelLogo" alt="Ravendel"></img>
           </Typography>
         </Link>
 

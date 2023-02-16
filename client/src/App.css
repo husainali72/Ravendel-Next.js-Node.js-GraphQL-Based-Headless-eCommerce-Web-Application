@@ -349,3 +349,13 @@
     padding-right: 0;
   }
 }
+
+.ravendelLogo{
+  width: 100px;
+}
+
+.mobileImage {
+  object-fit: contain; 
+  height: 100%;
+  width: 100%;
+}
