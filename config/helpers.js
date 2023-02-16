@@ -369,14 +369,14 @@ module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
 const imageUnlink = (imgObject) => {
-  for (let i in imgObject) {
+  // for (let i in imgObject) {
     // console.log(imgObject)
     //console.log('IMAGEOBJECT',imgObject[i]);
-    FileDelete(imgObject[i]);
-    fs.unlink("./assets/images/" + imgObject[i], function (err) {
-      if (err) console.log(err);
-    });
-  }
+    FileDelete(imgObject);
+    // fs.unlink("./assets/images/" + imgObject[i], function (err) {
+    //   if (err) console.log(err);
+    // });
+  // }
 };
 
 module.exports.imageUnlink = imageUnlink;

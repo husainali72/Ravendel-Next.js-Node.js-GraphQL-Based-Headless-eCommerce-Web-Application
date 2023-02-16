@@ -124,12 +124,7 @@ const MobileAppSetting = () => {
         url: "product_from_specific_categories",
         label: "Product from Specific Categories",
         visible: false,
-        section_img: {
-          thumbnail: "",
-          large: "",
-          medium: "",
-          original: ""
-        },
+        section_img: "",
         category: null
       }
     ]
@@ -144,7 +139,7 @@ const MobileAppSetting = () => {
 
   const handleImageChange = (event, index) => {
     let data = sectionData;
-    data[index].section_img.original = URL.createObjectURL(event.target.files[0]);
+    data[index].section_img = URL.createObjectURL(event.target.files[0]);
     data[index].update_image = event.target.files
     setSectionData([...data]);
   };
@@ -259,9 +254,9 @@ const MobileAppSetting = () => {
                             : null}
 
                           <label htmlFor={`htmltag${index}`}>
-                            {select.section_img && select.section_img.original ? (
+                            {select.section_img  ? (
                               <Box className={classes.logoImageBox}>
-                                <img src={select.section_img.original.startsWith("blob") ? select.section_img.original : bucketBaseURL + select.section_img.original}
+                                <img src={select.section_img.startsWith("blob") ? select.section_img : bucketBaseURL + select.section_img}
                                   alt="img"
                                   width="50"
                                   height="50" />

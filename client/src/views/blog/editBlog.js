@@ -73,10 +73,10 @@ const EditBlogComponenet = ({ params }) => {
     if (!isEmpty(get(blogState, "blog"))) {
       setBlog({ ...blog, ...blogState.blog });
       if (
-        blogState.blog.feature_image &&
-        blogState.blog.feature_image.original
+        blogState.blog.feature_image 
+        
       ) {
-        setfeatureImage(bucketBaseURL + blogState.blog.feature_image.original);
+        setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
       }
       dispatch(blogtagsAction());
     }

@@ -141,8 +141,7 @@ const AllBlogComponent = () => {
                           <TableCell>
                             <Avatar
                               alt={blog.name}
-                              src={`${bucketBaseURL}${blog.feature_image &&
-                                blog.feature_image.thumbnail
+                              src={`${bucketBaseURL}${blog.feature_image 
                                 }`}
                             />
                           </TableCell>

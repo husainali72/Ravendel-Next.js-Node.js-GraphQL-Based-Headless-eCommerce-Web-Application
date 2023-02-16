@@ -19,12 +19,12 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
   };
 
   const removeImage = (img) => {
-    if (img._id) {
+    if (img) {
       let galleryImages = product.gallery_image.filter(
-        (galleryImg) => galleryImg._id !== img._id
+        (galleryImg) => galleryImg !== img
       );
       let removed_image = product.removed_image || [];
-      removed_image.push(img._id);
+      removed_image.push(img);
 
       onRemoveOldImage(galleryImages, removed_image);
     } else {
@@ -46,7 +46,7 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
                 x
               </span>
               <img
-                src={`${bucketBaseURL}${img.thumbnail}`}
+                src={`${bucketBaseURL}${img}`}
                 className={classes.galleryImg}
                 alt="gallery-img"
               />
