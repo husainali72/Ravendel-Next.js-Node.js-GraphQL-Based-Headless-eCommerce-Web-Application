@@ -18,159 +18,188 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
- const   menuItems = [
-     {
-        "name": "Dashboard",
-        "url": "dashboard",
-        "icon": DashboardIcon
-      },
-     
+const menuItems = [
+  {
+    "name": "Dashboard",
+    "url": "dashboard",
+    "icon": DashboardIcon,
+    "role": ['MANAGER', 'SUBSCRIBER', 'EDITOR', 'AUTHOR', 'USER']
+  },
+
+  {
+    "name": "Orders",
+    "url": "all-orders",
+    "icon": ShoppingCartIcon,
+    "role": ['USER']
+  },
+  {
+    "name": "Products",
+    "url": "",
+    "icon": StorefrontIcon,
+    "role": ['USER'],
+    "children": [
       {
-        "name": "Orders",
-        "url": "all-orders",
-        "icon": ShoppingCartIcon 
-      },
-      {
-        "name": "Products",
-        "url": "",
+        "name": "All Products",
+        "url": "all-products",
         "icon": StorefrontIcon,
-        "children": [
-          {
-            "name": "All Products",
-            "url": "all-products",
-            "icon": StorefrontIcon
-          },
-          {
-            "name": "Add Product",
-            "url": "add-product",
-            "icon": AddBusinessIcon
-          },
-          {
-            "name": "Categories",
-            "url": "all-categories",
-            "icon": CategoryIcon
-          },
-          {
-            "name": "Attribute",
-            "url": "attributes",
-            "icon": SubjectIcon
-          }
-        ]
+        "role": ['USER']
       },
       {
-        "name": "Customers",
-        "url": "all-customers",
-        "icon": SupervisedUserCircleIcon,
-        "children": [
-          {
-            "name": "All Customer",
-            "url": "all-customer",
-            "icon": SupervisedUserCircleIcon
-          },
-          {
-            "name": "Add Customer",
-            "url": "add-customer",
-            "icon":AddIcon 
-          }
-        ]
+        "name": "Add Product",
+        "url": "add-product",
+        "icon": AddBusinessIcon,
+        "role": ['USER']
       },
       {
-        "name": "Brands",
-        "url": "all-brands",
-        "icon": RedeemIcon ,
-        "children": [
-          {
-            "name": "All Brands",
-            "url": "all-brands",
-            "icon":RedeemIcon 
-          },
-          {
-            "name": "Add Brand",
-            "url": "add-brand",
-            "icon": AddIcon 
-          }
-        ]
+        "name": "Categories",
+        "url": "all-categories",
+        "icon": CategoryIcon,
+        "role": ['USER']
       },
       {
-        "name": "Coupons",
-        "url": "all-coupons",
-        "icon": NewReleasesIcon
-      },
-      {
-        "name": "Tax",
-        "url": "taxes",
-        "icon": AttachMoneyIcon
-      },
-      {
-        "name": "Shipping",
-        "url": "shipping",
-        "icon": LocalShippingIcon
-      },
-      {
-        "name": "Reviews",
-        "url": "reviews",
-        "icon": StarIcon
-      },
-      {
-        "name": "Pages",
-        "url": "all-pages",
-        "icon": InsertDriveFileIcon ,
-        "children": [
-          {
-            "name": "All Pages",
-            "url": "all-pages",
-            "icon": InsertDriveFileIcon},
-          {
-            "name": "Add Page",
-            "url": "add-page",
-            "icon": AddIcon 
-          }
-        ]
-      },
-  
-      {
-        "name": "Blogs",
-        "url": "all-blogs",
-        "icon": DescriptionIcon,
-        "children": [
-          {
-            "name": "All Blogs",
-            "url": "all-blogs",
-            "icon": DescriptionIcon
-          },
-          {
-            "name": "Add Blog",
-            "url": "add-blog",
-            "icon": AddIcon 
-          },
-          {
-            "name": "Tags",
-            "url": "tags",
-            "icon": LibraryAddIcon
-          }
-        ]
-      },
-      {
-        "name": "Settings",
-        "url": "settings",
-        "icon": SettingsIcon
-      },
-      {
-        "name": "Users",
-        "icon": PersonIcon,
-        "children": [
-          {
-            "name": "All Users",
-            "url": "all-users",
-            "icon":PersonIcon
-          },
-          {
-            "name": "Add User",
-            "url": "add-user",
-            "icon": PersonAddIcon
-          }
-        ]
+        "name": "Attribute",
+        "url": "attributes",
+        "icon": SubjectIcon,
+        "role": ['USER']
       }
     ]
-  
-    export default menuItems;
+  },
+  {
+    "name": "Customers",
+    "url": "all-customers",
+    "icon": SupervisedUserCircleIcon,
+    "role": ['MANAGER', 'SUBSCRIBER', 'EDITOR', 'AUTHOR', 'USER'],
+    "children": [
+      {
+        "name": "All Customer",
+        "url": "all-customer",
+        "icon": SupervisedUserCircleIcon,
+        "role": ['MANAGER', 'SUBSCRIBER', 'EDITOR', 'AUTHOR', 'USER']
+      },
+      {
+        "name": "Add Customer",
+        "url": "add-customer",
+        "icon": AddIcon,
+        "role": ['MANAGER', 'SUBSCRIBER', 'EDITOR', 'AUTHOR', 'USER']
+      }
+    ]
+  },
+  {
+    "name": "Brands",
+    "url": "all-brands",
+    "icon": RedeemIcon,
+    "role": ['USER'],
+    "children": [
+      {
+        "name": "All Brands",
+        "url": "all-brands",
+        "icon": RedeemIcon,
+        "role": ['USER']
+      },
+      {
+        "name": "Add Brand",
+        "url": "add-brand",
+        "icon": AddIcon,
+        "role": ['USER']
+      }
+    ]
+  },
+  {
+    "name": "Coupons",
+    "url": "all-coupons",
+    "icon": NewReleasesIcon,
+    "role": ['USER',]
+  },
+  {
+    "name": "Tax",
+    "url": "taxes",
+    "icon": AttachMoneyIcon,
+    "role": ['USER', 'MANAGER', 'SUBSCRIBER', 'EDITOR', 'AUTHOR',]
+  },
+  {
+    "name": "Shipping",
+    "url": "shipping",
+    "icon": LocalShippingIcon,
+    role: ['USER']
+  },
+  {
+    "name": "Reviews",
+    "url": "reviews",
+    "icon": StarIcon,
+    role: ['USER']
+  },
+  {
+    "name": "Pages",
+    "url": "all-pages",
+    "icon": InsertDriveFileIcon,
+    "role": ['USER'],
+    "children": [
+      {
+        "name": "All Pages",
+        "url": "all-pages",
+        "icon": InsertDriveFileIcon,
+        "role": ['USER']
+      },
+      {
+        "name": "Add Page",
+        "url": "add-page",
+        "icon": AddIcon,
+        role: ['USER']
+      }
+    ]
+  },
+
+  {
+    "name": "Blogs",
+    "url": "all-blogs",
+    "icon": DescriptionIcon,
+    role: ['MANAGER', 'SUBSCRIBER', 'USER'],
+    "children": [
+      {
+        "name": "All Blogs",
+        "url": "all-blogs",
+        "icon": DescriptionIcon,
+        "role": ['MANAGER', 'SUBSCRIBER', 'USER']
+      },
+      {
+        "name": "Add Blog",
+        "url": "add-blog",
+        "icon": AddIcon,
+        "role": ['MANAGER', 'SUBSCRIBER', 'USER']
+      },
+      {
+        "name": "Tags",
+        "url": "tags",
+        "icon": LibraryAddIcon,
+        "role": ['MANAGER', 'SUBSCRIBER', 'USER']
+      }
+    ]
+  },
+  {
+    "name": "Settings",
+    "url": "settings",
+    "icon": SettingsIcon,
+    "role": ['USER']
+  },
+  {
+    "name": "Users",
+    "icon": PersonIcon,
+    "role": ['USER'],
+    "children": [
+      {
+        "name": "All Users",
+        "url": "all-users",
+        "icon": PersonIcon,
+        "role": ['USER'],
+      },
+      {
+        "name": "Add User",
+        "url": "add-user",
+        "icon": PersonAddIcon,
+        "role": ['USER'],
+      }
+    ]
+  }
+]
+
+export default menuItems;

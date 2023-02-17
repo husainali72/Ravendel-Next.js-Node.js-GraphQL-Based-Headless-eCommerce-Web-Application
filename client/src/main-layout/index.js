@@ -17,6 +17,7 @@ const MainLayout = ({ children }) => {
   const classes = useStyles();
 
   const login = useSelector((state) => state.login);
+
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"), {
     defaultMatches: true,
   });
@@ -47,11 +48,12 @@ const MainLayout = ({ children }) => {
             onClose={handleSidebarClose}
             open={shouldOpenSidebar}
             variant={isDesktop ? "persistent" : "temporary"}
+
           />
           <main className={classes.content}>
 
             {children}
-            <AllRoutes />
+            <AllRoutes user={login.user_token.role} />
           </main>
         </>
       ) : (

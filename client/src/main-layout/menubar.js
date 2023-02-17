@@ -15,13 +15,15 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Link } from "react-router-dom";
 import menuItems from "../routes/nav";
+import { useSelector } from "react-redux";
 import palette from "../theme/palette";
 import clsx from "clsx";
 import { client_app_route_url } from "../utils/helper";
-
+import { RoutesPath } from "../routes/routes";
 import { ThemeProvider } from "@mui/material";
 
 const MenuBarComponenet = () => {
+  const login = useSelector((state) => state.login);
   const classes = useStyles();
   const [menuName, setMenuName] = useState("");
 
@@ -34,58 +36,64 @@ const MenuBarComponenet = () => {
   };
 
   const menuListing = (menus) => {
+
     return menus.map((menu) => {
-      if (!menu.children) {
-        return (
-          <Link to={`${client_app_route_url + menu.url}`} key={menu.name}>
-            <ListItem className={classes.item} disableGutters>
-              <Button
-                className={classes.button}
-                style={{ color: palette.text.secondary, fontSize: "10px" }}
-              >
-                <ListItemIcon className={classes.icons}>
-                  {menu.icon && <menu.icon />}
-                </ListItemIcon>
-                <ListItemText
-                  className={classes.itemtext}
-                  primary={menu.name}
+
+      if (menu.role.includes(login.user_token.role)) {
+
+        if (!menu.children) {
+          return (
+            <Link to={`${client_app_route_url + menu.url}`} key={menu.name}>
+              <ListItem className={classes.item} disableGutters>
+                <Button
+                  className={classes.button}
                   style={{ color: palette.text.secondary, fontSize: "10px" }}
-                />
+                >
+                  <ListItemIcon className={classes.icons}>
+                    {menu.icon && <menu.icon />}
+                  </ListItemIcon>
+                  <ListItemText
+                    className={classes.itemtext}
+                    primary={menu.name}
+                    style={{ color: palette.text.secondary, fontSize: "10px" }}
+                  />
+                </Button>
+              </ListItem>
+            </Link>
+          );
+        }
+
+        return (
+          <div key={menu.name}>
+            <ListItem
+              onClick={() => handleClick(menu.name)}
+              className={classes.item}
+              disableGutters
+            >
+              <Button className={classes.button}>
+                <ListItemIcon className={classes.icons}>
+                  {menu.icon && <menu.icon fontSize="small" />}
+                </ListItemIcon>
+                <ListItemText className={classes.itemtext} primary={menu.name} />
+                {menuName === menu.name ? (
+                  <ExpandLessIcon fontSize="small" />
+                ) : (
+                  <ExpandMoreIcon fontSize="small" />
+                )}
               </Button>
             </ListItem>
-          </Link>
+            <Collapse
+              in={menuName === menu.name ? true : false}
+              timeout="auto"
+              unmountOnExit
+              className={clsx(classes.collapse, "menu-collapse")}
+              style={{ fontSize: "10px" }}
+            >
+              {menuListing(menu.children)}
+            </Collapse>
+          </div>
         );
       }
-      return (
-        <div key={menu.name}>
-          <ListItem
-            onClick={() => handleClick(menu.name)}
-            className={classes.item}
-            disableGutters
-          >
-            <Button className={classes.button}>
-              <ListItemIcon className={classes.icons}>
-                {menu.icon && <menu.icon fontSize="small" />}
-              </ListItemIcon>
-              <ListItemText className={classes.itemtext} primary={menu.name} />
-              {menuName === menu.name ? (
-                <ExpandLessIcon fontSize="small" />
-              ) : (
-                <ExpandMoreIcon fontSize="small" />
-              )}
-            </Button>
-          </ListItem>
-          <Collapse
-            in={menuName === menu.name ? true : false}
-            timeout="auto"
-            unmountOnExit
-            className={clsx(classes.collapse, "menu-collapse")}
-            style={{ fontSize: "10px" }}
-          >
-            {menuListing(menu.children)}
-          </Collapse>
-        </div>
-      );
     });
   };
 
