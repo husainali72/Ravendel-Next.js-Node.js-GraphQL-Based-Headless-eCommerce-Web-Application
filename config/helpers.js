@@ -701,7 +701,9 @@ const generateOrderNumber = () => {
     code += codeString.charAt(index)
     digit++
   }
-  code = `${date.getFullYear()+date.getSeconds()}-${code}-${date.getMonth()+date.getSeconds()}${date.getDate()+date.getSeconds()}`
+  const precode = date.getFullYear()+date.getSeconds()
+  const postcode = `${date.getMonth()+date.getSeconds()}${date.getDate()+date.getSeconds()}`
+  code = `${precode}-${code}-${postcode}`
 
   return code
 }
