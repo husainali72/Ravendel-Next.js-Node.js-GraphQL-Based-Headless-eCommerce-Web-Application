@@ -147,19 +147,26 @@ module.exports = {
             }
           }
         }
-        // sort year and months
-        ordersByYearMonth.sort((year1, year2)=>{
-          year1.months.sort((month1, month2)=>{
+        // sort year and months if two or more years exist
+        if(ordersByYearMonth.length > 1)
+          ordersByYearMonth.sort((year1, year2)=>{
+            year1.months.sort((month1, month2)=>{
+              // sort months in ascending order - jan, feb, mar...
+              return moment().month(month1.month).format("M") - moment().month(month2.month).format("M")
+            })
+            year2.months.sort((month1, month2)=>{
+              // sort months in ascending order - jan, feb, mar...
+              return moment().month(month1.month).format("M") - moment().month(month2.month).format("M")
+            })
+            // sort years in decsending order - 2023, 2022, 2021...
+            return Number.parseInt(year2.year) - Number.parseInt(year1.year)
+          })
+        // sort only months when only one year exist
+        else 
+          ordersByYearMonth[0].months.sort((month1, month2)=>{
             // sort months in ascending order - jan, feb, mar...
             return moment().month(month1.month).format("M") - moment().month(month2.month).format("M")
           })
-          year2.months.sort((month1, month2)=>{
-            // sort months in ascending order - jan, feb, mar...
-            return moment().month(month1.month).format("M") - moment().month(month2.month).format("M")
-          })
-          // sort years in decsending order - 2023, 2022, 2021...
-          return Number.parseInt(year2.year) - Number.parseInt(year1.year)
-        })
         // insert values to dashboard object
         const dashboardData = {}
         dashboardData.productCount = await Product.countDocuments({status: "Publish"});
