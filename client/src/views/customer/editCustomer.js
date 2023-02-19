@@ -167,10 +167,6 @@ const EditCustomerComponent = ({ params }) => {
   const handleAddressInputField = (e) => {
     setSingleCustomer({ ...singleCustomer, [e.target.name]: e.target.value });
   };
-  const AddressBookPhonehandlechange = (value, name) => {
-
-    setSingleCustomer({ ...singleCustomer, [name]: value });
-  };
 
   const AddressBookPhonehandlechange = (value, name) => {
 
@@ -338,7 +334,7 @@ const EditCustomerComponent = ({ params }) => {
                 </Grid>
 
                 <Grid item md={3} sm={6} xs={12} >
-                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={phoneValue} width= "100%"/>
+                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={customer.phone} width= "100%"/>
 
                 </Grid>
               </Grid>

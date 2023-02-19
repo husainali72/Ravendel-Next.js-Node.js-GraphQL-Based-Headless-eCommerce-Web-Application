@@ -701,7 +701,9 @@ const generateOrderNumber = () => {
     code += codeString.charAt(index)
     digit++
   }
-  code = `${date.getFullYear()+date.getSeconds()}-${code}-${date.getMonth()+date.getSeconds()}${date.getDate()+date.getSeconds()}`
+  const precode = date.getFullYear()+date.getSeconds()
+  const postcode = `${date.getMonth()+date.getSeconds()}${date.getDate()+date.getSeconds()}`
+  code = `${precode}-${code}-${postcode}`
 
   return code
 }
@@ -710,12 +712,14 @@ module.exports.generateOrderNumber = generateOrderNumber
 const prodAvgRating = async(productID, reviewModel, productModel) => {
   let avgRating = 0
   const reviews = await reviewModel.find({product_id: productID, status: {$ne: "pending"}})
-  reviews.map(review => {
-    avgRating += review.rating
-  })
-  avgRating /= reviews.length
-  const product = await productModel.findById(productID)
-  product.rating = avgRating.toFixed(1)
-  await product.save()
+  if(reviews.length){
+    reviews.map(review => {
+      avgRating += review.rating
+    })
+    avgRating /= reviews.length
+    const product = await productModel.findById(productID)
+    product.rating = avgRating.toFixed(1)
+    await product.save()
+  }
 }
 module.exports.prodAvgRating = prodAvgRating
