@@ -5,7 +5,7 @@ module.exports = gql`
     code: String
     description: String
     discount_type: String
-    discount_value: Int
+    discount_value: Float
     free_shipping: Boolean
     expire: String
     minimum_spend: Int
@@ -49,7 +49,7 @@ module.exports = gql`
       code: String
       description: String
       discount_type: String
-      discount_value: Int
+      discount_value: Float
       free_shipping: Boolean
       expire: String
       minimum_spend: Int
@@ -64,7 +64,7 @@ module.exports = gql`
       code: String
       description: String
       discount_type: String
-      discount_value: Int
+      discount_value: Float
       free_shipping: Boolean
       expire: String
       minimum_spend: Int

@@ -30,8 +30,8 @@ module.exports = gql`
   }
 
   type Height_Width {
-    width: Int
-    height: Int
+    width: Float
+    height: Float
   }
 
   type SMTP {

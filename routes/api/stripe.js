@@ -1,25 +1,26 @@
-require('dotenv').config()
+const dotenv = require('dotenv')
+dotenv.config({path:'./.env.local'})
+const {STRIPE_KEY, BUCKET_BASE_URL} = process.env
 const router=require('express').Router()
-const stripe=require('stripe')(process.env.STRIPE_KEY)
+const stripe=require('stripe')(STRIPE_KEY)
 
 router.post('/create-checkout-session', async (req, res) => { 
-  const imgUrl=process.env.IMAGE_URL
-  const line_items=req.body.customerCart.map(item=>{
-    const itemImage=imgUrl+item.feature_image.original
-    console.log(typeof itemImage)
+  const line_items = req.body.customerCart.map(item=>{
+    const itemImage = `${BUCKET_BASE_URL}${item.product_image}`
+    console.log(itemImage)
     return{
       price_data: {
         currency: 'usd',
         product_data: {
-          name: item.name,
+          name: item.product_title,
           images: [itemImage],
           metadata: {
-            id: item._id
+            id: item.product_id
           },
         },
-        unit_amount: item.pricing.sellprice*100,
+        unit_amount: item.product_price*100,
       },
-      quantity: item.quantity,
+      quantity: item.qty,
     }
   })
     const session = await stripe.checkout.sessions.create({
@@ -28,7 +29,8 @@ router.post('/create-checkout-session', async (req, res) => {
       success_url: 'http://localhost:3000/orderstatus/thankyou',
       cancel_url: 'http://localhost:3000/checkout',
     });
-    res.send({url: session.url});
+    res.send({url: session.url})
+    // res.redirect(session.url)
 });
 
 module.exports=router
