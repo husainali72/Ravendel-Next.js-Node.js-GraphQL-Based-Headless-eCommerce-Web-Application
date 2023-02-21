@@ -33,7 +33,8 @@ export const GET_CUSTOMER_ORDERS_QUERY = gql`
       products
       shipping
       shipping_amount
-      status
+      shipping_status
+      payment_status
       subtotal
       tax_amount
       updated

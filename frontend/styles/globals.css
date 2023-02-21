@@ -1062,7 +1062,16 @@ footer .follow h5 {
   color: #088178;
 }
 
- 
+ /* Loader */
+
+ .loading-container{
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ }
+
+
 /* recent-procuct-img css */
 /* nav css */
 .nav-link {
@@ -2215,6 +2224,9 @@ position: relative;
 .card:hover {
   transform: translateY(-6px);
 }
+.loading-table{
+  padding: 50px 0;
+}
 .shopcart-table {
   padding: 50px 0;
 }
@@ -2244,6 +2256,12 @@ position: relative;
 .shopcart-table .table td .td-flex {
   min-height: 90px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loading-table .table td .td-flex {
+  min-height: 0px;
+  display: block;
   align-items: center;
   justify-content: center;
 }
@@ -2410,7 +2428,28 @@ header {
 }
 
 /* -------CheckOut Page starts-------- */
-
+.cust-detail-container small{
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.cust-detail-container p{
+ margin: 0;
+}
+.cust-detail-container{
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.azure-clr{
+  background-color: rgb(240, 255, 255,.75);
+  padding: 10px 10px 10px 10px;
+  margin-left: -10px;
+}
+.cust-detail-select-btn:hover{
+  cursor: pointer;
+  color: #046963;
+}
 .checkout-section {
   padding-top: 50px;
 }

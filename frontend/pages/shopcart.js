@@ -15,6 +15,7 @@ import { APPLY_COUPON_CODE } from "../queries/couponquery";
 import { getAllProductsAction } from "../redux/actions/productAction";
 import { useRouter } from "next/router";
 import { settingActionCreator } from "../redux/actions/settingAction";
+import LoadingCartTable from "../components/cardcomponent/LoadingCard";
 
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice  * product.quantity || 0 * product.quantity), 0)
 const cartitems2 = []     
@@ -26,7 +27,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
     const allProducts = useSelector(state => state.products);
     const usercart = useSelector(state => state.userCart);
     const initialRender = useRef(true);
-
+    const [cartLoading,setCartLoading] = useState(false)
     const [cartItems, setCartItems] = useState([]);
     const [quantityy, setQuantity] = useState();
     const dispatch = useDispatch();
@@ -51,7 +52,6 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
         if(response.statusCode === 500) return;
     }
  }
-
  useEffect(() => {
     dispatch(settingActionCreator(currencyStore.currency_options))
   }, [currencyStore.currency_options])
@@ -69,6 +69,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
 }, []);
  useEffect(() => {
             const getProducts = async () => {
+                setCartLoading(true)
                 const productsCard = JSON.parse(localStorage.getItem("cart"))  
                 if (session?.status === "authenticated") {
                     
@@ -89,12 +90,8 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
                                 feature_image:originalProduct?.feature_image
                             }
                             // setCartItems((prev) => [...prev, cartProduct]) 
-                           
                             cartitems2.push(cartProduct);
                         })
-
-
-
                         // carts.map(cart=>{
                         //         const cartProduct = {
                         //             _id: cart?.product_id,
@@ -111,10 +108,8 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
                                
                         //         cartitems2.push(cartProduct);
                         //     })
-
-
                         setCartItems([...cartitems2]) 
-                    })
+                    }).finally(()=> {setCartLoading(false)})
                         
                     // try {
                     //     console.log('api usercart')
@@ -146,6 +141,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
                 }
                 else {
                     setCartItems(productsCard || []);
+                    setCartLoading(false)
                 }
             }
             getProducts();
@@ -327,7 +323,21 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
        
         mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("res", res))
     }
-    return (
+    if(cartLoading){
+        return <>
+        <BreadCrumb title={"Cart"} />
+        <section className="shopcart-table loading-table">
+        <Container>
+        <div className="row">
+          <div className="col-12">
+          <LoadingCartTable />
+         </div>
+        </div>
+        </Container>
+        </section>
+        </>
+    }
+    else return (
         <>
             <BreadCrumb title={"Cart"} />
             <section className="shopcart-table">
@@ -438,30 +448,30 @@ export async function getServerSideProps(context) {
 
         /* ----------------------- GET USER CART -----------------------------*/
 
-        try {
-            const { data: CartsData } = await client.query({
-                query: GET_USER_CART,
-                variables: { id: id }   
-            })
-            CartsDataa =CartsData
-            cart_id = CartsData.cartbyUser.id
-            let customercarts = CartsData?.cartbyUser.products
-            let cartitems = await customercarts.map(product => {
-                return {
-                    _id: product?.product_id,
-                    name: product?.product_title,
-                    pricing: {
-                        sellprice: product?.total
-                    },
-                    feature_image: { thumbnail: product?.product_image === undefined ? null : product?.product_image },
-                    quantity: product?.qty
-                }
-            })
-            customercart = cartitems
-        }
-        catch (e) {
-            console.log("error==", e)
-        }
+        // try {
+        //     const { data: CartsData } = await client.query({
+        //         query: GET_USER_CART,
+        //         variables: { id: id }   
+        //     })
+        //     CartsDataa =CartsData
+        //     cart_id = CartsData.cartbyUser.id
+        //     let customercarts = CartsData?.cartbyUser.products
+        //     let cartitems = await customercarts.map(product => {
+        //         return {
+        //             _id: product?.product_id,
+        //             name: product?.product_title,
+        //             pricing: {
+        //                 sellprice: product?.total
+        //             },
+        //             feature_image: { thumbnail: product?.product_image === undefined ? null : product?.product_image },
+        //             quantity: product?.qty
+        //         }
+        //     })
+        //     customercart = cartitems
+        // }
+        // catch (e) {
+        //     console.log("error==", e)
+        // }
     }
 
    /* ----------------------- GEt currency -----------------------------*/

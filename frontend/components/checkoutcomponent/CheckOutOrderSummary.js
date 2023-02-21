@@ -1,6 +1,7 @@
 import { useEffect } from "react"
+import { Spinner } from "react-bootstrap";
 const OrderSummary = (props) => {
-    const { subTotal, cartTotal, coupon, delivery, tax_amount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails } = props;
+    const { subTotal, cartTotal, coupon, delivery, tax_amount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails,CouponLoading } = props;
     useEffect(() => {
         var allData = {
             subtotal: subTotal.toString(),
@@ -21,9 +22,9 @@ const OrderSummary = (props) => {
                             <input type="text" placeholder="Enter Coupon Code..." value={couponCode} onChange={(e) => setCouponCode(e.target.value)} />
                         </div>
                         <div className="form-group">
-                            <button type="submit" className="btn  btn-md" name="coupon" style={{ marginTop: 12, backgroundColor: "#088178", color: "#fff" }}>Apply Coupon</button>
+                            <button type="submit" className="btn  btn-md" name="coupon" style={{ minWidth:"100px", marginTop: 12, backgroundColor: "#088178", color: "#fff" }}>{CouponLoading ? <Spinner animation="border" size="sm"  variant="light" />: "Apply Coupon" }</button>
                         </div>
-                    </form>
+                    </form> 
                 </div>
                 <div className="border p-md-4 p-30 border-radius cart-totals">
 
@@ -55,7 +56,7 @@ const OrderSummary = (props) => {
                                 <tr style={{ borderTop: "2px solid black", marginTop: "15px" }}>
                                     <td className="cart_total_label" >Total</td>
                                     <td className="cart_total_amount"><strong><span className="font-xl fw-900 text-brand">
-                                        $ {cartTotal.toFixed(2)}
+                                        $ {cartTotal?.toFixed(2)}
                                     </span></strong></td>
                                 </tr>
                             </tbody>
