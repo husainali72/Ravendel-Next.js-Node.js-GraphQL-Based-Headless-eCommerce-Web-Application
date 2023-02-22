@@ -1,29 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { productDeleteAction, productsAction } from "../../store/action";
-
-import viewStyles from "../viewStyles";
+import { client_app_route_url } from "../../utils/helper";
+import { useNavigate } from "react-router-dom";
 
 import { isEmpty } from "../../utils/helper";
 
 import { bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider, } from "@mui/material/styles";
-
+import ActionButton from "../components/actionbutton";
 import theme from "../../theme/index";
 import { get } from "lodash";
 import TableComponent from "../components/table";
 import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
 const GlobalThemeOverride = () => {
-  const classes = viewStyles();
+
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
-
+  const navigate = useNavigate()
   const [Allproducts, setAllproduct] = useState([])
+
   const columndata = [
     { name: "image", title: "image", sortingactive: false },
     { name: "date", title: "date", sortingactive: true },
     { name: "name", title: "Name", sortingactive: true },
-    { name: "actions", title: "Actions", sortingactive: false }]
+    {
+      name: "actions", title: "Actions", sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-product/${id}`)
+        } else if (type === "delete") {
+          dispatch(productDeleteAction(id))
+        }
+      }
+
+    }]
 
 
   useEffect(() => {
@@ -44,9 +56,14 @@ const GlobalThemeOverride = () => {
         data.push(object)
       })
       setAllproduct(data)
+
+    } else {
+      setAllproduct([])
     }
 
   }, [get(products, 'products')])
+
+
 
   return (
     <>
@@ -55,10 +72,11 @@ const GlobalThemeOverride = () => {
         loading={products.loading}
         columns={columndata}
         rows={Allproducts}
-        editpage='edit-product'
+
+
         addpage='add-product'
         title="All Products"
-        deletefunction={productDeleteAction}
+
       />
 
     </>

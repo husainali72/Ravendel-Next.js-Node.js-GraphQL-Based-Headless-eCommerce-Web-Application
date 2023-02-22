@@ -1,37 +1,37 @@
 import React, { useEffect, useState } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-
-} from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { client_app_route_url } from "../../utils/helper"; import { useDispatch, useSelector } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import { orderDeleteAction, ordersAction, } from "../../store/action";
 import { isEmpty, } from "../../utils/helper";
-import Alerts from "../components/Alert";
-import Loading from "../utils/loading";
-import viewStyles from "../viewStyles";
-
+import ActionButton from "../components/actionbutton";
 import theme from "../../theme/index";
-import { Searching } from "../components/searching";
 import { get } from 'lodash'
 import TableComponent from "../components/table";
+import { useNavigate } from "react-router-dom";
 const AllOrdersComponent = () => {
-  const classes = viewStyles();
+
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders);
   const [AllOrder, setAllOrder] = useState([])
-  const [tablehead, setTableHead] = useState([])
+  const navigate = useNavigate()
   const [loading, setloading] = useState(false)
   const columndata = [{ name: 'order_number', title: "Order Number", sortingactive: true },
   { name: 'date', title: "Date", sortingactive: true },
   { name: 'name', title: "Customer Name", sortingactive: true },
   { name: 'payment_status', title: "payment status", sortingactive: false },
   { name: 'payment_status', title: "payment status", sortingactive: false },
-  { name: 'actions', title: "Actions", sortingactive: false },]
+  {
+    name: 'actions', title: "Actions", sortingactive: false,
+    component: ActionButton,
+    buttonOnClick: (type, id) => {
+      if (type === 'edit') {
+        navigate(`${client_app_route_url}view-order/${id}`)
+      } else if (type === "delete") {
+        dispatch(orderDeleteAction(id))
+      }
+    }
+
+  },]
   useEffect(() => {
     if (isEmpty(get(orders, 'orders'))) {
       dispatch(ordersAction());
@@ -71,8 +71,8 @@ const AllOrdersComponent = () => {
         loading={loading}
         columns={columndata}
         rows={AllOrder}
-        editpage='view-order'
-        deletefunction={orderDeleteAction}
+
+
         title="All Orders"
       />
     </>

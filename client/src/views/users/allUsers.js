@@ -1,24 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import { bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
-import { usersAction } from "../../store/action";
+import { userDeleteAction, usersAction } from "../../store/action";
 import theme from "../../theme/index";
 import TableComponent from "../components/table";
 import { get } from 'lodash'
+import { useNavigate } from "react-router-dom";
+import ActionButton from "../components/actionbutton";
 const AllUsersComponent = () => {
 
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const [Allblogs, setAllblogs] = useState([])
   const columndata = [{ name: "image", title: "image", sortingactive: false },
   { name: "name", title: "name ", sortingactive: true },
   { name: "email", title: "email ", sortingactive: true },
   { name: "role", title: "role ", sortingactive: true },
 
-  { name: "actions", title: "Actions", sortingactive: false }]
-  const [tablehead, setTableHead] = useState([])
+  {
+    name: "actions", title: "Actions", sortingactive: false,
+    component: ActionButton,
+    buttonOnClick: (type, id) => {
+      if (type === 'edit') {
+        navigate(`${client_app_route_url}edit-user/${id}`)
+      } else if (type === "delete") {
+        dispatch(userDeleteAction(id))
+      }
+    }
+  }]
+
 
 
   useEffect(() => {
@@ -39,12 +52,11 @@ const AllUsersComponent = () => {
           role: user.role
         }
         data.push(object)
-
-        setAllblogs([...data])
-
       })
+      setAllblogs(data)
 
-      setTableHead(columndata)
+    } else {
+      setAllblogs([])
     }
   }, [get(UsersState, 'users')])
   return (
@@ -53,7 +65,7 @@ const AllUsersComponent = () => {
         loading={UsersState.loading}
         columns={columndata}
         rows={Allblogs}
-        editpage='edit-user'
+
 
         addpage='add-user'
         title="All Users"

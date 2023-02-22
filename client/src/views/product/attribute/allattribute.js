@@ -1,22 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { attributeDeleteAction } from "../../../store/action";
 import { attributesAction } from "../../../store/action";
-import { isEmpty } from "../../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../../utils/helper";
 import { get } from 'lodash'
 import theme from "../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import TableComponent from "../../components/table";
+import ActionButton from "../../components/actionbutton";
 const AllAttributeComponent = () => {
   const dispatch = useDispatch();
   const attributeState = useSelector((state) => state.product_attributes);
+  const navigate = useNavigate()
   const columndata = [
     { name: 'name', title: "name", sortingactive: true },
     { name: 'values', title: "Values", sortingactive: true },
-
-    { name: 'actions', title: "Actions", sortingactive: false },]
+    {
+      name: 'actions', title: "Actions", sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-attribute/${id}`)
+        } else if (type === "delete") {
+          dispatch(attributeDeleteAction(id))
+        }
+      }
+    },]
   const [AllAttribute, setAllAttributes] = useState([]);
-  console.log(attributeState)
+
 
   useEffect(() => {
     dispatch(attributesAction());
@@ -50,10 +62,10 @@ const AllAttributeComponent = () => {
         loading={attributeState.loading}
         columns={columndata}
         rows={AllAttribute}
-        editpage='edit-attribute'
+
         addpage='add-attribute'
         title="All Attributes"
-        deletefunction={attributeDeleteAction}
+
       />
 
     </>

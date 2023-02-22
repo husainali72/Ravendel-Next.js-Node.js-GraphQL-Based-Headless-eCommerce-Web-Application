@@ -34,6 +34,7 @@ import { get } from "lodash";
 import { validate } from "../../components/validate";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 import TableComponent from "../../components/table.js";
+import ActionButton from "../../components/actionbutton.js";
 var categoryObject = {
   name: "",
   parentId: null,
@@ -59,7 +60,20 @@ const AllCategoryComponent = () => {
   const columndata = [
     { name: 'date', title: "date", sortingactive: true },
     { name: 'name', title: "name", sortingactive: true },
-    { name: 'same_actions', title: "Actions", sortingactive: false },]
+    {
+      name: 'actions', title: "Actions", sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+
+          let cat = categories.find(item => item.id === id);
+
+          editCategory(cat)
+        } else if (type === "delete") {
+          dispatch(categoryDeleteAction(id))
+        }
+      }
+    },]
 
 
   useEffect(() => {
@@ -173,8 +187,6 @@ const AllCategoryComponent = () => {
             columns={columndata}
             rows={categories}
             classname="noclass"
-            editfunction={editCategory}
-            deletefunction={categoryDelete}
             title="All Category"
           />
         </Grid>

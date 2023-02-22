@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-import { useTheme } from "@mui/material/styles";
-
-import { isEmpty } from "../../utils/helper";
-import { brandsAction, } from "../../store/action";
+import ActionButton from "../components/actionbutton";
+import { useNavigate } from "react-router-dom";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
+import { brandDeleteAction, brandsAction, } from "../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
@@ -14,6 +14,7 @@ const AllbrandComponent = () => {
   const Brands = useSelector((state) => state.brands);
   const [tablehead, setTableHead] = useState([])
   const [Allorder, setAllorder] = useState([])
+  const navigate = useNavigate()
   useEffect(() => {
     if (isEmpty(Brands.brands)) {
       dispatch(brandsAction());
@@ -39,7 +40,16 @@ const AllbrandComponent = () => {
       let columndata = [
         { name: "date", title: "date", sortingactive: true },
         { name: "name", title: "Name", sortingactive: true },
-        { name: "actions", title: "Actions", sortingactive: false }]
+        {
+          name: "actions", title: "Actions", sortingactive: false, component: ActionButton,
+          buttonOnClick: (type, id) => {
+            if (type === 'edit') {
+              navigate(`${client_app_route_url}edit-brand/${id}`)
+            } else if (type === "delete") {
+              dispatch(brandDeleteAction(id))
+            }
+          }
+        }]
       setTableHead(columndata)
     }
   }, [get(Brands, 'brands')])

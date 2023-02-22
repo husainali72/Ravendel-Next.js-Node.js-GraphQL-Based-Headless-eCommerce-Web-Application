@@ -1,25 +1,54 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import theme from "../../../theme/index.js";
 import { ThemeProvider, } from "@mui/material/styles";
 import TableComponent from "../../components/table.js";
+import ActionButton from "../../components/actionbutton.js";
+
 const AllShippingComponentComponent = ({
   shippingState,
   editShippingForm,
   deleteShipping,
 }) => {
+  const [Allshipping, setAllshipping] = useState([])
   const columndata = [
     { name: 'name', title: "Name", sortingactive: true },
     { name: 'amount', title: "amount", sortingactive: true },
-    { name: 'same_actions', title: "Actions", sortingactive: false },]
+    {
+      name: 'actions', title: "Actions", sortingactive: false, component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
 
+          let shipping = Allshipping.find(item => item.id === id);
+
+          editShippingForm(shipping)
+
+        } else if (type === "delete") {
+          deleteShipping(id)
+        }
+      }
+    },]
+
+  useEffect(() => {
+    let data = []
+    shippingState.shipping.shipping_class.map((shipping) => {
+
+      let object = {
+        id: shipping._id,
+        amount: shipping.amount,
+        name: shipping.name,
+
+      }
+      data.push(object)
+    })
+    setAllshipping([...data])
+
+  }, [shippingState.shipping.shipping_class])
   return (
     <TableComponent
       loading={shippingState.loading}
       columns={columndata}
-      rows={shippingState.shipping.shipping_class}
+      rows={Allshipping}
       classname="noclass"
-      editfunction={editShippingForm}
-      deletefunction={deleteShipping}
       title="All Shippings"
     />
 

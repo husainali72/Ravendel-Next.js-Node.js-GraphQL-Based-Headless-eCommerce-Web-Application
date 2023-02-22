@@ -98,9 +98,14 @@ const ShippingComponent = () => {
   };
 
   const editShipping = (shipping) => {
-    setEditMode(true);
 
-    setcustomShippingClass(shipping);
+    setEditMode(true);
+    let object = {
+      _id: shipping.id,
+      name: shipping.name,
+      amount: shipping.amount
+    }
+    setcustomShippingClass(object);
   };
 
   const updateCustomShipping = () => {
@@ -117,6 +122,7 @@ const ShippingComponent = () => {
       });
     }
     else {
+
       dispatch(
         shippingClassUpdateAction({ shipping_class: customShippingClass })
       );
