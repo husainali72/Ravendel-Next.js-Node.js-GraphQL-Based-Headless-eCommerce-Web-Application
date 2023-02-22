@@ -200,6 +200,21 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    updateStoreOrder: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        const setting = await Setting.findOne({});
+        if(args.order_prefix){
+          setting.store.order_options.order_prefix = args.order_prefix
+          setting.store.order_options.order_prefix_list.push(args.order_prefix)
+          setting.store.order_options.order_digits = args.order_digits
+          return await setting.save();
+        }
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     updatePaymnetCOD: async (root, args, { id }) => {
       checkToken(id);
       try {
