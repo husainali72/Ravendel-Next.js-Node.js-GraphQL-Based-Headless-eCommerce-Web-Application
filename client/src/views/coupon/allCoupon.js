@@ -1,207 +1,67 @@
 import React, { useEffect, useState } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-  Button,
-  Tooltip,
-  TableSortLabel
-} from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { couponDeleteAction } from "../../store/action";
 
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "../../utils/helper";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import viewStyles from "../viewStyles";
-import { Alert, Loading } from "../components";
-import { convertDateToStringFormat } from "../utils/convertDate";
-import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { couponsAction } from "../../store/action";
-import { stableSort, getComparator } from "../components/sorting";
+import { get } from 'lodash'
+import TableComponent from "../components/table";
 const AllCouponsTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const Coupons = useSelector((state) => state.coupons);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('expire');
-  const navigate = useNavigate();
+  const [Allcoupon, setAllcoupon] = useState([])
+
+  const columndata = [
+    { name: "code", title: "Code", sortingactive: true },
+    { name: "discount_value", title: "Discount Value", sortingactive: true },
+    { name: "discount_type", title: "Discount type", sortingactive: true },
+    { name: "expire", title: "Expire date", sortingactive: true },
+    { name: "actions", title: "Actions", sortingactive: false }]
   useEffect(() => {
     if (isEmpty(Coupons.coupons)) {
       dispatch(couponsAction());
+
     }
   }, []);
 
-  const handleChangePage = (event, newPage) => {
+  useEffect(() => {
+    if (!isEmpty(get(Coupons, 'coupons'))) {
+      let data = []
+      Coupons.coupons.map((coupon) => {
 
-    setPage(newPage);
-  };
+        let object = {
+          id: coupon.id,
+          code: coupon.code,
+          expire: coupon.expire,
+          discount_type: coupon.discount_type,
+          discount_value: coupon.discount_value
+        }
+        data.push(object)
+      })
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+      setAllcoupon([...data])
+
+
+
+    }
+  }, [get(Coupons, 'coupons')])
 
   return (
     <>
-      <Alert />
-      <Grid container spacing={4} className={classes.mainrow}>
-        <Grid item lg={12}>
-          <Card>
-            {Coupons.loading && <Loading />}
-            <CardHeader
-              action={
-                <Link to={`${client_app_route_url}add-coupon`}>
-                  <Button
-                    color="success"
-                    className={classes.addUserBtn}
-                    size="small"
-                    variant="contained"
-                  >
-                    Add Coupon
-                  </Button>
-                </Link>
-              }
-              title="All Coupons"
-            />
-            <Divider />
-            <CardContent>
-              <TableContainer className={classes.container}>
-                <Table stickyHeader aria-label="allcoupons-table" size="small">
-                  <TableHead>
-                    <TableRow>
-
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
-                        <Tooltip enterDelay={300} title="Sort">
-                          <TableSortLabel active direction={order} onClick={() => {
-                            setOrder(order === "asc" ? "desc" : "asc")
-                            setOrderBy("code")
-                          }}>
-                            Code
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
+      <TableComponent
+        loading={Coupons.loading}
+        columns={columndata}
+        rows={Allcoupon}
+        editpage='edit-coupon'
+        addpage='add-coupon'
+        title="All Coupons"
+      />
 
 
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
-                        <Tooltip enterDelay={300} title="Sort">
-                          <TableSortLabel active direction={order} onClick={() => {
-                            setOrder(order === "asc" ? "desc" : "asc")
-                            setOrderBy("discount_type")
-                          }}>
-                            Coupon type
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
-
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
-                        <Tooltip enterDelay={300} title="Sort">
-                          <TableSortLabel active direction={order} onClick={() => {
-                            setOrder(order === "asc" ? "desc" : "asc")
-                            setOrderBy("discount_value")
-                          }}>
-                            Coupon Amount
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
-
-
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
-                        <Tooltip enterDelay={300} title="Sort">
-                          <TableSortLabel active direction={order} onClick={() => {
-                            setOrder(order === "asc" ? "desc" : "asc")
-                            setOrderBy("expire")
-                          }}>
-                            Expiry date
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Action
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-
-                    {
-                      stableSort(Coupons.coupons, getComparator(order, orderBy))
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((coupon) => (
-                          <TableRow key={coupon.id} hover>
-                            <TableCell>{coupon.code}</TableCell>
-                            <TableCell>{coupon.discount_type}</TableCell>
-                            <TableCell>{coupon.discount_value}</TableCell>
-                            <TableCell>
-                              {convertDateToStringFormat(coupon.expire)}
-                            </TableCell>
-                            <TableCell>
-                              <Tooltip
-                                title="Edit Coupon"
-                                aria-label="edit-coupon"
-                              >
-                                <IconButton
-                                  aria-label="Edit"
-                                  onClick={() =>
-                                    navigate(
-                                      `${client_app_route_url}edit-coupon/${coupon.id}`
-                                    )
-                                  }
-                                >
-                                  <EditIcon />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip
-                                title="Delete Coupon"
-                                aria-label="delete-coupon"
-                              >
-                                <IconButton
-                                  aria-label="Delete"
-                                  className={classes.deleteicon}
-                                  onClick={() =>
-                                    dispatch(couponDeleteAction(coupon.id))
-                                  }
-                                  disabled
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Tooltip>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={Coupons.coupons.length || 0}
-                rowsPerPage={rowsPerPage || 10}
-                page={page || 0}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
     </>
   );
 };

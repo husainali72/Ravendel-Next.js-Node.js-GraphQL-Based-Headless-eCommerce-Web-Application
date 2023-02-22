@@ -1,50 +1,22 @@
-import React, { Fragment, useEffect } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-  Button,
-  Tooltip,
-  TableSortLabel
-} from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { attributeDeleteAction, attributesAction } from "../../../store/action";
-import { stableSort, getComparator } from "../../components/sorting";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import viewStyles from "../../viewStyles";
-import { Alert, Loading } from "../../components";
-import { client_app_route_url } from "../../../utils/helper";
+import { attributeDeleteAction } from "../../../store/action";
+import { attributesAction } from "../../../store/action";
+import { isEmpty } from "../../../utils/helper";
+import { get } from 'lodash'
 import theme from "../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
+import TableComponent from "../../components/table";
 const AllAttributeComponent = () => {
-  const navigate = useNavigate();
-  const classes = viewStyles();
   const dispatch = useDispatch();
   const attributeState = useSelector((state) => state.product_attributes);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [order, setOrder] = React.useState('desc');
-  const [orderBy, setOrderBy] = React.useState('date');
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  const columndata = [
+    { name: 'name', title: "name", sortingactive: true },
+    { name: 'values', title: "Values", sortingactive: true },
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+    { name: 'actions', title: "Actions", sortingactive: false },]
+  const [AllAttribute, setAllAttributes] = useState([]);
+  console.log(attributeState)
 
   useEffect(() => {
     dispatch(attributesAction());
@@ -55,109 +27,35 @@ const AllAttributeComponent = () => {
       dispatch(attributesAction());
     }
   }, [attributeState.render]);
+  useEffect(() => {
+    if (!isEmpty(get(attributeState, 'attributes'))) {
+      let data = []
+      attributeState.attributes.map((attribute) => {
+
+        let object = {
+          id: attribute.id,
+          values: attribute.values.map((val) => val.name).join(","),
+          name: attribute.name,
+
+        }
+        data.push(object)
+      })
+      setAllAttributes(data)
+    }
+  }, [get(attributeState, 'attributes')])
 
   return (
     <>
-      <Alert />
-      <Grid container spacing={2} className={classes.mainrow}>
-        <Grid item xl={12}>
-          <Card>
-            {attributeState.loading ? <Loading /> : null}
-            <CardHeader
-              action={
-                <Link to={`${client_app_route_url}add-attribute`}>
-                  <Button
-                    color="success"
-                    className={classes.addUserBtn}
-                    size="small"
-                    variant="contained"
-                  >
-                    Add Attribute
-                  </Button>
-                </Link>
-              }
-              title="All Attributes"
-            />
-            <Divider />
-            <CardContent>
-              <TableContainer>
-                <Table stickyHeader aria-label="all-attributes" size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
-                        <Tooltip enterDelay={300} title="Sort">
-                          <TableSortLabel active direction={order} onClick={() => {
-                            setOrder(order === "asc" ? "desc" : "asc")
-                            setOrderBy("name")
-                          }}>
-                            Name
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell variant="contained" color="primary">Values</TableCell>
+      <TableComponent
+        loading={attributeState.loading}
+        columns={columndata}
+        rows={AllAttribute}
+        editpage='edit-attribute'
+        addpage='add-attribute'
+        title="All Attributes"
+        deletefunction={attributeDeleteAction}
+      />
 
-                      <TableCell variant="contained" color="primary">Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody className={classes.container}>
-                    {stableSort(attributeState.attributes, getComparator(order, orderBy))
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((attribute) => (
-                        <TableRow key={attribute.id} hover>
-                          <TableCell>{attribute.name}</TableCell>
-                          <TableCell>
-                            {attribute.values.map((val) => val.name).join(",")}
-                          </TableCell>
-                          <TableCell>
-                            <Tooltip title="Edit" aria-label="edit">
-                              <IconButton
-                                aria-label="Edit"
-                                onClick={() =>
-                                  navigate(
-                                    `${client_app_route_url}edit-attribute/${attribute.id}`
-                                  )
-                                }
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip
-                              title="Delete"
-                              aria-label="delete"
-                              onClick={() =>
-                                dispatch(attributeDeleteAction(attribute.id))
-                              }
-                              disabled
-                            >
-                              <IconButton
-                                aria-label="Delete"
-                                className={classes.deleteicon}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={attributeState.attributes.length || 0}
-                rowsPerPage={rowsPerPage || 10}
-                page={page || 0}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
     </>
   );
 };
