@@ -33,9 +33,11 @@ const GET_COUPONS = gql`
         expire
         minimum_spend
         maximum_spend
-        products
+        product
         exclude_products
-        categories
+        include_products
+        category
+        include_categories
         exclude_categories
         date
         updated
@@ -82,9 +84,11 @@ const GET_COUPON = gql`
         expire
         minimum_spend
         maximum_spend
-        products
+        product
         exclude_products
-        categories
+        include_products
+        category
+        include_categories
         exclude_categories
         date
         updated
@@ -154,9 +158,11 @@ const ADD_COUPON = gql`
     $expire: String
     $minimum_spend: Int
     $maximum_spend: Int
-    $products: customArray
+    $product: Boolean
+    $include_products: customArray
     $exclude_products: customArray
-    $categories: customArray
+    $category: Boolean
+    $include_categories: customArray
     $exclude_categories: customArray
   ) {
     addCoupon(
@@ -168,9 +174,11 @@ const ADD_COUPON = gql`
       expire: $expire
       minimum_spend: $minimum_spend
       maximum_spend: $maximum_spend
-      products: $products
+      product: $product
+      include_products: $include_products
       exclude_products: $exclude_products
-      categories: $categories
+      category: $category
+      include_categories: $include_categories
       exclude_categories: $exclude_categories
     ) {
       message
@@ -239,9 +247,11 @@ const UPDATE_COUPON = gql`
     $expire: String
     $minimum_spend: Int
     $maximum_spend: Int
-    $products: customArray
+    $product: Boolean
+    $include_products: customArray
     $exclude_products: customArray
-    $categories: customArray
+    $category: Boolean
+    $include_categories: customArray
     $exclude_categories: customArray
   ) {
     updateCoupon(
@@ -254,9 +264,11 @@ const UPDATE_COUPON = gql`
       expire: $expire
       minimum_spend: $minimum_spend
       maximum_spend: $maximum_spend
-      products: $products
+      product: $product
+      include_products: $include_products
       exclude_products: $exclude_products
-      categories: $categories
+      category: $category
+      include_categories: $include_categories
       exclude_categories: $exclude_categories
     ) {
       message

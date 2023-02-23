@@ -723,3 +723,35 @@ const prodAvgRating = async(productID, reviewModel, productModel) => {
   }
 }
 module.exports.prodAvgRating = prodAvgRating
+
+const calculateCart = async(coupon, cart, productModel) => {
+  let discountAmount = 0
+  for(let item of cart) {
+    let product = await productModel.findById(item.product_id)
+    if(coupon.category && coupon.include_categories.length){
+      if(product && product.categoryId && product.categoryId.length){
+        product.categoryId.map(catID => {
+          if(coupon.include_categories.includes(catID) || !coupon.exclude_categories.includes(catID)){
+            coupon.discount_type === "amount-discount" ?
+              discountAmount += (parseFloat(item.total)) - parseFloat(coupon.discount_value) :
+              discountAmount += (parseFloat(item.total)/100) * parseFloat(100 - coupon.discount_value)
+          }
+        })
+      }
+    }
+    else if(coupon.product && coupon.include_products.length){
+      if(product && (coupon.include_products.includes(product._id.toString()) || !coupon.exclude_products.includes(product._id.toString())) ){
+        coupon.discount_type === "amount-discount" ?
+          discountAmount += (parseFloat(item.total)) - parseFloat(coupon.discount_value) :
+          discountAmount += (parseFloat(item.total)/100) * parseFloat(100 - coupon.discount_value)
+      }
+    }
+    else{
+      coupon.discount_type === "amount-discount" ?
+        discountAmount += (parseFloat(item.total)) - parseFloat(coupon.discount_value) :
+        discountAmount += (parseFloat(item.total)/100) * parseFloat(100 - coupon.discount_value)
+    }
+  }
+  return discountAmount
+}
+module.exports.calculateCart = calculateCart

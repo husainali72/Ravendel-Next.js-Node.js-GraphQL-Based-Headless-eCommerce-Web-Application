@@ -10,9 +10,11 @@ module.exports = gql`
     expire: String
     minimum_spend: Int
     maximum_spend: Int
-    products: customArray
+    product: Boolean
+    include_products: customArray
     exclude_products: customArray
-    categories: customArray
+    category: Boolean
+    include_categories: customArray
     exclude_categories: customArray
     date: Date
     updated: Date
@@ -54,9 +56,11 @@ module.exports = gql`
       expire: String
       minimum_spend: Int
       maximum_spend: Int
-      products: customArray
+      product: Boolean
+      include_products: customArray
       exclude_products: customArray
-      categories: customArray
+      category: Boolean
+      include_categories: customArray
       exclude_categories: customArray
     ): statusSchema
     updateCoupon(
@@ -69,9 +73,11 @@ module.exports = gql`
       expire: String
       minimum_spend: Int
       maximum_spend: Int
-      products: customArray
+      product: Boolean
+      include_products: customArray
       exclude_products: customArray
-      categories: customArray
+      category: Boolean
+      include_categories: customArray
       exclude_categories: customArray
     ): statusSchema
     deleteCoupon(id: ID!): statusSchema

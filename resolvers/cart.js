@@ -21,6 +21,7 @@ const {
   checkError,
   checkToken,
   MESSAGE_RESPONSE,
+  calculateCart,
   _validate,getdate
 } = require("../config/helpers");
 const validate = require("../validations/cart");
@@ -59,78 +60,21 @@ module.exports = {
           total_coupon: {},
           message: '',
         };
-          let date = getdate('2');
+        let date = getdate('2');
         if(!coupon){
           calculated.total_coupon = 0.0;
           calculated.message = 'Invalid coupon code';
         }else{
-
           // console.log('expiredate',coupon.expire);
-          // if(coupon.expire >= date ){
-          if(coupon.expire){
-
-              var carttotal = 0;
-              var discountAmount = 0
-              // for (let i in args.cart) {
-              // carttotal = carttotal + args.cart[i].total;
-              // }
-
-
-            for (let i in args.cart) {
-              if (args.cart[i].product_id) {
-                const product = await Product.findById({ _id: args.cart[i].product_id });
-                // console.log("product===========",product)
-                if (product.pricing.sellprice > 0) {
-                  args.cart[i].total = args.cart[i].qty * product.pricing.sellprice;
-                } else {
-                  args.cart[i].total = args.cart[i].qty * product.pricing.price;
-                }
-              }
-              carttotal = carttotal + args.cart[i].total;
-            }
-
-              // console.log('carttotal',carttotal);
-              if(coupon.discount_type == 'amount-discount'){
-                // console.log('amount');
-                discountAmount = parseFloat(coupon.discount_value);
-              }else{
-                // console.log('percentage');
-                let productDiscountAmt=0
-                if(coupon.categories.length>0 && coupon.exclude_categories.length>0 && 
-                   coupon.products.length>0 && coupon.exclude_products.length>0){
-                    for (let i in args.cart) {
-                      if (args.cart[i].product_id) {
-                        const product = await Product.findById({ _id: args.cart[i].product_id });
-                        // map category ids of product
-                        product.categoryId.map(productCatId=>{
-                          // map product category ids in coupon
-                          coupon.categories.map(couponCatId=>{
-                            //console.log("productCatId=",productCatId, "couponCatId=", couponCatId)
-                            // match both ids for discount amt
-                            if(couponCatId===productCatId){
-                              productDiscountAmt+=(parseFloat(args.cart[i].total) / 100) * parseFloat(coupon.discount_value);
-                              //console.log("discount on product=",productDiscountAmt)
-                            }
-                          })
-                        })
-                      }
-                    }
-                  }else{
-                    // console.log(coupon.discount_value)
-                    productDiscountAmt+=(parseFloat(carttotal) / 100) * parseFloat(coupon.discount_value)
-                    //console.log(productDiscountAmt)
-                  }
-                
-                discountAmount = productDiscountAmt
-              }
-              //console.log('discountAmount',Math.round(discountAmount).toFixed(2));
-              calculated.total_coupon = Math.round(discountAmount).toFixed(2);
-              calculated.message = 'Coupon code applied sucessfully';
+          if(coupon.expire >= date){
+            var discountAmount = 0
+            discountAmount = await calculateCart(coupon, args.cart, Product)
+            calculated.total_coupon = Math.round(discountAmount).toFixed(2);
+            calculated.message = 'Coupon code applied successfully';
 
           }else{
-               calculated.total_coupon = 0.0;
-               calculated.message = 'Coupon code expire';
-
+            calculated.total_coupon = 0.0;
+            calculated.message = 'Coupon no longer applicable';
           }
         }
         return calculated;
@@ -189,6 +133,7 @@ module.exports = {
         let productById = {};
         let productIds = [];
         args.cart.forEach((item, i) => {
+          item.combination = []
           productIds.push(item.product_id);
           if (typeof productById[item.product_id.toString()] !== "object") {
             productById[item.product_id.toString()] = {};
@@ -222,6 +167,7 @@ module.exports = {
             for (const attr of productAttribute) {
               for (const attrVal of attr.values) {
                 if (~prod.combination.indexOf(attrVal._id.toString())) {
+                  productById[prod.product_id.toString()].carts[0].combination.push(attrVal._id.toString())
                   attributeVariation.combination_values.push({
                     id: attrVal._id,
                     name: attrVal.name,
@@ -267,13 +213,13 @@ module.exports = {
                 }
 
                 if (isMatch) {
-                  item.price = varProduct.price;
+                  item.price = varProduct.price * item.qty;
                   item.product_id = productById[i].product.product_id;
                   item.combination = varProduct.combination_values;
                 }
               }
             } else {
-              item.price = productById[i].price;
+              item.price = productById[i].price * item.qty;
               item.product_id = productById[i].product.product_id;
               //console.log(item);
             }

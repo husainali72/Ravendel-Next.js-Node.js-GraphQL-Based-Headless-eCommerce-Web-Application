@@ -31,9 +31,11 @@ const CouponSchema = new Schema({
     type: Number,
     // min : 0
   },
-  products: [],
+  product: Boolean,
+  include_products: [],
   exclude_products: [],
-  categories: [],
+  category: Boolean,
+  include_categories: [],
   exclude_categories: [],
   date: {
     type: Date,
