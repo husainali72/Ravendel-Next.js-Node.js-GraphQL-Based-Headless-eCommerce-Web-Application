@@ -724,32 +724,42 @@ const prodAvgRating = async(productID, reviewModel, productModel) => {
 }
 module.exports.prodAvgRating = prodAvgRating
 
-const calculateCart = async(coupon, cart, productModel) => {
+const calculateCart = async(coupon, cart, productModel, amountDiscount) => {
   let discountAmount = 0
   for(let item of cart) {
     let product = await productModel.findById(item.product_id)
-    if(coupon.category && coupon.include_categories.length){
-      if(product && product.categoryId && product.categoryId.length){
-        product.categoryId.map(catID => {
-          if(coupon.include_categories.includes(catID) || !coupon.exclude_categories.includes(catID)){
-            coupon.discount_type === "amount-discount" ?
-              discountAmount += (parseFloat(item.total)) - parseFloat(coupon.discount_value) :
-              discountAmount += (parseFloat(item.total)/100) * parseFloat(100 - coupon.discount_value)
-          }
-        })
+    if(product){
+      let includeProduct = true
+      if(coupon.category){
+        console.log("ruunning cat")
+        if(product.categoryId && product.categoryId.length){
+          product.categoryId.map(catID => {
+            if(coupon.include_categories.length){
+              includeProduct = coupon.include_categories.includes(catID) ? 
+                true : false
+            }
+            else if(coupon.exclude_categories.length){
+              includeProduct = coupon.exclude_categories.includes(catID) ? 
+                false : true
+            }
+          })
+        }
       }
-    }
-    else if(coupon.product && coupon.include_products.length){
-      if(product && (coupon.include_products.includes(product._id.toString()) || !coupon.exclude_products.includes(product._id.toString())) ){
-        coupon.discount_type === "amount-discount" ?
-          discountAmount += (parseFloat(item.total)) - parseFloat(coupon.discount_value) :
-          discountAmount += (parseFloat(item.total)/100) * parseFloat(100 - coupon.discount_value)
+      else if(coupon.product){
+        if(coupon.include_products.length){
+          includeProduct = coupon.include_products.includes(product._id.toString()) ? 
+            true : false
+        }
+        else if(coupon.exclude_products.length){
+          includeProduct = coupon.exclude_products.includes(product._id.toString()) ? 
+            false : true
+        }
       }
-    }
-    else{
-      coupon.discount_type === "amount-discount" ?
-        discountAmount += (parseFloat(item.total)) - parseFloat(coupon.discount_value) :
-        discountAmount += (parseFloat(item.total)/100) * parseFloat(100 - coupon.discount_value)
+      if(includeProduct){
+        amountDiscount ?
+          discountAmount += parseFloat(coupon.discount_value) :
+          discountAmount += parseFloat(item.total/100) * parseFloat(coupon.discount_value)
+      }
     }
   }
   return discountAmount

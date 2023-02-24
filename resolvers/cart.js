@@ -67,10 +67,20 @@ module.exports = {
         }else{
           // console.log('expiredate',coupon.expire);
           if(coupon.expire >= date){
-            var discountAmount = 0
-            discountAmount = await calculateCart(coupon, args.cart, Product)
-            calculated.total_coupon = Math.round(discountAmount).toFixed(2);
-            calculated.message = 'Coupon code applied successfully';
+            let cartTotal = 0
+            args.cart.map(item => cartTotal += item.total)
+            if(coupon.minimum_spend <= cartTotal && coupon.maximum_spend > cartTotal){
+              var discountAmount = 0
+              coupon.discount_type === "amount-discount" ? 
+              discountAmount = await calculateCart(coupon, args.cart, Product, true) :
+              discountAmount = await calculateCart(coupon, args.cart, Product, false)
+              calculated.total_coupon = Math.round(discountAmount).toFixed(2);
+              calculated.message = 'Coupon code applied successfully';
+            }
+            else{
+              calculated.total_coupon = 0.0;
+              calculated.message = 'Coupon not applicable on cart';
+            }
 
           }else{
             calculated.total_coupon = 0.0;
@@ -79,6 +89,7 @@ module.exports = {
         }
         return calculated;
       } catch (error) {
+        console.log(error)
         error = checkError(error);
         throw new Error(error.custom_message);
       }
