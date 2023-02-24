@@ -13,19 +13,17 @@ import {
     TableRow,
     TableContainer,
     TablePagination,
-
     Avatar,
     Button,
     Tooltip,
     TableSortLabel,
-
     Rating
 } from "@mui/material";
 
 import { Link } from "react-router-dom";
 
 import ImageIcon from "@mui/icons-material/Image";
-
+import { Searching } from "./searching";
 import { badgeColor } from "../components/BadgeColor";
 import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
@@ -36,10 +34,11 @@ import { stableSort, getComparator } from "../components/sorting";
 import { Alert, Loading } from "../components";
 import theme from "../../theme/index";
 
-const Tablecomponent = ({ searchdata, classname, rows, columns, loading, title, addpage, handleOnChangeSearch }) => {
-    const [order, setOrder] = useState('desc');
+const Tablecomponent = ({ searchdata, classname, rows, columns, loading, title, addpage, handleOnChangeSearch, dropdown, statusTabData }) => {
+    const [order, setOrder] = useState('asc');
     const classes = viewStyles();
     const [orderBy, setOrderBy] = useState('date');
+
 
     const [page, setPage] = useState(0);
 
@@ -64,24 +63,26 @@ const Tablecomponent = ({ searchdata, classname, rows, columns, loading, title, 
                         <CardHeader
                             action={
                                 <>
-                                    {addpage ? <Link to={`${client_app_route_url + addpage}`}>
-                                        <Button
-                                            color="success"
-                                            className={classes.addUserBtn}
-                                            size="small"
-                                            variant="contained"
-                                        >
-                                            {addpage.replaceAll('-', ' ')}
-                                        </Button>
-                                    </Link> : null}
+                                    <div className={classes.insidecardheader}>
+                                        <Searching searchData={searchdata} handleOnChangeSearch={handleOnChangeSearch} dropdown={dropdown} statusTabData={statusTabData} classname={classname} />
+                                        {addpage ? <Link to={`${client_app_route_url + addpage}`} className={classes.addbtnlink}>
 
+                                            <Button
+                                                color="success"
+                                                className={classes.addUserBtn}
+                                                size="small"
+                                                variant="contained"
+                                            >
+                                                {addpage.replaceAll('-', ' ')}
+                                            </Button>
+                                        </Link> : null}
+
+                                    </div>
                                 </>
                             }
 
                             title={title}
                         />
-
-                        {/* <Searching searchData={searchdata} searchby="name" handleOnChangeSearch={handleOnChangeSearch} /> */}
                         <Divider />
 
                         <CardContent>
@@ -189,11 +190,11 @@ const Tablecomponent = ({ searchdata, classname, rows, columns, loading, title, 
         </>
     )
 }
-export default function TableComponent({ loading, classname, searchdata, rows, columns, title, editpage, addpage, handleOnChangeSearch }) {
+export default function TableComponent({ loading, classname, searchdata, rows, columns, title, editpage, addpage, handleOnChangeSearch, dropdown, statusTabData }) {
 
     return (
         <ThemeProvider theme={theme}>
-            <Tablecomponent columns={columns} rows={rows} loading={loading} classname={classname} editpage={editpage} title={title} addpage={addpage} handleOnChangeSearch={handleOnChangeSearch} searchdata={searchdata} />
+            <Tablecomponent dropdown={dropdown} columns={columns} rows={rows} loading={loading} classname={classname} editpage={editpage} title={title} addpage={addpage} handleOnChangeSearch={handleOnChangeSearch} searchdata={searchdata} statusTabData={statusTabData} />
         </ThemeProvider>
     );
 }

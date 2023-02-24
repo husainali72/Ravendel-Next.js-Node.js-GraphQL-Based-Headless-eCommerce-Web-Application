@@ -5,29 +5,20 @@ const ActionButton = ({ onClick }) => {
     return (
         <>
             <Tooltip title="Edit " aria-label="edit">
-
                 <IconButton
                     aria-label="Edit"
                     type='edit'
-                    onClick={
-
-                        () => onClick('edit')
-
-                    }
+                    onClick={() => onClick('edit')}
                 >
                     <EditIcon />
                 </IconButton>
             </Tooltip>
-            <Tooltip title="Edit " aria-label="edit">
-
+            <Tooltip title="Delete " aria-label="Delete">
                 <IconButton
-                    aria-label="Edit"
+                    aria-label="Delete"
                     type='delete'
-                    onClick={
-
-                        () => onClick('delete')
-
-                    }
+                    onClick={() => onClick('delete')}
+                    disabled
                 >
                     <DeleteIcon />
                 </IconButton>

@@ -9,17 +9,20 @@ import { get } from 'lodash'
 import TableComponent from "../components/table";
 import { useNavigate } from "react-router-dom";
 const AllOrdersComponent = () => {
-
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders);
   const [AllOrder, setAllOrder] = useState([])
   const navigate = useNavigate()
   const [loading, setloading] = useState(false)
+  const [filtered, setfilterdData] = useState([])
+  const badgefilter = [{ name: 'payment_status', title: ['pending', 'failed', 'success', 'cancelled'] },
+  { name: 'shipping_status', title: ['inprogress', 'shipped', 'outfordelivery', 'delivered'] },]
+
   const columndata = [{ name: 'order_number', title: "Order Number", sortingactive: true },
   { name: 'date', title: "Date", sortingactive: true },
   { name: 'name', title: "Customer Name", sortingactive: true },
   { name: 'payment_status', title: "payment status", sortingactive: false },
-  { name: 'payment_status', title: "payment status", sortingactive: false },
+  { name: 'shipping_status', title: "shipping status", sortingactive: false },
   {
     name: 'actions', title: "Actions", sortingactive: false,
     component: ActionButton,
@@ -52,27 +55,32 @@ const AllOrdersComponent = () => {
         data.push(object)
       })
 
-      setAllOrder([...data])
+      setAllOrder(data)
+      setfilterdData(data)
 
-
+    } else {
+      setAllOrder([])
+      setfilterdData([])
     }
   }, [get(orders, 'orders')])
   useEffect(() => {
     if (!isEmpty(get(orders, 'loading')))
       setloading(get(orders, 'loading'))
   }, [get(orders, 'loading')])
+  const handleOnChangeSearch = (filtereData) => {
 
+    setfilterdData(filtereData)
+  }
 
   return (
     <>
-
-
       <TableComponent
         loading={loading}
+        rows={filtered}
         columns={columndata}
-        rows={AllOrder}
-
-
+        searchdata={AllOrder}
+        handleOnChangeSearch={handleOnChangeSearch}
+        dropdown={badgefilter}
         title="All Orders"
       />
     </>

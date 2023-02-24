@@ -54,7 +54,7 @@ const AllCategoryComponent = () => {
   const [singlecategory, setSingleCategory] = useState(categoryObject);
   const [editMode, setEditmode] = useState(false);
   const [featuredImage, setfeaturedImage] = useState(null);
-
+  const [filtered, setfilterdData] = useState([])
   const [loading, setloading] = useState(false);
 
   const columndata = [
@@ -85,6 +85,7 @@ const AllCategoryComponent = () => {
   useEffect(() => {
     if (!isEmpty(get(products, "categories"))) {
       setCategories(products.categories);
+      setfilterdData(products.categories)
       cancelCat();
     }
   }, [get(products, "categories")]);
@@ -165,9 +166,7 @@ const AllCategoryComponent = () => {
       [e.target.name]: e.target.files,
     });
   };
-  const categoryDelete = (id) => {
-    dispatch(categoryDeleteAction(id))
-  }
+
   const isUrlExist = async (url) => {
     let updatedUrl = await getUpdatedUrl("ProductCat", url);
     setSingleCategory({
@@ -175,7 +174,10 @@ const AllCategoryComponent = () => {
       url: updatedUrl,
     });
   };
+  const handleOnChangeSearch = (filtereData) => {
 
+    setfilterdData(filtereData)
+  }
   return (
     <>
       <Alert />
@@ -185,7 +187,9 @@ const AllCategoryComponent = () => {
           <TableComponent
             loading={loading}
             columns={columndata}
-            rows={categories}
+            rows={filtered}
+            searchdata={categories}
+            handleOnChangeSearch={handleOnChangeSearch}
             classname="noclass"
             title="All Category"
           />

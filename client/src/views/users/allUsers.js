@@ -14,7 +14,9 @@ const AllUsersComponent = () => {
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const navigate = useNavigate()
-  const [Allblogs, setAllblogs] = useState([])
+  const [AllUsers, setAllUsers] = useState([])
+  const [filtered, setfilterdData] = useState([])
+  const statusTabData = { name: 'role', array: ['All', 'USER', 'EDITOR', 'MANAGER', 'SUBSCRIBER', 'AUTHOR'] }
   const columndata = [{ name: "image", title: "image", sortingactive: false },
   { name: "name", title: "name ", sortingactive: true },
   { name: "email", title: "email ", sortingactive: true },
@@ -44,6 +46,7 @@ const AllUsersComponent = () => {
       let data = []
       UsersState.users.map((user) => {
 
+
         let object = {
           id: user.id,
           image: bucketBaseURL + user.image,
@@ -51,22 +54,31 @@ const AllUsersComponent = () => {
           email: user.email,
           role: user.role
         }
+
         data.push(object)
       })
-      setAllblogs(data)
+      setAllUsers(data)
+      setfilterdData(data)
 
     } else {
-      setAllblogs([])
+      setAllUsers([])
+      setfilterdData([])
     }
   }, [get(UsersState, 'users')])
+  const handleOnChangeSearch = (filtereData) => {
+
+    setfilterdData(filtereData)
+  }
   return (
     <>
       <TableComponent
         loading={UsersState.loading}
         columns={columndata}
-        rows={Allblogs}
+        rows={filtered}
+        statusTabData={statusTabData}
 
-
+        searchdata={AllUsers}
+        handleOnChangeSearch={handleOnChangeSearch}
         addpage='add-user'
         title="All Users"
 

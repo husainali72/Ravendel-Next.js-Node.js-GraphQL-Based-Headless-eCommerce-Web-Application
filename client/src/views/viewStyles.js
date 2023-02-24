@@ -39,6 +39,7 @@ const viewStyles = makeStyles((theme) => ({
   },
   addUserBtn: {
     color: "#fff",
+
   },
   backdrop: {
     zIndex: "1101 !important",
@@ -432,15 +433,99 @@ const viewStyles = makeStyles((theme) => ({
     maxHeight: "95%",
     marginBottom: 5,
   },
-}));
-// const theme = createTheme();
+  closeIcon: {
+    position: "absolute",
+    right: 0,
+    top: '10px',
+    marginRight: '10px',
+    cursor: 'pointer'
+  },
 
-// export default function viewStyles() {
-//     return (
-//       <ThemeProvider theme={theme}>
-//         <ViewStyleTheme />
-//       </ThemeProvider>
-//     );
-//   }
+  TableSearchRow: {
+    backgroundColor: "white",
+    width: "100%",
+    padding: "0px",
+  },
+  searchDiv: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100 %"
+  },
+  searchOption: {
+    marginLeft: "100px",
+
+    padding: "0px!important",
+
+  },
+  searchbar: {
+
+    border: "1px solid rgb(199, 191, 191)",
+    borderRadius: "25px",
+    width: "200px",
+  },
+  addbtnlink: {
+    marginTop: '5px'
+  },
+  box: {
+
+    width: "250px",
+    borderRadius: "25px",
+
+    marginRight: "10px",
+
+    backgroundColor: "white",
+
+  },
+  searchWrapper: {
+    position: "relative",
+    width: "250px",
+    padding: '2px',
+    borderRadius: "25px",
+    backgroundColor: "#f1f1f1",
+
+  },
+  searchIcon: {
+    position: "absolute",
+    left: 0,
+    top: "10px",
+    marginLeft: "10px",
+  },
+
+  textFieldWrapper: {
+    padding: '5px',
+    paddingLeft: "40px",
+    paddingRight: "40px",
+    // marginTop: '10px',
+    color: 'white',
+
+    border: '0ch'
+  },
+  insidecardheader: {
+    display: 'flex',
+    flexDirection: 'row',
+
+
+
+  },
+  datepicker: {
+    width: '105px'
+  },
+  enddatepicker: {
+    width: '105px',
+    marginLeft: '10px'
+  },
+  Datepickerclass: {
+    marginLeft: '20px'
+  },
+  search: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  muitabs: {
+    marginRight: '10px'
+  }
+}));
+
+
 
 export default viewStyles;

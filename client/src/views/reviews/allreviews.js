@@ -14,10 +14,8 @@ const AllReviewsComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const reviewState = useSelector((state) => state.reviews);
-
   const [AllReviews, setAllReviews] = useState([])
-
-
+  const [filtered, setfilterdData] = useState([])
   const columndata = [{ name: "date", title: "date", sortingactive: true },
   { name: "name", title: "Customer ", sortingactive: true },
   { name: "last_modified", title: "Last Modified ", sortingactive: true },
@@ -50,29 +48,36 @@ const AllReviewsComponent = () => {
           id: review.id,
           date: review.date,
           name: review.customer_id.first_name + " - " + convertDateToStringFormat(review.date),
-          last_modified: review.updated,
+          last_modified: convertDateToStringFormat(review.updated),
           reviewd_product: review.product_id.name,
           rating: review.rating
         }
         data.push(object)
       })
 
-      setAllReviews([...data])
+      setAllReviews(data)
+      setfilterdData(data)
+    } else {
+      setAllReviews([])
+      setfilterdData([])
 
     }
 
 
 
   }, [get(reviewState, 'reviews')])
+  const handleOnChangeSearch = (filtereData) => {
 
+    setfilterdData(filtereData)
+  }
   return (
     <>
       <TableComponent
         loading={reviewState.loading}
         columns={columndata}
-        rows={AllReviews}
-        editpage='edit-review'
-
+        rows={filtered}
+        searchdata={AllReviews}
+        handleOnChangeSearch={handleOnChangeSearch}
         addpage=''
         title="All Reviews"
 

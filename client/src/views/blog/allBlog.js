@@ -16,8 +16,11 @@ const AllBlogComponent = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
   const [Allblogs, setAllblogs] = useState([])
-
+  const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
+  const statusTabData = {
+    name: 'status', array: ['All', 'Publish', 'Draft']
+  }
   const columndata = [{ name: "image", title: "image", sortingactive: false },
   { name: "title", title: "title ", sortingactive: true },
   { name: "date", title: "date ", sortingactive: true },
@@ -56,24 +59,27 @@ const AllBlogComponent = () => {
         data.push(object)
       })
       setAllblogs(data)
-
+      setfilterdData(data)
     } else {
       setAllblogs([])
+      setfilterdData([])
     }
   }, [get(blogs, 'blogs')])
+  const handleOnChangeSearch = (filtereData) => {
 
+    setfilterdData(filtereData)
+  }
   return (
     <>
       <TableComponent
         loading={blogs.loading}
         columns={columndata}
-        rows={Allblogs}
-
-
-
+        rows={filtered}
+        searchdata={Allblogs}
+        handleOnChangeSearch={handleOnChangeSearch}
         addpage='add-blog'
         title="All Blogs"
-
+        statusTabData={statusTabData}
       />
 
     </>

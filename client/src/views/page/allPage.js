@@ -13,11 +13,13 @@ const AllPagesComponent = () => {
   const dispatch = useDispatch();
   const pageState = useSelector((state) => state.pages);
   const [Allpages, setAllpages] = useState([])
-
+  const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
+  const statusTabData = { name: 'status', array: ['All', 'Publish', 'Draft'] }
   const columndata = [{ name: "date", title: "date", sortingactive: true },
 
   { name: "name", title: "Name ", sortingactive: true },
+  { name: "status", title: "Status ", sortingactive: true },
 
   {
     name: "actions", title: "Actions", sortingactive: false, component: ActionButton,
@@ -44,35 +46,38 @@ const AllPagesComponent = () => {
         let object = {
           id: page.id,
           date: page.createdAt,
-          name: page.title
-
+          name: page.title,
+          status: page.status
         }
         data.push(object)
       })
 
       setAllpages(data)
-
+      setfilterdData(data)
     }
     else {
       setAllpages([])
-
+      setfilterdData([])
     }
 
 
   }, [get(pageState, 'pages')])
 
+  const handleOnChangeSearch = (filtereData) => {
 
+    setfilterdData(filtereData)
+  }
   return (
     <>
       <TableComponent
         loading={pageState.loading}
         columns={columndata}
-        rows={Allpages}
-
-
+        rows={filtered}
+        searchdata={Allpages}
+        handleOnChangeSearch={handleOnChangeSearch}
         addpage='add-page'
         title="All pages"
-
+        statusTabData={statusTabData}
       />
 
 

@@ -12,8 +12,22 @@ import TableComponent from "../components/table.js";
 const AllbrandComponent = () => {
   const dispatch = useDispatch();
   const Brands = useSelector((state) => state.brands);
-  const [tablehead, setTableHead] = useState([])
-  const [Allorder, setAllorder] = useState([])
+
+  const [Allbrand, setAllbrand] = useState([])
+  const [filtered, setfilterdData] = useState([])
+  let columndata = [
+    { name: "date", title: "date", sortingactive: true },
+    { name: "name", title: "Name", sortingactive: true },
+    {
+      name: "actions", title: "Actions", sortingactive: false, component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-brand/${id}`)
+        } else if (type === "delete") {
+          dispatch(brandDeleteAction(id))
+        }
+      }
+    }]
   const navigate = useNavigate()
   useEffect(() => {
     if (isEmpty(Brands.brands)) {
@@ -35,33 +49,31 @@ const AllbrandComponent = () => {
         data.push(object)
       })
 
-      setAllorder([...data])
+      setAllbrand(data)
+      setfilterdData(data)
 
-      let columndata = [
-        { name: "date", title: "date", sortingactive: true },
-        { name: "name", title: "Name", sortingactive: true },
-        {
-          name: "actions", title: "Actions", sortingactive: false, component: ActionButton,
-          buttonOnClick: (type, id) => {
-            if (type === 'edit') {
-              navigate(`${client_app_route_url}edit-brand/${id}`)
-            } else if (type === "delete") {
-              dispatch(brandDeleteAction(id))
-            }
-          }
-        }]
-      setTableHead(columndata)
+
+    } else {
+      setAllbrand([])
+      setfilterdData([])
     }
   }, [get(Brands, 'brands')])
 
+  const handleOnChangeSearch = (filtereData) => {
+
+    setfilterdData(filtereData)
+  }
 
 
   return (
     <>
       <TableComponent
         loading={Brands.loading}
-        columns={tablehead}
-        rows={Allorder}
+        columns={columndata}
+        rows={filtered}
+        searchdata={Allbrand}
+        handleOnChangeSearch={handleOnChangeSearch}
+
         editpage='edit-brand'
         addpage='add-brand'
         title="All Brands"

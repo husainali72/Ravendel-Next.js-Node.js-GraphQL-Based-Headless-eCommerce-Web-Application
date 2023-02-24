@@ -5,6 +5,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import ActionButton from "../../components/actionbutton";
 const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
   const [Alltaxes, setAlltaxes] = useState([])
+  const [filtered, setfilterdData] = useState([])
   const columndata = [
     { name: 'name', title: "Name", sortingactive: true },
     { name: 'percentage', title: "Percentage", sortingactive: true },
@@ -38,13 +39,20 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
       }
       data.push(object)
     })
-    setAlltaxes([...data])
+    setfilterdData(data)
+    setAlltaxes(data)
   }, [taxState.tax.tax_class])
+  const handleOnChangeSearch = (filtereData) => {
+    setfilterdData(filtereData)
+  }
   return (
     <TableComponent
       loading={taxState.loading}
       columns={columndata}
-      rows={Alltaxes}
+      rows={filtered}
+      searchdata={Alltaxes}
+      handleOnChangeSearch={handleOnChangeSearch}
+
       classname="noclass"
       title="All Taxes"
     />);

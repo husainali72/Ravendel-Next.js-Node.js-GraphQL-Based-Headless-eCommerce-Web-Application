@@ -19,11 +19,13 @@ const GlobalThemeOverride = () => {
   const products = useSelector((state) => state.products);
   const navigate = useNavigate()
   const [Allproducts, setAllproduct] = useState([])
-
+  const [filtered, setfilterdData] = useState([])
+  const statusTabData = { name: 'status', array: ['All', 'Publish', 'Draft'] }
   const columndata = [
     { name: "image", title: "image", sortingactive: false },
     { name: "date", title: "date", sortingactive: true },
     { name: "name", title: "Name", sortingactive: true },
+    { name: "status", title: "Status", sortingactive: true },
     {
       name: "actions", title: "Actions", sortingactive: false,
       component: ActionButton,
@@ -50,20 +52,26 @@ const GlobalThemeOverride = () => {
           id: product._id,
           image: product.feature_image ? bucketBaseURL + product.feature_image : NoImagePlaceHolder,
           date: product.date,
+          status: product.status,
           name: product.name,
 
         }
         data.push(object)
       })
       setAllproduct(data)
+      setfilterdData(data)
 
     } else {
       setAllproduct([])
+      setfilterdData([])
     }
 
   }, [get(products, 'products')])
 
+  const handleOnChangeSearch = (filtereData) => {
 
+    setfilterdData(filtereData)
+  }
 
   return (
     <>
@@ -71,9 +79,10 @@ const GlobalThemeOverride = () => {
       <TableComponent
         loading={products.loading}
         columns={columndata}
-        rows={Allproducts}
-
-
+        rows={filtered}
+        searchdata={Allproducts}
+        handleOnChangeSearch={handleOnChangeSearch}
+        statusTabData={statusTabData}
         addpage='add-product'
         title="All Products"
 

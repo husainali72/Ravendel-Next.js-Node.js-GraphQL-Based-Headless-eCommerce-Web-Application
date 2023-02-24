@@ -14,6 +14,7 @@ const AllCouponsTheme = () => {
   const dispatch = useDispatch();
   const Coupons = useSelector((state) => state.coupons);
   const [Allcoupon, setAllcoupon] = useState([])
+  const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
   const columndata = [
     { name: "code", title: "Code", sortingactive: true },
@@ -53,19 +54,29 @@ const AllCouponsTheme = () => {
         data.push(object)
       })
 
-      setAllcoupon([...data])
+      setAllcoupon(data)
+      setfilterdData(data)
 
 
-
+    } else {
+      setAllcoupon([])
+      setfilterdData([])
     }
   }, [get(Coupons, 'coupons')])
+  const handleOnChangeSearch = (filtereData) => {
+
+    setfilterdData(filtereData)
+  }
+
 
   return (
     <>
       <TableComponent
         loading={Coupons.loading}
         columns={columndata}
-        rows={Allcoupon}
+        rows={filtered}
+        searchdata={Allcoupon}
+        handleOnChangeSearch={handleOnChangeSearch}
         editpage='edit-coupon'
         addpage='add-coupon'
         title="All Coupons"

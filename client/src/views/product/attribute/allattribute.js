@@ -12,6 +12,7 @@ import ActionButton from "../../components/actionbutton";
 const AllAttributeComponent = () => {
   const dispatch = useDispatch();
   const attributeState = useSelector((state) => state.product_attributes);
+  const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
   const columndata = [
     { name: 'name', title: "name", sortingactive: true },
@@ -51,18 +52,27 @@ const AllAttributeComponent = () => {
 
         }
         data.push(object)
+
       })
       setAllAttributes(data)
+      setfilterdData(data)
+    } else {
+      setAllAttributes([])
+      setfilterdData([])
     }
   }, [get(attributeState, 'attributes')])
+  const handleOnChangeSearch = (filtereData) => {
+    setfilterdData(filtereData)
+  }
 
   return (
     <>
       <TableComponent
         loading={attributeState.loading}
         columns={columndata}
-        rows={AllAttribute}
-
+        rows={filtered}
+        searchdata={AllAttribute}
+        handleOnChangeSearch={handleOnChangeSearch}
         addpage='add-attribute'
         title="All Attributes"
 

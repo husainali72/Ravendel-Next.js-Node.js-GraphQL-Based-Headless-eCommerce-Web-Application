@@ -10,6 +10,7 @@ const AllShippingComponentComponent = ({
   deleteShipping,
 }) => {
   const [Allshipping, setAllshipping] = useState([])
+  const [filtered, setfilterdData] = useState([])
   const columndata = [
     { name: 'name', title: "Name", sortingactive: true },
     { name: 'amount', title: "amount", sortingactive: true },
@@ -29,6 +30,7 @@ const AllShippingComponentComponent = ({
     },]
 
   useEffect(() => {
+
     let data = []
     shippingState.shipping.shipping_class.map((shipping) => {
 
@@ -40,14 +42,22 @@ const AllShippingComponentComponent = ({
       }
       data.push(object)
     })
-    setAllshipping([...data])
+    setAllshipping(data)
+    setfilterdData(data)
 
   }, [shippingState.shipping.shipping_class])
+  const handleOnChangeSearch = (filtereData) => {
+
+    setfilterdData(filtereData)
+  }
   return (
     <TableComponent
       loading={shippingState.loading}
       columns={columndata}
-      rows={Allshipping}
+      rows={filtered}
+      searchdata={Allshipping}
+      handleOnChangeSearch={handleOnChangeSearch}
+
       classname="noclass"
       title="All Shippings"
     />

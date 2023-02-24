@@ -19,6 +19,7 @@ import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import TableComponent from "../components/table.js";
 import ActionButton from "../components/actionbutton.js";
+import { get } from 'lodash'
 import {
   CardBlocksWithAction,
 } from "../components";
@@ -32,6 +33,7 @@ const AllTagsComponent = () => {
   const dispatch = useDispatch();
   const blogState = useSelector((state) => state.blogs);
   const [singleTag, setSingleTag] = useState(tagObject);
+  const [filtered, setfilterdData] = useState([])
   const [editMode, setEditmode] = useState(false);
   const columndata = [
     { name: 'date', title: "Date", sortingactive: true },
@@ -55,6 +57,13 @@ const AllTagsComponent = () => {
   useEffect(() => {
     dispatch(blogtagsAction());
   }, []);
+  useEffect(() => {
+    if (!isEmpty(blogState, 'blog')) {
+      setfilterdData(blogState.tags)
+    } else {
+      setfilterdData([])
+    }
+  }, [get(blogState, 'tags')]);
 
   const editTag = (tag) => {
     setEditmode(true);
@@ -109,6 +118,10 @@ const AllTagsComponent = () => {
     setEditmode(false);
     setSingleTag(tagObject);
   };
+  const handleOnChangeSearch = (filtereData) => {
+
+    setfilterdData(filtereData)
+  }
 
   return (
 
@@ -118,7 +131,9 @@ const AllTagsComponent = () => {
           <TableComponent
             loading={blogState.loading}
             columns={columndata}
-            rows={blogState.tags}
+            rows={filtered}
+            searchdata={blogState.tags}
+            handleOnChangeSearch={handleOnChangeSearch}
             classname="noclass"
             title="All Tags"
           />
