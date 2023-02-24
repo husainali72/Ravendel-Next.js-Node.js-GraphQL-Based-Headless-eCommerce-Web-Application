@@ -96,7 +96,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct,currencyStore }) => {
                                                         <strong>{product.name}</strong>
                                                     )}
                                                     <StarRating stars={"5"} />
-                                                    <p style={{ marginTop: 0 }}>{currency} {product.pricing.sellprice}</p>
+                                                    <p style={{ marginTop: 0 }}>{currency}{product.pricing.sellprice}</p>
                                                 </div>
                                             </div>
                                         ))

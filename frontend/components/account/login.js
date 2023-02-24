@@ -57,7 +57,7 @@ const LogIn = () => {
             } )
             // console.log('dispatchedd')
             dispatch(createCart(id, products));
-            localStorage.setItem("cart", JSON.stringify([]))
+            // localStorage.setItem("cart", JSON.stringify([]))
 
         }
         //     /////////////////////////////////////////////////////////////

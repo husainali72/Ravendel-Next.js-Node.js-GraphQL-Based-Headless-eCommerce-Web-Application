@@ -10,17 +10,17 @@ import { GET_CUSTOMER_ORDERS_QUERY } from "../../queries/orderquery";
 import { useSession } from "next-auth/react";
 import { query2 } from "../../utills/cartHelperfun";
 import client from "../../apollo-client";
+import OrderDetailAfter from "../../components/account/component/OrderDetailAfter";
+import CheckOut from "../checkout";
 const ThankYou = () => {
     const checkoutDetail = useSelector(state => state.checkout)
     const [showOrderDetail, setShowOrderDetail] = useState(false)
     const [rderD, setOrderData] = useState("")
     const session = useSession();
-
-    // console.log("Checkout", session)
+    const [Data, setData] = useState()
     useEffect(async () => {
         if (session.status === "authenticated") {
             const user_id = session.data.user.accessToken.customer._id
-            console.log("user_id", user_id)
             const token = session.data.user.accessToken.token
 
             try {
@@ -32,7 +32,8 @@ const ThankYou = () => {
                     },
 
                 })
-                console.log("order", orderData)
+                setData(orderData?.orderbyUser?.data?.[1])
+               
             }
             catch (err) {
                 console.error(err)
@@ -40,7 +41,7 @@ const ThankYou = () => {
             // query2(GET_CUSTOMER_ORDERS_QUERY, user_id, token).then(res => console.log("res", res))
 
         }
-    }, [])
+    }, [session?.status])
     return (
         <div>
             <PageTitle title="Thank You" />
@@ -50,8 +51,8 @@ const ThankYou = () => {
                 <div className="thankyou-page-container"> <h1> Your order has been received.</h1>
                     {/* <button className="order-details-btn" onClick={() => setShowOrderDetail(!showOrderDetail)}>Order Invoices</button> */}
                     {/* {showOrderDetail && <OrdersDetails />} */}
-                    <OrdersDetails />
-                    <h3>Thank You for Shopping</h3>
+                    <OrderDetailAfter Data={Data} />
+                    {/* <h3>Thank You for Shopping</h3> */}
                 </div>
             </Container>
         </div>

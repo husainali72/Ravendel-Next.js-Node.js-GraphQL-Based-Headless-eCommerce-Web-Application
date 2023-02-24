@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const APPLY_COUPON_CODE = gql`
-               query($coupon_code: ID,$cart: [cartProducts])
+               query($coupon_code: String,$cart: [cartProducts])
     {
   calculateCoupon(coupon_code: $coupon_code ,
     cart: $cart

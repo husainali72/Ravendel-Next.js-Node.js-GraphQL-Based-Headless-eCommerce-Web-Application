@@ -19,6 +19,9 @@ const BillingDetails = (props) => {
         <>
             <div className="billing-container">
                 <div>
+
+                  <div className="twoRows" >
+                    <div className="col-lg-6 col-md-12 col-md-5half">
                     <input
                         className="input-filled"
                         name="firstname"
@@ -44,6 +47,8 @@ const BillingDetails = (props) => {
                             {errorRef.firstname?.type === "minLength" ? errorRef.firstname?.message : undefined}
                         </small>
                     </p>
+                </div>
+                <div className="col-lg-6 col-md-12  ">
                     <input
                         className="input-filled"
                         name="lastname"
@@ -65,6 +70,11 @@ const BillingDetails = (props) => {
                             {errorRef.lastname?.type === "required" ? errorRef.lastname?.message : undefined}
                         </small>
                     </p>
+                    </div>
+                </div>
+
+                <div className="twoRows">
+                    <div className="col-lg-6 col-md-12">
                     <input
                         className="input-filled"
                         name="company"
@@ -85,6 +95,8 @@ const BillingDetails = (props) => {
                             {errorRef.company?.type === "required" ? errorRef.company?.message : undefined}
                         </small>
                     </p>
+                </div>
+                <div className="col-lg-6 col-md-12">
                     <input
                         className="input-filled"
                         name="address"
@@ -105,7 +117,10 @@ const BillingDetails = (props) => {
                             {errorRef.address?.type === "required" ? errorRef.address?.message : undefined}
                         </small>
                     </p>
-
+                    </div>
+            </div>
+                <div className="twoRows">
+                    <div className="col-lg-4 col-md-12">
                     <input className="input-filled"
                         type="text"
                         required=""
@@ -127,6 +142,8 @@ const BillingDetails = (props) => {
                             {errorRef.city?.type === "required" ? errorRef.city?.message : undefined}
                         </small>
                     </p>
+                    </div>
+                    <div className="col-lg-4 col-md-12">
                     <input className="input-filled"
                         type="text"
                         required=""
@@ -147,7 +164,9 @@ const BillingDetails = (props) => {
                             {errorRef.state?.type === "required" ? errorRef.state?.message : undefined}
                         </small>
                     </p>
+                    </div>
 
+                    <div className="col-lg-4 col-md-12">
                     <input className="input-filled"
                         type="text"
                         required=""
@@ -168,6 +187,11 @@ const BillingDetails = (props) => {
                             {errorRef.country?.type === "required" ? errorRef.country?.message : undefined}
                         </small>
                     </p>
+                    </div>
+                </div>
+
+            <div className="twoRows" >
+                <div className="col-lg-6 col-md-12">
                     <input className="input-filled"
                         type="text"
                         required=""
@@ -199,6 +223,8 @@ const BillingDetails = (props) => {
                             {errorRef.zip?.type === "maxLength" ? errorRef.zip?.message : undefined}
                         </small>
                     </p>
+                </div>
+                  <div className="col-lg-6 col-md-12">
                     <input className="input-filled"
                         type="text"
                         required=""
@@ -235,6 +261,8 @@ const BillingDetails = (props) => {
                             {errorRef.phone?.type === "pattern" ? errorRef.phone?.message : undefined}
                         </small>
                     </p>
+                </div>
+            </div>
                     <input className="input-filled"
                         type="text"
                         required=""

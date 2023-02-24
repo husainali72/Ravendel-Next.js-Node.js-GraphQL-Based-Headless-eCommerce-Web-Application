@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button, Form, FormCheck, FormGroup } from "react-bootstrap";
 
 const ShippingTaxCoupon = (props) => {
-    const { shippingInfo, prevFormStep, shippingAdd, setCouponFeild, coupon, delivery, doApplyCouponCode, billingInfo } = props;
+    const { currency ,shippingInfo, prevFormStep, shippingAdd, setCouponFeild, coupon, delivery, doApplyCouponCode, billingInfo } = props;
     return (
         <>
             <div className="checkout-Details-shipping">
@@ -46,7 +46,7 @@ const ShippingTaxCoupon = (props) => {
                         <h4>Shipping Method</h4>
                     </div>
                     <div>
-                        <p>Free Shipping</p><span>$0.00 (3-10 Business Days) </span>
+                        <p>Free Shipping</p><span>{currency}0.00 (3-10 Business Days) </span>
                     </div>
 
 

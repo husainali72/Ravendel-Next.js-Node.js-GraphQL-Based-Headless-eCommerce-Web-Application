@@ -13,7 +13,7 @@ const ShopProducts = ({ shopcategory, name, brandProduct, brands, category, blog
                             {category ? <ul className="categories-shop">
                                 {category.map((category, i) => (
                                     <li className="category-type" key={i}>
-                                        <Link href={`/categorys/[categorys]?url=${category.url}`} as={`/categorys/${category.url}`}>
+                                        <Link href={`/category/[categorys]?url=${category.url}`} as={`/category/${category.url}`}>
                                             <span value={category.url}>{category.name}</span>
                                         </Link>
                                     </li>

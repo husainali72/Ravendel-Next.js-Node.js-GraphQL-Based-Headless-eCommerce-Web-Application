@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { checkoutDetailAction } from "../redux/actions/checkoutAction";
 import { loadStripe } from "@stripe/stripe-js"
 import CustomerDetail from "../components/checkoutcomponent/CustomerDetails";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import ShippingTaxCoupon from "../components/checkoutcomponent/ShippingTaxCoupon";
 import OrdersDetails from "../components/account/component/orders-details";
 import { mutation, query, stripeCheckout } from "../utills/helpers";
@@ -21,12 +21,24 @@ import CreditCards from "../components/checkoutcomponent/myCard/CreditCards";
 import { useRouter } from "next/router";
 import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
-import { CALCULATE_CART_TOTAL } from "../queries/cartquery";
+import { CALCULATE_CART_TOTAL, GET_USER_CART, UPDATE_CART_PRODUCT } from "../queries/cartquery";
 import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
 import { query2 } from "../utills/cartHelperfun"
 import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
 import { removeCartItemAction } from "../redux/actions/cartAction";
+import toast, { Toaster } from 'react-hot-toast';
+import { currencySetter } from "../utills/helpers"
+import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 
+
+const notify = (message,success) => {
+    if(success){
+       return toast.success(message);
+    }
+    else{
+        return toast.error(message);
+    }
+}
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.cost * product.qty), 0)
 
 var billingInfoObject = {
@@ -65,7 +77,9 @@ var shippingObject = {
 var savedShippingInfo;
 const totalCart = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity), 0)
 
-export const CheckOut = () => {
+export const CheckOut = ({currencyStore}) => {
+    
+    const allProducts = useSelector(state => state.products);
     const session = useSession();
     const dispatch = useDispatch();
     const [islogin, setIsLogin] = useState(false)
@@ -73,17 +87,30 @@ export const CheckOut = () => {
     let address_book = [];
     let customer_id = "";
     let token = ""
+    const [billingDetails, setBillingDetails] = useState({ customer_id: customer_id });
+
+    useEffect(() => {
+        if (session.status === "authenticated") {
+            address_book = session?.data?.user.accessToken.customer.address_book
+            token = session.data?.user.accessToken.token
+            let customer_id = session.data.user.accessToken.customer._id
+            setBillingDetails({...billingDetails,customer_id:customer_id})
+    
+        }
+    }, [session,session?.data?.user.accessToken.customer.address_book])
+
+
+    
     if (session.status === "authenticated") {
         address_book = session?.data?.user.accessToken.customer.address_book
         token = session.data?.user.accessToken.token
         customer_id = session.data.user.accessToken.customer._id
-        // console.log("id", customer_id)
 
     }
 
+
     const cartProducts = useSelector((state) => state.cart);
     const [cartTotal, setCartTotal] = useState(0)
-    const [billingDetails, setBillingDetails] = useState({ customer_id: customer_id });
     const [cartItems, setCartItems] = useState([])
     const [couponfield, setCouponFeild] = useState(false);
     const [billingInfo, setBillingInfo] = useState(billingInfoObject);
@@ -97,40 +124,97 @@ export const CheckOut = () => {
     const [formStep, setFormStep] = useState(1)
     const [couponCode, setCouponCode] = useState('')
     const [subtotal, setSubTotal] = useState(0);
+    const [cartId, setCartId] = useState('');
+    const [CouponLoading, setCouponLoading] = useState(false);
+    const [isCouponApplied, setIsCouponApplied] = useState(false);
+    const [AppliedCoupon, setAppliedCoupon] = useState("");
+
 
     const steps = ['Address', 'Shipping', 'Order Detail']
 
     const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
     const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
+    const currencyOpt = currencyStore?.currency_options?.currency
+    const [currency, setCurrency] = useState("$")
+
+      useEffect(() => {
+          currencySetter(currencyOpt,setCurrency);
+        }, [])
+
     useEffect(() => {
         if (session.status === "authenticated") {
             address_book = session?.data?.user.accessToken.customer.address_book
             token = session.data?.user.accessToken.token
             customer_id = session.data.user.accessToken.customer._id
-            // console.log("id", customer_id)
             setIsLogin(true)
         }
     }, [])
-    useEffect(() => {
-        setCartItems(cartProducts)
-    }, [cartProducts])
+    
+    // useEffect(() => {
+    //     setCartItems(cartProducts)
+    // }, [cartProducts])
 
     useEffect(() => {
-        let cartsData = cartProducts.map((product) => { return { product_id: product._id, qty: product.quantity, total: product.pricing.sellprice * product.quantity } })
+        const getProducts = async () => {
+           
+            const session2 = await getSession();
+            const productsCard = JSON.parse(localStorage.getItem("cart"))  
+            if (session?.status === "authenticated" || session2 !== null) {
+                setIsLogin(true)
+                let id = session2.user.accessToken.customer._id;
+                let token = session2.user.accessToken.token;
+                let variables= { id: id }
+                mutation(GET_USER_CART, variables).then(res => {
+                    setCartId( res.data.cartbyUser.id)
+                    let carts =  res?.data?.cartbyUser?.products;
+                    let cartitems2 = [];
+                    carts?.map(cart=>{
+                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
+                        // const cartProduct = {
+                        //     _id: cart?.product_id,
+                        //     quantity:parseInt(cart?.qty) ,
+                        //     name:cart?.product_title,
+                        //     pricing: cart?.total,
+                        //     feature_image:cart?.product_image
+                        // }
+                        const cartProduct = {
+                            _id: originalProduct?._id,
+                            quantity:parseInt(cart?.qty) ,
+                            name:originalProduct?.name,
+                            pricing: originalProduct?.pricing,
+                            feature_image:originalProduct?.feature_image
+                        }
+                        // setCartItems((prev) => [...prev, cartProduct]) 
+                        cartitems2.push(cartProduct);
+                    })
+                    setCartItems([...cartitems2]) 
+                })
+            }
+            else{
+                setCartItems(cartProducts)
+            }
+        }
+        getProducts();
+    
+}, [cartProducts,allProducts]);
+
+
+
+    useEffect(() => {
+        let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
         let calculate = {
-            total_coupon: 0.00,
-            cart: cartsData,
+            total_coupon: 0.0,
+            cart: cartsData
         }
         query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
             let response = res.data.calculateCart
-            console.log("cartdata======",response)
             setCartTotal(response?.grand_total)
             setSubTotal(response?.subtotal)
             setCoupon(response?.total_coupon)
             setDelivery(response?.total_shipping.amount)
             setTax_amount(response?.total_tax.amount)
         })
-    }, [])
+    }, [cartItems])
 
     const {
         register,
@@ -138,7 +222,6 @@ export const CheckOut = () => {
         formState: { errors },
     } = useForm({ mode: "onSubmit", });
 
-    // console.log("errors", errors);
     const onSubmit = (data) => {
         nextFormStep()
         // router.push("/orderstatus/paymentfailed")
@@ -159,7 +242,7 @@ export const CheckOut = () => {
         setBillingInfo({ ...billingInfo, [e.target.name]: e.target.value })
     };
 
-    const getBillingData = (val) => {
+    const getBillingData = (val) => {   
         setBillingDetails({ ...billingDetails, ...val });
     };
 
@@ -221,26 +304,31 @@ export const CheckOut = () => {
 
     const doApplyCouponCode = async (e) => {
         e.preventDefault();
-        // console.log("coupn value", couponCode)
         let cart = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity } })
         let variables = {
-            coupon_code: couponCode, cart: cart
+            coupon_code: `${couponCode}`, cart: cart
         }
-        // console.log("variables", variables)
         let couponResponse = 0
         let couponValue = 0.00
         let couponValueGet = false;
-
+        setCouponLoading(true)
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
             couponResponse = res.data.calculateCoupon.total_coupon
-            // console.log("res", couponResponse)
+            if(res.data.calculateCoupon.message !== "Invalid coupon code"){
+                notify(res.data.calculateCoupon.message,true)
+                setIsCouponApplied(true)
+            }
+            else{
+                notify(res.data.calculateCoupon.message)
+            
+            }
             couponValueGet = true;
             if (!res.data.laoding) {
                 setCoupon(couponResponse)
+                setAppliedCoupon(couponCode)
                 setCouponCode("")
                 setCouponFeild(true);
             }
-            // console.log("coupon calculate done", couponValueGet)
             if (couponValueGet) {
                 let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product.pricing.sellprice * product.quantity } })
                 let calculate = {
@@ -250,7 +338,6 @@ export const CheckOut = () => {
 
                 query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
                     let response = res.data.calculateCart
-                    console.log(response)
                     setCartTotal(response?.grand_total)
                     setSubTotal(response?.subtotal)
                     setCoupon(response?.total_coupon)
@@ -259,28 +346,39 @@ export const CheckOut = () => {
                 })
             }
         }
-        )
+        ).finally(()=>  setCouponLoading(false))
 
     }
     const detailsOfBill=billingDetails
-    // console.log("details of bill",detailsOfBill)
     const handleOrderPlaced = (e) => {
         e.preventDefault();
-        console.log("billingDetails===", billingDetails)
+        // setBillingDetails({...billingDetails,products:[...cartItems]})
         if(billingDetails.billing.payment_method==="stripe") {
             stripeCheckout(billingDetails, cartItems, baseUrl)
         }
         dispatch(checkoutDetailAction(billingDetails));
         mutation(ADD_ORDER, billingDetails, token).then(res => {
-            console.log("response", res);
             let response = res.data.addOrder.success
-            console.log("response2",response)
 
             if (response) {
                 // billingDetails?.products?.forEach(product => {
                 billingDetails.products.forEach(product => {
                     dispatch(removeCartItemAction(product.product_id))
                 })
+                if (session.status === "authenticated") {
+                    let id = session.data.user.accessToken.customer._id
+                    let token = session.data.user.accessToken.token
+        
+                  
+                        let variables = {
+                            id: cartId,
+                            products: [],
+                            total: 0
+                        }
+                        mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("delet res while auth ", res))
+                   
+                }
+
                 setBillingDetails("")
                 router.push("/orderstatus/thankyou")
 
@@ -298,6 +396,8 @@ export const CheckOut = () => {
         switch (formStep) {
             case 1:
                 return (
+                    <>
+                    <Toaster />
                     <div>
                         <BreadCrumb title={"checkout"} />
                         <section className="checkout-section">
@@ -307,8 +407,8 @@ export const CheckOut = () => {
                                     steps={steps}
                                 />
 
-                                <div className="col-lg-12" style={{ display: 'flex' }}>
-                                    <div style={{ width: "60%", padding: "20px" }}>
+                                <div className="col-lg-12 firstCheckPage">
+                                    <div style={{ padding: "20px" }}>
                                         <CustomerDetail
                                             address_book={address_book}
                                             setBillingInfo={setBillingInfo}
@@ -342,8 +442,12 @@ export const CheckOut = () => {
                                             <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }}>Continue</button>
                                         </form>
                                     </div>
-                                    <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
+                                    <div className="cupon-cart" >
                                         <OrderSummary
+                                            currency={currency}
+                                            AppliedCoupon={AppliedCoupon}
+                                            isCouponApplied={isCouponApplied}
+                                            CouponLoading={CouponLoading}
                                             cartTotal={cartTotal}
                                             subTotal={subtotal}
                                             coupon={coupon}
@@ -356,11 +460,12 @@ export const CheckOut = () => {
                                         />
                                     </div>
                                 </div>
-                                <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "left" }} onClick={prevFormStep}><i className="fas fa-angle-double-left"></i> prev</button>
+                                {/* <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "left" }} onClick={prevFormStep}><i className="fas fa-angle-double-left"></i> prev</button> */}
 
                             </Container>
                         </section>
                     </div>
+                    </>
                 )
             case 2:
                 return (
@@ -375,6 +480,7 @@ export const CheckOut = () => {
                                 <div className="col-lg-12" style={{ display: 'flex' }}>
                                     <div style={{ width: "60%", padding: "20px" }}>
                                         <ShippingTaxCoupon
+                                            currency={currency}
                                             couponCode={couponCode}
                                             setCouponCode={setCouponCode}
                                             coupon={coupon}
@@ -396,6 +502,7 @@ export const CheckOut = () => {
                                     </div>
                                     <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
                                         <OrderSummary
+                                            currency={currency}
                                             cartTotal={cartTotal}
                                             subTotal={subtotal}
                                             coupon={coupon}
@@ -405,10 +512,8 @@ export const CheckOut = () => {
                                             couponCode={couponCode}
                                             setCouponCode={setCouponCode}
                                             getCalculationDetails={getCalculationDetails}
-
                                         />
                                     </div>
-
                                 </div>
                             </Container>
                         </section>
@@ -428,6 +533,7 @@ export const CheckOut = () => {
                                     <div style={{ width: "60%", padding: "20px" }}>
                                         {/* <div className="your-order-container"> */}
                                         <ShippingTaxCoupon
+                                            currency={currency}
                                             couponCode={couponCode}
                                             setCouponCode={setCouponCode}
                                             coupon={coupon}
@@ -446,6 +552,7 @@ export const CheckOut = () => {
                                         <h5>Your Order Summary</h5>
                                         {/* <form onSubmit={handleSubmit(onSubmit)}> */}
                                         <Orderdetail
+                                            currency={currency}
                                             billingDetails={billingDetails}
                                             customer_id={customer_id}
                                             billingInfo={billingInfo}
@@ -478,6 +585,7 @@ export const CheckOut = () => {
                                     </div>
                                     <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
                                         <OrderSummary
+                                            currency={currency}
                                             cartTotal={cartTotal}
                                             subTotal={subtotal}
                                             coupon={coupon}
@@ -604,6 +712,27 @@ export const CheckOut = () => {
     )
 }
 export default CheckOut;
+
+export async function getStaticProps(){
+    var currencyStore =[];
+    try {
+        const { data: homepagedata } = await client.query({
+            query: GET_HOMEPAGE_DATA_QUERY
+        })
+        currencyStore = homepagedata?.getSettings?.store
+    }
+    catch (e) {
+        console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
+    }
+    return{
+        props:{
+            currencyStore
+        },
+        revalidate: 10
+    }
+}
+
+
 // const PUBLIC_KEY = 'pk_test_51KxU9XSAiF6cVz0nqNPdRsLq9hcWymfFXE2PBNKN0DmRl921J3EBNfzBydyh7RAxiqvQ5hpskCHGmDp5EcTPSfry00DOYmRxnT'
 
 // const stripeTestPromise = loadStripe(PUBLIC_KEY)
