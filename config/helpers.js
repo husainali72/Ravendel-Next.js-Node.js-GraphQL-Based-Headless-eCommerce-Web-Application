@@ -579,11 +579,13 @@ const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingMo
   let shipping = await shippingModel.findOne({})
   shipping = shipping.shipping_class.filter(shipClass => {
     if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) return shippingValue = shipClass.amount
+    else return shippingValue = 0
   })
   // assign tax_value
   let tax = await taxModel.findOne({})
   tax = tax.tax_class.filter(taxClass => {
     if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return taxValue = taxClass.percentage
+    else return taxValue = 0
   })
   // assign coupon_code, amount, type
   const coupon = await couponModel.findOne({code: couponCode})
@@ -608,7 +610,7 @@ const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingMo
     // calculate tax
     taxCalc = taxValue !== 0 ? subTotal*taxValue/100 : 0
     // calculate shipping
-    shippingCalc = shippingValue !== 0 ? subTotal*shippingValue/100 : 0
+    shippingCalc = shippingValue !== 0 ? subTotal+shippingValue : 0
     // calculate coupon
     if(!couponType || !couponValue) couponCalc = 0
     else if(couponType === "precantage-discount") couponCalc = couponValue !== 0 ? subTotal*couponValue/100 : 0
@@ -692,19 +694,35 @@ const sendEmail = (mailData, from, to, res)  => {
 }
 module.exports.sendEmail = sendEmail
 
-const generateOrderNumber = () => {
-  const date = new Date()
-  const codeString = APP_KEYS.codeString
-  let digit = 0, code = ""
-  while(digit != 4){
-    let index = Math.floor(Math.random() * codeString.length)
-    code += codeString.charAt(index)
-    digit++
+const generateOrderNumber = async (Order, Setting) => {
+  const orderNumbers = []
+  const setting = await Setting.findOne({})
+  let orderDigits = setting.store.order_options.order_digits
+  let prefix = setting.store.order_options.order_prefix
+  let code = ""
+  // prefix = ""
+  let pipeline = [
+    {$match: {order_number: {$regex: prefix}}}
+  ]
+  if(!prefix) pipeline = [{$addFields: {onlen: {$strLenBytes: "$order_number"}}},
+                          {$match: {onlen: {$lte: orderDigits}}}]
+  // if orders with specified prefix exists then continue number series
+  // else start new series
+  const orders = await Order.aggregate(pipeline)
+  if(orders.length){
+    orders.map(order => orderNumbers.push(Number.parseInt(order.order_number.substring(order.order_number.length-orderDigits))))
+    orderNumbers.sort((a, b) => b-a)
   }
-  const precode = date.getFullYear()+date.getSeconds()
-  const postcode = `${date.getMonth()+date.getSeconds()}${date.getDate()+date.getSeconds()}`
-  code = `${precode}-${code}-${postcode}`
-
+  code = orderNumbers[0] ? orderNumbers[0]+1 : 1
+  code = formatOrderNumber(code, prefix, orderDigits)
+  return code
+}
+const formatOrderNumber = (code, prefix, orderDigits) => {
+  code = code.toString()
+  while(code.length != orderDigits){
+    code = "0" + code 
+  }
+  code = prefix + code
   return code
 }
 module.exports.generateOrderNumber = generateOrderNumber
@@ -723,3 +741,10 @@ const prodAvgRating = async(productID, reviewModel, productModel) => {
   }
 }
 module.exports.prodAvgRating = prodAvgRating
+
+const emptyCart = async(cart) => {
+  cart.total = 0
+  cart.products = []
+  await cart.save()
+}
+module.exports.emptyCart = emptyCart

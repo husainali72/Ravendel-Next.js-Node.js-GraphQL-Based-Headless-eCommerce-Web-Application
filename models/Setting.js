@@ -137,6 +137,15 @@ const SeetingSchema = new Schema(
           type: String,
         },
       },
+      order_options: {
+        order_prefix_list: [String],
+        order_prefix: {
+          type: String,
+        },
+        order_digits: {
+          type: Number
+        }
+      }
     },
     paymnet: {
       cash_on_delivery: {
@@ -429,6 +438,11 @@ module.exports.createSettings = async () => {
         out_of_stock_visibility: true,
         stock_display_format: "1",
       },
+      order_options: {
+        order_prefix_list: [],
+        order_prefix: "#",
+        order_digits: 5
+      }
     },
     paymnet: {
       cash_on_delivery: {

@@ -13,7 +13,8 @@ const {
   subTotalDetailsEntry,
   subTotalSummaryEntry,
   sendEmail,
-  generateOrderNumber
+  generateOrderNumber,
+  emptyCart
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -100,7 +101,8 @@ module.exports = {
         if (args.billing.payment_method === 'Cash On Delivery') {
           var status = 'pending';
           var user_id = args.customer_id;
-          const cart = await Cart.findOneAndDelete({ user_id: args.customer_id });
+          const cart = await Cart.findOne({ user_id: args.customer_id });
+          emptyCart(cart)
         } else {
           let currencycode ;
           if( setting.store.currency_options.currency == 'eur'){
@@ -124,10 +126,11 @@ module.exports = {
           }else{
             status = 'pending';
           }
-          const cart = await Cart.findOneAndDelete({ user_id: args.customer_id });
+          const cart = await Cart.findOne({ user_id: args.customer_id });
+          emptyCart(cart)
         }
 
-        const orderNumber = generateOrderNumber()
+        const orderNumber = await generateOrderNumber(Order, Setting)
 
         const newOrder = new Order({
           order_number: orderNumber,
