@@ -3,7 +3,7 @@ import { Grid, TextField, Box, Button } from "@mui/material";
 import viewStyles from "../../viewStyles";
 import { useDispatch, useSelector } from "react-redux";
 import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png";
-import { bucketBaseURL } from "../../../utils/helper";
+import { bucketBaseURL, isEmpty } from "../../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { get } from "lodash";
@@ -11,7 +11,8 @@ import { appearanceThemeUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
 import PhoneNumber from "../../components/phoneNumberValidation";
-
+import { validatePhone, validate } from "../../components/validate";
+import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -32,7 +33,36 @@ const ThemesComponent = () => {
 
     delete theme.__typename;
 
-    dispatch(appearanceThemeUpdateAction(themeSetting));
+    let errors = validate(['playstore', "appstore", "email"], themeSetting);
+
+    let phoneNumberError = validatePhone(["phone_number"], themeSetting)
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(phoneNumberError)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: phoneNumberError,
+          error: true,
+        },
+      });
+    }
+
+    else {
+
+      dispatch(appearanceThemeUpdateAction(themeSetting));
+    }
+
+
   };
 
   const fileChange = (e) => {

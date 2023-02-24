@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from "react";
 import {
   Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  IconButton,
   TextField,
   FormControl,
   Select,
-  Tooltip,
   Box,
-  TablePagination,
-  TableSortLabel
+
 } from "@mui/material";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,15 +17,13 @@ import {
 } from "../../../store/action/";
 import { bucketBaseURL } from "../../../utils/helper";
 import { getUpdatedUrl } from "../../../utils/service";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { convertDateToStringFormat } from "../../utils/convertDate";
+
 import {
   Alert,
   Loading,
   URLComponent,
   TextInput,
-  CardBlocks,
+
   CardBlocksWithAction,
 } from "../../components";
 import theme from "../../../theme/index.js";
@@ -44,7 +33,8 @@ import { isEmpty } from "../../../utils/helper";
 import { get } from "lodash";
 import { validate } from "../../components/validate";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
-import { stableSort, getComparator } from "../../components/sorting";
+import TableComponent from "../../components/table.js";
+import ActionButton from "../../components/actionbutton.js";
 var categoryObject = {
   name: "",
   parentId: null,
@@ -64,19 +54,27 @@ const AllCategoryComponent = () => {
   const [singlecategory, setSingleCategory] = useState(categoryObject);
   const [editMode, setEditmode] = useState(false);
   const [featuredImage, setfeaturedImage] = useState(null);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [filtered, setfilterdData] = useState([])
   const [loading, setloading] = useState(false);
-  const [order, setOrder] = React.useState('desc');
-  const [orderBy, setOrderBy] = React.useState('date');
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+  const columndata = [
+    { name: 'date', title: "date", sortingactive: true },
+    { name: 'name', title: "name", sortingactive: true },
+    {
+      name: 'actions', title: "Actions", sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+
+          let cat = categories.find(item => item.id === id);
+
+          editCategory(cat)
+        } else if (type === "delete") {
+          dispatch(categoryDeleteAction(id))
+        }
+      }
+    },]
+
 
   useEffect(() => {
     if (isEmpty(get(products, "categories"))) {
@@ -87,6 +85,7 @@ const AllCategoryComponent = () => {
   useEffect(() => {
     if (!isEmpty(get(products, "categories"))) {
       setCategories(products.categories);
+      setfilterdData(products.categories)
       cancelCat();
     }
   }, [get(products, "categories")]);
@@ -175,109 +174,25 @@ const AllCategoryComponent = () => {
       url: updatedUrl,
     });
   };
+  const handleOnChangeSearch = (filtereData) => {
 
+    setfilterdData(filtereData)
+  }
   return (
     <>
       <Alert />
       {loading ? <Loading /> : null}
       <Grid container className={classes.mainrow} spacing={2}>
-        <Grid item md={6} xs={12}>
-          <CardBlocks
-            title="All Categories"
-            nomargin
-            titleTypographyProps={{ variant: "subtitle" }}
-            className={classes.Cardheader}
-          >
-            <TableContainer className={classes.container}>
-              <Table
-                stickyHeader
-                aria-label="All-Categories-Table"
-                size="small"
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell sortDirection="desc" variant="contained" color="primary">
-                      <Tooltip enterDelay={300} title="Sort">
-                        <TableSortLabel active direction={order} onClick={() => {
-                          setOrder(order === "asc" ? "desc" : "asc")
-                          setOrderBy("date")
-                        }}>
-                          Date
-                        </TableSortLabel>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell sortDirection="desc" variant="contained" color="primary">
-                      <Tooltip enterDelay={300} title="Sort">
-                        <TableSortLabel active direction={order} onClick={() => {
-                          setOrder(order === "asc" ? "desc" : "asc")
-                          setOrderBy("name")
-                        }}>
-                          Name
-                        </TableSortLabel>
-                      </Tooltip>
-                    </TableCell>
-
-
-                    <TableCell variant="contained" color="primary">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-
-                  {categories &&
-                    stableSort(categories, getComparator(order, orderBy))
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((cat) => (
-
-                        <TableRow key={cat.id} hover>
-
-                          <TableCell>
-                            {convertDateToStringFormat(cat.date)}
-                          </TableCell>
-                          <TableCell>{cat.name}</TableCell>
-
-                          <TableCell>
-                            <Tooltip title="Edit Category" aria-label="edit">
-                              <IconButton
-                                aria-label="Edit"
-                                onClick={() => editCategory(cat)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip
-                              title="Delete Category"
-                              aria-label="delete"
-                            >
-                              <IconButton
-                                aria-label="Delete"
-                                className={classes.deleteicon}
-                                onClick={() =>
-                                  dispatch(categoryDeleteAction(cat.id))
-                                }
-                                disabled
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 20]}
-              component="div"
-              count={categories.length || 0}
-              rowsPerPage={rowsPerPage || 10}
-              page={page || 0}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </CardBlocks>
+        <Grid item lg={6} xs={12}>
+          <TableComponent
+            loading={loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={categories}
+            handleOnChangeSearch={handleOnChangeSearch}
+            classname="noclass"
+            title="All Category"
+          />
         </Grid>
 
         <Grid item md={6} xs={12}>

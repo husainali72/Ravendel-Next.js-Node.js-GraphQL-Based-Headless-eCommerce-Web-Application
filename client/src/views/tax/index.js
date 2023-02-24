@@ -102,8 +102,14 @@ const TaxComponent = () => {
   };
 
   const editTax = (tax) => {
+
+    let object = {
+      _id: tax.id,
+      name: tax.name,
+      percentage: tax.percentage
+    }
     setEditMode(true);
-    setcustomTaxClass(tax);
+    setcustomTaxClass(object);
   };
 
   const updateCustomTax = () => {
@@ -184,12 +190,14 @@ const TaxComponent = () => {
                       <AllTaxesComponent
                         taxState={taxState}
                         editTaxChange={(tax) => editTax(tax)}
-                        deleteTaxChange={(id) =>
+                        deleteTaxChange={(id) => {
+
                           dispatch(
                             taxClassDeleteAction({
                               _id: id,
                             })
                           )
+                        }
                         }
                       />
                     </Grid>

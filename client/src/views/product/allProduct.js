@@ -1,194 +1,93 @@
-import React, { useEffect } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-  Avatar,
-  Button,
-  Tooltip,
-  TableSortLabel
-} from "@mui/material";
-
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { productsAction, productDeleteAction } from "../../store/action";
-import ImageIcon from "@mui/icons-material/Image";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import viewStyles from "../viewStyles";
-import { convertDateToStringFormat } from "../utils/convertDate";
-import { Alert, Loading } from "../components";
-import { client_app_route_url, bucketBaseURL } from "../../utils/helper";
-import { ThemeProvider, } from "@mui/material/styles";
-import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
+import { productDeleteAction, productsAction } from "../../store/action";
+import { client_app_route_url } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
-import { stableSort, getComparator } from "../components/sorting";
+
+import { isEmpty } from "../../utils/helper";
+
+import { bucketBaseURL } from "../../utils/helper";
+import { ThemeProvider, } from "@mui/material/styles";
+import ActionButton from "../components/actionbutton";
 import theme from "../../theme/index";
+import { get } from "lodash";
+import TableComponent from "../components/table";
+import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
 const GlobalThemeOverride = () => {
-  const classes = viewStyles();
+
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const products = useSelector((state) => state.products);
-  const [order, setOrder] = React.useState('desc');
-  const [orderBy, setOrderBy] = React.useState('date');
+  const navigate = useNavigate()
+  const [Allproducts, setAllproduct] = useState([])
+  const [filtered, setfilterdData] = useState([])
+  const statusTabData = { name: 'status', array: ['All', 'Publish', 'Draft'] }
+  const columndata = [
+    { name: "image", title: "image", sortingactive: false },
+    { name: "date", title: "date", sortingactive: true },
+    { name: "name", title: "Name", sortingactive: true },
+    { name: "status", title: "Status", sortingactive: true },
+    {
+      name: "actions", title: "Actions", sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-product/${id}`)
+        } else if (type === "delete") {
+          dispatch(productDeleteAction(id))
+        }
+      }
+
+    }]
+
+
   useEffect(() => {
     dispatch(productsAction());
   }, []);
+  useEffect(() => {
+    if (!isEmpty(get(products, 'products'))) {
+      let data = []
+      products.products.map((product) => {
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+        let object = {
+          id: product._id,
+          image: product.feature_image ? bucketBaseURL + product.feature_image : NoImagePlaceHolder,
+          date: product.date,
+          status: product.status,
+          name: product.name,
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+        }
+        data.push(object)
+      })
+      setAllproduct(data)
+      setfilterdData(data)
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+    } else {
+      setAllproduct([])
+      setfilterdData([])
+    }
+
+  }, [get(products, 'products')])
+
+  const handleOnChangeSearch = (filtereData) => {
+
+    setfilterdData(filtereData)
+  }
 
   return (
     <>
-      <Alert />
-      <Grid container spacing={2} className={classes.mainrow}>
-        <Grid item xl={12} md={12}>
-          <Card>
-            {products.loading ? <Loading /> : null}
-            <CardHeader
-              action={
-                <Link to={`${client_app_route_url}add-product`}>
-                  <Button
-                    color="success"
-                    className={classes.addUserBtn}
-                    size="small"
-                    variant="contained"
-                  >
-                    Add Product
-                  </Button>
-                </Link>
-              }
-              title="All Products"
-            />
-            <Divider />
-            <CardContent>
-              <TableContainer>
-                <Table stickyHeader aria-label="all-products" size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell
-                        className={classes.avtarTd}
-                        variant="contained"
-                        color="primary"
-                      >
-                        <ImageIcon />
-                      </TableCell>
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
-                        <Tooltip enterDelay={300} title="Sort">
-                          <TableSortLabel active direction={order} onClick={() => {
-                            setOrder(order === "asc" ? "desc" : "asc")
-                            setOrderBy("date")
-                          }}>
-                            Date
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
-                        <Tooltip enterDelay={300} title="Sort">
-                          <TableSortLabel active direction={order} onClick={() => {
-                            setOrder(order === "asc" ? "desc" : "asc")
-                            setOrderBy("name")
-                          }}>
-                            Name
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
 
+      <TableComponent
+        loading={products.loading}
+        columns={columndata}
+        rows={filtered}
+        searchdata={Allproducts}
+        handleOnChangeSearch={handleOnChangeSearch}
+        statusTabData={statusTabData}
+        addpage='add-product'
+        title="All Products"
 
-                      <TableCell variant="contained" color="primary" >
-                        Actions
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
+      />
 
-                  <TableBody className={classes.container}>
-                    {
-
-                      stableSort(products.products, getComparator(order, orderBy))
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((product) => (
-                          <TableRow key={product.id} hover>
-
-                            <TableCell>
-                              <Avatar
-                                alt={product.name}
-                                src={product.feature_image ? bucketBaseURL + product.feature_image : NoImagePlaceHolder}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              {convertDateToStringFormat(product.date)}
-                            </TableCell>
-                            <TableCell>{product.name}</TableCell>
-
-                            <TableCell>
-                              <Tooltip title="Edit Product" aria-label="edit">
-                                <IconButton
-                                  aria-label="Edit"
-                                  onClick={
-                                    () =>
-                                      navigate(
-                                        `${client_app_route_url}edit-product/${product._id}`
-                                      )
-
-                                  }
-                                >
-                                  <EditIcon />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Delete Product" aria-label="delete">
-                                <IconButton
-                                  aria-label="Delete"
-                                  className={classes.deleteicon}
-                                  onClick={() =>
-                                    dispatch(productDeleteAction(product._id))
-                                  }
-                                  disabled
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Tooltip>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={products.products.length || 0}
-                rowsPerPage={rowsPerPage || 10}
-                page={page || 0}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
     </>
   );
 };
