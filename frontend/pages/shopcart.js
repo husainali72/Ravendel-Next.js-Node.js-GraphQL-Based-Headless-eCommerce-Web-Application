@@ -28,6 +28,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
     const usercart = useSelector(state => state.userCart);
     const initialRender = useRef(true);
     const [cartLoading,setCartLoading] = useState(false)
+    const [isQuantityBtnLoading,setIsQuantityBtnLoading] = useState(false)
     const [cartItems, setCartItems] = useState([]);
     const [quantityy, setQuantity] = useState();
     const dispatch = useDispatch();
@@ -67,14 +68,15 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
  useEffect(() => {
     dispatch(getAllProductsAction());
 }, []);
+// allProducts, cartProducts,customercart.length
  useEffect(() => {
             const getProducts = async () => {
-                setCartLoading(true)
                 const productsCard = JSON.parse(localStorage.getItem("cart"))  
-                if (session?.status === "authenticated") {
-                    
-                    id = session.data.user.accessToken.customer._id
-                    token = session.data.user.accessToken.token;
+                setCartLoading(true)
+                const sessionn = await getSession()
+                if (session?.status === "authenticated" || sessionn !== null) {
+                    id = sessionn.user.accessToken.customer._id
+                    token = sessionn.user.accessToken.token
                     let variables= { id: id }
                     mutation(GET_USER_CART, variables).then(res => {
                         let carts =  res?.data?.cartbyUser?.products;
@@ -109,44 +111,18 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
                         //         cartitems2.push(cartProduct);
                         //     })
                         setCartItems([...cartitems2]) 
-                    }).finally(()=> {setCartLoading(false)})
+                    }).finally(()=> { allProducts?.products.length >0 && cartItems.length>0 && setCartLoading(false)})
                         
-                    // try {
-                    //     console.log('api usercart')
-                    //     const { data: CartsData } = await client.query({
-                    //         query: GET_USER_CART,
-                    //         variables: { id: id }
-                    //     })
-                    
-                    //     let carts = await CartsData?.cartbyUser?.products;
-                    //     console.log('carts',CartsData?.cartbyUser?.products)
-                    //     let cartitems2 = [];
-                    //     carts.map(cart=>{
-                    //         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-                    //         const cartProduct = {
-                    //             _id: originalProduct._id,
-                    //             quantity:parseInt(cart.qty) ,
-                    //             name:originalProduct.name,
-                    //             pricing: originalProduct.pricing,
-                    //             feature_image:originalProduct.feature_image
-                    //         }
-                    //         cartitems2.push(cartProduct);
-                    //     })
-                    //     setCartItems(cartitems2) 
-                    // // }
-                    // catch (e) {
-                    //     setCartItems(productsCard || []);  
-                    //     console.log('typt errr', e)
-                    // }
+                
                 }
                 else {
-                    setCartItems(productsCard || []);
+                    setCartItems(productsCard || []);   
                     setCartLoading(false)
                 }
             }
             getProducts();
         
-    }, [allProducts, cartProducts,customercart.length]);
+    }, [allProducts]);
 
   
     const AllCartItemsClear = async () => {
@@ -171,10 +147,12 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
     }
 
     const IncreaseQuantity = async (item) => {
+        setIsQuantityBtnLoading(true)
         setCartItems([...cartItems],cartItems.filter(itemm => itemm._id===item._id ? (itemm.quantity+=1):itemm.qyantity))   
         setQuantity(item.quantity)
         if (session?.status !== "authenticated"){         
             dispatch(increaseQuantity(item._id))
+            setIsQuantityBtnLoading(false)
         }
         else{
             const prod = cartItems.find(cart => cart._id === item._id);
@@ -202,21 +180,21 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
                     total: 0,
                 }
                 mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("update res while increasing qtyyyy", res))
-            })
+            }).finally(()=> setIsQuantityBtnLoading(false))
         }
         }
     }
     const DecreaseQuantity = (item) => {
         if (item.quantity > 1) {
+            setIsQuantityBtnLoading(true)
             setCartItems([...cartItems],cartItems.filter(itemm => itemm._id===item._id ? (itemm.quantity-=1):itemm.qyantity))
             setQuantity(item.quantity)
             if (session?.status !== "authenticated"){
-
                 dispatch(decreaseQuantity(item._id))
+                setIsQuantityBtnLoading(false)
             }  else{
                 const prod = cartItems.find(cart => cart._id === item._id);
                 const qty = prod.quantity;
-                
                 if (session?.status === "authenticated") {
                     let id = session.data.user.accessToken.customer._id
                     let token = session.data.user.accessToken.token
@@ -239,7 +217,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
                         total: 0,
                     }
                     mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("update res while decreasing qtyyyy", res))
-                })
+                }).finally(()=>setIsQuantityBtnLoading(false))
             }
             }
         }
@@ -346,6 +324,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
                         <div className="row">
                             <div className="col-12">
                                 <CartTable
+                                    isQuantityBtnLoading={isQuantityBtnLoading}
                                     cartItems={cartItems}
                                     quantity={quantityy}
                                     IncreaseQuantity={IncreaseQuantity}

@@ -27,6 +27,8 @@ import { query2 } from "../utills/cartHelperfun"
 import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
 import { removeCartItemAction } from "../redux/actions/cartAction";
 import toast, { Toaster } from 'react-hot-toast';
+import { currencySetter } from "../utills/helpers"
+import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 
 
 const notify = (message,success) => {
@@ -75,7 +77,7 @@ var shippingObject = {
 var savedShippingInfo;
 const totalCart = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity), 0)
 
-export const CheckOut = () => {
+export const CheckOut = ({currencyStore}) => {
     
     const allProducts = useSelector(state => state.products);
     const session = useSession();
@@ -124,12 +126,21 @@ export const CheckOut = () => {
     const [subtotal, setSubTotal] = useState(0);
     const [cartId, setCartId] = useState('');
     const [CouponLoading, setCouponLoading] = useState(false);
+    const [isCouponApplied, setIsCouponApplied] = useState(false);
+    const [AppliedCoupon, setAppliedCoupon] = useState("");
 
 
     const steps = ['Address', 'Shipping', 'Order Detail']
 
     const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
     const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
+    const currencyOpt = currencyStore?.currency_options?.currency
+    const [currency, setCurrency] = useState("$")
+
+      useEffect(() => {
+          currencySetter(currencyOpt,setCurrency);
+        }, [])
+
     useEffect(() => {
         if (session.status === "authenticated") {
             address_book = session?.data?.user.accessToken.customer.address_book
@@ -190,7 +201,7 @@ export const CheckOut = () => {
 
 
     useEffect(() => {
-        let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice : product?.pricing?.price * product.quantity } })
+        let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
         let calculate = {
             total_coupon: 0.0,
             cart: cartsData
@@ -303,16 +314,18 @@ export const CheckOut = () => {
         setCouponLoading(true)
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
             couponResponse = res.data.calculateCoupon.total_coupon
-            console.log("res", couponResponse)
             if(res.data.calculateCoupon.message !== "Invalid coupon code"){
                 notify(res.data.calculateCoupon.message,true)
+                setIsCouponApplied(true)
             }
             else{
                 notify(res.data.calculateCoupon.message)
+            
             }
             couponValueGet = true;
             if (!res.data.laoding) {
                 setCoupon(couponResponse)
+                setAppliedCoupon(couponCode)
                 setCouponCode("")
                 setCouponFeild(true);
             }
@@ -325,7 +338,6 @@ export const CheckOut = () => {
 
                 query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
                     let response = res.data.calculateCart
-                    console.log(response)
                     setCartTotal(response?.grand_total)
                     setSubTotal(response?.subtotal)
                     setCoupon(response?.total_coupon)
@@ -395,8 +407,8 @@ export const CheckOut = () => {
                                     steps={steps}
                                 />
 
-                                <div className="col-lg-12" style={{ display: 'flex' }}>
-                                    <div style={{ width: "60%", padding: "20px" }}>
+                                <div className="col-lg-12 firstCheckPage">
+                                    <div style={{ padding: "20px" }}>
                                         <CustomerDetail
                                             address_book={address_book}
                                             setBillingInfo={setBillingInfo}
@@ -430,8 +442,11 @@ export const CheckOut = () => {
                                             <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }}>Continue</button>
                                         </form>
                                     </div>
-                                    <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
+                                    <div className="cupon-cart" >
                                         <OrderSummary
+                                            currency={currency}
+                                            AppliedCoupon={AppliedCoupon}
+                                            isCouponApplied={isCouponApplied}
                                             CouponLoading={CouponLoading}
                                             cartTotal={cartTotal}
                                             subTotal={subtotal}
@@ -465,6 +480,7 @@ export const CheckOut = () => {
                                 <div className="col-lg-12" style={{ display: 'flex' }}>
                                     <div style={{ width: "60%", padding: "20px" }}>
                                         <ShippingTaxCoupon
+                                            currency={currency}
                                             couponCode={couponCode}
                                             setCouponCode={setCouponCode}
                                             coupon={coupon}
@@ -486,6 +502,7 @@ export const CheckOut = () => {
                                     </div>
                                     <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
                                         <OrderSummary
+                                            currency={currency}
                                             cartTotal={cartTotal}
                                             subTotal={subtotal}
                                             coupon={coupon}
@@ -516,6 +533,7 @@ export const CheckOut = () => {
                                     <div style={{ width: "60%", padding: "20px" }}>
                                         {/* <div className="your-order-container"> */}
                                         <ShippingTaxCoupon
+                                            currency={currency}
                                             couponCode={couponCode}
                                             setCouponCode={setCouponCode}
                                             coupon={coupon}
@@ -534,6 +552,7 @@ export const CheckOut = () => {
                                         <h5>Your Order Summary</h5>
                                         {/* <form onSubmit={handleSubmit(onSubmit)}> */}
                                         <Orderdetail
+                                            currency={currency}
                                             billingDetails={billingDetails}
                                             customer_id={customer_id}
                                             billingInfo={billingInfo}
@@ -566,6 +585,7 @@ export const CheckOut = () => {
                                     </div>
                                     <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
                                         <OrderSummary
+                                            currency={currency}
                                             cartTotal={cartTotal}
                                             subTotal={subtotal}
                                             coupon={coupon}
@@ -692,6 +712,27 @@ export const CheckOut = () => {
     )
 }
 export default CheckOut;
+
+export async function getStaticProps(){
+    var currencyStore =[];
+    try {
+        const { data: homepagedata } = await client.query({
+            query: GET_HOMEPAGE_DATA_QUERY
+        })
+        currencyStore = homepagedata?.getSettings?.store
+    }
+    catch (e) {
+        console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
+    }
+    return{
+        props:{
+            currencyStore
+        },
+        revalidate: 10
+    }
+}
+
+
 // const PUBLIC_KEY = 'pk_test_51KxU9XSAiF6cVz0nqNPdRsLq9hcWymfFXE2PBNKN0DmRl921J3EBNfzBydyh7RAxiqvQ5hpskCHGmDp5EcTPSfry00DOYmRxnT'
 
 // const stripeTestPromise = loadStripe(PUBLIC_KEY)

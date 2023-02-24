@@ -4,14 +4,12 @@ import Link from "next/link";
 
 const CustomerDetail = (props) => {
     const { address_book, getBillingInfo, SelectAddressBook, billingInfo, shippingInfo, shippingAdd } = props;
-    console.log("address_book", address_book)
     useEffect(() => {
         var allData = {
             billing: billingInfo,
             shipping: shippingInfo,
             shippingAddress: shippingAdd,
         };
-        console.log('useCalled',allData)
         getBillingInfo(allData);
     }, [shippingInfo, billingInfo, shippingAdd]);
     return (
@@ -35,39 +33,45 @@ const CustomerDetail = (props) => {
                                 <div className="col-md-12" key={i}>
                                     <Card key={i} style={{ marginLeft: 12 }}>
                                         <Card.Body className="cust-detail-container" >
-                                            <div className="azure-clr" >
-                                                <Row>
-                                                    <small> <strong>Firstname </strong>  <p>:</p> {address.first_name} </small>
-                                                </Row>
-                                                <Row >
-                                                    <small> <strong> Lastname </strong> <p>:</p> {address.last_name}  </small>
-                                                </Row>
-                                                <Row >
-                                                    <small> <strong> Phone </strong> <p>:</p> {address.phone}  </small>
-                                                </Row>
-                                                <Row >
-                                                    <small> <strong> City </strong> <p>:</p> {address.city}  </small>
-                                                </Row>
-                                                <Row >
-                                                    <small> <strong> Address 1 </strong> <p>:</p> {address.address_line1}  </small>
-                                                </Row>
-                                                <Row >
-                                                    <small> <strong> Address 2 </strong> <p>:</p> {address.address_line2}  </small>
-                                                </Row>
-                                                <Row >
-                                                    <small> <strong> Pincode </strong> <p>:</p> {address.pincode}  </small>
-                                                </Row>
-                                                <Row >
-                                                    <small> <strong> State </strong> <p>:</p> {address.state}  </small>
-                                                </Row>
-                                                <Row>
-                                                    <small> <strong> Company </strong> <p>:</p> {address.company}  </small>
-                                                </Row>
-                                                <Row >
-                                                    <small> <strong> City </strong> <p>:</p> {address.city}  </small>
-                                                </Row>
+                                            <div className="defination-table" >
+                                            <dl>
+                                                <dt>First Name</dt>
+                                                <dd>{address.first_name}</dd>
+
+                                                <dt>Lastname</dt>
+                                                <dd> {address.last_name}</dd>
+                                                
+                                                <dt>Phone</dt>
+                                                <dd>{address.phone}</dd>
+
+                                                <dt>City</dt>
+                                                <dd>{address.city} </dd>
+
+                                                <dt> Address 1</dt>
+                                                <dd> {address.address_line1}</dd>
+                                                
+                                                <dt> Address 2</dt>
+                                                <dd>{address.address_line2}</dd>
+
+                                                <dt>Pincode</dt>
+                                                <dd>{address.pincode}</dd>
+
+                                                <dt>State</dt>
+                                                <dd> {address.state}</dd>
+                                                
+                                                <dt>Company</dt>
+                                                <dd>{address.company}</dd>
+
+                                                <dt>City</dt>
+                                                <dd>{address.city}</dd>
+                                                
+                                            </dl>
+                                               
                                             </div>
-                                            <span className="cust-detail-select-btn"><i onClick={(e) => SelectAddressBook(address, e)}>select</i></span>
+                                            {/* <span className="cust-detail-select-btn"><i onClick={(e) => SelectAddressBook(address, e)}>select</i></span> */}
+                                            <div className="endBtn">
+                                                <Button variant="light" onClick={(e) => SelectAddressBook(address, e)}>Select</Button>
+                                            </div>
                                             {/* <Card.Text></Card.Text> */}
                                         </Card.Body>
                                     </Card>

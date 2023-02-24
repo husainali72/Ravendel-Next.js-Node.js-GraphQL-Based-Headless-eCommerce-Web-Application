@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { useState, useEffect } from "react"
+import { Spinner } from "react-bootstrap";
 import Table from 'react-bootstrap/Table';
 import { getImage } from '../../utills/helpers';
 const CartTable = (props) => {
     // const dispatch = useDispatch();
     const { cartItems,
+        isQuantityBtnLoading,
         CalculateProductTotal,
         DecreaseQuantity,
         IncreaseQuantity,
@@ -13,7 +15,7 @@ const CartTable = (props) => {
         removeToCart,
         updateCartProduct, currency 
     } = props;
-
+const [loadingIndex,setLoadingIndex] = useState(-1); 
     return (
 
         <div>
@@ -50,13 +52,19 @@ const CartTable = (props) => {
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <span className="btn btn-primary btn-less" style={{ margin: '2px' }} onClick={() => DecreaseQuantity(item)}>
-                                            <i className="fas fa-chevron-down"></i>
+                                        <span className={`btn btn-primary btn-less ${isQuantityBtnLoading && "disableButton"}`}  style={{ margin: '2px' }} onClick={() => {
+                                            DecreaseQuantity(item)
+                                            setLoadingIndex(i)
+                                            }}>
+                                            <i className="fas fa-chevron-down" ></i>
                                         </span>
-                                        <span className="btn btn-info">
-                                            {item.quantity || quantity}
+                                        <span className="btn btn-info max-button-width-load">
+                                            {i === loadingIndex && isQuantityBtnLoading ? <Spinner style={{paddingLeft:'4px'}} animation="border" size="sm" /> : `${item.quantity} ${" "}` || quantity}
                                         </span>
-                                        <span className="btn btn-primary btn-more" style={{ margin: '2px' }} onClick={() => IncreaseQuantity(item)}>
+                                        <span className={`btn btn-primary btn-more ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
+                                            IncreaseQuantity(item)
+                                            setLoadingIndex(i)
+                                            }}>
                                             <i className="fas fa-chevron-up"></i>
                                         </span>
                                     </div>

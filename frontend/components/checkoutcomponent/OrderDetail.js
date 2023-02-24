@@ -8,7 +8,7 @@ import Stripes from "./reactstripe/StripeContainer";
 const Orderdetail = (props) => {
     // const cart = useSelector((state) => state.cart);
     // console.log(cart)
-    const { getOrderDetails,cartItems, billingInfo, handleBillingInfo, tax_amount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal
+    const { currency,getOrderDetails,cartItems, billingInfo, handleBillingInfo, tax_amount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal
     } = props;
     const cart = cartItems;
 
@@ -71,7 +71,7 @@ const Orderdetail = (props) => {
                                 <td><i className="ti-check-box font-small text-muted mr-10"></i>
                                     <h5><a href="shop-product-full.html">{item.name}</a></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>
-                                <td>${item.pricing.sellprice ? item.pricing.sellprice :item.pricing.price  * item.quantity}</td>
+                                <td>{currency}{item.pricing.sellprice ? item.pricing.sellprice :item.pricing.price  * item.quantity}</td>
                             </tr>
                         ))}
                         {/* <tr>
