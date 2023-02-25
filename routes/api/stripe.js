@@ -7,7 +7,6 @@ const stripe=require('stripe')(STRIPE_KEY)
 router.post('/create-checkout-session', async (req, res) => { 
   const line_items = req.body.customerCart.map(item=>{
     const itemImage = `${BUCKET_BASE_URL}${item.product_image}`
-    console.log(itemImage)
     return{
       price_data: {
         currency: 'usd',
