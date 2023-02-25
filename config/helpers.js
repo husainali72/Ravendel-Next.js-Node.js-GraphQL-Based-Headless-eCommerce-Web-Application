@@ -749,7 +749,6 @@ const calculateCart = async(coupon, cart, productModel, amountDiscount) => {
     if(product){
       let includeProduct = true
       if(coupon.category){
-        console.log("ruunning cat")
         if(product.categoryId && product.categoryId.length){
           product.categoryId.map(catID => {
             if(coupon.include_categories.length){
