@@ -15,6 +15,10 @@ import Link from 'next/link';
 import { useRef } from 'react';
 const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduct,url}) => {
 
+    // console.log('shopProducts____',shopProduct.data.map(curr => curr.url))
+    // const filterProducts = shopProduct?.data?.filter(product => product.id !== "63d039bb58194ec30047d5bb")
+    // console.log('whole',filterProducts)
+
     const slider = useRef();
     const slideLeft =()=>{
         slider.current.scrollLeft = slider.current.scrollLeft - 500;
@@ -51,35 +55,35 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
     const subCat = shopProduct.data.filter(cat=> cat.parentId === catId)
 
     const getProducts = async ()=>{
-        let config = { category: [singlecategory.id], brand: [], attribute: [], price: [] }
-        try { 
-            const { data: fillterPrroducts } = await client.query({
-                query: GET_FILTEREDPRODUCTS,
-                variables: {  config },
-            })
-            let fillterProduct = fillterPrroducts.filteredProducts
-            if(fillterProduct.length>0){
-                const pro = fillterProduct.map(product =>{
-                    return{
-                        brand: product.brand,
-                        categoryId: product.categoryId,
-                        feature_image: product.feature_image,
-                        name:product.name,
-                        pricing:product.pricing,
-                        quantity: product.quantity,
-                        status:product.status,
-                        url:product.url,
-                        __typename: product.__typename,
-                        _id:product._id
-                    }
-                } )
-                setProducts(pro)
-            }
-            // setProducts(fillterProduct )
-        }
-        catch (e) {
-            console.log("fillerProduct ERRoR : ", e);
-        }
+        // let config = { category: [singlecategory.id], brand: [], attribute: [], price: [] }
+        // try { 
+        //     const { data: fillterPrroducts } = await client.query({
+        //         query: GET_FILTEREDPRODUCTS,
+        //         variables: {  config },
+        //     })
+        //     let fillterProduct = fillterPrroducts.filteredProducts
+        //     if(fillterProduct.length>0){
+        //         const pro = fillterProduct.map(product =>{
+        //             return{
+        //                 brand: product.brand,
+        //                 categoryId: product.categoryId,
+        //                 feature_image: product.feature_image,
+        //                 name:product.name,
+        //                 pricing:product.pricing,
+        //                 quantity: product.quantity,
+        //                 status:product.status,
+        //                 url:product.url,
+        //                 __typename: product.__typename,
+        //                 _id:product._id
+        //             }
+        //         } )
+        //         setProducts(pro)
+        //     }
+        //     // setProducts(fillterProduct )
+        // }
+        // catch (e) {
+        //     console.log("fillerProduct ERRoR : ", e);
+        // }
          
     }
     useEffect(() => {
@@ -139,29 +143,29 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
 }
 export default SingleCategoryProduct;
 
-// export async function getStaticPaths() {
-//     var shopProduct = [];
-//     try {
-//         const { data: shopproductcategory } = await client.query({
-//             query: GET_CATEGORIES_QUERY
-//         });
-//         shopProduct = shopproductcategory.productCategories;
-//     }
-//     catch (e) {
-//         console.log("ShopProduct Error===", e)
-//     }
-
-//     const paths = shopProduct?.data?.map((curElem) => {
-//         return{
-//             params: { categorys: curElem.url.toString() }
-//         }
-//     })
-//     return {
-//         paths,
-//         fallback: false,
-//     }
-// }
-export async function getServerSideProps({ params }) {
+export async function getStaticPaths() {
+    var shopProduct = [];
+    try {
+        const { data: shopproductcategory } = await client.query({
+            query: GET_CATEGORIES_QUERY
+        });
+        shopProduct = shopproductcategory.productCategories;
+    }
+    catch (e) {
+        console.log("ShopProduct Error===", e)
+    }
+    const filterProducts = shopProduct?.data?.filter(product => product.id !== "63d039bb58194ec30047d5bb")
+    const paths = filterProducts.map((curElem) => {
+        return{
+            params: { categorys: curElem.url.toString() }
+        }
+    })
+    return {
+        paths,
+        fallback: false,
+    }
+}
+export async function getStaticProps({ params }) {
     const url = params.categorys
     var homepageData = [];
     var singlecategory = [];
@@ -221,6 +225,7 @@ export async function getServerSideProps({ params }) {
             url,
             brandProduct,
             shopProduct
-        }
+        },
+        revalidate: 10  
     }
 }

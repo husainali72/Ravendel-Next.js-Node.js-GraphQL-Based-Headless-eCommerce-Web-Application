@@ -69,7 +69,7 @@ const EditProductComponent = ({ params }) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const [loading, setloading] = useState(false);
-
+  const [gallery, setGallery] = useState([]);
   const [product, setProduct] = useState({
     _id: "",
     name: "",
@@ -165,6 +165,8 @@ const EditProductComponent = ({ params }) => {
 
   const updateProduct = (e) => {
 
+    product.update_gallery_image = gallery
+    console.log(product)
     e.preventDefault();
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     let Errors = validatenested("pricing", ["price", "sellprice"], product);
@@ -358,7 +360,7 @@ const EditProductComponent = ({ params }) => {
                             sellprice: Number(e.target.value),
                           },
                         })
-                        :   dispatch({
+                        : dispatch({
                           type: ALERT_SUCCESS,
                           payload: {
                             boolean: false,
@@ -655,10 +657,15 @@ const EditProductComponent = ({ params }) => {
                 <CardBlocks title="Gallery Image">
                   <EditGalleryImageSelection
                     onAddGalleryImage={(e) => {
-                      setProduct({
-                        ...product,
-                        [e.target.name]: e.target.files,
-                      });
+
+                      var imagesRes = [...e.target.files];
+                      var images = [];
+                      for (let i in imagesRes) {
+                        images.push(URL.createObjectURL(imagesRes[i]));
+                      }
+
+                      setGallery([...gallery, ...imagesRes]);
+
                     }}
                     onRemoveGalleryImage={(images) => {
                       setProduct({ ...product, ["gallery_image"]: images });

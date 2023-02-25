@@ -7,7 +7,7 @@ export const isEmpty = (value) =>
 export const baseUrl = "http://localhost:8000";
 export const client_app_route_url = "/admin/";
 
-export var bucketName = "revendal-image";
+export var bucketName = "revendal-image-prod";
 export var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
 
 if (process.env.NODE_ENV === "production") {
@@ -18,6 +18,7 @@ if (process.env.NODE_ENV === "production") {
 /*-------------------------------------------------------------------------------------------------------------------------------------- */
 //simple category array to Tree array
 export const unflatten = (arr) => {
+
   var tree = [],
     mappedArr = {},
     arrElem,
@@ -34,7 +35,9 @@ export const unflatten = (arr) => {
     if (mappedArr.hasOwnProperty(id)) {
       mappedElem = mappedArr[id];
       // If the element is not at the root level, add it to its parent array of children.
-      if (mappedElem.parentId) {
+
+      if (mappedElem.parentId && mappedArr[mappedElem["parentId"]]) {
+
         mappedArr[mappedElem["parentId"]]["children"].push(mappedElem);
       }
       // If the element is at the root level, add it to first level elements array.
@@ -53,15 +56,12 @@ export const printTree = (tree) => {
   categoriesPrint += "<ul className='category-dropdown'>";
 
   for (let i in tree) {
-    categoriesPrint += `<li className="${
-      tree[i].children && tree[i].children.length ? "has-submenu" : ""
-    }">                               
-                        <label for="${
-                          tree[i].name
-                        }" className="checkmark-container">${tree[i].name}
-                          <input type='checkbox' name="abc" id="${
-                            tree[i].name
-                          }">
+    categoriesPrint += `<li className="${tree[i].children && tree[i].children.length ? "has-submenu" : ""
+      }">                               
+                        <label for="${tree[i].name
+      }" className="checkmark-container">${tree[i].name}
+                          <input type='checkbox' name="abc" id="${tree[i].name
+      }">
                           <span className="checkmark"></span>
                         </label>`;
     if (tree[i].children && tree[i].children.length) {

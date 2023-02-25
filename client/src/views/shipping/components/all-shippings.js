@@ -1,119 +1,67 @@
-import React, { useState } from "react";
-import {
-  Table,
-  TableContainer,
-  TableRow,
-  TableHead,
-  TableCell,
-  TableBody,
-  IconButton,
-  Tooltip,
-  TablePagination,
-  TableSortLabel
-} from "@mui/material";
-import viewStyles from "../../viewStyles.js";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { CardBlocks } from "../../components";
+import React, { useState, useEffect } from "react";
 import theme from "../../../theme/index.js";
 import { ThemeProvider, } from "@mui/material/styles";
-import { stableSort, getComparator } from "../../components/sorting";
+import TableComponent from "../../components/table.js";
+import ActionButton from "../../components/actionbutton.js";
+
 const AllShippingComponentComponent = ({
   shippingState,
   editShippingForm,
   deleteShipping,
 }) => {
-  const classes = viewStyles();
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [order, setOrder] = React.useState('desc');
-  const [orderBy, setOrderBy] = React.useState('name');
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  const [Allshipping, setAllshipping] = useState([])
+  const [filtered, setfilterdData] = useState([])
+  const columndata = [
+    { name: 'name', title: "Name", sortingactive: true },
+    { name: 'amount', title: "amount", sortingactive: true },
+    {
+      name: 'actions', title: "Actions", sortingactive: false, component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+          let shipping = Allshipping.find(item => item.id === id);
 
+          editShippingForm(shipping)
+
+        } else if (type === "delete") {
+          deleteShipping(id)
+        }
+      }
+    },]
+
+  useEffect(() => {
+
+    let data = []
+    shippingState.shipping.shipping_class.map((shipping) => {
+
+      let object = {
+        id: shipping._id,
+        amount: shipping.amount,
+        name: shipping.name,
+
+      }
+      data.push(object)
+    })
+    setAllshipping(data)
+    setfilterdData(data)
+
+  }, [shippingState.shipping.shipping_class])
+  const handleOnChangeSearch = (filtereData) => {
+
+    setfilterdData(filtereData)
+  }
   return (
-    <CardBlocks title="All Shippings" nomargin>
-      <TableContainer className={classes.container}>
-        <Table stickyHeader aria-label="shipping-table" size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell sortDirection="desc" variant="contained" color="primary">
-                <Tooltip enterDelay={300} title="Sort">
-                  <TableSortLabel active direction={order} onClick={() => {
-                    setOrder(order === "asc" ? "desc" : "asc")
-                    setOrderBy("name")
-                  }}>
-                    Name
-                  </TableSortLabel>
-                </Tooltip>
-              </TableCell>
-              <TableCell sortDirection="desc" variant="contained" color="primary">
-                <Tooltip enterDelay={300} title="Sort">
-                  <TableSortLabel active direction={order} onClick={() => {
-                    setOrder(order === "asc" ? "desc" : "asc")
-                    setOrderBy("amount")
-                  }}>
-                    Amount
-                  </TableSortLabel>
-                </Tooltip>
-              </TableCell>
+    <TableComponent
+      loading={shippingState.loading}
+      columns={columndata}
+      rows={filtered}
+      searchdata={Allshipping}
+      handleOnChangeSearch={handleOnChangeSearch}
 
-              <TableCell variant="contained" color="primary">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody  style={{marginLeft: "100px"}}>
+      classname="noclass"
+      title="All Shippings"
+    />
 
-            {shippingState.shipping.shipping_class &&
-              stableSort(shippingState.shipping.shipping_class, getComparator(order, orderBy))
-
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((shipping) => (
-                  <TableRow key={shipping._id} hover>
-                    <TableCell>{shipping.name}</TableCell>
-                    <TableCell style={{paddingLeft: "30px"}}>{shipping.amount}</TableCell>
-                    <TableCell>
-                      <Tooltip title="Edit shipping" aria-label="edit">
-                        <IconButton  style={{paddingLeft: "0px"}}
-                          aria-label="Edit"
-                          onClick={() => editShippingForm(shipping)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      {!shipping.system && (
-                        <Tooltip title="Delete shipping" aria-label="delete">
-                          <IconButton style={{paddingRight: "170px"}}
-                            aria-label="Delete"
-                            className={classes.deleteicon}
-                            onClick={() => deleteShipping(shipping._id)}
-                            disabled
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 20]}
-        component="div"
-        count={shippingState.shipping.shipping_class.length || 0}
-        rowsPerPage={rowsPerPage || 10}
-        page={page || 0}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </CardBlocks>
   );
 };
 

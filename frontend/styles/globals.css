@@ -428,7 +428,12 @@ color: #696969;
     border-radius: 10px;
     margin-bottom: 30px;
   }
+  .coupon-form-group input::placeholder{
+    font-weight: 100;
+    letter-spacing: 0
+  }
  .coupon-form-group input{
+  font-weight: 800;
   background: #fff;
   border: 1px solid #e2e9e1;
   height: 45px;
@@ -438,6 +443,7 @@ color: #696969;
   font-size: 13px;
   color: #1a1a1a;
   width: 100%;
+  letter-spacing: 0.75rem;
  }
 /* register page css */
 .title {
@@ -1062,7 +1068,16 @@ footer .follow h5 {
   color: #088178;
 }
 
- 
+ /* Loader */
+
+ .loading-container{
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ }
+
+
 /* recent-procuct-img css */
 /* nav css */
 .nav-link {
@@ -2215,6 +2230,9 @@ position: relative;
 .card:hover {
   transform: translateY(-6px);
 }
+.loading-table{
+  padding: 50px 0;
+}
 .shopcart-table {
   padding: 50px 0;
 }
@@ -2244,6 +2262,12 @@ position: relative;
 .shopcart-table .table td .td-flex {
   min-height: 90px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loading-table .table td .td-flex {
+  min-height: 0px;
+  display: block;
   align-items: center;
   justify-content: center;
 }
@@ -2359,6 +2383,26 @@ cursor: pointer;
 .card-other-information form {
   margin-bottom: 50px;
 }
+.cart_total_label{
+  font-weight: bold;
+}
+.cart-total-head{
+  font-weight: bold;
+  color: #8F8F8F ;
+}
+.cart_total_amount{
+  color: #777777;
+  font-weight: 700;
+}
+.cart_total_amount strong{
+  font-weight: 700;
+}
+.textSuccess{
+  color: #4BB543  ;
+}
+.textSuccess small{
+font-weight:700;
+}
 .cart_total_label,
 .cart_total_amount {
   text-align: left;
@@ -2410,7 +2454,34 @@ header {
 }
 
 /* -------CheckOut Page starts-------- */
+.defination-table dt { float: left; clear: left; width: 16em; font-weight: bold; }
+.defination-table dd { float: left; }
+.endBtn{
+  align-self: end;
+}
 
+.cust-detail-container small{
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.cust-detail-container p{
+ margin: 0;
+}
+.cust-detail-container{
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.azure-clr{
+  background-color: rgb(240, 255, 255,.75);
+  padding: 10px 10px 10px 10px;
+  margin-left: -10px;
+}
+.cust-detail-select-btn:hover{
+  cursor: pointer;
+  color: #046963;
+}
 .checkout-section {
   padding-top: 50px;
 }
@@ -2433,6 +2504,17 @@ header {
 }
 .checkout-section .devider {
   margin: 50px 0;
+}
+.twoRows{
+  display: flex;
+  flex-wrap: wrap;  
+  justify-content: space-between;
+}
+.twoRows .col-lg-6{
+  width: 49% ;
+}
+.twoRows .col-lg-4{
+  width: 32% ;
 }
 .checkout-bill-container h5 {
   margin-bottom: 25px;
@@ -3152,7 +3234,13 @@ header {
     margin-bottom: 24px;
   }
 }
-
+.disableButton{
+  pointer-events: none;
+}
+.max-button-width-load{
+  /* width: 62.34px; */
+  /* margin: 10px; */
+}
 
 @media screen and (max-width: 276px){
   /* .brand-container {
@@ -3160,6 +3248,32 @@ header {
   } */
 }
 
+@media screen and (min-width: 150px){
+
+  .col-xs-12 {
+      flex: 0 0 auto;
+      width: 100%;
+  }
+}
+.firstCheckPage{
+  display: flex;
+}
+@media only screen and (max-width: 770px) {
+  .firstCheckPage{
+    flex-direction:column;
+  }
+ 
+}
+.cupon-cart{
+  border-left: 2px solid whitesmoke;
+  padding: 20px;
+}
+
+@media screen and (min-width: 770px){
+  .cupon-cart{
+    width: 40%;
+  }
+}
 
 @media screen and (max-width: 576px) {
   .header-top .col-sm-6 {

@@ -52,6 +52,7 @@ module.exports = gql`
     store_address: STORE_ADDRESS
     measurements: MEASUREMENTS
     inventory: INVENTORY
+    order_options: ORDER_OPTIONS
   }
 
   type CURRENCY_OPTIONS {
@@ -89,6 +90,12 @@ module.exports = gql`
   type INVENTORY_NOTIFICATIONS {
     show_out_of_stock: Boolean
     alert_for_minimum_stock: Boolean
+  }
+
+  type ORDER_OPTIONS {
+    order_prefix_list: customArray
+    order_prefix: String
+    order_digits: Int
   }
 
   type Payment {
@@ -306,6 +313,11 @@ module.exports = gql`
       out_of_stock_threshold: Int
       out_of_stock_visibility: Boolean
       stock_display_format: String
+    ): Setting
+    updateStoreOrder(
+      order_prefix_list: customArray
+      order_prefix: String
+      order_digits: Int
     ): Setting
     updatePaymnetCOD(
       enable: Boolean

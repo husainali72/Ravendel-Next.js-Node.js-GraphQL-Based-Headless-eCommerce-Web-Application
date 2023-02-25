@@ -6,10 +6,11 @@ import Stripes from "./reactstripe/StripeContainer";
 
 
 const Orderdetail = (props) => {
-    const cart = useSelector((state) => state.cart);
+    // const cart = useSelector((state) => state.cart);
     // console.log(cart)
-    const { getOrderDetails, billingInfo, handleBillingInfo, tax_amount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal
+    const { currency,getOrderDetails,cartItems, billingInfo, handleBillingInfo, tax_amount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal
     } = props;
+    const cart = cartItems;
 
     const [cartProduct, setCartProduct] = useState([]);
 
@@ -44,7 +45,7 @@ const Orderdetail = (props) => {
     // console.log("cartproduct==+", cartProduct);
 
     useEffect(() => {
-        let cartItem = cart.map((product) => { return { product_id: product._id, name: product.name, cost: product.pricing.sellprice, qty: product.quantity } })
+        let cartItem = cart.map((product) => { return { product_id: product._id, name: product.name, cost: product.pricing.sellprice ? product.pricing.sellprice: product.pricing.price , qty: product.quantity } })
         var allData = {
             products: cartItem,
             billing: billingInfo,
@@ -64,13 +65,13 @@ const Orderdetail = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {cartProduct.map((item, i) => (
+                        {cartItems.map((item, i) => (
                             <tr key={i}>
                                 <td className="image product-thumbnail"><img src={getImage(item, 'feature_image')} alt="" /></td>
                                 <td><i className="ti-check-box font-small text-muted mr-10"></i>
                                     <h5><a href="shop-product-full.html">{item.name}</a></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>
-                                <td>${item.pricing.sellprice * item.quantity}</td>
+                                <td>{currency}{item.pricing.sellprice ? item.pricing.sellprice :item.pricing.price  * item.quantity}</td>
                             </tr>
                         ))}
                         {/* <tr>

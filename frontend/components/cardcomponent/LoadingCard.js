@@ -1,21 +1,11 @@
 import Link from "next/link";
 import { useState, useEffect } from "react"
-import { Spinner } from "react-bootstrap";
+import { Placeholder } from "react-bootstrap";
 import Table from 'react-bootstrap/Table';
 import { getImage } from '../../utills/helpers';
-const CartTable = (props) => {
-    // const dispatch = useDispatch();
-    const { cartItems,
-        isQuantityBtnLoading,
-        CalculateProductTotal,
-        DecreaseQuantity,
-        IncreaseQuantity,
-        AllCartItemsClear,
-        quantity,
-        removeToCart,
-        updateCartProduct, currency 
-    } = props;
-const [loadingIndex,setLoadingIndex] = useState(-1); 
+const LoadingCartTable = () => {
+   
+const cartItems = [1,2,3]
     return (
 
         <div>
@@ -37,47 +27,52 @@ const [loadingIndex,setLoadingIndex] = useState(-1);
                             <tr key={i}>
                                 <td>
                                     <div className="td-flex">
-                                        <img src={getImage(item.feature_image, 'thumbnail')} />
+                                     <Placeholder as="p" animation="glow">
+                                        <Placeholder style={{ width: '35%', height:"50px" , borderRadius:"3px"}}
+                                         xs={12} size="lg"/>
+                                    </Placeholder>
+                                        {/* <img src={getImage(item.feature_image, 'thumbnail')} />   */}
+                                    </div>
+                                   
+                                </td>
+                                <td>
+                                    <div className="td-flex">
+                                    <Placeholder as="p" animation="glow">
+                                        <Placeholder  xs={12} size="lg"/>
+                                        <Placeholder style={{ width: '75%'}} xs={12} size="sm"/>
+                                    </Placeholder>
                                     </div>
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <h3>{item.name}</h3>
+                                    <Placeholder as="p" animation="glow">
+                                        <Placeholder xs={12} size="lg"/>
+                                    </Placeholder>
                                     </div>
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <span>{currency} {(item.pricing?.sellprice ? item.pricing?.sellprice : item.pricing?.price)}</span>
+                                    <Placeholder as="p" animation="glow">
+                                        <Placeholder xs={12} size="lg"/>
+                                        <Placeholder  xs={12} size="sm"/>
+                                        
+                                    </Placeholder>
                                     </div>
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <span className={`btn btn-primary btn-less ${isQuantityBtnLoading && "disableButton"}`}  style={{ margin: '2px' }} onClick={() => {
-                                            DecreaseQuantity(item)
-                                            setLoadingIndex(i)
-                                            }}>
-                                            <i className="fas fa-chevron-down" ></i>
-                                        </span>
-                                        <span className="btn btn-info max-button-width-load">
-                                            {i === loadingIndex && isQuantityBtnLoading ? <Spinner style={{paddingLeft:'4px'}} animation="border" size="sm" /> : `${item.quantity} ${" "}` || quantity}
-                                        </span>
-                                        <span className={`btn btn-primary btn-more ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
-                                            IncreaseQuantity(item)
-                                            setLoadingIndex(i)
-                                            }}>
-                                            <i className="fas fa-chevron-up"></i>
-                                        </span>
+                                    <Placeholder as="p" animation="glow">
+                                        <Placeholder xs={12} size="lg"/>
+                                        <Placeholder  xs={12} size="sm"/>
+                                    </Placeholder>
                                     </div>
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <span>{currency} {((item.pricing?.sellprice ? item.pricing?.sellprice  * item.quantity : item.pricing?.price * item.quantity) || 0).toFixed(2)}</span>
-                                        {/* <span>{currency} {((item.pricing?.sellprice ? item.pricing?.price * item.quantity : item.pricing?.sellprice ) || 0).toFixed(2)}</span> */}
+                                       <Placeholder as="p" animation="glow">
+                                        <Placeholder style={{width:"75%"}} xs={12} size="lg"/>
+                                    </Placeholder>
                                     </div>
-                                </td>
-                                <td>
-                                    <div className="td-flex">
-                                        <i onClick={() => removeToCart(item)} className="far fa-trash-alt"></i></div>
                                 </td>
                             </tr>
                         ))
@@ -104,4 +99,4 @@ const [loadingIndex,setLoadingIndex] = useState(-1);
         </div>
     )
 }
-export default CartTable;
+export default LoadingCartTable;

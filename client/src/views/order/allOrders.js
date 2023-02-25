@@ -1,199 +1,88 @@
-import React, { useEffect } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-  Tooltip,
-  Badge,
-  TableSortLabel
-} from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import React, { useEffect, useState } from "react";
+import { client_app_route_url } from "../../utils/helper"; import { useDispatch, useSelector } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
-import { ordersAction, orderDeleteAction } from "../../store/action";
-import { isEmpty, client_app_route_url } from "../../utils/helper";
-import Alerts from "../components/Alert";
-import Loading from "../utils/loading";
-import viewStyles from "../viewStyles";
-import { convertDateToStringFormat } from "../utils/convertDate";
+import { orderDeleteAction, ordersAction, } from "../../store/action";
+import { isEmpty, } from "../../utils/helper";
+import ActionButton from "../components/actionbutton";
 import theme from "../../theme/index";
-import { badgeColor } from "../components/BadgeColor";
-import { stableSort, getComparator } from "../components/sorting";
+import { get } from 'lodash'
+import TableComponent from "../components/table";
+import { useNavigate } from "react-router-dom";
 const AllOrdersComponent = () => {
-  const classes = viewStyles();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders);
-  const [order, setOrder] = React.useState('desc');
-  const [orderBy, setOrderBy] = React.useState('date');
+  const [AllOrder, setAllOrder] = useState([])
+  const navigate = useNavigate()
+  const [loading, setloading] = useState(false)
+  const [filtered, setfilterdData] = useState([])
+  const badgefilter = [{ name: 'payment_status', title: ['pending', 'failed', 'success', 'cancelled'] },
+  { name: 'shipping_status', title: ['inprogress', 'shipped', 'outfordelivery', 'delivered'] },]
+
+  const columndata = [{ name: 'order_number', title: "Order Number", sortingactive: true },
+  { name: 'date', title: "Date", sortingactive: true },
+  { name: 'name', title: "Customer Name", sortingactive: true },
+  { name: 'payment_status', title: "payment status", sortingactive: false },
+  { name: 'shipping_status', title: "shipping status", sortingactive: false },
+  {
+    name: 'actions', title: "Actions", sortingactive: false,
+    component: ActionButton,
+    buttonOnClick: (type, id) => {
+      if (type === 'edit') {
+        navigate(`${client_app_route_url}view-order/${id}`)
+      } else if (type === "delete") {
+        dispatch(orderDeleteAction(id))
+      }
+    }
+
+  },]
   useEffect(() => {
-    if (isEmpty(orders.orders)) {
+    if (isEmpty(get(orders, 'orders'))) {
       dispatch(ordersAction());
     }
   }, []);
+  useEffect(() => {
+    if (!isEmpty(get(orders, 'orders'))) {
+      let data = []
+      orders.orders.map((order) => {
+        let object = {
+          id: order.id,
+          order_number: order.order_number,
+          date: order.date,
+          name: order.billing.firstname + " " + order.billing.lastname,
+          payment_status: order.payment_status,
+          shipping_status: order.shipping_status
+        }
+        data.push(object)
+      })
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+      setAllOrder(data)
+      setfilterdData(data)
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+    } else {
+      setAllOrder([])
+      setfilterdData([])
+    }
+  }, [get(orders, 'orders')])
+  useEffect(() => {
+    if (!isEmpty(get(orders, 'loading')))
+      setloading(get(orders, 'loading'))
+  }, [get(orders, 'loading')])
+  const handleOnChangeSearch = (filtereData) => {
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+    setfilterdData(filtereData)
+  }
 
   return (
     <>
-      <Alerts />
-      <Grid container spacing={4} className={classes.mainrow}>
-        <Grid item lg={12}>
-          <Card>
-            {orders.loading && <Loading />}
-
-            <CardHeader title="All Orders" />
-            <Divider />
-            <CardContent>
-              <TableContainer className={classes.container}>
-                <Table
-                  stickyHeader
-                  aria-label="sticky table and Dense Table"
-                  size="small"
-                >
-                  <TableHead>
-
-                    <TableRow>
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
-                        <Tooltip enterDelay={300} title="Sort">
-                          <TableSortLabel active direction={order} onClick={() => {
-                            setOrder(order === "asc" ? "desc" : "asc")
-                            setOrderBy("order_number")
-                          }}>
-                            Order Number
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
-                        <Tooltip enterDelay={300} title="Sort">
-                          <TableSortLabel active direction={order} onClick={() => {
-                            setOrder(order === "asc" ? "desc" : "asc")
-                            setOrderBy("date")
-                          }}>
-                            Date
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell sortDirection="desc" variant="contained" color="primary">
-                        <Tooltip enterDelay={300} title="Sort">
-                          <TableSortLabel active direction={order} onClick={() => {
-                            setOrder(order === "asc" ? "desc" : "asc")
-                            setOrderBy("firstname")
-                          }}>
-                            Customer Name
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
-
-
-                      <TableCell variant="contained" color="primary">
-                        Payment Status
-                      </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Shipping Status
-                      </TableCell>
-                      <TableCell variant="contained" color="primary">
-                        Actions
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-
-                    {stableSort(orders.orders, getComparator(order, orderBy, orderBy === "firstname" ? "shipping" : ""))
-
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((order) => (
-                        <TableRow key={order.id} hover>
-                          <TableCell>
-                            {order.order_number}
-                          </TableCell>
-                          <TableCell>
-                            {convertDateToStringFormat(order.date)}
-                          </TableCell>
-                          <TableCell>
-                            {order.shipping.firstname +
-                              " " +
-                              order.shipping.lastname}
-                          </TableCell>
-
-                          <TableCell >
-
-                            <Badge badgeContent={order.payment_status} color={badgeColor(order.payment_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
-
-                          </TableCell>
-                          <TableCell >
-                            <Badge badgeContent={order.shipping_status} color={badgeColor(order.shipping_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15 } }} />
-                          </TableCell>
-                          <TableCell >
-                            <Tooltip title="Edit Order" aria-label="edit">
-                              <IconButton
-                                aria-label="Edit"
-                                onClick={() =>
-                                  navigate(
-                                    `${client_app_route_url}view-order/${order.id}`
-                                  )
-                                }
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Delete Order" aria-label="delete">
-                              <IconButton
-                                aria-label="Delete"
-                                className={classes.deleteicon}
-                                onClick={() =>
-                                  dispatch(orderDeleteAction(order.id, navigate))
-                                }
-                                disabled
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={orders.orders.length || 0}
-                rowsPerPage={rowsPerPage || 10}
-                page={page || 0}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      <TableComponent
+        loading={loading}
+        rows={filtered}
+        columns={columndata}
+        searchdata={AllOrder}
+        handleOnChangeSearch={handleOnChangeSearch}
+        dropdown={badgefilter}
+        title="All Orders"
+      />
     </>
   );
 };
