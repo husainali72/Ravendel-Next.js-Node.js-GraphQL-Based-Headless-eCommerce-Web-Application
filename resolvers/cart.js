@@ -89,7 +89,6 @@ module.exports = {
         }
         return calculated;
       } catch (error) {
-        console.log(error)
         error = checkError(error);
         throw new Error(error.custom_message);
       }
