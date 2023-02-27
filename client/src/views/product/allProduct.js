@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { productDeleteAction, productsAction } from "../../store/action";
 import { client_app_route_url } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
-
+import { Grid } from "@mui/material";
 import { isEmpty } from "../../utils/helper";
 
 import { bucketBaseURL } from "../../utils/helper";
@@ -13,14 +13,18 @@ import theme from "../../theme/index";
 import { get } from "lodash";
 import TableComponent from "../components/table";
 import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
-const GlobalThemeOverride = () => {
-
+import viewStyles from "../viewStyles";
+const AllproductComponent = () => {
+  const classes = viewStyles()
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
   const navigate = useNavigate()
   const [Allproducts, setAllproduct] = useState([])
   const [filtered, setfilterdData] = useState([])
-  const statusTabData = { name: 'status', array: ['All', 'Publish', 'Draft'] }
+  const statusTabData = {
+    name: 'status',
+    array: ['All', 'Publish', 'Draft']
+  }
   const columndata = [
     { name: "image", title: "image", sortingactive: false },
     { name: "date", title: "date", sortingactive: true },
@@ -36,7 +40,6 @@ const GlobalThemeOverride = () => {
           dispatch(productDeleteAction(id))
         }
       }
-
     }]
 
 
@@ -76,26 +79,29 @@ const GlobalThemeOverride = () => {
   return (
     <>
 
-      <TableComponent
-        loading={products.loading}
-        columns={columndata}
-        rows={filtered}
-        searchdata={Allproducts}
-        handleOnChangeSearch={handleOnChangeSearch}
-        statusTabData={statusTabData}
-        addpage='add-product'
-        title="All Products"
-
-      />
-
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={products.loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={Allproducts}
+            handleOnChangeSearch={handleOnChangeSearch}
+            statusTabData={statusTabData}
+            addpage='add-product'
+            showDeleteButton={true}
+            title="All Products"
+          />
+        </Grid>
+      </Grid >
     </>
-  );
-};
 
+  );
+}
 export default function AllProduct() {
   return (
     <ThemeProvider theme={theme}>
-      <GlobalThemeOverride />
+      <AllproductComponent />
     </ThemeProvider>
   );
 }

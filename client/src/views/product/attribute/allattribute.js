@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import viewStyles from "../../viewStyles";
+import { Grid } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { attributeDeleteAction } from "../../../store/action";
@@ -11,6 +13,7 @@ import TableComponent from "../../components/table";
 import ActionButton from "../../components/actionbutton";
 const AllAttributeComponent = () => {
   const dispatch = useDispatch();
+  const classes = viewStyles()
   const attributeState = useSelector((state) => state.product_attributes);
   const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
@@ -67,17 +70,20 @@ const AllAttributeComponent = () => {
 
   return (
     <>
-      <TableComponent
-        loading={attributeState.loading}
-        columns={columndata}
-        rows={filtered}
-        searchdata={AllAttribute}
-        handleOnChangeSearch={handleOnChangeSearch}
-        addpage='add-attribute'
-        title="All Attributes"
-
-      />
-
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={attributeState.loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={AllAttribute}
+            handleOnChangeSearch={handleOnChangeSearch}
+            addpage='add-attribute'
+            title="All Attributes"
+            showDeleteButton={true}
+          />
+        </Grid>
+      </Grid >
     </>
   );
 };

@@ -1,7 +1,8 @@
 import { Tooltip, IconButton, } from "@mui/material"
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-const ActionButton = ({ onClick }) => {
+const ActionButton = ({ onClick, showDeleteButton }) => {
+
     return (
         <>
             <Tooltip title="Edit " aria-label="edit">
@@ -13,7 +14,7 @@ const ActionButton = ({ onClick }) => {
                     <EditIcon />
                 </IconButton>
             </Tooltip>
-            <Tooltip title="Delete " aria-label="Delete">
+            {showDeleteButton ? <Tooltip title="Delete " aria-label="Delete">
                 <IconButton
                     aria-label="Delete"
                     type='delete'
@@ -22,7 +23,7 @@ const ActionButton = ({ onClick }) => {
                 >
                     <DeleteIcon />
                 </IconButton>
-            </Tooltip>
+            </Tooltip> : null}
         </>
     )
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
@@ -9,8 +9,9 @@ import { couponDeleteAction, couponsAction } from "../../store/action";
 import { get } from 'lodash'
 import ActionButton from "../components/actionbutton";
 import TableComponent from "../components/table";
+import viewStyles from "../viewStyles";
 const AllCouponsTheme = () => {
-
+  const classes = viewStyles()
   const dispatch = useDispatch();
   const Coupons = useSelector((state) => state.coupons);
   const [Allcoupon, setAllcoupon] = useState([])
@@ -71,17 +72,21 @@ const AllCouponsTheme = () => {
 
   return (
     <>
-      <TableComponent
-        loading={Coupons.loading}
-        columns={columndata}
-        rows={filtered}
-        searchdata={Allcoupon}
-        handleOnChangeSearch={handleOnChangeSearch}
-        editpage='edit-coupon'
-        addpage='add-coupon'
-        title="All Coupons"
-      />
-
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={Coupons.loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={Allcoupon}
+            handleOnChangeSearch={handleOnChangeSearch}
+            editpage='edit-coupon'
+            addpage='add-coupon'
+            title="All Coupons"
+            showDeleteButton={true}
+          />
+        </Grid>
+      </Grid >
 
     </>
   );

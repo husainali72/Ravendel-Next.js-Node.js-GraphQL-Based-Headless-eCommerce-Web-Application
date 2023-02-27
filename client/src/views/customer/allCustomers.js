@@ -6,29 +6,31 @@ import { useDispatch, useSelector } from "react-redux";
 import { ThemeProvider, } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { get } from 'lodash'
+import { Grid } from "@mui/material";
 import TableComponent from "../components/table";
 import { useNavigate } from "react-router-dom";
+import viewStyles from "../viewStyles";
 const AllCustomersComponent = () => {
-
-
+  const classes = viewStyles()
   const dispatch = useDispatch();
   const Customers = useSelector((state) => state.customers);
   const [AllCustomers, setAllCustomer] = useState([])
   const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
-  const columndata = [{ name: "date", title: "date", sortingactive: true },
-  { name: "name", title: "Customer Name", sortingactive: true },
-  { name: "email", title: "Email", sortingactive: true },
-  {
-    name: "actions", title: "Actions", sortingactive: false, component: ActionButton,
-    buttonOnClick: (type, id) => {
-      if (type === 'edit') {
-        navigate(`${client_app_route_url}edit-customer/${id}`)
-      } else if (type === "delete") {
-        dispatch(customerDeleteAction(id))
+  const columndata = [
+    { name: "date", title: "date", sortingactive: true },
+    { name: "name", title: "Customer Name", sortingactive: true },
+    { name: "email", title: "Email", sortingactive: true },
+    {
+      name: "actions", title: "Actions", sortingactive: false, component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-customer/${id}`)
+        } else if (type === "delete") {
+          dispatch(customerDeleteAction(id))
+        }
       }
-    }
-  }]
+    }]
   useEffect(() => {
     if (isEmpty(Customers.customers)) {
       dispatch(customersAction());
@@ -66,17 +68,20 @@ const AllCustomersComponent = () => {
   }
   return (
     <>
-      <TableComponent
-        loading={Customers.loading}
-        columns={columndata}
-        rows={filtered}
-        searchdata={AllCustomers}
-        handleOnChangeSearch={handleOnChangeSearch}
-        addpage='add-customer'
-
-        title="All Customers"
-
-      />
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={Customers.loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={AllCustomers}
+            handleOnChangeSearch={handleOnChangeSearch}
+            addpage='add-customer'
+            showDeleteButton={true}
+            title="All Customers"
+          />
+        </Grid>
+      </Grid >
     </>
   );
 };

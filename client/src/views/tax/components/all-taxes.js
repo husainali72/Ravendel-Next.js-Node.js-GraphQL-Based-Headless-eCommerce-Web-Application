@@ -52,8 +52,8 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
       rows={filtered}
       searchdata={Alltaxes}
       handleOnChangeSearch={handleOnChangeSearch}
-
-      classname="noclass"
+      showDeleteButton={true}
+      classname="table-container"
       title="All Taxes"
     />);
 };

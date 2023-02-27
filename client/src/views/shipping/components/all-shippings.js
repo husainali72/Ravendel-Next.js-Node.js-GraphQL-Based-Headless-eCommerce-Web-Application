@@ -57,8 +57,8 @@ const AllShippingComponentComponent = ({
       rows={filtered}
       searchdata={Allshipping}
       handleOnChangeSearch={handleOnChangeSearch}
-
-      classname="noclass"
+      showDeleteButton={true}
+      classname="table-container"
       title="All Shippings"
     />
 

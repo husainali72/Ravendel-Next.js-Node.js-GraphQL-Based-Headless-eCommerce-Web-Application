@@ -508,7 +508,7 @@ const viewStyles = makeStyles((theme) => ({
 
   },
   datepicker: {
-    width: '105px'
+    width: '107px'
   },
   enddatepicker: {
     width: '105px',

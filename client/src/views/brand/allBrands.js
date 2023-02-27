@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { Grid } from "@mui/material";
 import ActionButton from "../components/actionbutton";
 import { useNavigate } from "react-router-dom";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
@@ -9,10 +9,11 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { get } from 'lodash'
 import TableComponent from "../components/table.js";
+import viewStyles from "../viewStyles";
 const AllbrandComponent = () => {
   const dispatch = useDispatch();
   const Brands = useSelector((state) => state.brands);
-
+  const classes = viewStyles()
   const [Allbrand, setAllbrand] = useState([])
   const [filtered, setfilterdData] = useState([])
   let columndata = [
@@ -38,21 +39,16 @@ const AllbrandComponent = () => {
     if (!isEmpty(get(Brands, 'brands'))) {
       let data = []
       Brands.brands.map((brand) => {
-
         let object = {
           id: brand.id,
-
           date: brand.date,
           name: brand.name,
-
         }
         data.push(object)
       })
 
       setAllbrand(data)
       setfilterdData(data)
-
-
     } else {
       setAllbrand([])
       setfilterdData([])
@@ -63,22 +59,23 @@ const AllbrandComponent = () => {
 
     setfilterdData(filtereData)
   }
-
-
   return (
     <>
-      <TableComponent
-        loading={Brands.loading}
-        columns={columndata}
-        rows={filtered}
-        searchdata={Allbrand}
-        handleOnChangeSearch={handleOnChangeSearch}
-
-        editpage='edit-brand'
-        addpage='add-brand'
-        title="All Brands"
-      />
-
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={Brands.loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={Allbrand}
+            handleOnChangeSearch={handleOnChangeSearch}
+            showDeleteButton={true}
+            editpage='edit-brand'
+            addpage='add-brand'
+            title="All Brands"
+          />
+        </Grid>
+      </Grid >
     </>
   );
 };

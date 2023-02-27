@@ -190,7 +190,7 @@ const AllCategoryComponent = () => {
             rows={filtered}
             searchdata={categories}
             handleOnChangeSearch={handleOnChangeSearch}
-            classname="noclass"
+            classname="table-container"
             title="All Category"
           />
         </Grid>

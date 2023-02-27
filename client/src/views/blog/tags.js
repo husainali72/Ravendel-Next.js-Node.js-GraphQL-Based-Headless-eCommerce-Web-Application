@@ -134,7 +134,8 @@ const AllTagsComponent = () => {
             rows={filtered}
             searchdata={blogState.tags}
             handleOnChangeSearch={handleOnChangeSearch}
-            classname="noclass"
+            classname="table-container"
+            showDeleteButton={true}
             title="All Tags"
           />
         </Grid>
