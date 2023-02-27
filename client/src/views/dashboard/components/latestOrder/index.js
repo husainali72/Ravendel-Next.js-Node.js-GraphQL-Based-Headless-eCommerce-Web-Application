@@ -56,8 +56,9 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
     if (!isEmpty(latestOrders)) {
       let data = []
       latestOrders.map((order) => {
+        console.log(order)
         let object = {
-          id: order.id,
+          id: order._id,
           order_number: order.order_number,
           date: order.date,
           name: order.billing.firstname + " " + order.billing.lastname,
