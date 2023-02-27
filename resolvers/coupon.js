@@ -7,7 +7,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
-const { duplicateData } = require("../config/helpers");
+const { duplicateData, MESSAGE_RESPONSE } = require("../config/helpers");
 
 module.exports = {
   Query: {
@@ -46,9 +46,11 @@ module.exports = {
         expire: args.expire,
         minimum_spend: args.minimum_spend,
         maximum_spend: args.maximum_spend,
-        products: args.products,
+        product: args.product,
+        include_products: args.include_products,
         exclude_products: args.exclude_products,
-        categories: args.categories,
+        category: args.category,
+        include_categories: args.include_categories,
         exclude_categories: args.exclude_categories,
       };
       let validation = ["code", "expire"];
@@ -74,9 +76,11 @@ module.exports = {
         expire: args.expire,
         minimum_spend: args.minimum_spend,
         maximum_spend: args.maximum_spend,
-        products: args.products,
+        product: args.product,
+        include_products: args.include_products,
         exclude_products: args.exclude_products,
-        categories: args.categories,
+        category: args.category,
+        include_categories: args.include_categories,
         exclude_categories: args.exclude_categories,
       };
       let validation = ["code", "expire"];
