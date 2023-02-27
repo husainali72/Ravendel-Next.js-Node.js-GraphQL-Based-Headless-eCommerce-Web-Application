@@ -1,6 +1,7 @@
 const dotenv = require('dotenv')
-dotenv.config({path:'./.env.local'})
-const {PAYPAL_CLIENT, PAYPAL_KEY} = process.env
+dotenv.config({path:'./.env'})
+const {PAYPAL_CLIENT, PAYPAL_KEY, RETURN_URL, CANCEL_URL} = process.env
+const Setting = require('../../models/Setting')
 const paypal = require('paypal-rest-sdk')
 const router = require('express').Router()
 
@@ -11,14 +12,16 @@ paypal.configure({
 })
 
 let total = 0
-router.post('/pay', (req, res) => {
+router.post('/pay', async(req, res) => {
     total = 0
+    let currency = await Setting.findOne({})
+    currency = currency.store.currency_options.currency.toUpperCase()
     const line_items = req.body.customerCart.map(item=>{
         total += (item.product_price*item.qty)
         return{
             name: item.product_title,
             price: item.product_price,
-            currency: 'USD',
+            currency: currency,
             quantity: item.qty,
         }
     })
@@ -28,18 +31,18 @@ router.post('/pay', (req, res) => {
             "payment_method": "paypal"
         },
         "redirect_urls": {
-            "return_url": "http://localhost:3000/orderstatus/thankyou",
-            "cancel_url": "http://localhost:3000/checkout"
+            "return_url": RETURN_URL,
+            "cancel_url": CANCEL_URL
         },
         "transactions": [{
             "item_list": {
                 "items": line_items
             },
             "amount": {
-                "currency": "USD",
+                "currency": currency,
                 "total": total
             },
-            "description": "Hat for the best team ever"
+            "description": "Thank you for ordering"
         }]
     };
     
@@ -65,7 +68,7 @@ router.get('/success', (req, res) => {
         "payer_id": payerId,
         "transactions": [{
             "amount": {
-                "currency": "USD",
+                "currency": currency,
                 "total": total
             }
         }]

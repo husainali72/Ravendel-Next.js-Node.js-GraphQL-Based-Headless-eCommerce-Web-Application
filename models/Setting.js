@@ -399,7 +399,7 @@ module.exports.createSettings = async () => {
     },
     store: {
       currency_options: {
-        currency: "dollar",
+        currency: "usd",
         currency_position: "left",
         thousand_separator: ",",
         decimal_separator: ".",

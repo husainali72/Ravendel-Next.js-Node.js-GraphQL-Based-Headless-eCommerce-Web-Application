@@ -44,7 +44,7 @@ const CurrencyOptionsComponent = () => {
                 })
               }
               items={[
-                { name: "U.S. Dollar (USD)", value: "dollar" },
+                { name: "U.S. Dollar (USD)", value: "usd" },
                 { name: "Euro (EUR)", value: "eur" },
                 { name: "British Pound (GBP)", value: "gbp" },
                 { name: "Canadian Dollar (CAD)", value: "cad" },
