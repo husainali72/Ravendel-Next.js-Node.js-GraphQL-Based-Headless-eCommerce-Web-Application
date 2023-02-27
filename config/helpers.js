@@ -752,24 +752,20 @@ const calculateCart = async(coupon, cart, productModel, amountDiscount) => {
         if(product.categoryId && product.categoryId.length){
           product.categoryId.map(catID => {
             if(coupon.include_categories.length){
-              includeProduct = coupon.include_categories.includes(catID) ? 
-                true : false
+              includeProduct = coupon.include_categories.includes(catID) 
             }
             else if(coupon.exclude_categories.length){
-              includeProduct = coupon.exclude_categories.includes(catID) ? 
-                false : true
+              includeProduct = coupon.exclude_categories.includes(catID) 
             }
           })
         }
       }
       else if(coupon.product){
         if(coupon.include_products.length){
-          includeProduct = coupon.include_products.includes(product._id.toString()) ? 
-            true : false
+          includeProduct = coupon.include_products.includes(product._id.toString()) 
         }
         else if(coupon.exclude_products.length){
-          includeProduct = coupon.exclude_products.includes(product._id.toString()) ? 
-            false : true
+          includeProduct = coupon.exclude_products.includes(product._id.toString()) 
         }
       }
       if(includeProduct){
