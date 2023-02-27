@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Grid } from "@mui/material";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import { bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
@@ -9,30 +10,36 @@ import TableComponent from "../components/table";
 import { get } from 'lodash'
 import { useNavigate } from "react-router-dom";
 import ActionButton from "../components/actionbutton";
+import viewStyles from "../viewStyles";
 const AllUsersComponent = () => {
 
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const navigate = useNavigate()
+  const classes = viewStyles()
   const [AllUsers, setAllUsers] = useState([])
   const [filtered, setfilterdData] = useState([])
-  const statusTabData = { name: 'role', array: ['All', 'USER', 'EDITOR', 'MANAGER', 'SUBSCRIBER', 'AUTHOR'] }
-  const columndata = [{ name: "image", title: "image", sortingactive: false },
-  { name: "name", title: "name ", sortingactive: true },
-  { name: "email", title: "email ", sortingactive: true },
-  { name: "role", title: "role ", sortingactive: true },
+  const statusTabData = {
+    name: 'role',
+    array: ['All', 'USER', 'EDITOR', 'MANAGER', 'SUBSCRIBER', 'AUTHOR']
+  }
+  const columndata = [
+    { name: "image", title: "image", sortingactive: false },
+    { name: "name", title: "name ", sortingactive: true },
+    { name: "email", title: "email ", sortingactive: true },
+    { name: "role", title: "role ", sortingactive: true },
 
-  {
-    name: "actions", title: "Actions", sortingactive: false,
-    component: ActionButton,
-    buttonOnClick: (type, id) => {
-      if (type === 'edit') {
-        navigate(`${client_app_route_url}edit-user/${id}`)
-      } else if (type === "delete") {
-        dispatch(userDeleteAction(id))
+    {
+      name: "actions", title: "Actions", sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-user/${id}`)
+        } else if (type === "delete") {
+          dispatch(userDeleteAction(id))
+        }
       }
-    }
-  }]
+    }]
 
 
 
@@ -71,18 +78,20 @@ const AllUsersComponent = () => {
   }
   return (
     <>
-      <TableComponent
-        loading={UsersState.loading}
-        columns={columndata}
-        rows={filtered}
-        statusTabData={statusTabData}
-
-        searchdata={AllUsers}
-        handleOnChangeSearch={handleOnChangeSearch}
-        addpage='add-user'
-        title="All Users"
-
-      />
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={UsersState.loading}
+            columns={columndata}
+            rows={filtered}
+            statusTabData={statusTabData}
+            showDeleteButton={true}
+            searchdata={AllUsers}
+            handleOnChangeSearch={handleOnChangeSearch}
+            addpage='add-user'
+            title="All Users" />
+        </Grid>
+      </Grid >
     </>
   );
 };

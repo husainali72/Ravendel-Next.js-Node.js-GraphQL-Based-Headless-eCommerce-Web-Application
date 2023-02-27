@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ImageIcon from "@mui/icons-material/Image";
 import viewStyles from "../../viewStyles";
-
+import NoImagePlaceHolder from "../../../assets/images/NoImagePlaceHolder.png";
 const GalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage }) => {
   const classes = viewStyles();
   const [gallery, setGallery] = useState([]);
@@ -26,20 +26,20 @@ const GalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage }) => {
       <div className={classes.galleryImgOuterBox}>
         {gallery
           ? gallery.map((img, index) => (
-              <div key={index} className={classes.galleryImgBox}>
-                <span
-                  className={classes.galleryImgRemove}
-                  onClick={() => removeImage(img)}
-                >
-                  x
-                </span>
-                <img
-                  src={img}
-                  className={classes.galleryImg}
-                  alt='product-gallery-img'
-                />
-              </div>
-            ))
+            <div key={index} className={classes.galleryImgBox}>
+              <span
+                className={classes.galleryImgRemove}
+                onClick={() => removeImage(img)}
+              >
+                x
+              </span>
+              <img
+                src={img ? img : NoImagePlaceHolder}
+                className={classes.galleryImg}
+                alt='product-gallery-img'
+              />
+            </div>
+          ))
           : null}
       </div>
       <input
