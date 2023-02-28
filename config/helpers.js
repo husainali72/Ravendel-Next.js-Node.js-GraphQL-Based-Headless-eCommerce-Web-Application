@@ -754,17 +754,18 @@ const calculateCart = async(coupon, cart, productModel, amountDiscount) => {
               includeProduct = coupon.include_categories.includes(catID) 
             }
             else if(coupon.exclude_categories.length){
-              includeProduct = coupon.exclude_categories.includes(catID) 
+              includeProduct = !coupon.exclude_categories.includes(catID) 
             }
           })
         }
       }
       else if(coupon.product){
+        console.log("run")
         if(coupon.include_products.length){
           includeProduct = coupon.include_products.includes(product._id.toString()) 
         }
         else if(coupon.exclude_products.length){
-          includeProduct = coupon.exclude_products.includes(product._id.toString()) 
+          includeProduct = !coupon.exclude_products.includes(product._id.toString()) 
         }
       }
       if(includeProduct){
