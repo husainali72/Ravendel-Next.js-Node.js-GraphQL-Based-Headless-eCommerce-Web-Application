@@ -105,7 +105,6 @@ const updateUrl = async (url, table, updateId) => {
 
   let duplicate = await duplicateData({url: url}, Table, updateId ? updateId : null)
   if(duplicate) {
-    console.log("duplicate", duplicate)
     let i = parseInt(url[url.length - 1]) + 1
     if(isNaN(i)) return url + "-2"
     return url.slice(0, url.length - 1) + i;
@@ -557,7 +556,7 @@ const subTotalDetailsEntry = async(couponCode, couponModel, shippingModel, taxMo
     if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return subTotalDetails.tax_name = taxClass.name
   })
   // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: couponCode})
+  const coupon = await couponModel.findOne({code: {$regex: couponCode, $options: "i"} })
   if(!coupon) {
     subTotalDetails.coupon_code = "None"
     subTotalDetails.coupon_type = ""
@@ -588,7 +587,7 @@ const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingMo
     else return taxValue = 0
   })
   // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: couponCode})
+  const coupon = await couponModel.findOne({code: {$regex: couponCode, $options: "i"} })
   if(!coupon) {
     couponType = ""
     couponValue = 0
