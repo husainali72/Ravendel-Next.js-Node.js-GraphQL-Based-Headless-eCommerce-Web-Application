@@ -541,7 +541,7 @@ module.exports = {
       let path = "/assets/images/product/category/";
       let url = "";
       if (args.url || args.title) {
-        url = await updateUrl(args.url || args.name, "ProductCat");
+        url = await updateUrl(args.url || args.name, "ProductCat", args.id);
       }
       let data = {
         name: args.name,
@@ -847,7 +847,7 @@ module.exports = {
           product.name = args.name;
           product.categoryId = args.categoryId;
           (product.brand = args.brand || null),
-            (product.url = await updateUrl(args.url || args.name, "Product"));
+            (product.url = await updateUrl(args.url || args.name, "Product", args.id));
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;

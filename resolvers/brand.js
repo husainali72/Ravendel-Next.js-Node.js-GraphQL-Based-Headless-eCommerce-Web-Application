@@ -136,7 +136,7 @@ module.exports = {
             }
           }
 
-          let url = await updateUrl(args.url, "Brand");
+          let url = await updateUrl(args.url, "Brand", args.id);
 
           brand.name = args.name;
           brand.url = url;

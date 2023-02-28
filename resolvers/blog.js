@@ -144,7 +144,7 @@ module.exports = {
 
       let url = "";
       if (args.url || args.title) {
-        url = await updateUrl(args.url || args.title, "Blog");
+        url = await updateUrl(args.url || args.title, "Blog", args.id);
       }
 
       let data = {

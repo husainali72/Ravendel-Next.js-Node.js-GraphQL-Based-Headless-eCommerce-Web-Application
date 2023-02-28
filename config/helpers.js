@@ -83,7 +83,7 @@ const validateUrl = (url) => {
 
 module.exports.validateUrl = validateUrl;
 
-const updateUrl = async (url, table) => {
+const updateUrl = async (url, table, updateId) => {
   var url = stringTourl(url);
   switch (table) {
     case "Product":
@@ -98,18 +98,18 @@ const updateUrl = async (url, table) => {
     case "Brand":
       var Table = require("../models/Brand");
       break;
+    case "Page":
+      var Table = require("../models/Page");
+      break;
   }
 
-  var duplicate = true;
-  while (duplicate) {
-    let data = await Table.findOne({ url: url });
-    if (data) {
-      url = validateUrl(url);
-    } else {
-      duplicate = false;
-      return Promise.resolve(url);
-    }
-  }
+  let duplicate = await duplicateData({url: url}, Table, updateId ? updateId : null)
+  if(duplicate) {
+    console.log("duplicate", duplicate)
+    let i = parseInt(url[url.length - 1]) + 1
+    if(isNaN(i)) return url + "-2"
+    return url.slice(0, url.length - 1) + i;
+  } else return Promise.resolve(url)
 };
 
 module.exports.updateUrl = updateUrl;
