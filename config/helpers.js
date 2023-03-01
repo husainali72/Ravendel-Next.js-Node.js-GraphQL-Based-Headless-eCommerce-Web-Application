@@ -760,7 +760,6 @@ const calculateCart = async(coupon, cart, productModel, amountDiscount) => {
         }
       }
       else if(coupon.product){
-        console.log("run")
         if(coupon.include_products.length){
           includeProduct = coupon.include_products.includes(product._id.toString()) 
         }

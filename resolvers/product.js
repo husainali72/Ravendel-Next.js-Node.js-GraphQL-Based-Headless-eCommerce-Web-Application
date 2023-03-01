@@ -316,7 +316,7 @@ module.exports = {
         let category = args.category
         // if product belongs to subcat then show parentcat products else show subcat products
         let existingCategory = await ProductCat.findById(category)
-        if(existingCategory.parentId) category = existingCategory.parentId
+        if(existingCategory && existingCategory.parentId) category = existingCategory.parentId.toString()
         const pipeline=[
           {$match: {
             $and: [
