@@ -25,7 +25,7 @@ module.exports = {
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      var searchInFields = { first_name: { $regex: search, $options: "i" } };
+      var searchInFields = { first_name: { $regex: `${search}`, $options: "i" } };
 
       return await GET_BY_PAGINATIONS(
         limit,

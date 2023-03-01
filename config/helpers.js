@@ -556,7 +556,7 @@ const subTotalDetailsEntry = async(couponCode, couponModel, shippingModel, taxMo
     if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return subTotalDetails.tax_name = taxClass.name
   })
   // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: {$regex: couponCode, $options: "i"} })
+  const coupon = await couponModel.findOne({code: {$regex: `${couponCode}`, $options: "i"} })
   if(!coupon) {
     subTotalDetails.coupon_code = "None"
     subTotalDetails.coupon_type = ""
@@ -587,7 +587,7 @@ const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingMo
     else return taxValue = 0
   })
   // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: {$regex: couponCode, $options: "i"} })
+  const coupon = await couponModel.findOne({code: {$regex: `${couponCode}`, $options: "i"} })
   if(!coupon) {
     couponType = ""
     couponValue = 0
@@ -701,7 +701,7 @@ const generateOrderNumber = async (Order, Setting) => {
   let code = ""
   // prefix = ""
   let pipeline = [
-    {$match: {order_number: {$regex: prefix}}}
+    {$match: {order_number: {$regex: `${prefix}`}}}
   ]
   if(!prefix) pipeline = [{$addFields: {onlen: {$strLenBytes: "$order_number"}}},
                           {$match: {onlen: {$lte: orderDigits}}}]

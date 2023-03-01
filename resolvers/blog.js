@@ -36,8 +36,8 @@ module.exports = {
     ) => {
       var searchInFields = {
         $or: [
-          { title: { $regex: search, $options: "i" } },
-          { content: { $regex: search, $options: "i" } },
+          { title: { $regex: `${search}`, $options: "i" } },
+          { content: { $regex: `${search}`, $options: "i" } },
         ],
       };
       return await GET_BY_PAGINATIONS(
@@ -87,7 +87,7 @@ module.exports = {
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      let searchInFields = { name: { $regex: search, $options: "i" } };
+      let searchInFields = { name: { $regex: `${search}`, $options: "i" } };
 
       return await GET_BY_PAGINATIONS(
         limit,
