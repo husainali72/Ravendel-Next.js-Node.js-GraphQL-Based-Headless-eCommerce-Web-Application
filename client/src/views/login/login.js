@@ -7,7 +7,6 @@ import { LoginAction } from "../../store/action";
 import { Alert, Loading } from "../components";
 import { useNavigate } from "react-router-dom";
 import theme from "../../theme";
-
 const LoginComponent = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -17,17 +16,13 @@ const LoginComponent = () => {
     email: "admin@ravendel.com",
     password: "12345678",
   });
-
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
-
   const login = (e) => {
     e.preventDefault();
     dispatch(LoginAction(values.email, values.password, navigate));
   };
-  
-
   return (
     <div className={classes.root}>
       <Alert />
@@ -91,9 +86,10 @@ const useStyles = makeStyles((theme) => ({
 
   form: {
     backgroundColor: "#fff",
-    paddingLeft: "30px",
-    paddingTop: "30px",
-    paddingBottom: "30px",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: "column",
     width: "520px",
     height: "350px",
     backgroundColor: "#fff",

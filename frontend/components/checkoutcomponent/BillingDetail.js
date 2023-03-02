@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import Collapse from 'react-bootstrap/Collapse';
 import Form from 'react-bootstrap/Form';
+import PhoneInput from "react-phone-input-2";
 import { handleEnter } from "../../utills/helpers";
 
 const BillingDetails = (props) => {
-    const { getBillingInfo, registerRef, errorRef, billingInfo, shippingAddressToggle, handleShippingChange, shippingAdd, shippingInfo, setShippingInfo, setBillingInfo, handleBillingInfo } = props;
-
+    const { getBillingInfo, registerRef, errorRef, billingInfo, shippingAddressToggle, handleShippingChange, shippingAdd, shippingInfo, handlePhoneInput, setShippingInfo, setBillingInfo, handleBillingInfo } = props;
     useEffect(() => {
         var allData = {
             billing: billingInfo,
@@ -20,249 +20,260 @@ const BillingDetails = (props) => {
             <div className="billing-container">
                 <div>
 
-                  <div className="twoRows" >
-                    <div className="col-lg-6 col-md-12 col-md-5half">
-                    <input
-                        className="input-filled"
-                        name="firstname"
-                        label="firstname"
-                        placeholder="First name *"
-                        {...registerRef('firstname', {
-                            required: {
-                                value: true,
-                                message: "First Name is Required",
-                            },
-                            minLength: {
-                                value: 4,
-                                message: "First Name Min length is 4",
-                            },
-                        })}
-                        value={billingInfo.firstname}
-                        onChange={handleBillingInfo}
-                        onKeyDown={(e) => handleEnter(e)}
-                    />
-                    <p>
-                        <small style={{ color: 'red' }}>
-                            {errorRef.firstname?.type === "required" ? errorRef.firstname?.message : undefined}
-                            {errorRef.firstname?.type === "minLength" ? errorRef.firstname?.message : undefined}
-                        </small>
-                    </p>
-                </div>
-                <div className="col-lg-6 col-md-12  ">
-                    <input
-                        className="input-filled"
-                        name="lastname"
-                        label="lastname"
-                        placeholder="Last name *"
-                        {...registerRef("lastname", {
-                            required: {
-                                value: true,
-                                message: "Last Name is Required",
-                            },
-                        })}
-                        value={billingInfo.lastname}
-                        onChange={handleBillingInfo}
-                        error={errorRef.billingInfo ? true : false}
-                        onKeyDown={(e) => handleEnter(e)}
-                    />
-                    <p>
-                        <small style={{ color: 'red' }}>
-                            {errorRef.lastname?.type === "required" ? errorRef.lastname?.message : undefined}
-                        </small>
-                    </p>
-                    </div>
-                </div>
-
-                <div className="twoRows">
-                    <div className="col-lg-6 col-md-12">
-                    <input
-                        className="input-filled"
-                        name="company"
-                        label="company"
-                        placeholder="Company name *"
-                        {...registerRef("company", {
-                            required: {
-                                value: true,
-                                message: "Company Name is Required",
-                            },
-                        })}
-                        value={billingInfo.company}
-                        onChange={handleBillingInfo}
-                        onKeyDown={(e) => handleEnter(e)}
-                    />
-                    <p>
-                        <small style={{ color: 'red' }}>
-                            {errorRef.company?.type === "required" ? errorRef.company?.message : undefined}
-                        </small>
-                    </p>
-                </div>
-                <div className="col-lg-6 col-md-12">
-                    <input
-                        className="input-filled"
-                        name="address"
-                        label="address"
-                        placeholder="address *"
-                        {...registerRef("address", {
-                            required: {
-                                value: true,
-                                message: "Address is Required",
-                            }
-                        })}
-                        value={billingInfo.address}
-                        onChange={handleBillingInfo}
-                        onKeyDown={(e) => handleEnter(e)}
-                    />
-                    <p>
-                        <small style={{ color: 'red' }}>
-                            {errorRef.address?.type === "required" ? errorRef.address?.message : undefined}
-                        </small>
-                    </p>
-                    </div>
-            </div>
-                <div className="twoRows">
-                    <div className="col-lg-4 col-md-12">
-                    <input className="input-filled"
-                        type="text"
-                        required=""
-                        name="city"
-                        placeholder="city / Town *"
-                        {...registerRef("city", {
-                            required: {
-                                value: true,
-                                message: "City is Required",
-                            },
-                        })}
-                        value={billingInfo.city}
-                        onChange={handleBillingInfo}
-                        onKeyDown={(e) => handleEnter(e)}
-
-                    />
-                    <p>
-                        <small style={{ color: 'red' }}>
-                            {errorRef.city?.type === "required" ? errorRef.city?.message : undefined}
-                        </small>
-                    </p>
-                    </div>
-                    <div className="col-lg-4 col-md-12">
-                    <input className="input-filled"
-                        type="text"
-                        required=""
-                        name="state"
-                        placeholder="state *"
-                        {...registerRef("state", {
-                            required: {
-                                value: true,
-                                message: "State is Required",
-                            }
-                        })}
-                        value={billingInfo.state}
-                        onChange={handleBillingInfo}
-                        onKeyDown={(e) => handleEnter(e)}
-                    />
-                    <p>
-                        <small style={{ color: 'red' }}>
-                            {errorRef.state?.type === "required" ? errorRef.state?.message : undefined}
-                        </small>
-                    </p>
+                    <div className="twoRows" >
+                        <div className="col-lg-6 col-md-12 col-md-5half">
+                            <input
+                                className="input-filled"
+                                name="firstname"
+                                label="firstname"
+                                placeholder="First name *"
+                                {...registerRef('firstname', {
+                                    required: {
+                                        value: true,
+                                        message: "First Name is Required",
+                                    },
+                                    minLength: {
+                                        value: 4,
+                                        message: "First Name Min length is 4",
+                                    },
+                                })}
+                                value={billingInfo.firstname}
+                                onChange={handleBillingInfo}
+                                onKeyDown={(e) => handleEnter(e)}
+                            />
+                            <p>
+                                <small style={{ color: 'red' }}>
+                                    {errorRef.firstname?.type === "required" ? errorRef.firstname?.message : undefined}
+                                    {errorRef.firstname?.type === "minLength" ? errorRef.firstname?.message : undefined}
+                                </small>
+                            </p>
+                        </div>
+                        <div className="col-lg-6 col-md-12  ">
+                            <input
+                                className="input-filled"
+                                name="lastname"
+                                label="lastname"
+                                placeholder="Last name *"
+                                {...registerRef("lastname", {
+                                    required: {
+                                        value: true,
+                                        message: "Last Name is Required",
+                                    },
+                                })}
+                                value={billingInfo.lastname}
+                                onChange={handleBillingInfo}
+                                error={errorRef.billingInfo ? true : false}
+                                onKeyDown={(e) => handleEnter(e)}
+                            />
+                            <p>
+                                <small style={{ color: 'red' }}>
+                                    {errorRef.lastname?.type === "required" ? errorRef.lastname?.message : undefined}
+                                </small>
+                            </p>
+                        </div>
                     </div>
 
-                    <div className="col-lg-4 col-md-12">
-                    <input className="input-filled"
-                        type="text"
-                        required=""
-                        name="country"
-                        placeholder="country *"
-                        {...registerRef("country", {
-                            required: {
-                                value: true,
-                                message: "country is Required",
-                            }
-                        })}
-                        value={billingInfo.country}
-                        onChange={handleBillingInfo}
-                        onKeyDown={(e) => handleEnter(e)}
-                    />
-                    <p>
-                        <small style={{ color: 'red' }}>
-                            {errorRef.country?.type === "required" ? errorRef.country?.message : undefined}
-                        </small>
-                    </p>
+                    <div className="twoRows">
+                        <div className="col-lg-6 col-md-12">
+                            <input
+                                className="input-filled"
+                                name="company"
+                                label="company"
+                                placeholder="Company name *"
+                                {...registerRef("company", {
+                                    required: {
+                                        value: true,
+                                        message: "Company Name is Required",
+                                    },
+                                })}
+                                value={billingInfo.company}
+                                onChange={handleBillingInfo}
+                                onKeyDown={(e) => handleEnter(e)}
+                            />
+                            <p>
+                                <small style={{ color: 'red' }}>
+                                    {errorRef.company?.type === "required" ? errorRef.company?.message : undefined}
+                                </small>
+                            </p>
+                        </div>
+                        <div className="col-lg-6 col-md-12">
+                            <input
+                                className="input-filled"
+                                name="address"
+                                label="address"
+                                placeholder="address *"
+                                {...registerRef("address", {
+                                    required: {
+                                        value: true,
+                                        message: "Address is Required",
+                                    }
+                                })}
+                                value={billingInfo.address}
+                                onChange={handleBillingInfo}
+                                onKeyDown={(e) => handleEnter(e)}
+                            />
+                            <p>
+                                <small style={{ color: 'red' }}>
+                                    {errorRef.address?.type === "required" ? errorRef.address?.message : undefined}
+                                </small>
+                            </p>
+                        </div>
                     </div>
-                </div>
+                    <div className="twoRows">
+                        <div className="col-lg-4 col-md-12">
+                            <input className="input-filled"
+                                type="text"
+                                required=""
+                                name="city"
+                                placeholder="city / Town *"
+                                {...registerRef("city", {
+                                    required: {
+                                        value: true,
+                                        message: "City is Required",
+                                    },
+                                })}
+                                value={billingInfo.city}
+                                onChange={handleBillingInfo}
+                                onKeyDown={(e) => handleEnter(e)}
 
-            <div className="twoRows" >
-                <div className="col-lg-6 col-md-12">
-                    <input className="input-filled"
-                        type="text"
-                        required=""
-                        label="zip"
-                        name="zip"
-                        placeholder="zip *"
-                        {...registerRef("zip", {
-                            required: {
-                                value: true,
-                                message: "zip is Required",
-                            },
-                            minLength: {
-                                value: 6,
-                                message: "zip Min length is 6",
-                            },
-                            maxLength: {
-                                value: 6,
-                                message: "zip Max length is 6",
-                            },
-                        })}
-                        value={billingInfo.zip}
-                        onChange={handleBillingInfo}
-                        onKeyDown={(e) => handleEnter(e)}
-                    />
-                    <p>
-                        <small style={{ color: 'red' }}>
-                            {errorRef.zip?.type === "required" ? errorRef.zip?.message : undefined}
-                            {errorRef.zip?.type === "minLength" ? errorRef.zip?.message : undefined}
-                            {errorRef.zip?.type === "maxLength" ? errorRef.zip?.message : undefined}
-                        </small>
-                    </p>
-                </div>
-                  <div className="col-lg-6 col-md-12">
-                    <input className="input-filled"
-                        type="text"
-                        required=""
-                        name="phone"
-                        label="phone"
-                        placeholder="phone *"
-                        {...registerRef("phone", {
-                            required: {
-                                value: true,
-                                message: "Phone is Required",
-                            },
-                            minLength: {
-                                value: 10,
-                                message: "Phone Min length is 10",
-                            },
-                            maxLength: {
-                                value: 10,
-                                message: "Phone Max length is 10",
-                            },
-                            pattern: {
-                                value: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
-                                message: "Invalid Phone Number",
-                            },
-                        })}
-                        value={billingInfo.phone}
-                        onChange={handleBillingInfo}
-                        onKeyDown={(e) => handleEnter(e)}
-                    />
-                    <p>
-                        <small style={{ color: 'red' }}>
-                            {errorRef.phone?.type === "required" ? errorRef.phone?.message : undefined}
-                            {errorRef.phone?.type === "minLength" ? errorRef.phone?.message : undefined}
-                            {errorRef.phone?.type === "maxLength" ? errorRef.phone?.message : undefined}
-                            {errorRef.phone?.type === "pattern" ? errorRef.phone?.message : undefined}
-                        </small>
-                    </p>
-                </div>
-            </div>
+                            />
+                            <p>
+                                <small style={{ color: 'red' }}>
+                                    {errorRef.city?.type === "required" ? errorRef.city?.message : undefined}
+                                </small>
+                            </p>
+                        </div>
+                        <div className="col-lg-4 col-md-12">
+                            <input className="input-filled"
+                                type="text"
+                                required=""
+                                name="state"
+                                placeholder="state *"
+                                {...registerRef("state", {
+                                    required: {
+                                        value: true,
+                                        message: "State is Required",
+                                    }
+                                })}
+                                value={billingInfo.state}
+                                onChange={handleBillingInfo}
+                                onKeyDown={(e) => handleEnter(e)}
+                            />
+                            <p>
+                                <small style={{ color: 'red' }}>
+                                    {errorRef.state?.type === "required" ? errorRef.state?.message : undefined}
+                                </small>
+                            </p>
+                        </div>
+
+                        <div className="col-lg-4 col-md-12">
+                            <input className="input-filled"
+                                type="text"
+                                required=""
+                                name="country"
+                                placeholder="country *"
+                                {...registerRef("country", {
+                                    required: {
+                                        value: true,
+                                        message: "country is Required",
+                                    }
+                                })}
+                                value={billingInfo.country}
+                                onChange={handleBillingInfo}
+                                onKeyDown={(e) => handleEnter(e)}
+                            />
+                            <p>
+                                <small style={{ color: 'red' }}>
+                                    {errorRef.country?.type === "required" ? errorRef.country?.message : undefined}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="twoRows" >
+                        <div className="col-lg-6 col-md-12">
+                            <input className="input-filled"
+                                type="text"
+                                required=""
+                                label="zip"
+                                name="zip"
+                                placeholder="zip *"
+                                {...registerRef("zip", {
+                                    required: {
+                                        value: true,
+                                        message: "zip is Required",
+                                    },
+                                    minLength: {
+                                        value: 6,
+                                        message: "zip Min length is 6",
+                                    },
+                                    maxLength: {
+                                        value: 6,
+                                        message: "zip Max length is 6",
+                                    },
+                                })}
+                                value={billingInfo.zip}
+                                onChange={handleBillingInfo}
+                                onKeyDown={(e) => handleEnter(e)}
+                            />
+                            <p>
+                                <small style={{ color: 'red' }}>
+                                    {errorRef.zip?.type === "required" ? errorRef.zip?.message : undefined}
+                                    {errorRef.zip?.type === "minLength" ? errorRef.zip?.message : undefined}
+                                    {errorRef.zip?.type === "maxLength" ? errorRef.zip?.message : undefined}
+                                </small>
+                            </p>
+                        </div>
+                        <div className="col-lg-6 col-md-12">
+                            <PhoneInput
+                                enableSearch='true'
+                                country={'in'}
+                                inputClass={'custom-input'}
+                                buttonClass={'select-flag'}
+                                placeholder="Enter phone number"
+                                value={billingInfo.phone}
+                                onChange={(value) => handlePhoneInput('phone', value)}
+                                style={{ marginTop: 12, }}
+
+                            />
+                            {/* <input className="input-filled"
+                                type="text"
+                                required=""
+                                name="phone"
+                                label="phone"
+                                placeholder="phone *"
+                                {...registerRef("phone", {
+                                    required: {
+                                        value: true,
+                                        message: "Phone is Required",
+                                    },
+                                    minLength: {
+                                        value: 10,
+                                        message: "Phone Min length is 10",
+                                    },
+                                    maxLength: {
+                                        value: 10,
+                                        message: "Phone Max length is 10",
+                                    },
+                                    pattern: {
+                                        value: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
+                                        message: "Invalid Phone Number",
+                                    },
+                                })}
+                                value={billingInfo.phone}
+                                onChange={handleBillingInfo}
+                                onKeyDown={(e) => handleEnter(e)}
+                            /> */}
+                            <p>
+                                <small style={{ color: 'red' }}>
+                                    {errorRef.phone?.type === "required" ? errorRef.phone?.message : undefined}
+                                    {errorRef.phone?.type === "minLength" ? errorRef.phone?.message : undefined}
+                                    {errorRef.phone?.type === "maxLength" ? errorRef.phone?.message : undefined}
+                                    {errorRef.phone?.type === "pattern" ? errorRef.phone?.message : undefined}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
                     <input className="input-filled"
                         type="text"
                         required=""
@@ -282,7 +293,6 @@ const BillingDetails = (props) => {
                         value={billingInfo.email}
                         onChange={handleBillingInfo}
                         onKeyDown={(e) => handleEnter(e)}
-
                     />
                     <p>
                         <small style={{ color: 'red' }}>

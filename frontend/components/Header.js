@@ -9,31 +9,32 @@ import { useSession, signOut } from "next-auth/react";
 import { logoutDispatch } from "../redux/actions/userlogoutAction"
 import { GET_USER_CART } from '../queries/cartquery';
 import { query } from '../utills/helpers';
-export default function Header({}) {
-const data = useSession();
-const cartItem = useSelector(state => state.cart)
-const dispatch = useDispatch();
-const [open, setOpen] = useState(false);
-const [cart,setCart] = useState(null);
-const LogOutUser = async () => {
-    const data = await signOut({ redirect: false, callbackUrl: "/" })
-    localStorage.setItem("userCart", JSON.stringify([]));
-    localStorage.setItem("cart", JSON.stringify([]));
-    dispatch(logoutDispatch())}
-    const getCartLength = async ()=>{
-        let userCart 
-        if (data.status === "authenticated") {
-        let id = data.data.user.accessToken.customer._id
-        let token = data.data.user.accessToken.token
-        query(GET_USER_CART, id, token).then(res => {
-            userCart = res.data.cartbyUser;
-            setCart(userCart);
-        })
+export default function Header({ }) {
+    const data = useSession();
+    const cartItem = useSelector(state => state.cart)
+    const dispatch = useDispatch();
+    const [open, setOpen] = useState(false);
+    const [cart, setCart] = useState(null);
+    const LogOutUser = async () => {
+        const data = await signOut({ redirect: false, callbackUrl: "/" })
+        localStorage.setItem("userCart", JSON.stringify([]));
+        localStorage.setItem("cart", JSON.stringify([]));
+        dispatch(logoutDispatch())
     }
+    const getCartLength = async () => {
+        let userCart
+        if (data.status === "authenticated") {
+            let id = data.data.user.accessToken.customer._id
+            let token = data.data.user.accessToken.token
+            query(GET_USER_CART, id, token).then(res => {
+                userCart = res.data.cartbyUser;
+                setCart(userCart);
+            })
+        }
     }
     useEffect(() => {
         getCartLength()
-      }, [data])
+    }, [cartItem, data])
     return (
         <header className="header-area header-style-5 mt-0">
             <div className="header-top">
@@ -117,7 +118,6 @@ const LogOutUser = async () => {
                             <Link href="/">
                                 <a className="app-logo" width="120" height="33.13">RAVENDEL</a>
                             </Link>
-
                         </div>
                         <div className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding d-lg-block hover-boder" id='navigation' style={{ justifyContent: "center" }}>
                             <nav>
@@ -158,17 +158,14 @@ const LogOutUser = async () => {
                                             <i className="fas fa-shopping-bag font-awesome-icon" style={{ color: "#088178" }} aria-hidden="true"></i>
                                         </a>
                                     </Link>{
-                                        
+
                                     }
-                                     
+
                                     {data.status === "authenticated" ? (
                                         <span className="pro-count blue">{cart?.products?.length}</span>
-                                    ) :  (
+                                    ) : (
                                         <span className="pro-count blue">{cartItem?.length}</span>
                                     )}
-                                    {/* {cartItem && cartItem?.length > 0 ? (
-                                        <span className="pro-count blue">{cartItem?.length}</span>
-                                    ) : null} */}
                                 </div>
                                 <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
                                     <ShopCartProducts />

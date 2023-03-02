@@ -3,6 +3,7 @@ import client from '../apollo-client';
 import { isEmpty } from "./service";
 import axios from 'axios'
 import { getSession } from 'next-auth/react';
+import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
 
 
 /* -------------------------------image funtion ------------------------------- */
@@ -24,21 +25,19 @@ import { getSession } from 'next-auth/react';
 // }
 
 export const getImage = (img, type) => {
-    var imagaPath = "https://dummyimage.com/300"
-    if (img && img[type]) {
-        imagaPath = bucketBaseURL + img[type]
+    var imagaPath = NoImagePlaceHolder.src
+    if (img) {
+        imagaPath = bucketBaseURL + img
     }
     return imagaPath;
-  
+
 }
 
 /* -------------------------------Graphql query function ------------------------------- */
 
 export const query = async (query, id) => {
     const session = await getSession();
-
     const token = session?.user.accessToken.token
-
     try {
         const response = await client.query({
             query: query,
@@ -51,7 +50,6 @@ export const query = async (query, id) => {
         return Promise.resolve(response);
     } catch (error) {
         const errors = JSON.parse(JSON.stringify(error));
-        console.log("err",error);
         if (errors &&
             errors.graphQLErrors && errors.graphQLErrors?.length &&
             !isEmpty(errors.graphQLErrors[0].message)
@@ -72,12 +70,9 @@ export const query = async (query, id) => {
 
 export const mutation = async (query, variables) => {
     const session = await getSession();
-
     const token = session?.user?.accessToken?.token;
     try {
-        /////////////////////////////////////////////////////
-        // console.log(variables.queryName)
-        if(!variables.queryName){
+        if (!variables.queryName) {
             var response = await client.mutate({
                 mutation: query,
                 variables,
@@ -85,7 +80,7 @@ export const mutation = async (query, variables) => {
                     headers: { Authorization: token },
                 },
             });
-        }else{
+        } else {
             var response = await client.mutate({
                 mutation: query,
                 variables,
@@ -95,7 +90,6 @@ export const mutation = async (query, variables) => {
         return Promise.resolve(response);
     } catch (error) {
         const errors = JSON.parse(JSON.stringify(error));
-        console.log(errors);
         if (errors && errors.graphQLErrors &&
             errors.graphQLErrors?.length &&
             !isEmpty(errors.graphQLErrors[0].message)
@@ -116,7 +110,6 @@ export const mutation = async (query, variables) => {
 export const handleEnter = (event) => {
     if (event.key.toLowerCase() === "enter") {
         const form = event.target.form;
-        // console.log([...form])
         const index = [...form].indexOf(event.target);
         form.elements[index + 1].focus();
         event.preventDefault();
@@ -125,25 +118,28 @@ export const handleEnter = (event) => {
 
 /* ------------------------------- Stripe payment function ------------------------------- */
 
-export const stripeCheckout=(billDetails, cartItems, baseUrl)=>{
-    console.log("paybtn for detailsOfBill", billDetails, "cartitems====", cartItems)
-    // const customerItems=billDetails.products
+export const stripeCheckout = (billDetails, cartItems, baseUrl) => {
     axios.post(`${baseUrl}/stripe/create-checkout-session`, {
         customerCart: cartItems,
         customer_id: billDetails.customer_id
-    }).then(res=>{
-        if(res.data.url){
-            window.location.href=res.data.url
+    }).then(res => {
+        if (res.data.url) {
+            window.location.href = res.data.url
         }
-    }).catch(err=>console.log(err.message))
+    }).catch(err => console.log(err.message))
 }
 
 /* ------------------------------- set currency  ------------------------------- */
 
-export const currencySetter=(settings,setCurrency) =>{
-    const currency = settings?.currencyOption?.currency || settings 
-    if (currency === "dollar") {  setCurrency("$") }
-        if (currency === "eur") { setCurrency(<i className="fas fa-euro-sign"></i>)  }
-        if (currency === "gbp") { setCurrency(<i className="fas fa-pound-sign"></i>) }
-        if (currency === "cad") { setCurrency("CA$") }
+export const currencySetter = (settings, setCurrency) => {
+    const currency = settings?.currencyOption?.currency || settings
+    if (currency === "dollar") { setCurrency("$") }
+    if (currency === "eur") { setCurrency(<i className="fas fa-euro-sign"></i>) }
+    if (currency === "gbp") { setCurrency(<i className="fas fa-pound-sign"></i>) }
+    if (currency === "cad") { setCurrency("CA$") }
+}
+export const getPrice = (price, decimal) => {
+    let fixed = 3
+    return price.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+
 }

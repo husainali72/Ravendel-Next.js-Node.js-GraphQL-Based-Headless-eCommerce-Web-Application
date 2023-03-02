@@ -36,6 +36,12 @@ const RoutesPath = [
     name: "Home",
   },
   {
+    path: '/',
+    exact: true,
+    component: Dashboard,
+    name: "Home",
+  },
+  {
     path: `${client_app_route_url}`,
     exact: true,
     component: Dashboard,
@@ -295,7 +301,7 @@ const RoutesPath = [
 ];
 
 const AllRoutes = () => {
-  
+
   return (
     <>
       <Routes>

@@ -299,7 +299,22 @@ const viewStyles = makeStyles((theme) => ({
     marginTop: 10,
     marginBottom: 10,
     minHeight: 25,
+    textTransform: 'capitalize',
+
   },
+  mtb1: {
+    marginTop: 10,
+    marginBottom: 10,
+    minHeight: 25,
+    textTransform: 'capitalize',
+    textAlign: 'left'
+  },
+  removefilter: {
+    marginLeft: '10px!important',
+    marginRight: '10px!important',
+
+  }
+  ,
   radioRoot: {
     "&:hover": {
       backgroundColor: "transparent",
@@ -503,9 +518,6 @@ const viewStyles = makeStyles((theme) => ({
   insidecardheader: {
     display: 'flex',
     flexDirection: 'row',
-
-
-
   },
   datepicker: {
     width: '107px'
@@ -515,7 +527,8 @@ const viewStyles = makeStyles((theme) => ({
     marginLeft: '10px'
   },
   Datepickerclass: {
-    marginLeft: '20px'
+    marginLeft: '20px',
+    width: '150px'
   },
   search: {
     display: 'flex',
@@ -523,6 +536,13 @@ const viewStyles = makeStyles((theme) => ({
   },
   muitabs: {
     marginRight: '10px'
+  },
+
+  noDataImage: {
+    display: 'flex',
+    justifyContent: 'center'
+
+
   }
 }));
 

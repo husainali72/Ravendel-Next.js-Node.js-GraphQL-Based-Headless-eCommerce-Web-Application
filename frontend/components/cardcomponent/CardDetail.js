@@ -2,10 +2,10 @@ import Link from "next/link";
 import { useState, useEffect } from "react"
 import { Spinner } from "react-bootstrap";
 import Table from 'react-bootstrap/Table';
-import { getImage } from '../../utills/helpers';
+import { getImage, getPrice } from '../../utills/helpers';
 const CartTable = (props) => {
-    // const dispatch = useDispatch();
     const { cartItems,
+        decimal,
         isQuantityBtnLoading,
         CalculateProductTotal,
         DecreaseQuantity,
@@ -13,11 +13,10 @@ const CartTable = (props) => {
         AllCartItemsClear,
         quantity,
         removeToCart,
-        updateCartProduct, currency 
+        updateCartProduct, currency
     } = props;
-const [loadingIndex,setLoadingIndex] = useState(-1); 
+    const [loadingIndex, setLoadingIndex] = useState(-1);
     return (
-
         <div>
             <div className="table-responsive">
                 <Table bordered>
@@ -31,7 +30,6 @@ const [loadingIndex,setLoadingIndex] = useState(-1);
                             <th>Remove</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         {cartItems && cartItems?.length > 0 && cartItems.map((item, i) => (
                             <tr key={i}>
@@ -47,32 +45,31 @@ const [loadingIndex,setLoadingIndex] = useState(-1);
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <span>{currency} {(item.pricing?.sellprice ? item.pricing?.sellprice : item.pricing?.price)}</span>
+                                        <span>{currency} {(item.pricing?.sellprice ? getPrice(item.pricing?.sellprice, decimal) : getPrice(item.pricing?.price, decimal))}</span>
                                     </div>
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <span className={`btn btn-primary btn-less ${isQuantityBtnLoading && "disableButton"}`}  style={{ margin: '2px' }} onClick={() => {
+                                        <span className={`btn btn-primary btn-less ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
                                             DecreaseQuantity(item)
                                             setLoadingIndex(i)
-                                            }}>
+                                        }}>
                                             <i className="fas fa-chevron-down" ></i>
                                         </span>
                                         <span className="btn btn-info max-button-width-load">
-                                            {i === loadingIndex && isQuantityBtnLoading ? <Spinner style={{paddingLeft:'4px'}} animation="border" size="sm" /> : `${item.quantity} ${" "}` || quantity}
+                                            {i === loadingIndex && isQuantityBtnLoading ? <Spinner style={{ paddingLeft: '4px' }} animation="border" size="sm" /> : `${item.quantity} ${" "}` || quantity}
                                         </span>
                                         <span className={`btn btn-primary btn-more ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
                                             IncreaseQuantity(item)
                                             setLoadingIndex(i)
-                                            }}>
+                                        }}>
                                             <i className="fas fa-chevron-up"></i>
                                         </span>
                                     </div>
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <span>{currency} {((item.pricing?.sellprice ? item.pricing?.sellprice  * item.quantity : item.pricing?.price * item.quantity) || 0).toFixed(2)}</span>
-                                        {/* <span>{currency} {((item.pricing?.sellprice ? item.pricing?.price * item.quantity : item.pricing?.sellprice ) || 0).toFixed(2)}</span> */}
+                                        <span>{currency} {((item.pricing?.sellprice ? getPrice(item.pricing?.sellprice * item.quantity, decimal) : getPrice(item.pricing?.price * item.quantity, decimal)) || 0)}</span>
                                     </div>
                                 </td>
                                 <td>
@@ -88,7 +85,6 @@ const [loadingIndex,setLoadingIndex] = useState(-1);
                             <td></td>
                             <td></td>
                             <td></td>
-                            {/* <td className="cart-total">Total {currency}{CalculateProductTotal(cartItems).toFixed(2)}</td> */}
                             <td className="clear-cart">
                                 <i onClick={() => AllCartItemsClear()} className="fas fa-times clear-cart">Clear Cart</i>
                             </td>
@@ -97,7 +93,6 @@ const [loadingIndex,setLoadingIndex] = useState(-1);
                 </Table>
             </div>
             <div className="cart-action text-end">
-                {/* <a className="card-btons disable-btn  mr-10 mb-sm-15" onClick={() => updateCartProduct()}><i className="fas fa-random"></i> Update Cart</a> */}
                 <Link href="/shop"><a className="card-btons "><i className="fas fa-shopping-bag"></i> Continue Shopping</a></Link>
             </div>
 
