@@ -54,11 +54,12 @@ module.exports = {
       // console.log("args cart=======", args.cart)
     
       try {
-        const coupon = await Coupon.findOne({ code: args.coupon_code });
+        const coupon = await Coupon.findOne({ code: {$regex: `${args.coupon_code}`, $options: "i"} });
         // console.log('coupon',coupon);
         let calculated = {
           total_coupon: {},
           message: '',
+          success: false
         };
         let date = getdate('2');
         if(!coupon){
@@ -76,6 +77,7 @@ module.exports = {
               discountAmount = await calculateCart(coupon, args.cart, Product, false)
               calculated.total_coupon = Math.round(discountAmount).toFixed(2);
               calculated.message = 'Coupon code applied successfully';
+              calculated.success = true
             }
             else{
               calculated.total_coupon = 0.0;

@@ -24,7 +24,7 @@ module.exports = {
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      let searchInFields = { review: { $regex: search, $options: "i" } };
+      let searchInFields = { review: { $regex: `${search}`, $options: "i" } };
       return await GET_BY_PAGINATIONS(
         limit,
         pageNumber,

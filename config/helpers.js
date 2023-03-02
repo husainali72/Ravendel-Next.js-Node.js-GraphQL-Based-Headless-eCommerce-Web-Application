@@ -83,7 +83,7 @@ const validateUrl = (url) => {
 
 module.exports.validateUrl = validateUrl;
 
-const updateUrl = async (url, table) => {
+const updateUrl = async (url, table, updateId) => {
   var url = stringTourl(url);
   switch (table) {
     case "Product":
@@ -98,18 +98,17 @@ const updateUrl = async (url, table) => {
     case "Brand":
       var Table = require("../models/Brand");
       break;
+    case "Page":
+      var Table = require("../models/Page");
+      break;
   }
 
-  var duplicate = true;
-  while (duplicate) {
-    let data = await Table.findOne({ url: url });
-    if (data) {
-      url = validateUrl(url);
-    } else {
-      duplicate = false;
-      return Promise.resolve(url);
-    }
-  }
+  let duplicate = await duplicateData({url: url}, Table, updateId ? updateId : null)
+  if(duplicate) {
+    let i = parseInt(url[url.length - 1]) + 1
+    if(isNaN(i)) return url + "-2"
+    return url.slice(0, url.length - 1) + i;
+  } else return Promise.resolve(url)
 };
 
 module.exports.updateUrl = updateUrl;
@@ -557,7 +556,7 @@ const subTotalDetailsEntry = async(couponCode, couponModel, shippingModel, taxMo
     if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return subTotalDetails.tax_name = taxClass.name
   })
   // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: couponCode})
+  const coupon = await couponModel.findOne({code: {$regex: `${couponCode}`, $options: "i"} })
   if(!coupon) {
     subTotalDetails.coupon_code = "None"
     subTotalDetails.coupon_type = ""
@@ -588,7 +587,7 @@ const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingMo
     else return taxValue = 0
   })
   // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: couponCode})
+  const coupon = await couponModel.findOne({code: {$regex: `${couponCode}`, $options: "i"} })
   if(!coupon) {
     couponType = ""
     couponValue = 0
@@ -702,7 +701,7 @@ const generateOrderNumber = async (Order, Setting) => {
   let code = ""
   // prefix = ""
   let pipeline = [
-    {$match: {order_number: {$regex: prefix}}}
+    {$match: {order_number: {$regex: `${prefix}`}}}
   ]
   if(!prefix) pipeline = [{$addFields: {onlen: {$strLenBytes: "$order_number"}}},
                           {$match: {onlen: {$lte: orderDigits}}}]
@@ -755,7 +754,7 @@ const calculateCart = async(coupon, cart, productModel, amountDiscount) => {
               includeProduct = coupon.include_categories.includes(catID) 
             }
             else if(coupon.exclude_categories.length){
-              includeProduct = coupon.exclude_categories.includes(catID) 
+              includeProduct = !coupon.exclude_categories.includes(catID) 
             }
           })
         }
@@ -765,7 +764,7 @@ const calculateCart = async(coupon, cart, productModel, amountDiscount) => {
           includeProduct = coupon.include_products.includes(product._id.toString()) 
         }
         else if(coupon.exclude_products.length){
-          includeProduct = coupon.exclude_products.includes(product._id.toString()) 
+          includeProduct = !coupon.exclude_products.includes(product._id.toString()) 
         }
       }
       if(includeProduct){

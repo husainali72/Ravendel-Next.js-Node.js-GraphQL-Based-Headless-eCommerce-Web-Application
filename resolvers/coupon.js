@@ -19,7 +19,7 @@ module.exports = {
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      var searchInFields = { code: { $regex: search, $options: "i" } };
+      var searchInFields = { code: { $regex: `${search}`, $options: "i" } };
 
       return await GET_BY_PAGINATIONS(
         limit,
@@ -54,7 +54,7 @@ module.exports = {
         exclude_categories: args.exclude_categories,
       };
       let validation = ["code", "expire"];
-      const duplicate = await duplicateData({code: data.code}, Coupon)
+      const duplicate = await duplicateData({code: {$regex: `${data.code}`, $options: "i"}}, Coupon)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Coupon", false);
       return await CREATE_FUNC(
         id,
@@ -84,7 +84,7 @@ module.exports = {
         exclude_categories: args.exclude_categories,
       };
       let validation = ["code", "expire"];
-      const duplicate = await duplicateData({code: data.code}, Coupon, args.id)
+      const duplicate = await duplicateData({code: {$regex: `${data.code}`, $options: "i"} }, Coupon, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Coupon", false);
       return await UPDATE_FUNC(
         id,

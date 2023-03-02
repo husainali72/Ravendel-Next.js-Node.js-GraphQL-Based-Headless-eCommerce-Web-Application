@@ -463,8 +463,8 @@ const UPDATE_APPEARANCE_MOBILE_NEW = gql`
 `;
 
 const UPDATE_APPEARANCE_THEME = gql`
-  mutation($primary_color: String, $new_logo: Upload, $playstore: String, $appstore: String, $phone_number: String, $email: String) {
-    updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo, playstore: $playstore, appstore: $appstore, phone_number: $phone_number, email: $email) {
+  mutation($primary_color: String, $new_logo: Upload, $playstore: String, $appstore: String, $phone_number: String, $email: String, $logo: String) {
+    updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo, playstore: $playstore, appstore: $appstore, phone_number: $phone_number, email: $email, logo: $logo) {
       ...SettingTile
     }
   }

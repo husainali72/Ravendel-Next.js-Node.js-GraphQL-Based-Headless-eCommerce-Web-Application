@@ -145,7 +145,7 @@ module.exports = {
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      let searchInFields = { name: { $regex: search, $options: "i" } };
+      let searchInFields = { name: { $regex: `${search}`, $options: "i" } };
 
       return await GET_BY_PAGINATIONS(
         limit,
@@ -176,7 +176,7 @@ module.exports = {
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      let searchInFields = { name: { $regex: search, $options: "i" } };
+      let searchInFields = { name: { $regex: `${search}`, $options: "i" } };
 
       return await GET_BY_PAGINATIONS(
         limit,
@@ -316,7 +316,7 @@ module.exports = {
         let category = args.category
         // if product belongs to subcat then show parentcat products else show subcat products
         let existingCategory = await ProductCat.findById(category)
-        if(existingCategory.parentId) category = existingCategory.parentId
+        if(existingCategory && existingCategory.parentId) category = existingCategory.parentId.toString()
         const pipeline=[
           {$match: {
             $and: [
@@ -541,7 +541,7 @@ module.exports = {
       let path = "/assets/images/product/category/";
       let url = "";
       if (args.url || args.title) {
-        url = await updateUrl(args.url || args.name, "ProductCat");
+        url = await updateUrl(args.url || args.name, "ProductCat", args.id);
       }
       let data = {
         name: args.name,
@@ -847,7 +847,7 @@ module.exports = {
           product.name = args.name;
           product.categoryId = args.categoryId;
           (product.brand = args.brand || null),
-            (product.url = await updateUrl(args.url || args.name, "Product"));
+            (product.url = await updateUrl(args.url || args.name, "Product", args.id));
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;

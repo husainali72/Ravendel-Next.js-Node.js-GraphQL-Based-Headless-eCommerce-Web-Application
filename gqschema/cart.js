@@ -69,6 +69,7 @@ module.exports = gql`
   type calculateCoupon {
     total_coupon: Float
     message: String
+    success: Boolean
   }
 
   extend type Query {
