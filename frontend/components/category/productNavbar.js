@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
 import { useSession } from "next-auth/react";
+import calculateDiscount from '../../utills/calculateDiscount';
 
 export const ProductNav = (props) => {
     const dispatch = useDispatch();
@@ -48,16 +49,11 @@ export const ProductNav = (props) => {
                         </Link>
                     </div>
                     <div className="on-sale-product-card-body">
-                        <div className="save-price">
-                            <span className="percantage-save">
-                                {Math.round(
-                                    (100 / product.pricing.price) *
-                                    (product.pricing.price -
-                                        product.pricing.sellprice)
-                                )}
-                                % off
-                            </span>
-                        </div>
+                        {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price ? <div className="save-price">
+                           <span className="percantage-save">
+                                {calculateDiscount(product.pricing.price,product.pricing.sellprice)}
+                            </span> 
+                        </div>: null}
                         <div className="product-categoryname" >
                             {product?.categoryId.map((item, i) =>
                             (<span key={i}>{(product?.categoryId?.length - 1 === i) ? (<span>{item?.name} </span>) : <span>{item?.name}, </span>}
@@ -81,15 +77,16 @@ export const ProductNav = (props) => {
                                     <strong className="sale-price">{currency} {product.pricing.sellprice.toFixed(2)}
                                     </strong>
                                 ) : (
-                                    ""
+                                    <strong className="sale-price">{currency} {product.pricing.price.toFixed(2)}</strong>
+                                    
                                 )}</span>
-                                <span
-                                    className={
-                                        product.pricing.sellprice ? "has-sale-price" : ""
-                                    }
+                                     { product.pricing.sellprice ? <span
+                                        className={
+                                            product.pricing.sellprice ? "has-sale-price" : ""
+                                        }
                                 >
                                     {currency} {product.pricing.price.toFixed(2)}
-                                </span>
+                                </span> : null}
                             </div>
                             <OverlayTrigger style={{ backgroundColor: "#088178" }}
                                 placement="top"

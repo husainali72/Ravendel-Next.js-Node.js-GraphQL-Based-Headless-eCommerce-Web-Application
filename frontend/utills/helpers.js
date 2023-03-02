@@ -25,8 +25,8 @@ import { getSession } from 'next-auth/react';
 
 export const getImage = (img, type) => {
     var imagaPath = "https://dummyimage.com/300"
-    if (img && img[type]) {
-        imagaPath = bucketBaseURL + img[type]
+    if (img ) {
+        imagaPath = bucketBaseURL + img
     }
     return imagaPath;
   

@@ -9,27 +9,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
 import { useSession } from "next-auth/react";
 import { ADD_TO_CART_QUERY, GET_USER_CART, UPDATE_CART_PRODUCT } from "../../queries/cartquery";
+import calculateDiscount from "../../utills/calculateDiscount";
 import { query } from "../../utills/helpers"; 
-
 var placeholder = "https://dummyimage.com/300";
-
-
 const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp }) => {
-
     const [currency, setCurrency] = useState("$")
-
     const settings =   useSelector(state => state.setting);
     // console.log('currendy in setting',settings?.currencyOption)
-
     useEffect(() => {
         currencySetter(settings,setCurrency);
         if(currencyProp){
             setCurrency(currencyProp)
         }
-
 }, [settings?.currencyOption,currencyProp])
-   
-    // console.log('currence',currency)
 
     const router = useRouter()
     const session = useSession();
@@ -139,16 +131,11 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp })
                                             </Link>
                                         </div>
                                         <div className="on-sale-product-card-body">
-                                            <div className="save-price">
+                                          {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price ? ( <div className="save-price">
                                                 <span className="percantage-save">
-                                                    {Math.round(
-                                                        (100 / product.pricing.price) *
-                                                        (product.pricing.price -
-                                                            product.pricing.sellprice)
-                                                    )}
-                                                    % off
+                                                     {calculateDiscount(product.pricing.price,product.pricing.sellprice)}
                                                 </span>
-                                            </div>
+                                            </div>) : null}
                                             <div className="product-categoryname" >
                                                 {product?.categoryId.map((item, i) =>
                                                 (<span key={i}>
@@ -176,15 +163,15 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp })
                                                             <strong className="sale-price">{currency} {product.pricing.sellprice.toFixed(2)}
                                                             </strong>
                                                         ) : (
-                                                            ""
+                                                            <strong className="sale-price">{currency} {product.pricing.price.toFixed(2)}</strong>
                                                         )}</span>
-                                                    <span
+                                                        {product.pricing.sellprice ? <span
                                                         className={
                                                             product.pricing.sellprice ? "has-sale-price" : ""
                                                         }
                                                     >
                                                         {currency} {product.pricing.price.toFixed(2)}
-                                                    </span>
+                                                    </span> : null}
                                                 </div>
                                                 <OverlayTrigger style={{ backgroundColor: "#088178" }}
                                                     placement="top"

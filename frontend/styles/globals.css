@@ -715,6 +715,7 @@ color: #696969;
   width: 100%;
   object-fit: cover;
   height: 100%;
+  opacity: 0.8;
 }
 .brand-card-image img{
   -moz-transition: all 0.5s ease-in-out;
@@ -727,13 +728,8 @@ color: #696969;
 }
 
 .category-card-image:hover img{
-  -moz-transform: scale(1.04);
-  -webkit-transform: scale(1.04);
   transform: scale(1.04);
-  border: solid #088178 1.5px;
-  box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.39);
--webkit-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.39);
--moz-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.39);
+  opacity: 1;
 }
 
 .category .card:hover img {
@@ -3237,29 +3233,12 @@ header {
 .disableButton{
   pointer-events: none;
 }
-.max-button-width-load{
-  /* width: 62.34px; */
-  /* margin: 10px; */
-}
 
-@media screen and (max-width: 276px){
-  /* .brand-container {
-    grid-template-columns: repeat(1, 1fr);
-  } */
-}
-
-@media screen and (min-width: 150px){
-
-  .col-xs-12 {
-      flex: 0 0 auto;
-      width: 100%;
-  }
-}
-.firstCheckPage{
+.first-checkout-page{
   display: flex;
 }
 @media only screen and (max-width: 770px) {
-  .firstCheckPage{
+  .first-checkout-page{
     flex-direction:column;
   }
  

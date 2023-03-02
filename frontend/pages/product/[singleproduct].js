@@ -18,7 +18,8 @@ import Reviews from "../../components/Reviews/Reviews";
 import { currencySetter } from "../../utills/helpers";
 
 
-const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,currencyStore }) => {
+const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,currencyStore,homepageData,lowStockThreshold,outOfStockVisibility,outOfStockThreshold}) => {
+
     const currencyOpt = currencyStore?.currency_options?.currency
     const router = useRouter();
     const session = useSession()
@@ -29,12 +30,8 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,c
     const [sliderImages, setSliderImages] = useState([]);
     const [singleProductReview,setSingleProductReview] = useState([])
     const productss = useSelector(state => state.products ) 
-
     const settingss =  useSelector(state => state.setting);
-
     const [currency, setCurrency] = useState("$")
-
-
     useEffect(() => {
         currencySetter(currencyOpt,setCurrency);
 }, [])
@@ -59,8 +56,6 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,c
         setSliderImages(allimages);
     }, [singleproducts]);
 
-
-
     return (
         <div>
             <Head>
@@ -81,7 +76,7 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,c
                         <div className="col-lg-12">
                             <div className="product-detail accordion-detail">
                                 <div>
-                                    <GalleryImagesComponents galleryImages={sliderImages} singleproducts={singleproducts} currency = {currency} />
+                                    <GalleryImagesComponents outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility ={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency = {currency} />
                                 </div>
                             </div>
                             <div>
@@ -168,6 +163,9 @@ export async function getStaticProps({ params }) {
     let productReview = [];
     let allReviewss = {};
     var currencyStore =[]
+    let lowStockThreshold = 4
+    let outOfStockVisibility = true
+    let outOfStockThreshold = 0 
    
        /* ========================================= get all review ========================================*/
 
@@ -188,6 +186,9 @@ export async function getStaticProps({ params }) {
             query: GET_HOMEPAGE_DATA_QUERY
         })
         homepageData = homepagedata
+        lowStockThreshold = homepagedata.getSettings.store.inventory.low_stock_threshold
+        outOfStockThreshold = homepagedata.getSettings.store.inventory.out_of_stock_threshold   
+        outOfStockVisibility = homepagedata.getSettings.store.inventory.out_of_stock_visibility   
         currencyStore = homepagedata?.getSettings?.store
     }
     catch (e) {
@@ -235,7 +236,10 @@ export async function getStaticProps({ params }) {
             productReview,
             allReviewss,
             homepageData,
-            currencyStore
+            currencyStore,
+            lowStockThreshold,
+            outOfStockVisibility,
+            outOfStockThreshold
         },
         revalidate: 10,
     }

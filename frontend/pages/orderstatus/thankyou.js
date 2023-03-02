@@ -32,7 +32,7 @@ const ThankYou = () => {
                     },
 
                 })
-                setData(orderData?.orderbyUser?.data?.[1])
+                setData(orderData?.orderbyUser?.data?.[0])
                
             }
             catch (err) {

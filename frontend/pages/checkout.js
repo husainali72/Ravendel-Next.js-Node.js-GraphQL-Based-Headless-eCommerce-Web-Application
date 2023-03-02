@@ -313,8 +313,9 @@ export const CheckOut = ({currencyStore}) => {
         let couponValueGet = false;
         setCouponLoading(true)
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
+            console.log('res',res.data.calculateCoupon.success)
             couponResponse = res.data.calculateCoupon.total_coupon
-            if(res.data.calculateCoupon.message !== "Invalid coupon code"){
+            if(res.data.calculateCoupon.success){
                 notify(res.data.calculateCoupon.message,true)
                 setIsCouponApplied(true)
             }
@@ -330,7 +331,7 @@ export const CheckOut = ({currencyStore}) => {
                 setCouponFeild(true);
             }
             if (couponValueGet) {
-                let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product.pricing.sellprice * product.quantity } })
+                let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity } })
                 let calculate = {
                     total_coupon: couponResponse,
                     cart: cartsData,
@@ -407,7 +408,7 @@ export const CheckOut = ({currencyStore}) => {
                                     steps={steps}
                                 />
 
-                                <div className="col-lg-12 firstCheckPage">
+                                <div className="col-lg-12 first-checkout-page">
                                     <div style={{ padding: "20px" }}>
                                         <CustomerDetail
                                             address_book={address_book}
@@ -469,7 +470,9 @@ export const CheckOut = ({currencyStore}) => {
                 )
             case 2:
                 return (
-                    <div>
+                   <>
+                    <Toaster />
+                     <div>
                         <BreadCrumb title={"checkout"} />
                         <section className="checkout-section">
                             <Container>
@@ -502,6 +505,9 @@ export const CheckOut = ({currencyStore}) => {
                                     </div>
                                     <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
                                         <OrderSummary
+                                            AppliedCoupon={AppliedCoupon}
+                                            isCouponApplied={isCouponApplied}
+                                            CouponLoading={CouponLoading}
                                             currency={currency}
                                             cartTotal={cartTotal}
                                             subTotal={subtotal}
@@ -518,9 +524,12 @@ export const CheckOut = ({currencyStore}) => {
                             </Container>
                         </section>
                     </div>
+                    </>
                 )
             case 3:
                 return (
+                   <>
+                    <Toaster />
                     <div>
                         <BreadCrumb title={"checkout"} />
                         <section className="checkout-section">
@@ -586,6 +595,9 @@ export const CheckOut = ({currencyStore}) => {
                                     <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
                                         <OrderSummary
                                             currency={currency}
+                                            AppliedCoupon={AppliedCoupon}
+                                            isCouponApplied={isCouponApplied}
+                                            CouponLoading={CouponLoading}
                                             cartTotal={cartTotal}
                                             subTotal={subtotal}
                                             coupon={coupon}
@@ -603,6 +615,7 @@ export const CheckOut = ({currencyStore}) => {
                             </Container>
                         </section>
                     </div>
+                    </>
                 )
             default:
                 <h1>nothing to do</h1>

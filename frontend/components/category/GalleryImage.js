@@ -8,16 +8,25 @@ import { addToCart } from "../../redux/actions/cartAction";
 import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import calculateDiscount from "../../utills/calculateDiscount";
 var placeholder = "https://dummyimage.com/300";
 
 const GalleryImagesComponents = (props) => {
     const dispatch = useDispatch();
     const session = useSession()
     const router = useRouter();
-    const { singleproducts , currency } = props;
-
- 
+    const { singleproducts , currency,lowStockThreshold,outOfStockVisibility,outOfStockThreshold } = props;
     
+    const stockLable = (stockQuantity)=>{
+        let lable = "In Stock"
+        if(stockQuantity <= lowStockThreshold){
+            lable = "Low Stock"
+        }
+        if(stockQuantity <= outOfStockThreshold){
+            lable = "Out Of Stock"
+        }
+        return lable
+    }
     const settings = {
         customPaging: function (i) {
             return (
@@ -90,7 +99,7 @@ const GalleryImagesComponents = (props) => {
                         <h2>{singleproducts.name}</h2>
                         <div className="product-detail-rating">
                             <div className="pro-details-brand">
-                                <span> Brands: {singleproducts.categoryId.map(item => <span>{item.name}</span>)}</span>
+                                <span> Category: {singleproducts.categoryId.map(item => <span>{item.name}</span>)}</span>
                             </div>
                             <div className="pro-details-rating">
                                 <StarRating stars={"5"} />
@@ -104,22 +113,19 @@ const GalleryImagesComponents = (props) => {
                                              {currency}{" "}{singleproducts.pricing.sellprice.toFixed(2)}
                                         </strong>
                                     ) : (
-                                        ""
+                                        <strong className="sale-price" style={{ fontSize: "25px" }}>
+                                        {currency}{" "}{singleproducts.pricing.price.toFixed(2)}
+                                        </strong>
                                     )}</span>
-                                <span
+                               {singleproducts.pricing.sellprice ? <span
                                     className={
                                         singleproducts.pricing.sellprice ? "has-sale-price mx-2" : ""
                                     } style={{ fontSize: "17px" }}
                                 >
                                     {currency}{singleproducts.pricing.price.toFixed(2)}
-                                </span>
+                                </span> : null}
                                 <span className=" mx-2">
-                                    {Math.round(
-                                        (100 / singleproducts.pricing.price) *
-                                        (singleproducts.pricing.price -
-                                            singleproducts.pricing.sellprice)
-                                    )}
-                                    % off
+                                    {calculateDiscount(singleproducts.pricing.price,singleproducts.pricing.sellprice)}
                                 </span>
                             </div>
                         </div>
@@ -128,29 +134,23 @@ const GalleryImagesComponents = (props) => {
                         </div>
                         {singleproducts.custom_field && singleproducts.custom_field?.length > 0 ? (
                             <>
-                                <div className="attr-detail attr-color mb-15">
-                                    <strong className="mr-10">Color</strong>
-                                </div>
-                                <div className="attr-detail attr-color mb-15">
-                                    <strong className="mr-10">Size</strong>
-                                </div>
-                            </>
-                        ) : null}
-                        <button type="button"
-                            className="btn btn-success button button-add-to-cart"
-                            style={{ marginTop: 12, backgroundColor: "#088178" }}
-                            onClick={() => addToCartProduct(singleproducts)}>Add to Cart</button>
-                            {singleproducts.custom_field.map(field => (<div>
+                                  {singleproducts.custom_field.map(field => (<div>
                                 <ul className="product-meta font-xs color-grey mt-50">
                                 <p >
                                     {`${field.key} - ${' '}`} <strong> {field.value}</strong>
                                 </p>
                                 </ul>
                             </div>))}
+                            </>
+                        ) : null}
+                        <button type="button"
+                            className="btn btn-success button button-add-to-cart"
+                            style={{ marginTop: 12, backgroundColor: "#088178" }}
+                            onClick={() => addToCartProduct(singleproducts)}>Add to Cart</button>
                         <ul className="product-meta font-xs color-grey mt-50">
                             <p className="">SKU: {singleproducts.sku}</p>
-                            <p className="">Tags: {singleproducts.__typename}</p>
-                            <p className="">Availablity: <span className="availablity-text">{singleproducts.quantity} item in stock</span></p>
+                            {newFunction(singleproducts)}
+                            <p className="">Availablity: <span className="availablity-text">{stockLable(singleproducts.quantity)}</span></p>
                         </ul>
                     </div>
                 </div>
@@ -161,3 +161,8 @@ const GalleryImagesComponents = (props) => {
 };
 
 export default GalleryImagesComponents;
+function newFunction(singleproducts) {
+    return <p className="">Tags: {singleproducts.__typename}</p>;
+}
+
+  

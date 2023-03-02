@@ -111,7 +111,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
                         //         cartitems2.push(cartProduct);
                         //     })
                         setCartItems([...cartitems2]) 
-                    }).finally(()=> { allProducts?.products.length >0 && cartItems.length>0 && setCartLoading(false)})
+                    }).finally(()=> { allProducts?.products.length >0 && cartItems.length>=0 && setCartLoading(false)})
                         
                 
                 }
@@ -224,6 +224,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
     }
     
     const removeToCart = async (item) => {
+        let product = item?._id
         let idx = cartItems.findIndex(cartItem => cartItem._id === item._id)
             const prod = cartItems.find(cart => cart._id === item._id);
             if (session?.status === "authenticated") {
@@ -375,7 +376,7 @@ const YourCard = ({ customercart, cart_id,CartsDataa ,currencyStore}) => {
                                                         <tr>
                                                             <td className="cart_total_label">Cart Subtotal</td>
                                                             <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
-                                                                {currency}  {CalculateProductTotal(cartItems).toFixed(2)}
+                                                                {currency} {CalculateProductTotal(cartItems).toFixed(2)}
                                                             </span></td>
                                                         </tr>
                                                         <tr>

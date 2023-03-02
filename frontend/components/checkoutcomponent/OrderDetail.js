@@ -67,7 +67,7 @@ const Orderdetail = (props) => {
                     <tbody>
                         {cartItems.map((item, i) => (
                             <tr key={i}>
-                                <td className="image product-thumbnail"><img src={getImage(item, 'feature_image')} alt="" /></td>
+                                <td className="image product-thumbnail"><img src={getImage(item.feature_image, 'feature_image')} alt="" /></td>
                                 <td><i className="ti-check-box font-small text-muted mr-10"></i>
                                     <h5><a href="shop-product-full.html">{item.name}</a></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>
