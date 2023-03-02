@@ -17,13 +17,11 @@ import {
 } from "../../../store/action/";
 import { bucketBaseURL } from "../../../utils/helper";
 import { getUpdatedUrl } from "../../../utils/service";
-
 import {
   Alert,
   Loading,
   URLComponent,
   TextInput,
-
   CardBlocksWithAction,
 } from "../../components";
 import theme from "../../../theme/index.js";
@@ -56,7 +54,6 @@ const AllCategoryComponent = () => {
   const [featuredImage, setfeaturedImage] = useState(null);
   const [filtered, setfilterdData] = useState([])
   const [loading, setloading] = useState(false);
-
   const columndata = [
     { name: 'date', title: "date", sortingactive: true },
     { name: 'name', title: "name", sortingactive: true },
@@ -74,14 +71,11 @@ const AllCategoryComponent = () => {
         }
       }
     },]
-
-
   useEffect(() => {
     if (isEmpty(get(products, "categories"))) {
       dispatch(categoriesAction());
     }
   }, []);
-
   useEffect(() => {
     if (!isEmpty(get(products, "categories"))) {
       setCategories(products.categories);
@@ -102,7 +96,6 @@ const AllCategoryComponent = () => {
     }
     setSingleCategory({ ...singlecategory, ...cat });
   };
-
   const handleChange = (e) => {
     if (e.target.name === "parentId" && !e.target.value) {
       setSingleCategory({ ...singlecategory, [e.target.name]: null });
@@ -110,7 +103,6 @@ const AllCategoryComponent = () => {
     }
     setSingleCategory({ ...singlecategory, [e.target.name]: e.target.value });
   };
-
   const updateCat = () => {
     var errors = validate(["name"], singlecategory);
 
@@ -131,10 +123,8 @@ const AllCategoryComponent = () => {
     }
 
   };
-
   const addCat = () => {
     var errors = validate(["name"], singlecategory);
-
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -148,16 +138,13 @@ const AllCategoryComponent = () => {
     else {
       dispatch(categoryAddAction(singlecategory));
     }
-
   };
-
   const cancelCat = () => {
     document.forms[0].reset();
     setEditmode(false);
     setfeaturedImage(null);
     setSingleCategory(categoryObject);
   };
-
   const fileChange = (e) => {
     setfeaturedImage(null);
     setfeaturedImage(URL.createObjectURL(e.target.files[0]));
@@ -166,7 +153,6 @@ const AllCategoryComponent = () => {
       [e.target.name]: e.target.files,
     });
   };
-
   const isUrlExist = async (url) => {
     let updatedUrl = await getUpdatedUrl("ProductCat", url);
     setSingleCategory({
@@ -175,7 +161,6 @@ const AllCategoryComponent = () => {
     });
   };
   const handleOnChangeSearch = (filtereData) => {
-
     setfilterdData(filtereData)
   }
   return (
@@ -190,11 +175,11 @@ const AllCategoryComponent = () => {
             rows={filtered}
             searchdata={categories}
             handleOnChangeSearch={handleOnChangeSearch}
+            showDeleteButton={true}
             classname="table-container"
             title="All Category"
           />
         </Grid>
-
         <Grid item md={6} xs={12}>
           <form>
             <CardBlocksWithAction
@@ -215,7 +200,6 @@ const AllCategoryComponent = () => {
                   !singlecategory.url && isUrlExist(singlecategory.name)
                 }
               />
-
               <Box component="div" mb={singlecategory.url ? 2 : 0}>
                 <URLComponent
                   url={singlecategory.url}
@@ -226,7 +210,6 @@ const AllCategoryComponent = () => {
                   tableUrl="ProductCat"
                 />
               </Box>
-
               <Box component="div" mb={2}>
                 <FormControl variant="outlined" fullWidth>
                   <span className={classes.selectCatLabel}>Parent</span>
@@ -260,7 +243,6 @@ const AllCategoryComponent = () => {
                   </Select>
                 </FormControl>
               </Box>
-
               <Grid container>
                 <Grid item className={classes.flex1}>
                   {editMode ? (
@@ -302,7 +284,6 @@ const AllCategoryComponent = () => {
                   )}
                 </Grid>
               </Grid>
-
               <TextField
                 label="Short Description"
                 name="description"
@@ -330,7 +311,6 @@ const AllCategoryComponent = () => {
                   }}
                 />
               </Box>
-
               <Box component="div" mb={2}>
                 <TextInput
                   value={singlecategory.meta.keywords}
@@ -347,7 +327,6 @@ const AllCategoryComponent = () => {
                   }}
                 />
               </Box>
-
               <Box component="div" mb={2}>
                 <TextInput
                   value={singlecategory.meta.description}

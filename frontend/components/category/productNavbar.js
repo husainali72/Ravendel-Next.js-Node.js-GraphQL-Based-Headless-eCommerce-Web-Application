@@ -1,6 +1,7 @@
 import { Container, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Link from "next/link";
-import { getImage } from '../../utills/helpers';
+import { useState, useEffect } from 'react';
+import { getImage, getPrice, currencySetter } from '../../utills/helpers';
 import StarRating from "../breadcrumb/rating";
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,13 +14,12 @@ export const ProductNav = (props) => {
     const router = useRouter();
     const settings = useSelector(state => state.setting)
     const currencyType = settings.currencyOption
-
-    let currency = "$"
-    if (currencyType?.currency === "dollar") { currency = "$" }
-    if (currencyType?.currency === "eur") { currency = <i className="fas fa-euro-sign"></i> }
-    if (currencyType?.currency === "gbp") { currency = <i className="fas fa-pound-sign"></i> }
-    if (currencyType?.currency === "cad") { currency = "CA$" }
-
+    const [currency, setCurrency] = useState("$")
+    const [decimal, setdecimal] = useState(2)
+    useEffect(() => {
+        setdecimal(settings.currencyOption.number_of_decimals)
+        currencySetter(settings, setCurrency);
+    }, [settings?.currencyOption])
     const addToCartProduct = (product) => {
         let quantity = 1;
         if (session.status === "authenticated") {
@@ -33,7 +33,6 @@ export const ProductNav = (props) => {
             router.push("/shopcart")
         }
     }
-
     return (
         <div className="on-sale-product">
             {props.items.map((product, i) => (
@@ -78,7 +77,7 @@ export const ProductNav = (props) => {
                             <div className="product-price" style={{ justifyContent: "left", alignContent: "left", m: 0 }}>
                                 <StarRating className="rating" stars={"4"} />
                                 <span >{product.pricing.sellprice ? (
-                                    <strong className="sale-price">{currency} {product.pricing.sellprice.toFixed(2)}
+                                    <strong className="sale-price">{currency} {getPrice(product.pricing.sellprice, decimal)}
                                     </strong>
                                 ) : (
                                     ""
@@ -88,7 +87,7 @@ export const ProductNav = (props) => {
                                         product.pricing.sellprice ? "has-sale-price" : ""
                                     }
                                 >
-                                    {currency} {product.pricing.price.toFixed(2)}
+                                    {currency} {getPrice(product.pricing.price, decimal)}
                                 </span>
                             </div>
                             <OverlayTrigger style={{ backgroundColor: "#088178" }}

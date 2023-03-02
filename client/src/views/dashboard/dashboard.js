@@ -4,7 +4,6 @@ import { useTheme } from "@mui/styles";
 import LatestOrder from "./components/latestOrder";
 import LatestProducts from "./components/latestProduct";
 import DashboardCard from "./components/dashboardCard";
-
 import { useSelector, useDispatch } from "react-redux";
 import theme from "../../theme";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
@@ -23,11 +22,9 @@ import {
   BarChart,
   Bar,
   Legend
-
 } from "recharts";
 import { currencyFormat } from "../order/CurrencyFormat";
 import { get } from "lodash";
-
 const DashboardComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -45,21 +42,16 @@ const DashboardComponent = () => {
 
   useEffect(() => {
     if (!isEmpty(get(data, "dashboard_data"))) {
-
       setdashBoardData({ ...dashBoardData, ...get(data, "dashboard_data") });
       const OrderChartData = get(data, "dashboard_data.ordersByYearMonth")
       if (!isEmpty(OrderChartData)) {
         setChartdata(OrderChartData[0].months)
         setYear(OrderChartData[0].year)
       }
-
-
     }
   }, [get(data, "dashboard_data")]);
-
   const handleChangeChart = (e) => {
     const { value } = e.target
-
     setYear(value)
     dashBoardData.ordersByYearMonth.map((arr) => {
 
@@ -69,7 +61,6 @@ const DashboardComponent = () => {
     })
 
   }
-
   return (
     <Box component="div" p={isSmall ? 1 : 4}>
       <Grid container spacing={isSmall ? 1 : 4}>
@@ -119,37 +110,24 @@ const DashboardComponent = () => {
             loader={loader}
           />
         </Grid>
-
         <Grid item lg={8} xl={9} xs={12}  >
-
           <Paper sx={{ paddingRight: "15px" }} >
-
             <Box sx={{ width: 120, }}>
-
               <FormControl fullWidth size="small" sx={{ width: 120, m: 3 }}>
-
-                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                <InputLabel id="demo-simple-select-label">Year</InputLabel>
                 <Select
-
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={year}
-                  label="Categories"
+                  label="Year"
                   onChange={(e) => handleChangeChart(e)}
-
                 >
                   {dashBoardData.ordersByYearMonth && dashBoardData.ordersByYearMonth.length > 0 ? dashBoardData.ordersByYearMonth.map((chart) => {
-
                     return <MenuItem value={chart.year}>{chart.year}</MenuItem>
                   }) : null}
-
-
-
                 </Select>
               </FormControl>
             </Box>
-
-
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={chartdata} margins={{ top: 50, right: 1, bottom: 100, left: 1 }} >
                 <XAxis dataKey="month" />
@@ -157,14 +135,13 @@ const DashboardComponent = () => {
                 <CartesianGrid />
                 <Legend />
                 <Tooltip offset={10} />
-                <Bar dataKey="paymentSuccessNetSales" stackId="x" fill="#FFB26B" barSize={30} />
-                <Bar dataKey="NetSales" barSize={9} stackId="x" fill="#89C4E1" />
-                <Bar dataKey="paymentSuccessNetSales" stackId="x" fill="#0081B4" barSize={30} />
-                <Bar dataKey="GrossSales" stackId="x" barSize={30} fill="#F55050" />
+                <Bar name="Payment Success NetSales" dataKey="paymentSuccessNetSales" stackId="x" fill="#FFB26B" barSize={30} />
+                <Bar name="Net Sales" dataKey="NetSales" barSize={9} stackId="x" fill="#89C4E1" />
+                <Bar name="Payment Success NetSales" dataKey="paymentSuccessNetSales" stackId="x" fill="#0081B4" barSize={30} />
+                <Bar name="Gross Sales" dataKey="GrossSales" stackId="x" barSize={30} fill="#F55050" />
               </BarChart>
             </ResponsiveContainer>
           </Paper>
-
         </Grid>
         <Grid item lg={4} xl={3} xs={12}>
           <LatestProducts
@@ -176,7 +153,6 @@ const DashboardComponent = () => {
     </Box >
   );
 };
-
 const Dashboard = () => {
   return (
     <ThemeProvider theme={theme}>

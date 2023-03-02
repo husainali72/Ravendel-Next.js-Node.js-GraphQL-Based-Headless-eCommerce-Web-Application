@@ -10,30 +10,25 @@ import { get } from "lodash";
 import { mediaUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert.js";
 import Loading from "../../components/Loading.js";
-
 const MediaComponent = () => {
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
-
   const settingState = useSelector((state) => state.settings);
   const [media, setMedia] = useState({
     thumbnail: settingState.settings.media.thumbnail,
     medium: settingState.settings.media.medium,
     large: settingState.settings.media.large,
   });
-
   const updateGeneral = () => {
     dispatch(mediaUpdateAction(media));
   };
-
   useEffect(() => {
     get(settingState, "settings.media.thumbnail")
     get(settingState, "settings.media.medium")
     get(settingState, "settings.media.large")
   }, [settingState.settings])
-
   return (
     <>
       <Alerts />
@@ -81,8 +76,8 @@ const MediaComponent = () => {
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
-                    thumbnail: {
-                      ...media.thumbnail,
+                    medium: {
+                      ...media.medium,
                       width: val,
                     },
                   });
@@ -96,8 +91,8 @@ const MediaComponent = () => {
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
-                    thumbnail: {
-                      ...media.thumbnail,
+                    medium: {
+                      ...media.medium,
                       height: val,
                     },
                   });

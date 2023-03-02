@@ -9,6 +9,7 @@ import {
   CircularProgress,
   Box,
   Typography,
+  Grid,
 
 } from "@mui/material";
 import { orderDeleteAction } from "../../../../store/action";
@@ -56,7 +57,6 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
     if (!isEmpty(latestOrders)) {
       let data = []
       latestOrders.map((order) => {
-        console.log(order)
         let object = {
           id: order._id,
           order_number: order.order_number,
@@ -67,7 +67,6 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
         }
         data.push(object)
       })
-
       setAllOrder(data)
       setfilterdData(data)
 
@@ -99,21 +98,25 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
             title='Latest Orders'
           />
         ) : (
-          <Box component="div" display="flex" justifyContent="center" p={2}>
-            <Typography className={classes.noRecordFound} variant="caption">
-              No records found
-            </Typography>
-          </Box>
+          <Card className={classes.root}>
+            <CardHeader
+              title="Latest Orders"
+              titleTypographyProps={{ variant: "subtitle" }}
+              className={classes.Cardheader}
+            />
+            <Divider />
+            <Box component="div" display="flex" justifyContent="center" p={2}>
+              <Typography className={classes.noRecordFound} variant="caption">
+                No records found
+              </Typography>
+            </Box>
+          </Card>
         )
       }
-
     </>
   );
 };
-
-
 const LatestOrders = ({ latestOrders, loader }) => {
-
   return (
     <ThemeProvider theme={theme}>
       <LatestOrdersTheme latestOrders={latestOrders} loader={loader} />

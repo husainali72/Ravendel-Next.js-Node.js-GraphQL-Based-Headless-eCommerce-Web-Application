@@ -1,5 +1,4 @@
 import Auth from "./auth";
-import jumpTo from "./navigation";
 import axios from "axios";
 import { isEmpty, client_app_route_url } from "./helper";
 import APclient from "../Client";
@@ -12,10 +11,10 @@ export const mutation = async (query, variables) => {
     const response = await APclient.mutate({
       mutation: query,
       variables,
-      fetchPolicy: "no-cache", 
+      fetchPolicy: "no-cache",
     });
     return Promise.resolve(response);
-   
+
   } catch (error) {
     const errors = JSON.parse(JSON.stringify(error));
     if (
@@ -61,8 +60,7 @@ export const query = async (query, variables) => {
   }
 };
 
-const service = (config) => {
-  //header authorization
+const service = (config, navigate) => {
   if (Auth.getToken()) {
     const token = Auth.getToken();
     config.headers = {
@@ -76,7 +74,6 @@ const service = (config) => {
       return response;
     },
     function (error) {
-      console.log(error);
       if (!error.response) {
         error.response = {
           data: "network error",
@@ -85,18 +82,17 @@ const service = (config) => {
       }
       if (error.response.status === 401) {
         Auth.logout();
-        jumpTo(`${client_app_route_url}login`);
+        navigate(`${client_app_route_url}login`);
         throw error;
       }
       return Promise.reject(error);
     }
   );
-  // config.baseURL = baseUrl;
   return axios(config);
 };
 export default service;
 
-export const login = (email, password) => {
+export const login = (email, password, navigate) => {
   const body = {
     email: email,
     password: password,
@@ -105,8 +101,7 @@ export const login = (email, password) => {
     method: "POST",
     url: `${location}/api/users/login`,
     data: body,
-  }).then(async (res) => {
-    console.log("res", res)
+  }, navigate).then(async (res) => {
     await Auth.setUserToken(res.data);
     return res;
   });

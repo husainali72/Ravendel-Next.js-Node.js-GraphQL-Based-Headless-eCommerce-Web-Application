@@ -6,64 +6,49 @@ import BreadCrumb from "../components/breadcrumb/breadcrumb";
 import { useSelector, useDispatch } from "react-redux";
 import CartTable from "../components/cardcomponent/CardDetail";
 import { removeCartItemAction, RemoveAllCartItemsAction, increaseQuantity, decreaseQuantity } from "../redux/actions/cartAction";
-import { mutation } from "../utills/helpers";
+import { getPrice, mutation } from "../utills/helpers";
 import { DELETE_CART_PRODUCTS, UPDATE_CART_PRODUCT, GET_USER_CART } from "../queries/cartquery";
 import { CHECKOUT_ORDER_QUERY } from "../queries/checkoutquery";
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
-
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity), 0)
-
 const YourCard = ({ customercart, cart_id }) => {
- 
-    // console.log(" cart_id", cart_id);
-
     const session = useSession();
     const cartProducts = useSelector(state => state.cart);
-    // console.log("cart_products", cartProducts);
     const usercart = useSelector(state => state.userCart);
-    // console.log("usercart", usercart)
     const initialRender = useRef(true);
     const settings = useSelector(state => state.setting)
     const currencyType = settings.currencyOption
-
-    let currency = "$"
-    if (currencyType?.currency === "dollar") { currency = "$" }
-    if (currencyType?.currency === "eur") { currency = <i className="fas fa-euro-sign"></i> }
-    if (currencyType?.currency === "gbp") { currency = <i className="fas fa-pound-sign"></i> }
-    if (currencyType?.currency === "cad") { currency = "CA$" }
-
     const [cartItems, setCartItems] = useState([]);
     const [quantity, setQuantity] = useState();
     const dispatch = useDispatch();
     const [press, setPress] = useState(false);
     const [couponCode, setCouponCode] = useState("")
-    // const [userCart, setUserCart] = useState(cart_id);
-    // console.log("cartItems", cartItems);
-
     var id = ""
     var token = ""
-
+    const [currency, setCurrency] = useState("$")
+    const [decimal, setdecimal] = useState(2)
+    useEffect(() => {
+        setdecimal(settings.currencyOption.number_of_decimals)
+        currencySetter(settings, setCurrency);
+    }, [settings?.currencyOption])
     useEffect(() => {
         if (session.status === "authenticated") {
             if (initialRender.current) {
                 initialRender.current = false;
                 {
-                    console.log('customercart', customercart)
                     customercart && customercart?.length > 0 ? (
                         setCartItems(customercart || [])
                     ) : setCartItems(cartProducts || [])
                 }
                 setCartItems(cartProducts || [])
             } else {
-                // setPress(true);
                 setCartItems(cartProducts)
             }
         }
         else {
-            // setPress(true);
             setCartItems(cartProducts)
         }
 
@@ -71,13 +56,9 @@ const YourCard = ({ customercart, cart_id }) => {
 
     useEffect(async () => {
         const productsCard = JSON.parse(localStorage.getItem("cart"))
-        // console.log("productsCard", productsCard)
-
         if (session?.status === "authenticated") {
             id = session.data.user.accessToken.customer._id
             token = session.data.user.accessToken.token
-            // console.log("id", id)
-            // console.log("token", token)
             var carts = [];
             try {
                 const { data: CartsData } = await client.query({
@@ -85,9 +66,7 @@ const YourCard = ({ customercart, cart_id }) => {
                     variables: { id: id }
                 })
                 carts = CartsData.cartbyUser
-                // console.log("userCart", carts.products)
                 let cartitems = carts.products.map(product => {
-                    // console.log("product", product)
                     return {
                         _id: product.product_id,
                         name: product.product_title,
@@ -98,11 +77,6 @@ const YourCard = ({ customercart, cart_id }) => {
                         quantity: product.qty
                     }
                 })
-                // console.log("cartitems latest ==", cartitems)
-                // setUserCart(carts)
-                // setCartItems(cartitems)
-                // setCartItems(productsCard)
-
             }
             catch (e) {
                 console.log("error==", e)
@@ -112,13 +86,6 @@ const YourCard = ({ customercart, cart_id }) => {
             setCartItems(productsCard || []);
         }
     }, [])
-
-    // useEffect(() => {
-    //     const productsCard = JSON.parse(localStorage.getItem("cart"))
-    //     setCartItems(productsCard || cartProducts);
-    // }, [])
-
-    // console.log("CartItems", cartItems);
 
     const AllCartItemsClear = () => {
         setCartItems([])
@@ -132,11 +99,9 @@ const YourCard = ({ customercart, cart_id }) => {
             token = session.data.user.accessToken.token
             mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("res", res))
         }
-
         localStorage.setItem("cart", JSON.stringify([]))
         dispatch(RemoveAllCartItemsAction([]));
     }
-
     const DecreaseQuantity = (item) => {
         if (item.quantity > 1) {
             item.quantity -= 1;
@@ -149,7 +114,6 @@ const YourCard = ({ customercart, cart_id }) => {
         setQuantity(item.quantity)
         dispatch(increaseQuantity(item._id))
     }
-
     const removeToCart = async (item) => {
         let product = item._id
         let token = ""
@@ -177,17 +141,14 @@ const YourCard = ({ customercart, cart_id }) => {
 
     }
     const doApplyCouponCode = () => {
-        console.log("coupn value", couponCode)
         let cart = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity } })
         let variables = {
             coupon_code: couponCode, cart: cart
         }
-        console.log("variable", variables)
         query2(APPLY_COUPON_CODE, variables, token).then(res => console.log("res", res))
     }
     const ProcessToCheckOut = () => {
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))
-        console.log("ProcessToCheckOut", productsCard.cart)
         var id = ''
         var token = ""
         if (session.status === "authenticated") {
@@ -202,46 +163,33 @@ const YourCard = ({ customercart, cart_id }) => {
                 total: product.pricing.sellprice * product.quantity
             }
         })
-        // console.log("carts", carts)
         let variables = {
             user_id: id,
             products: carts,
-            // total: CalculateProductTotal(cartItems)
         }
-        // console.log("checkout variable", variables)
-        // mutation(CHECKOUT_ORDER_QUERY, variables, token).then(res => console.log("res", res))
     }
 
     const updateCartProduct = () => {
-        console.log("updateCartProduct")
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))
-        console.log("updateCheckOut", productsCard.cart)
         var id = ''
         var token = ""
         if (session.status === "authenticated") {
             id = session.data.user.accessToken.customer._id
             token = session.data.user.accessToken.token
         }
-
-        console.log('productsCard', productsCard)
         let carts = productsCard.cart.map(product => {
-            console.log('product.pricing', )
             return {
                 product_id: product._id,
                 qty: product.quantity,
                 product_title: product.name,
-                // product_image: product.gallery_image[0].original||"",
                 product_image: product.feature_image.original,
                 product_price: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price
             }
         })
-        // console.log("carts", carts)
         let variables = {
             id: cart_id,
             products: carts,
-            // total: CalculateProductTotal(cartItems)
         }
-        console.log("update", variables)
         mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("res", res))
     }
 
@@ -307,7 +255,7 @@ const YourCard = ({ customercart, cart_id }) => {
                                                         <tr>
                                                             <td className="cart_total_label">Cart Subtotal</td>
                                                             <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
-                                                                {currency}  {CalculateProductTotal(cartItems).toFixed(2)}
+                                                                {currency}  {getPrice(CalculateProductTotal(cartItems), decimal)}
                                                             </span></td>
                                                         </tr>
                                                         <tr>
@@ -317,7 +265,7 @@ const YourCard = ({ customercart, cart_id }) => {
                                                         <tr>
                                                             <td className="cart_total_label">Total</td>
                                                             <td className="cart_total_amount"><strong><span className="font-xl fw-900 text-brand">
-                                                                {currency} {CalculateProductTotal(cartItems).toFixed(2)}
+                                                                {currency} {getPrice(CalculateProductTotal(cartItems), decimal)}
                                                             </span></strong></td>
                                                         </tr>
                                                     </tbody>
@@ -332,10 +280,10 @@ const YourCard = ({ customercart, cart_id }) => {
                             </div>
                         </div>
                     ) :
-                        <h2
+                        <p
                             style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            no product available in cart
-                        </h2>
+                            No product available in cart
+                        </p>
                     }
                 </Container>
             </section>
@@ -346,11 +294,8 @@ const YourCard = ({ customercart, cart_id }) => {
 export default YourCard;
 
 export async function getServerSideProps(context) {
-
     const session = await getSession(context)
-    // console.log("session", session)
     let id = session?.user?.accessToken?.customer._id
-    // let id = "622ae63d3aa0f0f63835ef8e"
     var customercart = [];
     var cart_id = ""
     if (session !== null) {
@@ -377,13 +322,11 @@ export async function getServerSideProps(context) {
                 }
             })
             customercart = cartitems
-            console.log("Cartsss", customercart)
         }
         catch (e) {
             console.log("error==", e)
         }
     }
-
     return {
         props: {
             customercart,

@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
-
 import { Link, useNavigate, useNavigation, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
 import { orderUpdateAction, orderAction } from "../../store/action/";
-
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
 import EditIcon from "@mui/icons-material/Edit";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {
@@ -41,7 +38,6 @@ import "../../App.css";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import viewStyles from "../viewStyles";
 import { client_app_route_url } from "../../utils/helper";
-
 import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
@@ -61,7 +57,6 @@ const ViewOrderComponent = ({ params }) => {
   const singleOrder = useSelector((state) => state.order);
   const [loading, setloading] = useState(false);
   const [phoneValue, setPhoneValue] = useState("");
-
   const [order, setorder] = useState({
     billing: {
       firstname: "",
@@ -98,16 +93,12 @@ const ViewOrderComponent = ({ params }) => {
 
   useEffect(() => {
     dispatch(orderAction(ORDERID));
-
-
   }, []);
 
   useEffect(() => {
-
     if (!isEmpty(get(singleOrder, "order"))) {
       const singleorder = get(singleOrder, "order");
       setorder({ ...order, ...singleorder });
-
       setPhoneValue(singleorder.billing.phone)
     }
 
@@ -116,15 +107,11 @@ const ViewOrderComponent = ({ params }) => {
   useEffect(() => {
     setloading(get(singleOrder, "loading"));
   }, [get(singleOrder, "loading")]);
-
   const updateOrder = (e) => {
     order.billing.phone = phoneValue
-
     e.preventDefault();
-
     let errors = validatenested("billing", ["payment_method", "email", "state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
     let Errors = validatenested("shipping", ["state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
-
     let phoneNumberError = validateNestedPhone("billing", ["phone"], order)
     if (!isEmpty(errors)) {
       dispatch({
@@ -157,34 +144,28 @@ const ViewOrderComponent = ({ params }) => {
         },
       });
     }
-
     else {
       setEditBilling(false);
       setEditShipping(false);
       dispatch(orderUpdateAction(order, navigate));
-
       setPhoneValue("")
     }
   };
-
   const changeBilling = (e) => {
     setorder({
       ...order,
       billing: { ...order.billing, [e.target.name]: e.target.value },
     });
   };
-
   const changeShipping = (e) => {
     setorder({
       ...order,
       shipping: { ...order.shipping, [e.target.name]: e.target.value },
     });
   };
-
   const getFirstLetter = (name) => {
     return name ? name.charAt(0) : name;
   };
-
   const BillingInput = (label, name, type, value) => {
     return (
       <TextField
@@ -407,8 +388,7 @@ const ViewOrderComponent = ({ params }) => {
                           )}
                         </Grid>
                         <Grid item md={4}>
-                          <PhoneNumber className="phoneValidation" handleOnChange={handleOnChange} phoneValue={phoneValue} width= "100%"/>
-
+                          <PhoneNumber className="phoneValidation" handleOnChange={handleOnChange} phoneValue={phoneValue} width="100%" />
                         </Grid>
                         <Grid item md={4}>
                           {BillingInput(
@@ -673,60 +653,59 @@ const ViewOrderComponent = ({ params }) => {
 
             <Grid item md={6}>
               <Box component="span">
-                <Card style={{height: "219px"}}>
+                <Card style={{ height: "219px" }}>
                   <CardHeader title="Subtotal" />
                   <Divider />
                   <CardContent>
                     <Grid container justify="flex-end">
                       <Grid item className={classes.textRight}>
-                        <Typography variant="body1" className={classes.mtb2}>
+                        <Typography variant="body1" className={classes.mtb1}>
                           Total
                         </Typography>
-                        <Typography variant="body1" className={classes.mtb2}>
-                          {order.sub_total_details.shipping_name}
-                        </Typography>
-                        <Typography variant="body1" className={classes.mtb2}>
-                          {order.sub_total_details.tax_name}
-                        </Typography>
-                        <Divider style={{marginTop: "10px"}}/>
-                        <Typography variant="body1" className={classes.mtb2}>
+                        {order.sub_total_details.shipping_name ?
+                          <Typography variant="body1" className={classes.mtb1}>
+                            {order.sub_total_details.shipping_name}
+                          </Typography> : null}
+                        {order.sub_total_details.tax_name ?
+                          <Typography variant="body1" className={classes.mtb1}>
+                            {order.sub_total_details.tax_name}
+                          </Typography> : null}
+                        {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
+                          <Typography variant="body1" className={classes.mtb1}>
+                            {order.sub_total_details.coupon_code}
+                          </Typography> : null}
+                        <Divider style={{ marginTop: "10px" }} />
+                        <Typography variant="body1" className={classes.mtb1}>
                           SubTotal
                         </Typography>
                       </Grid>
-
-
-
                       {order.sub_total_summary && order.sub_total_summary.length > 0 ? order.sub_total_summary.map((subTotal, index) => (
                         <Grid item md={3} className={classes.textRight}>
-
                           <Typography variant="body2" className={classes.mtb2}>
                             {subTotal.sub_total ? currencyFormat(subTotal.sub_total) : 0}
                           </Typography>
-
-                          <Typography variant="body2" className={classes.mtb2}>
-                            {subTotal.shipping_value ? subTotal.shipping_value : 0}
-                          </Typography>
-                          <Typography variant="body2" className={classes.mtb2}>
-                            {subTotal.tax_value ? subTotal.tax_value : 0}
-                          </Typography>
-                          <Divider style={{marginTop: "10px"}}/>
+                          {order.sub_total_details.shipping_name ?
+                            <Typography variant="body2" className={classes.mtb2}>
+                              {subTotal.shipping_value ? subTotal.shipping_value : 0}
+                            </Typography> : null}
+                          {order.sub_total_details.tax_name ?
+                            <Typography variant="body2" className={classes.mtb2}>
+                              {subTotal.tax_value ? subTotal.tax_value : 0}
+                            </Typography> : null}
+                          {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code != 'None' ?
+                            <Typography variant="body2" className={classes.mtb2}>
+                              {subTotal.tax_value ? subTotal.tax_value : 0}
+                            </Typography> : null}
+                          <Divider style={{ marginTop: "10px" }} />
                           <Typography variant="body2" className={classes.mtb2}>
                             {subTotal.total ? currencyFormat(subTotal.total) : 0}
                           </Typography>
                         </Grid>
                       )) : <Grid item md={3} className={classes.textRight}>
-
                         <Typography variant="body2" className={classes.mtb2}>
                           0
                         </Typography>
-
-                        <Typography variant="body2" className={classes.mtb2}>
-                          0
-                        </Typography>
-                        <Typography variant="body2" className={classes.mtb2}>
-                          0
-                        </Typography>
-                        <Divider style={{marginTop: "10px"}}/>
+                        <Divider style={{ marginTop: "10px" }} />
                         <Typography variant="body2" className={classes.mtb2}>
                           0
                         </Typography>

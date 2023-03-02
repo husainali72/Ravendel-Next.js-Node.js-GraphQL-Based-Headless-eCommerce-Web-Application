@@ -5,7 +5,7 @@ import client from "../../apollo-client";
 import { Container } from "react-bootstrap";
 import { GET_HOMEPAGE_DATA_QUERY, GET_RECENT_PRODUCTS_QUERY } from "../../queries/home";
 import { GET_SINGLE_PRODUCT, GET_PRODUCT_REVIEWS, GET_REVIEWS } from "../../queries/productquery";
-import { GET_PRODUCTS_QUERY} from "../../queries/shopquery";
+import { GET_PRODUCTS_QUERY } from "../../queries/shopquery";
 import { Tab, Col, Nav } from 'react-bootstrap';
 import GalleryImagesComponents from "../../components/category/GalleryImage";
 import OnSaleProductCard from "../../components/category/onSaleProductCard";
@@ -16,34 +16,27 @@ import Loading from "../../components/breadcrumb/loading";
 import { useSelector } from "react-redux";
 import Reviews from "../../components/Reviews/Reviews";
 import { currencySetter } from "../../utills/helpers";
-
-
-const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,currencyStore }) => {
+import ReactHtmlParser from 'react-html-parser'
+const SingleProduct = ({ singleproducts, allProduct, productReview, allReviewss, currencyStore }) => {
     const currencyOpt = currencyStore?.currency_options?.currency
     const router = useRouter();
     const session = useSession()
     if (router.isFallback) {
-        return <div>Loading...</div>    
+        return <div>Loading...</div>
     }
     const [singleProduct, setSingleProduct] = useState(null);
     const [sliderImages, setSliderImages] = useState([]);
-    const [singleProductReview,setSingleProductReview] = useState([])
-    const productss = useSelector(state => state.products ) 
-
-    const settingss =  useSelector(state => state.setting);
-
+    const [singleProductReview, setSingleProductReview] = useState([])
     const [currency, setCurrency] = useState("$")
-
-
     useEffect(() => {
-        currencySetter(currencyOpt,setCurrency);
-}, [])
+        currencySetter(currencyOpt, setCurrency);
+    }, [])
 
     useEffect(() => {
         const alll = productReview.reviews.data.filter(reviews => reviews.product_id._id === singleproducts._id);
-        setSingleProductReview(alll) 
-    }, [productReview,singleproducts])
-    
+        setSingleProductReview(alll)
+    }, [productReview, singleproducts])
+
     useEffect(() => {
         var product = singleproducts;
         setSingleProduct(product);
@@ -58,8 +51,6 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,c
         }
         setSliderImages(allimages);
     }, [singleproducts]);
-
-
 
     return (
         <div>
@@ -81,7 +72,7 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,c
                         <div className="col-lg-12">
                             <div className="product-detail accordion-detail">
                                 <div>
-                                    <GalleryImagesComponents galleryImages={sliderImages} singleproducts={singleproducts} currency = {currency} />
+                                    <GalleryImagesComponents galleryImages={sliderImages} singleproducts={singleproducts} currency={currency} />
                                 </div>
                             </div>
                             <div>
@@ -96,16 +87,16 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,c
                                             <Tab.Content>
                                                 <Tab.Pane eventKey="description">
                                                     <div style={{ padding: "20px", marginTop: "15px" }}>
-                                                        {singleproducts.description !== null && singleproducts.description !== "" ? (
-                                                            singleproducts.description.replace(/(<([^>]+)>)/ig, '')) :
-                                                            <p>Product Discription not available</p>
-                                                        }</div>
+
+                                                        {singleproducts.description !== null && singleproducts.description !== "" ? ReactHtmlParser(singleproducts.description) : <p>Product Discription not available</p>}
+                                                    </div>
+
                                                 </Tab.Pane>
                                             </Tab.Content>
                                             <Tab.Content>
                                                 <Tab.Pane eventKey="review">
                                                     {singleProduct !== null ? <Reviews singleProductReview={singleProductReview} /> : null}
-                                                    
+
                                                     {session.status === "authenticated" ? (
                                                         <ReviewForm productId={singleproducts._id} />
                                                     ) : <div style={{ padding: "20px", marginTop: "15px" }}>
@@ -125,13 +116,7 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,c
                                 />
                             </div>
                         </div>
-                        {/* <div className="col-lg-3">
-                            <h1>product category</h1>
-                            <ShopProducts name={"Category"} />
-                            <ShopProducts name={"Brand"} />
-                        </div> */}
                     </div>
-
                 </Container>
             </section>
         </div>
@@ -140,8 +125,8 @@ const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,c
 export default SingleProduct;
 
 export async function getStaticPaths() {
-    var allProduct =[];
-       try {
+    var allProduct = [];
+    try {
         const { data: shopproducts } = await client.query({
             query: GET_PRODUCTS_QUERY
         });
@@ -167,20 +152,20 @@ export async function getStaticProps({ params }) {
     let allProduct = [];
     let productReview = [];
     let allReviewss = {};
-    var currencyStore =[]
-   
-       /* ========================================= get all review ========================================*/
+    var currencyStore = []
 
-       try {
+    /* ========================================= get all review ========================================*/
+
+    try {
         const { data: Reviews } = await client.query({
-          query: GET_REVIEWS
+            query: GET_REVIEWS
         });
         allReviewss = Reviews
-      }
-      catch (e) {
+    }
+    catch (e) {
         console.log("Reviews Error=======", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
-      }
-    
+    }
+
     /* ========================================= get HomePage Data========================================*/
 
     try {
