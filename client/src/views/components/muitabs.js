@@ -12,27 +12,15 @@ function a11yProps(index) {
     };
 }
 
-export default function BasicTabs({ handleOnChangeSearch, statusTabData, searchData }) {
-    const [value, setValue] = React.useState('All');
+export default function BasicTabs({ handleChangeMuiTabs, value, statusTabData, searchData }) {
+
     const classes = viewStyles()
-    const handleChange = (event, newValue) => {
 
-        setValue(newValue);
-        if (newValue === 'All') {
-            handleOnChangeSearch(searchData)
-        } else {
-            let filterdata = searchData.filter((data) => {
-
-                return data[statusTabData.name] === newValue
-            })
-            handleOnChangeSearch(filterdata)
-        }
-    };
 
     return (
         <Box className={classes.muitabs}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                <Tabs value={value} onChange={handleChangeMuiTabs} aria-label="basic tabs example">
                     {statusTabData.array.map((item, index) => {
 
                         return <Tab label={item} value={item} {...a11yProps(index)} />
