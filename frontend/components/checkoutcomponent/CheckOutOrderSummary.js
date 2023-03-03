@@ -1,8 +1,10 @@
 import { useEffect } from "react"
 import { Spinner } from "react-bootstrap";
+import { getPrice } from "../../utills/helpers";
 const OrderSummary = (props) => {
-    const { currency, subTotal, cartTotal, coupon, delivery, tax_amount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails,CouponLoading,isCouponApplied,AppliedCoupon } = props;
-    
+
+    const { decimal, currency, subTotal, cartTotal, coupon, delivery, tax_amount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails, CouponLoading, isCouponApplied, AppliedCoupon } = props;
+
     useEffect(() => {
         var allData = {
             subtotal: subTotal?.toString(),
@@ -13,7 +15,9 @@ const OrderSummary = (props) => {
         }
         getCalculationDetails(allData)
     }, [subTotal, cartTotal, coupon, delivery, tax_amount])
-   
+
+
+
     return (
         <>
             <div className="col-md-12 col-sm-12 col-md-2-5">
@@ -24,9 +28,9 @@ const OrderSummary = (props) => {
                             <input type="text" placeholder="Enter Coupon Code..." value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} />
                         </div>
                         <div className="form-group">
-                            <button type="submit" className="btn  btn-md" name="coupon" style={{ minWidth:"100px", marginTop: 12, backgroundColor: "#088178", color: "#fff" }}>{CouponLoading ? <Spinner animation="border" size="sm"  variant="light" />: "Apply Coupon" }</button>
+                            <button type="submit" className="btn  btn-md" name="coupon" style={{ minWidth: "100px", marginTop: 12, backgroundColor: "#088178", color: "#fff" }}>{CouponLoading ? <Spinner animation="border" size="sm" variant="light" /> : "Apply Coupon"}</button>
                         </div>
-                    </form> 
+                    </form>
                 </div>
                 <div className="border p-md-4 p-30 border-radius cart-totals">
 
@@ -40,27 +44,30 @@ const OrderSummary = (props) => {
                                 <tr >
                                     <td className="cart_total_label" >Cart Total</td>
                                     <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
-                                        {currency}{subTotal?.toFixed(2)}
+
+                                        {currency}{getPrice(subTotal, decimal)}
+
                                     </span></td>
                                 </tr>
                                 <tr>
                                     <td className="cart_total_label">Tax</td>
-                                    <td className="cart_total_amount"> <i className="ti-gift mr-5"> {currency}{tax_amount === "0" ? "0.00" : tax_amount}</i></td>
+                                    <td className="cart_total_amount"> <i className="ti-gift mr-5"> {currency}{getPrice(tax_amount, decimal)}</i></td>
                                 </tr>
                                 <tr>
                                     <td className="cart_total_label">Shipping</td>
-                                    {/* <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>{delivery == "0" ? "Free Shipping" : `${currency}`+ delivery?.toFixed(2)}</td> */}
-                                    {delivery != "0" ? <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>{currency} {delivery?.toFixed(2)}</td>:
-                                     <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>Free Shipping</td>}
+
+                                    {delivery != "0" ? <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>{currency} {getPrice(delivery, decimal)}</td> :
+                                        <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>Free Shipping</td>}
                                 </tr>
                                 <tr>
                                     <td className={`cart_total_label ${isCouponApplied && "textSuccess"}`}>Coupon {isCouponApplied && <small> - ({AppliedCoupon})</small>}</td>
-                                    <td className={`cart_total_amount ${isCouponApplied && "textSuccess"}`}><i className="ti-gift mr-5"></i>{"-"} {currency}{Number(coupon)?.toFixed(2)}</td>
+                                    <td className={`cart_total_amount ${isCouponApplied && "textSuccess"}`}><i className="ti-gift mr-5"></i>{"-"} {currency} {getPrice(Number(coupon), decimal)}</td>
+
                                 </tr>
                                 <tr style={{ borderTop: "2px solid black", marginTop: "15px" }}>
                                     <td className="cart_total_label" >Total</td>
                                     <td className="cart_total_amount"><strong><span className="font-xl fw-900 text-brand">
-                                    {currency}{cartTotal?.toFixed(2)}
+                                        {currency}{getPrice(cartTotal, decimal)}
                                     </span></strong></td>
                                 </tr>
                             </tbody>

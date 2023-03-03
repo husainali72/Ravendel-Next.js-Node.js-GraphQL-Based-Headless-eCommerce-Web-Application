@@ -51,7 +51,7 @@ module.exports = {
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      let searchInFields = { name: { $regex: search, $options: "i" } };
+      let searchInFields = { name: { $regex: `${search}`, $options: "i" } };
       return await GET_BY_PAGINATIONS(
         limit,
         pageNumber,
@@ -136,7 +136,7 @@ module.exports = {
             }
           }
 
-          let url = await updateUrl(args.url, "Brand");
+          let url = await updateUrl(args.url, "Brand", args.id);
 
           brand.name = args.name;
           brand.url = url;

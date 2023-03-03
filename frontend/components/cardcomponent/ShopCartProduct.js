@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { getImage } from "../../utills/helpers";
+import { getImage, getPrice, currencySetter } from "../../utills/helpers";
 import { useSelector, useDispatch } from "react-redux";
 import { removeCartItemAction } from "../../redux/actions/cartAction";
 import { DELETE_CART_PRODUCTS } from "../../queries/cartquery";
@@ -8,24 +8,23 @@ import { mutation } from "../../utills/helpers";
 import { useSession } from "next-auth/react"
 import { getAllProductsAction } from "../../redux/actions/productAction";
 var placeholder = "https://dummyimage.com/300";
-
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice * product.quantity), 0)
-
 export const ShopCart = () => {
     const session = useSession()
     const dispatch = useDispatch()
     const cartProducts = useSelector(state => state.cart)
-    const {loading, success, products} = useSelector(state => state.products);
-    // console.log("cart", cartProducts)
+    const { loading, success, products } = useSelector(state => state.products);
     const usercart = useSelector(state => state.userCart)
     const settings = useSelector(state => state.setting)
     const currencyType = settings.currencyOption
-    let currency = "$"
-    if (currencyType?.currency === "dollar") { currency = "$" }
-    if (currencyType?.currency === "eur") { currency = <i className="fas fa-euro-sign"></i> }
-    if (currencyType?.currency === "gbp") { currency = <i className="fas fa-pound-sign"></i> }
-    if (currencyType?.currency === "cad") { currency = "CA$" }
+    const [currency, setCurrency] = useState("$")
+    const [decimal, setdecimal] = useState(2)
 
+    useEffect(() => {
+
+        setdecimal(settings.currencyOption.number_of_decimals)
+        currencySetter(settings, setCurrency);
+    }, [settings?.currencyOption])
     const [cart, setCart] = useState([])
     const [press, setPress] = useState(false);
     const initialRender = useRef(true)
@@ -35,7 +34,7 @@ export const ShopCart = () => {
     }, []);
 
     useEffect(() => {
-        if(success && products?.length) {
+        if (success && products?.length) {
             let filteredProducts = [];
             cartProducts.forEach(cartProduct => {
                 filteredProducts.push(...products.filter(product => product._id === cartProduct._id));
@@ -84,7 +83,7 @@ export const ShopCart = () => {
 
     return (
         <>
-        {console.log('cart - loading', cart)}
+
             {!loading && cart && cart?.length > 0 ? (
                 <div>
                     {cart.map((item, i) =>
@@ -118,7 +117,7 @@ export const ShopCart = () => {
                         </div>)}
                     <div className="shopping-cart-footer">
                         <div className="shopping-cart-total">
-                            <h4>Total <span style={{ float: 'right', color: '#088178' }}>{currency} {CalculateProductTotal(cart).toFixed(2)}</span></h4>
+                            <h4>Total <span style={{ float: 'right', color: '#088178' }}>{currency} {getPrice(CalculateProductTotal(cart), decimal)}</span></h4>
                         </div>
                         <div className="shopping-cart-button d-flex" >
                             <Link href="/shopcart">

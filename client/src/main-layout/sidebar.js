@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
   drawer: {
     "&&": {
       width: 175,
-
+      zIndex: "10!important",
       [theme.breakpoints.up("lg")]: {
         marginTop: 50,
         height: "calc(100% - 50px)",
@@ -39,11 +39,12 @@ const SideBarComponent = (props) => {
       onClose={onClose}
       open={open}
       variant={variant}
+
     >
       <div {...rest} className={clsx(classes.root, className)}>
         <MenuBar />
       </div>
-    </Drawer>
+    </Drawer >
   );
 };
 

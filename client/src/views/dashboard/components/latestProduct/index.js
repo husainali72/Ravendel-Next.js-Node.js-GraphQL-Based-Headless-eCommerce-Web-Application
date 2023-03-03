@@ -24,7 +24,6 @@ import theme from "../../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 const LatestProductsTheme = ({ products, loader }) => {
   const classes = DashboardStyles();
-
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -38,7 +37,7 @@ const LatestProductsTheme = ({ products, loader }) => {
           <Box component="div" display="flex" justifyContent="center" p={2}>
             <CircularProgress size={20} />
           </Box>
-        ) : !products ? (
+        ) : !products.length ? (
           <Box component="div" display="flex" justifyContent="center" p={2}>
             <Typography className={classes.noRecordFound} variant="caption">
               No Records Found

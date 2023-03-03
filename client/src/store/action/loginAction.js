@@ -5,7 +5,7 @@ export const LoginAction = (email, password, navigate) => (dispatch) => {
   dispatch({
     type: POST_TOKEN_BEGIN,
   });
-  return login(email, password)
+  return login(email, password, navigate)
     .then((res) => {
       console.log("res", res)
       dispatch({

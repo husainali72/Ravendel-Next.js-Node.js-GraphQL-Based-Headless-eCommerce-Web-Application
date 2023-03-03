@@ -1,21 +1,22 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Slider from "react-slick";
 import { GlassMagnifier } from "react-image-magnifiers";
-import { currencySetter, getImage } from "../../utills/helpers";
+import { currencySetter, getImage, getPrice } from "../../utills/helpers";
 import Carousel from 'react-bootstrap/Carousel'
 import StarRating from "../../components/breadcrumb/rating";
 import { addToCart } from "../../redux/actions/cartAction";
 import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+
 import calculateDiscount from "../../utills/calculateDiscount";
 var placeholder = "https://dummyimage.com/300";
-
 const GalleryImagesComponents = (props) => {
     const dispatch = useDispatch();
     const session = useSession()
     const router = useRouter();
-    const { singleproducts , currency,lowStockThreshold,outOfStockVisibility,outOfStockThreshold } = props;
+
+    const { singleproducts , currency,lowStockThreshold,outOfStockVisibility,outOfStockThreshold, decimal } = props;
     
     const stockLable = (stockQuantity)=>{
         let lable = "In Stock"
@@ -27,6 +28,7 @@ const GalleryImagesComponents = (props) => {
         }
         return lable
     }
+
     const settings = {
         customPaging: function (i) {
             return (
@@ -47,10 +49,9 @@ const GalleryImagesComponents = (props) => {
         slidesToShow: 1,
         slidesToScroll: 1,
         touchMove: false,
-        };
+    };
     const addToCartProduct = (product) => {
         let quantity = 1
-
         if (session.status === "authenticated") {
             let token = session.data.user.accessToken.token
             let id = session.data.user.accessToken.customer._id
@@ -62,7 +63,6 @@ const GalleryImagesComponents = (props) => {
             router.push("/shopcart")
         }
     }
-
     return (
         <>
             <div className="single-product row mb-50" style={{ display: 'flex' }}>
@@ -88,9 +88,8 @@ const GalleryImagesComponents = (props) => {
                                     ))}
                                 </Slider>)
                                 : (
-                                    <h1>no product Available</h1>
+                                    <img src={getImage('', 'large')}></img>
                                 )}
-
                         </div>
                     </>
                 </div>
@@ -110,7 +109,7 @@ const GalleryImagesComponents = (props) => {
                                 <span className=" mx-2">
                                     {singleproducts.pricing.sellprice ? (
                                         <strong className="sale-price" style={{ fontSize: "25px" }}>
-                                             {currency}{" "}{singleproducts.pricing.sellprice.toFixed(2)}
+                                            {currency}{" "}{getPrice(singleproducts.pricing.sellprice, decimal)}
                                         </strong>
                                     ) : (
                                         <strong className="sale-price" style={{ fontSize: "25px" }}>
@@ -122,8 +121,10 @@ const GalleryImagesComponents = (props) => {
                                         singleproducts.pricing.sellprice ? "has-sale-price mx-2" : ""
                                     } style={{ fontSize: "17px" }}
                                 >
-                                    {currency}{singleproducts.pricing.price.toFixed(2)}
-                                </span> : null}
+
+                                    {currency}{getPrice(singleproducts.pricing.price, decimal)}
+                                </span>
+
                                 <span className=" mx-2">
                                     {calculateDiscount(singleproducts.pricing.price,singleproducts.pricing.sellprice)}
                                 </span>
@@ -134,6 +135,7 @@ const GalleryImagesComponents = (props) => {
                         </div>
                         {singleproducts.custom_field && singleproducts.custom_field?.length > 0 ? (
                             <>
+
                                   {singleproducts.custom_field.map(field => (<div>
                                 <ul className="product-meta font-xs color-grey mt-50">
                                 <p >
@@ -147,6 +149,7 @@ const GalleryImagesComponents = (props) => {
                             className="btn btn-success button button-add-to-cart"
                             style={{ marginTop: 12, backgroundColor: "#088178" }}
                             onClick={() => addToCartProduct(singleproducts)}>Add to Cart</button>
+
                         <ul className="product-meta font-xs color-grey mt-50">
                             <p className="">SKU: {singleproducts.sku}</p>
                             {newFunction(singleproducts)}
@@ -155,7 +158,6 @@ const GalleryImagesComponents = (props) => {
                     </div>
                 </div>
             </div>
-
         </>
     );
 };

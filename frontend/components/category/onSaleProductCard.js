@@ -1,66 +1,68 @@
 import { useEffect, useMemo, useState } from "react";
-import client from "../../apollo-client"
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Container, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 import StarRating from "../breadcrumb/rating";
-import { currencySetter, getImage, mutation } from "../../utills/helpers";
+import { currencySetter, getImage, mutation, getPrice } from "../../utills/helpers";
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
 import { useSession } from "next-auth/react";
 import { ADD_TO_CART_QUERY, GET_USER_CART, UPDATE_CART_PRODUCT } from "../../queries/cartquery";
-import calculateDiscount from "../../utills/calculateDiscount";
-import { query } from "../../utills/helpers"; 
-var placeholder = "https://dummyimage.com/300";
-const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp }) => {
-    const [currency, setCurrency] = useState("$")
-    const settings =   useSelector(state => state.setting);
-    // console.log('currendy in setting',settings?.currencyOption)
-    useEffect(() => {
-        currencySetter(settings,setCurrency);
-        if(currencyProp){
-            setCurrency(currencyProp)
-        }
-}, [settings?.currencyOption,currencyProp])
 
-    const router = useRouter()
-    const session = useSession();
+import calculateDiscount from "../../utills/calculateDiscount";  
+import { query } from "../../utills/helpers";
+var placeholder = "https://dummyimage.com/300";
+const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }) => {
     var id = ""
     var token = ""
+    const dispatch = useDispatch();
+    const router = useRouter()
+    const session = useSession();
+    const [currency, setCurrency] = useState("$")
+    const [decimal, setdecimal] = useState(2)
+    const settings = useSelector(state => state.setting);
+
+    useEffect(() => {
+        currencySetter(settings, setCurrency);
+        setdecimal(settings.currencyOption.number_of_decimals)
+        if (currencyProp) {
+            setCurrency(currencyProp)
+        }
+
+    }, [settings?.currencyOption, currencyProp])
+
 
     if (session.status === "authenticated") {
         id = session.data.user.accessToken.customer._id
         token = session.data.user.accessToken.token
     }
-
-    const dispatch = useDispatch();
-
     const ProductAdd = async (product) => {
         let quantity = 1
         let href = '/shopcart'
         if (session.status === "authenticated") {
+
             let productInCart = false;
             query(GET_USER_CART, id, token).then(res => {
                 let cart_id = res?.data?.cartbyUser?.id
-                const inCartProducts =  res?.data?.cartbyUser?.products;
+                const inCartProducts = res?.data?.cartbyUser?.products;
                 inCartProducts.map(inCartProduct => {
                     const productt = inCartProduct;
-                    if(productt.product_id === product?._id){
+                    if (productt.product_id === product?._id) {
                         let qant = product.qty + quantity;
                         productInCart = true;
                         var Cartt = inCartProducts.map(producttt => {
-                            if(producttt.product_id === product._id){
-                                return{
+                            if (producttt.product_id === product._id) {
+                                return {
                                     product_id: producttt?.product_id,
-                                    qty: producttt.qty + quantity ,
+                                    qty: producttt.qty + quantity,
                                     product_title: producttt.product_title,
                                     product_image: producttt.product_image,
                                     product_price: producttt.product_price
                                 }
-                            }else{
+                            } else {
                                 return {
                                     product_id: producttt?.product_id,
-                                    qty: producttt.qty ,
+                                    qty: producttt.qty,
                                     product_title: producttt.product_title,
                                     product_image: producttt.product_image,
                                     product_price: producttt.product_price
@@ -72,15 +74,12 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp })
                             products: Cartt,
                             total: 0,
                         }
-                        mutation(UPDATE_CART_PRODUCT, variables, token).then(res =>{ 
+                        mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
                             router.push("/shopcart")
-                            
                         })
-                     
                     }
                 })
-                if(!productInCart){
-                
+                if (!productInCart) {
                     let variables = {
                         total: product?.pricing.sellprice * quantity,
                         user_id: id,
@@ -91,13 +90,11 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp })
                         product_price: product?.pricing.sellprice
                     }
                     mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
-                        console.log("Product Add successfully", res)
-                       router.push("/shopcart")
-                })
+                        router.push("/shopcart")
+                        dispatch(addToCart(product))
+                    })
                 }
             })
-            
- 
         }
         else {
             dispatch(addToCart(product))
@@ -107,7 +104,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp })
 
     return (
         <section className="product-cart-section" >
-            <Container style={{padding:'0'}}>
+            <Container style={{ padding: '0' }}>
                 {!hidetitle ? <div>
                     <h4 style={{ color: "#088178" }}>{titleShow ? titleShow : "On Sale"} <span style={{ color: "black" }}>Product</span></h4>
                 </div>
@@ -160,7 +157,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp })
                                                     <StarRating className="rating" stars="4" />
                                                     <span >
                                                         {product.pricing.sellprice ? (
-                                                            <strong className="sale-price">{currency} {product.pricing.sellprice.toFixed(2)}
+                                                            <strong className="sale-price">{currency} {getPrice(product.pricing.sellprice, decimal)}
                                                             </strong>
                                                         ) : (
                                                             <strong className="sale-price">{currency} {product.pricing.price.toFixed(2)}</strong>
@@ -170,8 +167,10 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp })
                                                             product.pricing.sellprice ? "has-sale-price" : ""
                                                         }
                                                     >
-                                                        {currency} {product.pricing.price.toFixed(2)}
-                                                    </span> : null}
+
+                                                        {currency} {getPrice(product.pricing.price, decimal)}
+                                                    </span>
+
                                                 </div>
                                                 <OverlayTrigger style={{ backgroundColor: "#088178" }}
                                                     placement="top"
@@ -182,8 +181,8 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp })
                                                     }
                                                 >
                                                     <div className="add-to-cart"> <a className="cart-icon" onClick={() => ProductAdd(product)}>
-                                                            <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
-                                                            </a>
+                                                        <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
+                                                    </a>
                                                     </div>
                                                 </OverlayTrigger>
 
@@ -197,7 +196,6 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle,titleShow, currencyProp })
                                 <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>Product not available</p>
                             </div>
                         }
-
                     </div>
                 </div>
             </Container>

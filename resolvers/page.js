@@ -1,5 +1,5 @@
 const Page = require("../models/Page");
-const { stringTourl, duplicateData, MESSAGE_RESPONSE } = require("../config/helpers");
+const { updateUrl, duplicateData, MESSAGE_RESPONSE } = require("../config/helpers");
 const {
   DELETE_FUNC,
   GET_BY_PAGINATIONS,
@@ -18,7 +18,7 @@ module.exports = {
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      let searchInFields = { title: { $regex: search, $options: "i" } };
+      let searchInFields = { title: { $regex: `${search}`, $options: "i" } };
       return await GET_BY_PAGINATIONS(
         limit,
         pageNumber,
@@ -37,7 +37,7 @@ module.exports = {
     addPage: async (root, args, { id }) => {
       let url = "";
       if (args.url || args.title) {
-        url = await stringTourl(args.url || args.title);
+        url = await updateUrl(args.url || args.title, "Page");
       }
       let data = {
         title: args.title,
@@ -54,7 +54,7 @@ module.exports = {
     updatePage: async (root, args, { id }) => {
       let url = "";
       if (args.url || args.title) {
-        url = await stringTourl(args.url || args.title);
+        url = await updateUrl(args.url || args.title, "Page", args.id);
       }
       let data = {
         title: args.title,

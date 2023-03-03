@@ -20,10 +20,10 @@ const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl }) => {
   };
 
   const isUrlExist = async (url) => {
-    setLoading(true);
-    let updatedUrl = await getUpdatedUrl(tableUrl, url);
-    onInputChange(updatedUrl);
-    setLoading(false);
+    // setLoading(true);
+    // let updatedUrl = await getUpdatedUrl(tableUrl, url);
+    // onInputChange(updatedUrl);
+    // setLoading(false);
   };
 
   return (

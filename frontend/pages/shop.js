@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { currencySetter, getImage } from "../utills/helpers";
+import { currencySetter, getImage, getPrice } from "../utills/helpers";
 import client from "../apollo-client";
 import StarRating from "../components/breadcrumb/rating";
 import MultiRangeSlider from "../components/breadcrumb/multirangeSlider";
@@ -16,10 +16,13 @@ import { CloseMenu } from '../utills/app';
 import { OpenSortMenu } from '../utills/app';
 import { CloseSortMenu } from '../utills/app';
 
-const Shop = ({ shopProducts, brandProduct, shopProduct,currencyStore }) => {
+const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
     const dispatch = useDispatch();
     const usercart = useSelector(state => state.userCart)
     const [rangevalue, setRangevalue] = useState('');
+    const currencyOpt = currencyStore?.currency_options?.currency
+    const decimal = currencyStore?.currency_options?.number_of_decimals
+    const [currency, setCurrency] = useState("$")
     let onSaleProduct = [];
     var number = 0;
     if (shopProducts && shopProducts?.products?.data?.length > 0) {
@@ -29,13 +32,9 @@ const Shop = ({ shopProducts, brandProduct, shopProduct,currencyStore }) => {
     else {
         <h1>loading...</h1>
     }
-
-    const currencyOpt = currencyStore?.currency_options?.currency
-    const [currency, setCurrency] = useState("$")
-      useEffect(() => {
-          currencySetter(currencyOpt,setCurrency);
-        }, [])
-
+    useEffect(() => {
+        currencySetter(currencyOpt, setCurrency);
+    }, [])
     useEffect(() => {
         if (brandProduct) {
             dispatch(brandsAction(brandProduct))
@@ -96,14 +95,13 @@ const Shop = ({ shopProducts, brandProduct, shopProduct,currencyStore }) => {
                                                         <strong>{product.name}</strong>
                                                     )}
                                                     <StarRating stars={"5"} />
-                                                    <p style={{ marginTop: 0 }}>{currency}{product.pricing.sellprice}</p>
+
+                                                    <p style={{ marginTop: 0 }}>{currency} {getPrice(product.pricing.sellprice, decimal)}</p>
                                                 </div>
                                             </div>
                                         ))
                                         }
                                     </>) : null}
-
-                                    {/* <Cart shopProducts={shopProducts} imgUrl={imgUrl} /> */}
                                 </div>
                             </div>
                         </div>
@@ -171,7 +169,8 @@ const Shop = ({ shopProducts, brandProduct, shopProduct,currencyStore }) => {
                                 <OnSaleProductCard
                                     onSaleProduct={onSaleProduct}
                                     hidetitle
-                                    currencyProp ={currency}
+                                    currencyProp={currency}
+                                    decimal={decimal}
                                 />
                             </div>) :
                             <div style={{ padding: "50px" }}>
@@ -192,7 +191,7 @@ export async function getStaticProps() {
     var shopProducts = [];
     var brandProduct = [];
     var shopProduct = [];
-    var  currencyStore = [];
+    var currencyStore = [];
     /* ===============================================Get HomepageData Settings ===============================================*/
 
     try {

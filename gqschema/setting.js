@@ -211,7 +211,7 @@ module.exports = gql`
     appstore: String
     phone_number: String
     email: String
-    logo: customObject
+    logo: String
   }
 
   input inventory_notification {
@@ -373,6 +373,7 @@ module.exports = gql`
       phone_number: String
       email: String
       new_logo: Upload
+      logo: String
     ): Setting
   }
 `;

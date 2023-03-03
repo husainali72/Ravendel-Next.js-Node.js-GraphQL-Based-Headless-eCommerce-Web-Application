@@ -54,7 +54,7 @@ module.exports = {
       // console.log("args cart=======", args.cart)
     
       try {
-        const coupon = await Coupon.findOne({ code: args.coupon_code });
+        const coupon = await Coupon.findOne({ code: {$regex: `${args.coupon_code}`, $options: "i"} });
         // console.log('coupon',coupon);
         let calculated = {
           total_coupon: {},

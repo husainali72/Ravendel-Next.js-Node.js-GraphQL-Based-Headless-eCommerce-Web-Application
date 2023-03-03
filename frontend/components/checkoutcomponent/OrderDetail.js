@@ -1,19 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { getImage } from "../../utills/helpers";
+import { getImage, getPrice } from "../../utills/helpers";
 import Form from 'react-bootstrap/Form';
 import Stripes from "./reactstripe/StripeContainer";
-
-
 const Orderdetail = (props) => {
-    // const cart = useSelector((state) => state.cart);
-    // console.log(cart)
-    const { currency,getOrderDetails,cartItems, billingInfo, handleBillingInfo, tax_amount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal
-    } = props;
+    const { decimal, currency, getOrderDetails, cartItems, billingInfo, handleBillingInfo, tax_amount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal } = props;
     const cart = cartItems;
-
     const [cartProduct, setCartProduct] = useState([]);
-
     const cartSubTotal = () => {
         var subtotalVar = 0;
         if (cartProduct && cartProduct?.length > 0) {
@@ -24,10 +17,7 @@ const Orderdetail = (props) => {
                 }
             });
         }
-        // console.log("Subtotal", subtotalVar);
-        // setSubTotal(subtotalVar);
     };
-
     useEffect(() => {
         if (cartProduct?.length > 0) {
             cartSubTotal();
@@ -42,10 +32,8 @@ const Orderdetail = (props) => {
             ListingCartProducts()
         }
     }, [cart])
-    // console.log("cartproduct==+", cartProduct);
-
     useEffect(() => {
-        let cartItem = cart.map((product) => { return { product_id: product._id, name: product.name, cost: product.pricing.sellprice ? product.pricing.sellprice: product.pricing.price , qty: product.quantity } })
+        let cartItem = cart.map((product) => { return { product_id: product._id, name: product.name, cost: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price, qty: product.quantity } })
         var allData = {
             products: cartItem,
             billing: billingInfo,
@@ -71,7 +59,7 @@ const Orderdetail = (props) => {
                                 <td><i className="ti-check-box font-small text-muted mr-10"></i>
                                     <h5><a href="shop-product-full.html">{item.name}</a></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>
-                                <td>{currency}{item.pricing.sellprice ? item.pricing.sellprice :item.pricing.price  * item.quantity}</td>
+                                <td>{currency}{item.pricing.sellprice ? getPrice(item.pricing.sellprice, decimal) : getPrice(item.pricing.price * item.quantity, decimal)}</td>
                             </tr>
                         ))}
                         {/* <tr>
@@ -135,8 +123,6 @@ const Orderdetail = (props) => {
 
                 </div> */}
             </div>
-
-
             <div style={{ display: "flex" }}>
                 <div className="payment-method">
                     <h5>Payment Mode</h5>
@@ -173,8 +159,6 @@ const Orderdetail = (props) => {
                     </Form>
                 </div>
             </div>
-
-
         </>
     )
 }
