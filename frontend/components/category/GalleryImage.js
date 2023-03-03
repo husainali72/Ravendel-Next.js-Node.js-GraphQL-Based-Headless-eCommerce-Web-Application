@@ -8,27 +8,23 @@ import { addToCart } from "../../redux/actions/cartAction";
 import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-
 import calculateDiscount from "../../utills/calculateDiscount";
 var placeholder = "https://dummyimage.com/300";
 const GalleryImagesComponents = (props) => {
     const dispatch = useDispatch();
     const session = useSession()
     const router = useRouter();
-
-    const { singleproducts , currency,lowStockThreshold,outOfStockVisibility,outOfStockThreshold, decimal } = props;
-    
-    const stockLable = (stockQuantity)=>{
+    const { singleproducts, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal } = props;
+    const stockLable = (stockQuantity) => {
         let lable = "In Stock"
-        if(stockQuantity <= lowStockThreshold){
+        if (stockQuantity <= lowStockThreshold) {
             lable = "Low Stock"
         }
-        if(stockQuantity <= outOfStockThreshold){
+        if (stockQuantity <= outOfStockThreshold) {
             lable = "Out Of Stock"
         }
         return lable
     }
-
     const settings = {
         customPaging: function (i) {
             return (
@@ -109,14 +105,16 @@ const GalleryImagesComponents = (props) => {
                                 <span className=" mx-2">
                                     {singleproducts.pricing.sellprice ? (
                                         <strong className="sale-price" style={{ fontSize: "25px" }}>
+
                                             {currency}{" "}{getPrice(singleproducts.pricing.sellprice, decimal)}
                                         </strong>
                                     ) : (
                                         <strong className="sale-price" style={{ fontSize: "25px" }}>
-                                        {currency}{" "}{singleproducts.pricing.price.toFixed(2)}
+
+                                            {currency}{" "}{getPrice(singleproducts.pricing.price, decimal)}
                                         </strong>
                                     )}</span>
-                               {singleproducts.pricing.sellprice ? <span
+                                {singleproducts.pricing.sellprice ? <span
                                     className={
                                         singleproducts.pricing.sellprice ? "has-sale-price mx-2" : ""
                                     } style={{ fontSize: "17px" }}
@@ -124,9 +122,9 @@ const GalleryImagesComponents = (props) => {
 
                                     {currency}{getPrice(singleproducts.pricing.price, decimal)}
                                 </span>
-
+                                    : null}
                                 <span className=" mx-2">
-                                    {calculateDiscount(singleproducts.pricing.price,singleproducts.pricing.sellprice)}
+                                    {calculateDiscount(singleproducts.pricing.price, singleproducts.pricing.sellprice)}
                                 </span>
                             </div>
                         </div>
@@ -136,13 +134,13 @@ const GalleryImagesComponents = (props) => {
                         {singleproducts.custom_field && singleproducts.custom_field?.length > 0 ? (
                             <>
 
-                                  {singleproducts.custom_field.map(field => (<div>
-                                <ul className="product-meta font-xs color-grey mt-50">
-                                <p >
-                                    {`${field.key} - ${' '}`} <strong> {field.value}</strong>
-                                </p>
-                                </ul>
-                            </div>))}
+                                {singleproducts.custom_field.map(field => (<div>
+                                    <ul className="product-meta font-xs color-grey mt-50">
+                                        <p >
+                                            {`${field.key} - ${' '}`} <strong> {field.value}</strong>
+                                        </p>
+                                    </ul>
+                                </div>))}
                             </>
                         ) : null}
                         <button type="button"
@@ -167,4 +165,3 @@ function newFunction(singleproducts) {
     return <p className="">Tags: {singleproducts.__typename}</p>;
 }
 
-  

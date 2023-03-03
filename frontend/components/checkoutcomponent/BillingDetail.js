@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Collapse from 'react-bootstrap/Collapse';
 import Form from 'react-bootstrap/Form';
 import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import { handleEnter } from "../../utills/helpers";
 
 const BillingDetails = (props) => {
@@ -233,7 +234,6 @@ const BillingDetails = (props) => {
                                 placeholder="Enter phone number"
                                 value={billingInfo.phone}
                                 onChange={(value) => handlePhoneInput('phone', value)}
-                                style={{ marginTop: 12, }}
 
                             />
                             {/* <input className="input-filled"

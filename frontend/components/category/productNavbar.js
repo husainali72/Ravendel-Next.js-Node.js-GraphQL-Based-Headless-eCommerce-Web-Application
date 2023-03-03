@@ -49,10 +49,10 @@ export const ProductNav = (props) => {
                     </div>
                     <div className="on-sale-product-card-body">
                         {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price ? <div className="save-price">
-                           <span className="percantage-save">
-                                {calculateDiscount(product.pricing.price,product.pricing.sellprice)}
-                            </span> 
-                        </div>: null}
+                            <span className="percantage-save">
+                                {calculateDiscount(product.pricing.price, product.pricing.sellprice)}
+                            </span>
+                        </div> : null}
                         <div className="product-categoryname" >
                             {product?.categoryId.map((item, i) =>
                             (<span key={i}>{(product?.categoryId?.length - 1 === i) ? (<span>{item?.name} </span>) : <span>{item?.name}, </span>}
@@ -77,16 +77,16 @@ export const ProductNav = (props) => {
                                     </strong>
                                 ) : (
                                     <strong className="sale-price">{currency} {product.pricing.price.toFixed(2)}</strong>
-                                    
+
                                 )}</span>
-                                     { product.pricing.sellprice ? <span
-                                        className={
-                                            product.pricing.sellprice ? "has-sale-price" : ""
-                                        }
+                                {product.pricing.sellprice ? <span
+                                    className={
+                                        product.pricing.sellprice ? "has-sale-price" : ""
+                                    }
                                 >
 
                                     {currency} {getPrice(product.pricing.price, decimal)}
-                                </span>
+                                </span> : null}
 
                             </div>
                             <OverlayTrigger style={{ backgroundColor: "#088178" }}

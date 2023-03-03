@@ -21,8 +21,7 @@ export const ShopCart = () => {
     const [decimal, setdecimal] = useState(2)
 
     useEffect(() => {
-
-        setdecimal(settings.currencyOption.number_of_decimals)
+        setdecimal(settings?.currencyOption?.number_of_decimals)
         currencySetter(settings, setCurrency);
     }, [settings?.currencyOption])
     const [cart, setCart] = useState([])

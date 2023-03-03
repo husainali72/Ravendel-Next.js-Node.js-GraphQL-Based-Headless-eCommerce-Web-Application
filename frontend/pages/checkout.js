@@ -280,11 +280,10 @@ export const CheckOut = ({ currencyStore }) => {
         let couponValueGet = false;
         setCouponLoading(true)
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
-            console.log('res',res.data.calculateCoupon.success)
             couponResponse = res.data.calculateCoupon.total_coupon
 
-            if(res.data.calculateCoupon.success){
-                notify(res.data.calculateCoupon.message,true)
+            if (res.data.calculateCoupon.success) {
+                notify(res.data.calculateCoupon.message, true)
 
                 setIsCouponApplied(true)
             }
@@ -367,7 +366,7 @@ export const CheckOut = ({ currencyStore }) => {
                                         steps={steps}
                                     />
 
-                                    <div className="col-lg-12 firstCheckPage">
+                                    <div className="col-lg-12 first-checkout-page">
                                         <div style={{ padding: "20px" }}>
                                             <CustomerDetail
                                                 address_book={address_book}
@@ -429,154 +428,154 @@ export const CheckOut = ({ currencyStore }) => {
                 )
             case 2:
                 return (
-                   <>
-                    <Toaster />
-                     <div>
-                        <BreadCrumb title={"checkout"} />
-                        <section className="checkout-section">
-                            <Container>
-                                <Stepper
-                                    activeStep={formStep}
-                                    steps={steps}
-                                />
-                                <div className="col-lg-12" style={{ display: 'flex' }}>
-                                    <div style={{ width: "60%", padding: "20px" }}>
-                                        <ShippingTaxCoupon
-                                            decimal={decimal}
-                                            currency={currency}
-                                            couponCode={couponCode}
-                                            setCouponCode={setCouponCode}
-                                            coupon={coupon}
-                                            setCoupon={setCoupon}
-                                            setCouponFeild={setCouponFeild}
-                                            tax_amount={tax_amount}
-                                            setTax_amount={setTax_amount}
-                                            doApplyCouponCode={doApplyCouponCode}
-                                            couponfield={couponfield}
-                                            delivery={delivery}
-                                            billingInfo={billingInfo}
-                                            shippingAdd={shippingAdd}
-                                            prevFormStep={prevFormStep}
-                                            shippingInfo={shippingInfo}
-                                        />
-                                        <button className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} onClick={nextFormStep}>Continue</button>
+                    <>
+                        <Toaster />
+                        <div>
+                            <BreadCrumb title={"checkout"} />
+                            <section className="checkout-section">
+                                <Container>
+                                    <Stepper
+                                        activeStep={formStep}
+                                        steps={steps}
+                                    />
+                                    <div className="col-lg-12" style={{ display: 'flex' }}>
+                                        <div style={{ width: "60%", padding: "20px" }}>
+                                            <ShippingTaxCoupon
+                                                decimal={decimal}
+                                                currency={currency}
+                                                couponCode={couponCode}
+                                                setCouponCode={setCouponCode}
+                                                coupon={coupon}
+                                                setCoupon={setCoupon}
+                                                setCouponFeild={setCouponFeild}
+                                                tax_amount={tax_amount}
+                                                setTax_amount={setTax_amount}
+                                                doApplyCouponCode={doApplyCouponCode}
+                                                couponfield={couponfield}
+                                                delivery={delivery}
+                                                billingInfo={billingInfo}
+                                                shippingAdd={shippingAdd}
+                                                prevFormStep={prevFormStep}
+                                                shippingInfo={shippingInfo}
+                                            />
+                                            <button className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} onClick={nextFormStep}>Continue</button>
+                                        </div>
+                                        <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
+                                            <OrderSummary
+                                                AppliedCoupon={AppliedCoupon}
+                                                isCouponApplied={isCouponApplied}
+                                                CouponLoading={CouponLoading}
+                                                decimal={decimal}
+                                                currency={currency}
+                                                cartTotal={cartTotal}
+                                                subTotal={subtotal}
+                                                coupon={coupon}
+                                                delivery={delivery}
+                                                tax_amount={tax_amount}
+                                                doApplyCouponCode={doApplyCouponCode}
+                                                couponCode={couponCode}
+                                                setCouponCode={setCouponCode}
+                                                getCalculationDetails={getCalculationDetails}
+                                            />
+                                        </div>
                                     </div>
-                                    <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
-                                        <OrderSummary
-                                            AppliedCoupon={AppliedCoupon}
-                                            isCouponApplied={isCouponApplied}
-                                            CouponLoading={CouponLoading}
-                                            decimal={decimal}
-                                            currency={currency}
-                                            cartTotal={cartTotal}
-                                            subTotal={subtotal}
-                                            coupon={coupon}
-                                            delivery={delivery}
-                                            tax_amount={tax_amount}
-                                            doApplyCouponCode={doApplyCouponCode}
-                                            couponCode={couponCode}
-                                            setCouponCode={setCouponCode}
-                                            getCalculationDetails={getCalculationDetails}
-                                        />
-                                    </div>
-                                </div>
-                            </Container>
-                        </section>
-                    </div>
+                                </Container>
+                            </section>
+                        </div>
                     </>
                 )
             case 3:
                 return (
-                   <>
-                    <Toaster />
-                    <div>
-                        <BreadCrumb title={"checkout"} />
-                        <section className="checkout-section">
-                            <Container>
-                                <Stepper
-                                    activeStep={formStep}
-                                    steps={steps}
-                                />
-                                <div className="col-lg-12" style={{ display: 'flex' }}>
-                                    <div style={{ width: "60%", padding: "20px" }}>
-                                        {/* <div className="your-order-container"> */}
-                                        <ShippingTaxCoupon
-                                            decimal={decimal}
-                                            currency={currency}
-                                            couponCode={couponCode}
-                                            setCouponCode={setCouponCode}
-                                            coupon={coupon}
-                                            setCoupon={setCoupon}
-                                            setCouponFeild={setCouponFeild}
-                                            tax_amount={tax_amount}
-                                            setTax_amount={setTax_amount}
-                                            doApplyCouponCode={doApplyCouponCode}
-                                            couponfield={couponfield}
-                                            delivery={delivery}
-                                            billingInfo={billingInfo}
-                                            shippingAdd={shippingAdd}
-                                            prevFormStep={prevFormStep}
-                                            shippingInfo={shippingInfo}
-                                        />
-                                        <h5>Your Order Summary</h5>
-                                        {/* <form onSubmit={handleSubmit(onSubmit)}> */}
-                                        <Orderdetail
-                                            decimal={decimal}
-                                            currency={currency}
-                                            billingDetails={billingDetails}
-                                            customer_id={customer_id}
-                                            billingInfo={billingInfo}
-                                            shippingInfo={shippingInfo}
-                                            setBillingInfo={setBillingInfo}
-                                            handleBillingInfo={handleBillingInfo}
-                                            cartItems={cartItems}
-                                            getOrderDetails={getOrderDetailsData}
-                                            paymentMethod={paymentMethod}
-                                            setPaymentMethod={setPaymentMethod}
-                                            setCoupon={setCoupon}
-                                            CalculateProductTotal={CalculateProductTotal}
-                                            cartTotal={cartTotal}
-                                            subTotal={subtotal}
-                                            coupon={coupon}
-                                            delivery={delivery}
-                                            tax_amount={tax_amount}
-                                        />
-                                        {/* </form> */}
-                                        {billingInfo.payment_method === "stripe" &&
-                                            <Stripes
-                                                getOrderDetailsData={getOrderDetailsData}
+                    <>
+                        <Toaster />
+                        <div>
+                            <BreadCrumb title={"checkout"} />
+                            <section className="checkout-section">
+                                <Container>
+                                    <Stepper
+                                        activeStep={formStep}
+                                        steps={steps}
+                                    />
+                                    <div className="col-lg-12" style={{ display: 'flex' }}>
+                                        <div style={{ width: "60%", padding: "20px" }}>
+                                            {/* <div className="your-order-container"> */}
+                                            <ShippingTaxCoupon
+                                                decimal={decimal}
+                                                currency={currency}
+                                                couponCode={couponCode}
+                                                setCouponCode={setCouponCode}
+                                                coupon={coupon}
+                                                setCoupon={setCoupon}
+                                                setCouponFeild={setCouponFeild}
+                                                tax_amount={tax_amount}
+                                                setTax_amount={setTax_amount}
+                                                doApplyCouponCode={doApplyCouponCode}
+                                                couponfield={couponfield}
+                                                delivery={delivery}
                                                 billingInfo={billingInfo}
-                                                setBillingInfo={setBillingInfo}
-                                                detailsOfBill={billingDetails}
-                                                cartItems={cartItems}
+                                                shippingAdd={shippingAdd}
+                                                prevFormStep={prevFormStep}
+                                                shippingInfo={shippingInfo}
                                             />
-                                        }
-                                        <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} onClick={handleOrderPlaced} disabled={!billingInfo.payment_method}>Continue </button>
+                                            <h5>Your Order Summary</h5>
+                                            {/* <form onSubmit={handleSubmit(onSubmit)}> */}
+                                            <Orderdetail
+                                                decimal={decimal}
+                                                currency={currency}
+                                                billingDetails={billingDetails}
+                                                customer_id={customer_id}
+                                                billingInfo={billingInfo}
+                                                shippingInfo={shippingInfo}
+                                                setBillingInfo={setBillingInfo}
+                                                handleBillingInfo={handleBillingInfo}
+                                                cartItems={cartItems}
+                                                getOrderDetails={getOrderDetailsData}
+                                                paymentMethod={paymentMethod}
+                                                setPaymentMethod={setPaymentMethod}
+                                                setCoupon={setCoupon}
+                                                CalculateProductTotal={CalculateProductTotal}
+                                                cartTotal={cartTotal}
+                                                subTotal={subtotal}
+                                                coupon={coupon}
+                                                delivery={delivery}
+                                                tax_amount={tax_amount}
+                                            />
+                                            {/* </form> */}
+                                            {billingInfo.payment_method === "stripe" &&
+                                                <Stripes
+                                                    getOrderDetailsData={getOrderDetailsData}
+                                                    billingInfo={billingInfo}
+                                                    setBillingInfo={setBillingInfo}
+                                                    detailsOfBill={billingDetails}
+                                                    cartItems={cartItems}
+                                                />
+                                            }
+                                            <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} onClick={handleOrderPlaced} disabled={!billingInfo.payment_method}>Continue </button>
+                                        </div>
+                                        <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
+                                            <OrderSummary
+                                                decimal={decimal}
+                                                currency={currency}
+                                                AppliedCoupon={AppliedCoupon}
+                                                isCouponApplied={isCouponApplied}
+                                                CouponLoading={CouponLoading}
+                                                cartTotal={cartTotal}
+                                                subTotal={subtotal}
+                                                coupon={coupon}
+                                                delivery={delivery}
+                                                tax_amount={tax_amount}
+                                                doApplyCouponCode={doApplyCouponCode}
+                                                couponCode={couponCode}
+                                                setCouponCode={setCouponCode}
+                                                getCalculationDetails={getCalculationDetails}
+                                            />
+                                        </div>
                                     </div>
-                                    <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
-                                        <OrderSummary
-                                            decimal={decimal}
-                                            currency={currency}
-                                            AppliedCoupon={AppliedCoupon}
-                                            isCouponApplied={isCouponApplied}
-                                            CouponLoading={CouponLoading}
-                                            cartTotal={cartTotal}
-                                            subTotal={subtotal}
-                                            coupon={coupon}
-                                            delivery={delivery}
-                                            tax_amount={tax_amount}
-                                            doApplyCouponCode={doApplyCouponCode}
-                                            couponCode={couponCode}
-                                            setCouponCode={setCouponCode}
-                                            getCalculationDetails={getCalculationDetails}
-                                        />
-                                    </div>
-                                </div>
-                                {/* </div> */}
+                                    {/* </div> */}
 
-                            </Container>
-                        </section>
-                    </div>
+                                </Container>
+                            </section>
+                        </div>
                     </>
                 )
             default:

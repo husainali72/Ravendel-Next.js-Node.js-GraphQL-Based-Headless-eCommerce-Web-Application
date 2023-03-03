@@ -17,30 +17,27 @@ import { useSelector } from "react-redux";
 import Reviews from "../../components/Reviews/Reviews";
 import { currencySetter } from "../../utills/helpers";
 import ReactHtmlParser from 'react-html-parser'
-const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,currencyStore,homepageData,lowStockThreshold,outOfStockVisibility,outOfStockThreshold}) => {
-const currencyOpt = currencyStore?.currency_options?.currency
+const SingleProduct = ({ singleproducts, allProduct, productReview, allReviewss, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
     const router = useRouter();
     const session = useSession()
+    const currencyOpt = currencyStore?.currency_options?.currency
+    const decimal = currencyStore?.currency_options?.number_of_decimals
+    const [currency, setCurrency] = useState("$")
+    const [singleProduct, setSingleProduct] = useState(null);
+    const [sliderImages, setSliderImages] = useState([]);
+    const [singleProductReview, setSingleProductReview] = useState([])
+    const productss = useSelector(state => state.products)
+    const settingss = useSelector(state => state.setting);
     if (router.isFallback) {
         return <div>Loading...</div>
     }
-    const [singleProduct, setSingleProduct] = useState(null);
-    const [sliderImages, setSliderImages] = useState([]);
-
-    const [singleProductReview,setSingleProductReview] = useState([])
-    const productss = useSelector(state => state.products ) 
-    const settingss =  useSelector(state => state.setting);
-
-    const [currency, setCurrency] = useState("$")
     useEffect(() => {
         currencySetter(currencyOpt, setCurrency);
     }, [])
-
     useEffect(() => {
         const alll = productReview.reviews.data.filter(reviews => reviews.product_id._id === singleproducts._id);
         setSingleProductReview(alll)
     }, [productReview, singleproducts])
-
     useEffect(() => {
         var product = singleproducts;
         setSingleProduct(product);
@@ -76,7 +73,7 @@ const currencyOpt = currencyStore?.currency_options?.currency
                         <div className="col-lg-12">
                             <div className="product-detail accordion-detail">
                                 <div>
-                                    <GalleryImagesComponents outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility ={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency = {currency} />
+                                    <GalleryImagesComponents outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency={currency} decimal={decimal} />
                                 </div>
                             </div>
                             <div>
@@ -117,6 +114,7 @@ const currencyOpt = currencyStore?.currency_options?.currency
                                     onSaleProduct={allProduct}
                                     hidetitle
                                     currencyProp={currency}
+                                    decimal={decimal}
                                 />
                             </div>
                         </div>
@@ -156,12 +154,12 @@ export async function getStaticProps({ params }) {
     let allProduct = [];
     let productReview = [];
     let allReviewss = {};
-    var currencyStore =[]
+    var currencyStore = []
     let lowStockThreshold = 4
     let outOfStockVisibility = true
-    let outOfStockThreshold = 0 
-   
-       /* ========================================= get all review ========================================*/
+    let outOfStockThreshold = 0
+
+    /* ========================================= get all review ========================================*/
 
 
     try {
@@ -182,8 +180,8 @@ export async function getStaticProps({ params }) {
         })
         homepageData = homepagedata
         lowStockThreshold = homepagedata.getSettings.store.inventory.low_stock_threshold
-        outOfStockThreshold = homepagedata.getSettings.store.inventory.out_of_stock_threshold   
-        outOfStockVisibility = homepagedata.getSettings.store.inventory.out_of_stock_visibility   
+        outOfStockThreshold = homepagedata.getSettings.store.inventory.out_of_stock_threshold
+        outOfStockVisibility = homepagedata.getSettings.store.inventory.out_of_stock_visibility
         currencyStore = homepagedata?.getSettings?.store
     }
     catch (e) {
