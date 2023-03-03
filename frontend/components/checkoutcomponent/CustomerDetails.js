@@ -29,7 +29,7 @@ const CustomerDetail = (props) => {
                 <div style={{ display: "flex", margin: "25px 0" }}>
                     {address_book && address_book?.length > 0 ? (
                         <>
-                            {address_book.map((address, i) => (
+                            {address_book.map((address, i) => ( i<1 ?
                                 <div className="col-md-12" key={i}>
                                     <Card key={i} style={{ marginLeft: 12 }}>
                                         <Card.Body className="cust-detail-container" >
@@ -75,7 +75,7 @@ const CustomerDetail = (props) => {
                                             {/* <Card.Text></Card.Text> */}
                                         </Card.Body>
                                     </Card>
-                                </div>
+                                </div>: null
                             ))}
                         </>
                     ) : null}

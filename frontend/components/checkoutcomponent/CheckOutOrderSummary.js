@@ -2,7 +2,9 @@ import { useEffect } from "react"
 import { Spinner } from "react-bootstrap";
 import { getPrice } from "../../utills/helpers";
 const OrderSummary = (props) => {
+
     const { decimal, currency, subTotal, cartTotal, coupon, delivery, tax_amount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails, CouponLoading, isCouponApplied, AppliedCoupon } = props;
+
     useEffect(() => {
         var allData = {
             subtotal: subTotal?.toString(),
@@ -13,6 +15,8 @@ const OrderSummary = (props) => {
         }
         getCalculationDetails(allData)
     }, [subTotal, cartTotal, coupon, delivery, tax_amount])
+
+
 
     return (
         <>
@@ -40,7 +44,9 @@ const OrderSummary = (props) => {
                                 <tr >
                                     <td className="cart_total_label" >Cart Total</td>
                                     <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
+
                                         {currency}{getPrice(subTotal, decimal)}
+
                                     </span></td>
                                 </tr>
                                 <tr>
@@ -49,12 +55,14 @@ const OrderSummary = (props) => {
                                 </tr>
                                 <tr>
                                     <td className="cart_total_label">Shipping</td>
+
                                     {delivery != "0" ? <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>{currency} {getPrice(delivery, decimal)}</td> :
                                         <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>Free Shipping</td>}
                                 </tr>
                                 <tr>
                                     <td className={`cart_total_label ${isCouponApplied && "textSuccess"}`}>Coupon {isCouponApplied && <small> - ({AppliedCoupon})</small>}</td>
                                     <td className={`cart_total_amount ${isCouponApplied && "textSuccess"}`}><i className="ti-gift mr-5"></i>{"-"} {currency} {getPrice(Number(coupon), decimal)}</td>
+
                                 </tr>
                                 <tr style={{ borderTop: "2px solid black", marginTop: "15px" }}>
                                     <td className="cart_total_label" >Total</td>

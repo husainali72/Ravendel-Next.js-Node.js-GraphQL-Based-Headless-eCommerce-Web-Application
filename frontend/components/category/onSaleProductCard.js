@@ -8,6 +8,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
 import { useSession } from "next-auth/react";
 import { ADD_TO_CART_QUERY, GET_USER_CART, UPDATE_CART_PRODUCT } from "../../queries/cartquery";
+
+import calculateDiscount from "../../utills/calculateDiscount";  
 import { query } from "../../utills/helpers";
 var placeholder = "https://dummyimage.com/300";
 const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }) => {
@@ -19,13 +21,16 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
     const settings = useSelector(state => state.setting);
+
     useEffect(() => {
         currencySetter(settings, setCurrency);
         setdecimal(settings.currencyOption.number_of_decimals)
         if (currencyProp) {
             setCurrency(currencyProp)
         }
+
     }, [settings?.currencyOption, currencyProp])
+
 
     if (session.status === "authenticated") {
         id = session.data.user.accessToken.customer._id
@@ -123,16 +128,11 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                             </Link>
                                         </div>
                                         <div className="on-sale-product-card-body">
-                                            <div className="save-price">
+                                          {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price ? ( <div className="save-price">
                                                 <span className="percantage-save">
-                                                    {Math.round(
-                                                        (100 / product.pricing.price) *
-                                                        (product.pricing.price -
-                                                            product.pricing.sellprice)
-                                                    )}
-                                                    % off
+                                                     {calculateDiscount(product.pricing.price,product.pricing.sellprice)}
                                                 </span>
-                                            </div>
+                                            </div>) : null}
                                             <div className="product-categoryname" >
                                                 {product?.categoryId.map((item, i) =>
                                                 (<span key={i}>
@@ -160,15 +160,17 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                                             <strong className="sale-price">{currency} {getPrice(product.pricing.sellprice, decimal)}
                                                             </strong>
                                                         ) : (
-                                                            ""
+                                                            <strong className="sale-price">{currency} {product.pricing.price.toFixed(2)}</strong>
                                                         )}</span>
-                                                    <span
+                                                        {product.pricing.sellprice ? <span
                                                         className={
                                                             product.pricing.sellprice ? "has-sale-price" : ""
                                                         }
                                                     >
+
                                                         {currency} {getPrice(product.pricing.price, decimal)}
                                                     </span>
+
                                                 </div>
                                                 <OverlayTrigger style={{ backgroundColor: "#088178" }}
                                                     placement="top"

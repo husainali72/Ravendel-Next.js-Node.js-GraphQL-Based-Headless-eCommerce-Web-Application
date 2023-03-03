@@ -39,6 +39,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     const [quantityy, setQuantity] = useState();
     const dispatch = useDispatch();
     const [couponCode, setCouponCode] = useState("")
+
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
     const settings = useSelector(state => state.setting);
@@ -82,6 +83,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
             else {
                 setCartItems(productsCard || []);
                 setCartLoading(false)
+
             }
         }
         getProducts();
@@ -213,7 +215,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     }
 
     const removeToCart = async (item) => {
-        let product = item._id
+        let product = item?._id
         let idx = cartItems.findIndex(cartItem => cartItem._id === item._id)
         const prod = cartItems.find(cart => cart._id === item._id);
         if (session?.status === "authenticated") {
@@ -369,7 +371,6 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                                         <tr>
                                                             <td className="cart_total_label">Cart Subtotal</td>
                                                             <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
-
                                                                 {currency}  {getPrice(CalculateProductTotal(cartItems), decimal)}
                                                             </span></td>
                                                         </tr>

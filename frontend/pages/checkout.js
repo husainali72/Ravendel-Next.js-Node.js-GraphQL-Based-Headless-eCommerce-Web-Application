@@ -280,9 +280,12 @@ export const CheckOut = ({ currencyStore }) => {
         let couponValueGet = false;
         setCouponLoading(true)
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
+            console.log('res',res.data.calculateCoupon.success)
             couponResponse = res.data.calculateCoupon.total_coupon
-            if (res.data.calculateCoupon.message !== "Invalid coupon code") {
-                notify(res.data.calculateCoupon.message, true)
+
+            if(res.data.calculateCoupon.success){
+                notify(res.data.calculateCoupon.message,true)
+
                 setIsCouponApplied(true)
             }
             else {
@@ -297,7 +300,7 @@ export const CheckOut = ({ currencyStore }) => {
                 setCouponFeild(true);
             }
             if (couponValueGet) {
-                let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product.pricing.sellprice * product.quantity } })
+                let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity } })
                 let calculate = {
                     total_coupon: couponResponse,
                     cart: cartsData,
@@ -353,6 +356,7 @@ export const CheckOut = ({ currencyStore }) => {
             case 1:
                 return (
                     <>
+
                         <Toaster />
                         <div>
                             <BreadCrumb title={"checkout"} />
@@ -425,7 +429,9 @@ export const CheckOut = ({ currencyStore }) => {
                 )
             case 2:
                 return (
-                    <div>
+                   <>
+                    <Toaster />
+                     <div>
                         <BreadCrumb title={"checkout"} />
                         <section className="checkout-section">
                             <Container>
@@ -457,6 +463,9 @@ export const CheckOut = ({ currencyStore }) => {
                                     </div>
                                     <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
                                         <OrderSummary
+                                            AppliedCoupon={AppliedCoupon}
+                                            isCouponApplied={isCouponApplied}
+                                            CouponLoading={CouponLoading}
                                             decimal={decimal}
                                             currency={currency}
                                             cartTotal={cartTotal}
@@ -474,9 +483,12 @@ export const CheckOut = ({ currencyStore }) => {
                             </Container>
                         </section>
                     </div>
+                    </>
                 )
             case 3:
                 return (
+                   <>
+                    <Toaster />
                     <div>
                         <BreadCrumb title={"checkout"} />
                         <section className="checkout-section">
@@ -545,6 +557,9 @@ export const CheckOut = ({ currencyStore }) => {
                                         <OrderSummary
                                             decimal={decimal}
                                             currency={currency}
+                                            AppliedCoupon={AppliedCoupon}
+                                            isCouponApplied={isCouponApplied}
+                                            CouponLoading={CouponLoading}
                                             cartTotal={cartTotal}
                                             subTotal={subtotal}
                                             coupon={coupon}
@@ -562,6 +577,7 @@ export const CheckOut = ({ currencyStore }) => {
                             </Container>
                         </section>
                     </div>
+                    </>
                 )
             default:
                 <p>Nothing to do</p>

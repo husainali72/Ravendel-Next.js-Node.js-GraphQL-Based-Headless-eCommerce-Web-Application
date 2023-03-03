@@ -25,6 +25,7 @@ import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
 // }
 
 export const getImage = (img, type) => {
+
     var imagaPath = NoImagePlaceHolder.src
     if (img) {
         imagaPath = bucketBaseURL + img
