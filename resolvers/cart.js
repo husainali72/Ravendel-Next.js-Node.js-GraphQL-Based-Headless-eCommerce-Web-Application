@@ -70,7 +70,7 @@ module.exports = {
           if(coupon.expire >= date){
             let cartTotal = 0
             args.cart.map(item => cartTotal += item.total)
-            if(coupon.minimum_spend <= cartTotal && coupon.maximum_spend > cartTotal){
+            if((coupon.minimum_spend === 0 || coupon.minimum_spend <= cartTotal) && (coupon.maximum_spend === 0 || coupon.maximum_spend > cartTotal)){
               var discountAmount = 0
               coupon.discount_type === "amount-discount" ? 
               discountAmount = await calculateCart(coupon, args.cart, Product, true) :
