@@ -106,7 +106,7 @@ module.exports = {
         status: args.status,
       };
       //console.log("data==", data)
-      let validation = ["review", "title", "email"];
+      let validation = ["review", "title", "email", "rating"];
       const duplicate = await duplicateData({review: args.review, customer_id: args.customer_id}, Review)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
       return await CREATE_FUNC(
@@ -137,6 +137,7 @@ module.exports = {
         "product_id",
         "customer_id",
       ];
+      if(Number(args.rating) === 0) return MESSAGE_RESPONSE("InvalidField", "Rating", false);
       const duplicate = await duplicateData({review: args.review, customer_id: args.customer_id}, Review, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
       return await UPDATE_FUNC(

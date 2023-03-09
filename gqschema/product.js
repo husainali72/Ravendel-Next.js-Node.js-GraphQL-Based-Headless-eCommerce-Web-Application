@@ -191,7 +191,7 @@ module.exports = gql`
     productsbycaturl(cat_url: String!): productCate_by_url
     productbyurl(url: String):  products_by_url
     filteredProducts(filter: customObject): [Product]
-    relatedProducts(category: String): [Product]
+    relatedProducts(category: customArray): [Product]
     onSaleProducts: [Product]
   }
 

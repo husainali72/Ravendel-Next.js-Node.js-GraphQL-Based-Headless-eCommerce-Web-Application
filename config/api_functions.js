@@ -371,7 +371,7 @@ const UPDATE_FUNC = async (
 
       await response.save();
       // update average rating of product related to reviews
-      if(name === "Review"){
+      if(name === "Review" && data.status === "approved"){
         await prodAvgRating(data.product_id, modal, modal2)
       }
       return MESSAGE_RESPONSE("UpdateSuccess", name, true);

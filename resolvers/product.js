@@ -313,14 +313,17 @@ module.exports = {
     },
     relatedProducts: async (root, args) => {
       try {
-        let category = args.category
-        // if product belongs to subcat then show parentcat products else show subcat products
-        let existingCategory = await ProductCat.findById(category)
-        if(existingCategory && existingCategory.parentId) category = existingCategory.parentId.toString()
+        let categories = []
+        for(let cat of (args.category||[])){
+          let existingCategory = await ProductCat.findById(cat)
+          if(existingCategory && existingCategory.parentId) cat = existingCategory.parentId.toString()
+          categories.push(cat)
+        }
+        categories = [...new Set(categories)]
         const pipeline=[
           {$match: {
             $and: [
-              {categoryId: {$in: [`${category}`]}}
+              {categoryId: {$in: categories}}
             ]
           }},
           {$limit: 4}

@@ -389,7 +389,7 @@ const _validate = (names, args) => {
   let errors = "";
   if (names && names.length > 0) {
     names.map((name) => {
-      if (!args[name] || Validator.isEmpty(args[name])) {
+      if (!args[name] || Validator.isEmpty(args[name]) || args[name] === null) {
         return (errors = `${capitalize(name)} field is required`)
       }
 
