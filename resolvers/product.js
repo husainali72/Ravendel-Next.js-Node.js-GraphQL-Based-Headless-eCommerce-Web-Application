@@ -323,7 +323,8 @@ module.exports = {
         const pipeline=[
           {$match: {
             $and: [
-              {categoryId: {$in: categories}}
+              {categoryId: {$in: categories}},
+              {_id: {$ne: mongoose.Types.ObjectId(args.productID)}}
             ]
           }},
           {$limit: 4}
