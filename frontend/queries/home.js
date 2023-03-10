@@ -286,6 +286,25 @@ export const GET_RECENT_PRODUCTS_QUERY = gql`
     }
   }
 `;
+export const GET_RELATED_PRODUCTS_QUERY = gql`
+  query ($category: String!){
+    relatedProducts (category: $category){
+      _id
+      name
+      feature_image
+      pricing
+      url
+      categoryId {
+        id
+        name
+      }
+      quantity
+      featured_product
+      status
+      variant
+    }
+  }
+`;
 
 export const GET_CATEGORIES_QUERY = gql`
   query {

@@ -96,7 +96,7 @@ const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduc
     return (
         <>
 
-            {subCat.length > 0 ? <div >
+            {subCat.length > 0 ? <div className='categories-cart-container' >
                 <BreadCrumb title={`category  >  ${categoryDetail.name}`} />
                 <Container style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <h2 style={{ color: "#088178", margin: "40px" }}><strong>{categoryDetail.name}</strong></h2>
@@ -107,12 +107,14 @@ const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduc
                                     <Card
                                         bg='light'
                                         style={{ display: "flex", flexDirection: "row", height: "100%" }}>
-                                        <img
-                                            src={getImage(cat?.image, 'original')}
-                                            className='subcat-img'
-                                            onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
-                                            alt={cat?.name}
-                                        />
+                                        <div className='card-img-wrapper'>
+                                            <img
+                                                src={getImage(cat?.image, 'original')}
+                                                className='subcat-img'
+                                                onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
+                                                alt={cat?.name}
+                                            />
+                                        </div>
                                         <Card.Body style={{ flexGrow: "2" }}>
                                             <Card.Title>{cat?.name}</Card.Title>
                                             <Card.Text>

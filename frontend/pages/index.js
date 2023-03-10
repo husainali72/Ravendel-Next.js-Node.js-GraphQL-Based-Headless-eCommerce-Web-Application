@@ -17,6 +17,7 @@ import { settingActionCreator, stripePaymentKeyAction } from "../redux/actions/s
 import { loadReviewAction } from "../redux/actions/productAction";
 import { GET_BRANDS_QUERY } from "../queries/shopquery";
 import SpecificProducts from "../components/SpecificProducts";
+import CustomBanner from "../components/banner/CustomBanner";
 
 export default function Home({ homepageData, seoInfo,brands, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts,allReviews }) {
 
@@ -79,6 +80,7 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
         if(section.visible){
           return (onSaleProducts?.length > 0 ?
             <>
+              <CustomBanner variant={"sale-banner"} />
               <OnSaleProductCard onSaleProduct={onSaleProducts} />
             </>
             : null)
@@ -89,6 +91,7 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
         if(section.visible){
           return (recentproducts?.length > 0 ?
             <>
+              <CustomBanner variant={"new-arrival-banner"} />
               <OnSaleProductCard onSaleProduct={recentproducts} titleShow={"Recent"} />
             </>
             : null)
@@ -144,7 +147,8 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
       {category?.length > 0 ? <Category category={category} /> : null}
       
       {brands?.length > 0 ? <FeatureBrand brands = {brands} /> : null}
-      <RavendelBanner />
+      {/* <RavendelBanner /> */}
+      <CustomBanner variant={"fashion-banner"} />
 
           {HomePageSeq?.map(section => (
             renderSwitch(section)

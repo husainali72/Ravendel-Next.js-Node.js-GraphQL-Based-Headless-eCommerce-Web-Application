@@ -29,10 +29,11 @@ const CustomerDetail = (props) => {
                 <div style={{ display: "flex", margin: "25px 0" }}>
                     {address_book && address_book?.length > 0 ? (
                         <>
-                            {address_book.map((address, i) => ( i<1 ?
-                                <div className="col-md-12" key={i}>
-                                    <Card key={i} style={{ marginLeft: 12 }}>
-                                        <Card.Body className="cust-detail-container" >
+                        <Card.Body className="cust-detail-container" >
+                            <Card className="disable-hover">
+                            {address_book.map((address, i) => ( i<5 ?
+                                <>
+                                <div className="col-md-12 d-flex flex-md-row flex-column align-items-center justify-content-between" key={i}>
                                             <div className="defination-table" >
                                             <dl>
                                                 <dt>First Name</dt>
@@ -66,17 +67,19 @@ const CustomerDetail = (props) => {
                                                 <dd>{address.city}</dd>
                                                 
                                             </dl>
-                                               
                                             </div>
+                                             
                                             {/* <span className="cust-detail-select-btn"><i onClick={(e) => SelectAddressBook(address, e)}>select</i></span> */}
-                                            <div className="endBtn">
-                                                <Button variant="light" onClick={(e) => SelectAddressBook(address, e)}>Select</Button>
+                                            <div className=" select-button">
+                                                <Button size="sm" variant="secondary" onClick={(e) => SelectAddressBook(address, e)}>Select</Button>
                                             </div>
                                             {/* <Card.Text></Card.Text> */}
-                                        </Card.Body>
-                                    </Card>
-                                </div>: null
+                                            
+                                </div><hr className={`customer-hr ${i===address_book.length -1 && "d-none" }`} /></> : null
                             ))}
+                           
+                            </Card>
+                            </Card.Body>
                         </>
                     ) : null}
 

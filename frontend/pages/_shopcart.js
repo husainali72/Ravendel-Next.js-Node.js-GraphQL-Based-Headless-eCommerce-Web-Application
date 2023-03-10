@@ -13,7 +13,9 @@ import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
-const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity), 0)
+
+const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity) || product.pricing?.price * product.quantity, 0)
+
 const YourCard = ({ customercart, cart_id }) => {
     const session = useSession();
     const cartProducts = useSelector(state => state.cart);

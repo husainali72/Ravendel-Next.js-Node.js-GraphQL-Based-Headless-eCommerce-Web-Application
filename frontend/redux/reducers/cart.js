@@ -120,8 +120,6 @@ function cartReducer(state = [], action) {
         case CREATE_CART_ON_LOGIN: {
             const {id, cart} = action.payload;
             let variables = { user_id: id, products: cart}
-            console.log('id:',id,
-            'products:',cart)
             mutation(ADD_CART, variables);
 
             return action.payload.cart || [];

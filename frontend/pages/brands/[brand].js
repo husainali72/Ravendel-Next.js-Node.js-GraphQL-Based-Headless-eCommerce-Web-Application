@@ -9,14 +9,20 @@ import ShopProducts from '../../components/shoppage/shopProducts';
 import { CloseSortMenu } from '../../utills/app';
 import { getImage } from '../../utills/helpers';
 import { useDispatch } from 'react-redux';
+import { GET_HOMEPAGE_DATA_QUERY } from '../../queries/home';
+import { settingActionCreator } from '../../redux/actions/settingAction';
 
-const Brand = ({brand,filteredProducts,brandProduct}) => {
+const Brand = ({brand,filteredProducts,brandProduct,currencyStore}) => {
     const [products, setProducts] = useState([]);
     const [rangevalue, setRangevalue] = useState('');
+    const dispatch = useDispatch();
 
+    useEffect(() => {
+        dispatch(settingActionCreator(currencyStore?.currency_options))
+    }, [currencyStore.currency_options])
     useEffect(() => {   
-    const brandProducts = filteredProducts?.filter((product) => product?.brand?.id === brand?.id)
-    setProducts(brandProducts)
+        const brandProducts = filteredProducts?.filter((product) => product?.brand?.id === brand?.id)
+        setProducts(brandProducts)
     }, [brand,filteredProducts])
 
 
@@ -67,7 +73,7 @@ const Brand = ({brand,filteredProducts,brandProduct}) => {
                                 />
                             </div>) :
                             <div style={{ padding: "50px" }}>
-                                <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>Product not available</p>
+                                <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>No Data Found</p>
                             </div>}
 
                     </div>
@@ -115,7 +121,24 @@ export async function getStaticProps({ params }) {
     var brand = {}
     var filteredProducts = []
     var brandProduct = [];
+    var homepageData = [];
+    var currencyStore = [];
 
+
+    /* ===============================================Get HomepageData Settings ===============================================*/
+
+    try {
+        const { data: homepagedata } = await client.query({
+            query: GET_HOMEPAGE_DATA_QUERY
+        })
+        homepageData = homepagedata
+        currencyStore = homepagedata?.getSettings?.store
+    }
+    catch (e) {
+        console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
+    }
+
+/* ===============================================Get Brand Product ===============================================*/
     try {
         const { data: brandproductData } = await client.query({
             query: GET_BRANDS_QUERY
@@ -190,7 +213,8 @@ return{
     props:{
         brand,
         filteredProducts,
-        brandProduct
+        brandProduct,
+        currencyStore
     },
     revalidate: 10,
 }
