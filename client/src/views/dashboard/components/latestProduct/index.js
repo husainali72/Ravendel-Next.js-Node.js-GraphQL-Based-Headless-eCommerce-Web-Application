@@ -52,8 +52,8 @@ const LatestProductsTheme = ({ products, loader }) => {
                     alt="Product"
                     className={classes.productImage}
                     src={
-                      product.feature_image && product.feature_image.thumbnail
-                        ? bucketBaseURL + product.feature_image.thumbnail
+                      product.feature_image 
+                        ? bucketBaseURL + product.feature_image
                         : NoImagePlaceholder
                     }
                   />
