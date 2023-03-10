@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts";
 import { settingActionCreator } from '../../redux/actions/settingAction';
 const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProduct, brandProduct }) => {
-    console.log(currencyStore, 'currencyStore')
     const [cats, setCats] = useState({})
     const dispatch = useDispatch()
     const [products, setProducts] = useState([]);
@@ -113,7 +112,7 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
                                     />
                                 </div>) : (
                                 <div style={{ padding: "50px" }}>
-                                    <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>Category Product not available</p>
+                                    <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>No Data Found</p>
                                 </div>
                             )}
 

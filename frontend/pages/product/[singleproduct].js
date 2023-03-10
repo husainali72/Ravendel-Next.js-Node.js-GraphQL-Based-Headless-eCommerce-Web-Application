@@ -3,7 +3,7 @@ import Head from 'next/head';
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import client from "../../apollo-client";
 import { Container } from "react-bootstrap";
-import { GET_HOMEPAGE_DATA_QUERY, GET_RECENT_PRODUCTS_QUERY } from "../../queries/home";
+import { GET_HOMEPAGE_DATA_QUERY, GET_RECENT_PRODUCTS_QUERY, GET_RELATED_PRODUCTS_QUERY } from "../../queries/home";
 import { GET_SINGLE_PRODUCT, GET_PRODUCT_REVIEWS, GET_REVIEWS } from "../../queries/productquery";
 import { GET_PRODUCTS_QUERY } from "../../queries/shopquery";
 import { Tab, Col, Nav } from 'react-bootstrap';
@@ -16,27 +16,51 @@ import Loading from "../../components/breadcrumb/loading";
 import { useSelector } from "react-redux";
 import Reviews from "../../components/Reviews/Reviews";
 import { currencySetter } from "../../utills/helpers";
-import ReactHtmlParser from 'react-html-parser'
-const SingleProduct = ({ singleproducts, allProduct, productReview, allReviewss, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
+import ReactHtmlParser from 'react-html-parser';
+import toast, { Toaster } from 'react-hot-toast';
+
+const SingleProduct = ({ recentProducts,singleproducts, productReview, allReviewss, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
     const router = useRouter();
     const session = useSession()
     const currencyOpt = currencyStore?.currency_options?.currency
     const decimal = currencyStore?.currency_options?.number_of_decimals
     const [currency, setCurrency] = useState("$")
+    const [allProduct, setAllProduct] = useState([])
     const [singleProduct, setSingleProduct] = useState(null);
     const [sliderImages, setSliderImages] = useState([]);
-    const [singleProductReview, setSingleProductReview] = useState([])
-    const productss = useSelector(state => state.products)
-    const settingss = useSelector(state => state.setting);
+    const [singleProductReview,setSingleProductReview] = useState([])
+    const productss = useSelector(state => state.products ) 
+    const settingss =  useSelector(state => state.setting);
+    const [stockClass, setStockClass] = useState("")
     if (router.isFallback) {
         return <div>Loading...</div>
     }
     useEffect(() => {
-        currencySetter(currencyOpt, setCurrency);
+        currencySetter(currencyOpt,setCurrency);
     }, [])
     useEffect(() => {
-        const alll = productReview.reviews.data.filter(reviews => reviews.product_id._id === singleproducts._id);
-        setSingleProductReview(alll)
+        getRelatedProducts();
+    }, [singleproducts])
+    const category = singleproducts?.categoryId[0]?.id;
+    const getRelatedProducts = async ()=>{  
+        try {
+            const { data: shopproductcategory } = await client.query({
+                query: GET_RELATED_PRODUCTS_QUERY,
+                variables: { category }
+            });
+            recentProducts = shopproductcategory;
+            const productss = shopproductcategory.relatedProducts;
+            setAllProduct(productss)
+        }
+        catch (e) {
+            console.log("ShopProduct Error===", e)
+        }
+    }
+    
+
+    useEffect(() => {
+        const reviews = productReview.reviews.data.filter(reviews => reviews.product_id._id === singleproducts._id);
+        setSingleProductReview(reviews)
     }, [productReview, singleproducts])
     useEffect(() => {
         var product = singleproducts;
@@ -68,12 +92,13 @@ const SingleProduct = ({ singleproducts, allProduct, productReview, allReviewss,
             </Head>
             <BreadCrumb title={`product`} />
             <section className="product-cart-section">
+            <Toaster />
                 <Container>
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="product-detail accordion-detail">
                                 <div>
-                                    <GalleryImagesComponents outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency={currency} decimal={decimal} />
+                                    <GalleryImagesComponents decimal={decimal} stockClass={stockClass} setStockClass={setStockClass} outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility ={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency = {currency} />
                                 </div>
                             </div>
                             <div>
@@ -101,7 +126,7 @@ const SingleProduct = ({ singleproducts, allProduct, productReview, allReviewss,
                                                     {session.status === "authenticated" ? (
                                                         <ReviewForm productId={singleproducts._id} />
                                                     ) : <div style={{ padding: "20px", marginTop: "15px" }}>
-                                                        <p>Product review not available</p></div>}
+                                                        <p>No Data Found</p></div>}
 
                                                 </Tab.Pane>
                                             </Tab.Content>
@@ -152,6 +177,7 @@ export async function getStaticProps({ params }) {
     let homepageData = [];
     let singleproducts = [];
     let allProduct = [];
+    let recentProducts =[];
     let productReview = [];
     let allReviewss = {};
     var currencyStore = []
@@ -196,21 +222,22 @@ export async function getStaticProps({ params }) {
             variables: { url },
         });
         singleproducts = singleproductsData.productbyurl.data;
+       
     }
     catch (e) {
         console.log("ShopProduct Error===", e.networkError.result.errors)
     }
     /* ========================================= get featureProduct ========================================*/
-    try {
-        const { data: shopproductcategory } = await client.query({
-            query: GET_RECENT_PRODUCTS_QUERY,
-        });
-        allProduct = shopproductcategory.recentproducts;
-    }
-    catch (e) {
-        console.log("ShopProduct Error===", e)
-    }
-    const id = singleproducts._id
+    // try {
+    //     const { data: shopproductcategory } = await client.query({
+    //         query: GET_RECENT_PRODUCTS_QUERY,
+    //     });
+    //     allProduct = shopproductcategory.recentproducts;
+    // }
+    // catch (e) {
+    //     console.log("ShopProduct Error===", e)
+    // }
+    
 
     try {
         const { data: productReviewData } = await client.query({
@@ -232,7 +259,8 @@ export async function getStaticProps({ params }) {
             currencyStore,
             lowStockThreshold,
             outOfStockVisibility,
-            outOfStockThreshold
+            outOfStockThreshold,
+            recentProducts
         },
         revalidate: 10,
     }

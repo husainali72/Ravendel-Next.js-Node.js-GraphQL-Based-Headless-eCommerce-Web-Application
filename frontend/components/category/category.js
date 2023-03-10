@@ -4,6 +4,7 @@ import {MdChevronLeft,MdChevronRight} from 'react-icons/md'
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import useResizeObserver from '@react-hook/resize-observer';
+import { capitalize } from 'lodash';
 const Category = ({ category }) => {
 const [showSlider,setShowSlider] = useState(false)
 const [inlineSize,setInlineSize] = useState(0)
@@ -28,14 +29,14 @@ const bool =  slider?.current?.offsetWidth < slider?.current?.scrollWidth;
     return (
         <section className="product-cart-section">
             <Container className="container">
-              {showSlider ? <MdChevronLeft  onClick={slideLeft} className='cat-left-icon' size={40}  /> : null }
+              {showSlider ? <MdChevronLeft  onClick={slideLeft} className='cat-left-icon' size={24}  /> : null }
                 <div>
                     <h4 className='theme-color'>Product <span className='black-color'>Category</span></h4>
                     <div
                          className={showSlider ? "category pro-cat": " pro-cat category categoryShow " }
                           ref={slider}>
                              {category.map((item, i) => (
-                                 item.parentId === null && (<div className=" category-cards" key={i}>
+                                 item.parentId === null && (<div className="category-cards" key={i}>
                                      <div className="category-card-image">
                                          <Link href={`/category/[category]?url=${item.url}`} as={`/category/${item.url}`}>
                                          <img
@@ -49,14 +50,14 @@ const bool =  slider?.current?.offsetWidth < slider?.current?.scrollWidth;
                                     <div className="card-body">
                                         <p
                                             className="card-title category-card-title">
-                                            {item?.name}
+                                            {capitalize(item?.name)}
                                         </p>
                                     </div>
                                 </div>)
                             ))}
                         </div>
                     </div>
-                        {showSlider ? <MdChevronRight onClick={slideRight} className='cat-right-icon' size={40} /> : null}
+                        {showSlider ? <MdChevronRight onClick={slideRight} className='cat-right-icon' size={24} /> : null}
             </Container>
         </section>
     )

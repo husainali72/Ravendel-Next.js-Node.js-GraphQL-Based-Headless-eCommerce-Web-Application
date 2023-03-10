@@ -15,7 +15,6 @@ import CheckOut from "../checkout";
 import { settingActionCreator } from "../../redux/actions/settingAction";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
 const ThankYou = ({ currencyStore }) => {
-    console.log('curr', currencyStore)
     const dispatch = useDispatch();
     const checkoutDetail = useSelector(state => state.checkout)
     const [showOrderDetail, setShowOrderDetail] = useState(false)

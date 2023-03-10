@@ -87,7 +87,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                         {onSaleProduct.map((product, i) => (
                                             <div style={{ display: 'flex', marginTop: 3 }} key={i}>
                                                 <div>
-                                                    <img src={getImage(product.feature_image, 'original')} width="75px" height="85px" />
+                                                    <img className="widget-category-img" src={getImage(product.feature_image, 'original')} />
                                                 </div>
                                                 <div style={{ padding: "3px", marginLeft: "10px" }}>
                                                     {product.name?.length > 15 ? (
@@ -101,7 +101,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                                     )}
                                                     <StarRating stars={"5"} />
 
-                                                    <p style={{ marginTop: 0 }}>{currency} {getPrice(product.pricing.sellprice, decimal)}</p>
+                                                    <p style={{ marginTop: 0 }}>{currency} {getPrice(product.pricing.sellprice || product.pricing.price , decimal)}</p>
                                                 </div>
                                             </div>
                                         ))
@@ -179,7 +179,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                 />
                             </div>) :
                             <div style={{ padding: "50px" }}>
-                                <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>Product not available</p>
+                                <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>No Data Found</p>
                             </div>}
 
                     </div>

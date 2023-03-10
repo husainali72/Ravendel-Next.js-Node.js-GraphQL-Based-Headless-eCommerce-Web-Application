@@ -142,8 +142,12 @@ export const currencySetter = (settings, setCurrency) => {
 export const getPrice = (price, decimal) => {
     let fixed = 3
     if (typeof price === 'string')
-        return parseInt(price).toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        return parseInt(price)?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     else
-        return price.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        return price?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 
+}
+export function capitalize(word)
+{
+    return word[0].toUpperCase() + word.slice(1);
 }

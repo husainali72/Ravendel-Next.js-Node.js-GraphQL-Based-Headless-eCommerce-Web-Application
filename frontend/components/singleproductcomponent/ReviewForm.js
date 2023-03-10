@@ -5,6 +5,8 @@ import client from '../../apollo-client';
 import { useSelector } from "react-redux";
 import { mutation } from "../../utills/helpers";
 import { useSession } from 'next-auth/react';
+import toast, { Toaster } from 'react-hot-toast';
+import notify from '../../utills/notifyToast';
 const Star = ({ starId, marked }) => {
     return (
         <span
@@ -18,6 +20,7 @@ const Star = ({ starId, marked }) => {
 };
 
 const ReviewForm = ({ productId }) => {
+    const [CustomerId,setCustomerId] = useState("");
     var reviewObject = {
         title: "",
         email: "ravendel@test.com",
@@ -25,17 +28,23 @@ const ReviewForm = ({ productId }) => {
         rating: "",
         status: "pending",
         product_id: productId || "",
-        customer_id: "",
+        customer_id: CustomerId || "",
     }
     const login = useSelector(state => state.login);
     const session = useSession()
-    // console.log("session", session);
+    console.log("session", session);
+    console.log("cust", customer_id);
     var token = "";
     var customer_id = "";
-    if (session.status === "authenticated") {
-        token = session.data.user.accessToken.token
-        customer_id = session.data.user.accessToken.customer._id
-    }
+    useEffect(() => {
+        if (session.status === "authenticated") {
+            token = session.data.user.accessToken.token;
+            customer_id = session.data.user.accessToken.customer._id;
+            setCustomerId(session.data.user.accessToken.customer._id);
+        }
+    }, [])
+    
+   
     const [review, setReview] = useState(reviewObject);
     const [writeReview, setWriteReview] = useState(false);
     const [selection, setSelection] = React.useState(0);
@@ -43,8 +52,9 @@ const ReviewForm = ({ productId }) => {
 
     useEffect(() => {
         setReview({ ...review, product_id: productId });
-        setReview({ ...review, customer_id: customer_id })
-    }, [])
+        // setReview({ ...review, customer_id: CustomerId })
+        
+    }, [productId])
 
 
     const hoverOver = event => {
@@ -57,15 +67,17 @@ const ReviewForm = ({ productId }) => {
 
     const addReview = (e) => {
         e.preventDefault();
-        // console.log("add", review);
         mutation(ADD_REVIEW, review, token).then((response) => {
-            // console.log("addreview", response)
+            console.log("addreview", response.data.addReview)
+            if(!response.data.addReview.success){
+                notify(response.data.addReview.message,response.data.addReview.success)
+            }
+            else if(response.data.addReview.success){
+                notify(response.data.addReview.message,response.data.addReview.success)
+                setWriteReview(!writeReview);
+            }
         })
-        // addReviewToApi(review)
-
-        // console.log("review", review);
         setReview(reviewObject);
-        setWriteReview(!writeReview);
     }
     return (
         <>
@@ -76,6 +88,7 @@ const ReviewForm = ({ productId }) => {
                     {writeReview ?
 
                         (<Fragment>
+                            {/* <Toaster /> */}
                             <div className="row">
                                 <div className="col-lg-8 col-md-12">
                                     <Form className="form-contact comment_form" action="#" id="commentForm" method="POST" onSubmit={addReview}>

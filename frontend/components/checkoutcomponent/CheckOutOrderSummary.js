@@ -28,7 +28,7 @@ const OrderSummary = (props) => {
                             <input type="text" placeholder="Enter Coupon Code..." value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} />
                         </div>
                         <div className="form-group">
-                            <button type="submit" className="btn  btn-md" name="coupon" style={{ minWidth: "100px", marginTop: 12, backgroundColor: "#088178", color: "#fff" }}>{CouponLoading ? <Spinner animation="border" size="sm" variant="light" /> : "Apply Coupon"}</button>
+                            <button disabled={!couponCode} type="submit" className="btn btn-md" name="coupon" style={{ minWidth: "100px", marginTop: 12, backgroundColor: "#088178", color: "#fff" }}>{CouponLoading ? <Spinner animation="border" size="sm" variant="light" /> : "Apply Coupon"}</button>
                         </div>
                     </form>
                 </div>

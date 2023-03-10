@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Slider from "react-slick";
 import { GlassMagnifier } from "react-image-magnifiers";
-import { currencySetter, getImage, getPrice } from "../../utills/helpers";
+import { currencySetter, getImage, getPrice,mutation } from "../../utills/helpers";
 import Carousel from 'react-bootstrap/Carousel'
 import StarRating from "../../components/breadcrumb/rating";
 import { addToCart } from "../../redux/actions/cartAction";
@@ -9,22 +9,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import calculateDiscount from "../../utills/calculateDiscount";
+import { ADD_TO_CART_QUERY, GET_USER_CART, UPDATE_CART_PRODUCT } from "../../queries/cartquery";
+import { query } from "../../utills/helpers";
 var placeholder = "https://dummyimage.com/300";
 const GalleryImagesComponents = (props) => {
+    var id = ""
+    var token = ""
     const dispatch = useDispatch();
     const session = useSession()
     const router = useRouter();
-    const { singleproducts, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal } = props;
-    const stockLable = (stockQuantity) => {
-        let lable = "In Stock"
-        if (stockQuantity <= lowStockThreshold) {
-            lable = "Low Stock"
+    const { singleproducts,stockClass ,setStockClass, currency,lowStockThreshold,outOfStockVisibility,outOfStockThreshold,decimal } = props;
+    const [Lable,setLable] = useState("In Stock")
+    useEffect(() => {
+        if(singleproducts.quantity <= lowStockThreshold){
+            setStockClass("low-stock")
+            setLable("Low Stock")
         }
-        if (stockQuantity <= outOfStockThreshold) {
-            lable = "Out Of Stock"
+        if(singleproducts.quantity <= outOfStockThreshold){
+            setStockClass("out-of-stock")
+            setLable("Out Of Stock")
         }
-        return lable
+        if(singleproducts.quantity > lowStockThreshold){
+            setStockClass("in-stock")
+            setLable("In Stock")
+        }
+    }, [singleproducts.quantity,lowStockThreshold,outOfStockThreshold])
+
+     if (session.status === "authenticated") {
+        id = session.data.user.accessToken.customer._id
+        token = session.data.user.accessToken.token
     }
+
     const settings = {
         customPaging: function (i) {
             return (
@@ -46,18 +61,71 @@ const GalleryImagesComponents = (props) => {
         slidesToScroll: 1,
         touchMove: false,
     };
-    const addToCartProduct = (product) => {
+    const addToCartProduct = async (product) => {
         let quantity = 1
+        let href = '/shopcart'
         if (session.status === "authenticated") {
-            let token = session.data.user.accessToken.token
-            let id = session.data.user.accessToken.customer._id
-            dispatch(addToCart(product, quantity, token, id))
-            router.push("/shopcart")
+
+            let productInCart = false;
+            query(GET_USER_CART, id, token).then(res => {
+                let cart_id = res?.data?.cartbyUser?.id
+                const inCartProducts = res?.data?.cartbyUser?.products;
+                inCartProducts.map(inCartProduct => {
+                    const productt = inCartProduct;
+                    if (productt.product_id === product?._id) {
+                        let qant = product.qty + quantity;
+                        productInCart = true;
+                        var Cartt = inCartProducts.map(producttt => {
+                            if (producttt.product_id === product._id) {
+                                return {
+                                    product_id: producttt?.product_id,
+                                    qty: producttt.qty + quantity,
+                                    product_title: producttt.product_title,
+                                    product_image: producttt.product_image,
+                                    product_price: producttt.product_price
+                                }
+                            } else {
+                                return {
+                                    product_id: producttt?.product_id,
+                                    qty: producttt.qty,
+                                    product_title: producttt.product_title,
+                                    product_image: producttt.product_image,
+                                    product_price: producttt.product_price
+                                }
+                            }
+                        })
+                        let variables = {
+                            id: cart_id,
+                            products: Cartt,
+                            total: 0,
+                        }
+                        mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
+                            router.push("/shopcart")
+                        })
+                    }
+                })
+                if (!productInCart) {
+                    let variables = {
+                        total: product?.pricing.sellprice * quantity,
+                        user_id: id,
+                        product_id: product?._id,
+                        qty: quantity,
+                        product_title: product?.name,
+                        product_image: product?.feature_image?.original,
+                        product_price: product?.pricing.sellprice
+                    }
+                    mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
+                        router.push("/shopcart")
+                        dispatch(addToCart(product))
+                    })
+                }
+            })
         }
         else {
             dispatch(addToCart(product))
             router.push("/shopcart")
         }
+
     }
     return (
         <>
@@ -143,15 +211,15 @@ const GalleryImagesComponents = (props) => {
                                 </div>))}
                             </>
                         ) : null}
-                        <button type="button"
+                        {Lable !== "Out Of Stock" && <button type="button"
                             className="btn btn-success button button-add-to-cart"
                             style={{ marginTop: 12, backgroundColor: "#088178" }}
-                            onClick={() => addToCartProduct(singleproducts)}>Add to Cart</button>
+                            onClick={() => addToCartProduct(singleproducts)}>Add to Cart</button>}
 
                         <ul className="product-meta font-xs color-grey mt-50">
                             <p className="">SKU: {singleproducts.sku}</p>
                             {newFunction(singleproducts)}
-                            <p className="">Availablity: <span className="availablity-text">{stockLable(singleproducts.quantity)}</span></p>
+                            <p className="">Availablity: <span className={stockClass}>{Lable}</span></p>
                         </ul>
                     </div>
                 </div>

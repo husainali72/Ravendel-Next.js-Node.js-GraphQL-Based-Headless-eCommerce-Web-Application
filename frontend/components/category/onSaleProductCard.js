@@ -191,7 +191,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                             </>
                         ) :
                             <div style={{ padding: "50px" }}>
-                                <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>Product not available</p>
+                                <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>No Data Found</p>
                             </div>
                         }
                     </div>
