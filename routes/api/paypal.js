@@ -3,6 +3,7 @@ dotenv.config({path:'./.env'})
 const {PAYPAL_CLIENT, PAYPAL_KEY, RETURN_URL, CANCEL_URL} = process.env
 const Setting = require('../../models/Setting')
 const paypal = require('paypal-rest-sdk')
+const _ = require('lodash')
 const router = require('express').Router()
 
 paypal.configure({
@@ -15,7 +16,7 @@ let total = 0
 router.post('/pay', async(req, res) => {
     total = 0
     let currency = await Setting.findOne({})
-    currency = currency.store.currency_options.currency.toUpperCase()
+    currency = _.get(currency, 'store.currency_options.currency').toUpperCase() || "USD"
     const line_items = req.body.customerCart.map(item=>{
         total += (item.product_price*item.qty)
         return{
@@ -50,7 +51,6 @@ router.post('/pay', async(req, res) => {
         if (error) {
             throw error;
         } else {
-            // console.log(payment)
             payment = payment.links.filter(data => data.rel === "approval_url")[0]
             // console.log(payment)
             // res.redirect(payment.href)
@@ -61,8 +61,7 @@ router.post('/pay', async(req, res) => {
 });
 
 router.get('/success', (req, res) => {
-    const payerId = req.query.PayerID;
-    const paymentId = req.query.paymentId;
+    const {payerId, paymentId} = req.query;
 
     const execute_payment_json = {
         "payer_id": payerId,
@@ -80,7 +79,7 @@ router.get('/success', (req, res) => {
             throw error;
         } else {
             // console.log(JSON.stringify(payment));
-            res.send('Success');
+            res.send({success: true});
         }
     });
 });
