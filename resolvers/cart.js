@@ -476,7 +476,7 @@ module.exports = {
           // declare variables to be used for adding product to cart
           let product_price = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price
           let total = product.pricing.sellprice > 0 ? localProd.qty * product.pricing.sellprice : localProd.qty * product.pricing.price
-          let product_image = product.feature_image.thumbnail
+          let product_image = product.feature_image
           let product_id = localProd.product_id
           let product_title = product.name
           let qty = localProd.qty
