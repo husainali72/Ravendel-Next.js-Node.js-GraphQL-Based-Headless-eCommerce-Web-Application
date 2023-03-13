@@ -19,7 +19,7 @@ import { currencySetter } from "../../utills/helpers";
 import ReactHtmlParser from 'react-html-parser';
 import toast, { Toaster } from 'react-hot-toast';
 
-const SingleProduct = ({ recentProducts,singleproducts, productReview, allReviewss, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
+const SingleProduct = ({ recentProducts,singleproducts, productReviews, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
     const router = useRouter();
     const session = useSession()
     const currencyOpt = currencyStore?.currency_options?.currency
@@ -59,9 +59,8 @@ const SingleProduct = ({ recentProducts,singleproducts, productReview, allReview
     
 
     useEffect(() => {
-        const reviews = productReview.reviews.data.filter(reviews => reviews.product_id._id === singleproducts._id);
-        setSingleProductReview(reviews)
-    }, [productReview, singleproducts])
+        setSingleProductReview(productReviews)
+    }, [ singleproducts ])
     useEffect(() => {
         var product = singleproducts;
         setSingleProduct(product);
@@ -174,29 +173,16 @@ export async function getStaticPaths() {
 }
 export async function getStaticProps({ params }) {
     const url = params.singleproduct
+    let id ="";
     let homepageData = [];
     let singleproducts = [];
     let allProduct = [];
     let recentProducts =[];
-    let productReview = [];
-    let allReviewss = {};
+    let productReviews = [];
     var currencyStore = []
     let lowStockThreshold = 4
     let outOfStockVisibility = true
     let outOfStockThreshold = 0
-
-    /* ========================================= get all review ========================================*/
-
-
-    try {
-        const { data: Reviews } = await client.query({
-            query: GET_REVIEWS
-        });
-        allReviewss = Reviews
-    }
-    catch (e) {
-        console.log("Reviews Error=======", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
-    }
 
     /* ========================================= get HomePage Data========================================*/
 
@@ -205,9 +191,9 @@ export async function getStaticProps({ params }) {
             query: GET_HOMEPAGE_DATA_QUERY
         })
         homepageData = homepagedata
-        lowStockThreshold = homepagedata.getSettings.store.inventory.low_stock_threshold
-        outOfStockThreshold = homepagedata.getSettings.store.inventory.out_of_stock_threshold
-        outOfStockVisibility = homepagedata.getSettings.store.inventory.out_of_stock_visibility
+        lowStockThreshold = homepagedata?.getSettings?.store?.inventory?.low_stock_threshold
+        outOfStockThreshold = homepagedata?.getSettings?.store?.inventory?.out_of_stock_threshold
+        outOfStockVisibility = homepagedata?.getSettings?.store?.inventory?.out_of_stock_visibility
         currencyStore = homepagedata?.getSettings?.store
     }
     catch (e) {
@@ -222,6 +208,7 @@ export async function getStaticProps({ params }) {
             variables: { url },
         });
         singleproducts = singleproductsData.productbyurl.data;
+        id = singleproducts._id;
        
     }
     catch (e) {
@@ -234,16 +221,18 @@ export async function getStaticProps({ params }) {
     //     });
     //     allProduct = shopproductcategory.recentproducts;
     // }
-    // catch (e) {
+    // catch (e) { 
     //     console.log("ShopProduct Error===", e)
     // }
+    //
     
 
     try {
         const { data: productReviewData } = await client.query({
-            query: GET_REVIEWS,
+            query: GET_PRODUCT_REVIEWS,
+            variables : {id}
         })
-        productReview = productReviewData
+        productReviews = productReviewData.productwisereview.data;
     }
     catch (e) {
         console.log("review Error", e.networkError.result.errors);
@@ -253,8 +242,7 @@ export async function getStaticProps({ params }) {
         props: {
             singleproducts,
             allProduct,
-            productReview,
-            allReviewss,
+            productReviews,
             homepageData,
             currencyStore,
             lowStockThreshold,

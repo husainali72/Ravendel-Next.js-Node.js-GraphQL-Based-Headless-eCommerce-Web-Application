@@ -78,7 +78,6 @@ var savedShippingInfo;
 const totalCart = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity), 0)
 
 export const CheckOut = ({currencyStore}) => {
-    const [shippingToggle,setShippingToggle] = useState();
     const allProducts = useSelector(state => state.products);
     const session = useSession();
     const dispatch = useDispatch();
@@ -252,7 +251,7 @@ export const CheckOut = ({currencyStore}) => {
         setBillingDetails({ ...billingDetails, ...val });
     }
     const handleShippingChange = (e) => {
-        setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
+        setShippingInfo({ ...shippingInfo, [e.target.name.slice(8)]: e.target.value });
     };
     const handlePhoneInput = (name, value) => {
         if (!shippingAdd) {
@@ -267,8 +266,7 @@ export const CheckOut = ({currencyStore}) => {
     const shippingAddressToggle = (e) => {
         if (e.target.checked) {
             savedShippingInfo = shippingInfo;
-            // setShippingInfo(shippingObject);
-            setShippingInfo(shippingToggle);
+            setShippingInfo(shippingObject);
         } else {
             setShippingInfo(savedShippingInfo);
         }
@@ -278,19 +276,20 @@ export const CheckOut = ({currencyStore}) => {
 
     const SelectAddressBook = (address) => {
         let shipping = {
-            shippingzip: address.pincode,
-            shippingstate: address.state,
-            shippingcity: address.city,
-            shippingaddress:address.address_line1 + ", " +address.address_line1,
-            shippingaddress_line2: address.address_line1,
-            shippingaddress_line1: address.address_line2,
-            shippingphone: address.phone,
-            shippingcompany: address.company,
-            shippingemail: address.email,
-            shippinglastname: address.last_name,
-            shippingfirstname: address.first_name,
-            shippingcountry: address.country,
-            shiippingpayment_method: address.payment_method,
+            zip: address.pincode,
+            state: address.state,
+            city: address.city,
+            address:address.address_line1 + ", " +address.address_line1,
+            address_line2: address.address_line1,
+            address_line1: address.address_line2,
+            phone: address.phone,
+            company: address.company,
+            email: address.email,
+            lastname: address.last_name,
+            firstname: address.first_name,
+            country: address.country,
+            payment_method: address.payment_method,
+            // shiippingpayment_method: address.payment_method,
         }
         let billing = {
             zip: address.pincode,
@@ -306,7 +305,6 @@ export const CheckOut = ({currencyStore}) => {
             firstname: address.first_name,
             country: address.country,
         }
-        setShippingToggle(shipping);
         if (!shippingAdd) {
             setShippingInfo(shipping);
         }

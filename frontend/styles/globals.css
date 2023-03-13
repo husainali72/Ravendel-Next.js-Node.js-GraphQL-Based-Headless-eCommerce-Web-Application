@@ -718,6 +718,7 @@ color: #696969;
   object-fit: cover;
   height: 100%;
   opacity: 1;
+  aspect-ratio: 1;
 }
 .brand-card-image img{
   -moz-transition: all 0.5s ease-in-out;

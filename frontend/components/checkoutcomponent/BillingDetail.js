@@ -339,15 +339,15 @@ const BillingDetails = (props) => {
                                     placeholder="First name *"
                                     {...registerRef("shippingfirstname", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.shippingfirstname ? false : true)): false),
-                                            message: "firstname is Required",
+                                            value: (shippingAdd ? ((shippingInfo?.firstname ? false : true)): false),
+                                            message: "First Name is Required",
                                         },
                                         minLength: {
                                             value: 4,
                                             message: "First Name Min length is 4",
                                         },
                                     })}
-                                    value={shippingInfo?.shippingfirstname}
+                                    value={shippingInfo?.firstname}
                                     onChange={handleShippingChange}
                                     onKeyDown={(e) => handleEnter(e)}
                                 />
@@ -363,11 +363,11 @@ const BillingDetails = (props) => {
                                     placeholder="Last name *"
                                     {...registerRef("shippinglastname", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.shippinglastname ? false : true)): false),
-                                            message: "Address is Required",
+                                            value: (shippingAdd ? ((shippingInfo?.lastname ? false : true)): false),
+                                            message: "Last Name is Required",
                                         }
                                     })}
-                                    value={shippingInfo?.shippinglastname}
+                                    value={shippingInfo?.lastname}
                                     onChange={handleShippingChange}
                                     onKeyDown={(e) => handleEnter(e)}
                                 />
@@ -383,11 +383,11 @@ const BillingDetails = (props) => {
                                     placeholder="Company name *"
                                     {...registerRef("shippingcompany", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.shippingcompany ? false : true)): false),
-                                            message: "Address is Required",
+                                            value: (shippingAdd ? ((shippingInfo?.company ? false : true)): false),
+                                            message: "Company is Required",
                                         }
                                     })}
-                                    value={shippingInfo?.shippingcompany}
+                                    value={shippingInfo?.company}
                                     onChange={handleShippingChange}
                                     onKeyDown={(e) => handleEnter(e)}
                                 />
@@ -403,11 +403,11 @@ const BillingDetails = (props) => {
                                     placeholder="address_line_1 *"
                                     {...registerRef("shippingaddress", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.shippingaddress ? false : true)): false),
+                                            value: (shippingAdd ? ((shippingInfo?.address ? false : true)): false),
                                             message: "Address is Required",
                                         }
                                     })}
-                                    value={shippingInfo?.shippingaddress}
+                                    value={shippingInfo?.address}
                                     onChange={handleShippingChange}
                                     onKeyDown={(e) => handleEnter(e)}
                                 />
@@ -423,11 +423,11 @@ const BillingDetails = (props) => {
                                     placeholder="address_line_2 *"
                                     {...registerRef("shippingaddress_line2", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.shippingaddress_line2 ? false : true)): false),
+                                            value: (shippingAdd ? ((shippingInfo?.address_line2 ? false : true)): false),
                                             message: "Address is Required",
                                         }
                                     })}
-                                    value={shippingInfo?.shippingaddress_line2}
+                                    value={shippingInfo?.address_line2}
                                     onChange={handleShippingChange}
                                     onKeyDown={(e) => handleEnter(e)}
                                 />
@@ -444,11 +444,11 @@ const BillingDetails = (props) => {
                                     placeholder="city / Town *"
                                     {...registerRef("shippingcity", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.shippingcity ? false : true)): false),
-                                            message: "Address is Required",
+                                            value: (shippingAdd ? ((shippingInfo?.city ? false : true)): false),
+                                            message: "City is Required",
                                         }
                                     })}
-                                    value={shippingInfo?.shippingcity}
+                                    value={shippingInfo?.city}
                                     onChange={handleShippingChange}
                                     onKeyDown={(e) => handleEnter(e)}
                                 />
@@ -464,11 +464,11 @@ const BillingDetails = (props) => {
                                     placeholder="state *"
                                     {...registerRef("shippingstate", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.shippingstate ? false : true)): false),
-                                            message: "Address is Required",
+                                            value: (shippingAdd ? ((shippingInfo?.state ? false : true)): false),
+                                            message: "State is Required",
                                         }
                                     })}
-                                    value={shippingInfo?.shippingstate}
+                                    value={shippingInfo?.state}
                                     onChange={handleShippingChange}
                                 />
                                 <p>
@@ -483,8 +483,8 @@ const BillingDetails = (props) => {
                                     placeholder="zip *"
                                     {...registerRef("shippingzip", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.shippingzip ? false : true)): false),
-                                            message: "Address is Required",
+                                            value: (shippingAdd ? ((shippingInfo?.zip ? false : true)): false),
+                                            message: "Zip is Required",
                                         },
                                         minLength: {
                                             value: 6,
@@ -495,7 +495,7 @@ const BillingDetails = (props) => {
                                             message: "zip Max length is 6",
                                         },
                                     })}
-                                    value={shippingInfo?.shippingzip}
+                                    value={shippingInfo?.zip}
                                     onChange={handleShippingChange} />
                                 <p>
                                     <small style={{ color: 'red' }}>
@@ -511,11 +511,11 @@ const BillingDetails = (props) => {
                                     placeholder="phone *"
                                     {...registerRef("shippingphone", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.shippingphone? false : true)): false),
-                                            message: "Address is Required",
+                                            value: (shippingAdd ? ((shippingInfo?.phone? false : true)): false),
+                                            message: "Phone is Required",
                                         }
                                     })}
-                                    value={shippingInfo?.shippingphone}
+                                    value={shippingInfo?.phone}
                                     onChange={handleShippingChange} />
                                 <p>
                                     <small style={{ color: 'red' }}>
@@ -532,15 +532,15 @@ const BillingDetails = (props) => {
                                     placeholder="email *"
                                     {...registerRef("shippingemail", {
                                         required: {
-                                            value: (shippingAdd ? (shippingInfo?.shippingemail ? false : true) : false),
-                                            message: "Address is Required",
+                                            value: (shippingAdd ? (shippingInfo?.email ? false : true) : false),
+                                            message: "Email is Required",
                                         },
                                         pattern: {
                                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
                                             message: "Invalid Email",
                                         },
                                     })}
-                                    value={shippingInfo?.shippingemail}
+                                    value={shippingInfo?.email}
                                     onChange={handleShippingChange} />
                                 <p>
                                     <small style={{ color: 'red' }}>

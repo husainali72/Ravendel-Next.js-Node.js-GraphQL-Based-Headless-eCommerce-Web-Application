@@ -23,11 +23,11 @@ const ThankYou = ({ currencyStore }) => {
     const [Data, setData] = useState()
     useEffect(() => {
         dispatch(settingActionCreator(currencyStore.currency_options))
-    }, [currencyStore.currency_options])
+    }, [currencyStore?.currency_options])
     useEffect(() => {
         if (session.status === "authenticated") {
-            const ID = session.data.user.accessToken.customer._id
-            const token = session.data.user.accessToken.token
+            const ID = session?.data?.user?.accessToken?.customer?._id
+            const token = session?.data?.user?.accessToken?.token
             query(GET_CUSTOMER_ORDERS_QUERY, ID, token).then((res) => {
                 console.log(res)
                 setData(res?.data?.orderbyUser?.data?.[0])
@@ -37,8 +37,8 @@ const ThankYou = ({ currencyStore }) => {
     }, [session?.status])
     return (
         <div>
-            <PageTitle title="Thank You" />
-            <BreadCrumb title={"Thank-You"} />
+            <PageTitle title="Order Status" />
+            <BreadCrumb title={"Order Status"} />
 
             <Container>
                 <div className="thankyou-page-container"> <h1> Your order has been received.</h1>

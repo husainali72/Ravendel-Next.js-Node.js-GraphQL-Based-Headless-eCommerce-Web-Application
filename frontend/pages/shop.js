@@ -18,7 +18,6 @@ import { CloseSortMenu } from '../utills/app';
 import { settingActionCreator } from "../redux/actions/settingAction";
 
 const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
-
     const dispatch = useDispatch();
     const usercart = useSelector(state => state.userCart)
     const [rangevalue, setRangevalue] = useState('');
@@ -36,7 +35,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
     }
     useEffect(() => {
         dispatch(settingActionCreator(currencyStore.currency_options))
-    }, [currencyStore.currency_options])
+    }, [currencyStore?.currency_options])
     useEffect(() => {
         currencySetter(currencyOpt, setCurrency);
     }, [])

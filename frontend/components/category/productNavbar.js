@@ -50,7 +50,7 @@ export const ProductNav = (props) => {
                     <div className="on-sale-product-card-body">
                         {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price ? <div className="save-price">
                             <span className="percantage-save">
-                                {calculateDiscount(product.pricing.price, product.pricing.sellprice)}
+                                {calculateDiscount(product?.pricing?.price, product?.pricing?.sellprice)}
                             </span>
                         </div> : null}
                         <div className="product-categoryname" >
@@ -73,10 +73,10 @@ export const ProductNav = (props) => {
                             <div className="product-price" style={{ justifyContent: "left", alignContent: "left", m: 0 }}>
                                 <StarRating className="rating" stars={"4"} />
                                 <span >{product.pricing.sellprice ? (
-                                    <strong className="sale-price">{currency} {getPrice(product.pricing.sellprice, decimal)}
+                                    <strong className="sale-price">{currency} {getPrice(product?.pricing?.sellprice, decimal)}
                                     </strong>
                                 ) : (
-                                    <strong className="sale-price">{currency} {product.pricing.price.toFixed(2)}</strong>
+                                    <strong className="sale-price">{currency} {getPrice(product?.pricing?.price, decimal)}</strong>
 
                                 )}</span>
                                 {product.pricing.sellprice ? <span

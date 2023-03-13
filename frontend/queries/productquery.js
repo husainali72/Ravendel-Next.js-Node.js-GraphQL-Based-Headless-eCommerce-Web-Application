@@ -5,6 +5,7 @@ query  {
 products {
     data {
       _id
+      rating
       name
       categoryId {
         id

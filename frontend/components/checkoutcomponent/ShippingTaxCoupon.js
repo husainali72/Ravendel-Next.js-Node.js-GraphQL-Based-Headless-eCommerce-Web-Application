@@ -30,9 +30,9 @@ const ShippingTaxCoupon = (props) => {
                         </div>
                         <div className="checkout-shipping-address">
                             <div className="checkout-list-content">
-                                <h6> {shippingInfo.shippingfirstname},{shippingInfo.shippinglastname}</h6>
+                                <h6> {shippingInfo.firstname},{shippingInfo.lastname}</h6>
                                 <p>
-                                    {shippingInfo.shippingcity},{shippingInfo.shippingstate},{shippingInfo.shippingzip},{shippingInfo.shippingcountry}
+                                    {shippingInfo.city},{shippingInfo.state},{shippingInfo.zip},{shippingInfo.country}
                                 </p>
                             </div>
                             <div className="checkout-shipping-edit-btn">

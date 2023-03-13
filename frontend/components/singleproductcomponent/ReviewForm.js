@@ -32,15 +32,13 @@ const ReviewForm = ({ productId }) => {
     }
     const login = useSelector(state => state.login);
     const session = useSession()
-    console.log("session", session);
-    console.log("cust", customer_id);
     var token = "";
     var customer_id = "";
     useEffect(() => {
-        if (session.status === "authenticated") {
-            token = session.data.user.accessToken.token;
-            customer_id = session.data.user.accessToken.customer._id;
-            setCustomerId(session.data.user.accessToken.customer._id);
+        if (session?.status === "authenticated") {
+            token = session?.data?.user?.accessToken?.token;
+            customer_id = session?.data?.user?.accessToken?.customer?._id;
+            setCustomerId(session?.data?.user?.accessToken?.customer?._id);
         }
     }, [])
     
@@ -68,12 +66,11 @@ const ReviewForm = ({ productId }) => {
     const addReview = (e) => {
         e.preventDefault();
         mutation(ADD_REVIEW, review, token).then((response) => {
-            console.log("addreview", response.data.addReview)
-            if(!response.data.addReview.success){
-                notify(response.data.addReview.message,response.data.addReview.success)
+            if(!response?.data?.addReview?.success){
+                notify(response?.data?.addReview?.message,response?.data?.addReview?.success)
             }
-            else if(response.data.addReview.success){
-                notify(response.data.addReview.message,response.data.addReview.success)
+            else if(response?.data?.addReview?.success){
+                notify(response?.data?.addReview?.message,response?.data?.addReview?.success)
                 setWriteReview(!writeReview);
             }
         })

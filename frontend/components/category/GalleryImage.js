@@ -36,8 +36,8 @@ const GalleryImagesComponents = (props) => {
     }, [singleproducts.quantity,lowStockThreshold,outOfStockThreshold])
 
      if (session.status === "authenticated") {
-        id = session.data.user.accessToken.customer._id
-        token = session.data.user.accessToken.token
+        id = session?.data?.user?.accessToken?.customer?._id
+        token = session?.data?.user?.accessToken?.token
     }
 
     const settings = {
@@ -63,40 +63,26 @@ const GalleryImagesComponents = (props) => {
     };
     const addToCartProduct = async (product) => {
         let quantity = 1
-        let href = '/shopcart'
         if (session.status === "authenticated") {
-
             let productInCart = false;
             query(GET_USER_CART, id, token).then(res => {
-                let cart_id = res?.data?.cartbyUser?.id
+                let cart_id = res?.data?.cartbyUser?.id;
                 const inCartProducts = res?.data?.cartbyUser?.products;
                 inCartProducts.map(inCartProduct => {
-                    const productt = inCartProduct;
-                    if (productt.product_id === product?._id) {
-                        let qant = product.qty + quantity;
+                    if (inCartProduct?.product_id === product?._id) {
                         productInCart = true;
-                        var Cartt = inCartProducts.map(producttt => {
-                            if (producttt.product_id === product._id) {
-                                return {
-                                    product_id: producttt?.product_id,
-                                    qty: producttt.qty + quantity,
-                                    product_title: producttt.product_title,
-                                    product_image: producttt.product_image,
-                                    product_price: producttt.product_price
-                                }
-                            } else {
-                                return {
-                                    product_id: producttt?.product_id,
-                                    qty: producttt.qty,
-                                    product_title: producttt.product_title,
-                                    product_image: producttt.product_image,
-                                    product_price: producttt.product_price
-                                }
+                        let Cart = inCartProducts.map(item => {
+                            return {
+                                product_id: item?.product_id,
+                                qty: item.product_id === product._id ? item.qty + quantity :item.qty,
+                                product_title: item?.product_title,
+                                product_image: item?.product_image,
+                                product_price: item?.product_price
                             }
                         })
                         let variables = {
                             id: cart_id,
-                            products: Cartt,
+                            products: Cart,
                             total: 0,
                         }
                         mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
@@ -106,14 +92,14 @@ const GalleryImagesComponents = (props) => {
                 })
                 if (!productInCart) {
                     let variables = {
-                        total: product?.pricing.sellprice * quantity,
+                        total: product?.pricing?.sellprice  * quantity || product?.pricing?.price  * quantity,
                         user_id: id,
                         product_id: product?._id,
                         qty: quantity,
                         product_title: product?.name,
                         product_image: product?.feature_image?.original,
-                        product_price: product?.pricing.sellprice
-                    }
+                        product_price: product?.pricing?.sellprice || product?.pricing?.price
+                    } 
                     mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
                         router.push("/shopcart")
                         dispatch(addToCart(product))
@@ -165,7 +151,7 @@ const GalleryImagesComponents = (props) => {
                                 <span> Category: {singleproducts.categoryId.map(item => <span>{item.name}</span>)}</span>
                             </div>
                             <div className="pro-details-rating">
-                                <StarRating stars={"5"} />
+                                <StarRating singleproducts={singleproducts} stars={singleproducts?.rating} />
                             </div>
                         </div>
                         <div className="clearfix product-price-cover">
@@ -173,36 +159,35 @@ const GalleryImagesComponents = (props) => {
                                 <span className=" mx-2">
                                     {singleproducts.pricing.sellprice ? (
                                         <strong className="sale-price" style={{ fontSize: "25px" }}>
-
-                                            {currency}{" "}{getPrice(singleproducts.pricing.sellprice, decimal)}
+                                            {currency}{" "}{getPrice(singleproducts?.pricing?.sellprice, decimal)}
                                         </strong>
                                     ) : (
                                         <strong className="sale-price" style={{ fontSize: "25px" }}>
 
-                                            {currency}{" "}{getPrice(singleproducts.pricing.price, decimal)}
+                                            {currency}{" "}{getPrice(singleproducts?.pricing?.price, decimal)}
                                         </strong>
                                     )}</span>
-                                {singleproducts.pricing.sellprice ? <span
+                                {singleproducts?.pricing?.sellprice ? <span
                                     className={
-                                        singleproducts.pricing.sellprice ? "has-sale-price mx-2" : ""
+                                        singleproducts?.pricing?.sellprice ? "has-sale-price mx-2" : ""
                                     } style={{ fontSize: "17px" }}
                                 >
 
-                                    {currency}{getPrice(singleproducts.pricing.price, decimal)}
+                                    {currency}{getPrice(singleproducts?.pricing?.price, decimal)}
                                 </span>
                                     : null}
                                 <span className=" mx-2">
-                                    {calculateDiscount(singleproducts.pricing.price, singleproducts.pricing.sellprice)}
+                                    {calculateDiscount(singleproducts?.pricing?.price, singleproducts?.pricing?.sellprice)}
                                 </span>
                             </div>
                         </div>
                         <div className="short-desc mb-30">
                             <p> {singleproducts?.short_description}</p>
                         </div>
-                        {singleproducts.custom_field && singleproducts.custom_field?.length > 0 ? (
+                        {singleproducts?.custom_field && singleproducts.custom_field?.length > 0 ? (
                             <>
 
-                                {singleproducts.custom_field.map(field => (<div>
+                                {singleproducts?.custom_field?.map(field => (<div>
                                     <ul className="product-meta font-xs color-grey mt-50">
                                         <p >
                                             {`${field.key} - ${' '}`} <strong> {field.value}</strong>
@@ -217,7 +202,7 @@ const GalleryImagesComponents = (props) => {
                             onClick={() => addToCartProduct(singleproducts)}>Add to Cart</button>}
 
                         <ul className="product-meta font-xs color-grey mt-50">
-                            <p className="">SKU: {singleproducts.sku}</p>
+                            <p className="">SKU: {singleproducts?.sku}</p>
                             {newFunction(singleproducts)}
                             <p className="">Availablity: <span className={stockClass}>{Lable}</span></p>
                         </ul>

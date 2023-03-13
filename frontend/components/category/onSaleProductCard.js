@@ -126,13 +126,13 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                             </Link>
                                         </div>
                                         <div className="on-sale-product-card-body">
-                                            {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price ? (<div className="save-price">
+                                            {product?.pricing?.sellprice > 0 && product?.pricing?.sellprice < product?.pricing?.price ? (<div className="save-price">
                                                 <span className="percantage-save">
-                                                    {calculateDiscount(product.pricing.price, product.pricing.sellprice)}
+                                                    {calculateDiscount(product?.pricing?.price, product?.pricing?.sellprice)}
                                                 </span>
                                             </div>) : null}
                                             <div className="product-categoryname" >
-                                                {product?.categoryId.map((item, i) =>
+                                                {product?.categoryId?.map((item, i) =>
                                                 (<span key={i}>
 
                                                     {(product?.categoryId?.length - 1 === i) ? (<span>{item?.name} </span>) : <span>{item?.name}, </span>}
@@ -155,18 +155,18 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                                     <StarRating className="rating" stars="4" />
                                                     <span >
                                                         {product.pricing.sellprice ? (
-                                                            <strong className="sale-price">{currency} {getPrice(product.pricing.sellprice, decimal)}
+                                                            <strong className="sale-price">{currency} {getPrice(product?.pricing?.sellprice, decimal)}
                                                             </strong>
                                                         ) : (
-                                                            <strong className="sale-price">{currency} {getPrice(product.pricing.price, decimal)}</strong>
+                                                            <strong className="sale-price">{currency} {getPrice(product?.pricing.price, decimal)}</strong>
                                                         )}</span>
-                                                    {product.pricing.sellprice ? <span
+                                                    {product?.pricing.sellprice ? <span
                                                         className={
-                                                            product.pricing.sellprice ? "has-sale-price" : ""
+                                                            product?.pricing.sellprice ? "has-sale-price" : ""
                                                         }
                                                     >
 
-                                                        {currency} {getPrice(product.pricing.price, decimal)}
+                                                        {currency} {getPrice(product?.pricing?.price, decimal)}
                                                     </span> : null}
 
                                                 </div>

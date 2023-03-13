@@ -19,7 +19,7 @@ const Brand = ({brand,filteredProducts,brandProduct,currencyStore}) => {
 
     useEffect(() => {
         dispatch(settingActionCreator(currencyStore?.currency_options))
-    }, [currencyStore.currency_options])
+    }, [currencyStore?.currency_options])
     useEffect(() => {   
         const brandProducts = filteredProducts?.filter((product) => product?.brand?.id === brand?.id)
         setProducts(brandProducts)
