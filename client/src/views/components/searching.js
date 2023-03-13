@@ -18,6 +18,7 @@ import BasicTabs from './muitabs';
 export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTabData, classname }) {
     const classes = viewStyles()
     const [search, setsearch] = useState("");
+    const [MuiTabsvalue, setMuiTabsValue] = React.useState('All');
     const [paymentstatus, setpaymentstatus] = useState('')
     const [shippingstatus, setshippingstatus] = useState('')
     const [startDate, setStartDate] = useState(null);
@@ -110,6 +111,21 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
             handleOnChangeSearch(searchData)
         }
     }
+
+    const handleChangeMuiTabs = (event, newValue) => {
+
+        setMuiTabsValue(newValue);
+        if (newValue === 'All') {
+            handleOnChangeSearch(searchData)
+        } else {
+            let filterdata = searchData.filter((data) => {
+
+                return data[statusTabData.name] === newValue
+            })
+            handleOnChangeSearch(filterdata)
+        }
+    };
+
     const crossButton = () => {
         setsearch("");
         handleOnChangeSearch(searchData)
@@ -117,6 +133,7 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
     const removeAllFilter = () => {
         setpaymentstatus("")
         setshippingstatus("")
+        setMuiTabsValue("All");
         setsearch("")
         setStartDate(null)
         setEndDate(null)
@@ -124,7 +141,7 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
     }
     return (
         <div className={classes.search}>
-            {statusTabData ? <BasicTabs statusTabData={statusTabData} handleOnChangeSearch={handleOnChangeSearch} searchData={searchData} /> : null}
+            {statusTabData ? <BasicTabs handleChangeMuiTabs={handleChangeMuiTabs} statusTabData={statusTabData} value={MuiTabsvalue} handleOnChangeSearch={handleOnChangeSearch} searchData={searchData} /> : null}
             <BasicDatePicker startDateHandleChange={startDateHandleChange} endDateHandleChange={endDateHandleChange} searchData={searchData} Alldata={searchData} classname={classname} startDate={startDate} endDate={endDate} />
             {dropdown && dropdown.length > 0 ?
                 <>
