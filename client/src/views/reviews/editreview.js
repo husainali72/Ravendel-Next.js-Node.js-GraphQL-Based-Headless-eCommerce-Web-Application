@@ -235,6 +235,7 @@ const EditReviewComponent = ({ params }) => {
                 name="simple-controlled"
                 value={Number(review.rating)}
                 onChange={(event, newValue) => {
+                  if(newValue === null) newValue = 0
                   setreview({
                     ...review,
                     rating: String(newValue),

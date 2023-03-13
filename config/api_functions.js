@@ -317,7 +317,7 @@ const UPDATE_FUNC = async (
     if (!updateId) {
       return MESSAGE_RESPONSE("ID_ERROR", name, false);
     }
-    const response = await modal.findById(updateId);
+    let response = await modal.findById(updateId);
     if (response) {
       //  console.log("args", args);
       if (args.updatedImage || args.update_image) {
@@ -369,6 +369,7 @@ const UPDATE_FUNC = async (
       }
       if(name !== "Page" && name !== "ProductAttribute") response.updated = Date.now()
 
+      response = await modal.findByIdAndUpdate({_id: response._id}, {...response})
       await response.save();
       // update average rating of product related to reviews
       if(name === "Review"){
