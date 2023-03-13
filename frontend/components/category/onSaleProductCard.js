@@ -8,8 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
 import { useSession } from "next-auth/react";
 import { ADD_TO_CART_QUERY, GET_USER_CART, UPDATE_CART_PRODUCT } from "../../queries/cartquery";
-
-import calculateDiscount from "../../utills/calculateDiscount";  
+import calculateDiscount from "../../utills/calculateDiscount";
 import { query } from "../../utills/helpers";
 var placeholder = "https://dummyimage.com/300";
 const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }) => {
@@ -21,10 +20,9 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
     const settings = useSelector(state => state.setting);
-
     useEffect(() => {
         currencySetter(settings, setCurrency);
-        setdecimal(settings.currencyOption.number_of_decimals)
+        setdecimal(settings?.currencyOption?.number_of_decimals)
         if (currencyProp) {
             setCurrency(currencyProp)
         }
@@ -128,13 +126,13 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                             </Link>
                                         </div>
                                         <div className="on-sale-product-card-body">
-                                          {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price ? ( <div className="save-price">
+                                            {product?.pricing?.sellprice > 0 && product?.pricing?.sellprice < product?.pricing?.price ? (<div className="save-price">
                                                 <span className="percantage-save">
-                                                     {calculateDiscount(product.pricing.price,product.pricing.sellprice)}
+                                                    {calculateDiscount(product?.pricing?.price, product?.pricing?.sellprice)}
                                                 </span>
                                             </div>) : null}
                                             <div className="product-categoryname" >
-                                                {product?.categoryId.map((item, i) =>
+                                                {product?.categoryId?.map((item, i) =>
                                                 (<span key={i}>
 
                                                     {(product?.categoryId?.length - 1 === i) ? (<span>{item?.name} </span>) : <span>{item?.name}, </span>}
@@ -157,19 +155,19 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                                     <StarRating className="rating" stars="4" />
                                                     <span >
                                                         {product.pricing.sellprice ? (
-                                                            <strong className="sale-price">{currency} {getPrice(product.pricing.sellprice, decimal)}
+                                                            <strong className="sale-price">{currency} {getPrice(product?.pricing?.sellprice, decimal)}
                                                             </strong>
                                                         ) : (
-                                                            <strong className="sale-price">{currency} {product.pricing.price.toFixed(2)}</strong>
+                                                            <strong className="sale-price">{currency} {getPrice(product?.pricing.price, decimal)}</strong>
                                                         )}</span>
-                                                        {product.pricing.sellprice ? <span
+                                                    {product?.pricing.sellprice ? <span
                                                         className={
-                                                            product.pricing.sellprice ? "has-sale-price" : ""
+                                                            product?.pricing.sellprice ? "has-sale-price" : ""
                                                         }
                                                     >
 
-                                                        {currency} {getPrice(product.pricing.price, decimal)}
-                                                    </span>
+                                                        {currency} {getPrice(product?.pricing?.price, decimal)}
+                                                    </span> : null}
 
                                                 </div>
                                                 <OverlayTrigger style={{ backgroundColor: "#088178" }}
@@ -193,7 +191,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                             </>
                         ) :
                             <div style={{ padding: "50px" }}>
-                                <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>Product not available</p>
+                                <p style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>No Data Found</p>
                             </div>
                         }
                     </div>

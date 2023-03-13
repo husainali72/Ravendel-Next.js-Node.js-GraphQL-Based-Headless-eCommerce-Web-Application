@@ -6,7 +6,8 @@ import { mutation } from "../../utills/helpers";
 import { Spinner, Toast } from "react-bootstrap";
 import toast, { Toaster } from 'react-hot-toast';
 import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
+// import "react-phone-input-2/lib/style.css";
+import 'react-phone-input-2/lib/bootstrap.css';
 import Validation from "../../utills/Validation";
 const registerObject = {
     ///////////////////////////////
@@ -118,7 +119,7 @@ const Register = () => {
                         enableSearch = 'true'
                         country={'in'}
                         inputClass={'custom-input'}
-                        buttonClass={'select-flag'}
+                        // buttonClass={'select-flag'}
                         placeholder="Enter phone number"
                         value={registerUser.phone}
                         onChange={(value) => setRegisterUser({ ...registerUser, phone: value })}

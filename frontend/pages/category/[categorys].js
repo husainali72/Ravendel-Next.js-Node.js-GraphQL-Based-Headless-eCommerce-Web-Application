@@ -13,20 +13,16 @@ import Row from 'react-bootstrap/Row';
 import { getImage } from "../../utills/helpers";
 import Link from 'next/link';
 import { useRef } from 'react';
-const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduct,url}) => {
-
-    // console.log('shopProducts____',shopProduct.data.map(curr => curr.url))
-    // const filterProducts = shopProduct?.data?.filter(product => product.id !== "63d039bb58194ec30047d5bb")
-    // console.log('whole',filterProducts)
+const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduct, url }) => {
 
     const slider = useRef();
-    const slideLeft =()=>{
+    const slideLeft = () => {
         slider.current.scrollLeft = slider.current.scrollLeft - 500;
     }
-    const slideRight =()=>{
+    const slideRight = () => {
         slider.current.scrollLeft = slider.current.scrollLeft + 500;
     }
-    const [cats,setCats] = useState({})
+    const [cats, setCats] = useState({})
     const [products, setProducts] = useState([]);
     const [categoryDetail, setCategoryDetail] = useState({
         name: "",
@@ -51,10 +47,10 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
     useEffect(() => {
         setCategoryDetail(singlecategory);
     }, [singlecategory]);
-    const  catId = shopProduct.data.filter(product => product.url === url)[0].id
-    const subCat = shopProduct.data.filter(cat=> cat.parentId === catId)
+    const catId = shopProduct.data.filter(product => product.url === url)[0].id
+    const subCat = shopProduct.data.filter(cat => cat.parentId === catId)
 
-    const getProducts = async ()=>{
+    const getProducts = async () => {
         // let config = { category: [singlecategory.id], brand: [], attribute: [], price: [] }
         // try { 
         //     const { data: fillterPrroducts } = await client.query({
@@ -84,60 +80,62 @@ const SingleCategoryProduct = ({ singlecategory , paths ,shopProduct,brandProduc
         // catch (e) {
         //     console.log("fillerProduct ERRoR : ", e);
         // }
-         
+
     }
     useEffect(() => {
         getProducts()
     }, [setCategoryDetail])
 
-   
-    const rederict = async () =>{
-    await router.push(`/subcategory/${url}`)
-    } 
-    if(subCat.length <= 0){
+
+    const rederict = async () => {
+        await router.push(`/subcategory/${url}`)
+    }
+    if (subCat.length <= 0) {
         rederict()
     }
     return (
         <>
-        
-        {subCat.length >0 ?  <div >
-             <BreadCrumb title={`category  >  ${categoryDetail.name}`} />
-            <Container style={{ display:'flex',flexDirection:'column', alignItems:'center', justifyContent:'center'}}>
-                <h2 style={{ color: "#088178" , margin:"40px" }}><strong>{categoryDetail.name}</strong></h2>
-                {subCat.length >0 ? 
-                <Row xs={1} md={1} lg={2} className="g-4">
-                {subCat.map((cat, idx) => (
-                <Col>
-                <Card
-                    bg='light' 
-                    style={{display:"flex", flexDirection:"row", height:"100%"}}>
-                        <img 
-                            src={getImage(cat?.image, 'original')}
-                            className='subcat-img'
-                            onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
-                            alt={cat?.name}
-                        />
-                    <Card.Body style={{flexGrow:"2"}}>
-                        <Card.Title>{cat?.name}</Card.Title>
-                            <Card.Text>
-                                This is a longer card with supporting text below as a natural
-                                lead-in to additional content. This content is a little bit
-                                longer.
-                            </Card.Text>
-                        <Link href={`/subcategory/[categorys]?url=${cat.url}`} as={`/subcategory/${cat.url}`}>
-                            <button type="button"
-                                        className="btn btn-success button button-add-to-cart"
-                                        style={{ marginTop: 12, backgroundColor: "#088178" }}
-                                        >Explore Products
-                            </button>
-                        </Link>
-                    </Card.Body>
-                </Card>
-                </Col>
-            ))}
-        </Row> : <h2>{url}</h2>}
-            </Container>
-        </div> : null }
+
+            {subCat.length > 0 ? <div className='categories-cart-container' >
+                <BreadCrumb title={`category  >  ${categoryDetail.name}`} />
+                <Container style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <h2 style={{ color: "#088178", margin: "40px" }}><strong>{categoryDetail.name}</strong></h2>
+                    {subCat.length > 0 ?
+                        <Row xs={1} md={1} lg={2} className="g-4">
+                            {subCat.map((cat, idx) => (
+                                <Col>
+                                    <Card
+                                        bg='light'
+                                        style={{ display: "flex", flexDirection: "row", height: "100%" }}>
+                                        <div className='card-img-wrapper'>
+                                            <img
+                                                src={getImage(cat?.image, 'original')}
+                                                className='subcat-img'
+                                                onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
+                                                alt={cat?.name}
+                                            />
+                                        </div>
+                                        <Card.Body style={{ flexGrow: "2" }}>
+                                            <Card.Title>{cat?.name}</Card.Title>
+                                            <Card.Text>
+                                                This is a longer card with supporting text below as a natural
+                                                lead-in to additional content. This content is a little bit
+                                                longer.
+                                            </Card.Text>
+                                            <Link href={`/subcategory/[categorys]?url=${cat.url}`} as={`/subcategory/${cat.url}`}>
+                                                <button type="button"
+                                                    className="btn btn-success button button-add-to-cart"
+                                                    style={{ marginTop: 12, backgroundColor: "#088178" }}
+                                                >Explore Products
+                                                </button>
+                                            </Link>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            ))}
+                        </Row> : <h2>{url}</h2>}
+                </Container>
+            </div> : null}
         </>
     )
 }
@@ -156,7 +154,7 @@ export async function getStaticPaths() {
     }
     const filterProducts = shopProduct?.data?.filter(product => product.id !== "63d039bb58194ec30047d5bb")
     const paths = filterProducts.map((curElem) => {
-        return{
+        return {
             params: { categorys: curElem.url.toString() }
         }
     })
@@ -208,7 +206,7 @@ export async function getStaticProps({ params }) {
         console.log("ShopProduct Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
     }
     /* ===============================================Get Brand Data Settings ===============================================*/
-    
+
     try {
         const { data: brandproductData } = await client.query({
             query: GET_BRANDS_QUERY
@@ -226,6 +224,6 @@ export async function getStaticProps({ params }) {
             brandProduct,
             shopProduct
         },
-        revalidate: 10  
+        revalidate: 10
     }
 }

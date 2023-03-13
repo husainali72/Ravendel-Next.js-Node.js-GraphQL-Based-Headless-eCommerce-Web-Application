@@ -3,7 +3,7 @@ import Head from 'next/head';
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import client from "../../apollo-client";
 import { Container } from "react-bootstrap";
-import { GET_HOMEPAGE_DATA_QUERY, GET_RECENT_PRODUCTS_QUERY } from "../../queries/home";
+import { GET_HOMEPAGE_DATA_QUERY, GET_RECENT_PRODUCTS_QUERY, GET_RELATED_PRODUCTS_QUERY } from "../../queries/home";
 import { GET_SINGLE_PRODUCT, GET_PRODUCT_REVIEWS, GET_REVIEWS } from "../../queries/productquery";
 import { GET_PRODUCTS_QUERY } from "../../queries/shopquery";
 import { Tab, Col, Nav } from 'react-bootstrap';
@@ -16,31 +16,51 @@ import Loading from "../../components/breadcrumb/loading";
 import { useSelector } from "react-redux";
 import Reviews from "../../components/Reviews/Reviews";
 import { currencySetter } from "../../utills/helpers";
-import ReactHtmlParser from 'react-html-parser'
-const SingleProduct = ({ singleproducts, allProduct, productReview,allReviewss,currencyStore,homepageData,lowStockThreshold,outOfStockVisibility,outOfStockThreshold}) => {
-const currencyOpt = currencyStore?.currency_options?.currency
+import ReactHtmlParser from 'react-html-parser';
+import toast, { Toaster } from 'react-hot-toast';
+
+const SingleProduct = ({ recentProducts,singleproducts, productReviews, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
     const router = useRouter();
     const session = useSession()
-    if (router.isFallback) {
-        return <div>Loading...</div>
-    }
+    const currencyOpt = currencyStore?.currency_options?.currency
+    const decimal = currencyStore?.currency_options?.number_of_decimals
+    const [currency, setCurrency] = useState("$")
+    const [allProduct, setAllProduct] = useState([])
     const [singleProduct, setSingleProduct] = useState(null);
     const [sliderImages, setSliderImages] = useState([]);
-
     const [singleProductReview,setSingleProductReview] = useState([])
     const productss = useSelector(state => state.products ) 
     const settingss =  useSelector(state => state.setting);
-
-    const [currency, setCurrency] = useState("$")
+    const [stockClass, setStockClass] = useState("")
+    if (router.isFallback) {
+        return <div>Loading...</div>
+    }
     useEffect(() => {
-        currencySetter(currencyOpt, setCurrency);
+        currencySetter(currencyOpt,setCurrency);
     }, [])
+    useEffect(() => {
+        getRelatedProducts();
+    }, [singleproducts])
+    const category = singleproducts?.categoryId[0]?.id;
+    const getRelatedProducts = async ()=>{  
+        try {
+            const { data: shopproductcategory } = await client.query({
+                query: GET_RELATED_PRODUCTS_QUERY,
+                variables: { category }
+            });
+            recentProducts = shopproductcategory;
+            const productss = shopproductcategory.relatedProducts;
+            setAllProduct(productss)
+        }
+        catch (e) {
+            console.log("ShopProduct Error===", e)
+        }
+    }
+    
 
     useEffect(() => {
-        const alll = productReview.reviews.data.filter(reviews => reviews.product_id._id === singleproducts._id);
-        setSingleProductReview(alll)
-    }, [productReview, singleproducts])
-
+        setSingleProductReview(productReviews)
+    }, [ singleproducts ])
     useEffect(() => {
         var product = singleproducts;
         setSingleProduct(product);
@@ -71,12 +91,13 @@ const currencyOpt = currencyStore?.currency_options?.currency
             </Head>
             <BreadCrumb title={`product`} />
             <section className="product-cart-section">
+            <Toaster />
                 <Container>
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="product-detail accordion-detail">
                                 <div>
-                                    <GalleryImagesComponents outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility ={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency = {currency} />
+                                    <GalleryImagesComponents decimal={decimal} stockClass={stockClass} setStockClass={setStockClass} outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility ={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency = {currency} />
                                 </div>
                             </div>
                             <div>
@@ -104,7 +125,7 @@ const currencyOpt = currencyStore?.currency_options?.currency
                                                     {session.status === "authenticated" ? (
                                                         <ReviewForm productId={singleproducts._id} />
                                                     ) : <div style={{ padding: "20px", marginTop: "15px" }}>
-                                                        <p>Product review not available</p></div>}
+                                                        <p>No Data Found</p></div>}
 
                                                 </Tab.Pane>
                                             </Tab.Content>
@@ -117,6 +138,7 @@ const currencyOpt = currencyStore?.currency_options?.currency
                                     onSaleProduct={allProduct}
                                     hidetitle
                                     currencyProp={currency}
+                                    decimal={decimal}
                                 />
                             </div>
                         </div>
@@ -151,28 +173,16 @@ export async function getStaticPaths() {
 }
 export async function getStaticProps({ params }) {
     const url = params.singleproduct
+    let id ="";
     let homepageData = [];
     let singleproducts = [];
     let allProduct = [];
-    let productReview = [];
-    let allReviewss = {};
-    var currencyStore =[]
+    let recentProducts =[];
+    let productReviews = [];
+    var currencyStore = []
     let lowStockThreshold = 4
     let outOfStockVisibility = true
-    let outOfStockThreshold = 0 
-   
-       /* ========================================= get all review ========================================*/
-
-
-    try {
-        const { data: Reviews } = await client.query({
-            query: GET_REVIEWS
-        });
-        allReviewss = Reviews
-    }
-    catch (e) {
-        console.log("Reviews Error=======", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
-    }
+    let outOfStockThreshold = 0
 
     /* ========================================= get HomePage Data========================================*/
 
@@ -181,9 +191,9 @@ export async function getStaticProps({ params }) {
             query: GET_HOMEPAGE_DATA_QUERY
         })
         homepageData = homepagedata
-        lowStockThreshold = homepagedata.getSettings.store.inventory.low_stock_threshold
-        outOfStockThreshold = homepagedata.getSettings.store.inventory.out_of_stock_threshold   
-        outOfStockVisibility = homepagedata.getSettings.store.inventory.out_of_stock_visibility   
+        lowStockThreshold = homepagedata?.getSettings?.store?.inventory?.low_stock_threshold
+        outOfStockThreshold = homepagedata?.getSettings?.store?.inventory?.out_of_stock_threshold
+        outOfStockVisibility = homepagedata?.getSettings?.store?.inventory?.out_of_stock_visibility
         currencyStore = homepagedata?.getSettings?.store
     }
     catch (e) {
@@ -198,27 +208,31 @@ export async function getStaticProps({ params }) {
             variables: { url },
         });
         singleproducts = singleproductsData.productbyurl.data;
+        id = singleproducts._id;
+       
     }
     catch (e) {
         console.log("ShopProduct Error===", e.networkError.result.errors)
     }
     /* ========================================= get featureProduct ========================================*/
-    try {
-        const { data: shopproductcategory } = await client.query({
-            query: GET_RECENT_PRODUCTS_QUERY,
-        });
-        allProduct = shopproductcategory.recentproducts;
-    }
-    catch (e) {
-        console.log("ShopProduct Error===", e)
-    }
-    const id = singleproducts._id
+    // try {
+    //     const { data: shopproductcategory } = await client.query({
+    //         query: GET_RECENT_PRODUCTS_QUERY,
+    //     });
+    //     allProduct = shopproductcategory.recentproducts;
+    // }
+    // catch (e) { 
+    //     console.log("ShopProduct Error===", e)
+    // }
+    //
+    
 
     try {
         const { data: productReviewData } = await client.query({
-            query: GET_REVIEWS,
+            query: GET_PRODUCT_REVIEWS,
+            variables : {id}
         })
-        productReview = productReviewData
+        productReviews = productReviewData.productwisereview.data;
     }
     catch (e) {
         console.log("review Error", e.networkError.result.errors);
@@ -228,13 +242,13 @@ export async function getStaticProps({ params }) {
         props: {
             singleproducts,
             allProduct,
-            productReview,
-            allReviewss,
+            productReviews,
             homepageData,
             currencyStore,
             lowStockThreshold,
             outOfStockVisibility,
-            outOfStockThreshold
+            outOfStockThreshold,
+            recentProducts
         },
         revalidate: 10,
     }

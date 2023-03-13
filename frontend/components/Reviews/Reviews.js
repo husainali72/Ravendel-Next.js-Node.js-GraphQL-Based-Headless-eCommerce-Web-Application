@@ -42,7 +42,7 @@ useEffect(() => {
                 <h2 className='reviewDesc'> {product.review} </h2>
                
             </div>
-            }) : null
+            }) : <p className='fw-light text-muted'>No Reviews</p>
         }
         
         {/* <hr className='reviewHR'/> */}

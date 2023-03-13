@@ -21,8 +21,8 @@ export const GET_ORDERS_QUERY = gql`
   }
 `;
 export const GET_CUSTOMER_ORDERS_QUERY = gql`
-  query ($user_id:ID!){
-  orderbyUser(user_id: $user_id) {
+  query ($id:ID!){
+  orderbyUser(user_id: $id) {
            data {
             billing
       customer_id

@@ -5,6 +5,7 @@ query  {
 products {
     data {
       _id
+      rating
       name
       categoryId {
         id
@@ -37,6 +38,7 @@ export const GET_SINGLE_PRODUCT = gql`
   productbyurl(url: $url) {
     data {
       _id
+      rating
       name
       url
       sku

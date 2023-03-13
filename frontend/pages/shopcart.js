@@ -16,13 +16,10 @@ import { getAllProductsAction } from "../redux/actions/productAction";
 import { useRouter } from "next/router";
 import { settingActionCreator } from "../redux/actions/settingAction";
 import LoadingCartTable from "../components/cardcomponent/LoadingCard";
-import { currencyFormat } from "../../client/src/views/order/CurrencyFormat";
 import Link from "next/link";
 
-
-const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice * product.quantity || 0 * product.quantity), 0)
-
-const cartitems2 = []
+const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice  * product.quantity || product.pricing?.price * product.quantity), 0)
+const cartitems2 = []     
 
 const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     var id = "";
