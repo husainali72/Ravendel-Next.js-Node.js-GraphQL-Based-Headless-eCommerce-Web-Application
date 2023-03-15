@@ -3574,3 +3574,6 @@ header {
     grid-template-columns: repeat(2,1fr);
   }
 }
+.slick-prev{
+  z-index: 10;
+}

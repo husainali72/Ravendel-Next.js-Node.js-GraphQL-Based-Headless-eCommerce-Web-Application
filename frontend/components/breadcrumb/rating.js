@@ -33,8 +33,9 @@ const StarRating = ({ stars,singleproducts }) => {
             onMouseOut={() => hoverOver(null)}
             onClick={event => setRating(event.target.getAttribute("star-id"))}
         >
-            {Array.from({ length: 5 }, (v, i) => (
-                <Star key={i} starId={i + 1} marked={selection ? selection > i : rating > i} />
+            {Array.from({ length: 5 }, (v, i) => (              
+                // <Star key={i} starId={i + 1} marked={selection ? selection > i : rating > i} />
+                <Star key={i} starId={i + 1} marked={selection && selection > i ? true : false} />
             ))}
         </div>
     );
