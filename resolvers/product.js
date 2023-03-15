@@ -170,7 +170,7 @@ module.exports = {
       return await GET_SINGLE_FUNC(args.id, ProductCat, "ProductCat");
     },
     products: async (root, args, { id }) => {
-      return await GET_ALL_FUNC(Product, "Products");
+      return await GET_ALL_FUNC(Product, "Products", args.admin);
     },
     products_pagination: async (
       root,
@@ -248,6 +248,7 @@ module.exports = {
     productsbycatid: async (root, args, { id }) => {
       try {
         const products = await Product.find({
+          status: "Publish",
           categoryId: { $in: args.cat_id },
         })
           .sort({ $natural: -1 })
@@ -277,6 +278,7 @@ module.exports = {
         const pipeline=[
           {$match: {
             $and: [
+              {status: "Publish"},
               {name: {$regex: search, $options: "i"}},
             ]
           }},
@@ -323,6 +325,7 @@ module.exports = {
         const pipeline=[
           {$match: {
             $and: [
+              {status: "Publish"},
               {categoryId: {$in: categories}},
               {_id: {$ne: mongoose.Types.ObjectId(args.productID)}}
             ]

@@ -175,7 +175,7 @@ module.exports = gql`
     productCategoriesByFilter(filter: customObject): [Category]
     productCategory(id: ID!): productCate_by_Id_RES
     getTree: [cattree]
-    products: productsRES
+    products(admin: Boolean): productsRES
     products_pagination(
       limit: Int
       pageNumber: Int

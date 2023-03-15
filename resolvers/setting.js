@@ -204,12 +204,13 @@ module.exports = {
       checkToken(id);
       try {
         const setting = await Setting.findOne({});
-        if(args.order_prefix){
-          setting.store.order_options.order_prefix = args.order_prefix
-          setting.store.order_options.order_prefix_list.push(args.order_prefix)
-          setting.store.order_options.order_digits = args.order_digits
-          return await setting.save();
+        let {order_prefix, order_digits} = args
+        if(!setting.store.order_options.order_prefix_list.includes(order_prefix)){
+          setting.store.order_options.order_prefix_list.push(order_prefix)
         }
+        setting.store.order_options.order_prefix = order_prefix
+        setting.store.order_options.order_digits = order_digits
+        return await setting.save();
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);

@@ -701,18 +701,24 @@ const generateOrderNumber = async (Order, Setting) => {
   let code = ""
   // prefix = ""
   let pipeline = [
-    {$match: {order_number: {$regex: `${prefix}`}}}
-  ]
-  if(!prefix) pipeline = [{$addFields: {onlen: {$strLenBytes: "$order_number"}}},
-                          {$match: {onlen: {$lte: orderDigits}}}]
+    {$project: {
+      orderPrefix: {
+        $substrBytes: [
+          "$order_number", 
+          0, 
+          {$subtract: [ {$strLenBytes: "$order_number"}, orderDigits ]}
+        ]
+      }
+    }},
+    {$match: {"orderPrefix": prefix}},
+    {$project: {orderPrefix: 0}}
+  ] 
+  if(!prefix) pipeline = [{$project: {onlen: {$strLenBytes: "$order_number"}}},
+                          {$match: {onlen: orderDigits}}]
   // if orders with specified prefix exists then continue number series
   // else start new series
   const orders = await Order.aggregate(pipeline)
-  if(orders.length){
-    orders.map(order => orderNumbers.push(Number.parseInt(order.order_number.substring(order.order_number.length-orderDigits))))
-    orderNumbers.sort((a, b) => b-a)
-  }
-  code = orderNumbers[0] ? orderNumbers[0]+1 : 1
+  code = orders.length+1
   code = formatOrderNumber(code, prefix, orderDigits)
   return code
 }

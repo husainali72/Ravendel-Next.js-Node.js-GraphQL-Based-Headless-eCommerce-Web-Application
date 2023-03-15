@@ -7,7 +7,7 @@ export const isEmpty = (value) =>
 export const baseUrl = "http://localhost:8000";
 export const client_app_route_url = "/admin/";
 
-export var bucketName = "revendal-image-prod";
+export var bucketName = "revendal-image";
 export var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
 
 if (process.env.NODE_ENV === "production") {
