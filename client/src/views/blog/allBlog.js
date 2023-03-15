@@ -10,8 +10,6 @@ import theme from "../../theme/index";
 import { blogDeleteAction, blogsAction } from "../../store/action";
 import { useNavigate } from "react-router-dom";
 import viewStyles from "../viewStyles";
-
-
 const AllBlogComponent = () => {
   const classes = viewStyles()
   const dispatch = useDispatch();
@@ -24,13 +22,31 @@ const AllBlogComponent = () => {
     array: ['All', 'Publish', 'Draft']
   }
   const columndata = [
-    { name: "image", title: "image", sortingactive: false },
-    { name: "title", title: "title ", sortingactive: true },
-    { name: "date", title: "date ", sortingactive: true },
-    { name: "status", title: "status ", sortingactive: true },
+    {
+      name: "image",
+      title: "image",
+      sortingactive: false
+    },
+    {
+      name: "title",
+      title: "title ",
+      sortingactive: true
+    },
+    {
+      name: "date",
+      title: "date ",
+      sortingactive: true
+    },
+    {
+      name: "status",
+      title: "status ",
+      sortingactive: true
+    },
 
     {
-      name: "actions", title: "Actions", sortingactive: false,
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
@@ -51,7 +67,6 @@ const AllBlogComponent = () => {
     if (!isEmpty(get(blogs, 'blogs'))) {
       let data = []
       blogs.blogs.map((blog) => {
-
         let object = {
           id: blog.id,
           image: bucketBaseURL + blog.feature_image,
@@ -69,7 +84,6 @@ const AllBlogComponent = () => {
     }
   }, [get(blogs, 'blogs')])
   const handleOnChangeSearch = (filtereData) => {
-
     setfilterdData(filtereData)
   }
   return (
@@ -84,6 +98,7 @@ const AllBlogComponent = () => {
             handleOnChangeSearch={handleOnChangeSearch}
             addpage='add-blog'
             title="All Blogs"
+            searchbydate={true}
             statusTabData={statusTabData}
             showDeleteButton={true}
           />

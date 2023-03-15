@@ -36,17 +36,24 @@ const AllTagsComponent = () => {
   const [filtered, setfilterdData] = useState([])
   const [editMode, setEditmode] = useState(false);
   const columndata = [
-    { name: 'date', title: "Date", sortingactive: true },
-    { name: 'name', title: "Name", sortingactive: true },
-
     {
-      name: 'actions', title: "Actions", sortingactive: false,
+      name: 'date',
+      title: "Date",
+      sortingactive: true
+    },
+    {
+      name: 'name',
+      title: "Name",
+      sortingactive: true
+    },
+    {
+      name: 'actions',
+      title: "Actions",
+      sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-
           let cat = blogState.tags.find(item => item.id === id);
-
           editTag(cat)
         } else if (type === "delete") {
           dispatch(blogtagDeleteAction(id))
@@ -91,9 +98,7 @@ const AllTagsComponent = () => {
       setEditmode(false);
       setSingleTag(tagObject);
     }
-
   };
-
   const addTag = () => {
     var errors = validate(["url", "name"], singleTag);
     if (!isEmpty(errors)) {
@@ -110,16 +115,13 @@ const AllTagsComponent = () => {
       dispatch(blogtagAddAction(singleTag));
       setSingleTag(tagObject);
     }
-
   };
-
   const cancelTag = () => {
     document.forms[0].reset();
     setEditmode(false);
     setSingleTag(tagObject);
   };
   const handleOnChangeSearch = (filtereData) => {
-
     setfilterdData(filtereData)
   }
 
@@ -137,6 +139,7 @@ const AllTagsComponent = () => {
             classname="table-container"
             showDeleteButton={true}
             title="All Tags"
+            searchbydate={true}
           />
         </Grid>
         <Grid item md={6} xs={12}>

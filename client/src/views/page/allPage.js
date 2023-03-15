@@ -22,12 +22,26 @@ const AllPagesComponent = () => {
     array: ['All', 'Publish', 'Draft']
   }
   const columndata = [
-    { name: "date", title: "date", sortingactive: true },
-    { name: "name", title: "Name ", sortingactive: true },
-    { name: "status", title: "Status ", sortingactive: true },
-
     {
-      name: "actions", title: "Actions", sortingactive: false, component: ActionButton,
+      name: "date",
+      title: "date",
+      sortingactive: true
+    },
+    {
+      name: "name",
+      title: "Name ",
+      sortingactive: true
+    },
+    {
+      name: "status",
+      title: "Status ",
+      sortingactive: true
+    },
+    {
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
+      component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
           navigate(`${client_app_route_url}edit-page/${id}`)
@@ -44,10 +58,8 @@ const AllPagesComponent = () => {
 
   useEffect(() => {
     if (!isEmpty(get(pageState, 'pages'))) {
-
       let data = []
       pageState.pages.map((page) => {
-
         let object = {
           id: page.id,
           date: page.createdAt,
@@ -56,7 +68,6 @@ const AllPagesComponent = () => {
         }
         data.push(object)
       })
-
       setAllpages(data)
       setfilterdData(data)
     }
@@ -64,12 +75,8 @@ const AllPagesComponent = () => {
       setAllpages([])
       setfilterdData([])
     }
-
-
   }, [get(pageState, 'pages')])
-
   const handleOnChangeSearch = (filtereData) => {
-
     setfilterdData(filtereData)
   }
   return (
@@ -86,6 +93,7 @@ const AllPagesComponent = () => {
             title="All pages"
             statusTabData={statusTabData}
             showDeleteButton={true}
+            searchbydate={true}
           />
         </Grid>
       </Grid >

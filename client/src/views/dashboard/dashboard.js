@@ -34,32 +34,54 @@ const DashboardComponent = () => {
   const [chartdata, setChartdata] = useState([])
   const [dashBoardData, setdashBoardData] = useState({});
   const loader = useSelector((state) => state.dashboardReducer.loading);
+  const [latestOrders, setlatestOrders] = useState([])
+  const [filteredLatestOrders, setFilteredLatestOrders] = useState([])
   useEffect(() => {
     if (isEmpty(get(data, "dashboard_data"))) {
       dispatch(dashboardAction());
     }
   }, []);
-
   useEffect(() => {
     if (!isEmpty(get(data, "dashboard_data"))) {
+      let latestdata = []
+      data.dashboard_data.latestOrders.map((order) => {
+        let object = {
+          id: order._id,
+          order_number: order.order_number,
+          date: order.date,
+          name: order.billing.firstname + " " + order.billing.lastname,
+          payment_status: order.payment_status,
+          shipping_status: order.shipping_status
+        }
+        latestdata.push(object)
+      })
+      setlatestOrders(latestdata)
+      setFilteredLatestOrders(latestdata)
       setdashBoardData({ ...dashBoardData, ...get(data, "dashboard_data") });
       const OrderChartData = get(data, "dashboard_data.ordersByYearMonth")
       if (!isEmpty(OrderChartData)) {
         setChartdata(OrderChartData[0].months)
         setYear(OrderChartData[0].year)
       }
+    } else {
+      setdashBoardData({})
+      setlatestOrders([])
+      setFilteredLatestOrders([])
+      setChartdata([])
+      setYear('')
     }
   }, [get(data, "dashboard_data")]);
   const handleChangeChart = (e) => {
     const { value } = e.target
     setYear(value)
     dashBoardData.ordersByYearMonth.map((arr) => {
-
       if (arr.year == value) {
         setChartdata(arr.months)
       }
     })
-
+  }
+  const handleOnChangeSearch = (filtereData) => {
+    setFilteredLatestOrders(filtereData)
   }
   return (
     <Box component="div" p={isSmall ? 1 : 4}>
@@ -106,8 +128,10 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={8} xl={12} md={12} xs={12}>
           <LatestOrder
-            latestOrders={dashBoardData.latestOrders || []}
+            latestOrders={latestOrders || []}
+            filteredLatestOrders={filteredLatestOrders || []}
             loader={loader}
+            handleOnChangeSearch={handleOnChangeSearch}
           />
         </Grid>
         <Grid item lg={8} xl={9} xs={12}  >

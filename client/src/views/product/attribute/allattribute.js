@@ -17,11 +17,22 @@ const AllAttributeComponent = () => {
   const attributeState = useSelector((state) => state.product_attributes);
   const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
+  const [AllAttribute, setAllAttributes] = useState([]);
   const columndata = [
-    { name: 'name', title: "name", sortingactive: true },
-    { name: 'values', title: "Values", sortingactive: true },
     {
-      name: 'actions', title: "Actions", sortingactive: false,
+      name: 'name',
+      title: "name",
+      sortingactive: true
+    },
+    {
+      name: 'values',
+      title: "Values",
+      sortingactive: true
+    },
+    {
+      name: 'actions',
+      title: "Actions",
+      sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
@@ -31,9 +42,6 @@ const AllAttributeComponent = () => {
         }
       }
     },]
-  const [AllAttribute, setAllAttributes] = useState([]);
-
-
   useEffect(() => {
     dispatch(attributesAction());
   }, []);
@@ -47,15 +55,12 @@ const AllAttributeComponent = () => {
     if (!isEmpty(get(attributeState, 'attributes'))) {
       let data = []
       attributeState.attributes.map((attribute) => {
-
         let object = {
           id: attribute.id,
           values: attribute.values.map((val) => val.name).join(","),
           name: attribute.name,
-
         }
         data.push(object)
-
       })
       setAllAttributes(data)
       setfilterdData(data)
@@ -81,6 +86,7 @@ const AllAttributeComponent = () => {
             addpage='add-attribute'
             title="All Attributes"
             showDeleteButton={true}
+            searchbydate={false}
           />
         </Grid>
       </Grid >

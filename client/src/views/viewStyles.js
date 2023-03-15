@@ -468,12 +468,9 @@ const viewStyles = makeStyles((theme) => ({
   },
   searchOption: {
     marginLeft: "100px",
-
     padding: "0px!important",
-
   },
   searchbar: {
-
     border: "1px solid rgb(199, 191, 191)",
     borderRadius: "25px",
     width: "200px",
@@ -482,12 +479,9 @@ const viewStyles = makeStyles((theme) => ({
     marginTop: '5px'
   },
   box: {
-
     width: "250px",
     borderRadius: "25px",
-
     marginRight: "10px",
-
     backgroundColor: "white",
 
   },
@@ -532,7 +526,8 @@ const viewStyles = makeStyles((theme) => ({
   },
   search: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingBottom: '10px'
   },
   muitabs: {
     marginRight: '10px'

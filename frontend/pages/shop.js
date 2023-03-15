@@ -16,7 +16,7 @@ import { CloseMenu } from '../utills/app';
 import { OpenSortMenu } from '../utills/app';
 import { CloseSortMenu } from '../utills/app';
 import { settingActionCreator } from "../redux/actions/settingAction";
-
+import Link from "next/link";
 const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
     const dispatch = useDispatch();
     const usercart = useSelector(state => state.userCart)
@@ -82,27 +82,30 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                 <div className="widget-category">
                                     <h5 className="category-section-title mb-30 wow fadeIn animated animated animated">New Product</h5>
                                     {/* {shopProducts && shopProducts.products ?  */}
+
                                     {onSaleProduct && onSaleProduct?.length > 0 ? (<>
                                         {onSaleProduct.map((product, i) => (
-                                            <div style={{ display: 'flex', marginTop: 3 }} key={i}>
-                                                <div>
-                                                    <img className="widget-category-img" src={getImage(product.feature_image, 'original')} />
-                                                </div>
-                                                <div style={{ padding: "3px", marginLeft: "10px" }}>
-                                                    {product.name?.length > 15 ? (
-                                                        <strong
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: product.name.substring(0, 15) + "...",
-                                                            }}
-                                                        ></strong>
-                                                    ) : (
-                                                        <strong>{product.name}</strong>
-                                                    )}
-                                                    <StarRating stars={"5"} />
-
-                                                    <p style={{ marginTop: 0 }}>{currency} {getPrice(product.pricing.sellprice || product.pricing.price , decimal)}</p>
-                                                </div>
-                                            </div>
+                                            i < 5 ?
+                                                <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
+                                                    <div style={{ display: 'flex', marginTop: 3 }} key={i}>
+                                                        <div>
+                                                            <img className="widget-category-img" src={getImage(product.feature_image, 'original')} />
+                                                        </div>
+                                                        <div style={{ padding: "3px", marginLeft: "10px" }}>
+                                                            {product.name?.length > 15 ? (
+                                                                <strong
+                                                                    dangerouslySetInnerHTML={{
+                                                                        __html: product.name.substring(0, 15) + "...",
+                                                                    }}
+                                                                ></strong>
+                                                            ) : (
+                                                                <strong>{product.name}</strong>
+                                                            )}
+                                                            <StarRating stars={"5"} />
+                                                            <p style={{ marginTop: 0 }}>{currency} {getPrice(product.pricing.sellprice || product.pricing.price, decimal)}</p>
+                                                        </div>
+                                                    </div>
+                                                </Link> : null
                                         ))
                                         }
                                     </>) : null}
@@ -121,7 +124,6 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                         <div className="sort-by">
                                             <span><i className="fas fa-border-all" aria-hidden="true"></i>Show:</span>
                                         </div>
-
                                         <span className="drop-down-btn item-down" id="menuDown">
                                             <i className="fas fa-angle-down" onClick={() => OpenMenu()}></i>
                                         </span>

@@ -56,7 +56,6 @@ import theme from "../../theme";
 import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
 import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
-
 const EditProductComponent = ({ params }) => {
   const Product_id = params.id || "";
   const classes = viewStyles();
@@ -73,7 +72,6 @@ const EditProductComponent = ({ params }) => {
   const [product, setProduct] = useState({
     _id: "",
     name: "",
-
     categoryId: [],
     brand: "",
     sku: "",
@@ -162,11 +160,8 @@ const EditProductComponent = ({ params }) => {
       }
     }
   }, [get(productState, "product")]);
-
   const updateProduct = (e) => {
-
     product.update_gallery_image = gallery
-    console.log(product)
     e.preventDefault();
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     let Errors = validatenested("pricing", ["price", "sellprice"], product);
@@ -195,9 +190,6 @@ const EditProductComponent = ({ params }) => {
 
       dispatch(productUpdateAction(product, navigate));
     }
-
-
-
   };
 
   const handleChange = (e) => {
@@ -603,7 +595,8 @@ const EditProductComponent = ({ params }) => {
               <Box component="span">
                 <CardBlocks title="Status" nomargin>
                   <RadioGroup
-                    defaultValue={product.status}
+                    defaultValue="Publish"
+                    value={product.status}
                     name="status"
                     onChange={handleChange}
                     row
@@ -663,9 +656,7 @@ const EditProductComponent = ({ params }) => {
                       for (let i in imagesRes) {
                         images.push(URL.createObjectURL(imagesRes[i]));
                       }
-
                       setGallery([...gallery, ...imagesRes]);
-
                     }}
                     onRemoveGalleryImage={(images) => {
                       setProduct({ ...product, ["gallery_image"]: images });

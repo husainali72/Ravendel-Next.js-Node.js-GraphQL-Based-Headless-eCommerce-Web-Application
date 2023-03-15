@@ -55,10 +55,20 @@ const AllCategoryComponent = () => {
   const [filtered, setfilterdData] = useState([])
   const [loading, setloading] = useState(false);
   const columndata = [
-    { name: 'date', title: "date", sortingactive: true },
-    { name: 'name', title: "name", sortingactive: true },
     {
-      name: 'actions', title: "Actions", sortingactive: false,
+      name: 'date',
+      title: "date",
+      sortingactive: true
+    },
+    {
+      name: 'name',
+      title: "name",
+      sortingactive: true
+    },
+    {
+      name: 'actions',
+      title: "Actions",
+      sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
@@ -121,7 +131,6 @@ const AllCategoryComponent = () => {
       setEditmode(false);
       setSingleCategory(categoryObject);
     }
-
   };
   const addCat = () => {
     var errors = validate(["name"], singlecategory);
@@ -177,6 +186,7 @@ const AllCategoryComponent = () => {
             handleOnChangeSearch={handleOnChangeSearch}
             showDeleteButton={true}
             classname="table-container"
+            searchbydate={true}
             title="All Category"
           />
         </Grid>

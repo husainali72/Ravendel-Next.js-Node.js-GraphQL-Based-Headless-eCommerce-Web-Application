@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Card,
-  CardActions,
   CardHeader,
-  CardContent,
-  Button,
   Divider,
   CircularProgress,
   Box,
@@ -22,12 +19,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../../theme/index";
 import { useDispatch } from "react-redux";
 import TableComponent from "../../../components/table";
-const LatestOrdersTheme = ({ latestOrders, loader }) => {
+const LatestOrdersTheme = ({ latestOrders, loader, handleOnChangeSearch, filteredLatestOrders }) => {
   const classes = DashboardStyles();
-  const dispatch = useDispatch()
   const navigate = useNavigate();
-  const [AllOrder, setAllOrder] = useState([])
-  const [filtered, setfilterdData] = useState([])
   const badgefilter = [
     {
       name: 'payment_status',
@@ -39,13 +33,35 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
     },
   ]
   const columndata = [
-    { name: 'order_number', title: "Order Number", sortingactive: true },
-    { name: 'date', title: "Date", sortingactive: true },
-    { name: 'name', title: "Customer Name", sortingactive: true },
-    { name: 'payment_status', title: "payment status", sortingactive: false },
-    { name: 'shipping_status', title: "shipping status", sortingactive: false },
     {
-      name: 'actions', title: "Actions", sortingactive: false,
+      name: 'order_number',
+      title: "Order Number",
+      sortingactive: true
+    },
+    {
+      name: 'date',
+      title: "Date",
+      sortingactive: true
+    },
+    {
+      name: 'name',
+      title: "Customer Name",
+      sortingactive: true
+    },
+    {
+      name: 'payment_status',
+      title: "payment status",
+      sortingactive: false
+    },
+    {
+      name: 'shipping_status',
+      title: "shipping status",
+      sortingactive: false
+    },
+    {
+      name: 'actions',
+      title: "Actions",
+      sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
@@ -53,32 +69,6 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
         }
       }
     }]
-  useEffect(() => {
-    if (!isEmpty(latestOrders)) {
-      let data = []
-      latestOrders.map((order) => {
-        let object = {
-          id: order._id,
-          order_number: order.order_number,
-          date: order.date,
-          name: order.billing.firstname + " " + order.billing.lastname,
-          payment_status: order.payment_status,
-          shipping_status: order.shipping_status
-        }
-        data.push(object)
-      })
-      setAllOrder(data)
-      setfilterdData(data)
-
-    } else {
-      setAllOrder([])
-      setfilterdData([])
-    }
-  }, [latestOrders])
-  const handleOnChangeSearch = (filtereData) => {
-
-    setfilterdData(filtereData)
-  }
   return (
     <>
       {
@@ -89,13 +79,14 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
         ) : latestOrders.length > 0 ? (
           <TableComponent
             loading={loader}
-            rows={filtered}
+            rows={filteredLatestOrders}
             columns={columndata}
-            searchdata={AllOrder}
+            searchdata={latestOrders}
             handleOnChangeSearch={handleOnChangeSearch}
             dropdown={badgefilter}
             showDeleteButton={false}
             title='Latest Orders'
+            searchbydate={true}
           />
         ) : (
           <Card className={classes.root}>
@@ -116,10 +107,10 @@ const LatestOrdersTheme = ({ latestOrders, loader }) => {
     </>
   );
 };
-const LatestOrders = ({ latestOrders, loader }) => {
+const LatestOrders = ({ latestOrders, loader, handleOnChangeSearch, filteredLatestOrders }) => {
   return (
     <ThemeProvider theme={theme}>
-      <LatestOrdersTheme latestOrders={latestOrders} loader={loader} />
+      <LatestOrdersTheme latestOrders={latestOrders} loader={loader} handleOnChangeSearch={handleOnChangeSearch} filteredLatestOrders={filteredLatestOrders} />
     </ThemeProvider>
   );
 };

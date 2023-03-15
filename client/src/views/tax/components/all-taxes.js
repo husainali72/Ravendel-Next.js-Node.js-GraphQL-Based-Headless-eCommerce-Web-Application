@@ -7,35 +7,37 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
   const [Alltaxes, setAlltaxes] = useState([])
   const [filtered, setfilterdData] = useState([])
   const columndata = [
-    { name: 'name', title: "Name", sortingactive: true },
-    { name: 'percentage', title: "Percentage", sortingactive: true },
     {
-      name: 'actions', title: "Actions", sortingactive: false,
+      name: 'name',
+      title: "Name",
+      sortingactive: true
+    },
+    {
+      name: 'percentage',
+      title: "Percentage",
+      sortingactive: true
+    },
+    {
+      name: 'actions',
+      title: "Actions",
+      sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-
           let tax = Alltaxes.find(item => item.id === id);
-
           editTaxChange(tax)
-
         } else if (type === "delete") {
           deleteTaxChange(id)
         }
       }
     },]
-
-
   useEffect(() => {
     let data = []
     taxState.tax.tax_class.map((tax) => {
-
       let object = {
         id: tax._id,
-
         percentage: tax.percentage,
         name: tax.name,
-
       }
       data.push(object)
     })
@@ -55,9 +57,9 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
       showDeleteButton={true}
       classname="table-container"
       title="All Taxes"
+      searchbydate={false}
     />);
 };
-
 const AllTaxesComponent = ({ taxState, editTaxChange, deleteTaxChange }) => {
   return (
     <ThemeProvider theme={theme}>

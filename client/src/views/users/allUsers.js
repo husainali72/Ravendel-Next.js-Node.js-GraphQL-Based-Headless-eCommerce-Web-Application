@@ -24,13 +24,30 @@ const AllUsersComponent = () => {
     array: ['All', 'USER', 'EDITOR', 'MANAGER', 'SUBSCRIBER', 'AUTHOR']
   }
   const columndata = [
-    { name: "image", title: "image", sortingactive: false },
-    { name: "name", title: "name ", sortingactive: true },
-    { name: "email", title: "email ", sortingactive: true },
-    { name: "role", title: "role ", sortingactive: true },
-
     {
-      name: "actions", title: "Actions", sortingactive: false,
+      name: "image",
+      title: "image",
+      sortingactive: false
+    },
+    {
+      name: "name",
+      title: "name ",
+      sortingactive: true
+    },
+    {
+      name: "email",
+      title: "email ",
+      sortingactive: true
+    },
+    {
+      name: "role",
+      title: "role ",
+      sortingactive: true
+    },
+    {
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
@@ -40,9 +57,6 @@ const AllUsersComponent = () => {
         }
       }
     }]
-
-
-
   useEffect(() => {
     if (isEmpty(UsersState.users)) {
       dispatch(usersAction());
@@ -52,8 +66,6 @@ const AllUsersComponent = () => {
     if (!isEmpty(get(UsersState, 'users'))) {
       let data = []
       UsersState.users.map((user) => {
-
-
         let object = {
           id: user.id,
           image: bucketBaseURL + user.image,
@@ -61,7 +73,6 @@ const AllUsersComponent = () => {
           email: user.email,
           role: user.role
         }
-
         data.push(object)
       })
       setAllUsers(data)
@@ -73,7 +84,6 @@ const AllUsersComponent = () => {
     }
   }, [get(UsersState, 'users')])
   const handleOnChangeSearch = (filtereData) => {
-
     setfilterdData(filtereData)
   }
   return (
@@ -89,6 +99,7 @@ const AllUsersComponent = () => {
             searchdata={AllUsers}
             handleOnChangeSearch={handleOnChangeSearch}
             addpage='add-user'
+            searchbydate={false}
             title="All Users" />
         </Grid>
       </Grid >

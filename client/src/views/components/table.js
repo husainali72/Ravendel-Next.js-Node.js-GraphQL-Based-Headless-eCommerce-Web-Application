@@ -31,8 +31,7 @@ import NodataImage from "../../assets/images/NodataImage.jpg";
 import { stableSort, getComparator } from "../components/sorting";
 import { Alert, Loading } from "../components";
 import theme from "../../theme/index";
-
-const Tablecomponent = ({ searchdata, classname, rows, columns, showDeleteButton, loading, title, addpage, handleOnChangeSearch, dropdown, statusTabData }) => {
+const Tablecomponent = ({ searchdata, classname, rows, columns, showDeleteButton, loading, title, addpage, handleOnChangeSearch, dropdown, statusTabData, searchbydate }) => {
     const [order, setOrder] = useState('desc');
     const classes = viewStyles();
     const [orderBy, setOrderBy] = useState('date');
@@ -67,7 +66,7 @@ const Tablecomponent = ({ searchdata, classname, rows, columns, showDeleteButton
                     }
                     title={title}
                 />
-                <Searching searchData={searchdata} handleOnChangeSearch={handleOnChangeSearch} dropdown={dropdown} statusTabData={statusTabData} />
+                <Searching searchData={searchdata} handleOnChangeSearch={handleOnChangeSearch} dropdown={dropdown} statusTabData={statusTabData} searchbydate={searchbydate} />
                 <Divider />
                 <CardContent>
                     <TableContainer>
@@ -170,10 +169,10 @@ const Tablecomponent = ({ searchdata, classname, rows, columns, showDeleteButton
         </>
     )
 }
-export default function TableComponent({ loading, classname, searchdata, rows, columns, title, editpage, addpage, handleOnChangeSearch, dropdown, statusTabData, showDeleteButton }) {
+export default function TableComponent({ loading, classname, searchdata, rows, columns, title, editpage, addpage, handleOnChangeSearch, dropdown, statusTabData, showDeleteButton, searchbydate }) {
     return (
         <ThemeProvider theme={theme}>
-            <Tablecomponent dropdown={dropdown} columns={columns} rows={rows} loading={loading} classname={classname} editpage={editpage} title={title} addpage={addpage} showDeleteButton={showDeleteButton} handleOnChangeSearch={handleOnChangeSearch} searchdata={searchdata} statusTabData={statusTabData} />
+            <Tablecomponent searchbydate={searchbydate} dropdown={dropdown} columns={columns} rows={rows} loading={loading} classname={classname} editpage={editpage} title={title} addpage={addpage} showDeleteButton={showDeleteButton} handleOnChangeSearch={handleOnChangeSearch} searchdata={searchdata} statusTabData={statusTabData} />
         </ThemeProvider>
     );
 }
