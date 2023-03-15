@@ -16,8 +16,20 @@ import Loading from "../../components/breadcrumb/loading";
 import { useSelector } from "react-redux";
 import Reviews from "../../components/Reviews/Reviews";
 import { currencySetter } from "../../utills/helpers";
-import ReactHtmlParser from 'react-html-parser';
+import ReactHtmlParser, { convertNodeToElement } from 'react-html-parser';
 import toast, { Toaster } from 'react-hot-toast';
+
+
+function transform(node, index) {
+    if (node.type === "tag" && node.name === "h1" || node.name === "h2" || node.name === "h3" ) {
+      node.name = "p";
+      return convertNodeToElement(node, index, transform);
+    }
+}
+const options = {
+    decodeEntities: true,
+    transform
+  };
 
 const SingleProduct = ({ recentProducts,singleproducts, productReviews, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
     const router = useRouter();
@@ -41,12 +53,13 @@ const SingleProduct = ({ recentProducts,singleproducts, productReviews, currency
     useEffect(() => {
         getRelatedProducts();
     }, [singleproducts])
-    const category = singleproducts?.categoryId[0]?.id;
+    const category = singleproducts?.categoryId.map(cat => cat?.id);
+    const productID = singleproducts._id;
     const getRelatedProducts = async ()=>{  
         try {
             const { data: shopproductcategory } = await client.query({
                 query: GET_RELATED_PRODUCTS_QUERY,
-                variables: { category }
+                variables: { category,productID }
             });
             recentProducts = shopproductcategory;
             const productss = shopproductcategory.relatedProducts;
@@ -112,10 +125,9 @@ const SingleProduct = ({ recentProducts,singleproducts, productReviews, currency
                                             <Tab.Content>
                                                 <Tab.Pane eventKey="description">
                                                     <div style={{ padding: "20px", marginTop: "15px" }}>
-
-                                                        {singleproducts.description !== null && singleproducts.description !== "" ? ReactHtmlParser(singleproducts.description) : <p>Product Discription not available</p>}
+                                                        {singleproducts.description !== null && singleproducts.description !== "" ?
+                                                        ReactHtmlParser(singleproducts.description, options) : <p>Product Discription not available</p>}
                                                     </div>
-
                                                 </Tab.Pane>
                                             </Tab.Content>
                                             <Tab.Content>

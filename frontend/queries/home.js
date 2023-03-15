@@ -287,8 +287,8 @@ export const GET_RECENT_PRODUCTS_QUERY = gql`
   }
 `;
 export const GET_RELATED_PRODUCTS_QUERY = gql`
-  query ($category: String!){
-    relatedProducts (category: $category){
+  query ($category: customArray!, $productID: ID!){
+    relatedProducts (category: $category, productID: $productID){
       _id
       name
       feature_image

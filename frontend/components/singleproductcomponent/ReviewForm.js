@@ -28,25 +28,24 @@ const ReviewForm = ({ productId }) => {
         rating: "",
         status: "pending",
         product_id: productId || "",
-        customer_id: CustomerId || "",
+        customer_id: "",
     }
     const login = useSelector(state => state.login);
     const session = useSession()
     var token = "";
-    var customer_id = "";
-    useEffect(() => {
-        if (session?.status === "authenticated") {
-            token = session?.data?.user?.accessToken?.token;
-            customer_id = session?.data?.user?.accessToken?.customer?._id;
-            setCustomerId(session?.data?.user?.accessToken?.customer?._id);
-        }
-    }, [])
-    
-   
     const [review, setReview] = useState(reviewObject);
     const [writeReview, setWriteReview] = useState(false);
     const [selection, setSelection] = React.useState(0);
 
+    useEffect(() => {
+        setReview((prev)=>({...prev, customer_id:session?.data?.user?.accessToken?.customer?._id}))
+        setReview({...review,customer_id:session?.data?.user?.accessToken?.customer?._id})
+        if (session?.status === "authenticated") {
+            token = session?.data?.user?.accessToken?.token;
+            setCustomerId(session?.data?.user?.accessToken?.customer?._id);
+        }
+    }, [session])
+    
 
     useEffect(() => {
         setReview({ ...review, product_id: productId });
@@ -54,6 +53,11 @@ const ReviewForm = ({ productId }) => {
         
     }, [productId])
 
+useEffect(() => {
+    if (session?.status === "authenticated") {
+        setReview((prev)=>({...prev, customer_id:session?.data?.user?.accessToken?.customer?._id}))
+    }
+}, [CustomerId])
 
     const hoverOver = event => {
         let starId = 0;
@@ -67,14 +71,16 @@ const ReviewForm = ({ productId }) => {
         e.preventDefault();
         mutation(ADD_REVIEW, review, token).then((response) => {
             if(!response?.data?.addReview?.success){
-                notify(response?.data?.addReview?.message,response?.data?.addReview?.success)
+                notify(response?.data?.addReview?.message,response?.data?.addReview?.success);               
             }
             else if(response?.data?.addReview?.success){
-                notify(response?.data?.addReview?.message,response?.data?.addReview?.success)
+                notify(response?.data?.addReview?.message,response?.data?.addReview?.success);
+                setReview(reviewObject);
                 setWriteReview(!writeReview);
+                
             }
         })
-        setReview(reviewObject);
+        
     }
     return (
         <>

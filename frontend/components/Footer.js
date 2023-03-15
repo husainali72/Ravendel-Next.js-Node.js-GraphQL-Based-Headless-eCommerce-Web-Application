@@ -79,7 +79,7 @@ export default function Footer() {
 
                                     </p>
                                     <p className="link-hover">
-                                        <Link href="/abouts/contactus">
+                                        <Link href="/contact">
                                             <a className="text-reset">Contact Us</a>
                                         </Link>
                                     </p>
@@ -120,7 +120,7 @@ export default function Footer() {
                                                 </Link>
                                             </p>
                                             <p className="link-hover">
-                                                <Link href="account/order">
+                                                <Link href="/account/order">
                                                     <a className="text-reset">Order</a>
                                                 </Link>
                                             </p>
