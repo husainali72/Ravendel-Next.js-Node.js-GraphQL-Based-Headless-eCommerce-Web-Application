@@ -19,7 +19,12 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../../theme/index";
 import { useDispatch } from "react-redux";
 import TableComponent from "../../../components/table";
-const LatestOrdersTheme = ({ latestOrders, loader, handleOnChangeSearch, filteredLatestOrders }) => {
+const LatestOrdersTheme = ({
+  latestOrders,
+  loader,
+  handleOnChangeSearch,
+  filteredLatestOrders
+}) => {
   const classes = DashboardStyles();
   const navigate = useNavigate();
   const badgefilter = [
@@ -107,10 +112,19 @@ const LatestOrdersTheme = ({ latestOrders, loader, handleOnChangeSearch, filtere
     </>
   );
 };
-const LatestOrders = ({ latestOrders, loader, handleOnChangeSearch, filteredLatestOrders }) => {
+const LatestOrders = ({
+  latestOrders,
+  loader,
+  handleOnChangeSearch,
+  filteredLatestOrders }) => {
   return (
     <ThemeProvider theme={theme}>
-      <LatestOrdersTheme latestOrders={latestOrders} loader={loader} handleOnChangeSearch={handleOnChangeSearch} filteredLatestOrders={filteredLatestOrders} />
+      <LatestOrdersTheme
+        latestOrders={latestOrders}
+        loader={loader}
+        handleOnChangeSearch={handleOnChangeSearch}
+        filteredLatestOrders={filteredLatestOrders}
+      />
     </ThemeProvider>
   );
 };
