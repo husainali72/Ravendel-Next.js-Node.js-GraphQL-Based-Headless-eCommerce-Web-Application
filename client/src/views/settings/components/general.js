@@ -21,7 +21,6 @@ import theme from "../../../theme/index.js";
 import { generalUpdateAction, getDatesAction } from "../../../store/action/settingAction.js";
 import Alerts from "../../components/Alert.js"
 import Loading from "../../components/Loading.js";
-
 const GeneralTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -31,8 +30,6 @@ const GeneralTheme = () => {
     date_format: settingState.settings.general.date_format,
     time_zone: settingState.settings.general.time_zone,
   });
-
-
   useEffect(() => {
     if (general.time_zone === null) {
       setTimeZone(-1);
@@ -49,6 +46,8 @@ const GeneralTheme = () => {
       setgeneral({ ...general, time_zone: null });
     }
     else {
+      let timeIndex = TimeZones.findIndex((tz) => tz.value === val.value)
+      setTimeZone(timeIndex);
       setgeneral({ ...general, time_zone: val.value });
     }
   };
@@ -56,7 +55,6 @@ const GeneralTheme = () => {
   const updateGenral = () => {
     dispatch(generalUpdateAction(general));
   };
-
   return (
     <>
       <Alerts />
@@ -72,8 +70,9 @@ const GeneralTheme = () => {
                 aria-label="Format"
                 name="dates"
                 value={general.date_format}
-                onChange={(e) =>
+                onChange={(e) => {
                   setgeneral({ ...general, date_format: e.target.value })
+                }
                 }
               >
                 {settingState.date_formats.map((format) => (
@@ -92,7 +91,6 @@ const GeneralTheme = () => {
               <Typography variant="h5" className={classes.marginBottom2}>
                 Time Zone
               </Typography>
-
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"

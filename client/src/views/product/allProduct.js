@@ -5,7 +5,6 @@ import { client_app_route_url } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { isEmpty } from "../../utils/helper";
-
 import { bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider, } from "@mui/material/styles";
 import ActionButton from "../components/actionbutton";
@@ -26,12 +25,31 @@ const AllproductComponent = () => {
     array: ['All', 'Publish', 'Draft']
   }
   const columndata = [
-    { name: "image", title: "image", sortingactive: false },
-    { name: "date", title: "date", sortingactive: true },
-    { name: "name", title: "Name", sortingactive: true },
-    { name: "status", title: "Status", sortingactive: true },
     {
-      name: "actions", title: "Actions", sortingactive: false,
+      name: "image",
+      title: "image",
+      sortingactive: false
+    },
+    {
+      name: "date",
+      title: "date",
+      sortingactive: true
+    },
+    {
+      name: "name",
+      title: "Name",
+      sortingactive: true
+    },
+    {
+      name: "status",
+      title: "Status",
+      sortingactive: true
+    },
+    {
+
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
@@ -50,14 +68,12 @@ const AllproductComponent = () => {
     if (!isEmpty(get(products, 'products'))) {
       let data = []
       products.products.map((product) => {
-
         let object = {
           id: product._id,
           image: product.feature_image ? bucketBaseURL + product.feature_image : NoImagePlaceHolder,
           date: product.date,
           status: product.status,
           name: product.name,
-
         }
         data.push(object)
       })
@@ -90,6 +106,7 @@ const AllproductComponent = () => {
             statusTabData={statusTabData}
             addpage='add-product'
             showDeleteButton={true}
+            searchbydate={true}
             title="All Products"
           />
         </Grid>

@@ -19,13 +19,35 @@ const AllReviewsComponent = () => {
   const [AllReviews, setAllReviews] = useState([])
   const [filtered, setfilterdData] = useState([])
   const columndata = [
-    { name: "date", title: "date", sortingactive: true },
-    { name: "name", title: "Customer ", sortingactive: true },
-    { name: "last_modified", title: "Last Modified ", sortingactive: true },
-    { name: "reviewd_product", title: "Reviewed Product", sortingactive: true },
-    { name: "rating", title: "Ratings", sortingactive: true },
     {
-      name: "actions", title: "Actions", sortingactive: false,
+      name: "date",
+      title: "date",
+      sortingactive: true
+    },
+    {
+      name: "name",
+      title: "Customer ",
+      sortingactive: true
+    },
+    {
+      name: "last_modified",
+      title: "Last Modified ",
+      sortingactive: true
+    },
+    {
+      name: "reviewd_product",
+      title: "Reviewed Product",
+      sortingactive: true
+    },
+    {
+      name: "rating",
+      title: "Ratings",
+      sortingactive: true
+    },
+    {
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
@@ -46,7 +68,6 @@ const AllReviewsComponent = () => {
     if (!isEmpty(get(reviewState, 'reviews'))) {
       let data = []
       reviewState.reviews.map((review) => {
-
         let object = {
           id: review.id,
           date: review.date,
@@ -57,17 +78,12 @@ const AllReviewsComponent = () => {
         }
         data.push(object)
       })
-
       setAllReviews(data)
       setfilterdData(data)
     } else {
       setAllReviews([])
       setfilterdData([])
-
     }
-
-
-
   }, [get(reviewState, 'reviews')])
   const handleOnChangeSearch = (filtereData) => {
 
@@ -86,6 +102,7 @@ const AllReviewsComponent = () => {
             addpage=''
             title="All Reviews"
             showDeleteButton={true}
+            searchbydate={true}
           />
         </Grid>
       </Grid >

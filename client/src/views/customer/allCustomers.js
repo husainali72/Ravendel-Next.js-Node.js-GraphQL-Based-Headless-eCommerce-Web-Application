@@ -18,11 +18,26 @@ const AllCustomersComponent = () => {
   const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
   const columndata = [
-    { name: "date", title: "date", sortingactive: true },
-    { name: "name", title: "Customer Name", sortingactive: true },
-    { name: "email", title: "Email", sortingactive: true },
     {
-      name: "actions", title: "Actions", sortingactive: false, component: ActionButton,
+      name: "date",
+      title: "date",
+      sortingactive: true
+    },
+    {
+      name: "name",
+      title: "Customer Name",
+      sortingactive: true
+    },
+    {
+      name: "email",
+      title: "Email",
+      sortingactive: true
+    },
+    {
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
+      component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
           navigate(`${client_app_route_url}edit-customer/${id}`)
@@ -40,7 +55,6 @@ const AllCustomersComponent = () => {
     if (!isEmpty(get(Customers, 'customers'))) {
       let data = []
       Customers.customers.map((customer) => {
-
         let object = {
           id: customer.id,
           date: customer.date,
@@ -51,19 +65,12 @@ const AllCustomersComponent = () => {
       })
       setfilterdData(data)
       setAllCustomer(data)
-
     } else {
       setAllCustomer([])
       setfilterdData([])
     }
-
-
-
   }, [get(Customers, 'customers')])
-
-
   const handleOnChangeSearch = (filtereData) => {
-
     setfilterdData(filtereData)
   }
   return (
@@ -78,6 +85,7 @@ const AllCustomersComponent = () => {
             handleOnChangeSearch={handleOnChangeSearch}
             addpage='add-customer'
             showDeleteButton={true}
+            searchbydate={true}
             title="All Customers"
           />
         </Grid>
