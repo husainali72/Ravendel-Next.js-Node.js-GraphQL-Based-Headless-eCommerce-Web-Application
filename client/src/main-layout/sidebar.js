@@ -8,7 +8,6 @@ import { ThemeProvider } from "@mui/material/styles";
 const useStyles = makeStyles((theme) => ({
   drawer: {
     "&&": {
-      width: 175,
       zIndex: "10!important",
       [theme.breakpoints.up("lg")]: {
         marginTop: 50,
