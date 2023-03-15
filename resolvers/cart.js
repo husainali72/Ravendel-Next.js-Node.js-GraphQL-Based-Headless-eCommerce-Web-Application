@@ -157,6 +157,7 @@ module.exports = {
         const products = await Product.find({ _id: { $in: productIds } });
 
         for (const prod of products) {
+          productById[prod._id.toString()].price = prod.pricing.sellprice ? prod.pricing.sellprice : prod.pricing.price
           productById[prod._id.toString()].product = {
             product_id: prod._id,
             variant: prod.variant,
@@ -165,40 +166,40 @@ module.exports = {
           };
         }
 
-        const productAttributeVariation = await ProductAttributeVariation.find({
-          product_id: { $in: productIds },
-        });
+        // const productAttributeVariation = await ProductAttributeVariation.find({
+        //   product_id: { $in: productIds },
+        // });
 
-        for (const prod of productAttributeVariation) {
-          if (prod.combination.length) {
-            let attributeVariation = {
-              combination_values: [],
-              price: prod.price,
-            };
+        // for (const prod of productAttributeVariation) {
+        //   if (prod.combination.length) {
+        //     let attributeVariation = {
+        //       combination_values: [],
+        //       price: prod.price,
+        //     };
 
-            for (const attr of productAttribute) {
-              for (const attrVal of attr.values) {
-                if (~prod.combination.indexOf(attrVal._id.toString())) {
-                  productById[prod.product_id.toString()].carts[0].combination.push(attrVal._id.toString())
-                  attributeVariation.combination_values.push({
-                    id: attrVal._id,
-                    name: attrVal.name,
-                  });
-                }
-              }
-            }
+        //     for (const attr of productAttribute) {
+        //       for (const attrVal of attr.values) {
+        //         if (~prod.combination.indexOf(attrVal._id.toString())) {
+        //           productById[prod.product_id.toString()].carts[0].combination.push(attrVal._id.toString())
+        //           attributeVariation.combination_values.push({
+        //             id: attrVal._id,
+        //             name: attrVal.name,
+        //           });
+        //         }
+        //       }
+        //     }
 
-            if (!productById[prod.product_id.toString()].attributeVariation) {
-              productById[prod.product_id.toString()].attributeVariation = [];
-            }
+        //     if (!productById[prod.product_id.toString()].attributeVariation) {
+        //       productById[prod.product_id.toString()].attributeVariation = [];
+        //     }
 
-            productById[prod.product_id.toString()].attributeVariation.push(
-              attributeVariation
-            );
-          } else {
-            productById[prod.product_id.toString()].price = prod.price;
-          }
-        }
+        //     productById[prod.product_id.toString()].attributeVariation.push(
+        //       attributeVariation
+        //     );
+        //   } else {
+        //     productById[prod.product_id.toString()].price = prod.price;
+        //   }
+        // }
 
         for (let i in productById) {
           for (const cart of productById[i].carts) {

@@ -194,7 +194,7 @@ export const productsAction = () => (dispatch) => {
   dispatch({
     type: PRODUCT_LOADING,
   });
-  query(GET_PRODUCTS)
+  query(GET_PRODUCTS, {admin: true})
     .then((response) => {
       const [error, success, message, data] = getResponseHandler(
         response,

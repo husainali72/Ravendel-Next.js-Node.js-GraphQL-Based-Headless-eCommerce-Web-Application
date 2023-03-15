@@ -261,8 +261,8 @@ const DELETE_CATEGORY = gql`
 // `;
 
 const GET_PRODUCTS = gql`
-  {
-    products {
+  query ($admin: Boolean){
+    products(admin: $admin) {
       data {
         ...ProductTile
       }

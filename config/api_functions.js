@@ -138,9 +138,11 @@ const GET_BY_URL = async (modal, url, name) => {
   }
 };
 
-const GET_ALL_FUNC = async (modal, name) => {
+const GET_ALL_FUNC = async (modal, name, admin) => {
   try {
-    const response = await modal.find({}).sort({date: -1});
+    let response;
+    if(modal === Product && !admin) response = await modal.find({status: "Publish"}).sort({date: -1}); 
+    else response = await modal.find({}).sort({date: -1});
     return {
       message: MESSAGE_RESPONSE("RESULT_FOUND", name, true),
       data: response,

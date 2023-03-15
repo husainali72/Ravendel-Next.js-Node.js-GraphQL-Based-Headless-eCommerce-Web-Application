@@ -315,7 +315,6 @@ module.exports = gql`
       stock_display_format: String
     ): Setting
     updateStoreOrder(
-      order_prefix_list: customArray
       order_prefix: String
       order_digits: Int
     ): Setting
