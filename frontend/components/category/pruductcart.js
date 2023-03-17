@@ -17,13 +17,14 @@ const PruductCart = ({ productDetail, featureproducts }) => {
 
         <Container>
             {/* <h4 style={{ color: "#088178" }}>Product <span style={{ color: "black" }}>Category</span></h4> */}
+            <h4 style={{ color: "#088178" }}>Feature <span style={{ color: "black" }}>Products</span></h4>
             <div className="Tab-container">
                 <Tab.Container id="left-tabs-example" defaultActiveKey="feature">
                     <Col>
                         <Nav variant="pills" className="flex-column">
                             <Nav.Item style={{ display: "flex" }}>
-                                <Nav.Link className="nav-tab" type="button" eventKey="feature" >Featured</Nav.Link>
-                                <Nav.Link className="nav-tab" eventKey="new-added">New added</Nav.Link>
+                                {/* <Nav.Link className="nav-tab" type="button" eventKey="feature" >Featured</Nav.Link> */}
+                                {/* <Nav.Link className="nav-tab" eventKey="new-added">New added</Nav.Link> */}
                             </Nav.Item>
                         </Nav>
                         <Tab.Content>

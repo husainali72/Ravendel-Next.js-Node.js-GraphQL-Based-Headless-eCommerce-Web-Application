@@ -93,7 +93,7 @@ const SingleProduct = ({ recentProducts,singleproducts, productReviews, currency
         <div>
             <Head>
                 {singleproducts && singleproducts.meta.title ?
-                    <title>{singleproducts.meta.title}</title>
+                    <title>{singleproducts.meta.title + " | Ravendel"}</title>
                     : null}
                 {singleproducts && singleproducts.meta.description ?
                     <meta name="description" content={singleproducts.meta.description} />

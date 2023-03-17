@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 import client from "../../apollo-client";
 import PageTitle from "../../components/PageTitle";
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
@@ -10,7 +11,9 @@ import { GET_HOMEPAGE_DATA_QUERY, GET_CATEGORIES_QUERY } from '../../queries/hom
 import { useDispatch, useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts";
 import { settingActionCreator } from '../../redux/actions/settingAction';
+import { capitalize } from 'lodash';
 const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProduct, brandProduct }) => {
+    const breadCrumbTitle = shopProduct.data.find((catt)=> catt.id === singlecategory.parentId)?.name;
     const [cats, setCats] = useState({})
     const dispatch = useDispatch()
     const [products, setProducts] = useState([]);
@@ -93,8 +96,19 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
 
     return (
         <div>
+            <Head>
+            {singlecategory && singlecategory.meta && singlecategory.meta.title ?
+            <title>{ capitalize(singlecategory?.meta?.title) + " | Ravendel" }</title>
+            : null}
+            {singlecategory && singlecategory?.meta && singlecategory?.meta?.description ?
+            <meta name="description" content={singlecategory?.meta?.description} />
+            : null}
+            {singlecategory && singlecategory?.meta && singlecategory?.meta?.keywords ?
+            <meta name="keywords" content={singlecategory?.meta?.keywords} />
+            : null}
+            </Head>
             <PageTitle title={"category"} />
-            <BreadCrumb title={`category  > Subcategory > ${categoryDetail.name}`} />
+            <BreadCrumb title={`category  > ${breadCrumbTitle !== undefined ? (breadCrumbTitle + ">") : ""}  ${categoryDetail.name}`} />
             <section className="product-cart-section">
                 <Container>
                     <div className="single-category-page">
@@ -156,9 +170,6 @@ export async function getServerSideProps({ params }) {
     var brandProduct = [];
     var shopProduct = [];
     /* ===============================================Get HomepageData Settings ===============================================*/
-
-
-
 
     try {
         const { data: homepagedata } = await client.query({

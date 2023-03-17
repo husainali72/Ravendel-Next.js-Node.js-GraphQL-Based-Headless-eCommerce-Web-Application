@@ -328,9 +328,9 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                     updateCartProduct={updateCartProduct}
                                     currency={currency}
                                 />
-                                <div className="devider"></div>
-                                <div className="card-other-information">
-                                    <div className="col-lg-6 col-md-12">
+                                {/* <div className="devider"></div> */}
+                                <div className="card-other-information flex-column-reverse">
+                                    <div className="col-lg-6 col-md-12 invisible">
                                         <h4>Shopping Calculation</h4>
                                         <p>Flat rate : <span>5%</span></p>
                                         <Form>
@@ -357,7 +357,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                         </div>
 
                                     </div>
-                                    <div className="col-lg-6 col-md-12 col-sm-12">
+                                    <div className="col-lg-12 col-md-12 col-sm-12 mt-4">
                                         <div className="border p-md-4 p-30 border-radius cart-totals">
                                             <div className="heading_s1 mb-3">
                                                 <h4>Cart Totals</h4>

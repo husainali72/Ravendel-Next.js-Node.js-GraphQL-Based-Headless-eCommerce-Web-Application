@@ -167,17 +167,16 @@ const GalleryImagesComponents = (props) => {
                                             {currency}{" "}{getPrice(singleproducts?.pricing?.price, decimal)}
                                         </strong>
                                     )}</span>
-                                {singleproducts?.pricing?.sellprice ? <span
+                                {singleproducts?.pricing?.sellprice && singleproducts?.pricing?.sellprice < singleproducts?.pricing?.price  ? <span
                                     className={
                                         singleproducts?.pricing?.sellprice ? "has-sale-price mx-2" : ""
                                     } style={{ fontSize: "17px" }}
                                 >
-
                                     {currency}{getPrice(singleproducts?.pricing?.price, decimal)}
                                 </span>
                                     : null}
                                 <span className=" mx-2">
-                                    {calculateDiscount(singleproducts?.pricing?.price, singleproducts?.pricing?.sellprice)}
+                                    {Math.round((100 /singleproducts?.pricing?.price)*(singleproducts?.pricing?.price - singleproducts?.pricing?.sellprice)) > 0 && calculateDiscount(singleproducts?.pricing?.price, singleproducts?.pricing?.sellprice)}
                                 </span>
                             </div>
                         </div>

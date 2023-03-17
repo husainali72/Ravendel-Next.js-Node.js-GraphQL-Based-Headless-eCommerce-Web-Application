@@ -2,9 +2,15 @@ import Link from "next/link";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import { useSession } from "next-auth/react"
+import { useEffect, useState } from "react";
+import { query } from "../utills/helpers";
+import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 export default function Footer() {
+    const [storeAddress,setStoreAddress] = useState({});
+    useEffect(() => {
+        query(GET_HOMEPAGE_DATA_QUERY).then(res => setStoreAddress(res?.data?.getSettings?.store?.store_address))
+    }, [])
     const session = useSession();
-    // console.log("session", session)
     return (
         <section className="product-cart-section">
             <Container>
@@ -22,7 +28,7 @@ export default function Footer() {
                                     <div className="address">
                                         <h5 className="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated animated animated">Contact</h5>
                                         <strong>Address : </strong>
-                                        <span>10 Suffolk st Soho, London, UK</span>
+                                        <span>{storeAddress?.address_line1 && (storeAddress?.address_line1 + ", ")}{storeAddress?.address_line2 && (storeAddress?.address_line2 + ", ")}{storeAddress?.city}</span>
                                         <br />
                                         <strong>Phone : </strong>
                                         <Link href="tel:+1234567890">

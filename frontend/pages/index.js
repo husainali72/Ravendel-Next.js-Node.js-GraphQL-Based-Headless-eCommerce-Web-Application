@@ -20,7 +20,6 @@ import SpecificProducts from "../components/SpecificProducts";
 import CustomBanner from "../components/banner/CustomBanner";
 
 export default function Home({ homepageData, seoInfo,brands, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts,allReviews }) {
-
   const [press, setPress] = useState(false);
   const initialRender = useRef(true)
   const dispatch = useDispatch()
@@ -102,6 +101,7 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
         if(section.visible){
           return(  featureproducts?.length > 0 ?
             <>
+              <CustomBanner variant={"fashion-banner"} />
               <PruductCart productDetail={recentproducts} featureproducts={featureproducts} />
             </>
             : null)
@@ -123,9 +123,7 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
   return (
     <div>
       <Head>
-        {seoInfo && seoInfo.meta_title ?
-          <title>{seoInfo.meta_title}</title>
-          : null}
+        <title>{seoInfo?.meta_title || "Ravendel"}</title>
         {seoInfo && seoInfo.meta_description ?
           <meta name="description" content={seoInfo.meta_description} />
           : null}
@@ -148,7 +146,6 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
       
       {brands?.length > 0 ? <FeatureBrand brands = {brands} /> : null}
       {/* <RavendelBanner /> */}
-      <CustomBanner variant={"fashion-banner"} />
 
           {HomePageSeq?.map(section => (
             renderSwitch(section)

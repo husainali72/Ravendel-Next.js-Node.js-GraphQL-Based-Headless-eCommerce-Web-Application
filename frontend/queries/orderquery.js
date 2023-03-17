@@ -27,6 +27,7 @@ export const GET_CUSTOMER_ORDERS_QUERY = gql`
             billing
       customer_id
       date
+      coupon_code
       discount_amount
       grand_total
       id
@@ -83,6 +84,7 @@ export const ADD_ORDER = gql`
               $tax_amount: String
               $discount_amount: String
               $grand_total: String
+              $coupon_code: String
      ){
        addOrder(
                 customer_id: $customer_id
@@ -94,6 +96,7 @@ export const ADD_ORDER = gql`
                 tax_amount:$tax_amount
                 discount_amount:$discount_amount
                   grand_total :$grand_total
+                  coupon_code :$coupon_code
     ){
         message
         success

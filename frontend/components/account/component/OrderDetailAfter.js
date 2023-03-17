@@ -31,8 +31,16 @@ const OrderDetailAfter = ({ Data, id, date, grand_total, products: orderDetail, 
                                         <td>{moment(Data.date).format("DD MMMM YY")}</td>
                                     </tr>
                                     <tr>
-                                        <th>Total</th>
-                                        <td>{currency} {Data.grand_total ? getPrice(Data.grand_total, decimal) : getPrice(CalculateProductTotal(Data), decimal)}</td>
+                                        <th>Subtotal</th>
+                                        <td>{currency} {Data?.subtotal ? getPrice(Data.subtotal, decimal) : getPrice(Data.grand_total, decimal)}</td>
+                                    </tr>
+                                    {Data.coupon_code && <tr>
+                                        <th>Coupon <span className="coupon-applied">({Data.coupon_code})</span></th>
+                                        <td>- {currency} {Data?.discount_amount && getPrice(Data.discount_amount, decimal)}</td>
+                                    </tr>}
+                                    <tr>
+                                        <th>Grandtotal</th>
+                                        <td>{currency} {Data?.grand_total && getPrice(Data.grand_total, decimal)}</td>
                                     </tr>
                                     <tr>
                                         <th>Payment Method</th>
@@ -91,6 +99,10 @@ const OrderDetailAfter = ({ Data, id, date, grand_total, products: orderDetail, 
                                     <th colSpan={2} style={{ textAlign: 'right' }} >Subtotal</th>
                                     <td>{currency} {getPrice(Data.subtotal, decimal)}</td>
                                 </tr>
+                                {Data.coupon_code && <tr>
+                                        <th colSpan={2} style={{ textAlign: 'right' }}>Coupon <span className="coupon-applied">({Data.coupon_code})</span></th>
+                                        <td>- {currency} {Data?.discount_amount && getPrice(Data.discount_amount, decimal)}</td>
+                                </tr>}
                                 <tr>
                                     <th colSpan={2} style={{ textAlign: 'right' }}>Tax</th>
                                     <td>{currency} {Data.tax_amount ? getPrice(Data.tax_amount, decimal) : "00"}</td>
@@ -100,7 +112,7 @@ const OrderDetailAfter = ({ Data, id, date, grand_total, products: orderDetail, 
                                     <td>{currency} {Data.shipping_amount ? getPrice(Data.shipping_amount, decimal) : "20"}</td>
                                 </tr>
                                 <tr className="total">
-                                    <th colSpan={2} style={{ textAlign: 'right' }}>Total</th>
+                                    <th colSpan={2} style={{ textAlign: 'right' }}>Grandtotal</th>
                                     <td>{currency} {Data ? getPrice(Data.grand_total, decimal) : getPrice(Data.subtotal, decimal)}</td>
                                 </tr>
                             </table>

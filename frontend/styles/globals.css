@@ -3577,3 +3577,20 @@ header {
 .slick-prev{
   z-index: 10;
 }
+.out-of-stock-card{
+margin-bottom: 0px;
+color: #ff1212;
+font-size: small;
+/* font-weight: bold; */
+border: 1px solid rgba(255, 18, 18, 0.322);
+border-radius: 8px;
+height: fit-content;
+padding: 3px 5px;
+white-space: nowrap;
+}
+.coupon-applied{
+  color:#00c100;
+  font-size: smaller;
+  /* font-weight: 600; */
+  letter-spacing: .1rem;
+}
