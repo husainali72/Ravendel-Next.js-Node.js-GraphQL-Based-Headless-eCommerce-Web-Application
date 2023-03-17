@@ -29,7 +29,6 @@ const ThankYou = ({ currencyStore }) => {
             const ID = session?.data?.user?.accessToken?.customer?._id
             const token = session?.data?.user?.accessToken?.token
             query(GET_CUSTOMER_ORDERS_QUERY, ID, token).then((res) => {
-                console.log(res)
                 setData(res?.data?.orderbyUser?.data?.[0])
             })
 
@@ -50,7 +49,7 @@ const ThankYou = ({ currencyStore }) => {
 }
 export default ThankYou;
 
-export async function getStaticProps(context) {
+export async function getStaticProps() {
     let currencyStore = [];
     let homepageData = [];
     try {

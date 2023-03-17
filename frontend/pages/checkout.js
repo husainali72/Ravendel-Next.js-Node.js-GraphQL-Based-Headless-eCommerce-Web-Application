@@ -133,7 +133,7 @@ export const CheckOut = ({ currencyStore }) => {
     useEffect(() => {
         currencySetter(currencyOpt, setCurrency);
     }, [])
-
+    
     useEffect(() => {
         if (session.status === "authenticated") {
             address_book = session?.data?.user.accessToken.customer.address_book
@@ -289,6 +289,7 @@ export const CheckOut = ({ currencyStore }) => {
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
             couponResponse = res.data.calculateCoupon.total_coupon
             if (res.data.calculateCoupon.success) {
+                setBillingDetails((previousDetails)=>({...previousDetails,coupon_code:couponCode}))
                 notify(res.data.calculateCoupon.message, true)
                 setIsCouponApplied(true)
             }

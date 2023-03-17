@@ -48,7 +48,7 @@ export const ProductNav = (props) => {
                         </Link>
                     </div>
                     <div className="on-sale-product-card-body">
-                        {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price ? <div className="save-price">
+                        {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price && Math.round((100 /product?.pricing?.price)*(product?.pricing?.price - product?.pricing?.sellprice))>0 ? <div className="save-price">
                             <span className="percantage-save">
                                 {calculateDiscount(product?.pricing?.price, product?.pricing?.sellprice)}
                             </span>
@@ -89,7 +89,7 @@ export const ProductNav = (props) => {
                                 </span> : null}
 
                             </div>
-                            <OverlayTrigger style={{ backgroundColor: "#088178" }}
+                            {product?.quantity>0 ? <OverlayTrigger style={{ backgroundColor: "#088178" }}
                                 placement="top"
                                 overlay={
                                     <Tooltip style={{ color: "#088178" }} id={"tooltip-top"}>
@@ -104,7 +104,7 @@ export const ProductNav = (props) => {
                                     </a>
                                     {/* </Link> */}
                                 </div>
-                            </OverlayTrigger>
+                            </OverlayTrigger> : <p className="out-of-stock-card">Out Of Stock</p>}
                         </div>
                     </div>
                 </div>

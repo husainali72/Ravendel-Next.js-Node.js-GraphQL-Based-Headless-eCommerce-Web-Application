@@ -31,7 +31,7 @@ const Category = ({ category }) => {
                 <div>
                     <h4 className='theme-color'>Product <span className='black-color'>Category</span></h4>
                     <div
-                        className={showSlider ? "category pro-cat" : " pro-cat category categoryShow "}
+                        className={showSlider ? "category pro-cat px-3" : " pro-cat category categoryShow "}
                         ref={slider}>
                         {category.map((item, i) => (
                             item.parentId === null && (

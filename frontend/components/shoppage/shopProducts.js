@@ -1,8 +1,6 @@
 import Link from 'next/link';
 
 const ShopProducts = ({ shopcategory, name, brandProduct, brands, category, blogTagsData }) => {
-    // console.log("category==", category);
-    // console.log("shopcategory", shopcategory);
     return (
         <div>
             <div className="primary-sidebar sticky-sidebar category-shop-cart">
@@ -13,7 +11,7 @@ const ShopProducts = ({ shopcategory, name, brandProduct, brands, category, blog
                             {category ? <ul className="categories-shop">
                                 {category.map((category, i) => (
                                     <li className="category-type" key={i}>
-                                        <Link href={`/category/[categorys]?url=${category.url}`} as={`/category/${category.url}`}>
+                                        <Link href={`/subcategory/[categorys]?url=${category.url}`} as={`/subcategory/${category.url}`}>
                                             <span value={category.url}>{category.name}</span>
                                         </Link>
                                     </li>

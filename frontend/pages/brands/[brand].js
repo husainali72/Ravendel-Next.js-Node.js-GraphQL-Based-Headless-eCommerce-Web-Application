@@ -11,6 +11,9 @@ import { getImage } from '../../utills/helpers';
 import { useDispatch } from 'react-redux';
 import { GET_HOMEPAGE_DATA_QUERY } from '../../queries/home';
 import { settingActionCreator } from '../../redux/actions/settingAction';
+import Head from 'next/head';
+import { capitalize } from 'lodash';
+import BreadCrumb from '../../components/breadcrumb/breadcrumb';
 
 const Brand = ({brand,filteredProducts,brandProduct,currencyStore}) => {
     const [products, setProducts] = useState([]);
@@ -27,7 +30,21 @@ const Brand = ({brand,filteredProducts,brandProduct,currencyStore}) => {
 
 
   return (
-    <section className="product-cart-section">
+<>
+    <Head>
+    {brand && brand.meta && brand.meta.title ?
+    <title>{ capitalize(brand?.meta?.title) + " | Ravendel" }</title>
+    : null}
+    {brand && brand?.meta && brand?.meta?.description ?
+    <meta name="description" content={brand?.meta?.description} />
+    : null}
+    {brand && brand?.meta && brand?.meta?.keywords ?
+    <meta name="keywords" content={brand?.meta?.keywords} />
+    : null}
+    </Head>
+      
+     <BreadCrumb title={`brands  >  ${brand.name}`} />
+     <section className="product-cart-section">
         <Container>
                 <div className="shop-Container" >
                     <div className="col-lg-3">
@@ -78,9 +95,9 @@ const Brand = ({brand,filteredProducts,brandProduct,currencyStore}) => {
 
                     </div>
                 </div>
-
         </Container>
     </section>
+ </>
   )
 }
 

@@ -13,8 +13,9 @@ import Row from 'react-bootstrap/Row';
 import { getImage } from "../../utills/helpers";
 import Link from 'next/link';
 import { useRef } from 'react';
+import Head from 'next/head';
+import { capitalize } from 'lodash';
 const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduct, url }) => {
-
     const slider = useRef();
     const slideLeft = () => {
         slider.current.scrollLeft = slider.current.scrollLeft - 500;
@@ -95,7 +96,17 @@ const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduc
     }
     return (
         <>
-
+            <Head>
+            {singlecategory && singlecategory.meta && singlecategory.meta.title ?
+            <title>{capitalize(singlecategory?.meta?.title) + " | Ravendel" }</title>
+            : null}
+            {singlecategory && singlecategory?.meta && singlecategory?.meta?.description ?
+            <meta name="description" content={singlecategory?.meta?.description} />
+            : null}
+            {singlecategory && singlecategory?.meta && singlecategory?.meta?.keywords ?
+            <meta name="keywords" content={singlecategory?.meta?.keywords} />
+            : null}
+            </Head>
             {subCat.length > 0 ? <div className='categories-cart-container' >
                 <BreadCrumb title={`category  >  ${categoryDetail.name}`} />
                 <Container style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>

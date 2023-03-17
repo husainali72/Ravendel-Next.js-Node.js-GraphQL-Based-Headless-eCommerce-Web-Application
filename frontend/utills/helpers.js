@@ -5,7 +5,6 @@ import axios from 'axios'
 import { getSession } from 'next-auth/react';
 import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
 
-
 /* -------------------------------image funtion ------------------------------- */
 
 // export const imgUrl = (img) => {
@@ -24,9 +23,12 @@ import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
 //     return imagaPath;
 // }
 
-export const getImage = (img, type) => {
+export const getImage = (img, type, isBanner) => {
 
-    var imagaPath = NoImagePlaceHolder.src
+    let imagaPath = ""
+    if(!isBanner){
+        imagaPath = NoImagePlaceHolder.src;
+    }
     if (img) {
         imagaPath = bucketBaseURL + img
     }
