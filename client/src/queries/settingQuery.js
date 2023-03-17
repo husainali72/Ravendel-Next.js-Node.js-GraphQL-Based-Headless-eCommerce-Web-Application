@@ -64,6 +64,11 @@ const SETTING_TILE_DATA = gql`
         out_of_stock_visibility
         stock_display_format
       }
+      order_options {
+        order_prefix_list
+        order_prefix
+        order_digits
+      }
     }
     paymnet {
       cash_on_delivery {
@@ -318,6 +323,21 @@ const UPDATE_STORE_INVENTORY = gql`
   ${SETTING_TILE_DATA}
 `;
 
+const UPDATE_STORE_ORDER = gql`
+  mutation(
+    $order_prefix: String
+    $order_digits: Number
+  ) {
+    updateStoreOrder(
+      order_prefix: $order_prefix
+      order_digits: $order_digits
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
 const UPDATE_PAYMENT_COD = gql`
   mutation(
     $enable: Boolean
@@ -506,6 +526,7 @@ export {
   UPDATE_STORE_ADDRESS,
   UPDATE_STORE_MEASUREMENTS,
   UPDATE_STORE_INVENTORY,
+  UPDATE_STORE_ORDER,
   UPDATE_PAYMENT_COD,
   UPDATE_PAYMENT_BANK,
   UPDATE_PAYMENT_STRIPE,

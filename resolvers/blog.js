@@ -126,7 +126,7 @@ module.exports = {
       let path = "/assets/images/blog/";
       let validation = ["title", "status"];
       const duplicate = await duplicateData({title: args.title}, Blog)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "BlogTag", false);
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Title", false);
       return await CREATE_FUNC(
         user.id,
         "Blog",
@@ -159,7 +159,7 @@ module.exports = {
       };
       let validation = ["title", "status"];
       const duplicate = await duplicateData({title: args.title}, Blog, args.id)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog", false);
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Title", false);
       return await UPDATE_FUNC(
         id,
         args.id,
@@ -183,7 +183,7 @@ module.exports = {
       };
       let validation = ["name"];
       const duplicate = await duplicateData({name: args.name}, BlogTag)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "BlogTag", false);
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Tag", false);
       return await CREATE_FUNC(
         user.id,
         "BlogTag",
@@ -203,7 +203,7 @@ module.exports = {
       }
       let validation = ["name"];
       const duplicate = await duplicateData({name: args.name}, BlogTag, args.id)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "BlogTag", false);
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Tag", false);
       return await UPDATE_FUNC(
         id,
         args.id,
