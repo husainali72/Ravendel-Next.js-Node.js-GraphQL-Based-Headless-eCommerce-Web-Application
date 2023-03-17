@@ -303,6 +303,19 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    updateNotificationOneSignal: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        await checkAwsFolder('setting');
+        const setting = await Setting.findOne({});
+        setting.notification.one_signal.app_id = args.app_id
+        setting.notification.one_signal.rest_api_key = args.rest_api_key
+        return await setting.save();
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     updateAppearanceHome: async (root, args, { id }) => {
       checkToken(id);
       try {
@@ -397,7 +410,7 @@ module.exports = {
       try {
         await checkAwsFolder('setting');
         const setting = await Setting.findOne({});
-        let imgObject = "";
+        let imgObject = {};
         if (args.new_logo) {
           imgObject = await imageUpload(
             args.new_logo[0].file,
@@ -408,14 +421,35 @@ module.exports = {
             throw putError(imgObject.message);
           }
         }
-
+        
+        let socialMedia = []
+        for(let media of args.social_media){
+          let mediaImgObject = {};
+          if(media.update_icon){
+            mediaImgObject = await imageUpload(
+              media.update_icon[0].file,
+              "/assets/images/setting/","Setting"
+            );
+  
+            if (mediaImgObject.success === false) {
+              throw putError(mediaImgObject.message);
+            }
+          }
+          socialMedia.push({
+            name: media.name,
+            icon: mediaImgObject.data || media.icon,
+            handle: media.handle,
+          })
+        }
+        
         const theme = {
           primary_color: args.primary_color,
           playstore: args.playstore,
           appstore: args.appstore,
           phone_number: args.phone_number,
           email: args.email,
-          logo: imgObject.data || args.logo
+          logo: imgObject.data || args.logo,
+          social_media: socialMedia
         };
 
         setting.appearance.theme = theme
