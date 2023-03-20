@@ -11,6 +11,7 @@ export default function Footer() {
         query(GET_HOMEPAGE_DATA_QUERY).then(res => setStoreAddress(res?.data?.getSettings?.store?.store_address))
     }, [])
     const session = useSession();
+    const customerId = session?.data?.user?.accessToken?.customer?._id;
     return (
         <section className="product-cart-section">
             <Container>
@@ -112,7 +113,7 @@ export default function Footer() {
                                                 </Link>
                                             </p>
                                             <p className="link-hover">
-                                                <Link href="/account/mywishlist">
+                                                <Link href={`/account/${customerId}`}>
                                                     <a className="text-reset">My WishList</a>
                                                 </Link>
                                             </p>
