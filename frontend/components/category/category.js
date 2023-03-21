@@ -35,7 +35,7 @@ const Category = ({ category }) => {
                         ref={slider}>
                         {category.map((item, i) => (
                             item.parentId === null && (
-                                <Link href={`/category/[category]?url=${item.url}`} as={`/category/${item.url}`}><div className="category-cards" key={i}>
+                                <Link href={`/subcategory/[category]?url=${item.url}`} as={`/subcategory/${item.url}`}><div className="category-cards" key={i}>
                                     <div className="category-card-image">
                                         <img
                                             src={getImage(item?.image, 'original')}

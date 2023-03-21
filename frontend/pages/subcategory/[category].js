@@ -108,7 +108,7 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
             : null}
             </Head>
             <PageTitle title={"category"} />
-            <BreadCrumb title={`category  > ${breadCrumbTitle !== undefined ? (breadCrumbTitle + ">") : ""}  ${categoryDetail.name}`} />
+            <BreadCrumb title={`category  > ${breadCrumbTitle !== undefined ? (breadCrumbTitle + ">") : ""}  ${capitalize(categoryDetail.name)}`} />
             <section className="product-cart-section">
                 <Container>
                     <div className="single-category-page">
@@ -117,7 +117,7 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
                             <ShopProducts brandProduct={brandProduct} name={"Brand"} brands />
                         </div>
                         <div className="shop-product-container">
-                            <strong style={{ display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>{categoryDetail.name}</strong>
+                            <strong style={{ display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>{capitalize(categoryDetail.name)}</strong>
                             {products && products?.length > 0 ? (
                                 <div className="shop-product-list">
                                     <OnSaleProductCard

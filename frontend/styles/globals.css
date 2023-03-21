@@ -581,7 +581,9 @@ color: #696969;
   height: 100%;
   object-fit:cover;
 }
-
+.cursor-none{
+  cursor:default !important;
+}
 .theme-color{color: #088178}
 .black-color{  color: black }
 .category-card-title
@@ -3593,4 +3595,14 @@ white-space: nowrap;
   font-size: smaller;
   /* font-weight: 600; */
   letter-spacing: .1rem;
+}
+.current-parent{
+  cursor: pointer;
+}
+.back-category{
+  stroke:#088178;
+  stroke-width: 3;
+}
+.cursor-pointer{
+  cursor: pointer;
 }
