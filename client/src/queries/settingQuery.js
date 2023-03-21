@@ -64,6 +64,11 @@ const SETTING_TILE_DATA = gql`
         out_of_stock_visibility
         stock_display_format
       }
+      order_options {
+        order_prefix_list
+        order_prefix
+        order_digits
+      }
     }
     paymnet {
       cash_on_delivery {
@@ -113,6 +118,12 @@ const SETTING_TILE_DATA = gql`
         api_signature
       }
     }
+    notification {
+      one_signal {
+        app_id
+        rest_api_key
+      }
+    }
     appearance {
       home {
         slider {
@@ -143,6 +154,11 @@ const SETTING_TILE_DATA = gql`
         phone_number
         email
         logo
+        social_media {
+          name
+          icon
+          handle
+        }
       }
       mobile {
         mobile_section {
@@ -307,6 +323,21 @@ const UPDATE_STORE_INVENTORY = gql`
   ${SETTING_TILE_DATA}
 `;
 
+const UPDATE_STORE_ORDER = gql`
+  mutation(
+    $order_prefix: String
+    $order_digits: Number
+  ) {
+    updateStoreOrder(
+      order_prefix: $order_prefix
+      order_digits: $order_digits
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
 const UPDATE_PAYMENT_COD = gql`
   mutation(
     $enable: Boolean
@@ -413,6 +444,18 @@ const UPDATE_PAYMENT_PAYPAL = gql`
   ${SETTING_TILE_DATA}
 `;
 
+const UPDATE_NOTIFICATION_ONESIGNAL = gql`
+  mutation($app_id: String, $rest_api_key: String) {
+    updateNotificationOneSignal(
+      app_id: $app_id
+      rest_api_key: $rest_api_key
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+
 const UPDATE_APPEARANCE_HOME = gql`
   mutation($slider: [slider_input], $add_section_in_home: add_section_in_home) {
     updateAppearanceHome(
@@ -463,8 +506,8 @@ const UPDATE_APPEARANCE_MOBILE_NEW = gql`
 `;
 
 const UPDATE_APPEARANCE_THEME = gql`
-  mutation($primary_color: String, $new_logo: Upload, $playstore: String, $appstore: String, $phone_number: String, $email: String, $logo: String) {
-    updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo, playstore: $playstore, appstore: $appstore, phone_number: $phone_number, email: $email, logo: $logo) {
+  mutation($primary_color: String, $new_logo: Upload, $playstore: String, $appstore: String, $phone_number: String, $email: String, $logo: String, $social_media: [social_media_input]) {
+    updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo, playstore: $playstore, appstore: $appstore, phone_number: $phone_number, email: $email, logo: $logo, social_media: $social_media) {
       ...SettingTile
     }
   }
@@ -483,10 +526,12 @@ export {
   UPDATE_STORE_ADDRESS,
   UPDATE_STORE_MEASUREMENTS,
   UPDATE_STORE_INVENTORY,
+  UPDATE_STORE_ORDER,
   UPDATE_PAYMENT_COD,
   UPDATE_PAYMENT_BANK,
   UPDATE_PAYMENT_STRIPE,
   UPDATE_PAYMENT_PAYPAL,
+  UPDATE_NOTIFICATION_ONESIGNAL,
   UPDATE_APPEARANCE_HOME,
   UPDATE_APPEARANCE_MOBILE,
   UPDATE_APPEARANCE_THEME,

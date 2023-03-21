@@ -531,7 +531,7 @@ module.exports = {
         meta: args.meta,
       };
       const duplicate = await duplicateData({name: data.name}, ProductCat)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "ProductCategory", false);
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       let validation = ["name"];
       return await CREATE_FUNC(
         id,
@@ -560,7 +560,7 @@ module.exports = {
       };
       let validation = ["name"];
       const duplicate = await duplicateData({name: data.name}, ProductCat, args.id)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "ProductCategory", false);
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       return await UPDATE_FUNC(
         id,
         args.id,
@@ -608,7 +608,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
       try {
-        var errors = _validate(["name", "sku", "quantity"], args);
+        var errors = _validate(["name", "description", "short_description", "sku", "quantity"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -637,7 +637,7 @@ module.exports = {
         }
         const product = await Product.findOne({ name: args.name });
         if (product) {
-          return MESSAGE_RESPONSE("DUPLICATE", "Name", false);
+          return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
         } else {
           let imgObject = "";
           if (args.feature_image) {
@@ -669,7 +669,7 @@ module.exports = {
           }
           let url = await updateUrl(args.url || args.name, "Product");
           const duplicate = await duplicateData({name: args.name}, Product)
-          if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product", false);
+          if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
           const newProduct = new Product({
             name: args.name,
             url: url,
@@ -749,7 +749,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
       try {
-        var errors = _validate(["name", "sku", "quantity"], args);
+        var errors = _validate(["name", "description", "short_description", "sku", "quantity"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -781,7 +781,7 @@ module.exports = {
         }
 
         const duplicate = await duplicateData({name: args.name}, Product, args.id)
-        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product", false);
+        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
 
         const product = await Product.findById({ _id: args.id });
         if (product) {
@@ -853,8 +853,8 @@ module.exports = {
 
           product.name = args.name;
           product.categoryId = args.categoryId;
-          (product.brand = args.brand || null),
-            (product.url = await updateUrl(args.url || args.name, "Product", args.id));
+          product.brand = args.brand || null,
+          product.url = await updateUrl(args.url || args.name, "Product", args.id);
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;
@@ -868,9 +868,9 @@ module.exports = {
           product.product_type = args.product_type;
           product.custom_field = args.custom_field;
           product.status = args.status;
-          (product.attribute = args.attribute),
-            (product.variant = args.variant),
-            (product.updated = Date.now());
+          product.attribute = args.attribute,
+          product.variant = args.variant,
+          product.updated = Date.now();
           await product.save();
 
           let combinations = [];

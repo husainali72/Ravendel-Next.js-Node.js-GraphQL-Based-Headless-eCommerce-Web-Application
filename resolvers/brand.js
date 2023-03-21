@@ -145,7 +145,7 @@ module.exports = {
 
           // console.log('BRAND',brand);
           const duplicate = await duplicateData({name: args.name}, Brand, args.id)
-          if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Brand", false)
+          if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Brand Name", false)
           await brand.save();
           return MESSAGE_RESPONSE("UpdateSuccess", "Brands", true);
         } else {

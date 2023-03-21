@@ -8,6 +8,7 @@ module.exports = gql`
     seo: SEO
     store: Store
     paymnet: Payment
+    notification: Notification
     appearance: Appearance
     createdAt: Date
     updatedAt: Date
@@ -157,6 +158,15 @@ module.exports = gql`
     api_signature: String
   }
 
+  type Notification {
+    one_signal: ONE_SIGNAL
+  }
+
+  type ONE_SIGNAL {
+    app_id: String,
+    rest_api_key: String
+  }
+
   type Appearance {
     home: APPEARANCE_HOME
     theme: APPEARANCE_THEME
@@ -212,6 +222,13 @@ module.exports = gql`
     phone_number: String
     email: String
     logo: String
+    social_media: [SOCIAL_MEDIA]
+  }
+
+  type SOCIAL_MEDIA {
+    name: String
+    icon: String
+    handle: String
   }
 
   input inventory_notification {
@@ -260,6 +277,13 @@ module.exports = gql`
     name: String
     category: String
     visible: Boolean
+  }
+
+  input social_media_input {
+    name: String
+    icon: String
+    update_icon: Upload
+    handle: String
   }
 
   extend type Query {
@@ -357,6 +381,10 @@ module.exports = gql`
       api_password: String
       api_signature: String
     ): Setting
+    updateNotificationOneSignal(
+      app_id: String
+      rest_api_key: String
+    ): Setting
     updateAppearanceHome(
       slider: [slider_input]
       add_section_in_home: add_section_in_home
@@ -373,6 +401,7 @@ module.exports = gql`
       email: String
       new_logo: Upload
       logo: String
+      social_media: [social_media_input]
     ): Setting
   }
 `;

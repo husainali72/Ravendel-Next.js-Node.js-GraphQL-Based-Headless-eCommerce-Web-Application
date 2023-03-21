@@ -267,6 +267,16 @@ const SeetingSchema = new Schema(
         },
       },
     },
+    notification: {
+      one_signal: {
+        app_id: {
+          type: String,
+        },
+        rest_api_key: {
+          type: String,
+        },
+      }
+    },
     appearance: {
       home: {
         slider: [
@@ -343,23 +353,16 @@ const SeetingSchema = new Schema(
         email: {
           type: String
         },
-        // logo: {
-        //   original: {
-        //     type: String,
-        //   },
-        //   large: {
-        //     type: String,
-        //   },
-        //   medium: {
-        //     type: String,
-        //   },
-        //   thumbnail: {
-        //     type: String,
-        //   },
-        // },
         logo: {
           type: String
         },
+        social_media: [
+          {
+            name: String,
+            icon: String,
+            handle: String
+          }
+        ]
       },
     },
   },
@@ -439,7 +442,7 @@ module.exports.createSettings = async () => {
         stock_display_format: "1",
       },
       order_options: {
-        order_prefix_list: [],
+        order_prefix_list: ["#"],
         order_prefix: "#",
         order_digits: 5
       }
@@ -491,6 +494,12 @@ module.exports.createSettings = async () => {
         api_password: "",
         api_signature: "",
       },
+    },
+    notification: {
+      one_signal: {
+        app_id: "",
+        rest_api_key: ""
+      }
     },
     appearance: {
       home: {
@@ -548,6 +557,33 @@ module.exports.createSettings = async () => {
         phone_number: "9797979797",
         email: "abc@gmail.com",
         logo: "",
+        social_media: [
+          {
+            name: "Facebook",
+            icon: "",
+            handle: ""
+          },
+          {
+            name: "Instagram",
+            icon: "",
+            handle: ""
+          },
+          {
+            name: "Pinterest",
+            icon: "",
+            handle: ""
+          },
+          {
+            name: "Youtube",
+            icon: "",
+            handle: ""
+          },
+          {
+            name: "Twitter",
+            icon: "",
+            handle: ""
+          }
+        ]
       },
       mobile: {
         mobile_section: [
