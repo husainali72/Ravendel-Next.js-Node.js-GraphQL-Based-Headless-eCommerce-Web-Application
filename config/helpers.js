@@ -3,6 +3,7 @@ const Validator = require("validator");
 const moment = require("moment")
 const nodemailer = require('nodemailer')
 const APP_KEYS = require('../config/keys')
+const { readFile } = require('node:fs/promises')
 
 const { uploadFile, FileDelete } = require("../config/aws");
 
@@ -791,3 +792,30 @@ const emptyCart = async(cart) => {
 }
 module.exports.emptyCart = emptyCart
 
+const addZipcodes = async(zipcode_file, filepath, zipcodes) => {
+  let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0].file
+  const stream = createReadStream()
+  const path = `.${filepath}/${filename}`
+  stream
+    .on("error", (error) => {
+      console.log(JSON.stringify(error));
+
+      fs.unlink(path, function (err) {
+        if (err) console.log(err);
+      });
+      return resolve({
+        success: false,
+        message: "This file can't be upload",
+      });
+    })
+    .pipe(fs.createWriteStream(path))
+
+  if(fs.existsSync(path)){
+    let csvData = await readFile(path, {encoding: 'utf8', flag: 'r'})
+    csvData = csvData.split(',')
+    if(zipcodes.length) zipcodes.map((zipcode) => csvData.unshift(zipcode))
+    csvData = [...new Set(csvData)]
+    return csvData
+  }
+}
+module.exports.addZipcodes = addZipcodes

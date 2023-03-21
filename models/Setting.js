@@ -100,6 +100,9 @@ const SeetingSchema = new Schema(
         zip: {
           type: String,
         },
+        hour: {
+          type: String
+        }
       },
       measurements: {
         weight_unit: {
@@ -136,6 +139,10 @@ const SeetingSchema = new Schema(
         stock_display_format: {
           type: String,
         },
+        manage_zipcodes: {
+          type: Boolean
+        },
+        zipcodes: [String]
       },
       order_options: {
         order_prefix_list: [String],
@@ -360,7 +367,8 @@ const SeetingSchema = new Schema(
           {
             name: String,
             icon: String,
-            handle: String
+            handle: String,
+            system: Boolean
           }
         ]
       },
@@ -424,6 +432,7 @@ module.exports.createSettings = async () => {
         country: "USA",
         state: "New York",
         zip: "100104",
+        hour: "Mon to Fri, 9am to 6pm",
       },
       measurements: {
         weight_unit: "kg",
@@ -440,6 +449,8 @@ module.exports.createSettings = async () => {
         out_of_stock_threshold: 1,
         out_of_stock_visibility: true,
         stock_display_format: "1",
+        manage_zipcodes: true,
+        zipcodes: []
       },
       order_options: {
         order_prefix_list: ["#"],
@@ -561,27 +572,32 @@ module.exports.createSettings = async () => {
           {
             name: "Facebook",
             icon: "",
-            handle: ""
+            handle: "",
+            system: true
           },
           {
             name: "Instagram",
             icon: "",
-            handle: ""
+            handle: "",
+            system: true
           },
           {
             name: "Pinterest",
             icon: "",
-            handle: ""
+            handle: "",
+            system: true
           },
           {
             name: "Youtube",
             icon: "",
-            handle: ""
+            handle: "",
+            system: true
           },
           {
             name: "Twitter",
             icon: "",
-            handle: ""
+            handle: "",
+            system: true
           }
         ]
       },

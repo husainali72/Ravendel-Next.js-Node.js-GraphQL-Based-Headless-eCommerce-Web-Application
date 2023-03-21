@@ -8,6 +8,7 @@ const {
   imageUnlink,
   checkToken,
   getdate,
+  addZipcodes
 } = require("../config/helpers");
 //const setting = require("../validations/setting");
 //const sanitizeHtml = require("sanitize-html");
@@ -66,6 +67,16 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    checkZipcode: async (root, args) => {
+      try {
+        const setting = await Setting.findOne({"store.inventory.zipcodes": {$in: args.zipcode}});
+        if (!setting) return {success: false, message: "Sorry, Product cannot be shipped to this zipcode"}
+        return {success: true, message: "Woohoo, Product can be shipped to your zipcode"}
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    }
   },
   Mutation: {
     updateGeneral: async (root, args, { id }) => {
@@ -157,6 +168,7 @@ module.exports = {
         setting.store.store_address.country = args.country;
         setting.store.store_address.state = args.state;
         setting.store.store_address.zip = args.zip;
+        setting.store.store_address.hour = args.hour;
         return await setting.save();
       } catch (error) {
         error = checkError(error);
@@ -193,6 +205,14 @@ module.exports = {
           args.out_of_stock_visibility;
         setting.store.inventory.stock_display_format =
           args.stock_display_format;
+        setting.store.inventory.manage_zipcodes =
+          args.manage_zipcodes;
+        if(args.zipcode_file){
+          const zipcodes = await addZipcodes(args.zipcode_file, "/assets/images/setting", setting.store.inventory.zipcodes)
+          setting.store.inventory.zipcodes = zipcodes
+        } else {
+          setting.store.inventory.zipcodes = args.zipcodes
+        }
 
         return await setting.save();
       } catch (error) {

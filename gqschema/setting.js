@@ -71,6 +71,7 @@ module.exports = gql`
     country: String
     state: String
     zip: String
+    hour: String
   }
 
   type MEASUREMENTS {
@@ -86,6 +87,8 @@ module.exports = gql`
     out_of_stock_threshold: Int
     out_of_stock_visibility: Boolean
     stock_display_format: String
+    manage_zipcodes: Boolean
+    zipcodes: customArray
   }
 
   type INVENTORY_NOTIFICATIONS {
@@ -286,10 +289,18 @@ module.exports = gql`
     handle: String
   }
 
+  type ZIPCODE {
+    success: Boolean
+    message: String
+  }
+
   extend type Query {
     setting: Setting
     getDateformat: [dateformat]
     getSettings: Setting
+    checkZipcode(
+      zipcode: String
+    ): ZIPCODE
   }
 
   extend type Mutation {
@@ -324,6 +335,7 @@ module.exports = gql`
       country: String
       state: String
       zip: String
+      hour: String
     ): Setting
     updateStoreMeasurements(
       weight_unit: String
@@ -337,6 +349,9 @@ module.exports = gql`
       out_of_stock_threshold: Int
       out_of_stock_visibility: Boolean
       stock_display_format: String
+      manage_zipcodes: Boolean
+      zipcodes: customArray
+      zipcode_file: Upload
     ): Setting
     updateStoreOrder(
       order_prefix: String
