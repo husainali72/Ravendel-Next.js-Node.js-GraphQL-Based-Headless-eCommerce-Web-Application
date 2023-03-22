@@ -28,7 +28,7 @@ const PaymentComponent = () => {
               textColor="primary"
               variant="scrollable"
             >
-              <Tab label="Cash On Delievery" {...TabProps(0)} />
+              <Tab label="Cash On Delivery" {...TabProps(0)} />
               <Tab label="Bank Transfer" {...TabProps(1)} />
               <Tab label="Stripe" {...TabProps(2)} />
               <Tab label="Paypal" {...TabProps(3)} />
