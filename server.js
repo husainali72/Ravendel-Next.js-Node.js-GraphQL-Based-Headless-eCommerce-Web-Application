@@ -40,7 +40,7 @@ const bodyParser = require("body-parser");
 const vhost = require("vhost");
 
 //connect db
-connectDB();
+connectDB();  
 
 //models
 /* const Tax = require("./models/Tax");
