@@ -17,7 +17,7 @@ import Auth from "../utils/auth";
 import palette from "../theme/palette";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { client_app_route_url } from "../utils/helper";
+import { bucketBaseURL, client_app_route_url } from "../utils/helper";
 import { ThemeProvider } from "@mui/material";
 import theme from "../theme";
 import RavendelLogo from "../assets/images/RavendelLogo.png"
@@ -32,7 +32,8 @@ const HeaderComponenet = () => {
     image: { thumbnail: "" },
   });
   const [anchorEl, setAnchorEl] = useState(null);
-
+  const logo = useSelector((state) => state.settings.settings.appearance.theme.logo) 
+  console.log("logo", logo)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -55,7 +56,7 @@ const HeaderComponenet = () => {
       <Toolbar className={classes.header}>
         <Link to={`${client_app_route_url}dashboard`}>
           <Typography variant="h6" component="h1" className={classes.textWhite}>
-            <img src={RavendelLogo} className="ravendelLogo" alt="Ravendel"></img>
+            <img  src={bucketBaseURL + logo} className="ravendelLogo" alt="Ravendel"></img>
           </Typography>
         </Link>
 

@@ -135,7 +135,7 @@ const DashboardComponent = () => {
           />
         </Grid>
         <Grid item lg={8} xl={9} xs={12}  >
-          <Paper sx={{ paddingRight: "15px" }} >
+          <Paper sx={{ paddingRight: "15px", paddingLeft: "15px" }} >
             <Box sx={{ width: 120, }}>
               <FormControl fullWidth size="small" sx={{ width: 120, m: 3 }}>
                 <InputLabel id="demo-simple-select-label">Year</InputLabel>
