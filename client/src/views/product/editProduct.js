@@ -131,8 +131,6 @@ const EditProductComponent = ({ params }) => {
                   value: brandState.brands[i].id,
                   label: brandState.brands[i].name,
                 };
-
-
                 break;
               }
             }
@@ -187,8 +185,19 @@ const EditProductComponent = ({ params }) => {
     }
     else {
       product.combinations = combination;
-
-      dispatch(productUpdateAction(product, navigate));
+      if (product.pricing.sellprice < product.pricing.price) {
+        dispatch(productUpdateAction(product, navigate));
+      }
+      else {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: false,
+            message: "Sale price couldn't exceed original price",
+            error: true,
+          },
+        })
+      }
     }
   };
 
@@ -248,6 +257,7 @@ const EditProductComponent = ({ params }) => {
     });
   };
 
+
   return (
     <>
       <Alert />
@@ -272,7 +282,7 @@ const EditProductComponent = ({ params }) => {
                     name="name"
                     value={product.name}
                     onChange={handleChange}
-                    onBlur={(e) => !product.url && isUrlExist(product.name)}
+                    onBlur={(e) => !product.url || e.target.value !== product.url ? isUrlExist(product.name) : null}
                     variant="outlined"
                     fullWidth
                   />
@@ -324,14 +334,26 @@ const EditProductComponent = ({ params }) => {
                       type="number"
 
                       value={product.pricing.price}
-                      onChange={(e) =>
-                        setProduct({
-                          ...product,
-                          pricing: {
-                            ...product.pricing,
-                            price: Number(e.target.value),
-                          },
-                        })
+                      onChange={(e) => {
+                        if (e.target.value >= 0) {
+                          e.target.value > product.pricing.sellprice ?
+                            setProduct({
+                              ...product,
+                              pricing: {
+                                ...product.pricing,
+                                price: Number(e.target.value),
+                              },
+                            })
+                            : dispatch({
+                              type: ALERT_SUCCESS,
+                              payload: {
+                                boolean: false,
+                                message: "Sale price couldn't exceed original price",
+                                error: true,
+                              }
+                            })
+                        }
+                      }
                       }
                     />
                   </Grid>
@@ -344,22 +366,26 @@ const EditProductComponent = ({ params }) => {
                       type="number"
 
                       value={product.pricing.sellprice}
-                      onChange={(e) => e.target.value < product.pricing.price ?
-                        setProduct({
-                          ...product,
-                          pricing: {
-                            ...product.pricing,
-                            sellprice: Number(e.target.value),
-                          },
-                        })
-                        : dispatch({
-                          type: ALERT_SUCCESS,
-                          payload: {
-                            boolean: false,
-                            message: "Sale price couldn't exceed original price",
-                            error: true,
-                          },
-                        })
+                      onChange={(e) => {
+                        if (e.target.value >= 0) {
+                          e.target.value < product.pricing.price ?
+                            setProduct({
+                              ...product,
+                              pricing: {
+                                ...product.pricing,
+                                sellprice: Number(e.target.value),
+                              },
+                            })
+                            : dispatch({
+                              type: ALERT_SUCCESS,
+                              payload: {
+                                boolean: false,
+                                message: "Sale price couldn't exceed original price",
+                                error: true,
+                              }
+                            })
+                        }
+                      }
                       }
                     />
                   </Grid>
@@ -448,6 +474,12 @@ const EditProductComponent = ({ params }) => {
                     setProduct({
                       ...product,
                       [name]: value,
+                    });
+                  }}
+                  onTaxClassChange={(value) => {
+                    setProduct({
+                      ...product,
+                      ['tax_class']: value,
                     });
                   }}
                 />

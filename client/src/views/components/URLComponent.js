@@ -11,7 +11,6 @@ const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl }) => {
   const classes = viewStyles();
   const [editPremalink, setEditPermalink] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const changePermalink = () => {
     if (editPremalink) {
       isUrlExist(url);
@@ -20,10 +19,10 @@ const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl }) => {
   };
 
   const isUrlExist = async (url) => {
-    // setLoading(true);
-    // let updatedUrl = await getUpdatedUrl(tableUrl, url);
-    // onInputChange(updatedUrl);
-    // setLoading(false);
+    setLoading(true);
+    let updatedUrl = await getUpdatedUrl(tableUrl, url);
+    onInputChange(updatedUrl);
+    setLoading(false);
   };
 
   return (
@@ -52,7 +51,7 @@ const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl }) => {
             variant="contained"
             onClick={changePermalink}
             className={classes.editpermalinkInputBtn}
-            style= {{marginLeft: "20px"}}
+            style={{ marginLeft: "20px" }}
           >
             {editPremalink ? "Ok" : "Edit"}
           </Button>

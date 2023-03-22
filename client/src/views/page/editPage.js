@@ -83,7 +83,10 @@ const EditPageComponent = ({ params }) => {
     }
 
   };
-
+  useEffect(() => {
+    var slugVal = page.title.replace(/[^A-Z0-9]/gi, "-");
+    setPage({ ...page, url: slugVal.toLowerCase() });
+  }, [page.title]);
   const handleChange = (e) => {
     setPage({ ...page, [e.target.name]: e.target.value });
   };
@@ -148,7 +151,7 @@ const EditPageComponent = ({ params }) => {
                       variant="contained"
                       onClick={changePermalink}
                       className={classes.editpermalinkInputBtn}
-                      style={{marginLeft: "20px"}}
+                      style={{ marginLeft: "20px" }}
                     >
                       {editPremalink ? "Ok" : "Edit"}
                     </Button>

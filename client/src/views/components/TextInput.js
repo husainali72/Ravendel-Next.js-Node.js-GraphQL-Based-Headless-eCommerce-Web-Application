@@ -1,8 +1,8 @@
 import React from "react";
-import { TextField } from"@mui/material";
+import { TextField } from "@mui/material";
 import viewStyles from "../viewStyles.js";
 
-const TextInput = ({ name, value, label, onInputChange, type, sizeSmall, ...other }) => {
+const TextInput = ({ name, onBlur, value, label, onInputChange, type, sizeSmall, ...other }) => {
   const classes = viewStyles();
   return (
     <TextField
@@ -13,8 +13,10 @@ const TextInput = ({ name, value, label, onInputChange, type, sizeSmall, ...othe
       onChange={onInputChange}
       variant="outlined"
       fullWidth
-      size={sizeSmall? "small" : 'medium'}
+      size={sizeSmall ? "small" : 'medium'}
+      onBlur={onBlur}
       {...other}
+
     />
   );
 };

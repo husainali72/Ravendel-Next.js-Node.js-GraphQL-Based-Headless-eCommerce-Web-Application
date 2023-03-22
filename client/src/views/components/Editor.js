@@ -9,7 +9,6 @@ const TinymceEditorComponent = ({ value, onEditorChange }) => {
   const handleEditorChange = (e) => {
     onEditorChange(e.target.getContent());
   };
-
   useEffect(() => {
     setTimeout(() => {
       setShow(true);
@@ -41,7 +40,7 @@ const TinymceEditorComponent = ({ value, onEditorChange }) => {
             paste_data_images: true,
             convert_urls: false,
           }}
-          onChange={handleEditorChange}
+          onEditorChange={handleEditorChange}
           onBlur={handleEditorChange}
         />
       ) : (

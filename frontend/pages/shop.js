@@ -86,8 +86,8 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                     {onSaleProduct && onSaleProduct?.length > 0 ? (<>
                                         {onSaleProduct.map((product, i) => (
                                             i < 5 ?
-                                                <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
-                                                    <div style={{ display: 'flex', marginTop: 3 }} key={i}>
+                                                <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`} >
+                                                    <div style={{ display: 'flex', marginTop: 3, cursor: 'pointer' }} key={i} >
                                                         <div>
                                                             <img className="widget-category-img" src={getImage(product.feature_image, 'original')} />
                                                         </div>

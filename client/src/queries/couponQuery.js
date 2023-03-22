@@ -153,7 +153,7 @@ const ADD_COUPON = gql`
     $code: String
     $description: String
     $discount_type: String
-    $discount_value: Int
+    $discount_value: Float
     $free_shipping: Boolean
     $expire: String
     $minimum_spend: Int
@@ -242,7 +242,7 @@ const UPDATE_COUPON = gql`
     $code: String
     $description: String
     $discount_type: String
-    $discount_value: Int
+    $discount_value: Float
     $free_shipping: Boolean
     $expire: String
     $minimum_spend: Int

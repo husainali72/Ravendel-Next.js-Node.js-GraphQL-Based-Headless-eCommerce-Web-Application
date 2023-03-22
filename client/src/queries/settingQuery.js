@@ -158,7 +158,9 @@ const SETTING_TILE_DATA = gql`
           name
           icon
           handle
+          
         }
+        
       }
       mobile {
         mobile_section {
@@ -326,7 +328,7 @@ const UPDATE_STORE_INVENTORY = gql`
 const UPDATE_STORE_ORDER = gql`
   mutation(
     $order_prefix: String
-    $order_digits: Number
+    $order_digits: Int
   ) {
     updateStoreOrder(
       order_prefix: $order_prefix

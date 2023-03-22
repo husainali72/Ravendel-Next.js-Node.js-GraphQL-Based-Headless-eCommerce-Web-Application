@@ -47,7 +47,7 @@ const AllOrdersComponent = () => {
     },
     {
       name: 'payment_status',
-      itle: "payment status",
+      title: "payment status",
       sortingactive: false
     },
     {

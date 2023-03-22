@@ -207,7 +207,8 @@ const AllCategoryComponent = () => {
                 onChange={handleChange}
                 value={singlecategory.name}
                 onBlur={(e) =>
-                  !singlecategory.url && isUrlExist(singlecategory.name)
+                  !singlecategory.url || singlecategory.url !== e.target.value ? isUrlExist(singlecategory.name) : null
+
                 }
               />
               <Box component="div" mb={singlecategory.url ? 2 : 0}>

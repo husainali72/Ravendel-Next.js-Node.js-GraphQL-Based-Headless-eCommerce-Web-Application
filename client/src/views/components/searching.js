@@ -360,7 +360,8 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
                     </div>
                 </div>
             </Box>
-            <Button color='error' onClick={removeAllFilter} className={classes.removefilter}>remove </Button>
+            {searchState || startDate || endDate || shippingstatus || paymentstatus || MuiTabsvalue !== 'All' ?
+                <Button color='error' onClick={removeAllFilter} className={classes.removefilter}>remove </Button> : null}
         </div>
     );
 }

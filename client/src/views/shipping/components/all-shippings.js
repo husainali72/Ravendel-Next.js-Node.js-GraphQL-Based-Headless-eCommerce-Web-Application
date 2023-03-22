@@ -38,7 +38,7 @@ const AllShippingComponentComponent = ({
         id: shipping._id,
         amount: shipping.amount,
         name: shipping.name,
-
+        system: shipping.system
       }
       data.push(object)
     })

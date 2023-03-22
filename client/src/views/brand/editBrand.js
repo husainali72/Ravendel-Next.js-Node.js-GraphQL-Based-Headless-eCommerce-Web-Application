@@ -5,7 +5,7 @@ import viewStyles from "../viewStyles.js";
 import clsx from "clsx";
 import { brandUpdateAction, brandsAction } from "../../store/action/";
 import { useDispatch, useSelector } from "react-redux";
-import { Loading, TopBar, Alert, TextInput, CardBlocks } from "../components";
+import { Loading, TopBar, Alert, TextInput, CardBlocks, URLComponent } from "../components";
 import {
   client_app_route_url,
   bucketBaseURL,
@@ -17,6 +17,7 @@ import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { get } from "lodash";
 import { useParams, useNavigate } from "react-router-dom";
+import { getUpdatedUrl } from "../../utils/service.js";
 const EditBrandComponenet = ({ params }) => {
   const ID = params.id || "";
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const EditBrandComponenet = ({ params }) => {
             if (editbrand.id === ID) {
               brand.id = editbrand.id;
               setBrand({ ...brand, ...editbrand });
-              if (editbrand.brand_logo ) {
+              if (editbrand.brand_logo) {
                 setLogoImage(bucketBaseURL + editbrand.brand_logo);
               }
             }
@@ -69,7 +70,6 @@ const EditBrandComponenet = ({ params }) => {
   }, []);
   const updateBrand = () => {
     var errors = validate(["name", 'url'], brand);
-
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -83,8 +83,6 @@ const EditBrandComponenet = ({ params }) => {
     else {
       dispatch(brandUpdateAction(brand, navigate));
     }
-
-
   };
 
   const handleChange = (e) => {
@@ -104,10 +102,13 @@ const EditBrandComponenet = ({ params }) => {
     setBrand({ ...brand, [e.target.name]: e.target.files[0] });
   };
 
-  const toInputLowercase = e => {
-    e.target.value = ("" + e.target.value).toLowerCase();
+  const isUrlExist = async (url) => {
+    let updatedUrl = await getUpdatedUrl("Brand", url);
+    setBrand({
+      ...brand,
+      url: updatedUrl,
+    });
   };
-
   return (
     <>
       {loading && <Loading />}
@@ -132,15 +133,30 @@ const EditBrandComponenet = ({ params }) => {
                   label="Brand Name"
                   name="name"
                   onInputChange={handleChange}
+                  onBlur={(e) => (
+                    !brand.url || brand.url !== e.target.value ? isUrlExist(brand.name) : null
+                  )}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextInput
-                  value={brand.url}
+                {/* <TextInput
+                  value={brand.name}
                   label="Url"
                   name="url"
                   onInputChange={handleChange}
                   onInput={toInputLowercase}
+                 
+                /> */}
+                <URLComponent
+                  url={brand.url}
+                  onInputChange={(updatedUrl) => {
+                    setBrand({
+                      ...brand,
+                      url: updatedUrl,
+                    });
+                  }}
+                  pageUrl="brand"
+                  tableUrl="brand"
                 />
               </Grid>
               <Grid item xs={12}>
