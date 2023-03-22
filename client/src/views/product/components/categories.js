@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  Grid,
-  Box,
-  FormControlLabel,
-  Checkbox,
-  Collapse,
-} from "@material-ui/core";
-import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
-import RemoveCircleRoundedIcon from "@material-ui/icons/RemoveCircleRounded";
-import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTwoTone";
+import { Grid, Box, FormControlLabel, Checkbox, Collapse } from "@mui/material";
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+import FiberManualRecordTwoToneIcon from "@mui/icons-material/FiberManualRecordTwoTone";
 import { useSelector, useDispatch } from "react-redux";
 import { unflatten } from "../../../utils/helper";
 import { categoriesAction } from "../../../store/action/";
@@ -63,7 +57,7 @@ const CategoriesComponent = ({ onCategoryChange }) => {
     return categories.map((cat) => {
       if (!cat.children.length) {
         return (
-          <Grid container alignItems='center' key={cat.name}>
+          <Grid container alignItems="center" key={cat.name}>
             <Grid item>
               <Box mr={2}>
                 <FiberManualRecordTwoToneIcon />
@@ -73,9 +67,9 @@ const CategoriesComponent = ({ onCategoryChange }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    color='primary'
+                    color="primary"
                     checked={cat.checked}
-                    name='categoryIds'
+                    name="categoryIds"
                     onChange={(e) => handleCategeryCheckbox(cat)}
                     value={cat.id}
                   />
@@ -88,22 +82,22 @@ const CategoriesComponent = ({ onCategoryChange }) => {
       }
       return (
         <Grid key={cat.name}>
-          <Grid container alignItems='center' className='category-dropdown'>
+          <Grid container alignItems="center" className="category-dropdown">
             <Grid item>
               <Box mr={2}>
                 <span
-                  className='toggle-icon'
+                  className="toggle-icon"
                   onClick={() => collapseToggle(cat)}
                 >
                   {collapseCategory[cat.id] ? (
                     <RemoveCircleRoundedIcon
                       style={{ fontSize: 22 }}
-                      className='expand-right'
+                      className="expand-right"
                     />
                   ) : (
                     <AddCircleRoundedIcon
                       style={{ fontSize: 22 }}
-                      className='expand-right'
+                      className="expand-right"
                     />
                   )}
                 </span>
@@ -113,9 +107,9 @@ const CategoriesComponent = ({ onCategoryChange }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    color='primary'
+                    color="primary"
                     checked={cat.checked}
-                    name='categoryIds'
+                    name="categoryIds"
                     onChange={(e) => handleCategeryCheckbox(cat)}
                     value={cat.id}
                     indeterminate={checkedChildernChecked(cat)}
@@ -128,9 +122,9 @@ const CategoriesComponent = ({ onCategoryChange }) => {
           <Box ml={4}>
             <Collapse
               in={collapseCategory[cat.id]}
-              timeout='auto'
+              timeout="auto"
               unmountOnExit
-              className='submenu-sidebar'
+              className="submenu-sidebar"
             >
               {menuListing(cat.children)}
             </Collapse>

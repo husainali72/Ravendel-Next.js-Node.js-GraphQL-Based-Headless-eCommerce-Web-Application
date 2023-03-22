@@ -17,6 +17,16 @@ const CartSchema = new Schema({
         type: Schema.ObjectId,
         required: true
       },
+      product_title: {
+        type: String,
+        required: true
+      },
+      product_image: {
+        type: String,
+      },
+      product_price: {
+        type: Number,
+      },
       qty: {
         type: Number,
         required: true

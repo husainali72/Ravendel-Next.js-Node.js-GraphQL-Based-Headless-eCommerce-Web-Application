@@ -1,56 +1,88 @@
-import { colors } from '@material-ui/core';
+import { colors } from "@mui/material";
 
-const white = '#FFFFFF';
-const black = '#000000';
+const white = "#FFFFFF";
+const black = "#000000";
 
 export default {
   black,
   white,
   primary: {
     contrastText: white,
-    dark: '#154050',
-    main: '#154050',
-    light: '#154050',
+    dark: "#154050",
+    main: "#154050",
+    light: "#154050",
   },
   secondary: {
     contrastText: white,
     dark: colors.blue[900],
-    main: colors.blue['A400'],
-    light: colors.blue['A400']
+    main: colors.blue["A400"],
+    light: colors.blue["A400"],
+  },
+  shipped: {
+    contrastText: white,
+    dark: "#85CDFD",
+    main: "#85CDFD",
+    light: "#85CDFD",
   },
   success: {
     contrastText: white,
     dark: colors.green[900],
     main: colors.green[600],
-    light: colors.green[400]
+    light: colors.green[400],
+  },
+  pending: {
+    contrastText: white,
+    dark: "#FC7300",
+    main: "#FC7300",
+    light: "#FC7300",
+  },
+  failed: {
+    contrastText: white,
+    dark: "#A9294F",
+    main: "#A9294F",
+    light: "#A9294F",
+  },
+  outfordelivery: {
+    contrastText: white,
+    dark: "#FDB44B",
+    main: "#FDB44B",
+    light: "#FDB44B",
+    width: "120px",
+  },
+  delivered: {
+    contrastText: white,
+    dark: "#00B7A8",
+    main: "#00B7A8",
+    light: "#00B7A8",
+    width: "120px",
   },
   info: {
     contrastText: white,
     dark: colors.blue[900],
     main: colors.blue[600],
-    light: colors.blue[400]
+    light: colors.blue[400],
   },
   warning: {
     contrastText: white,
     dark: colors.orange[900],
     main: colors.orange[600],
-    light: colors.orange[400]
+    light: colors.orange[400],
   },
   error: {
     contrastText: white,
     dark: colors.red[900],
     main: colors.red[600],
-    light: colors.red[400]
+    light: colors.red[400],
   },
   text: {
     primary: colors.blueGrey[900],
     secondary: colors.blueGrey[600],
-    link: colors.blue[600]
+    link: colors.blue[600],
   },
   background: {
-    default: '#F4F6F8',
-    paper: white
+    default: "#F4F6F8",
+    paper: white,
   },
   icon: colors.blueGrey[600],
-  divider: colors.grey[200]
+  divider: colors.grey[200],
 };

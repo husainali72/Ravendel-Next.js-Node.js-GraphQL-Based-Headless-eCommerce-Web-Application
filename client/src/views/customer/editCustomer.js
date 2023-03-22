@@ -15,9 +15,9 @@ import {
   Tooltip,
   FormControlLabel,
   Checkbox,
-  useMediaQuery
-} from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
+  useMediaQuery,
+} from "@mui/material";
+import { useTheme } from "@mui/styles";
 import {
   customerUpdateAction,
   addressbookAddAction,
@@ -26,17 +26,30 @@ import {
   customersAction,
 } from "../../store/action/";
 import viewStyles from "../viewStyles.js";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import BusinessIcon from "@material-ui/icons/Business";
-import PhoneIcon from "@material-ui/icons/Phone";
-import HomeIcon from "@material-ui/icons/Home";
-import Rating from "@material-ui/lab/Rating";
-import { isEmpty } from "../../utils/helper";
-import { Loading, TextInput, PasswordInput, TopBar, Alert, CardBlocks } from "../components";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import BusinessIcon from "@mui/icons-material/Business";
+import PhoneIcon from "@mui/icons-material/Phone";
+import HomeIcon from "@mui/icons-material/Home";
+import Rating from "@mui/material/Rating";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
+import {
+  Loading,
+  TextInput,
+  PasswordInput,
+  TopBar,
+  Alert,
+  CardBlocks,
+} from "../components";
 import { useDispatch, useSelector } from "react-redux";
-
+import { useNavigate, useParams } from "react-router-dom";
+import theme from "../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+import { get } from "lodash";
+import { validate, validatePhone } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import PhoneNumber from "../components/phoneNumberValidation";
 var SingleCustomerObject = {
   id: "",
   _id: "",
@@ -61,9 +74,10 @@ var customerObj = {
   phone: "",
 };
 
-const EditCustomer = (props) => {
+const EditCustomerComponent = ({ params }) => {
+  const ID = params.id || "";
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = viewStyles();
   const dispatch = useDispatch();
   const Customers = useSelector((state) => state.customers);
@@ -71,36 +85,81 @@ const EditCustomer = (props) => {
   const [singleCustomer, setSingleCustomer] = useState(SingleCustomerObject);
   const [customer, setcustomer] = useState(customerObj);
 
+  const [loading, setloading] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setloading(get(Customers, "loading"));
+  }, [get(Customers, "loading")]);
   useEffect(() => {
     document.forms[0].reset();
     setcustomer(customerObj);
 
-    if (isEmpty(Customers.customers)) {
+    if (isEmpty(get(Customers, "customers"))) {
       dispatch(customersAction());
-    }
+    } else {
+      for (let i in Customers.customers) {
+        if (Customers.customers[i].id === ID) {
+          SingleCustomerObject.id = Customers.customers[i].id;
+          setSingleCustomer(SingleCustomerObject);
+          setcustomer({ ...customer, ...Customers.customers[i] });
 
-    for (let i in Customers.customers) {
-      if (Customers.customers[i].id === props.match.params.id) {
-        SingleCustomerObject.id = Customers.customers[i].id;
-        setSingleCustomer(SingleCustomerObject);
-        setcustomer({ ...customer, ...Customers.customers[i] });
-        break;
+
+          break;
+        }
       }
+      setEditMode(false);
     }
-
-    setEditMode(false);
-  }, [Customers.customers]);
+  }, [get(Customers, "customers")]);
 
   const updateCustomer = (e) => {
+
     e.preventDefault();
-    dispatch(customerUpdateAction(customer));
+
+
+    let errors = validate(['company', "email", "last_name", "first_name"], customer);
+
+    let phoneNumberError = validatePhone(["phone"], customer)
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(phoneNumberError)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: phoneNumberError,
+          error: true,
+        },
+      });
+    }
+
+    else {
+
+      dispatch(customerUpdateAction(customer, navigate));
+    }
+
+
   };
 
   const handleChange = (e) => {
     setcustomer({ ...customer, [e.target.name]: e.target.value });
   };
 
+  const handleOnChange = (value, name) => {
+    setcustomer({ ...customer, [name]: value });
+  };
+
   const editAddress = (address) => {
+
     setEditMode(true);
     setSingleCustomer({ ...SingleCustomerObject, ...address });
   };
@@ -109,26 +168,83 @@ const EditCustomer = (props) => {
     setSingleCustomer({ ...singleCustomer, [e.target.name]: e.target.value });
   };
 
+  const AddressBookPhonehandlechange = (value, name) => {
+
+    setSingleCustomer({ ...singleCustomer, [name]: value });
+  };
+
   const addressInput = (label, name) => {
+
     return (
       <Grid item md={12} sm={6} xs={12}>
-        <TextInput
-          label={label}
-          name={name}
-          value={singleCustomer[name]}
-          onInputChange={handleAddressInputField}
-          sizeSmall
-        />
+
+        {label === 'Phone' ? <PhoneNumber handleOnChange={AddressBookPhonehandlechange} phoneValue={singleCustomer.phone} width="100%" className="phoneValidation"/> :
+
+          <TextInput
+            label={label}
+            name={name}
+            value={singleCustomer[name]}
+            onInputChange={handleAddressInputField}
+            sizeSmall
+          />}
       </Grid>
     );
   };
 
   const updateAddress = () => {
-    dispatch(addressbookUpdateAction(singleCustomer));
+
+    let phoneNumberError = validatePhone(["phone"], singleCustomer)
+    let errors = validate(["pincode", "country", "state", "city", "address_line1", 'company',"last_name", "first_name",], singleCustomer);
+    if (!isEmpty(errors)) {
+     dispatch({
+       type: ALERT_SUCCESS,
+       payload: {
+         boolean: false,
+         message: errors,
+         error: true,
+       },
+     });
+   } else if (!isEmpty(phoneNumberError)) {
+    dispatch({
+      type: ALERT_SUCCESS,
+      payload: {
+        boolean: false,
+        message: phoneNumberError,
+        error: true,
+      },
+    });
+  }
+   else {
+    dispatch(addressbookUpdateAction(singleCustomer))}
   };
 
   const addAddress = () => {
-    dispatch(addressbookAddAction(singleCustomer));
+    let phoneNumberError = validatePhone(["phone"], singleCustomer)
+    let errors = validate(["pincode", "country", "state", "city", "address_line1", 'company',"last_name", "first_name",], singleCustomer);
+    if (!isEmpty(errors)) {
+     dispatch({
+       type: ALERT_SUCCESS,
+       payload: {
+         boolean: false,
+         message: errors,
+         error: true,
+       },
+     });
+   }  else if (!isEmpty(phoneNumberError)) {
+    dispatch({
+      type: ALERT_SUCCESS,
+      payload: {
+        boolean: false,
+        message: phoneNumberError,
+        error: true,
+      },
+    });
+  }
+   else {
+    dispatch(addressbookAddAction(singleCustomer))
+ };
+   
+
   };
 
   const deleteAddressBook = (_id) => {
@@ -145,119 +261,128 @@ const EditCustomer = (props) => {
     setSingleCustomer(SingleCustomerObject);
   };
 
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
+  };
+
+
+
   return (
-    <Fragment>
+    <>
       <Alert />
-      {Customers.loading && <Loading />}
+      {loading && <Loading />}
       <form>
         <TopBar
           title="Edit Customer"
           onSubmit={updateCustomer}
           submitTitle="Update"
-          backLink={"/all-customer"}
+          backLink={`${client_app_route_url}all-customer`}
         />
 
         {/* ==============Customer Details============== */}
 
-        <Grid container spacing={isSmall ? 2 : 4} className={classes.secondmainrow}>
+        <Grid
+          container
+          spacing={isSmall ? 2 : 4}
+          className={classes.secondmainrow}
+        >
           <Grid item lg={12}>
-              <CardBlocks title="Customer Information" nomargin>
-                <Grid container spacing={isSmall ? 2 : 4}>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <TextInput
-                      value={customer.first_name}
-                      label="First Name"
-                      name="first_name"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <TextInput
-                      value={customer.last_name}
-                      label="Last Name"
-                      name="last_name"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <TextInput
-                      value={customer.email}
-                      label="Email"
-                      name="email"
-                      onInputChange={handleChange}
-                      type="email"
-                    />
-                  </Grid>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <PasswordInput
-                      name="password"
-                      value={customer.password}
-                      label="Password"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <TextInput
-                      value={customer.company}
-                      label="Company"
-                      name="company"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={3} sm={6} xs={12}>
-                    <TextInput
-                      value={customer.phone}
-                      label="Phone"
-                      name="phone"
-                      onInputChange={handleChange}
-                    />
-                  </Grid>
+            <CardBlocks title="Customer Information" nomargin>
+              <Grid container spacing={isSmall ? 2 : 4}>
+                <Grid item md={3} sm={6} xs={12}>
+                  <TextInput
+                    value={customer.first_name}
+                    label="First Name"
+                    name="first_name"
+                    onInputChange={handleChange}
+                  />
                 </Grid>
+                <Grid item md={3} sm={6} xs={12}>
+                  <TextInput
+                    value={customer.last_name}
+                    label="Last Name"
+                    name="last_name"
+                    onInputChange={handleChange}
+                  />
+                </Grid>
+                <Grid item md={3} sm={6} xs={12}>
+                  <TextInput
+                    value={customer.email}
+                    label="Email"
+                    name="email"
+                    onInputChange={handleChange}
+                    type="email"
+                    onInput={toInputLowercase}
+                  />
+                </Grid>
+                <Grid item md={3} sm={6} xs={12}>
+                  <PasswordInput
+                    name="password"
+                    value={customer.password}
+                    label="Password"
+                    onInputChange={handleChange}
+                  />
+                </Grid>
+
+                <Grid item md={3} sm={6} xs={12}>
+                  <TextInput
+                    value={customer.company}
+                    label="Company"
+                    name="company"
+                    onInputChange={handleChange}
+                  />
+                </Grid>
+
+                <Grid item md={3} sm={6} xs={12} >
+                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={customer.phone} width= "100%"/>
+
+                </Grid>
+              </Grid>
             </CardBlocks>
           </Grid>
 
           {/* ==============Address Books============== */}
 
           <Grid item md={4} sm={12} xs={12}>
-              <CardBlocks title={`${editMode ? "Edit" : "Add"} Adress`} >
-                <Grid container spacing={2}>
-                  {addressInput("First Name", "first_name")}
+            <CardBlocks title={`${editMode ? "Edit" : "Add"} Adress`}>
+              <Grid container spacing={2}>
+                {addressInput("First Name", "first_name")}
 
-                  {addressInput("Last Name", "last_name")}
+                {addressInput("Last Name", "last_name")}
 
-                  {addressInput("Company", "company")}
+                {addressInput("Company", "company")}
 
-                  {addressInput("Phone", "phone")}
+                {addressInput("Phone", "phone")}
 
-                  {addressInput("Address line1", "address_line1")}
+                {addressInput("Address line1", "address_line1")}
 
-                  {addressInput("Address line2", "address_line2")}
+                {addressInput("Address line2", "address_line2")}
 
-                  {addressInput("City", "city")}
+                {addressInput("City", "city")}
 
-                  {addressInput("State", "state")}
+                {addressInput("State", "state")}
 
-                  {addressInput("Country", "country")}
+                {addressInput("Country", "country")}
 
-                  {addressInput("Pincode", "pincode")}
-                  <Grid item md={12}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          color="primary"
-                          checked={singleCustomer.default_address}
-                          onChange={(e) =>
-                            setSingleCustomer({
-                              ...singleCustomer,
-                              default_address: e.target.checked,
-                            })
-                          }
-                        />
-                      }
-                      label="Make it Default Address"
-                    />
-                  </Grid>
+                {addressInput("Pincode", "pincode")}
+                <Grid item md={12}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={singleCustomer.default_address}
+                        onChange={(e) =>
+                          setSingleCustomer({
+                            ...singleCustomer,
+                            default_address: e.target.checked,
+                          })
+                        }
+                      />
+                    }
+                    label="Make it Default Address"
+                  />
                 </Grid>
+              </Grid>
               <CardActions>
                 <Button
                   size="small"
@@ -284,8 +409,8 @@ const EditCustomer = (props) => {
               {customer &&
                 customer.address_book &&
                 customer.address_book.map((address, index) => (
-                  <Grid item md={6} sm={6} xs={12} key={index}>
-                    <Box>
+                  <Grid item md={6} sm={6} xs={12} key={index} >
+                    <Box style={{ marginTop: "22px" }}>
                       <Card>
                         <CardHeader
                           title="Address"
@@ -386,8 +511,16 @@ const EditCustomer = (props) => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 
-export default EditCustomer;
+// export default EditCustomer;
+export default function EditCustomer() {
+  const params = useParams();
+  return (
+    <ThemeProvider theme={theme}>
+      <EditCustomerComponent params={params} />
+    </ThemeProvider>
+  );
+}

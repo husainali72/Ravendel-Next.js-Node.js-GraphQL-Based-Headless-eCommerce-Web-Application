@@ -1,19 +1,22 @@
 import Auth from "./auth";
-import jumpTo from "./navigation";
 import axios from "axios";
-import { isEmpty } from "./helper";
+import { isEmpty, client_app_route_url } from "./helper";
 import APclient from "../Client";
-import gql from "graphql-tag";
+
+const location = window.location.origin;
+// const location = "http://localhost:8000";
+
 export const mutation = async (query, variables) => {
   try {
     const response = await APclient.mutate({
       mutation: query,
       variables,
+      fetchPolicy: "no-cache",
     });
     return Promise.resolve(response);
+
   } catch (error) {
     const errors = JSON.parse(JSON.stringify(error));
-    console.log(errors);
     if (
       errors.graphQLErrors.length &&
       !isEmpty(errors.graphQLErrors[0].message)
@@ -57,8 +60,7 @@ export const query = async (query, variables) => {
   }
 };
 
-const service = (config) => {
-  //header authorization
+const service = (config, navigate) => {
   if (Auth.getToken()) {
     const token = Auth.getToken();
     config.headers = {
@@ -72,7 +74,6 @@ const service = (config) => {
       return response;
     },
     function (error) {
-      console.log(error);
       if (!error.response) {
         error.response = {
           data: "network error",
@@ -81,36 +82,35 @@ const service = (config) => {
       }
       if (error.response.status === 401) {
         Auth.logout();
-        jumpTo("/login");
+        navigate(`${client_app_route_url}login`);
         throw error;
       }
       return Promise.reject(error);
     }
   );
-  //config.baseURL = baseUrl;
   return axios(config);
 };
 export default service;
 
-export const login = (email, password) => {
+export const login = (email, password, navigate) => {
   const body = {
     email: email,
     password: password,
   };
   return service({
     method: "POST",
-    url: "api/users/login",
+    url: `${location}/api/users/login`,
     data: body,
-  }).then((res) => {
-    Auth.setUserToken(res.data);
+  }, navigate).then(async (res) => {
+    await Auth.setUserToken(res.data);
     return res;
   });
 };
 
 export const getUpdatedUrl = (table, url) => {
-  return service({ 
+  return service({
     method: "POST",
-    url: "/api/misc/checkurl",
+    url: `${location}/api/misc/checkurl`,
     data: { url: url, table: table },
   }).then((res) => {
     if (res.data.success) {
@@ -122,7 +122,7 @@ export const getUpdatedUrl = (table, url) => {
 export const deleteProductVariation = (id) => {
   return service({
     method: "POST",
-    url: "/api/misc/delete_variation",
+    url: `${location}/api/misc/delete_variation`,
     data: { id: id },
   }).then((res) => {
     if (res.data.success) {
@@ -134,22 +134,11 @@ export const deleteProductVariation = (id) => {
 export const deleteProductVariationImage = (obj) => {
   return service({
     method: "POST",
-    url: "/api/misc/delete_image",
+    url: `${location}/api/misc/delete_image`,
     data: { image: obj },
   }).then((res) => {
     if (res.data.success) {
       return Promise.resolve(true);
-    }
-  });
-};
-
-export const getDashboardData = () => {
-  return service({
-    method: "POST",
-    url: "/api/misc/dashboard_data"
-  }).then((res) => {
-    if (res.data.success) {
-      return Promise.resolve(res.data.dashBoardData);
     }
   });
 };

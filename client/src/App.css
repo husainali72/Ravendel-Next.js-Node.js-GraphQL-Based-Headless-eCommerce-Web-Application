@@ -1,30 +1,38 @@
 ::-webkit-scrollbar {
   width: 7px;
 }
+
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #888;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
 .category-dropdown li {
   list-style: none;
   padding-bottom: 7px;
   padding-top: 7px;
   border-bottom: 1px solid #ddd;
 }
+
 .category-dropdown .has-submenu ul {
   margin-left: 20px;
 }
+
 .category-dropdown .has-submenu li {
   border-bottom: none;
 }
+
 .category-dropdown .has-submenu .category-dropdown li.has-submenu {
   border-bottom: 1px solid #ddd !important;
 }
+
 .topbar {
   position: fixed;
   background-color: #fff;
@@ -34,43 +42,62 @@
   width: calc(100% - 175px) !important;
   box-shadow: 0 0 20px -10px grey;
 }
-.topbar-action{
+
+.topbar-action {
   text-align: right;
   padding-right: 20px;
+
 }
+
 .text-right {
   text-align: right;
 }
+
 .padding-right-2 {
   padding-right: 20px;
 }
+
 .toggle-icon {
   cursor: pointer;
   float: right;
 }
+
 .product-status-chip {
   padding: 5px 15px;
   border-radius: 20px;
 }
+
 .product-status-chip.Pendingpayment {
+
   background-color: #170000;
   color: #fff;
 }
+
 .product-status-chip.Processing {
   background-color: orange;
 }
+
 .product-status-chip.Onhold {
   background-color: #cfeffb;
   color: #797979;
 }
+
+.MuiBadge-badge {
+  text-transform: uppercase;
+
+
+}
+
 .product-status-chip.Completed {
   background-color: green;
   color: #fff;
 }
+
 .product-status-chip.Cancelled {
   background-color: #941919;
   color: #fff;
 }
+
 .product-status-chip.Refunded {
   background-color: #eee;
   color: #9a9898;
@@ -79,6 +106,7 @@
 .radioRoot:hover {
   background-color: transparent;
 }
+
 .radioIcon {
   border-radius: 50%;
   width: 16px;
@@ -86,27 +114,27 @@
   box-shadow: inset 0 0 0 1px rgba(16, 22, 26, 0.2),
     inset 0 -1px 0 rgba(16, 22, 26, 0.1);
   background-color: #f5f8fa;
-  background-image: linear-gradient(
-    180deg,
-    hsla(0, 0%, 100%, 0.8),
-    hsla(0, 0%, 100%, 0)
-  );
+  background-image: linear-gradient(180deg,
+      hsla(0, 0%, 100%, 0.8),
+      hsla(0, 0%, 100%, 0));
 }
+
 .radioIcon.Mui-focusVisible {
   outline: 2px auto rgba(19, 124, 189, 0.6);
   outline-offset: 2;
 }
+
 .radioIcon input:hover {
   background-color: #ebf1f5;
 }
+
 .radiocheckedIcon {
   background-color: #137cbd;
-  background-image: linear-gradient(
-    180deg,
-    hsla(0, 0%, 100%, 0.1),
-    hsla(0, 0%, 100%, 0)
-  );
+  background-image: linear-gradient(180deg,
+      hsla(0, 0%, 100%, 0.1),
+      hsla(0, 0%, 100%, 0));
 }
+
 .radiocheckedIcon:before {
   display: block;
   width: 16px;
@@ -114,9 +142,11 @@
   background-image: radial-gradient(#fff, #fff 28%, transparent 32%);
   content: "";
 }
+
 .radiocheckedIcon:before input:hover {
   background-color: #106ba3;
 }
+
 .top-helper .MuiFormHelperText-root.MuiFormHelperText-contained {
   position: absolute;
   top: -10px;
@@ -125,39 +155,50 @@
   color: #000;
   padding: 0 3px;
 }
+
 .menu-collapse .MuiListItemIcon-root {
   display: none !important;
 }
+
 .text-center {
   text-align: center;
 }
+
 .flex-end {
   justify-content: flex-end;
 }
+
 .marginBottom2 {
   margin-bottom: 20px !important;
 }
+
 .makeStyles-settingsTabs-404 .MuiTab-wrapper {
   align-items: flex-start !important;
   color: #fff !important;
 }
+
 .makeStyles-settingLeft-420 .PrivateTabIndicator-colorPrimary-485 {
   background-color: #8bc34a !important;
 }
+
 .makeStyles-settingLeft-420 .PrivateTabIndicator-vertical-487 {
   width: 5px !important;
 }
+
 .setting-footer {
   height: 50px;
   background-color: #d8d8d8;
 }
+
 .setting-content {
   height: calc(100%);
   overflow-y: auto;
 }
+
 .text-left-tab .MuiTab-wrapper {
   align-items: flex-start !important;
 }
+
 .react-tags {
   position: relative;
   padding: 6px 0 0 6px;
@@ -294,17 +335,45 @@
   overflow: inherit !important;
 }
 
+.css-1ynyhby{
+  margin: 10px 0 !important;
+  display: block;
+}
+
 
 @media screen and (max-width: 1279px) {
-  .topbar{
+  .topbar {
     width: 100% !important
   }
 }
 
 @media screen and (max-width: 450px) {
-  .topbar-action{
+  .topbar-action {
     text-align: center;
     padding-bottom: 10px;
     padding-right: 0;
   }
 }
+
+
+.ravendelLogo{
+  width: 100px;
+  max-height: 50px;
+  object-fit: contain;
+  padding: 5px 0;
+}
+
+.mobileImage {
+  object-fit: contain; 
+  height: 100%;
+  width: 100%;
+}
+
+.phoneValidation svg {
+   width: 24px;
+}
+
+.phoneValidation input{
+  padding: 10px
+}
+

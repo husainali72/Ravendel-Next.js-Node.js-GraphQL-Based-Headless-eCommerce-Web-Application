@@ -1,23 +1,22 @@
-import React, { Fragment, useState } from "react";
-import {
-  Grid,
-  Paper,
-  Tab,
-  Tabs,
-} from "@material-ui/core";
+import React, { useState } from "react";
+import { Grid, Paper, Tab, Tabs } from "@mui/material";
 import CashOnDelivery from "./cod";
 import DirectBankTransfer from "./directBankTransfer";
 import Paypal from "./paypal";
 import Stripe from "./stripe";
 import { TabPanel, TabProps } from "../../components";
-
-const Payment = () => {
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+import Alerts from "../../components/Alert";
+import OneSignal from "./oneSignal";
+const PaymentComponent = () => {
   const [tabVal, setTabVal] = useState(0);
   const handleChange = (event, newValue) => {
     setTabVal(newValue);
   };
   return (
-    <Fragment>
+    <>
+      <Alerts />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Paper square>
@@ -29,10 +28,11 @@ const Payment = () => {
               textColor="primary"
               variant="scrollable"
             >
-              <Tab label="Cash On Delievery" {...TabProps(0)} />
+              <Tab label="Cash On Delivery" {...TabProps(0)} />
               <Tab label="Bank Transfer" {...TabProps(1)} />
               <Tab label="Stripe" {...TabProps(2)} />
               <Tab label="Paypal" {...TabProps(3)} />
+              <Tab label="One Signal" {...TabProps(4)} />
             </Tabs>
           </Paper>
           <TabPanel value={tabVal} index={0}>
@@ -47,10 +47,19 @@ const Payment = () => {
           <TabPanel value={tabVal} index={3}>
             <Paypal />
           </TabPanel>
+          <TabPanel value={tabVal} index={4}>
+            <OneSignal />
+          </TabPanel>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
-export default Payment;
+export default function Payment() {
+  return (
+    <ThemeProvider theme={theme}>
+      <PaymentComponent />
+    </ThemeProvider>
+  );
+}

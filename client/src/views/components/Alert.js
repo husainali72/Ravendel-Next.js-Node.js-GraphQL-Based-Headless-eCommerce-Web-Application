@@ -1,16 +1,16 @@
-import React, { Fragment, useState, useEffect } from "react";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import Snackbar from "@mui/material/Snackbar";
+import { useDispatch, useSelector } from "react-redux";
+import MuiAlert from "@mui/material/Alert";
 
-function CustomAlert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
-const Alert = () => {
-  const dispatch = useDispatch();
-  const alert = useSelector(state => state.alert);
+const Alerts = () => {
   const [isOpen, setisOpen] = useState(false);
+  const alert = useSelector((state) => state.alert);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (alert.success) {
@@ -19,34 +19,48 @@ const Alert = () => {
         setisOpen(false);
         dispatch({
           type: "ALERT_SUCCESS",
-          payload: { boolean: false, message: "", error: false }
+          payload: { boolean: false, message: "", error: false },
         });
       }, 3000);
     }
   }, [alert.success]);
 
-  return (
-    <Fragment>
-      
-        <Snackbar
-        autoHideDuration={3000}
+  useEffect(() => {
+    if (alert.error) {
+      setisOpen(true);
+      window.setTimeout(() => {
+        setisOpen(false);
+        dispatch({
+          type: "ALERT_SUCCESS",
+          payload: { boolean: false, message: "", error: false },
+        });
+      }, 3000);
+    }
+  }, [alert.error]);
+  if (alert.message !== "") {
+
+
+    return (
+      <Snackbar
         open={isOpen}
+        autoHideDuration={6000}
         anchorOrigin={{
           vertical: "top",
-          horizontal: "right"
+          horizontal: "right",
         }}
+        sx={{ mt: "100px" }}
       >
-        {
-        isOpen ?
-        <CustomAlert severity={alert.error ? "error" : "success"}>
-          {alert.message}
-        </CustomAlert>
-         :null
-        }
+        {(alert.error || alert.success) && alert.message ? (
+          <Alert
+            severity={alert.success ? "success" : "error"}
+            sx={{ width: "100%" }}
+          >
+            {alert.message}
+          </Alert>
+        ) : null}
       </Snackbar>
-       
-    </Fragment>
-  );
+    );
+  }
 };
 
-export default Alert;
+export default Alerts;

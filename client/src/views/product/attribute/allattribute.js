@@ -1,48 +1,47 @@
-import React, { Fragment, useEffect } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-  Button,
-  Tooltip,
-} from "@material-ui/core";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { attributesAction, attributeDeleteAction } from "../../../store/action";
-import jumpTo from "../../../utils/navigation";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import React, { useEffect, useState } from "react";
 import viewStyles from "../../viewStyles";
-import {
-  Alert,
-  Loading,
-} from "../../components";
-
-const AllAttribute = () => {
-  const classes = viewStyles();
+import { Grid } from "@mui/material";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { attributeDeleteAction } from "../../../store/action";
+import { attributesAction } from "../../../store/action";
+import { isEmpty, client_app_route_url } from "../../../utils/helper";
+import { get } from 'lodash'
+import theme from "../../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+import TableComponent from "../../components/table";
+import ActionButton from "../../components/actionbutton";
+const AllAttributeComponent = () => {
   const dispatch = useDispatch();
+  const classes = viewStyles()
   const attributeState = useSelector((state) => state.product_attributes);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
+  const [filtered, setfilterdData] = useState([])
+  const navigate = useNavigate()
+  const [AllAttribute, setAllAttributes] = useState([]);
+  const columndata = [
+    {
+      name: 'name',
+      title: "name",
+      sortingactive: true
+    },
+    {
+      name: 'values',
+      title: "Values",
+      sortingactive: true
+    },
+    {
+      name: 'actions',
+      title: "Actions",
+      sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-attribute/${id}`)
+        } else if (type === "delete") {
+          dispatch(attributeDeleteAction(id))
+        }
+      }
+    },]
   useEffect(() => {
     dispatch(attributesAction());
   }, []);
@@ -52,102 +51,54 @@ const AllAttribute = () => {
       dispatch(attributesAction());
     }
   }, [attributeState.render]);
+  useEffect(() => {
+    if (!isEmpty(get(attributeState, 'attributes'))) {
+      let data = []
+      attributeState.attributes.map((attribute) => {
+        let object = {
+          id: attribute.id,
+          values: attribute.values.map((val) => val.name).join(","),
+          name: attribute.name,
+        }
+        data.push(object)
+      })
+      setAllAttributes(data)
+      setfilterdData(data)
+    } else {
+      setAllAttributes([])
+      setfilterdData([])
+    }
+  }, [get(attributeState, 'attributes')])
+  const handleOnChangeSearch = (filtereData) => {
+    setfilterdData(filtereData)
+  }
 
   return (
-    <Fragment>
-      <Alert />
-      <Grid container spacing={2} className={classes.mainrow}>
-        <Grid item xl={12}>
-          <Card>
-            {attributeState.loading ? <Loading /> : null} 
-            <CardHeader
-              action={
-                <Link to="/add-attribute">
-                  <Button
-                    color="primary"
-                    className={classes.addUserBtn}
-                    size="small"
-                    variant="contained"
-                  >
-                    Add Attribute
-                  </Button>
-                </Link>
-              }
-              title="All Attributes"
-            />
-            <Divider />
-            <CardContent>
-              <TableContainer>
-                <Table
-                  stickyHeader
-                  aria-label="all-attributes"
-                  size="small"
-                >
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Values</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody className={classes.container}>
-                    {attributeState.attributes
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((attribute) => (
-                        <TableRow key={attribute.id} hover>
-                          <TableCell>{attribute.name}</TableCell>
-                          <TableCell>
-                            {attribute.values.map((val) => val.name).join(",")}
-                          </TableCell>
-                          <TableCell>
-                            <Tooltip title="Edit" aria-label="edit">
-                              <IconButton
-                                aria-label="Edit"
-                                onClick={() =>
-                                  jumpTo(`edit-attribute/${attribute.id}`)
-                                }
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip
-                              title="Delete"
-                              aria-label="delete"
-                              onClick={() =>
-                                dispatch(attributeDeleteAction(attribute.id))
-                              }
-                            >
-                              <IconButton
-                                aria-label="Delete"
-                                className={classes.deleteicon}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={attributeState.attributes.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
+    <>
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={attributeState.loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={AllAttribute}
+            handleOnChangeSearch={handleOnChangeSearch}
+            addpage='add-attribute'
+            title="All Attributes"
+            showDeleteButton={true}
+            searchbydate={false}
+          />
         </Grid>
-      </Grid>
-    </Fragment>
+      </Grid >
+    </>
   );
 };
 
+const AllAttribute = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllAttributeComponent />
+    </ThemeProvider>
+  );
+};
 export default AllAttribute;

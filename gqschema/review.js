@@ -14,10 +14,34 @@ module.exports = gql`
   }
   
 
+  type reviewsResponse {
+    data: [Review]
+    pagination: paginationInfo
+    message: statusSchema
+  }
+  type ReviewIdRES {
+    data: Review
+    message: statusSchema
+  }
+  type ReviewRES {
+    data: [Review]
+    message: statusSchema
+  }
+  type productwise_Review {
+    data: [Review]
+    message: statusSchema
+  }
   extend type Query {
-    reviews: [Review]
-    review(id: ID!): Review
-    productwisereview(product_id: ID!): [Review]
+    reviews: ReviewRES
+    reviews_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): reviewsResponse
+    review(id: ID!): ReviewIdRES
+    productwisereview(product_id: ID!): productwise_Review
   }
 
   extend type Mutation {
@@ -29,7 +53,7 @@ module.exports = gql`
       review: String
       rating: String
       status: String
-    ): [Review]
+    ): statusSchema
     updateReview(
       id: ID!
       title: String
@@ -39,7 +63,8 @@ module.exports = gql`
       review: String
       rating: String
       status: String
-    ): [Review]
-    deleteReview(id: ID!): [Review]
+    ): statusSchema
+    deleteReview(id: ID!): statusSchema
   }
+  
 `;

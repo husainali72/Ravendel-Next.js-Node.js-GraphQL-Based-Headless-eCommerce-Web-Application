@@ -8,6 +8,7 @@ module.exports = gql`
     seo: SEO
     store: Store
     paymnet: Payment
+    notification: Notification
     appearance: Appearance
     createdAt: Date
     updatedAt: Date
@@ -30,15 +31,15 @@ module.exports = gql`
   }
 
   type Height_Width {
-    width: Int
-    height: Int
+    width: Float
+    height: Float
   }
 
   type SMTP {
     server: String
     username: String
     password: String
-    port: String
+    port: Int
   }
 
   type SEO {
@@ -52,6 +53,7 @@ module.exports = gql`
     store_address: STORE_ADDRESS
     measurements: MEASUREMENTS
     inventory: INVENTORY
+    order_options: ORDER_OPTIONS
   }
 
   type CURRENCY_OPTIONS {
@@ -89,6 +91,12 @@ module.exports = gql`
   type INVENTORY_NOTIFICATIONS {
     show_out_of_stock: Boolean
     alert_for_minimum_stock: Boolean
+  }
+
+  type ORDER_OPTIONS {
+    order_prefix_list: customArray
+    order_prefix: String
+    order_digits: Int
   }
 
   type Payment {
@@ -150,13 +158,23 @@ module.exports = gql`
     api_signature: String
   }
 
+  type Notification {
+    one_signal: ONE_SIGNAL
+  }
+
+  type ONE_SIGNAL {
+    app_id: String,
+    rest_api_key: String
+  }
+
   type Appearance {
     home: APPEARANCE_HOME
     theme: APPEARANCE_THEME
+    mobile: APPEARANCE_MOBILE
   }
 
   type SLIDER {
-    image: customObject
+    image: String
     link: String
     open_in_tab: Boolean
   }
@@ -164,8 +182,9 @@ module.exports = gql`
   type APPEARANCE_HOME {
     slider: [SLIDER]
     add_section_in_home: ADD_SECTION_IN_HOME
+    add_section_web: [ADD_SECTION_WEB]
   }
-
+  
   type ADD_SECTION_IN_HOME {
     feature_product: Boolean
     recently_added_products: Boolean
@@ -174,11 +193,42 @@ module.exports = gql`
     product_recommendation: Boolean
     products_on_sales: Boolean
     product_from_specific_categories: Boolean
+    category_id: String
+  }
+  
+  type ADD_SECTION_WEB {
+    label: String
+    name: String
+    visible: Boolean
+    category: String
+  }
+
+  type APPEARANCE_MOBILE {
+    mobile_section: [MOBILE_SECTION]
+  }
+
+  type MOBILE_SECTION {
+    label: String
+    section_img: String
+    visible: Boolean
+    category: String
+    url: String
   }
 
   type APPEARANCE_THEME {
     primary_color: String
-    logo: customObject
+    playstore: String
+    appstore: String
+    phone_number: String
+    email: String
+    logo: String
+    social_media: [SOCIAL_MEDIA]
+  }
+
+  type SOCIAL_MEDIA {
+    name: String
+    icon: String
+    handle: String
   }
 
   input inventory_notification {
@@ -197,7 +247,7 @@ module.exports = gql`
 
   input slider_input {
     update_image: Upload
-    image: customObject
+    image: String
     link: String
     open_in_tab: Boolean
   }
@@ -210,6 +260,30 @@ module.exports = gql`
     product_recommendation: Boolean
     products_on_sales: Boolean
     product_from_specific_categories: Boolean
+    category_id: String
+  }
+
+  input mobile_section_input {
+    update_image: Upload
+    label: String
+    section_img: String
+    visible: Boolean
+    url: String
+    category: String
+  }
+
+  input add_section_web_input {
+    label: String
+    name: String
+    category: String
+    visible: Boolean
+  }
+
+  input social_media_input {
+    name: String
+    icon: String
+    update_icon: Upload
+    handle: String
   }
 
   extend type Query {
@@ -264,6 +338,10 @@ module.exports = gql`
       out_of_stock_visibility: Boolean
       stock_display_format: String
     ): Setting
+    updateStoreOrder(
+      order_prefix: String
+      order_digits: Int
+    ): Setting
     updatePaymnetCOD(
       enable: Boolean
       title: String
@@ -303,10 +381,27 @@ module.exports = gql`
       api_password: String
       api_signature: String
     ): Setting
+    updateNotificationOneSignal(
+      app_id: String
+      rest_api_key: String
+    ): Setting
     updateAppearanceHome(
       slider: [slider_input]
       add_section_in_home: add_section_in_home
+      add_section_web: [add_section_web_input]
     ): Setting
-    updateAppeanranceTheme(primary_color: String, new_logo: Upload): Setting
+    updateAppearanceMobile(
+      mobile_section: [mobile_section_input]
+    ): Setting
+    updateAppeanranceTheme(
+      primary_color: String, 
+      playstore: String
+      appstore: String
+      phone_number: String
+      email: String
+      new_logo: Upload
+      logo: String
+      social_media: [social_media_input]
+    ): Setting
   }
 `;

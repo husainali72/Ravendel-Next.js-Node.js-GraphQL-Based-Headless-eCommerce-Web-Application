@@ -1,5 +1,5 @@
-import React, { Fragment, useState, useEffect } from "react";
-import { Grid, Box } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { Grid, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { userAddAction } from "../../store/action";
 import viewStyles from "../viewStyles";
@@ -13,7 +13,13 @@ import {
   FeaturedImageComponent,
   SelectComponent,
 } from "../components";
-
+import { useNavigate } from "react-router-dom";
+import { client_app_route_url } from "../../utils/helper";
+import { ThemeProvider } from "@mui/material/styles";
+import { validate } from "../components/validate";
+import { isEmpty } from "../../utils/helper";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import theme from "../../theme";
 var defaultObj = {
   id: "",
   name: "",
@@ -23,13 +29,13 @@ var defaultObj = {
   image: "",
 };
 
-const AddUser = () => {
+const AddUserComponent = () => {
   const classes = viewStyles();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     document.forms[0].reset();
     setfeatureImage(null);
@@ -37,35 +43,54 @@ const AddUser = () => {
   }, [UsersState.users]);
 
   const fileChange = (e) => {
-    setuser({ ...user, ['image']: e.target.files[0] });
+    setuser({ ...user, ["image"]: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };
 
   const addUser = (e) => {
     e.preventDefault();
-    dispatch(userAddAction(user));
+    let errors = validate(["role", "password", 'email', "name"], user);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(userAddAction(user, navigate));
+
+    }
   };
 
   const handleChange = (e) => {
     setuser({ ...user, [e.target.name]: e.target.value });
   };
 
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
+  };
+
   return (
-    <Fragment>
+    <>
       <Alert />
       {UsersState.loading ? <Loading /> : null}
 
       <form>
         <TopBar
-          title='Add User'
+          title="Add User"
           onSubmit={addUser}
-          submitTitle='Add'
-          backLink={"/all-users"}
+          submitTitle="Add"
+          backLink={`${client_app_route_url}all-users`}
         />
         <Grid container spacing={3} className={classes.secondmainrow}>
           <Grid item xs={12}>
-            <CardBlocks title='User Information' nomargin>
+            <CardBlocks title="User Information" nomargin>
               <Grid container spacing={4}>
                 <Grid item xl={2} lg={3} md={4} xs={12}>
                   <FeaturedImageComponent
@@ -75,34 +100,35 @@ const AddUser = () => {
                   />
                 </Grid>
                 <Grid item md={6} xs={12}>
-                  <Box component='div' mb={2}>
+                  <Box component="div" mb={2}>
                     <TextInput
                       value={user.name}
-                      label='Name'
-                      name='name'
+                      label="Name"
+                      name="name"
                       onInputChange={handleChange}
                     />
                   </Box>
-                  <Box component='div' mb={2}>
+                  <Box component="div" mb={2}>
                     <TextInput
-                      type='email'
+                      type="email"
                       value={user.email}
-                      label='Email'
-                      name='email'
+                      label="Email"
+                      name="email"
                       onInputChange={handleChange}
+                      onInput={toInputLowercase}
                     />
                   </Box>
-                  <Box component='div' mb={2}>
+                  <Box component="div" mb={2}>
                     <PasswordInput
-                      name='password'
+                      name="password"
                       value={user.password}
-                      label='Password'
+                      label="Password"
                       onInputChange={handleChange}
                     />
                   </Box>
-                  <Box component='div'>
+                  <Box component="div">
                     <SelectComponent
-                      label='Role'
+                      label="Role"
                       onSelecteChange={(val) =>
                         setuser({ ...user, ["role"]: val })
                       }
@@ -111,9 +137,9 @@ const AddUser = () => {
                         "Manager",
                         "Editor",
                         "Author",
-                        "User",
+                        "USER",
                       ]}
-                      name='role'
+                      name="role"
                       value={user.role}
                     />
                   </Box>
@@ -123,60 +149,14 @@ const AddUser = () => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 
-export default AddUser;
-
-
-// Backup for user upload image
-//   const [featureImage, setfeatureImage] = useState(null);
-
-//   useEffect(() => {
-//     document.forms[0].reset();
-//     setfeatureImage(null);
-//     setuser({});
-//     setLabelWidth(inputLabel.current.offsetWidth);
-//   }, [props.users.users]);
-
-//   const addUser = e => {
-//     e.preventDefault();
-//     props.userAddAction(user);
-//   };
-
-//   const handleChange = e => {
-//     setuser({ ...user, [e.target.name]: e.target.value });
-//   };
-
-//   const fileChange = e => {
-//     setuser({ ...user, [e.target.name]: e.target.files[0] });
-//     setfeatureImage(null);
-//     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-//   };
-
-
-
-
-  // {featureImage !== null && (
-  //   <Box className={classes.feautedImageBox}>
-  //     <img
-  //       src={featureImage}
-  //       className={classes.feautedImageBoxPreview}
-  //       alt="user-thumbnail"
-  //     />
-  //   </Box>
-  // )}
-  // <Input
-  //   className={classes.input}
-  //   style={{ display: "none" }}
-  //   id="image"
-  //   type="file"
-  //   onChange={fileChange}
-  //   name="image"
-  // />
-  // <label htmlFor="image" className={classes.feautedImage}>
-  //   {featureImage !== null
-  //     ? "Change Featured Image"
-  //     : "Set Featured Image"}
-  // </label>
+export default function AddUser() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AddUserComponent />
+    </ThemeProvider>
+  );
+}

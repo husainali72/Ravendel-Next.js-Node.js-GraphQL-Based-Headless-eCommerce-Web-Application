@@ -5,22 +5,45 @@ module.exports = gql`
     code: String
     description: String
     discount_type: String
-    discount_value: String
+    discount_value: Float
     free_shipping: Boolean
     expire: String
-    minimum_spend: String
-    maximum_spend: String
-    products: customArray
+    minimum_spend: Int
+    maximum_spend: Int
+    product: Boolean
+    include_products: customArray
     exclude_products: customArray
-    categories: customArray
+    category: Boolean
+    include_categories: customArray
     exclude_categories: customArray
     date: Date
     updated: Date
   }
+  
 
+  type couponResponse {
+    data: [Coupon]
+    pagination: paginationInfo
+    message: statusSchema
+  }
+  type couponIdRES {
+    data: Coupon
+    message: statusSchema
+  }
+  type couponRES {
+    data: [Coupon]
+    message: statusSchema
+  }
   extend type Query {
-    coupons: [Coupon]
-    coupon(id: ID!): Coupon
+    coupons_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): couponResponse
+    coupons: couponRES
+    coupon(id: ID!): couponIdRES
   }
 
   extend type Mutation {
@@ -28,31 +51,35 @@ module.exports = gql`
       code: String
       description: String
       discount_type: String
-      discount_value: String
+      discount_value: Float
       free_shipping: Boolean
       expire: String
-      minimum_spend: String
-      maximum_spend: String
-      products: customArray
+      minimum_spend: Int
+      maximum_spend: Int
+      product: Boolean
+      include_products: customArray
       exclude_products: customArray
-      categories: customArray
+      category: Boolean
+      include_categories: customArray
       exclude_categories: customArray
-    ): [Coupon]
+    ): statusSchema
     updateCoupon(
       id: ID!
       code: String
       description: String
       discount_type: String
-      discount_value: String
+      discount_value: Float
       free_shipping: Boolean
       expire: String
-      minimum_spend: String
-      maximum_spend: String
-      products: customArray
+      minimum_spend: Int
+      maximum_spend: Int
+      product: Boolean
+      include_products: customArray
       exclude_products: customArray
-      categories: customArray
+      category: Boolean
+      include_categories: customArray
       exclude_categories: customArray
-    ): [Coupon]
-    deleteCoupon(id: ID!): [Coupon]
+    ): statusSchema
+    deleteCoupon(id: ID!): statusSchema
   }
 `;

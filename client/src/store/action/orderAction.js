@@ -2,124 +2,177 @@ import {
   GET_ORDERS,
   GET_ORDER,
   DELETE_ORDER,
-  UPDATE_ORDER
+  UPDATE_ORDER,
 } from "../../queries/orderQuery";
-
+import {
+  client_app_route_url,
+  getResponseHandler,
+  mutationResponseHandler,
+} from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 
-export const ordersAction = () => dispatch => {
+import { useNavigate } from "react-router-dom";
+
+export const ordersAction = () => (dispatch) => {
   dispatch({
-    type: ORDER_LOADING
+    type: ORDER_LOADING,
   });
   query(GET_ORDERS)
-    .then(response => {
-      if (response) {
+    .then((response) => {
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "orders"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: false, message: message, error: true },
+        });
+      }
+
+      if (success) {
         return dispatch({
           type: ORDERS_SUCCESS,
-          payload: response.data.orders
+          payload: data,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: ORDER_FAIL
+        type: ORDER_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
-export const orderAction = () => dispatch => {
+export const orderAction = (id) => (dispatch) => {
   dispatch({
-    type: ORDER_LOADING
+    type: ORDER_LOADING,
   });
-  query(GET_ORDER)
-    .then(response => {
-      if (response) {
+
+  query(GET_ORDER, { id: id })
+    .then((response) => {
+      const [error, success, message, data] = getResponseHandler(
+        response,
+        "order"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: false, message: message, error: true },
+        });
+      }
+
+      if (success) {
         return dispatch({
           type: ORDER_SUCCESS,
-          payload: response.data.order
+          payload: data,
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: ORDER_FAIL
+        type: ORDER_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
-export const orderDeleteAction = id => dispatch => {
+export const orderDeleteAction = (id, navigate) => (dispatch) => {
   dispatch({
-    type: ORDER_LOADING
+    type: ORDER_LOADING,
   });
-  mutation(DELETE_ORDER, { id })
-    .then(response => {
-      if (response) {
+  mutation(DELETE_ORDER, { id: id })
+    .then((response) => {
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "deleteOrder"
+      );
+
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
         dispatch({
-          type: ORDERS_SUCCESS,
-          payload: response.data.deleteOrder
+          type: ALERT_SUCCESS,
+          payload: { boolean: false, message: message, error: true },
         });
+      }
+
+      if (success) {
+        dispatch(ordersAction());
+
         return dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "Order deleted successfully",
-            error: false
-          }
+          payload: { boolean: true, message: message, error: false },
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: ORDER_FAIL
+        type: ORDER_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
 
-export const orderUpdateAction = object => dispatch => {
+export const orderUpdateAction = (object, navigate) => (dispatch) => {
   dispatch({
-    type: ORDER_LOADING
+    type: ORDER_LOADING,
   });
-  mutation(UPDATE_ORDER, object)
-    .then(response => {
-      if (response) {
-        dispatch({
-          type: ORDERS_SUCCESS,
-          payload: response.data.updateOrder
-        });
 
+  mutation(UPDATE_ORDER, object)
+    .then((response) => {
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "updateOrder"
+      );
+      dispatch({
+        type: LOADING_FALSE,
+      });
+
+      if (error) {
         dispatch({
           type: ALERT_SUCCESS,
-          payload: {
-            boolean: true,
-            message: "Order updated successfully",
-            error: false
-          }
+          payload: { boolean: false, message: message, error: true },
         });
+      }
 
-        //jumpTo("/all-orders");
-        return;
+      if (success) {
+        navigate(`${client_app_route_url}all-orders`);
+        dispatch(ordersAction());
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: ORDER_FAIL
+        type: ORDER_FAIL,
       });
       return dispatch({
         type: ALERT_SUCCESS,
-        payload: { boolean: true, message: error, error: true }
+        payload: { boolean: false, message: error, error: true },
       });
     });
 };
@@ -128,3 +181,4 @@ export const ORDER_LOADING = "ORDER_LOADING";
 export const ORDERS_SUCCESS = "ORDERS_SUCCESS";
 export const ORDER_FAIL = "ORDER_FAIL";
 export const ORDER_SUCCESS = "ORDER_SUCCESS";
+export const LOADING_FALSE = "LOADING_FALSE";

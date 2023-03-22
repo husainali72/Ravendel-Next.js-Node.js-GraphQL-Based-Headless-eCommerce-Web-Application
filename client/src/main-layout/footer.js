@@ -1,16 +1,19 @@
 import React from "react";
-import { makeStyles } from "@material-ui/styles";
-import { Typography } from "@material-ui/core";
+import { makeStyles, ThemeProvider } from "@mui/styles";
+import { createTheme } from "@mui/material/styles";
+import { Typography } from "@mui/material";
+import palette from "../theme/palette";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(1),
     backgroundColor: "#e4e7ea",
-    textAlign: "center"
-  }
+
+    textAlign: "center",
+  },
 }));
 
-const Footer = () => {
+const FooterComponent = () => {
   const classes = useStyles();
 
   return (
@@ -30,4 +33,11 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+const theme = createTheme(palette);
+export default function Footer() {
+  return (
+    <ThemeProvider theme={theme}>
+      <FooterComponent />
+    </ThemeProvider>
+  );
+}

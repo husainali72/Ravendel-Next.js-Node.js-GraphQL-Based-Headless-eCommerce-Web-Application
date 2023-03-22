@@ -6,17 +6,19 @@ import {
   Typography,
   Avatar,
   CircularProgress,
-} from "@material-ui/core";
+  Button,
+} from "@mui/material";
 import DashboardStyles from "../../dashboard-styles";
-
-const DashboardCard = ({ count, title, Icon, loader }) => {
+import theme from "../../../../theme";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+const DashboardCardComponent = ({ count, title, Icon, loader }) => {
   const classes = DashboardStyles();
 
   return (
     <Card className={classes.dashboardcardroot}>
       <CardContent>
-        <Grid container justify="space-between">
-          <Grid item>
+        <Grid container justifyContent="space-between" >
+          <Grid item >
             <Typography
               className={classes.dashboardcardtitle}
               color="textSecondary"
@@ -32,13 +34,15 @@ const DashboardCard = ({ count, title, Icon, loader }) => {
                 No records found
               </Typography>
             ) : (
-              <Typography variant="h3">{count}</Typography>
+              <Typography variant="h5">{count}</Typography>
             )}
           </Grid>
-          <Grid item>
+          <Grid item >
+
             <Avatar className={classes.dashboardcardavatar}>
               <Icon className={classes.dashboardcardicon} />
             </Avatar>
+
           </Grid>
         </Grid>
       </CardContent>
@@ -46,4 +50,15 @@ const DashboardCard = ({ count, title, Icon, loader }) => {
   );
 };
 
-export default DashboardCard;
+export default function DashboardCard({ count, title, Icon, loader }) {
+  return (
+    <ThemeProvider theme={theme}>
+      <DashboardCardComponent
+        count={count}
+        title={title}
+        Icon={Icon}
+        loader={loader}
+      />
+    </ThemeProvider>
+  );
+}

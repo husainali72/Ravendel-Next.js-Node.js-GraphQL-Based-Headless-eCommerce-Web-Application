@@ -5,7 +5,7 @@ import {
   Select,
   MenuItem,
   Grid,
-} from "@material-ui/core";
+} from "@mui/material";
 import { TextInput } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { shippingAction } from "../../../store/action/";
@@ -31,7 +31,7 @@ const ShippingComponent = ({
 
   useEffect(() => {
     if (shippingState.shipping.shipping_class.length) {
-      // onShippingClassChange(shippingState.shipping.shipping_class[0]._id);
+      onShippingClassChange(shippingState.shipping.shipping_class[0]._id);
     }
   }, [shippingState.shipping]);
 
@@ -45,6 +45,7 @@ const ShippingComponent = ({
                 Shipping
               </InputLabel>
               <Select
+                label='Shipping'
                 labelWidth={labelWidth}
                 labelId='Shipping-name'
                 id='Shipping-name'

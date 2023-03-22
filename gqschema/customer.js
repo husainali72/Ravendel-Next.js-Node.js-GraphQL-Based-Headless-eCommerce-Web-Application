@@ -11,6 +11,7 @@ module.exports = gql`
     address_book: customArray
     date: Date
     updated: Date
+    gender: String
   }
 
   type AddressBook {
@@ -30,9 +31,29 @@ module.exports = gql`
     updated: Date
   }
 
+  type customersResponse {
+    data: [Customer]
+    pagination: paginationInfo
+    message: statusSchema
+  }
+  type Customers_response {
+    data: [Customer]
+    message: statusSchema
+  }
+  type Customer_By_Id {
+    data: Customer
+    message: statusSchema
+  }
   extend type Query {
-    customers: [Customer]
-    customer(id: ID!): Customer
+    customers_pagination(
+      limit: Int
+      pageNumber: Int
+      search: String
+      orderBy: String
+      order: String
+    ): customersResponse
+    customers:  Customers_response
+    customer(id: ID!): Customer_By_Id
   }
 
   extend type Mutation {
@@ -43,7 +64,7 @@ module.exports = gql`
       company: String
       phone: String
       password: String
-    ): [Customer]
+    ): statusSchema
     updateCustomer(
       id: ID!
       first_name: String
@@ -51,9 +72,14 @@ module.exports = gql`
       email: String
       company: String
       phone: String
-      password: String
-    ): [Customer]
-    deleteCustomer(id: ID!): [Customer]
+      gender: String
+    ): statusSchema
+    updateCustomerPassword(
+      id: ID!
+      oldPassword: String
+      newPassword: String
+    ): statusSchema
+    deleteCustomer(id: ID!): statusSchema
     addAddressBook(
       id: ID!
       first_name: String
@@ -67,7 +93,7 @@ module.exports = gql`
       state: String
       pincode: String
       default_address: Boolean
-    ): [Customer]
+    ): statusSchema
     updateAddressBook(
       id: ID!
       _id: ID!
@@ -82,7 +108,7 @@ module.exports = gql`
       state: String
       pincode: String
       default_address: Boolean
-    ): [Customer]
-    deleteAddressBook(id: ID!, _id: ID!): [Customer]
+    ): statusSchema
+    deleteAddressBook(id: ID!, _id: ID!): statusSchema
   }
 `;

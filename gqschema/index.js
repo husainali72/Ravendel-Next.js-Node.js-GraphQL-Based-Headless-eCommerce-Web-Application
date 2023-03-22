@@ -14,12 +14,15 @@ const shipping = require("./shipping");
 const coupon = require("./coupon");
 const review = require("./review");
 const product_attribute = require("./product_attribute");
+const faqSchema = require("./faq");
+const miscSchema = require("./misc");
 
 const linkSchema = gql`
   scalar Date
   scalar metaKeyValueArray
   scalar customObject
   scalar customArray
+  scalar Upload
 
   type File {
     filename: String!
@@ -52,6 +55,7 @@ const linkSchema = gql`
 
 module.exports = [
   linkSchema,
+  miscSchema,
   userSchema,
   pageSchema,
   blogSchema,
@@ -67,4 +71,6 @@ module.exports = [
   coupon,
   review,
   product_attribute,
+  faqSchema,
+  product_attribute, 
 ];

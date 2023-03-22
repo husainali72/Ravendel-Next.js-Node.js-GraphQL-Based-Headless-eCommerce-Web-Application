@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 
 const PRODUCT_TILE_DATA = gql`
   fragment ProductTile on Product {
-    id
+    _id
     name
     url
     categoryId {
@@ -57,24 +57,46 @@ const PRODUCT_TILE_DATA = gql`
   }
 `;
 
+// const GET_CATEGORIES = gql`
+//   {
+//     productCategories {
+//       id
+//       name
+//       parentId
+//       url
+//       description
+//       image
+//       meta
+//       date
+//       updated
+//     }
+//   }
+// `;
+
 const GET_CATEGORIES = gql`
   {
     productCategories {
-      id
-      name
-      parentId
-      url
-      description
-      image
-      meta
-      date
-      updated
+      data {
+        id
+        name
+        parentId
+        url
+        description
+        image
+        meta
+        date
+        updated
+      }
+      message {
+        message
+        success
+      }
     }
   }
 `;
 
 const GET_CATEGORY = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     productCategory(id: $id) {
       id
       name
@@ -89,8 +111,37 @@ const GET_CATEGORY = gql`
   }
 `;
 
+// const ADD_CATEGORY = gql`
+//   mutation(
+//     $name: String
+//     $parentId: ID
+//     $url: String
+//     $description: String
+//     $image: Upload
+//     $meta: customObject
+//   ) {
+//     addProductCategory(
+//       name: $name
+//       parentId: $parentId
+//       url: $url
+//       description: $description
+//       image: $image
+//       meta: $meta
+//     ) {
+//       id
+//       name
+//       parentId
+//       url
+//       description
+//       image
+//       meta
+//       date
+//       updated
+//     }
+//   }
+// `;
 const ADD_CATEGORY = gql`
-  mutation(
+  mutation (
     $name: String
     $parentId: ID
     $url: String
@@ -106,21 +157,45 @@ const ADD_CATEGORY = gql`
       image: $image
       meta: $meta
     ) {
-      id
-      name
-      parentId
-      url
-      description
-      image
-      meta
-      date
-      updated
+      message
+      success
     }
   }
 `;
 
+// const UPDATE_CATEGORY = gql`
+//   mutation(
+//     $id: ID!
+//     $name: String
+//     $parentId: ID
+//     $url: String
+//     $description: String
+//     $update_image: Upload
+//     $meta: customObject
+//   ) {
+//     updateProductCategory(
+//       id: $id
+//       name: $name
+//       parentId: $parentId
+//       url: $url
+//       description: $description
+//       update_image: $update_image
+//       meta: $meta
+//     ) {
+//       id
+//       name
+//       parentId
+//       url
+//       description
+//       image
+//       meta
+//       date
+//       updated
+//     }
+//   }
+// `;
 const UPDATE_CATEGORY = gql`
-  mutation(
+  mutation (
     $id: ID!
     $name: String
     $parentId: ID
@@ -138,55 +213,106 @@ const UPDATE_CATEGORY = gql`
       update_image: $update_image
       meta: $meta
     ) {
-      id
-      name
-      parentId
-      url
-      description
-      image
-      meta
-      date
-      updated
+      message
+      success
     }
   }
 `;
 
+// const DELETE_CATEGORY = gql`
+//   mutation($id: ID!) {
+//     deleteProductCategory(id: $id) {
+//       id
+//       name
+//       parentId
+//       url
+//       description
+//       image
+//       meta
+//       date
+//       updated
+//     }
+//   }
+// `;
 const DELETE_CATEGORY = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     deleteProductCategory(id: $id) {
-      id
-      name
-      parentId
-      url
-      description
-      image
-      meta
-      date
-      updated
+      message
+      success
     }
   }
 `;
+
+// const GET_PRODUCTS = gql`
+//   {
+//     products {
+//       ...ProductTile
+//     }
+//   }
+//   ${PRODUCT_TILE_DATA}
+// `;
+// const GET_PRODUCTS = gql`
+//   {
+//     products {
+//       ...ProductTile
+//     }
+//   }
+//   ${PRODUCT_TILE_DATA}
+// `;
 
 const GET_PRODUCTS = gql`
-  {
-    products {
-      ...ProductTile
+  query ($admin: Boolean){
+    products(admin: $admin) {
+      data {
+        ...ProductTile
+      }
+      message {
+        message
+        success
+      }
     }
   }
   ${PRODUCT_TILE_DATA}
 `;
-
+// const GET_ORDER = gql`
+//   query ($id: ID!) {
+//     order(id: $id) {
+//       data {
+//         id
+//         customer_id
+//         payment_status
+//         shipping_status
+//         shipping
+//         billing
+//         products
+//         coupon_code
+//         date
+//         updated
+//       }
+//       message {
+//         message
+//         success
+//       }
+//     }
+//   }
+// `;
 const GET_PRODUCT = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     product(id: $id) {
-      ...ProductTile
+      data {
+        ...ProductTile
+      }
+      message {
+        message
+        success
+      }
     }
   }
   ${PRODUCT_TILE_DATA}
 `;
 
 const ADD_PRODUCT = gql`
-  mutation(
+  mutation (
     $name: String
     $url: String
     $categoryId: customArray
@@ -232,15 +358,15 @@ const ADD_PRODUCT = gql`
       variant: $variant
       combinations: $combinations
     ) {
-      ...ProductTile
+      message
+      success
     }
   }
-  ${PRODUCT_TILE_DATA}
 `;
 
 const UPDATE_PRODUCT = gql`
-  mutation(
-    $id: ID!
+  mutation (
+    $_id: ID!
     $name: String
     $url: String
     $categoryId: customArray
@@ -265,7 +391,7 @@ const UPDATE_PRODUCT = gql`
     $combinations: [customObject]
   ) {
     updateProduct(
-      id: $id
+      id: $_id
       name: $name
       url: $url
       categoryId: $categoryId
@@ -289,19 +415,27 @@ const UPDATE_PRODUCT = gql`
       variant: $variant
       combinations: $combinations
     ) {
-      ...ProductTile
+      message
+      success
     }
   }
-  ${PRODUCT_TILE_DATA}
 `;
 
+// const DELETE_PRODUCT = gql`
+//   mutation ($id: ID!) {
+//     deleteProduct(id: $id) {
+//       ...ProductTile
+//     }
+//   }
+//   ${PRODUCT_TILE_DATA}
+// `;
 const DELETE_PRODUCT = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     deleteProduct(id: $id) {
-      ...ProductTile
+      message
+      success
     }
   }
-  ${PRODUCT_TILE_DATA}
 `;
 
 export {

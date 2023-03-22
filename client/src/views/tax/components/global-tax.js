@@ -7,15 +7,21 @@ import {
   Checkbox,
   Select,
   MenuItem,
-  useMediaQuery
-} from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
+  useMediaQuery,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import viewStyles from "../../viewStyles.js";
-
-const GlobalTaxComponent = ({ taxGlobalState, taxState, saveGlobal, changeGlobalState }) => {
+import theme from "../../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+const GlobalTaxesComponent = ({
+  taxGlobalState,
+  taxState,
+  saveGlobal,
+  changeGlobalState,
+}) => {
   const classes = viewStyles();
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <>
@@ -26,26 +32,30 @@ const GlobalTaxComponent = ({ taxGlobalState, taxState, saveGlobal, changeGlobal
               <FormControlLabel
                 control={
                   <Checkbox
-                    color='primary'
+                    color="primary"
                     checked={taxGlobalState.is_global}
-                    onChange={(e) => changeGlobalState("is_global", e.target.checked)}
+                    onChange={(e) =>
+                      changeGlobalState("is_global", e.target.checked)
+                    }
                   />
                 }
-                label='Global Tax'
+                label="Global Tax"
               />
             </Grid>
 
             <Grid item md={6} sm={12} xs={12}>
               <FormControl
-                variant='outlined'
-                size='small'
+                variant="outlined"
+                size="small"
                 fullWidth
                 style={{ marginBottom: isSmall ? 20 : 0 }}
               >
                 <Select
-                  name='Tax-name'
+                  name="Tax-name"
                   value={taxGlobalState.tax_class}
-                  onChange={(e) => changeGlobalState("tax_class", e.target.value)}
+                  onChange={(e) =>
+                    changeGlobalState("tax_class", e.target.value)
+                  }
                 >
                   {taxState.tax.tax_class.map((tax, index) => {
                     return (
@@ -63,12 +73,14 @@ const GlobalTaxComponent = ({ taxGlobalState, taxState, saveGlobal, changeGlobal
                 <FormControlLabel
                   control={
                     <Checkbox
-                      color='primary'
+                      color="primary"
                       checked={taxGlobalState.overwrite}
-                      onChange={(e) => changeGlobalState("overwrite", e.target.checked)}
+                      onChange={(e) =>
+                        changeGlobalState("overwrite", e.target.checked)
+                      }
                     />
                   }
-                  label='Do you want to override the current tax class selection in the existing products?'
+                  label="Do you want to override the current tax class selection in the existing products?"
                 />
               </Grid>
             )}
@@ -77,10 +89,10 @@ const GlobalTaxComponent = ({ taxGlobalState, taxState, saveGlobal, changeGlobal
       </Grid>
 
       <Button
-        size='small'
-        color='primary'
+        size="small"
+        color="primary"
         onClick={saveGlobal}
-        variant='contained'
+        variant="contained"
       >
         Save Changes
       </Button>
@@ -88,4 +100,21 @@ const GlobalTaxComponent = ({ taxGlobalState, taxState, saveGlobal, changeGlobal
   );
 };
 
+const GlobalTaxComponent = ({
+  taxGlobalState,
+  taxState,
+  saveGlobal,
+  changeGlobalState,
+}) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <GlobalTaxesComponent
+        taxGlobalState={taxGlobalState}
+        taxState={taxState}
+        saveGlobal={saveGlobal}
+        changeGlobalState={changeGlobalState}
+      />
+    </ThemeProvider>
+  );
+};
 export default GlobalTaxComponent;

@@ -1,140 +1,120 @@
-import React, { Fragment, useState, useEffect } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-  Tooltip,
-} from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import viewStyles from "../viewStyles.js";
-import jumpTo from "../../utils/navigation";
-import Rating from "@material-ui/lab/Rating";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { reviewsAction, reviewDeleteAction } from "../../store/action";
-import { Loading } from "../components";
-import {convertDateToStringFormat} from '../utils/convertDate';
-
-const AllReviews = () => {
-  const classes = viewStyles();
+import { reviewDeleteAction, reviewsAction } from "../../store/action";
+import { isEmpty, client_app_route_url } from "../../utils/helper.js";
+import { convertDateToStringFormat } from "../utils/convertDate.js";
+import theme from "../../theme";
+import { Grid } from "@mui/material";
+import TableComponent from "../components/table.js";
+import { get } from 'lodash'
+import { ThemeProvider } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import ActionButton from "../components/actionbutton";
+import viewStyles from "../viewStyles";
+const AllReviewsComponent = () => {
+  const classes = viewStyles()
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const reviewState = useSelector((state) => state.reviews);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [AllReviews, setAllReviews] = useState([])
+  const [filtered, setfilterdData] = useState([])
+  const columndata = [
+    {
+      name: "date",
+      title: "date",
+      sortingactive: true
+    },
+    {
+      name: "name",
+      title: "Customer ",
+      sortingactive: true
+    },
+    {
+      name: "last_modified",
+      title: "Last Modified ",
+      sortingactive: true
+    },
+    {
+      name: "reviewd_product",
+      title: "Reviewed Product",
+      sortingactive: true
+    },
+    {
+      name: "rating",
+      title: "Ratings",
+      sortingactive: true
+    },
+    {
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-review/${id}`)
+        } else if (type === "delete") {
+          dispatch(reviewDeleteAction(id))
+        }
+      }
+    }]
   useEffect(() => {
     if (!reviewState.reviews.length) {
       dispatch(reviewsAction());
     }
   }, []);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+  useEffect(() => {
+    if (!isEmpty(get(reviewState, 'reviews'))) {
+      let data = []
+      reviewState.reviews.map((review) => {
+        let object = {
+          id: review.id,
+          date: review.date,
+          name: review.customer_id.first_name + " - " + convertDateToStringFormat(review.date),
+          last_modified: convertDateToStringFormat(review.updated),
+          reviewd_product: review.product_id.name,
+          rating: review.rating
+        }
+        data.push(object)
+      })
+      setAllReviews(data)
+      setfilterdData(data)
+    } else {
+      setAllReviews([])
+      setfilterdData([])
+    }
+  }, [get(reviewState, 'reviews')])
+  const handleOnChangeSearch = (filtereData) => {
 
+    setfilterdData(filtereData)
+  }
   return (
-    <Fragment>
-      <Grid container spacing={4} className={classes.mainrow}>
-        <Grid item lg={12}>
-          <Card>
-            {reviewState.loading ? <Loading /> : null}
-            <CardHeader title='All Reviews' />
-            <Divider />
-            <CardContent>
-              <TableContainer className={classes.container}>
-                <Table stickyHeader aria-label='reviews-table' size='small'>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Title</TableCell>
-                      <TableCell>Customer</TableCell>
-                      <TableCell>Last Modified</TableCell>
-                      <TableCell>Reviewed Product</TableCell>
-                      <TableCell>Rating</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {reviewState.reviews
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((review) => (
-                        <TableRow key={review.id} hover>
-                          <TableCell>{review.title}</TableCell>
-                          <TableCell>
-                            {review.customer_id.first_name} -{" "}
-                            {convertDateToStringFormat(review.date)}
-                          </TableCell>
-                          <TableCell>
-                            {convertDateToStringFormat(review.updated)}
-                          </TableCell>
-                          <TableCell> {review.product_id.name}</TableCell>
-                          <TableCell>
-                            <Rating
-                              name='read-only'
-                              value={Number(review.rating)}
-                              readOnly
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Tooltip title='Edit Review' aria-label='delete'>
-                              <IconButton
-                                aria-label='Edit'
-                                onClick={() =>
-                                  jumpTo(`edit-review/${review.id}`)
-                                }
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title='Delete Review' aria-label='delete'>
-                              <IconButton
-                                aria-label='Delete'
-                                className={classes.deleteicon}
-                                onClick={() =>
-                                  dispatch(reviewDeleteAction(review.id))
-                                }
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component='div'
-                count={reviewState.reviews.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
+    <>
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={reviewState.loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={AllReviews}
+            handleOnChangeSearch={handleOnChangeSearch}
+            addpage=''
+            title="All Reviews"
+            showDeleteButton={true}
+            searchbydate={true}
+          />
         </Grid>
-      </Grid>
-    </Fragment>
+      </Grid >
+    </>
   );
 };
 
+const AllReviews = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllReviewsComponent />
+    </ThemeProvider>
+  );
+};
 export default AllReviews;

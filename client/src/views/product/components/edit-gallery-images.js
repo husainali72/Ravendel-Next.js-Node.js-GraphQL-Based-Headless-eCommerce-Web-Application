@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import ImageIcon from "@material-ui/icons/Image";
+import ImageIcon from "@mui/icons-material/Image";
 import viewStyles from "../../viewStyles";
+import { bucketBaseURL } from "../../../utils/helper";
+
 
 const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, product, onRemoveOldImage }) => {
   const classes = viewStyles();
@@ -17,15 +19,15 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
   };
 
   const removeImage = (img) => {
-    if(img._id){
+    if (img) {
       let galleryImages = product.gallery_image.filter(
-        (galleryImg) => galleryImg._id !== img._id
+        (galleryImg) => galleryImg !== img
       );
       let removed_image = product.removed_image || [];
-      removed_image.push(img._id);
-      
+      removed_image.push(img);
+
       onRemoveOldImage(galleryImages, removed_image);
-    }else{
+    } else {
       onRemoveGalleryImage(gallery.filter((galleryImg) => galleryImg !== img));
     }
     setGallery(gallery.filter((galleryImg) => galleryImg !== img));
@@ -34,39 +36,39 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
   return (
     <>
       <div className={classes.galleryImgOuterBox}>
-      {product.gallery_image && product.gallery_image.length > 0 ?
-                        product.gallery_image.map((img, index) => (
-                          <div key={index} className={classes.galleryImgBox}>
-                            <span
-                              className={classes.galleryImgRemove}
-                              onClick={() => removeImage(img)}
-                            >
-                              x
-                            </span>
-                            <img
-                              src={img.thumbnail}
-                              className={classes.galleryImg}
-                              alt="gallery-img"
-                            />
-                          </div>
-                        ))
-                        : null}
+        {product.gallery_image && product.gallery_image.length > 0 ?
+          product.gallery_image.map((img, index) => (
+            <div key={index} className={classes.galleryImgBox}>
+              <span
+                className={classes.galleryImgRemove}
+                onClick={() => removeImage(img)}
+              >
+                x
+              </span>
+              <img
+                src={`${bucketBaseURL}${img}`}
+                className={classes.galleryImg}
+                alt="gallery-img"
+              />
+            </div>
+          ))
+          : null}
         {gallery
           ? gallery.map((img, index) => (
-              <div key={index} className={classes.galleryImgBox}>
-                <span
-                  className={classes.galleryImgRemove}
-                  onClick={() => removeImage(img)}
-                >
-                  x
-                </span>
-                <img
-                  src={img}
-                  className={classes.galleryImg}
-                  alt='product-gallery-img'
-                />
-              </div>
-            ))
+            <div key={index} className={classes.galleryImgBox}>
+              <span
+                className={classes.galleryImgRemove}
+                onClick={() => removeImage(img)}
+              >
+                x
+              </span>
+              <img
+                src={img}
+                className={classes.galleryImg}
+                alt='product-gallery-img'
+              />
+            </div>
+          ))
           : null}
       </div>
       <input

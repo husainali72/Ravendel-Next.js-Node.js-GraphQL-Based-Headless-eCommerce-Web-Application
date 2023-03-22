@@ -1,145 +1,116 @@
-import React, { Fragment, useEffect, useState } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-  Avatar,
-  Button,
-} from "@material-ui/core";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { usersAction, userDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
-import { isEmpty } from "../../utils/helper";
-import PeopleIcon from "@material-ui/icons/People";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import viewStyles from "../viewStyles.js";
-import { Alert, Loading } from "../components";
+import { Grid } from "@mui/material";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
+import { bucketBaseURL } from "../../utils/helper";
+import { ThemeProvider } from "@mui/material/styles";
+import { userDeleteAction, usersAction } from "../../store/action";
+import theme from "../../theme/index";
+import TableComponent from "../components/table";
+import { get } from 'lodash'
+import { useNavigate } from "react-router-dom";
+import ActionButton from "../components/actionbutton";
+import viewStyles from "../viewStyles";
+const AllUsersComponent = () => {
 
-const AllUsers = () => {
-  const classes = viewStyles();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
+  const navigate = useNavigate()
+  const classes = viewStyles()
+  const [AllUsers, setAllUsers] = useState([])
+  const [filtered, setfilterdData] = useState([])
+  const statusTabData = {
+    name: 'role',
+    array: ['All', 'USER', 'EDITOR', 'MANAGER', 'SUBSCRIBER', 'AUTHOR']
+  }
+  const columndata = [
+    {
+      name: "image",
+      title: "image",
+      sortingactive: false
+    },
+    {
+      name: "name",
+      title: "name ",
+      sortingactive: true
+    },
+    {
+      name: "email",
+      title: "email ",
+      sortingactive: true
+    },
+    {
+      name: "role",
+      title: "role ",
+      sortingactive: true
+    },
+    {
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-user/${id}`)
+        } else if (type === "delete") {
+          dispatch(userDeleteAction(id))
+        }
+      }
+    }]
   useEffect(() => {
     if (isEmpty(UsersState.users)) {
       dispatch(usersAction());
     }
   }, []);
+  useEffect(() => {
+    if (!isEmpty(get(UsersState, 'users'))) {
+      let data = []
+      UsersState.users.map((user) => {
+        let object = {
+          id: user.id,
+          image: bucketBaseURL + user.image,
+          name: user.name,
+          email: user.email,
+          role: user.role
+        }
+        data.push(object)
+      })
+      setAllUsers(data)
+      setfilterdData(data)
 
+    } else {
+      setAllUsers([])
+      setfilterdData([])
+    }
+  }, [get(UsersState, 'users')])
+  const handleOnChangeSearch = (filtereData) => {
+    setfilterdData(filtereData)
+  }
   return (
-    <Fragment>
-      <Alert />
-      {UsersState.loading ? <Loading /> : null}
-      <Grid container spacing={4} className={classes.mainrow}>
-        <Grid item lg={12}>
-          <Card>
-            <CardHeader
-              action={
-                <Link to='/add-user'>
-                  <Button
-                    color='primary'
-                    className={classes.addUserBtn}
-                    size='small'
-                    variant='contained'
-                  >
-                    Add User
-                  </Button>
-                </Link>
-              }
-              title='All Users'
-            />
-            <Divider />
-            <CardContent>
-              <TableContainer className={classes.container}>
-                <Table stickyHeader aria-label='users-table' size='small'>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell className={classes.avtarTd}>
-                        <PeopleIcon />
-                      </TableCell>
-                      <TableCell>Username</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Role</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {UsersState.users
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((user) => (
-                        <TableRow key={user.id} hover>
-                          <TableCell>
-                            <Avatar
-                              alt={user.name}
-                              src={user.image && user.image.thumbnail}
-                            />
-                          </TableCell>
-                          <TableCell>{user.name}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>{user.role}</TableCell>
-                          <TableCell>
-                            <IconButton
-                              aria-label='Edit'
-                              onClick={() => jumpTo(`edit-user/${user.id}`)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              aria-label='Delete'
-                              className={classes.deleteicon}
-                              onClick={() =>
-                                dispatch(userDeleteAction(user.id))
-                              }
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component='div'
-                count={UsersState.users.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
+    <>
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={UsersState.loading}
+            columns={columndata}
+            rows={filtered}
+            statusTabData={statusTabData}
+            showDeleteButton={true}
+            searchdata={AllUsers}
+            handleOnChangeSearch={handleOnChangeSearch}
+            addpage='add-user'
+            searchbydate={false}
+            title="All Users" />
         </Grid>
-      </Grid>
-    </Fragment>
+      </Grid >
+    </>
   );
 };
 
-export default AllUsers;
+export default function AllUsers() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllUsersComponent />
+    </ThemeProvider>
+  );
+}

@@ -13,25 +13,31 @@ import {
   CircularProgress,
   Box,
   Typography,
-} from "@material-ui/core";
-import ArrowRightIcon from "@material-ui/icons/ArrowRight";
+} from "@mui/material";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { Link } from "react-router-dom";
-import {convertDateToStringFormat} from "../../../utils/convertDate";
+import { convertDateToStringFormat } from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
-
-const LatestProducts = ({ products, loader }) => {
+import { client_app_route_url, bucketBaseURL, } from "../../../../utils/helper";
+import NoImagePlaceholder from "../../../../assets/images/NoImagePlaceHolder.png";
+import theme from "../../../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+const LatestProductsTheme = ({ products, loader }) => {
   const classes = DashboardStyles();
-
   return (
     <Card className={classes.root}>
-      <CardHeader title="Latest Products" />
+      <CardHeader
+        title="Latest Products"
+        titleTypographyProps={{ variant: "subtitle" }}
+        className={classes.Cardheader}
+      />
       <Divider />
       <CardContent className={classes.content}>
         {loader ? (
           <Box component="div" display="flex" justifyContent="center" p={2}>
             <CircularProgress size={20} />
           </Box>
-        ) : !products ? (
+        ) : !products.length ? (
           <Box component="div" display="flex" justifyContent="center" p={2}>
             <Typography className={classes.noRecordFound} variant="caption">
               No Records Found
@@ -46,15 +52,17 @@ const LatestProducts = ({ products, loader }) => {
                     alt="Product"
                     className={classes.productImage}
                     src={
-                      product.feature_image && product.feature_image.thumbnail
-                        ? product.feature_image.thumbnail
-                        : "https://www.hbwebsol.com/wp-content/uploads/2020/07/category_dummy.png"
+                      product.feature_image 
+                        ? bucketBaseURL + product.feature_image
+                        : NoImagePlaceholder
                     }
                   />
                 </ListItemAvatar>
                 <ListItemText
                   primary={product.name}
-                  secondary={`Updated ${convertDateToStringFormat(product.date)}`}
+                  secondary={`Updated ${convertDateToStringFormat(
+                    product.date
+                  )}`}
                 />
               </ListItem>
             ))}
@@ -65,7 +73,7 @@ const LatestProducts = ({ products, loader }) => {
         <>
           <Divider />
           <CardActions className="flex-end">
-            <Link to="/all-products">
+            <Link to={`${client_app_route_url}all-products`}>
               <Button color="primary" size="small" variant="text">
                 View all <ArrowRightIcon />
               </Button>
@@ -77,4 +85,11 @@ const LatestProducts = ({ products, loader }) => {
   );
 };
 
+const LatestProducts = ({ products, loader }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <LatestProductsTheme products={products} loader={loader} />
+    </ThemeProvider>
+  );
+};
 export default LatestProducts;

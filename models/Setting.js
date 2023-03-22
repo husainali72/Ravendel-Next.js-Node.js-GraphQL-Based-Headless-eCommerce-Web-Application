@@ -137,6 +137,15 @@ const SeetingSchema = new Schema(
           type: String,
         },
       },
+      order_options: {
+        order_prefix_list: [String],
+        order_prefix: {
+          type: String,
+        },
+        order_digits: {
+          type: Number
+        }
+      }
     },
     paymnet: {
       cash_on_delivery: {
@@ -258,23 +267,36 @@ const SeetingSchema = new Schema(
         },
       },
     },
+    notification: {
+      one_signal: {
+        app_id: {
+          type: String,
+        },
+        rest_api_key: {
+          type: String,
+        },
+      }
+    },
     appearance: {
       home: {
         slider: [
           {
+            // image: {
+            //   original: {
+            //     type: String,
+            //   },
+            //   large: {
+            //     type: String,
+            //   },
+            //   medium: {
+            //     type: String,
+            //   },
+            //   thumbnail: {
+            //     type: String,
+            //   },
+            // },
             image: {
-              original: {
-                type: String,
-              },
-              large: {
-                type: String,
-              },
-              medium: {
-                type: String,
-              },
-              thumbnail: {
-                type: String,
-              },
+              type: String
             },
             link: {
               type: String,
@@ -306,26 +328,41 @@ const SeetingSchema = new Schema(
           product_from_specific_categories: {
             type: Boolean,
           },
+          category_id: {
+            type: String
+          }
         },
+        add_section_web: []
+      },
+      mobile: {
+        mobile_section: [],
       },
       theme: {
         primary_color: {
           type: String,
         },
-        logo: {
-          original: {
-            type: String,
-          },
-          large: {
-            type: String,
-          },
-          medium: {
-            type: String,
-          },
-          thumbnail: {
-            type: String,
-          },
+        playstore: {
+          type: String
         },
+        appstore: {
+          type: String
+        },
+        phone_number: {
+          type: String
+        },
+        email: {
+          type: String
+        },
+        logo: {
+          type: String
+        },
+        social_media: [
+          {
+            name: String,
+            icon: String,
+            handle: String
+          }
+        ]
       },
     },
   },
@@ -374,7 +411,7 @@ module.exports.createSettings = async () => {
     },
     store: {
       currency_options: {
-        currency: "dollar",
+        currency: "usd",
         currency_position: "left",
         thousand_separator: ",",
         decimal_separator: ".",
@@ -404,6 +441,11 @@ module.exports.createSettings = async () => {
         out_of_stock_visibility: true,
         stock_display_format: "1",
       },
+      order_options: {
+        order_prefix_list: ["#"],
+        order_prefix: "#",
+        order_digits: 5
+      }
     },
     paymnet: {
       cash_on_delivery: {
@@ -453,30 +495,17 @@ module.exports.createSettings = async () => {
         api_signature: "",
       },
     },
+    notification: {
+      one_signal: {
+        app_id: "",
+        rest_api_key: ""
+      }
+    },
     appearance: {
       home: {
         slider: [
           {
-            image: {
-              original: "",
-              large: "",
-              medium:
-                "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              thumbnail:
-                "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-            },
-            link: "https://www.google.com/",
-            open_in_tab: true,
-          },
-          {
-            image: {
-              original: "",
-              large: "",
-              medium:
-                "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-              thumbnail:
-                "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-            },
+            image: "",
             link: "https://www.google.com/",
             open_in_tab: true,
           },
@@ -490,18 +519,107 @@ module.exports.createSettings = async () => {
           products_on_sales: false,
           product_from_specific_categories: false,
         },
+
+        add_section_web: [
+          {
+            label: "Featured Product",
+            name: "feature_product",
+            visible: true,
+          },
+          {
+            label: "Recently Added Products",
+            name: "recently_added_products",
+            visible: true,
+          },
+          {
+            label: "Products On Sales",
+            name: "products_on_sales",
+            visible: true,
+          },
+          {
+            label: "Product Recommendation",
+            name: "product_recommendation",
+            visible: true,
+          },
+          {
+            label: "Product from Specific Category",
+            name: "product_from_specific_category",
+            category: null,
+            visible: true,
+          },
+        ],
+
       },
       theme: {
         primary_color: "#154050",
-        logo: {
-          original: "",
-          large: "",
-          medium:
-            "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-          thumbnail:
-            "/assets/images/blog/feature/thumbnail/1587797503342-gallery-4-thumb.jpg",
-        },
+        playstore: "https://play.google.com/store/apps/details?id=com.ravendel",
+        appstore: "https://apps.apple.com/us/app/ravendel/id1351162341",
+        phone_number: "9797979797",
+        email: "abc@gmail.com",
+        logo: "",
+        social_media: [
+          {
+            name: "Facebook",
+            icon: "setting/1679465730915-facebook.png",
+            handle: ""
+          },
+          {
+            name: "Instagram",
+            icon: "setting/1679465735748-instagram.png",
+            handle: ""
+          },
+          {
+            name: "Pinterest",
+            icon: "setting/1679465733326-pinterest.png",
+            handle: ""
+          },
+          {
+            name: "Youtube",
+            icon: "setting/1679465734614-youtube.png",
+            handle: ""
+          },
+          {
+            name: "Twitter",
+            icon: "setting/1679465732045-twitter.png",
+            handle: ""
+          }
+        ]
       },
+      mobile: {
+        mobile_section: [
+          {
+            label: "Featured Product",
+            section_img: "",
+            visible: false,
+            url: "feature_product",
+          },
+          {
+            label: "Recently Added Products",
+            section_img: "",
+            visible: false,
+            url: "recently_added_products",
+          },
+          {
+            label: "Products On Sales",
+            section_img: "",
+            visible: false,
+            url: "products_on_sales",
+          },
+          {
+            label: "Product Recommendation",
+            section_img: "",
+            visible: false,
+            url: "product_recommendation",
+          },
+          {
+            label: "Product from Specific Categories",
+            section_img: "",
+            visible: false,
+            url: "product_from_specific_categories",
+            category: null
+          },
+        ],
+      }
     },
   });
 

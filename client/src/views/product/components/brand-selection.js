@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { CircularProgress, Box } from "@material-ui/core";
+import { CircularProgress, Box } from "@mui/material";
 import ReactSelect from "react-select";
 import { isEmpty } from "../../../utils/helper";
 import { useSelector, useDispatch } from "react-redux";
 import { brandsAction } from "../../../store/action/";
-
-const BrandSelection = ({ value, onBrandChange }) => {
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+const BrandSelectionComponent = ({ value, onBrandChange }) => {
   const dispatch = useDispatch();
   const brandState = useSelector((state) => state.brands);
   const [brands, setbrands] = useState([]);
@@ -30,12 +31,12 @@ const BrandSelection = ({ value, onBrandChange }) => {
   return (
     <>
       {brandState.loading ? (
-        <Box component='div' display='flex' justifyContent='center'>
+        <Box component="div" display="flex" justifyContent="center">
           <CircularProgress />
         </Box>
       ) : (
         <ReactSelect
-          name='brand'
+          name="brand"
           options={brands}
           onChange={onBrandChange}
           value={value}
@@ -45,4 +46,11 @@ const BrandSelection = ({ value, onBrandChange }) => {
   );
 };
 
+const BrandSelection = ({ value, onBrandChange }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <BrandSelectionComponent value={value} onBrandChange={onBrandChange} />
+    </ThemeProvider>
+  );
+};
 export default BrandSelection;

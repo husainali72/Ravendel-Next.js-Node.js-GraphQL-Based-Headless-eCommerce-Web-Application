@@ -1,82 +1,108 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Grid, TextField } from "@material-ui/core";
+import { Grid, TextField } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { attributeUpdateAction, attributeAction } from "../../../store/action/";
-import { isEmpty } from "../../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../../utils/helper";
 import ReactTags from "react-tag-autocomplete";
 import viewStyles from "../../viewStyles";
 import { Alert, Loading, TopBar, CardBlocks } from "../../components";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme";
+import { get } from "lodash";
+import { validate } from "../../components/validate";
+import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 const delimiters = ["Enter", "Tab"];
 
-const EditAttribute = (props) => {
+const EditAttributeComponent = ({ params }) => {
+  const ATTRIBUTE_ID = params.id || "";
   const classes = viewStyles();
+  const navigate = useNavigate();
   const [attribute, setattribute] = useState({
     name: "",
     values: [],
   });
   const dispatch = useDispatch();
   const attributeState = useSelector((state) => state.product_attributes);
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
-    if (!isEmpty(props.match.params.id)) {
-      dispatch(attributeAction(props.match.params.id));
-    }
+    dispatch(attributeAction(ATTRIBUTE_ID));
   }, []);
 
   useEffect(() => {
-    if (Object.keys(attributeState.attribute).length) {
-      setattribute({
-        ...attribute,
-        id: attributeState.attribute.id,
-        name: attributeState.attribute.name,
-        values: attributeState.attribute.values,
-      });
+    if (!isEmpty(get(attributeState, "attribute"))) {
+      if (Object.keys(attributeState.attribute).length) {
+        setattribute({
+          ...attribute,
+          id: attributeState.attribute.id,
+          name: attributeState.attribute.name,
+          values: attributeState.attribute.values,
+        });
+      }
     }
-  }, [attributeState]);
+  }, [get(attributeState, "attribute")]);
+
+  useEffect(() => {
+    setloading(get(attributeState, "loading"));
+  }, [get(attributeState, "loading")]);
 
   const onDeleteTag = (i) => {
     attribute.values.splice(i, 1);
     setattribute({ ...attribute });
-    console.log(attribute);
   };
 
   const onAddTag = (tag) => {
     attribute.values.push(tag);
     setattribute({ ...attribute });
-    console.log(attribute);
   };
 
   const onUpdate = () => {
-    dispatch(attributeUpdateAction({ attribute: attribute }));
+    var errors = validate(["name"], attribute);
+
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(attributeUpdateAction({ attribute: attribute }, navigate));
+    }
+
+
+
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       <form>
         <TopBar
-          title='Edit Attribute'
+          title="Edit Attribute"
           onSubmit={onUpdate}
-          submitTitle='Update'
-          backLink={"/attributes"}
+          submitTitle="Update"
+          backLink={`${client_app_route_url}attributes`}
         />
 
         <Grid container spacing={2} className={classes.secondmainrow}>
-          {attributeState.loading ? <Loading /> : null}
+          {loading ? <Loading /> : null}
           <Grid item lg={6} xs={12}>
-            <CardBlocks title='Attribute Information' nomargin>
+            <CardBlocks title="Attribute Information" nomargin>
               <Grid container>
                 <Grid item xs={12}>
                   <TextField
-                    id='name'
-                    label='Name'
-                    name='name'
+                    id="name"
+                    label="Name"
+                    name="name"
                     value={attribute.name}
                     onChange={(e) =>
                       setattribute({ ...attribute, name: e.target.value })
                     }
-                    variant='outlined'
+                    variant="outlined"
                     className={classes.marginBottom}
                     fullWidth
                   />
@@ -99,8 +125,15 @@ const EditAttribute = (props) => {
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 
-export default EditAttribute;
+export default function EditAttribute() {
+  const params = useParams();
+  return (
+    <ThemeProvider theme={theme}>
+      <EditAttributeComponent params={params} />
+    </ThemeProvider>
+  );
+}

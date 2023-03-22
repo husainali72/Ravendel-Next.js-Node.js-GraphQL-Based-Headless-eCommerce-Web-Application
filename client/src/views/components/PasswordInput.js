@@ -5,13 +5,14 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
-} from "@material-ui/core";
+} from "@mui/material";
 import viewStyles from "../viewStyles";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import clsx from "clsx";
-
-const PasswordInput = ({ name, value, label, onInputChange }) => {
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme/index.js";
+const PasswordInputComponent = ({ name, value, label, onInputChange }) => {
   const classes = viewStyles();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -30,6 +31,7 @@ const PasswordInput = ({ name, value, label, onInputChange }) => {
     >
       <InputLabel htmlFor="password-field">{label}</InputLabel>
       <OutlinedInput
+        label={label}
         id="password-field"
         type={showPassword ? "text" : "password"}
         name={name}
@@ -43,20 +45,27 @@ const PasswordInput = ({ name, value, label, onInputChange }) => {
               onMouseDown={handleMouseDownPassword}
               edge="end"
             >
-              {showPassword ? <Visibility /> : <VisibilityOff />}
+              {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
             </IconButton>
           </InputAdornment>
         }
         labelWidth={70}
-        autoComplete='off'
-        // inputProps={{
-        //     autocomplete: 'new-password',
-        //     form: {
-        //       autocomplete: 'off',
-        //     },
-        //   }}
+        autoComplete="off"
       />
     </FormControl>
+  );
+};
+
+const PasswordInput = ({ name, value, label, onInputChange }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <PasswordInputComponent
+        name={name}
+        value={value}
+        label={label}
+        onInputChange={onInputChange}
+      />
+    </ThemeProvider>
   );
 };
 

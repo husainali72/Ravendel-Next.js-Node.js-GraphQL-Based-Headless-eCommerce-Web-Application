@@ -1,41 +1,90 @@
-import React, { Fragment, useState } from "react";
-import { Grid, TextField, Box, Button } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { Grid, TextField, Box, Button } from "@mui/material";
 import viewStyles from "../../viewStyles";
-import { appearanceThemeUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png";
-
-const Themes = () => {
+import { bucketBaseURL, isEmpty } from "../../../utils/helper";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+import { get } from "lodash";
+import { appearanceThemeUpdateAction } from "../../../store/action";
+import Alerts from "../../components/Alert";
+import Loading from "../../components/Loading.js";
+import PhoneNumber from "../../components/phoneNumberValidation";
+import { validatePhone, validate } from "../../components/validate";
+import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
+const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [themeSetting, setThemeSetting] = useState({
-    ...settingState.settings.appearance.theme,
-  });
+  const [themeSetting, setThemeSetting] = useState({});
 
-  const fileChange = (e) => {
-    themeSetting.logo.original = URL.createObjectURL(e.target.files[0]);
-    themeSetting.new_logo = e.target.files;
-    setThemeSetting({
-      ...themeSetting,
-      new_logo: themeSetting.new_logo,
-    });
-  };
+  useEffect(() => {
+    if (
+      settingState.settings &&
+      settingState.settings.appearance &&
+      settingState.settings.appearance.theme
+    ) {
+      setThemeSetting({ ...settingState.settings.appearance.theme })
+    }
+  }, [get(settingState, "settings.appearance.theme")])
 
   const updateTheme = () => {
-    console.log(themeSetting);
-    dispatch(appearanceThemeUpdateAction(themeSetting));
+
+    delete theme.__typename;
+
+    let errors = validate(['playstore', "appstore", "email"], themeSetting);
+
+    let phoneNumberError = validatePhone(["phone_number"], themeSetting)
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(phoneNumberError)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: phoneNumberError,
+          error: true,
+        },
+      });
+    }
+
+    else {
+
+      dispatch(appearanceThemeUpdateAction(themeSetting));
+    }
+
+
   };
 
+  const fileChange = (e) => {
+    themeSetting.logo = URL.createObjectURL(e.target.files[0]);
+    themeSetting.new_logo = e.target.files
+    setThemeSetting({ ...themeSetting })
+  };
+  const handleOnChange = (value) => {
+    setThemeSetting({ ...themeSetting, ["phone_number"]: value })
+  }
+
   return (
-    <Fragment>
+    <>
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Box component='div'>
+          <Box component="div">
             <TextField
-              type='color'
-              variant='outlined'
-              label='Primary Color'
+              type="color"
+              variant="outlined"
+              label="Primary Color"
               className={classes.settingInput}
               value={themeSetting.primary_color}
               onChange={(e) =>
@@ -47,46 +96,104 @@ const Themes = () => {
             />
           </Box>
           <Box className={classes.themeLogoWrapper}>
-            {themeSetting.logo.original ? (
+            {themeSetting.logo ? (
               <img
-                src={themeSetting.logo.original}
+                src={themeSetting.logo.startsWith("blob") ? themeSetting.logo : bucketBaseURL + themeSetting.logo}
                 className={classes.themeLogoBoxPreview}
-                alt='Logo'
+                alt="img"
               />
             ) : (
               <img
                 src={NoImagePlaceholder}
                 className={classes.themeLogoBoxPreview}
-                alt='Logo'
+                alt="Logo"
               />
             )}
             <input
-              accept='image/*'
+              accept="image/*"
               className={classes.input}
               style={{ display: "none" }}
-              id='logo'
-              name='logo'
-              type='file'
+              id="logo"
+              name="logo"
+              type="file"
               onChange={(e) => fileChange(e)}
             />
-            <label htmlFor='logo' className={classes.feautedImage}>
-              {themeSetting.logo.original ? "Change Logo" : "Add Logo"}
+            <label htmlFor="logo" className={classes.feautedImage}>
+              {themeSetting.logo ? "Change Logo" : "Add Logo"}
             </label>
           </Box>
+          <Box component="div">
+            <TextField
+              type="text"
+              variant="outlined"
+              label="Playstore url"
+              className={classes.settingInput}
+              value={themeSetting.playstore}
+              onChange={(e) =>
+                setThemeSetting({
+                  ...themeSetting,
+                  playstore: e.target.value,
+                })
+              }
+            />
+          </Box>
+
+          <Box component="div">
+            <TextField
+              type="text"
+              variant="outlined"
+              label="Applestore url "
+              className={classes.settingInput}
+              value={themeSetting.appstore}
+              onChange={(e) =>
+                setThemeSetting({
+                  ...themeSetting,
+                  appstore: e.target.value,
+                })
+              }
+            />
+          </Box>
+
+          <Box component="div" mb={3}>
+            <PhoneNumber handleOnChange={handleOnChange} phoneValue={themeSetting.phone_number} width="300px" />
+          </Box>
+          <Box component="div">
+
+            <TextField
+              type="text"
+              variant="outlined"
+              label="Email"
+              className={classes.settingInput}
+              value={themeSetting.email}
+              onChange={(e) =>
+                setThemeSetting({
+                  ...themeSetting,
+                  email: e.target.value,
+                })
+              }
+            />
+          </Box>
+
         </Grid>
         <Grid item xs={12}>
           <Button
-            size='small'
-            color='primary'
-            variant='contained'
+            size="small"
+            color="primary"
+            variant="contained"
             onClick={updateTheme}
           >
             Save Change
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
-export default Themes;
+export default function Themes() {
+  return (
+    <ThemeProvider theme={theme}>
+      <ThemesComponent />
+    </ThemeProvider>
+  );
+}

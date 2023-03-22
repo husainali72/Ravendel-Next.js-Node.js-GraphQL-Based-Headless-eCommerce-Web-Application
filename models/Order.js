@@ -7,6 +7,10 @@ const OrderSchema = new Schema({
     type: Schema.ObjectId,
     required: true
   },
+  order_number: {
+    type: String,
+    required: true
+  },
   billing: {
     firstname: String,
     lastname: String,
@@ -30,6 +34,8 @@ const OrderSchema = new Schema({
     zip: String,
     country: String,
     state: String,
+    email: String,
+    phone: String,
     notes: String
   },
   products: [
@@ -52,8 +58,55 @@ const OrderSchema = new Schema({
       }
     }
   ],
-  status: {
-    type: String
+  subtotal: {
+        type: Number,
+        required: true
+  },
+  shipping_amount: {
+        type: Number,
+        required: true
+  },
+  tax_amount: {
+        type: Number,
+        required: true
+  },
+  coupon_code: {
+        type: String,
+  },
+  discount_amount: {
+        type: Number,
+        required: true
+      },
+  grand_total: {
+        type: Number,
+        required: true
+  },
+  sub_total_details: {
+    shipping_name: String,
+    tax_name: String,
+    coupon_code: String,
+    coupon_type: String,
+    coupon_value: Number
+  },
+  sub_total_summary: [
+    {
+      total: Number,
+      coupon_type: String,
+      coupon_value: Number,
+      tax_value: Number,
+      shipping_value: Number,
+      sub_total: Number
+    }
+  ],
+  payment_status: {
+    type: String,
+    enum : ['pending','failed','success','cancelled'],
+    default: 'pending'
+  },
+  shipping_status: {
+    type: String,
+    enum : ['inprogress','shipped','outfordelivery','delivered'],
+    default: 'inprogress'
   },
   date: {
     type: Date,

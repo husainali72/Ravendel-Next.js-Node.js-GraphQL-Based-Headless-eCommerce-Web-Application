@@ -13,7 +13,8 @@ const CouponSchema = new Schema({
     type: String
   },
   discount_value: {
-    type: Number
+    type: Number,
+    min : 0
   },
   free_shipping: {
     type: Boolean,
@@ -23,14 +24,18 @@ const CouponSchema = new Schema({
     type: String
   },
   minimum_spend: {
-    type: Number
+    type: Number,
+    // min : 0
   },
   maximum_spend: {
-    type: Number
+    type: Number,
+    // min : 0
   },
-  products: [],
+  product: Boolean,
+  include_products: [],
   exclude_products: [],
-  categories: [],
+  category: Boolean,
+  include_categories: [],
   exclude_categories: [],
   date: {
     type: Date,

@@ -1,51 +1,69 @@
-import React, { Fragment, useState } from "react";
-import {
-  Grid,
-  Box,
-  FormControlLabel,
-  Checkbox,
-  Button,
-} from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { Grid, Box, FormControlLabel, Checkbox, Button } from "@mui/material";
 import viewStyles from "../../viewStyles.js";
-import { paymentCodUpdateAction } from "../../../store/action";
 import { useDispatch, useSelector } from "react-redux";
-import {SettingTextInput} from './setting-components/';
+import { SettingTextInput } from "./setting-components/";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+import { get } from "lodash";
+import { paymentCodUpdateAction } from "../../../store/action/settingAction.js";
+import Alerts from "../../components/Alert.js";
+import Loading from "../../components/Loading.js";
 
-const CashOnDelivery = (props) => {
+const CashOnDeliveryTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [codInfo, setCodInfo] = useState({
-    ...settingState.settings.paymnet.cash_on_delivery,
+    enable: false
   });
+
+  useEffect(() => {
+    if (
+      settingState.settings &&
+      settingState.settings.paymnet &&
+      settingState.settings.paymnet.cash_on_delivery
+    ) {
+      setCodInfo({ ...settingState.settings.paymnet.cash_on_delivery });
+    }
+  }, [get(settingState, "settings")]);
 
   const updateCOD = () => {
     dispatch(paymentCodUpdateAction(codInfo));
   };
 
+  const checkBoxOnChange = (index) => {
+    let data = codInfo;
+    data.enable = !data.enable
+    setCodInfo({ ...data })
+  };
+
   return (
-    <Fragment>
+    <>
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Box component='div' className={classes.marginBottom2}>
+          <Box component="div" className={classes.marginBottom2}>
             <FormControlLabel
               control={
                 <Checkbox
-                  color='primary'
+                  color="primary"
                   checked={codInfo.enable}
-                  onChange={(e) =>
-                    setCodInfo({ ...codInfo, enable: e.target.checked })
-                  }
+                  onChange={(e) => {
+                    checkBoxOnChange(e.target.checked)
+                  }}
                 />
               }
-              label='Enable cash on delivery'
+              label="Enable cash on delivery"
             />
           </Box>
-          {codInfo.enable && (
-            <Box>
-              <Box component='div'>
+
+          {codInfo.enable ? (
+            <Box  >
+              <Box component="div">
                 <SettingTextInput
-                  label='Title'
+                  label="Title"
                   value={codInfo.title}
                   onSettingInputChange={(val) =>
                     setCodInfo({ ...codInfo, title: val })
@@ -53,9 +71,9 @@ const CashOnDelivery = (props) => {
                 />
               </Box>
 
-              <Box component='div'>
+              <Box component="div">
                 <SettingTextInput
-                  label='Description'
+                  label="Description"
                   value={codInfo.description}
                   onSettingInputChange={(val) =>
                     setCodInfo({ ...codInfo, description: val })
@@ -63,9 +81,9 @@ const CashOnDelivery = (props) => {
                 />
               </Box>
 
-              <Box component='div'>
+              <Box component="div">
                 <SettingTextInput
-                  label='Instructions'
+                  label="Instructions"
                   value={codInfo.instructions}
                   onSettingInputChange={(val) =>
                     setCodInfo({ ...codInfo, instructions: val })
@@ -73,21 +91,28 @@ const CashOnDelivery = (props) => {
                 />
               </Box>
             </Box>
-          )}
+          ) : null}
         </Grid>
+        
         <Grid item xs={12}>
           <Button
-            size='small'
-            color='primary'
-            variant='contained'
+            size="small"
+            color="primary"
+            variant="contained"
             onClick={updateCOD}
           >
             Save Change
           </Button>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
-export default CashOnDelivery;
+export default function CashOnDelivery() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CashOnDeliveryTheme />
+    </ThemeProvider>
+  );
+}

@@ -17,7 +17,8 @@ const ProductCatSchema = new Schema({
   description: {
     type: String
   },
-  image: {},
+  // image: {},
+  image: String,
   meta: {
     title: {
       type: String

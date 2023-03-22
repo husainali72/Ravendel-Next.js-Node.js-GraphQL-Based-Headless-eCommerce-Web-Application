@@ -19,17 +19,24 @@ import {
   MenuItem,
   TextField,
   CircularProgress,
-} from "@material-ui/core";
+} from "@mui/material";
 import ReactSelect from "react-select";
 import { useSelector, useDispatch } from "react-redux";
-import ImageIcon from "@material-ui/icons/Image";
-import DeleteIcon from "@material-ui/icons/Delete";
+import ImageIcon from "@mui/icons-material/Image";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { isEmpty, allPossibleCases } from "../../../utils/helper";
 import { CardBlocks } from "../../components";
 import { attributesAction } from "../../../store/action/";
 import viewStyles from "../../viewStyles";
 
-const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode }) => {
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../theme/index.js";
+const AttributesComponent = ({
+  product,
+  productStateChange,
+  onCombinationUpdate,
+  EditMode,
+}) => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const inputLabel = useRef(null);
@@ -63,7 +70,7 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
       }
     }
 
-    if(EditMode && product && attributeState.attributes.length){
+    if (EditMode && product && attributeState.attributes.length) {
       let attrWithValue = {};
       for (const attr of product.attribute) {
         if (!Array.isArray(attrWithValue[attr.attribute_id])) {
@@ -110,7 +117,6 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
         ...currentVariants,
       });
     }
-
   }, [attributeState.attributes]);
 
   const changeSelectedValue = (e, i) => {
@@ -263,12 +269,11 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
   };
 
   const variantChange = (e, index) => {
-    console.log(currentVariants);
+
     if (e.target.name === "image") {
       currentVariants.combinations[index][e.target.name].file = e.target.files;
-      currentVariants.combinations[index][
-        e.target.name
-      ].view = URL.createObjectURL(e.target.files[0]);
+      currentVariants.combinations[index][e.target.name].view =
+        URL.createObjectURL(e.target.files[0]);
     } else {
       currentVariants.combinations[index][e.target.name] = e.target.value;
     }
@@ -287,20 +292,21 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
   return (
     <>
       {loading ? (
-        <Box component='div' display='flex' justifyContent='center'>
+        <Box component="div" display="flex" justifyContent="center">
           <CircularProgress />
         </Box>
       ) : (
         <>
-          <Grid container spacing={1} alignItems='center'>
+          <Grid container spacing={1} alignItems="center">
             <Grid item>
-              <FormControl style={{ width: 250 }} variant='outlined'>
-                <InputLabel ref={inputLabel} id='attribute-name'>
+              <FormControl style={{ width: 250 }} variant="outlined">
+                <InputLabel ref={inputLabel} id="attribute-name">
                   Select Attribute
                 </InputLabel>
                 <Select
+                  label="Select Attribute"
                   labelWidth={labelWidth}
-                  labelId='attribute-name'
+                  labelId="attribute-name"
                   value={currentAttribute.id}
                   onChange={(e) =>
                     setcurrentAttribute({
@@ -327,8 +333,8 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
             </Grid>
             <Grid item>
               <Button
-                color='primary'
-                variant='contained'
+                color="primary"
+                variant="contained"
                 onClick={addAttribute}
               >
                 Add
@@ -338,12 +344,12 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
 
           {currentAttribute.attribute_list.length > 0 ? (
             <>
-              <CardBlocks title='Attributes'>
+              <CardBlocks title="Attributes">
                 <TableContainer>
                   <Table
                     stickyHeader
-                    aria-label='attributes-table'
-                    size='small'
+                    aria-label="attributes-table"
+                    size="small"
                   >
                     <TableHead>
                       <TableRow>
@@ -364,7 +370,7 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
                                 value={attribute.selected_values}
                                 options={attribute.values}
                                 onChange={(e) => {
-                                  console.log("e", e);
+
                                   changeSelectedValue(e, index);
                                 }}
                                 styles={{
@@ -380,7 +386,7 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
                             </TableCell>
                             <TableCell>
                               <Checkbox
-                                color='primary'
+                                color="primary"
                                 checked={attribute.isVariant}
                                 onChange={(e) => {
                                   attribute.isVariant = e.target.checked;
@@ -391,9 +397,9 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
                               />
                             </TableCell>
                             <TableCell>
-                              <Tooltip title='Delete' aria-label='delete'>
+                              <Tooltip title="Delete" aria-label="delete">
                                 <IconButton
-                                  aria-label='Delete'
+                                  aria-label="Delete"
                                   className={classes.deleteicon}
                                   onClick={(e) => deleteAttribute(index)}
                                 >
@@ -411,8 +417,8 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
               <Divider />
               <Box mt={1}>
                 <Button
-                  color='primary'
-                  variant='contained'
+                  color="primary"
+                  variant="contained"
                   onClick={saveAttribute}
                 >
                   Save Attribute
@@ -423,10 +429,10 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
             ""
           )}
           {currentVariants.combinations.length ? (
-            <Box component='span' m={1}>
-              <CardBlocks title='Variants'>
+            <Box component="span" m={1}>
+              <CardBlocks title="Variants">
                 <TableContainer>
-                  <Table stickyHeader aria-label='variant-table' size='small'>
+                  <Table stickyHeader aria-label="variant-table" size="small">
                     <TableHead>
                       <TableRow>
                         <TableCell>Variant</TableCell>
@@ -447,11 +453,11 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
                           </TableCell>
                           <TableCell>
                             <TextField
-                              label='Price'
-                              variant='outlined'
-                              name='price'
+                              label="Price"
+                              variant="outlined"
+                              name="price"
                               fullWidth
-                              type='number'
+                              type="number"
                               value={variant.price}
                               onChange={(e) => variantChange(e, index)}
                               size="small"
@@ -459,11 +465,11 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
                           </TableCell>
                           <TableCell>
                             <TextField
-                              label='Quantity'
-                              variant='outlined'
+                              label="Quantity"
+                              variant="outlined"
                               fullWidth
-                              type='number'
-                              name='quantity'
+                              type="number"
+                              name="quantity"
                               value={variant.quantity}
                               onChange={(e) => variantChange(e, index)}
                               size="small"
@@ -471,10 +477,10 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
                           </TableCell>
                           <TableCell>
                             <TextField
-                              label='SKU'
-                              variant='outlined'
+                              label="SKU"
+                              variant="outlined"
                               fullWidth
-                              name='sku'
+                              name="sku"
                               value={variant.sku}
                               onChange={(e) => variantChange(e, index)}
                               size="small"
@@ -489,7 +495,7 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
                                     variant.image.thumbnail
                                   }
                                   className={classes.variantImage}
-                                  alt='variant'
+                                  alt="variant"
                                 />
                               ) : (
                                 ""
@@ -497,12 +503,12 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
                             </Box>
 
                             <input
-                              accept='image/*'
+                              accept="image/*"
                               className={classes.input}
                               style={{ display: "none" }}
                               id={`variant-image-${index}`}
-                              name='image'
-                              type='file'
+                              name="image"
+                              type="file"
                               onChange={(e) => variantChange(e, index)}
                             />
                             <label
@@ -514,9 +520,9 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
                             </label>
                           </TableCell>
                           <TableCell>
-                            <Tooltip title='Delete' aria-label='delete'>
+                            <Tooltip title="Delete" aria-label="delete">
                               <IconButton
-                                aria-label='Delete'
+                                aria-label="Delete"
                                 className={classes.deleteicon}
                                 onClick={() => variantDelete(index)}
                               >
@@ -540,4 +546,21 @@ const Attributes = ({ product, productStateChange, onCombinationUpdate, EditMode
   );
 };
 
+const Attributes = ({
+  product,
+  productStateChange,
+  onCombinationUpdate,
+  EditMode,
+}) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AttributesComponent
+        product={product}
+        productStateChange={productStateChange}
+        onCombinationUpdate={onCombinationUpdate}
+        EditMode={EditMode}
+      />
+    </ThemeProvider>
+  );
+};
 export default Attributes;

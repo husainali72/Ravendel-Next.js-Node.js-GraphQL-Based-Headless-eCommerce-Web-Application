@@ -1,107 +1,131 @@
 import React from "react";
 import {
   Card,
-  CardActions,
   CardHeader,
-  CardContent,
-  Button,
   Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Tooltip,
-  TableSortLabel,
   CircularProgress,
-  IconButton,
   Box,
   Typography,
-} from "@material-ui/core";
-import ArrowRightIcon from "@material-ui/icons/ArrowRight";
-import { Link } from "react-router-dom";
-import EditIcon from "@material-ui/icons/Edit";
-import jumpTo from "../../../../utils/navigation";
-import {convertDateToStringFormat} from "../../../utils/convertDate";
+  Grid,
+
+} from "@mui/material";
+import { orderDeleteAction } from "../../../../store/action";
+import ActionButton from "../../../components/actionbutton";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import { Link, useNavigate } from "react-router-dom";
 import DashboardStyles from "../../dashboard-styles";
-
-const LatestOrders = ({ ordersState }) => {
+import { client_app_route_url, isEmpty } from "../../../../utils/helper";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../../../theme/index";
+import { useDispatch } from "react-redux";
+import TableComponent from "../../../components/table";
+const LatestOrdersTheme = ({
+  latestOrders,
+  loader,
+  handleOnChangeSearch,
+  filteredLatestOrders
+}) => {
   const classes = DashboardStyles();
-
+  const navigate = useNavigate();
+  const badgefilter = [
+    {
+      name: 'payment_status',
+      title: ['pending', 'failed', 'success', 'cancelled']
+    },
+    {
+      name: 'shipping_status',
+      title: ['inprogress', 'shipped', 'outfordelivery', 'delivered']
+    },
+  ]
+  const columndata = [
+    {
+      name: 'order_number',
+      title: "Order Number",
+      sortingactive: true
+    },
+    {
+      name: 'date',
+      title: "Date",
+      sortingactive: true
+    },
+    {
+      name: 'name',
+      title: "Customer Name",
+      sortingactive: true
+    },
+    {
+      name: 'payment_status',
+      title: "payment status",
+      sortingactive: false
+    },
+    {
+      name: 'shipping_status',
+      title: "shipping status",
+      sortingactive: false
+    },
+    {
+      name: 'actions',
+      title: "Actions",
+      sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}view-order/${id}`)
+        }
+      }
+    }]
   return (
-    <Card className={classes.root}>
-      <CardHeader title="Latest Orders" />
-      <Divider />
-      <CardContent className={classes.content}>
-        {ordersState.loading ? (
-          <Box component="div" display="flex" justifyContent="center" p={2}>
+    <>
+      {
+        loader ? (
+          <Box component="div" display="flex" justifyContent="center" p={2} >
             <CircularProgress size={20} />
-          </Box>
-        ) : ordersState.orders.lenght > 0 ? (
-          <Table aria-label="sticky table and Dense Table" size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell sortDirection="desc">
-                  <Tooltip enterDelay={300} title="Sort">
-                    <TableSortLabel active direction="desc">
-                      Date
-                    </TableSortLabel>
-                  </Tooltip>
-                </TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {ordersState.orders.slice(0, 2).map((order) => (
-                <TableRow hover key={order.id}>
-                  <TableCell>
-                    {order.shipping.firstname + " " + order.shipping.lastname}
-                  </TableCell>
-                  <TableCell>{convertDateToStringFormat(order.date)}</TableCell>
-                  <TableCell>
-                    <span className={"product-status-chip " + order.status}>
-                      {order.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title="Edit Order" aria-label="edit">
-                      <IconButton
-                        aria-label="Edit"
-                        onClick={() => jumpTo(`view-order/${order.id}`)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          </Box >
+        ) : latestOrders.length > 0 ? (
+          <TableComponent
+            loading={loader}
+            rows={filteredLatestOrders}
+            columns={columndata}
+            searchdata={latestOrders}
+            handleOnChangeSearch={handleOnChangeSearch}
+            dropdown={badgefilter}
+            showDeleteButton={false}
+            title='Latest Orders'
+            searchbydate={true}
+          />
         ) : (
-          <Box component="div" display="flex" justifyContent="center" p={2}>
-            <Typography className={classes.noRecordFound} variant="caption">
-              No records found
-            </Typography>
-          </Box>
-        )}
-      </CardContent>
-
-      {ordersState.orders.lenght > 0 ? (
-        <>
-          <Divider />
-          <CardActions className="flex-end">
-            <Link to="/all-orders">
-              <Button color="primary" size="small" variant="text">
-                View all <ArrowRightIcon />
-              </Button>
-            </Link>
-          </CardActions>
-        </>
-      ) : null}
-    </Card>
+          <Card className={classes.root}>
+            <CardHeader
+              title="Latest Orders"
+              titleTypographyProps={{ variant: "subtitle" }}
+              className={classes.Cardheader}
+            />
+            <Divider />
+            <Box component="div" display="flex" justifyContent="center" p={2}>
+              <Typography className={classes.noRecordFound} variant="caption">
+                No records found
+              </Typography>
+            </Box>
+          </Card>
+        )
+      }
+    </>
   );
 };
-
+const LatestOrders = ({
+  latestOrders,
+  loader,
+  handleOnChangeSearch,
+  filteredLatestOrders }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <LatestOrdersTheme
+        latestOrders={latestOrders}
+        loader={loader}
+        handleOnChangeSearch={handleOnChangeSearch}
+        filteredLatestOrders={filteredLatestOrders}
+      />
+    </ThemeProvider>
+  );
+};
 export default LatestOrders;

@@ -5,9 +5,9 @@ import {
   Box,
   RadioGroup,
   FormControlLabel,
-} from "@material-ui/core";
+} from "@mui/material";
 import Select from "react-select";
-import Rating from "@material-ui/lab/Rating";
+import Rating from "@mui/material/Rating";
 import {
   productsAction,
   customersAction,
@@ -15,9 +15,23 @@ import {
   reviewUpdateAction,
 } from "../../store/action";
 import { useSelector, useDispatch } from "react-redux";
-import { StyledRadio, Loading, TopBar, TextInput, CardBlocks } from "../components";
+import { get } from "lodash";
+import {
+  StyledRadio,
+  Loading,
+  TopBar,
+  TextInput,
+  CardBlocks,
+} from "../components";
 import viewStyles from "../viewStyles";
-
+import { client_app_route_url, isEmpty } from "../../utils/helper";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme";
+import { useNavigate, useParams } from "react-router-dom";
+import Alerts from "../components/Alert";
+import { validate } from "../components/validate";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { customStyles } from "../../theme/ReactSelectCustomStyles";
 var reviewObj = {
   title: "",
   customer_id: "",
@@ -29,7 +43,10 @@ var reviewObj = {
   customer: {},
   product: {},
 };
-const EditReview = (props) => {
+
+const EditReviewComponent = ({ params }) => {
+  const Review_id = params.id || "";
+  const navigate = useNavigate();
   const classes = viewStyles();
   const dispatch = useDispatch();
   const productState = useSelector((state) => state.products);
@@ -38,39 +55,46 @@ const EditReview = (props) => {
   const [review, setreview] = useState(reviewObj);
   const [products, setproducts] = useState([]);
   const [customers, setcustomers] = useState([]);
+  const [loading, setloading] = useState(false);
 
   useEffect(() => {
-    if (!reviewState.reviews.length) {
-      dispatch(reviewsAction());
-    }
+    setloading(get(reviewState, "loading"));
+  }, [get(reviewState, "loading")]);
 
-    for (let i in reviewState.reviews) {
-      if (reviewState.reviews[i].id === props.match.params.id) {
-        dispatch(customersAction());
-        dispatch(productsAction());
-        setreview({
-          ...review,
-          ...reviewState.reviews[i],
-          customer_id: reviewState.reviews[i].customer_id.id,
-          product_id: reviewState.reviews[i].product_id.id,
-          customer: {
-            value: reviewState.reviews[i].customer_id.id,
-            label: reviewState.reviews[i].customer_id.first_name,
-          },
-          product: {
-            value: reviewState.reviews[i].product_id.id,
-            label: reviewState.reviews[i].product_id.name,
-          },
-        });
-        break;
+  useEffect(() => {
+    if (isEmpty(get(reviewState, "reviews"))) {
+      dispatch(reviewsAction());
+    } else {
+      for (let i in reviewState.reviews) {
+        if (reviewState.reviews && reviewState.reviews.length > 0) {
+          if (reviewState.reviews[i].id === Review_id) {
+            dispatch(customersAction());
+            dispatch(productsAction());
+            setreview({
+              ...review,
+              ...reviewState.reviews[i],
+              customer_id: reviewState.reviews[i].customer_id.id,
+              product_id: reviewState.reviews[i].product_id._id,
+              customer: {
+                value: reviewState.reviews[i].customer_id.id,
+                label: reviewState.reviews[i].customer_id.first_name,
+              },
+              product: {
+                value: reviewState.reviews[i].product_id._id,
+                label: reviewState.reviews[i].product_id.name,
+              },
+            });
+            break;
+          }
+        }
       }
     }
-  }, [reviewState.reviews]);
+  }, [get(reviewState, "reviews")]);
 
   useEffect(() => {
     const prodcutArr = productState.products.map((product) => {
       return {
-        value: product.id,
+        value: product._id,
         label: product.name,
       };
     });
@@ -90,8 +114,21 @@ const EditReview = (props) => {
   }, [customerState.customers]);
 
   const updateReview = () => {
-    console.log(review);
-    dispatch(reviewUpdateAction(review));
+    let errors = validate(['email', 'review', "title"], review);
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(reviewUpdateAction(review, navigate));
+    }
+
   };
 
   const handleChange = (e) => {
@@ -101,44 +138,52 @@ const EditReview = (props) => {
     });
   };
 
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
+  };
+
   return (
-    <Fragment>
-      {reviewState.loading && <Loading />}
+    <>
+      <Alerts />
+      {loading && <Loading />}
+
       <TopBar
-        title='Edit Customer Review'
+        title="Edit Customer Review"
         onSubmit={updateReview}
-        submitTitle='Update'
-        backLink={"/reviews"}
+        submitTitle="Update"
+        backLink={`${client_app_route_url}reviews`}
       />
+
 
       <Grid container spacing={4} className={classes.secondmainrow}>
         <Grid item lg={9} md={12} sm={12} xs={12}>
-          <CardBlocks title='Review Information' nomargin>
-            <Box component='div' mb={2}>
+          <CardBlocks title="Review Information" nomargin>
+            <Box component="div" mb={2}>
+
               <TextInput
                 value={review.title}
-                label='Title'
-                name='title'
+                label="Title"
+                name="title"
                 onInputChange={handleChange}
               />
             </Box>
-            <Box component='div' mb={2}>
+            <Box component="div" mb={2}>
               <TextInput
                 value={review.review}
-                name='review'
-                label='Review'
+                name="review"
+                label="Review"
                 onInputChange={handleChange}
               />
             </Box>
           </CardBlocks>
 
-          <CardBlocks title='Review Details'>
+          <CardBlocks title="Review Details">
             {review.product.value && (
-              <Box component='div' mb={2}>
-                <Typography component='legend'>Products</Typography>
+              <Box component="div" mb={2}>
+                <Typography variant="h3">Product</Typography>
                 <Select
                   value={review.product}
-                  name='product_id'
+                  name="product_id"
                   onChange={(e) =>
                     setreview({
                       ...review,
@@ -147,16 +192,19 @@ const EditReview = (props) => {
                     })
                   }
                   options={products}
+                  styles={customStyles}
+                  className={classes.marginBottom}
                 />
               </Box>
             )}
 
             {review.customer.value && (
-              <Box component='div' mb={2}>
-                <Typography component='legend'>Customer</Typography>
+              <Box component="div" mb={2}>
+                <Typography variant="h3">Customer</Typography>
+
                 <Select
                   value={review.customer}
-                  name='customer_id'
+                  name="customer_id"
                   onChange={(e) =>
                     setreview({
                       ...review,
@@ -165,26 +213,29 @@ const EditReview = (props) => {
                     })
                   }
                   options={customers}
+                  styles={customStyles}
                   className={classes.marginBottom}
                 />
               </Box>
             )}
 
-            <Box component='div' mb={2}>
+            <Box component="div" mb={2}>
+            <Typography variant="h3">Email</Typography>
               <TextInput
                 value={review.email}
-                label='Email'
-                name='email'
+                name="email"
                 onInputChange={handleChange}
+                onInput={toInputLowercase}
               />
             </Box>
 
-            <Box component='fieldset' mb={3} borderColor='transparent'>
-              <Typography component='legend'>Rating</Typography>
+            <Box component="fieldset" mb={3} borderColor="transparent">
+              <Typography component="legend">Rating</Typography>
               <Rating
-                name='simple-controlled'
+                name="simple-controlled"
                 value={Number(review.rating)}
                 onChange={(event, newValue) => {
+                  if(newValue === null) newValue = 0
                   setreview({
                     ...review,
                     rating: String(newValue),
@@ -196,30 +247,38 @@ const EditReview = (props) => {
         </Grid>
 
         <Grid item lg={3} md={12} xs={12}>
-          <CardBlocks title='Status' nomargin>
+          <CardBlocks title="Status" nomargin>
             <RadioGroup
-              defaultValue='Publish'
-              name='status'
+              defaultValue="Publish"
+              name="status"
               onChange={handleChange}
               row
               value={review.status}
             >
               <FormControlLabel
-                value='approved'
+                value="approved"
                 control={<StyledRadio />}
-                label='Approved'
+                label="Approved"
               />
               <FormControlLabel
-                value='pending'
+                value="pending"
                 control={<StyledRadio />}
-                label='Pending'
+                label="Pending"
               />
             </RadioGroup>
           </CardBlocks>
         </Grid>
       </Grid>
-    </Fragment>
+    </>
   );
 };
 
+const EditReview = () => {
+  const params = useParams();
+  return (
+    <ThemeProvider theme={theme}>
+      <EditReviewComponent params={params} />
+    </ThemeProvider>
+  );
+};
 export default EditReview;

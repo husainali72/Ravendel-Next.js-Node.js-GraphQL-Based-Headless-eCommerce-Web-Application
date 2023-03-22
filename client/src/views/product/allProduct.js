@@ -1,153 +1,124 @@
-import React, { Fragment, useEffect } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-  Avatar,
-  Button,
-  Tooltip,
-} from "@material-ui/core";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { productsAction, productDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
-import ImageIcon from "@material-ui/icons/Image";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import { productDeleteAction, productsAction } from "../../store/action";
+import { client_app_route_url } from "../../utils/helper";
+import { useNavigate } from "react-router-dom";
+import { Grid } from "@mui/material";
+import { isEmpty } from "../../utils/helper";
+import { bucketBaseURL } from "../../utils/helper";
+import { ThemeProvider, } from "@mui/material/styles";
+import ActionButton from "../components/actionbutton";
+import theme from "../../theme/index";
+import { get } from "lodash";
+import TableComponent from "../components/table";
+import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
 import viewStyles from "../viewStyles";
-import { convertDateToStringFormat } from "../utils/convertDate";
-import { Alert, Loading } from "../components";
-
-const AllProduct = () => {
-  const classes = viewStyles();
+const AllproductComponent = () => {
+  const classes = viewStyles()
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
+  const navigate = useNavigate()
+  const [Allproducts, setAllproduct] = useState([])
+  const [filtered, setfilterdData] = useState([])
+  const statusTabData = {
+    name: 'status',
+    array: ['All', 'Publish', 'Draft']
+  }
+  const columndata = [
+    {
+      name: "image",
+      title: "image",
+      sortingactive: false
+    },
+    {
+      name: "date",
+      title: "date",
+      sortingactive: true
+    },
+    {
+      name: "name",
+      title: "Name",
+      sortingactive: true
+    },
+    {
+      name: "status",
+      title: "Status",
+      sortingactive: true
+    },
+    {
+
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-product/${id}`)
+        } else if (type === "delete") {
+          dispatch(productDeleteAction(id))
+        }
+      }
+    }]
+
+
   useEffect(() => {
     dispatch(productsAction());
   }, []);
+  useEffect(() => {
+    if (!isEmpty(get(products, 'products'))) {
+      let data = []
+      products.products.map((product) => {
+        let object = {
+          id: product._id,
+          image: product.feature_image ? bucketBaseURL + product.feature_image : NoImagePlaceHolder,
+          date: product.date,
+          status: product.status,
+          name: product.name,
+        }
+        data.push(object)
+      })
+      setAllproduct(data)
+      setfilterdData(data)
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    } else {
+      setAllproduct([])
+      setfilterdData([])
+    }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  }, [get(products, 'products')])
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+  const handleOnChangeSearch = (filtereData) => {
+
+    setfilterdData(filtereData)
+  }
 
   return (
-    <Fragment>
-      <Alert />
-      <Grid container spacing={2} className={classes.mainrow}>
-        <Grid item xl={12}>
-          <Card>
-            {products.loading ? <Loading /> : null}
-            <CardHeader
-              action={
-                <Link to='/add-product'>
-                  <Button
-                    color='primary'
-                    className={classes.addUserBtn}
-                    size='small'
-                    variant='contained'
-                  >
-                    Add Product
-                  </Button>
-                </Link>
-              }
-              title='All Products'
-            />
-            <Divider />
-            <CardContent>
-              <TableContainer>
-                <Table stickyHeader aria-label='all-products' size='small'>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell className={classes.avtarTd}>
-                        <ImageIcon />
-                      </TableCell>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody className={classes.container}>
-                    {products.products
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((product) => (
-                        <TableRow key={product.id} hover>
-                          <TableCell>
-                            <Avatar
-                              alt={product.name}
-                              src={
-                                product.feature_image &&
-                                product.feature_image.thumbnail
-                              }
-                            />
-                          </TableCell>
-                          <TableCell>{product.name}</TableCell>
-                          <TableCell>
-                            {convertDateToStringFormat(product.date)}
-                          </TableCell>
-                          <TableCell>
-                            <Tooltip title='Edit Product' aria-label='edit'>
-                              <IconButton
-                                aria-label='Edit'
-                                onClick={() =>
-                                  jumpTo(`edit-product/${product.id}`)
-                                }
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title='Delete Product' aria-label='delete'>
-                              <IconButton
-                                aria-label='Delete'
-                                className={classes.deleteicon}
-                                onClick={() =>
-                                  dispatch(productDeleteAction(product.id))
-                                }
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component='div'
-                count={products.products.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Fragment>
-  );
-};
+    <>
 
-export default AllProduct;
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={products.loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={Allproducts}
+            handleOnChangeSearch={handleOnChangeSearch}
+            statusTabData={statusTabData}
+            addpage='add-product'
+            showDeleteButton={true}
+            searchbydate={true}
+            title="All Products"
+          />
+        </Grid>
+      </Grid >
+    </>
+
+  );
+}
+export default function AllProduct() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllproductComponent />
+    </ThemeProvider>
+  );
+}

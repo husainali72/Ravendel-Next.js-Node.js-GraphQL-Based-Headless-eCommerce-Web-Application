@@ -5,6 +5,7 @@ const APP_KEYS = require("../../config/keys");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("../../middleware/auth");
+const { sendEmail } = require("../../config/helpers");
 
 // user model
 const User = require("../../models/User");
@@ -26,17 +27,24 @@ router.post("/register", (req, res) => {
 
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
-          if (err) throw err;
+          // if (err) throw err;
           newUser.password = hash;
           newUser
             .save()
-            .then((user) =>
+            .then((user) =>{
               res.json({
                 name: user.name,
                 email: user.email,
                 role: user.role,
               })
-            )
+
+              // send registration email
+              mailData = {
+                subject: `Welcome To Ravendel ${user.name}`, 
+                mailTemplate: "template"
+              }
+              sendEmail(mailData, APP_KEYS.smptUser, user.email, res)
+            })
             .catch((err) => console.log(err));
         });
       });
@@ -62,22 +70,35 @@ router.post("/login", (req, res) => {
       if (isMatch) {
         // User Matched
         const payload = { id: user.id, name: user.name, email: user.email }; // Create JWT Payload
-        // Sign Token
-        jwt.sign(
-          payload,
-          APP_KEYS.jwtSecret,
-          { expiresIn: 36000 },
-          (err, token) => {
-            res.json({
-              success: true,
-              token: token,
-              role: user.role,
-              user_id: user.id,
-              name: user.name,
-              image: user.image,
-            });
-          }
-        );
+
+        try {
+          // Sign Token
+          jwt.sign(
+            payload,
+            APP_KEYS.jwtSecret,
+            { expiresIn: 36000 },
+            (err, token) => {
+              if(token){
+                res.json({
+                  success: true,
+                  token: token,
+                  role: user.role,
+                  user_id: user.id,
+                  name: user.name,
+                  image: user.image,
+                });
+              }else{
+                res.json({
+                  success: false,
+                  token: null
+                });
+              }
+            }
+          );
+        } catch (e) {
+          console.log('e', e)
+        }
+
       } else {
         return res.status(400).json("Invalid credentials");
       }

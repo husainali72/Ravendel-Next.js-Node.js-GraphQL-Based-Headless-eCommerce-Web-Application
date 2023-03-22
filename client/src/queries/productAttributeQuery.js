@@ -21,46 +21,83 @@ const GENERAL_RESPONSE_TILE = gql`
 const GET_ATTRIBUTES = gql`
   {
     product_attributes {
-      ...AttributeTile
+      data {
+        ...AttributeTile
+      }
+      message {
+        message
+        success
+      }
     }
   }
   ${ATTRIBUTE_TILE}
 `;
 
 const GET_ATTRIBUTE = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     product_attribute(id: $id) {
-      ...AttributeTile
+      data {
+        ...AttributeTile
+      }
+      message {
+        message
+        success
+      }
     }
   }
   ${ATTRIBUTE_TILE}
 `;
 
+// const ADD_ATTRIBUTE = gql`
+//   mutation($attribute: AttributeInput) {
+//     addAttribute(attribute: $attribute) {
+//       ...GeneralRsponseTile
+//     }
+//   }
+//   ${GENERAL_RESPONSE_TILE}
+// `;
 const ADD_ATTRIBUTE = gql`
   mutation($attribute: AttributeInput) {
     addAttribute(attribute: $attribute) {
-      ...GeneralRsponseTile
+      message
+      success
     }
   }
-  ${GENERAL_RESPONSE_TILE}
 `;
 
+// const UPDATE_ATTRIBUTE = gql`
+//   mutation($attribute: AttributeInput) {
+//     updateAttribute(attribute: $attribute) {
+//       ...GeneralRsponseTile
+//     }
+//   }
+//   ${GENERAL_RESPONSE_TILE}
+// `;
 const UPDATE_ATTRIBUTE = gql`
   mutation($attribute: AttributeInput) {
     updateAttribute(attribute: $attribute) {
-      ...GeneralRsponseTile
+      message
+      success
     }
   }
-  ${GENERAL_RESPONSE_TILE}
 `;
 
+// const DELETE_ATTRIBUTE = gql`
+//   mutation($id: ID!) {
+//     deleteAttribute(id: $id) {
+//       ...GeneralRsponseTile
+//     }
+//   }
+//   ${GENERAL_RESPONSE_TILE}
+// `;
 const DELETE_ATTRIBUTE = gql`
   mutation($id: ID!) {
     deleteAttribute(id: $id) {
-      ...GeneralRsponseTile
+      message
+      success
     }
   }
-  ${GENERAL_RESPONSE_TILE}
+  
 `;
 
 export {

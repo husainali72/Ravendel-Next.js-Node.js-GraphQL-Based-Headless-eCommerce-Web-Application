@@ -1,154 +1,114 @@
-import React, { Fragment, useEffect, useState } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-  Button,
-  Tooltip
-} from "@material-ui/core";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Grid } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { couponsAction, couponDeleteAction } from "../../store/action";
-import jumpTo from "../../utils/navigation";
-import { isEmpty } from "../../utils/helper";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
+import theme from "../../theme";
+import { ThemeProvider } from "@mui/material/styles";
+import { couponDeleteAction, couponsAction } from "../../store/action";
+import { get } from 'lodash'
+import ActionButton from "../components/actionbutton";
+import TableComponent from "../components/table";
 import viewStyles from "../viewStyles";
-import {Alert, Loading} from '../components';
-import {convertDateToStringFormat} from '../utils/convertDate';
-
-const AllCoupons = () => {
-  const classes = viewStyles();
+import { convertDateToStringFormat } from "../utils/convertDate";
+const AllCouponsTheme = () => {
+  const classes = viewStyles()
   const dispatch = useDispatch();
-  const Coupons = useSelector(state => state.coupons)
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const Coupons = useSelector((state) => state.coupons);
+  const [Allcoupon, setAllcoupon] = useState([])
+  const [filtered, setfilterdData] = useState([])
+  const navigate = useNavigate()
+  const columndata = [
+    {
+      name: "code",
+      title: "Code",
+      sortingactive: true
+    },
+    {
+      name: "discount_value",
+      title: "Discount Value",
+      sortingactive: true
+    },
+    {
+      name: "discount_type",
+      title: "Discount type",
+      sortingactive: true
+    },
+    {
+      name: "date",
+      title: "Expire date",
+      sortingactive: true
+    },
+    {
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-coupon/${id}`)
+        } else if (type === "delete") {
+          dispatch(couponDeleteAction(id))
+        }
+      }
+    }]
   useEffect(() => {
     if (isEmpty(Coupons.coupons)) {
       dispatch(couponsAction());
+
     }
   }, []);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
+  useEffect(() => {
+    if (!isEmpty(get(Coupons, 'coupons'))) {
+      let data = []
+      Coupons.coupons.map((coupon) => {
+        let object = {
+          id: coupon.id,
+          code: coupon.code,
+          date: coupon.expire,
+          discount_type: coupon.discount_type,
+          discount_value: coupon.discount_value
+        }
+        data.push(object)
+      })
+      setAllcoupon(data)
+      setfilterdData(data)
+    } else {
+      setAllcoupon([])
+      setfilterdData([])
+    }
+  }, [get(Coupons, 'coupons')])
+  const handleOnChangeSearch = (filtereData) => {
+    setfilterdData(filtereData)
+  }
   return (
-    <Fragment>
-      <Alert />
-      <Grid container spacing={4} className={classes.mainrow}>
-        <Grid item lg={12}>
-          <Card>
-            {Coupons.loading && <Loading />}
-            <CardHeader
-              action={
-                <Link to="/add-coupon">
-                  <Button
-                    color="primary"
-                    className={classes.addUserBtn}
-                    size="small"
-                    variant="contained"
-                  >
-                    Add Coupon
-                  </Button>
-                </Link>
-              }
-              title="All Coupons"
-            />
-            <Divider />
-            <CardContent>
-              <TableContainer className={classes.container}>
-                <Table
-                  stickyHeader
-                  aria-label="allcoupons-table"
-                  size="small"
-                >
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Code</TableCell>
-                      <TableCell>Coupon type</TableCell>
-                      <TableCell>Coupon Amount</TableCell>
-                      <TableCell>Expiry date</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {Coupons.coupons
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map(coupon => (
-                        <TableRow key={coupon.id} hover>
-                          <TableCell>{coupon.code}</TableCell>
-                          <TableCell>{coupon.discount_type}</TableCell>
-                          <TableCell>{coupon.discount_value}</TableCell>
-                          <TableCell>{convertDateToStringFormat(coupon.expire)}</TableCell>
-                          <TableCell>
-                            <Tooltip
-                              title="Edit Coupon"
-                              aria-label="edit-coupon"
-                            >
-                              <IconButton
-                                aria-label="Edit"
-                                onClick={() =>
-                                  jumpTo(`edit-coupon/${coupon.id}`)
-                                }
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip
-                              title="Delete Coupon"
-                              aria-label="delete-coupon"
-                            >
-                              <IconButton
-                                aria-label="Delete"
-                                className={classes.deleteicon}
-                                onClick={() =>
-                                  dispatch(couponDeleteAction(coupon.id))
-                                }
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={Coupons.coupons.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
+    <>
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={Coupons.loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={Allcoupon}
+            handleOnChangeSearch={handleOnChangeSearch}
+            editpage='edit-coupon'
+            addpage='add-coupon'
+            title="All Coupons"
+            searchbydate={true}
+            showDeleteButton={true}
+          />
         </Grid>
-      </Grid>
-    </Fragment>
+      </Grid >
+
+    </>
   );
 };
 
+const AllCoupons = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllCouponsTheme />
+    </ThemeProvider>
+  );
+};
 export default AllCoupons;

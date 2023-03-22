@@ -6,11 +6,11 @@ import {
   RadioGroup,
   FormControlLabel,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from "@mui/material";
+import { useTheme } from "@mui/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { blogUpdateAction, blogAction } from "../../store/action/";
-import { isEmpty } from "../../utils/helper";
+import { isEmpty, client_app_route_url } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
   Alert,
@@ -20,35 +20,41 @@ import {
   CardBlocks,
   TinymceEditor,
 } from "../components";
-
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme";
+import { get } from "lodash";
 const defaultObj = {
   title: "",
   content: "",
   status: "Publish",
 };
-const EditFAQ = (props) => {
-  const FAQId = props.match.params.id;
+
+const EditFAQComponenet = ({ params }) => {
+  const FAQId = params.id || "";
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
   const blogState = useSelector((state) => state.blogs);
   const [faq, setFaq] = useState(defaultObj);
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
-    if (!isEmpty(FAQId)) {
-      dispatch(blogAction(FAQId));
-    }
+    dispatch(blogAction(FAQId));
+
     return () => {
       setFaq(defaultObj);
     };
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(blogState.blog)) {
+    setloading(get(blogState, "loading"));
+  }, [get(blogState, "loading")]);
+
+  useEffect(() => {
+    if (!isEmpty(get(blogState, "blog"))) {
       setFaq({ ...faq, ...blogState.blog });
     }
-  }, [blogState.blog]);
+  }, [get(blogState, "blog")]);
 
   const updateFaq = (e) => {
     e.preventDefault();
@@ -60,15 +66,15 @@ const EditFAQ = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
-      {blogState.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title='Edit FAQ'
+          title="Edit FAQ"
           onSubmit={updateFaq}
-          submitTitle='Update'
-          backLink={"/all-faq"}
+          submitTitle="Update"
+          backLink={`${client_app_route_url}all-faq`}
         />
 
         <Grid
@@ -77,57 +83,64 @@ const EditFAQ = (props) => {
           className={classes.secondmainrow}
         >
           <Grid item lg={9} md={12} xs={12}>
-            <CardBlocks title='FAQ Information' nomargin>
-              <Box component='div' mb={2}>
+            <CardBlocks title="FAQ Information" nomargin>
+              <Box component="div" mb={2}>
                 <TextField
-                  id='title'
-                  label='Title'
-                  name='title'
+                  id="title"
+                  label="Title"
+                  name="title"
                   onChange={handleChange}
-                  variant='outlined'
+                  variant="outlined"
                   value={faq.title}
                   fullWidth
                 />
               </Box>
-              <Box component='div'>
-                {!blogState.loading ? 
+              <Box component="div">
+                {!blogState.loading ? (
                   <TinymceEditor
                     value={faq.content}
                     onEditorChange={(value) =>
                       setFaq({ ...faq, ["content"]: value })
                     }
                   />
-                : null}
+                ) : null}
               </Box>
             </CardBlocks>
           </Grid>
 
           <Grid item lg={3} md={12} xs={12}>
-            <CardBlocks title='Status' nomargin>
+            <CardBlocks title="Status" nomargin>
               <RadioGroup
-                defaultValue='Publish'
-                name='status'
+                defaultValue="Publish"
+                name="status"
                 onChange={handleChange}
                 row
                 value={faq.status}
               >
                 <FormControlLabel
-                  value='Publish'
+                  value="Publish"
                   control={<StyledRadio />}
-                  label='Publish'
+                  label="Publish"
                 />
                 <FormControlLabel
-                  value='Draft'
+                  value="Draft"
                   control={<StyledRadio />}
-                  label='Draft'
+                  label="Draft"
                 />
               </RadioGroup>
             </CardBlocks>
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 
+const EditFAQ = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <EditFAQComponenet />
+    </ThemeProvider>
+  );
+};
 export default EditFAQ;

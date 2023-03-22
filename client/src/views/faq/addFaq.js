@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   TextField,
@@ -6,8 +6,8 @@ import {
   RadioGroup,
   FormControlLabel,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+} from "@mui/material";
+import { useTheme } from "@mui/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { blogAddAction } from "../../store/action/";
 import viewStyles from "../viewStyles";
@@ -19,6 +19,9 @@ import {
   CardBlocks,
   TinymceEditor,
 } from "../components";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme";
+import { client_app_route_url } from "../../utils/helper";
 
 const defaultObj = {
   title: "",
@@ -26,7 +29,7 @@ const defaultObj = {
   status: "Publish",
 };
 
-const AddFAQ = () => {
+const AddFAQComponent = () => {
   const classes = viewStyles();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -51,15 +54,15 @@ const AddFAQ = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
       {blogState.loading && <Loading />}
       <form>
         <TopBar
-          title='Add FAQ'
+          title="Add FAQ"
           onSubmit={addFaq}
-          submitTitle='Add'
-          backLink={"/all-faq"}
+          submitTitle="Add"
+          backLink={`${client_app_route_url}all-faq`}
         />
 
         <Grid
@@ -68,19 +71,19 @@ const AddFAQ = () => {
           className={classes.secondmainrow}
         >
           <Grid item lg={9} md={12} xs={12}>
-            <CardBlocks title='FAQ Information' nomargin>
-              <Box component='div' mb={2}>
+            <CardBlocks title="FAQ Information" nomargin>
+              <Box component="div" mb={2}>
                 <TextField
-                  id='title'
-                  label='Title'
-                  name='title'
+                  id="title"
+                  label="Title"
+                  name="title"
                   onChange={handleChange}
-                  variant='outlined'
+                  variant="outlined"
                   fullWidth
                 />
               </Box>
 
-              <Box component='div'>
+              <Box component="div">
                 <TinymceEditor
                   value={faq.content}
                   onEditorChange={(value) =>
@@ -92,30 +95,37 @@ const AddFAQ = () => {
           </Grid>
 
           <Grid item lg={3} md={12} xs={12}>
-            <CardBlocks title='Status' nomargin>
+            <CardBlocks title="Status" nomargin>
               <RadioGroup
-                defaultValue='Publish'
-                name='status'
+                defaultValue="Publish"
+                name="status"
                 onChange={handleChange}
                 row
               >
                 <FormControlLabel
-                  value='Publish'
+                  value="Publish"
                   control={<StyledRadio />}
-                  label='Publish'
+                  label="Publish"
                 />
                 <FormControlLabel
-                  value='Draft'
+                  value="Draft"
                   control={<StyledRadio />}
-                  label='Draft'
+                  label="Draft"
                 />
               </RadioGroup>
             </CardBlocks>
           </Grid>
         </Grid>
       </form>
-    </Fragment>
+    </>
   );
 };
 
+const AddFAQ = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AddFAQComponent />
+    </ThemeProvider>
+  );
+};
 export default AddFAQ;

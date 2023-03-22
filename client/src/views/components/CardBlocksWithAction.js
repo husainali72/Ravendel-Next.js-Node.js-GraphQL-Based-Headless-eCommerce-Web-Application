@@ -7,7 +7,7 @@ import {
   CardContent,
   Button,
   CardActions,
-} from "@material-ui/core";
+} from '@mui/material';
 import viewStyles from "../viewStyles";
 
 const CardBlocksWithAction = ({

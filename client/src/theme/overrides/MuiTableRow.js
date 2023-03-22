@@ -1,14 +1,16 @@
-import palette from '../palette';
-
+import palette from "../palette";
+import { colors } from "@mui/material";
 export default {
-  root: {
-    '&$selected': {
-      backgroundColor: palette.background.default
+  styleOverrides: {
+    root: {
+      "&$selected": {
+        backgroundColor: palette.background.default,
+      },
+      "&$hover": {
+        "&:hover": {
+          backgroundColor: palette.background.default,
+        },
+      },
     },
-    '&$hover': {
-      '&:hover': {
-        backgroundColor: palette.background.default
-      }
-    }
-  }
+  },
 };

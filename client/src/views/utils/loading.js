@@ -1,5 +1,5 @@
 import React from "react";
-import { Backdrop, CircularProgress, Typography } from "@material-ui/core";
+import { Backdrop, CircularProgress, Typography } from"@mui/material";
 import viewStyles from "../viewStyles.js";
 
 const Loading = () => {

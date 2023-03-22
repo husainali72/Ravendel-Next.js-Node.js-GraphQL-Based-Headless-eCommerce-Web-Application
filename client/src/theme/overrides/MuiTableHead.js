@@ -1,7 +1,10 @@
-import { colors } from '@material-ui/core';
-
+import palette from "../palette";
 export default {
-  root: {
-    backgroundColor: colors.grey[50]
-  }
+  styleOverrides: {
+    root: {
+      borderBottom: `1px solid ${palette.divider}`,
+      backgroundColor: " #F4F6F8",
+      width: '200px'
+    },
+  },
 };

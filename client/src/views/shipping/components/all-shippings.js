@@ -1,94 +1,83 @@
-import React, { useState } from "react";
-import {
-  Table,
-  TableContainer,
-  TableRow,
-  TableHead,
-  TableCell,
-  TableBody,
-  IconButton,
-  Tooltip,
-  TablePagination,
-} from "@material-ui/core";
-import viewStyles from "../../viewStyles.js";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import { CardBlocks } from "../../components";
+import React, { useState, useEffect } from "react";
+import theme from "../../../theme/index.js";
+import { ThemeProvider, } from "@mui/material/styles";
+import TableComponent from "../../components/table.js";
+import ActionButton from "../../components/actionbutton.js";
+
+const AllShippingComponentComponent = ({
+  shippingState,
+  editShippingForm,
+  deleteShipping,
+}) => {
+  const [Allshipping, setAllshipping] = useState([])
+  const [filtered, setfilterdData] = useState([])
+  const columndata = [
+    { name: 'name', title: "Name", sortingactive: true },
+    { name: 'amount', title: "amount", sortingactive: true },
+    {
+      name: 'actions', title: "Actions", sortingactive: false, component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+
+          let shipping = Allshipping.find(item => item.id === id);
+
+          editShippingForm(shipping)
+
+        } else if (type === "delete") {
+          deleteShipping(id)
+        }
+      }
+    },]
+
+  useEffect(() => {
+
+    let data = []
+    shippingState.shipping.shipping_class.map((shipping) => {
+
+      let object = {
+        id: shipping._id,
+        amount: shipping.amount,
+        name: shipping.name,
+
+      }
+      data.push(object)
+    })
+    setAllshipping(data)
+    setfilterdData(data)
+
+  }, [shippingState.shipping.shipping_class])
+  const handleOnChangeSearch = (filtereData) => {
+
+    setfilterdData(filtereData)
+  }
+  return (
+    <TableComponent
+      loading={shippingState.loading}
+      columns={columndata}
+      rows={filtered}
+      searchdata={Allshipping}
+      handleOnChangeSearch={handleOnChangeSearch}
+      showDeleteButton={true}
+      classname="table-container"
+      title="All Shippings"
+    />
+
+  );
+};
 
 const AllShippingComponent = ({
   shippingState,
   editShippingForm,
   deleteShipping,
 }) => {
-  const classes = viewStyles();
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
   return (
-    <CardBlocks title='All Shippings' nomargin>
-      <TableContainer className={classes.container}>
-        <Table stickyHeader aria-label='shipping-table' size='small'>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {shippingState.shipping.shipping_class &&
-              shippingState.shipping.shipping_class
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((shipping) => (
-                  <TableRow key={shipping._id} hover>
-                    <TableCell>{shipping.name}</TableCell>
-                    <TableCell>{shipping.amount}</TableCell>
-                    <TableCell>
-                      <Tooltip title='Edit shipping' aria-label='edit'>
-                        <IconButton
-                          aria-label='Edit'
-                          onClick={() => editShippingForm(shipping)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      {!shipping.system && (
-                        <Tooltip title='Delete shipping' aria-label='delete'>
-                          <IconButton
-                            aria-label='Delete'
-                            className={classes.deleteicon}
-                            onClick={() => deleteShipping(shipping._id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 20]}
-        component='div'
-        count={shippingState.shipping.shipping_class.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+    <ThemeProvider theme={theme}>
+      <AllShippingComponentComponent
+        shippingState={shippingState}
+        editShippingForm={editShippingForm}
+        deleteShipping={deleteShipping}
       />
-    </CardBlocks>
+    </ThemeProvider>
   );
 };
-
 export default AllShippingComponent;

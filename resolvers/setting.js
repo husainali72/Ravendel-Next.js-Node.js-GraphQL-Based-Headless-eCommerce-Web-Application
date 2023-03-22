@@ -1,4 +1,5 @@
 const Setting = require("../models/Setting");
+const Categories = require("../models/ProductCat")
 const {
   isEmpty,
   putError,
@@ -10,6 +11,30 @@ const {
 } = require("../config/helpers");
 //const setting = require("../validations/setting");
 //const sanitizeHtml = require("sanitize-html");
+const {checkAwsFolder} = require("../config/aws");
+const fs = require("fs");
+
+var sdir = './assets/images/setting';
+// var ldir = './assets/images/setting/large';
+// var mdir = './assets/images/setting/medium';
+// var tdir = './assets/images/setting/thumbnail';
+// var odir = './assets/images/setting/original';
+
+if (!fs.existsSync(sdir)){
+  fs.mkdirSync(sdir);
+}
+// if (!fs.existsSync(ldir)){
+//   fs.mkdirSync(ldir);
+// }
+// if (!fs.existsSync(mdir)){
+//   fs.mkdirSync(mdir);
+// }
+// if (!fs.existsSync(odir)){
+//   fs.mkdirSync(odir);
+// }
+// if (!fs.existsSync(tdir)){
+//   fs.mkdirSync(tdir);
+// }
 
 module.exports = {
   Query: {
@@ -175,6 +200,22 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    updateStoreOrder: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        const setting = await Setting.findOne({});
+        let {order_prefix, order_digits} = args
+        if(!setting.store.order_options.order_prefix_list.includes(order_prefix)){
+          setting.store.order_options.order_prefix_list.push(order_prefix)
+        }
+        setting.store.order_options.order_prefix = order_prefix
+        setting.store.order_options.order_digits = order_digits
+        return await setting.save();
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     updatePaymnetCOD: async (root, args, { id }) => {
       checkToken(id);
       try {
@@ -262,18 +303,34 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    updateNotificationOneSignal: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        await checkAwsFolder('setting');
+        const setting = await Setting.findOne({});
+        setting.notification.one_signal.app_id = args.app_id
+        setting.notification.one_signal.rest_api_key = args.rest_api_key
+        return await setting.save();
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     updateAppearanceHome: async (root, args, { id }) => {
       checkToken(id);
       try {
+        await checkAwsFolder('setting');
         const setting = await Setting.findOne({});
+        //console.log('Slider',setting.appearance.home.slider);
+        // console.log('Argument',args.slider);
 
         var slider = [];
-        let imgObject = {};
         for (let i in args.slider) {
+          let imgObject = {};
           if (args.slider[i].update_image) {
             imgObject = await imageUpload(
-              args.slider[i].update_image[0],
-              "/assets/images/setting/"
+              args.slider[i].update_image[0].file,
+              "/assets/images/setting/","Setting"
             );
 
             if (imgObject.success === false) {
@@ -288,8 +345,60 @@ module.exports = {
           });
         }
 
+        // if(setting.appearance.home.add_section_in_home.product_from_specific_categories === true) {
+        //   setting.appearance.home.add_section_in_home.category_id = args.add_section_in_home.category_id
+        // }else{
+        //   setting.appearance.home.add_section_in_home.category_id = ""
+        // }
+
+        // var add_section_web = [];
+        // for (let i in args.add_section_web) {
+        //   add_section_web.push({
+        //     label: args.add_section_web[i].label,
+        //     name: args.add_section_web[i].name,
+        //     visible: args.add_section_web[i].visible
+        //   });
+        // }
+
         setting.appearance.home.slider = slider;
         setting.appearance.home.add_section_in_home = args.add_section_in_home;
+        setting.appearance.home.add_section_web = args.add_section_web;
+        return await setting.save();
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    updateAppearanceMobile: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        await checkAwsFolder('setting');
+        const setting = await Setting.findOne({});
+
+        var mobile_section = [];
+        for (let i in args.mobile_section) {
+          let imgObject = {};
+          if (args.mobile_section[i].update_image) {
+            imgObject = await imageUpload(
+              args.mobile_section[i].update_image[0].file,
+              "/assets/images/setting/","Setting"
+            );
+
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            }
+          }
+
+          mobile_section.push({
+            label: args.mobile_section[i].label,
+            section_img: imgObject.data || args.mobile_section[i].section_img,
+            url: args.mobile_section[i].url,
+            visible: args.mobile_section[i].visible,
+            category: args.mobile_section[i].category ? args.mobile_section[i].category : null
+          });
+        }
+        
+        setting.appearance.mobile.mobile_section = mobile_section;
         return await setting.save();
       } catch (error) {
         error = checkError(error);
@@ -299,21 +408,51 @@ module.exports = {
     updateAppeanranceTheme: async (root, args, { id }) => {
       checkToken(id);
       try {
+        await checkAwsFolder('setting');
         const setting = await Setting.findOne({});
-        let imgObject = "";
+        let imgObject = {};
         if (args.new_logo) {
           imgObject = await imageUpload(
-            args.new_logo[0],
-            "/assets/images/setting/"
+            args.new_logo[0].file,
+            "/assets/images/setting/","Setting"
           );
 
           if (imgObject.success === false) {
             throw putError(imgObject.message);
           }
         }
+        
+        let socialMedia = []
+        for(let media of args.social_media){
+          let mediaImgObject = {};
+          if(media.update_icon){
+            mediaImgObject = await imageUpload(
+              media.update_icon[0].file,
+              "/assets/images/setting/","Setting"
+            );
+  
+            if (mediaImgObject.success === false) {
+              throw putError(mediaImgObject.message);
+            }
+          }
+          socialMedia.push({
+            name: media.name,
+            icon: mediaImgObject.data || media.icon,
+            handle: media.handle,
+          })
+        }
+        
+        const theme = {
+          primary_color: args.primary_color,
+          playstore: args.playstore,
+          appstore: args.appstore,
+          phone_number: args.phone_number,
+          email: args.email,
+          logo: imgObject.data || args.logo,
+          social_media: socialMedia
+        };
 
-        setting.appearance.theme.primary_color = args.primary_color;
-        setting.appearance.theme.logo = imgObject.data || args.logo;
+        setting.appearance.theme = theme
         return await setting.save();
       } catch (error) {
         error = checkError(error);

@@ -1,147 +1,105 @@
-import React, { Fragment, useState, useEffect } from "react";
-import {
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-  Button,
-  Tooltip,
-  useMediaQuery
-} from "@material-ui/core";
-import {  useTheme } from '@material-ui/styles';
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import { Link } from "react-router-dom";
-import jumpTo from "../../utils/navigation";
-import viewStyles from "../viewStyles.js";
-import { isEmpty } from "../../utils/helper";
-import { brandsAction, brandDeleteAction } from "../../store/action";
+import React, { useState, useEffect } from "react";
+import { Grid } from "@mui/material";
+import ActionButton from "../components/actionbutton";
+import { useNavigate } from "react-router-dom";
+import { isEmpty, client_app_route_url, bucketBaseURL } from "../../utils/helper";
+import { brandDeleteAction, brandsAction, } from "../../store/action";
 import { useDispatch, useSelector } from "react-redux";
-import {Loading, Alert} from '../components';
-import {convertDateToStringFormat} from '../utils/convertDate';
-
-const AllBrands = props => {
-  const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
-  const classes = viewStyles();
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../../theme/index";
+import { get } from 'lodash'
+import TableComponent from "../components/table.js";
+import viewStyles from "../viewStyles";
+const AllbrandComponent = () => {
   const dispatch = useDispatch();
-  const Brands = useSelector(state => state.brands);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const navigate = useNavigate()
+  const Brands = useSelector((state) => state.brands);
+  const classes = viewStyles()
+  const [Allbrand, setAllbrand] = useState([])
+  const [filtered, setfilterdData] = useState([])
+  let columndata = [
+    {
+      name: "image",
+      title: "image",
+      sortingactive: false
+    },
+    {
+      name: "date",
+      title: "date",
+      sortingactive: true
+    },
+    {
+      name: "name",
+      title: "Name",
+      sortingactive: true
+    },
+    {
+      name: "actions",
+      title: "Actions",
+      sortingactive: false,
+      component: ActionButton,
+      buttonOnClick: (type, id) => {
+        if (type === 'edit') {
+          navigate(`${client_app_route_url}edit-brand/${id}`)
+        } else if (type === "delete") {
+          dispatch(brandDeleteAction(id))
+        }
+      }
+    }]
   useEffect(() => {
     if (isEmpty(Brands.brands)) {
       dispatch(brandsAction());
     }
   }, []);
+  useEffect(() => {
+    if (!isEmpty(get(Brands, 'brands'))) {
+      let data = []
+      Brands.brands.map((brand) => {
+        let object = {
+          id: brand.id,
+          image: bucketBaseURL + brand.brand_logo,
+          date: brand.date,
+          name: brand.name,
+        }
+        data.push(object)
+      })
+      setAllbrand(data)
+      setfilterdData(data)
+    } else {
+      setAllbrand([])
+      setfilterdData([])
+    }
+  }, [get(Brands, 'brands')])
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
+  const handleOnChangeSearch = (filtereData) => {
+    setfilterdData(filtereData)
+  }
   return (
-    <Fragment>
-      <Alert />
-      <Grid container spacing={isSmall ? 2 : 4} className={classes.mainrow}>
-        <Grid item lg={12}>
-          <Card>
-            {Brands.loading && <Loading />}
-
-            <CardHeader
-              action={
-                <Link to="/add-brand">
-                  <Button
-                    color="primary"
-                    className={classes.addUserBtn}
-                    size="small"
-                    variant="contained"
-                  >
-                    Add New Brand
-                  </Button>
-                </Link>
-              }
-              title="All Brands"
-            />
-            <Divider />
-            <CardContent>
-              <TableContainer className={classes.container}>
-                <Table
-                  stickyHeader
-                  aria-label="brands-table"
-                  size="small"
-                >
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Brand Name</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {Brands.brands
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map(brand => (
-                        <TableRow key={brand.id} hover>
-                          <TableCell>{brand.name}</TableCell>
-                          <TableCell>{convertDateToStringFormat(brand.date)}</TableCell>
-                          <TableCell>
-                            <Tooltip title="Edit Brand" aria-label="edit">
-                              <IconButton
-                                aria-label="Edit"
-                                onClick={() => jumpTo(`edit-brand/${brand.id}`)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Delete Brand" aria-label="delete">
-                              <IconButton
-                                aria-label="Delete"
-                                className={classes.deleteicon}
-                                onClick={() =>
-                                  dispatch(brandDeleteAction(brand.id))
-                                }
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={Brands.brands.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
+    <>
+      <Grid container spacing={0} className={classes.mainrow}>
+        <Grid item xl={12} md={12} >
+          <TableComponent
+            loading={Brands.loading}
+            columns={columndata}
+            rows={filtered}
+            searchdata={Allbrand}
+            handleOnChangeSearch={handleOnChangeSearch}
+            showDeleteButton={true}
+            editpage='edit-brand'
+            addpage='add-brand'
+            title="All Brands"
+            searchbydate={true}
+          />
         </Grid>
-      </Grid>
-    </Fragment>
+      </Grid >
+    </>
   );
 };
 
-export default AllBrands;
+export default function AllBrands() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AllbrandComponent />
+    </ThemeProvider>
+  );
+}

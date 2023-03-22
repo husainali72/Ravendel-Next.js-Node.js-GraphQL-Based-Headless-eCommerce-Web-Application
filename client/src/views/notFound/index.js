@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography } from"@mui/material";
 
 const NotFound = () => {
   return (
@@ -24,3 +24,4 @@ const NotFound = () => {
 };
 
 export default NotFound;
+

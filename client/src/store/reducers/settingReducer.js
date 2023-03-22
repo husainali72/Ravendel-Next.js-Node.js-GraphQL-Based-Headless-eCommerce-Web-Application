@@ -6,6 +6,7 @@ import {
 } from "../action/settingAction";
 
 const initialState = {
+
   settings: {
     appearance: {
       home: {
@@ -45,6 +46,7 @@ const initialState = {
   date_formats: [],
   loading: false,
   success: false,
+  // settings:''
 };
 
 export default (state = initialState, action) => {

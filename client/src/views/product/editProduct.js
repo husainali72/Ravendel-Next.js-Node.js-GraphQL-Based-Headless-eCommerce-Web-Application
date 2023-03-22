@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Button,
@@ -12,8 +12,9 @@ import {
   Tooltip,
   Icon,
   useMediaQuery,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/styles";
+  ThemeProvider,
+} from "@mui/material";
+import { useTheme } from "@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
   categoriesAction,
@@ -21,12 +22,14 @@ import {
   brandsAction,
   productAction,
 } from "../../store/action/";
+import { getUpdatedUrl } from "../../utils/service";
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { validate, validatenested } from "../components/validate";
 import {
-  getUpdatedUrl,
-  deleteProductVariationImage,
-  deleteProductVariation,
-} from "../../utils/service";
-import { isEmpty } from "../../utils/helper";
+  isEmpty,
+  client_app_route_url,
+  bucketBaseURL,
+} from "../../utils/helper";
 import {
   Alert,
   Loading,
@@ -47,22 +50,27 @@ import {
   EditCategoriesComponent,
 } from "./components";
 import viewStyles from "../viewStyles";
-
-//var catIds = [];
-const EditProduct = (props) => {
-  var productId = props.match.params.id;
+import Stack from '@mui/material/Stack';
+import CloseIcon from '@mui/icons-material/Close';
+import theme from "../../theme";
+import { useNavigate, useParams } from "react-router-dom";
+import { get } from "lodash";
+import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
+const EditProductComponent = ({ params }) => {
+  const Product_id = params.id || "";
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const productState = useSelector((state) => state.products);
-  const taxState = useSelector((state) => state.taxs);
-  const shippingState = useSelector((state) => state.shippings);
+  const navigate = useNavigate();
   const brandState = useSelector((state) => state.brands);
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
+  const [loading, setloading] = useState(false);
+  const [gallery, setGallery] = useState([]);
   const [product, setProduct] = useState({
-    id: "",
+    _id: "",
     name: "",
     categoryId: [],
     brand: "",
@@ -100,51 +108,88 @@ const EditProduct = (props) => {
   });
 
   useEffect(() => {
-    if (!isEmpty(productId)) {
-      dispatch(productAction(productId));
-    }
+    dispatch(productAction(Product_id));
     dispatch(brandsAction());
     dispatch(categoriesAction());
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(productState.product)) {
-      let defaultBrand = {};
-
-      if (productState.product.brand) {
-        for (let i in brandState.brands) {
-          if (brandState.brands[i].id === productState.product.brand.id) {
-            defaultBrand = {
-              value: brandState.brands[i].id,
-              label: brandState.brands[i].name,
-            };
-
-            break;
-          }
-        }
-      }
-      setProduct({
-        ...product,
-        ...productState.product,
-        categoryId: productState.product.categoryId.map((cat) => cat.id),
-        brand: defaultBrand || "",
-      });
-
-      if (productState.product.feature_image.original) {
-        setfeatureImage(productState.product.feature_image.original);
-      }
-    }
-  }, [productState.product]);
+    setloading(get(productState, "loading"));
+  }, [get(productState, "loading")]);
 
   useEffect(() => {
-    console.log("product useEffect", product);
-  }, [product]);
+    if (!isEmpty(get(productState, "product"))) {
+      if (!isEmpty(productState.product)) {
+        let defaultBrand = {};
+        if (productState.product.brand) {
 
+          if (!isEmpty(get(brandState, "brands"))) {
+            for (let i in brandState.brands) {
+
+              if (brandState.brands[i].id === productState.product.brand.id) {
+                defaultBrand = {
+                  value: brandState.brands[i].id,
+                  label: brandState.brands[i].name,
+                };
+
+
+                break;
+              }
+            }
+          }
+        }
+
+        setProduct({
+          ...product,
+          ...productState.product,
+          categoryId: productState.product.categoryId.map((cat) => cat.id),
+          brand: defaultBrand || "",
+
+        });
+
+        if (productState.product.feature_image) {
+          setfeatureImage(
+            bucketBaseURL + productState.product.feature_image
+          );
+        } else {
+          setfeatureImage(
+            NoImagePlaceHolder
+          );
+
+        }
+      }
+    }
+  }, [get(productState, "product")]);
   const updateProduct = (e) => {
+    product.update_gallery_image = gallery
     e.preventDefault();
-    product.combinations = combination;
+    let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
+    let Errors = validatenested("pricing", ["price", "sellprice"], product);
+    if (!isEmpty(errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(Errors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: Errors,
+          error: true,
+        },
+      });
+    }
+    else {
+      product.combinations = combination;
 
-    dispatch(productUpdateAction(product));
+      dispatch(productUpdateAction(product, navigate));
+    }
   };
 
   const handleChange = (e) => {
@@ -154,7 +199,7 @@ const EditProduct = (props) => {
   const onFeatureImageChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    setProduct({ ...product, [e.target.name]: e.target.files });
+    setProduct({ ...product, ["update_feature_image"]: e.target.files });
   };
 
   const isUrlExist = async (url) => {
@@ -204,37 +249,37 @@ const EditProduct = (props) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Alert />
-      {productState.loading ? <Loading /> : null}
+      {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title='Edit Product'
+          title="Edit Product"
           onSubmit={updateProduct}
-          submitTitle='Update'
-          backLink={"/all-products"}
+          submitTitle="Update"
+          backLink={`${client_app_route_url}all-products`}
         />
 
-        {!isEmpty(product.id) ? (
+        {!isEmpty(product._id) ? (
           <Grid container spacing={4} className={classes.secondmainrow}>
             <Grid item lg={9} md={12}>
               {/* ===================Information=================== */}
-              <CardBlocks title='Product Information' nomargin>
+              <CardBlocks title="Product Information" nomargin>
                 {/* ===================Title=================== */}
-                <Box component='div' mb={2}>
+                <Box component="div" mb={2}>
                   <TextField
-                    label='Name'
-                    name='name'
+                    label="Name"
+                    name="name"
                     value={product.name}
                     onChange={handleChange}
                     onBlur={(e) => !product.url && isUrlExist(product.name)}
-                    variant='outlined'
+                    variant="outlined"
                     fullWidth
                   />
                 </Box>
 
                 {/* ===================Url=================== */}
-                <Box component='div' mb={2}>
+                <Box component="div" mb={2}>
                   <URLComponent
                     url={product.url}
                     onInputChange={(updatedUrl) => {
@@ -243,13 +288,13 @@ const EditProduct = (props) => {
                         url: updatedUrl,
                       });
                     }}
-                    pageUrl='product'
-                    tableUrl='Product'
+                    pageUrl="product"
+                    tableUrl="Product"
                   />
                 </Box>
 
                 {/* ===================Description=================== */}
-                <Box component='div'>
+                <Box component="div">
                   <TinymceEditor
                     value={product.description}
                     onEditorChange={(value) =>
@@ -258,9 +303,8 @@ const EditProduct = (props) => {
                   />
                 </Box>
               </CardBlocks>
-
               {/* ===================Categories=================== */}
-              <CardBlocks title='Categories'>
+              <CardBlocks title="Categories">
                 <EditCategoriesComponent
                   selectedCategories={product.categoryId}
                   onCategoryChange={(items) => {
@@ -268,17 +312,17 @@ const EditProduct = (props) => {
                   }}
                 />
               </CardBlocks>
-
               {/* ===================Pricing=================== */}
-              <CardBlocks title='Pricing'>
+              <CardBlocks title="Pricing">
                 <Grid container spacing={3}>
                   <Grid item md={4}>
                     <TextField
-                      label='Price'
-                      name='price'
-                      variant='outlined'
+                      label="Price"
+                      name="price"
+                      variant="outlined"
                       fullWidth
-                      type='number'
+                      type="number"
+
                       value={product.pricing.price}
                       onChange={(e) =>
                         setProduct({
@@ -293,13 +337,14 @@ const EditProduct = (props) => {
                   </Grid>
                   <Grid item md={4}>
                     <TextField
-                      label='Sale Price'
-                      name='sellprice'
-                      variant='outlined'
+                      label="Sale Price"
+                      name="sellprice"
+                      variant="outlined"
                       fullWidth
-                      type='number'
+                      type="number"
+
                       value={product.pricing.sellprice}
-                      onChange={(e) =>
+                      onChange={(e) => e.target.value < product.pricing.price ?
                         setProduct({
                           ...product,
                           pricing: {
@@ -307,24 +352,31 @@ const EditProduct = (props) => {
                             sellprice: Number(e.target.value),
                           },
                         })
+                        : dispatch({
+                          type: ALERT_SUCCESS,
+                          payload: {
+                            boolean: false,
+                            message: "Sale price couldn't exceed original price",
+                            error: true,
+                          },
+                        })
                       }
                     />
                   </Grid>
                 </Grid>
               </CardBlocks>
-
               {/* ===================Product Type=================== */}
-              <CardBlocks title='Product Type'>
+              <CardBlocks title="Product Type">
                 <Grid container spacing={3}>
                   <Grid item md={12}>
                     <FormGroup row>
                       <FormControlLabel
                         control={
                           <Checkbox
-                            color='primary'
+                            color="primary"
                             checked={product.product_type.virtual}
-                            name='virtual'
-                            value='virtual'
+                            name="virtual"
+                            value="virtual"
                             onChange={(e) =>
                               setProduct({
                                 ...product,
@@ -336,15 +388,15 @@ const EditProduct = (props) => {
                             }
                           />
                         }
-                        label='Virtual'
+                        label="Virtual"
                       />
                       <FormControlLabel
                         control={
                           <Checkbox
-                            color='primary'
+                            color="primary"
                             checked={product.product_type.downloadable}
-                            name='downloadable'
-                            value='downloadable'
+                            name="downloadable"
+                            value="downloadable"
                             onChange={(e) =>
                               setProduct({
                                 ...product,
@@ -356,16 +408,15 @@ const EditProduct = (props) => {
                             }
                           />
                         }
-                        label='Downloadable'
+                        label="Downloadable"
                       />
                     </FormGroup>
                   </Grid>
                 </Grid>
               </CardBlocks>
-
               {/* ===================Shipping=================== */}
               {!product.product_type.virtual && (
-                <CardBlocks title='Shipping'>
+                <CardBlocks title="Shipping">
                   <ShippingComponent
                     product={product}
                     onShippingInputChange={(name, value) => {
@@ -389,9 +440,8 @@ const EditProduct = (props) => {
                   />
                 </CardBlocks>
               )}
-
               {/* ===================Tax=================== */}
-              <CardBlocks title='Tax'>
+              <CardBlocks title="Tax">
                 <TaxComponent
                   product={product}
                   onTaxInputChange={(name, value) => {
@@ -402,14 +452,13 @@ const EditProduct = (props) => {
                   }}
                 />
               </CardBlocks>
-
               {/* ===================Inventory=================== */}
-              <CardBlocks title='Inventory'>
+              <CardBlocks title="Inventory">
                 <Grid container spacing={3}>
                   <Grid item md={4}>
                     <TextInput
-                      label='SKU'
-                      name='sku'
+                      label="SKU"
+                      name="sku"
                       onChange={handleChange}
                       value={product.sku}
                     />
@@ -417,19 +466,19 @@ const EditProduct = (props) => {
 
                   <Grid item md={4}>
                     <TextInput
-                      id='quantity'
-                      label='Quantity'
-                      name='quantity'
+                      id="quantity"
+                      label="Quantity"
+                      name="quantity"
                       onChange={handleChange}
-                      type='number'
+                      type="number"
+
                       value={product.quantity}
                     />
                   </Grid>
                 </Grid>
               </CardBlocks>
-
               {/* ===================Attributes=================== */}
-              <CardBlocks title='Attribute selection'>
+              <CardBlocks title="Attribute selection">
                 <Attributes
                   EditMode
                   product={product}
@@ -443,54 +492,50 @@ const EditProduct = (props) => {
                   }}
                 />
               </CardBlocks>
-
               {/* ===================Custom Fields=================== */}
-              <CardBlocks title='Custom Fields'>
+              <CardBlocks title="Custom Fields">
                 <Grid container spacing={2}>
                   <Grid item md={12} sm={12} xs={12}>
                     {product.custom_field.map((field, index) => (
                       <Box
                         key={index}
-                        display='flex'
-                        justifyContent='flex-start'
-                        alignItems='center'
+                        display="flex"
+                        justifyContent="flex-start"
+                        alignItems="center"
                         className={classes.customFieldRow}
                       >
                         <TextField
-                          label='Custom Field Name: *'
-                          variant='outlined'
-                          name='key'
+                          label="Custom Field Name: *"
+                          variant="outlined"
+                          name="key"
                           className={classes.customFieldInput}
                           value={field.key}
                           onChange={(e) => customChange(e, index)}
-                          size='small'
+                          size="small"
                         />
                         <TextField
-                          label='Custom Field Value: *'
-                          variant='outlined'
-                          name='value'
+                          label="Custom Field Value: *"
+                          variant="outlined"
+                          name="value"
                           className={classes.customFieldInput}
                           value={field.value}
                           onChange={(e) => customChange(e, index)}
-                          size='small'
+                          size="small"
                         />
-                        <Tooltip title='Remove Field' aria-label='remove-field'>
-                          <IconButton
-                            aria-label='remove-field'
-                            onClick={(e) => removeCustomField(index)}
-                            size='small'
-                            className={classes.deleteicon}
-                          >
-                            <Icon>clear</Icon>
-                          </IconButton>
+                        <Tooltip title="Remove Field" aria-label="remove-field">
+                          <Stack direction="row" spacing={1}>
+                            <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
+                              <CloseIcon />
+                            </IconButton>
+                          </Stack>
                         </Tooltip>
                       </Box>
                     ))}
                   </Grid>
                   <Grid item lg={4} md={12}>
                     <Button
-                      color='primary'
-                      variant='contained'
+                      color="primary"
+                      variant="contained"
                       onClick={addCustomField}
                     >
                       + Add Custom Fields
@@ -498,27 +543,26 @@ const EditProduct = (props) => {
                   </Grid>
                 </Grid>
               </CardBlocks>
-
               {/* ===================Short Description=================== */}
-              <CardBlocks title='Short Description'>
+              <CardBlocks title="Short Description">
                 <TextInput
                   value={product.short_description}
-                  label='Short Description'
-                  name='short_description'
+                  label="Short Description"
+                  name="short_description"
                   onInputChange={handleChange}
                   multiline
-                  rows='4'
+                  rows="4"
                 />
-              </CardBlocks>
 
+              </CardBlocks>
               {/* ===================Meta Information=================== */}
-              <CardBlocks title='Meta Information'>
+              <CardBlocks title="Meta Information">
                 <Grid container spacing={isSmall ? 1 : 2}>
                   <Grid item md={6} xs={12}>
                     <TextInput
                       value={product.meta.title}
-                      label='Meta Title'
-                      name='title'
+                      label="Meta Title"
+                      name="title"
                       onInputChange={onMetaChange}
                     />
                   </Grid>
@@ -526,8 +570,8 @@ const EditProduct = (props) => {
                   <Grid item md={6} xs={12}>
                     <TextInput
                       value={product.meta.keywords}
-                      label='Meta Keywords'
-                      name='keywords'
+                      label="Meta Keywords"
+                      name="keywords"
                       onInputChange={onMetaChange}
                     />
                   </Grid>
@@ -535,11 +579,11 @@ const EditProduct = (props) => {
                   <Grid item xs={12}>
                     <TextInput
                       value={product.meta.description}
-                      label='Meta Description'
-                      name='description'
+                      label="Meta Description"
+                      name="description"
                       onInputChange={onMetaChange}
                       multiline
-                      rows='4'
+                      rows="4"
                     />
                   </Grid>
                 </Grid>
@@ -548,36 +592,36 @@ const EditProduct = (props) => {
 
             <Grid item lg={3} md={12}>
               {/* ===================Status=================== */}
-              <Box component='span'>
-                <CardBlocks title='Status' nomargin>
+              <Box component="span">
+                <CardBlocks title="Status" nomargin>
                   <RadioGroup
-                    defaultValue='Draft'
-                    name='status'
+                    defaultValue="Publish"
+                    value={product.status}
+                    name="status"
                     onChange={handleChange}
                     row
                   >
                     <FormControlLabel
-                      value='Publish'
+                      value="Publish"
                       control={<StyledRadio />}
-                      label='Publish'
+                      label="Publish"
                     />
                     <FormControlLabel
-                      value='Draft'
+                      value="Draft"
                       control={<StyledRadio />}
-                      label='Draft'
+                      label="Draft"
                     />
                   </RadioGroup>
                 </CardBlocks>
               </Box>
-
               {/* ===================Featured Product=================== */}
-              <Box component='span' m={1}>
-                <CardBlocks title='Featured Product'>
+              <Box component="span" m={1}>
+                <CardBlocks title="Featured Product">
                   <FormGroup row>
                     <FormControlLabel
                       control={
                         <Checkbox
-                          color='primary'
+                          color="primary"
                           checked={product.featured_product}
                           onChange={(e) =>
                             setProduct({
@@ -587,32 +631,32 @@ const EditProduct = (props) => {
                           }
                         />
                       }
-                      label='Featured Product'
+                      label="Featured Product"
                     />
                   </FormGroup>
                 </CardBlocks>
               </Box>
-
               {/* ===================Featured Image=================== */}
-              <Box component='span' m={1}>
-                <CardBlocks title='Featured Image'>
+              <Box component="span" m={1}>
+                <CardBlocks title="Featured Image">
                   <FeaturedImageComponent
                     image={featureImage}
                     feautedImageChange={(e) => onFeatureImageChange(e)}
                   />
                 </CardBlocks>
               </Box>
-
               {/* ===================Gallery Images=================== */}
-              <Box component='span' m={1}>
-                <CardBlocks title='Gallery Image'>
+              <Box component="span" m={1}>
+                <CardBlocks title="Gallery Image">
                   <EditGalleryImageSelection
                     onAddGalleryImage={(e) => {
-                      console.log("e.target.files", e.target.files)
-                      setProduct({
-                        ...product,
-                        [e.target.name]: e.target.files,
-                      });
+
+                      var imagesRes = [...e.target.files];
+                      var images = [];
+                      for (let i in imagesRes) {
+                        images.push(URL.createObjectURL(imagesRes[i]));
+                      }
+                      setGallery([...gallery, ...imagesRes]);
                     }}
                     onRemoveGalleryImage={(images) => {
                       setProduct({ ...product, ["gallery_image"]: images });
@@ -628,13 +672,13 @@ const EditProduct = (props) => {
                   />
                 </CardBlocks>
               </Box>
-
               {/* ===================Brands=================== */}
-              <Box component='span' m={1}>
-                <CardBlocks title='Brands'>
+              <Box component="span" m={1}>
+                <CardBlocks title="Brands">
                   <BrandSelection
                     value={product.brand}
                     onBrandChange={(brand) => {
+
                       setProduct({ ...product, brand });
                     }}
                   />
@@ -644,8 +688,15 @@ const EditProduct = (props) => {
           </Grid>
         ) : null}
       </form>
-    </Fragment>
+    </>
   );
 };
 
-export default EditProduct;
+export default function EditProduct() {
+  const params = useParams();
+  return (
+    <ThemeProvider theme={theme}>
+      <EditProductComponent params={params} />
+    </ThemeProvider>
+  );
+}

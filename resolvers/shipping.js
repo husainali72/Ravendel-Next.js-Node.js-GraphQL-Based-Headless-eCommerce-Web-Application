@@ -1,15 +1,6 @@
 const Shipping = require("../models/Shipping");
 const Product = require("../models/Product");
-const {
-  isEmpty,
-  putError,
-  checkError,
-  imageUpload,
-  imageUnlink,
-  checkToken
-} = require("../config/helpers");
-const validate = require("../validations/shipping");
-//const slugify = require("slugify");
+const { isEmpty, MESSAGE_RESPONSE,_validate } = require("../config/helpers");
 
 module.exports = {
   Query: {
@@ -17,18 +8,26 @@ module.exports = {
       try {
         const shipping = await Shipping.findOne({});
         if (!shipping) {
-          throw putError("not found");
+          return {
+            message: MESSAGE_RESPONSE("NOT_EXIST", "shipping", false),
+          };
         }
-        return shipping;
+        return {
+          message: MESSAGE_RESPONSE("RESULT_FOUND", "shipping", true),
+          data: shipping,
+        };
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return {
+          message: MESSAGE_RESPONSE("RETRIEVE_ERROR", "shipping", false),
+        };
       }
-    }
+    },
   },
   Mutation: {
     updateGlobalShipping: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "GlobalShipping", false);
+      }
       try {
         // Check Validation
         /* const errors = validate("updateGlobalShipping", args.global);
@@ -45,46 +44,68 @@ module.exports = {
           await Product.updateMany(
             {},
             {
-              $set: { "shipping.shipping_class": args.global.shipping_class }
+              $set: { "shipping.shipping_class": args.global.shipping_class },
             }
           );
         }
-
-        return await Shipping.findOne({});
+        return MESSAGE_RESPONSE("UpdateSuccess", "GlobalShipping", true);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        console.log(error)
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "GlobalShipping", false);
       }
     },
     addShippingClass: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "ShippingClass", false);
+      }
       try {
-        // Check Validation
-        const errors = validate("addShippingClass", args.shipping_class);
+        const errors = _validate(["name", "amount"], args.shipping_class);
         if (!isEmpty(errors)) {
-          throw putError(errors);
+          return {
+            message: errors,
+            success: false,
+          };
         }
         const shipping = await Shipping.findOne({});
+        const result = shipping.shipping_class.map(shipping=>{
+          if(shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase() || 
+          shipping.amount === parseInt(args.shipping_class.amount)){
+            return false
+          } else return true
+        })
+        if(result.includes(false)) return MESSAGE_RESPONSE("DUPLICATE", "Shipping", false)
         shipping.shipping_class.push(args.shipping_class);
         shipping.updated = Date.now();
         await shipping.save();
-        return await Shipping.findOne({});
+        await Shipping.findOne({});
+        return MESSAGE_RESPONSE("AddSuccess", "ShippingClass", true);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "ShippingClass", false);
       }
     },
     updateShippingClass: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "ShippingClass", false);
+      }
       try {
-        // Check Validation
-        const errors = validate("updateShippingClass", args.shipping_class);
+        const errors = _validate(["name"], args.shipping_class);
         if (!isEmpty(errors)) {
-          throw putError(errors);
+          return {
+            message: errors,
+            success: false,
+          };
         }
 
         const shipping = await Shipping.findOne({});
-
+        const result = shipping.shipping_class.map(shipping=>{
+          if((shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase() || 
+            shipping.amount === parseInt(args.shipping_class.amount)) && 
+            shipping._id.toString() !== args.shipping_class._id.toString()){
+            return false
+          } else return true
+        })
+        console.log(result)
+        if(result.includes(false)) return MESSAGE_RESPONSE("DUPLICATE", "Shipping", false)
         for (let i in shipping.shipping_class) {
           if (shipping.shipping_class[i]._id == args.shipping_class._id) {
             shipping.shipping_class[i] = args.shipping_class;
@@ -95,34 +116,41 @@ module.exports = {
         //tax.tax_class.push(args.tax_class);
         shipping.updated = Date.now();
         await shipping.save();
-        return await Shipping.findOne({});
+        // await Shipping.findOne({});
+        return MESSAGE_RESPONSE("UpdateSuccess", "ShippingClass", true);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        console.log('err', error);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "ShippingClass", false);
       }
     },
     deleteShippingClass: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "ShippingClass", false);
+      }
       try {
         const shipping = await Shipping.findOne({});
+        console.log(shipping)
 
-        var ShippingClass = [...shipping.shipping_class];
-
-        for (let i in ShippingClass) {
-          if (ShippingClass[i]._id == args._id) {
-            delete ShippingClass[i];
-            break;
-          }
-        }
-
-        shipping.shipping_class = ShippingClass;
+        var ShippingClass = shipping.shipping_class;
+        // for (let i in ShippingClass) {
+        //   if (ShippingClass[i]._id == args._id) {
+        //     console.log('Matched')
+        //     delete ShippingClass[i];
+        //     break;
+        //   }else {
+        //     console.log('Not Matched')
+        //   }
+        // }
+        let balanceShipping = ShippingClass.filter(ship => ship._id != args._id);
+        shipping.shipping_class = balanceShipping;
         shipping.updated = Date.now();
         await shipping.save();
-        return await Shipping.findOne({});
+        // await Shipping.findOne({});
+        return MESSAGE_RESPONSE("DELETE", "ShippingClass", true);
       } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
+        console.log('delete', error)
+        return MESSAGE_RESPONSE("DELETE_ERROR", "ShippingClass", false);
       }
-    }
-  }
+    },
+  },
 };

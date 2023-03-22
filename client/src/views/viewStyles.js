@@ -1,27 +1,36 @@
-import palette from "../theme/palette";
-import { makeStyles } from "@material-ui/styles";
-import { deepPurple } from "@material-ui/core/colors";
+
+import { makeStyles } from "@mui/styles";
+import { deepPurple } from "@mui/material/colors";
+
 
 const viewStyles = makeStyles((theme) => ({
   marginTop1: {
     marginTop: 10,
   },
+  badge: {
+    marginLeft: "40px"
+  },
   mainrow: {
-    padding: theme.spacing(4),
-    [theme.breakpoints.down('xs')]: {
-      padding: theme.spacing(2),
+    "&&": {
+      padding: theme.spacing(4),
+      [theme.breakpoints.down("xs")]: {
+        padding: theme.spacing(2),
+      },
     },
   },
   secondmainrow: {
-    padding: theme.spacing(4),
-    marginTop: 40,
-    [theme.breakpoints.down('xs')]: {
-      marginTop: 75,
-      padding: theme.spacing(2),
+    "&&": {
+      padding: theme.spacing(4),
+
+      marginTop: 30,
+      [theme.breakpoints.down("xs")]: {
+        marginTop: 75,
+        padding: theme.spacing(2),
+      },
     },
   },
   deleteicon: {
-    color: palette.error.dark,
+    "&&": {},
   },
   avatar: {
     width: "50px",
@@ -29,32 +38,41 @@ const viewStyles = makeStyles((theme) => ({
     borderRadius: "100%",
   },
   addUserBtn: {
-    background: palette.success.main,
     color: "#fff",
+
   },
-   backdrop: {
+  backdrop: {
     zIndex: "1101 !important",
     color: "#fff",
   },
-  backdropInnerWrapper:{
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+  backdropInnerWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
-  backdropLoadingText:{
-    color: '#fff',
-    marginTop: '20px !important'
+  backdropLoadingText: {
+    color: "#fff",
+    marginTop: "20px !important",
   },
   avtarTd: {
     width: "50px",
+
   },
   container: {
     maxHeight: 600,
   },
   cancelBtn: {
-    background: palette.error.dark,
-    color: "#fff",
-    marginLeft: theme.spacing(2),
+    "&&": {
+      marginLeft: "10px",
+    },
+  },
+
+  addBtn: {
+    "&&": {
+      color: "white",
+
+      marginLeft: "10px",
+    },
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -80,6 +98,7 @@ const viewStyles = makeStyles((theme) => ({
     textDecoration: "underline",
     display: "flex",
     cursor: "pointer",
+    fontSize: "15px",
   },
   feautedImageBox: {
     background: "rgb(240,240,240)",
@@ -132,11 +151,14 @@ const viewStyles = makeStyles((theme) => ({
   sliderImagePreview: {
     maxWidth: "90%",
     maxHeight: "90%",
+    fontSize: "15px",
   },
   slideRemove: {
-    position: "absolute",
-    top: 2,
-    right: 2,
+    "&&": {
+      position: "absolute",
+      top: 2,
+      right: 2,
+    },
   },
   galleryImgOuterBox: {
     display: "flex",
@@ -224,20 +246,18 @@ const viewStyles = makeStyles((theme) => ({
   },
   settingRoot: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
+
     display: "flex",
     height: 600,
     "&: .MuiTabs-flexContainerVertical": {
-      "&: .MuiButtonBase-root.Mui-selected": {
-        backgroundColor: "#000",
-      },
+      "&: .MuiButtonBase-root.Mui-selected": {},
     },
-    [theme.breakpoints.down('md')]: {
-      height: 'auto',
+    [theme.breakpoints.down("md")]: {
+      height: "auto",
     },
   },
   settingsTabs: {
-    //borderRight: `1px solid ${theme.palette.divider}`\
+    borderRight: `1px solid ${theme.palette.divider}`,
   },
   flexGrow1: {
     flexGrow: 1,
@@ -260,6 +280,7 @@ const viewStyles = makeStyles((theme) => ({
   statusSelect: {
     marginTop: 25,
     width: 300,
+
   },
   fullWidth: {
     width: "100%",
@@ -268,16 +289,32 @@ const viewStyles = makeStyles((theme) => ({
     display: "block",
   },
   textRight: {
+
     textAlign: "right",
   },
   discount: {
-    color: "red",
+    color: "green",
   },
   mtb2: {
     marginTop: 10,
     marginBottom: 10,
     minHeight: 25,
+    textTransform: 'capitalize',
+
   },
+  mtb1: {
+    marginTop: 10,
+    marginBottom: 10,
+    minHeight: 25,
+    textTransform: 'capitalize',
+    textAlign: 'left'
+  },
+  removefilter: {
+    marginLeft: '10px!important',
+    marginRight: '10px!important',
+
+  }
+  ,
   radioRoot: {
     "&:hover": {
       backgroundColor: "transparent",
@@ -353,22 +390,27 @@ const viewStyles = makeStyles((theme) => ({
   settingInput: {
     minWidth: "300px !important",
     marginBottom: "25px !important",
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down("md")]: {
       minWidth: "100% !important",
       width: "100% !important",
-      display: "flex !important"
+      display: "flex !important",
     },
   },
   settingSelectInput: {
     minWidth: "300px !important",
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down("md")]: {
       minWidth: "100% !important",
       width: "100% !important",
-      display: "flex !important"
+      display: "flex !important",
     },
   },
   marginBottom1: {
-    marginBottom: "10px !important",
+    "&&": {
+      marginBottom: "10px !important",
+    },
+  },
+  marginTop1: {
+    marginTop: "20px !important"
   },
   marginBottom2: {
     marginBottom: "20px !important",
@@ -402,13 +444,105 @@ const viewStyles = makeStyles((theme) => ({
     justifyContent: "center",
     marginBottom: theme.spacing(2),
     padding: theme.spacing(2),
-    flexDirection: 'column'
+    flexDirection: "column",
   },
   themeLogoBoxPreview: {
     maxWidth: "95%",
     maxHeight: "95%",
-    marginBottom: 5
+    marginBottom: 5,
   },
+  closeIcon: {
+    position: "absolute",
+    right: 0,
+    top: '10px',
+    marginRight: '10px',
+    cursor: 'pointer'
+  },
+
+  TableSearchRow: {
+    backgroundColor: "white",
+    width: "100%",
+    padding: "0px",
+  },
+  searchDiv: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100 %"
+  },
+  searchOption: {
+    marginLeft: "100px",
+    padding: "0px!important",
+  },
+  searchbar: {
+    border: "1px solid rgb(199, 191, 191)",
+    borderRadius: "25px",
+    width: "200px",
+  },
+  addbtnlink: {
+    marginTop: '5px'
+  },
+  box: {
+    width: "250px",
+    borderRadius: "25px",
+    marginRight: "10px",
+    backgroundColor: "white",
+
+  },
+  searchWrapper: {
+    position: "relative",
+    width: "250px",
+    padding: '2px',
+    borderRadius: "25px",
+    backgroundColor: "#f1f1f1",
+
+  },
+  searchIcon: {
+    position: "absolute",
+    left: 0,
+    top: "10px",
+    marginLeft: "10px",
+  },
+
+  textFieldWrapper: {
+    padding: '5px',
+    paddingLeft: "40px",
+    paddingRight: "40px",
+    // marginTop: '10px',
+    color: 'white',
+
+    border: '0ch'
+  },
+  insidecardheader: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  datepicker: {
+    width: '107px'
+  },
+  enddatepicker: {
+    width: '105px',
+    marginLeft: '10px'
+  },
+  Datepickerclass: {
+    marginLeft: '20px',
+    width: '150px'
+  },
+  search: {
+    display: 'flex',
+    flexDirection: 'row',
+    paddingBottom: '10px'
+  },
+  muitabs: {
+    marginRight: '10px'
+  },
+
+  noDataImage: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  
 }));
+
+
 
 export default viewStyles;
