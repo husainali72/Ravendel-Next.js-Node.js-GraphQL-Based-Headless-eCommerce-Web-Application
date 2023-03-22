@@ -560,27 +560,27 @@ module.exports.createSettings = async () => {
         social_media: [
           {
             name: "Facebook",
-            icon: "",
+            icon: "setting/1679465730915-facebook.png",
             handle: ""
           },
           {
             name: "Instagram",
-            icon: "",
+            icon: "setting/1679465735748-instagram.png",
             handle: ""
           },
           {
             name: "Pinterest",
-            icon: "",
+            icon: "setting/1679465733326-pinterest.png",
             handle: ""
           },
           {
             name: "Youtube",
-            icon: "",
+            icon: "setting/1679465734614-youtube.png",
             handle: ""
           },
           {
             name: "Twitter",
-            icon: "",
+            icon: "setting/1679465732045-twitter.png",
             handle: ""
           }
         ]
