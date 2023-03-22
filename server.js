@@ -57,7 +57,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const server = new ApolloServer({
+const server = new ApolloServer({  
   typeDefs,
   resolvers,
   context,
