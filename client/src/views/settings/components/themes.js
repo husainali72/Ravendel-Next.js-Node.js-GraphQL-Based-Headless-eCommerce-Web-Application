@@ -19,8 +19,14 @@ const ThemesComponent = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [themeSetting, setThemeSetting] = useState({});
-
   const [social_media, setSocialMedia] = React.useState([]);
+  const menuItem = ([
+    { name: 'instagram', handle: '', icon: '', },
+    { name: 'facebook', handle: '', icon: '', },
+    { name: 'twitter', handle: '', icon: '', },
+    { name: 'youtube', handle: '', icon: '' },
+  ])
+
   useEffect(() => {
     if (!isEmpty(get(settingState.settings.appearance, 'theme'))) {
       setThemeSetting({ ...settingState.settings.appearance.theme })
@@ -36,7 +42,6 @@ const ThemesComponent = () => {
     delete theme.__typename;
     let errors = validate(['playstore', "appstore", "email", 'hours'], themeSetting);
     let phoneNumberError = validatePhone(["phone_number"], themeSetting)
-
     let nested_validation = validatenested("social_media", ["name", "handle"], themeSetting);
     if (!isEmpty(errors)) {
       dispatch({
@@ -86,17 +91,9 @@ const ThemesComponent = () => {
     social_media[i].handle = e.target.value;
     setSocialMedia([...social_media]);
   }
-
   const selectHandleChange = (e) => {
     let obj = e.target.value;
     setSocialMedia(obj);
-
-  };
-  const addIconButton = (icon) => {
-    let obj = { name: icon.iconName, handle: '', icon: icon.iconImage, update_icon: icon.updateIconImage }
-    let data = social_media
-    data.push(obj)
-    setSocialMedia([...data]);
 
   };
   const removeInput = (i) => {
@@ -218,11 +215,9 @@ const ThemesComponent = () => {
               handleImageChange={handleImageChange}
               removeInput={removeInput}
               handleChange={LinkhandleChange}
-              menuItem={social_media}
-              addIconButton={addIconButton}
+              menuItem={menuItem}
               selectedIcons={social_media} />
           </Box>
-
         </Grid >
         <Grid item xs={12}>
           <Button

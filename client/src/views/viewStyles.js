@@ -189,6 +189,21 @@ const viewStyles = makeStyles((theme) => ({
     fontSize: 12,
     fontWeight: "bold",
   },
+  featureImgRemove: {
+    // position: "absolute",
+    // top: "-5px",
+
+    background: "#d80e0e",
+    borderRadius: "100%",
+    color: "#fff",
+    width: 20,
+    height: 20,
+    display: "flex",
+    justifyContent: "center",
+    cursor: "pointer",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
   galleryImg: { width: "100%", height: "100%" },
   editpermalinkInput: {
     padding: "5px !important",
@@ -563,23 +578,25 @@ const viewStyles = makeStyles((theme) => ({
     width: '20%',
     padding: '5px',
 
+
   },
   container: {
     display: 'flex',
-
-
   },
   socialMediaIcon: {
-
     textAlign: 'center',
     objectFit: 'contain',
+
   },
   iconLogoBox: {
     width: 30,
     height: 30,
     borderRadius: "50%",
-    margin: "0px 10px",
+    margin: "0px 5px",
+
     overflow: "hidden",
+    objectFit: 'contain',
+    border: '1px solid lightgrey'
   },
   iconImage: {
     objectFit: 'contain',
@@ -600,7 +617,8 @@ const viewStyles = makeStyles((theme) => ({
     marginTop: '25px',
     paddingLeft: '20px',
 
-  }
+  },
+
 }));
 
 

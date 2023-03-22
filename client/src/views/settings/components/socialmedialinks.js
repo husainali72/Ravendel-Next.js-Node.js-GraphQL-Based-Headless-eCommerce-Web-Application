@@ -19,14 +19,18 @@ import NoImagePlaceHolder from "../../../assets/images/NoImagePlaceHolder.png";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import AddIcon from '@mui/icons-material/Add';
 import { ALERT_SUCCESS } from '../../../store/reducers/alertReducer.js';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import TwitterIcon from '@mui/icons-material/Twitter';
 import { useDispatch } from 'react-redux';
-const Image = React.memo(function Image({ src }) {
-    const error = React.memo(function imageOnError(event) {
-        event.target.src = NoImagePlaceHolder
-    })
-    return src.icon ? <img src={src.icon.startsWith("blob") ? src.icon : (bucketBaseURL + src.icon)} className="mobileImage" /> : <p>{src.name}</p>
-});
-const SocialMediaComponent = ({ addIconButton, handleChange, selectedIcons, removeInput, handleImageChange, menuItem, onhandleChange }) => {
+export const socialMediaIconSetter = (IconName, setIcon,) => {
+    if (IconName === "facebook") return <FacebookIcon sx={{ color: 'blue', m: '5px' }} />
+    if (IconName === "instagram") return <InstagramIcon sx={{ color: 'pink', m: '5px' }} />
+    if (IconName === "youtube") return <YouTubeIcon sx={{ color: 'red', m: '5px' }} />
+    if (IconName === "twitter") return <TwitterIcon sx={{ color: 'skyblue', m: '5px' }} />
+}
+const SocialMediaComponent = ({ handleChange, selectedIcons, removeInput, menuItem, onhandleChange }) => {
     const classes = viewStyles()
     const dispatch = useDispatch()
     const checkSelectedIcons = (Icons) => {
@@ -34,29 +38,6 @@ const SocialMediaComponent = ({ addIconButton, handleChange, selectedIcons, remo
             return item.name === Icons.name;
         });
     };
-    const [addIconName, setAddIconName] = useState(false)
-    const [icon, setIconName] = useState({
-        iconName: '',
-        iconImage: ''
-    })
-    const AddIconButton = () => {
-        if (icon.iconName && icon.iconImage) {
-            setAddIconName(false)
-            addIconButton(icon)
-            setIconName('')
-        }
-        else dispatch({
-            type: ALERT_SUCCESS,
-            payload: {
-                boolean: false,
-                message: !icon.iconName ? "Media name is required" : `${icon.iconName} image is required`,
-                error: true,
-            },
-        })
-    }
-    const imageOnError = (event) => {
-        event.target.src = NoImagePlaceHolder
-    }
     const SelectOptionField = ({ label, name, value, children, id }) => {
         return (
             <>
@@ -76,13 +57,7 @@ const SocialMediaComponent = ({ addIconButton, handleChange, selectedIcons, remo
                         renderValue={(selected) => (
                             <div style={{ display: "flex", flexWrap: "wrap", }} >
                                 {selected.map((value) => (
-                                    < Box className={classes.iconLogoBox} >
-                                        <Image
-                                            src={value}
-                                        />
-
-                                    </Box>
-                                ))}
+                                    socialMediaIconSetter(value.name)))}
                             </div>
                         )
                         }
@@ -92,8 +67,6 @@ const SocialMediaComponent = ({ addIconButton, handleChange, selectedIcons, remo
                         {children}
                     </Select >
                 </FormControl >
-                <Button color='primary' variant='contained' sx={{ m: '10px' }} onClick={() => setAddIconName(true)}>Add Icon</Button>
-
             </>
         );
     };
@@ -107,94 +80,18 @@ const SocialMediaComponent = ({ addIconButton, handleChange, selectedIcons, remo
             >
                 {menuItem.length > 0 ? menuItem.map((iconName, index) =>
                 (< MenuItem value={iconName} key={iconName.name} disabled={checkSelectedIcons(iconName)}>
-                    < Box className={classes.iconLogoBox} >
-                        <Image
-                            src={iconName}
-                        />
-                    </Box>
+                    {socialMediaIconSetter(iconName.name)}
                     <span style={{ marginLeft: '20px' }}>{iconName.name}</span>
                 </MenuItem>)
-                ) : <p style={{ textAlign: 'center', margin: '10px' }}>
-                    Add New Icon
-                </p>}
+                ) : null}
             </SelectOptionField>
-            {addIconName ?
-                <div className={classes.container}>
-                    <div className={classes.divContainer} >
-                        <div className={classes.iconDiv}>
-                            <label htmlFor='htmltag'>
-                                {icon.iconImage ? (
-                                    <Box className={classes.iconLogoBox}>
-                                        <img
-                                            className="mobileImage"
-                                            src={icon.iconImage.startsWith("blob") ? icon.iconImage : (bucketBaseURL + icon.iconImage)}
-                                            onError={imageOnError}
-                                        />
-                                    </Box>
-                                ) : (
-                                    <Box className={classes.iconLogoBox}>
-                                        <h6 className={classes.socialMediaIcon}><AddPhotoAlternateIcon color="action" sx={{ fontSize: '30px' }} /></h6>
-                                    </Box>
-                                )}
-                            </label>
-                            <input
-                                key='index'
-                                name='iconImage'
-                                type="file"
-                                accept="image/*"
-                                id='htmltag'
-                                style={{ display: "none" }}
-                                onChange={(e) => {
-                                    setIconName({ ...icon, iconImage: URL.createObjectURL(e.target.files[0]), updateIconImage: e.target.files })
-                                }}
-                            />
-                        </div>
-                        <input
-                            aria-invalid="false"
-                            id=":rj:"
-                            name="iconName"
-                            placeholder='Add Icon Name'
-                            type="tel"
-                            className="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedStart css-e7hdwz-MuiInputBase-input-MuiOutlinedInput-input"
-                            value={icon.iconName}
-                            onChange={(e) => setIconName({ ...icon, [e.target.name]: e.target.value })} />
-                    </div>
-                    <div className={classes.AddIconDiv} >
-                        <Button variant='contained' color='primary' className={classes.AddIconButton} onClick={AddIconButton}><AddIcon /></Button>
-                        <Button color='error' className={classes.AddIconButton} onClick={() => setAddIconName(false)}><CloseIcon /></Button>
-                    </div>
-                </div>
-                : null}
+
             {selectedIcons && selectedIcons.length > 0 ? selectedIcons.map((icon, index) => {
                 return (
                     <div className={classes.container}>
                         <div className={classes.divContainer}>
                             <div className={classes.iconDiv}>
-                                <label htmlFor={`htmltag${index}`}>
-                                    {icon.icon ? (
-                                        <Box className={classes.iconLogoBox}>
-                                            <img
-                                                className="mobileImage"
-                                                src={icon.icon.startsWith("blob") ? icon.icon : (bucketBaseURL + icon.icon)}
-                                                onError={imageOnError}
-                                            />
-
-                                        </Box>
-                                    ) : (
-                                        <>
-                                            <Box className={classes.iconLogoBox}>
-                                                <h6 className={classes.socialMediaIcon}><AddPhotoAlternateIcon color="action" sx={{ fontSize: '30px' }} /></h6>
-                                            </Box>
-                                        </>)}
-                                </label>
-                                <input
-                                    key={index}
-                                    type="file"
-                                    accept="image/*"
-                                    id={`htmltag${index}`}
-                                    style={{ display: "none" }}
-                                    onChange={(e) => handleImageChange(e, index)}
-                                />
+                                {socialMediaIconSetter(icon.name)}
                             </div>
                             <input
                                 aria-invalid="false"
@@ -206,18 +103,15 @@ const SocialMediaComponent = ({ addIconButton, handleChange, selectedIcons, remo
                                 value={icon.handle}
                                 onChange={(e) => handleChange(e, index)} />
                         </div >
-                        {!icon.system ?
-                            <Stack direction="row" spacing={1}>
-                                <IconButton color="error" aria-label="delete" onClick={() => removeInput(index)}>
-                                    <CloseIcon sx={{ m: '20px' }} />
-                                </IconButton>
-                            </Stack> : null}
+                        <Stack direction="row" spacing={1}>
+                            <IconButton color="error" aria-label="delete" onClick={() => removeInput(index)}>
+                                <CloseIcon sx={{ m: '20px' }} />
+                            </IconButton>
+                        </Stack>
                     </div>
                 )
             }) : null
             }
-
-
         </>
     );
 }
