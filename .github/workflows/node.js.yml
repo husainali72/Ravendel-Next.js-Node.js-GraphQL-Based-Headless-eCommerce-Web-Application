@@ -27,4 +27,4 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     - run: cd client && npm install && npm run build
-    - run: cd .. && pm2 server.js
+    - run: cd .. && sudo pm2 restart server
