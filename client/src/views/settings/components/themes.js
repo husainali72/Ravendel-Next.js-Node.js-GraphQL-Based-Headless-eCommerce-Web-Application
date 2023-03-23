@@ -21,10 +21,10 @@ const ThemesComponent = () => {
   const [themeSetting, setThemeSetting] = useState({});
   const [social_media, setSocialMedia] = React.useState([]);
   const menuItem = ([
-    { name: 'instagram', handle: '', icon: '', },
-    { name: 'facebook', handle: '', icon: '', },
-    { name: 'twitter', handle: '', icon: '', },
-    { name: 'youtube', handle: '', icon: '' },
+    { name: 'instagram', handle: '' },
+    { name: 'facebook', handle: '' },
+    { name: 'twitter', handle: '' },
+    { name: 'youtube', handle: '' },
   ])
 
   useEffect(() => {
@@ -101,12 +101,7 @@ const ThemesComponent = () => {
     data.splice(i, 1)
     setSocialMedia([...data])
   }
-  const handleImageChange = (event, index) => {
-    let data = social_media;
-    data[index].icon = URL.createObjectURL(event.target.files[0]);
-    data[index].update_icon = event.target.files
-    setSocialMedia([...data]);
-  };
+
   return (
     <>
       <Alerts />
@@ -212,7 +207,6 @@ const ThemesComponent = () => {
 
             <SocialMedia
               onhandleChange={selectHandleChange}
-              handleImageChange={handleImageChange}
               removeInput={removeInput}
               handleChange={LinkhandleChange}
               menuItem={menuItem}

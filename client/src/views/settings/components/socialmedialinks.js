@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
     Box,
     IconButton,
@@ -10,15 +10,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select'
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
-import { Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { bucketBaseURL } from '../../../utils/helper.js';
 import viewStyles from '../../viewStyles.js';
 import { MenuProps } from '../../coupon/coupon-components/index.js';
-import NoImagePlaceHolder from "../../../assets/images/NoImagePlaceHolder.png";
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import AddIcon from '@mui/icons-material/Add';
-import { ALERT_SUCCESS } from '../../../store/reducers/alertReducer.js';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import InstagramIcon from '@mui/icons-material/Instagram';
@@ -32,7 +26,6 @@ export const socialMediaIconSetter = (IconName, setIcon,) => {
 }
 const SocialMediaComponent = ({ handleChange, selectedIcons, removeInput, menuItem, onhandleChange }) => {
     const classes = viewStyles()
-    const dispatch = useDispatch()
     const checkSelectedIcons = (Icons) => {
         return selectedIcons.some((item) => {
             return item.name === Icons.name;
@@ -115,13 +108,12 @@ const SocialMediaComponent = ({ handleChange, selectedIcons, removeInput, menuIt
         </>
     );
 }
-export default function SocialMedia({ handleChange, addIconButton, onhandleChange, selectedIcons, socialMedia, addInput, removeInput, handleImageChange, menuItem }) {
+export default function SocialMedia({ handleChange, addIconButton, onhandleChange, selectedIcons, socialMedia, addInput, removeInput, menuItem }) {
     return (
         <ThemeProvider theme={theme}>
             <SocialMediaComponent
                 handleChange={handleChange}
                 selectedIcons={selectedIcons}
-                handleImageChange={handleImageChange}
                 removeInput={removeInput}
                 menuItem={menuItem}
                 addIconButton={addIconButton}
