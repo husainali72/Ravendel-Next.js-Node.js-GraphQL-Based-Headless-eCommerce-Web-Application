@@ -87,18 +87,25 @@ module.exports = {
         //   };
         // }
         const brands = await Brand.find({});
-        let brandList = brands.map((brand) => brand.name);
+        let brandList = brands.map((brand) => brand.name.toLowerCase());
         let addBrands = [];
+        let duplicateBrands = "";
         for (let i in args.brands) {
           if (
-            !isEmpty(args.brands[i].name) &&
-            !~brandList.indexOf(args.brands[i].name)
+            !isEmpty(args.brands[i].name) && 
+            !brandList.includes(args.brands[i].name.toLowerCase())
           ) {
             args.brands[i].url = await updateUrl(args.brands[i].name, "Brand");
             args.brands[i].meta = { title: "", description: "", keywords: "" };
             addBrands.push(args.brands[i]);
+          } else {
+            duplicateBrands += args.brands[i].name+" "
           }
         }
+        if(duplicateBrands.length) return {
+          message: `${duplicateBrands} already exists`,
+          success: false,
+        };
         await Brand.insertMany(addBrands);
         return MESSAGE_RESPONSE("AddSuccess", "Brands", true);
       } catch (error) {
