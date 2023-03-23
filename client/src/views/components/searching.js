@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { useDispatch } from "react-redux";
 import {
     Box,
     InputLabel,
@@ -21,12 +23,50 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
     const [shippingstatus, setshippingstatus] = useState('')
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const dispatch = useDispatch();
+
     const startDateHandleChange = (newvalue) => {
-        setStartDate(new Date(newvalue.$d))
+        if (endDate) {
+            if (new Date(newvalue.$d) < endDate) {
+                setStartDate(new Date(newvalue.$d))
+            }
+            else {
+                dispatch({
+                    type: ALERT_SUCCESS,
+                    payload: {
+                        boolean: false,
+                        message: "Invalid date",
+                        error: true,
+                    },
+                });
+            }
+        }
+        else {
+            setStartDate(new Date(newvalue.$d))
+        }
     }
+
     const endDateHandleChange = (newvalue) => {
-        setEndDate(new Date(newvalue))
+        if (startDate) {
+            if (new Date(newvalue) > startDate) {
+                setEndDate(new Date(newvalue))
+            }
+            else {
+                dispatch({
+                    type: ALERT_SUCCESS,
+                    payload: {
+                        boolean: false,
+                        message: "Invalid date",
+                        error: true,
+                    },
+                });
+            }
+        }
+        else {
+            setEndDate(new Date(newvalue))
+        }
     }
+
     const handlesearch = (event) => {
         setsearch(event.target.value)
     }
@@ -365,6 +405,3 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
         </div>
     );
 }
-
-
-

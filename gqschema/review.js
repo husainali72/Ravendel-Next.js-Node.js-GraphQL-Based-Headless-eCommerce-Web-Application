@@ -12,6 +12,7 @@ module.exports = gql`
     date: Date
     updated: Date
   }
+  
 
   type reviewsResponse {
     data: [Review]

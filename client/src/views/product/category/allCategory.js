@@ -17,12 +17,17 @@ import {
 } from "../../../store/action/";
 import { bucketBaseURL } from "../../../utils/helper";
 import { getUpdatedUrl } from "../../../utils/service";
+import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png"
+import UserPlaceholder from "../../../assets/images/user-placeholder.png";
+import ImageIcon from "@mui/icons-material/Image";
 import {
   Alert,
   Loading,
   URLComponent,
   TextInput,
   CardBlocksWithAction,
+  CardBlocks,
+  FeaturedImageComponent,
 } from "../../components";
 import theme from "../../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
@@ -159,9 +164,20 @@ const AllCategoryComponent = () => {
     setfeaturedImage(URL.createObjectURL(e.target.files[0]));
     setSingleCategory({
       ...singlecategory,
-      [e.target.name]: e.target.files,
+      "image": e.target.files,
     });
   };
+
+  const updatefileChange = (e) => {
+    setSingleCategory({
+      ...singlecategory,
+      "update_image": e.target.files,
+    });
+    setfeaturedImage(null);
+    setfeaturedImage(URL.createObjectURL(e.target.files[0]));
+
+  };
+
   const isUrlExist = async (url) => {
     let updatedUrl = await getUpdatedUrl("ProductCat", url);
     setSingleCategory({
@@ -254,56 +270,37 @@ const AllCategoryComponent = () => {
                   </Select>
                 </FormControl>
               </Box>
-              <Grid container>
-                <Grid item className={classes.flex1}>
-                  {editMode ? (
-                    <TextField
-                      helperText="Featured Image"
-                      name="update_image"
-                      variant="outlined"
-                      className={clsx(
-                        classes.marginBottom,
-                        classes.width100,
-                        "top-helper"
-                      )}
-                      onChange={fileChange}
-                      type="file"
+
+              {editMode ?
+                <Box component="span">
+                  <CardBlocks title="Change Category Image" >
+                    <FeaturedImageComponent
+                      image={featuredImage}
+                      feautedImageChange={(e) => updatefileChange(e)}
                     />
-                  ) : (
-                    <TextField
-                      helperText="Featured Image"
-                      name="image"
-                      variant="outlined"
-                      className={clsx(
-                        classes.marginBottom,
-                        classes.width100,
-                        "top-helper"
-                      )}
-                      onChange={fileChange}
-                      type="file"
-                    />
-                  )}
-                </Grid>
-                <Grid item>
-                  {featuredImage !== null && (
-                    <Box className={classes.logoImageBox}>
-                      <img
-                        src={featuredImage}
-                        className={classes.logoImagePreview}
-                      />
-                    </Box>
-                  )}
-                </Grid>
-              </Grid>
+                  </CardBlocks>
+                 </Box>
+                 :
+                <Box component="span" >
+<CardBlocks title="Choose Category Image" className={classes.flex1}>
+                  <FeaturedImageComponent
+                    image={featuredImage}
+                    feautedImageChange={(e) => fileChange(e)}
+                    // style={{marginBottom: '200px'}}
+                  />
+                  </CardBlocks>
+                </Box>}
+
               <TextField
                 label="Short Description"
                 name="description"
                 variant="outlined"
-                className={clsx(classes.marginBottom, classes.width100)}
+                className={clsx(classes.marginBottom, classes.width100, classes.marginTop1)}
                 multiline
                 rows={3}
                 value={singlecategory.description}
                 onChange={handleChange}
+                style={{marginRight: '20px'}}
               />
 
               <Box component="div" mb={2}>

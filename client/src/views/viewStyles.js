@@ -424,6 +424,9 @@ const viewStyles = makeStyles((theme) => ({
       marginBottom: "10px !important",
     },
   },
+  marginTop1: {
+    marginTop: "20px !important"
+  },
   marginBottom2: {
     marginBottom: "20px !important",
   },
@@ -555,8 +558,6 @@ const viewStyles = makeStyles((theme) => ({
   noDataImage: {
     display: 'flex',
     justifyContent: 'center'
-
-
   },
   socialmediaSelectIcon: {
     height: '50px',
@@ -616,9 +617,7 @@ const viewStyles = makeStyles((theme) => ({
   AddIconDiv: {
     marginTop: '25px',
     paddingLeft: '20px',
-
   },
-
 }));
 
 

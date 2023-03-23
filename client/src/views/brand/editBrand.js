@@ -99,7 +99,7 @@ const EditBrandComponenet = ({ params }) => {
   const fileChange = (e) => {
     setLogoImage(null);
     setLogoImage(URL.createObjectURL(e.target.files[0]));
-    setBrand({ ...brand, [e.target.name]: e.target.files[0] });
+    setBrand({ ...brand, "updated_brand_logo": e.target.files[0] });
   };
 
   const isUrlExist = async (url) => {
@@ -161,31 +161,16 @@ const EditBrandComponenet = ({ params }) => {
               </Grid>
               <Grid item xs={12}>
                 <Grid container>
-                  <Grid item className={classes.flex1}>
-                    <TextField
-                      helperText="Brand Logo"
-                      name="updated_brand_logo"
-                      variant="outlined"
-                      className={clsx(
-                        classes.marginBottom,
-                        classes.width100,
-                        "top-helper"
-                      )}
-                      onChange={fileChange}
-                      type="file"
-                    />
-                  </Grid>
-                  <Grid item>
-                    {logoImage !== null && (
-                      <Box className={classes.logoImageBox}>
-                        <img
-                          src={logoImage}
-                          className={classes.logoImagePreview}
-                          alt="Brand Logo"
-                        />
-                      </Box>
-                    )}
-                  </Grid>
+
+                  <Box component="span" m={1}>
+                    <CardBlocks title="Brand Logo Image">
+                      <FeaturedImageComponent
+                        image={logoImage}
+                        feautedImageChange={(e) => fileChange(e)}
+                      />
+                    </CardBlocks>
+                  </Box>
+      
                 </Grid>
               </Grid>
             </Grid>
