@@ -10,6 +10,7 @@ module.exports = gql`
     paymnet: Payment
     notification: Notification
     appearance: Appearance
+    zipcode: Zipcode
     createdAt: Date
     updatedAt: Date
   }
@@ -88,7 +89,6 @@ module.exports = gql`
     out_of_stock_visibility: Boolean
     stock_display_format: String
     manage_zipcodes: Boolean
-    zipcodes: customArray
   }
 
   type INVENTORY_NOTIFICATIONS {
@@ -286,18 +286,10 @@ module.exports = gql`
     handle: String
   }
 
-  type ZIPCODE {
-    success: Boolean
-    message: String
-  }
-
   extend type Query {
     setting: Setting
     getDateformat: [dateformat]
     getSettings: Setting
-    checkZipcode(
-      zipcode: String
-    ): ZIPCODE
   }
 
   extend type Mutation {
@@ -347,7 +339,6 @@ module.exports = gql`
       out_of_stock_visibility: Boolean
       stock_display_format: String
       manage_zipcodes: Boolean
-      zipcodes: customArray
       zipcode_file: Upload
     ): Setting
     updateStoreOrder(

@@ -371,6 +371,13 @@ const SeetingSchema = new Schema(
         ]
       },
     },
+    zipcode: [
+      {
+        zipcode: {
+          type: String
+        }
+      }
+    ]
   },
   {
     timestamps: true,
@@ -624,7 +631,7 @@ module.exports.createSettings = async () => {
           },
         ],
       }
-    },
+    }
   });
 
   await newSettings.save();

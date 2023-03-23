@@ -1,4 +1,5 @@
 const Setting = require("../models/Setting");
+const Zipcode = require('../models/Zipcode')
 const Categories = require("../models/ProductCat")
 const {
   isEmpty,
@@ -67,11 +68,12 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
-    checkZipcode: async (root, args) => {
+  },
+  Setting: {
+    zipcode: async (root, args) => {
       try {
-        const setting = await Setting.findOne({"store.inventory.zipcodes": {$in: args.zipcode}});
-        if (!setting) return {success: false, message: "Sorry, Product cannot be shipped to this zipcode"}
-        return {success: true, message: "Woohoo, Product can be shipped to your zipcode"}
+        const zipcodes = await Zipcode.find()
+        if(zipcodes) return zipcodes
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -207,12 +209,7 @@ module.exports = {
           args.stock_display_format;
         setting.store.inventory.manage_zipcodes =
           args.manage_zipcodes;
-        if(args.zipcode_file){
-          const zipcodes = await addZipcodes(args.zipcode_file, "/assets/images/setting", setting.store.inventory.zipcodes)
-          setting.store.inventory.zipcodes = zipcodes
-        } else {
-          setting.store.inventory.zipcodes = args.zipcodes
-        }
+        if(args.zipcode_file) await addZipcodes(args.zipcode_file, "/assets/images/setting", Zipcode)
 
         return await setting.save();
       } catch (error) {
