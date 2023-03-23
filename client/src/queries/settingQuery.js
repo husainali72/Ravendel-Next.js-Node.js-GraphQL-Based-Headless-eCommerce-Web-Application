@@ -159,7 +159,6 @@ const SETTING_TILE_DATA = gql`
         logo
         social_media {
           name
-          icon
           handle
         }
       }

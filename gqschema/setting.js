@@ -230,7 +230,6 @@ module.exports = gql`
 
   type SOCIAL_MEDIA {
     name: String
-    icon: String
     handle: String
   }
 
@@ -284,8 +283,6 @@ module.exports = gql`
 
   input social_media_input {
     name: String
-    icon: String
-    update_icon: Upload
     handle: String
   }
 

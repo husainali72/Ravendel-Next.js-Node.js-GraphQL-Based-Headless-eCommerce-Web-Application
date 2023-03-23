@@ -444,20 +444,8 @@ module.exports = {
         
         let socialMedia = []
         for(let media of args.social_media){
-          let mediaImgObject = {};
-          if(media.update_icon){
-            mediaImgObject = await imageUpload(
-              media.update_icon[0].file,
-              "/assets/images/setting/","Setting"
-            );
-  
-            if (mediaImgObject.success === false) {
-              throw putError(mediaImgObject.message);
-            }
-          }
           socialMedia.push({
             name: media.name,
-            icon: mediaImgObject.data || media.icon,
             handle: media.handle,
           })
         }

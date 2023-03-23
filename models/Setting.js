@@ -366,9 +366,7 @@ const SeetingSchema = new Schema(
         social_media: [
           {
             name: String,
-            icon: String,
-            handle: String,
-            system: Boolean
+            handle: String
           }
         ]
       },
@@ -571,33 +569,23 @@ module.exports.createSettings = async () => {
         social_media: [
           {
             name: "Facebook",
-            icon: "",
             handle: "",
-            system: true
           },
           {
             name: "Instagram",
-            icon: "",
-            handle: "",
-            system: true
+            handle: "",            
           },
           {
             name: "Pinterest",
-            icon: "",
-            handle: "",
-            system: true
+            handle: "",            
           },
           {
             name: "Youtube",
-            icon: "",
-            handle: "",
-            system: true
+            handle: "",            
           },
           {
             name: "Twitter",
-            icon: "",
-            handle: "",
-            system: true
+            handle: "",            
           }
         ]
       },
