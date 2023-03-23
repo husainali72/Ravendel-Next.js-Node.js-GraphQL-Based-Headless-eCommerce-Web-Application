@@ -8,6 +8,8 @@ import { Controller, useForm } from "react-hook-form";
 import notify from "../utills/notifyToast";
 import PhoneInput from "react-phone-input-2";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
+import client from "../apollo-client";
 var defaultObj = {
     name: "",
     email: "",
@@ -16,7 +18,9 @@ var defaultObj = {
     city: '',
     message: "",
 };
-const Contact = () => {
+const Contact = ({homePageData}) => {
+    const [contactDetails,setContactDetails] = useState({...homePageData?.getSettings?.appearance?.theme});
+    const [address,seAddress] = useState({...homePageData?.getSettings?.store?.store_address});
     const [contact, setcontact] = useState(defaultObj);
     const handleChange = (e) => {
         setcontact({ ...contact, [e.target.name]: e.target.value });
@@ -196,13 +200,13 @@ const Contact = () => {
                             <div className="get-in-touch-contact">
                                 <div className="contact-info">
                                     <h4>Contact Us</h4>
-                                    <p><span>Address:</span> 10 Suffolk st Soho, London, UK</p>
+                                    <p><span>Address:</span> {address ? (address?.address_line1 && address?.address_line1 + ", ") + (address?.address_line2 && address?.address_line2 + ", ") + address?.city :"10 Suffolk st Soho, London, UK"}</p>
                                     <Link href="tel:+1234567890">
-                                        <p><a>Phone : (+01) - 2345 - 6789</a>
+                                        <p><a>Phone : {contactDetails ? contactDetails?.phone_number : "(+01) - 2345 - 6789"}</a>
                                         </p>
                                     </Link>
                                     <Link href="mailto:support@abc.com">
-                                        <p><a>Email : support@abc.com</a></p>
+                                        <p><a>Email : {contactDetails ? contactDetails?.email : "support@abc.com"}</a></p>
                                     </Link>
                                 </div>
                             </div>
@@ -214,3 +218,22 @@ const Contact = () => {
     )
 }
 export default Contact;
+export const getStaticProps = async () =>{
+    var homePageData = []
+
+    try{
+        const { data: homePagedata} = await client.query({
+            query: GET_HOMEPAGE_DATA_QUERY
+        })
+        homePageData = homePagedata;
+    }
+    catch (e) {
+        console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
+    }
+    return{
+        props:{
+            homePageData
+        },
+        revalidate: 10,
+    }
+}

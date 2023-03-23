@@ -8,7 +8,7 @@ import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 export default function Footer() {
     const [storeAddress,setStoreAddress] = useState({});
     useEffect(() => {
-        query(GET_HOMEPAGE_DATA_QUERY).then(res => setStoreAddress(res?.data?.getSettings?.store?.store_address))
+        query(GET_HOMEPAGE_DATA_QUERY).then(res => setStoreAddress(res?.data?.getSettings))
     }, [])
     const session = useSession();
     const customerId = session?.data?.user?.accessToken?.customer?._id;
@@ -29,16 +29,16 @@ export default function Footer() {
                                     <div className="address">
                                         <h5 className="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated animated animated">Contact</h5>
                                         <strong>Address : </strong>
-                                        <span>{storeAddress?.address_line1 && (storeAddress?.address_line1 + ", ")}{storeAddress?.address_line2 && (storeAddress?.address_line2 + ", ")}{storeAddress?.city}</span>
+                                        <span>{storeAddress?.store?.store_address?.address_line1 && (storeAddress?.store?.store_address?.address_line1 + ", ")}{storeAddress?.store?.store_address?.address_line2 && (storeAddress?.store?.store_address?.address_line2 + ", ")}{storeAddress?.store?.store_address?.city}</span>
                                         <br />
                                         <strong>Phone : </strong>
-                                        <Link href="tel:+1234567890">
-                                            <span style={{ textDecoration: "none", fontFamily: "Poppins sans- serif" }}><a>(+01) - 2345 - 6789</a></span>
+                                        <Link href={storeAddress?.appearance?.theme?.phone_number ? "tel:" + storeAddress?.appearance?.theme?.phone_number : "tel:+1234567890"}>
+                                            <span style={{ textDecoration: "none", fontFamily: "Poppins sans- serif" }}><a>{storeAddress?.appearance?.theme?.phone_number ? storeAddress?.appearance?.theme?.phone_number : "(+01) - 2345 - 6789"}</a></span>
                                         </Link>
                                         <br />
                                         <strong>Email : </strong>
-                                        <Link href="mailto:support@abc.com">
-                                            <span style={{ textDecoration: "none", fontFamily: "Poppins sans- serif" }}><a>support@abc.com</a></span>
+                                        <Link href={storeAddress?.appearance?.theme?.email ?("mailto:" + storeAddress?.appearance?.theme?.email) : "mailto:support@abc.com"}>
+                                            <span style={{ textDecoration: "none", fontFamily: "Poppins sans- serif" }}><a>{storeAddress?.appearance?.theme?.email ? storeAddress?.appearance?.theme?.email :"support@abc.com" }</a></span>
                                         </Link>
                                         <br />
                                         <strong>Hour: </strong>
@@ -162,12 +162,12 @@ export default function Footer() {
                                     <p className="download">From App Store or Google Play</p>
                                     <div style={{ display: "flex", }}>
                                         <Button variant="outline">
-                                            <Link href="#">
+                                            <Link href={storeAddress?.appearance?.theme?.appstore ? storeAddress?.appearance?.theme?.appstore : "#"}>
                                                 <a className="download-btn" aria-hidden="true">
                                                     <img src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/theme/app-store.jpg"></img>
                                                 </a></Link></Button>{' '}
                                         <Button variant="outline" className="mx-2">
-                                            <Link href="#">
+                                            <Link href={storeAddress?.appearance?.theme?.playstore ? storeAddress?.appearance?.theme?.playstore : "#"}>
                                                 <a className="download-btn" aria-hidden="true"><img src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/theme/google-play.jpg"></img>
                                                 </a></Link></Button>{' '}
                                     </div>

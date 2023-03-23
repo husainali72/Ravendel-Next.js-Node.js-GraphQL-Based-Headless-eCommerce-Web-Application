@@ -78,7 +78,7 @@ const SpecificProducts = ({section}) => {
   return (
        <div>
             {products?.length > 0 ?  <Container>
-                <h4 className='theme-color' >Products For <span className='black-color' >{category?.name}</span></h4>
+                <h4 className='theme-color my-5' >Products For <span className='black-color' >{category?.name}</span></h4>
                     <OnSaleProductCard
                         onSaleProduct={products}
                         hidetitle
