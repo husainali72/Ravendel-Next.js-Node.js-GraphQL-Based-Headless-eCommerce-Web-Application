@@ -814,19 +814,17 @@ const addZipcodes = async(zipcode_file, filepath, modal) => {
   if(fs.existsSync(path)){
     let csvData = await readFile(path, {encoding: 'utf8', flag: 'r'})
     csvData = csvData.split(',')
-    console.log(csvData)
-    const invalidZipcodes = false
+
     for(let zipcode of csvData){
-      if(zipcode.length < 5 || zipcode.length > 10) invalidZipcodes = true
-      else {
-        const newZipcode = new modal({zipcode})
-        await newZipcode.save()
+      if(zipcode.length >= 5 || zipcode.length <= 10) {
+        const existingZipcode = await modal.findOne({zipcode})
+        if(!existingZipcode){
+          const newZipcode = new modal({zipcode})
+          await newZipcode.save()
+        }
       }
     }
     await modal.deleteMany({zipcode: "\r\n"})
-    if(invalidZipcodes) return {
-      message: "Invalid Zipcodes have not been added"
-    }
   }
 }
 module.exports.addZipcodes = addZipcodes

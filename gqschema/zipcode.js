@@ -10,9 +10,14 @@ module.exports = gql`
     success: Boolean
   } 
 
+  type ZIPCODE_BY_ID_RESPONSE {
+    data: Zipcode
+    message: statusSchema
+  }
+
   extend type Query {
     checkZipcode( zipcode: String! ): checkZipcode
-    zipcode( id: ID! ): Zipcode
+    zipcode( id: ID! ): ZIPCODE_BY_ID_RESPONSE
   }
 
   extend type Mutation {
