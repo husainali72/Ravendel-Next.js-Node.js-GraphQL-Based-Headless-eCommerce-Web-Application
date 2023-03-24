@@ -204,6 +204,7 @@ module.exports = gql`
   }
 
   type APPEARANCE_MOBILE {
+    slider: [SLIDER]
     mobile_section: [MOBILE_SECTION]
   }
 
@@ -391,6 +392,7 @@ module.exports = gql`
       add_section_web: [add_section_web_input]
     ): Setting
     updateAppearanceMobile(
+      slider: [slider_input]
       mobile_section: [mobile_section_input]
     ): Setting
     updateAppeanranceTheme(

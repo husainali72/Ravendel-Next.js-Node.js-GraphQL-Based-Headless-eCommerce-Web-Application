@@ -335,6 +335,19 @@ const SeetingSchema = new Schema(
         add_section_web: []
       },
       mobile: {
+        slider: [
+          {
+            image: {
+              type: String
+            },
+            link: {
+              type: String,
+            },
+            open_in_tab: {
+              type: Boolean,
+            },
+          },
+        ],
         mobile_section: [],
       },
       theme: {
@@ -586,6 +599,13 @@ module.exports.createSettings = async () => {
         ]
       },
       mobile: {
+        slider: [
+          {
+            image: "",
+            link: "https://www.google.com/",
+            open_in_tab: true,
+          },
+        ],
         mobile_section: [
           {
             label: "Featured Product",
