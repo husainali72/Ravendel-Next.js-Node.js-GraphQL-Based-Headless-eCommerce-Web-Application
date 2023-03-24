@@ -11,16 +11,16 @@ module.exports = gql`
   } 
 
   extend type Query {
-    checkZipcode( zipcode: String ): checkZipcode
-    getZipcode( id: ID ): Zipcode
+    checkZipcode( zipcode: String! ): checkZipcode
+    zipcode( id: ID! ): Zipcode
   }
 
   extend type Mutation {
-    addZipcode( zipcode: String ): Zipcode
+    addZipcode( zipcode: String! ): statusSchema
     updateZipcode(
-      id: ID
-      zipcode: String
-    ): Zipcode
-    deleteZipcode( id: ID ): Zipcode
+      id: ID!
+      zipcode: String!
+    ): statusSchema
+    deleteZipcode( id: ID! ): statusSchema
   }
 `;

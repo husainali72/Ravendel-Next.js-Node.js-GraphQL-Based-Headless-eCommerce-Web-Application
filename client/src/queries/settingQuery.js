@@ -65,7 +65,6 @@ const SETTING_TILE_DATA = gql`
         out_of_stock_visibility
         stock_display_format
         manage_zipcodes
-        zipcodes
       }
       order_options {
         order_prefix_list
@@ -312,7 +311,6 @@ const UPDATE_STORE_INVENTORY = gql`
     $out_of_stock_visibility: Boolean
     $stock_display_format: String
     $manage_zipcodes: Boolean
-    $zipcodes: [String]
     $zipcode_file: Upload 
   ) {
     updateStoreInventory(
@@ -324,7 +322,6 @@ const UPDATE_STORE_INVENTORY = gql`
       out_of_stock_visibility: $out_of_stock_visibility
       stock_display_format: $stock_display_format
       manage_zipcodes: $manage_zipcodes
-      zipcodes: $zipcodes
       zipcode_file: $zipcode_file
     ) {
       ...SettingTile

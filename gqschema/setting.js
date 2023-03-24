@@ -10,7 +10,7 @@ module.exports = gql`
     paymnet: Payment
     notification: Notification
     appearance: Appearance
-    zipcode: Zipcode
+    zipcode: [Zipcode]
     createdAt: Date
     updatedAt: Date
   }

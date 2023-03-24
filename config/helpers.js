@@ -119,6 +119,7 @@ module.exports.updateUrl = updateUrl;
 const fs = require("fs");
 const Jimp = require("jimp");
 const sharp = require("sharp");
+const Zipcode = require("../models/Zipcode");
 const imgType = ["original", "large", "medium", "thumbnail"]
 
 //const path = require("path");
@@ -792,7 +793,7 @@ const emptyCart = async(cart) => {
 }
 module.exports.emptyCart = emptyCart
 
-const addZipcodes = async(zipcode_file, filepath, zipcodes) => {
+const addZipcodes = async(zipcode_file, filepath, modal) => {
   let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0].file
   const stream = createReadStream()
   const path = `.${filepath}/${filename}`
@@ -805,7 +806,7 @@ const addZipcodes = async(zipcode_file, filepath, zipcodes) => {
       });
       return resolve({
         success: false,
-        message: "This file can't be upload",
+        message: "This file can't be uploaded",
       });
     })
     .pipe(fs.createWriteStream(path))
@@ -813,9 +814,19 @@ const addZipcodes = async(zipcode_file, filepath, zipcodes) => {
   if(fs.existsSync(path)){
     let csvData = await readFile(path, {encoding: 'utf8', flag: 'r'})
     csvData = csvData.split(',')
-    if(zipcodes.length) zipcodes.map((zipcode) => csvData.unshift(zipcode))
-    csvData = [...new Set(csvData)]
-    return csvData
+    console.log(csvData)
+    const invalidZipcodes = false
+    for(let zipcode of csvData){
+      if(zipcode.length < 5 || zipcode.length > 10) invalidZipcodes = true
+      else {
+        const newZipcode = new modal({zipcode})
+        await newZipcode.save()
+      }
+    }
+    await modal.deleteMany({zipcode: "\r\n"})
+    if(invalidZipcodes) return {
+      message: "Invalid Zipcodes have not been added"
+    }
   }
 }
 module.exports.addZipcodes = addZipcodes
