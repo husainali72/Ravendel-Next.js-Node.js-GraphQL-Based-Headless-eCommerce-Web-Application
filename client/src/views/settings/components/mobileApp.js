@@ -8,10 +8,12 @@ import {
   FormControlLabel,
   Checkbox,
   FormGroup,
+  Tooltip,
   IconButton,
 } from "@mui/material";
 import viewStyles from "../../viewStyles";
 import { get } from "lodash";
+import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import CloseIcon from '@mui/icons-material/Close';
 import { Draggable } from "react-drag-reorder";
@@ -42,6 +44,7 @@ const MobileAppSetting = () => {
   const category = useSelector((state) => state.products);
   const settingState = useSelector((state) => state.settings);
   const [loading, setloading] = useState(false);
+  const [slider, setSlider] = useState({});
   const [settingMobile, setSettingMobile] = useState({
     ...settingState.settings.appearance.mobile,
   });
@@ -57,6 +60,94 @@ const MobileAppSetting = () => {
   }, [get(settingState, "loading")]);
 
   useEffect(() => {
+    if (settingState.settings.appearance.mobile && settingState.settings.appearance.mobile.slider && settingState.settings.appearance.mobile.slider.length > 0) {
+      setSlider(settingState.settings.appearance.mobile.slider)
+    }
+  }, [get(settingState, "settings.appearance.mobile")])
+
+
+  useEffect(() => {
+    setSettingMobile({
+      ...settingState.settings.appearance.mobile,
+    });
+    var newSliderArr = [];
+    for (
+      let i = 0;
+      i < settingState.settings.appearance.mobile.slider.length;
+      i++
+    ) {
+      let newImge =
+        bucketBaseURL +
+        settingState.settings.appearance.mobile.slider[i].image;
+      newSliderArr.push({ image: newImge  });
+    }
+    setSlider(newSliderArr)
+  },
+    [settingState.settings.appearance.mobile.slider]
+  )
+
+
+  const addSlide = () => {
+    setSettingMobile({
+      ...settingMobile,
+      slider: [
+        ...settingMobile.slider,
+        {
+          image: "",
+          link: "",
+          open_in_tab: false,
+        },
+      ],
+    });
+    setSlider([
+      ...slider,
+      {
+        image: "",
+        link: "",
+        open_in_tab: false,
+      },
+    ]);
+  };
+
+
+  const removeSlide = (i) => {
+    settingMobile.slider.splice(i, 1);
+    slider.splice(i, 1);
+    setSettingMobile({
+      ...settingMobile,
+      slider: [...settingMobile.slider],
+    });
+    setSlider([...slider]);
+  };
+
+
+  const handleChange = (e, i) => {
+    if (e.target.name === "link") {
+      settingMobile.slider[i].link = e.target.value;
+    } else {
+      settingMobile.slider[i].open_in_tab = e.target.checked;
+    }
+    setSettingMobile({
+      ...settingMobile,
+      slider: [...settingMobile.slider],
+    });
+  };
+
+
+  const fileChange = (e, i) => {
+    settingMobile.slider[i].image = URL.createObjectURL(
+      e.target.files[0]
+    );
+    slider[i].image = URL.createObjectURL(e.target.files[0]);
+    settingMobile.slider[i].update_image = e.target.files;
+    slider[i].update_image = e.target.files;
+    setSettingMobile({
+      ...settingMobile,
+      slider: [...settingMobile.slider],
+    });
+  };
+
+  useEffect(() => {
     if (!category.categories.length) {
       dispatch(categoriesAction());
     }
@@ -69,6 +160,9 @@ const MobileAppSetting = () => {
   }, [])
 
   const updateMobileApp = () => {
+    for (let i in settingMobile.slider) {
+      delete settingMobile.slider[i].__typename;
+    }
     for (let i in settingMobile.mobile_section) {
       delete settingMobile.mobile_section[i].__typename;
     }
@@ -162,10 +256,106 @@ const MobileAppSetting = () => {
     <>
       <Alerts />
       {loading ? <Loading /> : null}
+
+         {/* ============SLIDER============ */}
+         
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>
+          <Grid container spacing={2}>
+          <Grid item xs={12}>
+                <Typography variant="h5" className={classes.paddingBottom1}>
+                  Slider
+                </Typography>
+               
+                  {settingMobile.slider && settingMobile.slider.map((slide, index) => (
+                    <Grid item md={4} sm={6} xs={12} key={index}>
+                      <Box className={classes.sliderImageWrapper}>
+                        <Tooltip title="Remove Slide" aria-label="remove-slide">
+                          <IconButton
+                            aria-label="remove-slide"
+                            onClick={(e) => removeSlide(index)}
+                            size="small"
+                            className={clsx(
+                              classes.deleteicon,
+                              classes.slideRemove
+                            )}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Box className={classes.sliderImagePreviewWrapper}>
+                          {slide.image && (
+                            <img
+                              src={slider[index] && slider[index].image}
+                              className={classes.sliderImagePreview}
+                              alt="Featured"
+                            />
+                          )}
 
+                          <input
+                            accept="image/*"
+                            className={classes.input}
+                            style={{ display: "none" }}
+                            id={`slide-${index}`}
+                            name={`slide-${index}`}
+                            type="file"
+                            onChange={(e) => fileChange(e, index)}
+                          />
+
+                          <label
+                            htmlFor={`slide-${index}`}
+                            className={classes.feautedImage}
+                          >
+                            {slide.image
+                              ? "Change Slider"
+                              : "Add Slide Image"}
+                          </label>
+
+                        </Box>
+
+
+                        <Box className={classes.slidesInfo}>
+                          <TextField
+                            label="Slide Link"
+                            variant="outlined"
+                            name="link"
+                            className={clsx(classes.width100)}
+                            value={slide.link}
+                            onChange={(e) => handleChange(e, index)}
+                            size="small"
+                          />
+
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                color="primary"
+                                checked={slide.open_in_tab}
+                                onChange={(e) => handleChange(e, index)}
+                              />
+                            }
+                            label="Open in New Tab"
+                          />
+                        </Box>
+                      </Box>
+                    </Grid>
+                  ))}
+                 </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={addSlide}
+                  size="small"
+                >
+                  + Add Slide
+                </Button>
+              </Grid>
+              </Box>
+              {/* ===========Add section for Website===========  */}
+
+              <Box component="div" className={classes.marginBottom2}>
             <Typography variant="h5" className={classes.paddingBottom1}>
               Add Section in Mobile App
             </Typography>

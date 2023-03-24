@@ -490,6 +490,7 @@ mutation($slider: [slider_input], $add_section_in_home: add_section_in_home, $ad
 const UPDATE_APPEARANCE_MOBILE = gql`
   mutation($mobile_add_section_in_home: [mobile_add_section_in_home]) {
     updateAppearanceMobile(
+      slider: $slider
       mobile_add_section_in_home: $mobile_add_section_in_home
     ) {
       ...SettingTile
