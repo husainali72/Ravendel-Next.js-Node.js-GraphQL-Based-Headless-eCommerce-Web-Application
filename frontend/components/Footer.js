@@ -5,11 +5,42 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react";
 import { query } from "../utills/helpers";
 import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
+import { get } from "lodash";
 export default function Footer() {
-    const [storeAddress,setStoreAddress] = useState({});
+    const [Address, setAddress] = useState({
+        address_line1: "",
+        address_line2: "",
+        city: "",
+        phone_number: "",
+        email: "",
+        playStoreUrl: "",
+        appStoreUrl: ""
+    });
+
     useEffect(() => {
-        query(GET_HOMEPAGE_DATA_QUERY).then(res => setStoreAddress(res?.data?.getSettings))
+        query(GET_HOMEPAGE_DATA_QUERY).then(res => {
+            const addressPath1 = "data.getSettings.store.store_address.address_line1";
+            const addressPath2 = "data.getSettings.store.store_address.address_line2";
+            const cityPath = "data.getSettings.store.store_address.city";
+            const phonePath = "data.getSettings.appearance.theme.phone_number";
+            const emailPath = "data.getSettings.appearance.theme.email";
+            const playStorePath = "data.getSettings.appearance.theme.playstore";
+            const appStorePath = "data.getSettings.appearance.theme.appstore";
+            setAddress((previousAddress) => ({
+                ...previousAddress,
+                address_line1: get(res, addressPath1, "Central Park"),
+                address_line2: get(res, addressPath2, ""),
+                city: get(res, cityPath, "Paris"),
+                email: get(res, emailPath, "ravendel@gmail.com"),
+                phone_number: get(res, phonePath, "+91 9124192994"),
+                appStoreUrl: get(res, appStorePath, "#"),
+                playStoreUrl: get(res, playStorePath, "#"),
+            }
+            ))
+        })
     }, [])
+
+    const { address_line1, address_line2, city, email, phone_number, appStoreUrl, playStoreUrl } = Address;
     const session = useSession();
     const customerId = session?.data?.user?.accessToken?.customer?._id;
     return (
@@ -29,16 +60,16 @@ export default function Footer() {
                                     <div className="address">
                                         <h5 className="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated animated animated">Contact</h5>
                                         <strong>Address : </strong>
-                                        <span>{storeAddress?.store?.store_address?.address_line1 && (storeAddress?.store?.store_address?.address_line1 + ", ")}{storeAddress?.store?.store_address?.address_line2 && (storeAddress?.store?.store_address?.address_line2 + ", ")}{storeAddress?.store?.store_address?.city}</span>
+                                        <span>{address_line1 && address_line1 + ", "}{address_line2 && address_line2 + ", "}{city}</span>
                                         <br />
                                         <strong>Phone : </strong>
-                                        <Link href={storeAddress?.appearance?.theme?.phone_number ? "tel:" + storeAddress?.appearance?.theme?.phone_number : "tel:+1234567890"}>
-                                            <span style={{ textDecoration: "none", fontFamily: "Poppins sans- serif" }}><a>{storeAddress?.appearance?.theme?.phone_number ? storeAddress?.appearance?.theme?.phone_number : "(+01) - 2345 - 6789"}</a></span>
+                                        <Link href={"tel:" + phone_number}>
+                                            <span className="contact-details" ><a>{phone_number}</a></span>
                                         </Link>
                                         <br />
                                         <strong>Email : </strong>
-                                        <Link href={storeAddress?.appearance?.theme?.email ?("mailto:" + storeAddress?.appearance?.theme?.email) : "mailto:support@abc.com"}>
-                                            <span style={{ textDecoration: "none", fontFamily: "Poppins sans- serif" }}><a>{storeAddress?.appearance?.theme?.email ? storeAddress?.appearance?.theme?.email :"support@abc.com" }</a></span>
+                                        <Link href={"mailto:" + email}>
+                                            <span className="contact-details" ><a>{email}</a></span>
                                         </Link>
                                         <br />
                                         <strong>Hour: </strong>
@@ -162,12 +193,12 @@ export default function Footer() {
                                     <p className="download">From App Store or Google Play</p>
                                     <div style={{ display: "flex", }}>
                                         <Button variant="outline">
-                                            <Link href={storeAddress?.appearance?.theme?.appstore ? storeAddress?.appearance?.theme?.appstore : "#"}>
+                                            <Link href={appStoreUrl}>
                                                 <a className="download-btn" aria-hidden="true">
                                                     <img src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/theme/app-store.jpg"></img>
                                                 </a></Link></Button>{' '}
                                         <Button variant="outline" className="mx-2">
-                                            <Link href={storeAddress?.appearance?.theme?.playstore ? storeAddress?.appearance?.theme?.playstore : "#"}>
+                                            <Link href={playStoreUrl}>
                                                 <a className="download-btn" aria-hidden="true"><img src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/theme/google-play.jpg"></img>
                                                 </a></Link></Button>{' '}
                                     </div>
