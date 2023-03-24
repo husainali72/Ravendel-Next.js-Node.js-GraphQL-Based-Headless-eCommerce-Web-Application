@@ -51,7 +51,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
             <Container>
                 <div className="shop-Container" >
                     <div className="col-lg-3">
-                        <ShopProducts category={shopProduct.data} name={"Category"} />
+                        <ShopProducts shopCategory={shopProduct.data} name={"Category"} />
                         <ShopProducts brandProduct={brandProduct} name={"Brand"} brands />
                         <div className="primary-sidebar sticky-sidebar category-shop-cart my-3">
                             <div className="theiaStickySidebar category-box-filler">
@@ -87,7 +87,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                         {onSaleProduct.map((product, i) => (
                                             i < 5 ?
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
-                                                    <div style={{ display: 'flex', marginTop: 3 }} key={i}>
+                                                    <div className="d-flex flex-row m-1 cursor-pointer" key={i}>
                                                         <div>
                                                             <img className="widget-category-img" src={getImage(product.feature_image, 'original')} />
                                                         </div>

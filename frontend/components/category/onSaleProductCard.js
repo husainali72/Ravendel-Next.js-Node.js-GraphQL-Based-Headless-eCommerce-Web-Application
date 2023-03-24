@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { ADD_TO_CART_QUERY, GET_USER_CART, UPDATE_CART_PRODUCT } from "../../queries/cartquery";
 import calculateDiscount from "../../utills/calculateDiscount";
 import { query } from "../../utills/helpers";
+import { capitalize } from "lodash";
 var placeholder = "https://dummyimage.com/300";
 const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }) => {
     var id = ""
@@ -104,7 +105,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
         <section className="product-cart-section" >
             <Container style={{ padding: '0' }}>
                 {!hidetitle ? <div>
-                    <h4 style={{ color: "#088178" }}>{titleShow ? titleShow : "On Sale"} <span style={{ color: "black" }}>Product</span></h4>
+                    <h4 className="theme-color my-5">{titleShow ? titleShow : "On Sale"} <span className="text-black">Product</span></h4>
                 </div>
                     : null}
                 <div>
@@ -125,7 +126,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                                 />
                                             </div>
                                             <div className="on-sale-product-card-body">
-                                                {product?.pricing?.sellprice > 0 && product?.pricing?.sellprice < product?.pricing?.price &&  Math.round((100 /product?.pricing?.price)*(product?.pricing?.price - product?.pricing?.sellprice))>0  ? (<div className="save-price">
+                                                {product?.pricing?.sellprice > 0 && product?.pricing?.sellprice < product?.pricing?.price &&  ((100 /product?.pricing?.price)*(product?.pricing?.price - product?.pricing?.sellprice))>0  ? (<div className="save-price">
                                                     <span className="percantage-save">
                                                         {calculateDiscount(product?.pricing?.price, product?.pricing?.sellprice)}
                                                     </span>
@@ -134,7 +135,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                                     {product?.categoryId?.map((item, i) =>
                                                     (<span key={i}>
 
-                                                        {(product?.categoryId?.length - 1 === i) ? (<span>{item?.name} </span>) : <span>{item?.name}, </span>}
+                                                        {(product?.categoryId?.length - 1 === i) ? (<span>{capitalize(item?.name)} </span>) : <span>{capitalize(item?.name)}, </span>}
 
                                                     </span>))}
                                                 </div>

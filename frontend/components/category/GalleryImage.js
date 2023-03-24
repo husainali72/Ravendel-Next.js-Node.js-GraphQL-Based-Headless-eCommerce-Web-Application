@@ -176,7 +176,7 @@ const GalleryImagesComponents = (props) => {
                                 </span>
                                     : null}
                                 <span className=" mx-2">
-                                    {Math.round((100 /singleproducts?.pricing?.price)*(singleproducts?.pricing?.price - singleproducts?.pricing?.sellprice)) > 0 && calculateDiscount(singleproducts?.pricing?.price, singleproducts?.pricing?.sellprice)}
+                                    {((100 /singleproducts?.pricing?.price)*(singleproducts?.pricing?.price - singleproducts?.pricing?.sellprice)) > 0 && calculateDiscount(singleproducts?.pricing?.price, singleproducts?.pricing?.sellprice)}
                                 </span>
                             </div>
                         </div>

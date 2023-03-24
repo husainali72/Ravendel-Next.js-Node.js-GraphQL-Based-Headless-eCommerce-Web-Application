@@ -5,9 +5,9 @@ const calculateDiscount = (price , sellPrice)=>{
             discount = ""
         }
         else{
-            let amount = Math.round(
-                (100 /price)*(price - sellPrice)
-            )
+            // let amount = Math.round(
+                let amount = ((100 /price)*(price - sellPrice)).toFixed(2)
+            // )
             discount = discount + amount + "% off"
         }
     }
