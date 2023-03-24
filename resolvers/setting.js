@@ -375,6 +375,27 @@ module.exports = {
         await checkAwsFolder('setting');
         const setting = await Setting.findOne({});
 
+        var slider = [];
+        for (let i in args.slider) {
+          let imgObject = {};
+          if (args.slider[i].update_image) {
+            imgObject = await imageUpload(
+              args.slider[i].update_image[0].file,
+              "/assets/images/setting/","Setting"
+            );
+
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            }
+          }
+
+          slider.push({
+            image: imgObject.data || args.slider[i].image,
+            link: args.slider[i].link,
+            open_in_tab: args.slider[i].open_in_tab,
+          });
+        }
+
         var mobile_section = [];
         for (let i in args.mobile_section) {
           let imgObject = {};
@@ -398,6 +419,7 @@ module.exports = {
           });
         }
         
+        setting.appearance.mobile.slider = slider;
         setting.appearance.mobile.mobile_section = mobile_section;
         return await setting.save();
       } catch (error) {
