@@ -3,6 +3,7 @@ const Product = require("../models/Product");
 const Brand = require("../models/Brand");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const ProductAttribute = require("../models/ProductAttribute");
+const Review = require("../models/Review");
 const {
   isEmpty,
   putError,
@@ -936,6 +937,15 @@ module.exports = {
               imageUnlink(product.gallery_image[i]);
             }
           }
+
+          await Review.deleteMany({
+            product_id: args.id
+          })
+
+          const productVariants = product.variant
+          await ProductAttribute.deleteMany({
+            _id: {$in: [productVariants]}
+          })
 
           const variations = await ProductAttributeVariation.find({
             product_id: args.id,

@@ -100,6 +100,9 @@ const SeetingSchema = new Schema(
         zip: {
           type: String,
         },
+        hour: {
+          type: String
+        }
       },
       measurements: {
         weight_unit: {
@@ -136,6 +139,10 @@ const SeetingSchema = new Schema(
         stock_display_format: {
           type: String,
         },
+        manage_zipcodes: {
+          type: Boolean
+        },
+        zipcodes: [String]
       },
       order_options: {
         order_prefix_list: [String],
@@ -335,6 +342,19 @@ const SeetingSchema = new Schema(
         add_section_web: []
       },
       mobile: {
+        slider: [
+          {
+            image: {
+              type: String
+            },
+            link: {
+              type: String,
+            },
+            open_in_tab: {
+              type: Boolean,
+            },
+          },
+        ],
         mobile_section: [],
       },
       theme: {
@@ -359,12 +379,18 @@ const SeetingSchema = new Schema(
         social_media: [
           {
             name: String,
-            icon: String,
             handle: String
           }
         ]
       },
     },
+    zipcode: [
+      {
+        zipcode: {
+          type: String
+        }
+      }
+    ]
   },
   {
     timestamps: true,
@@ -424,6 +450,7 @@ module.exports.createSettings = async () => {
         country: "USA",
         state: "New York",
         zip: "100104",
+        hour: "Mon to Fri, 9am to 6pm",
       },
       measurements: {
         weight_unit: "kg",
@@ -440,6 +467,8 @@ module.exports.createSettings = async () => {
         out_of_stock_threshold: 1,
         out_of_stock_visibility: true,
         stock_display_format: "1",
+        manage_zipcodes: true,
+        zipcodes: []
       },
       order_options: {
         order_prefix_list: ["#"],
@@ -560,32 +589,34 @@ module.exports.createSettings = async () => {
         social_media: [
           {
             name: "Facebook",
-            icon: "setting/1679465730915-facebook.png",
-            handle: ""
+            handle: "",
           },
           {
             name: "Instagram",
-            icon: "setting/1679465735748-instagram.png",
-            handle: ""
+            handle: "",            
           },
           {
             name: "Pinterest",
-            icon: "setting/1679465733326-pinterest.png",
-            handle: ""
+            handle: "",            
           },
           {
             name: "Youtube",
-            icon: "setting/1679465734614-youtube.png",
-            handle: ""
+            handle: "",            
           },
           {
             name: "Twitter",
-            icon: "setting/1679465732045-twitter.png",
-            handle: ""
+            handle: "",            
           }
         ]
       },
       mobile: {
+        slider: [
+          {
+            image: "",
+            link: "https://www.google.com/",
+            open_in_tab: true,
+          },
+        ],
         mobile_section: [
           {
             label: "Featured Product",
@@ -620,7 +651,7 @@ module.exports.createSettings = async () => {
           },
         ],
       }
-    },
+    }
   });
 
   await newSettings.save();

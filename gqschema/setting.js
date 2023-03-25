@@ -10,6 +10,7 @@ module.exports = gql`
     paymnet: Payment
     notification: Notification
     appearance: Appearance
+    zipcode: [Zipcode]
     createdAt: Date
     updatedAt: Date
   }
@@ -71,6 +72,7 @@ module.exports = gql`
     country: String
     state: String
     zip: String
+    hour: String
   }
 
   type MEASUREMENTS {
@@ -86,6 +88,7 @@ module.exports = gql`
     out_of_stock_threshold: Int
     out_of_stock_visibility: Boolean
     stock_display_format: String
+    manage_zipcodes: Boolean
   }
 
   type INVENTORY_NOTIFICATIONS {
@@ -204,6 +207,7 @@ module.exports = gql`
   }
 
   type APPEARANCE_MOBILE {
+    slider: [SLIDER]
     mobile_section: [MOBILE_SECTION]
   }
 
@@ -227,7 +231,6 @@ module.exports = gql`
 
   type SOCIAL_MEDIA {
     name: String
-    icon: String
     handle: String
   }
 
@@ -281,8 +284,6 @@ module.exports = gql`
 
   input social_media_input {
     name: String
-    icon: String
-    update_icon: Upload
     handle: String
   }
 
@@ -324,6 +325,7 @@ module.exports = gql`
       country: String
       state: String
       zip: String
+      hour: String
     ): Setting
     updateStoreMeasurements(
       weight_unit: String
@@ -337,6 +339,8 @@ module.exports = gql`
       out_of_stock_threshold: Int
       out_of_stock_visibility: Boolean
       stock_display_format: String
+      manage_zipcodes: Boolean
+      zipcode_file: Upload
     ): Setting
     updateStoreOrder(
       order_prefix: String
@@ -391,6 +395,7 @@ module.exports = gql`
       add_section_web: [add_section_web_input]
     ): Setting
     updateAppearanceMobile(
+      slider: [slider_input]
       mobile_section: [mobile_section_input]
     ): Setting
     updateAppeanranceTheme(

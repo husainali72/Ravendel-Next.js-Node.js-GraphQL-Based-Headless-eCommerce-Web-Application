@@ -135,9 +135,9 @@ const DashboardComponent = () => {
           />
         </Grid>
         <Grid item lg={8} xl={9} xs={12}  >
-          <Paper sx={{ paddingRight: "15px", paddingLeft: "15px" }} >
+          <Paper sx={{ paddingRight: "15px", pl: '20px' }} >
             <Box sx={{ width: 120, }}>
-              <FormControl fullWidth size="small" sx={{ width: 120, m: 3 }}>
+              <FormControl fullWidth size="small" sx={{ width: 120, m: 2 }}>
                 <InputLabel id="demo-simple-select-label">Year</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
@@ -152,7 +152,7 @@ const DashboardComponent = () => {
                 </Select>
               </FormControl>
             </Box>
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={250}  >
               <BarChart data={chartdata} margins={{ top: 50, right: 1, bottom: 100, left: 1 }} >
                 <XAxis dataKey="month" />
                 <YAxis />

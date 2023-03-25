@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, TextField, Box, Button } from "@mui/material";
+import { Grid, TextField, Box, Button, MenuItem, FormControl, InputLabel, Select } from "@mui/material";
 import viewStyles from "../../viewStyles";
 import { useDispatch, useSelector } from "react-redux";
 import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png";
@@ -11,31 +11,38 @@ import { appearanceThemeUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
 import PhoneNumber from "../../components/phoneNumberValidation";
-import { validatePhone, validate } from "../../components/validate";
+import { validatePhone, validate, validatenested } from "../../components/validate";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
+import SocialMedia from "./socialmedialinks";
 const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [themeSetting, setThemeSetting] = useState({});
+  const [social_media, setSocialMedia] = React.useState([]);
+  const menuItem = ([
+    { name: 'instagram', handle: '' },
+    { name: 'facebook', handle: '' },
+    { name: 'twitter', handle: '' },
+    { name: 'youtube', handle: '' },
+  ])
 
   useEffect(() => {
-    if (
-      settingState.settings &&
-      settingState.settings.appearance &&
-      settingState.settings.appearance.theme
-    ) {
+    if (!isEmpty(get(settingState.settings.appearance, 'theme'))) {
       setThemeSetting({ ...settingState.settings.appearance.theme })
+      setSocialMedia([...settingState.settings.appearance.theme.social_media])
+      setSocialMedia(settingState.settings.appearance.theme.social_media)
     }
   }, [get(settingState, "settings.appearance.theme")])
-
   const updateTheme = () => {
-
+    themeSetting.social_media = social_media
+    for (let i in themeSetting.social_media) {
+      delete themeSetting.social_media[i].__typename;
+    }
     delete theme.__typename;
-
-    let errors = validate(['playstore', "appstore", "email"], themeSetting);
-
+    let errors = validate(['playstore', "appstore", "email", 'hours'], themeSetting);
     let phoneNumberError = validatePhone(["phone_number"], themeSetting)
+    let nested_validation = validatenested("social_media", ["name", "handle"], themeSetting);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -56,13 +63,20 @@ const ThemesComponent = () => {
         },
       });
     }
-
-    else {
-
-      dispatch(appearanceThemeUpdateAction(themeSetting));
+    else if (!isEmpty(nested_validation)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: nested_validation,
+          error: true,
+        },
+      });
     }
 
-
+    else {
+      dispatch(appearanceThemeUpdateAction(themeSetting));
+    }
   };
 
   const fileChange = (e) => {
@@ -72,6 +86,20 @@ const ThemesComponent = () => {
   };
   const handleOnChange = (value) => {
     setThemeSetting({ ...themeSetting, ["phone_number"]: value })
+  }
+  const LinkhandleChange = (e, i) => {
+    social_media[i].handle = e.target.value;
+    setSocialMedia([...social_media]);
+  }
+  const selectHandleChange = (e) => {
+    let obj = e.target.value;
+    setSocialMedia(obj);
+
+  };
+  const removeInput = (i) => {
+    let data = social_media
+    data.splice(i, 1)
+    setSocialMedia([...data])
   }
 
   return (
@@ -137,7 +165,6 @@ const ThemesComponent = () => {
               }
             />
           </Box>
-
           <Box component="div">
             <TextField
               type="text"
@@ -155,7 +182,10 @@ const ThemesComponent = () => {
           </Box>
 
           <Box component="div" mb={3}>
-            <PhoneNumber handleOnChange={handleOnChange} phoneValue={themeSetting.phone_number} width="300px" />
+            <PhoneNumber
+              handleOnChange={handleOnChange}
+              phoneValue={themeSetting.phone_number}
+              width="300px" />
           </Box>
           <Box component="div">
 
@@ -173,8 +203,16 @@ const ThemesComponent = () => {
               }
             />
           </Box>
+          <Box component="div" mb={3}>
 
-        </Grid>
+            <SocialMedia
+              onhandleChange={selectHandleChange}
+              removeInput={removeInput}
+              handleChange={LinkhandleChange}
+              menuItem={menuItem}
+              selectedIcons={social_media} />
+          </Box>
+        </Grid >
         <Grid item xs={12}>
           <Button
             size="small"
@@ -185,7 +223,7 @@ const ThemesComponent = () => {
             Save Change
           </Button>
         </Grid>
-      </Grid>
+      </Grid >
     </>
   );
 };

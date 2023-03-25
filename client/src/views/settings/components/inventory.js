@@ -191,6 +191,28 @@ const InventoryComponent = () => {
               ]}
             />
           </Box>
+          <SettingBlock label="Manage zipcodes" noBottomMargin>
+            <Box component="div" className={classes.marginBottom2}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    color="primary"
+                    checked={inventory.manage_zipcodes}
+                    onChange={(e) =>
+                      setinventory({
+                        ...inventory,
+                        manage_zipcodes: e.target.checked,
+                      })
+                    }
+                  />
+                }
+                label="Do you want to add zipcodes deliverability check for products?"
+              />
+            </Box>
+          </SettingBlock>
+          {inventory.manage_zipcodes ? (
+            <>Zipcode Settings</>
+          ) : null}
         </Grid>
         <Grid item xs={12}>
           <Button

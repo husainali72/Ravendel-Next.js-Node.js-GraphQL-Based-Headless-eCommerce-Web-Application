@@ -47,6 +47,7 @@ const SETTING_TILE_DATA = gql`
         country
         state
         zip
+        hour
       }
       measurements {
         weight_unit
@@ -63,6 +64,7 @@ const SETTING_TILE_DATA = gql`
         out_of_stock_threshold
         out_of_stock_visibility
         stock_display_format
+        manage_zipcodes
       }
       order_options {
         order_prefix_list
@@ -156,11 +158,17 @@ const SETTING_TILE_DATA = gql`
         logo
         social_media {
           name
-          icon
           handle
+          
         }
+        
       }
       mobile {
+        slider {
+          image
+          link
+          open_in_tab
+        }
         mobile_section {
           label
           section_img
@@ -271,6 +279,7 @@ const UPDATE_STORE_ADDRESS = gql`
     $country: String
     $state: String
     $zip: String
+    $hour: String
   ) {
     updateStoreAddress(
       address_line1: $address_line1
@@ -279,6 +288,7 @@ const UPDATE_STORE_ADDRESS = gql`
       country: $country
       state: $state
       zip: $zip
+      hour: $hour
     ) {
       ...SettingTile
     }
@@ -307,6 +317,8 @@ const UPDATE_STORE_INVENTORY = gql`
     $out_of_stock_threshold: Int
     $out_of_stock_visibility: Boolean
     $stock_display_format: String
+    $manage_zipcodes: Boolean
+    $zipcode_file: Upload 
   ) {
     updateStoreInventory(
       manage_stock: $manage_stock
@@ -316,6 +328,8 @@ const UPDATE_STORE_INVENTORY = gql`
       out_of_stock_threshold: $out_of_stock_threshold
       out_of_stock_visibility: $out_of_stock_visibility
       stock_display_format: $stock_display_format
+      manage_zipcodes: $manage_zipcodes
+      zipcode_file: $zipcode_file
     ) {
       ...SettingTile
     }
@@ -326,7 +340,7 @@ const UPDATE_STORE_INVENTORY = gql`
 const UPDATE_STORE_ORDER = gql`
   mutation(
     $order_prefix: String
-    $order_digits: Number
+    $order_digits: Int
   ) {
     updateStoreOrder(
       order_prefix: $order_prefix
@@ -485,6 +499,7 @@ mutation($slider: [slider_input], $add_section_in_home: add_section_in_home, $ad
 const UPDATE_APPEARANCE_MOBILE = gql`
   mutation($mobile_add_section_in_home: [mobile_add_section_in_home]) {
     updateAppearanceMobile(
+      slider: $slider
       mobile_add_section_in_home: $mobile_add_section_in_home
     ) {
       ...SettingTile
@@ -494,8 +509,12 @@ const UPDATE_APPEARANCE_MOBILE = gql`
 `;
 
 const UPDATE_APPEARANCE_MOBILE_NEW = gql`
-  mutation($mobile_section: [mobile_section_input]) {
+  mutation(
+    $slider: [slider_input],
+    $mobile_section: [mobile_section_input]
+  ) {
     updateAppearanceMobile(
+      slider: $slider
       mobile_section: $mobile_section
     ) {
       ...SettingTile

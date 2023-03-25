@@ -13,7 +13,7 @@ import ShopProducts from "../../components/shoppage/shopProducts";
 import { settingActionCreator } from '../../redux/actions/settingAction';
 import { capitalize } from 'lodash';
 const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProduct, brandProduct }) => {
-    const breadCrumbTitle = shopProduct.data.find((catt)=> catt.id === singlecategory.parentId)?.name;
+    const breadCrumbTitle = shopProduct?.data?.find((catt)=> catt.id === singlecategory.parentId)?.name;
     const [cats, setCats] = useState({})
     const dispatch = useDispatch()
     const [products, setProducts] = useState([]);
@@ -108,7 +108,7 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
             : null}
             </Head>
             <PageTitle title={"category"} />
-            <BreadCrumb title={`category  > ${breadCrumbTitle !== undefined ? (breadCrumbTitle + ">") : ""}  ${capitalize(categoryDetail.name)}`} />
+            <BreadCrumb title={`category  > ${breadCrumbTitle !== undefined ? (breadCrumbTitle + ">") : ""}  ${capitalize(categoryDetail?.name)}`} />
             <section className="product-cart-section">
                 <Container>
                     <div className="single-category-page">

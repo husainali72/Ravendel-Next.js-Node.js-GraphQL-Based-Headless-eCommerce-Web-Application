@@ -85,6 +85,15 @@ const StoreAddressComponent = () => {
               }}
             />
           </Box>
+          <Box component="div">
+            <SettingTextInput
+              value={address.hour}
+              label="Hour"
+              onSettingInputChange={(val) => {
+                setAddress({ ...address, hour: val });
+              }}
+            />
+          </Box>
         </Grid>
 
         <Grid item md={12}>

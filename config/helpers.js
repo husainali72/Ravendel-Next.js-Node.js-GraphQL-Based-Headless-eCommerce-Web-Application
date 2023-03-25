@@ -3,6 +3,7 @@ const Validator = require("validator");
 const moment = require("moment")
 const nodemailer = require('nodemailer')
 const APP_KEYS = require('../config/keys')
+const { readFile } = require('node:fs/promises')
 
 const { uploadFile, FileDelete } = require("../config/aws");
 
@@ -118,6 +119,7 @@ module.exports.updateUrl = updateUrl;
 const fs = require("fs");
 const Jimp = require("jimp");
 const sharp = require("sharp");
+const Zipcode = require("../models/Zipcode");
 const imgType = ["original", "large", "medium", "thumbnail"]
 
 //const path = require("path");
@@ -791,3 +793,38 @@ const emptyCart = async(cart) => {
 }
 module.exports.emptyCart = emptyCart
 
+const addZipcodes = async(zipcode_file, filepath, modal) => {
+  let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0].file
+  const stream = createReadStream()
+  const path = `.${filepath}/${filename}`
+  stream
+    .on("error", (error) => {
+      console.log(JSON.stringify(error));
+
+      fs.unlink(path, function (err) {
+        if (err) console.log(err);
+      });
+      return resolve({
+        success: false,
+        message: "This file can't be uploaded",
+      });
+    })
+    .pipe(fs.createWriteStream(path))
+
+  if(fs.existsSync(path)){
+    let csvData = await readFile(path, {encoding: 'utf8', flag: 'r'})
+    csvData = csvData.split(',')
+
+    for(let zipcode of csvData){
+      if(zipcode.length >= 5 || zipcode.length <= 10) {
+        const existingZipcode = await modal.findOne({zipcode})
+        if(!existingZipcode){
+          const newZipcode = new modal({zipcode})
+          await newZipcode.save()
+        }
+      }
+    }
+    await modal.deleteMany({zipcode: "\r\n"})
+  }
+}
+module.exports.addZipcodes = addZipcodes

@@ -163,7 +163,8 @@ export const CheckOut = ({ currencyStore }) => {
                             quantity: parseInt(cart?.qty),
                             name: originalProduct?.name,
                             pricing: originalProduct?.pricing,
-                            feature_image: originalProduct?.feature_image
+                            feature_image: originalProduct?.feature_image,
+                            url: originalProduct?.url
                         }
                         cartitems2.push(cartProduct);
                     })

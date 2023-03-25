@@ -27,14 +27,25 @@ export const validatenested = (main, names, args) => {
 
   let errors = "";
   if (names && names.length > 0) {
-    names.map((name) => {
-      if (args[main] === '') {
-        return (errors = `${main} is required`);
-      }
-      if (args[main][name] === '') {
-        return (errors = `${name} is required`);
-      }
-    })
+    if (Array.isArray(args[main])) {
+      args[main].map((obj) => {
+        names.map((name) => {
+          if (obj[name] === '' && name === 'handle') {
+            let msg = obj.name.charAt(0).toUpperCase() + obj.name.slice(1)
+            return (errors = `${msg} Link is required`);
+          }
+        })
+      })
+    } else {
+      names.map((name) => {
+        if (args[main] === '') {
+          return (errors = `${main} is required`);
+        }
+        if (args[main][name] === '') {
+          return (errors = `${name} is required`);
+        }
+      })
+    }
   }
   return errors;
 };
