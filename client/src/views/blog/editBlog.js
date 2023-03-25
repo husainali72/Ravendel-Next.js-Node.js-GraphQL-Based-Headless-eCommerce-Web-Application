@@ -38,6 +38,7 @@ import Alerts from "../components/Alert";
 import { get } from "lodash";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { getUpdatedUrl } from "../../utils/service";
 
 const defaultObj = {
   title: "",
@@ -73,8 +74,8 @@ const EditBlogComponenet = ({ params }) => {
     if (!isEmpty(get(blogState, "blog"))) {
       setBlog({ ...blog, ...blogState.blog });
       if (
-        blogState.blog.feature_image 
-        
+        blogState.blog.feature_image
+
       ) {
         setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
       }
@@ -151,6 +152,13 @@ const EditBlogComponenet = ({ params }) => {
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
   };
 
+  const isUrlExist = async (url) => {
+    let updatedUrl = await getUpdatedUrl("Blog", url);
+    setBlog({
+      ...blog,
+      url: updatedUrl,
+    });
+  };
   return (
     <Fragment>
       <Alerts />
@@ -178,6 +186,9 @@ const EditBlogComponenet = ({ params }) => {
                   name="title"
                   onChange={handleChange}
                   variant="outlined"
+                  onBlur={(e) => (
+                    !blog.url || blog.url !== e.target.value ? isUrlExist(blog.title) : null
+                  )}
                   value={blog.title}
                   fullWidth
                 />

@@ -26,12 +26,13 @@ import { useDispatch } from "react-redux";
 import General from "./components/general";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme";
+import Notification from "./components/notification";
 const SettingsComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const [value, setValue] = useState(6);
+  const [value, setValue] = useState(7);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -70,7 +71,8 @@ const SettingsComponent = () => {
                       <Tab label="SEO" {...TabProps(3)} />
                       <Tab label="Store" {...TabProps(4)} />
                       <Tab label="Payment" {...TabProps(5)} />
-                      <Tab label="Appearance" {...TabProps(6)} />
+                      <Tab label="Notification" {...TabProps(6)} />
+                      <Tab label="Appearance" {...TabProps(7)} />
                     </Tabs>
                   </Box>
                   <Box
@@ -96,6 +98,9 @@ const SettingsComponent = () => {
                         <Payment />
                       </TabPanel>
                       <TabPanel value={value} index={6}>
+                        <Notification />
+                      </TabPanel>
+                      <TabPanel value={value} index={7}>
                         <Appearance />
                       </TabPanel>
                     </Box>

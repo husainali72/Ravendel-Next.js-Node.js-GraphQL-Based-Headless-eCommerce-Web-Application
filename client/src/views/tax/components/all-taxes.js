@@ -38,6 +38,7 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
         id: tax._id,
         percentage: tax.percentage,
         name: tax.name,
+        system: tax.system
       }
       data.push(object)
     })

@@ -162,7 +162,7 @@ const AddBlogComponenet = () => {
                   label="Title"
                   name="title"
                   onChange={handleChange}
-                  onBlur={(e) => !blog.url && isUrlExist(blog.title)}
+                  onBlur={(e) => !blog.url || blog.url !== e.target.value ? isUrlExist(blog.title) : null}
                   variant="outlined"
                   fullWidth
                 />
@@ -225,7 +225,6 @@ const AddBlogComponenet = () => {
               </Grid>
             </CardBlocks>
           </Grid>
-
           <Grid item lg={3} md={12} xs={12}>
             <CardBlocks title="Status" nomargin>
               <RadioGroup
@@ -260,7 +259,6 @@ const AddBlogComponenet = () => {
               <Typography variant="subtitle1" className={classes.marginBottom1}>
                 Select Tags
               </Typography>
-
               <Select
                 isMulti
                 value={clearTags}
