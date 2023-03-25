@@ -15,7 +15,7 @@ const shippingResolvers = require("./shipping");
 const couponResolvers = require("./coupon");
 const reviewResolvers = require("./review");
 const product_attribute = require("./product_attribute");
-
+const zipcodeResolvers = require("./zipcode");
 const faqResolvers = require("./faq");
 
 const customScalarResolver = {
@@ -54,5 +54,6 @@ module.exports = [
   reviewResolvers,
   product_attribute,
   faqResolvers,
+  zipcodeResolvers,
   product_attribute
 ];

@@ -16,6 +16,7 @@ const review = require("./review");
 const product_attribute = require("./product_attribute");
 const faqSchema = require("./faq");
 const miscSchema = require("./misc");
+const zipcodeSchema = require("./zipcode");
 
 const linkSchema = gql`
   scalar Date
@@ -73,4 +74,5 @@ module.exports = [
   product_attribute,
   faqSchema,
   product_attribute, 
+  zipcodeSchema,
 ];
