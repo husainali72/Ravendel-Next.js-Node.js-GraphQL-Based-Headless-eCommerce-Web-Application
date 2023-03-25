@@ -25,8 +25,8 @@ const AppearanceComponent = () => {
               textColor="primary"
               variant="scrollable"
             >
-              <Tab label="Home" {...TabProps(0)} />
-              <Tab label="Mobile" {...TabProps(1)} />
+              <Tab label="Web Application" {...TabProps(0)} />
+              <Tab label="Mobile Application" {...TabProps(1)} />
               <Tab label="Theme" {...TabProps(2)} />
             </Tabs>
           </Paper>
