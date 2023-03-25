@@ -31,9 +31,11 @@ const Blog = (blogData, blogTagsData) => {
                     <div className="blog-page">
                         <div className="blog-section">
                             <h1><strong>Our Blog</strong></h1>
-                            <div className=" d-flex flex-row justify-content-center">
+                            {/* <div className=" d-flex flex-row justify-content-center"> */}
+                            <div className="blog-container">
                                 {blog.map((blog, i) => (
-                                    <div className="col-lg-6" key={i}>
+                                    // <div className="col-lg-6" key={i}>
+                                    <div className="" key={i}>
                                         <Card>
                                             <div className="card-img"><Card.Img
                                                 variant="top"
@@ -115,7 +117,6 @@ export async function getStaticProps() {
     catch (e) {
         console.log("BlOG TAGS Error==", e)
     }
-    console.log("blogTagsData ==", blogTagsData);
 
     return {
         props: {

@@ -25,6 +25,14 @@ function transform(node, index) {
       node.name = "p";
       return convertNodeToElement(node, index, transform);
     }
+    if (node.type === "tag" && node.name === "a" ) {
+      node.name = "p";
+      return convertNodeToElement(node, index, transform);
+    }
+    if (node.type === "tag" && node.name === "strong" ) {
+      node.name = "span";
+      return convertNodeToElement(node, index, transform);
+    }
 }
 const options = {
     decodeEntities: true,
@@ -145,7 +153,7 @@ const SingleProduct = ({ recentProducts,singleproducts, productReviews, currency
                                     </Col>
                                 </Tab.Container>
                                 <hr></hr>
-                                <h4 className='theme-color'>Related <span className='black-color'>Products</span></h4>
+                                <h4 className='theme-color my-4 '>Related <span className='black-color'>Products</span></h4>
                                 <OnSaleProductCard
                                     onSaleProduct={allProduct}
                                     hidetitle
@@ -174,7 +182,7 @@ export async function getStaticPaths() {
         console.log("ShopProduct Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
     }
 
-    const paths = allProduct.map((curElem) => ({
+    const paths = allProduct?.map((curElem) => ({
         params: { singleproduct: curElem.url.toString() }
 
     }))

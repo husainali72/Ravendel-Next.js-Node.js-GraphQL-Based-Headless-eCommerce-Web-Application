@@ -163,6 +163,11 @@ const SETTING_TILE_DATA = gql`
         
       }
       mobile {
+        slider {
+          image
+          link
+          open_in_tab
+        }
         mobile_section {
           label
           section_img
@@ -487,6 +492,7 @@ mutation($slider: [slider_input], $add_section_in_home: add_section_in_home, $ad
 const UPDATE_APPEARANCE_MOBILE = gql`
   mutation($mobile_add_section_in_home: [mobile_add_section_in_home]) {
     updateAppearanceMobile(
+      slider: $slider
       mobile_add_section_in_home: $mobile_add_section_in_home
     ) {
       ...SettingTile
@@ -496,8 +502,12 @@ const UPDATE_APPEARANCE_MOBILE = gql`
 `;
 
 const UPDATE_APPEARANCE_MOBILE_NEW = gql`
-  mutation($mobile_section: [mobile_section_input]) {
+  mutation(
+    $slider: [slider_input],
+    $mobile_section: [mobile_section_input]
+  ) {
     updateAppearanceMobile(
+      slider: $slider
       mobile_section: $mobile_section
     ) {
       ...SettingTile

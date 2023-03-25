@@ -199,6 +199,10 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
         }
         theme {
           primary_color
+          playstore
+          appstore
+          phone_number
+          email
           logo
         }
         mobile {
