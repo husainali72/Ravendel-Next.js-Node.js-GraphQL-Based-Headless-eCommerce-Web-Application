@@ -351,8 +351,8 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
                             >
                                 {dropdown.map((arr) => {
                                     return arr.name === 'payment_status' ?
-                                        arr.title.map((obj) => {
-                                            return <MenuItem value={obj}>{obj}</MenuItem>
+                                        arr.status.map((obj) => {
+                                            return <MenuItem value={obj.name}>{obj.title.charAt(0).toUpperCase() + obj.title.slice(1)}</MenuItem>
                                         }) : null
                                 })}
                             </Select>
@@ -372,8 +372,8 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
                             >
                                 {dropdown.map((arr) => {
                                     return arr.name === 'shipping_status' ?
-                                        arr.title.map((obj) => {
-                                            return <MenuItem value={obj}>{obj}</MenuItem>
+                                        arr.status.map((obj) => {
+                                            return <MenuItem value={obj.name}>{obj.title.charAt(0).toUpperCase() + obj.title.slice(1)}</MenuItem>
                                         }) : null
                                 })}
                             </Select>

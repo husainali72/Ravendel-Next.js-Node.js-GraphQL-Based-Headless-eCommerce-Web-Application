@@ -218,7 +218,7 @@ const InventoryComponent = () => {
                 <Box component="div" sx={{ width: '300px' }}>
 
                   <TextField
-                    helperText=" Enter CSV File"
+                    helperText=" Enter Zipcode File"
                     name="zipcode_file"
                     variant="outlined"
                     className={clsx(

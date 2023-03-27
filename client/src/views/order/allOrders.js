@@ -21,11 +21,44 @@ const AllOrdersComponent = () => {
   const badgefilter = [
     {
       name: 'payment_status',
-      title: ['pending', 'failed', 'success', 'cancelled']
+      status: [{
+        name: 'pending',
+        title: 'Pending'
+      },
+      {
+        name: 'failed',
+        title: 'Failed'
+      },
+      {
+        name: 'success',
+        title: 'Success'
+      },
+      {
+        name: 'cancelled',
+        title: 'Cancelled'
+      }
+      ]
     },
     {
       name: 'shipping_status',
-      title: ['inprogress', 'shipped', 'outfordelivery', 'delivered']
+      status: [
+        {
+          name: 'inprogress',
+          title: 'Inprogress'
+        },
+        {
+          name: 'shipped',
+          title: 'Shipped'
+        },
+        {
+          name: 'outfordelivery',
+          title: 'Out For Delivery'
+        },
+        {
+          name: 'delivered',
+          title: 'Delivered'
+        }
+      ]
     },
   ]
 
