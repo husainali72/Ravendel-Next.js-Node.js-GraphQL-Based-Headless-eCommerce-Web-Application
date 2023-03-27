@@ -85,6 +85,7 @@ const ViewOrderComponent = ({ params }) => {
     },
     products: [],
     payment_status: "",
+    shipping_status: "",
     sub_total_details: {},
     sub_total_summary: [],
 
@@ -288,6 +289,32 @@ const ViewOrderComponent = ({ params }) => {
                         <MenuItem value="failed">Failed</MenuItem>
                         <MenuItem value="success">Completed</MenuItem>
                         <MenuItem value="cancelled">Cancelled</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl className={classes.statusSelect} sx={{ ml: '20px' }}>
+                      <InputLabel id="status" sx={{ marginTop: '20px' }} >
+                        Shipping Status
+                      </InputLabel>
+                      <Select
+                        label="Shipping Status"
+                        labelId="shipping_status
+                        "
+                        id="shipping_status"
+                        sx={{ marginTop: '20px' }}
+                        value={order.shipping_status}
+                        name="shipping_status"
+                        onChange={(e) => {
+                          setorder({
+                            ...order,
+                            [e.target.name]: e.target.value,
+                          });
+                        }}
+
+                      >
+                        <MenuItem value="inprogress">Inprogress </MenuItem>
+                        <MenuItem value="shipped">Shipped</MenuItem>
+                        <MenuItem value="outfordelivery">Out For Delivery</MenuItem>
+                        <MenuItem value="delivered">Delivered</MenuItem>
                       </Select>
                     </FormControl>
                   </CardContent>

@@ -42,7 +42,10 @@ const Tablecomponent = ({
     handleOnChangeSearch,
     dropdown,
     statusTabData,
-    searchbydate }) => {
+    searchbydate,
+    addDialogBox,
+    AddZipCodeDialogBox
+}) => {
 
     const [order, setOrder] = useState('desc');
     const classes = viewStyles();
@@ -74,6 +77,15 @@ const Tablecomponent = ({
                                     {addpage.replaceAll('-', ' ')}
                                 </Button>
                             </Link> : null}
+                            {addDialogBox ? <Button
+                                color="success"
+                                className={classes.addUserBtn}
+                                size="small"
+                                variant="contained"
+                                onClick={AddZipCodeDialogBox}
+                            >
+                                {addDialogBox.replaceAll('-', ' ')}
+                            </Button> : null}
                         </>
                     }
                     title={title}
@@ -137,7 +149,6 @@ const Tablecomponent = ({
                                                             return <TableCell>
                                                                 <Badge badgeContent={data.shipping_status} color={badgeColor(data.shipping_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
                                                             </TableCell>
-
                                                         case 'payment_status':
                                                             return <TableCell>
                                                                 <Badge badgeContent={data.payment_status} color={badgeColor(data.payment_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
@@ -195,7 +206,10 @@ export default function TableComponent({
     dropdown,
     statusTabData,
     showDeleteButton,
-    searchbydate }) {
+    addDialogBox,
+    searchbydate,
+    AddZipCodeDialogBox
+}) {
     return (
         <ThemeProvider theme={theme}>
             <Tablecomponent
@@ -211,6 +225,8 @@ export default function TableComponent({
                 handleOnChangeSearch={handleOnChangeSearch}
                 searchdata={searchdata}
                 statusTabData={statusTabData}
+                addDialogBox={addDialogBox}
+                AddZipCodeDialogBox={AddZipCodeDialogBox}
             />
         </ThemeProvider>
     );

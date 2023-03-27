@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, Box, FormControlLabel, Checkbox, Button } from "@mui/material";
+import { Grid, Box, FormControlLabel, Checkbox, Button, TextField } from "@mui/material";
 import viewStyles from "../../viewStyles.js";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -14,11 +14,13 @@ import theme from "../../../theme/index.js";
 import { storeInventoryUpdateAction } from "../../../store/action/settingAction.js";
 import Alerts from "../../components/Alert.js";
 import Loading from "../../components/Loading.js";
-
+import clsx from "clsx";
+import '../../../App.css';
 const InventoryComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
+  const [zipcode, setZipCode] = useState([]);
   const [inventory, setinventory] = useState({
     ...settingState.settings.store.inventory,
     notifications: {
@@ -29,11 +31,13 @@ const InventoryComponent = () => {
           .alert_for_minimum_stock,
     },
   });
-
+  const handleFileChange = (e) => {
+    setinventory({ ...inventory, [e.target.name]: e.target.files })
+  };
   useEffect(() => {
+
     get(settingState, "settings.store.inventory")
   }, [settingState.settings])
-
 
   const updateInventory = () => {
     dispatch(storeInventoryUpdateAction(inventory));
@@ -191,7 +195,7 @@ const InventoryComponent = () => {
               ]}
             />
           </Box>
-          <SettingBlock label="Manage zipcodes" noBottomMargin>
+          <SettingBlock label="Manage zipcodes" >
             <Box component="div" className={classes.marginBottom2}>
               <FormControlLabel
                 control={
@@ -206,13 +210,33 @@ const InventoryComponent = () => {
                     }
                   />
                 }
-                label="Do you want to add zipcodes deliverability check for products?"
+                label="Do you want to track the inventory?"
               />
             </Box>
+            {inventory.manage_zipcodes ? (
+              <>
+                <Box component="div" sx={{ width: '300px' }}>
+
+                  <TextField
+                    helperText=" Enter CSV File"
+                    name="zipcode_file"
+                    variant="outlined"
+                    className={clsx(
+                      classes.marginBottom,
+                      classes.width100,
+                      classes.textcolor,
+                      "top-helper"
+                    )}
+                    inputProps={{ accept: ".csv" }}
+                    onChange={handleFileChange}
+                    type="file"
+                  />
+                </Box>
+              </>
+            ) : null}
           </SettingBlock>
-          {inventory.manage_zipcodes ? (
-            <>Zipcode Settings</>
-          ) : null}
+
+
         </Grid>
         <Grid item xs={12}>
           <Button

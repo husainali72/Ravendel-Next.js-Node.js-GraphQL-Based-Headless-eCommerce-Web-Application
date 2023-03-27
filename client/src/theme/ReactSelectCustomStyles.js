@@ -16,8 +16,8 @@ export const customStyles = {
     option: (provided, state) => ({
         ...provided,
         backgroundColor: state.isSelected ? "lightgrey" : "white",
-
         fontSize: "14px",
+        textTransform: "capitalize",
         letterSpacing: "-0.04px",
         lineHeight: "18px",
         '&:hover': {

@@ -3,6 +3,7 @@ import {
   SETTING_SUCCESS,
   SETTING_FAIL,
   LIST_DATE_FORMAT,
+  LOADING_FALSE
 } from "../action/settingAction";
 
 const initialState = {
@@ -69,6 +70,11 @@ export default (state = initialState, action) => {
         loading: false,
       };
     case SETTING_FAIL:
+      return {
+        ...state,
+        loading: false,
+      };
+    case LOADING_FALSE:
       return {
         ...state,
         loading: false,
