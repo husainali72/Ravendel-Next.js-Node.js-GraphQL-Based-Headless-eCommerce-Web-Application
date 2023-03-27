@@ -56,13 +56,16 @@ const HeaderComponenet = () => {
   useEffect(() => {
     setActiveUser(login.user_token);
   }, [login.user_token]);
+  const imageOnError = (event) => {
+    event.target.src = RavendelLogo
+  }
 
   return (
     <AppBar className={classes.header} >
       <Toolbar className={classes.header}>
         <Link to={`${client_app_route_url}dashboard`}>
           <Typography variant="h6" component="h1" className={classes.textWhite}>
-            <img src={bucketBaseURL + logo} className="ravendelLogo" alt="Ravendel"></img>
+            <img src={bucketBaseURL + logo} onError={imageOnError} className="ravendelLogo" alt="Ravendel"></img>
           </Typography>
         </Link>
 
