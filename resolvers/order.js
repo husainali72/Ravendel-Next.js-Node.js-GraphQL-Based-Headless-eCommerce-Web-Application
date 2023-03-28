@@ -147,8 +147,8 @@ module.exports = {
           grand_total: c_grand_total,
         });
         newOrder.products = args.products;
-        const subTotalDetails = await subTotalDetailsEntry(args.coupon_code, Coupon, Shipping, Tax)
-        const subTotalSummary = await subTotalSummaryEntry(args.products, args.coupon_code, Coupon, Shipping, Tax)
+        const subTotalDetails = await subTotalDetailsEntry(args, Coupon, Shipping, Tax)
+        const subTotalSummary = await subTotalSummaryEntry(args, Coupon)
         newOrder.sub_total_details = subTotalDetails
         newOrder.sub_total_summary = subTotalSummary.subTotalSummary
         newOrder.subtotal = subTotalSummary.orderSubTotal

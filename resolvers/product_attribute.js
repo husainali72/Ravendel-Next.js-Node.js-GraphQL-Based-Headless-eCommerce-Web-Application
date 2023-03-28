@@ -45,7 +45,7 @@ module.exports = {
         name: args.attribute.name,
         values: args.attribute.values,
       };
-      const duplicate = await duplicateData({name: data.name}, ProductAttribute)
+      const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, ProductAttribute)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Attribute", false);
       let validation = ["name"];
       return await CREATE_FUNC(
@@ -63,7 +63,7 @@ module.exports = {
         name: args.attribute.name,
         values: args.attribute.values,
       };
-      const duplicate = await duplicateData({name: data.name}, ProductAttribute, args.attribute.id)
+      const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, ProductAttribute, args.attribute.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Attribute", false);
       return await UPDATE_FUNC(
         id,

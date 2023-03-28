@@ -531,7 +531,7 @@ module.exports = {
         image: args.image,
         meta: args.meta,
       };
-      const duplicate = await duplicateData({name: data.name}, ProductCat)
+      const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, ProductCat)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       let validation = ["name"];
       return await CREATE_FUNC(
@@ -560,7 +560,7 @@ module.exports = {
         meta: args.meta,
       };
       let validation = ["name"];
-      const duplicate = await duplicateData({name: data.name}, ProductCat, args.id)
+      const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, ProductCat, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       return await UPDATE_FUNC(
         id,
@@ -669,7 +669,7 @@ module.exports = {
             }
           }
           let url = await updateUrl(args.url || args.name, "Product");
-          const duplicate = await duplicateData({name: args.name}, Product)
+          const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, Product)
           if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
           const newProduct = new Product({
             name: args.name,
@@ -781,7 +781,7 @@ module.exports = {
           return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
         }
 
-        const duplicate = await duplicateData({name: args.name}, Product, args.id)
+        const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, Product, args.id)
         if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
 
         const product = await Product.findById({ _id: args.id });

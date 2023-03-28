@@ -88,16 +88,14 @@ const OrderSchema = new Schema({
     coupon_type: String,
     coupon_value: Number
   },
-  sub_total_summary: [
-    {
-      total: Number,
-      coupon_type: String,
-      coupon_value: Number,
-      tax_value: Number,
-      shipping_value: Number,
-      sub_total: Number
-    }
-  ],
+  sub_total_summary: {
+    shipping_value: Number,
+    tax_value: Number,
+    coupon_value: Number,
+    coupon_type: String,
+    sub_total: Number,
+    total: Number
+  },
   payment_status: {
     type: String,
     enum : ['pending','failed','success','cancelled'],
