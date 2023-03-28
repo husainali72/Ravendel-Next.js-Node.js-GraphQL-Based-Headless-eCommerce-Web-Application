@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useNavigation, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
-import { orderUpdateAction, orderAction } from "../../store/action/";
+import { orderUpdateAction, orderAction, getSettings } from "../../store/action/";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -47,6 +47,9 @@ import { validatenested, validateNestedPhone } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { isEmpty } from "../../utils/helper";
 import PhoneNumber from "../components/phoneNumberValidation";
+
+import { currencySetter, getPrice } from "./CurrencyFormat";
+
 const ViewOrderComponent = ({ params }) => {
   const ORDERID = params.id || "";
   const classes = viewStyles();
@@ -55,6 +58,9 @@ const ViewOrderComponent = ({ params }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const singleOrder = useSelector((state) => state.order);
+  const currencyState = useSelector((state) => state.settings)
+  const [currency, setcurrency] = useState('usd')
+  const [decimal, setdecimal] = useState(2)
   const [loading, setloading] = useState(false);
   const [phoneValue, setPhoneValue] = useState("");
   const [order, setorder] = useState({
@@ -94,7 +100,16 @@ const ViewOrderComponent = ({ params }) => {
 
   useEffect(() => {
     dispatch(orderAction(ORDERID));
+    dispatch(getSettings());
   }, []);
+  useEffect(() => {
+    if (!isEmpty(get(currencyState, 'settings'))) {
+      if (!isEmpty(get(currencyState.settings, 'store'))) {
+        setcurrency(get(currencyState.settings.store.currency_options, 'currency'))
+        setdecimal(get(currencyState.settings.store.currency_options, 'number_of_decimals'))
+      }
+    }
+  }, [get(currencyState, 'settings')])
 
   useEffect(() => {
     if (!isEmpty(get(singleOrder, "order"))) {
@@ -699,8 +714,8 @@ const ViewOrderComponent = ({ params }) => {
                             {order.sub_total_details.tax_name}
                           </Typography> : null}
                         {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
-                          <Typography variant="body1" className={classes.mtb1}>
-                            {order.sub_total_details.coupon_code}
+                          <Typography variant="body1" className={classes.mtb1} sx={{ color: '#4BB543', fontWeight: 'bold' }}>
+                            Coupon - ( {order.sub_total_details.coupon_code} )
                           </Typography> : null}
                         <Divider style={{ marginTop: "10px" }} />
                         <Typography variant="body1" className={classes.mtb1}>
@@ -710,23 +725,26 @@ const ViewOrderComponent = ({ params }) => {
                       {order.sub_total_summary && order.sub_total_summary.length > 0 ? order.sub_total_summary.map((subTotal, index) => (
                         <Grid item md={3} className={classes.textRight}>
                           <Typography variant="body2" className={classes.mtb2}>
-                            {subTotal.sub_total ? currencyFormat(subTotal.sub_total) : 0}
+                            {currencySetter(currency, '12px')}{getPrice(subTotal.sub_total, decimal)}
                           </Typography>
                           {order.sub_total_details.shipping_name ?
                             <Typography variant="body2" className={classes.mtb2}>
-                              {subTotal.shipping_value ? subTotal.shipping_value : 0}
+                              {currencySetter(currency, '12px')}{getPrice(subTotal.shipping_value, decimal)}
                             </Typography> : null}
+
                           {order.sub_total_details.tax_name ?
                             <Typography variant="body2" className={classes.mtb2}>
-                              {subTotal.tax_value ? subTotal.tax_value : 0}
+
+                              {currencySetter(currency, '12px')}{getPrice(subTotal.tax_value, decimal)}
                             </Typography> : null}
                           {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
                             <Typography variant="body2" className={classes.mtb2}>
-                              {subTotal.coupon_value ? subTotal.coupon_value : 0}
+                              {currencySetter(currency, '12px')}{getPrice(subTotal.coupon_value, decimal)}
                             </Typography> : null}
                           <Divider style={{ marginTop: "10px" }} />
                           <Typography variant="body2" className={classes.mtb2}>
-                            {subTotal.total ? currencyFormat(subTotal.total) : 0}
+
+                            {currencySetter(currency, '12px')}  {getPrice(subTotal.total, decimal)}
                           </Typography>
                         </Grid>
                       )) : <Grid item md={3} className={classes.textRight}>
