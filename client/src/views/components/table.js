@@ -64,7 +64,7 @@ const Tablecomponent = ({
                 <CardHeader
                     action={
                         <>
-                            {addpage ? <Link to={`${client_app_route_url + addpage}`} className={classes.addbtnlink}>
+                            {addpage ? <Link to={`${client_app_route_url + addpage}`} state={{editMode: false}} className={classes.addbtnlink}>
                                 <Button
                                     color="success"
                                     className={classes.addUserBtn}

@@ -401,7 +401,7 @@ const ViewOrderComponent = ({ params }) => {
                       </Grid>
                     ) : (
                       <>
-                        <Typography variant="h6">
+                        <Typography variant="body1">
                           {order.billing.firstname +
                             " " +
                             order.shipping.lastname}

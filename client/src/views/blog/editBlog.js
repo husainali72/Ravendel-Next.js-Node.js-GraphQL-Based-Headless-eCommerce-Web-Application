@@ -3,6 +3,7 @@ import {
   Grid,
   TextField,
   Box,
+  Typography,
   RadioGroup,
   FormControlLabel,
   useMediaQuery,
@@ -14,6 +15,7 @@ import {
   blogUpdateAction,
   blogtagsAction,
   blogAction,
+  blogAddAction
 } from "../../store/action/";
 import clsx from "clsx";
 import {
@@ -23,17 +25,19 @@ import {
 } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import { ThemeProvider } from "@mui/material/styles";
+import { getUpdatedUrl } from "../../utils/service";
 import theme from "../../theme/index";
 import {
   Loading,
   TopBar,
   StyledRadio,
   CardBlocks,
+  TextInput,
   FeaturedImageComponent,
   URLComponent,
   TinymceEditor,
 } from "../components";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Alerts from "../components/Alert";
 import { get } from "lodash";
 import { validate } from "../components/validate";
@@ -62,14 +66,21 @@ const EditBlogComponenet = ({ params }) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
+  const [clearTags, setclearTags] = useState([]);
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const editBlog = location.state.editMode
 
   useEffect(() => {
+    if (editBlog){
     dispatch(blogAction(Id));
-  }, []);
+  } else {
+    dispatch(blogtagsAction())
+  }}, []);
 
   useEffect(() => {
+    if(editBlog){
     if (!isEmpty(get(blogState, "blog"))) {
       setBlog({ ...blog, ...blogState.blog });
       if (
@@ -79,14 +90,29 @@ const EditBlogComponenet = ({ params }) => {
         setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
       }
       dispatch(blogtagsAction());
+    }} else {
+      setBlog(defaultObj)
+      setfeatureImage(null)
     }
-  }, [get(blogState, "blog")]);
+  }, [get(blogState, "blog"), editBlog]);
+
+  useEffect(() => {
+    if(!editBlog){
+    if (isEmpty(get(blogState, "success"))) {
+      document.forms[0].reset();
+      setBlog(defaultObj);
+      setfeatureImage(null);
+      setclearTags([]);
+    }
+  }}, [get(blogState, "success")]);
+
   useEffect(() => {
     setloading(get(blogState, "loading"));
   }, [get(blogState, "loading")]);
 
   useEffect(() => {
     if (!isEmpty(get(blogState, "tags"))) {
+      if (editBlog){
       setTimeout(() => {
         var defaultTags = [];
         const tagObj = blogState.tags.map((tag) => {
@@ -103,21 +129,38 @@ const EditBlogComponenet = ({ params }) => {
           };
         });
         setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
-      }, 1000);
-    }
+      }, 1000)}
+      else {
+        const tagObj = blogState.tags.map((tag) => {
+          return {
+            value: tag.id,
+            label: tag.name,
+          };
+        });
+  
+        setTags({...tagObj, tags: tagObj});
+      }
+    }      
   }, [get(blogState, "tags")]);
 
   const tagChange = (e) => {
+    if(editBlog){
     setBlog({
       ...blog,
       blog_tag: e && e.length > 0 ? e.map((tag) => tag.value) : [],
     });
-    setTags({ ...tags, defaultTags: e });
+    setTags({ ...tags, defaultTags: e })
+  } else {
+    if (!isEmpty(e)) {
+      setclearTags(e);
+      setBlog({ ...blog, blog_tag: e.map((tag) => tag.value) });
+    }
+  }
   };
 
-  const updateBlog = (e) => {
+  const addUpdateBlog = (e) => {
     e.preventDefault();
-    var errors = validate(["title"], blog);
+    var errors = validate(["content", "title"], blog);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -127,11 +170,13 @@ const EditBlogComponenet = ({ params }) => {
           error: true,
         },
       });
-    }
-    else {
+    } else {
+      if (editBlog){
       dispatch(blogUpdateAction(blog, navigate));
     }
-
+    else {
+      dispatch(blogAddAction(blog, navigate));
+    }}
   };
 
   const handleChange = (e) => {
@@ -145,11 +190,31 @@ const EditBlogComponenet = ({ params }) => {
     });
   };
 
+  const onBlur = (e) => {
+    if (!blog.url || blog.url !== e.target.value){
+      isUrlExist(blog.title)
+    } 
+  }
+
   const fileChange = (e) => {
-    setBlog({ ...blog, updatedImage: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
+    if (editBlog) {
+      setBlog({ ...blog, updatedImage: e.target.files[0] });
+    }
+    else {
+      setBlog({ ...blog, [e.target.name]: e.target.files[0] });
+    }
   };
+
+  const isUrlExist = async (url) => {
+    let updatedUrl = await getUpdatedUrl("Blog", url);
+      setBlog({
+        ...blog,
+        url: updatedUrl,
+      });
+  };
+
 
   return (
     <Fragment>
@@ -158,9 +223,9 @@ const EditBlogComponenet = ({ params }) => {
       {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title="Edit Blog"
-          onSubmit={updateBlog}
-          submitTitle="Update"
+          title= {editBlog? "Edit Blog" : "Add Blog"}
+          onSubmit={addUpdateBlog}
+          submitTitle={editBlog? "Update" : "Add"}
           backLink={`${client_app_route_url}all-blogs`}
         />
 
@@ -179,6 +244,7 @@ const EditBlogComponenet = ({ params }) => {
                   onChange={handleChange}
                   variant="outlined"
                   value={blog.title}
+                  onBlur = {onBlur}
                   fullWidth
                 />
               </Box>
@@ -275,9 +341,12 @@ const EditBlogComponenet = ({ params }) => {
             </CardBlocks>
 
             <CardBlocks title="Tags">
+            <Typography variant="subtitle1" className={classes.marginBottom1}>
+                Select Tags
+              </Typography>
               <Select
                 isMulti
-                value={tags.defaultTags}
+                value={editBlog ? tags.defaultTags : clearTags}
                 name="blog_tag"
                 options={tags.tags}
                 onChange={tagChange}

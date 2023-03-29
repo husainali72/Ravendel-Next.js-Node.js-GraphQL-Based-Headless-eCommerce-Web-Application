@@ -40,7 +40,7 @@ const AllCustomersComponent = () => {
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          navigate(`${client_app_route_url}edit-customer/${id}`)
+          navigate(`${client_app_route_url}edit-customer/${id}`, {state : {editMode: true}} )
         } else if (type === "delete") {
           dispatch(customerDeleteAction(id))
         }

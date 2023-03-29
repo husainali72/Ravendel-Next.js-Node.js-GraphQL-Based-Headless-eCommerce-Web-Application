@@ -21,6 +21,7 @@ const TaxComponent = ({ product, onTaxInputChange }) => {
   useEffect(() => {
     if (taxState.tax.tax_class.length) {
       var taxClass = taxState.tax.tax_class[0]._id;
+      onTaxInputChange(taxClass);
     }
   }, [taxState.tax]);
 
@@ -37,8 +38,8 @@ const TaxComponent = ({ product, onTaxInputChange }) => {
             labelId="tax-name"
             id="tax-name"
             name="tax-name"
-            value={product.tax_class}
-            onChange={(e) => onTaxInputChange("tax_class", e.target.value)}
+            value={product}
+            onChange={(e) => onTaxInputChange(e.target.value)}
           >
             {taxState.tax.tax_class.map((tax) => {
               return (
