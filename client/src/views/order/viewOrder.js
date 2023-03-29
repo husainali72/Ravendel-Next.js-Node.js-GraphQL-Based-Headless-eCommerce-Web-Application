@@ -47,7 +47,6 @@ import { validatenested, validateNestedPhone } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { isEmpty } from "../../utils/helper";
 import PhoneNumber from "../components/phoneNumberValidation";
-
 import { currencySetter, getPrice } from "./CurrencyFormat";
 
 const ViewOrderComponent = ({ params }) => {
@@ -724,7 +723,7 @@ const ViewOrderComponent = ({ params }) => {
                       </Grid>
                       <Grid item md={3} className={classes.textRight}>
                         <Typography variant="body2" className={classes.mtb2}>
-                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.sub_total, decimal)}
+                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.total, decimal)}
                         </Typography>
                         {order.sub_total_details.shipping_name && order.sub_total_details.shipping_name !== 'None' ?
                           <Typography variant="body2" className={classes.mtb2}>
@@ -735,12 +734,12 @@ const ViewOrderComponent = ({ params }) => {
                             {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.tax_value, decimal)}
                           </Typography> : null}
                         {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
-                          <Typography variant="body2" className={classes.mtb2}>
-                            {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.coupon_value, decimal)}
+                          <Typography variant="body2" className={classes.mtb2coupon} sx={{ color: '#4BB543', }}>
+                            <span className={classes.minus}>-</span>  {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary[0].coupon_value, decimal)}
                           </Typography> : null}
                         <Divider sx={{ mt: "10px", mb: "10px" }} />
                         <Typography variant="body2" className={classes.mtb2}>
-                          {currencySetter(currency, '12px')}  {getPrice(order.sub_total_summary.total, decimal)}
+                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.sub_total, decimal)}
                         </Typography>
                       </Grid>
                     </Grid>

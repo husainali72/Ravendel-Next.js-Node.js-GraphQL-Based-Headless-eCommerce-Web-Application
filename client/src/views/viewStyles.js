@@ -41,6 +41,7 @@ const viewStyles = makeStyles((theme) => ({
     color: "#fff",
 
   },
+
   backdrop: {
     zIndex: "1101 !important",
     color: "#fff",
@@ -317,6 +318,13 @@ const viewStyles = makeStyles((theme) => ({
     textTransform: 'capitalize',
 
   },
+  mtb2coupon: {
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 10,
+    minHeight: 25,
+    textTransform: 'capitalize',
+  },
   mtb1: {
     marginTop: 10,
     marginBottom: 10,
@@ -450,6 +458,9 @@ const viewStyles = makeStyles((theme) => ({
   },
   paddingBottom3: {
     marginBottom: "30px !important",
+  },
+  minus: {
+    fontWeight: 800
   },
   themeLogoWrapper: {
     background: "rgb(240,240,240)",
