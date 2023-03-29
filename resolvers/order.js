@@ -148,7 +148,7 @@ module.exports = {
         });
         newOrder.products = args.products;
         const subTotalDetails = await subTotalDetailsEntry(args, Coupon, Shipping, Tax)
-        const subTotalSummary = await subTotalSummaryEntry(args, Coupon)
+        const subTotalSummary = await subTotalSummaryEntry(args, Coupon, Shipping, Tax)
         newOrder.sub_total_details = subTotalDetails
         newOrder.sub_total_summary = subTotalSummary.subTotalSummary
         newOrder.subtotal = subTotalSummary.orderSubTotal
