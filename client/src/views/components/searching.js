@@ -16,6 +16,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import BasicDatePicker from './datepicker';
 import BasicTabs from './muitabs';
 export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTabData, classname, searchbydate }) {
+
     const classes = viewStyles()
     const [searchState, setsearch] = useState("");
     const [MuiTabsvalue, setMuiTabsValue] = React.useState('All');
@@ -24,7 +25,15 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const dispatch = useDispatch();
-
+    useEffect(() => {
+        setpaymentstatus("")
+        setshippingstatus("")
+        setMuiTabsValue("All");
+        setsearch("")
+        setStartDate(null)
+        setEndDate(null)
+        handleOnChangeSearch(searchData)
+    }, [searchData])
     const startDateHandleChange = (newvalue) => {
         if (endDate) {
             if (new Date(newvalue.$d) < endDate) {
@@ -400,7 +409,7 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
                     </div>
                 </div>
             </Box>
-            {searchState || startDate || endDate || shippingstatus || paymentstatus || MuiTabsvalue !== 'All' ?
+            {searchState || startDate || endDate || shippingstatus || paymentstatus ?
                 <Button color='error' onClick={removeAllFilter} className={classes.removefilter}>remove </Button> : null}
         </div>
     );

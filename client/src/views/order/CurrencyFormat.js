@@ -7,9 +7,9 @@ export function currencyFormat(num) {
 }
 export const currencySetter = (currency, fontSize) => {
   if (currency === "usd") return <AttachMoneyOutlinedIcon sx={{ fontSize: fontSize }} />
-  if (currency === "eur") return <EuroIcon sx={{ fontSize: "12px", }} />
-  if (currency === "gbp") return <CurrencyPoundOutlinedIcon sx={{ fontSize: "12px", }} />
-  if (currency === "cad") return <AttachMoneyOutlinedIcon sx={{ fontSize: "12px", }} />
+  if (currency === "eur") return <EuroIcon sx={{ fontSize: fontSize }} />
+  if (currency === "gbp") return <CurrencyPoundOutlinedIcon sx={{ fontSize: fontSize, }} />
+  if (currency === "cad") return <AttachMoneyOutlinedIcon sx={{ fontSize: fontSize }} />
 }
 export const getPrice = (price, decimal) => {
   if (typeof price === 'string')

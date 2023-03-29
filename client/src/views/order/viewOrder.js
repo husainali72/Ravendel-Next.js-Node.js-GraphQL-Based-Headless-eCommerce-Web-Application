@@ -705,11 +705,11 @@ const ViewOrderComponent = ({ params }) => {
                         <Typography variant="body1" className={classes.mtb1}>
                           Total
                         </Typography>
-                        {order.sub_total_details.shipping_name ?
+                        {order.sub_total_details.shipping_name && order.sub_total_details.shipping_name !== 'None' ?
                           <Typography variant="body1" className={classes.mtb1}>
                             {order.sub_total_details.shipping_name}
                           </Typography> : null}
-                        {order.sub_total_details.tax_name ?
+                        {order.sub_total_details.tax_name && order.sub_total_details.tax_name !== 'None' ?
                           <Typography variant="body1" className={classes.mtb1}>
                             {order.sub_total_details.tax_name}
                           </Typography> : null}
@@ -717,45 +717,32 @@ const ViewOrderComponent = ({ params }) => {
                           <Typography variant="body1" className={classes.mtb1} sx={{ color: '#4BB543', fontWeight: 'bold' }}>
                             Coupon - ( {order.sub_total_details.coupon_code} )
                           </Typography> : null}
-                        <Divider style={{ marginTop: "10px" }} />
+                        <Divider sx={{ mt: "10px", mb: "10px" }} />
                         <Typography variant="body1" className={classes.mtb1}>
                           SubTotal
                         </Typography>
                       </Grid>
-                      {order.sub_total_summary && order.sub_total_summary.length > 0 ? order.sub_total_summary.map((subTotal, index) => (
-                        <Grid item md={3} className={classes.textRight}>
-                          <Typography variant="body2" className={classes.mtb2}>
-                            {currencySetter(currency, '12px')}{getPrice(subTotal.sub_total, decimal)}
-                          </Typography>
-                          {order.sub_total_details.shipping_name ?
-                            <Typography variant="body2" className={classes.mtb2}>
-                              {currencySetter(currency, '12px')}{getPrice(subTotal.shipping_value, decimal)}
-                            </Typography> : null}
-
-                          {order.sub_total_details.tax_name ?
-                            <Typography variant="body2" className={classes.mtb2}>
-
-                              {currencySetter(currency, '12px')}{getPrice(subTotal.tax_value, decimal)}
-                            </Typography> : null}
-                          {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
-                            <Typography variant="body2" className={classes.mtb2}>
-                              {currencySetter(currency, '12px')}{getPrice(subTotal.coupon_value, decimal)}
-                            </Typography> : null}
-                          <Divider style={{ marginTop: "10px" }} />
-                          <Typography variant="body2" className={classes.mtb2}>
-
-                            {currencySetter(currency, '12px')}  {getPrice(subTotal.total, decimal)}
-                          </Typography>
-                        </Grid>
-                      )) : <Grid item md={3} className={classes.textRight}>
+                      <Grid item md={3} className={classes.textRight}>
                         <Typography variant="body2" className={classes.mtb2}>
-                          0
+                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.sub_total, decimal)}
                         </Typography>
-                        <Divider style={{ marginTop: "10px" }} />
+                        {order.sub_total_details.shipping_name && order.sub_total_details.shipping_name !== 'None' ?
+                          <Typography variant="body2" className={classes.mtb2}>
+                            {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.shipping_value, decimal)}
+                          </Typography> : null}
+                        {order.sub_total_details.tax_name && order.sub_total_details.tax_name !== 'None' ?
+                          <Typography variant="body2" className={classes.mtb2}>
+                            {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.tax_value, decimal)}
+                          </Typography> : null}
+                        {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
+                          <Typography variant="body2" className={classes.mtb2}>
+                            {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.coupon_value, decimal)}
+                          </Typography> : null}
+                        <Divider sx={{ mt: "10px", mb: "10px" }} />
                         <Typography variant="body2" className={classes.mtb2}>
-                          0
+                          {currencySetter(currency, '12px')}  {getPrice(order.sub_total_summary.total, decimal)}
                         </Typography>
-                      </Grid>}
+                      </Grid>
                     </Grid>
                   </CardContent>
                 </Card>

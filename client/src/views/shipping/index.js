@@ -78,7 +78,7 @@ const ShippingComponent = () => {
   };
 
   const addCustomShipping = () => {
-    var errors = validate(["name", "amount"], customShippingClass);
+    var errors = validate(["amount", "name"], customShippingClass);
 
     if (!isEmpty(errors)) {
       dispatch({
