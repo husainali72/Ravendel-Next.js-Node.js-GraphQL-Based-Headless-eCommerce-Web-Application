@@ -189,6 +189,21 @@ const viewStyles = makeStyles((theme) => ({
     fontSize: 12,
     fontWeight: "bold",
   },
+  featureImgRemove: {
+    // position: "absolute",
+    // top: "-5px",
+
+    background: "#d80e0e",
+    borderRadius: "100%",
+    color: "#fff",
+    width: 20,
+    height: 20,
+    display: "flex",
+    justifyContent: "center",
+    cursor: "pointer",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
   galleryImg: { width: "100%", height: "100%" },
   editpermalinkInput: {
     padding: "5px !important",
@@ -527,6 +542,10 @@ const viewStyles = makeStyles((theme) => ({
     marginLeft: '20px',
     width: '150px'
   },
+  Timepickerclass: {
+    width: '145px',
+    marginTop: '20px'
+  },
   search: {
     display: 'flex',
     flexDirection: 'row',
@@ -540,7 +559,65 @@ const viewStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center'
   },
-  
+  socialmediaSelectIcon: {
+    height: '50px',
+    mt: 0,
+    boxShadow: "none",
+    overflow: 'revert!important'
+  },
+  divContainer: {
+    width: "300px",
+    height: "50px",
+    border: '1px solid black',
+    borderRadius: "5px",
+    display: 'flex',
+    marginTop: '20px',
+    lineHeight: '0px',
+
+  },
+  iconDiv: {
+    width: '20%',
+    padding: '5px',
+
+
+  },
+  container: {
+    display: 'flex',
+  },
+  socialMediaIcon: {
+    textAlign: 'center',
+    objectFit: 'contain',
+
+  },
+  iconLogoBox: {
+    width: 30,
+    height: 30,
+    borderRadius: "50%",
+    margin: "0px 5px",
+
+    overflow: "hidden",
+    objectFit: 'contain',
+    border: '1px solid lightgrey'
+  },
+  iconImage: {
+    objectFit: 'contain',
+    height: ' 100%',
+    width: '100%',
+  },
+  iconSelect: {
+    borderRadius: '5px',
+  },
+  IconBox: {
+    margin: '10px',
+    display: 'flex'
+  },
+  AddIconButton: {
+    minWidth: "30px"
+  },
+  AddIconDiv: {
+    marginTop: '25px',
+    paddingLeft: '20px',
+  },
 }));
 
 

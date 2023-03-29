@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { getImage, getPrice } from "../../utills/helpers";
 import Form from 'react-bootstrap/Form';
 import Stripes from "./reactstripe/StripeContainer";
+import Link from "next/link";
 const Orderdetail = (props) => {
     const { decimal, currency, getOrderDetails, cartItems, billingInfo, handleBillingInfo, tax_amount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal } = props;
     const cart = cartItems;
@@ -54,10 +55,11 @@ const Orderdetail = (props) => {
                     </thead>
                     <tbody>
                         {cartItems.map((item, i) => (
+                            
                             <tr key={i}>
                                 <td className="image product-thumbnail"><img src={getImage(item.feature_image, 'feature_image')} alt="" /></td>
                                 <td><i className="ti-check-box font-small text-muted mr-10"></i>
-                                    <h5><a href="shop-product-full.html">{item.name}</a></h5> <span className="product-qty">x {item.quantity}</span>
+                                    <h5><Link href={"/product/"+cart[i]?.url}><a >{item?.name}</a></Link></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>
                                 <td>{currency}{item.pricing.sellprice ? getPrice(item.pricing.sellprice, decimal) : getPrice(item.pricing.price * item.quantity, decimal)}</td>
                             </tr>

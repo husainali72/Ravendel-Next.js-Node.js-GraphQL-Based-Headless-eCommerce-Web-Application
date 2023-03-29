@@ -1731,12 +1731,12 @@ cursor: pointer;
 }
 /* blog page css */
 .blog-page {
-  display: flex;
+  /* display: flex; */
   flex-wrap: wrap;
 }
 .blog-section {
   flex: 0 0 auto;
-  width: 75%;
+  /* width: 75%; */
 }
 .blog-category {
   flex: 0 0 auto;
@@ -3605,4 +3605,9 @@ white-space: nowrap;
 }
 .cursor-pointer{
   cursor: pointer;
+}
+.blog-container{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 400px);
+  gap: 2rem;
 }

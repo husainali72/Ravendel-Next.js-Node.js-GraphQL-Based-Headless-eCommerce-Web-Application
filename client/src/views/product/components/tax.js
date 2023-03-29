@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { taxAction } from "../../../store/action/";
 import viewStyles from "../../viewStyles";
 
-const TaxComponent = ({ product, onTaxInputChange }) => {
+const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange }) => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const taxState = useSelector((state) => state.taxs);

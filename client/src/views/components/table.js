@@ -86,6 +86,7 @@ const Tablecomponent = ({
                             <TableHead>
                                 <TableRow>
                                     {columns.map((head) => {
+
                                         return head.sortingactive ?
                                             <TableCell sortDirection="desc" variant="contained" color="primary">
                                                 <Tooltip enterDelay={300} title="Sort">
@@ -143,7 +144,7 @@ const Tablecomponent = ({
                                                             </TableCell>
                                                         case "actions":
                                                             return <TableCell>
-                                                                <column.component onClick={(type) => column.buttonOnClick(type, data.id)} showDeleteButton={showDeleteButton} />
+                                                                <column.component onClick={(type) => column.buttonOnClick(type, data.id)} showDeleteButton={data.system ? false : showDeleteButton} />
                                                             </TableCell>
                                                         case column.name:
                                                             return <TableCell>

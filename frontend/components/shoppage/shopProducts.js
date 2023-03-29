@@ -6,10 +6,9 @@ import { GET_CATEGORIES_QUERY } from '../../queries/home';
 import {BiChevronLeft} from 'react-icons/bi';
 import {FiChevronLeft} from 'react-icons/fi';
 import { capitalize } from 'lodash';
-const ShopProducts = ({ shopcategory, name, brandProduct, brands, category, blogTagsData }) => {
+const ShopProducts = ({ shopcategory, name, brandProduct, brands, category, blogTagsData,shopCategory }) => {
     const router = useRouter();
     const [allCategories,setAllCategories] = useState([]);
-    // console.log("allcat",allCategories)
     const getCategories = async ()=>{
         try {
             const { data: shopproductcategory } = await client.query({
@@ -32,22 +31,30 @@ const ShopProducts = ({ shopcategory, name, brandProduct, brands, category, blog
     
     const getCategoryHeadings = (category) => { 
         var headings = [];
+        var headingObjs = [];
         
         const getHeadings = (category) =>{
         if (!category?.parentId){
+            let categoryObj = {};
+            categoryObj.name = category?.name;
+            categoryObj.url = category?.url;
+            headingObjs.push(categoryObj);
+            headings.push(category?.name);
             return;
         }
+        let categoryObj = {};
+        categoryObj.name = category?.name;
+        categoryObj.url = category?.url;
         headings.push(category?.name);
-       getHeadings(allCategories?.find(cat => cat?.id === category?.parentId),headings);
+        headingObjs.push(categoryObj);
+       getHeadings(allCategories?.find(cat => cat?.id === category?.parentId));
         
     }
     getHeadings(category);
-    return headings;
+    headings.shift();
+    headingObjs.shift();
+    return headingObjs;
 }
-useEffect(() => {
-    const headingsss = getCategoryHeadings(allCategories?.find(cat => cat.id === "63fdd74d2b3bf7ad4b0d6e40"));
-}, [allCategories])
-
 
     return (
         <div>
@@ -57,22 +64,24 @@ useEffect(() => {
                         <h4 className="category-section-title">{name}</h4>
                         <ul className="categories-shop">
                             {category ? <ul className="categories-shop">
-                                {/* {category.map((category, i) => (
-                                    <li className="category-type" key={i}>
+                                 {getCategoryHeadings(allCategories?.find(cat => cat.id === selectedCategory?.id)).reverse().map((headingName,index)=>
+                                 <Link href={`/subcategory/[categorys]?url=${headingName?.url}`} as={`/subcategory/${headingName?.url}`} key={index}><li onClick={()=> router.back()} className='fw-semibold text-black cursor-pointer mb-1'> 
+                                    <FiChevronLeft className='mb-1 back-category' />{headingName?.name}</li></Link>) } 
+                                    {!selectedCategory?.parentId ? <li className='fw-semibold mb-1 text-black current-parent cursor-none'>{capitalize(selectedCategory?.name)}</li> : 
+                                    <li className='mb-1 current-parent ps-3 text-black cursor-none fw-normal'>{capitalize(selectedCategory?.name)}</li>}
+                                 {allCategories.filter(cat => cat.parentId === selectedCategory?.id).map((category, i) => (
+                                    <li className= {selectedCategory?.parentId ?"category-type ps-4" : "category-type ps-2" } key={i}>
                                         <Link href={`/subcategory/[categorys]?url=${category.url}`} as={`/subcategory/${category.url}`}>
                                             <span value={category.url}>{category.name}</span>
                                         </Link>
                                     </li>
-                                ))} */}
-                                
-                                 {getCategoryHeadings(allCategories?.find(cat => cat.id === selectedCategory?.id)).map((headingName)=><li onClick={()=> router.back()} className='fw-semibold text-black cursor-pointer mb-1'> 
-                                    <FiChevronLeft className='mb-1 back-category' />{headingName}</li>) } 
-                                {!selectedCategory?.parentId ? <li onClick={()=> router.back()} className='fw-semibold mb-1 text-black current-parent'>{capitalize(selectedCategory?.name)}</li> : 
-                                <li className='mb-1 current-parent ps-3 theme-color cursor-none fw-normal'>{capitalize(selectedCategory?.name)}</li>}
-                                {allCategories.filter(cat => cat.parentId === selectedCategory?.id).map((category, i) => (
-                                    <li className= {selectedCategory?.parentId ?"category-type ps-4" : "category-type ps-2" } key={i}>
-                                        <Link href={`/subcategory/[categorys]?url=${category.url}`} as={`/subcategory/${category.url}`}>
-                                            <span value={category.url}>{category.name}</span>
+                                ))}
+                            </ul> : null}
+                            {shopCategory ? <ul className="categories-shop">
+                                    {shopCategory.filter(category => category?.parentId === null).map((shopCategory, i) => (
+                                    <li className="category-type" key={i}>
+                                        <Link href={`/subcategory/[categorys]?url=${shopCategory.url}`} as={`/subcategory/${shopCategory.url}`}>
+                                            <span value={shopCategory.url}>{capitalize(shopCategory.name)}</span>
                                         </Link>
                                     </li>
                                 ))}

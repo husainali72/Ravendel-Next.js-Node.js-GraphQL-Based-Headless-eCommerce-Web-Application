@@ -45,6 +45,7 @@ import { useNavigate } from "react-router-dom";
 import { validate, validatenested } from "../components/validate";
 import Stack from '@mui/material/Stack';
 import CloseIcon from '@mui/icons-material/Close';
+import { getUpdatedUrl } from "../../utils/service";
 
 
 const AddProductTheme = () => {
@@ -56,7 +57,8 @@ const AddProductTheme = () => {
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const loading = useSelector((state) => state.products.loading);
-
+  const [shippingClass, setShippingClass] = useState('')
+  const [taxClass, setTaxClass] = useState('')
   const [product, setProduct] = useState({
     name: "",
     description: "",
@@ -92,10 +94,11 @@ const AddProductTheme = () => {
     sku: "",
     quantity: "",
   });
-
   const addProduct = (e) => {
 
     e.preventDefault();
+    product.tax_class = taxClass
+    product.shipping.shipping_class = shippingClass
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     let Errors = validatenested("pricing", ["price", "sellprice"], product);
     if (!isEmpty(errors)) {
@@ -120,7 +123,31 @@ const AddProductTheme = () => {
     }
     else {
       product.combinations = combination;
-      dispatch(productAddAction(product, navigate));
+      if (product.pricing.price !== 0) {
+        if (product.pricing.sellprice < product.pricing.price) {
+
+          dispatch(productAddAction(product, navigate));
+        }
+        else {
+          dispatch({
+            type: ALERT_SUCCESS,
+            payload: {
+              boolean: false,
+              message: "Sale price couldn't exceed original price",
+              error: true,
+            },
+          })
+        }
+      } else {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: false,
+            message: "Price is required",
+            error: true,
+          },
+        })
+      }
     }
 
 
@@ -166,8 +193,10 @@ const AddProductTheme = () => {
   };
 
   const isUrlExist = async (url) => {
+    let updatedUrl = await getUpdatedUrl("Product", url);
     setProduct({
       ...product,
+      url: updatedUrl,
     });
   };
 
@@ -204,13 +233,17 @@ const AddProductTheme = () => {
                   name="name"
                   value={product.name}
                   onChange={handleChange}
-                  onBlur={(e) => !product.url && isUrlExist(product.name)}
+                  onBlur={(e) => (
+                    !product.url || product.url !== e.target.value ? isUrlExist(product.name) : null
+                  )}
                   variant="outlined"
                   fullWidth
                 />
               </Box>
 
               {/* ===================Url=================== */}
+
+
               <Box component="div" mb={2}>
                 <URLComponent
                   url={product.url}
@@ -256,15 +289,26 @@ const AddProductTheme = () => {
                     variant="outlined"
                     fullWidth
                     type="number"
-
-                    onChange={(e) =>
-                      setProduct({
-                        ...product,
-                        pricing: {
-                          ...product.pricing,
-                          price: Number(e.target.value),
-                        },
-                      })
+                    value={product.pricing.price}
+                    onChange={(e) => {
+                      if (e.target.value >= 0) {
+                        e.target.value > product.pricing.sellprice ?
+                          setProduct({
+                            ...product,
+                            pricing: {
+                              ...product.pricing,
+                              price: Number(e.target.value),
+                            },
+                          }) : dispatch({
+                            type: ALERT_SUCCESS,
+                            payload: {
+                              boolean: false,
+                              message: "Sale price couldn't exceed original price",
+                              error: true,
+                            },
+                          })
+                      }
+                    }
                     }
                   />
                 </Grid>
@@ -275,22 +319,27 @@ const AddProductTheme = () => {
                     variant="outlined"
                     fullWidth
                     type="number"
-                    onChange={(e) => e.target.value < product.pricing.price ?
-                      setProduct({
-                        ...product,
-                        pricing: {
-                          ...product.pricing,
-                          sellprice: Number(e.target.value),
-                        },
-                      })
-                      :  dispatch({
-                        type: ALERT_SUCCESS,
-                        payload: {
-                          boolean: false,
-                          message: "Sale price couldn't exceed original price",
-                          error: true,
-                        },
-                      })
+                    value={product.pricing.sellprice}
+                    onChange={(e) => {
+                      if (e.target.value >= 0) {
+                        e.target.value < product.pricing.price ?
+                          setProduct({
+                            ...product,
+                            pricing: {
+                              ...product.pricing,
+                              sellprice: Number(e.target.value),
+                            },
+                          })
+                          : dispatch({
+                            type: ALERT_SUCCESS,
+                            payload: {
+                              boolean: false,
+                              message: "Sale price couldn't exceed original price",
+                              error: true,
+                            },
+                          })
+                      }
+                    }
                     }
                   />
                 </Grid>
@@ -362,15 +411,11 @@ const AddProductTheme = () => {
                     });
                   }}
                   onShippingClassChange={(value) => {
-                    setProduct({
-                      ...product,
-                      shipping: {
-                        ...product.shipping,
-                        shipping_class: value,
-                      },
-                    });
+                    setShippingClass(value)
                   }}
+
                 />
+
               </CardBlocks>
             )}
 
@@ -384,9 +429,11 @@ const AddProductTheme = () => {
                     [name]: value,
                   });
                 }}
+                onTaxClassChange={(value) => {
+                  setTaxClass(value)
+                }}
               />
             </CardBlocks>
-
             {/* ===================Inventory=================== */}
             <CardBlocks title="Inventory">
               <Grid container spacing={3}>
@@ -624,3 +671,4 @@ const AddProduct = () => {
   );
 };
 export default AddProduct;
+

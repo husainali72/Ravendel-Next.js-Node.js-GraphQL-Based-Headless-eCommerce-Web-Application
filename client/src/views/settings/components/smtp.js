@@ -12,7 +12,7 @@ import viewStyles from "../../viewStyles.js";
 import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import {get} from "lodash";
+import { get } from "lodash";
 import { useEffect } from "react";
 import theme from "../../../theme/index.js";
 import { smtpUpdateAction } from "../../../store/action/settingAction.js";
@@ -26,10 +26,10 @@ const SMTPComponent = () => {
   const [smtp, setSmptp] = useState({});
 
   useEffect(() => {
-    if(settingState, "settings.smtp"){
-      setSmptp({  ...settingState.settings.smtp })
+    if (settingState, "settings.smtp") {
+      setSmptp({ ...settingState.settings.smtp })
     }
-    }, [get(settingState, "settings")])
+  }, [get(settingState, "settings")])
 
 
   const updateSmtp = () => {
@@ -38,20 +38,20 @@ const SMTPComponent = () => {
 
   return (
     <>
-     <Alerts/>
-     {settingState.loading ? <Loading /> : null}
+      <Alerts />
+      {settingState.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div">
             <SettingTextInput
-              label="SMTP server"
+              label="SMTP Server"
               value={smtp.server}
               onSettingInputChange={(val) => setSmptp({ ...smtp, server: val })}
             />
           </Box>
           <Box component="div">
             <SettingTextInput
-              label="SMTP username"
+              label="SMTP Username"
               value={smtp.username}
               onSettingInputChange={(val) =>
                 setSmptp({ ...smtp, username: val })
@@ -60,7 +60,7 @@ const SMTPComponent = () => {
           </Box>
           <Box component="div">
             <SettingTextInput
-              label="SMTP username"
+              label="SMTP Password"
               value={smtp.password}
               onSettingInputChange={(val) =>
                 setSmptp({ ...smtp, password: val })

@@ -2,7 +2,7 @@ import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { useDispatch } from 'react-redux';
 
-const TinymceEditor = ({value}) => {
+const TinymceEditor = ({ value }) => {
   const dispatch = useDispatch();
   const handleEditorChange = e => {
     dispatch({
@@ -31,7 +31,7 @@ const TinymceEditor = ({value}) => {
         paste_data_images: true,
         convert_urls: false
       }}
-      onChange={handleEditorChange}
+      onEditorChange={handleEditorChange}
       onBlur={handleEditorChange}
     />
   );

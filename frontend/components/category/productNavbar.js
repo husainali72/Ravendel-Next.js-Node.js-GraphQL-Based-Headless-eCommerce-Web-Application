@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
 import { useSession } from "next-auth/react";
 import calculateDiscount from '../../utills/calculateDiscount';
+import { capitalize } from 'lodash';
 
 export const ProductNav = (props) => {
     const dispatch = useDispatch();
@@ -48,14 +49,14 @@ export const ProductNav = (props) => {
                         </Link>
                     </div>
                     <div className="on-sale-product-card-body">
-                        {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price && Math.round((100 /product?.pricing?.price)*(product?.pricing?.price - product?.pricing?.sellprice))>0 ? <div className="save-price">
+                        {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price && ((100 /product?.pricing?.price)*(product?.pricing?.price - product?.pricing?.sellprice))>0 ? <div className="save-price">
                             <span className="percantage-save">
                                 {calculateDiscount(product?.pricing?.price, product?.pricing?.sellprice)}
                             </span>
                         </div> : null}
                         <div className="product-categoryname" >
                             {product?.categoryId.map((item, i) =>
-                            (<span key={i}>{(product?.categoryId?.length - 1 === i) ? (<span>{item?.name} </span>) : <span>{item?.name}, </span>}
+                            (<span key={i}>{(product?.categoryId?.length - 1 === i) ? (<span>{capitalize(item?.name)} </span>) : <span>{capitalize(item?.name)}, </span>}
                             </span>))}
                         </div>
                         <div className="card-price" style={{ cursor: 'pointer' }}>

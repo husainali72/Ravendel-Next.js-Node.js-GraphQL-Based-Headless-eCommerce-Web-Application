@@ -203,7 +203,6 @@ const EditProductComponent = ({ params }) => {
      if (editMode) {
       product.combinations = combination;
       dispatch(productUpdateAction(product, navigate));
-
     }
     else {
       product.combinations = combination;
@@ -279,6 +278,7 @@ const EditProductComponent = ({ params }) => {
     });
   };
 
+
   return (
     <>
       <Alert />
@@ -290,6 +290,7 @@ const EditProductComponent = ({ params }) => {
           submitTitle={editMode ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-products`}
         />
+
 
         <Grid container spacing={4} className={classes.secondmainrow}>
           <Grid item lg={9} md={12}>
@@ -360,14 +361,26 @@ const EditProductComponent = ({ params }) => {
                       type="number"
 
                       value={product.pricing.price}
-                      onChange={(e) =>
-                        setProduct({
-                          ...product,
-                          pricing: {
-                            ...product.pricing,
-                            price: Number(e.target.value),
-                          },
-                        })
+                      onChange={(e) => {
+                        if (e.target.value >= 0) {
+                          e.target.value > product.pricing.sellprice ?
+                            setProduct({
+                              ...product,
+                              pricing: {
+                                ...product.pricing,
+                                price: Number(e.target.value),
+                              },
+                            })
+                            : dispatch({
+                              type: ALERT_SUCCESS,
+                              payload: {
+                                boolean: false,
+                                message: "Sale price couldn't exceed original price",
+                                error: true,
+                              }
+                            })
+                        }
+                      }
                       }
                     />
                   </Grid>
@@ -380,22 +393,26 @@ const EditProductComponent = ({ params }) => {
                       type="number"
 
                       value={product.pricing.sellprice}
-                      onChange={(e) => e.target.value < product.pricing.price ?
-                        setProduct({
-                          ...product,
-                          pricing: {
-                            ...product.pricing,
-                            sellprice: Number(e.target.value),
-                          },
-                        })
-                        : dispatch({
-                          type: ALERT_SUCCESS,
-                          payload: {
-                            boolean: false,
-                            message: "Sale price couldn't exceed original price",
-                            error: true,
-                          },
-                        })
+                      onChange={(e) => {
+                        if (e.target.value >= 0) {
+                          e.target.value < product.pricing.price ?
+                            setProduct({
+                              ...product,
+                              pricing: {
+                                ...product.pricing,
+                                sellprice: Number(e.target.value),
+                              },
+                            })
+                            : dispatch({
+                              type: ALERT_SUCCESS,
+                              payload: {
+                                boolean: false,
+                                message: "Sale price couldn't exceed original price",
+                                error: true,
+                              }
+                            })
+                        }
+                      }
                       }
                     />
                   </Grid>
@@ -482,6 +499,12 @@ const EditProductComponent = ({ params }) => {
                   product={taxClass}
                   onTaxInputChange={(value) => {
                   setTaxClass(value)
+                  }}
+                  onTaxClassChange={(value) => {
+                    setProduct({
+                      ...product,
+                      ['tax_class']: value,
+                    });
                   }}
                 />
               </CardBlocks>

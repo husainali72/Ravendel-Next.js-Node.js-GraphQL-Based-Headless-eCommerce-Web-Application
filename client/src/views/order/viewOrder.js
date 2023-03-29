@@ -256,11 +256,12 @@ const ViewOrderComponent = ({ params }) => {
                   <CardHeader title="Order Details" />
                   <Divider />
                   <CardContent>
-                    <Typography variant="body1">Order: {order.id}</Typography>
+                    <Typography variant="body1">Order: {order.order_number}</Typography>
                     <Typography variant="body1" mt={2}>
                       Payment via {order.billing.payment_method} paid on{" "}
-                      {convertDateToStringFormat(order.date)}, Transaction
-                      number {order.billing.transaction_id}
+                      {convertDateToStringFormat(order.date)}
+                      {/* Transaction
+                      number {order.billing.transaction_id} */}
                     </Typography>
                     <FormControl className={classes.statusSelect}>
                       <InputLabel id="status" sx={{ marginTop: '20px' }} >
@@ -692,9 +693,9 @@ const ViewOrderComponent = ({ params }) => {
                             <Typography variant="body2" className={classes.mtb2}>
                               {subTotal.tax_value ? subTotal.tax_value : 0}
                             </Typography> : null}
-                          {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code != 'None' ?
+                          {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
                             <Typography variant="body2" className={classes.mtb2}>
-                              {subTotal.tax_value ? subTotal.tax_value : 0}
+                              {subTotal.coupon_value ? subTotal.coupon_value : 0}
                             </Typography> : null}
                           <Divider style={{ marginTop: "10px" }} />
                           <Typography variant="body2" className={classes.mtb2}>
