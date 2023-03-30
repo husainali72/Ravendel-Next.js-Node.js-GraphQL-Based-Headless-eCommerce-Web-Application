@@ -32,7 +32,6 @@ const PaymentComponent = () => {
               <Tab label="Bank Transfer" {...TabProps(1)} />
               <Tab label="Stripe" {...TabProps(2)} />
               <Tab label="Paypal" {...TabProps(3)} />
-              <Tab label="One Signal" {...TabProps(4)} />
             </Tabs>
           </Paper>
           <TabPanel value={tabVal} index={0}>
@@ -46,9 +45,6 @@ const PaymentComponent = () => {
           </TabPanel>
           <TabPanel value={tabVal} index={3}>
             <Paypal />
-          </TabPanel>
-          <TabPanel value={tabVal} index={4}>
-            <OneSignal />
           </TabPanel>
         </Grid>
       </Grid>

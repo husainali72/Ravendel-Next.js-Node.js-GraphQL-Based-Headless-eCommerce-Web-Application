@@ -31,7 +31,7 @@ import { Loading } from "../../components";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 import AddIcon from '@mui/icons-material/Add';
 import ReorderIcon from '@mui/icons-material/Reorder';
-
+import NoImagePlaceHolder from "../../../assets/images/NoImagePlaceHolder.png";
 const HomeSettingsTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
@@ -78,7 +78,7 @@ const HomeSettingsTheme = () => {
       let newImge =
         bucketBaseURL +
         settingState.settings.appearance.home.slider[i].image;
-      newSliderArr.push({ image: newImge  });
+      newSliderArr.push({ image: newImge });
     }
     setSlider(newSliderArr)
   },
@@ -228,6 +228,9 @@ const HomeSettingsTheme = () => {
     setSectionData([...list])
   };
 
+  const imageOnError = (event) => {
+    event.target.src = NoImagePlaceHolder
+  }
 
   return (
     <>
@@ -267,6 +270,7 @@ const HomeSettingsTheme = () => {
                               src={slider[index] && slider[index].image}
                               className={classes.sliderImagePreview}
                               alt="Featured"
+                              onError={imageOnError}
                             />
                           )}
 
@@ -443,7 +447,7 @@ const HomeSettingsTheme = () => {
                     size='small'
                     color='primary'
                     variant='contained'
-                    style={{ marginLeft: "20px", marginTop: "25px", minWidth: "40px"}}
+                    style={{ marginLeft: "20px", marginTop: "25px", minWidth: "40px" }}
                     onClick={reOrder}
                   >
                     <ReorderIcon />
@@ -453,7 +457,7 @@ const HomeSettingsTheme = () => {
                     size='small'
                     color='primary'
                     variant='contained'
-                    style={{ marginLeft: "20px", marginTop: "25px"}}
+                    style={{ marginLeft: "20px", marginTop: "25px" }}
                     onClick={updateHome}
                   >
                     Save Change

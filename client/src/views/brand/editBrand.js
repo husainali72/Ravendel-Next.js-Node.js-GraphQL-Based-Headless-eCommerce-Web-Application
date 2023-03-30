@@ -5,7 +5,7 @@ import viewStyles from "../viewStyles.js";
 import clsx from "clsx";
 import { brandUpdateAction, brandsAction } from "../../store/action/";
 import { useDispatch, useSelector } from "react-redux";
-import { Loading, TopBar, Alert, TextInput, CardBlocks, URLComponent } from "../components";
+import { Loading, TopBar, Alert, TextInput, CardBlocks, FeaturedImageComponent, URLComponent } from "../components";
 import {
   client_app_route_url,
   bucketBaseURL,
@@ -69,7 +69,7 @@ const EditBrandComponenet = ({ params }) => {
     }
   }, []);
   const updateBrand = () => {
-    var errors = validate(["name", 'url'], brand);
+    let errors = validate(["name", 'url'], brand);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -99,9 +99,9 @@ const EditBrandComponenet = ({ params }) => {
   const fileChange = (e) => {
     setLogoImage(null);
     setLogoImage(URL.createObjectURL(e.target.files[0]));
+
     setBrand({ ...brand, "updated_brand_logo": e.target.files[0] });
   };
-
   const isUrlExist = async (url) => {
     let updatedUrl = await getUpdatedUrl("Brand", url);
     setBrand({
@@ -133,20 +133,10 @@ const EditBrandComponenet = ({ params }) => {
                   label="Brand Name"
                   name="name"
                   onInputChange={handleChange}
-                  onBlur={(e) => (
-                    !brand.url || brand.url !== e.target.value ? isUrlExist(brand.name) : null
-                  )}
+                  onBlur={(e) => !brand.url || e.target.value !== brand.url ? isUrlExist(brand.name) : null}
                 />
               </Grid>
               <Grid item xs={12}>
-                {/* <TextInput
-                  value={brand.name}
-                  label="Url"
-                  name="url"
-                  onInputChange={handleChange}
-                  onInput={toInputLowercase}
-                 
-                /> */}
                 <URLComponent
                   url={brand.url}
                   onInputChange={(updatedUrl) => {
@@ -156,12 +146,11 @@ const EditBrandComponenet = ({ params }) => {
                     });
                   }}
                   pageUrl="brand"
-                  tableUrl="brand"
+                  tableUrl="Brand"
                 />
               </Grid>
               <Grid item xs={12}>
                 <Grid container>
-
                   <Box component="span" m={1}>
                     <CardBlocks title="Brand Logo Image">
                       <FeaturedImageComponent
@@ -170,7 +159,7 @@ const EditBrandComponenet = ({ params }) => {
                       />
                     </CardBlocks>
                   </Box>
-      
+
                 </Grid>
               </Grid>
             </Grid>

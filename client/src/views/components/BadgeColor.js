@@ -6,6 +6,6 @@ export const badgeColor = (color) => {
     if (color === "shipped") return "secondary"
     if (color === "cancelled") return "error"
     if (color === "delivered") return "delivered"
-    if (color === "outfordelivery") return " outfordelivery"
+    if (color === "outfordelivery") return "outfordelivery"
 
 }

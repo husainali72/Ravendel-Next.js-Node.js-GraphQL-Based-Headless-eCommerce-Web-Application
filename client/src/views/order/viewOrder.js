@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useNavigation, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
-import { orderUpdateAction, orderAction } from "../../store/action/";
+import { orderUpdateAction, orderAction, getSettings } from "../../store/action/";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -47,6 +47,8 @@ import { validatenested, validateNestedPhone } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { isEmpty } from "../../utils/helper";
 import PhoneNumber from "../components/phoneNumberValidation";
+import { currencySetter, getPrice } from "./CurrencyFormat";
+
 const ViewOrderComponent = ({ params }) => {
   const ORDERID = params.id || "";
   const classes = viewStyles();
@@ -55,6 +57,9 @@ const ViewOrderComponent = ({ params }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const singleOrder = useSelector((state) => state.order);
+  const currencyState = useSelector((state) => state.settings)
+  const [currency, setcurrency] = useState('usd')
+  const [decimal, setdecimal] = useState(2)
   const [loading, setloading] = useState(false);
   const [phoneValue, setPhoneValue] = useState("");
   const [order, setorder] = useState({
@@ -85,6 +90,7 @@ const ViewOrderComponent = ({ params }) => {
     },
     products: [],
     payment_status: "",
+    shipping_status: "",
     sub_total_details: {},
     sub_total_summary: [],
 
@@ -93,7 +99,16 @@ const ViewOrderComponent = ({ params }) => {
 
   useEffect(() => {
     dispatch(orderAction(ORDERID));
+    dispatch(getSettings());
   }, []);
+  useEffect(() => {
+    if (!isEmpty(get(currencyState, 'settings'))) {
+      if (!isEmpty(get(currencyState.settings, 'store'))) {
+        setcurrency(get(currencyState.settings.store.currency_options, 'currency'))
+        setdecimal(get(currencyState.settings.store.currency_options, 'number_of_decimals'))
+      }
+    }
+  }, [get(currencyState, 'settings')])
 
   useEffect(() => {
     if (!isEmpty(get(singleOrder, "order"))) {
@@ -288,6 +303,32 @@ const ViewOrderComponent = ({ params }) => {
                         <MenuItem value="failed">Failed</MenuItem>
                         <MenuItem value="success">Completed</MenuItem>
                         <MenuItem value="cancelled">Cancelled</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl className={classes.statusSelect} sx={{ ml: '20px' }}>
+                      <InputLabel id="status" sx={{ marginTop: '20px' }} >
+                        Shipping Status
+                      </InputLabel>
+                      <Select
+                        label="Shipping Status"
+                        labelId="shipping_status
+                        "
+                        id="shipping_status"
+                        sx={{ marginTop: '20px' }}
+                        value={order.shipping_status}
+                        name="shipping_status"
+                        onChange={(e) => {
+                          setorder({
+                            ...order,
+                            [e.target.name]: e.target.value,
+                          });
+                        }}
+
+                      >
+                        <MenuItem value="inprogress">Inprogress </MenuItem>
+                        <MenuItem value="shipped">Shipped</MenuItem>
+                        <MenuItem value="outfordelivery">Out For Delivery</MenuItem>
+                        <MenuItem value="delivered">Delivered</MenuItem>
                       </Select>
                     </FormControl>
                   </CardContent>
@@ -663,54 +704,44 @@ const ViewOrderComponent = ({ params }) => {
                         <Typography variant="body1" className={classes.mtb1}>
                           Total
                         </Typography>
-                        {order.sub_total_details.shipping_name ?
+                        {order.sub_total_details.shipping_name && order.sub_total_details.shipping_name !== 'None' ?
                           <Typography variant="body1" className={classes.mtb1}>
                             {order.sub_total_details.shipping_name}
                           </Typography> : null}
-                        {order.sub_total_details.tax_name ?
+                        {order.sub_total_details.tax_name && order.sub_total_details.tax_name !== 'None' ?
                           <Typography variant="body1" className={classes.mtb1}>
                             {order.sub_total_details.tax_name}
                           </Typography> : null}
                         {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
-                          <Typography variant="body1" className={classes.mtb1}>
-                            {order.sub_total_details.coupon_code}
+                          <Typography variant="body1" className={classes.mtb1} sx={{ color: '#4BB543', fontWeight: 'bold' }}>
+                            Coupon - ( {order.sub_total_details.coupon_code} )
                           </Typography> : null}
-                        <Divider style={{ marginTop: "10px" }} />
+                        <Divider sx={{ mt: "10px", mb: "10px" }} />
                         <Typography variant="body1" className={classes.mtb1}>
                           SubTotal
                         </Typography>
                       </Grid>
-                      {order.sub_total_summary && order.sub_total_summary.length > 0 ? order.sub_total_summary.map((subTotal, index) => (
-                        <Grid item md={3} className={classes.textRight}>
-                          <Typography variant="body2" className={classes.mtb2}>
-                            {subTotal.sub_total ? currencyFormat(subTotal.sub_total) : 0}
-                          </Typography>
-                          {order.sub_total_details.shipping_name ?
-                            <Typography variant="body2" className={classes.mtb2}>
-                              {subTotal.shipping_value ? subTotal.shipping_value : 0}
-                            </Typography> : null}
-                          {order.sub_total_details.tax_name ?
-                            <Typography variant="body2" className={classes.mtb2}>
-                              {subTotal.tax_value ? subTotal.tax_value : 0}
-                            </Typography> : null}
-                          {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
-                            <Typography variant="body2" className={classes.mtb2}>
-                              {subTotal.coupon_value ? subTotal.coupon_value : 0}
-                            </Typography> : null}
-                          <Divider style={{ marginTop: "10px" }} />
-                          <Typography variant="body2" className={classes.mtb2}>
-                            {subTotal.total ? currencyFormat(subTotal.total) : 0}
-                          </Typography>
-                        </Grid>
-                      )) : <Grid item md={3} className={classes.textRight}>
+                      <Grid item md={3} className={classes.textRight}>
                         <Typography variant="body2" className={classes.mtb2}>
-                          0
+                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.total, decimal)}
                         </Typography>
-                        <Divider style={{ marginTop: "10px" }} />
+                        {order.sub_total_details.shipping_name && order.sub_total_details.shipping_name !== 'None' ?
+                          <Typography variant="body2" className={classes.mtb2}>
+                            {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.shipping_value, decimal)}
+                          </Typography> : null}
+                        {order.sub_total_details.tax_name && order.sub_total_details.tax_name !== 'None' ?
+                          <Typography variant="body2" className={classes.mtb2}>
+                            {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.tax_value, decimal)}
+                          </Typography> : null}
+                        {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
+                          <Typography variant="body2" className={classes.mtb2coupon} sx={{ color: '#4BB543', }}>
+                            <span className={classes.minus}>-</span>  {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary[0].coupon_value, decimal)}
+                          </Typography> : null}
+                        <Divider sx={{ mt: "10px", mb: "10px" }} />
                         <Typography variant="body2" className={classes.mtb2}>
-                          0
+                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.sub_total, decimal)}
                         </Typography>
-                      </Grid>}
+                      </Grid>
                     </Grid>
                   </CardContent>
                 </Card>
