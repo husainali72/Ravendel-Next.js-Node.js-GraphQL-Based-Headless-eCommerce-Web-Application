@@ -61,6 +61,7 @@ export default {
     fontSize: "14px",
     letterSpacing: "-0.05px",
     lineHeight: "21px",
+    textTransform: "capitalize",
   },
   body2: {
     color: palette.text.secondary,

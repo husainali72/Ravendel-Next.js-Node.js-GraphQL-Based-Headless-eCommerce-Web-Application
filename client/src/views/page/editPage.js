@@ -9,14 +9,14 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { pageUpdateAction, pageAction } from "../../store/action/";
+import { pageUpdateAction, pageAction, pageAddAction } from "../../store/action/";
 import TinymceEditor from "./TinymceEditor.js";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { get } from "lodash";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import {
@@ -31,6 +31,8 @@ import {
 var defaultObj = {
   status: "Publish",
   title: "",
+  url: "",
+  content: "",
   meta: {
     title: "",
     description: "",
@@ -49,24 +51,47 @@ const EditPageComponent = ({ params }) => {
   const [page, setPage] = useState(defaultObj);
   const navigate = useNavigate();
   const [loading, setloading] = useState(false);
+  const location = useLocation();
+  const editPage = location.state.editMode
 
   useEffect(() => {
+    if (!editPage){
+    if (pageState.success) {
+      document.forms[0].reset();
+      setPage(defaultObj);
+    }}
+    if (pageState.page.content !== undefined) {
+      setPage({ ...page, content: pageState.page.content });
+    }
+  }, [pageState.success, pageState.page.content]);
+
+  useEffect(() => {
+    if (!editPage){
+    var slugVal = page.title.replace(/[^A-Z0-9]/gi, "-");
+    setPage({ ...page, url: slugVal.toLowerCase() });
+  }}, [page.title]);
+
+  useEffect(() => {
+    if (editPage){
     dispatch(pageAction(PAGEID));
-  }, [params]);
+  }}, [params]);
 
   useEffect(() => {
+    if (editPage){
     if (!isEmpty(get(pageState, "page"))) {
       setPage({ ...page, ...pageState.page });
-    }
-  }, [get(pageState, "page")]);
+    } 
+  } else {
+    setPage(defaultObj)
+  }}, [get(pageState, "page"), editPage]);
 
   useEffect(() => {
     setloading(get(pageState, "loading"));
   }, [get(pageState, "loading")]);
 
-  const updatePage = (e) => {
+  const addUpdatePage = (e) => {
     e.preventDefault();
-    var errors = validate(["title"], page);
+    var errors = validate(["content", "title"], page);
 
     if (!isEmpty(errors)) {
       dispatch({
@@ -77,11 +102,14 @@ const EditPageComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else {
+    } else {
+      if (editPage){
       dispatch(pageUpdateAction(page, navigate));
     }
-
+    else {
+      dispatch(pageAddAction(page, navigate));
+    }
+  }
   };
   useEffect(() => {
     var slugVal = page.title.replace(/[^A-Z0-9]/gi, "-");
@@ -108,9 +136,9 @@ const EditPageComponent = ({ params }) => {
       {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title="Edit Page"
-          onSubmit={updatePage}
-          submitTitle="Update"
+          title={editPage ? "Edit Page" : "Add Page"}
+          onSubmit={addUpdatePage}
+          submitTitle={editPage ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-pages`}
         />
 

@@ -50,7 +50,7 @@ const AllBlogComponent = () => {
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          navigate(`${client_app_route_url}edit-blog/${id}`)
+          navigate(`${client_app_route_url}edit-blog/${id}`, {state : {editMode: true}})
         } else if (type === "delete") {
           dispatch(blogDeleteAction(id))
         }

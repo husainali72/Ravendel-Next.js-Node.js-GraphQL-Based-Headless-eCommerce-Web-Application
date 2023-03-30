@@ -53,7 +53,7 @@ const AllproductComponent = () => {
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          navigate(`${client_app_route_url}edit-product/${id}`)
+          navigate(`${client_app_route_url}edit-product/${id}`, {state : {editMode: true}})
         } else if (type === "delete") {
           dispatch(productDeleteAction(id))
         }

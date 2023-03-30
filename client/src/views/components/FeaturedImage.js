@@ -7,8 +7,13 @@ import NoImagePlaceholder from "../../assets/images/no-image-placeholder.png";
 import UserPlaceholder from "../../assets/images/user-placeholder.png";
 import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
+import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png"
 const FeaturedImageComponentTheme = ({ image, feautedImageChange, user }) => {
   const classes = viewStyles();
+
+  const imageOnError = (event) => {
+    event.target.src = NoImagePlaceHolder
+  }
 
   return (
     <>
@@ -18,6 +23,7 @@ const FeaturedImageComponentTheme = ({ image, feautedImageChange, user }) => {
             src={image}
             className={classes.feautedImageBoxPreview}
             alt="featured"
+            onError={imageOnError}
           />
         ) : (
           <img

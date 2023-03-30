@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import {
+  customerAddAction,
   customerUpdateAction,
   addressbookAddAction,
   addressbookUpdateAction,
@@ -43,7 +44,7 @@ import {
   CardBlocks,
 } from "../components";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { get } from "lodash";
@@ -84,43 +85,41 @@ const EditCustomerComponent = ({ params }) => {
   const [editMode, setEditMode] = useState(false);
   const [singleCustomer, setSingleCustomer] = useState(SingleCustomerObject);
   const [customer, setcustomer] = useState(customerObj);
-
+  const location = useLocation();
   const [loading, setloading] = useState(false);
-
   const navigate = useNavigate();
+  const editCustomer = location.state.editMode
 
   useEffect(() => {
     setloading(get(Customers, "loading"));
   }, [get(Customers, "loading")]);
+
   useEffect(() => {
     document.forms[0].reset();
-    setcustomer(customerObj);
-
     if (isEmpty(get(Customers, "customers"))) {
       dispatch(customersAction());
     } else {
-      for (let i in Customers.customers) {
+      if (editCustomer) {
+        for (let i in Customers.customers) {
         if (Customers.customers[i].id === ID) {
           SingleCustomerObject.id = Customers.customers[i].id;
           setSingleCustomer(SingleCustomerObject);
           setcustomer({ ...customer, ...Customers.customers[i] });
-
-
           break;
         }
+        } setEditMode(false);
+      } else {
+        setcustomer(customerObj)
       }
-      setEditMode(false);
     }
-  }, [get(Customers, "customers")]);
+  }, [get(Customers, "customers"), editCustomer]);
 
-  const updateCustomer = (e) => {
-
+  const addUpdateCustomer = (e) => {
     e.preventDefault();
-
-
     let errors = validate(['company', "email", "last_name", "first_name"], customer);
-
     let phoneNumberError = validatePhone(["phone"], customer)
+    let passwordError = validate(["password"], customer)
+
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -141,13 +140,24 @@ const EditCustomerComponent = ({ params }) => {
         },
       });
     }
-
     else {
-
-      dispatch(customerUpdateAction(customer, navigate));
+      if (editCustomer) {
+        dispatch(customerUpdateAction(customer, navigate));
+      } else {
+        if (!isEmpty(passwordError)) {
+          dispatch({
+            type: ALERT_SUCCESS,
+            payload: {
+              boolean: false,
+              message: passwordError,
+              error: true,
+            },
+          });
+        } else {
+          dispatch(customerAddAction(customer, navigate));
+        }
+      }
     }
-
-
   };
 
   const handleChange = (e) => {
@@ -273,9 +283,9 @@ const EditCustomerComponent = ({ params }) => {
       {loading && <Loading />}
       <form>
         <TopBar
-          title="Edit Customer"
-          onSubmit={updateCustomer}
-          submitTitle="Update"
+          title={editCustomer ? "Edit Customer" : "Add Customer"}
+          onSubmit={addUpdateCustomer}
+          submitTitle={editCustomer ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-customer`}
         />
 
@@ -287,7 +297,7 @@ const EditCustomerComponent = ({ params }) => {
           className={classes.secondmainrow}
         >
           <Grid item lg={12}>
-            <CardBlocks title="Customer Information" nomargin>
+            <CardBlocks title={editCustomer ? "Customer Information" : "Add Customer"} nomargin>
               <Grid container spacing={isSmall ? 2 : 4}>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
@@ -334,7 +344,7 @@ const EditCustomerComponent = ({ params }) => {
                 </Grid>
 
                 <Grid item md={3} sm={6} xs={12} >
-                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={customer.phone} width= "100%"/>
+                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={customer.phone} width="100%" />
 
                 </Grid>
               </Grid>
@@ -342,7 +352,8 @@ const EditCustomerComponent = ({ params }) => {
           </Grid>
 
           {/* ==============Address Books============== */}
-
+          {editCustomer ?
+            <>
           <Grid item md={4} sm={12} xs={12}>
             <CardBlocks title={`${editMode ? "Edit" : "Add"} Adress`}>
               <Grid container spacing={2}>
@@ -509,6 +520,7 @@ const EditCustomerComponent = ({ params }) => {
                 ))}
             </Grid>
           </Grid>
+            </> : null}
         </Grid>
       </form>
     </>

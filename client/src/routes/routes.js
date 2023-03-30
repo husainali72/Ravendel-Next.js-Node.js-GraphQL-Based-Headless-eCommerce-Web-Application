@@ -68,7 +68,7 @@ const RoutesPath = [
   {
     path: `${client_app_route_url}add-user`,
     exact: true,
-    component: AddUser,
+    component: EditUser,
     name: "Add User",
   },
   {
@@ -87,7 +87,7 @@ const RoutesPath = [
     path: `${client_app_route_url}add-blog`,
     exact: true,
     name: "Add Blog",
-    component: AddBlog,
+    component: EditBlog,
   },
   {
     path: `${client_app_route_url}edit-blog/:id`,
@@ -147,7 +147,7 @@ const RoutesPath = [
     path: `${client_app_route_url}add-product`,
     exact: true,
     name: "Add Product",
-    component: AddProduct,
+    component: EditProduct,
   },
   {
     path: `${client_app_route_url}edit-product/:id`,
@@ -183,7 +183,7 @@ const RoutesPath = [
     path: `${client_app_route_url}add-page`,
     exact: true,
     name: "Add Page",
-    component: AddPage,
+    component: EditPage,
   },
   {
     path: `${client_app_route_url}edit-page/:id`,
@@ -218,7 +218,7 @@ const RoutesPath = [
   {
     path: `${client_app_route_url}add-customer`,
     exact: true,
-    component: AddCustomer,
+    component: EditCustomer,
     name: "Add Customer",
   },
   {

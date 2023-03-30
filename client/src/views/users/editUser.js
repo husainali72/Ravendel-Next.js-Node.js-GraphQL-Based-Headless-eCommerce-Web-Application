@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { userUpdateAction, usersAction } from "../../store/action";
+import { userUpdateAction, usersAction, userAddAction } from "../../store/action";
 import {
   isEmpty,
   client_app_route_url,
@@ -20,7 +20,7 @@ import {
 } from "../components";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { get } from "lodash";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
@@ -30,6 +30,7 @@ var defaultObj = {
   email: "",
   role: "",
   password: "",
+  image: ""
 };
 
 const EditUserComponent = ({ params }) => {
@@ -38,9 +39,12 @@ const EditUserComponent = ({ params }) => {
   const navigate = useNavigate();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
+  const location =  useLocation();
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
   const [loading, setloading] = useState(false);
+  const editUser = location.state.editMode
+
   useEffect(() => {
     if (isEmpty(get(UsersState, "users"))) {
       dispatch(usersAction());
@@ -54,6 +58,7 @@ const EditUserComponent = ({ params }) => {
   useEffect(() => {
     document.forms[0].reset();
     setuser(defaultObj);
+    if(editUser){
     if (!isEmpty(get(UsersState, "users"))) {
       UsersState.users.map((edituser) => {
         if (edituser.id === User_id) {
@@ -63,17 +68,24 @@ const EditUserComponent = ({ params }) => {
           }
         }
       });
+    }} else {
+      setuser(defaultObj)
+      setfeatureImage(null)
     }
-
-  }, [get(UsersState, "users")]);
+  }, [get(UsersState, "users"), editUser]);
 
   const fileChange = (e) => {
-    setuser({ ...user, ["updatedImage"]: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
+    if (editUser) {
+      setuser({ ...user, ["updatedImage"]: e.target.files[0] });
+    }
+    else {
+      setuser({ ...user, ["image"]: e.target.files[0] });
+    }
   };
 
-  const updateUser = (e) => {
+  const addUpdateUser = (e) => {
     e.preventDefault();
     let errors = validate(["role", "password", 'email', "name"], user);
 
@@ -87,17 +99,21 @@ const EditUserComponent = ({ params }) => {
         },
       });
     }
-    else {
+   else { 
+    if (editUser) {
       dispatch(userUpdateAction(user, navigate));
-
     }
+    else {
+      dispatch(userAddAction(user, navigate));
+    }}
 
   };
-
   const handleChange = (e) => {
     setuser({ ...user, [e.target.name]: e.target.value });
   };
-
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
+  };
   return (
     <>
       <Alert />
@@ -105,9 +121,9 @@ const EditUserComponent = ({ params }) => {
 
       <form>
         <TopBar
-          title="Edit Users"
-          onSubmit={updateUser}
-          submitTitle="Update"
+          title={editUser ? "Edit Users" : "Add Users"}
+          onSubmit={addUpdateUser}
+          submitTitle={editUser ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-users`}
         />
         <Grid container spacing={3} className={classes.secondmainrow}>
@@ -137,6 +153,7 @@ const EditUserComponent = ({ params }) => {
                       label="Email"
                       name="email"
                       onInputChange={handleChange}
+                      onInput={toInputLowercase}
                     />
                   </Box>
                   <Box component="div" mb={2}>
