@@ -1,11 +1,16 @@
 import Link from "next/link";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import { useEffect, useState } from "react";
 import { query } from "../utills/helpers";
 import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 import { get } from "lodash";
+import logoutDispatch from "../redux/actions/userlogoutAction";
+import { useDispatch } from "react-redux";
+
+
+
 export default function Footer() {
     const [Address, setAddress] = useState({
         address_line1: "",
@@ -16,8 +21,14 @@ export default function Footer() {
         playStoreUrl: "",
         appStoreUrl: ""
     });
-
-    useEffect(() => {
+    const dispatch = useDispatch();
+    const LogOutUser = async () => {
+        const data = await signOut({ redirect: false, callbackUrl: "/" })
+        localStorage.setItem("userCart", JSON.stringify([]));
+        localStorage.setItem("cart", JSON.stringify([]));
+        dispatch(logoutDispatch())
+    }
+     useEffect(() => {
         query(GET_HOMEPAGE_DATA_QUERY).then(res => {
             const addressPath1 = "data.getSettings.store.store_address.address_line1";
             const addressPath2 = "data.getSettings.store.store_address.address_line2";
@@ -134,8 +145,8 @@ export default function Footer() {
                                     {session.status === "authenticated" ? (
                                         <>
                                             <p className="link-hover">
-                                                <Link href="/account" >
-                                                    <a className="text-reset">Log Out</a>
+                                                <Link href="/" >
+                                                    <a onClick={LogOutUser} className="text-reset">Log Out</a>
                                                 </Link>
                                             </p>
                                             <p className="link-hover">

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { Container, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 import StarRating from "../breadcrumb/rating";
-import { currencySetter, getImage, mutation, getPrice } from "../../utills/helpers";
+import { currencySetter, getImage, mutation, getPrice, isDiscount } from "../../utills/helpers";
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
 import { useSession } from "next-auth/react";
@@ -12,7 +12,7 @@ import calculateDiscount from "../../utills/calculateDiscount";
 import { query } from "../../utills/helpers";
 import { capitalize } from "lodash";
 var placeholder = "https://dummyimage.com/300";
-const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }) => {
+const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp,currencyOpt }) => {
     var id = ""
     var token = ""
     const dispatch = useDispatch();
@@ -30,12 +30,20 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
 
     }, [settings?.currencyOption, currencyProp])
 
+    useEffect(() => {
+      if(currencyOpt){
+        currencySetter(currencyOpt.currency_options.currency,setCurrency)
+        setdecimal(currencyOpt.currency_options.number_of_decimals)
+      }
+    }, [currencyOpt])
+    
 
     if (session.status === "authenticated") {
         id = session.data.user.accessToken.customer._id
         token = session.data.user.accessToken.token
     }
-    const ProductAdd = async (product) => {
+    const ProductAdd = async (e,product) => {
+        e.stopPropagation();
         let quantity = 1
         let href = '/shopcart'
         if (session.status === "authenticated") {
@@ -105,7 +113,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
         <section className="product-cart-section" >
             <Container style={{ padding: '0' }}>
                 {!hidetitle ? <div>
-                    <h4 className="theme-color my-5">{titleShow ? titleShow : "On Sale"} <span className="text-black">Product</span></h4>
+                    <h4 className="theme-color my-5">{titleShow ? capitalize(titleShow) : "On Sale"} <span className="text-black">Products</span></h4>
                 </div>
                     : null}
                 <div>
@@ -126,7 +134,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                                 />
                                             </div>
                                             <div className="on-sale-product-card-body">
-                                                {product?.pricing?.sellprice > 0 && product?.pricing?.sellprice < product?.pricing?.price &&  ((100 /product?.pricing?.price)*(product?.pricing?.price - product?.pricing?.sellprice))>0  ? (<div className="save-price">
+                                                {isDiscount(product) ? (<div className="save-price">
                                                     <span className="percantage-save">
                                                         {calculateDiscount(product?.pricing?.price, product?.pricing?.sellprice)}
                                                     </span>
@@ -177,7 +185,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                                             </Tooltip>
                                                         }
                                                     >
-                                                        <div className="add-to-cart"> <a className="cart-icon" onClick={() => ProductAdd(product)}>
+                                                        <div className="add-to-cart"> <a className="cart-icon" onClick={(e) => ProductAdd(e,product)}>
                                                             <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
                                                         </a>
                                                         </div>

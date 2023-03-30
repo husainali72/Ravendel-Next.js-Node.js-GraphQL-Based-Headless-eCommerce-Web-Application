@@ -15,6 +15,7 @@ import { GET_CART_ITEM_QUERY } from "../../queries/cartquery";
 import { query, mutation } from "../../utills/helpers";
 import { useRouter } from "next/router";
 import { useSession, getSession } from 'next-auth/react';
+import { capitalize } from 'lodash';
 
 
 const Profile = ({ customeraddres }) => {
@@ -40,6 +41,7 @@ const Profile = ({ customeraddres }) => {
 
     const [customeraddress, setCustomerAddress] = useState(customeraddres)
     const [customerOrder, setCustomerOrder] = useState({})
+    const [ToggleEdit, setToggleEdit] = useState(false)
     var id = ""
     var token = ""
 
@@ -104,7 +106,6 @@ const Profile = ({ customeraddres }) => {
 
     }
 
-
     return (
         <>
             <PageTitle title={"Account"} />
@@ -115,29 +116,27 @@ const Profile = ({ customeraddres }) => {
                 {session.status === "authenticated" ?
                     (
                         <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
-                            <Tab eventKey="profile" title="Profile">
-                                <Link href={`/account/${customeraddress?.id}`}>
+                            <Tab className='my-3' eventKey="profile" title="Profile">
+                                {/* <Link href={`/account/${customeraddress?.id}`}>
                                     <Button>edit</Button>
-                                </Link>
-                                <AccountSettings
+                                </Link> */}
+                                {ToggleEdit && <AccountSettings
+                                    setToggleEdit={setToggleEdit}
                                     accountDetailInfo={customeraddress}
                                     getcustomer={getcustomer}
                                     refreshData={refreshData}
                                     token={token}
-                                />
-                                <Card style={{ width: "25rem" }}>
-                                    <ListGroup variant="flush">
-                                        <ListGroup.Item>firstname :{customeraddress?.first_name}</ListGroup.Item>
-                                        <ListGroup.Item> lastname :{customeraddress?.last_name}</ListGroup.Item>
-                                        <ListGroup.Item>email : {customeraddress?.email}</ListGroup.Item>
-                                        <ListGroup.Item>company : {customeraddress?.company}</ListGroup.Item>
-                                        <ListGroup.Item>phone: {customeraddress?.phone}</ListGroup.Item>
+                                />}
+                                {!ToggleEdit && <Card className='box-shadow w-50 pt-2' >
+                                    <ListGroup className='profile-list' variant="flush">
+                                        <ListGroup.Item><span><strong>Firstname</strong></span>  <span>{capitalize(customeraddress?.first_name)}</span></ListGroup.Item>
+                                        <ListGroup.Item><span><strong> Lastname</strong></span>  <span>{capitalize(customeraddress?.last_name)}</span></ListGroup.Item>
+                                        <ListGroup.Item><span><strong>Email</strong></span>  <span>{capitalize(customeraddress?.email)}</span></ListGroup.Item>
+                                        <ListGroup.Item><span><strong>Company</strong></span>  <span>{capitalize(customeraddress?.company)}</span></ListGroup.Item>
+                                        <ListGroup.Item><span><strong>Phone</strong></span>  <span>{capitalize(customeraddress?.phone)}</span></ListGroup.Item>
                                     </ListGroup>
-                                    <Link href={`/account/${customeraddress?.id}`}>
-                                        <Button>edit</Button>
-                                    </Link>
-
-                                </Card>
+                                    <Button onClick={() => setToggleEdit(!ToggleEdit)} className='me-0'>Edit User</Button>
+                                </Card>}
                             </Tab>
                             <Tab eventKey="orders" title="Orders">
                                 {customerOrder && customerOrder?.length > 0 ? customerOrder.map((order, index) => (

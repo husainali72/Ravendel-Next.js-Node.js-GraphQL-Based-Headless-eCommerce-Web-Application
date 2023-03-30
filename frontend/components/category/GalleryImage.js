@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Slider from "react-slick";
 import { GlassMagnifier } from "react-image-magnifiers";
-import { currencySetter, getImage, getPrice,mutation } from "../../utills/helpers";
+import { currencySetter, getImage, getPrice, isDiscount, mutation } from "../../utills/helpers";
 import Carousel from 'react-bootstrap/Carousel'
 import StarRating from "../../components/breadcrumb/rating";
 import { addToCart } from "../../redux/actions/cartAction";
@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import calculateDiscount from "../../utills/calculateDiscount";
 import { ADD_TO_CART_QUERY, GET_USER_CART, UPDATE_CART_PRODUCT } from "../../queries/cartquery";
 import { query } from "../../utills/helpers";
+import CheckZipcode from "../account/component/CheckZipcode";
 var placeholder = "https://dummyimage.com/300";
 const GalleryImagesComponents = (props) => {
     var id = ""
@@ -18,24 +19,24 @@ const GalleryImagesComponents = (props) => {
     const dispatch = useDispatch();
     const session = useSession()
     const router = useRouter();
-    const { singleproducts,stockClass ,setStockClass, currency,lowStockThreshold,outOfStockVisibility,outOfStockThreshold,decimal } = props;
-    const [Lable,setLable] = useState("In Stock")
+    const { singleproducts, stockClass, setStockClass, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal } = props;
+    const [Lable, setLable] = useState("In Stock")
     useEffect(() => {
-        if(singleproducts.quantity <= lowStockThreshold){
+        if (singleproducts.quantity <= lowStockThreshold) {
             setStockClass("low-stock")
             setLable("Low Stock")
         }
-        if(singleproducts.quantity <= outOfStockThreshold){
+        if (singleproducts.quantity <= outOfStockThreshold) {
             setStockClass("out-of-stock")
             setLable("Out Of Stock")
         }
-        if(singleproducts.quantity > lowStockThreshold){
+        if (singleproducts.quantity > lowStockThreshold) {
             setStockClass("in-stock")
             setLable("In Stock")
         }
-    }, [singleproducts.quantity,lowStockThreshold,outOfStockThreshold])
+    }, [singleproducts.quantity, lowStockThreshold, outOfStockThreshold])
 
-     if (session.status === "authenticated") {
+    if (session.status === "authenticated") {
         id = session?.data?.user?.accessToken?.customer?._id
         token = session?.data?.user?.accessToken?.token
     }
@@ -74,10 +75,12 @@ const GalleryImagesComponents = (props) => {
                         let Cart = inCartProducts.map(item => {
                             return {
                                 product_id: item?.product_id,
-                                qty: item.product_id === product._id ? item.qty + quantity :item.qty,
+                                qty: item.product_id === product._id ? item.qty + quantity : item.qty,
                                 product_title: item?.product_title,
                                 product_image: item?.product_image,
-                                product_price: item?.product_price
+                                product_price: item?.product_price,
+                                shipping_class: product?.shipping?.shipping_class,
+                                tax_class: product?.tax_class
                             }
                         })
                         let variables = {
@@ -92,14 +95,16 @@ const GalleryImagesComponents = (props) => {
                 })
                 if (!productInCart) {
                     let variables = {
-                        total: product?.pricing?.sellprice  * quantity || product?.pricing?.price  * quantity,
+                        total: product?.pricing?.sellprice * quantity || product?.pricing?.price * quantity,
                         user_id: id,
                         product_id: product?._id,
                         qty: quantity,
                         product_title: product?.name,
                         product_image: product?.feature_image?.original,
-                        product_price: product?.pricing?.sellprice || product?.pricing?.price
-                    } 
+                        product_price: product?.pricing?.sellprice || product?.pricing?.price,
+                        shipping_class: product?.shipping?.shipping_class,
+                        tax_class: product?.tax_class
+                    }
                     mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
                         router.push("/shopcart")
                         dispatch(addToCart(product))
@@ -148,7 +153,7 @@ const GalleryImagesComponents = (props) => {
                         <h2>{singleproducts.name}</h2>
                         <div className="product-detail-rating">
                             <div className="pro-details-brand">
-                                <span> Category: {singleproducts.categoryId.map(item => <span>{item.name}</span>)}</span>
+                                <span> Category: {singleproducts.categoryId.map((item, index) => <span>{index < singleproducts.categoryId.length - 1 ? (item.name + ", ") : item.name}</span>)}</span>
                             </div>
                             <div className="pro-details-rating">
                                 <StarRating singleproducts={singleproducts} stars={singleproducts?.rating} />
@@ -167,7 +172,7 @@ const GalleryImagesComponents = (props) => {
                                             {currency}{" "}{getPrice(singleproducts?.pricing?.price, decimal)}
                                         </strong>
                                     )}</span>
-                                {singleproducts?.pricing?.sellprice && singleproducts?.pricing?.sellprice < singleproducts?.pricing?.price  ? <span
+                                {singleproducts?.pricing?.sellprice && singleproducts?.pricing?.sellprice < singleproducts?.pricing?.price ? <span
                                     className={
                                         singleproducts?.pricing?.sellprice ? "has-sale-price mx-2" : ""
                                     } style={{ fontSize: "17px" }}
@@ -176,17 +181,22 @@ const GalleryImagesComponents = (props) => {
                                 </span>
                                     : null}
                                 <span className=" mx-2">
-                                    {((100 /singleproducts?.pricing?.price)*(singleproducts?.pricing?.price - singleproducts?.pricing?.sellprice)) > 0 && calculateDiscount(singleproducts?.pricing?.price, singleproducts?.pricing?.sellprice)}
+                                    {isDiscount(singleproducts) && calculateDiscount(singleproducts?.pricing?.price, singleproducts?.pricing?.sellprice)}
                                 </span>
                             </div>
                         </div>
                         <div className="short-desc mb-30">
                             <p> {singleproducts?.short_description}</p>
                         </div>
+                        {Lable !== "Out Of Stock" && <button type="button"
+                            className="btn btn-success button button-add-to-cart"
+                            style={{ marginTop: 12, backgroundColor: "#088178" }}
+                            onClick={() => addToCartProduct(singleproducts)}>Add to Cart</button>}
+                        <CheckZipcode />
                         {singleproducts?.custom_field && singleproducts.custom_field?.length > 0 ? (
                             <>
 
-                                {singleproducts?.custom_field?.map(field => (<div>
+                                {singleproducts?.custom_field?.map(field => (<div className="product-attributes">
                                     <ul className="product-meta font-xs color-grey mt-50">
                                         <p >
                                             {`${field.key} - ${' '}`} <strong> {field.value}</strong>
@@ -195,10 +205,6 @@ const GalleryImagesComponents = (props) => {
                                 </div>))}
                             </>
                         ) : null}
-                        {Lable !== "Out Of Stock" && <button type="button"
-                            className="btn btn-success button button-add-to-cart"
-                            style={{ marginTop: 12, backgroundColor: "#088178" }}
-                            onClick={() => addToCartProduct(singleproducts)}>Add to Cart</button>}
 
                         <ul className="product-meta font-xs color-grey mt-50">
                             <p className="">SKU: {singleproducts?.sku}</p>

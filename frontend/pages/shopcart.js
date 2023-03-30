@@ -70,7 +70,8 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                             quantity: parseInt(cart?.qty),
                             name: originalProduct?.name,
                             pricing: originalProduct?.pricing,
-                            feature_image: originalProduct?.feature_image
+                            feature_image: originalProduct?.feature_image,
+                            url: originalProduct?.url
                         }
                         cartitems2.push(cartProduct);
                     })
@@ -101,7 +102,6 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                 },
                 body: JSON.stringify(cartItems),
             });
-            console.log('data', response)
             const data = await response.json();
 
             // window.location.href = data.url
@@ -130,7 +130,10 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
             })
         }
-
+        else{
+            dispatch(RemoveAllCartItemsAction([]))
+        }
+        
         localStorage.setItem("cart", JSON.stringify([]))
     }
 

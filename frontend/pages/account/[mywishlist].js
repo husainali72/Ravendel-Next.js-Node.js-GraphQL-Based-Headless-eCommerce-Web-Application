@@ -194,11 +194,11 @@ const MyWishList = ({ id, customeraddres }) => {
                 </form>
                 <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
                     <Tab eventKey="profile" title="Profile">
-                        <AccountSettings
+                        {/* <AccountSettings
                             accountDetailInfo={accountDetails}
                             token={token}
                             refreshData={refreshData}
-                        />
+                        /> */}
                         <Card>
                             <ListGroup variant="flush">
                                 <ListGroup.Item>firstname :{customeraddres?.first_name}</ListGroup.Item>
