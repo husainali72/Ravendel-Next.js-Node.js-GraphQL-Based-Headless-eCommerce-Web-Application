@@ -545,86 +545,83 @@ const duplicateData = async(args, model, updateId) => {
 }
 module.exports.duplicateData = duplicateData
 
-const subTotalDetailsEntry = async(couponCode, couponModel, shippingModel, taxModel) => {
+const subTotalDetailsEntry = async(data, couponModel, shippingModel, taxModel) => {
   const subTotalDetails = {}
   // assign shipping_name
-  let shipping = await shippingModel.findOne({})
-  shipping = shipping.shipping_class.filter(shipClass => {
-    if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) return subTotalDetails.shipping_name = shipClass.name
-  })
+  // let shipping = await shippingModel.findOne({})
+  // shipping.shipping_class.filter(shipClass => {
+  //   if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) subTotalDetails.shipping_name = shipClass.name
+  //   else subTotalDetails.shipping_name = "None"
+  // })
   // assign tax_name
-  let tax = await taxModel.findOne({})
-  tax = tax.tax_class.filter(taxClass => {
-    if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return subTotalDetails.tax_name = taxClass.name
-  })
+  // let tax = await taxModel.findOne({})
+  // tax.tax_class.filter(taxClass => {
+  //   if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) subTotalDetails.tax_name = taxClass.name
+  //   else subTotalDetails.tax_name = "None"
+  // })
   // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: {$regex: `${couponCode}`, $options: "i"} })
+  const coupon = await couponModel.findOne({code: {$regex: `${data.coupon_code}`, $options: "i"} })
   if(!coupon) {
     subTotalDetails.coupon_code = "None"
     subTotalDetails.coupon_type = ""
     subTotalDetails.coupon_value = 0
   } else {
-    subTotalDetails.coupon_code = couponCode
+    subTotalDetails.coupon_code = coupon.code
     subTotalDetails.coupon_type = coupon.discount_type
     subTotalDetails.coupon_value = coupon.discount_value
   } 
+  subTotalDetails.shipping_name = "Shipping"
+  subTotalDetails.tax_name = "Tax"
   return subTotalDetails
 }
 module.exports.subTotalDetailsEntry = subTotalDetailsEntry
 
-const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingModel, taxModel) => {
-  const subTotalSummary = []
+const subTotalSummaryEntry = async(data, couponModel, shippingModel, taxModel) => {
+  const subTotalSummary = {}
   let orderSubTotal = 0, orderGrandTotal = 0;
-  let shippingValue, taxValue, couponValue, couponType;
-  // assign shipping_value
-  let shipping = await shippingModel.findOne({})
-  shipping = shipping.shipping_class.filter(shipClass => {
-    if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) return shippingValue = shipClass.amount
-    else return shippingValue = 0
-  })
-  // assign tax_value
-  let tax = await taxModel.findOne({})
-  tax = tax.tax_class.filter(taxClass => {
-    if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return taxValue = taxClass.percentage
-    else return taxValue = 0
-  })
-  // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: {$regex: `${couponCode}`, $options: "i"} })
+  let shippingAmount = 0, taxAmount = 0, couponType, couponAmount = Number(data.discount_amount);
+  // get shipping class array and tax class array
+  let shippingClasses = await shippingModel.findOne()
+  shippingClasses = shippingClasses.shipping_class
+  let taxClasses = await taxModel.findOne()
+  taxClasses = taxClasses.tax_class
+  // assign couponType
+  const coupon = await couponModel.findOne({code: {$regex: `${data.coupon_code}`, $options: "i"} })
   if(!coupon) {
     couponType = ""
-    couponValue = 0
   } else {
     couponType = coupon.discount_type
-    couponValue = coupon.discount_value
-  } 
-  // assign total and subtotal for individual product
-  products.map(product=>{
+  }
+  for(let product of data.products){
     // console.log(product)
-    let subTotalSummaryItem = {}
-    let subTotal, taxCalc, shippingCalc, couponCalc;
-    subTotalSummaryItem.coupon_type = couponType
-    subTotalSummaryItem.coupon_value = couponValue
-    subTotalSummaryItem.shipping_value = shippingValue
-    subTotalSummaryItem.tax_value = taxValue
-    subTotal = product.cost * product.qty
-    subTotalSummaryItem.sub_total = subTotal
-    // calculate tax
-    taxCalc = taxValue !== 0 ? subTotal*taxValue/100 : 0
-    // calculate shipping
-    shippingCalc = shippingValue !== 0 ? subTotal+shippingValue : 0
-    // calculate coupon
-    if(!couponType || !couponValue) couponCalc = 0
-    else if(couponType === "precantage-discount") couponCalc = couponValue !== 0 ? subTotal*couponValue/100 : 0
-    else if(couponType === "amount-discount") couponCalc = couponValue !== 0 ? couponValue : 0
-    // add tax add shipping subtract coupon
-    subTotalSummaryItem.total = subTotal + taxCalc + shippingCalc - couponCalc
-    // add subtotal value for order subtotal
-    orderSubTotal += subTotal
-    // add grandtotal value for order grandtotal
-    orderGrandTotal += subTotalSummaryItem.total
-    // push item to orderSummary array
-    subTotalSummary.push(subTotalSummaryItem)
-  })
+    let shippingValue, taxValue;
+    productTotal = product.cost * product.qty
+    for(let shippingClass of shippingClasses){
+      shippingClass._id.toString() === product.shipping_class.toString() ?
+        shippingValue = shippingClass.amount :
+        shippingValue = 0
+    }
+    for(let taxClass of taxClasses){
+      taxClass._id.toString() === product.tax_class.toString() ?
+        taxValue = (taxClass.percentage / 100 * productTotal) :
+        taxValue = 0
+    }
+    // console.log(shippingValue, taxValue)
+    orderSubTotal += productTotal
+    orderGrandTotal += productTotal + shippingValue + taxValue
+    
+    shippingAmount += shippingValue
+    taxAmount += taxValue
+    // console.log(shippingAmount, taxAmount, orderSubTotal, orderGrandTotal)
+  }
+  orderGrandTotal -= couponAmount
+  // console.log(orderGrandTotal)
+  subTotalSummary.coupon_type = couponType
+  subTotalSummary.shipping_value = shippingAmount
+  subTotalSummary.tax_value = taxAmount
+  subTotalSummary.coupon_value = couponAmount
+  subTotalSummary.sub_total = orderSubTotal
+  subTotalSummary.total = orderGrandTotal
   return {
     subTotalSummary,
     orderSubTotal,

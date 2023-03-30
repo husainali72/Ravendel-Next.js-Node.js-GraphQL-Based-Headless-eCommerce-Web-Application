@@ -34,6 +34,14 @@ const CartSchema = new Schema({
       total: {
         type: Number,
         required: true
+      },
+      shipping_class: {
+        type: Schema.ObjectId,
+        required: true
+      },
+      tax_class: {
+        type: Schema.ObjectId,
+        required: true
       }
     }
   ],

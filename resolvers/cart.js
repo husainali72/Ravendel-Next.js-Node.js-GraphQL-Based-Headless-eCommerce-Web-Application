@@ -64,7 +64,7 @@ module.exports = {
         let date = getdate('2');
         if(!coupon){
           calculated.total_coupon = 0.0;
-          calculated.message = 'Invalid coupon codeeee';
+          calculated.message = 'Invalid coupon code';
         }else{
           // console.log('expiredate',coupon.expire);
           if(coupon.expire >= date){

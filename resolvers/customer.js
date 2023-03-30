@@ -55,7 +55,7 @@ module.exports = {
         password: args.password,
       };
       let validation = ["first_name", "last_name", "email", "password"];
-      const duplicate = await duplicateData({email: args.email}, Customer)
+      const duplicate = await duplicateData({email: {$regex: `${args.email}`, $options: "i"}}, Customer)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
       return await CREATE_FUNC(
         id,
@@ -78,7 +78,7 @@ module.exports = {
         updated: Date.now(),
       };
       let validation = ["first_name", "last_name", "email"];
-      const duplicate = await duplicateData({email: args.email}, Customer, args.id)
+      const duplicate = await duplicateData({email: {$regex: `${args.email}`, $options: "i"}}, Customer, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
       return await UPDATE_FUNC(
         id,

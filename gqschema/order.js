@@ -10,7 +10,7 @@ module.exports = gql`
     billing: customObject
     products: customArray
     sub_total_details: customObject
-    sub_total_summary: customArray
+    sub_total_summary: customObject
     date: Date
     updated: Date
     subtotal: String
@@ -51,7 +51,7 @@ module.exports = gql`
       shipping: customObject
       products: customArray
       sub_total_details: customObject
-      sub_total_summary: customArray
+      sub_total_summary: customObject
       subtotal: String
       shipping_amount: String
       tax_amount: String

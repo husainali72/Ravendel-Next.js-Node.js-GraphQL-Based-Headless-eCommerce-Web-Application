@@ -125,7 +125,7 @@ module.exports = {
       };
       let path = "/assets/images/blog/";
       let validation = ["title", "status"];
-      const duplicate = await duplicateData({title: args.title}, Blog)
+      const duplicate = await duplicateData({title: {$regex: `${args.title}`, $options: "i"}}, Blog)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Title", false);
       return await CREATE_FUNC(
         user.id,
@@ -158,7 +158,7 @@ module.exports = {
         updated: Date.now(),
       };
       let validation = ["title", "status"];
-      const duplicate = await duplicateData({title: args.title}, Blog, args.id)
+      const duplicate = await duplicateData({title: {$regex: `${args.title}`, $options: "i"}}, Blog, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Title", false);
       return await UPDATE_FUNC(
         id,
@@ -182,7 +182,7 @@ module.exports = {
         url: url,
       };
       let validation = ["name"];
-      const duplicate = await duplicateData({name: args.name}, BlogTag)
+      const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, BlogTag)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Tag", false);
       return await CREATE_FUNC(
         user.id,
@@ -202,7 +202,7 @@ module.exports = {
         updated: Date.now(),
       }
       let validation = ["name"];
-      const duplicate = await duplicateData({name: args.name}, BlogTag, args.id)
+      const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, BlogTag, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Tag", false);
       return await UPDATE_FUNC(
         id,
