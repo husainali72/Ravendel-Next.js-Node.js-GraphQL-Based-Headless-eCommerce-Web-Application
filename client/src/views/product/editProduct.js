@@ -118,9 +118,9 @@ const EditProductComponent = ({ params }) => {
 
   useEffect(() => {
     if (editMode) {
-    dispatch(productAction(Product_id));
-    dispatch(brandsAction());
-    dispatch(categoriesAction());
+      dispatch(productAction(Product_id));
+      dispatch(brandsAction());
+      dispatch(categoriesAction());
     }
   }, []);
 
@@ -130,55 +130,58 @@ const EditProductComponent = ({ params }) => {
 
   useEffect(() => {
     if (editMode) {
-    if (!isEmpty(get(productState, "product"))) {
-      if (!isEmpty(productState.product)) {
-        let defaultBrand = {};
+      if (!isEmpty(get(productState, "product"))) {
+        if (!isEmpty(productState.product)) {
+          let defaultBrand = {};
           setTaxClass(productState.product.tax_class)
-        if (productState.product.brand) {
-          if (!isEmpty(get(brandState, "brands"))) {
-            for (let i in brandState.brands) {
+          if (productState.product.brand) {
+            if (!isEmpty(get(brandState, "brands"))) {
+              for (let i in brandState.brands) {
 
-              if (brandState.brands[i].id === productState.product.brand.id) {
-                defaultBrand = {
-                  value: brandState.brands[i].id,
-                  label: brandState.brands[i].name,
-                };
-                break;
+                if (brandState.brands[i].id === productState.product.brand.id) {
+                  defaultBrand = {
+                    value: brandState.brands[i].id,
+                    label: brandState.brands[i].name,
+                  };
+                  break;
+                }
               }
             }
           }
-        }
-        setProduct({
-          ...product,
-          ...productState.product,
-          categoryId: productState.product.categoryId.map((cat) => cat.id),
-          brand: defaultBrand || "",
-        });
-        if (productState.product.feature_image) {
-          setfeatureImage(
-            bucketBaseURL + productState.product.feature_image
-          );
-        } else {
-          setfeatureImage(
-            NoImagePlaceHolder
-          );
+          setProduct({
+            ...product,
+            ...productState.product,
+            categoryId: productState.product.categoryId.map((cat) => cat.id),
+            brand: defaultBrand || "",
+          });
+          if (productState.product.feature_image) {
+            setfeatureImage(
+              bucketBaseURL + productState.product.feature_image
+            );
+          } else {
+            setfeatureImage(
+              NoImagePlaceHolder
+            );
+          }
         }
       }
-    }
-   } else {
+    } else {
       setProduct(defaultobj)
       setfeatureImage(null)
     }
-  }, [get(productState, "product"),editMode]);
+  }, [get(productState, "product"), editMode]);
 
   const addUpdateProduct = (e) => {
     product.tax_class = taxClass
+    e.preventDefault();
     if (editMode) {
       product.update_gallery_image = gallery
+    } else {
+      product.gallery_image = gallery
     }
-    e.preventDefault();
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     let Errors = validatenested("pricing", ["price"], product);
+    let customFieldErrors = validatenested("custom_field", [{ key: "value", title: 'value' }, { key: "key", title: 'Name' },], product);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -189,7 +192,7 @@ const EditProductComponent = ({ params }) => {
         },
       });
     }
-   else if (!isEmpty(Errors)) {
+    else if (!isEmpty(Errors)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -199,16 +202,27 @@ const EditProductComponent = ({ params }) => {
         },
       });
     }
-   else {
-     if (editMode) {
-      product.combinations = combination;
-      dispatch(productUpdateAction(product, navigate));
+    else if (!isEmpty(customFieldErrors)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: customFieldErrors,
+          error: true,
+        },
+      });
     }
     else {
-      product.combinations = combination;
-      dispatch(productAddAction(product, navigate));
-    
-    }}
+      if (editMode) {
+        product.combinations = combination;
+        dispatch(productUpdateAction(product, navigate));
+      }
+      else {
+        product.combinations = combination;
+        dispatch(productAddAction(product, navigate));
+
+      }
+    }
   };
 
   const handleChange = (e) => {
@@ -309,20 +323,20 @@ const EditProductComponent = ({ params }) => {
                 />
               </Box>
 
-                {/* ===================Url=================== */}
-                <Box component="div" mb={2}>
-                  <URLComponent
-                    url={product.url}
-                    onInputChange={(updatedUrl) => {
-                      setProduct({
-                        ...product,
-                        url: updatedUrl,
-                      });
-                    }}
-                    pageUrl="product"
-                    tableUrl="Product"
-                  />
-                </Box>
+              {/* ===================Url=================== */}
+              <Box component="div" mb={2}>
+                <URLComponent
+                  url={product.url}
+                  onInputChange={(updatedUrl) => {
+                    setProduct({
+                      ...product,
+                      url: updatedUrl,
+                    });
+                  }}
+                  pageUrl="product"
+                  tableUrl="Product"
+                />
+              </Box>
 
               {/* ===================Description=================== */}
               <Box component="div">
@@ -348,364 +362,363 @@ const EditProductComponent = ({ params }) => {
                     setProduct({ ...product, categoryId: items });
                   }}
                 />}
-              </CardBlocks>
-              {/* ===================Pricing=================== */}
-              <CardBlocks title="Pricing">
-                <Grid container spacing={3}>
-                  <Grid item md={4}>
-                    <TextField
-                      label="Price"
-                      name="price"
-                      variant="outlined"
-                      fullWidth
-                      type="number"
+            </CardBlocks>
+            {/* ===================Pricing=================== */}
+            <CardBlocks title="Pricing">
+              <Grid container spacing={3}>
+                <Grid item md={4}>
+                  <TextField
+                    label="Price"
+                    name="price"
+                    variant="outlined"
+                    fullWidth
+                    type="number"
 
-                      value={product.pricing.price}
-                      onChange={(e) => {
-                        if (e.target.value >= 0) {
-                          e.target.value > product.pricing.sellprice ?
-                            setProduct({
-                              ...product,
-                              pricing: {
-                                ...product.pricing,
-                                price: Number(e.target.value),
-                              },
-                            })
-                            : dispatch({
-                              type: ALERT_SUCCESS,
-                              payload: {
-                                boolean: false,
-                                message: "Sale price couldn't exceed original price",
-                                error: true,
-                              }
-                            })
-                        }
-                      }
-                      }
-                    />
-                  </Grid>
-                  <Grid item md={4}>
-                    <TextField
-                      label="Sale Price"
-                      name="sellprice"
-                      variant="outlined"
-                      fullWidth
-                      type="number"
-
-                      value={product.pricing.sellprice}
-                      onChange={(e) => {
-                        if (e.target.value >= 0) {
-                          e.target.value < product.pricing.price ?
-                            setProduct({
-                              ...product,
-                              pricing: {
-                                ...product.pricing,
-                                sellprice: Number(e.target.value),
-                              },
-                            })
-                            : dispatch({
-                              type: ALERT_SUCCESS,
-                              payload: {
-                                boolean: false,
-                                message: "Sale price couldn't exceed original price",
-                                error: true,
-                              }
-                            })
-                        }
-                      }
-                      }
-                    />
-                  </Grid>
-                </Grid>
-              </CardBlocks>
-              {/* ===================Product Type=================== */}
-              <CardBlocks title="Product Type">
-                <Grid container spacing={3}>
-                  <Grid item md={12}>
-                    <FormGroup row>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            color="primary"
-                            checked={product.product_type.virtual}
-                            name="virtual"
-                            value="virtual"
-                            onChange={(e) =>
-                              setProduct({
-                                ...product,
-                                product_type: {
-                                  ...product.product_type,
-                                  virtual: e.target.checked,
-                                },
-                              })
+                    value={product.pricing.price}
+                    onChange={(e) => {
+                      if (e.target.value >= 0) {
+                        e.target.value > product.pricing.sellprice ?
+                          setProduct({
+                            ...product,
+                            pricing: {
+                              ...product.pricing,
+                              price: Number(e.target.value),
+                            },
+                          })
+                          : dispatch({
+                            type: ALERT_SUCCESS,
+                            payload: {
+                              boolean: false,
+                              message: "Sale price couldn't exceed original price",
+                              error: true,
                             }
-                          />
-                        }
-                        label="Virtual"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            color="primary"
-                            checked={product.product_type.downloadable}
-                            name="downloadable"
-                            value="downloadable"
-                            onChange={(e) =>
-                              setProduct({
-                                ...product,
-                                product_type: {
-                                  ...product.product_type,
-                                  downloadable: e.target.checked,
-                                },
-                              })
-                            }
-                          />
-                        }
-                        label="Downloadable"
-                      />
-                    </FormGroup>
-                  </Grid>
-                </Grid>
-              </CardBlocks>
-              {/* ===================Shipping=================== */}
-              {!product.product_type.virtual && (
-                <CardBlocks title="Shipping">
-                  <ShippingComponent
-                    product={product}
-                    onShippingInputChange={(name, value) => {
-                      setProduct({
-                        ...product,
-                        shipping: {
-                          ...product.shipping,
-                          [name]: value,
-                        },
-                      });
-                    }}
-                    onShippingClassChange={(value) => {
-                      setProduct({
-                        ...product,
-                        shipping: {
-                          ...product.shipping,
-                          shipping_class: value,
-                        },
-                      });
-                    }}
+                          })
+                      }
+                    }
+                    }
                   />
-                </CardBlocks>
-              )}
-              {/* ===================Tax=================== */}
-              <CardBlocks title="Tax">
-                <TaxComponent
-                  product={taxClass}
-                  onTaxInputChange={(value) => {
-                  setTaxClass(value)
-                  }}
-                  onTaxClassChange={(value) => {
-                    setProduct({
-                      ...product,
-                      ['tax_class']: value,
-                    });
-                  }}
-                />
-              </CardBlocks>
-              {/* ===================Inventory=================== */}
-              <CardBlocks title="Inventory">
-                <Grid container spacing={3}>
-                  <Grid item md={4}>
-                    <TextInput
-                      label="SKU"
-                      name="sku"
-                      onChange={handleChange}
-                      value={product.sku}
-                    />
-                  </Grid>
-
-                  <Grid item md={4}>
-                    <TextInput
-                      id="quantity"
-                      label="Quantity"
-                      name="quantity"
-                      onChange={handleChange}
-                      type="number"
-                      value={product.quantity}
-                    />
-                  </Grid>
                 </Grid>
-              </CardBlocks>
-              {/* ===================Attributes=================== */}
-              <CardBlocks title="Attribute selection">
-                <Attributes
-                  product={product}
-                  productStateChange={({ ...product }) =>
-                    setProduct({
-                      ...product,
-                    })
-                  }
-                  onCombinationUpdate={(combination) => {
-                    setCombination(combination);
-                  }}
-                />
-              </CardBlocks>
-              {/* ===================Custom Fields=================== */}
-              <CardBlocks title="Custom Fields">
-                <Grid container spacing={2}>
-                  <Grid item md={12} sm={12} xs={12}>
-                    {product.custom_field.map((field, index) => (
-                      <Box
-                        key={index}
-                        display="flex"
-                        justifyContent="flex-start"
-                        alignItems="center"
-                        className={classes.customFieldRow}
-                      >
-                        <TextField
-                          label="Custom Field Name: *"
-                          variant="outlined"
-                          name="key"
-                          className={classes.customFieldInput}
-                          value={field.key}
-                          onChange={(e) => customChange(e, index)}
-                          size="small"
-                        />
-                        <TextField
-                          label="Custom Field Value: *"
-                          variant="outlined"
-                          name="value"
-                          className={classes.customFieldInput}
-                          value={field.value}
-                          onChange={(e) => customChange(e, index)}
-                          size="small"
-                        />
-                        <Tooltip title="Remove Field" aria-label="remove-field">
-                          <Stack direction="row" spacing={1}>
-                            <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
-                              <CloseIcon />
-                            </IconButton>
-                          </Stack>
-                        </Tooltip>
-                      </Box>
-                    ))}
-                  </Grid>
-                  <Grid item lg={4} md={12}>
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      onClick={addCustomField}
-                    >
-                      + Add Custom Fields
-                    </Button>
-                  </Grid>
+                <Grid item md={4}>
+                  <TextField
+                    label="Sale Price"
+                    name="sellprice"
+                    variant="outlined"
+                    fullWidth
+                    type="number"
+
+                    value={product.pricing.sellprice}
+                    onChange={(e) => {
+                      if (e.target.value >= 0) {
+                        e.target.value < product.pricing.price ?
+                          setProduct({
+                            ...product,
+                            pricing: {
+                              ...product.pricing,
+                              sellprice: Number(e.target.value),
+                            },
+                          })
+                          : dispatch({
+                            type: ALERT_SUCCESS,
+                            payload: {
+                              boolean: false,
+                              message: "Sale price couldn't exceed original price",
+                              error: true,
+                            }
+                          })
+                      }
+                    }
+                    }
+                  />
                 </Grid>
-              </CardBlocks>
-              {/* ===================Short Description=================== */}
-              <CardBlocks title="Short Description">
-                <TextInput
-                  value={product.short_description}
-                  label="Short Description"
-                  name="short_description"
-                  onInputChange={handleChange}
-                  multiline
-                  rows="4"
-                />
-
-              </CardBlocks>
-              {/* ===================Meta Information=================== */}
-              <CardBlocks title="Meta Information">
-                <Grid container spacing={isSmall ? 1 : 2}>
-                  <Grid item md={6} xs={12}>
-                    <TextInput
-                      value={product.meta.title}
-                      label="Meta Title"
-                      name="title"
-                      onInputChange={onMetaChange}
-                    />
-                  </Grid>
-
-                  <Grid item md={6} xs={12}>
-                    <TextInput
-                      value={product.meta.keywords}
-                      label="Meta Keywords"
-                      name="keywords"
-                      onInputChange={onMetaChange}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <TextInput
-                      value={product.meta.description}
-                      label="Meta Description"
-                      name="description"
-                      onInputChange={onMetaChange}
-                      multiline
-                      rows="4"
-                    />
-                  </Grid>
-                </Grid>
-              </CardBlocks>
-            </Grid>
-
-            <Grid item lg={3} md={12}>
-              {/* ===================Status=================== */}
-              <Box component="span">
-                <CardBlocks title="Status" nomargin>
-                  <RadioGroup
-                    value={product.status}
-                    name="status"
-                    onChange={handleChange}
-                    row
-                  >
-                    <FormControlLabel
-                      value="Publish"
-                      control={<StyledRadio />}
-                      label="Publish"
-                    />
-                    <FormControlLabel
-                      value="Draft"
-                      control={<StyledRadio />}
-                      label="Draft"
-                    />
-                  </RadioGroup>
-                </CardBlocks>
-              </Box>
-              {/* ===================Featured Product=================== */}
-              <Box component="span" m={1}>
-                <CardBlocks title="Featured Product">
+              </Grid>
+            </CardBlocks>
+            {/* ===================Product Type=================== */}
+            <CardBlocks title="Product Type">
+              <Grid container spacing={3}>
+                <Grid item md={12}>
                   <FormGroup row>
                     <FormControlLabel
                       control={
                         <Checkbox
                           color="primary"
-                          checked={product.featured_product}
+                          checked={product.product_type.virtual}
+                          name="virtual"
+                          value="virtual"
                           onChange={(e) =>
                             setProduct({
                               ...product,
-                              featured_product: e.target.checked,
+                              product_type: {
+                                ...product.product_type,
+                                virtual: e.target.checked,
+                              },
                             })
                           }
                         />
                       }
-                      label="Featured Product"
+                      label="Virtual"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          color="primary"
+                          checked={product.product_type.downloadable}
+                          name="downloadable"
+                          value="downloadable"
+                          onChange={(e) =>
+                            setProduct({
+                              ...product,
+                              product_type: {
+                                ...product.product_type,
+                                downloadable: e.target.checked,
+                              },
+                            })
+                          }
+                        />
+                      }
+                      label="Downloadable"
                     />
                   </FormGroup>
-                </CardBlocks>
-              </Box>
-              {/* ===================Featured Image=================== */}
-              <Box component="span" m={1}>
-                <CardBlocks title="Featured Image">
-                  <FeaturedImageComponent
-                    image={featureImage}
-                    feautedImageChange={(e) => onFeatureImageChange(e)}
+                </Grid>
+              </Grid>
+            </CardBlocks>
+            {/* ===================Shipping=================== */}
+            {!product.product_type.virtual && (
+              <CardBlocks title="Shipping">
+                <ShippingComponent
+                  product={product}
+                  onShippingInputChange={(name, value) => {
+                    setProduct({
+                      ...product,
+                      shipping: {
+                        ...product.shipping,
+                        [name]: value,
+                      },
+                    });
+                  }}
+                  onShippingClassChange={(value) => {
+                    setProduct({
+                      ...product,
+                      shipping: {
+                        ...product.shipping,
+                        shipping_class: value,
+                      },
+                    });
+                  }}
+                />
+              </CardBlocks>
+            )}
+            {/* ===================Tax=================== */}
+            <CardBlocks title="Tax">
+              <TaxComponent
+                product={taxClass}
+                onTaxInputChange={(value) => {
+                  setTaxClass(value)
+                }}
+                onTaxClassChange={(value) => {
+                  setProduct({
+                    ...product,
+                    ['tax_class']: value,
+                  });
+                }}
+              />
+            </CardBlocks>
+            {/* ===================Inventory=================== */}
+            <CardBlocks title="Inventory">
+              <Grid container spacing={3}>
+                <Grid item md={4}>
+                  <TextInput
+                    label="SKU"
+                    name="sku"
+                    onChange={handleChange}
+                    value={product.sku}
                   />
-                </CardBlocks>
-              </Box>
-              {/* ===================Gallery Images=================== */}
-              <Box component="span" m={1}>
-                <CardBlocks title="Gallery Image">
-                 {editMode ?
+                </Grid>
+
+                <Grid item md={4}>
+                  <TextInput
+                    id="quantity"
+                    label="Quantity"
+                    name="quantity"
+                    onChange={handleChange}
+                    type="number"
+                    value={product.quantity}
+                  />
+                </Grid>
+              </Grid>
+            </CardBlocks>
+            {/* ===================Attributes=================== */}
+            <CardBlocks title="Attribute selection">
+              <Attributes
+                product={product}
+                productStateChange={({ ...product }) =>
+                  setProduct({
+                    ...product,
+                  })
+                }
+                onCombinationUpdate={(combination) => {
+                  setCombination(combination);
+                }}
+              />
+            </CardBlocks>
+            {/* ===================Custom Fields=================== */}
+            <CardBlocks title="Custom Fields">
+              <Grid container spacing={2}>
+                <Grid item md={12} sm={12} xs={12}>
+                  {product.custom_field.map((field, index) => (
+                    <Box
+                      key={index}
+                      display="flex"
+                      justifyContent="flex-start"
+                      alignItems="center"
+                      className={classes.customFieldRow}
+                    >
+                      <TextField
+                        label="Custom Field Name: *"
+                        variant="outlined"
+                        name="key"
+                        className={classes.customFieldInput}
+                        value={field.key}
+                        onChange={(e) => customChange(e, index)}
+                        size="small"
+                      />
+                      <TextField
+                        label="Custom Field Value: *"
+                        variant="outlined"
+                        name="value"
+                        className={classes.customFieldInput}
+                        value={field.value}
+                        onChange={(e) => customChange(e, index)}
+                        size="small"
+                      />
+                      <Tooltip title="Remove Field" aria-label="remove-field">
+                        <Stack direction="row" spacing={1}>
+                          <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
+                            <CloseIcon />
+                          </IconButton>
+                        </Stack>
+                      </Tooltip>
+                    </Box>
+                  ))}
+                </Grid>
+                <Grid item lg={4} md={12}>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={addCustomField}
+                  >
+                    + Add Custom Fields
+                  </Button>
+                </Grid>
+              </Grid>
+            </CardBlocks>
+            {/* ===================Short Description=================== */}
+            <CardBlocks title="Short Description">
+              <TextInput
+                value={product.short_description}
+                label="Short Description"
+                name="short_description"
+                onInputChange={handleChange}
+                multiline
+                rows="4"
+              />
+
+            </CardBlocks>
+            {/* ===================Meta Information=================== */}
+            <CardBlocks title="Meta Information">
+              <Grid container spacing={isSmall ? 1 : 2}>
+                <Grid item md={6} xs={12}>
+                  <TextInput
+                    value={product.meta.title}
+                    label="Meta Title"
+                    name="title"
+                    onInputChange={onMetaChange}
+                  />
+                </Grid>
+
+                <Grid item md={6} xs={12}>
+                  <TextInput
+                    value={product.meta.keywords}
+                    label="Meta Keywords"
+                    name="keywords"
+                    onInputChange={onMetaChange}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextInput
+                    value={product.meta.description}
+                    label="Meta Description"
+                    name="description"
+                    onInputChange={onMetaChange}
+                    multiline
+                    rows="4"
+                  />
+                </Grid>
+              </Grid>
+            </CardBlocks>
+          </Grid>
+
+          <Grid item lg={3} md={12}>
+            {/* ===================Status=================== */}
+            <Box component="span">
+              <CardBlocks title="Status" nomargin>
+                <RadioGroup
+                  value={product.status}
+                  name="status"
+                  onChange={handleChange}
+                  row
+                >
+                  <FormControlLabel
+                    value="Publish"
+                    control={<StyledRadio />}
+                    label="Publish"
+                  />
+                  <FormControlLabel
+                    value="Draft"
+                    control={<StyledRadio />}
+                    label="Draft"
+                  />
+                </RadioGroup>
+              </CardBlocks>
+            </Box>
+            {/* ===================Featured Product=================== */}
+            <Box component="span" m={1}>
+              <CardBlocks title="Featured Product">
+                <FormGroup row>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={product.featured_product}
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            featured_product: e.target.checked,
+                          })
+                        }
+                      />
+                    }
+                    label="Featured Product"
+                  />
+                </FormGroup>
+              </CardBlocks>
+            </Box>
+            {/* ===================Featured Image=================== */}
+            <Box component="span" m={1}>
+              <CardBlocks title="Featured Image">
+                <FeaturedImageComponent
+                  image={featureImage}
+                  feautedImageChange={(e) => onFeatureImageChange(e)}
+                />
+              </CardBlocks>
+            </Box>
+            {/* ===================Gallery Images=================== */}
+            <Box component="span" m={1}>
+              <CardBlocks title="Gallery Image">
+                {editMode ?
                   <EditGalleryImageSelection
                     onAddGalleryImage={(e) => {
-
-                      var imagesRes = [...e.target.files];
+                      var imagesRes = [...e.target.files]
                       var images = [];
                       for (let i in imagesRes) {
                         images.push(URL.createObjectURL(imagesRes[i]));
@@ -726,7 +739,12 @@ const EditProductComponent = ({ params }) => {
                   />
                   : <GalleryImageSelection
                     onAddGalleryImage={(e) => {
-                      setProduct({ ...product, [e.target.name]: e.target.files });
+                      var imagesRes = [...e.target.files];
+                      var images = [];
+                      for (let i in imagesRes) {
+                        images.push(URL.createObjectURL(imagesRes[i]));
+                      }
+                      setGallery([...gallery, ...imagesRes])
                     }}
                     onRemoveGalleryImage={(images) => {
                       setProduct({ ...product, ["gallery_image"]: images });
@@ -734,19 +752,19 @@ const EditProductComponent = ({ params }) => {
                   />}
               </CardBlocks>
             </Box>
-              {/* ===================Brands=================== */}
-              <Box component="span" m={1}>
-                <CardBlocks title="Brands">
-                  <BrandSelection
-                    value={product.brand}
-                    onBrandChange={(brand) => {
-                      setProduct({ ...product, brand });
-                    }}
-                  />
-                </CardBlocks>
-              </Box>
-            </Grid>
+            {/* ===================Brands=================== */}
+            <Box component="span" m={1}>
+              <CardBlocks title="Brands">
+                <BrandSelection
+                  value={product.brand}
+                  onBrandChange={(brand) => {
+                    setProduct({ ...product, brand });
+                  }}
+                />
+              </CardBlocks>
+            </Box>
           </Grid>
+        </Grid>
       </form>
     </>
   );
