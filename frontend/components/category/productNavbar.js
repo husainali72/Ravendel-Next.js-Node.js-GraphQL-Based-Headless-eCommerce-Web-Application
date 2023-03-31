@@ -1,7 +1,7 @@
 import { Container, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Link from "next/link";
 import { useState, useEffect } from 'react';
-import { getImage, getPrice, currencySetter } from '../../utills/helpers';
+import { getImage, getPrice, currencySetter, isDiscount } from '../../utills/helpers';
 import StarRating from "../breadcrumb/rating";
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -49,7 +49,7 @@ export const ProductNav = (props) => {
                         </Link>
                     </div>
                     <div className="on-sale-product-card-body">
-                        {product.pricing.sellprice > 0 && product.pricing.sellprice < product.pricing.price && ((100 /product?.pricing?.price)*(product?.pricing?.price - product?.pricing?.sellprice))>0 ? <div className="save-price">
+                        {isDiscount(product) ? <div className="save-price">
                             <span className="percantage-save">
                                 {calculateDiscount(product?.pricing?.price, product?.pricing?.sellprice)}
                             </span>

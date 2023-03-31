@@ -67,7 +67,6 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
     if (userCart.card_id === undefined) {
       return undefined;
     } else {
-      // console.log('idx var', variables)
       await mutation(UPDATE_CART_PRODUCT, variables, token).then(res => res)
     }
   }
@@ -102,7 +101,7 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
           return(  featureproducts?.length > 0 ?
             <>
               <CustomBanner variant={"fashion-banner"} />
-              <PruductCart productDetail={recentproducts} featureproducts={featureproducts} />
+              <OnSaleProductCard onSaleProduct={featureproducts} titleShow={"featured"} />
             </>
             : null)
         }
@@ -137,7 +136,6 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
       </Head>
-
       {homePageInfo && homePageInfo.slider && homePageInfo.slider?.length > 0 ?
         <Homebanner slider={homePageInfo.slider} Image={Image} />
         : null}

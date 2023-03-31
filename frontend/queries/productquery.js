@@ -156,3 +156,12 @@ export const ADD_REVIEW = gql`
     }
   }
 `;
+
+export const CHECK_ZIPCODE = gql`
+  query($zipcode: String!) {
+    checkZipcode(zipcode: $zipcode) {
+        message
+        success
+    }
+  }
+`;

@@ -49,8 +49,9 @@ const Orderdetail = (props) => {
                 <table className="table checkout-table">
                     <thead>
                         <tr>
-                            <th colSpan="2">Product</th>
-                            <th>Total</th>
+                            <th colSpan="1">Image</th>
+                            <th>Title</th>
+                            <th> Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -145,13 +146,13 @@ const Orderdetail = (props) => {
                                         name="payment_method"
                                         type={type}
                                         value="stripe"
-                                        id={`inline-${type}-1`}
+                                        id={`inline-${type}-2`}
                                     />
                                     <Form.Check
                                         label="Credit Card"
                                         name="payment_method"
                                         type={type}
-                                        id={`inline-${type}-2`}
+                                        id={`inline-${type}-3`}
                                         value="creditCard"
                                     />
                                 </div>

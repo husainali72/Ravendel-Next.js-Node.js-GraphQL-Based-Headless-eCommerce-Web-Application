@@ -98,7 +98,6 @@ export const CheckOut = ({ currencyStore }) => {
     }, [session, session?.data?.user.accessToken.customer.address_book])
 
 
-
     if (session.status === "authenticated") {
         address_book = session?.data?.user.accessToken.customer.address_book
         token = session.data?.user.accessToken.token
@@ -133,6 +132,7 @@ export const CheckOut = ({ currencyStore }) => {
     useEffect(() => {
         currencySetter(currencyOpt, setCurrency);
     }, [])
+    
     
     useEffect(() => {
         if (session.status === "authenticated") {
@@ -177,6 +177,25 @@ export const CheckOut = ({ currencyStore }) => {
         }
         getProducts();
     }, [cartProducts, allProducts]);
+
+    useEffect(() => {
+        const checkCart = async () => {
+            const session2 = await getSession();
+            if (session?.status === "authenticated" || session2 !== null) {
+                setIsLogin(true)
+                let id = session2.user.accessToken.customer._id;
+                let token = session2.user.accessToken.token;
+                let variables = { id: id }
+                mutation(GET_USER_CART, variables).then(res => {
+                    let carts = res?.data?.cartbyUser?.products;
+                    if(carts.length<=0){
+                        router.push("/")
+                    }
+                })
+            }
+        }
+        checkCart();
+    }, []);
     useEffect(() => {
         let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
         let calculate = {
@@ -233,12 +252,19 @@ export const CheckOut = ({ currencyStore }) => {
         setBillingInfo({ ...billingInfo, [name]: value })
     };
 
+    const handleShippingPhone = (name, value) => {
+        setShippingInfo({
+            ...shippingInfo,
+            [name]: value,
+        });
+    };
+
     const shippingAddressToggle = (e) => {
         if (e.target.checked) {
             savedShippingInfo = shippingInfo;
             setShippingInfo(shippingObject);
         } else {
-            setShippingInfo(savedShippingInfo);
+            setShippingInfo(billingInfo);
         }
         setShippingAdd(e.target.checked);
     };
@@ -296,7 +322,9 @@ export const CheckOut = ({ currencyStore }) => {
             }
             else {
                 notify(res.data.calculateCoupon.message)
-
+                if(isCouponApplied){
+                    setIsCouponApplied(false)
+                }
             }
             couponValueGet = true;
             if (!res.data.laoding) {
@@ -404,6 +432,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                     shippingInfo={shippingInfo}
                                                     setShippingInfo={setShippingInfo}
                                                     handlePhoneInput={handlePhoneInput}
+                                                    handleShippingPhone={handleShippingPhone}
                                                     shippingAdd={shippingAdd}
                                                     setShippingAdd={setShippingAdd}
                                                     handleBillingInfo={handleBillingInfo}

@@ -17,7 +17,7 @@ var accountDetailObject = {
     phone: "",
 }
 const AccountSettings = (props) => {
-    const { accountDetailInfo, token, refreshData } = props;
+    const { accountDetailInfo, token, refreshData, setToggleEdit } = props;
     const session = useSession();
     // console.log("accountSession", session);
     const router = useRouter()
@@ -51,9 +51,10 @@ const AccountSettings = (props) => {
 
     return (
         <div>
-            <form onSubmit={updateAccountDetail}>
+            <form className="edit-form" onSubmit={updateAccountDetail}>
                 <Row>
                     <Col>
+                        <label>First Name </label>
                         <input
                             type="text"
                             name="firstname"
@@ -65,6 +66,7 @@ const AccountSettings = (props) => {
                         />
                     </Col>
                     <Col>
+                        <label>Last Name </label>
                         <input
                             type="text"
                             name="lastname"
@@ -76,6 +78,7 @@ const AccountSettings = (props) => {
                         />
                     </Col>
                     <Col>
+                        <label>Company</label>
                         <input
                             type="text"
                             name="company"
@@ -87,6 +90,7 @@ const AccountSettings = (props) => {
                         />
                     </Col>
                     <Col>
+                        <label>Phone</label>
                         <input
                             type="text"
                             name="phone"
@@ -100,6 +104,7 @@ const AccountSettings = (props) => {
                 </Row>
                 <Row style={{ marginTop: "25px" }}>
                     <Col>
+                        <label>Email </label>
                         <input
                             type="text"
                             name="email"
@@ -112,6 +117,7 @@ const AccountSettings = (props) => {
                         />
                     </Col>
                     <Col>
+                        <label>Password </label>
                         <input
                             type="password"
                             name="password"
@@ -123,6 +129,7 @@ const AccountSettings = (props) => {
                         />
                     </Col>
                     <Col>
+                        <label>Confirnm Password </label>
                         <input
                             type="password"
                             name="confirmPassword"
@@ -134,6 +141,7 @@ const AccountSettings = (props) => {
                         />
                     </Col>
                     <Col>
+                        <label>Current Password </label>
                         <input
                             type="password"
                             name="currentpassword"
@@ -145,8 +153,11 @@ const AccountSettings = (props) => {
                         />
                     </Col>
                 </Row>
-                <div className="account-details-button">
-                    <Button type="submit" variant="outline-info">UPDATE DETAILS</Button>{' '}
+                <div className="account-details-button my-4">
+                    <Button onClick={() => setToggleEdit((previous) => !previous)} type="submit" variant="outline-success" size="sm">UPDATE DETAILS</Button>{' '}
+                    <Button className="ms-1" onClick={() => setToggleEdit((previous) => !previous)} variant="danger" size="sm">
+                        Cancel
+                    </Button>
                 </div>
             </form>
 

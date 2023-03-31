@@ -5,7 +5,7 @@ const FeatureBrand = ({brands}) => {
     return (
         <section className="product-cart-section">
             <Container>
-                <h4 className='theme-color mb-5'>Feature <span className='black-color'>Brand</span></h4>
+                <h4 className='theme-color mb-5'>Featured <span className='black-color'>Brands</span></h4>
                 <div className="brand-container">
                         {brands.map((item, i) => ( 
                             <div className="brand-card-container" key={i}>

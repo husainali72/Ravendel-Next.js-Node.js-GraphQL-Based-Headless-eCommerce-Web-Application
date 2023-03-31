@@ -39,13 +39,12 @@ const options = {
     transform
   };
 
-const SingleProduct = ({ recentProducts,singleproducts, productReviews, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
+const SingleProduct = ({ allProduct,recentProducts,singleproducts, productReviews, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
     const router = useRouter();
     const session = useSession()
     const currencyOpt = currencyStore?.currency_options?.currency
     const decimal = currencyStore?.currency_options?.number_of_decimals
     const [currency, setCurrency] = useState("$")
-    const [allProduct, setAllProduct] = useState([])
     const [singleProduct, setSingleProduct] = useState(null);
     const [sliderImages, setSliderImages] = useState([]);
     const [singleProductReview,setSingleProductReview] = useState([])
@@ -58,26 +57,6 @@ const SingleProduct = ({ recentProducts,singleproducts, productReviews, currency
     useEffect(() => {
         currencySetter(currencyOpt,setCurrency);
     }, [])
-    useEffect(() => {
-        getRelatedProducts();
-    }, [singleproducts])
-    const category = singleproducts?.categoryId.map(cat => cat?.id);
-    const productID = singleproducts._id;
-    const getRelatedProducts = async ()=>{  
-        try {
-            const { data: shopproductcategory } = await client.query({
-                query: GET_RELATED_PRODUCTS_QUERY,
-                variables: { category,productID }
-            });
-            recentProducts = shopproductcategory;
-            const productss = shopproductcategory.relatedProducts;
-            setAllProduct(productss)
-        }
-        catch (e) {
-            console.log("ShopProduct Error===", e)
-        }
-    }
-    
 
     useEffect(() => {
         setSingleProductReview(productReviews)
@@ -158,6 +137,7 @@ const SingleProduct = ({ recentProducts,singleproducts, productReviews, currency
                                     onSaleProduct={allProduct}
                                     hidetitle
                                     currencyProp={currency}
+                                    currencyOpt={currencyStore}
                                     decimal={decimal}
                                 />
                             </div>
@@ -234,23 +214,27 @@ export async function getStaticProps({ params }) {
     catch (e) {
         console.log("ShopProduct Error===", e.networkError.result.errors)
     }
-    /* ========================================= get featureProduct ========================================*/
-    // try {
-    //     const { data: shopproductcategory } = await client.query({
-    //         query: GET_RECENT_PRODUCTS_QUERY,
-    //     });
-    //     allProduct = shopproductcategory.recentproducts;
-    // }
-    // catch (e) { 
-    //     console.log("ShopProduct Error===", e)
-    // }
-    //
-    
+    /* ========================================= get Related Products ========================================*/
 
+    const category = singleproducts?.categoryId.map(cat => cat?.id);
+    const productID = singleproducts._id;
+    try {
+        const { data: shopproductcategory } = await client.query({
+            query: GET_RELATED_PRODUCTS_QUERY,
+            variables: { category, productID }
+        });
+        recentProducts = shopproductcategory;
+        allProduct = shopproductcategory.relatedProducts;
+    }
+    catch (e) {
+        console.log("ShopProduct Error===", e)
+    }
+
+    /* ========================================= get Product Reviews ========================================*/
     try {
         const { data: productReviewData } = await client.query({
             query: GET_PRODUCT_REVIEWS,
-            variables : {id}
+            variables: { id }
         })
         productReviews = productReviewData.productwisereview.data;
     }
