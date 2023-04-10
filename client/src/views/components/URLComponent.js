@@ -15,13 +15,13 @@ const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl }) => {
     if (editPremalink) {
       isUrlExist(url);
     }
+
     setEditPermalink(!editPremalink);
   };
 
   const isUrlExist = async (url) => {
     setLoading(true);
-    let updatedUrl = await getUpdatedUrl(tableUrl, url);
-    onInputChange(updatedUrl);
+    onInputChange(url);
     setLoading(false);
   };
 

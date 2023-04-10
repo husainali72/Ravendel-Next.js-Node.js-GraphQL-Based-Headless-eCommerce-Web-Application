@@ -115,7 +115,6 @@ const EditProductComponent = ({ params }) => {
   const [taxClass, setTaxClass] = useState('')
   const [product, setProduct] = useState(defaultobj
   );
-
   useEffect(() => {
     if (editMode) {
       dispatch(productAction(Product_id));
@@ -241,17 +240,11 @@ const EditProductComponent = ({ params }) => {
   };
 
   const isUrlExist = async (url) => {
-    if (editMode) {
-      let updatedUrl = await getUpdatedUrl("Product", url);
-      setProduct({
-        ...product,
-        url: updatedUrl,
-      });
-    } else {
-      setProduct({
-        ...product,
-      });
-    }
+    setProduct({
+      ...product,
+      url: url,
+    });
+
   };
 
   const addCustomField = () => {
@@ -317,7 +310,9 @@ const EditProductComponent = ({ params }) => {
                   name="name"
                   value={product.name}
                   onChange={handleChange}
-                  onBlur={(e) => !product.url && isUrlExist(product.name)}
+                  onBlur={(e) =>
+                    !product.url || product.url !== e.target.value ? isUrlExist(product.name) : null
+                  }
                   variant="outlined"
                   fullWidth
                 />

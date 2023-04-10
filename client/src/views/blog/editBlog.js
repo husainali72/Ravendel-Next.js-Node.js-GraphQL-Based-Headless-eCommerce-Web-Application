@@ -81,6 +81,7 @@ const EditBlogComponenet = ({ params }) => {
   }, []);
 
   useEffect(() => {
+
     if (editBlog) {
       if (!isEmpty(get(blogState, "blog"))) {
         setBlog({ ...blog, ...blogState.blog });
@@ -213,10 +214,9 @@ const EditBlogComponenet = ({ params }) => {
   };
 
   const isUrlExist = async (url) => {
-    let updatedUrl = await getUpdatedUrl("Blog", url);
     setBlog({
       ...blog,
-      url: updatedUrl,
+      url: url,
     });
   };
 

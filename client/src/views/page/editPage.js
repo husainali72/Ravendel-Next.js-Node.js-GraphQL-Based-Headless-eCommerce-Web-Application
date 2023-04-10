@@ -26,6 +26,7 @@ import {
   TextInput,
   StyledRadio,
   CardBlocks,
+  URLComponent,
 } from "../components";
 
 var defaultObj = {
@@ -55,35 +56,33 @@ const EditPageComponent = ({ params }) => {
   const editPage = location.state.editMode
 
   useEffect(() => {
-    if (!editPage){
-    if (pageState.success) {
-      document.forms[0].reset();
-      setPage(defaultObj);
-    }}
+    if (!editPage) {
+      if (pageState.success) {
+        document.forms[0].reset();
+        setPage(defaultObj);
+      }
+    }
     if (pageState.page.content !== undefined) {
       setPage({ ...page, content: pageState.page.content });
     }
   }, [pageState.success, pageState.page.content]);
 
   useEffect(() => {
-    if (!editPage){
-    var slugVal = page.title.replace(/[^A-Z0-9]/gi, "-");
-    setPage({ ...page, url: slugVal.toLowerCase() });
-  }}, [page.title]);
+    if (editPage) {
+      dispatch(pageAction(PAGEID));
+    }
+  }, [params]);
 
   useEffect(() => {
-    if (editPage){
-    dispatch(pageAction(PAGEID));
-  }}, [params]);
-
-  useEffect(() => {
-    if (editPage){
-    if (!isEmpty(get(pageState, "page"))) {
-      setPage({ ...page, ...pageState.page });
-    } 
-  } else {
-    setPage(defaultObj)
-  }}, [get(pageState, "page"), editPage]);
+    if (editPage) {
+      if (!isEmpty(get(pageState, "page"))) {
+        setPage({ ...page, ...pageState.page });
+      }
+    }
+    else {
+      setPage(defaultObj)
+    }
+  }, [get(pageState, "page"), editPage]);
 
   useEffect(() => {
     setloading(get(pageState, "loading"));
@@ -103,18 +102,14 @@ const EditPageComponent = ({ params }) => {
         },
       });
     } else {
-      if (editPage){
-      dispatch(pageUpdateAction(page, navigate));
+      if (editPage) {
+        dispatch(pageUpdateAction(page, navigate));
+      }
+      else {
+        dispatch(pageAddAction(page, navigate));
+      }
     }
-    else {
-      dispatch(pageAddAction(page, navigate));
-    }
-  }
   };
-  useEffect(() => {
-    var slugVal = page.title.replace(/[^A-Z0-9]/gi, "-");
-    setPage({ ...page, url: slugVal.toLowerCase() });
-  }, [page.title]);
   const handleChange = (e) => {
     setPage({ ...page, [e.target.name]: e.target.value });
   };
@@ -129,7 +124,13 @@ const EditPageComponent = ({ params }) => {
       meta: { ...page.meta, [e.target.name]: e.target.value },
     });
   };
+  const isUrlExist = async (url) => {
+    setPage({
+      ...page,
+      url: url,
+    });
 
+  };
   return (
     <>
       <Alert />
@@ -141,7 +142,6 @@ const EditPageComponent = ({ params }) => {
           submitTitle={editPage ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-pages`}
         />
-
         <Grid
           container
           spacing={isSmall ? 2 : 3}
@@ -155,39 +155,28 @@ const EditPageComponent = ({ params }) => {
                   label="Title"
                   name="title"
                   onInputChange={handleChange}
+                  onBlur={(e) => !page.url || page.url !== e.target.value ? isUrlExist(page.title) : null
+                  }
                 />
               </Box>
 
               <Box component="div" mb={2}>
-                {page.title ? (
-                  <span style={{ marginBottom: 10, display: "block" }}>
-                    <strong>Link: </strong>
-                    https://www.google.com/product/
-                    {editPremalink === false && page.url}
-                    {editPremalink === true && (
-                      <input
-                        id="url"
-                        name="url"
-                        value={page.url}
-                        onChange={handleChange}
-                        variant="outlined"
-                        className={classes.editpermalinkInput}
-                      />
-                    )}
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      onClick={changePermalink}
-                      className={classes.editpermalinkInputBtn}
-                      style={{ marginLeft: "20px" }}
-                    >
-                      {editPremalink ? "Ok" : "Edit"}
-                    </Button>
-                  </span>
-                ) : null}
+                <URLComponent
+                  url={page.url}
+                  onInputChange={(updatedUrl) => {
+                    setPage({
+                      ...page,
+                      url: updatedUrl,
+                    });
+                  }}
+                  pageUrl="page"
+                  tableUrl="Page"
+                />
               </Box>
               <Box component="div">
-                <TinymceEditor value={page.content} />
+                <TinymceEditor value={page.content} onEditorChange={(value) =>
+                  setPage({ ...page, ["content"]: value })
+                } />
               </Box>
             </CardBlocks>
 
