@@ -5,8 +5,8 @@ import { onError } from 'apollo-link-error'
 import { useSession } from "next-auth/react"
 import jwt from "next-auth/jwt"
 
-// const httpLink = new createUploadLink({ uri: `https://demo1.ravendel.io/graphql` });
-const httpLink = new createUploadLink({ uri: `http://localhost:8000/graphql` });
+const httpLink = new createUploadLink({ uri: `https://demo1.ravendel.io/graphql` });
+// const httpLink = new createUploadLink({ uri: `http://localhost:8000/graphql` });
 // const httpLink = new createUploadLink({ uri: `http://192.168.1.6:8000/graphql` });
 // const httpLink = new createUploadLink({ uri: `https://ravendel.herokuapp.com/graphql` });
 
