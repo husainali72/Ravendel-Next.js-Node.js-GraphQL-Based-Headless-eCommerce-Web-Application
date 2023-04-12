@@ -10,15 +10,16 @@ import Link from "next/link";
 import { SessionProvider, getSession } from 'next-auth/react'
 import SSRProvider from 'react-bootstrap/SSRProvider';
 import Router from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LoadingSpinner from "../components/breadcrumb/loading"
 // import { getStaticPaths } from './product/[singleproduct]';
 import { useRouter } from 'next/router'
+import TagManager from 'react-gtm-module';
 
 export function MyApp({
   Component,
   pageProps,
-  
+
 }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false);
@@ -28,6 +29,16 @@ export function MyApp({
   Router.events.on("routeChangeComplete", (url) => {
     setLoading(false)
   })
+
+  const tagManagerArgs = {
+    gtmId: 'GTM-XXXX'
+  }
+
+  useEffect(() => {
+    TagManager.initialize(tagManagerArgs)
+  }, [])
+  
+
   return (<>
     <SSRProvider>
       <SessionProvider session={pageProps.session}>
@@ -51,10 +62,10 @@ MyApp.getInitialProps = async (appContext = AppContext) => {
   const session = await getSession({ req: appContext.ctx.req })
   const appProps = await App.getInitialProps(appContext)
   console.log("session", session)
-    return { ...appProps, session }
-  }
+  return { ...appProps, session }
+}
 
- 
+
 
 // export default MyApp;
 

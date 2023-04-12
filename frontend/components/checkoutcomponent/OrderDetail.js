@@ -34,7 +34,15 @@ const Orderdetail = (props) => {
         }
     }, [cart])
     useEffect(() => {
-        let cartItem = cart.map((product) => { return { product_id: product._id, name: product.name, cost: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price, qty: product.quantity } })
+        let cartItem = cart.map((product) => {
+            return {
+                product_id: product._id,
+                name: product.name,
+                cost: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price, qty: product.quantity,
+                tax_class: product?.tax_class,
+                shipping_class: product?.shipping_class
+            }
+        })
         var allData = {
             products: cartItem,
             billing: billingInfo,
@@ -62,7 +70,7 @@ const Orderdetail = (props) => {
                                 <td><i className="ti-check-box font-small text-muted mr-10"></i>
                                     <h5><Link href={"/product/"+cart[i]?.url}><a >{item?.name}</a></Link></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>
-                                <td>{currency}{item.pricing.sellprice ? getPrice(item.pricing.sellprice, decimal) : getPrice(item.pricing.price * item.quantity, decimal)}</td>
+                                <td>{currency}{item?.pricing?.sellprice ? getPrice(item.pricing?.sellprice, decimal) : getPrice(item?.pricing?.price * item?.quantity, decimal)}</td>
                             </tr>
                         ))}
                         {/* <tr>

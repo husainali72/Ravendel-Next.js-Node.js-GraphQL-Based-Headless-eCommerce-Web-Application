@@ -99,6 +99,8 @@ module.exports = gql`
       product_price: Float
       product_image: String
       qty: Int
+      shipping_class : String,
+      tax_class : String
     ): statusSchema
   }
 `;

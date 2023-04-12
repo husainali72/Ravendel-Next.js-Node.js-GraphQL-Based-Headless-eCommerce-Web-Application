@@ -8,7 +8,9 @@ export const ADD_TO_CART_QUERY = gql`
     $product_price:Float,
     $product_image:String,
     $total:Float,
-    $qty:Int
+    $qty:Int,
+    $shipping_class:String,
+    $tax_class:String
         ){
     addToCart(
             total: $total
@@ -17,7 +19,9 @@ export const ADD_TO_CART_QUERY = gql`
             product_title : $product_title,
             product_price : $product_price,
             product_image : $product_image,
-            qty : $qty
+            qty : $qty,
+            shipping_class : $shipping_class,
+            tax_class : $tax_class
             )
             {
               message
