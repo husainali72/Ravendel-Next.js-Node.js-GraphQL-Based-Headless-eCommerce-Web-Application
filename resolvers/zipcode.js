@@ -57,7 +57,7 @@ module.exports = {
           };
         }
         
-        const duplicate = await duplicateData({zipcode: {$regex: `${args.zipcode}`, $options: "i"}}, Zipcode)
+        const duplicate = await duplicateData({zipcode: args.zipcode}, Zipcode)
         if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Zipcode", false);
         
         const newZipcode = new Zipcode({zipcode: args.zipcode})
@@ -81,7 +81,7 @@ module.exports = {
           };
         }
 
-        const duplicate = await duplicateData({zipcode: {$regex: `${args.zipcode}`, $options: "i"}}, Zipcode, args.id)
+        const duplicate = await duplicateData({zipcode: args.zipcode}, Zipcode, args.id)
         if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Zipcode", false);
 
         const zipcode = await Zipcode.findById(args.id)

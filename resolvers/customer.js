@@ -55,7 +55,7 @@ module.exports = {
         password: args.password,
       };
       let validation = ["first_name", "last_name", "email", "password"];
-      const duplicate = await duplicateData({email: {$regex: `${args.email}`, $options: "i"}}, Customer)
+      const duplicate = await duplicateData({email: args.email}, Customer)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
       return await CREATE_FUNC(
         id,
@@ -78,7 +78,7 @@ module.exports = {
         updated: Date.now(),
       };
       let validation = ["first_name", "last_name", "email"];
-      const duplicate = await duplicateData({email: {$regex: `${args.email}`, $options: "i"}}, Customer, args.id)
+      const duplicate = await duplicateData({email: args.email}, Customer, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
       return await UPDATE_FUNC(
         id,
@@ -111,7 +111,7 @@ module.exports = {
     },
     addAddressBook: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "addAddressBook", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Address", false);
       }
       try {
         const errors = _validate(
@@ -133,7 +133,7 @@ module.exports = {
         }
         const customer = await Customer.findById({ _id: args.id });
         if (!customer) {
-          return MESSAGE_RESPONSE("NOT_EXIST", "addAddressBook", false);
+          return MESSAGE_RESPONSE("NOT_EXIST", "Address", false);
         }
 
         if (args.default_address) {
@@ -147,15 +147,15 @@ module.exports = {
         customer.address_book.push(args);
         customer.updated = Date.now();
         await customer.save();
-        return MESSAGE_RESPONSE("AddSuccess", "addAddressBook", true);
+        return MESSAGE_RESPONSE("AddSuccess", "Address", true);
       } catch (error) {
         error = checkError(error);
-        return MESSAGE_RESPONSE("CREATE_ERROR", "addAddressBook", false);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Address", false);
       }
     },
     updateAddressBook: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "addAddressBook", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Address", false);
       }
       try {
         const errors = _validate(
@@ -181,7 +181,7 @@ module.exports = {
         }
         delete args.id;
         if(!customer.address_book.length > 0){
-          return MESSAGE_RESPONSE("NOT_EXIST", "addAddressBook", false);
+          return MESSAGE_RESPONSE("NOT_EXIST", "Address", false);
         }
         customer.address_book = customer.address_book.map((address) => {
           if (args.default_address) {
@@ -195,9 +195,9 @@ module.exports = {
 
         customer.updated = Date.now();
         await customer.save();
-        return MESSAGE_RESPONSE("UpdateSuccess", "addAddressBook", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "Address", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "addAddressBook", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Address", false);
       }
     },
 
@@ -261,7 +261,7 @@ module.exports = {
           }
         }
         await customer.save();
-        return MESSAGE_RESPONSE("DeleteSuccess", "addAddressBook", true);
+        return MESSAGE_RESPONSE("DeleteSuccess", "Address", true);
 
     },
   },

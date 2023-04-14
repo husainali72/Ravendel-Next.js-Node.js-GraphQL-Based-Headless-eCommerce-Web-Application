@@ -51,28 +51,28 @@ module.exports = {
             }
           );
         }
-        return MESSAGE_RESPONSE("UpdateSuccess", "GlobalTax", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "Global Tax", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "GlobalTax", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Global Tax", false);
       }
     },
     updateOptionTax: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "TaxOption", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Tax Option", false);
       }
       try {
         const tax = await Tax.findOne({});
         tax.is_inclusive = args.is_inclusive;
         tax.updated = Date.now();
         await tax.save();
-        return MESSAGE_RESPONSE("UpdateSuccess", "TaxOption", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "Tax Option", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "TaxOption", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Tax Option", false);
       }
     },
     addTaxClass: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "TaxClass", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Tax Class", false);
       }
       try {
         const errors = _validate(["name", "percentage"], args.tax_class);
@@ -94,14 +94,14 @@ module.exports = {
         tax.tax_class.push(args.tax_class);
         tax.updated = Date.now();
         await tax.save();
-        return MESSAGE_RESPONSE("AddSuccess", "TaxClass", true);
+        return MESSAGE_RESPONSE("AddSuccess", "Tax Class", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("CREATE_ERROR", "TaxClass", false);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Tax Class", false);
       }
     },
     updateTaxClass: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "TaxClass", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Tax Class", false);
       }
       try {
         const errors = _validate(["name"], args.tax_class);
@@ -130,14 +130,14 @@ module.exports = {
         // tax.tax_class.push(args.tax_class);
         tax.updated = Date.now();
         await tax.save();
-        return MESSAGE_RESPONSE("UpdateSuccess", "TaxClass", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "Tax Class", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "TaxClass", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Tax Class", false);
       }
     },
     deleteTaxClass: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "TaxClass", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Tax Class", false);
       }
       try {
         const tax = await Tax.findOne({});
@@ -154,9 +154,9 @@ module.exports = {
         tax.tax_class = TaxClass;
         tax.updated = Date.now();
         await tax.save();
-        return MESSAGE_RESPONSE("DELETE", "TaxClass", true);
+        return MESSAGE_RESPONSE("DELETE", "Tax Class", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("DELETE_ERROR", "TaxClass", false);
+        return MESSAGE_RESPONSE("DELETE_ERROR", "Tax Class", false);
       }
     },
   },

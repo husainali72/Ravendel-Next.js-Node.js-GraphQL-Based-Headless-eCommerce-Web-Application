@@ -12,7 +12,7 @@ const {duplicateData,MESSAGE_RESPONSE} = require("../config/helpers")
 module.exports = {
   Query: {
     product_attributes: async (root, args) => {
-      return await GET_ALL_FUNC(ProductAttribute, "ProductAttribute");
+      return await GET_ALL_FUNC(ProductAttribute, "Product Attribute");
     },
 
     productAttribute_pagination: async (
@@ -27,14 +27,14 @@ module.exports = {
         order,
         searchInFields,
         ProductAttribute,
-        "ProductAttributes"
+        "Product Attributes"
       );
     },
     product_attribute: async (root, args) => {
       return await GET_SINGLE_FUNC(
         args.id,
         ProductAttribute,
-        "ProductAttribute"
+        "Product Attribute"
       );
     },
   },
@@ -45,12 +45,12 @@ module.exports = {
         name: args.attribute.name,
         values: args.attribute.values,
       };
-      const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, ProductAttribute)
+      const duplicate = await duplicateData({name: args.name}, ProductAttribute)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Attribute", false);
       let validation = ["name"];
       return await CREATE_FUNC(
         id,
-        "ProductAttribute",
+        "Product Attribute",
         ProductAttribute,
         data,
         args,
@@ -63,20 +63,20 @@ module.exports = {
         name: args.attribute.name,
         values: args.attribute.values,
       };
-      const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, ProductAttribute, args.attribute.id)
+      const duplicate = await duplicateData({name: args.name}, ProductAttribute, args.attribute.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Attribute", false);
       return await UPDATE_FUNC(
         id,
         args.attribute.id,
         ProductAttribute,
-        "ProductAttribute",
+        "Product Attribute",
         data,
         "",
         args
       );
     },
     deleteAttribute: async (root, args, { id }) => {
-      return await DELETE_FUNC(id, args.id, ProductAttribute, "ProductAttribute");
+      return await DELETE_FUNC(id, args.id, ProductAttribute, "Product Attribute");
     },
   },
 };
