@@ -98,7 +98,8 @@ const GalleryImagesComponents = (props) => {
                         qty: quantity,
                         product_title: product?.name,
                         product_image: product?.feature_image?.original,
-                        product_price: product?.pricing?.sellprice || product?.pricing?.price
+                        product_price: product?.pricing?.sellprice || product?.pricing?.price,
+                        product_quantity: product?.quantity
                     } 
                     mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
                         router.push("/shopcart")

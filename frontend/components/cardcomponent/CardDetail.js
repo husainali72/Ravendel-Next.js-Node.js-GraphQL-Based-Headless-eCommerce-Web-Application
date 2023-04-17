@@ -57,7 +57,7 @@ const CartTable = (props) => {
                                             <i className="fas fa-chevron-down" ></i>
                                         </span>
                                         <span className="btn btn-info max-button-width-load">
-                                            {i === loadingIndex && isQuantityBtnLoading ? <Spinner style={{ paddingLeft: '4px' }} animation="border" size="sm" /> : `${item.quantity} ${" "}` || quantity}
+                                            {item?.quantity}
                                         </span>
                                         <span className={`btn btn-primary btn-more ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
                                             IncreaseQuantity(item)

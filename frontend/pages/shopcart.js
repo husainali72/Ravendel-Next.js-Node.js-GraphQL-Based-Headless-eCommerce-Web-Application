@@ -135,12 +135,11 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     }
 
     const IncreaseQuantity = async (item) => {
-        setIsQuantityBtnLoading(true)
-        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id ? (itemm.quantity += 1) : itemm.qyantity))
+        const prodct = allProducts.products.find(pro => pro._id === item._id)
+        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id ? (prodct?.quantity > item.quantity && (itemm.quantity += 1)) : itemm.quantity))
         setQuantity(item.quantity)
         if (session?.status !== "authenticated") {
-            dispatch(increaseQuantity(item._id))
-            setIsQuantityBtnLoading(false)
+                dispatch(increaseQuantity(item._id, prodct.quantity))
         }
         else {
             const prod = cartItems.find(cart => cart._id === item._id);
