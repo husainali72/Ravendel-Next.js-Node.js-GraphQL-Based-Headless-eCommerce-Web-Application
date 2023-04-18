@@ -28,8 +28,9 @@ export default function Footer() {
         localStorage.setItem("cart", JSON.stringify([]));
         dispatch(logoutDispatch())
     }
-     useEffect(() => {
+    useEffect(() => {
         query(GET_HOMEPAGE_DATA_QUERY).then(res => {
+
             const addressPath1 = "data.getSettings.store.store_address.address_line1";
             const addressPath2 = "data.getSettings.store.store_address.address_line2";
             const cityPath = "data.getSettings.store.store_address.city";
@@ -37,6 +38,7 @@ export default function Footer() {
             const emailPath = "data.getSettings.appearance.theme.email";
             const playStorePath = "data.getSettings.appearance.theme.playstore";
             const appStorePath = "data.getSettings.appearance.theme.appstore";
+            const hour = "data.getSettings.store.store_address.hour"
             setAddress((previousAddress) => ({
                 ...previousAddress,
                 address_line1: get(res, addressPath1, "Central Park"),
@@ -46,6 +48,7 @@ export default function Footer() {
                 phone_number: get(res, phonePath, "+91 9124192994"),
                 appStoreUrl: get(res, appStorePath, "#"),
                 playStoreUrl: get(res, playStorePath, "#"),
+                hour: get(res, hour, '#')
             }
             ))
         })
@@ -84,7 +87,8 @@ export default function Footer() {
                                         </Link>
                                         <br />
                                         <strong>Hour: </strong>
-                                        <span> Mon to Fri 9am to 6pm</span>
+
+                                        {Address.hour ? <span>{Address.hour}</span> : <span></span>}
                                     </div>
 
                                     <div className="mt-4 follow">

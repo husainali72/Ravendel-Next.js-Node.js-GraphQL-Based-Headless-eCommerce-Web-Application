@@ -139,7 +139,7 @@ export default function Header({ }) {
                                     </li>
                                     <li className="nav-header">
                                         <Link href="/contact">
-                                            <a className="nav-link" aria-selected="false">Contact</a>
+                                            <a className="nav-link" aria-selected="false">Contact Us</a>
                                         </Link>
                                     </li>
                                     <li className="nav-item">
