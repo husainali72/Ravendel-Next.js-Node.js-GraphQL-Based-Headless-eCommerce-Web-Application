@@ -246,7 +246,7 @@ const AddCouponComponent = () => {
                           Fixed Amount Discount
                         </MenuItem>
                         <MenuItem value="precantage-discount">
-                          Fixed Precantage Discount
+                          Fixed Precentage Discount
                         </MenuItem>
                       </Select>
                     </FormControl>
@@ -255,7 +255,7 @@ const AddCouponComponent = () => {
                     <TextInput
                       type="number"
                       value={coupon.discount_value}
-                      label="Coupon Amount"
+                      label={coupon.discount_type === 'amount-discount' ? "Coupon Amount" : 'Coupon Percent'}
                       name="discount_value"
                       onInputChange={handleChange}
 
