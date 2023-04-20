@@ -7,34 +7,24 @@ import AddressDetail from '../../components/account/component/address-details';
 import OrdersDetails from '../../components/account/component/orders-details';
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import PageTitle from "../../components/PageTitle";
-import { useSelector } from 'react-redux';
-import Link from "next/link";
-import { GET_CUSTOMERS, GET_CUSTOMER_QUERY, GET_ORDER_BY_CUSTOMER, } from "../../queries/customerquery";
+import { GET_CUSTOMER_QUERY } from "../../queries/customerquery";
 import { GET_CUSTOMER_ORDERS_QUERY } from "../../queries/orderquery"
-import { GET_CART_ITEM_QUERY } from "../../queries/cartquery";
-import { query, mutation } from "../../utills/helpers";
+import { query } from "../../utills/helpers";
 import { useRouter } from "next/router";
 import { useSession, getSession } from 'next-auth/react';
 import { capitalize } from 'lodash';
-
-
+import { Toaster } from 'react-hot-toast';
 const Profile = ({ customeraddres }) => {
-    // console.log("customeraddres====", customeraddres)
     const session = useSession();
-    // console.log("session", session)
-
     const router = useRouter();
-
     if (router.isFallback) {
         return <div>Loading...</div>
     }
     const [isRefreshing, setIsRefreshing] = useState(false);
-
     const refreshData = () => {
         router.replace(router.asPath);
         setIsRefreshing(true);
     }
-
     useEffect(() => {
         setIsRefreshing(false);
     }, [customeraddres])
@@ -48,21 +38,12 @@ const Profile = ({ customeraddres }) => {
     if (session.status === "authenticated") {
         id = session.data.user.accessToken.customer._id
         token = session.data.user.accessToken.token
-        // console.log("token", token)
     }
 
     useEffect(() => {
-        // getcustomer()
         setCustomerAddress(customeraddres)
         setIsRefreshing(false);
     }, [customeraddres])
-
-
-    // useEffect(() => {
-    //     // const id = data.user.accessToken.customer._id
-    //     getcustomer()
-    //     setIsRefreshing(false);
-    // }, [])
 
     function getcustomer() {
         var id = ""
@@ -74,13 +55,11 @@ const Profile = ({ customeraddres }) => {
         if (session.status === "authenticated") {
             id = session.data.user.accessToken.customer._id
             token = session.data.user.accessToken.token
-            // console.log("token", token)
         }
         query(GET_CUSTOMER_QUERY, id, token).then((response) => {
-            // console.log("customer useEffect response", response.data)
             const customeradd = response.data.customer.data
-            // console.log("==useEffect", customeradd)
             setCustomerAddress(customeradd)
+            setToggleEdit(false)
         })
     }
 
@@ -90,14 +69,12 @@ const Profile = ({ customeraddres }) => {
 
     async function getOrderCustomer() {
         var customerorder = [];
-
         try {
             const { data: ordercustomerDataById } = await client.query({
                 query: GET_CUSTOMER_ORDERS_QUERY,
                 variables: { user_id: id },
             })
             customerorder = ordercustomerDataById.orderbyUser.data
-            // setCustomerAddress(customerorder)
             setCustomerOrder(customerorder)
         }
         catch (e) {
@@ -111,15 +88,13 @@ const Profile = ({ customeraddres }) => {
             <PageTitle title={"Account"} />
             <BreadCrumb title={"Account"} />
             <Container className="update-detail-container">
-
-                {/* {customer.login ? ( */}
+                <Toaster />
                 {session.status === "authenticated" ?
+
                     (
                         <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
+
                             <Tab className='my-3' eventKey="profile" title="Profile">
-                                {/* <Link href={`/account/${customeraddress?.id}`}>
-                                    <Button>edit</Button>
-                                </Link> */}
                                 {ToggleEdit && <AccountSettings
                                     setToggleEdit={setToggleEdit}
                                     accountDetailInfo={customeraddress}
@@ -157,7 +132,7 @@ const Profile = ({ customeraddres }) => {
                                             </Accordion.Header>
                                             <Accordion.Body>
                                                 <OrdersDetails
-                                                    orderDetail={order.products}
+                                                    orderDetail={order}
                                                     billingInfo={order.billing}
                                                     shippingInfo={order.shipping}
                                                     tax={order.tax_amount}
@@ -173,9 +148,6 @@ const Profile = ({ customeraddres }) => {
 
                             </Tab>
                             <Tab eventKey="address" title="Address">
-                                <Link href={`/account/${customeraddress?.id}`}>
-                                    <Button>edit</Button>
-                                </Link>
                                 <AddressDetail
                                     addressDetail={customeraddress}
                                     address={customeraddress}
@@ -200,13 +172,7 @@ export default Profile;
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
-
-    // console.log("session", session)
-    // var id = ""
-
-    var id = session.user.accessToken.customer._id
-
-    // var customers = [];
+    var id = session?.user?.accessToken.customer._id
     var customeraddres = [];
 
     /* ================================= GET_CUSTOMER DETAILS ================================= */

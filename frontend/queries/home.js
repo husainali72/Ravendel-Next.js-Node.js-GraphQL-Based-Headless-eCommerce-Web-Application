@@ -18,10 +18,10 @@ import { gql } from "@apollo/client";
 //                             capture
 //                             test_mode
 //                             publishable_key
-                           
+
 //                             webhook_key
 //                    }
- 
+
 //            }
 //            store{
 //                     currency_options{
@@ -108,6 +108,7 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           country
           state
           zip
+          hour
         }
         measurements {
           weight_unit
@@ -204,6 +205,12 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           phone_number
           email
           logo
+          social_media {
+            name
+            handle
+            
+          }
+          
         }
         mobile {
           mobile_section {

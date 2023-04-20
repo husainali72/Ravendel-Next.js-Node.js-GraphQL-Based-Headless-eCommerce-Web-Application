@@ -19,7 +19,8 @@ export default function Footer() {
         phone_number: "",
         email: "",
         playStoreUrl: "",
-        appStoreUrl: ""
+        appStoreUrl: "",
+        socailMedia: []
     });
     const dispatch = useDispatch();
     const LogOutUser = async () => {
@@ -33,12 +34,13 @@ export default function Footer() {
 
             const addressPath1 = "data.getSettings.store.store_address.address_line1";
             const addressPath2 = "data.getSettings.store.store_address.address_line2";
+            const hour = "data.getSettings.store.store_address.hour";
             const cityPath = "data.getSettings.store.store_address.city";
             const phonePath = "data.getSettings.appearance.theme.phone_number";
             const emailPath = "data.getSettings.appearance.theme.email";
             const playStorePath = "data.getSettings.appearance.theme.playstore";
             const appStorePath = "data.getSettings.appearance.theme.appstore";
-            const hour = "data.getSettings.store.store_address.hour"
+            const socialMediaPath = "data.getSettings.appearance.theme.social_media";
             setAddress((previousAddress) => ({
                 ...previousAddress,
                 address_line1: get(res, addressPath1, "Central Park"),
@@ -53,10 +55,16 @@ export default function Footer() {
             ))
         })
     }, [])
-
     const { address_line1, address_line2, city, email, phone_number, appStoreUrl, playStoreUrl } = Address;
     const session = useSession();
     const customerId = session?.data?.user?.accessToken?.customer?._id;
+    const iconSetter = (iconName) => {
+        if (iconName === 'twitter') return 'fab fa-twitter mx-2 icon-footer'
+        if (iconName === 'facebook') return 'fab fa-facebook mx-2 icon-footer'
+        if (iconName === 'instagram') return 'fab fa-instagram mx-2 icon-footer'
+        if (iconName === 'youtube') return 'fab fa-youtube mx-2 icon-footer'
+        if (iconName === 'pinterest') return 'fab fa-pinterest mx-2 icon-footer'
+    }
     return (
         <section className="product-cart-section">
             <Container>
@@ -94,12 +102,9 @@ export default function Footer() {
                                     <div className="mt-4 follow">
                                         <h5>Follow us</h5>
                                         {/* <ui> */}
-                                        <Link href="#"><a className="fab fa-facebook-f mx-2 icon-footer" aria-hidden="true"></a></Link>
-                                        <Link href="#"><a className="fab fa-twitter mx-2 icon-footer" aria-hidden="true"></a></Link>
-                                        <Link href="#"><a className="fab fa-instagram mx-2 icon-footer" aria-hidden="true"></a></Link>
-                                        <Link href="#"><a className="fab fa-pinterest-p mx-2 icon-footer" aria-hidden="true"></a></Link>
-                                        <Link href="#"><a className="fab fa-youtube mx-2 icon-footer" aria-hidden="true"></a></Link>
-                                        {/* </ui> */}
+                                        {Address.socailMedia && Address.socailMedia.length > 0 ? Address.socailMedia.map((media) => {
+                                            return <Link href={media.handle}><a href={media.handle} className={iconSetter(media.name)} aria-hidden="true" target="_blank"></a></Link>
+                                        }) : null}
                                     </div>
                                 </div>
                                 <div className="col-lg-2 col-md-3 col-xl-2 mx-auto mb-4 mt-2 ">

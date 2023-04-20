@@ -1,14 +1,48 @@
-import { Accordion, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import moment from 'moment';
+import { currencySetter, getPrice } from "../../../utills/helpers";
+import { useEffect, useState } from "react";
+import { GET_HOMEPAGE_DATA_QUERY } from "../../../queries/home";
+import client from "../../../apollo-client";
+import { getSession } from "next-auth/react";
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.cost * product.qty), 0)
 
-const OrdersDetails = ({ orderDetail, billingInfo, shippingInfo, total, subtotal, tax, shipping_amount }) => {
-    const Details = useSelector(state => state.checkout)
 
-
-    const handleReOrder = (detail) => {
-        console.log("order", detail)
+export const convertDateToStringFormat = (date) => {
+    var convertedDate = ""
+    if (date) {
+        convertedDate = moment(date).format('ll')
+    } else {
+        convertedDate = date;
     }
+    return convertedDate;
+};
+const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, subtotal, tax, shipping_amount, homepageData }) => {
+    const Details = useSelector(state => state.checkout)
+    const [currency, setCurrency] = useState("$")
+    const [decimal, setdecimal] = useState(2)
+    const [currencyStore, setCurrencyStore] = useState({})
+    useEffect(() => {
+        setdecimal(currencyStore?.currency_options?.number_of_decimals)
+        currencySetter(currencyStore, setCurrency);
+    }, [currencyStore])
+    const handleReOrder = (detail) => {
+
+    }
+    useEffect(() => {
+        const getSettings = async () => {
+            try {
+                const { data: homepagedata } = await client.query({
+                    query: GET_HOMEPAGE_DATA_QUERY
+                })
+                const homepageData = homepagedata
+                setCurrencyStore(homepageData?.getSettings?.store)
+            }
+            catch (e) {
+            }
+        }
+        getSettings()
+    }, [order]);
     return (
         <>
             {orderDetail ? (<>
@@ -19,16 +53,18 @@ const OrdersDetails = ({ orderDetail, billingInfo, shippingInfo, total, subtotal
                                 <h4>Order Info</h4>
                                 <table>
                                     <tr>
+
                                         <th>Order Number</th>
-                                        <td>{orderDetail.data.id}</td>
+                                        <td>{order.id}</td>
                                     </tr>
                                     <tr>
                                         <th>Date</th>
-                                        <td>{orderDetail.data.date}</td>
+                                        <td>{convertDateToStringFormat(order.date)}</td>
                                     </tr>
                                     <tr>
                                         <th>Total</th>
-                                        <td>$ {total ? total : CalculateProductTotal(orderDetail)}</td>
+
+                                        <td>{currency} {total ? getPrice(total, decimal) : getPrice(CalculateProductTotal(orderDetail), decimal)}</td>
                                     </tr>
                                     <tr>
                                         <th>Payment Method</th>
@@ -45,8 +81,8 @@ const OrdersDetails = ({ orderDetail, billingInfo, shippingInfo, total, subtotal
                                         {billingInfo?.firstname} {billingInfo?.lastname} <br />
                                         {billingInfo?.email}  <br />
                                         {billingInfo?.phone}  <br />
-                                        {billingInfo?.address_line1},{billingInfo?.firstname}, <br />
-                                        {billingInfo?.city}, {billingInfo?.state},{billingInfo?.country}
+                                        {billingInfo?.address_line1} {billingInfo?.firstname}  <br />
+                                        {billingInfo?.city} {billingInfo?.state} {billingInfo?.country}
                                     </p>
                                     <hr />
                                 </div>
@@ -56,8 +92,8 @@ const OrdersDetails = ({ orderDetail, billingInfo, shippingInfo, total, subtotal
                                         {shippingInfo?.firstname} {shippingInfo?.lastname} <br />
                                         {shippingInfo?.email}  <br />
                                         {shippingInfo?.phone}  <br />
-                                        {shippingInfo?.address},{shippingInfo?.firstname}, <br />
-                                        {shippingInfo?.city}, {shippingInfo?.State},{shippingInfo?.country}
+                                        {shippingInfo?.address} {shippingInfo?.firstname} <br />
+                                        {shippingInfo?.city} {shippingInfo?.State} {shippingInfo?.country}
                                     </p>
 
                                 </div>
@@ -72,6 +108,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, shippingInfo, total, subtotal
                                 <thead>
                                     <th>Products</th>
                                     <th>Qty</th>
+
                                     <th>Total</th>
                                 </thead>
                                 <tbody>
@@ -79,35 +116,30 @@ const OrdersDetails = ({ orderDetail, billingInfo, shippingInfo, total, subtotal
                                         <tr key={i}>
                                             <th>{order?.name}</th>
                                             <td>x {order?.quantity ? order.quantity : order.qty}</td>
-                                            <td>$ {order?.pricing?.sellprice}</td>
+                                            {console.log(order.cost, getPrice(order?.cost, decimal))}
+                                            <td>{currency} {getPrice(order?.cost, decimal)}</td>
                                         </tr>
                                     )}
                                 </tbody>
                                 <tr>
-                                    <th colSpan={2} style={{ textAlign: 'right' }} >Subtotal</th>
-                                    <td>$ {CalculateProductTotal(orderDetail)}</td>
+                                    <th colSpan={2} className="order-text-align" >Subtotal</th>
+                                    <td>{currency} {getPrice(CalculateProductTotal(orderDetail), decimal)}</td>
                                 </tr>
                                 <tr>
-                                    <th colSpan={2} style={{ textAlign: 'right' }}>Tax</th>
-                                    <td>$ {tax ? tax : "50"}</td>
+                                    <th colSpan={2} className="order-text-align">Tax</th>
+                                    <td>{currency} {tax ? getPrice(tax, decimal) : "0.00"}</td>
                                 </tr>
                                 <tr>
-                                    <th colSpan={2} style={{ textAlign: 'right' }}>Shipping</th>
-                                    <td>$ {shipping_amount ? shipping_amount : "20"}</td>
+                                    <th colSpan={2} className="order-text-align">Shipping</th>
+                                    <td>{currency} {shipping_amount ? getPrice(shipping_amount, decimal) : "0.00"}</td>
                                 </tr>
                                 <tr className="total">
-                                    <th colSpan={2} style={{ textAlign: 'right' }}>Total</th>
-                                    <td>$ {total ? total : CalculateProductTotal(orderDetail)}</td>
+                                    <th colSpan={2} className="order-text-align" >Total</th>
+                                    <td>{currency} {total ? getPrice(total, decimal) : getPrice(CalculateProductTotal(orderDetail), decimal)}</td>
                                 </tr>
                             </table>
                         </div>
                     </div>
-                    {/* <div className="row order-btn-row">
-                        <div>
-                            <button className="order-details-btn" >Reorder</button>
-                            <button className="order-details-btn" onCLick={() => setTimeOut(() => { window.print() }, 0)}>Print Invoices</button>
-                        </div>
-                    </div> */}
                 </div>
             </>) :
                 <div className="order-details">
@@ -188,19 +220,19 @@ const OrdersDetails = ({ orderDetail, billingInfo, shippingInfo, total, subtotal
                                     <td>$ 250</td>
                                 </tr>
                                 <tr>
-                                    <th colSpan={2} style={{ textAlign: 'right' }} >Subtotal</th>
+                                    <th colSpan={2} className="order-text-align" >Subtotal</th>
                                     <td>$ 4520</td>
                                 </tr>
                                 <tr>
-                                    <th colSpan={2} style={{ textAlign: 'right' }}>Tax</th>
+                                    <th colSpan={2} className="order-text-align">Tax</th>
                                     <td>$ 50</td>
                                 </tr>
                                 <tr>
-                                    <th colSpan={2} style={{ textAlign: 'right' }}>Shipping</th>
+                                    <th colSpan={2} className="order-text-align">Shipping</th>
                                     <td>$ 20</td>
                                 </tr>
                                 <tr className="total">
-                                    <th colSpan={2} style={{ textAlign: 'right' }}>Total</th>
+                                    <th colSpan={2} className="order-text-align">Total</th>
                                     <td>$ 4570</td>
                                 </tr>
                             </table>
@@ -219,3 +251,41 @@ const OrdersDetails = ({ orderDetail, billingInfo, shippingInfo, total, subtotal
     )
 }
 export default OrdersDetails;
+export async function getServerSideProps(context) {
+
+
+    const session = await getSession(context)
+    let id = session?.user?.accessToken?.customer._id
+    var customercart = [];
+    var cart_id = ""
+    var CartsDataa = {}
+    var homepageData = [];
+    var currencyStore = [];
+
+
+    /* ----------------------- GEt currency -----------------------------*/
+    try {
+        const { data: homepagedata } = await client.query({
+            query: GET_HOMEPAGE_DATA_QUERY
+        })
+        homepageData = homepagedata
+
+        currencyStore = homepagedata?.getSettings?.store
+
+    }
+    catch (e) {
+        console.log("homepage Error===", e);
+    }
+
+
+    return {
+        props: {
+            currencyStore,
+            homepageData
+        },
+
+
+    }
+}
+
+
