@@ -41,11 +41,6 @@ const AddressDetail = (props) => {
     const [editMode, setEditMode] = useState(false);
     const [address, setAddress] = useState(addressObject)
     const [allAddressBook, setAllAddressBook] = useState([])
-    const {
-        register,
-        handleSubmit, reset, clearErrors,
-        formState: { errors }, control
-    } = useForm({ mode: editMode ? updateAddress : addNewAddress, });
 
 
 
@@ -84,6 +79,7 @@ const AddressDetail = (props) => {
         reset()
     };
 
+
     const updateAddress = async (e) => {
         if (address.first_name && address.last_name && address.address_line1 && address.city && address.company && address.country && address.state && address.phone) {
             mutation(UPDATE_ADDRESSBOOK, address, token).then(async (response) => {
@@ -112,6 +108,11 @@ const AddressDetail = (props) => {
             })
         }
     };
+    const {
+        register,
+        handleSubmit, reset, clearErrors,
+        formState: { errors }, control
+    } = useForm({ mode: editMode ? updateAddress : addNewAddress, });
     const cancelAddress = () => {
         setEditMode(false);
         setAddMode(false);
