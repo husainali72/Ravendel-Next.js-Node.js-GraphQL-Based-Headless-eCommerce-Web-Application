@@ -78,7 +78,7 @@ const Brand = ({brand,filteredProducts,brandProduct,currencyStore}) => {
                     <div className="shop-product-container">
                         <div className="shop-product-fillter">
                             <div className="totall-product">
-                            <h4 className='theme-color' >Products For <span className='black-color' >{brand?.name}</span></h4>
+                            <h4 className='theme-color' >Products For <span className='black-color' >{capitalize(brand?.name)}</span></h4>
                             </div>
                           
                         </div>

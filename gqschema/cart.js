@@ -49,12 +49,17 @@ module.exports = gql`
     product_price: Float
     product_image: String
     combination: [String]
+    tax_class: String
+    shipping_class: String
+
   }
 
   input cartProducts {
     product_id: ID
     qty: Int
     total: Float
+    tax_class: String
+    shipping_class: String
   }
 
   type CartRES {

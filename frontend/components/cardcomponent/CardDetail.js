@@ -15,7 +15,6 @@ const CartTable = (props) => {
         removeToCart,
         updateCartProduct, currency
     } = props;
-    const [loadingIndex, setLoadingIndex] = useState(-1);
     return (
         <div>
             <div className="table-responsive">
@@ -34,14 +33,18 @@ const CartTable = (props) => {
                         {cartItems && cartItems?.length > 0 && cartItems.map((item, i) => (
                             <tr key={i}>
                                 <td>
-                                    <div className="td-flex">
-                                        <img src={getImage(item.feature_image, 'thumbnail')} />
-                                    </div>
+                                    <Link href={"/product/" + item.url}>
+                                        <div className="td-flex cursor-pointer">
+                                            <img src={getImage(item.feature_image, 'thumbnail')} />
+                                        </div>
+                                    </Link>
                                 </td>
                                 <td>
-                                    <div className="td-flex">
-                                        <h3>{item.name}</h3>
-                                    </div>
+                                    <Link href={"/product/" + item.url}>
+                                        <div className="td-flex cursor-pointer">
+                                            <h3>{item.name}</h3>
+                                        </div>
+                                    </Link>
                                 </td>
                                 <td>
                                     <div className="td-flex">
@@ -52,7 +55,6 @@ const CartTable = (props) => {
                                     <div className="td-flex">
                                         <span className={`btn btn-primary btn-less ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
                                             DecreaseQuantity(item)
-                                            setLoadingIndex(i)
                                         }}>
                                             <i className="fas fa-chevron-down" ></i>
                                         </span>
@@ -61,7 +63,6 @@ const CartTable = (props) => {
                                         </span>
                                         <span className={`btn btn-primary btn-more ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
                                             IncreaseQuantity(item)
-                                            setLoadingIndex(i)
                                         }}>
                                             <i className="fas fa-chevron-up"></i>
                                         </span>

@@ -13,13 +13,14 @@ import Router from 'next/router';
 import { useState } from 'react';
 import LoadingSpinner from "../components/breadcrumb/loading"
 // import { getStaticPaths } from './product/[singleproduct]';
+import { useRouter } from 'next/router'
 
 export function MyApp({
   Component,
   pageProps,
   
 }) {
-
+  const router = useRouter()
   const [loading, setLoading] = useState(false);
   Router.events.on("routeChangeStart", (url) => {
     setLoading(true)
@@ -32,7 +33,7 @@ export function MyApp({
       <SessionProvider session={pageProps.session}>
         {loading && <LoadingSpinner />}
         <Layout>
-          <Component {...pageProps} />
+          <Component {...pageProps} key={router.asPath} />
           {/* <Script src="https://kit.fontawesome.com/60e73f4013.js" ></Script> */}
           <Script src="https://kit.fontawesome.com/60e73f4013.js" crossOrigin="anonymous"></Script>
           <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
