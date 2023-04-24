@@ -82,7 +82,6 @@ module.exports = gql`
     id: ID
     product_id: ID
     combination: customArray
-    price: Float
     pricing: customObject
     quantity: Float
     sku: String
