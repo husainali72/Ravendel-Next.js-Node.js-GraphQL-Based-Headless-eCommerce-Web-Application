@@ -25,7 +25,6 @@ import {
 import { getUpdatedUrl } from "../../utils/service";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { validate, validatenested } from "../components/validate";
-import validator from 'validator';
 import {
   isEmpty,
   client_app_route_url,
@@ -57,7 +56,7 @@ import viewStyles from "../viewStyles";
 import Stack from '@mui/material/Stack';
 import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
 import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
 let defaultobj = {
@@ -105,19 +104,17 @@ const EditProductComponent = ({ params }) => {
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const productState = useSelector((state) => state.products);
   const navigate = useNavigate();
-  const location = useLocation();
   const brandState = useSelector((state) => state.brands);
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const [loading, setloading] = useState(false);
   const [gallery, setGallery] = useState([]);
-  const editMode = location.state.editMode
   const [taxClass, setTaxClass] = useState('')
   const [product, setProduct] = useState(defaultobj
   );
 
   useEffect(() => {
-    if (editMode) {
+    if (Product_id) {
     dispatch(productAction(Product_id));
     dispatch(brandsAction());
     dispatch(categoriesAction());
@@ -129,7 +126,7 @@ const EditProductComponent = ({ params }) => {
   }, [get(productState, "loading")]);
 
   useEffect(() => {
-    if (editMode) {
+    if (Product_id) {
     if (!isEmpty(get(productState, "product"))) {
       if (!isEmpty(productState.product)) {
         let defaultBrand = {};
@@ -169,11 +166,11 @@ const EditProductComponent = ({ params }) => {
       setProduct(defaultobj)
       setfeatureImage(null)
     }
-  }, [get(productState, "product"),editMode]);
+  }, [get(productState, "product"),Product_id]);
 
   const addUpdateProduct = (e) => {
     product.tax_class = taxClass
-    if (editMode) {
+    if (Product_id) {
       product.update_gallery_image = gallery
     }
     e.preventDefault();
@@ -200,7 +197,7 @@ const EditProductComponent = ({ params }) => {
       });
     }
    else {
-     if (editMode) {
+     if (Product_id) {
       product.combinations = combination;
       dispatch(productUpdateAction(product, navigate));
     }
@@ -218,7 +215,7 @@ const EditProductComponent = ({ params }) => {
   const onFeatureImageChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    if (editMode) {
+    if (Product_id) {
       setProduct({ ...product, ["update_feature_image"]: e.target.files });
     }
     else {
@@ -227,7 +224,7 @@ const EditProductComponent = ({ params }) => {
   };
 
   const isUrlExist = async (url) => {
-    if (editMode) {
+    if (Product_id) {
       let updatedUrl = await getUpdatedUrl("Product", url);
       setProduct({
         ...product,
@@ -285,9 +282,9 @@ const EditProductComponent = ({ params }) => {
       {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title={editMode ? "Edit Product" : "Add product"}
+          title={Product_id ? "Edit Product" : "Add product"}
           onSubmit={addUpdateProduct}
-          submitTitle={editMode ? "Update" : "Add"}
+          submitTitle={Product_id ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-products`}
         />
 
@@ -336,7 +333,7 @@ const EditProductComponent = ({ params }) => {
             </CardBlocks>
             {/* ===================Categories=================== */}
             <CardBlocks title="Categories">
-              {editMode ?
+              {Product_id ?
                 <EditCategoriesComponent
                   selectedCategories={product.categoryId}
                   onCategoryChange={(items) => {
@@ -701,7 +698,7 @@ const EditProductComponent = ({ params }) => {
               {/* ===================Gallery Images=================== */}
               <Box component="span" m={1}>
                 <CardBlocks title="Gallery Image">
-                 {editMode ?
+                 {Product_id ?
                   <EditGalleryImageSelection
                     onAddGalleryImage={(e) => {
 

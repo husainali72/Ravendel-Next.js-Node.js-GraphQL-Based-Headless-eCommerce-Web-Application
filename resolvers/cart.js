@@ -441,6 +441,8 @@ module.exports = {
               product_image: args.product_image,
               qty: args.qty,
               total: args.total,
+              tax_class: args.tax_class,
+              shipping_class: args.shipping_class,
             }
           ]
           const newCart = new Cart({

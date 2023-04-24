@@ -151,7 +151,7 @@ module.exports = {
           brand.updated = Date.now();
 
           // console.log('BRAND',brand);
-          const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, Brand, args.id)
+          const duplicate = await duplicateData({name: args.name}, Brand, args.id)
           if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Brand Name", false)
           await brand.save();
           return MESSAGE_RESPONSE("UpdateSuccess", "Brands", true);

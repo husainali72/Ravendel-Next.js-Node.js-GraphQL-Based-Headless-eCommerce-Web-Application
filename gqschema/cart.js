@@ -101,6 +101,7 @@ module.exports = gql`
       qty: Int
       shipping_class : String,
       tax_class : String
+
     ): statusSchema
   }
 `;

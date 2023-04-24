@@ -735,7 +735,7 @@ const ViewOrderComponent = ({ params }) => {
                           </Typography> : null}
                         {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
                           <Typography variant="body2" className={classes.mtb2coupon} sx={{ color: '#4BB543', }}>
-                            <span className={classes.minus}>-</span>  {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary[0].coupon_value, decimal)}
+                            <span className={classes.minus}>-</span>  {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.coupon_value, decimal)}
                           </Typography> : null}
                         <Divider sx={{ mt: "10px", mb: "10px" }} />
                         <Typography variant="body2" className={classes.mtb2}>

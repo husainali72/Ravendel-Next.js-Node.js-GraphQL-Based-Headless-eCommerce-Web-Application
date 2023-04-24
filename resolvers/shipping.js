@@ -26,7 +26,7 @@ module.exports = {
   Mutation: {
     updateGlobalShipping: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "GlobalShipping", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Global Shipping", false);
       }
       try {
         // Check Validation
@@ -48,15 +48,15 @@ module.exports = {
             }
           );
         }
-        return MESSAGE_RESPONSE("UpdateSuccess", "GlobalShipping", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "Global Shipping", true);
       } catch (error) {
         console.log(error)
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "GlobalShipping", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Global Shipping", false);
       }
     },
     addShippingClass: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "ShippingClass", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Shipping Class", false);
       }
       try {
         const errors = _validate(["name", "amount"], args.shipping_class);
@@ -78,14 +78,14 @@ module.exports = {
         shipping.updated = Date.now();
         await shipping.save();
         await Shipping.findOne({});
-        return MESSAGE_RESPONSE("AddSuccess", "ShippingClass", true);
+        return MESSAGE_RESPONSE("AddSuccess", "Shipping Class", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("CREATE_ERROR", "ShippingClass", false);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Shipping Class", false);
       }
     },
     updateShippingClass: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "ShippingClass", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Shipping Class", false);
       }
       try {
         const errors = _validate(["name"], args.shipping_class);
@@ -117,15 +117,15 @@ module.exports = {
         shipping.updated = Date.now();
         await shipping.save();
         // await Shipping.findOne({});
-        return MESSAGE_RESPONSE("UpdateSuccess", "ShippingClass", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "Shipping Class", true);
       } catch (error) {
         console.log('err', error);
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "ShippingClass", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Shipping Class", false);
       }
     },
     deleteShippingClass: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "ShippingClass", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Shipping Class", false);
       }
       try {
         const shipping = await Shipping.findOne({});
@@ -146,10 +146,10 @@ module.exports = {
         shipping.updated = Date.now();
         await shipping.save();
         // await Shipping.findOne({});
-        return MESSAGE_RESPONSE("DELETE", "ShippingClass", true);
+        return MESSAGE_RESPONSE("DELETE", "Shipping Class", true);
       } catch (error) {
         console.log('delete', error)
-        return MESSAGE_RESPONSE("DELETE_ERROR", "ShippingClass", false);
+        return MESSAGE_RESPONSE("DELETE_ERROR", "Shipping Class", false);
       }
     },
   },
