@@ -44,7 +44,7 @@ import {
   CardBlocks,
 } from "../components";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { get } from "lodash";
@@ -85,10 +85,8 @@ const EditCustomerComponent = ({ params }) => {
   const [editMode, setEditMode] = useState(false);
   const [singleCustomer, setSingleCustomer] = useState(SingleCustomerObject);
   const [customer, setcustomer] = useState(customerObj);
-  const location = useLocation();
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
-  const editCustomer = location.state.editMode
 
   useEffect(() => {
     setloading(get(Customers, "loading"));
@@ -99,7 +97,7 @@ const EditCustomerComponent = ({ params }) => {
     if (isEmpty(get(Customers, "customers"))) {
       dispatch(customersAction());
     } else {
-      if (editCustomer) {
+      if (ID) {
         for (let i in Customers.customers) {
         if (Customers.customers[i].id === ID) {
           SingleCustomerObject.id = Customers.customers[i].id;
@@ -112,7 +110,7 @@ const EditCustomerComponent = ({ params }) => {
         setcustomer(customerObj)
       }
     }
-  }, [get(Customers, "customers"), editCustomer]);
+  }, [get(Customers, "customers"), ID]);
 
   const addUpdateCustomer = (e) => {
     e.preventDefault();
@@ -141,7 +139,7 @@ const EditCustomerComponent = ({ params }) => {
       });
     }
     else {
-      if (editCustomer) {
+      if (ID) {
         dispatch(customerUpdateAction(customer, navigate));
       } else {
         if (!isEmpty(passwordError)) {
@@ -283,9 +281,9 @@ const EditCustomerComponent = ({ params }) => {
       {loading && <Loading />}
       <form>
         <TopBar
-          title={editCustomer ? "Edit Customer" : "Add Customer"}
+          title={ID ? "Edit Customer" : "Add Customer"}
           onSubmit={addUpdateCustomer}
-          submitTitle={editCustomer ? "Update" : "Add"}
+          submitTitle={ID ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-customer`}
         />
 
@@ -297,7 +295,7 @@ const EditCustomerComponent = ({ params }) => {
           className={classes.secondmainrow}
         >
           <Grid item lg={12}>
-            <CardBlocks title={editCustomer ? "Customer Information" : "Add Customer"} nomargin>
+            <CardBlocks title={ID ? "Customer Information" : "Add Customer"} nomargin>
               <Grid container spacing={isSmall ? 2 : 4}>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
@@ -352,7 +350,7 @@ const EditCustomerComponent = ({ params }) => {
           </Grid>
 
           {/* ==============Address Books============== */}
-          {editCustomer ?
+          {ID ?
             <>
           <Grid item md={4} sm={12} xs={12}>
             <CardBlocks title={`${editMode ? "Edit" : "Add"} Adress`}>

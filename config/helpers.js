@@ -250,7 +250,7 @@ const imageUpload = async (upload, uploadPath, nametype) => {
             awsFilePath = 'setting'
           }
 
-          if (nametype == 'ProductCategory') {
+          if (nametype == 'Product Category') {
             // awsoriginalpath = 'product/category/original';
             // awslargepath = 'product/category/large';
             // awsmediumpath = 'product/category/medium';
@@ -533,9 +533,10 @@ module.exports.checkRole = checkRole;
 const duplicateData = async(args, model, updateId) => {
   let docs
   if(!updateId){
-    docs = await model.find(args)
+    docs = await model.find(args).collation({locale: "en", strength: 2})
   }else{
-    docs = await model.find(args)
+    docs = await model.find(args).collation({locale: "en", strength: 2})
+    console.log(docs)
     docs = docs.filter(doc=>{
       if(doc._id.toString() !== updateId.toString()) return doc
     })

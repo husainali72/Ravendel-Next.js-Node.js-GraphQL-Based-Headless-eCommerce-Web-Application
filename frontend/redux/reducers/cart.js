@@ -151,7 +151,7 @@ function cartReducer(state = [], action) {
             if (isExisted ) {
                 for(let item of cart) {
                     if (item._id === action.payload._id) {
-                        item.quantity += 1;
+                        action.payload.originalQuantity > item.quantity && (item.quantity += 1);
                         break;
                     }
                 }

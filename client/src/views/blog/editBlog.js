@@ -36,12 +36,11 @@ import {
   URLComponent,
   TinymceEditor,
 } from "../components";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
 import { get } from "lodash";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
-import { getUpdatedUrl } from "../../utils/service";
 
 const defaultObj = {
   title: "",
@@ -69,44 +68,39 @@ const EditBlogComponenet = ({ params }) => {
   const [clearTags, setclearTags] = useState([]);
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const editBlog = location.state.editMode
 
   useEffect(() => {
-    if (editBlog) {
-      dispatch(blogAction(Id));
-    } else {
-      dispatch(blogtagsAction())
-    }
-  }, []);
+    if (Id){
+    dispatch(blogAction(Id));
+  } else {
+    dispatch(blogtagsAction())
+  }}, []);
+
 
   useEffect(() => {
+    if(Id){
+    if (!isEmpty(get(blogState, "blog"))) {
+      setBlog({ ...blog, ...blogState.blog });
+      if (
+        blogState.blog.feature_image
 
-    if (editBlog) {
-      if (!isEmpty(get(blogState, "blog"))) {
-        setBlog({ ...blog, ...blogState.blog });
-        if (
-          blogState.blog.feature_image
-
-        ) {
-          setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
-        }
-        dispatch(blogtagsAction());
+      ) {
+        setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
       }
-    } else {
+      dispatch(blogtagsAction());
+    }} else {
       setBlog(defaultObj)
       setfeatureImage(null)
     }
-  }, [get(blogState, "blog"), editBlog]);
+  }, [get(blogState, "blog"), Id]);
 
   useEffect(() => {
-    if (!editBlog) {
-      if (isEmpty(get(blogState, "success"))) {
-        document.forms[0].reset();
-        setBlog(defaultObj);
-        setfeatureImage(null);
-        setclearTags([]);
-      }
+    if(!Id){
+    if (isEmpty(get(blogState, "success"))) {
+      document.forms[0].reset();
+      setBlog(defaultObj);
+      setfeatureImage(null);
+      setclearTags([]);
     }
   }, [get(blogState, "success")]);
 
@@ -116,18 +110,13 @@ const EditBlogComponenet = ({ params }) => {
 
   useEffect(() => {
     if (!isEmpty(get(blogState, "tags"))) {
-      if (editBlog) {
-        setTimeout(() => {
-          var defaultTags = [];
-          const tagObj = blogState.tags.map((tag) => {
-            if (~blog.blog_tag.indexOf(tag.id)) {
-              defaultTags.push({
-                value: tag.id,
-                label: tag.name,
-              });
-            }
 
-            return {
+      if (Id){
+      setTimeout(() => {
+        var defaultTags = [];
+        const tagObj = blogState.tags.map((tag) => {
+          if (~blog.blog_tag.indexOf(tag.id)) {
+            defaultTags.push({
               value: tag.id,
               label: tag.name,
             };
@@ -149,17 +138,16 @@ const EditBlogComponenet = ({ params }) => {
   }, [get(blogState, "tags")]);
 
   const tagChange = (e) => {
-    if (editBlog) {
-      setBlog({
-        ...blog,
-        blog_tag: e && e.length > 0 ? e.map((tag) => tag.value) : [],
-      });
-      setTags({ ...tags, defaultTags: e })
-    } else {
-      if (!isEmpty(e)) {
-        setclearTags(e);
-        setBlog({ ...blog, blog_tag: e.map((tag) => tag.value) });
-      }
+    if(Id){
+    setBlog({
+      ...blog,
+      blog_tag: e && e.length > 0 ? e.map((tag) => tag.value) : [],
+    });
+    setTags({ ...tags, defaultTags: e })
+  } else {
+    if (!isEmpty(e)) {
+      setclearTags(e);
+      setBlog({ ...blog, blog_tag: e.map((tag) => tag.value) });
     }
   };
 
@@ -176,12 +164,8 @@ const EditBlogComponenet = ({ params }) => {
         },
       });
     } else {
-      if (editBlog) {
-        dispatch(blogUpdateAction(blog, navigate));
-      }
-      else {
-        dispatch(blogAddAction(blog, navigate));
-      }
+      if (Id){
+      dispatch(blogUpdateAction(blog, navigate));
     }
   };
 
@@ -205,7 +189,7 @@ const EditBlogComponenet = ({ params }) => {
   const fileChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    if (editBlog) {
+    if (Id) {
       setBlog({ ...blog, updatedImage: e.target.files[0] });
     }
     else {
@@ -227,9 +211,9 @@ const EditBlogComponenet = ({ params }) => {
       {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title={editBlog ? "Edit Blog" : "Add Blog"}
+          title= {Id? "Edit Blog" : "Add Blog"}
           onSubmit={addUpdateBlog}
-          submitTitle={editBlog ? "Update" : "Add"}
+          submitTitle={Id? "Update" : "Add"}
           backLink={`${client_app_route_url}all-blogs`}
         />
 
@@ -350,7 +334,7 @@ const EditBlogComponenet = ({ params }) => {
               </Typography>
               <Select
                 isMulti
-                value={editBlog ? tags.defaultTags : clearTags}
+                value={Id ? tags.defaultTags : clearTags}
                 name="blog_tag"
                 options={tags.tags}
                 onChange={tagChange}

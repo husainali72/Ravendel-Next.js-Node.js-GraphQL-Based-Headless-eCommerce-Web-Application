@@ -20,7 +20,7 @@ import {
 } from "../components";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
@@ -39,11 +39,9 @@ const EditUserComponent = ({ params }) => {
   const navigate = useNavigate();
   const UsersState = useSelector((state) => state.users);
   const dispatch = useDispatch();
-  const location =  useLocation();
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
   const [loading, setloading] = useState(false);
-  const editUser = location.state.editMode
 
   useEffect(() => {
     if (isEmpty(get(UsersState, "users"))) {
@@ -58,7 +56,7 @@ const EditUserComponent = ({ params }) => {
   useEffect(() => {
     document.forms[0].reset();
     setuser(defaultObj);
-    if(editUser){
+    if(User_id){
     if (!isEmpty(get(UsersState, "users"))) {
       UsersState.users.map((edituser) => {
         if (edituser.id === User_id) {
@@ -72,12 +70,12 @@ const EditUserComponent = ({ params }) => {
       setuser(defaultObj)
       setfeatureImage(null)
     }
-  }, [get(UsersState, "users"), editUser]);
+  }, [get(UsersState, "users"), User_id]);
 
   const fileChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    if (editUser) {
+    if (User_id) {
       setuser({ ...user, ["updatedImage"]: e.target.files[0] });
     }
     else {
@@ -100,7 +98,7 @@ const EditUserComponent = ({ params }) => {
       });
     }
    else { 
-    if (editUser) {
+    if (User_id) {
       dispatch(userUpdateAction(user, navigate));
     }
     else {
@@ -121,9 +119,9 @@ const EditUserComponent = ({ params }) => {
 
       <form>
         <TopBar
-          title={editUser ? "Edit Users" : "Add Users"}
+          title={User_id ? "Edit Users" : "Add Users"}
           onSubmit={addUpdateUser}
-          submitTitle={editUser ? "Update" : "Add"}
+          submitTitle={User_id ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-users`}
         />
         <Grid container spacing={3} className={classes.secondmainrow}>

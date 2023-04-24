@@ -25,7 +25,6 @@ import {
 import { getUpdatedUrl } from "../../utils/service";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { validate, validatenested } from "../components/validate";
-import validator from 'validator';
 import {
   isEmpty,
   client_app_route_url,
@@ -57,7 +56,7 @@ import viewStyles from "../viewStyles";
 import Stack from '@mui/material/Stack';
 import CloseIcon from '@mui/icons-material/Close';
 import theme from "../../theme";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
 import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
 let defaultobj = {
@@ -105,21 +104,19 @@ const EditProductComponent = ({ params }) => {
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const productState = useSelector((state) => state.products);
   const navigate = useNavigate();
-  const location = useLocation();
   const brandState = useSelector((state) => state.brands);
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
   const [loading, setloading] = useState(false);
   const [gallery, setGallery] = useState([]);
-  const editMode = location.state.editMode
   const [taxClass, setTaxClass] = useState('')
   const [product, setProduct] = useState(defaultobj
   );
   useEffect(() => {
-    if (editMode) {
-      dispatch(productAction(Product_id));
-      dispatch(brandsAction());
-      dispatch(categoriesAction());
+    if (Product_id) {
+    dispatch(productAction(Product_id));
+    dispatch(brandsAction());
+    dispatch(categoriesAction());
     }
   }, []);
 
@@ -127,60 +124,56 @@ const EditProductComponent = ({ params }) => {
     setloading(get(productState, "loading"));
   }, [get(productState, "loading")]);
 
-  useEffect(() => {
-    if (editMode) {
-      if (!isEmpty(get(productState, "product"))) {
-        if (!isEmpty(productState.product)) {
-          let defaultBrand = {};
+ useEffect(() => {
+    if (Product_id) {
+    if (!isEmpty(get(productState, "product"))) {
+      if (!isEmpty(productState.product)) {
+        let defaultBrand = {};
           setTaxClass(productState.product.tax_class)
-          if (productState.product.brand) {
-            if (!isEmpty(get(brandState, "brands"))) {
-              for (let i in brandState.brands) {
+        if (productState.product.brand) {
+          if (!isEmpty(get(brandState, "brands"))) {
+            for (let i in brandState.brands) {
 
-                if (brandState.brands[i].id === productState.product.brand.id) {
-                  defaultBrand = {
-                    value: brandState.brands[i].id,
-                    label: brandState.brands[i].name,
-                  };
-                  break;
-                }
+              if (brandState.brands[i].id === productState.product.brand.id) {
+                defaultBrand = {
+                  value: brandState.brands[i].id,
+                  label: brandState.brands[i].name,
+                };
+                break;
               }
             }
           }
-          setProduct({
-            ...product,
-            ...productState.product,
-            categoryId: productState.product.categoryId.map((cat) => cat.id),
-            brand: defaultBrand || "",
-          });
-          if (productState.product.feature_image) {
-            setfeatureImage(
-              bucketBaseURL + productState.product.feature_image
-            );
-          } else {
-            setfeatureImage(
-              NoImagePlaceHolder
-            );
-          }
+        }
+        setProduct({
+          ...product,
+          ...productState.product,
+          categoryId: productState.product.categoryId.map((cat) => cat.id),
+          brand: defaultBrand || "",
+        });
+        if (productState.product.feature_image) {
+          setfeatureImage(
+            bucketBaseURL + productState.product.feature_image
+          );
+        } else {
+          setfeatureImage(
+            NoImagePlaceHolder
+          );
         }
       }
-    } else {
+    }
+   } else {
       setProduct(defaultobj)
       setfeatureImage(null)
     }
-  }, [get(productState, "product"), editMode]);
-
+  }, [get(productState, "product"),Product_id]);
   const addUpdateProduct = (e) => {
     product.tax_class = taxClass
-    e.preventDefault();
-    if (editMode) {
+    if (Product_id) {
       product.update_gallery_image = gallery
-    } else {
-      product.gallery_image = gallery
     }
+    e.preventDefault();
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     let Errors = validatenested("pricing", ["price"], product);
-    let customFieldErrors = validatenested("custom_field", [{ key: "value", title: 'value' }, { key: "key", title: 'Name' },], product);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -191,7 +184,7 @@ const EditProductComponent = ({ params }) => {
         },
       });
     }
-    else if (!isEmpty(Errors)) {
+   else if (!isEmpty(Errors)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -201,28 +194,18 @@ const EditProductComponent = ({ params }) => {
         },
       });
     }
-    else if (!isEmpty(customFieldErrors)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: customFieldErrors,
-          error: true,
-        },
-      });
+   else {
+     if (Product_id) {
+      product.combinations = combination;
+      dispatch(productUpdateAction(product, navigate));
     }
     else {
-      if (editMode) {
-        product.combinations = combination;
-        dispatch(productUpdateAction(product, navigate));
-      }
-      else {
-        product.combinations = combination;
-        dispatch(productAddAction(product, navigate));
-
-      }
-    }
+      product.combinations = combination;
+      dispatch(productAddAction(product, navigate));
+    
+    }}
   };
+
 
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
@@ -231,7 +214,7 @@ const EditProductComponent = ({ params }) => {
   const onFeatureImageChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    if (editMode) {
+    if (Product_id) {
       setProduct({ ...product, ["update_feature_image"]: e.target.files });
     }
     else {
@@ -240,12 +223,19 @@ const EditProductComponent = ({ params }) => {
   };
 
   const isUrlExist = async (url) => {
-    setProduct({
-      ...product,
-      url: url,
-    });
-
+    if (Product_id) {
+      let updatedUrl = await getUpdatedUrl("Product", url);
+      setProduct({
+        ...product,
+        url: updatedUrl,
+      });
+    } else {
+      setProduct({
+        ...product,
+      });
+    }
   };
+
 
   const addCustomField = () => {
     setProduct({
@@ -292,9 +282,9 @@ const EditProductComponent = ({ params }) => {
       {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title={editMode ? "Edit Product" : "Add product"}
+          title={Product_id ? "Edit Product" : "Add product"}
           onSubmit={addUpdateProduct}
-          submitTitle={editMode ? "Update" : "Add"}
+          submitTitle={Product_id ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-products`}
         />
 
@@ -345,7 +335,7 @@ const EditProductComponent = ({ params }) => {
             </CardBlocks>
             {/* ===================Categories=================== */}
             <CardBlocks title="Categories">
-              {editMode ?
+              {Product_id ?
                 <EditCategoriesComponent
                   selectedCategories={product.categoryId}
                   onCategoryChange={(items) => {
@@ -705,12 +695,12 @@ const EditProductComponent = ({ params }) => {
                   image={featureImage}
                   feautedImageChange={(e) => onFeatureImageChange(e)}
                 />
-              </CardBlocks>
-            </Box>
-            {/* ===================Gallery Images=================== */}
-            <Box component="span" m={1}>
-              <CardBlocks title="Gallery Image">
-                {editMode ?
+                </CardBlocks>
+              </Box>
+              {/* ===================Gallery Images=================== */}
+              <Box component="span" m={1}>
+                <CardBlocks title="Gallery Image">
+                 {Product_id ?
                   <EditGalleryImageSelection
                     onAddGalleryImage={(e) => {
                       var imagesRes = [...e.target.files]

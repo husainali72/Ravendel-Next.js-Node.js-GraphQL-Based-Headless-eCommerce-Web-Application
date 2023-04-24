@@ -102,9 +102,13 @@ const GalleryImagesComponents = (props) => {
                         product_title: product?.name,
                         product_image: product?.feature_image?.original,
                         product_price: product?.pricing?.sellprice || product?.pricing?.price,
+
+                        product_quantity: product?.quantity
+
                         shipping_class: product?.shipping?.shipping_class,
                         tax_class: product?.tax_class
                     }
+
                     mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
                         router.push("/shopcart")
                         dispatch(addToCart(product))
