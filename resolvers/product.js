@@ -140,7 +140,7 @@ const getTree = async (id) => {
 module.exports = {
   Query: {
     productCategories: async (root, args) => {
-      return await GET_ALL_FUNC(ProductCat, "ProductCats");
+      return await GET_ALL_FUNC(ProductCat, "Product Cats");
     },
     productCategories_pagination: async (
       root,
@@ -155,7 +155,7 @@ module.exports = {
         order,
         searchInFields,
         ProductCat,
-        "ProductCategories"
+        "Product Categories"
       );
     },
 
@@ -168,7 +168,7 @@ module.exports = {
       }
     },
     productCategory: async (root, args) => {
-      return await GET_SINGLE_FUNC(args.id, ProductCat, "ProductCat");
+      return await GET_SINGLE_FUNC(args.id, ProductCat, "Product Cat");
     },
     products: async (root, args, { id }) => {
       return await GET_ALL_FUNC(Product, "Products", args.admin);
@@ -190,7 +190,7 @@ module.exports = {
       );
     },
     productswithcat: async (root, args, { id }) => {
-      return await GET_ALL_FUNC(Product, "Productswithcategory");
+      return await GET_ALL_FUNC(Product, "Products with category");
     },
     featureproducts: async (root, args, { id }) => {
       try {
@@ -261,7 +261,7 @@ module.exports = {
       }
     },
     productsbycaturl: async (root, args, { id }) => {
-      return await GET_BY_URL(ProductCat, args.cat_url, "ProductCategory");
+      return await GET_BY_URL(ProductCat, args.cat_url, "Product Category");
     },
     productbyurl: async (root, args, { id }) => {
       return await GET_BY_URL(Product, args.url, "Products");
@@ -531,12 +531,12 @@ module.exports = {
         image: args.image,
         meta: args.meta,
       };
-      const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, ProductCat)
+      const duplicate = await duplicateData({name: args.name}, ProductCat)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       let validation = ["name"];
       return await CREATE_FUNC(
         id,
-        "ProductCategory",
+        "Product Category",
         ProductCat,
         data,
         args,
@@ -560,13 +560,13 @@ module.exports = {
         meta: args.meta,
       };
       let validation = ["name"];
-      const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, ProductCat, args.id)
+      const duplicate = await duplicateData({name: args.name}, ProductCat, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       return await UPDATE_FUNC(
         id,
         args.id,
         ProductCat,
-        "ProductCategory",
+        "Product Category",
         data,
         path,
         args,
@@ -575,10 +575,10 @@ module.exports = {
     },
     deleteProductCategory: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "ProductCategory", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Product Category", false);
       }
       if (!args.id) {
-        return MESSAGE_RESPONSE("ID_ERROR","ProductCategory", false);
+        return MESSAGE_RESPONSE("ID_ERROR","Product Category", false);
       }
       try {
         const cat = await ProductCat.findByIdAndRemove(args.id);
@@ -595,11 +595,11 @@ module.exports = {
             { $pull: { categoryId: { $in: [_id] } } },
             { multi: true }
           );
-          return MESSAGE_RESPONSE("DELETE", "ProductCategory", true);
+          return MESSAGE_RESPONSE("DELETE", "Product Category", true);
         }
-        return MESSAGE_RESPONSE("NOT_EXIST", "ProductCategory", false);
+        return MESSAGE_RESPONSE("NOT_EXIST", "Product Category", false);
       } catch (error) {
-        return MESSAGE_RESPONSE("DELETE_ERROR", "ProductCategory", false);
+        return MESSAGE_RESPONSE("DELETE_ERROR", "Product Category", false);
       }
     },
 
@@ -669,7 +669,7 @@ module.exports = {
             }
           }
           let url = await updateUrl(args.url || args.name, "Product");
-          const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, Product)
+          const duplicate = await duplicateData({name: args.name}, Product)
           if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
           const newProduct = new Product({
             name: args.name,
@@ -728,7 +728,10 @@ module.exports = {
                 product_id: lastProduct.id,
                 sku: args.sku,
                 quantity: args.quantity,
-                price: args.pricing.sellprice || args.pricing.price,
+                pricing: {
+                  price: args.pricing.price,
+                  sellprice: args.pricing.sellprice 
+                },
                 image: "",
               },
             ];
@@ -781,7 +784,7 @@ module.exports = {
           return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
         }
 
-        const duplicate = await duplicateData({name: {$regex: `${args.name}`, $options: "i"}}, Product, args.id)
+        const duplicate = await duplicateData({name: args.name}, Product, args.id)
         if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
 
         const product = await Product.findById({ _id: args.id });
@@ -899,7 +902,10 @@ module.exports = {
                 product_id: args.id,
                 sku: args.sku,
                 quantity: args.quantity,
-                price: args.pricing.sellprice || args.pricing.price,
+                pricing: {
+                  price: args.pricing.price,
+                  sellprice: args.pricing.sellprice 
+                },
                 image: "",
               },
             ];

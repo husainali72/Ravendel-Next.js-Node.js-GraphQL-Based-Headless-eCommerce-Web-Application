@@ -54,7 +54,7 @@ module.exports = {
         exclude_categories: args.exclude_categories,
       };
       let validation = ["code", "expire"];
-      const duplicate = await duplicateData({code: {$regex: `${data.code}`, $options: "i"}}, Coupon)
+      const duplicate = await duplicateData({code: data.code}, Coupon)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Coupon Code", false);
       return await CREATE_FUNC(
         id,
@@ -84,7 +84,7 @@ module.exports = {
         exclude_categories: args.exclude_categories,
       };
       let validation = ["code", "expire"];
-      const duplicate = await duplicateData({code: {$regex: `${data.code}`, $options: "i"} }, Coupon, args.id)
+      const duplicate = await duplicateData({code: data.code }, Coupon, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Coupon Code", false);
       return await UPDATE_FUNC(
         id,

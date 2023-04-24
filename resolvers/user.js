@@ -206,7 +206,7 @@ module.exports = {
     addUser: async (root, args, { id }) => {
       await checkAwsFolder('user');
       let path = "/assets/images/user/";
-      const duplicate = await duplicateData({email: {$regex: `${args.email}`, $options: "i"}}, User)
+      const duplicate = await duplicateData({email: args.email}, User)
         if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
       const result = checkRole(args.role, roleOptions)
       if(result.success) args.role = result.role
@@ -230,7 +230,7 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "User", false);
       }
       try {
-        const duplicate = await duplicateData({email: {$regex: `${args.email}`, $options: "i"}}, User, args.id)
+        const duplicate = await duplicateData({email: args.email}, User, args.id)
         if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
 
         if(args.role){

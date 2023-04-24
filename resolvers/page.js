@@ -47,7 +47,7 @@ module.exports = {
         meta: args.meta,
       };
       let validation = ["title"];
-      const duplicate = await duplicateData({title: {$regex: `${args.title}`, $options: "i"}}, Page)
+      const duplicate = await duplicateData({title: args.title}, Page)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Page Title", false);
       return await CREATE_FUNC(id, "Page", Page, data, args, "", validation);
     },
@@ -64,7 +64,7 @@ module.exports = {
         meta: args.meta,
       };
       let validation = ["title"];
-      const duplicate = await duplicateData({title: {$regex: `${args.title}`, $options: "i"}}, Page, args.id)
+      const duplicate = await duplicateData({title: args.title}, Page, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Page Title", false);
       return await UPDATE_FUNC(
         id,
