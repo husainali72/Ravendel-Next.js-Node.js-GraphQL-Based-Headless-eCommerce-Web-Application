@@ -16,7 +16,7 @@ import viewStyles from "../viewStyles";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { get } from "lodash";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import {
@@ -51,11 +51,9 @@ const EditPageComponent = ({ params }) => {
   const [page, setPage] = useState(defaultObj);
   const navigate = useNavigate();
   const [loading, setloading] = useState(false);
-  const location = useLocation();
-  const editPage = location.state.editMode
 
   useEffect(() => {
-    if (!editPage){
+    if (!PAGEID){
     if (pageState.success) {
       document.forms[0].reset();
       setPage(defaultObj);
@@ -66,24 +64,24 @@ const EditPageComponent = ({ params }) => {
   }, [pageState.success, pageState.page.content]);
 
   useEffect(() => {
-    if (!editPage){
+    if (!PAGEID){
     var slugVal = page.title.replace(/[^A-Z0-9]/gi, "-");
     setPage({ ...page, url: slugVal.toLowerCase() });
   }}, [page.title]);
 
   useEffect(() => {
-    if (editPage){
+    if (PAGEID){
     dispatch(pageAction(PAGEID));
   }}, [params]);
 
   useEffect(() => {
-    if (editPage){
+    if (PAGEID){
     if (!isEmpty(get(pageState, "page"))) {
       setPage({ ...page, ...pageState.page });
     } 
   } else {
     setPage(defaultObj)
-  }}, [get(pageState, "page"), editPage]);
+  }}, [get(pageState, "page"), PAGEID]);
 
   useEffect(() => {
     setloading(get(pageState, "loading"));
@@ -103,7 +101,7 @@ const EditPageComponent = ({ params }) => {
         },
       });
     } else {
-      if (editPage){
+      if (PAGEID){
       dispatch(pageUpdateAction(page, navigate));
     }
     else {
@@ -136,9 +134,9 @@ const EditPageComponent = ({ params }) => {
       {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title={editPage ? "Edit Page" : "Add Page"}
+          title={PAGEID ? "Edit Page" : "Add Page"}
           onSubmit={addUpdatePage}
-          submitTitle={editPage ? "Update" : "Add"}
+          submitTitle={PAGEID ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-pages`}
         />
 
