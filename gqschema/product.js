@@ -90,6 +90,14 @@ module.exports = gql`
     updatedAt: Date
   }
 
+  type ProductAttribute {
+    id: ID
+    name: String
+    attribute_values: customArray
+    createdAt: Date
+    updatedAt: Date
+  }
+
   type Product {
     _id: ID
     name: String
@@ -111,7 +119,7 @@ module.exports = gql`
     product_type: customObject
     custom_field: [customObject]
     attribute: [customObject]
-    attribute_master: [productAttribute]
+    attribute_master: [ProductAttribute]
     variant: customArray
     variation_master: [ProductVariations]
     date: Date

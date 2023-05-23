@@ -40,15 +40,22 @@ const PRODUCT_TILE_DATA = gql`
     meta
     custom_field
     attribute
+    attribute_master {
+      id
+      name
+      attribute_values
+      createdAt
+      updatedAt
+    }
     variant
     variation_master {
       id
       product_id
       combination
-      price
       quantity
       sku
       image
+      pricing
       createdAt
       updatedAt
     }

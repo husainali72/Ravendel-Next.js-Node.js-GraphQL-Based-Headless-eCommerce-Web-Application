@@ -56,10 +56,29 @@ export const GET_SINGLE_PRODUCT = gql`
       custom_field
       date
       updated
+      attribute
+      attribute_master {
+        id
+        name
+        attribute_values
+        createdAt
+        updatedAt
+      }
       categoryId {
         id
         name
         __typename
+      }
+      variation_master {
+        id
+        product_id
+        combination
+        quantity
+        sku
+        image
+        pricing
+        createdAt
+        updatedAt
       }
       short_description
       variant

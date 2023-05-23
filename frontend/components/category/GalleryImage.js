@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Slider from "react-slick";
 import { GlassMagnifier } from "react-image-magnifiers";
-import { currencySetter, getImage, getPrice, isDiscount, mutation } from "../../utills/helpers";
+import { currencySetter, getImage, getPrice, isDiscount, isVariantDiscount, mutation } from "../../utills/helpers";
 import Carousel from 'react-bootstrap/Carousel'
 import StarRating from "../../components/breadcrumb/rating";
 import { addToCart } from "../../redux/actions/cartAction";
@@ -9,6 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import calculateDiscount from "../../utills/calculateDiscount";
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 import { ADD_TO_CART_QUERY, GET_USER_CART, UPDATE_CART_PRODUCT } from "../../queries/cartquery";
 import { query } from "../../utills/helpers";
 import CheckZipcode from "../account/component/CheckZipcode";
@@ -23,20 +28,50 @@ const GalleryImagesComponents = (props) => {
     const { singleproducts, stockClass, setStockClass, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal } = props;
     const [available, setavailable] = useState(true)
     const [Lable, setLable] = useState("In Stock")
+    const [variantSelect, setVariantSelect] = useState()
+    const [parentId, setParentId] = useState()
+    const [singleprod, setSingleprod] = useState(singleproducts)
+    const [selectedAttrs, setSelectedAttrs] = useState([])
+    const [comboData, setComboData] = useState([])
+    const [priceRange, setPriceRange] = useState([]);
+    const [sellpriceRange, setSellpriceRange] = useState([]);
     useEffect(() => {
-        if (singleproducts.quantity <= lowStockThreshold) {
+        if (singleproducts && !variantSelect ? (singleproducts.quantity <= lowStockThreshold) : (comboData && comboData.length > 1 && variantSelect ? null : (comboData[0]?.quantity <= lowStockThreshold))) {
             setStockClass("low-stock")
             setLable("Low Stock")
         }
-        if (singleproducts.quantity <= outOfStockThreshold) {
+        if (singleproducts && !variantSelect ? (singleproducts.quantity <= outOfStockThreshold) : (comboData && comboData.length > 1 && variantSelect ? null : (comboData[0]?.quantity <= outOfStockThreshold))) {
             setStockClass("out-of-stock")
             setLable("Out Of Stock")
         }
-        if (singleproducts.quantity > lowStockThreshold) {
+        if (singleproducts && !variantSelect ? (singleproducts.quantity > lowStockThreshold) : (comboData && comboData.length > 1 && variantSelect ? null : (comboData[0]?.quantity > lowStockThreshold))) {
             setStockClass("in-stock")
             setLable("In Stock")
         }
-    }, [singleproducts.quantity, lowStockThreshold, outOfStockThreshold])
+        if (!comboData?.length && variantSelect) {
+            setStockClass("not-available")
+            setLable("Not available")
+        }
+        if (comboData?.length === 1 && variantSelect){
+            singleprod.comboData = comboData
+            setSingleprod({...singleprod})
+         } 
+    }, [singleproducts.quantity, lowStockThreshold, outOfStockThreshold, comboData])
+
+    useEffect(() => {
+        let priceData = [];
+        let sellPriceData = [];
+        if (comboData && comboData.length) {
+            priceData = comboData.map((c) => {
+                return c.pricing.price
+            })
+            sellPriceData = comboData.map((c) => {
+                return c.pricing.sellprice
+            })
+            setPriceRange([...priceData])
+            setSellpriceRange([...sellPriceData])
+        }
+    }, [comboData])
 
     if (session.status === "authenticated") {
         id = session?.data?.user?.accessToken?.customer?._id
@@ -108,7 +143,7 @@ const GalleryImagesComponents = (props) => {
                         product_image: product?.feature_image?.original,
                         product_price: product?.pricing?.sellprice || product?.pricing?.price,
 
-                        product_quantity: product?.quantity
+                        product_quantity: product?.quantity,
 
                         shipping_class: product?.shipping?.shipping_class,
                         tax_class: product?.tax_class
@@ -125,8 +160,40 @@ const GalleryImagesComponents = (props) => {
             dispatch(addToCart(product))
             router.push("/shopcart")
         }
-
     }
+
+    const prepareComb = (data) => {
+        let com = singleproducts.variation_master
+        data.map(item => {
+            com = com.filter(combo => {
+                return combo.combination.includes(item.value)
+            })
+        });
+        setComboData([...com])
+        return com;
+    };
+
+    const prepareData = (e, name) => {
+        setVariantSelect(e.target.value)
+        setParentId(name)
+        let data = selectedAttrs
+        if (data.length) {
+            if (!data.some(val => val.name == name)) {
+                data.push({ 'name': name, 'value': e.target.value })
+            } else {
+                data.forEach((attr) => {
+                    if (attr.name == name) {
+                        attr.value = e.target.value
+                    }
+                })
+            }
+        } else {
+            data.push({ 'name': name, 'value': e.target.value })
+        }
+        setSelectedAttrs([...data])
+        prepareComb(data)
+    };
+
     return (
         <>
             <div className="single-product row mb-50" style={{ display: 'flex' }}>
@@ -138,7 +205,19 @@ const GalleryImagesComponents = (props) => {
                                     {props.galleryImages.map((gallery, index) => (
                                         <div key={index}>
                                             <GlassMagnifier
-                                                imageSrc={getImage(gallery, 'original')}
+                                                imageSrc={!variantSelect ?
+                                                    getImage(gallery, 'original')
+                                                    :
+                                                    (comboData?.length && variantSelect ?
+                                                        (comboData?.length > 1 ?
+                                                            getImage(gallery, 'original')
+                                                            :
+                                                            (comboData[0].image.length ?
+                                                                getImage(comboData[0].image, 'original')
+                                                                :
+                                                                getImage(gallery, 'original')))
+                                                        :
+                                                        getImage(gallery, 'original'))}
                                                 // imageSrc="https://dummyimage.com/300"
                                                 imageAlt="Example"
                                                 largeImageSrc={getImage(gallery, 'large')} // Optional
@@ -169,43 +248,90 @@ const GalleryImagesComponents = (props) => {
                             </div>
                         </div>
                         <div className="clearfix product-price-cover">
-                            <div className="product-price primary-color float-left">
-                                <span className=" mx-2">
-                                    {singleproducts.pricing.sellprice ? (
-                                        <strong className="sale-price" style={{ fontSize: "25px" }}>
-                                            {currency}{" "}{getPrice(singleproducts?.pricing?.sellprice, decimal)}
-                                        </strong>
-                                    ) : (
-                                        <strong className="sale-price" style={{ fontSize: "25px" }}>
+                            {comboData && comboData.length || !variantSelect ?
+                                <div className="product-price primary-color float-left">
 
-                                            {currency}{" "}{getPrice(singleproducts?.pricing?.price, decimal)}
-                                        </strong>
-                                    )}</span>
-                                {singleproducts?.pricing?.sellprice && singleproducts?.pricing?.sellprice < singleproducts?.pricing?.price ? <span
-                                    className={
-                                        singleproducts?.pricing?.sellprice ? "has-sale-price mx-2" : ""
-                                    } style={{ fontSize: "17px" }}
-                                >
-                                    {currency}{getPrice(singleproducts?.pricing?.price, decimal)}
-                                </span>
-                                    : null}
-                                <span className=" mx-2">
-                                    {isDiscount(singleproducts) && calculateDiscount(singleproducts?.pricing?.price, singleproducts?.pricing?.sellprice)}
-                                </span>
-                            </div>
+                                    <span className=" mx-2">
+                                        {singleproducts.pricing.sellprice ? (
+                                            <strong className="sale-price" style={{ fontSize: "25px" }}>
+                                                {comboData && comboData.length ?
+                                                    (comboData && comboData.length > 1 ?
+                                                        (sellpriceRange ?
+                                                            (currency + " " + getPrice(Math.min(...sellpriceRange)) + "  -  " + currency + " " + getPrice(Math.max(...sellpriceRange)))
+                                                            :
+                                                            null)
+                                                        :
+                                                        currency + " " + getPrice(comboData[0]?.pricing?.sellprice, decimal))
+                                                    :
+                                                    (variantSelect ? null : currency + " " + getPrice(singleproducts?.pricing?.sellprice, decimal))}
+
+                                            </strong>
+                                        ) : (
+
+                                            <strong className="sale-price" style={{ fontSize: "25px" }}>
+
+                                                {currency}{" "}{getPrice(singleproducts?.pricing?.price, decimal)}
+                                            </strong>
+                                        )}</span>
+                                    {singleproducts?.pricing?.sellprice && singleproducts?.pricing?.sellprice < singleproducts?.pricing?.price ? <span
+                                        className={
+                                            singleproducts?.pricing?.sellprice ? "has-sale-price mx-2" : ""
+                                        } style={{ fontSize: "17px" }}
+                                    >
+                                        {comboData && comboData.length ? (comboData && comboData.length > 1 ? (priceRange ? (currency + " " + getPrice(Math.min(...priceRange)) + "  -  " + currency + " " + getPrice(Math.max(...priceRange))) : null) : currency + " " + getPrice(comboData[0]?.pricing?.price, decimal)) : (variantSelect ? null : currency + " " + getPrice(singleproducts?.pricing?.price, decimal))}
+                                    </span>
+                                        : null}
+                                    {comboData && comboData.length > 1 ? null :
+                                        <span className=" mx-2">
+
+                                            {!comboData.length && !variantSelect ? (isDiscount(singleproducts) && calculateDiscount(singleproducts?.pricing?.price, singleproducts?.pricing?.sellprice)) : comboData && comboData.length > 1 ? null : (isVariantDiscount(comboData) && calculateDiscount(comboData[0]?.pricing?.price, comboData[0]?.pricing?.sellprice))}
+                                        </span>}
+
+                                </div> : <h6 style={{ color: 'red' }}>Sorry, this combination is not available. Choose another variant.</h6>}
                         </div>
                         <div className="short-desc mb-30">
                             <p> {singleproducts?.short_description}</p>
                         </div>
-                        {Lable !== "Out Of Stock" && <button type="button"
-                            className="btn btn-success button button-add-to-cart"
-                            style={{ marginTop: 12, backgroundColor: "#088178" }}
-                            disabled={available}
-                            onClick={() => addToCartProduct(singleproducts)}>Add to Cart</button>}
-                        <CheckZipcode checkzipcode={checkzipcode} />
+
+                        {Lable !== "Out Of Stock" &&
+                            <button type="button"
+                                className="btn btn-success button button-add-to-cart"
+                                style={{ marginTop: 12, backgroundColor: "#088178" }}
+                                onClick={() => addToCartProduct(singleproducts)}
+                                disabled={(comboData && comboData.length || !variantSelect) ? false : true}
+                            >
+                                Add to Cart
+                            </button>
+                        }
+
+                        <div className="varaint-select">
+                          {singleproducts.attribute_master.map((attr) => {
+                            return (
+                                <FormControl>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">{attr.name}</FormLabel>
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="row-radio-buttons-group"
+                                        value={variantSelect}
+                                        onChange={(e) => prepareData(e, attr.id)}
+                                    >
+                                        {attr.attribute_values.map((val) => {
+                                            return (
+                                                <FormControlLabel value={val._id} control={<Radio />} label={val.name}
+                                                />
+                                            )
+                                        })}
+                                    </RadioGroup>
+                                </FormControl>
+                            )
+                        })}
+                        </div>
+
+                        <CheckZipcode  checkzipcode={checkzipcode}/>
+
                         {singleproducts?.custom_field && singleproducts.custom_field?.length > 0 ? (
                             <>
-
                                 {singleproducts?.custom_field?.map(field => (<div className="product-attributes">
                                     <ul className="product-meta font-xs color-grey mt-50">
                                         <p >
@@ -217,7 +343,7 @@ const GalleryImagesComponents = (props) => {
                         ) : null}
 
                         <ul className="product-meta font-xs color-grey mt-50">
-                            <p className="">SKU: {singleproducts?.sku}</p>
+                            <p className="">SKU: {comboData && comboData.length ? comboData[0].sku : singleproducts?.sku}</p>
                             {newFunction(singleproducts)}
                             <p className="">Availablity: <span className={stockClass}>{Lable}</span></p>
                         </ul>

@@ -4363,6 +4363,18 @@ header {
   font-size: small;
 }
 
+.css-b62m3t-container {
+  position: relative;
+    display: inline-block;
+    width: 150px;
+    margin-right: 10px;
+}
+
+.varaint-select{
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+
 .order-details-btn {
   margin: 10px;
 }
@@ -4387,4 +4399,5 @@ header {
 .update-profile-detail-input {
   padding: 10px;
   border-radius: 5px !important;
+
 }

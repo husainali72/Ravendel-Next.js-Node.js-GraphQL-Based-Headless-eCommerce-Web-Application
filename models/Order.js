@@ -55,6 +55,9 @@ const OrderSchema = new Schema({
       qty: {
         type: Number,
         required: true
+      },
+      feature_image: {
+        type: Number,
       }
     }
   ],

@@ -285,24 +285,24 @@ module.exports = {
           }},
         ]
         // category filter
-        if(category) pipeline[0].$match.$and.push({categoryId: {$in: [`${category}`]}})
+        if (category) pipeline[0].$match.$and.push({ categoryId: { $in: [`${category}`] } })
         // brand filter
-        if(brand) pipeline[0].$match.$and.push({brand: mongoose.Types.ObjectId(brand)})
+        if (brand) pipeline[0].$match.$and.push({ brand: mongoose.Types.ObjectId(brand) })
         // product type filter
-        if(product_type === "virtual") pipeline[0].$match.$and.push({'product_type.virtual': true})
-        else if(product_type === "downloadable") pipeline[0].$match.$and.push({'product_type.downloadable': true})
+        if (product_type === "virtual") pipeline[0].$match.$and.push({ 'product_type.virtual': true })
+        else if (product_type === "downloadable") pipeline[0].$match.$and.push({ 'product_type.downloadable': true })
         // price filter
-        if(price){
-          if(price.min && price.max){
-            pipeline[0].$match.$and.push({'pricing.price': {$gte: price.min, $lte: price.max}})
+        if (price) {
+          if (price.min && price.max) {
+            pipeline[0].$match.$and.push({ 'pricing.price': { $gte: price.min, $lte: price.max } })
           }
         }
         // most reviewed products filter
         // if(most_reviewed) pipeline[0].$match.$and.push({})
         // rating filter
-        if(rating){
-          if(rating.min && rating.max){
-            pipeline[0].$match.$and.push({rating: {$gte: rating.min, $lte: rating.max}})
+        if (rating) {
+          if (rating.min && rating.max) {
+            pipeline[0].$match.$and.push({ rating: { $gte: rating.min, $lte: rating.max } })
           }
         }
         // retrieve filtered products
@@ -317,21 +317,23 @@ module.exports = {
     relatedProducts: async (root, args) => {
       try {
         let categories = []
-        for(let cat of (args.category||[])){
+        for (let cat of (args.category || [])) {
           let existingCategory = await ProductCat.findById(cat)
-          if(existingCategory && existingCategory.parentId) cat = existingCategory.parentId.toString()
+          if (existingCategory && existingCategory.parentId) cat = existingCategory.parentId.toString()
           categories.push(cat)
         }
         categories = [...new Set(categories)]
-        const pipeline=[
-          {$match: {
-            $and: [
-              {status: "Publish"},
-              {categoryId: {$in: categories}},
-              {_id: {$ne: mongoose.Types.ObjectId(args.productID)}}
-            ]
-          }},
-          {$limit: 4}
+        const pipeline = [
+          {
+            $match: {
+              $and: [
+                { status: "Publish" },
+                { categoryId: { $in: categories } },
+                { _id: { $ne: mongoose.Types.ObjectId(args.productID) } }
+              ]
+            }
+          },
+          { $limit: 4 }
         ]
         // retrieve related products
         let products = await Product.aggregate(pipeline)
@@ -531,8 +533,8 @@ module.exports = {
         image: args.image,
         meta: args.meta,
       };
-      const duplicate = await duplicateData({name: args.name}, ProductCat)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
+      const duplicate = await duplicateData({ name: args.name }, ProductCat)
+      if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       let validation = ["name"];
       return await CREATE_FUNC(
         id,
@@ -560,8 +562,8 @@ module.exports = {
         meta: args.meta,
       };
       let validation = ["name"];
-      const duplicate = await duplicateData({name: args.name}, ProductCat, args.id)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
+      const duplicate = await duplicateData({ name: args.name }, ProductCat, args.id)
+      if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       return await UPDATE_FUNC(
         id,
         args.id,
@@ -578,7 +580,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product Category", false);
       }
       if (!args.id) {
-        return MESSAGE_RESPONSE("ID_ERROR","Product Category", false);
+        return MESSAGE_RESPONSE("ID_ERROR", "Product Category", false);
       }
       try {
         const cat = await ProductCat.findByIdAndRemove(args.id);
@@ -645,7 +647,7 @@ module.exports = {
             // console.log('fimage',args.feature_image);
             imgObject = await imageUpload(
               args.feature_image[0].file,
-              "/assets/images/product/feature/","productfeature"
+              "/assets/images/product/feature/", "productfeature"
             );
 
             if (imgObject.success === false) {
@@ -661,7 +663,7 @@ module.exports = {
             for (let i in args.gallery_image) {
               galleryObject = await imageUpload(
                 args.gallery_image[i].file,
-                "/assets/images/product/gallery/","productgallery"
+                "/assets/images/product/gallery/", "productgallery"
               );
               if (galleryObject.success) {
                 imgArray.push(galleryObject.data);
@@ -669,8 +671,8 @@ module.exports = {
             }
           }
           let url = await updateUrl(args.url || args.name, "Product");
-          const duplicate = await duplicateData({name: args.name}, Product)
-          if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
+          const duplicate = await duplicateData({ name: args.name }, Product)
+          if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
           const newProduct = new Product({
             name: args.name,
             url: url,
@@ -706,19 +708,20 @@ module.exports = {
           let combinations = [];
           if (args.variant.length && args.combinations.length) {
             combinations = args.combinations;
-            //console.log('ttt',combinations);
+            console.log('ttt', combinations);
 
             for (const combination of combinations) {
               combination.product_id = lastProduct.id;
 
               let imgObject = "";
 
-              if (combination.image && combination.image.file) {
+              if (combination.upload_image && combination.upload_image.length) {
                 imgObject = await imageUpload(
-                  combination.image.file[0].file,
-                  "/assets/images/product/variant/","productvariant"
+                  combination.upload_image[0].file,
+                  "/assets/images/product/variant/", "productvariant"
                 );
                 combination.image = imgObject.data || imgObject;
+                delete combination.upload_image
               }
             }
           } else {
@@ -730,7 +733,7 @@ module.exports = {
                 quantity: args.quantity,
                 pricing: {
                   price: args.pricing.price,
-                  sellprice: args.pricing.sellprice 
+                  sellprice: args.pricing.sellprice
                 },
                 image: "",
               },
@@ -784,8 +787,8 @@ module.exports = {
           return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
         }
 
-        const duplicate = await duplicateData({name: args.name}, Product, args.id)
-        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
+        const duplicate = await duplicateData({ name: args.name }, Product, args.id)
+        if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
 
         const product = await Product.findById({ _id: args.id });
         if (product) {
@@ -798,7 +801,7 @@ module.exports = {
           if (args.update_feature_image) {
             imgObject = await imageUpload(
               args.update_feature_image[0].file,
-              "/assets/images/product/feature/","productfeature"
+              "/assets/images/product/feature/", "productfeature"
             );
 
             if (imgObject.success === false) {
@@ -819,7 +822,7 @@ module.exports = {
             for (let i in args.update_gallery_image) {
               galleryObject = await imageUpload(
                 args.update_gallery_image[i].file,
-                "/assets/images/product/gallery/","productgallery"
+                "/assets/images/product/gallery/", "productgallery"
               );
 
               if (galleryObject.success) {
@@ -830,9 +833,9 @@ module.exports = {
 
           if (args.removed_image.length) {
             gallery_images = gallery_images.filter((gImage => {
-              if(args.removed_image.includes(gImage)){
+              if (args.removed_image.includes(gImage)) {
                 imageUnlink(gImage);
-              }else{
+              } else {
                 return gImage
               }
             }))
@@ -858,7 +861,7 @@ module.exports = {
           product.name = args.name;
           product.categoryId = args.categoryId;
           product.brand = args.brand || null,
-          product.url = await updateUrl(args.url || args.name, "Product", args.id);
+            product.url = await updateUrl(args.url || args.name, "Product", args.id);
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;
@@ -873,8 +876,8 @@ module.exports = {
           product.custom_field = args.custom_field;
           product.status = args.status;
           product.attribute = args.attribute,
-          product.variant = args.variant,
-          product.updated = Date.now();
+            product.variant = args.variant,
+            product.updated = Date.now();
           await product.save();
 
           let combinations = [];
@@ -882,17 +885,17 @@ module.exports = {
             combinations = args.combinations;
             for (const combination of combinations) {
               combination.product_id = args.id;
-
               let imgObject = "";
               if (
-                combination.image &&
-                combination.image.hasOwnProperty("file")
+                combination.upload_image &&
+                combination.upload_image.length
               ) {
                 imgObject = await imageUpload(
-                  combination.image.file[0].file,
-                  "/assets/images/product/variant/","productvariant"
+                  combination.upload_image[0].file,
+                  "/assets/images/product/variant/", "productvariant"
                 );
                 combination.image = imgObject.data || imgObject;
+                delete combination.upload_image;
               }
             }
           } else {
@@ -904,7 +907,7 @@ module.exports = {
                 quantity: args.quantity,
                 pricing: {
                   price: args.pricing.price,
-                  sellprice: args.pricing.sellprice 
+                  sellprice: args.pricing.sellprice
                 },
                 image: "",
               },
@@ -950,7 +953,7 @@ module.exports = {
 
           const productVariants = product.variant
           await ProductAttribute.deleteMany({
-            _id: {$in: [productVariants]}
+            _id: {$in: [productVariants] }
           })
 
           const variations = await ProductAttributeVariation.find({

@@ -164,4 +164,15 @@ export const isDiscount = (product) => {
             return false;
         }
 }
+
+export const isVariantDiscount = (variantProduct) => {
+    if(variantProduct[0]?.pricing.sellprice > 0 && 
+        variantProduct[0].pricing.sellprice < variantProduct[0].pricing.price && 
+        ((100 /variantProduct[0]?.pricing?.price)*(variantProduct[0]?.pricing?.price - variantProduct[0]?.pricing?.sellprice))>0){
+            return true;
+        }
+        else{
+            return false;
+        }
+}
         
