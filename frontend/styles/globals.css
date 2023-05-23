@@ -3723,3 +3723,15 @@ white-space: nowrap;
   color: #dc3545;
   font-size: small;
 }
+.css-b62m3t-container {
+  position: relative;
+    display: inline-block;
+    width: 150px;
+    margin-right: 10px;
+}
+
+.varaint-select{
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+}

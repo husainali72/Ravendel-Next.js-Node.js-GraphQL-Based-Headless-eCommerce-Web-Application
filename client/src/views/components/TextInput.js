@@ -3,7 +3,6 @@ import { TextField } from "@mui/material";
 import viewStyles from "../viewStyles.js";
 
 const TextInput = ({ name, onBlur, value, label, onInputChange, type, sizeSmall, ...other }) => {
-  const classes = viewStyles();
   return (
     <TextField
       type={type || "text"}
