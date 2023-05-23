@@ -2,13 +2,12 @@ import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { useDispatch } from 'react-redux';
 
-const TinymceEditor = ({ value }) => {
+const TinymceEditor = ({ value, onEditorChange }) => {
   const dispatch = useDispatch();
   const handleEditorChange = e => {
-    dispatch({
-      type: "TINYMCE_SUCCESS",
-      payload: { content: e.target.getContent() }
-    });
+    if (e.target) {
+      onEditorChange(e.target.getContent());
+    }
   };
 
   return (

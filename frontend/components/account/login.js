@@ -37,7 +37,6 @@ const LogIn = () => {
 
         const session = await getSession()
         // console.log('sesionfromlogin',session)
-        console.log('resssss==>' , res)
         if (res?.error) {
             setError(res.error);
         } else {
@@ -55,7 +54,6 @@ const LogIn = () => {
                     qty: prod.quantity
                 }
             } )
-            // console.log('dispatchedd')
             dispatch(createCart(id, products));
             // localStorage.setItem("cart", JSON.stringify([]))
 

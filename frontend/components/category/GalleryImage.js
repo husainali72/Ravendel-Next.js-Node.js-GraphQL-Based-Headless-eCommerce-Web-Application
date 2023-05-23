@@ -17,10 +17,7 @@ import FormLabel from '@mui/material/FormLabel';
 import { ADD_TO_CART_QUERY, GET_USER_CART, UPDATE_CART_PRODUCT } from "../../queries/cartquery";
 import { query } from "../../utills/helpers";
 import CheckZipcode from "../account/component/CheckZipcode";
-// import NoImagePlaceHolder from "../images/NoImagePlaceHolder.png"
-import NoImagePlaceHolder from "../../public/assets/images/NoImagePlaceHolder.png"
-import Select from 'react-select';
-import e from "cors";
+import { capitalize } from "lodash";
 var placeholder = "https://dummyimage.com/300";
 const GalleryImagesComponents = (props) => {
     var id = ""
@@ -29,6 +26,7 @@ const GalleryImagesComponents = (props) => {
     const session = useSession()
     const router = useRouter();
     const { singleproducts, stockClass, setStockClass, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal } = props;
+    const [available, setavailable] = useState(true)
     const [Lable, setLable] = useState("In Stock")
     const [variantSelect, setVariantSelect] = useState()
     const [parentId, setParentId] = useState()
@@ -101,6 +99,9 @@ const GalleryImagesComponents = (props) => {
         slidesToScroll: 1,
         touchMove: false,
     };
+    const checkzipcode = (result) => {
+        setavailable(!result)
+    }
     const addToCartProduct = async (product) => {
         let quantity = 1
         if (session.status === "authenticated") {
@@ -237,7 +238,7 @@ const GalleryImagesComponents = (props) => {
                 </div>
                 <div className="single-product-detail col-md-6 col-sm-12 col-xs-12">
                     <div className="detail-info">
-                        <h2>{singleproducts.name}</h2>
+                        <h2>{capitalize(singleproducts.name)}</h2>
                         <div className="product-detail-rating">
                             <div className="pro-details-brand">
                                 <span> Category: {singleproducts.categoryId.map((item, index) => <span>{index < singleproducts.categoryId.length - 1 ? (item.name + ", ") : item.name}</span>)}</span>
@@ -291,6 +292,7 @@ const GalleryImagesComponents = (props) => {
                         <div className="short-desc mb-30">
                             <p> {singleproducts?.short_description}</p>
                         </div>
+
                         {Lable !== "Out Of Stock" &&
                             <button type="button"
                                 className="btn btn-success button button-add-to-cart"
@@ -326,7 +328,8 @@ const GalleryImagesComponents = (props) => {
                         })}
                         </div>
 
-                        <CheckZipcode />
+                        <CheckZipcode  checkzipcode={checkzipcode}/>
+
                         {singleproducts?.custom_field && singleproducts.custom_field?.length > 0 ? (
                             <>
                                 {singleproducts?.custom_field?.map(field => (<div className="product-attributes">

@@ -696,43 +696,39 @@ const ViewOrderComponent = ({ params }) => {
             <Grid item md={6}>
               <Box component="span">
                 <Card style={{ height: "219px" }}>
-                  <CardHeader title="Subtotal" />
+                  <CardHeader title="Total" />
                   <Divider />
                   <CardContent>
                     <Grid container justify="flex-end">
                       <Grid item className={classes.textRight}>
                         <Typography variant="body1" className={classes.mtb1}>
-                          Total
+                          SubTotal
                         </Typography>
-                        {order.sub_total_details.shipping_name && order.sub_total_details.shipping_name !== 'None' ?
-                          <Typography variant="body1" className={classes.mtb1}>
-                            {order.sub_total_details.shipping_name}
-                          </Typography> : null}
-                        {order.sub_total_details.tax_name && order.sub_total_details.tax_name !== 'None' ?
-                          <Typography variant="body1" className={classes.mtb1}>
-                            {order.sub_total_details.tax_name}
-                          </Typography> : null}
+                        <Typography variant="body1" className={classes.mtb1}>
+                          Tax
+                        </Typography>
+                        <Typography variant="body1" className={classes.mtb1}>
+                          Shipping
+                        </Typography>
                         {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
-                          <Typography variant="body1" className={classes.mtb1} sx={{ color: '#4BB543', fontWeight: 'bold' }}>
+                          <Typography variant="body1" className={classes.mtb2coupon} sx={{ color: '#4BB543' }}>
                             Coupon - ( {order.sub_total_details.coupon_code} )
                           </Typography> : null}
                         <Divider sx={{ mt: "10px", mb: "10px" }} />
                         <Typography variant="body1" className={classes.mtb1}>
-                          SubTotal
+                          Total
                         </Typography>
                       </Grid>
                       <Grid item md={3} className={classes.textRight}>
                         <Typography variant="body2" className={classes.mtb2}>
                           {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.total, decimal)}
                         </Typography>
-                        {order.sub_total_details.shipping_name && order.sub_total_details.shipping_name !== 'None' ?
-                          <Typography variant="body2" className={classes.mtb2}>
-                            {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.shipping_value, decimal)}
-                          </Typography> : null}
-                        {order.sub_total_details.tax_name && order.sub_total_details.tax_name !== 'None' ?
-                          <Typography variant="body2" className={classes.mtb2}>
-                            {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.tax_value, decimal)}
-                          </Typography> : null}
+                        <Typography variant="body2" className={classes.mtb2}>
+                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.tax_value, decimal)}
+                        </Typography>
+                        <Typography variant="body2" className={classes.mtb2}>
+                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.shipping_value, decimal)}
+                        </Typography>
                         {order.sub_total_details.coupon_code && order.sub_total_details.coupon_code !== 'None' ?
                           <Typography variant="body2" className={classes.mtb2coupon} sx={{ color: '#4BB543', }}>
                             <span className={classes.minus}>-</span>  {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.coupon_value, decimal)}

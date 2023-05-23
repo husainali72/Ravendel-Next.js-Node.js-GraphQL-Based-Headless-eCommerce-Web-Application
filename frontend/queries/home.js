@@ -18,10 +18,10 @@ import { gql } from "@apollo/client";
 //                             capture
 //                             test_mode
 //                             publishable_key
-                           
+
 //                             webhook_key
 //                    }
- 
+
 //            }
 //            store{
 //                     currency_options{
@@ -108,6 +108,7 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           country
           state
           zip
+          hour
         }
         measurements {
           weight_unit
@@ -204,6 +205,12 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           phone_number
           email
           logo
+          social_media {
+            name
+            handle
+            
+          }
+          
         }
         mobile {
           mobile_section {
@@ -268,6 +275,8 @@ export const FEATURE_PRODUCT_QUERY = gql`
           featured_product
           status
           variant
+          shipping
+          tax_class
         }
       }
     `;
@@ -287,6 +296,8 @@ export const GET_RECENT_PRODUCTS_QUERY = gql`
       featured_product
       status
       variant
+      shipping
+      tax_class
     }
   }
 `;
@@ -306,6 +317,8 @@ export const GET_RELATED_PRODUCTS_QUERY = gql`
       featured_product
       status
       variant
+      shipping
+      tax_class
     }
   }
 `;
@@ -350,6 +363,8 @@ export const ON_SALE_PRODUCTS_QUERY = gql`
     featured_product
     status
     variant
+    shipping
+    tax_class
     __typename
   }
   }

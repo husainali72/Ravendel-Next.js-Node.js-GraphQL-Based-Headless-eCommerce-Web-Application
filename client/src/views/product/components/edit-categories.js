@@ -20,7 +20,6 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
 
   useEffect(() => {
     if (products.categories.length && selectedCategories.length) {
-      //var selectedCat = _.cloneDeep(props.productState.categories);
       var selectedCat = JSON.parse(JSON.stringify(products.categories));
       if (selectedCat && selectedCat.length) {
         selectedCat.map((cat) => {
@@ -42,13 +41,13 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
 
   const handleCategeryCheckbox = (category) => {
     category.checked = !category.checked;
-    var items = document.getElementsByName("categoryIds");
-    var selectedItems = [];
-    for (let i in items) {
-      if (items[i].type === "checkbox" && items[i].checked === true)
-        selectedItems.push(items[i].value);
+    var items = selectedCategories
+    if (category.checked) {
+      items.push(category.id)
+    } else {
+      items = items.filter((value) => value !== category.id)
     }
-    onCategoryChange(selectedItems);
+    onCategoryChange(items);
   };
 
   const checkedChildernChecked = (cat) => {

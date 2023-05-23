@@ -103,10 +103,9 @@ const EditBrandComponenet = ({ params }) => {
     setBrand({ ...brand, "updated_brand_logo": e.target.files[0] });
   };
   const isUrlExist = async (url) => {
-    let updatedUrl = await getUpdatedUrl("Brand", url);
     setBrand({
       ...brand,
-      url: updatedUrl,
+      url: url,
     });
   };
   return (

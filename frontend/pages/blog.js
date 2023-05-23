@@ -68,7 +68,11 @@ const Blog = (blogData, blogTagsData) => {
                             <ShopProducts name={"Tags"} blogTagsData={tags} />
                         </div> */}
                     </div>
-                ) : (<h1>no blog available</h1>)}
+                ) : (
+                    <div className="d-flex  justify-content-center mt-5"> 
+                        <p className="" >No blogs available</p>
+                    </div>
+                )}
             </Container>
         </>
     )

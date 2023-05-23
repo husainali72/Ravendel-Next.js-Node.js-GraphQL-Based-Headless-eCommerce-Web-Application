@@ -8,13 +8,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { useSession, signOut } from "next-auth/react";
 import { logoutDispatch } from "../redux/actions/userlogoutAction"
 import { GET_USER_CART } from '../queries/cartquery';
-import { query } from '../utills/helpers';
+import { getImage, query } from '../utills/helpers';
+import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 export default function Header({ }) {
     const data = useSession();
     const cartItem = useSelector(state => state.cart)
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [cart, setCart] = useState(null);
+    const [homeData, setHomeData] = useState({});
     const LogOutUser = async () => {
         const data = await signOut({ redirect: false, callbackUrl: "/" })
         localStorage.setItem("userCart", JSON.stringify([]));
@@ -32,9 +34,18 @@ export default function Header({ }) {
             })
         }
     }
+    const getHomepageData = () =>{
+        query(GET_HOMEPAGE_DATA_QUERY).then(res => {
+            let homepageData = res?.data?.getSettings;
+            setHomeData(homepageData);
+        })
+    }
     useEffect(() => {
         getCartLength()
     }, [cartItem, data])
+    useEffect(() => {
+        getHomepageData()
+    }, [])
     return (
         <header className="header-area header-style-5 mt-0">
             <div className="header-top">
@@ -117,6 +128,7 @@ export default function Header({ }) {
                                 alt="Ravendel" width="120" height="33.13" /> */}
                             <Link href="/">
                                 <a className="app-logo" width="120" height="33.13">RAVENDEL</a>
+                                {/* <img className="home-logo" src={getImage(homeData?.appearance?.theme?.logo, 'original',true)} alt="" /> */}
                             </Link>
                         </div>
                         <div className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding d-lg-block hover-boder" id='navigation' style={{ justifyContent: "center" }}>
@@ -139,7 +151,7 @@ export default function Header({ }) {
                                     </li>
                                     <li className="nav-header">
                                         <Link href="/contact">
-                                            <a className="nav-link" aria-selected="false">Contact</a>
+                                            <a className="nav-link" aria-selected="false">Contact Us</a>
                                         </Link>
                                     </li>
                                     <li className="nav-item">
@@ -152,21 +164,18 @@ export default function Header({ }) {
                         </div>
                         <div>
                             <div className="dropdown cart-btn" style={{ float: 'right', marginRight: 8, justifyContent: "right" }}>
-                                <div className="add-to-cart-header">
-                                    <Link href="/shopcart">
+                                <Link href="/shopcart">
+                                    <div className="add-to-cart-header">
                                         <a className="cart-icon action-btn">
                                             <i className="fas fa-shopping-bag font-awesome-icon" style={{ color: "#088178" }} aria-hidden="true"></i>
                                         </a>
-                                    </Link>{
-
-                                    }
-
-                                    {data.status === "authenticated" ? (
-                                        <span className="pro-count blue">{cart?.products?.length}</span>
-                                    ) : (
-                                        <span className="pro-count blue">{cartItem?.length}</span>
-                                    )}
-                                </div>
+                                        {data.status === "authenticated" ? (
+                                            <span className="pro-count blue">{cart?.products?.length}</span>
+                                        ) : (
+                                            <span className="pro-count blue">{cartItem?.length}</span>
+                                        )}
+                                    </div>
+                                </Link>
                                 <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
                                     <ShopCartProducts />
                                 </div>
