@@ -13,6 +13,7 @@ import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 
 import { useNavigate } from "react-router-dom";
+import { dashboardAction } from "./dashboardAction";
 
 export const ordersAction = () => (dispatch) => {
   dispatch({
@@ -160,6 +161,7 @@ export const orderUpdateAction = (object, navigate) => (dispatch) => {
       if (success) {
         navigate(`${client_app_route_url}all-orders`);
         dispatch(ordersAction());
+        dispatch(dashboardAction());
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

@@ -131,7 +131,7 @@ const ZipCodesComponent = () => {
                 value={zipcode.zipcode}
                 name='zipcode'
                 label={edit ? 'Edit Zipcode ' : 'Add zip code'}
-                buttonTitle={edit ? 'Edit' : 'Add'}
+                buttonTitle={edit ? 'Update' : 'Add'}
                 onSubmit={edit ? onUpdate : onAdd}
                 register={register}
                 handleSubmit={handleSubmit}

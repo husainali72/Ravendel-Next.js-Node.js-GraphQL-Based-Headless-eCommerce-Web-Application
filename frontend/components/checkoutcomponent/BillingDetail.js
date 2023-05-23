@@ -7,7 +7,7 @@ import 'react-phone-input-2/lib/bootstrap.css';
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { handleEnter } from "../../utills/helpers";
 const BillingDetails = (props) => {
-    const { handleShippingPhone, control, getBillingInfo, registerRef, errorRef, billingInfo, shippingAddressToggle, handleShippingChange, shippingAdd, shippingInfo, handlePhoneInput, setShippingInfo, setBillingInfo, handleBillingInfo } = props;
+    const { handleShippingPhone, control, getBillingInfo, registerRef, errorRef, billingInfo, handleZipCode, ZipMessage, shippingAddressToggle, handleShippingChange, shippingAdd, shippingInfo, handlePhoneInput, setShippingInfo, setBillingInfo, handleBillingInfo } = props;
     useEffect(() => {
         var allData = {
             billing: billingInfo,
@@ -215,14 +215,12 @@ const BillingDetails = (props) => {
                                     },
                                 })}
                                 value={billingInfo.zip}
-                                onChange={handleBillingInfo}
+                                onChange={handleZipCode}
                                 onKeyDown={(e) => handleEnter(e)}
                             />
                             <p>
-                                <small style={{ color: 'red' }}>
-                                    {errorRef.zip?.type === "required" ? errorRef.zip?.message : undefined}
-                                    {errorRef.zip?.type === "minLength" ? errorRef.zip?.message : undefined}
-                                    {errorRef.zip?.type === "maxLength" ? errorRef.zip?.message : undefined}
+                                <small style={{ color: ZipMessage.zipSuccess ? '#4BB543' : 'red' }}>
+                                    {ZipMessage.zipMessage}
                                 </small>
                             </p>
                         </div>
@@ -513,34 +511,34 @@ const BillingDetails = (props) => {
                                     </small>
                                 </p> */}
                                 <Controller
-                                name="shippingphone"
-                                control={control}
-                                rules={{
-                                    required: {
-                                        value: (shippingAdd ?(shippingInfo.phone ? false : true) : false),
-                                        message: "Phone number is Required",
-                                    },
-                                    validate: () => {
-                                        return isValidPhoneNumber(`+${shippingInfo.phone}`)
-                                    }
-                                }}
-                                render={({ field: { onChange, value } }) => (
-                                    <PhoneInput
-                                        enableSearch='true'
-                                        country={'in'}
-                                        inputClass={'custom-input'}
-                                        placeholder="Enter phone number"
-                                        value={shippingInfo.phone}
-                                        onChange={(value) => handleShippingPhone('phone', value)}
-                                    />
-                                )}
-                            />
-                             <p>
-                                <small style={{ color: 'red' }}>
-                                    {errorRef.shippingphone?.type === "required" ? errorRef.shippingphone?.message : undefined}
-                                    {errorRef.shippingphone?.type === "validate" ? "Phone number is invalid" : undefined}
-                                </small>
-                            </p>
+                                    name="shippingphone"
+                                    control={control}
+                                    rules={{
+                                        required: {
+                                            value: (shippingAdd ? (shippingInfo.phone ? false : true) : false),
+                                            message: "Phone number is Required",
+                                        },
+                                        validate: () => {
+                                            return isValidPhoneNumber(`+${shippingInfo.phone}`)
+                                        }
+                                    }}
+                                    render={({ field: { onChange, value } }) => (
+                                        <PhoneInput
+                                            enableSearch='true'
+                                            country={'in'}
+                                            inputClass={'custom-input'}
+                                            placeholder="Enter phone number"
+                                            value={shippingInfo.phone}
+                                            onChange={(value) => handleShippingPhone('phone', value)}
+                                        />
+                                    )}
+                                />
+                                <p>
+                                    <small style={{ color: 'red' }}>
+                                        {errorRef.shippingphone?.type === "required" ? errorRef.shippingphone?.message : undefined}
+                                        {errorRef.shippingphone?.type === "validate" ? "Phone number is invalid" : undefined}
+                                    </small>
+                                </p>
                                 <input className="input-filled"
                                     type="text"
                                     name="shippingemail"
@@ -588,7 +586,7 @@ const BillingDetails = (props) => {
                     {/* </form> */}
 
                 </div >
-            </div>
+            </div >
         </>
 
     )
