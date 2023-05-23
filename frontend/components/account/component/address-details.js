@@ -4,6 +4,7 @@ import { Fragment, useEffect, useState } from "react";
 import { Card, Button, Row, Col, Collapse, Form, Fade, Tooltip, OverlayTrigger } from "react-bootstrap";
 import { mutation, query } from "../../../utills/helpers";
 import { useRouter } from "next/router";
+import { capitalize } from "lodash";
 
 const Star = ({ starId, marked }) => {
     return (
@@ -333,7 +334,7 @@ const AddressDetail = (props) => {
                     <Card key={index}>
                         <Card.Body>
                             <Row className="address-card-row">
-                                <Col><i className="fas fa-user">{addressBook.first_name}</i></Col>
+                                <Col><i className="fas fa-user"></i><b>{capitalize(addressBook.first_name)}</b></Col>
                                 <Col style={{ float: 'right', marginRight: "-400px" }}>
                                     <OverlayTrigger
                                         overlay={
@@ -351,15 +352,16 @@ const AddressDetail = (props) => {
                                 <div style={{ margin: "10px", padding: "10px" }}><i className="far fa-building"></i>{addressBook.company}</div>
                             </Card.Text>
                             <Button
-                                size="small"
-                                color="primary"
+                                className="me-2"
+                                variant="outline-dark"
+                                size="sm"
                                 onClick={() => editAddress(addressBook)}
                             >
                                 EDIT
                             </Button>
                             <Button
-                                size="small"
-                                color="primary"
+                                variant="danger"
+                                size="sm"
                                 onClick={() => deleteAddressBook(addressBook._id, index)}
                             >
                                 DELETE

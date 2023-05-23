@@ -19,12 +19,11 @@ import { capitalize } from 'lodash';
 
 
 const Profile = ({ customeraddres }) => {
-    // console.log("customeraddres====", customeraddres)
+    const [ID,setID] = useState("")
     const session = useSession();
-    // console.log("session", session)
-
+    const session2 = getSession();
+    session2.then(res => setID(res.user.accessToken.customer._id))
     const router = useRouter();
-
     if (router.isFallback) {
         return <div>Loading...</div>
     }
@@ -48,7 +47,6 @@ const Profile = ({ customeraddres }) => {
     if (session.status === "authenticated") {
         id = session.data.user.accessToken.customer._id
         token = session.data.user.accessToken.token
-        // console.log("token", token)
     }
 
     useEffect(() => {
@@ -57,6 +55,22 @@ const Profile = ({ customeraddres }) => {
         setIsRefreshing(false);
     }, [customeraddres])
 
+    useEffect(() => {
+        const getCustomerAddress = async () =>{
+            try {
+                const { data: customerssdata } = await client.query({
+                    query: GET_CUSTOMER_QUERY,
+                    variables: { ID },
+                })
+                setCustomerAddress(customerssdata.customer.data) 
+            }
+            catch (e) {
+                console.log("customer Error===", e);
+            }
+        }
+        getCustomerAddress();
+    }, [])
+    
 
     // useEffect(() => {
     //     // const id = data.user.accessToken.customer._id
@@ -74,12 +88,9 @@ const Profile = ({ customeraddres }) => {
         if (session.status === "authenticated") {
             id = session.data.user.accessToken.customer._id
             token = session.data.user.accessToken.token
-            // console.log("token", token)
         }
         query(GET_CUSTOMER_QUERY, id, token).then((response) => {
-            // console.log("customer useEffect response", response.data)
             const customeradd = response.data.customer.data
-            // console.log("==useEffect", customeradd)
             setCustomerAddress(customeradd)
         })
     }
@@ -173,9 +184,9 @@ const Profile = ({ customeraddres }) => {
 
                             </Tab>
                             <Tab eventKey="address" title="Address">
-                                <Link href={`/account/${customeraddress?.id}`}>
+                                {/* <Link href={`/account/${customeraddress?.id}`}>
                                     <Button>edit</Button>
-                                </Link>
+                                </Link> */}
                                 <AddressDetail
                                     addressDetail={customeraddress}
                                     address={customeraddress}
@@ -204,22 +215,24 @@ export async function getServerSideProps(context) {
     // console.log("session", session)
     // var id = ""
 
-    var id = session.user.accessToken.customer._id
+    var id = session?.user?.accessToken?.customer?._id
 
     // var customers = [];
     var customeraddres = [];
+    if(session !== null){
 
-    /* ================================= GET_CUSTOMER DETAILS ================================= */
-
-    try {
-        const { data: customerssdata } = await client.query({
-            query: GET_CUSTOMER_QUERY,
-            variables: { id },
-        })
-        customeraddres = customerssdata.customer.data
-    }
-    catch (e) {
-        console.log("customer Error===", e);
+            /* ================================= GET_CUSTOMER DETAILS ================================= */
+        
+            try {
+                const { data: customerssdata } = await client.query({
+                    query: GET_CUSTOMER_QUERY,
+                    variables: { id },
+                })
+                customeraddres = customerssdata.customer.data
+            }
+            catch (e) {
+                console.log("customer Error===", e);
+            }
     }
 
     return {

@@ -474,32 +474,34 @@ module.exports = {
         let carttotal = 0;
         // if local products exists then only run loop for adding products in customer cart
         if(args.products)
-        for(let localProd of args.products){
-          let product = await Product.findById({ _id: localProd.product_id });
-          // declare variables to be used for adding product to cart
-          let product_price = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price
-          let total = product.pricing.sellprice > 0 ? localProd.qty * product.pricing.sellprice : localProd.qty * product.pricing.price
-          let product_image = product.feature_image
-          let product_id = localProd.product_id
-          let product_title = product.name
-          let qty = localProd.qty
-          // if customer cart is empty then add product from local
-          if(!existingCartProducts.length){
-            existingCartProducts.push({product_id, product_title, product_image, product_price, qty, total})
-          }
-          // else update customer cart with local
-          else{
-            // check local product id with customer cart product id
-            let existingProduct = existingCartProducts.find(prod=>prod.product_id.toString() === localProd.product_id.toString() ? product : false)
-            // if matches then update customer cart product with local product
-            if(existingProduct){
-              existingProduct.qty += localProd.qty
-              existingProduct.total = existingProduct.product_price * existingProduct.qty
+          for (let localProd of args.products) {
+            let product = await Product.findById({ _id: localProd.product_id });
+            // declare variables to be used for adding product to cart
+            let product_price = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price
+            let total = product.pricing.sellprice > 0 ? localProd.qty * product.pricing.sellprice : localProd.qty * product.pricing.price
+            let product_image = product.feature_image
+            let product_id = localProd.product_id
+            let product_title = product.name
+            let shipping_class = product.shipping.shipping_class
+            let tax_class = product.tax_class
+            let qty = localProd.qty
+            // if customer cart is empty then add product from local
+            if (!existingCartProducts.length) {
+              existingCartProducts.push({ product_id, product_title, product_image, product_price, qty, total, shipping_class, tax_class })
             }
-            // else add local product to customer cart
-            else{
-              existingCartProducts.push({product_id, product_title, product_image, product_price, qty, total})
-            }
+            // else update customer cart with local
+            else {
+              // check local product id with customer cart product id
+              let existingProduct = existingCartProducts.find(prod => prod.product_id.toString() === localProd.product_id.toString() ? product : false)
+              // if matches then update customer cart product with local product
+              if (existingProduct) {
+                existingProduct.qty += localProd.qty
+                existingProduct.total = existingProduct.product_price * existingProduct.qty
+              }
+              // else add local product to customer cart
+              else {
+                existingCartProducts.push({ product_id, product_title, product_image, product_price, qty, total, shipping_class, tax_class })
+              }
           }
         }
         // calculate carttotal from total of all products in customer cart
