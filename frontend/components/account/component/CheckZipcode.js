@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import client from '../../../apollo-client';
 import { CHECK_ZIPCODE } from '../../../queries/productquery';
 
-const CheckZipcode = () => {
+const CheckZipcode = ({ checkzipcode }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [Zipcode, setZipCode] = useState("");
     const [ZipMessage, setZipMessage] = useState("");
@@ -32,6 +32,7 @@ const CheckZipcode = () => {
                 });
                 setZipMessage(result.checkZipcode.message)
                 setZipMessageSuccess(result.checkZipcode.success)
+                checkzipcode(result.checkZipcode.success)
             } catch (e) {
                 console.log('ZipCode error ==>', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
             }

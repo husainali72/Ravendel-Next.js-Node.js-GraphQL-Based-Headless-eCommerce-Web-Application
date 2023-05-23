@@ -29,6 +29,7 @@ import { removeCartItemAction } from "../redux/actions/cartAction";
 import toast, { Toaster } from 'react-hot-toast';
 import { currencySetter } from "../utills/helpers"
 import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
+import { CHECK_ZIPCODE } from "../queries/productquery";
 
 
 const notify = (message, success) => {
@@ -128,12 +129,13 @@ export const CheckOut = ({ currencyStore }) => {
     const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
     const currencyOpt = currencyStore?.currency_options?.currency
     const [currency, setCurrency] = useState("$")
+    const [ZipMessage, setZipMessage] = useState("");
     const decimal = currencyStore?.currency_options?.number_of_decimals
     useEffect(() => {
         currencySetter(currencyOpt, setCurrency);
     }, [])
-    
-    
+
+
     useEffect(() => {
         if (session.status === "authenticated") {
             address_book = session?.data?.user.accessToken.customer.address_book
@@ -164,7 +166,9 @@ export const CheckOut = ({ currencyStore }) => {
                             name: originalProduct?.name,
                             pricing: originalProduct?.pricing,
                             feature_image: originalProduct?.feature_image,
-                            url: originalProduct?.url
+                            url: originalProduct?.url,
+                            tax_class: originalProduct?.tax_class,
+                            shipping_class: originalProduct?.shipping?.shipping_class
                         }
                         cartitems2.push(cartProduct);
                     })
@@ -188,7 +192,7 @@ export const CheckOut = ({ currencyStore }) => {
                 let variables = { id: id }
                 mutation(GET_USER_CART, variables).then(res => {
                     let carts = res?.data?.cartbyUser?.products;
-                    if(carts.length<=0){
+                    if (carts.length <= 0) {
                         router.push("/")
                     }
                 })
@@ -228,9 +232,33 @@ export const CheckOut = ({ currencyStore }) => {
             });
         }
         setBillingInfo({ ...billingInfo, [e.target.name]: e.target.value })
+
+    };
+    const handleZipCode = (e) => {
+        if (!shippingAdd) {
+            setShippingInfo({
+                ...shippingInfo,
+                [e.target.name]: e.target.value,
+            });
+        }
+        setBillingInfo({ ...billingInfo, [e.target.name]: e.target.value })
+        const checkCode = async () => {
+            try {
+                const { data: result } = await client.query({
+                    query: CHECK_ZIPCODE,
+                    variables: { zipcode: e.target.value.toString() }
+                });
+                setZipMessage({ ...ZipMessage, zipMessage: result.checkZipcode.message, zipSuccess: result.checkZipcode.success })
+            } catch (e) {
+                console.log('ZipCode error ==>', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
+            }
+        }
+        checkCode();
+
     };
     const getBillingData = (val) => {
         setBillingDetails({ ...billingDetails, ...val });
+
     };
 
     const getOrderDetailsData = (val) => {
@@ -316,13 +344,13 @@ export const CheckOut = ({ currencyStore }) => {
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
             couponResponse = res.data.calculateCoupon.total_coupon
             if (res.data.calculateCoupon.success) {
-                setBillingDetails((previousDetails)=>({...previousDetails,coupon_code:couponCode}))
+                setBillingDetails((previousDetails) => ({ ...previousDetails, coupon_code: couponCode }))
                 notify(res.data.calculateCoupon.message, true)
                 setIsCouponApplied(true)
             }
             else {
                 notify(res.data.calculateCoupon.message)
-                if(isCouponApplied){
+                if (isCouponApplied) {
                     setIsCouponApplied(false)
                 }
             }
@@ -420,6 +448,8 @@ export const CheckOut = ({ currencyStore }) => {
                                             <form onSubmit={handleSubmit(onSubmit)}>
                                                 <BillingDetails
                                                     control={control}
+                                                    ZipMessage={ZipMessage}
+                                                    handleZipCode={handleZipCode}
                                                     decimal={decimal}
                                                     coupon={coupon}
                                                     setCoupon={setCoupon}
@@ -653,6 +683,8 @@ export const CheckOut = ({ currencyStore }) => {
                                                 <h5>Billing Details</h5>
                                                 <BillingDetails
                                                     control={control}
+                                                    ZipMessage={ZipMessage}
+                                                    handleZipCode={handleZipCode}
                                                     coupon={coupon}
                                                     setCoupon={setCoupon}
                                                     setCouponFeild={setCouponFeild}

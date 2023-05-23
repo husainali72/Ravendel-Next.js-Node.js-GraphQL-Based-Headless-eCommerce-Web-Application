@@ -156,6 +156,8 @@ fragment ProductTile on Product {
     __typename
   }
   attribute
+  shipping
+  tax_class
   __typename
 }
 `;

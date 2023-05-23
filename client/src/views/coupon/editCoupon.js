@@ -119,14 +119,11 @@ const EditCouponComponent = ({ params }) => {
     if (name === "discount_value" || name === "minimum_spend" || name === "maximum_spend") {
       value = parseInt(value);
     }
-
     setCoupon({ ...coupon, [name]: value });
 
   };
 
   const selectChange = (e) => {
-
-
     setCoupon({ ...coupon, [e.target.name]: e.target.value });
   };
   const IncludeProduct = (id) => {
@@ -278,7 +275,7 @@ const EditCouponComponent = ({ params }) => {
                           Fixed Amount Discount
                         </MenuItem>
                         <MenuItem value="precantage-discount">
-                          Fixed Precantage Discount
+                          Fixed Precentage Discount
                         </MenuItem>
                       </Select>
                     </FormControl>
@@ -287,7 +284,7 @@ const EditCouponComponent = ({ params }) => {
                     <TextInput
                       type="number"
                       value={coupon.discount_value}
-                      label="Coupon Amount"
+                      label={coupon.discount_type === 'amount-discount' ? "Coupon Amount" : 'Coupon Percent'}
                       name="discount_value"
                       onInputChange={handleChange}
 

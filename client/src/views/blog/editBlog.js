@@ -70,37 +70,40 @@ const EditBlogComponenet = ({ params }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (Id){
-    dispatch(blogAction(Id));
-  } else {
-    dispatch(blogtagsAction())
-  }}, []);
+    if (Id) {
+      dispatch(blogAction(Id));
+    } else {
+      dispatch(blogtagsAction())
+    }
+  }, []);
 
 
   useEffect(() => {
-    if(Id){
-    if (!isEmpty(get(blogState, "blog"))) {
-      setBlog({ ...blog, ...blogState.blog });
-      if (
-        blogState.blog.feature_image
+    if (Id) {
+      if (!isEmpty(get(blogState, "blog"))) {
+        setBlog({ ...blog, ...blogState.blog });
+        if (
+          blogState.blog.feature_image
 
-      ) {
-        setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
+        ) {
+          setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
+        }
+        dispatch(blogtagsAction());
       }
-      dispatch(blogtagsAction());
-    }} else {
+    } else {
       setBlog(defaultObj)
       setfeatureImage(null)
     }
   }, [get(blogState, "blog"), Id]);
 
   useEffect(() => {
-    if(!Id){
-    if (isEmpty(get(blogState, "success"))) {
-      document.forms[0].reset();
-      setBlog(defaultObj);
-      setfeatureImage(null);
-      setclearTags([]);
+    if (!Id) {
+      if (isEmpty(get(blogState, "success"))) {
+        document.forms[0].reset();
+        setBlog(defaultObj);
+        setfeatureImage(null);
+        setclearTags([]);
+      }
     }
   }, [get(blogState, "success")]);
 
@@ -108,9 +111,8 @@ const EditBlogComponenet = ({ params }) => {
     setloading(get(blogState, "loading"));
   }, [get(blogState, "loading")]);
 
-  useEffect(() => {
+ useEffect(() => {
     if (!isEmpty(get(blogState, "tags"))) {
-
       if (Id){
       setTimeout(() => {
         var defaultTags = [];
@@ -119,11 +121,16 @@ const EditBlogComponenet = ({ params }) => {
             defaultTags.push({
               value: tag.id,
               label: tag.name,
-            };
-          });
-          setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
-        }, 1000)
-      }
+            });
+          }
+
+          return {
+            value: tag.id,
+            label: tag.name,
+          };
+        });
+        setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
+      }, 1000)}
       else {
         const tagObj = blogState.tags.map((tag) => {
           return {
@@ -131,23 +138,24 @@ const EditBlogComponenet = ({ params }) => {
             label: tag.name,
           };
         });
-
-        setTags({ ...tagObj, tags: tagObj });
+  
+        setTags({...tagObj, tags: tagObj});
       }
-    }
+    }      
   }, [get(blogState, "tags")]);
 
   const tagChange = (e) => {
-    if(Id){
-    setBlog({
-      ...blog,
-      blog_tag: e && e.length > 0 ? e.map((tag) => tag.value) : [],
-    });
-    setTags({ ...tags, defaultTags: e })
-  } else {
-    if (!isEmpty(e)) {
-      setclearTags(e);
-      setBlog({ ...blog, blog_tag: e.map((tag) => tag.value) });
+    if (Id) {
+      setBlog({
+        ...blog,
+        blog_tag: e && e.length > 0 ? e.map((tag) => tag.value) : [],
+      });
+      setTags({ ...tags, defaultTags: e })
+    } else {
+      if (!isEmpty(e)) {
+        setclearTags(e);
+        setBlog({ ...blog, blog_tag: e.map((tag) => tag.value) });
+      }
     }
   };
 
@@ -164,8 +172,12 @@ const EditBlogComponenet = ({ params }) => {
         },
       });
     } else {
-      if (Id){
-      dispatch(blogUpdateAction(blog, navigate));
+      if (Id) {
+        dispatch(blogUpdateAction(blog, navigate));
+      }
+      else {
+        dispatch(blogAddAction(blog, navigate));
+      }
     }
   };
 
@@ -198,9 +210,11 @@ const EditBlogComponenet = ({ params }) => {
   };
 
   const isUrlExist = async (url) => {
+
+    let updatedUrl = await getUpdatedUrl("Blog", url);
     setBlog({
       ...blog,
-      url: url,
+      url: updatedUrl,
     });
   };
 
@@ -211,9 +225,9 @@ const EditBlogComponenet = ({ params }) => {
       {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title= {Id? "Edit Blog" : "Add Blog"}
+          title={Id ? "Edit Blog" : "Add Blog"}
           onSubmit={addUpdateBlog}
-          submitTitle={Id? "Update" : "Add"}
+          submitTitle={Id ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-blogs`}
         />
 
@@ -334,7 +348,7 @@ const EditBlogComponenet = ({ params }) => {
               </Typography>
               <Select
                 isMulti
-                value={Id ? tags.defaultTags : clearTags}
+                value={tags.defaultTags}
                 name="blog_tag"
                 options={tags.tags}
                 onChange={tagChange}
