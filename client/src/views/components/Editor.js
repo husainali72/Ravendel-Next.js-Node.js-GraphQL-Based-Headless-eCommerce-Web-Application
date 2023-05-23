@@ -5,9 +5,13 @@ import { CircularProgress, Box } from "@mui/material";
 import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
 const TinymceEditorComponent = ({ value, onEditorChange }) => {
+
   const [show, setShow] = useState(false);
   const handleEditorChange = (e) => {
-    onEditorChange(e.target.getContent());
+
+    if (e.target) {
+      onEditorChange(e.target.getContent());
+    }
   };
   useEffect(() => {
     setTimeout(() => {

@@ -179,10 +179,9 @@ const AllCategoryComponent = () => {
   };
 
   const isUrlExist = async (url) => {
-    let updatedUrl = await getUpdatedUrl("ProductCat", url);
     setSingleCategory({
       ...singlecategory,
-      url: updatedUrl,
+      url: url,
     });
   };
   const handleOnChangeSearch = (filtereData) => {

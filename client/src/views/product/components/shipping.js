@@ -110,7 +110,7 @@ const ShippingComponent = ({
 
         <Grid item md={3}>
           <TextInput
-            label='Weigth'
+            label='Weight'
             name='weigth'
             variant='outlined'
             type='number'

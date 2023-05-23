@@ -25,7 +25,6 @@ import {
 } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import { ThemeProvider } from "@mui/material/styles";
-import { getUpdatedUrl } from "../../utils/service";
 import theme from "../../theme/index";
 import {
   Loading,
@@ -78,6 +77,7 @@ const EditBlogComponenet = ({ params }) => {
     }
   }, []);
 
+
   useEffect(() => {
     if (Id) {
       if (!isEmpty(get(blogState, "blog"))) {
@@ -111,27 +111,26 @@ const EditBlogComponenet = ({ params }) => {
     setloading(get(blogState, "loading"));
   }, [get(blogState, "loading")]);
 
-  useEffect(() => {
+ useEffect(() => {
     if (!isEmpty(get(blogState, "tags"))) {
-      if (Id) {
-        setTimeout(() => {
-          var defaultTags = [];
-          const tagObj = blogState.tags.map((tag) => {
-            if (~blog.blog_tag.indexOf(tag.id)) {
-              defaultTags.push({
-                value: tag.id,
-                label: tag.name,
-              });
-            }
-
-            return {
+      if (Id){
+      setTimeout(() => {
+        var defaultTags = [];
+        const tagObj = blogState.tags.map((tag) => {
+          if (~blog.blog_tag.indexOf(tag.id)) {
+            defaultTags.push({
               value: tag.id,
               label: tag.name,
-            };
-          });
-          setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
-        }, 1000)
-      }
+            });
+          }
+
+          return {
+            value: tag.id,
+            label: tag.name,
+          };
+        });
+        setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
+      }, 1000)}
       else {
         const tagObj = blogState.tags.map((tag) => {
           return {
@@ -139,10 +138,10 @@ const EditBlogComponenet = ({ params }) => {
             label: tag.name,
           };
         });
-
-        setTags({ ...tagObj, tags: tagObj });
+  
+        setTags({...tagObj, tags: tagObj});
       }
-    }
+    }      
   }, [get(blogState, "tags")]);
 
   const tagChange = (e) => {
@@ -211,6 +210,7 @@ const EditBlogComponenet = ({ params }) => {
   };
 
   const isUrlExist = async (url) => {
+
     let updatedUrl = await getUpdatedUrl("Blog", url);
     setBlog({
       ...blog,
