@@ -15,7 +15,12 @@ import { useSession, getSession } from 'next-auth/react';
 import { capitalize } from 'lodash';
 import { Toaster } from 'react-hot-toast';
 const Profile = ({ customeraddres }) => {
+
     const session = useSession();
+    const [ID,setID] = useState("")
+    const session = useSession();
+    const session2 = getSession();
+    session2.then(res => setID(res.user.accessToken.customer._id))
     const router = useRouter();
     if (router.isFallback) {
         return <div>Loading...</div>
@@ -44,6 +49,31 @@ const Profile = ({ customeraddres }) => {
         setCustomerAddress(customeraddres)
         setIsRefreshing(false);
     }, [customeraddres])
+
+
+    useEffect(() => {
+        const getCustomerAddress = async () =>{
+            try {
+                const { data: customerssdata } = await client.query({
+                    query: GET_CUSTOMER_QUERY,
+                    variables: { ID },
+                })
+                setCustomerAddress(customerssdata.customer.data) 
+            }
+            catch (e) {
+                console.log("customer Error===", e);
+            }
+        }
+        getCustomerAddress();
+    }, [])
+    
+
+    // useEffect(() => {
+    //     // const id = data.user.accessToken.customer._id
+    //     getcustomer()
+    //     setIsRefreshing(false);
+    // }, [])
+
 
     function getcustomer() {
         var id = ""
@@ -148,6 +178,10 @@ const Profile = ({ customeraddres }) => {
 
                             </Tab>
                             <Tab eventKey="address" title="Address">
+                                {/* <Link href={`/account/${customeraddress?.id}`}>
+                                    <Button>edit</Button>
+                                </Link> */}
+
                                 <AddressDetail
                                     addressDetail={customeraddress}
                                     address={customeraddress}
@@ -172,20 +206,24 @@ export default Profile;
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
+
     var id = session?.user?.accessToken.customer._id
+
     var customeraddres = [];
+    if(session !== null){
 
-    /* ================================= GET_CUSTOMER DETAILS ================================= */
-
-    try {
-        const { data: customerssdata } = await client.query({
-            query: GET_CUSTOMER_QUERY,
-            variables: { id },
-        })
-        customeraddres = customerssdata.customer.data
-    }
-    catch (e) {
-        console.log("customer Error===", e);
+            /* ================================= GET_CUSTOMER DETAILS ================================= */
+        
+            try {
+                const { data: customerssdata } = await client.query({
+                    query: GET_CUSTOMER_QUERY,
+                    variables: { id },
+                })
+                customeraddres = customerssdata.customer.data
+            }
+            catch (e) {
+                console.log("customer Error===", e);
+            }
     }
 
     return {

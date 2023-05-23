@@ -275,6 +275,8 @@ export const FEATURE_PRODUCT_QUERY = gql`
           featured_product
           status
           variant
+          shipping
+          tax_class
         }
       }
     `;
@@ -294,6 +296,8 @@ export const GET_RECENT_PRODUCTS_QUERY = gql`
       featured_product
       status
       variant
+      shipping
+      tax_class
     }
   }
 `;
@@ -313,6 +317,8 @@ export const GET_RELATED_PRODUCTS_QUERY = gql`
       featured_product
       status
       variant
+      shipping
+      tax_class
     }
   }
 `;
@@ -357,6 +363,8 @@ export const ON_SALE_PRODUCTS_QUERY = gql`
     featured_product
     status
     variant
+    shipping
+    tax_class
     __typename
   }
   }

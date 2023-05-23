@@ -2103,6 +2103,10 @@ footer .btn:hover a {
   padding-left: 0 !important;
 }
 
+.table-product-title h3{
+  max-width:200px;
+}
+
 .product-description hr {
   margin: 24px 0;
 }

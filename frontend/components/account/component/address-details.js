@@ -9,6 +9,8 @@ import { capitalize } from 'lodash';
 import notify from "../../../utills/notifyToast";
 import PhoneInput from "react-phone-input-2";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import { capitalize } from "lodash";
+
 const Star = ({ starId, marked }) => {
     return (
         <span
@@ -431,7 +433,9 @@ const AddressDetail = (props) => {
                     <Card key={index}>
                         <Card.Body>
                             <Row className="address-card-row">
+
                                 <Col style={{ fontWeight: 700 }}><i className="fas fa-user"></i>  {capitalize(addressBook.first_name)}</Col>
+
                                 <Col style={{ float: 'right', marginRight: "-400px" }}>
                                     <OverlayTrigger
                                         overlay={
@@ -449,15 +453,16 @@ const AddressDetail = (props) => {
                                 <div style={{ margin: "10px", padding: "10px" }}><i className="far fa-building"></i>{capitalize(addressBook.company)}</div>
                             </Card.Text>
                             <Button
-                                size="small"
-                                color="primary"
+                                className="me-2"
+                                variant="outline-dark"
+                                size="sm"
                                 onClick={() => editAddress(addressBook)}
                             >
                                 EDIT
                             </Button>
                             <Button
-                                size="small"
-                                color="primary"
+                                variant="danger"
+                                size="sm"
                                 onClick={() => deleteAddressBook(addressBook._id, index)}
                             >
                                 DELETE

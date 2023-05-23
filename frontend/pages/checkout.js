@@ -166,7 +166,9 @@ export const CheckOut = ({ currencyStore }) => {
                             name: originalProduct?.name,
                             pricing: originalProduct?.pricing,
                             feature_image: originalProduct?.feature_image,
-                            url: originalProduct?.url
+                            url: originalProduct?.url,
+                            tax_class: originalProduct?.tax_class,
+                            shipping_class: originalProduct?.shipping?.shipping_class
                         }
                         cartitems2.push(cartProduct);
                     })

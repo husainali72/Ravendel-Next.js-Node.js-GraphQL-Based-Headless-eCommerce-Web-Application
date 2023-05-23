@@ -12,7 +12,7 @@ import calculateDiscount from "../../utills/calculateDiscount";
 import { query } from "../../utills/helpers";
 import { capitalize } from "lodash";
 var placeholder = "https://dummyimage.com/300";
-const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp,currencyOpt }) => {
+const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, currencyOpt }) => {
     var id = ""
     var token = ""
     const dispatch = useDispatch();
@@ -31,18 +31,18 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp,c
     }, [settings?.currencyOption, currencyProp])
 
     useEffect(() => {
-      if(currencyOpt){
-        currencySetter(currencyOpt.currency_options.currency,setCurrency)
-        setdecimal(currencyOpt.currency_options.number_of_decimals)
-      }
+        if (currencyOpt) {
+            currencySetter(currencyOpt.currency_options.currency, setCurrency)
+            setdecimal(currencyOpt.currency_options.number_of_decimals)
+        }
     }, [currencyOpt])
-    
+
 
     if (session.status === "authenticated") {
         id = session.data.user.accessToken.customer._id
         token = session.data.user.accessToken.token
     }
-    const ProductAdd = async (e,product) => {
+    const ProductAdd = async (e, product) => {
         e.stopPropagation();
         let quantity = 1
         let href = '/shopcart'
@@ -64,7 +64,9 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp,c
                                     qty: producttt.qty + quantity,
                                     product_title: producttt.product_title,
                                     product_image: producttt.product_image,
-                                    product_price: producttt.product_price
+                                    product_price: producttt.product_price,
+                                    shipping_class: product?.shipping?.shipping_class,
+                                    tax_class: product?.tax_class
                                 }
                             } else {
                                 return {
@@ -72,7 +74,9 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp,c
                                     qty: producttt.qty,
                                     product_title: producttt.product_title,
                                     product_image: producttt.product_image,
-                                    product_price: producttt.product_price
+                                    product_price: producttt.product_price,
+                                    shipping_class: product?.shipping?.shipping_class,
+                                    tax_class: product?.tax_class
                                 }
                             }
                         })
@@ -86,6 +90,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp,c
                         })
                     }
                 })
+                
                 if (!productInCart) {
                     let variables = {
                         total: product?.pricing.sellprice * quantity,
@@ -94,7 +99,9 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp,c
                         qty: quantity,
                         product_title: product?.name,
                         product_image: product?.feature_image?.original,
-                        product_price: product?.pricing.sellprice
+                        product_price: product?.pricing.sellprice,
+                        shipping_class: product?.shipping?.shipping_class,
+                        tax_class: product?.tax_class
                     }
                     mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
                         router.push("/shopcart")
@@ -168,7 +175,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp,c
                                                             ) : (
                                                                 <strong className="sale-price">{currency} {getPrice(product?.pricing.price, decimal)}</strong>
                                                             )}</span>
-                                                        {product?.pricing.sellprice && product?.pricing.sellprice < product?.pricing.price ?  <span
+                                                        {product?.pricing.sellprice && product?.pricing.sellprice < product?.pricing.price ? <span
                                                             className={
                                                                 product?.pricing.sellprice ? "has-sale-price" : ""
                                                             }
@@ -177,7 +184,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp,c
                                                         </span> : null}
 
                                                     </div>
-                                                    { product?.quantity > 0 ? <OverlayTrigger style={{ backgroundColor: "#088178" }}
+                                                    {product?.quantity > 0 ? <OverlayTrigger style={{ backgroundColor: "#088178" }}
                                                         placement="top"
                                                         overlay={
                                                             <Tooltip style={{ color: "#088178" }} id={"tooltip-top"}>
@@ -185,7 +192,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp,c
                                                             </Tooltip>
                                                         }
                                                     >
-                                                        <div className="add-to-cart"> <a className="cart-icon" onClick={(e) => ProductAdd(e,product)}>
+                                                        <div className="add-to-cart"> <a className="cart-icon" onClick={(e) => ProductAdd(e, product)}>
                                                             <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
                                                         </a>
                                                         </div>
