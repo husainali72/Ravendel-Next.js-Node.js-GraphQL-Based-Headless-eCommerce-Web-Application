@@ -41,7 +41,7 @@ const ThemesComponent = () => {
     delete theme.__typename;
     let errors = validate(['playstore', "appstore", "email", 'hours'], themeSetting);
     let phoneNumberError = validatePhone(["phone_number"], themeSetting)
-    let nested_validation = validatenested("social_media", [{ key: "handle", title: '' }], themeSetting);
+    let nested_validation = validatenested("social_media", ["handle"], themeSetting);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,

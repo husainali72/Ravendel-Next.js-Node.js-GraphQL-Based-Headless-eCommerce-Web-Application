@@ -26,13 +26,43 @@ products {
       product_type
       custom_field
       date
+      attribute
+      attribute_master {
+        id
+        name
+        attribute_values
+        createdAt
+        updatedAt
+      }
       updated
       short_description
     }
   }
 }
 `;
-
+const ATTRIBUTE_TILE = gql`
+  fragment AttributeTile on productAttribute {
+    id
+    name
+    values
+    date
+    updated
+  }
+`;
+export const GET_ATTRIBUTES = gql`
+  {
+    product_attributes {
+      data {
+        ...AttributeTile
+      }
+      message {
+        message
+        success
+      }
+    }
+  }
+  ${ATTRIBUTE_TILE}
+`;
 export const GET_SINGLE_PRODUCT = gql`
   query ($url: String!) {
   productbyurl(url: $url) {

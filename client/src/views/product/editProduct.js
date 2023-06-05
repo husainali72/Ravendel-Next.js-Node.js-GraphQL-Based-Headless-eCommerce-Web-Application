@@ -24,7 +24,7 @@ import {
 } from "../../store/action/";
 import { getUpdatedUrl } from "../../utils/service";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
-import { validate, validatenested } from "../components/validate";
+import { validate, validatenested, validatenestedArray } from "../components/validate";
 import {
   isEmpty,
   client_app_route_url,
@@ -114,9 +114,9 @@ const EditProductComponent = ({ params }) => {
   );
   useEffect(() => {
     if (Product_id) {
-    dispatch(productAction(Product_id));
-    dispatch(brandsAction());
-    dispatch(categoriesAction());
+      dispatch(productAction(Product_id));
+      dispatch(brandsAction());
+      dispatch(categoriesAction());
     }
   }, []);
 
@@ -124,55 +124,58 @@ const EditProductComponent = ({ params }) => {
     setloading(get(productState, "loading"));
   }, [get(productState, "loading")]);
 
- useEffect(() => {
+  useEffect(() => {
     if (Product_id) {
-    if (!isEmpty(get(productState, "product"))) {
-      if (!isEmpty(productState.product)) {
-        let defaultBrand = {};
+      if (!isEmpty(get(productState, "product"))) {
+        if (!isEmpty(productState.product)) {
+          let defaultBrand = {};
           setTaxClass(productState.product.tax_class)
-        if (productState.product.brand) {
-          if (!isEmpty(get(brandState, "brands"))) {
-            for (let i in brandState.brands) {
+          if (productState.product.brand) {
+            if (!isEmpty(get(brandState, "brands"))) {
+              for (let i in brandState.brands) {
 
-              if (brandState.brands[i].id === productState.product.brand.id) {
-                defaultBrand = {
-                  value: brandState.brands[i].id,
-                  label: brandState.brands[i].name,
-                };
-                break;
+                if (brandState.brands[i].id === productState.product.brand.id) {
+                  defaultBrand = {
+                    value: brandState.brands[i].id,
+                    label: brandState.brands[i].name,
+                  };
+                  break;
+                }
               }
             }
           }
-        }
-        setProduct({
-          ...product,
-          ...productState.product,
-          categoryId: productState.product.categoryId.map((cat) => cat.id),
-          brand: defaultBrand || "",
-        });
-        if (productState.product.feature_image) {
-          setfeatureImage(
-            bucketBaseURL + productState.product.feature_image
-          );
-        } else {
-          setfeatureImage(
-            NoImagePlaceHolder
-          );
+          setProduct({
+            ...product,
+            ...productState.product,
+            categoryId: productState.product.categoryId.map((cat) => cat.id),
+            brand: defaultBrand || "",
+          });
+          if (productState.product.feature_image) {
+            setfeatureImage(
+              bucketBaseURL + productState.product.feature_image
+            );
+          } else {
+            setfeatureImage(
+              NoImagePlaceHolder
+            );
+          }
         }
       }
-    }
-   } else {
+    } else {
       setProduct(defaultobj)
       setfeatureImage(null)
     }
-  }, [get(productState, "product"),Product_id]);
+  }, [get(productState, "product"), Product_id]);
   const addUpdateProduct = (e) => {
+    product.combinations = combination;
     product.tax_class = taxClass
     if (Product_id) {
       product.update_gallery_image = gallery
     }
     e.preventDefault();
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
+    let combination_error = validatenested("combinations", ["sku"], product);
+    let combination_price_error = validatenestedArray("pricing", ["price"], product.combinations)
     let Errors = validatenested("pricing", ["price"], product);
     if (!isEmpty(errors)) {
       dispatch({
@@ -184,7 +187,7 @@ const EditProductComponent = ({ params }) => {
         },
       });
     }
-   else if (!isEmpty(Errors)) {
+    else if (!isEmpty(Errors)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -194,16 +197,37 @@ const EditProductComponent = ({ params }) => {
         },
       });
     }
-   else {
-     if (Product_id) {
-      product.combinations = combination;
-      dispatch(productUpdateAction(product, navigate));
+    else if (!isEmpty(combination_error)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: combination_error,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(combination_price_error)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: combination_price_error,
+          error: true,
+        },
+      });
     }
     else {
-      product.combinations = combination;
-      dispatch(productAddAction(product, navigate));
-    
-    }}
+      if (Product_id) {
+
+        dispatch(productUpdateAction(product, navigate));
+      }
+      else {
+
+        dispatch(productAddAction(product, navigate));
+
+      }
+    }
   };
 
 
@@ -695,12 +719,12 @@ const EditProductComponent = ({ params }) => {
                   image={featureImage}
                   feautedImageChange={(e) => onFeatureImageChange(e)}
                 />
-                </CardBlocks>
-              </Box>
-              {/* ===================Gallery Images=================== */}
-              <Box component="span" m={1}>
-                <CardBlocks title="Gallery Image">
-                 {Product_id ?
+              </CardBlocks>
+            </Box>
+            {/* ===================Gallery Images=================== */}
+            <Box component="span" m={1}>
+              <CardBlocks title="Gallery Image">
+                {Product_id ?
                   <EditGalleryImageSelection
                     onAddGalleryImage={(e) => {
                       var imagesRes = [...e.target.files]

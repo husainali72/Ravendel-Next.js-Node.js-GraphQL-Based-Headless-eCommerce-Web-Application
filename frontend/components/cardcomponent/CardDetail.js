@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { Spinner } from "react-bootstrap";
 import Table from 'react-bootstrap/Table';
 import { getImage, getPrice } from '../../utills/helpers';
+import { capitalize } from "lodash";
 const CartTable = (props) => {
     const { cartItems,
         decimal,
@@ -24,6 +25,7 @@ const CartTable = (props) => {
                             <th>Image</th>
                             <th>Name</th>
                             <th>Price</th>
+                            <th>Attributes</th>
                             <th>Quantity</th>
                             <th>SubTotal</th>
                             <th>Remove</th>
@@ -48,8 +50,17 @@ const CartTable = (props) => {
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <span>{currency} {(item.pricing?.sellprice ? getPrice(item.pricing?.sellprice, decimal) : getPrice(item.pricing?.price, decimal))}</span>
+                                        <span>{currency} {(item.pricing?.sellprice ? getPrice(item.pricing, decimal) : getPrice(item.pricing, decimal))}</span>
                                     </div>
+                                </td>
+                                <td>
+                                    {item?.attributes?.map((obj) => {
+                                        let classname = item.attributes.length === 1 ? "td-flex" : "td-Flex"
+                                        return (<div className={classname}>
+                                            {capitalize(obj.name)} :   {capitalize(obj.value)}
+                                        </div>)
+
+                                    })}
                                 </td>
                                 <td>
                                     <div className="td-flex">
@@ -70,7 +81,7 @@ const CartTable = (props) => {
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <span>{currency} {((item.pricing?.sellprice ? getPrice(item.pricing?.sellprice * item.quantity, decimal) : getPrice(item.pricing?.price * item.quantity, decimal)) || 0)}</span>
+                                        <span>{currency} {((item.pricing?.sellprice ? getPrice(item.pricing * item.quantity, decimal) : getPrice(item.pricing * item.quantity, decimal)) || 0)}</span>
                                     </div>
                                 </td>
                                 <td>

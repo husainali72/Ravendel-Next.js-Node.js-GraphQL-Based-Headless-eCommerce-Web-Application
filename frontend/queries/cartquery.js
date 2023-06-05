@@ -11,6 +11,9 @@ export const ADD_TO_CART_QUERY = gql`
     $qty:Int,
     $shipping_class:String,
     $tax_class:String
+    $attributes:customArray
+    $variant_id:String
+    $product_quantity:Int
         ){
     addToCart(
             total: $total
@@ -20,6 +23,9 @@ export const ADD_TO_CART_QUERY = gql`
             product_price : $product_price,
             product_image : $product_image,
             qty : $qty,
+          attributes: $attributes
+            product_quantity:$product_quantity
+            variant_id:$variant_id
             shipping_class : $shipping_class,
             tax_class : $tax_class
             )
@@ -53,6 +59,7 @@ export const GET_USER_CART = gql`
     total
     products
     date
+
     updated
   }
 }`

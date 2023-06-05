@@ -17,19 +17,14 @@ import { useRouter } from "next/router";
 import { settingActionCreator } from "../redux/actions/settingAction";
 import LoadingCartTable from "../components/cardcomponent/LoadingCard";
 import Link from "next/link";
-
-const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice  * product.quantity || product.pricing?.price * product.quantity), 0)
-const cartitems2 = []     
-
+const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing * product.quantity || product.pricing * product.quantity), 0)
+const cartitems2 = []
 const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     var id = "";
     var token = "";
     const router = useRouter();
     const session = useSession();
-    const cartProducts = useSelector(state => state.cart);
     const allProducts = useSelector(state => state.products);
-    const usercart = useSelector(state => state.userCart);
-    const initialRender = useRef(true);
     const [cartLoading, setCartLoading] = useState(false)
     const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false)
     const [cartItems, setCartItems] = useState([]);
@@ -52,6 +47,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     }, []);
     useEffect(() => {
         const getProducts = async () => {
+
             const productsCard = JSON.parse(localStorage.getItem("cart"))
             setCartLoading(true)
             const sessionn = await getSession()
@@ -63,15 +59,23 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                     let carts = res?.data?.cartbyUser?.products;
                     const cartProducts = [...carts];
                     let cartitems2 = [];
+
                     carts?.map(cart => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
+
                         const cartProduct = {
                             _id: originalProduct?._id,
+                            variant_id: cart.variant_id,
                             quantity: parseInt(cart?.qty),
+                            product_quantity: cart?.product_quantity,
                             name: originalProduct?.name,
-                            pricing: originalProduct?.pricing,
-                            feature_image: originalProduct?.feature_image,
-                            url: originalProduct?.url
+                            pricing: cart.product_price,
+                            feature_image: cart?.product_image
+                                || originalProduct?.feature_image,
+                            url: originalProduct?.url,
+                            attributes: cart.attributes || [],
+                            shipping_class: originalProduct?.shipping?.shipping_class,
+                            tax_class: originalProduct?.tax_class,
                         }
                         cartitems2.push(cartProduct);
                     })
@@ -79,6 +83,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                 }).finally(() => { allProducts?.products.length > 0 && cartItems.length >= 0 && setCartLoading(false) })
             }
             else {
+
                 setCartItems(productsCard || []);
                 setCartLoading(false)
 
@@ -130,22 +135,21 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
             })
         }
-        else{
+        else {
             dispatch(RemoveAllCartItemsAction([]))
         }
-        
+
         localStorage.setItem("cart", JSON.stringify([]))
     }
 
     const IncreaseQuantity = async (item) => {
-        const prodct = allProducts.products.find(pro => pro._id === item._id)
-        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id ? (prodct?.quantity > item.quantity && (itemm.quantity += 1)) : itemm.quantity))
-        setQuantity(item.quantity)
+
+        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variant_id === item.variant_id ? (item?.product_quantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
         if (session?.status !== "authenticated") {
-                dispatch(increaseQuantity(item._id, prodct.quantity))
+            dispatch(increaseQuantity(item._id, item.product_quantity, item.variant_id))
         }
         else {
-            const prod = cartItems.find(cart => cart._id === item._id);
+            const prod = cartItems.find(cart => cart._id === item._id && cart.variant_id === item.variant_id);
             const qty = prod.quantity;
             if (session?.status === "authenticated") {
                 let id = session.data.user.accessToken.customer._id
@@ -153,16 +157,34 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                 query(GET_USER_CART, id, token).then(res => {
                     cart_id = res.data.cartbyUser.id
                     const cCartItems = [...cartItems];
-
                     const Cartt = cCartItems.map(product => {
-                        return {
-                            product_id: product._id,
-                            qty: product._id === item._id ? qty : product.quantity,
-                            product_title: product.name,
-                            product_image: product.feature_image?.original,
-                            product_price: product.pricing.sellprice
+                        if (product._id === item._id && product.variant_id === item.variant_id) {
+                            return {
+                                product_id: product._id,
+                                qty: qty,
+                                product_title: product.name,
+                                product_image: product.feature_image,
+                                product_price: product.pricing,
+                                shipping_class: product?.shipping_class,
+                                tax_class: product?.tax_class,
+                                attributes: product.attributes,
+                                variant_id: product.variant_id,
+                                product_quantity: product.product_quantity
+                            }
+                        } else {
+                            return {
+                                product_id: product._id,
+                                qty: product.quantity,
+                                product_title: product.name,
+                                product_image: product.feature_image,
+                                product_price: product.pricing,
+                                shipping_class: product?.shipping_class,
+                                tax_class: product?.tax_class,
+                                attributes: product.attributes,
+                                variant_id: product.variant_id,
+                                product_quantity: product.product_quantity
+                            }
                         }
-
                     })
                     let variables = {
                         id: cart_id,
@@ -177,13 +199,19 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     const DecreaseQuantity = (item) => {
         if (item.quantity > 1) {
             setIsQuantityBtnLoading(true)
-            setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id ? (itemm.quantity -= 1) : itemm.qyantity))
+            setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variant_id === item.variant_id ? (itemm.quantity -= 1) : itemm.qyantity))
             setQuantity(item.quantity)
             if (session?.status !== "authenticated") {
-                dispatch(decreaseQuantity(item._id))
+                let variables = {
+                    _id: item._id,
+                    variant_id: item.variant_id
+                }
+                dispatch(decreaseQuantity(variables))
+
                 setIsQuantityBtnLoading(false)
             } else {
-                const prod = cartItems.find(cart => cart._id === item._id);
+
+                const prod = cartItems.find(cart => cart._id === item._id && cart.variant_id === item.variant_id);
                 const qty = prod.quantity;
                 if (session?.status === "authenticated") {
                     let id = session.data.user.accessToken.customer._id
@@ -192,21 +220,47 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                         cart_id = res.data.cartbyUser.id
                         const cCartItems = [...cartItems];
                         const Cartt = cCartItems.map(product => {
-                            return {
-                                product_id: product._id,
-                                qty: product._id === item._id ? qty : product.quantity,
-                                product_title: product.name,
-                                product_image: product.feature_image?.original,
-                                product_price: product.pricing.sellprice
+                            if (product._id === item._id && product.variant_id === item.variant_id) {
+                                return {
+                                    product_id: product._id,
+                                    qty: qty,
+                                    product_title: product.name,
+                                    product_image: product.feature_image?.original,
+                                    product_price: product.pricing,
+                                    attributes: product.attributes,
+                                    variant_id: product.variant_id,
+                                    product_quantity: product.product_quantity,
+                                    shipping_class: product?.shipping_class,
+                                    tax_class: product?.tax_class,
+                                }
+                            } else {
+                                return {
+                                    product_id: product._id,
+                                    qty: product.quantity,
+                                    product_title: product.name,
+                                    product_image: product.feature_image?.original,
+                                    product_price: product.pricing,
+                                    attributes: product.attributes,
+                                    variant_id: product.variant_id,
+                                    product_quantity: product.product_quantity,
+                                    shipping_class: product?.shipping_class,
+                                    tax_class: product?.tax_class,
+                                }
                             }
-
                         })
                         let variables = {
                             id: cart_id,
                             products: Cartt,
                             total: 0,
                         }
-                        mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("update res while decreasing qtyyyy", res))
+                        mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
+                            let variables = {
+                                _id: item._id,
+                                variant_id: item.variant_id
+                            }
+                            // dispatch(decreaseQuantity(variables))
+                            console.log("update res while decreasing qtyyyy", res)
+                        })
                     }).finally(() => setIsQuantityBtnLoading(false))
                 }
             }
@@ -214,29 +268,37 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     }
 
     const removeToCart = async (item) => {
+
         let product = item?._id
         let idx = cartItems.findIndex(cartItem => cartItem._id === item._id)
         const prod = cartItems.find(cart => cart._id === item._id);
         if (session?.status === "authenticated") {
-            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id)
+            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id || (itemm._id === item._id && itemm.variant_id !== item.variant_id))
             setCartItems(cartItemsfilter);
             let id = session.data.user.accessToken.customer._id
             let token = session.data.user.accessToken.token
+
             query(GET_USER_CART, id, token).then(res => {
                 cart_id = res.data.cartbyUser.id
 
                 let variables = {
                     id: cart_id,
                     product_id: item._id,
+                    variant_id: item.variant_id
                 }
-                mutation(DELETE_CART_PRODUCTS, variables, token).then(res => dispatch(removeCartItemAction(product)))
+
+                mutation(DELETE_CART_PRODUCTS, variables, token).then(res => dispatch(removeCartItemAction(variables)))
 
 
             })
         }
         else {
-            let cartItemsfilter = cartItems.filter(item => item._id !== product)
-            dispatch(removeCartItemAction(product));
+            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== product || (itemm._id === product && itemm.variant_id !== item.variant_id))
+            let variables = {
+                id: product,
+                variant_id: item.variant_id
+            }
+            dispatch(removeCartItemAction(variables));
             setCartItems(cartItemsfilter);
         }
 

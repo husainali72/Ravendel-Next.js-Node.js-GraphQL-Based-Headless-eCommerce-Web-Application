@@ -56,6 +56,7 @@ module.exports = gql`
       shipping_amount: String
       tax_amount: String
       coupon_code: String
+      attributes:customArray
       discount_amount: String
       grand_total: String
     ): statusSchema

@@ -1,16 +1,21 @@
-import { Container } from "react-bootstrap";
+
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import PageTitle from "../../components/PageTitle";
 import { useEffect, useState } from "react";
 import { GET_CUSTOMER_ORDERS_QUERY } from "../../queries/orderquery";
 import { getSession } from 'next-auth/react';
-import { query } from "../../utills/helpers";
+import { getPrice, query } from "../../utills/helpers";
+import { Accordion, Container, Col } from "react-bootstrap";
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineSeparator } from "@mui/lab";
 import DoneIcon from '@mui/icons-material/Done';
+import OrdersDetails from "../../components/account/component/orders-details";
 const TrackMyOrder = () => {
     const [customerOrder, setCustomerOrder] = useState([])
     const [loading, setloading] = useState(false)
     const [Session, setSession] = useState({})
+    const [decimal, setdecimal] = useState(2)
+    const [currencyStore, setCurrencyStore] = useState({})
+    const [currency, setCurrency] = useState("$")
     const OrderStatus = [
         { name: 'inprogress', Title: 'Order Confirmed', color: 'primary' },
         { name: 'shipped', Title: 'Order Shipped', color: 'primary' },
@@ -21,6 +26,22 @@ const TrackMyOrder = () => {
         const session = getSession();
         session.then(res => setSession(res))
     }, [])
+    useEffect(() => {
+        getOrderCustomer();
+        getSettings()
+    }, [Session])
+    const getSettings = async () => {
+        try {
+            const { data: homepagedata } = await client.query({
+                query: GET_HOMEPAGE_DATA_QUERY
+            })
+            const homepageData = homepagedata
+            setCurrencyStore(homepageData?.getSettings?.store)
+        }
+        catch (e) {
+            console.log("homepage Error===", e);
+        }
+    }
     useEffect(() => {
         getOrderCustomer();
     }, [Session])
@@ -50,6 +71,36 @@ const TrackMyOrder = () => {
         <div>
             <PageTitle title="Track  My  Order" />
             <BreadCrumb title={"TrackMyOrder"} />
+            <Accordion style={{ margin: "25px 10px" }} >
+                <Accordion.Item eventKey="0">
+                    <Accordion.Header>
+                        <Col>
+                            <strong> Order id : {customerOrder[0]?.id}</strong>
+                        </Col>
+                        <Col>
+                            <strong>Total : {currency} {getPrice(customerOrder[0]?.grand_total, decimal)}</strong>
+                        </Col>
+                    </Accordion.Header>
+                    <Accordion.Body>
+                        <OrdersDetails
+                            orderDetail={customerOrder[0]?.products}
+                            order={customerOrder[0]}
+                            billingInfo={customerOrder[0]?.billing}
+                            shippingInfo={customerOrder[0]?.shipping}
+                            tax={customerOrder[0]?.tax_amount}
+                            subtotal={customerOrder[0]?.subtotal}
+                            shipping_amount={customerOrder[0]?.shipping_amount}
+                            total={customerOrder[0]?.grand_total}
+                        />
+                        <div className="row order-btn-row">
+                            <div>
+                                <button className="order-details-btn" onClick={() => handleReOrder(customerOrder[0])}>Reorder</button>
+                                <button className="order-details-btn" onClick={() => window.print()}>Print Invoices</button>
+                            </div>
+                        </div>
+                    </Accordion.Body>
+                </Accordion.Item>
+            </Accordion>
             <Container>
                 {OrderStatus.map((status) => {
                     return <Timeline>

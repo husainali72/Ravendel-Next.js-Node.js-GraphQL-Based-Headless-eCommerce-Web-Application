@@ -109,7 +109,7 @@ const AttributesComponent = ({
           }
         }
       }
-   
+
       currentVariants.combinations = product.variation_master;
 
       setcurrentAttribute({
@@ -274,10 +274,10 @@ const AttributesComponent = ({
         generatedVariants.push({
           combination: comb,
           sku: "",
-          quantity: "",
+          quantity: 0,
           pricing: {
-            price: "",
-            sellprice: "",
+            price: 0,
+            sellprice: 0,
           },
           image: "",
         });
@@ -483,9 +483,10 @@ const AttributesComponent = ({
                               type="number"
                               value={variant.pricing.price}
                               onChange={(e) => {
-                                currentVariants.combinations[index].pricing[e.target.name] = Number(e.target.value)
-                                if (e.target.value >= 0){
-                                  if (e.target.value > variant.pricing.sellprice){
+
+                                if (e.target.value >= 0) {
+                                  if (e.target.value > variant.pricing.sellprice) {
+                                    currentVariants.combinations[index].pricing[e.target.name] = Number(e.target.value)
                                     setcurrentVariants({
                                       ...currentVariants,
                                     });
@@ -515,9 +516,10 @@ const AttributesComponent = ({
                               type="number"
                               value={variant.pricing.sellprice}
                               onChange={(e) => {
-                                currentVariants.combinations[index].pricing[e.target.name] = Number(e.target.value)
-                                if (e.target.value >= 0){
-                                  if (e.target.value < variant.pricing.price){
+                                if (e.target.value >= 0) {
+                                  if (e.target.value < variant.pricing.price) {
+                                    currentVariants.combinations[index].pricing[e.target.name] = Number(e.target.value)
+
                                     setcurrentVariants({
                                       ...currentVariants,
                                     });
@@ -533,7 +535,7 @@ const AttributesComponent = ({
                                     })
                                   }
                                 }
-                                
+
                               }
                               }
                               size="small"
@@ -566,7 +568,7 @@ const AttributesComponent = ({
                             <Box m={1}>
                               {!isEmpty(variant.image) ? (
                                 <img
-                                  src= {
+                                  src={
                                     variant.image.startsWith("blob") ? variant.image : (bucketBaseURL + variant.image)
                                   }
                                   className={classes.variantImage}

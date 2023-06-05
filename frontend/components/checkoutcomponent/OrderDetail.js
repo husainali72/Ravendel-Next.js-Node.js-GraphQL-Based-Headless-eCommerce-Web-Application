@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { getImage, getPrice } from "../../utills/helpers";
 import Form from 'react-bootstrap/Form';
-import Stripes from "./reactstripe/StripeContainer";
 import Link from "next/link";
+import { capitalize } from "lodash";
 const Orderdetail = (props) => {
     const { decimal, currency, getOrderDetails, cartItems, billingInfo, handleBillingInfo, tax_amount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal } = props;
     const cart = cartItems;
@@ -38,9 +37,11 @@ const Orderdetail = (props) => {
             return {
                 product_id: product._id,
                 name: product.name,
-                cost: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price, qty: product.quantity,
+                cost: product.pricing,
+                qty: product.quantity,
                 tax_class: product?.tax_class,
-                shipping_class: product?.shipping_class
+                shipping_class: product?.shipping_class,
+                attributes: product?.attributes || []
             }
         })
         var allData = {
@@ -59,18 +60,26 @@ const Orderdetail = (props) => {
                         <tr>
                             <th colSpan="1">Image</th>
                             <th>Title</th>
+                            <th>Attributes</th>
                             <th> Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         {cartItems.map((item, i) => (
-                            
+
                             <tr key={i}>
                                 <td className="image product-thumbnail"><img src={getImage(item.feature_image, 'feature_image')} alt="" /></td>
                                 <td><i className="ti-check-box font-small text-muted mr-10"></i>
-                                    <h5><Link href={"/product/"+cart[i]?.url}><a >{item?.name}</a></Link></h5> <span className="product-qty">x {item.quantity}</span>
+                                    <h5><Link href={"/product/" + cart[i]?.url}><a >{item?.name}</a></Link></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>
-                                <td>{currency}{item?.pricing?.sellprice ? getPrice(item.pricing?.sellprice, decimal) : getPrice(item?.pricing?.price * item?.quantity, decimal)}</td>
+                                <td>
+                                    {item.attributes.map((attribute) => (
+                                        <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)
+
+                                    )}
+                                </td>
+                                <td>{currency}{getPrice(item?.pricing, decimal)
+                                } </td>
                             </tr>
                         ))}
                         {/* <tr>

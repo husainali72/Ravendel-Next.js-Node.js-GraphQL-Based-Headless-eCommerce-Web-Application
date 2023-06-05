@@ -22,7 +22,7 @@ const {
   checkToken,
   MESSAGE_RESPONSE,
   calculateCart,
-  _validate,getdate
+  _validate, getdate
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
@@ -36,13 +36,11 @@ module.exports = {
     },
     cartbyUser: async (root, args) => {
       try {
-        // console.log("cart by user=======",args.user_id)
         const cart = await Cart.findOne({ user_id: args.user_id });
-        // console.log("cart by user=========",cart)
         if (!cart) {
           throw putError("Cart not found");
         }
-        return cart; 
+        return cart;
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -50,41 +48,36 @@ module.exports = {
     },
 
     calculateCoupon: async (root, args, { id }) => {
-      //  checkToken(id);
-      // console.log("args cart=======", args.cart)
-    
       try {
-        const coupon = await Coupon.findOne({ code: {$regex: `${args.coupon_code}`, $options: "i"} });
-        // console.log('coupon',coupon);
+        const coupon = await Coupon.findOne({ code: { $regex: `${args.coupon_code}`, $options: "i" } });
         let calculated = {
           total_coupon: {},
           message: '',
           success: false
         };
         let date = getdate('2');
-        if(!coupon){
+        if (!coupon) {
           calculated.total_coupon = 0.0;
           calculated.message = 'Invalid coupon code';
-        }else{
-          // console.log('expiredate',coupon.expire);
-          if(coupon.expire >= date){
+        } else {
+          if (coupon.expire >= date) {
             let cartTotal = 0
             args.cart.map(item => cartTotal += item.total)
-            if((coupon.minimum_spend === 0 || coupon.minimum_spend <= cartTotal) && (coupon.maximum_spend === 0 || coupon.maximum_spend > cartTotal)){
+            if ((coupon.minimum_spend === 0 || coupon.minimum_spend <= cartTotal) && (coupon.maximum_spend === 0 || coupon.maximum_spend > cartTotal)) {
               var discountAmount = 0
-              coupon.discount_type === "amount-discount" ? 
-              discountAmount = await calculateCart(coupon, args.cart, Product, true) :
-              discountAmount = await calculateCart(coupon, args.cart, Product, false)
+              coupon.discount_type === "amount-discount" ?
+                discountAmount = await calculateCart(coupon, args.cart, Product, true) :
+                discountAmount = await calculateCart(coupon, args.cart, Product, false)
               calculated.total_coupon = Math.round(discountAmount).toFixed(2);
               calculated.message = 'Coupon code applied successfully';
               calculated.success = true;
             }
-            else{
+            else {
               calculated.total_coupon = 0.0;
               calculated.message = 'Coupon not applicable on cart';
             }
 
-          }else{
+          } else {
             calculated.total_coupon = 0.0;
             calculated.message = 'Coupon no longer applicable';
           }
@@ -119,7 +112,6 @@ module.exports = {
                 name: taxval.name,
                 percentage: taxval.percentage,
               };
-              //console.log("global tax=====",isGlobalTaxObj)
               break;
             }
           }
@@ -391,6 +383,7 @@ module.exports = {
 
 
     addToCart: async (root, args, { id }) => {
+      console.log('args', args)
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -465,6 +458,7 @@ module.exports = {
 
 
     addCart: async (root, args, { id }) => {
+
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -473,7 +467,7 @@ module.exports = {
         let existingCartProducts = cart && cart.products ? cart.products : []
         let carttotal = 0;
         // if local products exists then only run loop for adding products in customer cart
-        if(args.products)
+        if (args.products)
           for (let localProd of args.products) {
             let product = await Product.findById({ _id: localProd.product_id });
             // declare variables to be used for adding product to cart
@@ -502,20 +496,20 @@ module.exports = {
               else {
                 existingCartProducts.push({ product_id, product_title, product_image, product_price, qty, total, shipping_class, tax_class })
               }
+            }
           }
-        }
         // calculate carttotal from total of all products in customer cart
-        existingCartProducts.map(cartProduct=>{
+        existingCartProducts.map(cartProduct => {
           carttotal += cartProduct.total
         })
         // if customer cart exists then update
-        if(cart) {
+        if (cart) {
           cart.total = carttotal
           cart.products = existingCartProducts
           await cart.save();
         }
         // else create new cart
-        else{
+        else {
           const newCart = new Cart({
             user_id: args.user_id,
             total: carttotal,
@@ -556,7 +550,6 @@ module.exports = {
     },*/
 
     updateCart: async (root, args, { id }) => {
-      //console.log("updateCart", args)
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -600,7 +593,7 @@ module.exports = {
         const cart = await Cart.findOne({ user_id: args.user_id });
         for (let i in cart.products) {
           // console.log(cart.products[i])
-          if(cart.products[i].product_id.toString() === args.product_id.toString()){
+          if (cart.products[i].product_id.toString() === args.product_id.toString()) {
             cart.products[i].qty = args.qty
           }
         }

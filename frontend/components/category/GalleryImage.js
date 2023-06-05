@@ -26,10 +26,11 @@ const GalleryImagesComponents = (props) => {
     const session = useSession()
     const router = useRouter();
     const { singleproducts, stockClass, setStockClass, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal } = props;
-    const [available, setavailable] = useState(true)
+    const [available, setavailable] = useState(false)
     const [Lable, setLable] = useState("In Stock")
     const [variantSelect, setVariantSelect] = useState()
     const [parentId, setParentId] = useState()
+    const [error, seterror] = useState(false)
     const [singleprod, setSingleprod] = useState(singleproducts)
     const [selectedAttrs, setSelectedAttrs] = useState([])
     const [comboData, setComboData] = useState([])
@@ -52,10 +53,10 @@ const GalleryImagesComponents = (props) => {
             setStockClass("not-available")
             setLable("Not available")
         }
-        if (comboData?.length === 1 && variantSelect){
+        if (comboData?.length === 1 && variantSelect) {
             singleprod.comboData = comboData
-            setSingleprod({...singleprod})
-         } 
+            setSingleprod({ ...singleprod })
+        }
     }, [singleproducts.quantity, lowStockThreshold, outOfStockThreshold, comboData])
 
     useEffect(() => {
@@ -100,70 +101,157 @@ const GalleryImagesComponents = (props) => {
         touchMove: false,
     };
     const checkzipcode = (result) => {
-        setavailable(!result)
+        setavailable(result)
     }
     const addToCartProduct = async (product) => {
-        let quantity = 1
-        if (session.status === "authenticated") {
-            let productInCart = false;
-            query(GET_USER_CART, id, token).then(res => {
-                let cart_id = res?.data?.cartbyUser?.id;
-                const inCartProducts = res?.data?.cartbyUser?.products;
-                inCartProducts.map(inCartProduct => {
-                    if (inCartProduct?.product_id === product?._id) {
-                        productInCart = true;
-                        let Cart = inCartProducts.map(item => {
-                            return {
-                                product_id: item?.product_id,
-                                qty: item.product_id === product._id ? item.qty + quantity : item.qty,
-                                product_title: item?.product_title,
-                                product_image: item?.product_image,
-                                product_price: item?.product_price,
+        if (singleproducts.attribute_master.length > 0 && selectedAttrs.length !== singleproducts.attribute_master.length) {
+            seterror(true)
+        }
+        else {
+            seterror(false)
+            let quantity = 1
+            if (session.status === "authenticated") {
+                let productInCart = false;
+                query(GET_USER_CART, id, token).then(res => {
+                    let cart_id = res?.data?.cartbyUser?.id;
+                    const inCartProducts = res?.data?.cartbyUser?.products;
+                    inCartProducts.map(inCartProduct => {
+                        if (product._id === inCartProduct.product_id && comboData.some((variant) => variant.id === inCartProduct.variant_id)) {
+                            productInCart = true;
+                            let Cart = inCartProducts.map(item => {
+                                if (comboData.some((variant) => variant.id === item.variant_id)) {
+                                    return {
+                                        product_id: item?.product_id,
+                                        qty: item.product_id === product?._id ? item?.qty + quantity : item?.qty,
+                                        product_title: item?.product_title,
+                                        product_image: item?.product_image,
+                                        product_price: item?.product_price,
+                                        shipping_class: product?.shipping?.shipping_class,
+                                        tax_class: product?.tax_class,
+                                        variant_id: item?.variant_id,
+                                        attributes: item?.attributes,
+                                        product_quantity: item?.product_quantity,
+                                    }
+                                }
+                                else {
+                                    return {
+                                        product_id: item?.product_id,
+                                        qty: item?.qty,
+                                        product_title: item?.product_title,
+                                        product_image: item?.product_image,
+                                        product_price: item?.product_price,
+                                        shipping_class: product?.shipping?.shipping_class,
+                                        tax_class: product?.tax_class,
+                                        variant_id: item?.variant_id,
+                                        attributes: item?.attributes,
+                                        product_quantity: item?.product_quantity,
+                                    }
+                                }
+                            }
+                            )
+                            let variables = {
+                                id: cart_id,
+                                products: Cart,
+                                total: 0,
+                            }
+                            mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
+                                router.push("/shopcart")
+                                dispatch(addToCart(variables))
+                            })
+                        }
+                    })
+                    if (!productInCart) {
+                        if (comboData.length > 0) {
+                            let attributesData = []
+                            selectedAttrs.map((selectedAttribute) => {
+                                let singleAttribute = product.attribute_master.find((data) => data.id === selectedAttribute.name)
+                                let singleAttributeValues = singleAttribute.attribute_values.find((data) => data._id === selectedAttribute.value)
+                                let AttributeObject = {
+                                    name: singleAttribute.name,
+                                    value: singleAttributeValues.name
+                                }
+                                attributesData.push(AttributeObject)
+                            })
+
+                            let variables = {
+                                total: comboData[0]?.pricing?.sellprice * quantity || comboData[0]?.pricing?.price * quantity || product?.pricing?.sellprice * quantity || product?.pricing?.price * quantity,
+                                user_id: id,
+                                product_id: product?._id,
+                                qty: quantity,
+                                product_title: product?.name,
+                                product_image: comboData[0]?.image || product?.feature_image,
+                                product_price: comboData[0]?.pricing?.sellprice || comboData[0]?.pricing?.price || product?.pricing?.sellprice || product?.pricing?.sellprice,
+                                variant_id: comboData[0]?.id,
+                                product_quantity: comboData[0]?.quantity || product?.quantity,
+                                attributes: attributesData,
                                 shipping_class: product?.shipping?.shipping_class,
                                 tax_class: product?.tax_class
                             }
-                        })
-                        let variables = {
-                            id: cart_id,
-                            products: Cart,
-                            total: 0,
+                            mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
+                                router.push("/shopcart")
+                                dispatch(addToCart(variables))
+                            })
                         }
-                        mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
-                            router.push("/shopcart")
-                        })
+                        else {
+                            let variables = {
+                                total: product?.pricing?.sellprice * quantity || product?.pricing?.price * quantity,
+                                user_id: id,
+                                product_id: product?._id,
+                                qty: quantity,
+                                product_title: product?.name,
+                                product_image: product?.feature_image,
+                                product_price: product?.pricing?.sellprice || product?.pricing?.price,
+                                variant_id: "",
+                                product_quantity: parseInt(product?.quantity
+                                ),
+                                attributes: [],
+                                shipping_class: product?.shipping?.shipping_class,
+                                tax_class: product?.tax_class
+                            }
+                            mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
+                                router.push("/shopcart")
+                                dispatch(addToCart(variables))
+                            })
+                        }
+
                     }
                 })
-                if (!productInCart) {
-                    let variables = {
-                        total: product?.pricing?.sellprice * quantity || product?.pricing?.price * quantity,
-                        user_id: id,
-                        product_id: product?._id,
-                        qty: quantity,
-                        product_title: product?.name,
-                        product_image: product?.feature_image?.original,
-                        product_price: product?.pricing?.sellprice || product?.pricing?.price,
-
-                        product_quantity: product?.quantity,
-
-                        shipping_class: product?.shipping?.shipping_class,
-                        tax_class: product?.tax_class
+            }
+            else {
+                let attributesData = []
+                selectedAttrs.map((selectedAttribute) => {
+                    let singleAttribute = product.attribute_master.find((data) => data.id === selectedAttribute.name)
+                    let singleAttributeValues = singleAttribute.attribute_values.find((data) => data._id === selectedAttribute.value)
+                    let AttributeObject = {
+                        name: singleAttribute.name,
+                        value: singleAttributeValues.name
                     }
-
-                    mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
-                        router.push("/shopcart")
-                        dispatch(addToCart(product))
-                    })
+                    attributesData.push(AttributeObject)
+                })
+                let variables = {
+                    total: comboData[0]?.pricing?.sellprice * quantity || comboData[0]?.pricing?.price * quantity || product?.pricing?.sellprice * quantity || product?.pricing?.price * quantity,
+                    user_id: id,
+                    url: product?.url,
+                    _id: product?._id,
+                    qty: quantity,
+                    name: product?.name,
+                    feature_image: comboData[0]?.image || product?.feature_image,
+                    pricing: comboData[0]?.pricing?.sellprice || comboData[0]?.pricing?.price || product?.pricing?.sellprice || product?.pricing?.sellprice,
+                    variant_id: comboData[0]?.id,
+                    product_quantity: comboData[0]?.quantity || product?.quantity,
+                    attributes: attributesData,
+                    shipping_class: product?.shipping?.shipping_class,
+                    tax_class: product?.tax_class
                 }
-            })
-        }
-        else {
-            dispatch(addToCart(product))
-            router.push("/shopcart")
+                dispatch(addToCart(variables))
+                router.push("/shopcart")
+            }
         }
     }
 
     const prepareComb = (data) => {
         let com = singleproducts.variation_master
+
         data.map(item => {
             com = com.filter(combo => {
                 return combo.combination.includes(item.value)
@@ -254,17 +342,15 @@ const GalleryImagesComponents = (props) => {
                                     <span className=" mx-2">
                                         {singleproducts.pricing.sellprice ? (
                                             <strong className="sale-price" style={{ fontSize: "25px" }}>
+
                                                 {comboData && comboData.length ?
                                                     (comboData && comboData.length > 1 ?
                                                         (sellpriceRange ?
                                                             (currency + " " + getPrice(Math.min(...sellpriceRange)) + "  -  " + currency + " " + getPrice(Math.max(...sellpriceRange)))
                                                             :
                                                             null)
-                                                        :
-                                                        currency + " " + getPrice(comboData[0]?.pricing?.sellprice, decimal))
-                                                    :
-                                                    (variantSelect ? null : currency + " " + getPrice(singleproducts?.pricing?.sellprice, decimal))}
-
+                                                        : currency + " " + getPrice(comboData[0]?.pricing?.sellprice || comboData[0]?.pricing?.price, decimal))
+                                                    : (variantSelect ? null : currency + " " + getPrice(singleproducts?.pricing?.sellprice))}
                                             </strong>
                                         ) : (
 
@@ -278,7 +364,7 @@ const GalleryImagesComponents = (props) => {
                                             singleproducts?.pricing?.sellprice ? "has-sale-price mx-2" : ""
                                         } style={{ fontSize: "17px" }}
                                     >
-                                        {comboData && comboData.length ? (comboData && comboData.length > 1 ? (priceRange ? (currency + " " + getPrice(Math.min(...priceRange)) + "  -  " + currency + " " + getPrice(Math.max(...priceRange))) : null) : currency + " " + getPrice(comboData[0]?.pricing?.price, decimal)) : (variantSelect ? null : currency + " " + getPrice(singleproducts?.pricing?.price, decimal))}
+                                        {comboData && comboData.length ? (comboData && comboData.length > 1 ? (priceRange ? (currency + " " + getPrice(Math.min(...priceRange)) + "  -  " + currency + " " + getPrice(Math.max(...priceRange))) : null) : comboData[0]?.pricing?.sellprice ? currency + " " + getPrice(comboData[0]?.pricing?.price, decimal) : null) : (variantSelect ? null : currency + " " + singleproducts?.pricing?.sellprice ? getPrice(singleproducts?.pricing?.price, decimal) : null)}
                                     </span>
                                         : null}
                                     {comboData && comboData.length > 1 ? null :
@@ -292,7 +378,6 @@ const GalleryImagesComponents = (props) => {
                         <div className="short-desc mb-30">
                             <p> {singleproducts?.short_description}</p>
                         </div>
-
                         {Lable !== "Out Of Stock" &&
                             <button type="button"
                                 className="btn btn-success button button-add-to-cart"
@@ -303,32 +388,35 @@ const GalleryImagesComponents = (props) => {
                                 Add to Cart
                             </button>
                         }
-
                         <div className="varaint-select">
-                          {singleproducts.attribute_master.map((attr) => {
-                            return (
-                                <FormControl>
-                                    <FormLabel id="demo-row-radio-buttons-group-label">{attr.name}</FormLabel>
-                                    <RadioGroup
-                                        row
-                                        aria-labelledby="demo-row-radio-buttons-group-label"
-                                        name="row-radio-buttons-group"
-                                        value={variantSelect}
-                                        onChange={(e) => prepareData(e, attr.id)}
-                                    >
-                                        {attr.attribute_values.map((val) => {
-                                            return (
-                                                <FormControlLabel value={val._id} control={<Radio />} label={val.name}
-                                                />
-                                            )
-                                        })}
-                                    </RadioGroup>
-                                </FormControl>
-                            )
-                        })}
+                            {singleproducts.attribute_master.map((attr) => {
+                                return (<>
+                                    <FormControl>
+                                        <FormLabel id="demo-row-radio-buttons-group-label">{capitalize(attr.name)}</FormLabel>
+                                        <RadioGroup
+                                            row
+                                            aria-labelledby="demo-row-radio-buttons-group-label"
+                                            name="row-radio-buttons-group"
+                                            value={variantSelect}
+                                            onChange={(e) => prepareData(e, attr.id)}
+                                        >
+                                            {attr.attribute_values.map((val) => {
+                                                return (
+                                                    <FormControlLabel value={val._id} control={<Radio />} label={capitalize(val.name)}
+                                                    />
+                                                )
+                                            })}
+
+                                        </RadioGroup>
+                                    </FormControl>
+
+                                    {error && !selectedAttrs.some((selectedAtt) => attr.id === selectedAtt.name) ? <p style={{ color: 'red' }}>Please Select The {capitalize(attr.name)}</p>
+                                        : null}
+                                </>)
+                            })}
                         </div>
 
-                        <CheckZipcode  checkzipcode={checkzipcode}/>
+                        <CheckZipcode checkzipcode={checkzipcode} />
 
                         {singleproducts?.custom_field && singleproducts.custom_field?.length > 0 ? (
                             <>

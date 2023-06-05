@@ -2103,8 +2103,8 @@ footer .btn:hover a {
   padding-left: 0 !important;
 }
 
-.table-product-title h3{
-  max-width:200px;
+.table-product-title h3 {
+  max-width: 200px;
 }
 
 .product-description hr {
@@ -2655,6 +2655,13 @@ footer .btn:hover a {
 
 .shopcart-table .table td .td-flex {
   min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shopcart-table .table td .td-Flex {
+  min-height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4365,15 +4372,16 @@ header {
 
 .css-b62m3t-container {
   position: relative;
-    display: inline-block;
-    width: 150px;
-    margin-right: 10px;
+  display: inline-block;
+  width: 150px;
+  margin-right: 10px;
 }
 
-.varaint-select{
+.varaint-select {
   padding-top: 40px;
   display: flex;
   flex-direction: column;
+}
 
 .order-details-btn {
   margin: 10px;

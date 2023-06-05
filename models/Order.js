@@ -58,31 +58,32 @@ const OrderSchema = new Schema({
       },
       feature_image: {
         type: Number,
-      }
+      },
+      attributes: []
     }
   ],
   subtotal: {
-        type: Number,
-        required: true
+    type: Number,
+    required: true
   },
   shipping_amount: {
-        type: Number,
-        required: true
+    type: Number,
+    required: true
   },
   tax_amount: {
-        type: Number,
-        required: true
+    type: Number,
+    required: true
   },
   coupon_code: {
-        type: String,
+    type: String,
   },
   discount_amount: {
-        type: Number,
-        required: true
-      },
+    type: Number,
+    required: true
+  },
   grand_total: {
-        type: Number,
-        required: true
+    type: Number,
+    required: true
   },
   sub_total_details: {
     shipping_name: String,
@@ -101,12 +102,12 @@ const OrderSchema = new Schema({
   },
   payment_status: {
     type: String,
-    enum : ['pending','failed','success','cancelled'],
+    enum: ['pending', 'failed', 'success', 'cancelled'],
     default: 'pending'
   },
   shipping_status: {
     type: String,
-    enum : ['inprogress','shipped','outfordelivery','delivered'],
+    enum: ['inprogress', 'shipped', 'outfordelivery', 'delivered'],
     default: 'inprogress'
   },
   date: {
