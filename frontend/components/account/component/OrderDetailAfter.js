@@ -84,6 +84,7 @@ const OrderDetailAfter = ({ Data, id, date, grand_total, products: orderDetail, 
                                 <thead>
                                     <th>Products</th>
                                     <th>Qty</th>
+                                    <th>Attributes</th>
                                     <th>Total</th>
                                 </thead>
                                 <tbody >
@@ -91,6 +92,7 @@ const OrderDetailAfter = ({ Data, id, date, grand_total, products: orderDetail, 
                                         <tr key={i}>
                                             <th>{order?.name}</th>
                                             <td>x {order?.quantity ? order.quantity : order.qty}</td>
+                                            <th>  {order?.attributes.map((attribute) => (<div>{attribute.name} : {attribute.value}</div>))}</th>
                                             <td>{currency} {order ? getPrice(order.cost, decimal) : null}</td>
                                         </tr>
                                     )}
@@ -100,8 +102,8 @@ const OrderDetailAfter = ({ Data, id, date, grand_total, products: orderDetail, 
                                     <td>{currency} {getPrice(Data.subtotal, decimal)}</td>
                                 </tr>
                                 {Data.coupon_code && <tr>
-                                        <th colSpan={2} style={{ textAlign: 'right' }}>Coupon <span className="coupon-applied">({Data.coupon_code})</span></th>
-                                        <td>- {currency} {Data?.discount_amount && getPrice(Data.discount_amount, decimal)}</td>
+                                    <th colSpan={2} style={{ textAlign: 'right' }}>Coupon <span className="coupon-applied">({Data.coupon_code})</span></th>
+                                    <td>- {currency} {Data?.discount_amount && getPrice(Data.discount_amount, decimal)}</td>
                                 </tr>}
                                 <tr>
                                     <th colSpan={2} style={{ textAlign: 'right' }}>Tax</th>

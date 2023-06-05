@@ -90,7 +90,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, 
                         })
                     }
                 })
-                
+
                 if (!productInCart) {
                     let variables = {
                         total: product?.pricing.sellprice * quantity,
@@ -184,19 +184,24 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, 
                                                         </span> : null}
 
                                                     </div>
-                                                    {product?.quantity > 0 ? <OverlayTrigger style={{ backgroundColor: "#088178" }}
-                                                        placement="top"
-                                                        overlay={
-                                                            <Tooltip style={{ color: "#088178" }} id={"tooltip-top"}>
-                                                                add to cart
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <div className="add-to-cart"> <a className="cart-icon" onClick={(e) => ProductAdd(e, product)}>
-                                                            <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
-                                                        </a>
-                                                        </div>
-                                                    </OverlayTrigger> : <p className="out-of-stock-card">Out Of Stock</p>}
+
+                                                    {product?.quantity > 0 ?
+
+                                                        <OverlayTrigger style={{ backgroundColor: "#088178" }}
+                                                            placement="top"
+                                                            overlay={
+                                                                <Tooltip style={{ color: "#088178" }} id={"tooltip-top"}>
+                                                                    add to cart
+                                                                </Tooltip>
+                                                            }
+                                                        >
+                                                            <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
+                                                                <div className="add-to-cart"> <a className="cart-icon">
+                                                                    <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
+                                                                </a>
+                                                                </div>
+                                                            </Link>
+                                                        </OverlayTrigger> : <p className="out-of-stock-card">Out Of Stock</p>}
 
                                                 </div>
                                             </div>

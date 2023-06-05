@@ -42,7 +42,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
 import { currencyFormat } from "./CurrencyFormat";
-import { get } from "lodash";
+import { capitalize, get } from "lodash";
 import { validatenested, validateNestedPhone } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { isEmpty } from "../../utils/helper";
@@ -668,8 +668,12 @@ const ViewOrderComponent = ({ params }) => {
                               Qty
                             </TableCell>
                             <TableCell variet="contained" color="primary">
+                              Attributes
+                            </TableCell>
+                            <TableCell variet="contained" color="primary">
                               Total
                             </TableCell>
+
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -680,6 +684,8 @@ const ViewOrderComponent = ({ params }) => {
                                 {currencyFormat(product.cost)}
                               </TableCell>
                               <TableCell>{product.qty}</TableCell>
+
+                              <TableCell>{product?.attributes.map((attribute) => <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)}</TableCell>
                               <TableCell>
                                 {currencyFormat(product.qty * product.cost)}
                               </TableCell>

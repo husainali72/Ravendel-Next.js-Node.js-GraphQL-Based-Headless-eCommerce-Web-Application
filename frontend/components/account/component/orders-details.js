@@ -9,6 +9,7 @@ const CalculateProductTotal = product => product.reduce((total, product) => tota
 
 
 export const convertDateToStringFormat = (date) => {
+
     var convertedDate = ""
     if (date) {
         convertedDate = moment(date).format('ll')
@@ -108,7 +109,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                 <thead>
                                     <th>Products</th>
                                     <th>Qty</th>
-
+                                    <th>Attributes</th>
                                     <th>Total</th>
                                 </thead>
                                 <tbody>
@@ -116,25 +117,28 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                         <tr key={i}>
                                             <th>{order?.name}</th>
                                             <td>x {order?.quantity ? order.quantity : order.qty}</td>
-                                            {console.log(order.cost, getPrice(order?.cost, decimal))}
+
+                                            <th>    {order?.attributes.map((attribute) => {
+                                                return <div> {attribute.name} : {attribute.value}</div>
+                                            })}</th>
                                             <td>{currency} {getPrice(order?.cost, decimal)}</td>
                                         </tr>
                                     )}
                                 </tbody>
                                 <tr>
-                                    <th colSpan={2} className="order-text-align" >Subtotal</th>
+                                    <th colSpan={3} className="order-text-align" >Subtotal</th>
                                     <td>{currency} {getPrice(CalculateProductTotal(orderDetail), decimal)}</td>
                                 </tr>
                                 <tr>
-                                    <th colSpan={2} className="order-text-align">Tax</th>
+                                    <th colSpan={3} className="order-text-align">Tax</th>
                                     <td>{currency} {tax ? getPrice(tax, decimal) : "0.00"}</td>
                                 </tr>
                                 <tr>
-                                    <th colSpan={2} className="order-text-align">Shipping</th>
+                                    <th colSpan={3} className="order-text-align">Shipping</th>
                                     <td>{currency} {shipping_amount ? getPrice(shipping_amount, decimal) : "0.00"}</td>
                                 </tr>
                                 <tr className="total">
-                                    <th colSpan={2} className="order-text-align" >Total</th>
+                                    <th colSpan={3} className="order-text-align" >Total</th>
                                     <td>{currency} {total ? getPrice(total, decimal) : getPrice(CalculateProductTotal(orderDetail), decimal)}</td>
                                 </tr>
                             </table>

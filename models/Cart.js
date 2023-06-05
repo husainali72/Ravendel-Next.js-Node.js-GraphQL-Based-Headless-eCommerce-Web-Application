@@ -35,6 +35,20 @@ const CartSchema = new Schema({
         type: Number,
         required: true
       },
+      attributes: [
+        {
+          name:
+            { type: String },
+          value:
+            { type: String }
+        }
+      ],
+      product_quantity: {
+        type: Number
+      },
+      variant_id: {
+        type: String
+      },
       shipping_class: {
         type: Schema.ObjectId,
         required: true

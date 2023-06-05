@@ -51,7 +51,9 @@ module.exports = gql`
     combination: [String]
     tax_class: String
     shipping_class: String
-
+    product_quantity:Int
+    attributes:customArray
+    variant_id:String
   }
 
   input cartProducts {
@@ -60,6 +62,7 @@ module.exports = gql`
     total: Float
     tax_class: String
     shipping_class: String
+    
   }
 
   type CartRES {
@@ -99,6 +102,9 @@ module.exports = gql`
       product_price: Float
       product_image: String
       qty: Int
+      attributes:customArray
+      variant_id:String
+      product_quantity:Int
       shipping_class : String,
       tax_class : String
 

@@ -17,22 +17,35 @@ import { OpenSortMenu } from '../utills/app';
 import { CloseSortMenu } from '../utills/app';
 import { settingActionCreator } from "../redux/actions/settingAction";
 import Link from "next/link";
+import { getAllAttributes } from "../redux/actions/productAction";
+import { capitalize } from "lodash";
 const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
     const dispatch = useDispatch();
+    const attributes = useSelector(state => state.products.attributes)
     const usercart = useSelector(state => state.userCart)
     const [rangevalue, setRangevalue] = useState('');
     const currencyOpt = currencyStore?.currency_options?.currency
+    const [FilterAttribute, setFilterAttribute] = useState([])
     const decimal = currencyStore?.currency_options?.number_of_decimals
     const [currency, setCurrency] = useState("$")
-    let onSaleProduct = [];
-    var number = 0;
-    if (shopProducts && shopProducts?.products?.data?.length > 0) {
-        number = shopProducts.products.data?.length;
-        onSaleProduct = shopProducts.products.data;
-    }
-    else {
-        <h1>loading...</h1>
-    }
+    const [loading, setloading] = useState(false)
+    const [onSaleProduct, setonSaleProduct] = useState([])
+    const [onSaleAllProduct, setonSaleAllProduct] = useState([])
+    const [number, setNumber] = useState(0)
+    useEffect(() => {
+        if (shopProducts && shopProducts?.products?.data?.length > 0) {
+            setloading(false)
+            setNumber(shopProducts.products.data?.length)
+            setonSaleProduct(shopProducts.products.data)
+            setonSaleAllProduct(shopProducts.products.data)
+        }
+        else {
+            setloading(true)
+        }
+    }, [shopProducts])
+    useEffect(() => {
+        dispatch(getAllAttributes());
+    }, []);
     useEffect(() => {
         dispatch(settingActionCreator(currencyStore.currency_options))
     }, [currencyStore?.currency_options])
@@ -45,6 +58,67 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
             dispatch(categoryAction(shopProduct.data))
         }
     }, [brandProduct])
+    const handleFilterData = (e, attribute) => {
+        let index = FilterAttribute.findIndex((data) => data.name === attribute)
+        if (index !== -1) {
+            let val_index = FilterAttribute[index].value.findIndex((att_value) => att_value === e.target.value)
+            if (val_index !== -1) {
+                FilterAttribute[index].value.splice(val_index, 1)
+                if (FilterAttribute[index].value.length === 0) {
+                    let FilteredProductAttribute = FilterAttribute.filter((FilteredAttribute) => FilteredAttribute.name !== attribute)
+
+                    setFilterAttribute([...FilteredProductAttribute])
+                }
+                else {
+                    setFilterAttribute([...FilterAttribute])
+                }
+            }
+            else {
+
+                FilterAttribute[index].value.push(e.target.value)
+                setFilterAttribute([...FilterAttribute])
+            }
+        }
+        else {
+            let val = []
+            val.push(e.target.value)
+            let obj = {
+                name: attribute,
+                value: val
+            }
+            let productAttribute = FilterAttribute
+            productAttribute.push(obj)
+            setFilterAttribute([...productAttribute])
+        }
+    }
+    const filterData = () => {
+        let priceRange = rangevalue.split('-')
+        if (FilterAttribute && FilterAttribute.length > 0) {
+            let data = onSaleAllProduct.filter((data) => {
+                return (data.attribute_master.some((attribute_value) => {
+                    return FilterAttribute.some((filteredData) => {
+                        return (filteredData.name === attribute_value.id && filteredData.value.some((data1) =>
+                            attribute_value.attribute_values.some(val => val._id === data1)
+                        ))
+                    })
+                })
+                ) && (data.pricing.sellprice >= parseInt(priceRange[0]) && data.pricing.sellprice <= parseInt(priceRange[1]))
+
+            })
+            setonSaleProduct([...data])
+            setNumber(data.length)
+        }
+        else {
+            let data = onSaleAllProduct.filter((data) => {
+                return (data.pricing.sellprice >= parseInt(priceRange[0]) && data.pricing.sellprice <= parseInt(priceRange[1]))
+            })
+            setonSaleProduct([...data])
+            setNumber(data.length)
+        }
+
+
+    }
+
     return (<>
         <BreadCrumb title={"Shop"} />
         <section className="product-cart-section">
@@ -60,17 +134,32 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                     <div style={{ marginTop: '30px' }}>
                                         <MultiRangeSlider
                                             min={0}
-                                            max={1000}
+                                            max={100000}
                                             onChange={({ min, max }) => setRangevalue(`${min}-${max}`)}
                                         />
                                         <p style={{ paddingTop: "10px", fontWeight: "600" }}>range : {currency} {rangevalue}</p>
                                     </div>
                                     <div className="fillter-by-price-checkbox">
-                                        <h5>Color</h5>
-                                        <Form.Check aria-label="option 1" label="Red" ></Form.Check>
-                                        <Form.Check aria-label="option 1" label="Blue" ></Form.Check>
-                                        <Form.Check aria-label="option 1" label="Green" ></Form.Check>
-                                        <button type="button" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178" }}>
+                                        {attributes && attributes.length > 0 ? attributes.map((attribute) => {
+                                            return (<>
+                                                <h6>{capitalize(attribute.name)}</h6>
+                                                <Form>
+                                                    <Form.Group value='{billingInfo.payment_method}'
+                                                        onChange={(e) => handleFilterData(e, attribute.id)}>
+                                                        {attribute.values.map((value) => {
+                                                            return (<>
+                                                                <Form.Check label={capitalize(value.name)} name="payment_method" value={value._id} />
+                                                            </>)
+
+                                                        })}
+                                                    </Form.Group>
+
+                                                </Form>
+                                            </>
+                                            )
+                                        }) : null}
+
+                                        <button type="button" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178" }} onClick={filterData}>
                                             <i className="fa fa-filter"></i>Fillter
                                         </button>
                                     </div>
@@ -81,10 +170,8 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                             <div className="theiaStickySidebar category-box-filler">
                                 <div className="widget-category">
                                     <h5 className="category-section-title mb-30 wow fadeIn animated animated animated">New Product</h5>
-                                    {/* {shopProducts && shopProducts.products ?  */}
-
-                                    {onSaleProduct && onSaleProduct?.length > 0 ? (<>
-                                        {onSaleProduct.map((product, i) => (
+                                    {onSaleAllProduct && onSaleAllProduct?.length > 0 ? (<>
+                                        {onSaleAllProduct.map((product, i) => (
                                             i < 5 ?
 
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`} >
@@ -119,6 +206,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                             <div className="totall-product">
                                 <p> We found <strong className="text-brand">{number}</strong> items for you!</p>
                             </div>
+                            {loading ? <h5>loading...</h5> : null}
                             <div className="sort-by-product-area">
                                 <div className="sort-by-cover mr-10">
                                     <div className="sort-by-product-wrap">
@@ -211,7 +299,7 @@ export async function getStaticProps() {
     catch (e) {
         console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
     }
-    //   console.log("homepage", homepageData);
+
 
     /* ===============================================Get Product Shop Settings ===============================================*/
     try {
@@ -223,8 +311,6 @@ export async function getStaticProps() {
     catch (e) {
         console.log("ShopProduct Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
     }
-    // console.log("shopProducts", shopProducts);
-
     try {
         const { data: shopproductcategory } = await client.query({
             query: GET_CATEGORIES_QUERY
@@ -234,7 +320,7 @@ export async function getStaticProps() {
     catch (e) {
         console.log("ShopProduct Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
     }
-    // console.log("shopproductcategory", shopProduct);
+
 
 
     /* ===============================================Get Brand Data Settings ===============================================*/
@@ -248,7 +334,7 @@ export async function getStaticProps() {
     catch (e) {
         console.log("===brand", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
     }
-    // console.log("brandProduct", brandProduct);
+
 
     return {
         props: {

@@ -1,7 +1,8 @@
-import {PRODUCT_REVIEWS_ADD,ADD_REVIEW,LOAD_REVIEW, PRODUCTS_FAIL, PRODUCTS_LOADING, PRODUCTS_SUCCESS } from "../actions/productAction";
+import { PRODUCT_REVIEWS_ADD, ADD_REVIEW, LOAD_REVIEW, PRODUCTS_FAIL, PRODUCTS_LOADING, PRODUCTS_SUCCESS, ATTRIBUTES_SUCCESS } from "../actions/productAction";
 
 const initialState = {
     productReviews: [],
+    attributes: [],
     loading: false,
     success: false,
     products: []
@@ -30,23 +31,29 @@ const productReducer = (state = initialState, action) => {
                 products: action.payload,
                 loading: false,
                 success: true,
-              };
-
+            };
+        case ATTRIBUTES_SUCCESS:
+            return {
+                ...state,
+                attributes: action.payload,
+                loading: false,
+                success: true,
+            };
         case PRODUCTS_FAIL:
             return {
                 ...state,
                 products: [],
                 loading: false,
                 success: false,
-              };
+            };
         case LOAD_REVIEW:
-            return{
+            return {
                 ...state,
                 loading: false,
                 productReviews: action.payload,
                 success: true,
-               
-              }
+
+            }
         default:
             return state;
     }

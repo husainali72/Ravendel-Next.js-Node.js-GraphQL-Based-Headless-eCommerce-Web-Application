@@ -50,7 +50,8 @@ export default function Footer() {
                 phone_number: get(res, phonePath, "+91 9124192994"),
                 appStoreUrl: get(res, appStorePath, "#"),
                 playStoreUrl: get(res, playStorePath, "#"),
-                hour: get(res, hour, '#')
+                hour: get(res, hour, '#'),
+                socailMedia: get(res, socialMediaPath, '#')
             }
             ))
         })

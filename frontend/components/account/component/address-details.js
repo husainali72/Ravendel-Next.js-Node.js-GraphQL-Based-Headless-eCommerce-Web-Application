@@ -9,8 +9,6 @@ import { capitalize } from 'lodash';
 import notify from "../../../utills/notifyToast";
 import PhoneInput from "react-phone-input-2";
 import { isValidPhoneNumber } from "react-phone-number-input";
-import { capitalize } from "lodash";
-
 const Star = ({ starId, marked }) => {
     return (
         <span
@@ -43,9 +41,6 @@ const AddressDetail = (props) => {
     const [editMode, setEditMode] = useState(false);
     const [address, setAddress] = useState(addressObject)
     const [allAddressBook, setAllAddressBook] = useState([])
-
-
-
     useEffect(() => {
         if (addressDetail.id) {
             addressObject.id = addressDetail.id

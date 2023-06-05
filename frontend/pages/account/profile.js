@@ -15,9 +15,7 @@ import { useSession, getSession } from 'next-auth/react';
 import { capitalize } from 'lodash';
 import { Toaster } from 'react-hot-toast';
 const Profile = ({ customeraddres }) => {
-
-    const session = useSession();
-    const [ID,setID] = useState("")
+    const [ID, setID] = useState("")
     const session = useSession();
     const session2 = getSession();
     session2.then(res => setID(res.user.accessToken.customer._id))
@@ -51,29 +49,6 @@ const Profile = ({ customeraddres }) => {
     }, [customeraddres])
 
 
-    useEffect(() => {
-        const getCustomerAddress = async () =>{
-            try {
-                const { data: customerssdata } = await client.query({
-                    query: GET_CUSTOMER_QUERY,
-                    variables: { ID },
-                })
-                setCustomerAddress(customerssdata.customer.data) 
-            }
-            catch (e) {
-                console.log("customer Error===", e);
-            }
-        }
-        getCustomerAddress();
-    }, [])
-    
-
-    // useEffect(() => {
-    //     // const id = data.user.accessToken.customer._id
-    //     getcustomer()
-    //     setIsRefreshing(false);
-    // }, [])
-
 
     function getcustomer() {
         var id = ""
@@ -94,7 +69,7 @@ const Profile = ({ customeraddres }) => {
     }
 
     useEffect(() => {
-        getOrderCustomer();
+        getcustomer();
     }, [])
 
     async function getOrderCustomer() {
@@ -210,20 +185,20 @@ export async function getServerSideProps(context) {
     var id = session?.user?.accessToken.customer._id
 
     var customeraddres = [];
-    if(session !== null){
+    if (session !== null) {
 
-            /* ================================= GET_CUSTOMER DETAILS ================================= */
-        
-            try {
-                const { data: customerssdata } = await client.query({
-                    query: GET_CUSTOMER_QUERY,
-                    variables: { id },
-                })
-                customeraddres = customerssdata.customer.data
-            }
-            catch (e) {
-                console.log("customer Error===", e);
-            }
+        /* ================================= GET_CUSTOMER DETAILS ================================= */
+
+        try {
+            const { data: customerssdata } = await client.query({
+                query: GET_CUSTOMER_QUERY,
+                variables: { id },
+            })
+            customeraddres = customerssdata.customer.data
+        }
+        catch (e) {
+            console.log("customer Error===", e);
+        }
     }
 
     return {
