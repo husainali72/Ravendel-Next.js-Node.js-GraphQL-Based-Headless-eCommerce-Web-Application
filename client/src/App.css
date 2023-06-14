@@ -335,7 +335,7 @@
   overflow: inherit !important;
 }
 
-.css-1ynyhby{
+.css-1ynyhby {
   margin: 10px 0 !important;
   display: block;
 }
@@ -356,7 +356,7 @@
 }
 
 
-.ravendelLogo{
+.ravendelLogo {
   width: 100px;
   max-height: 50px;
   object-fit: contain;
@@ -364,16 +364,21 @@
 }
 
 .mobileImage {
-  object-fit: contain; 
+  object-fit: contain;
   height: 100%;
   width: 100%;
 }
 
 .phoneValidation svg {
-   width: 24px;
+  width: 24px;
 }
 
-.phoneValidation input{
+.phoneValidation input {
   padding: 10px
 }
 
+.image_ratio {
+  object-fit: contain;
+  height: 20%;
+  width: 20%;
+}

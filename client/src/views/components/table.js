@@ -67,7 +67,7 @@ const Tablecomponent = ({
                 <CardHeader
                     action={
                         <>
-                            {addpage ? <Link to={`${client_app_route_url + addpage}`} state={{editMode: false}} className={classes.addbtnlink}>
+                            {addpage ? <Link to={`${client_app_route_url + addpage}`} state={{ editMode: false }} className={classes.addbtnlink}>
                                 <Button
                                     color="success"
                                     className={classes.addUserBtn}
@@ -127,7 +127,9 @@ const Tablecomponent = ({
                                                             return <TableCell>
                                                                 <Avatar
                                                                     alt={data.name}
-                                                                    src={data.image} />
+                                                                    src={data.image}
+                                                                    sx={{ '& .MuiAvatar-img': { objectFit: 'contain' } }}
+                                                                />
                                                             </TableCell>
                                                         case 'rating':
                                                             return <TableCell>

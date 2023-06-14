@@ -41,6 +41,7 @@ import Alerts from "../components/Alert";
 import { get } from "lodash";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
+import { getUpdatedUrl } from "../../utils/service";
 
 const defaultObj = {
   title: "",
@@ -111,26 +112,27 @@ const EditBlogComponenet = ({ params }) => {
     setloading(get(blogState, "loading"));
   }, [get(blogState, "loading")]);
 
- useEffect(() => {
+  useEffect(() => {
     if (!isEmpty(get(blogState, "tags"))) {
-      if (Id){
-      setTimeout(() => {
-        var defaultTags = [];
-        const tagObj = blogState.tags.map((tag) => {
-          if (~blog.blog_tag.indexOf(tag.id)) {
-            defaultTags.push({
+      if (Id) {
+        setTimeout(() => {
+          var defaultTags = [];
+          const tagObj = blogState.tags.map((tag) => {
+            if (~blog.blog_tag.indexOf(tag.id)) {
+              defaultTags.push({
+                value: tag.id,
+                label: tag.name,
+              });
+            }
+
+            return {
               value: tag.id,
               label: tag.name,
-            });
-          }
-
-          return {
-            value: tag.id,
-            label: tag.name,
-          };
-        });
-        setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
-      }, 1000)}
+            };
+          });
+          setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
+        }, 1000)
+      }
       else {
         const tagObj = blogState.tags.map((tag) => {
           return {
@@ -138,10 +140,10 @@ const EditBlogComponenet = ({ params }) => {
             label: tag.name,
           };
         });
-  
-        setTags({...tagObj, tags: tagObj});
+
+        setTags({ ...tagObj, tags: tagObj });
       }
-    }      
+    }
   }, [get(blogState, "tags")]);
 
   const tagChange = (e) => {
@@ -253,6 +255,7 @@ const EditBlogComponenet = ({ params }) => {
               <Box component="div" mb={2}>
                 <URLComponent
                   url={blog.url}
+                  onBlur={onBlur}
                   onInputChange={(updatedUrl) => {
                     setBlog({
                       ...blog,
