@@ -97,6 +97,7 @@ const ViewOrderComponent = ({ params }) => {
     date: "",
   });
 
+
   useEffect(() => {
     dispatch(orderAction(ORDERID));
     dispatch(getSettings());
@@ -679,13 +680,14 @@ const ViewOrderComponent = ({ params }) => {
                         <TableBody>
                           {order.products.map((product, index) => (
                             <TableRow key={index}>
+
                               <TableCell>{product.name}</TableCell>
                               <TableCell>
                                 {currencyFormat(product.cost)}
                               </TableCell>
                               <TableCell>{product.qty}</TableCell>
 
-                              <TableCell>{product?.attributes.map((attribute) => <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)}</TableCell>
+                              <TableCell>{product?.attributes?.map((attribute) => <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)}</TableCell>
                               <TableCell>
                                 {currencyFormat(product.qty * product.cost)}
                               </TableCell>

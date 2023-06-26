@@ -7,7 +7,7 @@ import Loading from "./Loading";
 
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
-const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl }) => {
+const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl, onBlur }) => {
   const classes = viewStyles();
   const [editPremalink, setEditPermalink] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,6 +43,7 @@ const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl }) => {
                 }
               }}
               variant="outlined"
+              onBlur={onBlur}
               className={classes.editpermalinkInput}
             />
           )}
@@ -61,13 +62,14 @@ const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl }) => {
   );
 };
 
-const URLComponent = ({ url, onInputChange, pageUrl, tableUrl }) => {
+const URLComponent = ({ url, onInputChange, pageUrl, tableUrl, onBlur }) => {
   return (
     <ThemeProvider theme={theme}>
       <URLComponentTheme
         url={url}
         onInputChange={onInputChange}
         pageUrl={pageUrl}
+        onBlur={onBlur}
         tableUrl={tableUrl}
       />
     </ThemeProvider>

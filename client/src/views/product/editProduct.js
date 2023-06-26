@@ -169,13 +169,14 @@ const EditProductComponent = ({ params }) => {
   const addUpdateProduct = (e) => {
     product.combinations = combination;
     product.tax_class = taxClass
-    if (Product_id) {
-      product.update_gallery_image = gallery
-    }
+    let combination_error = ''
+    let combination_price_error = ''
     e.preventDefault();
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
-    let combination_error = validatenested("combinations", ["sku"], product);
-    let combination_price_error = validatenestedArray("pricing", ["price"], product.combinations)
+    if (product.combinations) {
+      combination_error = validatenested("combinations", ["sku", 'quantity'], product);
+      combination_price_error = validatenestedArray("pricing", ["price"], product.combinations)
+    }
     let Errors = validatenested("pricing", ["price"], product);
     if (!isEmpty(errors)) {
       dispatch({
@@ -219,11 +220,11 @@ const EditProductComponent = ({ params }) => {
     }
     else {
       if (Product_id) {
-
+        product.update_gallery_image = gallery
         dispatch(productUpdateAction(product, navigate));
       }
       else {
-
+        product.gallery_image = gallery
         dispatch(productAddAction(product, navigate));
 
       }

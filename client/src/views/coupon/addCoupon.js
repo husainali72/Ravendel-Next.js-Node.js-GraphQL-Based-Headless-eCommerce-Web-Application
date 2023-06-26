@@ -246,7 +246,7 @@ const AddCouponComponent = () => {
                           Fixed Amount Discount
                         </MenuItem>
                         <MenuItem value="precantage-discount">
-                          Fixed Precentage Discount
+                          Fixed Percentage Discount
                         </MenuItem>
                       </Select>
                     </FormControl>

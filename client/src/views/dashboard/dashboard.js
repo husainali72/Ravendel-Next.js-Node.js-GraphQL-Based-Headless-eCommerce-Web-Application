@@ -36,9 +36,7 @@ const DashboardComponent = () => {
   const [latestOrders, setlatestOrders] = useState([])
   const [filteredLatestOrders, setFilteredLatestOrders] = useState([])
   useEffect(() => {
-    if (isEmpty(get(data, "dashboard_data"))) {
-      dispatch(dashboardAction());
-    }
+    dispatch(dashboardAction());
   }, []);
   useEffect(() => {
     if (!isEmpty(get(data, "dashboard_data"))) {

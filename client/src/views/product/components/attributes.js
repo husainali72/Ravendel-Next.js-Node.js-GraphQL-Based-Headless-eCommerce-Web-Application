@@ -140,7 +140,14 @@ const AttributesComponent = ({
   };
   const addAttribute = () => {
     if (!currentAttribute.id) {
-      alert("invalid");
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: "Please Select The Correct Attribute",
+          error: true,
+        }
+      })
       return;
     }
 
@@ -178,7 +185,7 @@ const AttributesComponent = ({
     let isValidattribute = false
     if (currentAttribute.attribute_list && currentAttribute.attribute_list.length > 0) {
       currentAttribute.attribute_list.forEach((attr, index) => {
-        if (attr.selected_values.length) {
+        if (attr.selected_values.length > 0) {
           attr.selected_values.forEach((val) => {
             product.attribute.push({
               attribute_id: attr.id,
@@ -192,7 +199,14 @@ const AttributesComponent = ({
           isValidattribute = true;
         } else {
           isValidattribute = false;
-
+          dispatch({
+            type: ALERT_SUCCESS,
+            payload: {
+              boolean: false,
+              message: "Attribute value is required",
+              error: true,
+            }
+          })
         }
       });
     } else {
@@ -266,7 +280,7 @@ const AttributesComponent = ({
             price: currentVariants.combinations[index].pricing.price,
             sellprice: currentVariants.combinations[index].pricing.sellprice,
           },
-          image: "",
+          image: currentVariants.combinations[index].image || ""
         });
 
         currentVariants.combinations.splice(index, 1);
