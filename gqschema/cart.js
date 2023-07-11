@@ -62,7 +62,7 @@ module.exports = gql`
     total: Float
     tax_class: String
     shipping_class: String
-    
+    variant_id:String
   }
 
   type CartRES {
@@ -111,12 +111,3 @@ module.exports = gql`
     ): statusSchema
   }
 `;
-
-/* type calculatedCart {
-  items: [cartItem]
-  subtotal: Float,
-  total_shipping: shippingObj,
-  total_tax: taxObj,
-  total_coupon: Float,
-  grand_total: Float,
-} */
