@@ -457,63 +457,134 @@ module.exports = {
 
 
 
-    addCart: async (root, args, { id }) => {
-
+    addCart: async (root, args, { id }) => { 
+      // console.log("withOutLogin----args-2", args);
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
       try {
         const cart = await Cart.findOne({ user_id: args.user_id });
-        let existingCartProducts = cart && cart.products ? cart.products : []
-        let carttotal = 0;
+        let existingCartProducts = cart && cart.products ? cart.products : [];
+        // let carttotal = 0;
         // if local products exists then only run loop for adding products in customer cart
         if (args.products)
           for (let localProd of args.products) {
-            let product = await Product.findById({ _id: localProd.product_id });
-            // declare variables to be used for adding product to cart
-            let product_price = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price
-            let total = product.pricing.sellprice > 0 ? localProd.qty * product.pricing.sellprice : localProd.qty * product.pricing.price
-            let product_image = product.feature_image
-            let product_id = localProd.product_id
-            let product_title = product.name
-            let shipping_class = product.shipping.shipping_class
-            let tax_class = product.tax_class
-            let qty = localProd.qty
-            // if customer cart is empty then add product from local
-            if (!existingCartProducts.length) {
-              existingCartProducts.push({ product_id, product_title, product_image, product_price, qty, total, shipping_class, tax_class })
+            if (localProd.variant_id) {
+              // let productAttributeValue =
+              //   await ProductAttributeVariation.findById(localProd.variant_id);
+    
+              // let product = await Product.findById({
+              //   _id: localProd.product_id,
+              // });
+              let product_id = localProd.product_id;           
+              let qty = localProd.qty;
+              
+              // let shipping_class = product.shipping.shipping_class
+              //   ? product.shipping.shipping_class
+              //   : "";
+              // let tax_class = product.tax_class ? product.tax_class : "";
+    
+              if (!existingCartProducts.length) {
+                existingCartProducts.push({
+                  product_id,
+                  variant_id: localProd.variant_id.toString(),             
+                  qty,
+                  shipping_class,
+                  tax_class,
+                });
+              } else {
+                // check local product id with customer cart product id
+                let existingProduct = existingCartProducts.find((prod) =>
+                  prod.product_id.toString() ===
+                    localProd.product_id.toString() &&
+                  prod.variant_id == localProd.variant_id.toString()
+                    ? prod
+                    : false
+                );
+                // if matches then update customer cart product with local product
+                if (existingProduct) {
+                  existingProduct.qty += localProd.qty
+                }
+                // else add local product to customer cart
+                else {
+                  existingCartProducts.push({
+                    product_id,                   
+                    variant_id,
+                    qty,                
+                    // shipping_class,
+                    // tax_class,
+                  });
+                }
+              }
             }
-            // else update customer cart with local
+          
+        // ==============================================================================================================
+        else {
+          let product = await Product.findById({ _id: localProd.product_id });
+          // declare variables to be used for adding product to cart
+          
+          let product_id = localProd.product_id;
+        
+          let shipping_class = product.shipping.shipping_class;
+          let tax_class = product.tax_class;
+          let qty = localProd.qty;
+          // if customer cart is empty then add product from local
+          if (!existingCartProducts.length) {
+            existingCartProducts.push({
+              product_id,            
+              qty,
+              shipping_class,
+              tax_class,
+            });
+          }
+          // else update customer cart with local
+          else {
+            // check local product id with customer cart product id
+            let existingProduct = existingCartProducts.find((prod) =>
+              prod.product_id.toString() === localProd.product_id.toString() && !prod.variant_id
+                ? prod
+                : false
+            );
+            // if matches then update customer cart product with local product
+            if (existingProduct) {
+              existingProduct.qty += localProd.qty;
+               }
+            // else add local product to customer cart
             else {
-              // check local product id with customer cart product id
-              let existingProduct = existingCartProducts.find(prod => prod.product_id.toString() === localProd.product_id.toString() ? product : false)
-              // if matches then update customer cart product with local product
-              if (existingProduct) {
-                existingProduct.qty += localProd.qty
-                existingProduct.total = existingProduct.product_price * existingProduct.qty
-              }
-              // else add local product to customer cart
-              else {
-                existingCartProducts.push({ product_id, product_title, product_image, product_price, qty, total, shipping_class, tax_class })
-              }
+              existingCartProducts.push({
+                product_id,
+                qty,
+                shipping_class,
+                tax_class,
+              });
             }
           }
+        }
+      }
+        //---------------------------------------------------------------------------------------------------------------
+    
         // calculate carttotal from total of all products in customer cart
-        existingCartProducts.map(cartProduct => {
-          carttotal += cartProduct.total
-        })
+        // existingCartProducts.map(async (cartProduct) => {
+        //   if(cartProduct.variant_id){          
+        //   let productAttributeValue =
+        //         await ProductAttributeVariation.findById(cartProduct.variant_id);
+        //  let price = productAttributeValue.pricing.sellprice>0 ?  productAttributeValue.pricing.sellprice : productAttributeValue.pricing.price
+        //    carttotal += price;
+        //   }
+        //   else {
+    
+        //   }
+        // });
         // if customer cart exists then update
         if (cart) {
-          cart.total = carttotal
-          cart.products = existingCartProducts
+          cart.products = existingCartProducts;
           await cart.save();
         }
         // else create new cart
         else {
           const newCart = new Cart({
             user_id: args.user_id,
-            total: carttotal,
-            products: existingCartProducts
+            products: existingCartProducts,
           });
           await newCart.save();
         }
