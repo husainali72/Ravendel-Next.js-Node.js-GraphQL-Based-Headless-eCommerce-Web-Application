@@ -42,8 +42,8 @@ export const validatenested = (main, names, args) => {
             let msg = obj.name.charAt(0).toUpperCase() + obj.name.slice(1)
             return (errors = `${msg} Link is required`);
           } else if (!obj[name]) {
-            let msg = name.charAt(0).toUpperCase() + name.slice(1)
-            return (errors = `${msg} is required`);
+            let msg = main.charAt(0).toUpperCase() + main.slice(1)
+            return (errors = `${msg?.replace('_', ' ')} is required`);
           }
         }
         )

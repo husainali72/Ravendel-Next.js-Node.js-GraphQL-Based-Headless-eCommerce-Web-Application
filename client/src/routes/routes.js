@@ -260,7 +260,7 @@ const RoutesPath = [
   {
     path: `${client_app_route_url}add-coupon`,
     exact: true,
-    component: AddCoupon,
+    component: EditCoupon,
     name: "Add Coupon",
   },
   {
