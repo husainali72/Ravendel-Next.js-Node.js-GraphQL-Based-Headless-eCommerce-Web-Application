@@ -27,6 +27,12 @@ const CartSchema = new Schema({
       product_price: {
         type: Number,
       },
+      product_taxPercentage: {
+        type: Number,
+      },
+      product_tax: {
+        type: Number,
+      },
       qty: {
         type: Number,
         required: true

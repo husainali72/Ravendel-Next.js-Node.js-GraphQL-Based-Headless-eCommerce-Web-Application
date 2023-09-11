@@ -27,19 +27,21 @@ module.exports = gql`
 
   type cartItem {
     product_id: ID
-    qty: Int
-    price: Float
-    combination: customArray
-    tax: taxObj
-    shipping: shippingObj
+    product_title:String
+    product_image : String
+    product_price : String
+    qty: Int,
+    product_total : String,
+    product_tax: String
+    product_shipping: String
   }
 
   type calculatedCart {
-    subtotal: Float
-    total_shipping: shippingObj
-    total_tax: taxObj
+    total_shipping: String
+    total_tax: String
     total_coupon: Float
-    grand_total: Float
+    grand_total: String
+    cartItem:[cartItem]
   }
 
   input cartProduct {
@@ -82,10 +84,10 @@ module.exports = gql`
 
   extend type Query {
     carts: CartRES
-    cart(id: ID!): Cart 
+    cart(id: ID!): Cart
     cartbyUser(user_id: ID!): Cart
     calculateCart(total_coupon : Float, cart: [cartProducts]): calculatedCart
-    calculateCoupon(coupon_code: String, cart: [cartProducts]): calculateCoupon
+    calculateCoupon(coupon_code: String,cart: [cartProducts]): calculateCoupon
   }
 
   extend type Mutation {
