@@ -173,9 +173,15 @@ const EditProductComponent = ({ params }) => {
     let combination_price_error = ''
     e.preventDefault();
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
+    let custom_field = ''
+    if (product.custom_field) {
+      custom_field = validatenested('custom_field', ['key', 'value'], product)
+    }
+    console.log(custom_field);
     if (product.combinations) {
       combination_error = validatenested("combinations", ["sku", 'quantity'], product);
       combination_price_error = validatenestedArray("pricing", ["price"], product.combinations)
+
     }
     let Errors = validatenested("pricing", ["price"], product);
     if (!isEmpty(errors)) {
@@ -204,6 +210,16 @@ const EditProductComponent = ({ params }) => {
         payload: {
           boolean: false,
           message: combination_error,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(custom_field)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: custom_field,
           error: true,
         },
       });

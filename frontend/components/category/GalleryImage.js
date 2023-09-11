@@ -389,7 +389,7 @@ const GalleryImagesComponents = (props) => {
                             </button>
                         }
                         <div className="varaint-select">
-                            {singleproducts.attribute_master.map((attr) => {
+                            {singleproducts?.attribute_master?.map((attr) => {
                                 return (<>
                                     <FormControl>
                                         <FormLabel id="demo-row-radio-buttons-group-label">{capitalize(attr.name)}</FormLabel>
@@ -423,7 +423,7 @@ const GalleryImagesComponents = (props) => {
                                 {singleproducts?.custom_field?.map(field => (<div className="product-attributes">
                                     <ul className="product-meta font-xs color-grey mt-50">
                                         <p >
-                                            {`${field.key} - ${' '}`} <strong> {field.value}</strong>
+                                            {`${field?.key} - ${' '}`} <strong> {field?.value}</strong>
                                         </p>
                                     </ul>
                                 </div>))}

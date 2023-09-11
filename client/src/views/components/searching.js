@@ -96,241 +96,30 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
     useEffect(() => {
         searchfilter()
     }, [searchState, startDate, endDate, MuiTabsvalue, paymentstatus, shippingstatus])
-    const searchfilter = (searchvalue) => {
-        let search = ''
-        if (searchvalue === 'search') {
-            search = ''
-        } else {
-            search = searchState
-        }
-        if (!search && MuiTabsvalue === 'All' && !shippingstatus && !paymentstatus && !startDate && !endDate) {
-            handleOnChangeSearch(searchData)
-        } else {
-            let filterdata = searchData.filter(data => Object.keys(data).some(key => {
-                if (startDate || endDate) {
-                    if (startDate && endDate) {
-                        let endconvetdate = new Date(endDate)
-                        let getenddate = new Date(endDate).getDate()
-                        endconvetdate.setDate(getenddate + 1)
-                        if (shippingstatus || paymentstatus) {
-                            if (shippingstatus && paymentstatus) {
-                                if (search) {
-                                    if (MuiTabsvalue !== 'All') {
-                                        return new Date(data['date']) >= startDate
-                                            && new Date(data['date']) <= endconvetdate
-                                            && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                            && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                            && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                            && data[statusTabData.name] === MuiTabsvalue
-                                    } else {
-                                        return new Date(data['date']) >= startDate
-                                            && new Date(data['date']) <= endconvetdate
-                                            && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                            && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                            && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                    }
-                                } else {
-                                    return new Date(data['date']) >= startDate
-                                        && new Date(data['date']) <= endconvetdate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                }
-                            } else if (shippingstatus) {
-                                if (search) {
-                                    return new Date(data['date']) >= startDate
-                                        && new Date(data['date']) <= endconvetdate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
+    const searchfilter = () => {
 
-                                        && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                } else {
-                                    return new Date(data['date']) >= startDate
-                                        && new Date(data['date']) <= endconvetdate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                }
-                            }
-                            else if (paymentstatus) {
-                                if (search) {
-                                    return new Date(data['date']) >= startDate
-                                        && new Date(data['date']) <= endconvetdate
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
+        const filterdata = searchData.filter(data => {
+            const matchesSearch = searchState ? Object.values(data).some(val => String(val).toLowerCase().includes(searchState.toLowerCase())) : true;
+            const matchesTabs = MuiTabsvalue === 'All' || data[statusTabData.name] === MuiTabsvalue;
+            const matchesPaymentStatus = !paymentstatus || data['payment_status'].toLowerCase().includes(paymentstatus);
+            const matchesShippingStatus = !shippingstatus || data['shipping_status'].toLowerCase().includes(shippingstatus);
+            const currentDate = new Date(data['date']);
+            currentDate.setHours(0, 0, 0, 0); // Reset time to midnight
+            const startDateWithoutTime = startDate ? new Date(startDate) : null;
+            const endDateWithoutTime = endDate ? new Date(endDate) : null;
+            if (startDateWithoutTime) startDateWithoutTime.setHours(0, 0, 0, 0);
+            if (endDateWithoutTime) endDateWithoutTime.setHours(0, 0, 0, 0);
+            const matchesDateRange =
+                (!startDateWithoutTime || currentDate >= startDateWithoutTime) &&
+                (!endDateWithoutTime || currentDate <= endDateWithoutTime);
 
-                                        && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                } else {
-                                    return new Date(data['date']) >= startDate
-                                        && new Date(data['date']) <= endconvetdate
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                }
-                            }
-                        } else if (search) {
 
-                            if (MuiTabsvalue !== 'All') {
-                                return new Date(data['date']) >= startDate
-                                    && new Date(data['date']) <= endconvetdate
-                                    && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                    && data[statusTabData.name] === MuiTabsvalue
-                            } else {
-                                return new Date(data['date']) >= startDate
-                                    && new Date(data['date']) <= endconvetdate
-                                    && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                            }
-                        } else if (MuiTabsvalue !== 'All') {
-                            return new Date(data['date']) >= startDate
-                                && new Date(data['date']) <= endconvetdate
-                                && data[statusTabData.name] === MuiTabsvalue
-                        } else {
-                            return new Date(data['date']) >= startDate
-                                && new Date(data['date']) <= endconvetdate
-                        }
-                    }
-                    else if (startDate) {
-                        if (shippingstatus || paymentstatus) {
-                            if (shippingstatus && paymentstatus) {
-                                if (search) {
-                                    return new Date(data['date']) >= startDate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                        && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                } else {
-                                    return new Date(data['date']) >= startDate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                }
-                            } else if (shippingstatus) {
-                                if (search) {
-                                    return new Date(data['date']) >= startDate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                        && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                } else {
-                                    return new Date(data['date']) >= startDate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                }
-                            }
-                            else if (paymentstatus) {
-                                if (search) {
-                                    return new Date(data['date']) >= startDate
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                        && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                } else {
-                                    return new Date(data['date']) >= startDate
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                }
-                            }
-                        } else if (search) {
-                            if (MuiTabsvalue !== 'All') {
-                                return new Date(data['date']) >= startDate
-                                    && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                    && data[statusTabData.name] === MuiTabsvalue
-                            }
-                            else {
-                                return new Date(data['date']) >= startDate
-                                    && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                            }
-                        }
-                        else if (MuiTabsvalue !== 'All') {
-                            return new Date(data['date']) >= startDate
-                                && data[statusTabData.name] === MuiTabsvalue
-                        } else {
-                            return new Date(data['date']) >= startDate
-                        }
-                    }
-                    else if (endDate) {
-                        let endconvetdate = new Date(endDate)
-                        let getenddate = new Date(endDate).getDate()
-                        endconvetdate.setDate(getenddate + 1)
-                        if (shippingstatus || paymentstatus) {
-                            if (shippingstatus && paymentstatus) {
-                                if (search) {
+            return matchesSearch && matchesTabs && matchesPaymentStatus && matchesShippingStatus && matchesDateRange;
+        });
 
-                                    return new Date(data['date']) <= endconvetdate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                        && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                } else {
-                                    return new Date(data['date']) <= endconvetdate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                }
-                            } else if (shippingstatus) {
-                                if (search) {
-                                    return new Date(data['date']) <= endconvetdate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                        && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                } else {
-                                    return new Date(data['date']) <= endconvetdate
-                                        && data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                }
-                            }
-                            else if (paymentstatus) {
-                                if (search) {
-                                    return new Date(data['date']) <= endconvetdate
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
-
-                                        && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                } else {
-                                    return new Date(data['date']) <= endconvetdate
-                                        && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                }
-                            }
-                        } else if (search) {
-                            if (MuiTabsvalue !== 'All') {
-                                return new Date(data['date']) <= endconvetdate
-                                    && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                                    && data[statusTabData.name] === MuiTabsvalue
-                            } else {
-                                return new Date(data['date']) <= endconvetdate
-                                    && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                            }
-                        }
-                        else if (MuiTabsvalue !== 'All') {
-                            return new Date(data['date']) <= endconvetdate
-                                && data[statusTabData.name] === MuiTabsvalue
-                        } else {
-                            return new Date(data['date']) <= endconvetdate
-                        }
-                    }
-                }
-                else if (shippingstatus || paymentstatus) {
-                    if (shippingstatus && paymentstatus) {
-                        if (search) {
-                            return data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                && data['payment_status'].toLowerCase().includes(paymentstatus)
-                                && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                        } else {
-                            return data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                && data['payment_status'].toLowerCase().includes(paymentstatus)
-                        }
-                    } else if (shippingstatus) {
-                        if (search) {
-                            return data['shipping_status'].toLowerCase().includes(shippingstatus)
-                                && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                        } else {
-                            return data['shipping_status'].toLowerCase().includes(shippingstatus)
-                        }
-                    }
-                    else if (paymentstatus) {
-                        if (search) {
-                            return data['payment_status'].toLowerCase().includes(paymentstatus)
-                                && String(data[key]).toLowerCase().includes(search.toLowerCase())
-                        } else {
-                            return data['payment_status'].toLowerCase().includes(paymentstatus)
-                        }
-                    }
-                }
-                else if (search) {
-                    if (MuiTabsvalue !== 'All') {
-                        return String(data[key]).toLowerCase().includes(search.toLowerCase())
-                            && data[statusTabData.name] === MuiTabsvalue
-                    } else {
-                        return String(data[key]).toLowerCase().includes(search.toLowerCase())
-                    }
-                }
-                else if (MuiTabsvalue !== 'All') {
-                    return data[statusTabData.name] === MuiTabsvalue
-                }
-            }))
-            handleOnChangeSearch(filterdata)
-        }
+        handleOnChangeSearch(filterdata);
     };
+
     const removeAllFilter = () => {
         setpaymentstatus("")
         setshippingstatus("")
@@ -414,3 +203,4 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
         </div>
     );
 }
+

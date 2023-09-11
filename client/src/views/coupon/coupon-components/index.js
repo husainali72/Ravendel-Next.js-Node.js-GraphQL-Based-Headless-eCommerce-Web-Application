@@ -2,7 +2,7 @@ import React from "react";
 import {
   Typography,
   Box,
-} from"@mui/material";
+} from "@mui/material";
 
 /* ==================Component for Tabpanel===================== */
 
@@ -45,7 +45,8 @@ export const MenuProps = {
 };
 
 export const getSelectedName = (id, element, products, categories) => {
-  if (element === "products" || element === "exclude_products") {
+
+  if (element === "include_products" || element === "exclude_products") {
     for (let i in products) {
       if (id === products[i]._id) {
         return products[i].name;
@@ -74,7 +75,10 @@ export const couponObj = {
   minimum_spend: 0,
   maximum_spend: 0,
   products: [],
+  include_products: [],
+
   exclude_products: [],
   categories: [],
+  include_categories: [],
   exclude_categories: [],
 };

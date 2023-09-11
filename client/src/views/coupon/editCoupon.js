@@ -22,6 +22,7 @@ import {
   productsAction,
   couponUpdateAction,
   couponsAction,
+  couponAddAction,
 } from "../../store/action/";
 import { useSelector, useDispatch } from "react-redux";
 import { Alert, Loading, TopBar, TextInput, CardBlocks } from "../components";
@@ -41,7 +42,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { get } from "lodash";
 
 const EditCouponComponent = ({ params }) => {
-  const ID = params.id || "";
+  const id = params?.id || "";
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -54,11 +55,11 @@ const EditCouponComponent = ({ params }) => {
   const [loading, setloading] = useState(false);
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = useState(0);
-
+  console.log('fdkjghdfjk')
   useEffect(() => {
     if (!isEmpty(get(Coupons, "coupons"))) {
       Coupons.coupons.map((editcoupon) => {
-        if (editcoupon.id === ID) {
+        if (editcoupon.id === id) {
           setCoupon({ ...coupon, ...editcoupon });
         }
       });
@@ -93,9 +94,9 @@ const EditCouponComponent = ({ params }) => {
     setTabVal(newValue);
   };
 
-  const updateCoupon = () => {
+  const addUpdateCoupon = () => {
     var errors = validate(["code", "expire"], coupon);
-
+    // console.log(coupon, 'coupon');
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -106,8 +107,10 @@ const EditCouponComponent = ({ params }) => {
         },
       });
     }
-    else {
+    if (id) {
       dispatch(couponUpdateAction(coupon, navigate));
+    } else {
+      dispatch(couponAddAction(coupon, navigate));
     }
 
   };
@@ -127,7 +130,7 @@ const EditCouponComponent = ({ params }) => {
     setCoupon({ ...coupon, [e.target.name]: e.target.value });
   };
   const IncludeProduct = (id) => {
-    return coupon.products.some((included_product) => {
+    return coupon.include_products?.some((included_product) => {
       return included_product === id
     })
 
@@ -139,7 +142,7 @@ const EditCouponComponent = ({ params }) => {
   }
   const IncludeCategories = (id) => {
 
-    return coupon.categories.some((included_categorie) => {
+    return coupon.include_categories?.some((included_categorie) => {
       return included_categorie === id
     })
   }
@@ -198,9 +201,9 @@ const EditCouponComponent = ({ params }) => {
       <Alert />
       {loading ? <Loading /> : null}
       <TopBar
-        title="Edit Coupon"
-        onSubmit={updateCoupon}
-        submitTitle="Update"
+        title={id ? "Edit Coupon" : "Add Coupon"}
+        onSubmit={addUpdateCoupon}
+        submitTitle={id ? "Update" : "Add"}
         backLink={`${client_app_route_url}all-coupons`}
       />
 
@@ -348,9 +351,9 @@ const EditCouponComponent = ({ params }) => {
 
                 {/*  ================== Products Select ================== */}
                 <SelectOptionField
-                  name="products"
+                  name="include_products"
                   label="Products"
-                  value={coupon.products}
+                  value={coupon.include_products}
                   id="products"
 
                 >
@@ -382,9 +385,9 @@ const EditCouponComponent = ({ params }) => {
 
                 {/*  ================== Category Select ==================*/}
                 <SelectOptionField
-                  name="categories"
+                  name="include_categories"
                   label="Categories"
-                  value={coupon.categories}
+                  value={coupon.include_categories}
                   id="categories"
                 >
                   {Products.categories.map((category) =>
