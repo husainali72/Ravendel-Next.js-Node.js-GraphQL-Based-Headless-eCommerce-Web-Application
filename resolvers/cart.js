@@ -217,17 +217,20 @@ module.exports = {
 
                           }
 
-                      items.push({
-                        product_id : product._id,
-                        product_title: product.name,
-                        product_image: product.feature_image,
-                        product_price :productPrice.toFixed(2),
-                        qty : +odredQuantity,
-                        product_total : productPrice*(+odredQuantity),
-                        product_shipping:productShippingAmount.toFixed(2),
-                        product_tax:product_tax.toFixed(2)
-                      })
+                     let pushValue = {
+                      product_id : product._id,
+                      product_title: product.name,
+                      product_image: product.feature_image,
+                      product_price :productPrice.toFixed(2),
+                      qty : +odredQuantity,
+                      product_total : productPrice*(+odredQuantity),
+                      product_tax:product_tax.toFixed(2)
+                    }
+                      if(productShippingAmount){
+                        pushValue.productShippingAmount.toFixed(2)
+                      }
 
+                      items.push(pushValue)
                     }
 
                     if(global_shipping && globalShippingPerOrder){
@@ -312,16 +315,21 @@ module.exports = {
 
                               }
         
-                              items.push({
+
+                              let pushValue = {
                                 product_id : product._id,
                                 product_title: product.name,
                                 product_image: product.feature_image,
                                 product_price :productPrice.toFixed(2),
                                 qty : +odredQuantity,
-                                product_total : productPrice*(+odredQuantity),
-                                product_shipping:productShippingAmount.toFixed(2),
+                                product_total : productPrice*(+odredQuantity),                             
                                 product_tax:productTaxAmount.toFixed(2)                           
-                              })    
+                              }
+                                if(productShippingAmount){
+                                  pushValue.productShippingAmount.toFixed(2)
+                                }
+
+                              items.push(pushValue)    
     
                         }
 
