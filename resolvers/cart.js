@@ -191,8 +191,7 @@ module.exports = {
 
                       if(global_shipping){
 
-                                          if(globalShippingPerOrder){
-                              
+                                          if(!globalShippingPerOrder){                              
                                                 total_shipping +=globalShippingAmount;
                                                 grand_total+=globalShippingAmount;
                                                 productShippingAmount = +globalShippingAmount
@@ -231,7 +230,7 @@ module.exports = {
 
                     }
 
-                    if(global_shipping && !globalShippingPerOrder){
+                    if(global_shipping && globalShippingPerOrder){
                       grand_total+=globalShippingAmount;
                       total_shipping = globalShippingAmount;
                     }                    
@@ -286,7 +285,7 @@ module.exports = {
 
                       if(global_shipping){
         
-                                        if(globalShippingPerOrder){
+                                        if(!globalShippingPerOrder){
                                           
                                           total_shipping +=globalShippingAmount;
                                           grand_total+=globalShippingAmount;
@@ -326,7 +325,7 @@ module.exports = {
     
                         }
 
-                        if(global_shipping && !globalShippingPerOrder){
+                        if(global_shipping && globalShippingPerOrder){
                           grand_total+=globalShippingAmount;
                           total_shipping = globalShippingAmount;
                         }
