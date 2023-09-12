@@ -112,6 +112,7 @@ const EditProductComponent = ({ params }) => {
   const [taxClass, setTaxClass] = useState('')
   const [product, setProduct] = useState(defaultobj
   );
+
   useEffect(() => {
     if (Product_id) {
       dispatch(productAction(Product_id));
@@ -512,6 +513,7 @@ const EditProductComponent = ({ params }) => {
               <CardBlocks title="Shipping">
                 <ShippingComponent
                   product={product}
+
                   onShippingInputChange={(name, value) => {
                     setProduct({
                       ...product,
@@ -537,6 +539,7 @@ const EditProductComponent = ({ params }) => {
             <CardBlocks title="Tax">
               <TaxComponent
                 product={taxClass}
+                taxClass={taxClass}
                 onTaxInputChange={(value) => {
                   setTaxClass(value)
                 }}

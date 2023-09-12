@@ -155,6 +155,7 @@ export const CheckOut = ({ currencyStore }) => {
                 let token = session2.user.accessToken.token;
                 let variables = { id: id }
                 mutation(GET_USER_CART, variables).then(res => {
+
                     setCartId(res.data.cartbyUser.id)
                     let carts = res?.data?.cartbyUser?.products;
                     let cartitems2 = [];
@@ -207,14 +208,19 @@ export const CheckOut = ({ currencyStore }) => {
             total_coupon: 0.0,
             cart: cartsData
         }
-        query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
-            let response = res.data.calculateCart
-            setCartTotal(response?.grand_total)
-            setSubTotal(response?.subtotal)
-            setCoupon(response?.total_coupon)
-            setDelivery(response?.total_shipping.amount)
-            setTax_amount(response?.total_tax.amount)
-        })
+        console.log(calculate, 'cartItems', cartsData, 'cart', cartItems)
+        if (cartsData.length > 0) {
+            query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
+
+                let response = res.data.calculateCart
+                console.log(response, '-----------response')
+                setCartTotal(response?.grand_total)
+                setSubTotal(response?.subtotal)
+                setCoupon(response?.total_coupon)
+                setDelivery(response?.total_shipping)
+                setTax_amount(response?.total_tax)
+            })
+        }
     }, [cartItems])
     const {
         register,
@@ -223,7 +229,8 @@ export const CheckOut = ({ currencyStore }) => {
         control
     } = useForm({ mode: "onSubmit", });
     const onSubmit = (data) => {
-        nextFormStep()
+        console.log(ZipMessage, 'billingDetails.billing.payment_method')
+        if (ZipMessage && ZipMessage.zipSuccess) { nextFormStep() }
     };
     const handleBillingInfo = (e) => {
         if (!shippingAdd) {
@@ -257,6 +264,7 @@ export const CheckOut = ({ currencyStore }) => {
         checkCode();
 
     };
+
     const getBillingData = (val) => {
         setBillingDetails({ ...billingDetails, ...val });
 
@@ -330,6 +338,18 @@ export const CheckOut = ({ currencyStore }) => {
         if (!shippingAdd) {
             setShippingInfo(shipping);
         }
+        const checkCode = async () => {
+            try {
+                const { data: result } = await client.query({
+                    query: CHECK_ZIPCODE,
+                    variables: { zipcode: address?.pincode?.toString() }
+                });
+                setZipMessage({ ...ZipMessage, zipMessage: result.checkZipcode.message, zipSuccess: result.checkZipcode.success })
+            } catch (e) {
+                console.log('ZipCode error ==>', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
+            }
+        }
+        checkCode();
         setBillingInfo(billing);
     }
     const doApplyCouponCode = async (e) => {
@@ -388,6 +408,7 @@ export const CheckOut = ({ currencyStore }) => {
         if (billingDetails.billing.payment_method === "stripe") {
             stripeCheckout(billingDetails, cartItems, baseUrl)
         }
+        console.log(billingDetails.billing.payment_method, 'billingDetails.billing.payment_method');
         dispatch(checkoutDetailAction(billingDetails));
         mutation(ADD_ORDER, billingDetails, token).then(res => {
             let response = res.data.addOrder.success
@@ -472,9 +493,11 @@ export const CheckOut = ({ currencyStore }) => {
                                                     registerRef={register}
                                                     errorRef={errors}
                                                     getBillingInfo={getBillingData} />
-                                                <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }}>Continue</button>
+
+                                                <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} >Continue</button>
                                             </form>
                                         </div>
+                                        {console.log(delivery)}
                                         <div className="cupon-cart" >
                                             <OrderSummary
                                                 decimal={decimal}

@@ -62,22 +62,24 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
                     carts?.map(cart => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-
-                        const cartProduct = {
-                            _id: originalProduct?._id,
-                            variant_id: cart.variant_id,
-                            quantity: parseInt(cart?.qty),
-                            product_quantity: cart?.product_quantity,
-                            name: originalProduct?.name,
-                            pricing: cart.product_price,
-                            feature_image: cart?.product_image
-                                || originalProduct?.feature_image,
-                            url: originalProduct?.url,
-                            attributes: cart.attributes || [],
-                            shipping_class: originalProduct?.shipping?.shipping_class,
-                            tax_class: originalProduct?.tax_class,
+                        if (originalProduct) {
+                            const cartProduct = {
+                                _id: originalProduct?._id,
+                                variant_id: cart.variant_id,
+                                quantity: parseInt(cart?.qty),
+                                product_quantity: cart?.product_quantity,
+                                name: originalProduct?.name,
+                                pricing: originalProduct?.pricing
+                                    ?.sellprice,
+                                feature_image: originalProduct?.product_image
+                                    || originalProduct?.feature_image,
+                                url: originalProduct?.url,
+                                attributes: cart.attributes || [],
+                                shipping_class: originalProduct?.shipping?.shipping_class,
+                                tax_class: originalProduct?.tax_class,
+                            }
+                            cartitems2.push(cartProduct);
                         }
-                        cartitems2.push(cartProduct);
                     })
                     setCartItems([...cartitems2])
                 }).finally(() => { allProducts?.products.length > 0 && cartItems.length >= 0 && setCartLoading(false) })
@@ -394,7 +396,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                 />
                                 {/* <div className="devider"></div> */}
                                 <div className="card-other-information flex-column-reverse">
-                                    <div className="col-lg-6 col-md-12 invisible">
+                                    {/* <div className="col-lg-6 col-md-12 invisible">
                                         <h4>Shopping Calculation</h4>
                                         <p>Flat rate : <span>5%</span></p>
                                         <Form>
@@ -420,7 +422,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                             </Row>
                                         </div>
 
-                                    </div>
+                                    </div> */}
                                     <div className="col-lg-12 col-md-12 col-sm-12 mt-4">
                                         <div className="border p-md-4 p-30 border-radius cart-totals">
                                             <div className="heading_s1 mb-3">

@@ -31,7 +31,7 @@ const ShippingComponent = ({
 
   useEffect(() => {
     if (shippingState.shipping.shipping_class.length) {
-      onShippingClassChange(shippingState.shipping.shipping_class[0]._id);
+      onShippingClassChange(product?.shipping?.shipping_class || shippingState.shipping.shipping_class[0]._id);
     }
   }, [shippingState.shipping]);
 

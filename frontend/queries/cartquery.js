@@ -160,16 +160,19 @@ export const CALCULATE_CART_TOTAL = gql`
                               $cart : [cartProducts]){
                             calculateCart(total_coupon : $total_coupon,cart: $cart
                             ) {
-                              total_tax {
-                                name
-                                amount
-                              }
-                              total_shipping {
-                                name
-                                amount
-                              }
-                              subtotal
-                              total_coupon
+                              total_shipping
                               grand_total
+                              total_tax
+                              cartItem{
+                                product_image
+                                product_title
+                                qty
+                                product_id
+                                product_price
+                                product_shipping
+                                product_tax
+                              }
+                              
+                             
                             }
                           }`
