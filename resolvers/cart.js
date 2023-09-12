@@ -68,11 +68,11 @@ module.exports = {
           calculated.message = 'Invalid coupon code';
         } 
         else {
-
+            
           if (coupon.expire >= date) {
 
             let cartTotal = 0
-            args.cart.map(item => cartTotal += item.total)
+            args.cart.map(item => cartTotal += item.product_total)
             if ((coupon.minimum_spend === 0 || coupon.minimum_spend <= cartTotal) && (coupon.maximum_spend === 0 || coupon.maximum_spend > cartTotal)) {
               var discountAmount = 0
               coupon.discount_type === "amount-discount" ?
@@ -104,6 +104,7 @@ module.exports = {
     calculateCart: async (root, args, { id }) => {
       try {
 
+
         const shipping = await Shipping.findOne({});
         const tax = await Tax.findOne({});
      // const productAttribute = await ProductAttribute.find({});
@@ -113,7 +114,7 @@ module.exports = {
               let total_tax=0
               let total_shipping=0             
               let grand_total=0
-              
+              let cart_total =0
               
 
               let global_tax = false;
@@ -170,7 +171,7 @@ module.exports = {
                   let odredQuantity = cartProduct.qty
 
                   let productPrice = product.pricing.sellprice>0 ? product.pricing.sellprice : product.pricing.price;
-                      
+                       cart_total += productPrice * odredQuantity;
 
                   // product tax calculation
                       if(taxPercentage != 0) {grand_total= grand_total+(productPrice * odredQuantity)+((productPrice*taxPercentage/100)*odredQuantity);
@@ -250,6 +251,7 @@ module.exports = {
                           let odredQuantity = cartProduct.qty
         
                           let productPrice = product.pricing.sellprice>0 ? product.pricing.sellprice : product.pricing.price;
+                           cart_total += productPrice * odredQuantity;
 
                           let productTaxClass = product.tax_class;
                           let productTaxPercentage;
@@ -336,6 +338,7 @@ module.exports = {
                           total_tax:total_tax.toFixed(2),
                           total_shipping:total_shipping.toFixed(2),
                           grand_total:grand_total.toFixed(2),
+                          cart_total : cart_total.toFixed(2)
                    }
 
             console.log("calculated cart----",calculated)
