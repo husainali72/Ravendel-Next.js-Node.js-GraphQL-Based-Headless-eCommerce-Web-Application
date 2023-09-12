@@ -68,11 +68,11 @@ module.exports = {
           calculated.message = 'Invalid coupon code';
         } 
         else {
-
+            
           if (coupon.expire >= date) {
 
             let cartTotal = 0
-            args.cart.map(item => cartTotal += item.total)
+            args.cart.map(item => cartTotal += item.product_total)
             if ((coupon.minimum_spend === 0 || coupon.minimum_spend <= cartTotal) && (coupon.maximum_spend === 0 || coupon.maximum_spend > cartTotal)) {
               var discountAmount = 0
               coupon.discount_type === "amount-discount" ?
@@ -104,6 +104,7 @@ module.exports = {
     calculateCart: async (root, args, { id }) => {
       try {
 
+
         const shipping = await Shipping.findOne({});
         const tax = await Tax.findOne({});
      // const productAttribute = await ProductAttribute.find({});
@@ -113,7 +114,7 @@ module.exports = {
               let total_tax=0
               let total_shipping=0             
               let grand_total=0
-              
+              let cart_total =0
               
 
               let global_tax = false;
@@ -170,7 +171,7 @@ module.exports = {
                   let odredQuantity = cartProduct.qty
 
                   let productPrice = product.pricing.sellprice>0 ? product.pricing.sellprice : product.pricing.price;
-                      
+                       cart_total += productPrice * odredQuantity;
 
                   // product tax calculation
                       if(taxPercentage != 0) {grand_total= grand_total+(productPrice * odredQuantity)+((productPrice*taxPercentage/100)*odredQuantity);
@@ -190,8 +191,7 @@ module.exports = {
 
                       if(global_shipping){
 
-                                          if(globalShippingPerOrder){
-                              
+                                          if(!globalShippingPerOrder){                              
                                                 total_shipping +=globalShippingAmount;
                                                 grand_total+=globalShippingAmount;
                                                 productShippingAmount = +globalShippingAmount
@@ -217,20 +217,23 @@ module.exports = {
 
                           }
 
-                      items.push({
-                        product_id : product._id,
-                        product_title: product.name,
-                        product_image: product.feature_image,
-                        product_price :productPrice.toFixed(2),
-                        qty : +odredQuantity,
-                        product_total : productPrice*(+odredQuantity),
-                        product_shipping:productShippingAmount.toFixed(2),
-                        product_tax:product_tax.toFixed(2)
-                      })
+                     let pushValue = {
+                      product_id : product._id,
+                      product_title: product.name,
+                      product_image: product.feature_image,
+                      product_price :productPrice.toFixed(2),
+                      qty : +odredQuantity,
+                      product_total : productPrice*(+odredQuantity),
+                      product_tax:product_tax.toFixed(2)
+                    }
+                      if(productShippingAmount){
+                        pushValue.productShippingAmount.toFixed(2)
+                      }
 
+                      items.push(pushValue)
                     }
 
-                    if(global_shipping && !globalShippingPerOrder){
+                    if(global_shipping && globalShippingPerOrder){
                       grand_total+=globalShippingAmount;
                       total_shipping = globalShippingAmount;
                     }                    
@@ -250,6 +253,7 @@ module.exports = {
                           let odredQuantity = cartProduct.qty
         
                           let productPrice = product.pricing.sellprice>0 ? product.pricing.sellprice : product.pricing.price;
+                           cart_total += productPrice * odredQuantity;
 
                           let productTaxClass = product.tax_class;
                           let productTaxPercentage;
@@ -284,7 +288,7 @@ module.exports = {
 
                       if(global_shipping){
         
-                                        if(globalShippingPerOrder){
+                                        if(!globalShippingPerOrder){
                                           
                                           total_shipping +=globalShippingAmount;
                                           grand_total+=globalShippingAmount;
@@ -311,20 +315,25 @@ module.exports = {
 
                               }
         
-                              items.push({
+
+                              let pushValue = {
                                 product_id : product._id,
                                 product_title: product.name,
                                 product_image: product.feature_image,
                                 product_price :productPrice.toFixed(2),
                                 qty : +odredQuantity,
-                                product_total : productPrice*(+odredQuantity),
-                                product_shipping:productShippingAmount.toFixed(2),
+                                product_total : productPrice*(+odredQuantity),                             
                                 product_tax:productTaxAmount.toFixed(2)                           
-                              })    
+                              }
+                                if(productShippingAmount){
+                                  pushValue.productShippingAmount.toFixed(2)
+                                }
+
+                              items.push(pushValue)    
     
                         }
 
-                        if(global_shipping && !globalShippingPerOrder){
+                        if(global_shipping && globalShippingPerOrder){
                           grand_total+=globalShippingAmount;
                           total_shipping = globalShippingAmount;
                         }
@@ -336,6 +345,7 @@ module.exports = {
                           total_tax:total_tax.toFixed(2),
                           total_shipping:total_shipping.toFixed(2),
                           grand_total:grand_total.toFixed(2),
+                          cart_total : cart_total.toFixed(2)
                    }
 
             console.log("calculated cart----",calculated)

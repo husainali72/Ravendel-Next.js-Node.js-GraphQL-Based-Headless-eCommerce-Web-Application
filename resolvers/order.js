@@ -92,7 +92,8 @@ module.exports = {
         var Secret_Key = setting.paymnet.stripe.secret_key;
         const stripe = require('stripe')(Secret_Key);
 
-        var c_grand_total = parseFloat(args.subtotal) + parseFloat(args.shipping_amount) + parseFloat(args.tax_amount) - parseFloat(args.discount_amount);
+        // var c_grand_total = parseFloat(args.subtotal) + parseFloat(args.shipping_amount) + parseFloat(args.tax_amount) - parseFloat(args.discount_amount);
+        var c_grand_total = parseFloat(args.grand_total) - parseFloat(args.discount_amount);
         if (args.billing.payment_method === 'Cash On Delivery') {
           var status = 'pending';
           var user_id = args.customer_id;
