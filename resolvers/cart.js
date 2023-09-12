@@ -227,7 +227,7 @@ module.exports = {
                       product_tax:product_tax.toFixed(2)
                     }
                       if(productShippingAmount){
-                        pushValue.productShippingAmount.toFixed(2)
+                        pushValue.productShippingAmount = productShippingAmount.toFixed(2);
                       }
 
                       items.push(pushValue)
@@ -326,7 +326,7 @@ module.exports = {
                                 product_tax:productTaxAmount.toFixed(2)                           
                               }
                                 if(productShippingAmount){
-                                  pushValue.productShippingAmount.toFixed(2)
+                                  pushValue.productShippingAmount= productShippingAmount.toFixed(2)
                                 }
 
                               items.push(pushValue)    
