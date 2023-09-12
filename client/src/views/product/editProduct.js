@@ -174,15 +174,16 @@ const EditProductComponent = ({ params }) => {
     e.preventDefault();
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     let custom_field = ''
+    if (product.combinations) {
+      combination_error = validatenested("combinations", ["sku", 'quantity'], product, 'Variant');
+      combination_price_error = validatenestedArray("pricing", ["price"], product.combinations, 'Variant')
+
+    }
+
     if (product.custom_field) {
       custom_field = validatenested('custom_field', ['key', 'value'], product)
     }
-    console.log(custom_field);
-    if (product.combinations) {
-      combination_error = validatenested("combinations", ["sku", 'quantity'], product);
-      combination_price_error = validatenestedArray("pricing", ["price"], product.combinations)
 
-    }
     let Errors = validatenested("pricing", ["price"], product);
     if (!isEmpty(errors)) {
       dispatch({
@@ -204,6 +205,16 @@ const EditProductComponent = ({ params }) => {
         },
       });
     }
+    else if (!isEmpty(combination_price_error)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: combination_price_error,
+          error: true,
+        },
+      });
+    }
     else if (!isEmpty(combination_error)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -220,16 +231,6 @@ const EditProductComponent = ({ params }) => {
         payload: {
           boolean: false,
           message: custom_field,
-          error: true,
-        },
-      });
-    }
-    else if (!isEmpty(combination_price_error)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: combination_price_error,
           error: true,
         },
       });
@@ -537,6 +538,7 @@ const EditProductComponent = ({ params }) => {
             <CardBlocks title="Tax">
               <TaxComponent
                 product={taxClass}
+                tax_class={product?.tax_class}
                 onTaxInputChange={(value) => {
                   setTaxClass(value)
                 }}

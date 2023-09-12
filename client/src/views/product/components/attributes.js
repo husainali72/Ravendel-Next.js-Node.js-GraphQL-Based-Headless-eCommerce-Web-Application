@@ -109,8 +109,20 @@ const AttributesComponent = ({
           }
         }
       }
+      let selected_variants = []
+      let allAttributes = []
 
-      currentVariants.combinations = product.variation_master;
+      for (const [key, attribute] of attributeState.attributes.entries()) {
+
+        for (const value of attribute.values) {
+          product.variation_master?.forEach((variation_master) => {
+            if (variation_master?.combination.includes(value._id) && !selected_variants.some((selected) => selected.id === variation_master.id)) {
+              selected_variants.push(variation_master);
+            }
+          });
+        }
+      }
+      currentVariants.combinations = selected_variants;
 
       setcurrentAttribute({
         ...currentAttribute,

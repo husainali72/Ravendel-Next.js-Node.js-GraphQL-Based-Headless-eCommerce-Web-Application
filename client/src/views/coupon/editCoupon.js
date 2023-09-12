@@ -55,7 +55,11 @@ const EditCouponComponent = ({ params }) => {
   const [loading, setloading] = useState(false);
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = useState(0);
-  console.log('fdkjghdfjk')
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  const currentDate = `${yyyy}-${mm}-${dd}`;
   useEffect(() => {
     if (!isEmpty(get(Coupons, "coupons"))) {
       Coupons.coupons.map((editcoupon) => {
@@ -88,6 +92,7 @@ const EditCouponComponent = ({ params }) => {
       dispatch(couponsAction());
     }
 
+
   }, []);
 
   const tabChange = (event, newValue) => {
@@ -96,7 +101,6 @@ const EditCouponComponent = ({ params }) => {
 
   const addUpdateCoupon = () => {
     var errors = validate(["code", "expire"], coupon);
-    // console.log(coupon, 'coupon');
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -107,13 +111,43 @@ const EditCouponComponent = ({ params }) => {
         },
       });
     }
-    if (id) {
-      dispatch(couponUpdateAction(coupon, navigate));
-    } else {
-      dispatch(couponAddAction(coupon, navigate));
+    else {
+      if (id) {
+        if ((coupon.minimum_spend >= 0 || coupon.maximum_spend >= 0) && coupon.minimum_spend > coupon.maximum_spend) {
+
+          showAlert(true, false, 'Maximum spend  must be greater than minimum spend ')
+        } else {
+
+          dispatch(couponUpdateAction(coupon, navigate));
+
+        }
+      } else {
+        if ((coupon.minimum_spend >= 0 || coupon.maximum_spend >= 0) && coupon.minimum_spend > coupon.maximum_spend) {
+          showAlert(true, false, 'Maximum spend  must be greater than minimum spend ')
+        } else {
+          if (coupon.minimum_spend === '' || coupon.minimum_spend === null) {
+            coupon.minimum_spend = 0
+          } if (coupon.maximum_spend === '' || coupon.minimum_spend === null) {
+            coupon.maximum_spend = 0
+          }
+          dispatch(couponAddAction(coupon, navigate));
+
+        }
+
+      }
     }
 
   };
+  const showAlert = (error, success, message) => {
+    dispatch({
+      type: ALERT_SUCCESS,
+      payload: {
+        boolean: success,
+        message: message,
+        error: error,
+      },
+    });
+  }
 
   const handleChange = (e) => {
     let name = e.target.name;
@@ -303,6 +337,7 @@ const EditCouponComponent = ({ params }) => {
                       variant="outlined"
                       className={clsx(classes.width100, "top-helper")}
                       type="date"
+                      min={currentDate}
 
                     />
                   </Grid>
@@ -335,6 +370,7 @@ const EditCouponComponent = ({ params }) => {
                     label="Minimum Spend"
                     name="minimum_spend"
                     onInputChange={handleChange}
+                    min={0}
 
                   />
                 </Box>
@@ -345,6 +381,7 @@ const EditCouponComponent = ({ params }) => {
                     label="Maximum Spend"
                     name="maximum_spend"
                     onInputChange={handleChange}
+                    min={0}
 
                   />
                 </Box>

@@ -62,23 +62,25 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
                     carts?.map(cart => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-
-                        const cartProduct = {
-                            _id: originalProduct?._id,
-                            variant_id: cart.variant_id,
-                            quantity: parseInt(cart?.qty),
-                            product_quantity: cart?.product_quantity,
-                            name: originalProduct?.name,
-                            pricing: cart.product_price,
-                            feature_image: cart?.product_image
-                                || originalProduct?.feature_image,
-                            url: originalProduct?.url,
-                            attributes: cart.attributes || [],
-                            shipping_class: originalProduct?.shipping?.shipping_class,
-                            tax_class: originalProduct?.tax_class,
+                        if (originalProduct) {
+                            const cartProduct = {
+                                _id: originalProduct?._id,
+                                variant_id: cart.variant_id,
+                                quantity: parseInt(cart?.qty),
+                                product_quantity: cart?.product_quantity,
+                                name: originalProduct?.name,
+                                pricing: cart.product_price,
+                                feature_image: cart?.product_image
+                                    || originalProduct?.feature_image,
+                                url: originalProduct?.url,
+                                attributes: cart.attributes || [],
+                                shipping_class: originalProduct?.shipping?.shipping_class,
+                                tax_class: originalProduct?.tax_class,
+                            }
+                            cartitems2.push(cartProduct);
                         }
-                        cartitems2.push(cartProduct);
-                    })
+                    }
+                    )
                     setCartItems([...cartitems2])
                 }).finally(() => { allProducts?.products.length > 0 && cartItems.length >= 0 && setCartLoading(false) })
             }
