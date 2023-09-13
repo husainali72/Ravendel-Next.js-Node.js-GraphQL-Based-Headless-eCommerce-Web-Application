@@ -21,7 +21,8 @@ const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange }) => {
   useEffect(() => {
     if (taxState.tax.tax_class.length) {
       var taxClass = taxState.tax.tax_class[0]._id;
-      onTaxInputChange(product || taxClass);
+      let tax_class = product && taxState.tax.tax_class?.some((tax_class) => tax_class._id === product)
+      onTaxInputChange(tax_class ? product : taxClass);
     }
   }, [taxState.tax]);
 

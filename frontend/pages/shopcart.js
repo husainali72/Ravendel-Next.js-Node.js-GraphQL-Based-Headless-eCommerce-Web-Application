@@ -62,21 +62,44 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
                     carts?.map(cart => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
+                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variant_id)
+                        // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variant_id)
                         if (originalProduct) {
-                            const cartProduct = {
-                                _id: originalProduct?._id,
-                                variant_id: cart.variant_id,
-                                quantity: parseInt(cart?.qty),
-                                product_quantity: cart?.product_quantity,
-                                name: originalProduct?.name,
-                                pricing: originalProduct?.pricing
-                                    ?.sellprice,
-                                feature_image: originalProduct?.product_image
-                                    || originalProduct?.feature_image,
-                                url: originalProduct?.url,
-                                attributes: cart.attributes || [],
-                                shipping_class: originalProduct?.shipping?.shipping_class,
-                                tax_class: originalProduct?.tax_class,
+                            const cartProduct = {}
+                            if (orginal_attributes) {
+                                cartProduct = {
+                                    _id: originalProduct?._id,
+                                    variant_id: cart.variant_id,
+                                    quantity: parseInt(cart?.qty),
+                                    product_quantity: parseInt(orginal_attributes?.quantity),
+                                    name: originalProduct?.name,
+                                    pricing: orginal_attributes?.pricing
+                                        ?.sellprice,
+                                    feature_image: orginal_attributes?.product_image
+                                        || orginal_attributes?.feature_image,
+                                    url: originalProduct?.url,
+                                    attributes: cart.attributes || [],
+                                    shipping_class: originalProduct?.shipping?.shipping_class,
+                                    tax_class: originalProduct?.tax_class,
+                                }
+                            }
+                            else {
+                                cartProduct = {
+                                    _id: originalProduct?._id,
+                                    variant_id: cart.variant_id,
+                                    quantity: parseInt(cart?.qty),
+                                    product_quantity: parseInt(originalProduct?.quantity),
+
+                                    name: originalProduct?.name,
+                                    pricing: originalProduct?.pricing
+                                        ?.sellprice,
+                                    feature_image: originalProduct?.product_image
+                                        || originalProduct?.feature_image,
+                                    url: originalProduct?.url,
+                                    attributes: cart.attributes || [],
+                                    shipping_class: originalProduct?.shipping?.shipping_class,
+                                    tax_class: originalProduct?.tax_class,
+                                }
                             }
                             cartitems2.push(cartProduct);
                         }

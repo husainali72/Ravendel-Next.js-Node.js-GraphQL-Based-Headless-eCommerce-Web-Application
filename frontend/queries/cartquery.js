@@ -163,6 +163,7 @@ export const CALCULATE_CART_TOTAL = gql`
                               total_shipping
                               grand_total
                               total_tax
+                              cart_total
                               cartItem{
                                 product_image
                                 product_title
@@ -171,6 +172,7 @@ export const CALCULATE_CART_TOTAL = gql`
                                 product_price
                                 product_shipping
                                 product_tax
+                           
                               }
                               
                              

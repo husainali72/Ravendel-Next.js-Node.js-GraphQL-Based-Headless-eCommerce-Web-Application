@@ -59,7 +59,7 @@ const OrderSummary = (props) => {
                                     {delivery != "0" ? <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>{currency} {getPrice(delivery, decimal)}</td> :
                                         <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>Free Shipping</td>}
                                 </tr>
-                               { isCouponApplied && <tr>
+                                {isCouponApplied && <tr>
                                     <td className={`cart_total_label ${isCouponApplied && "textSuccess"}`}>Coupon {isCouponApplied && <small> - ({AppliedCoupon})</small>}</td>
                                     <td className={`cart_total_amount ${isCouponApplied && "textSuccess"}`}><i className="ti-gift mr-5"></i>{"-"} {currency} {getPrice(Number(coupon), decimal)}</td>
                                 </tr>}

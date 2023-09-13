@@ -119,6 +119,7 @@ const GalleryImagesComponents = (props) => {
                         if (product._id === inCartProduct.product_id && comboData.some((variant) => variant.id === inCartProduct.variant_id)) {
                             productInCart = true;
                             let Cart = inCartProducts.map(item => {
+
                                 if (comboData.some((variant) => variant.id === item.variant_id)) {
                                     return {
                                         product_id: item?.product_id,
@@ -158,6 +159,54 @@ const GalleryImagesComponents = (props) => {
                                 router.push("/shopcart")
                                 dispatch(addToCart(variables))
                             })
+                        } else if (comboData.length === 0) {
+                            if (product._id === inCartProduct.product_id) {
+                                let Cart = inCartProducts.map(item => {
+                                    productInCart = true;
+                                    if (inCartProducts.some((i) => i.product_id === item.product_id)) {
+                                        return {
+                                            product_id: item?.product_id,
+                                            qty: item.product_id === product?._id ? item?.qty + quantity : item?.qty,
+                                            product_title: item?.product_title,
+                                            product_image: item?.product_image,
+                                            product_price: item?.product_price,
+                                            shipping_class: product?.shipping?.shipping_class,
+                                            tax_class: product?.tax_class,
+                                            variant_id: item?.variant_id,
+                                            attributes: item?.attributes,
+                                            product_quantity: item?.product_quantity,
+                                        }
+                                    } else {
+
+                                        if (comboData.length === 0) {
+                                            return {
+                                                product_id: item?.product_id,
+                                                qty: item?.qty,
+                                                product_title: item?.product_title,
+                                                product_image: item?.product_image,
+                                                product_price: item?.product_price,
+                                                shipping_class: product?.shipping?.shipping_class,
+                                                tax_class: product?.tax_class,
+                                                variant_id: item?.variant_id,
+                                                attributes: item?.attributes,
+                                                product_quantity: item?.product_quantity
+                                            }
+                                        }
+                                    }
+
+                                }
+                                )
+
+                                let variables = {
+                                    id: cart_id,
+                                    products: Cart,
+                                    total: 0,
+                                }
+                                mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
+                                    router.push("/shopcart")
+                                    dispatch(addToCart(variables))
+                                })
+                            }
                         }
                     })
                     if (!productInCart) {

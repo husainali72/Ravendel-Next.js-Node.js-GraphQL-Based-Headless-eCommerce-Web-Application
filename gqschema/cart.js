@@ -79,7 +79,8 @@ module.exports = gql`
     product_tax : String
     product_price : String
     variant_id:String
-    product_total : String
+    total_coupon: Float
+    product_total : Float
   }
 
   type CartRES {

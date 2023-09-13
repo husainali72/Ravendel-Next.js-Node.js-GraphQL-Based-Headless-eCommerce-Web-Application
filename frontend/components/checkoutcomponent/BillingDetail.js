@@ -205,14 +205,14 @@ const BillingDetails = (props) => {
                                         value: (billingInfo.zip ? false : true),
                                         message: "zip is Required",
                                     },
-                                    minLength: {
-                                        value: 6,
-                                        message: "zip Min length is 6",
-                                    },
-                                    maxLength: {
-                                        value: 6,
-                                        message: "zip Max length is 6",
-                                    },
+                                    // minLength: {
+                                    //     value: 6,
+                                    //     message: "zip Min length is 6",
+                                    // },
+                                    // maxLength: {
+                                    //     value: 6,
+                                    //     message: "zip Max length is 6",
+                                    // },
                                 })}
                                 value={billingInfo.zip}
                                 onChange={handleZipCode}

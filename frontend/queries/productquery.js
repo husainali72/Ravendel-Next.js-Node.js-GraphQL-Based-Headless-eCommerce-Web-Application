@@ -34,6 +34,18 @@ products {
         createdAt
         updatedAt
       }
+
+      variation_master {
+        id
+        product_id
+        combination
+        quantity
+        sku
+        image
+        pricing
+        createdAt
+        updatedAt
+      }
       updated
       short_description
     }

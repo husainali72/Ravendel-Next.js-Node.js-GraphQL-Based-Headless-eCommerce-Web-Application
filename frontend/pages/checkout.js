@@ -161,19 +161,63 @@ export const CheckOut = ({ currencyStore }) => {
                     let cartitems2 = [];
                     carts?.map(cart => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-                        const cartProduct = {
-                            _id: originalProduct?._id,
-                            quantity: parseInt(cart?.qty),
-                            name: originalProduct?.name,
-                            pricing: cart?.product_price || originalProduct?.pricing,
-                            feature_image: originalProduct?.feature_image,
-                            url: originalProduct?.url,
-                            tax_class: originalProduct?.tax_class,
-                            shipping_class: originalProduct?.shipping?.shipping_class,
-                            attributes: cart.attributes
+                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variant_id)
+                        // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variant_id)
+                        if (originalProduct) {
+                            const cartProduct = {}
+                            if (orginal_attributes) {
+                                cartProduct = {
+                                    _id: originalProduct?._id,
+                                    variant_id: cart.variant_id,
+                                    quantity: parseInt(cart?.qty),
+                                    product_quantity: parseInt(orginal_attributes?.quantity),
+                                    name: originalProduct?.name,
+                                    pricing: orginal_attributes?.pricing
+                                        ?.sellprice,
+                                    feature_image: orginal_attributes?.product_image
+                                        || orginal_attributes?.feature_image,
+                                    url: originalProduct?.url,
+                                    attributes: cart.attributes || [],
+                                    shipping_class: originalProduct?.shipping?.shipping_class,
+                                    tax_class: originalProduct?.tax_class,
+                                }
+                            }
+                            else {
+                                cartProduct = {
+                                    _id: originalProduct?._id,
+                                    variant_id: cart.variant_id,
+                                    quantity: parseInt(cart?.qty),
+                                    product_quantity: parseInt(originalProduct?.quantity),
+
+                                    name: originalProduct?.name,
+                                    pricing: originalProduct?.pricing
+                                        ?.sellprice,
+                                    feature_image: originalProduct?.product_image
+                                        || originalProduct?.feature_image,
+                                    url: originalProduct?.url,
+                                    attributes: cart.attributes || [],
+                                    shipping_class: originalProduct?.shipping?.shipping_class,
+                                    tax_class: originalProduct?.tax_class,
+                                }
+                            }
+                            cartitems2.push(cartProduct);
                         }
-                        cartitems2.push(cartProduct);
                     })
+                    // carts?.map(cart => {
+                    //     const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
+                    //     const cartProduct = {
+                    //         _id: originalProduct?._id,
+                    //         quantity: parseInt(cart?.qty),
+                    //         name: originalProduct?.name,
+                    //         pricing: cart?.product_price || originalProduct?.pricing,
+                    //         feature_image: originalProduct?.feature_image,
+                    //         url: originalProduct?.url,
+                    //         tax_class: originalProduct?.tax_class,
+                    //         shipping_class: originalProduct?.shipping?.shipping_class,
+                    //         attributes: cart.attributes
+                    //     }
+                    //     cartitems2.push(cartProduct);
+                    // })
                     setCartItems([...cartitems2])
                 })
             }
@@ -208,14 +252,12 @@ export const CheckOut = ({ currencyStore }) => {
             total_coupon: 0.0,
             cart: cartsData
         }
-        console.log(calculate, 'cartItems', cartsData, 'cart', cartItems)
         if (cartsData.length > 0) {
             query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
 
                 let response = res.data.calculateCart
-                console.log(response, '-----------response')
                 setCartTotal(response?.grand_total)
-                setSubTotal(response?.subtotal)
+                setSubTotal(response?.cart_total)
                 setCoupon(response?.total_coupon)
                 setDelivery(response?.total_shipping)
                 setTax_amount(response?.total_tax)
@@ -229,7 +271,6 @@ export const CheckOut = ({ currencyStore }) => {
         control
     } = useForm({ mode: "onSubmit", });
     const onSubmit = (data) => {
-        console.log(ZipMessage, 'billingDetails.billing.payment_method')
         if (ZipMessage && ZipMessage.zipSuccess) { nextFormStep() }
     };
     const handleBillingInfo = (e) => {
@@ -254,6 +295,7 @@ export const CheckOut = ({ currencyStore }) => {
             try {
                 const { data: result } = await client.query({
                     query: CHECK_ZIPCODE,
+
                     variables: { zipcode: e.target.value.toString() }
                 });
                 setZipMessage({ ...ZipMessage, zipMessage: result.checkZipcode.message, zipSuccess: result.checkZipcode.success })
@@ -266,14 +308,17 @@ export const CheckOut = ({ currencyStore }) => {
     };
 
     const getBillingData = (val) => {
+
         setBillingDetails({ ...billingDetails, ...val });
 
     };
 
     const getOrderDetailsData = (val) => {
+
         setBillingDetails({ ...billingDetails, ...val });
     };
     const getCalculationDetails = (val) => {
+
         setBillingDetails({ ...billingDetails, ...val });
     }
     const handleShippingChange = (e) => {
@@ -354,7 +399,14 @@ export const CheckOut = ({ currencyStore }) => {
     }
     const doApplyCouponCode = async (e) => {
         e.preventDefault();
-        let cart = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
+
+        let cart = cartItems.map((product) => {
+            return {
+                product_id: product._id,
+                qty: product.quantity,
+                product_total: (product?.pricing ? product?.pricing * product.quantity : product?.pricing * product.quantity.toString()),
+            }
+        })
         let variables = {
             coupon_code: `${couponCode}`, cart: cart,
         }
@@ -363,6 +415,7 @@ export const CheckOut = ({ currencyStore }) => {
         let couponValueGet = false;
         setCouponLoading(true)
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
+
             couponResponse = res.data.calculateCoupon.total_coupon
             if (res.data.calculateCoupon.success) {
                 setBillingDetails((previousDetails) => ({ ...previousDetails, coupon_code: couponCode }))
@@ -392,10 +445,10 @@ export const CheckOut = ({ currencyStore }) => {
                 query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
                     let response = res.data.calculateCart
                     setCartTotal(response?.grand_total)
-                    setSubTotal(response?.subtotal)
-                    setCoupon(response?.total_coupon)
-                    setDelivery(response?.total_shipping.amount)
-                    setTax_amount(response?.total_tax.amount)
+                    setSubTotal(response?.cart_total)
+                    setCoupon(couponResponse)
+                    setDelivery(response?.total_shipping)
+                    setTax_amount(response?.total_tax)
                 })
             }
         }
@@ -408,7 +461,6 @@ export const CheckOut = ({ currencyStore }) => {
         if (billingDetails.billing.payment_method === "stripe") {
             stripeCheckout(billingDetails, cartItems, baseUrl)
         }
-        console.log(billingDetails.billing.payment_method, 'billingDetails.billing.payment_method');
         dispatch(checkoutDetailAction(billingDetails));
         mutation(ADD_ORDER, billingDetails, token).then(res => {
             let response = res.data.addOrder.success
@@ -497,7 +549,6 @@ export const CheckOut = ({ currencyStore }) => {
                                                 <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} >Continue</button>
                                             </form>
                                         </div>
-                                        {console.log(delivery)}
                                         <div className="cupon-cart" >
                                             <OrderSummary
                                                 decimal={decimal}
