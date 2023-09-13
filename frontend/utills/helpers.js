@@ -146,7 +146,7 @@ export const getPrice = (price, decimal) => {
     if (typeof price === 'string')
         return parseInt(price)?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     else
-        return price?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        return typeof price === 'number' &&  price?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 
 }
 export function capitalize(word) {

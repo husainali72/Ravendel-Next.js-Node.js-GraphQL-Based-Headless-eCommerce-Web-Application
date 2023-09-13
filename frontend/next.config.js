@@ -9,6 +9,7 @@
 
 module.exports = {
   reactStrictMode: true,
+  distDir: 'build',
   assetPrefix: '',
   basepath: "/out",
   images: {
@@ -54,6 +55,7 @@ module.exports = {
   reactStrictMode: true,
   assetPrefix: '',
   basepath: "/",
+  distDir: 'build',
   images: {
     domains: ['demo1.ravendel.io'],
     loader: "imgix",
