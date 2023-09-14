@@ -249,18 +249,18 @@ export const CheckOut = ({ currencyStore }) => {
     useEffect(() => {
         let cartsData = cartItems.map((product) => { return { productId: product._id, qty: product.quantity, total: product?.pricing * product.quantity } })
         let calculate = {
-            totalCoupon: 0.0,
-            cart: cartsData
+            total_coupon: '0.0',
+            cartItem: cartsData
         }
         if (cartsData.length > 0) {
             query2(CALCULATE_cartTotal, calculate, token).then(res => {
 
                 let response = res.data.calculateCart
-                setCartTotal(response?.grandTotal)
-                setSubTotal(response?.cartTotal)
-                setCoupon(response?.totalCoupon)
-                setDelivery(response?.totalShipping)
-                settaxAmount(response?.totalTax)
+                setCartTotal(response?.grand_total)
+                setSubTotal(response?.cart_total)
+                setCoupon(response?.total_coupon)
+                setDelivery(response?.total_shipping)
+                setTax_amount(response?.total_tax)
             })
         }
     }, [cartItems])
@@ -314,11 +314,15 @@ export const CheckOut = ({ currencyStore }) => {
     };
 
     const getOrderDetailsData = (val) => {
-
+        console.log(val)
         setBillingDetails({ ...billingDetails, ...val });
     };
     const getCalculationDetails = (val) => {
-
+        val.cart_total = val.subtotal
+        val.discount_amount = val?.discount_amount || '0'
+        delete val.subtotal
+        // let data = { ...val, cart_total: val.subTotal }
+        console.log(val)
         setBillingDetails({ ...billingDetails, ...val });
     }
     const handleShippingChange = (e) => {
@@ -397,28 +401,31 @@ export const CheckOut = ({ currencyStore }) => {
         checkCode();
         setBillingInfo(billing);
     }
+    console.log(delivery, tax_amount, cartTotal, subtotal, 'ydsfsdsdgsdessssss')
     const doApplyCouponCode = async (e) => {
         e.preventDefault();
 
         let cart = cartItems.map((product) => {
+
             return {
                 productId: product._id,
                 qty: product.quantity,
-                productTotal: (product?.pricing ? product?.pricing * product.quantity : product?.pricing * product.quantity.toString()),
+                product_total: (product?.pricing ? product?.pricing * product.quantity : product?.pricing * product.quantity.toString()),
             }
         })
+        console.log(delivery, tax_amount, cartTotal, subtotal, 'yessssss', coupon)
         let variables = {
-            couponCode: `${couponCode}`, cart: cart,
+            coupon_code: `${couponCode}`, cart: cart,
         }
         let couponResponse = 0
         let couponValue = 0.00
         let couponValueGet = false;
         setCouponLoading(true)
-        query2(APPLY_couponCode, variables, token).then(res => {
+        query2(APPLY_COUPON_CODE, variables, token).then(res => {
 
-            couponResponse = res.data.calculateCoupon.totalCoupon
+            couponResponse = res.data.calculateCoupon.total_coupon
             if (res.data.calculateCoupon.success) {
-                setBillingDetails((previousDetails) => ({ ...previousDetails, couponCode: couponCode }))
+                setBillingDetails((previousDetails) => ({ ...previousDetails, coupon_code: couponCode }))
                 notify(res.data.calculateCoupon.message, true)
                 setIsCouponApplied(true)
             }
@@ -430,31 +437,32 @@ export const CheckOut = ({ currencyStore }) => {
             }
             couponValueGet = true;
             if (!res.data.laoding) {
-                setCoupon(couponResponse)
+                setCoupon(couponResponse?.total_coupon)
                 setAppliedCoupon(couponCode)
                 setCouponCode("")
                 setCouponFeild(true);
             }
             if (couponValueGet) {
-                let cartsData = cartItems.map((product) => { return { productId: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
+                let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
                 let calculate = {
-                    totalCoupon: couponResponse,
+                    total_coupon: couponResponse,
                     cart: cartsData,
                 }
 
-                query2(CALCULATE_cartTotal, calculate, token).then(res => {
+                query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
                     let response = res.data.calculateCart
-                    setCartTotal(response?.grandTotal)
-                    setSubTotal(response?.cartTotal)
+                    setCartTotal(response?.grand_total)
+                    setSubTotal(response?.cart_total)
                     setCoupon(couponResponse)
-                    setDelivery(response?.totalShipping)
-                    settaxAmount(response?.totalTax)
+                    setDelivery(response?.total_shipping)
+                    setTax_amount(response?.total_tax)
                 })
             }
         }
         ).finally(() => setCouponLoading(false))
 
     }
+    console.log("coupon,", coupon)
     const detailsOfBill = billingDetails
     const handleOrderPlaced = (e) => {
         e.preventDefault();
@@ -462,6 +470,7 @@ export const CheckOut = ({ currencyStore }) => {
             stripeCheckout(billingDetails, cartItems, baseUrl)
         }
         dispatch(checkoutDetailAction(billingDetails));
+        console.log(billingDetails, 'billingDetails')
         mutation(ADD_ORDER, billingDetails, token).then(res => {
             let response = res.data.addOrder.success
             if (response) {

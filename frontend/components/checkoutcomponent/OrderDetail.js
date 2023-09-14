@@ -35,15 +35,17 @@ const Orderdetail = (props) => {
     useEffect(() => {
         let cartItem = cart.map((product) => {
             return {
-                productId: product._id,
-                name: product.name,
-                cost: product.pricing,
+                product_id: product._id,
+                product_title: product.name,
+                product_price: product.pricing.toString(),
                 qty: product.quantity,
-                taxClass: product?.taxClass,
-                shippingClass: product?.shippingClass,
-                attributes: product?.attributes || []
+                tax_class: product?.tax_class,
+                shipping_class: product?.shipping_class,
+                attributes: product?.attributes || [],
+
             }
         })
+
         var allData = {
             products: cartItem,
             billing: billingInfo,

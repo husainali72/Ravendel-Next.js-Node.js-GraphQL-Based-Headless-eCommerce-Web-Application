@@ -155,10 +155,10 @@ export const UPDATE_CART_PRODUCT = gql`
     }
 `;
 
-export const CALCULATE_cartTotal = gql`
-                            query ($totalCoupon : Float,
-                              $cart : [cartProducts]){
-                            calculateCart(totalCoupon : $totalCoupon,cart: $cart
+export const CALCULATE_CART_TOTAL = gql`
+                            query ($total_coupon : String,
+                              $cartItem : [calculateCartProducts]){
+                            calculateCart(total_coupon : $total_coupon,cartItem: $cartItem
                             ) {
                               totalShipping
                               grandTotal

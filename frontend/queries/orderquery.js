@@ -79,24 +79,24 @@ export const ADD_ORDER = gql`
               $billing: customObject
               $shipping: customObject
               $products: customArray
-              $subtotal: String
-              $shippingAmount: String
-              $taxAmount: String
-              $discountAmount: String
-              $grandTotal: String
-              $couponCode: String
+              $cart_total: String
+              $shipping_amount: String
+              $tax_amount: String
+              $discount_amount: String
+              $grand_total: String
+              $coupon_code: String
      ){
        addOrder(
                 customerId: $customerId
                 shipping: $shipping
                 billing: $billing
                 products: $products
-                subtotal:$subtotal
-              shippingAmount:$shippingAmount
-                taxAmount:$taxAmount
-                discountAmount:$discountAmount
-                  grandTotal :$grandTotal
-                  couponCode :$couponCode
+                cart_total:$cart_total
+              shipping_amount:$shipping_amount
+                tax_amount:$tax_amount
+                discount_amount:$discount_amount
+                  grand_total :$grand_total
+                  coupon_code :$coupon_code
     ){
         message
         success

@@ -234,7 +234,7 @@ const BillingDetails = (props) => {
                                         message: "Phone number is Required",
                                     },
                                     validate: () => {
-                                        return isValidPhoneNumber(billingInfo.phone.replace(/[\s-]/g, ''))
+                                        return isValidPhoneNumber(`+${billingInfo.phone}`)
                                     }
                                 }}
                                 render={({ field: { onChange, value } }) => (
@@ -471,14 +471,14 @@ const BillingDetails = (props) => {
                                             value: (shippingAdd ? ((shippingInfo?.zip ? false : true)) : false),
                                             message: "Zip is Required",
                                         },
-                                        minLength: {
-                                            value: 6,
-                                            message: "zip Min length is 6",
-                                        },
-                                        maxLength: {
-                                            value: 6,
-                                            message: "zip Max length is 6",
-                                        },
+                                        // minLength: {
+                                        //     value: 6,
+                                        //     message: "zip Min length is 6",
+                                        // },
+                                        // maxLength: {
+                                        //     value: 6,
+                                        //     message: "zip Max length is 6",
+                                        // },
                                     })}
                                     value={shippingInfo?.zip}
                                     onChange={handleShippingChange} />
@@ -519,7 +519,7 @@ const BillingDetails = (props) => {
                                             message: "Phone number is Required",
                                         },
                                         validate: () => {
-                                            return isValidPhoneNumber(shippingInfo.phone.replace(/[\s-]/g, ''))
+                                            return isValidPhoneNumber(`+${shippingInfo.phone}`)
                                         }
                                     }}
                                     render={({ field: { onChange, value } }) => (

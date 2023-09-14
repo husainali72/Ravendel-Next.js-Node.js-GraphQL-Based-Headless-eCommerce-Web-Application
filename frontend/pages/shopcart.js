@@ -331,7 +331,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     const doApplyCouponCode = () => {
         let cart = cartItems.map((product) => { return { productId: product._id, qty: product.quantity } })
         let variables = {
-            couponCode: couponCode, cart: cart
+            coupon_code: couponCode, cartItem: cart
         }
         query2(APPLY_couponCode, variables, token).then(res => console.log("res", res))
     }
