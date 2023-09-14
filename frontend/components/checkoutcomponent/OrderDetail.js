@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Link from "next/link";
 import { capitalize } from "lodash";
 const Orderdetail = (props) => {
-    const { decimal, currency, getOrderDetails, cartItems, billingInfo, handleBillingInfo, tax_amount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal } = props;
+    const { decimal, currency, getOrderDetails, cartItems, billingInfo, handleBillingInfo, taxAmount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal } = props;
     const cart = cartItems;
     const [cartProduct, setCartProduct] = useState([]);
     const cartSubTotal = () => {
@@ -51,7 +51,7 @@ const Orderdetail = (props) => {
             checkoutDate: new Date(),
         };
         getOrderDetails(allData);
-    }, [billingInfo, shippingInfo, cart, cartTotal, tax_amount, delivery])
+    }, [billingInfo, shippingInfo, cart, cartTotal, taxAmount, delivery])
     return (
         <>
             <div className="table-responsive order_table text-center">
@@ -96,7 +96,7 @@ const Orderdetail = (props) => {
                         </tr>
                         <tr>
                             <th>Tax</th>
-                            <td colSpan="2"> {tax_amount === "0" ? "$0" : "$" + tax_amount.toFixed(2)}</td>
+                            <td colSpan="2"> {taxAmount === "0" ? "$0" : "$" + taxAmount.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <th>Total</th>
@@ -121,7 +121,7 @@ const Orderdetail = (props) => {
                                 </tr>
                                 <tr>
                                     <td className="cartTotal_label">Tax</td>
-                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5">{tax_amount === "0" ? "$0.00" : "$ " + tax_amount?.toFixed(2)}</i></td>
+                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5">{taxAmount === "0" ? "$0.00" : "$ " + taxAmount?.toFixed(2)}</i></td>
                                 </tr>
                                 <tr>
                                     <td className="cartTotal_label">Shipping</td>

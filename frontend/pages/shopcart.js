@@ -11,7 +11,7 @@ import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
-import { APPLY_COUPON_CODE } from "../queries/couponquery";
+import { APPLY_couponCode } from "../queries/couponquery";
 import { getAllProductsAction } from "../redux/actions/productAction";
 import { useRouter } from "next/router";
 import { settingActionCreator } from "../redux/actions/settingAction";
@@ -331,9 +331,9 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     const doApplyCouponCode = () => {
         let cart = cartItems.map((product) => { return { productId: product._id, qty: product.quantity } })
         let variables = {
-            coupon_code: couponCode, cart: cart
+            couponCode: couponCode, cart: cart
         }
-        query2(APPLY_COUPON_CODE, variables, token).then(res => console.log("res", res))
+        query2(APPLY_couponCode, variables, token).then(res => console.log("res", res))
     }
     const ProcessToCheckOut = () => {
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))

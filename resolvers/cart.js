@@ -2,6 +2,7 @@ const Cart = require("../models/Cart");
 const Customer = require("../models/Customer");
 const Product = require("../models/Product");
 const Tax = require("../models/Tax");
+let {default:mongoose}= require("mongoose");
 const Coupon = require("../models/Coupon");
 const Shipping = require("../models/Shipping");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
@@ -38,9 +39,9 @@ module.exports = {
     },
 
 
-  cartbyUser: async (root, args) => {
+cartbyUser: async (root, args) => {
       try {
-        const cart = await Cart.findOne({ userId: args.userId });
+        const cart = await Cart.findOne({ userId: mongoose.Types.ObjectId(args.userId) });
         if (!cart) {
           throw putError("Cart not found");
         }
@@ -49,8 +50,18 @@ module.exports = {
  let unavilableProducts = [];
  let cartItem = cart.products;
 
-
-
+  let productsArray = cart.products
+        for (let a=0;a<productsArray.length;a++) 
+        {
+          let product = productsArray[a];
+          let isProductAvilable = await Product.findOne({_id:product.productId,quantity:{$gte:product.qty}});
+          if(isProductAvilable){
+            AvilableProducts.push(product)
+          }
+          else {
+            unavilableProducts.push(product)
+          }
+        }
         return {
           id:cart._id,
           cartItem,
@@ -71,7 +82,7 @@ module.exports = {
 
   calculateCoupon: async (root, args, { id }) => {
       try {
-        const coupon = await Coupon.findOne({ code: { $regex: `${args.coupon_code}`, $options: "i" } });
+        const coupon = await Coupon.findOne({ code: { $regex: `${args.couponCode}`, $options: "i" } });
         
         let discountGrandTotal;
         let calculated = {
@@ -626,7 +637,7 @@ module.exports = {
     // addToCart: async (root, args, { id }) => {
     //   //checkToken(id);
     //   try {
-    //     const customer = await Customer.findById(args.customer_id);
+    //     const customer = await Customer.findById(args.customerId);
     //     if (customer) {
     //       customer.cart.items = args.cart;
     //       await customer.save();

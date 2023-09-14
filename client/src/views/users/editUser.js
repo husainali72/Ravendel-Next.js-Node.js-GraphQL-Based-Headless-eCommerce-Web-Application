@@ -34,7 +34,7 @@ var defaultObj = {
 };
 
 const EditUserComponent = ({ params }) => {
-  const User_id = params.id || "";
+  const userId = params.id || "";
   const classes = viewStyles();
   const navigate = useNavigate();
   const UsersState = useSelector((state) => state.users);
@@ -56,10 +56,10 @@ const EditUserComponent = ({ params }) => {
   useEffect(() => {
     document.forms[0].reset();
     setuser(defaultObj);
-    if(User_id){
+    if(userId){
     if (!isEmpty(get(UsersState, "users"))) {
       UsersState.users.map((edituser) => {
-        if (edituser.id === User_id) {
+        if (edituser.id === userId) {
           setuser({ ...edituser });
           if (edituser.image) {
             setfeatureImage(bucketBaseURL + edituser.image);
@@ -70,12 +70,12 @@ const EditUserComponent = ({ params }) => {
       setuser(defaultObj)
       setfeatureImage(null)
     }
-  }, [get(UsersState, "users"), User_id]);
+  }, [get(UsersState, "users"), userId]);
 
   const fileChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    if (User_id) {
+    if (userId) {
       setuser({ ...user, ["updatedImage"]: e.target.files[0] });
     }
     else {
@@ -98,7 +98,7 @@ const EditUserComponent = ({ params }) => {
       });
     }
    else { 
-    if (User_id) {
+    if (userId) {
       dispatch(userUpdateAction(user, navigate));
     }
     else {
@@ -119,9 +119,9 @@ const EditUserComponent = ({ params }) => {
 
       <form>
         <TopBar
-          title={User_id ? "Edit Users" : "Add Users"}
+          title={userId ? "Edit Users" : "Add Users"}
           onSubmit={addUpdateUser}
-          submitTitle={User_id ? "Update" : "Add"}
+          submitTitle={userId ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-users`}
         />
         <Grid container spacing={3} className={classes.secondmainrow}>

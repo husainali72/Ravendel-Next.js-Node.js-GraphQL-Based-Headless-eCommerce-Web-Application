@@ -6,7 +6,7 @@ const GET_TAX = gql`
         id
         is_inclusive
         global
-        tax_class
+        taxClass
         date
         updated
       }
@@ -24,7 +24,7 @@ const GET_TAX = gql`
 //       id
 //       is_inclusive
 //       global
-//       tax_class
+//       taxClass
 //       date
 //       updated
 //     }
@@ -49,8 +49,8 @@ const UPDATE_OPTIONTAX = gql`
 `;
 
 const ADD_TAXCLASS = gql`
-  mutation($tax_class: customObject) {
-    addTaxClass(tax_class: $tax_class) {
+  mutation($taxClass: customObject) {
+    addTaxClass(taxClass: $taxClass) {
       message
       success
     }
@@ -58,8 +58,8 @@ const ADD_TAXCLASS = gql`
 `;
 
 const UPDATE_TAXCLASS = gql`
-  mutation($tax_class: customObject) {
-    updateTaxClass(tax_class: $tax_class) {
+  mutation($taxClass: customObject) {
+    updateTaxClass(taxClass: $taxClass) {
       message
       success
     }
@@ -81,7 +81,7 @@ const DELETE_TAXCLASS = gql`
 //       id
 //       is_inclusive
 //       global
-//       tax_class
+//       taxClass
 //       date
 //       updated
 //     }
@@ -89,12 +89,12 @@ const DELETE_TAXCLASS = gql`
 // `;
 
 // const ADD_TAXCLASS = gql`
-//   mutation($tax_class: customObject) {
-//     addTaxClass(tax_class: $tax_class) {
+//   mutation($taxClass: customObject) {
+//     addTaxClass(taxClass: $taxClass) {
 //       id
 //       is_inclusive
 //       global
-//       tax_class
+//       taxClass
 //       date
 //       updated
 //     }
@@ -102,12 +102,12 @@ const DELETE_TAXCLASS = gql`
 // `;
 
 // const UPDATE_TAXCLASS = gql`
-//   mutation($tax_class: customObject) {
-//     updateTaxClass(tax_class: $tax_class) {
+//   mutation($taxClass: customObject) {
+//     updateTaxClass(taxClass: $taxClass) {
 //       id
 //       is_inclusive
 //       global
-//       tax_class
+//       taxClass
 //       date
 //       updated
 //     }
@@ -120,7 +120,7 @@ const DELETE_TAXCLASS = gql`
 //       id
 //       is_inclusive
 //       global
-//       tax_class
+//       taxClass
 //       date
 //       updated
 //     }

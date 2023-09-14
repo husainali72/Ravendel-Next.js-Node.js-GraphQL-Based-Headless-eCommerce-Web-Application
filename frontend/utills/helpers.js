@@ -124,7 +124,7 @@ export const handleEnter = (event) => {
 export const stripeCheckout = (billDetails, cartItems, baseUrl) => {
     axios.post(`${baseUrl}/stripe/create-checkout-session`, {
         customerCart: cartItems,
-        customer_id: billDetails.customer_id
+        customerId: billDetails.customerId
     }).then(res => {
         if (res.data.url) {
             window.location.href = res.data.url

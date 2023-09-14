@@ -235,7 +235,7 @@ export const GET_REVIEWS = gql`
       data {
         id
         title
-        customer_id {
+        customerId {
           id
           first_name
         }

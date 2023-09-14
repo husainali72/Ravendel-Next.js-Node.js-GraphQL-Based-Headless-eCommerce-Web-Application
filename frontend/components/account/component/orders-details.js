@@ -18,7 +18,7 @@ export const convertDateToStringFormat = (date) => {
     }
     return convertedDate;
 };
-const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, subtotal, tax, shipping_amount, homepageData }) => {
+const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, subtotal, tax, shippingAmount, homepageData }) => {
     const Details = useSelector(state => state.checkout)
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
@@ -135,7 +135,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                 </tr>
                                 <tr>
                                     <th colSpan={3} className="order-text-align">Shipping</th>
-                                    <td>{currency} {shipping_amount ? getPrice(shipping_amount, decimal) : "0.00"}</td>
+                                    <td>{currency} {shippingAmount ? getPrice(shippingAmount, decimal) : "0.00"}</td>
                                 </tr>
                                 <tr className="total">
                                     <th colSpan={3} className="order-text-align" >Total</th>

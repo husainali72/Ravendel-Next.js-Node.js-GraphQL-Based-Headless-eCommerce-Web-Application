@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const OrderSchema = new Schema({
-  customer_id: {
+  customerId: {
     type: Schema.ObjectId,
     required: true
   },
-  order_number: {
+  orderNumber: {
     type: String,
     required: true
   },
@@ -42,18 +42,18 @@ const OrderSchema = new Schema({
     type: Number,
     required: true
   },
-  shipping_amount: {
+  shippingAmount: {
     type: Number,
     required: true
   },
-  tax_amount: {
+  taxAmount: {
     type: Number,
     required: true
   },
-  coupon_code: {
+  couponCode: {
     type: String,
   },
-  discount_amount: {
+  discountAmount: {
     type: Number,
     required: true
   },
@@ -61,12 +61,12 @@ const OrderSchema = new Schema({
     type: Number,
     required: true
   },    
-  payment_status: {
+  paymentStatus: {
     type: String,
     enum: ['pending', 'failed', 'success', 'cancelled'],
     default: 'pending'
   },
-  shipping_status: {
+  shippingStatus: {
     type: String,
     enum: ['inprogress', 'shipped', 'outfordelivery', 'delivered'],
     default: 'inprogress'
@@ -114,7 +114,7 @@ const OrderSchema = new Schema({
   // sub_total_details: {
   //   shipping_name: String,
   //   tax_name: String,
-  //   coupon_code: String,
+  //   couponCode: String,
   //   coupon_type: String,
   //   coupon_value: Number
   // },

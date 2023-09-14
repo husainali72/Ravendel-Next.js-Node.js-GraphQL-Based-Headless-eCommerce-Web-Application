@@ -4,7 +4,7 @@ import { Accordion, Col, Container, Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { currencySetter, getPrice } from "../../../utills/helpers";
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.cost * product.qty), 0)
-const OrderDetailAfter = ({ Data, id, date, grandTotal, products: orderDetail, billing: billingInfo, shipping: shippingInfo, subtotal, tax, shipping_amount }) => {
+const OrderDetailAfter = ({ Data, id, date, grandTotal, products: orderDetail, billing: billingInfo, shipping: shippingInfo, subtotal, tax, shippingAmount }) => {
     const Details = useSelector(state => state.checkout)
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
@@ -34,9 +34,9 @@ const OrderDetailAfter = ({ Data, id, date, grandTotal, products: orderDetail, b
                                         <th>Subtotal</th>
                                         <td>{currency} {Data?.subtotal ? getPrice(Data.subtotal, decimal) : getPrice(Data.grandTotal, decimal)}</td>
                                     </tr>
-                                    {Data.coupon_code && <tr>
-                                        <th>Coupon <span className="coupon-applied">({Data.coupon_code})</span></th>
-                                        <td>- {currency} {Data?.discount_amount && getPrice(Data.discount_amount, decimal)}</td>
+                                    {Data.couponCode && <tr>
+                                        <th>Coupon <span className="coupon-applied">({Data.couponCode})</span></th>
+                                        <td>- {currency} {Data?.discountAmount && getPrice(Data.discountAmount, decimal)}</td>
                                     </tr>}
                                     <tr>
                                         <th>Grandtotal</th>
@@ -101,17 +101,17 @@ const OrderDetailAfter = ({ Data, id, date, grandTotal, products: orderDetail, b
                                     <th colSpan={2} style={{ textAlign: 'right' }} >Subtotal</th>
                                     <td>{currency} {getPrice(Data.subtotal, decimal)}</td>
                                 </tr>
-                                {Data.coupon_code && <tr>
-                                    <th colSpan={2} style={{ textAlign: 'right' }}>Coupon <span className="coupon-applied">({Data.coupon_code})</span></th>
-                                    <td>- {currency} {Data?.discount_amount && getPrice(Data.discount_amount, decimal)}</td>
+                                {Data.couponCode && <tr>
+                                    <th colSpan={2} style={{ textAlign: 'right' }}>Coupon <span className="coupon-applied">({Data.couponCode})</span></th>
+                                    <td>- {currency} {Data?.discountAmount && getPrice(Data.discountAmount, decimal)}</td>
                                 </tr>}
                                 <tr>
                                     <th colSpan={2} style={{ textAlign: 'right' }}>Tax</th>
-                                    <td>{currency} {Data.tax_amount ? getPrice(Data.tax_amount, decimal) : "00"}</td>
+                                    <td>{currency} {Data.taxAmount ? getPrice(Data.taxAmount, decimal) : "00"}</td>
                                 </tr>
                                 <tr>
                                     <th colSpan={2} style={{ textAlign: 'right' }}>Shipping</th>
-                                    <td>{currency} {Data.shipping_amount ? getPrice(Data.shipping_amount, decimal) : "20"}</td>
+                                    <td>{currency} {Data.shippingAmount ? getPrice(Data.shippingAmount, decimal) : "20"}</td>
                                 </tr>
                                 <tr className="total">
                                     <th colSpan={2} style={{ textAlign: 'right' }}>Grandtotal</th>

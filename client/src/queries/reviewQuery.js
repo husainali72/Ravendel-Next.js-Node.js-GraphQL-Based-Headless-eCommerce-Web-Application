@@ -5,11 +5,11 @@ const GET_REVIEWS = gql`
       data {
         id
         title
-        customer_id {
+        customerId {
           id
           first_name
         }
-        product_id {
+        productId {
           _id
           name
         }
@@ -33,11 +33,11 @@ const GET_REVIEWS = gql`
 //       data {
 //         id
 //         title
-//         customer_id {
+//         customerId {
 //           id
 //           first_name
 //         }
-//         product_id {
+//         productId {
 //           id
 //           name
 //         }
@@ -57,11 +57,11 @@ const GET_REVIEW = gql`
     review(id: $id) {
       id
       title
-      customer_id {
+      customerId {
         id
         first_name
       }
-      product_id {
+      productId {
         id
         name
       }
@@ -78,8 +78,8 @@ const GET_REVIEW = gql`
 // const ADD_REVIEW = gql`
 //   mutation (
 //     $title: String
-//     $customer_id: String
-//     $product_id: String
+//     $customerId: String
+//     $productId: String
 //     $email: String
 //     $review: String
 //     $rating: String
@@ -87,8 +87,8 @@ const GET_REVIEW = gql`
 //   ) {
 //     addReview(
 //       title: $title
-//       customer_id: $customer_id
-//       product_id: $product_id
+//       customerId: $customerId
+//       productId: $productId
 //       email: $email
 //       review: $review
 //       rating: $rating
@@ -96,11 +96,11 @@ const GET_REVIEW = gql`
 //     ) {
 //       id
 //       title
-//       customer_id {
+//       customerId {
 //         id
 //         first_name
 //       }
-//       product_id {
+//       productId {
 //         id
 //         name
 //       }
@@ -116,8 +116,8 @@ const GET_REVIEW = gql`
 const ADD_REVIEW = gql`
   mutation (
     $title: String
-    $customer_id: String
-    $product_id: String
+    $customerId: String
+    $productId: String
     $email: String
     $review: String
     $rating: String
@@ -125,8 +125,8 @@ const ADD_REVIEW = gql`
   ) {
     addReview(
       title: $title
-      customer_id: $customer_id
-      product_id: $product_id
+      customerId: $customerId
+      productId: $productId
       email: $email
       review: $review
       rating: $rating
@@ -142,8 +142,8 @@ const ADD_REVIEW = gql`
 //   mutation (
 //     $id: ID!
 //     $title: String
-//     $customer_id: String
-//     $product_id: String
+//     $customerId: String
+//     $productId: String
 //     $email: String
 //     $review: String
 //     $rating: String
@@ -152,8 +152,8 @@ const ADD_REVIEW = gql`
 //     updateReview(
 //       id: $id
 //       title: $title
-//       customer_id: $customer_id
-//       product_id: $product_id
+//       customerId: $customerId
+//       productId: $productId
 //       email: $email
 //       review: $review
 //       rating: $rating
@@ -161,11 +161,11 @@ const ADD_REVIEW = gql`
 //     ) {
 //       id
 //       title
-//       customer_id {
+//       customerId {
 //         id
 //         first_name
 //       }
-//       product_id {
+//       productId {
 //         id
 //         name
 //       }
@@ -182,8 +182,8 @@ const UPDATE_REVIEW = gql`
   mutation (
     $id: ID!
     $title: String
-    $customer_id: String
-    $product_id: String
+    $customerId: String
+    $productId: String
     $email: String
     $review: String
     $rating: String
@@ -192,8 +192,8 @@ const UPDATE_REVIEW = gql`
     updateReview(
       id: $id
       title: $title
-      customer_id: $customer_id
-      product_id: $product_id
+      customerId: $customerId
+      productId: $productId
       email: $email
       review: $review
       rating: $rating
@@ -210,11 +210,11 @@ const UPDATE_REVIEW = gql`
 //     deleteReview(id: $id) {
 //       id
 //       title
-//       customer_id {
+//       customerId {
 //         id
 //         first_name
 //       }
-//       product_id {
+//       productId {
 //         id
 //         name
 //       }

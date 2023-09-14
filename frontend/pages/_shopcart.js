@@ -12,7 +12,7 @@ import { CHECKOUT_ORDER_QUERY } from "../queries/checkoutquery";
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
-import { APPLY_COUPON_CODE } from "../queries/couponquery";
+import { APPLY_couponCode } from "../queries/couponquery";
 
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity) || product.pricing?.price * product.quantity, 0)
 
@@ -145,9 +145,9 @@ const YourCard = ({ customercart, cart_id }) => {
     const doApplyCouponCode = () => {
         let cart = cartItems.map((product) => { return { productId: product._id, qty: product.quantity } })
         let variables = {
-            coupon_code: couponCode, cart: cart
+            couponCode: couponCode, cart: cart
         }
-        query2(APPLY_COUPON_CODE, variables, token).then(res => console.log("res", res))
+        query2(APPLY_couponCode, variables, token).then(res => console.log("res", res))
     }
     const ProcessToCheckOut = () => {
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))

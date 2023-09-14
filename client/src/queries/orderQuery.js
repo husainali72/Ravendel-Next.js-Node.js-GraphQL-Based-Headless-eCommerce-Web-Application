@@ -4,14 +4,14 @@ const GET_ORDERS = gql`
     orders {
       data {
         id
-        order_number
-        customer_id
-        payment_status
-        shipping_status
+        orderNumber
+        customerId
+        paymentStatus
+        shippingStatus
         shipping
         billing
         products
-        coupon_code
+        couponCode
         date
         updated
       }
@@ -28,14 +28,14 @@ const GET_ORDER = gql`
     order(id: $id) {
       data {
         id
-        order_number
-        customer_id
-        payment_status
-        shipping_status
+        orderNumber
+        customerId
+        paymentStatus
+        shippingStatus
         shipping
         billing
         products
-        coupon_code
+        couponCode
         date
         updated
         sub_total_details
@@ -52,7 +52,7 @@ const GET_ORDER = gql`
 // query($id: ID!) {
 //   productCategory(id: $id) {
 //     id
-//     user_id
+//     userId
 //     status
 //     shipping
 //     billing
@@ -66,7 +66,7 @@ const GET_ORDER = gql`
 //   mutation($id: ID!) {
 //     deleteOrder(id: $id) {
 //       id
-//       user_id
+//       userId
 //       status
 //       shipping
 //       billing
@@ -100,7 +100,7 @@ const DELETE_ORDER = gql`
 //       status: $status
 //     ) {
 //       id
-//       user_id
+//       userId
 //       status
 //       shipping
 //       billing
@@ -133,15 +133,15 @@ const UPDATE_ORDER = gql`
     $id: ID!
     $billing: customObject
     $shipping: customObject
-    $shipping_status: String
-    $payment_status: String
+    $shippingStatus: String
+    $paymentStatus: String
   ) {
     updateOrder(
       id: $id
       billing: $billing
       shipping: $shipping
-      shipping_status: $shipping_status
-      payment_status: $payment_status
+      shippingStatus: $shippingStatus
+      paymentStatus: $paymentStatus
     ) {
       message
       success

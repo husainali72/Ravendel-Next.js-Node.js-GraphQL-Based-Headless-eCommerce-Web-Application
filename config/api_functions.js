@@ -201,9 +201,9 @@ const CREATE_FUNC = async (
     }
 
     if(name === "Review"){
-      const customer = await Customer.findById(mongoose.Types.ObjectId(data.customer_id))
+      const customer = await Customer.findById(mongoose.Types.ObjectId(data.customerId))
       if(!customer) return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
-      const product = await Product.findById(mongoose.Types.ObjectId(data.product_id))
+      const product = await Product.findById(mongoose.Types.ObjectId(data.productId))
       if(!product) return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
     }
     //console.log('DATA', data) ;
@@ -270,7 +270,7 @@ const CREATE_FUNC = async (
       }
     }
     if (data.email && name !== "Review") {
-      const emailresponse = await modal.find({$and: [{product_id: data.product_id},{email: data.email}]});
+      const emailresponse = await modal.find({$and: [{productId: data.productId},{email: data.email}]});
       //console.log("emailres===",emailresponse)
       if (emailresponse.length>0) {
         return MESSAGE_RESPONSE("DUPLICATE", "Email", false);
@@ -375,7 +375,7 @@ const UPDATE_FUNC = async (
       await response.save();
       // update average rating of product related to reviews
       if(name === "Review"){
-        await prodAvgRating(data.product_id, modal, modal2)
+        await prodAvgRating(data.productId, modal, modal2)
       }
       return MESSAGE_RESPONSE("UpdateSuccess", name, true);
     }

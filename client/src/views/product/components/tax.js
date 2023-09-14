@@ -19,10 +19,10 @@ const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange }) => {
   }, []);
 
   useEffect(() => {
-    if (taxState.tax.tax_class.length) {
-      var taxClass = taxState.tax.tax_class[0]._id;
-      let tax_class = product && taxState.tax.tax_class?.some((tax_class) => tax_class._id === product)
-      onTaxInputChange(tax_class ? product : taxClass);
+    if (taxState.tax.taxClass.length) {
+      var taxClass = taxState.tax.taxClass[0]._id;
+      let taxClass = product && taxState.tax.taxClass?.some((taxClass) => taxClass._id === product)
+      onTaxInputChange(taxClass ? product : taxClass);
     }
   }, [taxState.tax]);
 
@@ -42,7 +42,7 @@ const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange }) => {
             value={product}
             onChange={(e) => onTaxInputChange(e.target.value)}
           >
-            {taxState.tax.tax_class.map((tax) => {
+            {taxState.tax.taxClass.map((tax) => {
               return (
                 <MenuItem value={tax._id} key={tax._id}>
                   {tax.name}

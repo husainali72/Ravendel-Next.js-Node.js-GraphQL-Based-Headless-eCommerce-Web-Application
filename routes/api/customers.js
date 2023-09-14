@@ -163,7 +163,7 @@ router.get("/reset/:custId",  (req, res) => {
       }
       res.json({
         success: true,
-        customer_id: customer.id,
+        customerId: customer.id,
         first_name: customer.first_name,
         last_name: customer.last_name,
         email: customer.email,
@@ -183,7 +183,7 @@ router.get("/reset/:custId",  (req, res) => {
 // @access  public
 router.post("/resetpassword", (req, res) => {
 
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json({success: false,message: 'Customer Id field is required.' });
   }
 
@@ -200,7 +200,7 @@ router.post("/resetpassword", (req, res) => {
     bcrypt.hash(req.body.password, salt, (err, hash) => {
       if (err) throw err;
        newpassword = hash;
-       Customer.findByIdAndUpdate(req.body.customer_id, {
+       Customer.findByIdAndUpdate(req.body.customerId, {
         password: newpassword
     }, {new: true})
     .then(customer => {
@@ -233,7 +233,7 @@ router.post("/changepassword", auth, async (req, res) => {
     return res.status(401).json({success: false,message: 'Access Denied.' });
   }
 
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json({success: false,message: 'Customer Id field is required.' });
   }
   if (!req.body.oldpassword) {
@@ -245,7 +245,7 @@ router.post("/changepassword", auth, async (req, res) => {
   if (req.body.password && req.body.password !== req.body.confirm_password) {
      return res.status(400).json({success: false,message: 'Password and confirm field not match.' });
   }
-  const customerid =  req.body.customer_id;
+  const customerid =  req.body.customerId;
   Customer.findOne({  _id: customerid }).then((customer) => {
     // Check for customer
     if (!customer) {
@@ -259,7 +259,7 @@ router.post("/changepassword", auth, async (req, res) => {
     bcrypt.hash(req.body.password, salt, (err, hash) => {
       if (err) throw err;
        newpassword = hash;
-       Customer.findByIdAndUpdate(req.body.customer_id, {
+       Customer.findByIdAndUpdate(req.body.customerId, {
         password: newpassword
     }, {new: true})
     .then(customer => {
@@ -299,11 +299,11 @@ router.post("/viewprofile", auth, async (req, res) => {
     return res.status(401).json({success: false,message: 'Access Denied.' });
   }
   
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json({success: false,message: 'Customer Id field is required.' });
   }
   
-  const customerid =  req.body.customer_id;
+  const customerid =  req.body.customerId;
   Customer.findOne({  _id: customerid }).then((customer) => {
     // Check for customer
     if (!customer) {
@@ -337,7 +337,7 @@ router.post("/updateprofile", auth, async (req, res) => {
   if (req.user.role !=='customer') {
     return res.status(401).json({success: false,message: 'Access Denied.' });
   }
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json({success: false,message: 'Customer Id field is required.' });
   }
   if (!req.body.first_name) {
@@ -354,7 +354,7 @@ router.post("/updateprofile", auth, async (req, res) => {
   }
 
   let updatedate = Date.now();
-  Customer.findByIdAndUpdate(req.body.customer_id, {
+  Customer.findByIdAndUpdate(req.body.customerId, {
     first_name: req.body.first_name, 
     last_name: req.body.last_name,
     company: req.body.company,
@@ -385,7 +385,7 @@ router.post("/addaddressbook", auth, async (req, res) => {
   }
 
 
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json({success: false,message: 'Customer Id field is required.' });    
   }
   if (!req.body.first_name) {
@@ -411,7 +411,7 @@ router.post("/addaddressbook", auth, async (req, res) => {
   }
 
   let updatedate = Date.now();
-  const customer = await Customer.findById({ _id: req.body.customer_id });
+  const customer = await Customer.findById({ _id: req.body.customerId });
   if (!customer) {
     return res.status(404).json({success: false,message: 'Customer not found.' });   
   }
@@ -440,7 +440,7 @@ router.post("/addaddressbook", auth, async (req, res) => {
   customer.address_book.push(cdata);
   customer.updated = Date.now();
   await customer.save();
-  Customer.findOne({  _id: req.body.customer_id }).then((customer) => {
+  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
     // Check for customer
     let ccompany ='';
     let cphone ='';
@@ -468,7 +468,7 @@ router.post("/updateaddressbook", auth, async (req, res) => {
   if (req.user.role !=='customer') {
     return res.status(401).json({success: false,message: 'Access Denied.' });
   }
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json({success: false,message: 'Customer Id field is required.' });    
   }
 
@@ -496,7 +496,7 @@ router.post("/updateaddressbook", auth, async (req, res) => {
   }
 
   let updatedate = Date.now();
-  const customer = await Customer.findById({ _id: req.body.customer_id });
+  const customer = await Customer.findById({ _id: req.body.customerId });
   if (!customer) {
     return res.status(404).json({success: false,message: 'Customer not found.' });
   }
@@ -527,7 +527,7 @@ router.post("/updateaddressbook", auth, async (req, res) => {
     });
   customer.updated = Date.now();
   await customer.save();
-  Customer.findOne({  _id: req.body.customer_id }).then((customer) => {
+  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
     // Check for customer
     let ccompany ='';
     let cphone ='';
@@ -555,14 +555,14 @@ router.post("/deleteaddressbook", auth, async (req, res) => {
   if (req.user.role !=='customer') {
     return res.status(401).json({success: false,message: 'Access Denied.' });
   }
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json({success: false,message: 'Customer Id field is required.' });    
   }
   if (!req.body._id) {
     return res.status(400).json({success: false,message: 'Address id field is required.' });
   }
 
-  const customer = await Customer.findById({ _id: req.body.customer_id });
+  const customer = await Customer.findById({ _id: req.body.customerId });
   if (!customer) {
     return res.status(404).json({success: false,message: 'Customer not found.' });
   }
@@ -577,7 +577,7 @@ router.post("/deleteaddressbook", auth, async (req, res) => {
     }
   }
   await customer.save();
-  Customer.findOne({  _id: req.body.customer_id }).then((customer) => {
+  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
     // Check for customer
     let ccompany ='';
     let cphone ='';
@@ -602,7 +602,7 @@ router.post("/deleteaddressbook", auth, async (req, res) => {
 // @access  public
 router.post("/addtocart", auth, async (req, res) => {
 
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json("Customer Id field is required");
   }
   if (!req.body.productId) {
@@ -612,7 +612,7 @@ router.post("/addtocart", auth, async (req, res) => {
     return res.status(400).json("Qty field is required");
   }
   
-  const customer = await Customer.findById({ _id: req.body.customer_id });
+  const customer = await Customer.findById({ _id: req.body.customerId });
   if (!customer) {
     return res.status(404).json("Customer Id not found");
   }
@@ -644,7 +644,7 @@ router.post("/addtocart", auth, async (req, res) => {
   }
 
 
-  Customer.findOne({  _id: req.body.customer_id }).then((customer) => {
+  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
     // Check for customer
     res.json({ success: true,customer  });
    });
@@ -656,7 +656,7 @@ router.post("/addtocart", auth, async (req, res) => {
 // @access  public
 router.post("/updatecart", auth, async (req, res) => {
 
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json("Customer Id field is required");
   }
   if (!req.body.productId) {
@@ -666,7 +666,7 @@ router.post("/updatecart", auth, async (req, res) => {
     return res.status(400).json("Qty field is required");
   }
   
-  const customer = await Customer.findById({ _id: req.body.customer_id });
+  const customer = await Customer.findById({ _id: req.body.customerId });
   if (!customer) {
     return res.status(404).json("Customer Id not found");
   }
@@ -682,7 +682,7 @@ router.post("/updatecart", auth, async (req, res) => {
     });
   
   await customer.save();
-  Customer.findOne({  _id: req.body.customer_id }).then((customer) => {
+  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
     // Check for customer
     res.json({ success: true,customer  });
    });
@@ -694,7 +694,7 @@ router.post("/updatecart", auth, async (req, res) => {
 // @access  public
 router.post("/deleteproductcart", auth, async (req, res) => {
 
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json("Customer Id field is required");
   }
   if (!req.body.productId) {
@@ -702,7 +702,7 @@ router.post("/deleteproductcart", auth, async (req, res) => {
   }
   
   
-  const customer = await Customer.findById({ _id: req.body.customer_id });
+  const customer = await Customer.findById({ _id: req.body.customerId });
   if (!customer) {
     return res.status(404).json("Customer Id not found");
   }
@@ -720,7 +720,7 @@ router.post("/deleteproductcart", auth, async (req, res) => {
 
   //customer.cart.items = [];
   await customer.save();
-  Customer.findOne({  _id: req.body.customer_id }).then((customer) => {
+  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
     // Check for customer
     res.json({ success: true,customer  });
    });
@@ -732,22 +732,22 @@ router.post("/deleteproductcart", auth, async (req, res) => {
 // @access  public
 router.post("/getcart", auth, async (req, res) => {
 
-  if (!req.body.customer_id) {
+  if (!req.body.customerId) {
     return res.status(400).json("Customer Id field is required");
   }
   
   
   
-  const customer = await Customer.findById({ _id: req.body.customer_id });
+  const customer = await Customer.findById({ _id: req.body.customerId });
   if (!customer) {
     return res.status(404).json("Customer Id not found");
   }
 
-  Customer.findOne({  _id: req.body.customer_id }).then((customer) => {
+  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
     // Check for customer
     res.json({
       success: true,
-      customer_id: customer.id,
+      customerId: customer.id,
       cart: customer.cart,
     });
    });

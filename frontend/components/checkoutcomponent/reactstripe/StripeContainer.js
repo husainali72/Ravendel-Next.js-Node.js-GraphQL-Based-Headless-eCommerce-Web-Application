@@ -200,7 +200,7 @@ const CheckoutForm = ({ getOrderDetailsData, setBillingInfo, billingInfo, detail
 
                 {error && <ErrorMessage>{error.message}</ErrorMessage>}
                 <SubmitButton cartItems={cartItems} billDetails={detailsOfBill} processing={processing} error={error} disabled={!stripe} >
-                    Pay ${parseInt(detailsOfBill.subtotal)+parseInt(detailsOfBill.tax_amount)+parseInt(detailsOfBill.shipping_amount)-parseInt(detailsOfBill.discount_amount)}
+                    Pay ${parseInt(detailsOfBill.subtotal)+parseInt(detailsOfBill.taxAmount)+parseInt(detailsOfBill.shippingAmount)-parseInt(detailsOfBill.discountAmount)}
                 </SubmitButton>
             </form>
         </div>

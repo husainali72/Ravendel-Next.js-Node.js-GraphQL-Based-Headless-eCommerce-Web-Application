@@ -44,11 +44,11 @@ const DashboardComponent = () => {
       data.dashboard_data.latestOrders.map((order) => {
         let object = {
           id: order._id,
-          order_number: order.order_number,
+          orderNumber: order.orderNumber,
           date: order.date,
           name: order.billing.firstname + " " + order.billing.lastname,
-          payment_status: order.payment_status,
-          shipping_status: order.shipping_status
+          paymentStatus: order.paymentStatus,
+          shippingStatus: order.shippingStatus
         }
         latestdata.push(object)
       })

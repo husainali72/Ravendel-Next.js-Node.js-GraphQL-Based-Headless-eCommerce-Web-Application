@@ -141,7 +141,7 @@ query ($id: ID!) {
         data{
       id
       title
-      customer_id {
+      customerId {
         id
         first_name
       }
@@ -169,7 +169,7 @@ export const GET_REVIEWS = gql`
       data {
         id
         title
-        customer_id {
+        customerId {
           id
           first_name
         }
@@ -194,7 +194,7 @@ export const GET_REVIEWS = gql`
 export const ADD_REVIEW = gql`
   mutation(
     $title: String
-    $customer_id: String
+    $customerId: String
     $productId: String
     $email: String
     $review: String
@@ -203,7 +203,7 @@ export const ADD_REVIEW = gql`
   ) {
     addReview(
       title: $title
-      customer_id: $customer_id
+      customerId: $customerId
       productId: $productId
       email: $email
       review: $review

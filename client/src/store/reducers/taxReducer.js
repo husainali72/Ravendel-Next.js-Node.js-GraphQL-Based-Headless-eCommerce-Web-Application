@@ -12,7 +12,7 @@ const initialState = {
     global: {
       is_global: false
     },
-    tax_class: []
+    taxClass: []
   },
   loading: false,
   success: false

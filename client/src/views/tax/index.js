@@ -48,12 +48,12 @@ const TaxComponent = () => {
   const [editMode, setEditMode] = useState(false);
   const [taxGlobal, settaxGlobal] = useState({
     is_global: false,
-    tax_class: "",
+    taxClass: "",
     overwrite: false,
   });
 
   useEffect(() => {
-    if (isEmpty(taxState.tax.tax_class)) {
+    if (isEmpty(taxState.tax.taxClass)) {
       dispatch(taxAction());
     }
   }, []);
@@ -96,7 +96,7 @@ const TaxComponent = () => {
       });
     }
     else {
-      dispatch(taxClassAddAction({ tax_class: customTaxClass }));
+      dispatch(taxClassAddAction({ taxClass: customTaxClass }));
     }
 
   };
@@ -126,7 +126,7 @@ const TaxComponent = () => {
       });
     }
     else {
-      dispatch(taxClassUpdateAction({ tax_class: customTaxClass }));
+      dispatch(taxClassUpdateAction({ taxClass: customTaxClass }));
     }
 
   };

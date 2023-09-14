@@ -12,7 +12,7 @@ const initialState = {
     global: {
       is_global: false
     },
-    shipping_class: []
+    shippingClass: []
   },
   loading: false,
   success: false

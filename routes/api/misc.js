@@ -81,7 +81,7 @@ router.post("/add_log", auth, async (req, res) => {
   try {
     const ProductLog = new ProductLog({
       productId: req.body.productId,
-      customer_id: req.body.customer_id || null,
+      customerId: req.body.customerId || null,
     });
 
     await ProductLog.save();

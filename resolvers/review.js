@@ -80,12 +80,12 @@ module.exports = {
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
       }
     },
-    customer_id: async (root, args) => {
-      if (!root.customer_id) {
+    customerId: async (root, args) => {
+      if (!root.customerId) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
       try {
-        const customer = await Customer.findById(root.customer_id);
+        const customer = await Customer.findById(root.customerId);
         if(customer) return customer
         return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
       } catch (error) {
@@ -100,14 +100,14 @@ module.exports = {
         title: args.title,
         review: args.review,
         productId: args.productId,
-        customer_id: args.customer_id,
+        customerId: args.customerId,
         email: args.email,
         rating: args.rating,
         status: args.status,
       };
       //console.log("data==", data)
       let validation = ["title", "rating", "review", "email"];
-      const duplicate = await duplicateData({review: args.review, customer_id: args.customer_id, productId: args.productId}, Review)
+      const duplicate = await duplicateData({review: args.review, customerId: args.customerId, productId: args.productId}, Review)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
       return await CREATE_FUNC(
         id,
@@ -125,14 +125,14 @@ module.exports = {
         title: args.title,
         review: args.review,
         productId: args.productId,
-        customer_id: args.customer_id,
+        customerId: args.customerId,
         email: args.email,
         rating: args.rating,
         status: args.status,
       };
-      let validation = ["title", "rating", "review", "email", "productId", "customer_id",];
+      let validation = ["title", "rating", "review", "email", "productId", "customerId",];
       if(Number(args.rating) === 0) return MESSAGE_RESPONSE("InvalidField", "Rating", false);
-      const duplicate = await duplicateData({review: args.review, customer_id: args.customer_id, productId: args.productId}, Review, args.id)
+      const duplicate = await duplicateData({review: args.review, customerId: args.customerId, productId: args.productId}, Review, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
       return await UPDATE_FUNC(
         id,

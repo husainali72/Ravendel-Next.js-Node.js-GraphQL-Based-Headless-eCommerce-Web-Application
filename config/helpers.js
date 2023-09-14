@@ -560,14 +560,14 @@ const subTotalDetailsEntry = async(data, couponModel, shippingModel, taxModel) =
   //   if(tax.global.is_global && tax.global.taxClass.toString() === taxClass._id.toString()) subTotalDetails.tax_name = taxClass.name
   //   else subTotalDetails.tax_name = "None"
   // })
-  // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: {$regex: `${data.coupon_code}`, $options: "i"} })
+  // assign couponCode, amount, type
+  const coupon = await couponModel.findOne({code: {$regex: `${data.couponCode}`, $options: "i"} })
   if(!coupon) {
-    subTotalDetails.coupon_code = "None"
+    subTotalDetails.couponCode = "None"
     subTotalDetails.coupon_type = ""
     subTotalDetails.coupon_value = 0
   } else {
-    subTotalDetails.coupon_code = coupon.code
+    subTotalDetails.couponCode = coupon.code
     subTotalDetails.coupon_type = coupon.discount_type
     subTotalDetails.coupon_value = coupon.discount_value
   } 
@@ -580,14 +580,14 @@ module.exports.subTotalDetailsEntry = subTotalDetailsEntry
 const subTotalSummaryEntry = async(data, couponModel, shippingModel, taxModel) => {
   const subTotalSummary = {}
   let orderSubTotal = 0, orderGrandTotal = 0;
-  let shippingAmount = 0, taxAmount = 0, couponType, couponAmount = Number(data.discount_amount);
+  let shippingAmount = 0, taxAmount = 0, couponType, couponAmount = Number(data.discountAmount);
   // get shipping class array and tax class array
   let shippingClasses = await shippingModel.findOne()
   shippingClasses = shippingClasses.shippingClass
   let taxClasses = await taxModel.findOne()
   taxClasses = taxClasses.taxClass
   // assign couponType
-  const coupon = await couponModel.findOne({code: {$regex: `${data.coupon_code}`, $options: "i"} })
+  const coupon = await couponModel.findOne({code: {$regex: `${data.couponCode}`, $options: "i"} })
   if(!coupon) {
     couponType = ""
   } else {
@@ -704,16 +704,16 @@ const generateOrderNumber = async (Order, Setting) => {
     {$project: {
       orderPrefix: {
         $substrBytes: [
-          "$order_number", 
+          "$orderNumber", 
           0, 
-          {$subtract: [ {$strLenBytes: "$order_number"}, orderDigits ]}
+          {$subtract: [ {$strLenBytes: "$orderNumber"}, orderDigits ]}
         ]
       }
     }},
     {$match: {"orderPrefix": prefix}},
     {$project: {orderPrefix: 0}}
   ] 
-  if(!prefix) pipeline = [{$project: {onlen: {$strLenBytes: "$order_number"}}},
+  if(!prefix) pipeline = [{$project: {onlen: {$strLenBytes: "$orderNumber"}}},
                           {$match: {onlen: orderDigits}}]
   // if orders with specified prefix exists then continue number series
   // else start new series

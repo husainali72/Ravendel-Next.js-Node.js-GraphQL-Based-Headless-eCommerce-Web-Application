@@ -67,9 +67,9 @@ const AddProduct = () => {
       width: "0",
       depth: "0",
       weight: "0",
-      shipping_class: "",
+      shippingClass: "",
     },
-    tax_class: "",
+    taxClass: "",
     featured_product: false,
     product_type: {
       virtual: false,
@@ -325,7 +325,7 @@ const AddProduct = () => {
                       ...product,
                       shipping: {
                         ...product.shipping,
-                        shipping_class: value,
+                        shippingClass: value,
                       },
                     });
                   }}

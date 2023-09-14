@@ -29,7 +29,7 @@ const LatestOrdersTheme = ({
   const navigate = useNavigate();
   const badgefilter = [
     {
-      name: 'payment_status',
+      name: 'paymentStatus',
       status: [{
         name: 'pending',
         title: 'Pending'
@@ -49,7 +49,7 @@ const LatestOrdersTheme = ({
       ]
     },
     {
-      name: 'shipping_status',
+      name: 'shippingStatus',
       status: [
         {
           name: 'inprogress',
@@ -73,7 +73,7 @@ const LatestOrdersTheme = ({
 
   const columndata = [
     {
-      name: 'order_number',
+      name: 'orderNumber',
       title: "Order Number",
       sortingactive: true
     },
@@ -88,12 +88,12 @@ const LatestOrdersTheme = ({
       sortingactive: true
     },
     {
-      name: 'payment_status',
+      name: 'paymentStatus',
       title: "payment status",
       sortingactive: false
     },
     {
-      name: 'shipping_status',
+      name: 'shippingStatus',
       title: "shipping status",
       sortingactive: false
     },

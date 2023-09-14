@@ -48,7 +48,7 @@ export const GET_ORDERS_Query = gql`
     orders {
       data {
         id
-        customer_id
+        customerId
         status
         shipping
         billing

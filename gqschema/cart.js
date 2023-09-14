@@ -123,7 +123,7 @@ module.exports = gql`
     cart(id: ID!): Cart
     cartbyUser(userId: ID!): Cart
     calculateCart(cartItem: [calculateCartProducts]): calculatedCart
-    calculateCoupon(coupon_code: String,cartItem: [couponCartProducts], totalShipping : String
+    calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
       totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
   }
 

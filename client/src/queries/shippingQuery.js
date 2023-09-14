@@ -5,7 +5,7 @@ const GET_SHIPPING = gql`
       data {
         id
         global
-        shipping_class
+        shippingClass
         date
         updated
       }
@@ -22,7 +22,7 @@ const GET_SHIPPING = gql`
 //     updateGlobalShipping(global: $global) {
 //       id
 //       global
-//       shipping_class
+//       shippingClass
 //       date
 //       updated
 //     }
@@ -38,11 +38,11 @@ const UPDATE_GLOBALSHIPPING = gql`
 `;
 
 // const ADD_SHIPPINGCLASS = gql`
-//   mutation($shipping_class: customObject) {
-//     addShippingClass(shipping_class: $shipping_class) {
+//   mutation($shippingClass: customObject) {
+//     addShippingClass(shippingClass: $shippingClass) {
 //       id
 //       global
-//       shipping_class
+//       shippingClass
 //       date
 //       updated
 //     }
@@ -50,8 +50,8 @@ const UPDATE_GLOBALSHIPPING = gql`
 // `;
 
 const ADD_SHIPPINGCLASS = gql`
-  mutation($shipping_class: customObject) {
-    addShippingClass(shipping_class: $shipping_class) {
+  mutation($shippingClass: customObject) {
+    addShippingClass(shippingClass: $shippingClass) {
       message
       success
     }
@@ -59,11 +59,11 @@ const ADD_SHIPPINGCLASS = gql`
 `;
 
 // const UPDATE_SHIPPINGCLASS = gql`
-//   mutation($shipping_class: customObject) {
-//     updateShippingClass(shipping_class: $shipping_class) {
+//   mutation($shippingClass: customObject) {
+//     updateShippingClass(shippingClass: $shippingClass) {
 //       id
 //       global
-//       shipping_class
+//       shippingClass
 //       date
 //       updated
 //     }
@@ -71,8 +71,8 @@ const ADD_SHIPPINGCLASS = gql`
 // `;
 
 const UPDATE_SHIPPINGCLASS = gql`
-  mutation($shipping_class: customObject) {
-    updateShippingClass(shipping_class: $shipping_class) {
+  mutation($shippingClass: customObject) {
+    updateShippingClass(shippingClass: $shippingClass) {
       message
       success
     }
@@ -84,7 +84,7 @@ const UPDATE_SHIPPINGCLASS = gql`
 //     deleteShippingClass(_id: $_id) {
 //       id
 //       global
-//       shipping_class
+//       shippingClass
 //       date
 //       updated
 //     }

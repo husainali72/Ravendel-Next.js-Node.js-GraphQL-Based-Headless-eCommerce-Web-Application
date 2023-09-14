@@ -30,12 +30,12 @@ const ShippingComponent = ({
   }, []);
 
   useEffect(() => {
-    if (shippingState.shipping.shipping_class.length) {
-      let shipping_class = product?.shipping?.shipping_class && shippingState.shipping.shipping_class.some((shipping_class) => shipping_class._id === product?.shipping?.shipping_class);
-      shippingState.shipping.shipping_class.some((shipping_class) => {
-        return shipping_class === product?.shipping?.shipping_class;
+    if (shippingState.shipping.shippingClass.length) {
+      let shippingClass = product?.shipping?.shippingClass && shippingState.shipping.shippingClass.some((shippingClass) => shippingClass._id === product?.shipping?.shippingClass);
+      shippingState.shipping.shippingClass.some((shippingClass) => {
+        return shippingClass === product?.shipping?.shippingClass;
       });
-      onShippingClassChange(shipping_class ? product?.shipping?.shipping_class : shippingState.shipping.shipping_class[0]._id);
+      onShippingClassChange(shippingClass ? product?.shipping?.shippingClass : shippingState.shipping.shippingClass[0]._id);
     }
   }, [shippingState.shipping]);
 
@@ -55,10 +55,10 @@ const ShippingComponent = ({
                 labelId='Shipping-name'
                 id='Shipping-name'
                 name='Shipping-name'
-                value={product.shipping.shipping_class}
+                value={product.shipping.shippingClass}
                 onChange={(e) => onShippingClassChange(e.target.value)}
               >
-                {shippingState.shipping.shipping_class.map(
+                {shippingState.shipping.shippingClass.map(
                   (shipping, index) => {
                     return (
                       <MenuItem value={shipping._id} key={index}>

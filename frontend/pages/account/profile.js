@@ -140,9 +140,9 @@ const Profile = ({ customeraddres }) => {
                                                     orderDetail={order}
                                                     billingInfo={order.billing}
                                                     shippingInfo={order.shipping}
-                                                    tax={order.tax_amount}
+                                                    tax={order.taxAmount}
                                                     subtotal={order.subtotal}
-                                                    shipping_amount={order.shipping_amount}
+                                                    shippingAmount={order.shippingAmount}
                                                     total={order.grandTotal}
 
                                                 />

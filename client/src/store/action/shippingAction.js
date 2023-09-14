@@ -137,8 +137,8 @@ export const shippingClassUpdateAction = (object) => (dispatch) => {
   dispatch({
     type: SHIPPING_LOADING,
   });
-  if (object && object.shipping_class && object.shipping_class.amount) {
-    object.shipping_class.amount = object.shipping_class.amount.toString();
+  if (object && object.shippingClass && object.shippingClass.amount) {
+    object.shippingClass.amount = object.shippingClass.amount.toString();
   }
   mutation(UPDATE_SHIPPINGCLASS, object)
     .then((response) => {

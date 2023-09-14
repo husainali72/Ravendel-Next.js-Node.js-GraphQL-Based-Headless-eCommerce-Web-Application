@@ -40,7 +40,7 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Order", false);
       }
       try {
-        const order = await Order.find({ customer_id: args.userId }).sort({ date: -1 });
+        const order = await Order.find({ customerId: args.userId }).sort({ date: -1 });
         console.log("ooorder", order[0].products)
         if (!order) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
@@ -61,7 +61,7 @@ module.exports = {
   Mutation: {
     addOrder: async (root, args, { id }) => {
       try {
-        var errors = _validate(["customer_id"], args);
+        var errors = _validate(["customerId"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -92,13 +92,13 @@ module.exports = {
         var Secret_Key = setting.paymnet.stripe.secret_key;
         const stripe = require('stripe')(Secret_Key);
 
-        // var c_grandTotal = parseFloat(args.subtotal) + parseFloat(args.shipping_amount) + parseFloat(args.tax_amount) - parseFloat(args.discount_amount);
+        // var c_grandTotal = parseFloat(args.subtotal) + parseFloat(args.shippingAmount) + parseFloat(args.taxAmount) - parseFloat(args.discountAmount);
 
-        var c_grandTotal = parseFloat(args.grandTotal) - parseFloat(args.discount_amount);
+        var c_grandTotal = parseFloat(args.grandTotal) - parseFloat(args.discountAmount);
         if (args.billing.payment_method === 'Cash On Delivery') {
           var status = 'pending';
-          var userId = args.customer_id;
-          const cart = await Cart.findOne({ userId: args.customer_id });
+          var userId = args.customerId;
+          const cart = await Cart.findOne({ userId: args.customerId });
           emptyCart(cart)
         } else {
           let currencycode;
@@ -123,24 +123,24 @@ module.exports = {
           } else {
             status = 'pending';
           }
-          const cart = await Cart.findOne({ userId: args.customer_id });
+          const cart = await Cart.findOne({ userId: args.customerId });
           emptyCart(cart)
         }
 
         const orderNumber = await generateOrderNumber(Order, Setting)
         
         const newOrder = new Order({
-          order_number: orderNumber,
-          customer_id: args.customer_id,
+          orderNumber: orderNumber,
+          customerId: args.customerId,
           billing: args.billing,
           shipping: args.shipping,
-          payment_status: status,
-          shipping_status: "inprogress",
+          paymentStatus: status,
+          shippingStatus: "inprogress",
           cartTotal: args.cartTotal, // previous sub_total
-          shipping_amount: args.shipping_amount,
-          tax_amount: args.tax_amount,
-          coupon_code: args.coupon_code,
-          discount_amount: args.discount_amount,
+          shippingAmount: args.shippingAmount,
+          taxAmount: args.taxAmount,
+          couponCode: args.couponCode,
+          discountAmount: args.discountAmount,
           grandTotal: c_grandTotal,
         });
         newOrder.products = args.products;
@@ -152,7 +152,7 @@ module.exports = {
         // newOrder.grandTotal = subTotalSummary.orderGrandTotal
         await newOrder.save();
         // send order create email
-        const customer = await Customer.findById(args.customer_id);
+        const customer = await Customer.findById(args.customerId);
         mailData = {
           subject: `Order Placed`,
           mailTemplate: "template",
@@ -217,8 +217,8 @@ module.exports = {
         }
         const order = await Order.findById(args.id);
         if (order) {
-          order.payment_status = args.payment_status;
-          order.shipping_status = args.shipping_status;
+          order.paymentStatus = args.paymentStatus;
+          order.shippingStatus = args.shippingStatus;
           order.billing = args.billing;
           order.shipping = args.shipping;
           await order.save();

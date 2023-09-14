@@ -64,7 +64,7 @@ const TrackMyOrder = () => {
 
     }
     const checkstatus = (status) => {
-        if (customerOrder.length > 0 && customerOrder[0].shipping_status === status) return 'success'
+        if (customerOrder.length > 0 && customerOrder[0].shippingStatus === status) return 'success'
         else return 'primary'
     }
     return (
@@ -87,9 +87,9 @@ const TrackMyOrder = () => {
                             order={customerOrder[0]}
                             billingInfo={customerOrder[0]?.billing}
                             shippingInfo={customerOrder[0]?.shipping}
-                            tax={customerOrder[0]?.tax_amount}
+                            tax={customerOrder[0]?.taxAmount}
                             subtotal={customerOrder[0]?.subtotal}
-                            shipping_amount={customerOrder[0]?.shipping_amount}
+                            shippingAmount={customerOrder[0]?.shippingAmount}
                             total={customerOrder[0]?.grandTotal}
                         />
                         <div className="row order-btn-row">

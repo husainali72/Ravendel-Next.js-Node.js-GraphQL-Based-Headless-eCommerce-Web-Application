@@ -147,13 +147,13 @@ const Tablecomponent = ({
                                                             return <TableCell style={{ textTransform: "lowercase" }}>{data.email}</TableCell>
                                                         case 'role':
                                                             return <TableCell style={{ textTransform: "capitalize" }}>{data.role}</TableCell>
-                                                        case 'shipping_status':
+                                                        case 'shippingStatus':
                                                             return <TableCell>
-                                                                <Badge badgeContent={data.shipping_status} color={badgeColor(data.shipping_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
+                                                                <Badge badgeContent={data.shippingStatus} color={badgeColor(data.shippingStatus)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
                                                             </TableCell>
-                                                        case 'payment_status':
+                                                        case 'paymentStatus':
                                                             return <TableCell>
-                                                                <Badge badgeContent={data.payment_status} color={badgeColor(data.payment_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
+                                                                <Badge badgeContent={data.paymentStatus} color={badgeColor(data.paymentStatus)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
                                                             </TableCell>
                                                         case "actions":
                                                             return <TableCell>

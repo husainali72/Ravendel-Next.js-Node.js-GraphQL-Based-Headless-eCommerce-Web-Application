@@ -88,7 +88,7 @@ export const GET_ADDTOCART_QUERY = gql`
 //     $productId:String 
 //     $qty:Float
 //      ){
-//     addToCart(customer_id: $id){
+//     addToCart(customerId: $id){
 //        id
 //     userId: ID
 //     status: String

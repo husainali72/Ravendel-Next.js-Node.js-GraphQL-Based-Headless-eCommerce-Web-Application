@@ -3,18 +3,18 @@ import { Spinner } from "react-bootstrap";
 import { getPrice } from "../../utills/helpers";
 const OrderSummary = (props) => {
 
-    const { decimal, currency, subTotal, cartTotal, coupon, delivery, tax_amount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails, CouponLoading, isCouponApplied, AppliedCoupon } = props;
+    const { decimal, currency, subTotal, cartTotal, coupon, delivery, taxAmount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails, CouponLoading, isCouponApplied, AppliedCoupon } = props;
 
     useEffect(() => {
         var allData = {
             subtotal: subTotal?.toString(),
             grandTotal: cartTotal?.toString(),
-            discount_amount: coupon?.toString(),
-            shipping_amount: delivery?.toString(),
-            tax_amount: tax_amount?.toString(),
+            discountAmount: coupon?.toString(),
+            shippingAmount: delivery?.toString(),
+            taxAmount: taxAmount?.toString(),
         }
         getCalculationDetails(allData)
-    }, [subTotal, cartTotal, coupon, delivery, tax_amount])
+    }, [subTotal, cartTotal, coupon, delivery, taxAmount])
 
 
 
@@ -51,7 +51,7 @@ const OrderSummary = (props) => {
                                 </tr>
                                 <tr>
                                     <td className="cartTotal_label">Tax</td>
-                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5"> {currency}{getPrice(tax_amount, decimal)}</i></td>
+                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5"> {currency}{getPrice(taxAmount, decimal)}</i></td>
                                 </tr>
                                 <tr>
                                     <td className="cartTotal_label">Shipping</td>

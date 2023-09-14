@@ -101,8 +101,8 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
         const filterdata = searchData.filter(data => {
             const matchesSearch = searchState ? Object.values(data).some(val => String(val).toLowerCase().includes(searchState.toLowerCase())) : true;
             const matchesTabs = MuiTabsvalue === 'All' || data[statusTabData.name] === MuiTabsvalue;
-            const matchesPaymentStatus = !paymentstatus || data['payment_status'].toLowerCase().includes(paymentstatus);
-            const matchesShippingStatus = !shippingstatus || data['shipping_status'].toLowerCase().includes(shippingstatus);
+            const matchesPaymentStatus = !paymentstatus || data['paymentStatus'].toLowerCase().includes(paymentstatus);
+            const matchesShippingStatus = !shippingstatus || data['shippingStatus'].toLowerCase().includes(shippingstatus);
             const currentDate = new Date(data['date']);
             currentDate.setHours(0, 0, 0, 0); // Reset time to midnight
             const startDateWithoutTime = startDate ? new Date(startDate) : null;
@@ -148,7 +148,7 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
                                 size="small"
                             >
                                 {dropdown.map((arr) => {
-                                    return arr.name === 'payment_status' ?
+                                    return arr.name === 'paymentStatus' ?
                                         arr.status.map((obj) => {
                                             return <MenuItem value={obj.name}>{obj.title.charAt(0).toUpperCase() + obj.title.slice(1)}</MenuItem>
                                         }) : null
@@ -169,7 +169,7 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
                                 size="small"
                             >
                                 {dropdown.map((arr) => {
-                                    return arr.name === 'shipping_status' ?
+                                    return arr.name === 'shippingStatus' ?
                                         arr.status.map((obj) => {
                                             return <MenuItem value={obj.name}>{obj.title.charAt(0).toUpperCase() + obj.title.slice(1)}</MenuItem>
                                         }) : null

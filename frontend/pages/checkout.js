@@ -20,7 +20,7 @@ import { ADD_ORDER } from "../queries/orderquery";
 import CreditCards from "../components/checkoutcomponent/myCard/CreditCards";
 import { useRouter } from "next/router";
 import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
-import { APPLY_COUPON_CODE } from "../queries/couponquery";
+import { APPLY_couponCode } from "../queries/couponquery";
 import { CALCULATE_cartTotal, GET_USER_CART, UPDATE_CART_PRODUCT } from "../queries/cartquery";
 import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
 import { query2 } from "../utills/cartHelperfun"
@@ -85,15 +85,15 @@ export const CheckOut = ({ currencyStore }) => {
     const [islogin, setIsLogin] = useState(false)
     const router = useRouter();
     let address_book = [];
-    let customer_id = "";
+    let customerId = "";
     let token = ""
-    const [billingDetails, setBillingDetails] = useState({ customer_id: customer_id || "" });
+    const [billingDetails, setBillingDetails] = useState({ customerId: customerId || "" });
     useEffect(() => {
         if (session.status === "authenticated") {
             address_book = session?.data?.user.accessToken.customer.address_book
             token = session.data?.user.accessToken.token
-            let customer_id = session.data.user.accessToken.customer._id
-            setBillingDetails({ ...billingDetails, customer_id: customer_id })
+            let customerId = session.data.user.accessToken.customer._id
+            setBillingDetails({ ...billingDetails, customerId: customerId })
 
         }
     }, [session, session?.data?.user.accessToken.customer.address_book])
@@ -102,7 +102,7 @@ export const CheckOut = ({ currencyStore }) => {
     if (session.status === "authenticated") {
         address_book = session?.data?.user.accessToken.customer.address_book
         token = session.data?.user.accessToken.token
-        customer_id = session.data.user.accessToken.customer._id
+        customerId = session.data.user.accessToken.customer._id
 
     }
     const cartProducts = useSelector((state) => state.cart);
@@ -115,7 +115,7 @@ export const CheckOut = ({ currencyStore }) => {
     const [coupon, setCoupon] = useState("0");
     const [paymentMethod, setPaymentMethod] = useState("");
     const [delivery, setDelivery] = useState("0");
-    const [tax_amount, setTax_amount] = useState(0);
+    const [taxAmount, settaxAmount] = useState(0);
     const [showItem, setShowItem] = useState(false);
     const [formStep, setFormStep] = useState(1)
     const [couponCode, setCouponCode] = useState('')
@@ -140,7 +140,7 @@ export const CheckOut = ({ currencyStore }) => {
         if (session.status === "authenticated") {
             address_book = session?.data?.user.accessToken.customer.address_book
             token = session.data?.user.accessToken.token
-            customer_id = session.data.user.accessToken.customer._id
+            customerId = session.data.user.accessToken.customer._id
             setIsLogin(true)
         }
     }, [])
@@ -260,7 +260,7 @@ export const CheckOut = ({ currencyStore }) => {
                 setSubTotal(response?.cartTotal)
                 setCoupon(response?.totalCoupon)
                 setDelivery(response?.totalShipping)
-                setTax_amount(response?.totalTax)
+                settaxAmount(response?.totalTax)
             })
         }
     }, [cartItems])
@@ -408,17 +408,17 @@ export const CheckOut = ({ currencyStore }) => {
             }
         })
         let variables = {
-            coupon_code: `${couponCode}`, cart: cart,
+            couponCode: `${couponCode}`, cart: cart,
         }
         let couponResponse = 0
         let couponValue = 0.00
         let couponValueGet = false;
         setCouponLoading(true)
-        query2(APPLY_COUPON_CODE, variables, token).then(res => {
+        query2(APPLY_couponCode, variables, token).then(res => {
 
             couponResponse = res.data.calculateCoupon.totalCoupon
             if (res.data.calculateCoupon.success) {
-                setBillingDetails((previousDetails) => ({ ...previousDetails, coupon_code: couponCode }))
+                setBillingDetails((previousDetails) => ({ ...previousDetails, couponCode: couponCode }))
                 notify(res.data.calculateCoupon.message, true)
                 setIsCouponApplied(true)
             }
@@ -448,7 +448,7 @@ export const CheckOut = ({ currencyStore }) => {
                     setSubTotal(response?.cartTotal)
                     setCoupon(couponResponse)
                     setDelivery(response?.totalShipping)
-                    setTax_amount(response?.totalTax)
+                    settaxAmount(response?.totalTax)
                 })
             }
         }
@@ -560,7 +560,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 subTotal={subtotal}
                                                 coupon={coupon}
                                                 delivery={delivery}
-                                                tax_amount={tax_amount}
+                                                taxAmount={taxAmount}
                                                 doApplyCouponCode={doApplyCouponCode}
                                                 couponCode={couponCode}
                                                 setCouponCode={setCouponCode}
@@ -594,8 +594,8 @@ export const CheckOut = ({ currencyStore }) => {
                                                 coupon={coupon}
                                                 setCoupon={setCoupon}
                                                 setCouponFeild={setCouponFeild}
-                                                tax_amount={tax_amount}
-                                                setTax_amount={setTax_amount}
+                                                taxAmount={taxAmount}
+                                                settaxAmount={settaxAmount}
                                                 doApplyCouponCode={doApplyCouponCode}
                                                 couponfield={couponfield}
                                                 delivery={delivery}
@@ -618,7 +618,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 subTotal={subtotal}
                                                 coupon={coupon}
                                                 delivery={delivery}
-                                                tax_amount={tax_amount}
+                                                taxAmount={taxAmount}
                                                 doApplyCouponCode={doApplyCouponCode}
                                                 couponCode={couponCode}
                                                 setCouponCode={setCouponCode}
@@ -653,8 +653,8 @@ export const CheckOut = ({ currencyStore }) => {
                                                 coupon={coupon}
                                                 setCoupon={setCoupon}
                                                 setCouponFeild={setCouponFeild}
-                                                tax_amount={tax_amount}
-                                                setTax_amount={setTax_amount}
+                                                taxAmount={taxAmount}
+                                                settaxAmount={settaxAmount}
                                                 doApplyCouponCode={doApplyCouponCode}
                                                 couponfield={couponfield}
                                                 delivery={delivery}
@@ -668,7 +668,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 decimal={decimal}
                                                 currency={currency}
                                                 billingDetails={billingDetails}
-                                                customer_id={customer_id}
+                                                customerId={customerId}
                                                 billingInfo={billingInfo}
                                                 shippingInfo={shippingInfo}
                                                 setBillingInfo={setBillingInfo}
@@ -683,7 +683,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 subTotal={subtotal}
                                                 coupon={coupon}
                                                 delivery={delivery}
-                                                tax_amount={tax_amount}
+                                                taxAmount={taxAmount}
                                             />
                                             {/* </form> */}
                                             {billingInfo.payment_method === "stripe" &&
@@ -708,7 +708,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 subTotal={subtotal}
                                                 coupon={coupon}
                                                 delivery={delivery}
-                                                tax_amount={tax_amount}
+                                                taxAmount={taxAmount}
                                                 doApplyCouponCode={doApplyCouponCode}
                                                 couponCode={couponCode}
                                                 setCouponCode={setCouponCode}

@@ -20,7 +20,7 @@ const AllOrdersComponent = () => {
   const [filtered, setfilterdData] = useState([])
   const badgefilter = [
     {
-      name: 'payment_status',
+      name: 'paymentStatus',
       status: [{
         name: 'pending',
         title: 'Pending'
@@ -40,7 +40,7 @@ const AllOrdersComponent = () => {
       ]
     },
     {
-      name: 'shipping_status',
+      name: 'shippingStatus',
       status: [
         {
           name: 'inprogress',
@@ -64,7 +64,7 @@ const AllOrdersComponent = () => {
 
   const columndata = [
     {
-      name: 'order_number',
+      name: 'orderNumber',
       title: "Order Number",
       sortingactive: true
     },
@@ -79,12 +79,12 @@ const AllOrdersComponent = () => {
       sortingactive: true
     },
     {
-      name: 'payment_status',
+      name: 'paymentStatus',
       title: "payment status",
       sortingactive: false
     },
     {
-      name: 'shipping_status',
+      name: 'shippingStatus',
       title: "shipping status",
       sortingactive: false
     },
@@ -113,11 +113,11 @@ const AllOrdersComponent = () => {
       orders.orders.map((order) => {
         let object = {
           id: order.id,
-          order_number: order.order_number,
+          orderNumber: order.orderNumber,
           date: order.date,
           name: order.billing.firstname + " " + order.billing.lastname,
-          payment_status: order.payment_status,
-          shipping_status: order.shipping_status
+          paymentStatus: order.paymentStatus,
+          shippingStatus: order.shippingStatus
         }
         data.push(object)
       })
