@@ -59,7 +59,7 @@ module.exports = gql`
     variant_id:String
   }
 
-  input cartProducts {
+  input calculateCartProducts {
     product_id: ID
     qty: Int
     total: Float
@@ -69,41 +69,60 @@ module.exports = gql`
     product_total : String
   }
 
-  input cartProductsCoupon {
+  input couponCartProducts {
     product_id: ID
     qty: Int
-    total: Float
     product_image : String
     product_title : String
     product_shipping : String
     product_tax : String
     product_price : String
+    product_total : String
     variant_id:String
-    total_coupon: Float
-    product_total : Float
+  }
+
+  type calculateCouponCartItem {
+    product_id: ID
+    qty: Int
+    product_image : String
+    product_title : String
+    product_shipping : String
+    product_tax : String
+    product_price : String
+    product_total : String
+    variant_id:String
+    discount_grand_total : String
   }
 
   type CartRES {
     data:[Cart]
     message: statusSchema
   } 
+
   type Cart_by_id_RES {
     data:Cart
     message: statusSchema
   }
 
   type calculateCoupon {
-    total_coupon: Float
+    total_coupon: String
     message: String
     success: Boolean
+    cartItem :[calculateCouponCartItem]
+    cart_total : String
+    total_shipping : String
+    total_tax : String,
+  grand_total:String
+  discount_grand_total : String
   }
 
   extend type Query {
     carts: CartRES
     cart(id: ID!): Cart
     cartbyUser(user_id: ID!): Cart
-    calculateCart(total_coupon : Float, cart: [cartProducts]): calculatedCart
-    calculateCoupon(coupon_code: String,cart: [cartProductsCoupon]): calculateCoupon
+    calculateCart(cartItem: [calculateCartProducts]): calculatedCart
+    calculateCoupon(coupon_code: String,cartItem: [couponCartProducts], total_shipping : String
+      total_tax : String,grand_total:String,cart_total:String): calculateCoupon
   }
 
   extend type Mutation {

@@ -37,32 +37,8 @@ const OrderSchema = new Schema({
     email: String,
     phone: String,
     notes: String
-  },
-  products: [
-    {
-      product_id: {
-        type: Schema.ObjectId,
-        required: true
-      },
-      name: {
-        type: String,
-        required: true
-      },
-      cost: {
-        type: Number,
-        required: true
-      },
-      qty: {
-        type: Number,
-        required: true
-      },
-      feature_image: {
-        type: Number,
-      },
-      attributes: []
-    }
-  ],
-  subtotal: {
+  }, 
+  cart_total: {
     type: Number,
     required: true
   },
@@ -84,22 +60,7 @@ const OrderSchema = new Schema({
   grand_total: {
     type: Number,
     required: true
-  },
-  sub_total_details: {
-    shipping_name: String,
-    tax_name: String,
-    coupon_code: String,
-    coupon_type: String,
-    coupon_value: Number
-  },
-  sub_total_summary: {
-    shipping_value: Number,
-    tax_value: Number,
-    coupon_value: Number,
-    coupon_type: String,
-    sub_total: Number,
-    total: Number
-  },
+  },    
   payment_status: {
     type: String,
     enum: ['pending', 'failed', 'success', 'cancelled'],
@@ -116,7 +77,55 @@ const OrderSchema = new Schema({
   },
   updated: {
     type: Date
-  }
+  },
+  products: [
+    {
+      product_id: {
+        type: Schema.ObjectId,
+        required: true
+      },
+      product_title: {
+        type: String,
+        required: true
+      },
+      product_price: {
+        type: Number,
+        required: true
+      },
+      qty: {
+        type: Number,
+        required: true
+      },
+      feature_image: {
+        type: Number,
+      },
+      product_total : {
+        type: Number,
+      },
+      product_shipping : {
+        type: Number,
+      },
+      product_tax : {
+        type: Number
+      },
+      attributes: []
+    }
+  ]
+  // sub_total_details: {
+  //   shipping_name: String,
+  //   tax_name: String,
+  //   coupon_code: String,
+  //   coupon_type: String,
+  //   coupon_value: Number
+  // },
+  // sub_total_summary: {
+  //   shipping_value: Number,
+  //   tax_value: Number,
+  //   coupon_value: Number,
+  //   coupon_type: String,
+  //   sub_total: Number,
+  //   total: Number
+  // },
 });
 
 module.exports = mongoose.model("Order", OrderSchema);

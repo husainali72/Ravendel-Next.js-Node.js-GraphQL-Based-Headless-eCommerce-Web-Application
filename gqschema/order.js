@@ -52,7 +52,7 @@ module.exports = gql`
       products: customArray
       sub_total_details: customObject
       sub_total_summary: customObject
-      subtotal: String
+      cart_total : String
       shipping_amount: String
       tax_amount: String
       coupon_code: String

@@ -52,43 +52,62 @@ module.exports = {
     },
 
 
-    calculateCoupon: async (root, args, { id }) => {
+  calculateCoupon: async (root, args, { id }) => {
       try {
         const coupon = await Coupon.findOne({ code: { $regex: `${args.coupon_code}`, $options: "i" } });
+        
+        let discount_grand_total;
         let calculated = {
           total_coupon: {},
           message: '',
-          success: false
+          success: false,
+          cartItem: args.cartItem,
+          cart_total:args.cart_total,
+          total_shipping : args.total_shipping,
+          total_tax : args.total_tax,
+  grand_total : args.grand_total,
         };
 
         let date = getdate('2');
 
         if (!coupon) {
-          calculated.total_coupon = 0.0;
+          calculated.total_coupon = "0.0";
           calculated.message = 'Invalid coupon code';
         } 
         else {
             
           if (coupon.expire >= date) {
-
             let cartTotal = 0
-            args.cart.map(item => cartTotal += item.product_total)
+            // args.cart.map(item => cartTotal += item.product_total)     
+             cartTotal = args.cart_total;
+
             if ((coupon.minimum_spend === 0 || coupon.minimum_spend <= cartTotal) && (coupon.maximum_spend === 0 || coupon.maximum_spend > cartTotal)) {
-              var discountAmount = 0
-              coupon.discount_type === "amount-discount" ?
-                discountAmount = await againCalculateCart(coupon, args.cart, Product, true) :
-                discountAmount = await againCalculateCart(coupon, args.cart, Product, false)
-              calculated.total_coupon = Math.round(discountAmount).toFixed(2);
-              calculated.message = 'Coupon code applied successfully';
-              calculated.success = true;
+
+                  var calculatedCartWithDiscount = 0
+
+                  coupon.discount_type === "amount-discount" ?
+                  calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, true) :
+                  calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, false)
+ 
+                if(calculatedCartWithDiscount==0){
+                  calculated.total_coupon = "0.0";
+                  calculated.message = 'Coupon not applicable on cart';
+                }
+                  else {
+                    calculated.total_coupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+                    calculated.discount_grand_total = (+args.grand_total - Math.round(+calculatedCartWithDiscount)).toFixed(2);
+                    calculated.message = 'Coupon code applied successfully';
+                    calculated.success = true;
+                }
+
             }
             else {
-              calculated.total_coupon = 0.0;
+              calculated.total_coupon = "0.0";
               calculated.message = 'Coupon not applicable on cart';
             }
 
           } else {
-            calculated.total_coupon = 0.0;
+            calculated.total_coupon = "0.0";
             calculated.message = 'Coupon no longer applicable';
           }
         }
@@ -159,11 +178,11 @@ module.exports = {
 
 // if global tax applicable
 
-              if(global_tax){ 
+              if(global_tax){
 
-                for(let a=0;a<args.cart.length;a++){
+                for(let a=0;a<args.cartItem.length;a++){
 
-                  cartProduct = args.cart[a];                 
+                  cartProduct = args.cartItem[a];                 
                   let productShippingAmount ;
                   let product_tax;
 
@@ -244,9 +263,9 @@ module.exports = {
 
               else{    
 
-                        for(let a=0;a<args.cart.length;a++){
+                        for(let a=0;a<args.cartItem.length;a++){
                           
-                          cartProduct = args.cart[a]                     
+                          cartProduct = args.cartItem[a]                     
                           let productShippingAmount;
 
                           const product = await Product.findById({ _id:cartProduct.product_id}).lean();

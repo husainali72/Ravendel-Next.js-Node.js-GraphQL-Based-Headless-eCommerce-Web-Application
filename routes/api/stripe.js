@@ -36,4 +36,4 @@ router.post('/create-checkout-session', async (req, res) => {
     // res.redirect(session.url)
 });
 
-module.exports=router
+module.exports=router;
