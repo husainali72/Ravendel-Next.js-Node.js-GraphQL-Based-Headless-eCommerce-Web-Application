@@ -46,8 +46,8 @@ cartbyUser: async (root, args) => {
           throw putError("Cart not found");
         }
 
- let AvilableProducts = [];
- let unavilableProducts = [];
+ let availableItem = [];
+ let unavailableItem = [];
  let cartItem = cart.products;
 
   let productsArray = cart.products
@@ -56,17 +56,19 @@ cartbyUser: async (root, args) => {
           let product = productsArray[a];
           let isProductAvilable = await Product.findOne({_id:product.productId,quantity:{$gte:product.qty}});
           if(isProductAvilable){
-            AvilableProducts.push(product)
+            availableItem.push(product)
           }
           else {
-            unavilableProducts.push(product)
+            unavailableItem.push(product)
           }
         }
+
+
         return {
           id:cart._id,
           cartItem,
-          AvilableProducts,
-          unavilableProducts,
+          availableItem,
+          unavailableItem,
           status:cart.status,
           total:cart.total,
           date:cart.date,

@@ -4,10 +4,10 @@ module.exports = gql`
     id: ID
     userId: ID
     status: String
-    total: Float
+    total: String
     cartItem: metaKeyValueArray
-    AvailableItem: metaKeyValueArray
-    unavailableItem: metaKeyValueArray
+    availableItem: customArray
+    unavailableItem: customArray
     date: Date
     updated: Date
   }
