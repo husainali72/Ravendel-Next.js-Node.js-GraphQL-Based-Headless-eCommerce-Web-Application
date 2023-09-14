@@ -234,13 +234,13 @@ const BillingDetails = (props) => {
                                         message: "Phone number is Required",
                                     },
                                     validate: () => {
-                                        return isValidPhoneNumber(`+${billingInfo.phone}`)
+                                        return isValidPhoneNumber(billingInfo.phone.replace(/[\s-]/g, ''))
                                     }
                                 }}
                                 render={({ field: { onChange, value } }) => (
                                     <PhoneInput
                                         enableSearch='true'
-                                        country={'in'}
+                                        country={'us'}
                                         inputClass={'custom-input'}
                                         placeholder="Enter phone number"
                                         value={billingInfo.phone}
@@ -519,7 +519,7 @@ const BillingDetails = (props) => {
                                             message: "Phone number is Required",
                                         },
                                         validate: () => {
-                                            return isValidPhoneNumber(`+${shippingInfo.phone}`)
+                                            return isValidPhoneNumber(shippingInfo.phone.replace(/[\s-]/g, ''))
                                         }
                                     }}
                                     render={({ field: { onChange, value } }) => (

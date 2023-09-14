@@ -588,7 +588,7 @@ export const CheckOut = ({ currencyStore }) => {
                                     <div className="col-lg-12" style={{ display: 'flex' }}>
                                         <div style={{ width: "60%", padding: "20px" }}>
                                             <ShippingTaxCoupon
-                                                currency={currency}
+
                                                 couponCode={couponCode}
                                                 setCouponCode={setCouponCode}
                                                 coupon={coupon}
@@ -611,6 +611,7 @@ export const CheckOut = ({ currencyStore }) => {
                                             <OrderSummary
                                                 AppliedCoupon={AppliedCoupon}
                                                 isCouponApplied={isCouponApplied}
+                                                decimal={decimal}
                                                 CouponLoading={CouponLoading}
                                                 currency={currency}
                                                 cartTotal={cartTotal}
