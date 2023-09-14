@@ -116,36 +116,36 @@ const GalleryImagesComponents = (props) => {
                     let cart_id = res?.data?.cartbyUser?.id;
                     const inCartProducts = res?.data?.cartbyUser?.products;
                     inCartProducts.map(inCartProduct => {
-                        if (product._id === inCartProduct.product_id && comboData.some((variant) => variant.id === inCartProduct.variant_id)) {
+                        if (product._id === inCartProduct.productId && comboData.some((variant) => variant.id === inCartProduct.variantId)) {
                             productInCart = true;
                             let Cart = inCartProducts.map(item => {
 
-                                if (comboData.some((variant) => variant.id === item.variant_id)) {
+                                if (comboData.some((variant) => variant.id === item.variantId)) {
                                     return {
-                                        product_id: item?.product_id,
-                                        qty: item.product_id === product?._id ? item?.qty + quantity : item?.qty,
-                                        product_title: item?.product_title,
-                                        product_image: item?.product_image,
-                                        product_price: item?.product_price,
-                                        shipping_class: product?.shipping?.shipping_class,
-                                        tax_class: product?.tax_class,
-                                        variant_id: item?.variant_id,
+                                        productId: item?.productId,
+                                        qty: item.productId === product?._id ? item?.qty + quantity : item?.qty,
+                                        productTitle: item?.productTitle,
+                                        productImage: item?.productImage,
+                                        productPrice: item?.productPrice,
+                                        shippingClass: product?.shipping?.shippingClass,
+                                        taxClass: product?.taxClass,
+                                        variantId: item?.variantId,
                                         attributes: item?.attributes,
-                                        product_quantity: item?.product_quantity,
+                                        productQuantity: item?.productQuantity,
                                     }
                                 }
                                 else {
                                     return {
-                                        product_id: item?.product_id,
+                                        productId: item?.productId,
                                         qty: item?.qty,
-                                        product_title: item?.product_title,
-                                        product_image: item?.product_image,
-                                        product_price: item?.product_price,
-                                        shipping_class: product?.shipping?.shipping_class,
-                                        tax_class: product?.tax_class,
-                                        variant_id: item?.variant_id,
+                                        productTitle: item?.productTitle,
+                                        productImage: item?.productImage,
+                                        productPrice: item?.productPrice,
+                                        shippingClass: product?.shipping?.shippingClass,
+                                        taxClass: product?.taxClass,
+                                        variantId: item?.variantId,
                                         attributes: item?.attributes,
-                                        product_quantity: item?.product_quantity,
+                                        productQuantity: item?.productQuantity,
                                     }
                                 }
                             }
@@ -160,36 +160,36 @@ const GalleryImagesComponents = (props) => {
                                 dispatch(addToCart(variables))
                             })
                         } else if (comboData.length === 0) {
-                            if (product._id === inCartProduct.product_id) {
+                            if (product._id === inCartProduct.productId) {
                                 let Cart = inCartProducts.map(item => {
                                     productInCart = true;
-                                    if (inCartProducts.some((i) => i.product_id === item.product_id)) {
+                                    if (inCartProducts.some((i) => i.productId === item.productId)) {
                                         return {
-                                            product_id: item?.product_id,
-                                            qty: item.product_id === product?._id ? item?.qty + quantity : item?.qty,
-                                            product_title: item?.product_title,
-                                            product_image: item?.product_image,
-                                            product_price: item?.product_price,
-                                            shipping_class: product?.shipping?.shipping_class,
-                                            tax_class: product?.tax_class,
-                                            variant_id: item?.variant_id,
+                                            productId: item?.productId,
+                                            qty: item.productId === product?._id ? item?.qty + quantity : item?.qty,
+                                            productTitle: item?.productTitle,
+                                            productImage: item?.productImage,
+                                            productPrice: item?.productPrice,
+                                            shippingClass: product?.shipping?.shippingClass,
+                                            taxClass: product?.taxClass,
+                                            variantId: item?.variantId,
                                             attributes: item?.attributes,
-                                            product_quantity: item?.product_quantity,
+                                            productQuantity: item?.productQuantity,
                                         }
                                     } else {
 
                                         if (comboData.length === 0) {
                                             return {
-                                                product_id: item?.product_id,
+                                                productId: item?.productId,
                                                 qty: item?.qty,
-                                                product_title: item?.product_title,
-                                                product_image: item?.product_image,
-                                                product_price: item?.product_price,
-                                                shipping_class: product?.shipping?.shipping_class,
-                                                tax_class: product?.tax_class,
-                                                variant_id: item?.variant_id,
+                                                productTitle: item?.productTitle,
+                                                productImage: item?.productImage,
+                                                productPrice: item?.productPrice,
+                                                shippingClass: product?.shipping?.shippingClass,
+                                                taxClass: product?.taxClass,
+                                                variantId: item?.variantId,
                                                 attributes: item?.attributes,
-                                                product_quantity: item?.product_quantity
+                                                productQuantity: item?.productQuantity
                                             }
                                         }
                                     }
@@ -224,17 +224,17 @@ const GalleryImagesComponents = (props) => {
 
                             let variables = {
                                 total: comboData[0]?.pricing?.sellprice * quantity || comboData[0]?.pricing?.price * quantity || product?.pricing?.sellprice * quantity || product?.pricing?.price * quantity,
-                                user_id: id,
-                                product_id: product?._id,
+                                userId: id,
+                                productId: product?._id,
                                 qty: quantity,
-                                product_title: product?.name,
-                                product_image: comboData[0]?.image || product?.feature_image,
-                                product_price: comboData[0]?.pricing?.sellprice || comboData[0]?.pricing?.price || product?.pricing?.sellprice || product?.pricing?.sellprice,
-                                variant_id: comboData[0]?.id,
-                                product_quantity: comboData[0]?.quantity || product?.quantity,
+                                productTitle: product?.name,
+                                productImage: comboData[0]?.image || product?.feature_image,
+                                productPrice: comboData[0]?.pricing?.sellprice || comboData[0]?.pricing?.price || product?.pricing?.sellprice || product?.pricing?.sellprice,
+                                variantId: comboData[0]?.id,
+                                productQuantity: comboData[0]?.quantity || product?.quantity,
                                 attributes: attributesData,
-                                shipping_class: product?.shipping?.shipping_class,
-                                tax_class: product?.tax_class
+                                shippingClass: product?.shipping?.shippingClass,
+                                taxClass: product?.taxClass
                             }
                             mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
                                 router.push("/shopcart")
@@ -244,18 +244,18 @@ const GalleryImagesComponents = (props) => {
                         else {
                             let variables = {
                                 total: product?.pricing?.sellprice * quantity || product?.pricing?.price * quantity,
-                                user_id: id,
-                                product_id: product?._id,
+                                userId: id,
+                                productId: product?._id,
                                 qty: quantity,
-                                product_title: product?.name,
-                                product_image: product?.feature_image,
-                                product_price: product?.pricing?.sellprice || product?.pricing?.price,
-                                variant_id: "",
-                                product_quantity: parseInt(product?.quantity
+                                productTitle: product?.name,
+                                productImage: product?.feature_image,
+                                productPrice: product?.pricing?.sellprice || product?.pricing?.price,
+                                variantId: "",
+                                productQuantity: parseInt(product?.quantity
                                 ),
                                 attributes: [],
-                                shipping_class: product?.shipping?.shipping_class,
-                                tax_class: product?.tax_class
+                                shippingClass: product?.shipping?.shippingClass,
+                                taxClass: product?.taxClass
                             }
                             mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
                                 router.push("/shopcart")
@@ -279,18 +279,18 @@ const GalleryImagesComponents = (props) => {
                 })
                 let variables = {
                     total: comboData[0]?.pricing?.sellprice * quantity || comboData[0]?.pricing?.price * quantity || product?.pricing?.sellprice * quantity || product?.pricing?.price * quantity,
-                    user_id: id,
+                    userId: id,
                     url: product?.url,
                     _id: product?._id,
                     qty: quantity,
                     name: product?.name,
                     feature_image: comboData[0]?.image || product?.feature_image,
                     pricing: comboData[0]?.pricing?.sellprice || comboData[0]?.pricing?.price || product?.pricing?.sellprice || product?.pricing?.sellprice,
-                    variant_id: comboData[0]?.id,
-                    product_quantity: comboData[0]?.quantity || product?.quantity,
+                    variantId: comboData[0]?.id,
+                    productQuantity: comboData[0]?.quantity || product?.quantity,
                     attributes: attributesData,
-                    shipping_class: product?.shipping?.shipping_class,
-                    tax_class: product?.tax_class
+                    shippingClass: product?.shipping?.shippingClass,
+                    taxClass: product?.taxClass
                 }
                 dispatch(addToCart(variables))
                 router.push("/shopcart")

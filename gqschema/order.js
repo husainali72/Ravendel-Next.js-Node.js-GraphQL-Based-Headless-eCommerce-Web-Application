@@ -18,11 +18,11 @@ module.exports = gql`
     tax_amount: String
     coupon_code: String
     discount_amount: String
-    grand_total: String
+    grandTotal: String
   }
 
   input orderProduct {
-    product_id: ID
+    productId: ID
     qty: Int
   }
   type OrderIdRES {
@@ -40,7 +40,7 @@ module.exports = gql`
   extend type Query {
     orders: OrderRES
     order(id: ID!): OrderIdRES
-    orderbyUser(user_id: ID!): OrderByUser
+    orderbyUser(userId: ID!): OrderByUser
   }
 
   extend type Mutation {
@@ -52,13 +52,13 @@ module.exports = gql`
       products: customArray
       sub_total_details: customObject
       sub_total_summary: customObject
-      cart_total : String
+      cartTotal : String
       shipping_amount: String
       tax_amount: String
       coupon_code: String
       attributes:customArray
       discount_amount: String
-      grand_total: String
+      grandTotal: String
     ): statusSchema
     updateOrder(
       id: ID

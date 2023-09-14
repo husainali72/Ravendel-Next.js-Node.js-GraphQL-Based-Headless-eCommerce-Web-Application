@@ -14,7 +14,7 @@ export const GET_SINGLE_PRODUCT_QUERY = gql`
       gallery_image
       meta
       shipping
-      tax_class
+      taxClass
       status
       featured_product
       product_type
@@ -33,7 +33,7 @@ export const GET_ORDER = gql`
   query($id: ID!) {
     productCategory(id: $id) {
       id
-      user_id
+      userId
       status
       shipping
       billing

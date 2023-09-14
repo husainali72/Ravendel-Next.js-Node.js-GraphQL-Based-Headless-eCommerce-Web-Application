@@ -8,7 +8,7 @@ export const APPLY_COUPON_CODE = gql`
   ) 
   {
     message
-    total_coupon
+    totalCoupon
     success
   }
 }`;

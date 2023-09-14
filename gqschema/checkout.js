@@ -2,7 +2,7 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Checkout {
     id: ID
-    user_id: ID
+    userId: ID
     shipping: customObject
     payment: customObject
     products: metaKeyValueArray
@@ -12,7 +12,7 @@ module.exports = gql`
   }
 
   input checkoutProduct {
-    product_id: ID
+    productId: ID
     qty: Int
     total: Float
   }
@@ -20,11 +20,11 @@ module.exports = gql`
   extend type Query {
     checkouts: [Checkout]
     checkout(id: ID!): Checkout
-    checkoutbyUser(user_id: ID!): Checkout
+    checkoutbyUser(userId: ID!): Checkout
   }
 
   extend type Mutation {
-    addCheckout(user_id: ID, products: [checkoutProduct]): Checkout
+    addCheckout(userId: ID, products: [checkoutProduct]): Checkout
     deleteCheckout(id: ID!): Boolean!
   }
 `;

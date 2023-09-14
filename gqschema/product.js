@@ -80,7 +80,7 @@ module.exports = gql`
 
   type ProductVariations {
     id: ID
-    product_id: ID
+    productId: ID
     combination: customArray
     pricing: customObject
     quantity: Float
@@ -113,7 +113,7 @@ module.exports = gql`
     gallery_image: customArray
     meta: customObject
     shipping: customObject
-    tax_class: String
+    taxClass: String
     status: String
     featured_product: Boolean
     product_type: customObject
@@ -235,7 +235,7 @@ module.exports = gql`
       feature_image: Upload
       gallery_image: Upload
       shipping: customObject
-      tax_class: String
+      taxClass: String
       status: String
       featured_product: Boolean
       product_type: customObject
@@ -260,7 +260,7 @@ module.exports = gql`
       update_gallery_image: Upload
       removed_image: customArray
       shipping: customObject
-      tax_class: String
+      taxClass: String
       status: String
       featured_product: Boolean
       product_type: customObject

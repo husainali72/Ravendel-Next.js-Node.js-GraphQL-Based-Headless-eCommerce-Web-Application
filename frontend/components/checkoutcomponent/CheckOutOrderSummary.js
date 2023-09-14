@@ -8,7 +8,7 @@ const OrderSummary = (props) => {
     useEffect(() => {
         var allData = {
             subtotal: subTotal?.toString(),
-            grand_total: cartTotal?.toString(),
+            grandTotal: cartTotal?.toString(),
             discount_amount: coupon?.toString(),
             shipping_amount: delivery?.toString(),
             tax_amount: tax_amount?.toString(),
@@ -42,30 +42,30 @@ const OrderSummary = (props) => {
                         <table className="table">
                             <tbody>
                                 <tr >
-                                    <td className="cart_total_label" >Cart Total</td>
-                                    <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
+                                    <td className="cartTotal_label" >Cart Total</td>
+                                    <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
 
                                         {currency}{getPrice(subTotal, decimal)}
 
                                     </span></td>
                                 </tr>
                                 <tr>
-                                    <td className="cart_total_label">Tax</td>
-                                    <td className="cart_total_amount"> <i className="ti-gift mr-5"> {currency}{getPrice(tax_amount, decimal)}</i></td>
+                                    <td className="cartTotal_label">Tax</td>
+                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5"> {currency}{getPrice(tax_amount, decimal)}</i></td>
                                 </tr>
                                 <tr>
-                                    <td className="cart_total_label">Shipping</td>
+                                    <td className="cartTotal_label">Shipping</td>
 
-                                    {delivery != "0" ? <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>{currency} {getPrice(delivery, decimal)}</td> :
-                                        <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>Free Shipping</td>}
+                                    {delivery != "0" ? <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i>{currency} {getPrice(delivery, decimal)}</td> :
+                                        <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i>Free Shipping</td>}
                                 </tr>
                                 {isCouponApplied && <tr>
-                                    <td className={`cart_total_label ${isCouponApplied && "textSuccess"}`}>Coupon {isCouponApplied && <small> - ({AppliedCoupon})</small>}</td>
-                                    <td className={`cart_total_amount ${isCouponApplied && "textSuccess"}`}><i className="ti-gift mr-5"></i>{"-"} {currency} {getPrice(Number(coupon), decimal)}</td>
+                                    <td className={`cartTotal_label ${isCouponApplied && "textSuccess"}`}>Coupon {isCouponApplied && <small> - ({AppliedCoupon})</small>}</td>
+                                    <td className={`cartTotal_amount ${isCouponApplied && "textSuccess"}`}><i className="ti-gift mr-5"></i>{"-"} {currency} {getPrice(Number(coupon), decimal)}</td>
                                 </tr>}
                                 <tr style={{ borderTop: "2px solid black", marginTop: "15px" }}>
-                                    <td className="cart_total_label" >Total</td>
-                                    <td className="cart_total_amount"><strong><span className="font-xl fw-900 text-brand">
+                                    <td className="cartTotal_label" >Total</td>
+                                    <td className="cartTotal_amount"><strong><span className="font-xl fw-900 text-brand">
                                         {currency}{getPrice(cartTotal, decimal)}
                                     </span></strong></td>
                                 </tr>

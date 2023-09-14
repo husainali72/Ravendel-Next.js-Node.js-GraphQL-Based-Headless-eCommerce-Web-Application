@@ -77,7 +77,7 @@ const Profile = ({ customeraddres }) => {
         try {
             const { data: ordercustomerDataById } = await client.query({
                 query: GET_CUSTOMER_ORDERS_QUERY,
-                variables: { user_id: id },
+                variables: { userId: id },
             })
             customerorder = ordercustomerDataById.orderbyUser.data
             setCustomerOrder(customerorder)
@@ -132,7 +132,7 @@ const Profile = ({ customeraddres }) => {
                                                     )}
                                                 </Col>
                                                 <Col>
-                                                    <strong>Total : {order.grand_total}</strong>
+                                                    <strong>Total : {order.grandTotal}</strong>
                                                 </Col>
                                             </Accordion.Header>
                                             <Accordion.Body>
@@ -143,7 +143,7 @@ const Profile = ({ customeraddres }) => {
                                                     tax={order.tax_amount}
                                                     subtotal={order.subtotal}
                                                     shipping_amount={order.shipping_amount}
-                                                    total={order.grand_total}
+                                                    total={order.grandTotal}
 
                                                 />
                                             </Accordion.Body>

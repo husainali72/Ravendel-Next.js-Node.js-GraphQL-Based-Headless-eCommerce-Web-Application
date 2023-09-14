@@ -550,14 +550,14 @@ const subTotalDetailsEntry = async(data, couponModel, shippingModel, taxModel) =
   const subTotalDetails = {}
   // assign shipping_name
   // let shipping = await shippingModel.findOne({})
-  // shipping.shipping_class.filter(shipClass => {
-  //   if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) subTotalDetails.shipping_name = shipClass.name
+  // shipping.shippingClass.filter(shipClass => {
+  //   if(shipping.global.is_global && shipping.global.shippingClass.toString() === shipClass._id.toString()) subTotalDetails.shipping_name = shipClass.name
   //   else subTotalDetails.shipping_name = "None"
   // })
   // assign tax_name
   // let tax = await taxModel.findOne({})
-  // tax.tax_class.filter(taxClass => {
-  //   if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) subTotalDetails.tax_name = taxClass.name
+  // tax.taxClass.filter(taxClass => {
+  //   if(tax.global.is_global && tax.global.taxClass.toString() === taxClass._id.toString()) subTotalDetails.tax_name = taxClass.name
   //   else subTotalDetails.tax_name = "None"
   // })
   // assign coupon_code, amount, type
@@ -583,9 +583,9 @@ const subTotalSummaryEntry = async(data, couponModel, shippingModel, taxModel) =
   let shippingAmount = 0, taxAmount = 0, couponType, couponAmount = Number(data.discount_amount);
   // get shipping class array and tax class array
   let shippingClasses = await shippingModel.findOne()
-  shippingClasses = shippingClasses.shipping_class
+  shippingClasses = shippingClasses.shippingClass
   let taxClasses = await taxModel.findOne()
-  taxClasses = taxClasses.tax_class
+  taxClasses = taxClasses.taxClass
   // assign couponType
   const coupon = await couponModel.findOne({code: {$regex: `${data.coupon_code}`, $options: "i"} })
   if(!coupon) {
@@ -598,12 +598,12 @@ const subTotalSummaryEntry = async(data, couponModel, shippingModel, taxModel) =
     let shippingValue, taxValue;
     productTotal = product.cost * product.qty
     for(let shippingClass of shippingClasses){
-      shippingClass._id.toString() === product.shipping_class.toString() ?
+      shippingClass._id.toString() === product.shippingClass.toString() ?
         shippingValue = shippingClass.amount :
         shippingValue = 0
     }
     for(let taxClass of taxClasses){
-      taxClass._id.toString() === product.tax_class.toString() ?
+      taxClass._id.toString() === product.taxClass.toString() ?
         taxValue = (taxClass.percentage / 100 * productTotal) :
         taxValue = 0
     }
@@ -636,7 +636,7 @@ const populateYearMonth = (order, orderYear, orderMonth, paymentSuccessSubTotal,
     month: moment(orderMonth+1, "MM").format("MMM"),
     orders: [order],
     GrossSales: order.subtotal,
-    NetSales: order.grand_total,
+    NetSales: order.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal
   }
@@ -644,7 +644,7 @@ const populateYearMonth = (order, orderYear, orderMonth, paymentSuccessSubTotal,
     year: orderYear,
     months: [monthObj],
     GrossSales: order.subtotal,
-    NetSales: order.grand_total,
+    NetSales: order.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal
   }
@@ -658,7 +658,7 @@ module.exports.populateYearMonth = populateYearMonth;
 
 const populateSales = (data, order, paymentSuccessSubTotal, paymentSuccessGrandTotal) => {
   data.GrossSales += order.subtotal
-  data.NetSales += order.grand_total
+  data.NetSales += order.grandTotal
   data.paymentSuccessGrossSales += paymentSuccessSubTotal
   data.paymentSuccessNetSales += paymentSuccessGrandTotal
 }
@@ -734,7 +734,7 @@ module.exports.generateOrderNumber = generateOrderNumber
 
 const prodAvgRating = async(productID, reviewModel, productModel) => {
   let avgRating = 0
-  const reviews = await reviewModel.find({product_id: productID, status: {$ne: "pending"}})
+  const reviews = await reviewModel.find({productId: productID, status: {$ne: "pending"}})
   if(reviews.length >= 5){
     reviews.map(review => {
       avgRating += review.rating
@@ -747,55 +747,71 @@ const prodAvgRating = async(productID, reviewModel, productModel) => {
 }
 module.exports.prodAvgRating = prodAvgRating
 
-const againCalculateCart = async(coupon, cart, productModel, amountDiscount) => {
+const againCalculateCart = async(coupon, args, productModel, amountDiscount) => {
+
   let discountAmount = 0;
-  for(let item of cart){
-    let product = await productModel.findById(item.product_id)
-    if(product){
-                  let includeProduct = true
+  let forCouponCartTotal= 0;
+let IsApplicableDiscount = false;
 
-                  //if coupon category is abilable
-                  if(coupon.category){
-                    if(product.categoryId && product.categoryId.length){
-                      product.categoryId.map(catID => {
-                        if(coupon.include_categories.length){
-                          includeProduct = coupon.include_categories.includes(catID)
+  for(let item of args.cartItem){
+
+        let product = await productModel.findById(item.productId)
+        if(product){
+                      let includeProduct = true
+                    let  includeProductTotal;
+                      //if coupon category is abilable
+                          if(coupon.category){
+
+                            if(product.categoryId && product.categoryId.length){
+                              product.categoryId.map(catID => {
+                                if(coupon.include_categories.length){
+                                  includeProduct = coupon.include_categories.includes(catID)
+                                 
+                                }
+                                else if(coupon.exclude_categories.length){
+                                  includeProduct = !coupon.exclude_categories.includes(catID) 
+                                }
+                              })
+                            }
+
+                      }
+
+                      //if coupon category is not abilable but product is included in category;
+
+                      else if(coupon.product){
+                        if(coupon.include_products.length){
+                          includeProduct = coupon.include_products.includes(product._id.toString()) 
                         }
-                        else if(coupon.exclude_categories.length){
-                          includeProduct = !coupon.exclude_categories.includes(catID) 
+                        else if(coupon.exclude_products.length){
+                          includeProduct = !coupon.exclude_products.includes(product._id.toString());
                         }
-                      })
-                    }
-                  }
-
-                  //if coupon category is not abilable but product is included in category;
-
-                  else if(coupon.product){
-                    if(coupon.include_products.length){
-                      includeProduct = coupon.include_products.includes(product._id.toString()) 
-                    }
-                    else if(coupon.exclude_products.length){
-                      includeProduct = !coupon.exclude_products.includes(product._id.toString()) 
-                    }
-                  }
-
-                // if any product is applicable for discount so includeproduct will be true,or if product category is applicable for discount so include product will be true;
-
-                  if(includeProduct){
-                    amountDiscount ?
-                      discountAmount += parseFloat(coupon.discount_value) :
-                      discountAmount += parseFloat(+item.product_total/100) * parseFloat(coupon.discount_value)
-                  }
-    }
+                      }
+                      if(includeProduct)  includeProductTotal = +item.productTotal;                    
+                        forCouponCartTotal += includeProductTotal;                      
+        } 
   }
+
+          if ((coupon.minimum_spend === 0 || coupon.minimum_spend <= forCouponCartTotal) && (coupon.maximum_spend === 0 || coupon.maximum_spend > forCouponCartTotal)) {
+            
+            IsApplicableDiscount = true;
+
+          }
+
+              if(IsApplicableDiscount){
+                  amountDiscount ?
+                  discountAmount += parseFloat(coupon.discount_value) :
+                  discountAmount += parseFloat(+forCouponCartTotal/100) * parseFloat(coupon.discount_value)
+              }
+
   return discountAmount;
+
 }
 module.exports.againCalculateCart = againCalculateCart
 
 const emptyCart = async(cart) => {
   cart.total = 0
   cart.products = []
-  await cart.save()
+  await cart.save();
 }
 module.exports.emptyCart = emptyCart
 

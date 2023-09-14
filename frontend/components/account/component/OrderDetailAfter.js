@@ -4,7 +4,7 @@ import { Accordion, Col, Container, Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { currencySetter, getPrice } from "../../../utills/helpers";
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.cost * product.qty), 0)
-const OrderDetailAfter = ({ Data, id, date, grand_total, products: orderDetail, billing: billingInfo, shipping: shippingInfo, subtotal, tax, shipping_amount }) => {
+const OrderDetailAfter = ({ Data, id, date, grandTotal, products: orderDetail, billing: billingInfo, shipping: shippingInfo, subtotal, tax, shipping_amount }) => {
     const Details = useSelector(state => state.checkout)
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
@@ -32,7 +32,7 @@ const OrderDetailAfter = ({ Data, id, date, grand_total, products: orderDetail, 
                                     </tr>
                                     <tr>
                                         <th>Subtotal</th>
-                                        <td>{currency} {Data?.subtotal ? getPrice(Data.subtotal, decimal) : getPrice(Data.grand_total, decimal)}</td>
+                                        <td>{currency} {Data?.subtotal ? getPrice(Data.subtotal, decimal) : getPrice(Data.grandTotal, decimal)}</td>
                                     </tr>
                                     {Data.coupon_code && <tr>
                                         <th>Coupon <span className="coupon-applied">({Data.coupon_code})</span></th>
@@ -40,7 +40,7 @@ const OrderDetailAfter = ({ Data, id, date, grand_total, products: orderDetail, 
                                     </tr>}
                                     <tr>
                                         <th>Grandtotal</th>
-                                        <td>{currency} {Data?.grand_total && getPrice(Data.grand_total, decimal)}</td>
+                                        <td>{currency} {Data?.grandTotal && getPrice(Data.grandTotal, decimal)}</td>
                                     </tr>
                                     <tr>
                                         <th>Payment Method</th>
@@ -115,7 +115,7 @@ const OrderDetailAfter = ({ Data, id, date, grand_total, products: orderDetail, 
                                 </tr>
                                 <tr className="total">
                                     <th colSpan={2} style={{ textAlign: 'right' }}>Grandtotal</th>
-                                    <td>{currency} {Data ? getPrice(Data.grand_total, decimal) : getPrice(Data.subtotal, decimal)}</td>
+                                    <td>{currency} {Data ? getPrice(Data.grandTotal, decimal) : getPrice(Data.subtotal, decimal)}</td>
                                 </tr>
                             </table>
                         </div>

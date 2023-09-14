@@ -38,7 +38,7 @@ const OrderSchema = new Schema({
     phone: String,
     notes: String
   }, 
-  cart_total: {
+  cartTotal: {
     type: Number,
     required: true
   },
@@ -57,7 +57,7 @@ const OrderSchema = new Schema({
     type: Number,
     required: true
   },
-  grand_total: {
+  grandTotal: {
     type: Number,
     required: true
   },    
@@ -80,15 +80,15 @@ const OrderSchema = new Schema({
   },
   products: [
     {
-      product_id: {
+      productId: {
         type: Schema.ObjectId,
         required: true
       },
-      product_title: {
+      productTitle: {
         type: String,
         required: true
       },
-      product_price: {
+      productPrice: {
         type: Number,
         required: true
       },
@@ -99,13 +99,13 @@ const OrderSchema = new Schema({
       feature_image: {
         type: Number,
       },
-      product_total : {
+      productTotal : {
         type: Number,
       },
-      product_shipping : {
+      productShipping : {
         type: Number,
       },
-      product_tax : {
+      productTax : {
         type: Number
       },
       attributes: []

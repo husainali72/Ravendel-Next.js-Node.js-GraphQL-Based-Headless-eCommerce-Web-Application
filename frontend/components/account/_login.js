@@ -74,11 +74,11 @@ const LogIn = () => {
                         console.log("equal to zero")
                         var cart = userCart.map(product => {
                             return {
-                                feature_image: { original: product.product_image },
-                                name: product.product_title,
-                                pricing: { price: 0, sellprice: product.product_price },
+                                feature_image: { original: product.productImage },
+                                name: product.productTitle,
+                                pricing: { price: 0, sellprice: product.productPrice },
                                 quantity: product.qty,
-                                _id: product.product_id,
+                                _id: product.productId,
                             }
                         })
                     }
@@ -97,22 +97,22 @@ const LogIn = () => {
                         console.log("greater than zero")
                         var localCart = productsInCart.cart.map(product => {
                             return {
-                                product_id: product._id,
+                                productId: product._id,
                                 qty: product.quantity,
-                                product_title: product.name,
-                                product_image: product.feature_image.original,
-                                product_price: product.pricing.sellprice,
+                                productTitle: product.name,
+                                productImage: product.feature_image.original,
+                                productPrice: product.pricing.sellprice,
                             }
                         });
                     }else{
                         console.log("equal to zero")
                         var localCart = localCartItem.map(product => {
                             return {
-                                product_id: product._id,
+                                productId: product._id,
                                 qty: product.quantity,
-                                product_title: product.name,
-                                product_image: product.feature_image.original,
-                                product_price: product.pricing.sellprice,
+                                productTitle: product.name,
+                                productImage: product.feature_image.original,
+                                productPrice: product.pricing.sellprice,
                             }
                         });
                     }

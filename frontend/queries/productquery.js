@@ -20,7 +20,7 @@ products {
       gallery_image
       meta
       shipping
-      tax_class
+      taxClass
       status
       featured_product
       product_type
@@ -37,7 +37,7 @@ products {
 
       variation_master {
         id
-        product_id
+        productId
         combination
         quantity
         sku
@@ -91,7 +91,7 @@ export const GET_SINGLE_PRODUCT = gql`
       gallery_image
       meta
       shipping
-      tax_class
+      taxClass
       status
       featured_product
       product_type
@@ -113,7 +113,7 @@ export const GET_SINGLE_PRODUCT = gql`
       }
       variation_master {
         id
-        product_id
+        productId
         combination
         quantity
         sku
@@ -137,7 +137,7 @@ export const GET_SINGLE_PRODUCT = gql`
 `;
 export const GET_PRODUCT_REVIEWS = gql`
 query ($id: ID!) {
-    productwisereview(product_id: $id) {
+    productwisereview(productId: $id) {
         data{
       id
       title
@@ -145,7 +145,7 @@ query ($id: ID!) {
         id
         first_name
       }
-      product_id {
+      productId {
         _id
         name
       }
@@ -173,7 +173,7 @@ export const GET_REVIEWS = gql`
           id
           first_name
         }
-        product_id {
+        productId {
           _id
           name
         }
@@ -195,7 +195,7 @@ export const ADD_REVIEW = gql`
   mutation(
     $title: String
     $customer_id: String
-    $product_id: String
+    $productId: String
     $email: String
     $review: String
     $rating: String
@@ -204,7 +204,7 @@ export const ADD_REVIEW = gql`
     addReview(
       title: $title
       customer_id: $customer_id
-      product_id: $product_id
+      productId: $productId
       email: $email
       review: $review
       rating: $rating

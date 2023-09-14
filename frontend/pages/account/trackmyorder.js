@@ -78,7 +78,7 @@ const TrackMyOrder = () => {
                             <strong> Order id : {customerOrder[0]?.id}</strong>
                         </Col>
                         <Col>
-                            <strong>Total : {currency} {getPrice(customerOrder[0]?.grand_total, decimal)}</strong>
+                            <strong>Total : {currency} {getPrice(customerOrder[0]?.grandTotal, decimal)}</strong>
                         </Col>
                     </Accordion.Header>
                     <Accordion.Body>
@@ -90,7 +90,7 @@ const TrackMyOrder = () => {
                             tax={customerOrder[0]?.tax_amount}
                             subtotal={customerOrder[0]?.subtotal}
                             shipping_amount={customerOrder[0]?.shipping_amount}
-                            total={customerOrder[0]?.grand_total}
+                            total={customerOrder[0]?.grandTotal}
                         />
                         <div className="row order-btn-row">
                             <div>

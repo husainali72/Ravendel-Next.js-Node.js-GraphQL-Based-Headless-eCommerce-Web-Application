@@ -27,7 +27,7 @@ const ReviewForm = ({ productId }) => {
         review: "",
         rating: "",
         status: "pending",
-        product_id: productId || "",
+        productId: productId || "",
         customer_id: "",
     }
     const login = useSelector(state => state.login);
@@ -48,7 +48,7 @@ const ReviewForm = ({ productId }) => {
     
 
     useEffect(() => {
-        setReview({ ...review, product_id: productId });
+        setReview({ ...review, productId: productId });
         // setReview({ ...review, customer_id: CustomerId })
         
     }, [productId])

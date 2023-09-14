@@ -169,14 +169,14 @@ mutation($id: ID!, $_id: ID!) {
 
 export const GET_ORDER_BY_CUSTOMER = gql`
 query ($id:ID!){
-  cartbyUser(user_id: $id) {
+  cartbyUser(userId: $id) {
     date
     id
     products
     status
     total
     updated
-    user_id
+    userId
   }
 
 }

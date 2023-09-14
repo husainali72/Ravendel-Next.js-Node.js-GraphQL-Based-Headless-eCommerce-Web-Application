@@ -22,14 +22,14 @@ export const GET_ORDERS_QUERY = gql`
 `;
 export const GET_CUSTOMER_ORDERS_QUERY = gql`
   query ($id:ID!){
-  orderbyUser(user_id: $id) {
+  orderbyUser(userId: $id) {
            data {
             billing
       customer_id
       date
       coupon_code
       discount_amount
-      grand_total
+      grandTotal
       id
       products
       shipping
@@ -63,7 +63,7 @@ export const GET_SINGLE_ORDER_DETAILS = gql`
                 shipping_amount
                 tax_amount
                 discount_amount
-                grand_total
+                grandTotal
             }
             message{
                 message
@@ -83,7 +83,7 @@ export const ADD_ORDER = gql`
               $shipping_amount: String
               $tax_amount: String
               $discount_amount: String
-              $grand_total: String
+              $grandTotal: String
               $coupon_code: String
      ){
        addOrder(
@@ -95,7 +95,7 @@ export const ADD_ORDER = gql`
               shipping_amount:$shipping_amount
                 tax_amount:$tax_amount
                 discount_amount:$discount_amount
-                  grand_total :$grand_total
+                  grandTotal :$grandTotal
                   coupon_code :$coupon_code
     ){
         message

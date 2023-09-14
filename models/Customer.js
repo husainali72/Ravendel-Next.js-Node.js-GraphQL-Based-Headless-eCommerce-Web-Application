@@ -69,7 +69,7 @@ const CustomerSchema = new Schema({
   cart: {
     items: [
       {
-        product_id: {
+        productId: {
           type: Schema.ObjectId,
           required: true,
         },

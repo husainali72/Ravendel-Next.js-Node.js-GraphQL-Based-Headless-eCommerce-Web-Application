@@ -35,12 +35,12 @@ const Orderdetail = (props) => {
     useEffect(() => {
         let cartItem = cart.map((product) => {
             return {
-                product_id: product._id,
+                productId: product._id,
                 name: product.name,
                 cost: product.pricing,
                 qty: product.quantity,
-                tax_class: product?.tax_class,
-                shipping_class: product?.shipping_class,
+                taxClass: product?.taxClass,
+                shippingClass: product?.shippingClass,
                 attributes: product?.attributes || []
             }
         })
@@ -114,26 +114,26 @@ const Orderdetail = (props) => {
                         <table className="table">
                             <tbody>
                                 <tr>
-                                    <td className="cart_total_label">Cart Total</td>
-                                    <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
+                                    <td className="cartTotal_label">Cart Total</td>
+                                    <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
                                         $ {subtotal.toFixed(2)}
                                     </span></td>
                                 </tr>
                                 <tr>
-                                    <td className="cart_total_label">Tax</td>
-                                    <td className="cart_total_amount"> <i className="ti-gift mr-5">{tax_amount === "0" ? "$0.00" : "$ " + tax_amount?.toFixed(2)}</i></td>
+                                    <td className="cartTotal_label">Tax</td>
+                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5">{tax_amount === "0" ? "$0.00" : "$ " + tax_amount?.toFixed(2)}</i></td>
                                 </tr>
                                 <tr>
-                                    <td className="cart_total_label">Shipping</td>
-                                    <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>{delivery === "0" ? "Free Shipping" : "$ " + delivery?.toFixed(2)}</td>
+                                    <td className="cartTotal_label">Shipping</td>
+                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i>{delivery === "0" ? "Free Shipping" : "$ " + delivery?.toFixed(2)}</td>
                                 </tr>
                                 <tr>
-                                    <td className="cart_total_label">Coupon</td>
-                                    <td className="cart_total_amount"><i className="ti-gift mr-5"></i>{coupon === "0" ? "$ 0.00" : "$" + coupon?.toFixed(2)}</td>
+                                    <td className="cartTotal_label">Coupon</td>
+                                    <td className="cartTotal_amount"><i className="ti-gift mr-5"></i>{coupon === "0" ? "$ 0.00" : "$" + coupon?.toFixed(2)}</td>
                                 </tr>
                                 <tr>
-                                    <td className="cart_total_label">Grand Total</td>
-                                    <td className="cart_total_amount"><strong><span className="font-xl fw-900 text-brand">
+                                    <td className="cartTotal_label">Grand Total</td>
+                                    <td className="cartTotal_amount"><strong><span className="font-xl fw-900 text-brand">
                                         $ {cartTotal.toFixed(2)}
                                     </span></strong></td>
                                 </tr>

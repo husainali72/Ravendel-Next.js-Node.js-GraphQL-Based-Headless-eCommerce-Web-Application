@@ -61,44 +61,44 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                     let cartitems2 = [];
 
                     carts?.map(cart => {
-                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variant_id)
-                        // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variant_id)
+                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
+                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
+                        // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
                         if (originalProduct) {
                             const cartProduct = {}
                             if (orginal_attributes) {
                                 cartProduct = {
                                     _id: originalProduct?._id,
-                                    variant_id: cart.variant_id,
+                                    variantId: cart.variantId,
                                     quantity: parseInt(cart?.qty),
-                                    product_quantity: parseInt(orginal_attributes?.quantity),
+                                    productQuantity: parseInt(orginal_attributes?.quantity),
                                     name: originalProduct?.name,
                                     pricing: orginal_attributes?.pricing
                                         ?.sellprice,
-                                    feature_image: orginal_attributes?.product_image
+                                    feature_image: orginal_attributes?.productImage
                                         || orginal_attributes?.feature_image,
                                     url: originalProduct?.url,
                                     attributes: cart.attributes || [],
-                                    shipping_class: originalProduct?.shipping?.shipping_class,
-                                    tax_class: originalProduct?.tax_class,
+                                    shippingClass: originalProduct?.shipping?.shippingClass,
+                                    taxClass: originalProduct?.taxClass,
                                 }
                             }
                             else {
                                 cartProduct = {
                                     _id: originalProduct?._id,
-                                    variant_id: cart.variant_id,
+                                    variantId: cart.variantId,
                                     quantity: parseInt(cart?.qty),
-                                    product_quantity: parseInt(originalProduct?.quantity),
+                                    productQuantity: parseInt(originalProduct?.quantity),
 
                                     name: originalProduct?.name,
                                     pricing: originalProduct?.pricing
                                         ?.sellprice,
-                                    feature_image: originalProduct?.product_image
+                                    feature_image: originalProduct?.productImage
                                         || originalProduct?.feature_image,
                                     url: originalProduct?.url,
                                     attributes: cart.attributes || [],
-                                    shipping_class: originalProduct?.shipping?.shipping_class,
-                                    tax_class: originalProduct?.tax_class,
+                                    shippingClass: originalProduct?.shipping?.shippingClass,
+                                    taxClass: originalProduct?.taxClass,
                                 }
                             }
                             cartitems2.push(cartProduct);
@@ -169,12 +169,12 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
     const IncreaseQuantity = async (item) => {
 
-        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variant_id === item.variant_id ? (item?.product_quantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
+        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
         if (session?.status !== "authenticated") {
-            dispatch(increaseQuantity(item._id, item.product_quantity, item.variant_id))
+            dispatch(increaseQuantity(item._id, item.productQuantity, item.variantId))
         }
         else {
-            const prod = cartItems.find(cart => cart._id === item._id && cart.variant_id === item.variant_id);
+            const prod = cartItems.find(cart => cart._id === item._id && cart.variantId === item.variantId);
             const qty = prod.quantity;
             if (session?.status === "authenticated") {
                 let id = session.data.user.accessToken.customer._id
@@ -183,31 +183,31 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                     cart_id = res.data.cartbyUser.id
                     const cCartItems = [...cartItems];
                     const Cartt = cCartItems.map(product => {
-                        if (product._id === item._id && product.variant_id === item.variant_id) {
+                        if (product._id === item._id && product.variantId === item.variantId) {
                             return {
-                                product_id: product._id,
+                                productId: product._id,
                                 qty: qty,
-                                product_title: product.name,
-                                product_image: product.feature_image,
-                                product_price: product.pricing,
-                                shipping_class: product?.shipping_class,
-                                tax_class: product?.tax_class,
+                                productTitle: product.name,
+                                productImage: product.feature_image,
+                                productPrice: product.pricing,
+                                shippingClass: product?.shippingClass,
+                                taxClass: product?.taxClass,
                                 attributes: product.attributes,
-                                variant_id: product.variant_id,
-                                product_quantity: product.product_quantity
+                                variantId: product.variantId,
+                                productQuantity: product.productQuantity
                             }
                         } else {
                             return {
-                                product_id: product._id,
+                                productId: product._id,
                                 qty: product.quantity,
-                                product_title: product.name,
-                                product_image: product.feature_image,
-                                product_price: product.pricing,
-                                shipping_class: product?.shipping_class,
-                                tax_class: product?.tax_class,
+                                productTitle: product.name,
+                                productImage: product.feature_image,
+                                productPrice: product.pricing,
+                                shippingClass: product?.shippingClass,
+                                taxClass: product?.taxClass,
                                 attributes: product.attributes,
-                                variant_id: product.variant_id,
-                                product_quantity: product.product_quantity
+                                variantId: product.variantId,
+                                productQuantity: product.productQuantity
                             }
                         }
                     })
@@ -224,19 +224,19 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     const DecreaseQuantity = (item) => {
         if (item.quantity > 1) {
             setIsQuantityBtnLoading(true)
-            setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variant_id === item.variant_id ? (itemm.quantity -= 1) : itemm.qyantity))
+            setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (itemm.quantity -= 1) : itemm.qyantity))
             setQuantity(item.quantity)
             if (session?.status !== "authenticated") {
                 let variables = {
                     _id: item._id,
-                    variant_id: item.variant_id
+                    variantId: item.variantId
                 }
                 dispatch(decreaseQuantity(variables))
 
                 setIsQuantityBtnLoading(false)
             } else {
 
-                const prod = cartItems.find(cart => cart._id === item._id && cart.variant_id === item.variant_id);
+                const prod = cartItems.find(cart => cart._id === item._id && cart.variantId === item.variantId);
                 const qty = prod.quantity;
                 if (session?.status === "authenticated") {
                     let id = session.data.user.accessToken.customer._id
@@ -245,31 +245,31 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                         cart_id = res.data.cartbyUser.id
                         const cCartItems = [...cartItems];
                         const Cartt = cCartItems.map(product => {
-                            if (product._id === item._id && product.variant_id === item.variant_id) {
+                            if (product._id === item._id && product.variantId === item.variantId) {
                                 return {
-                                    product_id: product._id,
+                                    productId: product._id,
                                     qty: qty,
-                                    product_title: product.name,
-                                    product_image: product.feature_image?.original,
-                                    product_price: product.pricing,
+                                    productTitle: product.name,
+                                    productImage: product.feature_image?.original,
+                                    productPrice: product.pricing,
                                     attributes: product.attributes,
-                                    variant_id: product.variant_id,
-                                    product_quantity: product.product_quantity,
-                                    shipping_class: product?.shipping_class,
-                                    tax_class: product?.tax_class,
+                                    variantId: product.variantId,
+                                    productQuantity: product.productQuantity,
+                                    shippingClass: product?.shippingClass,
+                                    taxClass: product?.taxClass,
                                 }
                             } else {
                                 return {
-                                    product_id: product._id,
+                                    productId: product._id,
                                     qty: product.quantity,
-                                    product_title: product.name,
-                                    product_image: product.feature_image?.original,
-                                    product_price: product.pricing,
+                                    productTitle: product.name,
+                                    productImage: product.feature_image?.original,
+                                    productPrice: product.pricing,
                                     attributes: product.attributes,
-                                    variant_id: product.variant_id,
-                                    product_quantity: product.product_quantity,
-                                    shipping_class: product?.shipping_class,
-                                    tax_class: product?.tax_class,
+                                    variantId: product.variantId,
+                                    productQuantity: product.productQuantity,
+                                    shippingClass: product?.shippingClass,
+                                    taxClass: product?.taxClass,
                                 }
                             }
                         })
@@ -281,7 +281,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                         mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
                             let variables = {
                                 _id: item._id,
-                                variant_id: item.variant_id
+                                variantId: item.variantId
                             }
                             // dispatch(decreaseQuantity(variables))
                             console.log("update res while decreasing qtyyyy", res)
@@ -298,7 +298,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         let idx = cartItems.findIndex(cartItem => cartItem._id === item._id)
         const prod = cartItems.find(cart => cart._id === item._id);
         if (session?.status === "authenticated") {
-            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id || (itemm._id === item._id && itemm.variant_id !== item.variant_id))
+            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id || (itemm._id === item._id && itemm.variantId !== item.variantId))
             setCartItems(cartItemsfilter);
             let id = session.data.user.accessToken.customer._id
             let token = session.data.user.accessToken.token
@@ -308,8 +308,8 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
                 let variables = {
                     id: cart_id,
-                    product_id: item._id,
-                    variant_id: item.variant_id
+                    productId: item._id,
+                    variantId: item.variantId
                 }
 
                 mutation(DELETE_CART_PRODUCTS, variables, token).then(res => dispatch(removeCartItemAction(variables)))
@@ -318,10 +318,10 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
             })
         }
         else {
-            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== product || (itemm._id === product && itemm.variant_id !== item.variant_id))
+            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== product || (itemm._id === product && itemm.variantId !== item.variantId))
             let variables = {
                 id: product,
-                variant_id: item.variant_id
+                variantId: item.variantId
             }
             dispatch(removeCartItemAction(variables));
             setCartItems(cartItemsfilter);
@@ -329,7 +329,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
     }
     const doApplyCouponCode = () => {
-        let cart = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity } })
+        let cart = cartItems.map((product) => { return { productId: product._id, qty: product.quantity } })
         let variables = {
             coupon_code: couponCode, cart: cart
         }
@@ -346,13 +346,13 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         let carts = productsCard.map(product => {
 
             return {
-                product_id: product._id,
+                productId: product._id,
                 qty: product.quantity,
                 total: product.pricing.sellprice * product.quantity
             }
         })
         let variables = {
-            user_id: id,
+            userId: id,
             products: carts,
         }
     }
@@ -367,11 +367,11 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         }
         let carts = productsCard.cart.map(product => {
             return {
-                product_id: product?._id,
+                productId: product?._id,
                 qty: product?.quantity,
-                product_title: product?.name,
-                product_image: product?.feature_image?.original,
-                product_price: product?.pricing?.sellprice ? product?.pricing?.sellprice : product?.pricing?.price
+                productTitle: product?.name,
+                productImage: product?.feature_image?.original,
+                productPrice: product?.pricing?.sellprice ? product?.pricing?.sellprice : product?.pricing?.price
             }
         })
         let variables = {
@@ -455,18 +455,18 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                                 <table className="table">
                                                     <tbody>
                                                         <tr>
-                                                            <td className="cart_total_label">Cart Subtotal</td>
-                                                            <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
+                                                            <td className="cartTotal_label">Cart Subtotal</td>
+                                                            <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
                                                                 {currency}  {getPrice(CalculateProductTotal(cartItems), decimal)}
                                                             </span></td>
                                                         </tr>
                                                         <tr>
-                                                            <td className="cart_total_label">Shipping</td>
-                                                            <td className="cart_total_amount"> <i className="ti-gift mr-5"></i> Free Shipping</td>
+                                                            <td className="cartTotal_label">Shipping</td>
+                                                            <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i> Free Shipping</td>
                                                         </tr>
                                                         <tr>
-                                                            <td className="cart_total_label">Total</td>
-                                                            <td className="cart_total_amount"><strong><span className="font-xl fw-900 text-brand">
+                                                            <td className="cartTotal_label">Total</td>
+                                                            <td className="cartTotal_amount"><strong><span className="font-xl fw-900 text-brand">
                                                                 {currency} {getPrice(CalculateProductTotal(cartItems), decimal)}
                                                             </span></strong></td>
                                                         </tr>
@@ -519,12 +519,12 @@ export async function getServerSideProps(context) {
         //     let customercarts = CartsData?.cartbyUser.products
         //     let cartitems = await customercarts.map(product => {
         //         return {
-        //             _id: product?.product_id,
-        //             name: product?.product_title,
+        //             _id: product?.productId,
+        //             name: product?.productTitle,
         //             pricing: {
         //                 sellprice: product?.total
         //             },
-        //             feature_image: { thumbnail: product?.product_image === undefined ? null : product?.product_image },
+        //             feature_image: { thumbnail: product?.productImage === undefined ? null : product?.productImage },
         //             quantity: product?.qty
         //         }
         //     })

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 // Create Schema
 const ProductAttributeVariationSchema = new Schema(
   {
-    product_id: {
+    productId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "Product",

@@ -80,7 +80,7 @@ router.post("/delete_image", auth, async (req, res) => {
 router.post("/add_log", auth, async (req, res) => {
   try {
     const ProductLog = new ProductLog({
-      product_id: req.body.product_id,
+      productId: req.body.productId,
       customer_id: req.body.customer_id || null,
     });
 
@@ -220,8 +220,8 @@ router.get("/testing", async (req, res) => {
     res.json({
       success: true,
       response: await ProductAttributeVariation.find({
-        product_id: "5f1182f226104110805cb3a0",
-      }), //ProductAttributeVariation.find({ combination: { $in : {product_id: { $exists: true } } }  }),
+        productId: "5f1182f226104110805cb3a0",
+      }), //ProductAttributeVariation.find({ combination: { $in : {productId: { $exists: true } } }  }),
     });
   } catch (error) {
     console.log(error);
@@ -247,7 +247,7 @@ router.get("/update_product", async (req, res) => {
   /* const result = await ProductAttributeVariation.find({
     price: { $gte: 0, $lte: 200 },
   })
-    .populate({ path: "product_id" })
+    .populate({ path: "productId" })
     .select(["price", "createdAt"]); */
 
   /* const result = await ProductAttributeVariation.find({
@@ -266,7 +266,7 @@ router.get("/update_product", async (req, res) => {
       },
     ],
   })
-    .populate({ path: "product_id", select: ["name", "pricing"] })
+    .populate({ path: "productId", select: ["name", "pricing"] })
     .select(["pricing", "createdAt"]); */
 
   const result = await Product.find({

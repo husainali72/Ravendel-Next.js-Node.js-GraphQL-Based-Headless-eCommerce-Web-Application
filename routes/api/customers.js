@@ -83,7 +83,7 @@ router.post("/login", (req, res) => {
     {$lookup: {
       from: "carts",
       localField: "_id",
-      foreignField: "user_id",
+      foreignField: "userId",
       as: "cartId"
     }},
     {$set: {cartId: {$arrayElemAt: ["$cartId._id", 0]}}},
@@ -605,7 +605,7 @@ router.post("/addtocart", auth, async (req, res) => {
   if (!req.body.customer_id) {
     return res.status(400).json("Customer Id field is required");
   }
-  if (!req.body.product_id) {
+  if (!req.body.productId) {
     return res.status(400).json("Product Id field is required");
   }
   if (!req.body.qty) {
@@ -617,7 +617,7 @@ router.post("/addtocart", auth, async (req, res) => {
     return res.status(404).json("Customer Id not found");
   }
   const cdata =  {
-        product_id: req.body.product_id, 
+        productId: req.body.productId, 
         qty: req.body.qty
     }
   var customer_cart = customer.cart.items;
@@ -629,7 +629,7 @@ router.post("/addtocart", auth, async (req, res) => {
   }else{
 
     for (let i in customer_cart) {
-      if (customer_cart[i].product_id == req.body.product_id) {
+      if (customer_cart[i].productId == req.body.productId) {
         return res.status(400).json("Product already exist in a cart");
       }
       // }else{
@@ -659,7 +659,7 @@ router.post("/updatecart", auth, async (req, res) => {
   if (!req.body.customer_id) {
     return res.status(400).json("Customer Id field is required");
   }
-  if (!req.body.product_id) {
+  if (!req.body.productId) {
     return res.status(400).json("Product Id field is required");
   }
   if (!req.body.qty) {
@@ -671,11 +671,11 @@ router.post("/updatecart", auth, async (req, res) => {
     return res.status(404).json("Customer Id not found");
   }
   const cdata =  {
-        product_id: req.body.product_id, 
+        productId: req.body.productId, 
         qty: req.body.qty
     }
   customer.cart.items = customer.cart.items.map(cart => {
-      if (cart.product_id == req.body.product_id) {
+      if (cart.productId == req.body.productId) {
         cart = cdata;
       }
       return cart;
@@ -697,7 +697,7 @@ router.post("/deleteproductcart", auth, async (req, res) => {
   if (!req.body.customer_id) {
     return res.status(400).json("Customer Id field is required");
   }
-  if (!req.body.product_id) {
+  if (!req.body.productId) {
     return res.status(400).json("Product Id field is required");
   }
   
@@ -710,7 +710,7 @@ router.post("/deleteproductcart", auth, async (req, res) => {
 
   var customer_cart = customer.cart.items;
   for (let i in customer_cart) {
-    if (customer_cart[i].product_id == req.body.product_id) {
+    if (customer_cart[i].productId == req.body.productId) {
       customer.cart.items = [];
       delete customer_cart[i];
       customer.cart.items = customer_cart;
@@ -763,7 +763,7 @@ router.post('/remindCart/:custId', auth, async(req, res) => {
       return res.status(400).json({message: "Something is missing", succes: false})
     
     const existingCustomer = await Customer.findById(req.params.custId)
-    const customerCart = await Cart.findOne({ user_id: req.params.custId })
+    const customerCart = await Cart.findOne({ userId: req.params.custId })
     const mailData ={
       subject: "Checkout Cart",
       mailTemplate: "template",

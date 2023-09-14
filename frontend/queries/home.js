@@ -239,7 +239,7 @@ export const GET_REVIEWS = gql`
           id
           first_name
         }
-        product_id {
+        productId {
           _id
           name
         }
@@ -276,7 +276,7 @@ export const FEATURE_PRODUCT_QUERY = gql`
           status
           variant
           shipping
-          tax_class
+          taxClass
         }
       }
     `;
@@ -297,7 +297,7 @@ export const GET_RECENT_PRODUCTS_QUERY = gql`
       status
       variant
       shipping
-      tax_class
+      taxClass
     }
   }
 `;
@@ -318,7 +318,7 @@ export const GET_RELATED_PRODUCTS_QUERY = gql`
       status
       variant
       shipping
-      tax_class
+      taxClass
     }
   }
 `;
@@ -364,7 +364,7 @@ export const ON_SALE_PRODUCTS_QUERY = gql`
     status
     variant
     shipping
-    tax_class
+    taxClass
     __typename
   }
   }

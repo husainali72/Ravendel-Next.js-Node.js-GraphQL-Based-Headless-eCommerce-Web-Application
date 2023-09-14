@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { API_BASE_URL as baseUrl } from "../config";
 import Link from "next/link";
 import client from "../apollo-client";
-import { GET_CHECKOUT_DETAILS_BY_USER_ID } from "../queries/checkoutquery"
+import { GET_CHECKOUT_DETAILS_BY_userId } from "../queries/checkoutquery"
 import BreadCrumb from "../components/breadcrumb/breadcrumb";
 import { Container, Button, Form } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,7 +21,7 @@ import CreditCards from "../components/checkoutcomponent/myCard/CreditCards";
 import { useRouter } from "next/router";
 import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
-import { CALCULATE_CART_TOTAL, GET_USER_CART, UPDATE_CART_PRODUCT } from "../queries/cartquery";
+import { CALCULATE_cartTotal, GET_USER_CART, UPDATE_CART_PRODUCT } from "../queries/cartquery";
 import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
 import { query2 } from "../utills/cartHelperfun"
 import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
@@ -160,60 +160,60 @@ export const CheckOut = ({ currencyStore }) => {
                     let carts = res?.data?.cartbyUser?.products;
                     let cartitems2 = [];
                     carts?.map(cart => {
-                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variant_id)
-                        // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variant_id)
+                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
+                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
+                        // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
                         if (originalProduct) {
                             const cartProduct = {}
                             if (orginal_attributes) {
                                 cartProduct = {
                                     _id: originalProduct?._id,
-                                    variant_id: cart.variant_id,
+                                    variantId: cart.variantId,
                                     quantity: parseInt(cart?.qty),
-                                    product_quantity: parseInt(orginal_attributes?.quantity),
+                                    productQuantity: parseInt(orginal_attributes?.quantity),
                                     name: originalProduct?.name,
                                     pricing: orginal_attributes?.pricing
                                         ?.sellprice,
-                                    feature_image: orginal_attributes?.product_image
+                                    feature_image: orginal_attributes?.productImage
                                         || orginal_attributes?.feature_image,
                                     url: originalProduct?.url,
                                     attributes: cart.attributes || [],
-                                    shipping_class: originalProduct?.shipping?.shipping_class,
-                                    tax_class: originalProduct?.tax_class,
+                                    shippingClass: originalProduct?.shipping?.shippingClass,
+                                    taxClass: originalProduct?.taxClass,
                                 }
                             }
                             else {
                                 cartProduct = {
                                     _id: originalProduct?._id,
-                                    variant_id: cart.variant_id,
+                                    variantId: cart.variantId,
                                     quantity: parseInt(cart?.qty),
-                                    product_quantity: parseInt(originalProduct?.quantity),
+                                    productQuantity: parseInt(originalProduct?.quantity),
 
                                     name: originalProduct?.name,
                                     pricing: originalProduct?.pricing
                                         ?.sellprice,
-                                    feature_image: originalProduct?.product_image
+                                    feature_image: originalProduct?.productImage
                                         || originalProduct?.feature_image,
                                     url: originalProduct?.url,
                                     attributes: cart.attributes || [],
-                                    shipping_class: originalProduct?.shipping?.shipping_class,
-                                    tax_class: originalProduct?.tax_class,
+                                    shippingClass: originalProduct?.shipping?.shippingClass,
+                                    taxClass: originalProduct?.taxClass,
                                 }
                             }
                             cartitems2.push(cartProduct);
                         }
                     })
                     // carts?.map(cart => {
-                    //     const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
+                    //     const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
                     //     const cartProduct = {
                     //         _id: originalProduct?._id,
                     //         quantity: parseInt(cart?.qty),
                     //         name: originalProduct?.name,
-                    //         pricing: cart?.product_price || originalProduct?.pricing,
+                    //         pricing: cart?.productPrice || originalProduct?.pricing,
                     //         feature_image: originalProduct?.feature_image,
                     //         url: originalProduct?.url,
-                    //         tax_class: originalProduct?.tax_class,
-                    //         shipping_class: originalProduct?.shipping?.shipping_class,
+                    //         taxClass: originalProduct?.taxClass,
+                    //         shippingClass: originalProduct?.shipping?.shippingClass,
                     //         attributes: cart.attributes
                     //     }
                     //     cartitems2.push(cartProduct);
@@ -247,20 +247,20 @@ export const CheckOut = ({ currencyStore }) => {
         checkCart();
     }, []);
     useEffect(() => {
-        let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing * product.quantity } })
+        let cartsData = cartItems.map((product) => { return { productId: product._id, qty: product.quantity, total: product?.pricing * product.quantity } })
         let calculate = {
-            total_coupon: 0.0,
+            totalCoupon: 0.0,
             cart: cartsData
         }
         if (cartsData.length > 0) {
-            query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
+            query2(CALCULATE_cartTotal, calculate, token).then(res => {
 
                 let response = res.data.calculateCart
-                setCartTotal(response?.grand_total)
-                setSubTotal(response?.cart_total)
-                setCoupon(response?.total_coupon)
-                setDelivery(response?.total_shipping)
-                setTax_amount(response?.total_tax)
+                setCartTotal(response?.grandTotal)
+                setSubTotal(response?.cartTotal)
+                setCoupon(response?.totalCoupon)
+                setDelivery(response?.totalShipping)
+                setTax_amount(response?.totalTax)
             })
         }
     }, [cartItems])
@@ -402,9 +402,9 @@ export const CheckOut = ({ currencyStore }) => {
 
         let cart = cartItems.map((product) => {
             return {
-                product_id: product._id,
+                productId: product._id,
                 qty: product.quantity,
-                product_total: (product?.pricing ? product?.pricing * product.quantity : product?.pricing * product.quantity.toString()),
+                productTotal: (product?.pricing ? product?.pricing * product.quantity : product?.pricing * product.quantity.toString()),
             }
         })
         let variables = {
@@ -416,7 +416,7 @@ export const CheckOut = ({ currencyStore }) => {
         setCouponLoading(true)
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
 
-            couponResponse = res.data.calculateCoupon.total_coupon
+            couponResponse = res.data.calculateCoupon.totalCoupon
             if (res.data.calculateCoupon.success) {
                 setBillingDetails((previousDetails) => ({ ...previousDetails, coupon_code: couponCode }))
                 notify(res.data.calculateCoupon.message, true)
@@ -436,19 +436,19 @@ export const CheckOut = ({ currencyStore }) => {
                 setCouponFeild(true);
             }
             if (couponValueGet) {
-                let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
+                let cartsData = cartItems.map((product) => { return { productId: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
                 let calculate = {
-                    total_coupon: couponResponse,
+                    totalCoupon: couponResponse,
                     cart: cartsData,
                 }
 
-                query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
+                query2(CALCULATE_cartTotal, calculate, token).then(res => {
                     let response = res.data.calculateCart
-                    setCartTotal(response?.grand_total)
-                    setSubTotal(response?.cart_total)
+                    setCartTotal(response?.grandTotal)
+                    setSubTotal(response?.cartTotal)
                     setCoupon(couponResponse)
-                    setDelivery(response?.total_shipping)
-                    setTax_amount(response?.total_tax)
+                    setDelivery(response?.totalShipping)
+                    setTax_amount(response?.totalTax)
                 })
             }
         }
@@ -466,7 +466,7 @@ export const CheckOut = ({ currencyStore }) => {
             let response = res.data.addOrder.success
             if (response) {
                 billingDetails.products.forEach(product => {
-                    dispatch(removeCartItemAction(product.product_id))
+                    dispatch(removeCartItemAction(product.productId))
                 })
                 if (session.status === "authenticated") {
                     let id = session.data.user.accessToken.customer._id
@@ -859,12 +859,12 @@ export async function getStaticProps() {
 // export async function getServerSideProps(context) {
 //     const session = await getSession(context)
 //     // console.log("session", session);
-//     let user_id = session?.user?.accessToken?.customer._id
+//     let userId = session?.user?.accessToken?.customer._id
 //     var checkoutDetail = {};
 //     try {
 //         const { data: checkoutData } = await client.query({
-//             query: GET_CHECKOUT_DETAILS_BY_USER_ID,
-//             variables: { user_id }
+//             query: GET_CHECKOUT_DETAILS_BY_userId,
+//             variables: { userId }
 //         });
 //         checkoutDetail = checkoutData.checkoutbyUser
 //         console.log("checkout", checkoutDetail);
