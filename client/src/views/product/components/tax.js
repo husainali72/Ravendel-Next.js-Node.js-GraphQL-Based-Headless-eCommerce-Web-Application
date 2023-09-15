@@ -20,7 +20,7 @@ const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange }) => {
 
   useEffect(() => {
     if (taxState.tax.taxClass.length) {
-      var taxClass = taxState.tax.taxClass[0]._id;
+
       let taxClass = product && taxState.tax.taxClass?.some((taxClass) => taxClass._id === product)
       onTaxInputChange(taxClass ? product : taxClass);
     }

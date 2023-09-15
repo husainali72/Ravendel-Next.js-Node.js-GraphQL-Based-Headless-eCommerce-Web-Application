@@ -34,7 +34,7 @@ export default function Header({ }) {
             })
         }
     }
-    const getHomepageData = () =>{
+    const getHomepageData = () => {
         query(GET_HOMEPAGE_DATA_QUERY).then(res => {
             let homepageData = res?.data?.getSettings;
             setHomeData(homepageData);
@@ -170,7 +170,7 @@ export default function Header({ }) {
                                             <i className="fas fa-shopping-bag font-awesome-icon" style={{ color: "#088178" }} aria-hidden="true"></i>
                                         </a>
                                         {data.status === "authenticated" ? (
-                                            <span className="pro-count blue">{cart?.products?.length}</span>
+                                            <span className="pro-count blue">{cart?.cartItem?.length}</span>
                                         ) : (
                                             <span className="pro-count blue">{cartItem?.length}</span>
                                         )}

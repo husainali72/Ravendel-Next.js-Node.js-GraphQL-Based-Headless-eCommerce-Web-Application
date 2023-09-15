@@ -114,8 +114,8 @@ const GalleryImagesComponents = (props) => {
                 let productInCart = false;
                 query(GET_USER_CART, id, token).then(res => {
                     let cart_id = res?.data?.cartbyUser?.id;
-                    const inCartProducts = res?.data?.cartbyUser?.products;
-                    inCartProducts.map(inCartProduct => {
+                    const inCartProducts = res?.data?.cartbyUser?.cartItem;
+                    inCartProducts?.map(inCartProduct => {
                         if (product._id === inCartProduct.productId && comboData.some((variant) => variant.id === inCartProduct.variantId)) {
                             productInCart = true;
                             let Cart = inCartProducts.map(item => {
@@ -161,7 +161,7 @@ const GalleryImagesComponents = (props) => {
                             })
                         } else if (comboData.length === 0) {
                             if (product._id === inCartProduct.productId) {
-                                let Cart = inCartProducts.map(item => {
+                                let Cart = inCartProducts?.map(item => {
                                     productInCart = true;
                                     if (inCartProducts.some((i) => i.productId === item.productId)) {
                                         return {

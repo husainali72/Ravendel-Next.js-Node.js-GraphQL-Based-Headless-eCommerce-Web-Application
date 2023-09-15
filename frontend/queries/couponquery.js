@@ -1,31 +1,45 @@
 import { gql } from "@apollo/client";
 
 export const APPLY_COUPON_CODE = gql`
-               query($coupon_code: String,$cartItem: [couponCartProducts],$total_shipping : String
-                $total_tax : String,$grand_total:String,$cart_total:String)
+               query($couponCode: String,
+                $cartItem: [couponCartProducts],
+                $totalShipping : String
+                $totalTax : String,
+                $grandTotal:String,
+                $cartTotal:String)
     {
-  calculateCoupon(coupon_code: $coupon_code ,
+  calculateCoupon(couponCode: $couponCode ,
     cartItem: $cartItem,
-    total_shipping:$total_shipping,
-    total_tax:$total_tax,
-    grand_total:$grand_total,
-    cart_total:$cart_total
+    totalShipping:$totalShipping,
+    totalTax:$totalTax,
+    grandTotal:$grandTotal,
+    cartTotal:$cartTotal
 
 
   ) 
   {
     message
-    total_coupon
-    total_coupon
+    totalCoupon
     message
     success
-   
-    cart_total 
-    total_shipping 
-    total_tax 
-  grand_total
-  discount_grand_total 
-    success
+    cartItem{
+      productId
+    qty  
+    productImage 
+    productTitle 
+    productShipping 
+    productTax 
+    productPrice 
+    productTotal 
+    variantId   
+     discountGrandTotal 
+    }
+    cartTotal 
+    totalShipping 
+    totalTax 
+    grandTotal
+    discountGrandTotal 
+
   }
 }`;
 
