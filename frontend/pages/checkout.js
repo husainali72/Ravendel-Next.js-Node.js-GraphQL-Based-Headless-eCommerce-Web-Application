@@ -47,7 +47,7 @@ var billingInfoObject = {
     zip: "",
     state: "",
     city: "",
-    addressLine2: "",
+    address_line2: "",
     address: "",
     phone: "",
     company: "",
@@ -64,7 +64,7 @@ var shippingObject = {
     zip: "",
     state: "",
     city: "",
-    addressLine2: "",
+    address_line2: "",
     address: "",
     phone: "",
     company: "",
@@ -84,23 +84,23 @@ export const CheckOut = ({ currencyStore }) => {
     const dispatch = useDispatch();
     const [islogin, setIsLogin] = useState(false)
     const router = useRouter();
-    let addressBook = [];
+    let address_book = [];
     let customerId = "";
     let token = ""
-    const [billingDetails, setBillingDetails] = useState({ customerId: customerId || "" });
+    const [billingDetails, setBillingDetails] = useState({ userId: customerId || "" });
     useEffect(() => {
         if (session.status === "authenticated") {
-            addressBook = session?.data?.user.accessToken.customer.addressBook
+            address_book = session?.data?.user.accessToken.customer.address_book
             token = session.data?.user.accessToken.token
             let customerId = session.data.user.accessToken.customer._id
-            setBillingDetails({ ...billingDetails, customerId: customerId })
+            setBillingDetails({ ...billingDetails, userId: customerId })
 
         }
-    }, [session, session?.data?.user.accessToken.customer.addressBook])
+    }, [session, session?.data?.user.accessToken.customer.address_book])
 
 
     if (session.status === "authenticated") {
-        addressBook = session?.data?.user.accessToken.customer.addressBook
+        address_book = session?.data?.user.accessToken.customer.address_book
         token = session.data?.user.accessToken.token
         customerId = session.data.user.accessToken.customer._id
 
@@ -139,7 +139,7 @@ export const CheckOut = ({ currencyStore }) => {
 
     useEffect(() => {
         if (session.status === "authenticated") {
-            addressBook = session?.data?.user.accessToken.customer.addressBook
+            address_book = session?.data?.user.accessToken.customer.address_book
             token = session.data?.user.accessToken.token
             customerId = session.data.user.accessToken.customer._id
             setIsLogin(true)
@@ -156,12 +156,10 @@ export const CheckOut = ({ currencyStore }) => {
                 let token = session2.user.accessToken.token;
                 let variables = { id: id }
                 mutation(GET_USER_CART, variables).then(res => {
-
                     setCartId(res?.data?.cartbyUser?.id)
-                    let carts = res?.data?.cartbyUser?.cartItem;
+                    let carts = res?.data?.cartbyUser;
                     let cartitems2 = [];
-                    carts?.map(cart => {
-
+                    carts?.availableItem?.map(cart => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
                         const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
                         // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
@@ -174,8 +172,8 @@ export const CheckOut = ({ currencyStore }) => {
                                     quantity: parseInt(cart?.qty),
                                     productQuantity: parseInt(orginal_attributes?.quantity),
                                     name: originalProduct?.name,
-                                    pricing: orginal_attributes?.pricing
-                                        ?.sellprice,
+                                    pricing: (orginal_attributes?.pricing
+                                        ?.sellprice * cart?.qty),
                                     feature_image: orginal_attributes?.productImage
                                         || orginal_attributes?.feature_image,
                                     url: originalProduct?.url,
@@ -192,8 +190,8 @@ export const CheckOut = ({ currencyStore }) => {
                                     productQuantity: parseInt(originalProduct?.quantity),
 
                                     name: originalProduct?.name,
-                                    pricing: originalProduct?.pricing
-                                        ?.sellprice,
+                                    pricing: (originalProduct?.pricing
+                                        ?.sellprice * cart?.qty),
                                     feature_image: originalProduct?.productImage
                                         || originalProduct?.feature_image,
                                     url: originalProduct?.url,
@@ -230,7 +228,6 @@ export const CheckOut = ({ currencyStore }) => {
         }
         getProducts();
     }, [cartProducts, allProducts]);
-
     useEffect(() => {
         const checkCart = async () => {
             const session2 = await getSession();
@@ -255,7 +252,6 @@ export const CheckOut = ({ currencyStore }) => {
             // total_coupon: '0.0',
             cartItem: cartsData
         }
-        console.log(cartsData, 'cartsData')
         if (cartsData.length > 0) {
             query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
 
@@ -323,7 +319,6 @@ export const CheckOut = ({ currencyStore }) => {
     };
     const getCalculationDetails = (val) => {
         val.cartTotal = val.subtotal
-        val.discount_amount = val?.discount_amount || '0'
         delete val.subtotal
         // let data = { ...val, cart_total: val.subTotal }
         setBillingDetails({ ...billingDetails, ...val });
@@ -362,29 +357,29 @@ export const CheckOut = ({ currencyStore }) => {
             zip: address.pincode,
             state: address.state,
             city: address.city,
-            address: address.addressLine1 + ", " + address.addressLine1,
-            addressLine2: address.addressLine1,
-            addressLine1: address.addressLine2,
+            address: address.address_line1 + ", " + address.address_line1,
+            addressLine2: address.address_line1,
+            addressLine1: address.address_line2,
             phone: address.phone,
             company: address.company,
             email: address.email,
-            lastname: address.lastName,
-            firstname: address.firstName,
+            lastname: address.last_name,
+            firstname: address.first_name,
             country: address.country,
-            paymentMethod: address.paymentMethod,
+            payment_method: address.payment_method,
         }
         let billing = {
             zip: address.pincode,
             state: address.state,
             city: address.city,
-            address: address.addressLine1 + ', ' + address.addressLine2,
-            addressLine2: address.addressLine1,
-            addressLine1: address.addressLine2,
+            address: address.address_line1 + ', ' + address.address_line2,
+            addressLine2: address.address_line1,
+            addressLine1: address.address_line2,
             phone: address.phone,
             company: address.company,
             email: address.email,
-            lastname: address.lastName,
-            firstname: address.firstName,
+            lastname: address.last_name,
+            firstname: address.first_name,
             country: address.country,
         }
         if (!shippingAdd) {
@@ -435,7 +430,7 @@ export const CheckOut = ({ currencyStore }) => {
 
             couponResponse = res?.data?.calculateCoupon
             if (res?.data?.calculateCoupon.success) {
-                setBillingDetails((previousDetails) => ({ ...previousDetails, coupon_code: couponCode }))
+                setBillingDetails((previousDetails) => ({ ...previousDetails, couponCode: couponCode }))
                 notify(res?.data?.calculateCoupon?.message, true)
                 setIsCouponApplied(true)
             }
@@ -449,7 +444,6 @@ export const CheckOut = ({ currencyStore }) => {
             if (!res?.data?.laoding) {
                 // couponResponse?.grandTotal && !isNaN(couponResponse?.grandTotal) && !couponResponse?.discountGrandTotal ? couponResponse?.grandTotal : (couponResponse?.discountGrandTotal && !isNaN(couponResponse?.discountGrandTotal) ? couponResponse?.discountGrandTotal : "0")
                 let grandTotal = couponResponse?.discountGrandTotal ? couponResponse?.discountGrandTotal : couponResponse?.grandTotal
-                console.log(grandTotal, 'grand')
                 setCoupon(couponResponse?.totalCoupon && !isNaN(couponResponse?.totalCoupon) ? couponResponse?.totalCoupon : "0")
                 setAppliedCoupon(couponCode)
                 setCartTotal(!isNaN(grandTotal) ? grandTotal : '0')
@@ -483,17 +477,18 @@ export const CheckOut = ({ currencyStore }) => {
         ).finally(() => setCouponLoading(false))
 
     }
-    console.log("coupon,", coupon)
+
     const detailsOfBill = billingDetails
     const handleOrderPlaced = (e) => {
         e.preventDefault();
-        if (billingDetails.billing.paymentMethod === "stripe") {
+        if (billingDetails.billing.payment_method === "stripe") {
             stripeCheckout(billingDetails, cartItems, baseUrl)
         }
         dispatch(checkoutDetailAction(billingDetails));
-        console.log(billingDetails, 'billingDetails')
+
         mutation(ADD_ORDER, billingDetails, token).then(res => {
             let response = res.data.addOrder.success
+
             if (response) {
                 billingDetails.products.forEach(product => {
                     dispatch(removeCartItemAction(product.productId))
@@ -508,6 +503,7 @@ export const CheckOut = ({ currencyStore }) => {
                         products: [],
                         total: 0
                     }
+
                     mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("delet res while auth ", res))
 
                 }
@@ -522,6 +518,7 @@ export const CheckOut = ({ currencyStore }) => {
         }
         )
     }
+
     if (islogin) {
         switch (formStep) {
             case 1:
@@ -538,9 +535,10 @@ export const CheckOut = ({ currencyStore }) => {
                                     />
                                     <div className="col-lg-12 first-checkout-page">
                                         <div style={{ padding: "20px", maxWidth: "700px" }}>
+
                                             <CustomerDetail
                                                 decimal={decimal}
-                                                addressBook={addressBook}
+                                                addressBook={address_book}
                                                 setBillingInfo={setBillingInfo}
                                                 SelectAddressBook={SelectAddressBook}
                                                 billingInfo={billingInfo}
@@ -716,7 +714,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 taxAmount={taxAmount}
                                             />
                                             {/* </form> */}
-                                            {billingInfo.paymentMethod === "stripe" &&
+                                            {billingInfo.payment_method === "stripe" &&
                                                 <Stripes
                                                     getOrderDetailsData={getOrderDetailsData}
                                                     billingInfo={billingInfo}
@@ -725,6 +723,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                     cartItems={cartItems}
                                                 />
                                             }
+
                                             <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} onClick={handleOrderPlaced} disabled={!billingInfo.paymentMethod}>Continue </button>
                                         </div>
                                         <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>

@@ -25,7 +25,7 @@ export const GET_CUSTOMER_ORDERS_QUERY = gql`
   orderbyUser(userId: $id) {
            data {
             billing
-      customerId
+            userId
       date
       couponCode
       discountAmount
@@ -36,7 +36,7 @@ export const GET_CUSTOMER_ORDERS_QUERY = gql`
       shippingAmount
       shippingStatus
       paymentStatus
-      subtotal
+      cartTotal
       taxAmount
       updated
   }
@@ -75,28 +75,28 @@ export const GET_SINGLE_ORDER_DETAILS = gql`
 
 export const ADD_ORDER = gql`
   mutation(
-            $customerId: ID
+            $userId: ID
               $billing: customObject
               $shipping: customObject
               $products: customArray
-              $cart_total: String
-              $shipping_amount: String
-              $tax_amount: String
-              $discount_amount: String
-              $grand_total: String
-              $coupon_code: String
+              $cartTotal: String
+              $shippingAmount: String
+              $taxAmount: String
+              $discountAmount: String
+              $grandTotal: String
+              $couponCode: String
      ){
        addOrder(
-                customerId: $customerId
+                userId: $userId
                 shipping: $shipping
                 billing: $billing
                 products: $products
-                cartTotal:$cart_total
-              shipping_amount:$shipping_amount
-                tax_amount:$tax_amount
-                discount_amount:$discount_amount
-                  grand_total :$grand_total
-                  coupon_code :$coupon_code
+                cartTotal:$cartTotal
+              shippingAmount:$shippingAmount
+                taxAmount:$taxAmount
+                discountAmount:$discountAmount
+                  grandTotal :$grandTotal
+                  couponCode :$couponCode
 
                
     ){
