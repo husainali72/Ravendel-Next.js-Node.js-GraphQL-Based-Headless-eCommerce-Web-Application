@@ -23,7 +23,7 @@ const EditAttributeComponent = ({ params }) => {
     values: [],
   });
   const dispatch = useDispatch();
-  const attributeState = useSelector((state) => state.product_attributes);
+  const attributeState = useSelector((state) => state.productAttributes);
   const [loading, setloading] = useState(false);
   useEffect(() => {
     dispatch(attributeAction(ATTRIBUTE_ID));

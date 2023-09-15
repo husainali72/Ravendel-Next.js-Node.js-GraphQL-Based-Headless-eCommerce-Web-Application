@@ -3,7 +3,7 @@ module.exports = gql`
   type Order {
     id: ID
     orderNumber: String
-    customerId: ID
+    userId: ID
     paymentStatus: String
     shippingStatus: String
     shipping: customObject
@@ -43,7 +43,7 @@ module.exports = gql`
 
   extend type Mutation {
     addOrder(
-      customerId: ID
+      userId: ID
       orderNumber: String
       billing: customObject
       shipping: customObject

@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const OrderSchema = new Schema({
-  customerId: {
+  userId: {
     type: Schema.ObjectId,
     required: true
   },
@@ -22,7 +22,7 @@ const OrderSchema = new Schema({
     state: String,
     email: String,
     phone: String,
-    payment_method: String,
+    paymentMethod: String,
     transaction_id: String
   },
   shipping: {

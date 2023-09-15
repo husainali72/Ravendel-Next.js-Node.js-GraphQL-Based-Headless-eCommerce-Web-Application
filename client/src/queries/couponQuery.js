@@ -5,16 +5,16 @@ import gql from "graphql-tag";
 //       id
 //       code
 //       description
-//       discount_type
-//       discount_value
-//       free_shipping
+//       discountType
+//       discountValue
+//       freeShipping
 //       expire
-//       minimum_spend
-//       maximum_spend
+//       minimumSpend
+//       maximumSpend
 //       products
-//       exclude_products
+//       excludeProducts
 //       categories
-//       exclude_categories
+//       excludeCategories
 //       date
 //       updated
 //     }
@@ -27,18 +27,18 @@ const GET_COUPONS = gql`
         id
         code
         description
-        discount_type
-        discount_value
-        free_shipping
+        discountType
+        discountValue
+        freeShipping
         expire
-        minimum_spend
-        maximum_spend
+        minimumSpend
+        maximumSpend
         product
-        exclude_products
-        include_products
+        excludeProducts
+        includeProducts
         category
-        include_categories
-        exclude_categories
+        includeCategories
+        excludeCategories
         date
         updated
       }
@@ -56,16 +56,16 @@ const GET_COUPONS = gql`
 //       id
 //       code
 //       description
-//       discount_type
-//       discount_value
-//       free_shipping
+//       discountType
+//       discountValue
+//       freeShipping
 //       expire
-//       minimum_spend
-//       maximum_spend
+//       minimumSpend
+//       maximumSpend
 //       products
-//       exclude_products
+//       excludeProducts
 //       categories
-//       exclude_categories
+//       excludeCategories
 //       date
 //       updated
 //     }
@@ -78,18 +78,18 @@ const GET_COUPON = gql`
         id
         code
         description
-        discount_type
-        discount_value
-        free_shipping
+        discountType
+        discountValue
+        freeShipping
         expire
-        minimum_spend
-        maximum_spend
+        minimumSpend
+        maximumSpend
         product
-        exclude_products
-        include_products
+        excludeProducts
+        includeProducts
         category
-        include_categories
-        exclude_categories
+        includeCategories
+        excludeCategories
         date
         updated
       }
@@ -105,44 +105,44 @@ const GET_COUPON = gql`
 //   mutation(
 //     $code: String
 //     $description: String
-//     $discount_type: String
-//     $discount_value: String
-//     $free_shipping: Boolean
+//     $discountType: String
+//     $discountValue: String
+//     $freeShipping: Boolean
 //     $expire: String
-//     $minimum_spend: String
-//     $maximum_spend: String
+//     $minimumSpend: String
+//     $maximumSpend: String
 //     $products: customArray
-//     $exclude_products: customArray
+//     $excludeProducts: customArray
 //     $categories: customArray
-//     $exclude_categories: customArray
+//     $excludeCategories: customArray
 //   ) {
 //     addCoupon(
 //       code: $code
 //       description: $description
-//       discount_type: $discount_type
-//       discount_value: $discount_value
-//       free_shipping: $free_shipping
+//       discountType: $discountType
+//       discountValue: $discountValue
+//       freeShipping: $freeShipping
 //       expire: $expire
-//       minimum_spend: $minimum_spend
-//       maximum_spend: $maximum_spend
+//       minimumSpend: $minimumSpend
+//       maximumSpend: $maximumSpend
 //       products: $products
-//       exclude_products: $exclude_products
+//       excludeProducts: $excludeProducts
 //       categories: $categories
-//       exclude_categories: $exclude_categories
+//       excludeCategories: $excludeCategories
 //     ) {
 //       id
 //       code
 //       description
-//       discount_type
-//       discount_value
-//       free_shipping
+//       discountType
+//       discountValue
+//       freeShipping
 //       expire
-//       minimum_spend
-//       maximum_spend
+//       minimumSpend
+//       maximumSpend
 //       products
-//       exclude_products
+//       excludeProducts
 //       categories
-//       exclude_categories
+//       excludeCategories
 //       date
 //       updated
 //     }
@@ -152,34 +152,34 @@ const ADD_COUPON = gql`
   mutation (
     $code: String
     $description: String
-    $discount_type: String
-    $discount_value: Float
-    $free_shipping: Boolean
+    $discountType: String
+    $discountValue: Float
+    $freeShipping: Boolean
     $expire: String
-    $minimum_spend: Int
-    $maximum_spend: Int
+    $minimumSpend: Int
+    $maximumSpend: Int
     $product: Boolean
-    $include_products: customArray
-    $exclude_products: customArray
+    $includeProducts: customArray
+    $excludeProducts: customArray
     $category: Boolean
-    $include_categories: customArray
-    $exclude_categories: customArray
+    $includeCategories: customArray
+    $excludeCategories: customArray
   ) {
     addCoupon(
       code: $code
       description: $description
-      discount_type: $discount_type
-      discount_value: $discount_value
-      free_shipping: $free_shipping
+      discountType: $discountType
+      discountValue: $discountValue
+      freeShipping: $freeShipping
       expire: $expire
-      minimum_spend: $minimum_spend
-      maximum_spend: $maximum_spend
+      minimumSpend: $minimumSpend
+      maximumSpend: $maximumSpend
       product: $product
-      include_products: $include_products
-      exclude_products: $exclude_products
+      includeProducts: $includeProducts
+      excludeProducts: $excludeProducts
       category: $category
-      include_categories: $include_categories
-      exclude_categories: $exclude_categories
+      includeCategories: $includeCategories
+      excludeCategories: $excludeCategories
     ) {
       message
       success
@@ -192,45 +192,45 @@ const ADD_COUPON = gql`
 //     $id: ID!
 //     $code: String
 //     $description: String
-//     $discount_type: String
-//     $discount_value: String
-//     $free_shipping: Boolean
+//     $discountType: String
+//     $discountValue: String
+//     $freeShipping: Boolean
 //     $expire: String
-//     $minimum_spend: String
-//     $maximum_spend: String
+//     $minimumSpend: String
+//     $maximumSpend: String
 //     $products: customArray
-//     $exclude_products: customArray
+//     $excludeProducts: customArray
 //     $categories: customArray
-//     $exclude_categories: customArray
+//     $excludeCategories: customArray
 //   ) {
 //     updateCoupon(
 //       id: $id
 //       code: $code
 //       description: $description
-//       discount_type: $discount_type
-//       discount_value: $discount_value
-//       free_shipping: $free_shipping
+//       discountType: $discountType
+//       discountValue: $discountValue
+//       freeShipping: $freeShipping
 //       expire: $expire
-//       minimum_spend: $minimum_spend
-//       maximum_spend: $maximum_spend
+//       minimumSpend: $minimumSpend
+//       maximumSpend: $maximumSpend
 //       products: $products
-//       exclude_products: $exclude_products
+//       excludeProducts: $excludeProducts
 //       categories: $categories
-//       exclude_categories: $exclude_categories
+//       excludeCategories: $excludeCategories
 //     ) {
 //       id
 //       code
 //       description
-//       discount_type
-//       discount_value
-//       free_shipping
+//       discountType
+//       discountValue
+//       freeShipping
 //       expire
-//       minimum_spend
-//       maximum_spend
+//       minimumSpend
+//       maximumSpend
 //       products
-//       exclude_products
+//       excludeProducts
 //       categories
-//       exclude_categories
+//       excludeCategories
 //       date
 //       updated
 //     }
@@ -241,35 +241,35 @@ const UPDATE_COUPON = gql`
     $id: ID!
     $code: String
     $description: String
-    $discount_type: String
-    $discount_value: Float
-    $free_shipping: Boolean
+    $discountType: String
+    $discountValue: Float
+    $freeShipping: Boolean
     $expire: String
-    $minimum_spend: Int
-    $maximum_spend: Int
+    $minimumSpend: Int
+    $maximumSpend: Int
     $product: Boolean
-    $include_products: customArray
-    $exclude_products: customArray
+    $includeProducts: customArray
+    $excludeProducts: customArray
     $category: Boolean
-    $include_categories: customArray
-    $exclude_categories: customArray
+    $includeCategories: customArray
+    $excludeCategories: customArray
   ) {
     updateCoupon(
       id: $id
       code: $code
       description: $description
-      discount_type: $discount_type
-      discount_value: $discount_value
-      free_shipping: $free_shipping
+      discountType: $discountType
+      discountValue: $discountValue
+      freeShipping: $freeShipping
       expire: $expire
-      minimum_spend: $minimum_spend
-      maximum_spend: $maximum_spend
+      minimumSpend: $minimumSpend
+      maximumSpend: $maximumSpend
       product: $product
-      include_products: $include_products
-      exclude_products: $exclude_products
+      includeProducts: $includeProducts
+      excludeProducts: $excludeProducts
       category: $category
-      include_categories: $include_categories
-      exclude_categories: $exclude_categories
+      includeCategories: $includeCategories
+      excludeCategories: $excludeCategories
     ) {
       message
       success
@@ -283,16 +283,16 @@ const UPDATE_COUPON = gql`
 //       id
 //       code
 //       description
-//       discount_type
-//       discount_value
-//       free_shipping
+//       discountType
+//       discountValue
+//       freeShipping
 //       expire
-//       minimum_spend
-//       maximum_spend
+//       minimumSpend
+//       maximumSpend
 //       products
-//       exclude_products
+//       excludeProducts
 //       categories
-//       exclude_categories
+//       excludeCategories
 //       date
 //       updated
 //     }

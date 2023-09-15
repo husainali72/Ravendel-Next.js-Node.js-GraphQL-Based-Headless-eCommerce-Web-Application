@@ -138,7 +138,7 @@ module.exports = gql`
       total: Float
       productId: String
       productTitle: String
-      productPrice: Float
+      productPrice: String
       productImage: String
       qty: Int
       attributes:customArray

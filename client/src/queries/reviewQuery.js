@@ -7,7 +7,7 @@ const GET_REVIEWS = gql`
         title
         customerId {
           id
-          first_name
+          firstName
         }
         productId {
           _id
@@ -35,7 +35,7 @@ const GET_REVIEWS = gql`
 //         title
 //         customerId {
 //           id
-//           first_name
+//           firstName
 //         }
 //         productId {
 //           id
@@ -59,7 +59,7 @@ const GET_REVIEW = gql`
       title
       customerId {
         id
-        first_name
+        firstName
       }
       productId {
         id
@@ -98,7 +98,7 @@ const GET_REVIEW = gql`
 //       title
 //       customerId {
 //         id
-//         first_name
+//         firstName
 //       }
 //       productId {
 //         id
@@ -163,7 +163,7 @@ const ADD_REVIEW = gql`
 //       title
 //       customerId {
 //         id
-//         first_name
+//         firstName
 //       }
 //       productId {
 //         id
@@ -212,7 +212,7 @@ const UPDATE_REVIEW = gql`
 //       title
 //       customerId {
 //         id
-//         first_name
+//         firstName
 //       }
 //       productId {
 //         id

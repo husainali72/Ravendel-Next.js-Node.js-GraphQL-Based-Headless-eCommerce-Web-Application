@@ -11,7 +11,7 @@ const {duplicateData,MESSAGE_RESPONSE} = require("../config/helpers")
 
 module.exports = {
   Query: {
-    product_attributes: async (root, args) => {
+    productAttributes: async (root, args) => {
       return await GET_ALL_FUNC(ProductAttribute, "Product Attribute");
     },
 
@@ -30,7 +30,7 @@ module.exports = {
         "Product Attributes"
       );
     },
-    product_attribute: async (root, args) => {
+    productAttribute: async (root, args) => {
       return await GET_SINGLE_FUNC(
         args.id,
         ProductAttribute,

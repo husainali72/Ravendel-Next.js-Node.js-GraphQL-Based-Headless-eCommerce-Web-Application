@@ -44,7 +44,7 @@ const OrderDetailAfter = ({ Data, id, date, grandTotal, products: orderDetail, b
                                     </tr>
                                     <tr>
                                         <th>Payment Method</th>
-                                        {Data.billing?.payment_method ? <td>{Data.billing?.payment_method} </td> : <td>"Cash On Delivery"</td>}
+                                        {Data.billing?.paymentMethod ? <td>{Data.billing?.paymentMethod} </td> : <td>"Cash On Delivery"</td>}
                                     </tr>
                                 </table>
                             </div>
@@ -57,7 +57,7 @@ const OrderDetailAfter = ({ Data, id, date, grandTotal, products: orderDetail, b
                                         {Data.billing?.firstname} {Data.billing?.lastname} <br />
                                         {Data.billing?.email}  <br />
                                         {Data.billing?.phone}  <br />
-                                        {Data.billing?.address_line1},{Data.billing?.firstname}, <br />
+                                        {Data.billing?.addressLine1},{Data.billing?.firstname}, <br />
                                         {Data.billing?.city}, {Data.billing?.state},{Data.billing?.country}
                                     </p>
                                     <hr />

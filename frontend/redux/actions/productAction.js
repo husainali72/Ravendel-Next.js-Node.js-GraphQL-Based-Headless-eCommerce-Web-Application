@@ -65,7 +65,7 @@ export const getAllAttributes = () => (dispatch) => {
       if (response) {
         return dispatch({
           type: ATTRIBUTES_SUCCESS,
-          payload: response.data.product_attributes.data,
+          payload: response.data.productAttributes.data,
         });
       }
     })

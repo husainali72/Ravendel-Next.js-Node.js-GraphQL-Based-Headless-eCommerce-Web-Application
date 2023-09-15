@@ -77,7 +77,7 @@ const EditReviewComponent = ({ params }) => {
               productId: reviewState.reviews[i].productId._id,
               customer: {
                 value: reviewState.reviews[i].customerId.id,
-                label: reviewState.reviews[i].customerId.first_name,
+                label: reviewState.reviews[i].customerId.firstName,
               },
               product: {
                 value: reviewState.reviews[i].productId._id,
@@ -106,7 +106,7 @@ const EditReviewComponent = ({ params }) => {
     const customerArr = customerState.customers.map((customer) => {
       return {
         value: customer.id,
-        label: customer.first_name,
+        label: customer.firstName,
       };
     });
 

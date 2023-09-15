@@ -20,7 +20,7 @@ const GENERAL_RESPONSE_TILE = gql`
 
 const GET_ATTRIBUTES = gql`
   {
-    product_attributes {
+    productAttributes {
       data {
         ...AttributeTile
       }
@@ -35,7 +35,7 @@ const GET_ATTRIBUTES = gql`
 
 const GET_ATTRIBUTE = gql`
   query ($id: ID!) {
-    product_attribute(id: $id) {
+    productAttribute(id: $id) {
       data {
         ...AttributeTile
       }

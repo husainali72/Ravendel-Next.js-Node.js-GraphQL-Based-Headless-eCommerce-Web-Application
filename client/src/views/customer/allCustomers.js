@@ -58,7 +58,7 @@ const AllCustomersComponent = () => {
         let object = {
           id: customer.id,
           date: customer.date,
-          name: customer.first_name + " " + customer.last_name,
+          name: customer.firstName + " " + customer.lastName,
           email: customer.email
         }
         data.push(object)

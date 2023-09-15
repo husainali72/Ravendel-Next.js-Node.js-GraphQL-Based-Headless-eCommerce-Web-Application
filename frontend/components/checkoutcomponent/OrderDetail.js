@@ -149,27 +149,27 @@ const Orderdetail = (props) => {
                 <div className="payment-method">
                     <h5>Payment Mode</h5>
                     <Form>
-                        <Form.Group value={billingInfo.payment_method}
+                        <Form.Group value={billingInfo.paymentMethod}
                             onChange={(e) => handleBillingInfo(e)}>
                             {['radio'].map((type) => (
                                 <div key={`inline-${type}`} className="mb-3">
                                     <Form.Check
                                         label="Cash on delivery"
-                                        name="payment_method"
+                                        name="paymentMethod"
                                         type={type}
                                         value="Cash On Delivery"
                                         id={`inline-${type}-1`}
                                     />
                                     <Form.Check
                                         label="Stripe"
-                                        name="payment_method"
+                                        name="paymentMethod"
                                         type={type}
                                         value="stripe"
                                         id={`inline-${type}-2`}
                                     />
                                     <Form.Check
                                         label="Credit Card"
-                                        name="payment_method"
+                                        name="paymentMethod"
                                         type={type}
                                         id={`inline-${type}-3`}
                                         value="creditCard"

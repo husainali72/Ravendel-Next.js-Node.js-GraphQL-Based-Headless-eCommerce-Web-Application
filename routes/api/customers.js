@@ -21,10 +21,10 @@ const { default: mongoose } = require("mongoose");
 router.post("/register", (req, res) => {
 
 
-  if (!req.body.first_name) {
+  if (!req.body.firstName) {
     return res.status(400).json({success: false,message: 'First name field is required.' });
   }
-  if (!req.body.last_name) {
+  if (!req.body.lastName) {
     return res.status(400).json({success: false,message: 'Last name field is required.' });
   }
   if (!req.body.email || !/[\w]+?@[\w]+?\.[a-z]{2,4}/.test(req.body.email)) {
@@ -42,8 +42,8 @@ router.post("/register", (req, res) => {
       return res.status(400).json({success: false,message: 'Email already exists.' });
     } else {
       const newCustomer = new Customer({
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
         password: req.body.password,
       });
@@ -99,7 +99,7 @@ router.post("/login", (req, res) => {
     bcrypt.compare(password, customer.password).then((isMatch) => {
       if (isMatch) {
         // customer Matched
-        const payload = { id: customer._id, first_name: customer.first_name,last_name: customer.last_name, email: customer.email,role:'customer' }; // Create JWT Payload
+        const payload = { id: customer._id, firstName: customer.firstName,lastName: customer.lastName, email: customer.email,role:'customer' }; // Create JWT Payload
         // Sign Token
         jwt.sign(
           payload,
@@ -164,8 +164,8 @@ router.get("/reset/:custId",  (req, res) => {
       res.json({
         success: true,
         customerId: customer.id,
-        first_name: customer.first_name,
-        last_name: customer.last_name,
+        firstName: customer.firstName,
+        lastName: customer.lastName,
         email: customer.email,
       });
       // send reset password email
@@ -340,10 +340,10 @@ router.post("/updateprofile", auth, async (req, res) => {
   if (!req.body.customerId) {
     return res.status(400).json({success: false,message: 'Customer Id field is required.' });
   }
-  if (!req.body.first_name) {
+  if (!req.body.firstName) {
     return res.status(400).json({success: false,message: 'First name field is required.' });
   }
-  if (!req.body.last_name) {
+  if (!req.body.lastName) {
     return res.status(400).json({success: false,message: 'Last name field is required.' });
   }
   if (!req.body.company) {
@@ -355,8 +355,8 @@ router.post("/updateprofile", auth, async (req, res) => {
 
   let updatedate = Date.now();
   Customer.findByIdAndUpdate(req.body.customerId, {
-    first_name: req.body.first_name, 
-    last_name: req.body.last_name,
+    firstName: req.body.firstName, 
+    lastName: req.body.lastName,
     company: req.body.company,
     phone: req.body.phone, update: updatedate
 }, {new: true})
@@ -388,14 +388,14 @@ router.post("/addaddressbook", auth, async (req, res) => {
   if (!req.body.customerId) {
     return res.status(400).json({success: false,message: 'Customer Id field is required.' });    
   }
-  if (!req.body.first_name) {
+  if (!req.body.firstName) {
     return res.status(400).json({success: false,message: 'First name field is required.' });    
   }
-  if (!req.body.last_name) {
+  if (!req.body.lastName) {
     return res.status(400).json({success: false,message: 'last name field is required.' });    
   }
 
-  if (!req.body.address_line1) {
+  if (!req.body.addressLine1) {
     return res.status(400).json({success: false,message: 'Address field is required.' });    
   }
 
@@ -416,28 +416,28 @@ router.post("/addaddressbook", auth, async (req, res) => {
     return res.status(404).json({success: false,message: 'Customer not found.' });   
   }
  
-  if (req.body.default_address) {
-    for (let i in customer.address_book) {
-      if (customer.address_book[i].default_address) {
-        customer.address_book[i].default_address = false;
+  if (req.body.defaultAddress) {
+    for (let i in customer.addressBook) {
+      if (customer.addressBook[i].defaultAddress) {
+        customer.addressBook[i].defaultAddress = false;
       }
     }
   }
   const cdata =  {
-        first_name: req.body.first_name, 
-        last_name: req.body.last_name,
+        firstName: req.body.firstName, 
+        lastName: req.body.lastName,
         company: req.body.company,
         phone: req.body.phone,
-        address_line1: req.body.address_line1,
-        address_line2: req.body.address_line2,
+        addressLine1: req.body.addressLine1,
+        addressLine2: req.body.addressLine2,
         city: req.body.city,
         country: req.body.country,
         state: req.body.state,
         pincode: req.body.pincode,
-        default_address: req.body.default_address
+        defaultAddress: req.body.defaultAddress
     }
 
-  customer.address_book.push(cdata);
+  customer.addressBook.push(cdata);
   customer.updated = Date.now();
   await customer.save();
   Customer.findOne({  _id: req.body.customerId }).then((customer) => {
@@ -475,13 +475,13 @@ router.post("/updateaddressbook", auth, async (req, res) => {
   if (!req.body._id) {
     return res.status(400).json({success: false,message: 'Address id field is required.' });
   }
-  if (!req.body.first_name) {
+  if (!req.body.firstName) {
     return res.status(400).json({success: false,message: 'First nmae field is required.' });
   }
-  if (!req.body.last_name) {
+  if (!req.body.lastName) {
     return res.status(400).json({success: false,message: 'Last name field is required.' });
   }
-  if (!req.body.address_line1) {
+  if (!req.body.addressLine1) {
     return res.status(400).json({success: false,message: 'Address1 field is required.' });
   }
   if (!req.body.city) {
@@ -502,22 +502,22 @@ router.post("/updateaddressbook", auth, async (req, res) => {
   }
 
   const cdata =  {
-        first_name: req.body.first_name, 
-        last_name: req.body.last_name,
+        firstName: req.body.firstName, 
+        lastName: req.body.lastName,
         company: req.body.company,
         phone: req.body.phone,
-        address_line1: req.body.address_line1,
-        address_line2: req.body.address_line2,
+        addressLine1: req.body.addressLine1,
+        addressLine2: req.body.addressLine2,
         city: req.body.city,
         country: req.body.country,
         state: req.body.state,
         pincode: req.body.pincode,
-        default_address: req.body.default_address
+        defaultAddress: req.body.defaultAddress
     }
 
-    customer.address_book = customer.address_book.map(address => {
-      if (req.body.default_address) {
-        address.default_address = false;
+    customer.addressBook = customer.addressBook.map(address => {
+      if (req.body.defaultAddress) {
+        address.defaultAddress = false;
       }
 
       if (address._id == req.body._id) {
@@ -567,12 +567,12 @@ router.post("/deleteaddressbook", auth, async (req, res) => {
     return res.status(404).json({success: false,message: 'Customer not found.' });
   }
 
-  var customer_address_book = customer.address_book;
-  for (let i in customer_address_book) {
-    if (customer_address_book[i]._id == req.body._id) {
-      customer.address_book = [];
-      delete customer_address_book[i];
-      customer.address_book = customer_address_book;
+  var customer_addressBook = customer.addressBook;
+  for (let i in customer_addressBook) {
+    if (customer_addressBook[i]._id == req.body._id) {
+      customer.addressBook = [];
+      delete customer_addressBook[i];
+      customer.addressBook = customer_addressBook;
       break;
     }
   }

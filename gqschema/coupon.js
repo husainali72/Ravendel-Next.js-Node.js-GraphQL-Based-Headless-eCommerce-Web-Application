@@ -4,18 +4,18 @@ module.exports = gql`
     id: ID
     code: String
     description: String
-    discount_type: String
-    discount_value: Float
-    free_shipping: Boolean
+    discountType: String
+    discountValue: Float
+    freeShipping: Boolean
     expire: String
-    minimum_spend: Int
-    maximum_spend: Int
+    minimumSpend: Int
+    maximumSpend: Int
     product: Boolean
-    include_products: customArray
-    exclude_products: customArray
+    includeProducts: customArray
+    excludeProducts: customArray
     category: Boolean
-    include_categories: customArray
-    exclude_categories: customArray
+    includeCategories: customArray
+    excludeCategories: customArray
     date: Date
     updated: Date
   }
@@ -50,35 +50,35 @@ module.exports = gql`
     addCoupon(
       code: String
       description: String
-      discount_type: String
-      discount_value: Float
-      free_shipping: Boolean
+      discountType: String
+      discountValue: Float
+      freeShipping: Boolean
       expire: String
-      minimum_spend: Int
-      maximum_spend: Int
+      minimumSpend: Int
+      maximumSpend: Int
       product: Boolean
-      include_products: customArray
-      exclude_products: customArray
+      includeProducts: customArray
+      excludeProducts: customArray
       category: Boolean
-      include_categories: customArray
-      exclude_categories: customArray
+      includeCategories: customArray
+      excludeCategories: customArray
     ): statusSchema
     updateCoupon(
       id: ID!
       code: String
       description: String
-      discount_type: String
-      discount_value: Float
-      free_shipping: Boolean
+      discountType: String
+      discountValue: Float
+      freeShipping: Boolean
       expire: String
-      minimum_spend: Int
-      maximum_spend: Int
+      minimumSpend: Int
+      maximumSpend: Int
       product: Boolean
-      include_products: customArray
-      exclude_products: customArray
+      includeProducts: customArray
+      excludeProducts: customArray
       category: Boolean
-      include_categories: customArray
-      exclude_categories: customArray
+      includeCategories: customArray
+      excludeCategories: customArray
     ): statusSchema
     deleteCoupon(id: ID!): statusSchema
   }

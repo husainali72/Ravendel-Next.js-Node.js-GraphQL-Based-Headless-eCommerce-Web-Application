@@ -47,7 +47,7 @@ var billingInfoObject = {
     zip: "",
     state: "",
     city: "",
-    address_line2: "",
+    addressLine2: "",
     address: "",
     phone: "",
     company: "",
@@ -55,7 +55,7 @@ var billingInfoObject = {
     lastname: "",
     firstname: "",
     country: "UK",
-    payment_method: "",
+    paymentMethod: "",
     transaction_id: ""
 
 };
@@ -64,7 +64,7 @@ var shippingObject = {
     zip: "",
     state: "",
     city: "",
-    address_line2: "",
+    addressLine2: "",
     address: "",
     phone: "",
     company: "",
@@ -72,7 +72,7 @@ var shippingObject = {
     lastname: "",
     firstname: "",
     country: "UK",
-    payment_method: "",
+    paymentMethod: "",
 };
 
 var savedShippingInfo;
@@ -84,23 +84,23 @@ export const CheckOut = ({ currencyStore }) => {
     const dispatch = useDispatch();
     const [islogin, setIsLogin] = useState(false)
     const router = useRouter();
-    let address_book = [];
+    let addressBook = [];
     let customerId = "";
     let token = ""
     const [billingDetails, setBillingDetails] = useState({ customerId: customerId || "" });
     useEffect(() => {
         if (session.status === "authenticated") {
-            address_book = session?.data?.user.accessToken.customer.address_book
+            addressBook = session?.data?.user.accessToken.customer.addressBook
             token = session.data?.user.accessToken.token
             let customerId = session.data.user.accessToken.customer._id
             setBillingDetails({ ...billingDetails, customerId: customerId })
 
         }
-    }, [session, session?.data?.user.accessToken.customer.address_book])
+    }, [session, session?.data?.user.accessToken.customer.addressBook])
 
 
     if (session.status === "authenticated") {
-        address_book = session?.data?.user.accessToken.customer.address_book
+        addressBook = session?.data?.user.accessToken.customer.addressBook
         token = session.data?.user.accessToken.token
         customerId = session.data.user.accessToken.customer._id
 
@@ -138,7 +138,7 @@ export const CheckOut = ({ currencyStore }) => {
 
     useEffect(() => {
         if (session.status === "authenticated") {
-            address_book = session?.data?.user.accessToken.customer.address_book
+            addressBook = session?.data?.user.accessToken.customer.addressBook
             token = session.data?.user.accessToken.token
             customerId = session.data.user.accessToken.customer._id
             setIsLogin(true)
@@ -359,29 +359,29 @@ export const CheckOut = ({ currencyStore }) => {
             zip: address.pincode,
             state: address.state,
             city: address.city,
-            address: address.address_line1 + ", " + address.address_line1,
-            address_line2: address.address_line1,
-            address_line1: address.address_line2,
+            address: address.addressLine1 + ", " + address.addressLine1,
+            addressLine2: address.addressLine1,
+            addressLine1: address.addressLine2,
             phone: address.phone,
             company: address.company,
             email: address.email,
-            lastname: address.last_name,
-            firstname: address.first_name,
+            lastname: address.lastName,
+            firstname: address.firstName,
             country: address.country,
-            payment_method: address.payment_method,
+            paymentMethod: address.paymentMethod,
         }
         let billing = {
             zip: address.pincode,
             state: address.state,
             city: address.city,
-            address: address.address_line1 + ', ' + address.address_line2,
-            address_line2: address.address_line1,
-            address_line1: address.address_line2,
+            address: address.addressLine1 + ', ' + address.addressLine2,
+            addressLine2: address.addressLine1,
+            addressLine1: address.addressLine2,
             phone: address.phone,
             company: address.company,
             email: address.email,
-            lastname: address.last_name,
-            firstname: address.first_name,
+            lastname: address.lastName,
+            firstname: address.firstName,
             country: address.country,
         }
         if (!shippingAdd) {
@@ -466,7 +466,7 @@ export const CheckOut = ({ currencyStore }) => {
     const detailsOfBill = billingDetails
     const handleOrderPlaced = (e) => {
         e.preventDefault();
-        if (billingDetails.billing.payment_method === "stripe") {
+        if (billingDetails.billing.paymentMethod === "stripe") {
             stripeCheckout(billingDetails, cartItems, baseUrl)
         }
         dispatch(checkoutDetailAction(billingDetails));
@@ -519,7 +519,7 @@ export const CheckOut = ({ currencyStore }) => {
                                         <div style={{ padding: "20px", maxWidth: "700px" }}>
                                             <CustomerDetail
                                                 decimal={decimal}
-                                                address_book={address_book}
+                                                addressBook={addressBook}
                                                 setBillingInfo={setBillingInfo}
                                                 SelectAddressBook={SelectAddressBook}
                                                 billingInfo={billingInfo}
@@ -695,7 +695,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 taxAmount={taxAmount}
                                             />
                                             {/* </form> */}
-                                            {billingInfo.payment_method === "stripe" &&
+                                            {billingInfo.paymentMethod === "stripe" &&
                                                 <Stripes
                                                     getOrderDetailsData={getOrderDetailsData}
                                                     billingInfo={billingInfo}
@@ -704,7 +704,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                     cartItems={cartItems}
                                                 />
                                             }
-                                            <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} onClick={handleOrderPlaced} disabled={!billingInfo.payment_method}>Continue </button>
+                                            <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} onClick={handleOrderPlaced} disabled={!billingInfo.paymentMethod}>Continue </button>
                                         </div>
                                         <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
                                             <OrderSummary

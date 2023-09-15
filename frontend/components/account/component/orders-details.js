@@ -69,7 +69,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                     </tr>
                                     <tr>
                                         <th>Payment Method</th>
-                                        {billingInfo?.payment_method ? <td>{billingInfo?.payment_method} </td> : <td>"Cash On Delivery"</td>}
+                                        {billingInfo?.paymentMethod ? <td>{billingInfo?.paymentMethod} </td> : <td>"Cash On Delivery"</td>}
                                     </tr>
                                 </table>
                             </div>
@@ -82,7 +82,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                         {billingInfo?.firstname} {billingInfo?.lastname} <br />
                                         {billingInfo?.email}  <br />
                                         {billingInfo?.phone}  <br />
-                                        {billingInfo?.address_line1} {billingInfo?.firstname}  <br />
+                                        {billingInfo?.addressLine1} {billingInfo?.firstname}  <br />
                                         {billingInfo?.city} {billingInfo?.state} {billingInfo?.country}
                                     </p>
                                     <hr />

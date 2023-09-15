@@ -164,8 +164,8 @@ module.exports = {
       checkToken(id);
       try {
         const setting = await Setting.findOne({});
-        setting.store.store_address.address_line1 = args.address_line1;
-        setting.store.store_address.address_line2 = args.address_line2;
+        setting.store.store_address.addressLine1 = args.addressLine1;
+        setting.store.store_address.addressLine2 = args.addressLine2;
         setting.store.store_address.city = args.city;
         setting.store.store_address.country = args.country;
         setting.store.store_address.state = args.state;

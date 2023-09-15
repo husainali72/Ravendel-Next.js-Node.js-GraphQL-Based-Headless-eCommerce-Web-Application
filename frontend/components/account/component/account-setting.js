@@ -11,8 +11,8 @@ import notify from '../../../utills/notifyToast';
 import { isValidPhoneNumber } from "react-phone-number-input";
 
 var accountDetailObject = {
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     company: "",
@@ -50,15 +50,15 @@ const AccountSettings = (props) => {
                             name="firstname"
                             label="firstname"
                             placeholder="First name *"
-                            value={accountDetails.first_name || ''}
+                            value={accountDetails.firstName || ''}
                             {...register('firstname', {
 
                                 required: {
-                                    value: (accountDetails.first_name ? false : true),
+                                    value: (accountDetails.firstName ? false : true),
                                     message: "First name is required",
                                 },
                             })}
-                            onChange={(e) => setAccountDetails({ ...accountDetails, first_name: e.target.value })}
+                            onChange={(e) => setAccountDetails({ ...accountDetails, firstName: e.target.value })}
                             className="update-profile-detail-input"
                         />
                         <p className='error'>
@@ -75,16 +75,16 @@ const AccountSettings = (props) => {
                             name="lastname"
                             label="lastname"
                             placeholder="Last name *"
-                            value={accountDetails.last_name || ""}
+                            value={accountDetails.lastName || ""}
                             {...register('lastname', {
 
                                 required: {
-                                    value: (accountDetails.last_name ? false : true),
+                                    value: (accountDetails.lastName ? false : true),
                                     message: "Last name is required",
                                 },
 
                             })}
-                            onChange={(e) => setAccountDetails({ ...accountDetails, last_name: e.target.value })}
+                            onChange={(e) => setAccountDetails({ ...accountDetails, lastName: e.target.value })}
                             className="update-profile-detail-input"
                         />
                         <p className='error'>

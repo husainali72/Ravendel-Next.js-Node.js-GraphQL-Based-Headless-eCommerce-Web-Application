@@ -32,8 +32,8 @@ import { gql } from "@apollo/client";
 //                   number_of_decimals
 //                     }
 //                     store_address{
-//                                     address_line1
-//                               address_line2
+//                                     addressLine1
+//                               addressLine2
 //                               city
 //                               country
 //                               state
@@ -102,8 +102,8 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           number_of_decimals
         }
         store_address {
-          address_line1
-          address_line2
+          addressLine1
+          addressLine2
           city
           country
           state
@@ -237,7 +237,7 @@ export const GET_REVIEWS = gql`
         title
         customerId {
           id
-          first_name
+          firstName
         }
         productId {
           _id

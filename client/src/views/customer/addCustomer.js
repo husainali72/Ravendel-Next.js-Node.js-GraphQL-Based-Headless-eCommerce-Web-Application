@@ -23,8 +23,8 @@ import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { useNavigate } from "react-router-dom";
 import PhoneNumber from "../components/phoneNumberValidation";
 var customerObj = {
-  first_name: "",
-  last_name: "",
+  firstName: "",
+  lastName: "",
   email: "",
   password: "",
   company: "",
@@ -50,7 +50,7 @@ const AddCustomerComponent = () => {
 
 
 
-    let errors = validate(['company', "password", "email", "last_name", "first_name"], customer);
+    let errors = validate(['company', "password", "email", "lastName", "firstName"], customer);
     let phoneError = validatePhone(["phone"], customer)
 
     if (!isEmpty(errors)) {
@@ -112,17 +112,17 @@ const AddCustomerComponent = () => {
               <Grid container spacing={4}>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
-                    value={customer.first_name}
+                    value={customer.firstName}
                     label="First Name"
-                    name="first_name"
+                    name="firstName"
                     onInputChange={handleChange}
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
-                    value={customer.last_name}
+                    value={customer.lastName}
                     label="Last Name"
-                    name="last_name"
+                    name="lastName"
                     onInputChange={handleChange}
                   />
                 </Grid>

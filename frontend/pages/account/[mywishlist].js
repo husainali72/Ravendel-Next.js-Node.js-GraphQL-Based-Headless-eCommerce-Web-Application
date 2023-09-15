@@ -17,8 +17,8 @@ import { getSession, useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 
 var accountDetailObject = {
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     company: "",
@@ -80,8 +80,8 @@ const MyWishList = ({ id, customeraddres }) => {
                                 name="firstname"
                                 label="firstname"
                                 placeholder="First name *"
-                                value={accountDetails.first_name || ''}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, first_name: e.target.value })}
+                                value={accountDetails.firstName || ''}
+                                onChange={(e) => setAccountDetails({ ...accountDetails, firstName: e.target.value })}
                                 className="update-account-details-input"
                             />
                         </Col>
@@ -91,8 +91,8 @@ const MyWishList = ({ id, customeraddres }) => {
                                 name="lastname"
                                 label="lastname"
                                 placeholder="Last name *"
-                                value={accountDetails.last_name || ""}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, last_name: e.target.value })}
+                                value={accountDetails.lastName || ""}
+                                onChange={(e) => setAccountDetails({ ...accountDetails, lastName: e.target.value })}
                                 className="update-account-details-input"
                             />
                         </Col>
@@ -179,8 +179,8 @@ const MyWishList = ({ id, customeraddres }) => {
                         /> */}
                         <Card>
                             <ListGroup variant="flush">
-                                <ListGroup.Item>firstname :{customeraddres?.first_name}</ListGroup.Item>
-                                <ListGroup.Item> lastname :{customeraddres?.last_name}</ListGroup.Item>
+                                <ListGroup.Item>firstname :{customeraddres?.firstName}</ListGroup.Item>
+                                <ListGroup.Item> lastname :{customeraddres?.lastName}</ListGroup.Item>
                                 <ListGroup.Item>email : {customeraddres?.email}</ListGroup.Item>
                                 <ListGroup.Item>company : {customeraddres?.company}</ListGroup.Item>
                                 <ListGroup.Item>phone: {customeraddres?.phone}</ListGroup.Item>

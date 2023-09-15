@@ -29,7 +29,7 @@ router.post('/pay', async(req, res) => {
     const create_payment_json = {
         "intent": "sale",
         "payer": {
-            "payment_method": "paypal"
+            "paymentMethod": "paypal"
         },
         "redirect_urls": {
             "return_url": RETURN_URL,

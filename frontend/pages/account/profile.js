@@ -109,8 +109,8 @@ const Profile = ({ customeraddres }) => {
                                 />}
                                 {!ToggleEdit && <Card className='box-shadow w-50 pt-2' >
                                     <ListGroup className='profile-list' variant="flush">
-                                        <ListGroup.Item><span><strong>Firstname</strong></span>  <span>{capitalize(customeraddress?.first_name)}</span></ListGroup.Item>
-                                        <ListGroup.Item><span><strong> Lastname</strong></span>  <span>{capitalize(customeraddress?.last_name)}</span></ListGroup.Item>
+                                        <ListGroup.Item><span><strong>Firstname</strong></span>  <span>{capitalize(customeraddress?.firstName)}</span></ListGroup.Item>
+                                        <ListGroup.Item><span><strong> Lastname</strong></span>  <span>{capitalize(customeraddress?.lastName)}</span></ListGroup.Item>
                                         <ListGroup.Item><span><strong>Email</strong></span>  <span>{capitalize(customeraddress?.email)}</span></ListGroup.Item>
                                         <ListGroup.Item><span><strong>Company</strong></span>  <span>{capitalize(customeraddress?.company)}</span></ListGroup.Item>
                                         <ListGroup.Item><span><strong>Phone</strong></span>  <span>{capitalize(customeraddress?.phone)}</span></ListGroup.Item>

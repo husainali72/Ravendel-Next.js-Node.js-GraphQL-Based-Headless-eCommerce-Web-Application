@@ -403,22 +403,22 @@ const BillingDetails = (props) => {
                                 </p>
                                 <input className="input-filled"
                                     type="text"
-                                    name="shippingaddress_line2"
+                                    name="shippingaddressLine2"
                                     label="address_line_2"
                                     placeholder="address_line_2 *"
-                                    {...registerRef("shippingaddress_line2", {
+                                    {...registerRef("shippingaddressLine2", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.address_line2 ? false : true)) : false),
+                                            value: (shippingAdd ? ((shippingInfo?.addressLine2 ? false : true)) : false),
                                             message: "Address is Required",
                                         }
                                     })}
-                                    value={shippingInfo?.address_line2}
+                                    value={shippingInfo?.addressLine2}
                                     onChange={handleShippingChange}
                                     onKeyDown={(e) => handleEnter(e)}
                                 />
                                 <p>
                                     <small style={{ color: 'red' }}>
-                                        {errorRef.shippingaddress_line2?.type === "required" ? errorRef.shippingaddress_line2?.message : undefined}
+                                        {errorRef.shippingaddressLine2?.type === "required" ? errorRef.shippingaddressLine2?.message : undefined}
                                     </small>
                                 </p>
                                 <input

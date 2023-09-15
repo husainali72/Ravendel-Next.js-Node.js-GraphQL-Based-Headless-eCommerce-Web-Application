@@ -568,8 +568,8 @@ const subTotalDetailsEntry = async(data, couponModel, shippingModel, taxModel) =
     subTotalDetails.coupon_value = 0
   } else {
     subTotalDetails.couponCode = coupon.code
-    subTotalDetails.coupon_type = coupon.discount_type
-    subTotalDetails.coupon_value = coupon.discount_value
+    subTotalDetails.coupon_type = coupon.discountType
+    subTotalDetails.coupon_value = coupon.discountValue
   } 
   subTotalDetails.shipping_name = "Shipping"
   subTotalDetails.tax_name = "Tax"
@@ -591,7 +591,7 @@ const subTotalSummaryEntry = async(data, couponModel, shippingModel, taxModel) =
   if(!coupon) {
     couponType = ""
   } else {
-    couponType = coupon.discount_type
+    couponType = coupon.discountType
   }
   for(let product of data.products){
     // console.log(product)
@@ -700,20 +700,51 @@ const generateOrderNumber = async (Order, Setting) => {
   let prefix = setting.store.order_options.order_prefix
   let code = ""
   // prefix = ""
+  // let pipeline = [
+  //   {$project: {
+  //     orderPrefix: {
+  //       $substrBytes: [
+  //         "$order_number", 
+  //         0, 
+  //         {$subtract: [ {$strLenBytes: "$order_number"}, orderDigits ]}
+  //       ]
+  //     }
+  //   }},
+  //   {$match: {"orderPrefix": prefix}},
+  //   {$project: {orderPrefix: 0}}
+  // ] 
+
   let pipeline = [
-    {$project: {
-      orderPrefix: {
-        $substrBytes: [
-          "$orderNumber", 
-          0, 
-          {$subtract: [ {$strLenBytes: "$orderNumber"}, orderDigits ]}
-        ]
+    {
+      $match: {
+        "orderNumber": { $exists: true, $type: "string" } // Filter out missing or non-string values
       }
-    }},
-    {$match: {"orderPrefix": prefix}},
-    {$project: {orderPrefix: 0}}
-  ] 
-  if(!prefix) pipeline = [{$project: {onlen: {$strLenBytes: "$orderNumber"}}},
+    },
+    {
+      $project: {
+        orderPrefix: {
+          $substrBytes: [
+            "$orderNumber",
+            0,
+            {
+              $subtract: [
+                { $strLenBytes: "$orderNumber" },
+                orderDigits
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      $match: { "orderPrefix": prefix }
+    },
+    {
+      $project: { orderPrefix: 0 }
+    }
+  ];
+
+  if(!prefix) pipeline = [{$project: {onlen: {$strLenBytes: "$order_number"}}},
                           {$match: {onlen: orderDigits}}]
   // if orders with specified prefix exists then continue number series
   // else start new series
@@ -764,12 +795,12 @@ let IsApplicableDiscount = false;
 
                             if(product.categoryId && product.categoryId.length){
                               product.categoryId.map(catID => {
-                                if(coupon.include_categories.length){
-                                  includeProduct = coupon.include_categories.includes(catID)
+                                if(coupon.includeCategories.length){
+                                  includeProduct = coupon.includeCategories.includes(catID)
                                  
                                 }
-                                else if(coupon.exclude_categories.length){
-                                  includeProduct = !coupon.exclude_categories.includes(catID) 
+                                else if(coupon.excludeCategories.length){
+                                  includeProduct = !coupon.excludeCategories.includes(catID) 
                                 }
                               })
                             }
@@ -779,11 +810,11 @@ let IsApplicableDiscount = false;
                       //if coupon category is not abilable but product is included in category;
 
                       else if(coupon.product){
-                        if(coupon.include_products.length){
-                          includeProduct = coupon.include_products.includes(product._id.toString()) 
+                        if(coupon.includeProducts.length){
+                          includeProduct = coupon.includeProducts.includes(product._id.toString()) 
                         }
-                        else if(coupon.exclude_products.length){
-                          includeProduct = !coupon.exclude_products.includes(product._id.toString());
+                        else if(coupon.excludeProducts.length){
+                          includeProduct = !coupon.excludeProducts.includes(product._id.toString());
                         }
                       }
                       if(includeProduct)  includeProductTotal = +item.productTotal;                    
@@ -791,7 +822,7 @@ let IsApplicableDiscount = false;
         } 
   }
 
-          if ((coupon.minimum_spend === 0 || coupon.minimum_spend <= forCouponCartTotal) && (coupon.maximum_spend === 0 || coupon.maximum_spend > forCouponCartTotal)) {
+          if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= forCouponCartTotal) && (coupon.maximumSpend === 0 || coupon.maximumSpend > forCouponCartTotal)) {
             
             IsApplicableDiscount = true;
 
@@ -799,8 +830,8 @@ let IsApplicableDiscount = false;
 
               if(IsApplicableDiscount){
                   amountDiscount ?
-                  discountAmount += parseFloat(coupon.discount_value) :
-                  discountAmount += parseFloat(+forCouponCartTotal/100) * parseFloat(coupon.discount_value)
+                  discountAmount += parseFloat(coupon.discountValue) :
+                  discountAmount += parseFloat(+forCouponCartTotal/100) * parseFloat(coupon.discountValue)
               }
 
   return discountAmount;

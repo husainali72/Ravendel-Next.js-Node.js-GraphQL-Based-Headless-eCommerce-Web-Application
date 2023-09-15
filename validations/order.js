@@ -68,8 +68,8 @@ module.exports = function validate(method, args) {
       }
 
       if (
-        !args.billing.payment_method &&
-        Validator.isEmpty(args.billing.payment_method)
+        !args.billing.paymentMethod &&
+        Validator.isEmpty(args.billing.paymentMethod)
       ) {
         return (errors = "Billing's Payment Method field is required");
       }

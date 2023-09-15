@@ -74,7 +74,7 @@ const ViewOrderComponent = ({ params }) => {
       state: "",
       email: "",
       phone: "",
-      payment_method: "",
+      paymentMethod: "",
       transaction_id: "",
     },
     shipping: {
@@ -126,7 +126,7 @@ const ViewOrderComponent = ({ params }) => {
   const updateOrder = (e) => {
     order.billing.phone = phoneValue
     e.preventDefault();
-    let errors = validatenested("billing", ["payment_method", "email", "state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
+    let errors = validatenested("billing", ["paymentMethod", "email", "state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
     let Errors = validatenested("shipping", ["state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
     let phoneNumberError = validateNestedPhone("billing", ["phone"], order)
     if (!isEmpty(errors)) {
@@ -274,7 +274,7 @@ const ViewOrderComponent = ({ params }) => {
                   <CardContent>
                     <Typography variant="body1">Order: {order.orderNumber}</Typography>
                     <Typography variant="body1" mt={2}>
-                      Payment via {order.billing.payment_method} paid on{" "}
+                      Payment via {order.billing.paymentMethod} paid on{" "}
                       {convertDateToStringFormat(order.date)}
                       {/* Transaction
                       number {order.billing.transaction_id} */}

@@ -2,16 +2,16 @@ import gql from "graphql-tag";
 
 export const ADD_CUSTOMER = gql`
        mutation (
-         $first_name: String,
-         $last_name: String, 
+         $firstName: String,
+         $lastName: String, 
          $email: String, 
          $company: String,
          $phone: String,
          $password: String)
           {
             addCustomer(
-              first_name: $first_name,
-              last_name: $last_name,
+              firstName: $firstName,
+              lastName: $lastName,
               email: $email,
               company: $company,
               phone: $phone,
@@ -29,12 +29,12 @@ export const GET_CUSTOMERS = gql`
     customers {
       data {
         id
-        first_name
-        last_name
+        firstName
+        lastName
         email
         company
         phone
-        address_book
+        addressBook
         date
         updated
       }
@@ -50,12 +50,12 @@ export const GET_CUSTOMER_QUERY = gql`
     customer(id: $id) {
       data{
       id
-      first_name
-      last_name
+      firstName
+      lastName
       email
       company
       phone
-      address_book
+      addressBook
       date
       updated
       }
@@ -65,31 +65,31 @@ export const GET_CUSTOMER_QUERY = gql`
 export const ADD_ADDRESSBOOK = gql`
   mutation(
     $id: ID!
-    $first_name: String
-    $last_name: String
+    $firstName: String
+    $lastName: String
     $company: String
     $phone: String
-    $address_line1: String
-    $address_line2: String
+    $addressLine1: String
+    $addressLine2: String
     $city: String
     $country: String
     $state: String
     $pincode: String
-    $default_address: Boolean
+    $defaultAddress: Boolean
   ) {
     addAddressBook(
       id: $id
-      first_name: $first_name
-      last_name: $last_name
+      firstName: $firstName
+      lastName: $lastName
       company: $company
       phone: $phone
-      address_line1: $address_line1
-      address_line2: $address_line2
+      addressLine1: $addressLine1
+      addressLine2: $addressLine2
       city: $city
       country: $country
       state: $state
       pincode: $pincode
-      default_address: $default_address
+      defaultAddress: $defaultAddress
     ) {
       message
       success
@@ -100,16 +100,16 @@ export const ADD_ADDRESSBOOK = gql`
 export const UPDATE_CUSTOMER = gql`
   mutation(
     $id: ID!
-    $first_name: String
-    $last_name: String
+    $firstName: String
+    $lastName: String
     $email: String
     $company: String
     $phone: String
   ) {
     updateCustomer(
       id: $id
-      first_name: $first_name
-      last_name: $last_name
+      firstName: $firstName
+      lastName: $lastName
       email: $email
       company: $company
       phone: $phone
@@ -124,32 +124,32 @@ export const UPDATE_ADDRESSBOOK = gql`
   mutation(
     $id: ID!
     $_id: ID!
-    $first_name: String
-    $last_name: String
+    $firstName: String
+    $lastName: String
     $company: String
     $phone: String
-    $address_line1: String
-    $address_line2: String
+    $addressLine1: String
+    $addressLine2: String
     $city: String
     $country: String
     $state: String
     $pincode: String
-    $default_address: Boolean
+    $defaultAddress: Boolean
   ) {
     updateAddressBook(
       id: $id
       _id: $_id
-      first_name: $first_name
-      last_name: $last_name
+      firstName: $firstName
+      lastName: $lastName
       company: $company
       phone: $phone
-      address_line1: $address_line1
-      address_line2: $address_line2
+      addressLine1: $addressLine1
+      addressLine2: $addressLine2
       city: $city
       country: $country
       state: $state
       pincode: $pincode
-      default_address: $default_address
+      defaultAddress: $defaultAddress
     ) {
       message
       success

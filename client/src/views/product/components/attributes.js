@@ -42,7 +42,7 @@ const AttributesComponent = ({
   const classes = viewStyles();
   const dispatch = useDispatch();
   const inputLabel = useRef(null);
-  const attributeState = useSelector((state) => state.product_attributes);
+  const attributeState = useSelector((state) => state.productAttributes);
   const [labelWidth, setLabelWidth] = useState(0);
   const [currentVariants, setcurrentVariants] = useState({
     combinations: [],

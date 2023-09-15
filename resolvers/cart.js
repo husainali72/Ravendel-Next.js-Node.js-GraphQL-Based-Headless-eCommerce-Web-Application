@@ -111,11 +111,11 @@ cartbyUser: async (root, args) => {
             // args.cart.map(item => cartTotal += item.productTotal)     
              cartTotal = args.cartTotal;
 
-            if ((coupon.minimum_spend === 0 || coupon.minimum_spend <= cartTotal) && (coupon.maximum_spend === 0 || coupon.maximum_spend > cartTotal)) {
+            if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) && (coupon.maximumSpend === 0 || coupon.maximumSpend > cartTotal)) {
 
                   var calculatedCartWithDiscount = 0
 
-                  coupon.discount_type === "amount-discount" ?
+                  coupon.discountType === "amount-discount" ?
                   calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, true) :
                   calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, false)
  
@@ -372,7 +372,7 @@ cartbyUser: async (root, args) => {
                                 productPrice :productPrice.toFixed(2),
                                 qty : +odredQuantity,
                                 productTotal : productPrice*(+odredQuantity),                             
-                                productTax:productTaxAmount.toFixed(2)                           
+                                productTax:+productTaxAmount.toFixed(2)                           
                               }
                                 if(productShippingAmount){
                                   pushValue.productShippingAmount= productShippingAmount.toFixed(2)
@@ -686,9 +686,8 @@ cartbyUser: async (root, args) => {
       }
     },*/
 
-
+// runing With login
     addToCart: async (root, args, { id }) => {
-      // console.log('args', args)
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -836,6 +835,7 @@ cartbyUser: async (root, args) => {
 
 
 
+// runing WithOut login
     addCart: async (root, args, { id }) => {
       // console.log("withOutLogin----args-2", args);
       if (!id) {

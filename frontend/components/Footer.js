@@ -13,8 +13,8 @@ import { useDispatch } from "react-redux";
 
 export default function Footer() {
     const [Address, setAddress] = useState({
-        address_line1: "",
-        address_line2: "",
+        addressLine1: "",
+        addressLine2: "",
         city: "",
         phone_number: "",
         email: "",
@@ -32,8 +32,8 @@ export default function Footer() {
     useEffect(() => {
         query(GET_HOMEPAGE_DATA_QUERY).then(res => {
 
-            const addressPath1 = "data.getSettings.store.store_address.address_line1";
-            const addressPath2 = "data.getSettings.store.store_address.address_line2";
+            const addressPath1 = "data.getSettings.store.store_address.addressLine1";
+            const addressPath2 = "data.getSettings.store.store_address.addressLine2";
             const hour = "data.getSettings.store.store_address.hour";
             const cityPath = "data.getSettings.store.store_address.city";
             const phonePath = "data.getSettings.appearance.theme.phone_number";
@@ -43,8 +43,8 @@ export default function Footer() {
             const socialMediaPath = "data.getSettings.appearance.theme.social_media";
             setAddress((previousAddress) => ({
                 ...previousAddress,
-                address_line1: get(res, addressPath1, "Central Park"),
-                address_line2: get(res, addressPath2, ""),
+                addressLine1: get(res, addressPath1, "Central Park"),
+                addressLine2: get(res, addressPath2, ""),
                 city: get(res, cityPath, "Paris"),
                 email: get(res, emailPath, "ravendel@gmail.com"),
                 phone_number: get(res, phonePath, "+91 9124192994"),
@@ -56,7 +56,7 @@ export default function Footer() {
             ))
         })
     }, [])
-    const { address_line1, address_line2, city, email, phone_number, appStoreUrl, playStoreUrl } = Address;
+    const { addressLine1, addressLine2, city, email, phone_number, appStoreUrl, playStoreUrl } = Address;
     const session = useSession();
     const customerId = session?.data?.user?.accessToken?.customer?._id;
     const iconSetter = (iconName) => {
@@ -83,7 +83,7 @@ export default function Footer() {
                                     <div className="address">
                                         <h5 className="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated animated animated">Contact</h5>
                                         <strong>Address : </strong>
-                                        <span>{address_line1 && address_line1 + ", "}{address_line2 && address_line2 + ", "}{city}</span>
+                                        <span>{addressLine1 && addressLine1 + ", "}{addressLine2 && addressLine2 + ", "}{city}</span>
                                         <br />
                                         <strong>Phone : </strong>
                                         <Link href={"tel:" + phone_number}>

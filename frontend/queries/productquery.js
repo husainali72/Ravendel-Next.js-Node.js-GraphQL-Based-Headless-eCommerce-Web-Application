@@ -63,7 +63,7 @@ const ATTRIBUTE_TILE = gql`
 `;
 export const GET_ATTRIBUTES = gql`
   {
-    product_attributes {
+    productAttributes {
       data {
         ...AttributeTile
       }
@@ -143,7 +143,7 @@ query ($id: ID!) {
       title
       customerId {
         id
-        first_name
+        firstName
       }
       productId {
         _id
@@ -171,7 +171,7 @@ export const GET_REVIEWS = gql`
         title
         customerId {
           id
-          first_name
+          firstName
         }
         productId {
           _id

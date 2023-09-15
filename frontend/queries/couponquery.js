@@ -36,16 +36,16 @@ export const GET_CUOPONS_QUERY = gql`
                 id
                 code
                 description
-                discount_type
-                discount_value
-                free_shipping
+                discountType
+                discountValue
+                freeShipping
                 expire
-                minimum_spend
-                maximum_spend
+                minimumSpend
+                maximumSpend
                 products
-                exclude_products
+                excludeProducts
                 categories
-                exclude_categories
+                excludeCategories
                 date
                 updated
         }
@@ -62,16 +62,16 @@ export const GET_COUPON_BY_ID = gql`  query($id:ID!) {
      id
     code
     description
-    discount_type
-    discount_value
-    free_shipping
+    discountType
+    discountValue
+    freeShipping
     expire
-    minimum_spend
-    maximum_spend
+    minimumSpend
+    maximumSpend
     products
-    exclude_products
+    excludeProducts
     categories
-    exclude_categories
+    excludeCategories
     date
     updated
         }
