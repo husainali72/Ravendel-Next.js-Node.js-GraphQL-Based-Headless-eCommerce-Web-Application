@@ -32,8 +32,8 @@ import { gql } from "@apollo/client";
 //                   number_of_decimals
 //                     }
 //                     store_address{
-//                                     address_line1
-//                               address_line2
+//                                     addressLine1
+//                               addressLine2
 //                               city
 //                               country
 //                               state
@@ -102,8 +102,8 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           number_of_decimals
         }
         store_address {
-          address_line1
-          address_line2
+          addressLine1
+          addressLine2
           city
           country
           state
@@ -235,11 +235,11 @@ export const GET_REVIEWS = gql`
       data {
         id
         title
-        customer_id {
+        customerId {
           id
-          first_name
+          firstName
         }
-        product_id {
+        productId {
           _id
           name
         }
@@ -276,7 +276,7 @@ export const FEATURE_PRODUCT_QUERY = gql`
           status
           variant
           shipping
-          tax_class
+          taxClass
         }
       }
     `;
@@ -297,7 +297,7 @@ export const GET_RECENT_PRODUCTS_QUERY = gql`
       status
       variant
       shipping
-      tax_class
+      taxClass
     }
   }
 `;
@@ -318,7 +318,7 @@ export const GET_RELATED_PRODUCTS_QUERY = gql`
       status
       variant
       shipping
-      tax_class
+      taxClass
     }
   }
 `;
@@ -364,7 +364,7 @@ export const ON_SALE_PRODUCTS_QUERY = gql`
     status
     variant
     shipping
-    tax_class
+    taxClass
     __typename
   }
   }

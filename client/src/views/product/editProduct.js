@@ -80,10 +80,10 @@ let defaultobj = {
     width: "0",
     depth: "0",
     weight: "0",
-    shipping_class: "",
+    shippingClass: "",
   },
   removed_image: [],
-  tax_class: "",
+  taxClass: "",
   featured_product: false,
   product_type: {
     virtual: false,
@@ -97,7 +97,7 @@ let defaultobj = {
   quantity: "",
 }
 const EditProductComponent = ({ params }) => {
-  const Product_id = params.id || "";
+  const productId = params.id || "";
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -112,9 +112,10 @@ const EditProductComponent = ({ params }) => {
   const [taxClass, setTaxClass] = useState('')
   const [product, setProduct] = useState(defaultobj
   );
+
   useEffect(() => {
-    if (Product_id) {
-      dispatch(productAction(Product_id));
+    if (productId) {
+      dispatch(productAction(productId));
       dispatch(brandsAction());
       dispatch(categoriesAction());
     }
@@ -125,11 +126,11 @@ const EditProductComponent = ({ params }) => {
   }, [get(productState, "loading")]);
 
   useEffect(() => {
-    if (Product_id) {
+    if (productId) {
       if (!isEmpty(get(productState, "product"))) {
         if (!isEmpty(productState.product)) {
           let defaultBrand = {};
-          setTaxClass(productState.product.tax_class)
+          setTaxClass(productState.product.taxClass)
           if (productState.product.brand) {
             if (!isEmpty(get(brandState, "brands"))) {
               for (let i in brandState.brands) {
@@ -165,23 +166,23 @@ const EditProductComponent = ({ params }) => {
       setProduct(defaultobj)
       setfeatureImage(null)
     }
-  }, [get(productState, "product"), Product_id]);
+  }, [get(productState, "product"), productId]);
   const addUpdateProduct = (e) => {
     product.combinations = combination;
-    product.tax_class = taxClass
+    product.taxClass = taxClass
     let combination_error = ''
     let combination_price_error = ''
     e.preventDefault();
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     let custom_field = ''
-    if (product.combinations) {
-      combination_error = validatenested("combinations", ["sku", 'quantity'], product, 'Variant');
-      combination_price_error = validatenestedArray("pricing", ["price"], product.combinations, 'Variant')
-
-    }
 
     if (product.custom_field) {
       custom_field = validatenested('custom_field', ['key', 'value'], product)
+    }
+    if (product.combinations) {
+      combination_error = validatenested("combinations", ["sku", 'quantity'], product);
+      combination_price_error = validatenestedArray("pricing", ["price"], product.combinations)
+
     }
 
     let Errors = validatenested("pricing", ["price"], product);
@@ -226,6 +227,18 @@ const EditProductComponent = ({ params }) => {
       });
     }
     else if (!isEmpty(custom_field)) {
+
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: custom_field,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(combination_price_error)) {
+
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -236,7 +249,7 @@ const EditProductComponent = ({ params }) => {
       });
     }
     else {
-      if (Product_id) {
+      if (productId) {
         product.update_gallery_image = gallery
         dispatch(productUpdateAction(product, navigate));
       }
@@ -256,7 +269,7 @@ const EditProductComponent = ({ params }) => {
   const onFeatureImageChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    if (Product_id) {
+    if (productId) {
       setProduct({ ...product, ["update_feature_image"]: e.target.files });
     }
     else {
@@ -265,7 +278,7 @@ const EditProductComponent = ({ params }) => {
   };
 
   const isUrlExist = async (url) => {
-    if (Product_id) {
+    if (productId) {
       let updatedUrl = await getUpdatedUrl("Product", url);
       setProduct({
         ...product,
@@ -324,9 +337,9 @@ const EditProductComponent = ({ params }) => {
       {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title={Product_id ? "Edit Product" : "Add product"}
+          title={productId ? "Edit Product" : "Add product"}
           onSubmit={addUpdateProduct}
-          submitTitle={Product_id ? "Update" : "Add"}
+          submitTitle={productId ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-products`}
         />
 
@@ -377,7 +390,7 @@ const EditProductComponent = ({ params }) => {
             </CardBlocks>
             {/* ===================Categories=================== */}
             <CardBlocks title="Categories">
-              {Product_id ?
+              {productId ?
                 <EditCategoriesComponent
                   selectedCategories={product.categoryId}
                   onCategoryChange={(items) => {
@@ -513,6 +526,7 @@ const EditProductComponent = ({ params }) => {
               <CardBlocks title="Shipping">
                 <ShippingComponent
                   product={product}
+
                   onShippingInputChange={(name, value) => {
                     setProduct({
                       ...product,
@@ -527,7 +541,7 @@ const EditProductComponent = ({ params }) => {
                       ...product,
                       shipping: {
                         ...product.shipping,
-                        shipping_class: value,
+                        shippingClass: value,
                       },
                     });
                   }}
@@ -538,14 +552,16 @@ const EditProductComponent = ({ params }) => {
             <CardBlocks title="Tax">
               <TaxComponent
                 product={taxClass}
-                tax_class={product?.tax_class}
+
+                taxClass={taxClass}
+
                 onTaxInputChange={(value) => {
                   setTaxClass(value)
                 }}
                 onTaxClassChange={(value) => {
                   setProduct({
                     ...product,
-                    ['tax_class']: value,
+                    ['taxClass']: value,
                   });
                 }}
               />
@@ -743,7 +759,7 @@ const EditProductComponent = ({ params }) => {
             {/* ===================Gallery Images=================== */}
             <Box component="span" m={1}>
               <CardBlocks title="Gallery Image">
-                {Product_id ?
+                {productId ?
                   <EditGalleryImageSelection
                     onAddGalleryImage={(e) => {
                       var imagesRes = [...e.target.files]

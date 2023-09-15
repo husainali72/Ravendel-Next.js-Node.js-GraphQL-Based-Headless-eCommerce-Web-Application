@@ -50,11 +50,11 @@ module.exports = function validate(method, args) {
         return (errors = "Pricing field is required");
       } */
 
-      if (!args.shipping || !args.shipping.shipping_class) {
+      if (!args.shipping || !args.shipping.shippingClass) {
         return (errors = "Please select Shipping class");
       }
 
-      /* if (!args.tax || !args.tax.tax_class) {
+      /* if (!args.tax || !args.tax.taxClass) {
         return (errors = "Please select Tax class");
       } */
 
@@ -92,11 +92,11 @@ module.exports = function validate(method, args) {
         return (errors = "Pricing field is required");
       } */
 
-      if (!args.shipping || !args.shipping.shipping_class) {
+      if (!args.shipping || !args.shipping.shippingClass) {
         return (errors = "Please select Shipping class");
       }
 
-      /* if (!args.tax || !args.tax.tax_class) {
+      /* if (!args.tax || !args.tax.taxClass) {
         return (errors = "Please select Tax class");
       } */
 

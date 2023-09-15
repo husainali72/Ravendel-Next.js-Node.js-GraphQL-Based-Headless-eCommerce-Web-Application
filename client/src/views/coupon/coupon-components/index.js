@@ -45,8 +45,7 @@ export const MenuProps = {
 };
 
 export const getSelectedName = (id, element, products, categories) => {
-
-  if (element === "include_products" || element === "exclude_products") {
+  if (element === "includeProducts" || element === "excludeProducts") {
     for (let i in products) {
       if (id === products[i]._id) {
         return products[i].name;
@@ -65,20 +64,22 @@ export const getSelectedName = (id, element, products, categories) => {
 export const couponObj = {
   code: "",
   description: "",
-  discount_type: "amount-discount",
-  // discount_value: "0",
-  discount_value: 0,
-  free_shipping: false,
+  discountType: "amount-discount",
+  // discountValue: "0",
+  discountValue: 0,
+  freeShipping: false,
   expire: "",
-  // minimum_spend: "0",
-  // maximum_spend: "0",
-  minimum_spend: 0,
-  maximum_spend: 0,
+  // minimumSpend: "0",
+  // maximumSpend: "0",
+  minimumSpend: 0,
+  maximumSpend: 0,
   products: [],
-  include_products: [],
 
-  exclude_products: [],
+  includeProducts: [],
+
+  excludeProducts: [],
   categories: [],
-  include_categories: [],
-  exclude_categories: [],
+  includeCategories: [],
+  excludeCategories: [],
+
 };

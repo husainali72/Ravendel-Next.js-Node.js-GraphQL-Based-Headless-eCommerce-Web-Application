@@ -77,7 +77,7 @@ const Profile = ({ customeraddres }) => {
         try {
             const { data: ordercustomerDataById } = await client.query({
                 query: GET_CUSTOMER_ORDERS_QUERY,
-                variables: { user_id: id },
+                variables: { userId: id },
             })
             customerorder = ordercustomerDataById.orderbyUser.data
             setCustomerOrder(customerorder)
@@ -109,8 +109,8 @@ const Profile = ({ customeraddres }) => {
                                 />}
                                 {!ToggleEdit && <Card className='box-shadow w-50 pt-2' >
                                     <ListGroup className='profile-list' variant="flush">
-                                        <ListGroup.Item><span><strong>Firstname</strong></span>  <span>{capitalize(customeraddress?.first_name)}</span></ListGroup.Item>
-                                        <ListGroup.Item><span><strong> Lastname</strong></span>  <span>{capitalize(customeraddress?.last_name)}</span></ListGroup.Item>
+                                        <ListGroup.Item><span><strong>Firstname</strong></span>  <span>{capitalize(customeraddress?.firstName)}</span></ListGroup.Item>
+                                        <ListGroup.Item><span><strong> Lastname</strong></span>  <span>{capitalize(customeraddress?.lastName)}</span></ListGroup.Item>
                                         <ListGroup.Item><span><strong>Email</strong></span>  <span>{capitalize(customeraddress?.email)}</span></ListGroup.Item>
                                         <ListGroup.Item><span><strong>Company</strong></span>  <span>{capitalize(customeraddress?.company)}</span></ListGroup.Item>
                                         <ListGroup.Item><span><strong>Phone</strong></span>  <span>{capitalize(customeraddress?.phone)}</span></ListGroup.Item>
@@ -132,7 +132,7 @@ const Profile = ({ customeraddres }) => {
                                                     )}
                                                 </Col>
                                                 <Col>
-                                                    <strong>Total : {order.grand_total}</strong>
+                                                    <strong>Total : {order.grandTotal}</strong>
                                                 </Col>
                                             </Accordion.Header>
                                             <Accordion.Body>
@@ -140,10 +140,10 @@ const Profile = ({ customeraddres }) => {
                                                     orderDetail={order}
                                                     billingInfo={order.billing}
                                                     shippingInfo={order.shipping}
-                                                    tax={order.tax_amount}
+                                                    tax={order.taxAmount}
                                                     subtotal={order.subtotal}
-                                                    shipping_amount={order.shipping_amount}
-                                                    total={order.grand_total}
+                                                    shippingAmount={order.shippingAmount}
+                                                    total={order.grandTotal}
 
                                                 />
                                             </Accordion.Body>

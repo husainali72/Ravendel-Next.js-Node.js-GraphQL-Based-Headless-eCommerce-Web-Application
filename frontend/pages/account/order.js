@@ -82,7 +82,7 @@ const Order = () => {
                                         <strong> Order id : {order.id}</strong>
                                     </Col>
                                     <Col>
-                                        <strong>Total : {currency} {getPrice(order.grand_total, decimal)}</strong>
+                                        <strong>Total : {currency} {getPrice(order.grandTotal, decimal)}</strong>
                                     </Col>
                                 </Accordion.Header>
                                 <Accordion.Body>
@@ -91,10 +91,10 @@ const Order = () => {
                                         order={order}
                                         billingInfo={order?.billing}
                                         shippingInfo={order?.shipping}
-                                        tax={order?.tax_amount}
+                                        tax={order?.taxAmount}
                                         subtotal={order?.subtotal}
-                                        shipping_amount={order?.shipping_amount}
-                                        total={order?.grand_total}
+                                        shippingAmount={order?.shippingAmount}
+                                        total={order?.grandTotal}
                                     />
                                     <div className="row order-btn-row">
                                         <div>

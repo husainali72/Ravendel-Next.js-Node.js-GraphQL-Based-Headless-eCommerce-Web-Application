@@ -11,7 +11,7 @@ import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
-import { APPLY_COUPON_CODE } from "../queries/couponquery";
+import { APPLY_couponCode } from "../queries/couponquery";
 import { getAllProductsAction } from "../redux/actions/productAction";
 import { useRouter } from "next/router";
 import { settingActionCreator } from "../redux/actions/settingAction";
@@ -31,7 +31,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     const [quantityy, setQuantity] = useState();
     const dispatch = useDispatch();
     const [couponCode, setCouponCode] = useState("")
-
+    const [unAvailableProducts, setUnAvailableProduct] = useState([])
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
     const settings = useSelector(state => state.setting);
@@ -56,32 +56,119 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                 token = sessionn.user.accessToken.token
                 let variables = { id: id }
                 mutation(GET_USER_CART, variables).then(res => {
-                    let carts = res?.data?.cartbyUser?.products;
-                    const cartProducts = [...carts];
-                    let cartitems2 = [];
+                    let carts = res?.data?.cartbyUser;
 
-                    carts?.map(cart => {
-                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-                        if (originalProduct) {
-                            const cartProduct = {
+                    let cartitems2 = [];
+                    let unAvailable = [];
+                    carts?.availableItem?.map((cart) => {
+                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
+                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
+                        let cartProduct = {}
+                        if (orginal_attributes) {
+                            cartProduct = {
                                 _id: originalProduct?._id,
-                                variant_id: cart.variant_id,
+                                variantId: cart.variantId,
                                 quantity: parseInt(cart?.qty),
-                                product_quantity: cart?.product_quantity,
+                                productQuantity: parseInt(orginal_attributes?.quantity),
                                 name: originalProduct?.name,
-                                pricing: cart.product_price,
-                                feature_image: cart?.product_image
+                                pricing: (orginal_attributes?.pricing
+                                    ?.sellprice),
+                                feature_image: orginal_attributes?.productImage
+                                    || orginal_attributes?.feature_image,
+                                url: originalProduct?.url,
+                                attributes: cart.attributes || [],
+                                shippingClass: originalProduct?.shipping?.shippingClass,
+                                taxClass: originalProduct?.taxClass,
+                            }
+                        }
+                        else {
+                            cartProduct = {
+                                _id: originalProduct?._id,
+                                variantId: cart.variantId,
+                                quantity: parseInt(cart?.qty),
+                                productQuantity: parseInt(originalProduct?.quantity),
+
+                                name: originalProduct?.name,
+                                pricing: (originalProduct?.pricing
+                                    ?.sellprice),
+                                feature_image: originalProduct?.productImage
                                     || originalProduct?.feature_image,
                                 url: originalProduct?.url,
                                 attributes: cart.attributes || [],
-                                shipping_class: originalProduct?.shipping?.shipping_class,
-                                tax_class: originalProduct?.tax_class,
+                                shippingClass: originalProduct?.shipping?.shippingClass,
+                                taxClass: originalProduct?.taxClass,
                             }
-                            cartitems2.push(cartProduct);
                         }
-                    }
-                    )
+                        cartitems2.push(cartProduct);
+
+                    })
+                    carts?.unavailableItem?.map((cart) => {
+                        let cartProduct = {
+                            _id: cart?._id,
+                            variantId: cart.variantId,
+                            quantity: parseInt(cart?.qty),
+                            productQuantity: parseInt(cart?.productQuantity),
+                            name: cart?.productTitle,
+                            pricing: (cart?.productPrice),
+                            feature_image: cart?.productImage
+
+                                || cart?.feature_image,
+                            url: cart?.url,
+                            attributes: cart.attributes || [],
+                            shippingClass: cart?.shipping?.shippingClass,
+                            taxClass: cart?.taxClass,
+                        }
+                        unAvailable.push(cartProduct)
+                    })
+                    // carts?.map(cart => {
+                    //     const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
+                    //     const cart = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
+                    //     // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
+                    //     if (originalProduct) {
+
+                    //         if (orginal_attributes) {
+                    //             cartProduct = {
+                    //                 _id: originalProduct?._id,
+                    //                 variantId: cart.variantId,
+                    //                 quantity: parseInt(cart?.qty),
+                    //                 productQuantity: parseInt(orginal_attributes?.quantity),
+                    //                 name: originalProduct?.name,
+                    //                 pricing: orginal_attributes?.pricing
+                    //                     ?.sellprice,
+                    //                 feature_image: orginal_attributes?.productImage
+                    //                     || orginal_attributes?.feature_image,
+                    //                 url: originalProduct?.url,
+                    //                 attributes: cart.attributes || [],
+                    //                 shippingClass: originalProduct?.shipping?.shippingClass,
+                    //                 taxClass: originalProduct?.taxClass,
+                    //             }
+                    //         }
+                    //         else {
+                    //             cartProduct = {
+                    //                 _id: originalProduct?._id,
+                    //                 variantId: cart.variantId,
+                    //                 quantity: parseInt(cart?.qty),
+                    //                 productQuantity: parseInt(originalProduct?.quantity),
+
+                    //                 name: originalProduct?.name,
+                    //                 pricing: originalProduct?.pricing
+                    //                     ?.sellprice,
+                    //                 feature_image: originalProduct?.productImage
+                    //                     || originalProduct?.feature_image,
+                    //                 url: originalProduct?.url,
+                    //                 attributes: cart.attributes || [],
+                    //                 shippingClass: originalProduct?.shipping?.shippingClass,
+                    //                 taxClass: originalProduct?.taxClass,
+                    //             }
+                    //         }
+                    //         cartitems2.push(cartProduct);
+                    //     } else {
+
+                    //     }
+
+                    // })
                     setCartItems([...cartitems2])
+                    setUnAvailableProduct([...unAvailable])
                 }).finally(() => { allProducts?.products.length > 0 && cartItems.length >= 0 && setCartLoading(false) })
             }
             else {
@@ -146,12 +233,12 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
     const IncreaseQuantity = async (item) => {
 
-        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variant_id === item.variant_id ? (item?.product_quantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
+        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
         if (session?.status !== "authenticated") {
-            dispatch(increaseQuantity(item._id, item.product_quantity, item.variant_id))
+            dispatch(increaseQuantity(item._id, item.productQuantity, item.variantId))
         }
         else {
-            const prod = cartItems.find(cart => cart._id === item._id && cart.variant_id === item.variant_id);
+            const prod = cartItems.find(cart => cart._id === item._id && cart.variantId === item.variantId);
             const qty = prod.quantity;
             if (session?.status === "authenticated") {
                 let id = session.data.user.accessToken.customer._id
@@ -160,31 +247,31 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                     cart_id = res.data.cartbyUser.id
                     const cCartItems = [...cartItems];
                     const Cartt = cCartItems.map(product => {
-                        if (product._id === item._id && product.variant_id === item.variant_id) {
+                        if (product._id === item._id && product.variantId === item.variantId) {
                             return {
-                                product_id: product._id,
+                                productId: product._id,
                                 qty: qty,
-                                product_title: product.name,
-                                product_image: product.feature_image,
-                                product_price: product.pricing,
-                                shipping_class: product?.shipping_class,
-                                tax_class: product?.tax_class,
+                                productTitle: product.name,
+                                productImage: product.feature_image,
+                                productPrice: product.pricing,
+                                shippingClass: product?.shippingClass,
+                                taxClass: product?.taxClass,
                                 attributes: product.attributes,
-                                variant_id: product.variant_id,
-                                product_quantity: product.product_quantity
+                                variantId: product.variantId,
+                                productQuantity: product.productQuantity
                             }
                         } else {
                             return {
-                                product_id: product._id,
+                                productId: product._id,
                                 qty: product.quantity,
-                                product_title: product.name,
-                                product_image: product.feature_image,
-                                product_price: product.pricing,
-                                shipping_class: product?.shipping_class,
-                                tax_class: product?.tax_class,
+                                productTitle: product.name,
+                                productImage: product.feature_image,
+                                productPrice: product.pricing,
+                                shippingClass: product?.shippingClass,
+                                taxClass: product?.taxClass,
                                 attributes: product.attributes,
-                                variant_id: product.variant_id,
-                                product_quantity: product.product_quantity
+                                variantId: product.variantId,
+                                productQuantity: product.productQuantity
                             }
                         }
                     })
@@ -201,19 +288,19 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     const DecreaseQuantity = (item) => {
         if (item.quantity > 1) {
             setIsQuantityBtnLoading(true)
-            setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variant_id === item.variant_id ? (itemm.quantity -= 1) : itemm.qyantity))
+            setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (itemm.quantity -= 1) : itemm.qyantity))
             setQuantity(item.quantity)
             if (session?.status !== "authenticated") {
                 let variables = {
                     _id: item._id,
-                    variant_id: item.variant_id
+                    variantId: item.variantId
                 }
                 dispatch(decreaseQuantity(variables))
 
                 setIsQuantityBtnLoading(false)
             } else {
 
-                const prod = cartItems.find(cart => cart._id === item._id && cart.variant_id === item.variant_id);
+                const prod = cartItems.find(cart => cart._id === item._id && cart.variantId === item.variantId);
                 const qty = prod.quantity;
                 if (session?.status === "authenticated") {
                     let id = session.data.user.accessToken.customer._id
@@ -222,31 +309,31 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                         cart_id = res.data.cartbyUser.id
                         const cCartItems = [...cartItems];
                         const Cartt = cCartItems.map(product => {
-                            if (product._id === item._id && product.variant_id === item.variant_id) {
+                            if (product._id === item._id && product.variantId === item.variantId) {
                                 return {
-                                    product_id: product._id,
+                                    productId: product._id,
                                     qty: qty,
-                                    product_title: product.name,
-                                    product_image: product.feature_image?.original,
-                                    product_price: product.pricing,
+                                    productTitle: product.name,
+                                    productImage: product.feature_image?.original,
+                                    productPrice: product.pricing,
                                     attributes: product.attributes,
-                                    variant_id: product.variant_id,
-                                    product_quantity: product.product_quantity,
-                                    shipping_class: product?.shipping_class,
-                                    tax_class: product?.tax_class,
+                                    variantId: product.variantId,
+                                    productQuantity: product.productQuantity,
+                                    shippingClass: product?.shippingClass,
+                                    taxClass: product?.taxClass,
                                 }
                             } else {
                                 return {
-                                    product_id: product._id,
+                                    productId: product._id,
                                     qty: product.quantity,
-                                    product_title: product.name,
-                                    product_image: product.feature_image?.original,
-                                    product_price: product.pricing,
+                                    productTitle: product.name,
+                                    productImage: product.feature_image?.original,
+                                    productPrice: product.pricing,
                                     attributes: product.attributes,
-                                    variant_id: product.variant_id,
-                                    product_quantity: product.product_quantity,
-                                    shipping_class: product?.shipping_class,
-                                    tax_class: product?.tax_class,
+                                    variantId: product.variantId,
+                                    productQuantity: product.productQuantity,
+                                    shippingClass: product?.shippingClass,
+                                    taxClass: product?.taxClass,
                                 }
                             }
                         })
@@ -258,7 +345,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                         mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
                             let variables = {
                                 _id: item._id,
-                                variant_id: item.variant_id
+                                variantId: item.variantId
                             }
                             // dispatch(decreaseQuantity(variables))
                             console.log("update res while decreasing qtyyyy", res)
@@ -275,7 +362,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         let idx = cartItems.findIndex(cartItem => cartItem._id === item._id)
         const prod = cartItems.find(cart => cart._id === item._id);
         if (session?.status === "authenticated") {
-            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id || (itemm._id === item._id && itemm.variant_id !== item.variant_id))
+            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id || (itemm._id === item._id && itemm.variantId !== item.variantId))
             setCartItems(cartItemsfilter);
             let id = session.data.user.accessToken.customer._id
             let token = session.data.user.accessToken.token
@@ -285,8 +372,8 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
                 let variables = {
                     id: cart_id,
-                    product_id: item._id,
-                    variant_id: item.variant_id
+                    productId: item._id,
+                    variantId: item.variantId
                 }
 
                 mutation(DELETE_CART_PRODUCTS, variables, token).then(res => dispatch(removeCartItemAction(variables)))
@@ -295,10 +382,10 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
             })
         }
         else {
-            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== product || (itemm._id === product && itemm.variant_id !== item.variant_id))
+            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== product || (itemm._id === product && itemm.variantId !== item.variantId))
             let variables = {
                 id: product,
-                variant_id: item.variant_id
+                variantId: item.variantId
             }
             dispatch(removeCartItemAction(variables));
             setCartItems(cartItemsfilter);
@@ -306,11 +393,11 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
     }
     const doApplyCouponCode = () => {
-        let cart = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity } })
+        let cart = cartItems.map((product) => { return { productId: product._id, qty: product.quantity } })
         let variables = {
-            coupon_code: couponCode, cart: cart
+            couponCode: couponCode, cartItem: cart
         }
-        query2(APPLY_COUPON_CODE, variables, token).then(res => console.log("res", res))
+        query2(APPLY_couponCode, variables, token).then(res => console.log("res", res))
     }
     const ProcessToCheckOut = () => {
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))
@@ -323,13 +410,13 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         let carts = productsCard.map(product => {
 
             return {
-                product_id: product._id,
+                productId: product._id,
                 qty: product.quantity,
                 total: product.pricing.sellprice * product.quantity
             }
         })
         let variables = {
-            user_id: id,
+            userId: id,
             products: carts,
         }
     }
@@ -344,11 +431,11 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         }
         let carts = productsCard.cart.map(product => {
             return {
-                product_id: product?._id,
+                productId: product?._id,
                 qty: product?.quantity,
-                product_title: product?.name,
-                product_image: product?.feature_image?.original,
-                product_price: product?.pricing?.sellprice ? product?.pricing?.sellprice : product?.pricing?.price
+                productTitle: product?.name,
+                productImage: product?.feature_image?.original,
+                productPrice: product?.pricing?.sellprice ? product?.pricing?.sellprice : product?.pricing?.price
             }
         })
         let variables = {
@@ -393,10 +480,29 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                     AllCartItemsClear={AllCartItemsClear}
                                     updateCartProduct={updateCartProduct}
                                     currency={currency}
+
                                 />
+                                {unAvailableProducts && unAvailableProducts?.length > 0 ? <><h3 style={{ color: 'red' }}>Products are not available</h3>
+                                    <CartTable
+                                        decimal={decimal}
+                                        isQuantityBtnLoading={isQuantityBtnLoading}
+                                        cartItems={unAvailableProducts}
+                                        quantity={quantityy}
+                                        IncreaseQuantity={IncreaseQuantity}
+                                        DecreaseQuantity={DecreaseQuantity}
+                                        removeToCart={removeToCart}
+                                        CalculateProductTotal={CalculateProductTotal}
+                                        AllCartItemsClear={AllCartItemsClear}
+                                        updateCartProduct={updateCartProduct}
+                                        currency={currency}
+
+                                    /></> : null}
+                                <div className="cart-action text-end">
+                                    <Link href="/shop"><a className="card-btons "><i className="fas fa-shopping-bag"></i> Continue Shopping</a></Link>
+                                </div>
                                 {/* <div className="devider"></div> */}
                                 <div className="card-other-information flex-column-reverse">
-                                    <div className="col-lg-6 col-md-12 invisible">
+                                    {/* <div className="col-lg-6 col-md-12 invisible">
                                         <h4>Shopping Calculation</h4>
                                         <p>Flat rate : <span>5%</span></p>
                                         <Form>
@@ -422,7 +528,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                             </Row>
                                         </div>
 
-                                    </div>
+                                    </div> */}
                                     <div className="col-lg-12 col-md-12 col-sm-12 mt-4">
                                         <div className="border p-md-4 p-30 border-radius cart-totals">
                                             <div className="heading_s1 mb-3">
@@ -432,18 +538,18 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                                 <table className="table">
                                                     <tbody>
                                                         <tr>
-                                                            <td className="cart_total_label">Cart Subtotal</td>
-                                                            <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
+                                                            <td className="cartTotal_label">Cart Subtotal</td>
+                                                            <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
                                                                 {currency}  {getPrice(CalculateProductTotal(cartItems), decimal)}
                                                             </span></td>
                                                         </tr>
                                                         <tr>
-                                                            <td className="cart_total_label">Shipping</td>
-                                                            <td className="cart_total_amount"> <i className="ti-gift mr-5"></i> Free Shipping</td>
+                                                            <td className="cartTotal_label">Shipping</td>
+                                                            <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i> Free Shipping</td>
                                                         </tr>
                                                         <tr>
-                                                            <td className="cart_total_label">Total</td>
-                                                            <td className="cart_total_amount"><strong><span className="font-xl fw-900 text-brand">
+                                                            <td className="cartTotal_label">Total</td>
+                                                            <td className="cartTotal_amount"><strong><span className="font-xl fw-900 text-brand">
                                                                 {currency} {getPrice(CalculateProductTotal(cartItems), decimal)}
                                                             </span></strong></td>
                                                         </tr>
@@ -496,12 +602,12 @@ export async function getServerSideProps(context) {
         //     let customercarts = CartsData?.cartbyUser.products
         //     let cartitems = await customercarts.map(product => {
         //         return {
-        //             _id: product?.product_id,
-        //             name: product?.product_title,
+        //             _id: product?.productId,
+        //             name: product?.productTitle,
         //             pricing: {
         //                 sellprice: product?.total
         //             },
-        //             feature_image: { thumbnail: product?.product_image === undefined ? null : product?.product_image },
+        //             feature_image: { thumbnail: product?.productImage === undefined ? null : product?.productImage },
         //             quantity: product?.qty
         //         }
         //     })

@@ -372,7 +372,7 @@ module.exports = {
     variation_master: async (root, args) => {
       try {
         const variations = await ProductAttributeVariation.find({
-          product_id: root.id,
+          productId: root.id,
         });
         //console.log(variations);
         return variations || [];
@@ -628,7 +628,7 @@ module.exports = {
         }
         errors = _validatenested(
           "shipping",
-          ["height", "width", "depth", "weight", "shipping_class"],
+          ["height", "width", "depth", "weight", "shippingClass"],
           args
         );
 
@@ -695,9 +695,9 @@ module.exports = {
               width: args.shipping.width || 0,
               depth: args.shipping.depth || 0,
               weight: args.shipping.weight || 0,
-              shipping_class: args.shipping.shipping_class || null,
+              shippingClass: args.shipping.shippingClass || null,
             },
-            tax_class: args.tax_class || null,
+            taxClass: args.taxClass || null,
             featured_product: args.featured_product,
             product_type: args.product_type,
             custom_field: args.custom_field,
@@ -711,7 +711,7 @@ module.exports = {
             console.log('ttt', combinations);
 
             for (const combination of combinations) {
-              combination.product_id = lastProduct.id;
+              combination.productId = lastProduct.id;
 
               let imgObject = "";
 
@@ -728,7 +728,7 @@ module.exports = {
             combinations = [
               {
                 combination: [],
-                product_id: lastProduct.id,
+                productId: lastProduct.id,
                 sku: args.sku,
                 quantity: args.quantity,
                 pricing: {
@@ -773,7 +773,7 @@ module.exports = {
         }
         errors = _validatenested(
           "shipping",
-          ["shipping_class"],
+          ["shippingClass"],
           args
         );
 
@@ -870,7 +870,7 @@ module.exports = {
           product.gallery_image = gallery_images;
           product.meta = args.meta;
           product.shipping = args.shipping;
-          product.tax_class = args.tax_class;
+          product.taxClass = args.taxClass;
           product.featured_product = args.featured_product;
           product.product_type = args.product_type;
           product.custom_field = args.custom_field;
@@ -884,7 +884,7 @@ module.exports = {
           if (args.variant.length && args.combinations.length) {
             combinations = args.combinations;
             for (const combination of combinations) {
-              combination.product_id = args.id;
+              combination.productId = args.id;
               let imgObject = "";
               if (
                 combination.upload_image &&
@@ -902,7 +902,7 @@ module.exports = {
             combinations = [
               {
                 combination: [],
-                product_id: args.id,
+                productId: args.id,
                 sku: args.sku,
                 quantity: args.quantity,
                 pricing: {
@@ -914,7 +914,7 @@ module.exports = {
             ];
           }
           await ProductAttributeVariation.deleteMany({
-            product_id: args.id,
+            productId: args.id,
           });
 
           let result = await ProductAttributeVariation.insertMany(combinations);
@@ -948,7 +948,7 @@ module.exports = {
           }
 
           await Review.deleteMany({
-            product_id: args.id
+            productId: args.id
           })
 
           const productVariants = product.variant
@@ -957,11 +957,11 @@ module.exports = {
           })
 
           const variations = await ProductAttributeVariation.find({
-            product_id: args.id,
+            productId: args.id,
           });
 
           await ProductAttributeVariation.deleteMany({
-            product_id: args.id,
+            productId: args.id,
           });
 
           for (const variation of variations) {

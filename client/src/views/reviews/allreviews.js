@@ -71,9 +71,9 @@ const AllReviewsComponent = () => {
         let object = {
           id: review.id,
           date: review.date,
-          name: review.customer_id.first_name + " - " + convertDateToStringFormat(review.date),
+          name: review.customerId.firstName + " - " + convertDateToStringFormat(review.date),
           last_modified: convertDateToStringFormat(review.updated),
-          reviewd_product: review.product_id.name,
+          reviewd_product: review.productId.name,
           rating: review.rating
         }
         data.push(object)

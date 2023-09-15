@@ -54,21 +54,21 @@ import PhoneNumber from "../components/phoneNumberValidation";
 var SingleCustomerObject = {
   id: "",
   _id: "",
-  first_name: "",
-  last_name: "",
+  firstName: "",
+  lastName: "",
   company: "",
   phone: "",
-  address_line1: "",
-  address_line2: "",
+  addressLine1: "",
+  addressLine2: "",
   city: "",
   country: "",
   state: "",
   pincode: "",
-  default_address: false,
+  defaultAddress: false,
 };
 var customerObj = {
-  first_name: "",
-  last_name: "",
+  firstName: "",
+  lastName: "",
   email: "",
   password: "",
   company: "",
@@ -114,7 +114,7 @@ const EditCustomerComponent = ({ params }) => {
 
   const addUpdateCustomer = (e) => {
     e.preventDefault();
-    let errors = validate(['company', "email", "last_name", "first_name"], customer);
+    let errors = validate(['company', "email", "lastName", "firstName"], customer);
     let phoneNumberError = validatePhone(["phone"], customer)
     let passwordError = validate(["password"], customer)
 
@@ -202,7 +202,7 @@ const EditCustomerComponent = ({ params }) => {
   const updateAddress = () => {
 
     let phoneNumberError = validatePhone(["phone"], singleCustomer)
-    let errors = validate(["pincode", "country", "state", "city", "address_line1", 'company',"last_name", "first_name",], singleCustomer);
+    let errors = validate(["pincode", "country", "state", "city", "addressLine1", 'company',"lastName", "firstName",], singleCustomer);
     if (!isEmpty(errors)) {
      dispatch({
        type: ALERT_SUCCESS,
@@ -228,7 +228,7 @@ const EditCustomerComponent = ({ params }) => {
 
   const addAddress = () => {
     let phoneNumberError = validatePhone(["phone"], singleCustomer)
-    let errors = validate(["pincode", "country", "state", "city", "address_line1", 'company',"last_name", "first_name",], singleCustomer);
+    let errors = validate(["pincode", "country", "state", "city", "addressLine1", 'company',"lastName", "firstName",], singleCustomer);
     if (!isEmpty(errors)) {
      dispatch({
        type: ALERT_SUCCESS,
@@ -299,17 +299,17 @@ const EditCustomerComponent = ({ params }) => {
               <Grid container spacing={isSmall ? 2 : 4}>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
-                    value={customer.first_name}
+                    value={customer.firstName}
                     label="First Name"
-                    name="first_name"
+                    name="firstName"
                     onInputChange={handleChange}
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
-                    value={customer.last_name}
+                    value={customer.lastName}
                     label="Last Name"
-                    name="last_name"
+                    name="lastName"
                     onInputChange={handleChange}
                   />
                 </Grid>
@@ -355,17 +355,17 @@ const EditCustomerComponent = ({ params }) => {
           <Grid item md={4} sm={12} xs={12}>
             <CardBlocks title={`${editMode ? "Edit" : "Add"} Adress`}>
               <Grid container spacing={2}>
-                {addressInput("First Name", "first_name")}
+                {addressInput("First Name", "firstName")}
 
-                {addressInput("Last Name", "last_name")}
+                {addressInput("Last Name", "lastName")}
 
                 {addressInput("Company", "company")}
 
                 {addressInput("Phone", "phone")}
 
-                {addressInput("Address line1", "address_line1")}
+                {addressInput("Address line1", "addressLine1")}
 
-                {addressInput("Address line2", "address_line2")}
+                {addressInput("Address line2", "addressLine2")}
 
                 {addressInput("City", "city")}
 
@@ -379,11 +379,11 @@ const EditCustomerComponent = ({ params }) => {
                     control={
                       <Checkbox
                         color="primary"
-                        checked={singleCustomer.default_address}
+                        checked={singleCustomer.defaultAddress}
                         onChange={(e) =>
                           setSingleCustomer({
                             ...singleCustomer,
-                            default_address: e.target.checked,
+                            defaultAddress: e.target.checked,
                           })
                         }
                       />
@@ -416,8 +416,8 @@ const EditCustomerComponent = ({ params }) => {
           <Grid item md={8} sm={12} xs={12}>
             <Grid container spacing={isSmall ? 2 : 4}>
               {customer &&
-                customer.address_book &&
-                customer.address_book.map((address, index) => (
+                customer.addressBook &&
+                customer.addressBook.map((address, index) => (
                   <Grid item md={6} sm={6} xs={12} key={index} >
                     <Box style={{ marginTop: "22px" }}>
                       <Card>
@@ -431,7 +431,7 @@ const EditCustomerComponent = ({ params }) => {
                               >
                                 <Tooltip
                                   title={
-                                    address.default_address
+                                    address.defaultAddress
                                       ? "Default Address"
                                       : "Edit the address and check the 'Default Address' option to make it your default address."
                                   }
@@ -440,7 +440,7 @@ const EditCustomerComponent = ({ params }) => {
                                   <Button>
                                     <Rating
                                       name="customized-10"
-                                      value={address.default_address ? 1 : 0}
+                                      value={address.defaultAddress ? 1 : 0}
                                       max={1}
                                       readOnly
                                     />
@@ -476,7 +476,7 @@ const EditCustomerComponent = ({ params }) => {
                               </ListItemIcon>
                               <ListItemText
                                 primary={
-                                  address.first_name + " " + address.last_name
+                                  address.firstName + " " + address.lastName
                                 }
                               />
                             </ListItem>
@@ -498,7 +498,7 @@ const EditCustomerComponent = ({ params }) => {
                               </ListItemIcon>
                               <ListItemText
                                 primary={
-                                  address.address_line1 +
+                                  address.addressLine1 +
                                   ", " +
                                   address.city +
                                   ", " +

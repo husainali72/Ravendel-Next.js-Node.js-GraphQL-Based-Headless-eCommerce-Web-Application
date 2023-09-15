@@ -22,7 +22,7 @@ const Reviews = ({ singleProductReview }) => {
           return <div key={index} className='singleReview'>
             <div className='usernameWidProfile'>
               <img className='userImg' src='/assets/userProfile/icons8.png' alt='img' />
-              <span className='singleReviewUsername'>	{product.customer_id.first_name} </span>
+              <span className='singleReviewUsername'>	{product.customerId.firstName} </span>
             </div>
             <div className='starWidTitle'>
               <StarRating className="rating" stars={product.rating} />

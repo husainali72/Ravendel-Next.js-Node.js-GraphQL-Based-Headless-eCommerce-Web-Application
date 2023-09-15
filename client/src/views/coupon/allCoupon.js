@@ -25,12 +25,12 @@ const AllCouponsTheme = () => {
       sortingactive: true
     },
     {
-      name: "discount_value",
+      name: "discountValue",
       title: "Discount Value",
       sortingactive: true
     },
     {
-      name: "discount_type",
+      name: "discountType",
       title: "Discount type",
       sortingactive: true
     },
@@ -67,8 +67,10 @@ const AllCouponsTheme = () => {
           code: coupon.code,
           expire_date: coupon.expire,
           date: coupon.date,
-          discount_type: coupon.discount_type,
-          discount_value: coupon.discount_value
+
+          discountType: coupon.discountType,
+          discountValue: coupon.discountValue
+
         }
         data.push(object)
       })

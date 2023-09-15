@@ -23,15 +23,15 @@ const Star = ({ starId, marked }) => {
 const addressObject = {
     id: "",
     _id: "",
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     company: "",
     phone: "",
-    address_line1: "",
-    address_line2: "",
+    addressLine1: "",
+    addressLine2: "",
     state: "",
     city: "",
-    default_address: false,
+    defaultAddress: false,
 }
 
 const AddressDetail = (props) => {
@@ -54,8 +54,8 @@ const AddressDetail = (props) => {
         }
     }, [addMode, editMode])
     useEffect(() => {
-        if (addressDetail.address_book && addressDetail.address_book?.length > 0) {
-            setAllAddressBook(addressDetail.address_book)
+        if (addressDetail.addressBook && addressDetail.addressBook?.length > 0) {
+            setAllAddressBook(addressDetail.addressBook)
         }
         else {
             setAllAddressBook(allAddressBook)
@@ -78,7 +78,7 @@ const AddressDetail = (props) => {
 
 
     const updateAddress = async (e) => {
-        if (address.first_name && address.last_name && address.address_line1 && address.city && address.company && address.country && address.state && address.phone) {
+        if (address.firstName && address.lastName && address.addressLine1 && address.city && address.company && address.country && address.state && address.phone) {
             mutation(UPDATE_ADDRESSBOOK, address, token).then(async (response) => {
                 if (response.data.updateAddressBook.success) {
                     getcustomer()
@@ -92,7 +92,7 @@ const AddressDetail = (props) => {
         }
     };
     const addNewAddress = async () => {
-        if (address.first_name && address.last_name && address.address_line1 && address.city && address.company && address.country && address.state && address.phone) {
+        if (address.firstName && address.lastName && address.addressLine1 && address.city && address.company && address.country && address.state && address.phone) {
             mutation(ADD_ADDRESSBOOK, address, token).then(async (response) => {
 
                 if (response.data.addAddressBook.success) {
@@ -150,18 +150,18 @@ const AddressDetail = (props) => {
                                         name="firstname"
                                         label="firstname"
                                         placeholder="First name *"
-                                        value={address.first_name || ""}
+                                        value={address.firstName || ""}
 
                                         className="update-account-details-input"
 
                                         {...register('firstname', {
 
                                             required: {
-                                                value: (address.first_name ? false : true),
+                                                value: (address.firstName ? false : true),
                                                 message: "First name is required",
                                             },
                                         })}
-                                        onChange={(e) => setAddress({ ...address, first_name: e.target.value })}
+                                        onChange={(e) => setAddress({ ...address, firstName: e.target.value })}
                                     />
                                     <p>
                                         <small style={{ color: 'red' }}>
@@ -175,18 +175,18 @@ const AddressDetail = (props) => {
                                         name="lastname"
                                         label="lastname"
                                         placeholder="Last name *"
-                                        value={address.last_name}
+                                        value={address.lastName}
 
                                         className="update-account-details-input"
                                         {...register('lastname', {
 
                                             required: {
-                                                value: (address.last_name ? false : true),
+                                                value: (address.lastName ? false : true),
                                                 message: "Last name is required",
                                             },
 
                                         })}
-                                        onChange={(e) => setAddress({ ...address, last_name: e.target.value })}
+                                        onChange={(e) => setAddress({ ...address, lastName: e.target.value })}
                                     />
                                     <p>
                                         <small style={{ color: 'red' }}>
@@ -251,21 +251,21 @@ const AddressDetail = (props) => {
                                         name="address"
                                         label="address"
                                         placeholder="Address *"
-                                        value={address.address_line1}
-                                        {...register('address_line1', {
+                                        value={address.addressLine1}
+                                        {...register('addressLine1', {
 
                                             required: {
-                                                value: (address.address_line1 ? false : true),
+                                                value: (address.addressLine1 ? false : true),
                                                 message: "Address is required",
                                             },
                                         })}
-                                        onChange={(e) => setAddress({ ...address, address_line1: e.target.value })}
+                                        onChange={(e) => setAddress({ ...address, addressLine1: e.target.value })}
 
                                         className="update-account-details-input"
                                     />
                                     <p>
                                         <small style={{ color: 'red' }}>
-                                            {errors.address_line1?.type === "required" ? errors.address_line1?.message : undefined}
+                                            {errors.addressLine1?.type === "required" ? errors.addressLine1?.message : undefined}
                                         </small>
                                     </p>
                                 </Col >
@@ -277,8 +277,8 @@ const AddressDetail = (props) => {
                                         name="address"
                                         label="address"
                                         placeholder="Address *"
-                                        value={address.address_line2}
-                                        onChange={(e) => setAddress({ ...address, address_line2: e.target.value })}
+                                        value={address.addressLine2}
+                                        onChange={(e) => setAddress({ ...address, addressLine2: e.target.value })}
 
                                         className="update-account-details-input"
                                     />
@@ -385,8 +385,8 @@ const AddressDetail = (props) => {
                                 <Form.Check
                                     type="checkbox"
                                     name="checkedB"
-                                    value={address.default_address}
-                                    onChange={(e) => setAddress({ ...address, default_address: e.target.checked })}
+                                    value={address.defaultAddress}
+                                    onChange={(e) => setAddress({ ...address, defaultAddress: e.target.checked })}
                                     label="Make it Default Address"
                                 />
                             </Row>
@@ -424,12 +424,12 @@ const AddressDetail = (props) => {
                 </Button>
             </Fade>
             <div className="address-details-container">
-                {addressDetail && addressDetail.address_book && allAddressBook.map((addressBook, index) => (
+                {addressDetail && addressDetail.addressBook && allAddressBook.map((addressBook, index) => (
                     <Card key={index}>
                         <Card.Body>
                             <Row className="address-card-row">
 
-                                <Col style={{ fontWeight: 700 }}><i className="fas fa-user"></i>  {capitalize(addressBook.first_name)}</Col>
+                                <Col style={{ fontWeight: 700 }}><i className="fas fa-user"></i>  {capitalize(addressBook.firstName)}</Col>
 
                                 <Col style={{ float: 'right', marginRight: "-400px" }}>
                                     <OverlayTrigger
@@ -438,7 +438,7 @@ const AddressDetail = (props) => {
                                                 className="default-address"
                                                 aria-label="Default-Address"
                                             >Default Address</Tooltip>
-                                        }><Star marked={addressBook.default_address ? 1 : 0} /></OverlayTrigger>
+                                        }><Star marked={addressBook.defaultAddress ? 1 : 0} /></OverlayTrigger>
                                 </Col>
                             </Row>
                             <Card.Text>

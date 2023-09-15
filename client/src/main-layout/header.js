@@ -31,7 +31,7 @@ const HeaderComponenet = () => {
   const { onSidebarOpen } = login;
   const [activeUser, setActiveUser] = useState({
     name: "",
-    user_id: "",
+    userId: "",
     image: { thumbnail: "" },
   });
   const [anchorEl, setAnchorEl] = useState(null);
@@ -95,7 +95,7 @@ const HeaderComponenet = () => {
             >
               <MenuItem onClick={handleClose}>
                 <Link
-                  to={`${client_app_route_url}edit-user/${activeUser.user_id}`}
+                  to={`${client_app_route_url}edit-user/${activeUser.userId}`}
                 >
                   <span className={classes.editProfile}>Edit Profile</span>
                 </Link>

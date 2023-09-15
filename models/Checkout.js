@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const CheckoutSchema = new Schema({
-  user_id: {
+  userId: {
     type: Schema.ObjectId,
     required: true
   },
@@ -11,7 +11,7 @@ const CheckoutSchema = new Schema({
   payment: {},
   products: [
     {
-      product_id: {
+      productId: {
         type: Schema.ObjectId,
         required: true
       },

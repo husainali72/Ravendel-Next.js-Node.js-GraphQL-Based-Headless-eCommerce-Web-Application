@@ -8,7 +8,7 @@ const getToken = () => {
   return cookie.load("auth").token;
 };
 const getUserId = () => {
-  return user_token.user_id;
+  return user_token.userId;
 };
 
 const getUser = () => {

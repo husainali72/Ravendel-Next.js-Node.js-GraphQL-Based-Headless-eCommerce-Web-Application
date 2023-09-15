@@ -52,12 +52,12 @@ const GlobalTaxesComponent = ({
               >
                 <Select
                   name="Tax-name"
-                  value={taxGlobalState.tax_class}
+                  value={taxGlobalState.taxClass}
                   onChange={(e) =>
-                    changeGlobalState("tax_class", e.target.value)
+                    changeGlobalState("taxClass", e.target.value)
                   }
                 >
-                  {taxState.tax.tax_class.map((tax, index) => {
+                  {taxState.tax.taxClass.map((tax, index) => {
                     return (
                       <MenuItem value={tax._id} key={index}>
                         {tax.name}

@@ -33,7 +33,7 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
     },]
   useEffect(() => {
     let data = []
-    taxState.tax.tax_class.map((tax) => {
+    taxState.tax.taxClass.map((tax) => {
       let object = {
         id: tax._id,
         percentage: tax.percentage,
@@ -44,7 +44,7 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
     })
     setfilterdData(data)
     setAlltaxes(data)
-  }, [taxState.tax.tax_class])
+  }, [taxState.tax.taxClass])
   const handleOnChangeSearch = (filtereData) => {
     setfilterdData(filtereData)
   }

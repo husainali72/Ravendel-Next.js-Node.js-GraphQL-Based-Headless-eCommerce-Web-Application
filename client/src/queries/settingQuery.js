@@ -41,8 +41,8 @@ const SETTING_TILE_DATA = gql`
         number_of_decimals
       }
       store_address {
-        address_line1
-        address_line2
+        addressLine1
+        addressLine2
         city
         country
         state
@@ -278,8 +278,8 @@ const UPDATE_STORE_CURRENCY = gql`
 
 const UPDATE_STORE_ADDRESS = gql`
   mutation(
-    $address_line1: String
-    $address_line2: String
+    $addressLine1: String
+    $addressLine2: String
     $city: String
     $country: String
     $state: String
@@ -287,8 +287,8 @@ const UPDATE_STORE_ADDRESS = gql`
     $hour: String
   ) {
     updateStoreAddress(
-      address_line1: $address_line1
-      address_line2: $address_line2
+      addressLine1: $addressLine1
+      addressLine2: $addressLine2
       city: $city
       country: $country
       state: $state

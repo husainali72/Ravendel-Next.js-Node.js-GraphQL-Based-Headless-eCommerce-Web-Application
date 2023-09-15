@@ -217,11 +217,11 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
                                                 return (<>
                                                     <h6>{capitalize(attribute.name)}</h6>
                                                     <Form>
-                                                        <Form.Group value='{billingInfo.payment_method}'
+                                                        <Form.Group value='{billingInfo.paymentMethod}'
                                                             onChange={(e) => handleFilterData(e, attribute.id)}>
                                                             {attribute.values.map((value) => {
                                                                 return (<>
-                                                                    <Form.Check label={capitalize(value.name)} name="payment_method" value={value._id} />
+                                                                    <Form.Check label={capitalize(value.name)} name="paymentMethod" value={value._id} />
                                                                 </>)
 
                                                             })}

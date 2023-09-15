@@ -2812,7 +2812,7 @@ footer .btn:hover a {
   margin-bottom: 50px;
 }
 
-.cart_total_label {
+.cartTotal_label {
   font-weight: bold;
 }
 
@@ -2821,12 +2821,12 @@ footer .btn:hover a {
   color: #8F8F8F;
 }
 
-.cart_total_amount {
+.cartTotal_amount {
   color: #777777;
   font-weight: 700;
 }
 
-.cart_total_amount strong {
+.cartTotal_amount strong {
   font-weight: 700;
 }
 
@@ -2838,8 +2838,8 @@ footer .btn:hover a {
   font-weight: 700;
 }
 
-.cart_total_label,
-.cart_total_amount {
+.cartTotal_label,
+.cartTotal_amount {
   text-align: left;
   /* border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important; */
   padding: 10px;
@@ -2854,7 +2854,7 @@ footer .btn:hover a {
   line-height: 22px;
 }
 
-.cart_total_amount {
+.cartTotal_amount {
   float: right;
 }
 

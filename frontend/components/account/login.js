@@ -50,7 +50,7 @@ const LogIn = () => {
 
             const products =  productsInCart?.map(prod => {
                 return{
-                    product_id: prod._id,
+                    productId: prod._id,
                     qty: prod.quantity
                 }
             } )
@@ -85,18 +85,18 @@ const LogIn = () => {
         //         // if(!cart_id) {
 
         //             updatedUserCart = userCart ? userCart?.map((product) => ({
-        //                 product_id: product.product_id,
+        //                 productId: product.productId,
         //                 qty: product.qty,
-        //                 product_title: product.product_title
-        //                 // feature_image: { original: product.product_image },
-        //                 // name: product.product_title,
-        //                 // pricing: { price: 0, sellprice: product.product_price },
+        //                 productTitle: product.productTitle
+        //                 // feature_image: { original: product.productImage },
+        //                 // name: product.productTitle,
+        //                 // pricing: { price: 0, sellprice: product.productPrice },
         //             })) : [];
                     
         //             updatedLocalCart = productsInCart ? productsInCart?.cart?.map(product =>({
         //                 qty: product.quantity,
-        //                 product_id: product._id,
-        //                 product_title: product.product_title
+        //                 productId: product._id,
+        //                 productTitle: product.productTitle
         //                 // feature_image: { original: product.feature_image.original },
         //                 // name: product.name,
         //                 // pricing: product.pricing,
@@ -104,11 +104,11 @@ const LogIn = () => {
 
         //         // }else{
         //         //     updatedUserCart = userCart?.map((product) => ({
-        //         //         feature_image: { original: product.product_image },
-        //         //         name: product.product_title,
-        //         //         pricing: { price: 0, sellprice: product.product_price },
+        //         //         feature_image: { original: product.productImage },
+        //         //         name: product.productTitle,
+        //         //         pricing: { price: 0, sellprice: product.productPrice },
         //         //         quantity: product.qty,
-        //         //         _id: product.product_id,
+        //         //         _id: product.productId,
         //         //     }));
         
         //         //     updatedLocalCart = productsInCart?.cart?.map(product =>({
@@ -158,11 +158,11 @@ const LogIn = () => {
     //         console.log('useeffect ran islogin')
             
     //         let updatedUserCart = userCart?.map((product) => ({
-    //             feature_image: { original: product.product_image },
-    //             name: product.product_title,
-    //             pricing: { price: 0, sellprice: product.product_price },
+    //             feature_image: { original: product.productImage },
+    //             name: product.productTitle,
+    //             pricing: { price: 0, sellprice: product.productPrice },
     //             quantity: product.qty,
-    //             _id: product.product_id,
+    //             _id: product.productId,
     //         }));
 
     //         let updatedLocalCart = productsInCart?.cart?.map(product =>({

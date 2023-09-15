@@ -51,11 +51,11 @@ export default function Home({ homepageData, seoInfo, brands, homePageInfo, curr
     let token = await session.data.user.accessToken.token
     var Cart = await cart.map(product => {
       return {
-        product_id: product._id,
+        productId: product._id,
         qty: product.quantity,
-        product_title: product.name,
-        product_image: product.feature_image?.original,
-        product_price: product.pricing?.sellprice || 0
+        productTitle: product?.name,
+        productImage: product?.feature_image?.original,
+        productPrice: product?.pricing?.toString() || '0'
       }
     })
 
@@ -64,6 +64,7 @@ export default function Home({ homepageData, seoInfo, brands, homePageInfo, curr
       products: Cart,
       total: 0,
     }
+
     if (userCart.card_id === undefined) {
       return undefined;
     } else {

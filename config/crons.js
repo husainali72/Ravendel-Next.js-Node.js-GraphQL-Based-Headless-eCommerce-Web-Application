@@ -36,7 +36,7 @@ const updateCustomerCheckoutCart = (app) => {
     cron.schedule("0 0 */10 * *", async() => {
         const allCarts = await Cart.find()
         for(let cart of allCarts){
-            let customer = await Customer.findById(cart.user_id)
+            let customer = await Customer.findById(cart.userId)
             const mailData = {
                 subject: "Checkout Cart!",
                 mailTemplate: "template",

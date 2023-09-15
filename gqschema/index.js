@@ -13,7 +13,7 @@ const tax = require("./tax");
 const shipping = require("./shipping");
 const coupon = require("./coupon");
 const review = require("./review");
-const product_attribute = require("./product_attribute");
+const productAttribute = require("./product_attribute");
 const faqSchema = require("./faq");
 const miscSchema = require("./misc");
 const zipcodeSchema = require("./zipcode");
@@ -71,8 +71,8 @@ module.exports = [
   shipping,
   coupon,
   review,
-  product_attribute,
+  productAttribute,
   faqSchema,
-  product_attribute, 
+  productAttribute, 
   zipcodeSchema,
 ];

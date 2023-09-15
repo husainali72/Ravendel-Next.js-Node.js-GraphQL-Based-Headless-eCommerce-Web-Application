@@ -1,15 +1,45 @@
 import { gql } from "@apollo/client";
 
 export const APPLY_COUPON_CODE = gql`
-               query($coupon_code: String,$cart: [cartProducts])
+               query($couponCode: String,
+                $cartItem: [couponCartProducts],
+                $totalShipping : String
+                $totalTax : String,
+                $grandTotal:String,
+                $cartTotal:String)
     {
-  calculateCoupon(coupon_code: $coupon_code ,
-    cart: $cart
+  calculateCoupon(couponCode: $couponCode ,
+    cartItem: $cartItem,
+    totalShipping:$totalShipping,
+    totalTax:$totalTax,
+    grandTotal:$grandTotal,
+    cartTotal:$cartTotal
+
+
   ) 
   {
     message
-    total_coupon
+    totalCoupon
+    message
     success
+    cartItem{
+      productId
+    qty  
+    productImage 
+    productTitle 
+    productShipping 
+    productTax 
+    productPrice 
+    productTotal 
+    variantId   
+     discountGrandTotal 
+    }
+    cartTotal 
+    totalShipping 
+    totalTax 
+    grandTotal
+    discountGrandTotal 
+
   }
 }`;
 
@@ -20,16 +50,16 @@ export const GET_CUOPONS_QUERY = gql`
                 id
                 code
                 description
-                discount_type
-                discount_value
-                free_shipping
+                discountType
+                discountValue
+                freeShipping
                 expire
-                minimum_spend
-                maximum_spend
+                minimumSpend
+                maximumSpend
                 products
-                exclude_products
+                excludeProducts
                 categories
-                exclude_categories
+                excludeCategories
                 date
                 updated
         }
@@ -46,16 +76,16 @@ export const GET_COUPON_BY_ID = gql`  query($id:ID!) {
      id
     code
     description
-    discount_type
-    discount_value
-    free_shipping
+    discountType
+    discountValue
+    freeShipping
     expire
-    minimum_spend
-    maximum_spend
+    minimumSpend
+    maximumSpend
     products
-    exclude_products
+    excludeProducts
     categories
-    exclude_categories
+    excludeCategories
     date
     updated
         }

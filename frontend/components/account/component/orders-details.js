@@ -18,7 +18,7 @@ export const convertDateToStringFormat = (date) => {
     }
     return convertedDate;
 };
-const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, subtotal, tax, shipping_amount, homepageData }) => {
+const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, subtotal, tax, shippingAmount, homepageData }) => {
     const Details = useSelector(state => state.checkout)
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
@@ -69,7 +69,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                     </tr>
                                     <tr>
                                         <th>Payment Method</th>
-                                        {billingInfo?.payment_method ? <td>{billingInfo?.payment_method} </td> : <td>"Cash On Delivery"</td>}
+                                        {billingInfo?.paymentMethod ? <td>{billingInfo?.paymentMethod} </td> : <td>"Cash On Delivery"</td>}
                                     </tr>
                                 </table>
                             </div>
@@ -82,7 +82,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                         {billingInfo?.firstname} {billingInfo?.lastname} <br />
                                         {billingInfo?.email}  <br />
                                         {billingInfo?.phone}  <br />
-                                        {billingInfo?.address_line1} {billingInfo?.firstname}  <br />
+                                        {billingInfo?.addressLine1} {billingInfo?.firstname}  <br />
                                         {billingInfo?.city} {billingInfo?.state} {billingInfo?.country}
                                     </p>
                                     <hr />
@@ -135,7 +135,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                 </tr>
                                 <tr>
                                     <th colSpan={3} className="order-text-align">Shipping</th>
-                                    <td>{currency} {shipping_amount ? getPrice(shipping_amount, decimal) : "0.00"}</td>
+                                    <td>{currency} {shippingAmount ? getPrice(shippingAmount, decimal) : "0.00"}</td>
                                 </tr>
                                 <tr className="total">
                                     <th colSpan={3} className="order-text-align" >Total</th>

@@ -25,7 +25,7 @@ module.exports = {
       root,
       { limit, pageNumber, search, orderBy, order }
     ) => {
-      var searchInFields = { first_name: { $regex: `${search}`, $options: "i" } };
+      var searchInFields = { firstName: { $regex: `${search}`, $options: "i" } };
 
       return await GET_BY_PAGINATIONS(
         limit,
@@ -47,14 +47,14 @@ module.exports = {
         ///////////////////////////////
         queryName: "addCustomer",
         ///////////////////////////////
-        first_name: args.first_name,
-        last_name: args.last_name,
+        firstName: args.firstName,
+        lastName: args.lastName,
         email: args.email,
         company: args.company || "",
         phone: args.phone || "",
         password: args.password,
       };
-      let validation = ["first_name", "last_name", "email", "password"];
+      let validation = ["firstName", "lastName", "email", "password"];
       const duplicate = await duplicateData({email: args.email}, Customer)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
       return await CREATE_FUNC(
@@ -69,15 +69,15 @@ module.exports = {
     },
     updateCustomer: async (root, args, { id }) => {
       let data = {
-        first_name: args.first_name,
-        last_name: args.last_name,
+        firstName: args.firstName,
+        lastName: args.lastName,
         email: args.email,
         gender: args.gender,
         company: args.company || "",
         phone: args.phone || "",
         updated: Date.now(),
       };
-      let validation = ["first_name", "last_name", "email"];
+      let validation = ["firstName", "lastName", "email"];
       const duplicate = await duplicateData({email: args.email}, Customer, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
       return await UPDATE_FUNC(
@@ -116,9 +116,9 @@ module.exports = {
       try {
         const errors = _validate(
           [
-            "first_name",
-            "last_name",
-            "address_line1",
+            "firstName",
+            "lastName",
+            "addressLine1",
             "pincode",
             "city",
             "country",
@@ -136,15 +136,15 @@ module.exports = {
           return MESSAGE_RESPONSE("NOT_EXIST", "Address", false);
         }
 
-        if (args.default_address) {
-          for (let i in customer.address_book) {
-            if (customer.address_book[i].default_address) {
-              customer.address_book[i].default_address = false;
+        if (args.defaultAddress) {
+          for (let i in customer.addressBook) {
+            if (customer.addressBook[i].defaultAddress) {
+              customer.addressBook[i].defaultAddress = false;
             }
           }
         }
         delete args.id;
-        customer.address_book.push(args);
+        customer.addressBook.push(args);
         customer.updated = Date.now();
         await customer.save();
         return MESSAGE_RESPONSE("AddSuccess", "Address", true);
@@ -160,9 +160,9 @@ module.exports = {
       try {
         const errors = _validate(
           [
-            "first_name",
-            "last_name",
-            "address_line1",
+            "firstName",
+            "lastName",
+            "addressLine1",
             "pincode",
             "city",
             "country",
@@ -180,12 +180,12 @@ module.exports = {
           return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
         }
         delete args.id;
-        if(!customer.address_book.length > 0){
+        if(!customer.addressBook.length > 0){
           return MESSAGE_RESPONSE("NOT_EXIST", "Address", false);
         }
-        customer.address_book = customer.address_book.map((address) => {
-          if (args.default_address) {
-            address.default_address = false;
+        customer.addressBook = customer.addressBook.map((address) => {
+          if (args.defaultAddress) {
+            address.defaultAddress = false;
           }
           if (address._id == args._id) {
             address = args;
@@ -216,7 +216,7 @@ module.exports = {
 //         }
 //         if (customer) {
 //           let customerID = customer._id
-//           let addressbook = customer.address_book
+//           let addressbook = customer.addressBook
          
   
 //           if (!args._id) {
@@ -229,10 +229,10 @@ module.exports = {
 //             return MESSAGE_RESPONSE("NOT_EXIST", "addressBook", false);
 //           }
        
-//           const address_Book = await Customer.updateOne(
+//           const addressBook = await Customer.updateOne(
 //             { _id: customerID },
 //             {
-//               $pull: { address_book: { _id: { $in: ids } } },
+//               $pull: { addressBook: { _id: { $in: ids } } },
 //             });
 
 //           return MESSAGE_RESPONSE("DELETE", "addressBook", true);
@@ -250,13 +250,13 @@ module.exports = {
           return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
         }
 
-        var customer_address_book = customer.address_book;
+        var customer_addressBook = customer.addressBook;
 
-        for (let i in customer_address_book) {
-          if (customer_address_book[i]._id == args._id) {
-            customer.address_book = [];
-            delete customer_address_book[i];
-            customer.address_book = customer_address_book;
+        for (let i in customer_addressBook) {
+          if (customer_addressBook[i]._id == args._id) {
+            customer.addressBook = [];
+            delete customer_addressBook[i];
+            customer.addressBook = customer_addressBook;
             break;
           }
         }

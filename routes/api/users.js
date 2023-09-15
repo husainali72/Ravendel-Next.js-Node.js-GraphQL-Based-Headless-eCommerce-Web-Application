@@ -83,7 +83,7 @@ router.post("/login", (req, res) => {
                   success: true,
                   token: token,
                   role: user.role,
-                  user_id: user.id,
+                  userId: user.id,
                   name: user.name,
                   image: user.image,
                 });

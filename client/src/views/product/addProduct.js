@@ -79,9 +79,9 @@ const AddProductTheme = () => {
       width: "0",
       depth: "0",
       weight: "0",
-      shipping_class: "",
+      shippingClass: "",
     },
-    tax_class: "",
+    taxClass: "",
     featured_product: false,
     product_type: {
       virtual: false,
@@ -97,8 +97,8 @@ const AddProductTheme = () => {
   const addProduct = (e) => {
 
     e.preventDefault();
-    product.tax_class = taxClass
-    product.shipping.shipping_class = shippingClass
+    product.taxClass = taxClass
+    product.shipping.shippingClass = shippingClass
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     let Errors = validatenested("pricing", ["price", "sellprice"], product);
     if (!isEmpty(errors)) {

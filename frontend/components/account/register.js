@@ -13,8 +13,8 @@ const registerObject = {
     ///////////////////////////////
     queryName: "addCustomer",
     ///////////////////////////////
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     company: "",
@@ -82,26 +82,26 @@ const Register = () => {
             <div className="form-container">
                 <form onSubmit={doRegister}>
                     <input
-                        type="first_name"
+                        type="firstName"
                         className="form-control"
-                        id="first_name"
+                        id="firstName"
                         placeholder="First Name"
-                        value={registerUser.first_name}
-                        onChange={(e) => setRegisterUser({ ...registerUser, first_name: e.target.value })}
+                        value={registerUser.firstName}
+                        onChange={(e) => setRegisterUser({ ...registerUser, firstName: e.target.value })}
                     />
                     <div className="error-message" >
-                    <small>{Errors?.first_name && Errors?.first_name}</small>
+                    <small>{Errors?.firstName && Errors?.firstName}</small>
                     </div>
                     <input
-                        type="last_name"
+                        type="lastName"
                         className="form-control"
-                        id="last_name"
+                        id="lastName"
                         placeholder="Last Name"
-                        value={registerUser.last_name}
-                        onChange={(e) => setRegisterUser({ ...registerUser, last_name: e.target.value })}
+                        value={registerUser.lastName}
+                        onChange={(e) => setRegisterUser({ ...registerUser, lastName: e.target.value })}
                     />
                      <div className="error-message" >
-                    <small>{Errors?.last_name && Errors?.last_name}</small>
+                    <small>{Errors?.lastName && Errors?.lastName}</small>
                     </div>
                     <input
                         type="login-email"
@@ -168,7 +168,7 @@ const Register = () => {
                         </Link>
                         {/* <a href="#" style={{ float: 'right' }}>learn more</a> */}
                     </div>
-                    <button disabled={registerUser.first_name == "" ||  registerUser.last_name == "" || registerUser.email == "" 
+                    <button disabled={registerUser.firstName == "" ||  registerUser.lastName == "" || registerUser.email == "" 
                                      || registerUser.password == "" || registerUser.company == "" || registerUser.phone == ""
                                    }
                              type="submit" 

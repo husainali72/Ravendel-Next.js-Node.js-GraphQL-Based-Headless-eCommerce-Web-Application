@@ -27,8 +27,8 @@ const ReviewForm = ({ productId }) => {
         review: "",
         rating: "",
         status: "pending",
-        product_id: productId || "",
-        customer_id: "",
+        productId: productId || "",
+        customerId: "",
     }
     const login = useSelector(state => state.login);
     const session = useSession()
@@ -38,8 +38,8 @@ const ReviewForm = ({ productId }) => {
     const [selection, setSelection] = React.useState(0);
 
     useEffect(() => {
-        setReview((prev)=>({...prev, customer_id:session?.data?.user?.accessToken?.customer?._id}))
-        setReview({...review,customer_id:session?.data?.user?.accessToken?.customer?._id})
+        setReview((prev)=>({...prev, customerId:session?.data?.user?.accessToken?.customer?._id}))
+        setReview({...review,customerId:session?.data?.user?.accessToken?.customer?._id})
         if (session?.status === "authenticated") {
             token = session?.data?.user?.accessToken?.token;
             setCustomerId(session?.data?.user?.accessToken?.customer?._id);
@@ -48,14 +48,14 @@ const ReviewForm = ({ productId }) => {
     
 
     useEffect(() => {
-        setReview({ ...review, product_id: productId });
-        // setReview({ ...review, customer_id: CustomerId })
+        setReview({ ...review, productId: productId });
+        // setReview({ ...review, customerId: CustomerId })
         
     }, [productId])
 
 useEffect(() => {
     if (session?.status === "authenticated") {
-        setReview((prev)=>({...prev, customer_id:session?.data?.user?.accessToken?.customer?._id}))
+        setReview((prev)=>({...prev, customerId:session?.data?.user?.accessToken?.customer?._id}))
     }
 }, [CustomerId])
 

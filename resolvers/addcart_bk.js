@@ -3,13 +3,13 @@ addCart: async (root, args, { id }) => {
       return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
     }
     try {
-      const cart = await Cart.findOne({ user_id: args.user_id });
+      const cart = await Cart.findOne({ userId: args.userId });
       var carttotal = 0;
       console.log("cart any==========",cart)
       if(cart){
         for (let i in args.products) {
-          if (args.products[i].product_id) {
-            const product = await Product.findById({ _id: args.products[i].product_id });
+          if (args.products[i].productId) {
+            const product = await Product.findById({ _id: args.products[i].productId });
             if (product.pricing.sellprice > 0) {
               args.products[i].total = args.products[i].qty * product.pricing.sellprice;
             } else {
@@ -23,7 +23,7 @@ addCart: async (root, args, { id }) => {
       } 
       
       const newCart = new Cart({
-        user_id: args.user_id,
+        userId: args.userId,
         total: carttotal,
         // products: args.products
       });

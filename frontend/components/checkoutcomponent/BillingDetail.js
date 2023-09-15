@@ -205,14 +205,14 @@ const BillingDetails = (props) => {
                                         value: (billingInfo.zip ? false : true),
                                         message: "zip is Required",
                                     },
-                                    minLength: {
-                                        value: 6,
-                                        message: "zip Min length is 6",
-                                    },
-                                    maxLength: {
-                                        value: 6,
-                                        message: "zip Max length is 6",
-                                    },
+                                    // minLength: {
+                                    //     value: 6,
+                                    //     message: "zip Min length is 6",
+                                    // },
+                                    // maxLength: {
+                                    //     value: 6,
+                                    //     message: "zip Max length is 6",
+                                    // },
                                 })}
                                 value={billingInfo.zip}
                                 onChange={handleZipCode}
@@ -240,7 +240,7 @@ const BillingDetails = (props) => {
                                 render={({ field: { onChange, value } }) => (
                                     <PhoneInput
                                         enableSearch='true'
-                                        country={'in'}
+                                        country={'us'}
                                         inputClass={'custom-input'}
                                         placeholder="Enter phone number"
                                         value={billingInfo.phone}
@@ -403,22 +403,22 @@ const BillingDetails = (props) => {
                                 </p>
                                 <input className="input-filled"
                                     type="text"
-                                    name="shippingaddress_line2"
+                                    name="shippingaddressLine2"
                                     label="address_line_2"
                                     placeholder="address_line_2 *"
-                                    {...registerRef("shippingaddress_line2", {
+                                    {...registerRef("shippingaddressLine2", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.address_line2 ? false : true)) : false),
+                                            value: (shippingAdd ? ((shippingInfo?.addressLine2 ? false : true)) : false),
                                             message: "Address is Required",
                                         }
                                     })}
-                                    value={shippingInfo?.address_line2}
+                                    value={shippingInfo?.addressLine2}
                                     onChange={handleShippingChange}
                                     onKeyDown={(e) => handleEnter(e)}
                                 />
                                 <p>
                                     <small style={{ color: 'red' }}>
-                                        {errorRef.shippingaddress_line2?.type === "required" ? errorRef.shippingaddress_line2?.message : undefined}
+                                        {errorRef.shippingaddressLine2?.type === "required" ? errorRef.shippingaddressLine2?.message : undefined}
                                     </small>
                                 </p>
                                 <input
@@ -471,14 +471,14 @@ const BillingDetails = (props) => {
                                             value: (shippingAdd ? ((shippingInfo?.zip ? false : true)) : false),
                                             message: "Zip is Required",
                                         },
-                                        minLength: {
-                                            value: 6,
-                                            message: "zip Min length is 6",
-                                        },
-                                        maxLength: {
-                                            value: 6,
-                                            message: "zip Max length is 6",
-                                        },
+                                        // minLength: {
+                                        //     value: 6,
+                                        //     message: "zip Min length is 6",
+                                        // },
+                                        // maxLength: {
+                                        //     value: 6,
+                                        //     message: "zip Max length is 6",
+                                        // },
                                     })}
                                     value={shippingInfo?.zip}
                                     onChange={handleShippingChange} />

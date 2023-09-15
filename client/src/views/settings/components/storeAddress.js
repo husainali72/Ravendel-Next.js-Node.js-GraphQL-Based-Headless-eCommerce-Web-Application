@@ -33,19 +33,19 @@ const StoreAddressComponent = () => {
         <Grid item xs={12}>
           <Box component="div">
             <SettingTextInput
-              value={address.address_line1}
+              value={address.addressLine1}
               label="Address line 1"
               onSettingInputChange={(val) => {
-                setAddress({ ...address, address_line1: val });
+                setAddress({ ...address, addressLine1: val });
               }}
             />
           </Box>
           <Box component="div">
             <SettingTextInput
-              value={address.address_line2}
+              value={address.addressLine2}
               label="Address line 2"
               onSettingInputChange={(val) => {
-                setAddress({ ...address, address_line2: val });
+                setAddress({ ...address, addressLine2: val });
               }}
             />
           </Box>

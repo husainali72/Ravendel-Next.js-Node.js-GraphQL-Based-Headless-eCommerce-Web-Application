@@ -2,32 +2,32 @@ import gql from "graphql-tag";
 
 export const ADD_TO_CART_QUERY = gql`
  mutation (
-     $user_id:ID!,
-    $product_id:String,
-    $product_title:String,
-    $product_price:Float,
-    $product_image:String,
+     $userId:ID!,
+    $productId:String,
+    $productTitle:String,
+    $productPrice:String,
+    $productImage:String,
     $total:Float,
     $qty:Int,
-    $shipping_class:String,
-    $tax_class:String
+    $shippingClass:String,
+    $taxClass:String
     $attributes:customArray
-    $variant_id:String
-    $product_quantity:Int
+    $variantId:String
+    $productQuantity:Int
         ){
     addToCart(
             total: $total
-            user_id: $user_id,
-            product_id :$product_id,
-            product_title : $product_title,
-            product_price : $product_price,
-            product_image : $product_image,
+            userId: $userId,
+            productId :$productId,
+            productTitle : $productTitle,
+            productPrice : $productPrice,
+            productImage : $productImage,
             qty : $qty,
           attributes: $attributes
-            product_quantity:$product_quantity
-            variant_id:$variant_id
-            shipping_class : $shipping_class,
-            tax_class : $tax_class
+            productQuantity:$productQuantity
+            variantId:$variantId
+            shippingClass : $shippingClass,
+            taxClass : $taxClass
             )
             {
               message
@@ -38,7 +38,7 @@ export const GET_CART_ITEM_QUERY = gql`
  query($id: ID!){
     cart (id:$id){
        id
-    user_id
+    userId
     status
     total
     products
@@ -52,13 +52,16 @@ export const GET_CART_ITEM_QUERY = gql`
   }`
 export const GET_USER_CART = gql`
    query ($id:ID!){
-  cartbyUser(user_id: $id) {
+  cartbyUser(userId: $id) {
   id
-    user_id
+    userId
     status
     total
-    products
+    cartItem
+    availableItem
+    unavailableItem
     date
+
 
     updated
   }
@@ -68,7 +71,7 @@ export const GET_ADDTOCART_QUERY = gql`
     carts{
         data{
        id
-    user_id
+    userId
     status
     total
     products
@@ -85,12 +88,12 @@ export const GET_ADDTOCART_QUERY = gql`
 // export const ADD_TO_CART_QUERY = gql`
 //   mutation(
 //      $id: ID
-//     $product_id:String 
+//     $productId:String 
 //     $qty:Float
 //      ){
-//     addToCart(customer_id: $id){
+//     addToCart(customerId: $id){
 //        id
-//     user_id: ID
+//     userId: ID
 //     status: String
 //     total: Float
 //     products: metaKeyValueArray
@@ -107,12 +110,12 @@ export const GET_ADDTOCART_QUERY = gql`
 
 export const ADD_CART = gql`
     mutation(
-    $user_id: ID
+    $userId: ID
     $products:[cartProduct]
    
 ) {
  addCart(
-    user_id:$user_id
+    userId:$userId
     products:$products
   )
   {
@@ -125,10 +128,10 @@ export const ADD_CART = gql`
 export const DELETE_CART_PRODUCTS = gql`
     mutation(
     $id:ID!,
-    $product_id: ID!
+    $productId: ID!
     ) {
   deleteCartProduct(id:$id,
-  product_id: $product_id)
+  productId: $productId)
    {
      message
      success
@@ -156,20 +159,25 @@ export const UPDATE_CART_PRODUCT = gql`
 `;
 
 export const CALCULATE_CART_TOTAL = gql`
-                            query ($total_coupon : Float,
-                              $cart : [cartProducts]){
-                            calculateCart(total_coupon : $total_coupon,cart: $cart
+                            query (
+                              $cartItem : [calculateCartProducts]){
+                            calculateCart(cartItem: $cartItem
                             ) {
-                              total_tax {
-                                name
-                                amount
+                              totalShipping
+                              grandTotal
+                              totalTax
+                              cartTotal
+                              cartItem{
+                                productImage
+                                productTitle
+                                qty
+                                productId
+                                productPrice
+                                productShipping
+                                productTax
+                           
                               }
-                              total_shipping {
-                                name
-                                amount
-                              }
-                              subtotal
-                              total_coupon
-                              grand_total
+                              
+                             
                             }
                           }`

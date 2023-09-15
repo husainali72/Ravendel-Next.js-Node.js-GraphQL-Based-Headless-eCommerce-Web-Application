@@ -106,12 +106,12 @@ module.exports = {
         const existingOrders = await Order.find({})
         if(existingOrders.length){
           existingOrders.map(orderSale=>{
-            totalSales += orderSale.grand_total
+            totalSales += orderSale.grandTotal
           })
           // orders and sales by year and month
           for(let order of existingOrders){
-            let paymentSuccessSubTotal = order.payment_status !== "success" ? 0 : order.subtotal
-            let paymentSuccessGrandTotal = order.payment_status !== "success" ? 0 : order.grand_total
+            let paymentSuccessSubTotal = order.paymentStatus !== "success" ? 0 : order.subtotal
+            let paymentSuccessGrandTotal = order.paymentStatus !== "success" ? 0 : order.grandTotal
             let orderMonth = order.date.getMonth()
             let orderYear = order.date.getFullYear()
             // if year array is empty add new year with month

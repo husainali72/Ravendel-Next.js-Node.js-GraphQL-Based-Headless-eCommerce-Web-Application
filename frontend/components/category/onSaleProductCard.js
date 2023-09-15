@@ -54,29 +54,29 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, 
                 const inCartProducts = res?.data?.cartbyUser?.products;
                 inCartProducts.map(inCartProduct => {
                     const productt = inCartProduct;
-                    if (productt.product_id === product?._id) {
+                    if (productt.productId === product?._id) {
                         let qant = product.qty + quantity;
                         productInCart = true;
                         var Cartt = inCartProducts.map(producttt => {
-                            if (producttt.product_id === product._id) {
+                            if (producttt.productId === product._id) {
                                 return {
-                                    product_id: producttt?.product_id,
+                                    productId: producttt?.productId,
                                     qty: producttt.qty + quantity,
-                                    product_title: producttt.product_title,
-                                    product_image: producttt.product_image,
-                                    product_price: producttt.product_price,
-                                    shipping_class: product?.shipping?.shipping_class,
-                                    tax_class: product?.tax_class
+                                    productTitle: producttt.productTitle,
+                                    productImage: producttt.productImage,
+                                    productPrice: producttt.productPrice,
+                                    shippingClass: product?.shipping?.shippingClass,
+                                    taxClass: product?.taxClass
                                 }
                             } else {
                                 return {
-                                    product_id: producttt?.product_id,
+                                    productId: producttt?.productId,
                                     qty: producttt.qty,
-                                    product_title: producttt.product_title,
-                                    product_image: producttt.product_image,
-                                    product_price: producttt.product_price,
-                                    shipping_class: product?.shipping?.shipping_class,
-                                    tax_class: product?.tax_class
+                                    productTitle: producttt.productTitle,
+                                    productImage: producttt.productImage,
+                                    productPrice: producttt.productPrice,
+                                    shippingClass: product?.shipping?.shippingClass,
+                                    taxClass: product?.taxClass
                                 }
                             }
                         })
@@ -94,14 +94,14 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, 
                 if (!productInCart) {
                     let variables = {
                         total: product?.pricing.sellprice * quantity,
-                        user_id: id,
-                        product_id: product?._id,
+                        userId: id,
+                        productId: product?._id,
                         qty: quantity,
-                        product_title: product?.name,
-                        product_image: product?.feature_image?.original,
-                        product_price: product?.pricing.sellprice,
-                        shipping_class: product?.shipping?.shipping_class,
-                        tax_class: product?.tax_class
+                        productTitle: product?.name,
+                        productImage: product?.feature_image?.original,
+                        productPrice: product?.pricing.sellprice,
+                        shippingClass: product?.shipping?.shippingClass,
+                        taxClass: product?.taxClass
                     }
                     mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
                         router.push("/shopcart")

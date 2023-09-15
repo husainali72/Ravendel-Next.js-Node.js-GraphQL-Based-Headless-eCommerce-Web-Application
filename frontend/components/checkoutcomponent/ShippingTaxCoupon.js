@@ -99,7 +99,7 @@ const ShippingTaxCoupon = (props) => {
                     <p>Shipping : {delivery.toFixed(2)} </p>
                 </div>
                 <div className="toggle-info" style={{ marginBottom: 12 }}>
-                    <p>Tax : {tax_amount.toFixed(2)}</p>
+                    <p>Tax : {taxAmount.toFixed(2)}</p>
                 </div>
             </div> */}
         </>

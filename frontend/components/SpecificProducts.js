@@ -45,7 +45,7 @@ const SpecificProducts = ({section}) => {
                         quantity: product.quantity,
                         status:product.status,
                         url:product.url,
-                        tax_class:product?.tax_class,
+                        taxClass:product?.taxClass,
                         shipping:product?.shipping,
                         __typename: product.__typename,
                         _id:product._id} ])

@@ -20,7 +20,7 @@ export const GET_PRODUCTS_QUERY = gql`
       gallery_image
       meta
       shipping
-      tax_class
+      taxClass
       status
       featured_product
       product_type
@@ -173,7 +173,7 @@ fragment ProductTile on Product {
   attribute
 
   shipping
-  tax_class
+  taxClass
   __typename
 }
 `;

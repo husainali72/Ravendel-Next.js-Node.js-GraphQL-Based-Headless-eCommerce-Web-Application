@@ -44,7 +44,7 @@ module.exports = {
           await Product.updateMany(
             {},
             {
-              $set: { "shipping.shipping_class": args.global.shipping_class },
+              $set: { "shipping.shippingClass": args.global.shippingClass },
             }
           );
         }
@@ -59,7 +59,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Shipping Class", false);
       }
       try {
-        const errors = _validate(["name", "amount"], args.shipping_class);
+        const errors = _validate(["name", "amount"], args.shippingClass);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -67,14 +67,14 @@ module.exports = {
           };
         }
         const shipping = await Shipping.findOne({});
-        const result = shipping.shipping_class.map(shipping=>{
-          if(shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase() || 
-          shipping.amount === parseInt(args.shipping_class.amount)){
+        const result = shipping.shippingClass.map(shipping=>{
+          if(shipping.name.toLowerCase() === args.shippingClass.name.toLowerCase() || 
+          shipping.amount === parseInt(args.shippingClass.amount)){
             return false
           } else return true
         })
         if(result.includes(false)) return MESSAGE_RESPONSE("DUPLICATE", "Shipping", false)
-        shipping.shipping_class.push(args.shipping_class);
+        shipping.shippingClass.push(args.shippingClass);
         shipping.updated = Date.now();
         await shipping.save();
         await Shipping.findOne({});
@@ -88,7 +88,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Shipping Class", false);
       }
       try {
-        const errors = _validate(["name"], args.shipping_class);
+        const errors = _validate(["name"], args.shippingClass);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -97,23 +97,23 @@ module.exports = {
         }
 
         const shipping = await Shipping.findOne({});
-        const result = shipping.shipping_class.map(shipping=>{
-          if((shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase() || 
-            shipping.amount === parseInt(args.shipping_class.amount)) && 
-            shipping._id.toString() !== args.shipping_class._id.toString()){
+        const result = shipping.shippingClass.map(shipping=>{
+          if((shipping.name.toLowerCase() === args.shippingClass.name.toLowerCase() || 
+            shipping.amount === parseInt(args.shippingClass.amount)) && 
+            shipping._id.toString() !== args.shippingClass._id.toString()){
             return false
           } else return true
         })
         console.log(result)
         if(result.includes(false)) return MESSAGE_RESPONSE("DUPLICATE", "Shipping", false)
-        for (let i in shipping.shipping_class) {
-          if (shipping.shipping_class[i]._id == args.shipping_class._id) {
-            shipping.shipping_class[i] = args.shipping_class;
+        for (let i in shipping.shippingClass) {
+          if (shipping.shippingClass[i]._id == args.shippingClass._id) {
+            shipping.shippingClass[i] = args.shippingClass;
             break;
           }
         }
 
-        //tax.tax_class.push(args.tax_class);
+        //tax.taxClass.push(args.taxClass);
         shipping.updated = Date.now();
         await shipping.save();
         // await Shipping.findOne({});
@@ -131,7 +131,7 @@ module.exports = {
         const shipping = await Shipping.findOne({});
         console.log(shipping)
 
-        var ShippingClass = shipping.shipping_class;
+        var ShippingClass = shipping.shippingClass;
         // for (let i in ShippingClass) {
         //   if (ShippingClass[i]._id == args._id) {
         //     console.log('Matched')
@@ -142,7 +142,7 @@ module.exports = {
         //   }
         // }
         let balanceShipping = ShippingClass.filter(ship => ship._id != args._id);
-        shipping.shipping_class = balanceShipping;
+        shipping.shippingClass = balanceShipping;
         shipping.updated = Date.now();
         await shipping.save();
         // await Shipping.findOne({});

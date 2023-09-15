@@ -4,12 +4,12 @@ const GET_CUSTOMERS = gql`
     customers {
       data {
         id
-        first_name
-        last_name
+        firstName
+        lastName
         email
         company
         phone
-        address_book
+        addressBook
         date
         updated
       }
@@ -25,12 +25,12 @@ const GET_CUSTOMER = gql`
   query ($id: ID!) {
     customer(id: $id) {
       id
-      first_name
-      last_name
+      firstName
+      lastName
       email
       company
       phone
-      address_book
+      addressBook
       date
       updated
     }
@@ -39,28 +39,28 @@ const GET_CUSTOMER = gql`
 
 // const ADD_CUSTOMER = gql`
 //   mutation(
-//     $first_name: String
-//     $last_name: String
+//     $firstName: String
+//     $lastName: String
 //     $email: String
 //     $company: String
 //     $phone: String
 //     $password: String
 //   ) {
 //     addCustomer(
-//       first_name: $first_name
-//       last_name: $last_name
+//       firstName: $firstName
+//       lastName: $lastName
 //       email: $email
 //       company: $company
 //       phone: $phone
 //       password: $password
 //     ) {
 //       id
-//       first_name
-//       last_name
+//       firstName
+//       lastName
 //       email
 //       company
 //       phone
-//       address_book
+//       addressBook
 //       date
 //       updated
 //     }
@@ -68,16 +68,16 @@ const GET_CUSTOMER = gql`
 // `;
 const ADD_CUSTOMER = gql`
   mutation (
-    $first_name: String
-    $last_name: String
+    $firstName: String
+    $lastName: String
     $email: String
     $company: String
     $phone: String
     $password: String
   ) {
     addCustomer(
-      first_name: $first_name
-      last_name: $last_name
+      firstName: $firstName
+      lastName: $lastName
       email: $email
       company: $company
       phone: $phone
@@ -92,39 +92,39 @@ const ADD_CUSTOMER = gql`
 // const ADD_ADDRESSBOOK = gql`
 //   mutation(
 //     $id: ID!
-//     $first_name: String
-//     $last_name: String
+//     $firstName: String
+//     $lastName: String
 //     $company: String
 //     $phone: String
-//     $address_line1: String
-//     $address_line2: String
+//     $addressLine1: String
+//     $addressLine2: String
 //     $city: String
 //     $country: String
 //     $state: String
 //     $pincode: String
-//     $default_address: Boolean
+//     $defaultAddress: Boolean
 //   ) {
 //     addAddressBook(
 //       id: $id
-//       first_name: $first_name
-//       last_name: $last_name
+//       firstName: $firstName
+//       lastName: $lastName
 //       company: $company
 //       phone: $phone
-//       address_line1: $address_line1
-//       address_line2: $address_line2
+//       addressLine1: $addressLine1
+//       addressLine2: $addressLine2
 //       city: $city
 //       country: $country
 //       state: $state
 //       pincode: $pincode
-//       default_address: $default_address
+//       defaultAddress: $defaultAddress
 //     ) {
 //       id
-//       first_name
-//       last_name
+//       firstName
+//       lastName
 //       email
 //       company
 //       phone
-//       address_book
+//       addressBook
 //       date
 //       updated
 //     }
@@ -133,31 +133,31 @@ const ADD_CUSTOMER = gql`
 const ADD_ADDRESSBOOK = gql`
   mutation (
     $id: ID!
-    $first_name: String
-    $last_name: String
+    $firstName: String
+    $lastName: String
     $company: String
     $phone: String
-    $address_line1: String
-    $address_line2: String
+    $addressLine1: String
+    $addressLine2: String
     $city: String
     $country: String
     $state: String
     $pincode: String
-    $default_address: Boolean
+    $defaultAddress: Boolean
   ) {
     addAddressBook(
       id: $id
-      first_name: $first_name
-      last_name: $last_name
+      firstName: $firstName
+      lastName: $lastName
       company: $company
       phone: $phone
-      address_line1: $address_line1
-      address_line2: $address_line2
+      addressLine1: $addressLine1
+      addressLine2: $addressLine2
       city: $city
       country: $country
       state: $state
       pincode: $pincode
-      default_address: $default_address
+      defaultAddress: $defaultAddress
     ) {
       message
       success
@@ -168,8 +168,8 @@ const ADD_ADDRESSBOOK = gql`
 // const UPDATE_CUSTOMER = gql`
 //   mutation(
 //     $id: ID!
-//     $first_name: String
-//     $last_name: String
+//     $firstName: String
+//     $lastName: String
 //     $email: String
 //     $company: String
 //     $phone: String
@@ -177,20 +177,20 @@ const ADD_ADDRESSBOOK = gql`
 //   ) {
 //     updateCustomer(
 //       id: $id
-//       first_name: $first_name
-//       last_name: $last_name
+//       firstName: $firstName
+//       lastName: $lastName
 //       email: $email
 //       company: $company
 //       phone: $phone
 //       password: $password
 //     ) {
 //       id
-//       first_name
-//       last_name
+//       firstName
+//       lastName
 //       email
 //       company
 //       phone
-//       address_book
+//       addressBook
 //       date
 //       updated
 //     }
@@ -199,16 +199,16 @@ const ADD_ADDRESSBOOK = gql`
 const UPDATE_CUSTOMER = gql`
   mutation (
     $id: ID!
-    $first_name: String
-    $last_name: String
+    $firstName: String
+    $lastName: String
     $email: String
     $company: String
     $phone: String
   ) {
     updateCustomer(
       id: $id
-      first_name: $first_name
-      last_name: $last_name
+      firstName: $firstName
+      lastName: $lastName
       email: $email
       company: $company
       phone: $phone
@@ -223,40 +223,40 @@ const UPDATE_CUSTOMER = gql`
 //   mutation(
 //     $id: ID!
 //     $_id: ID!
-//     $first_name: String
-//     $last_name: String
+//     $firstName: String
+//     $lastName: String
 //     $company: String
 //     $phone: String
-//     $address_line1: String
-//     $address_line2: String
+//     $addressLine1: String
+//     $addressLine2: String
 //     $city: String
 //     $country: String
 //     $state: String
 //     $pincode: String
-//     $default_address: Boolean
+//     $defaultAddress: Boolean
 //   ) {
 //     updateAddressBook(
 //       id: $id
 //       _id: $_id
-//       first_name: $first_name
-//       last_name: $last_name
+//       firstName: $firstName
+//       lastName: $lastName
 //       company: $company
 //       phone: $phone
-//       address_line1: $address_line1
-//       address_line2: $address_line2
+//       addressLine1: $addressLine1
+//       addressLine2: $addressLine2
 //       city: $city
 //       country: $country
 //       state: $state
 //       pincode: $pincode
-//       default_address: $default_address
+//       defaultAddress: $defaultAddress
 //     ) {
 //       id
-//       first_name
-//       last_name
+//       firstName
+//       lastName
 //       email
 //       company
 //       phone
-//       address_book
+//       addressBook
 //       date
 //       updated
 //     }
@@ -266,32 +266,32 @@ const UPDATE_ADDRESSBOOK = gql`
   mutation (
     $id: ID!
     $_id: ID!
-    $first_name: String
-    $last_name: String
+    $firstName: String
+    $lastName: String
     $company: String
     $phone: String
-    $address_line1: String
-    $address_line2: String
+    $addressLine1: String
+    $addressLine2: String
     $city: String
     $country: String
     $state: String
     $pincode: String
-    $default_address: Boolean
+    $defaultAddress: Boolean
   ) {
     updateAddressBook(
       id: $id
       _id: $_id
-      first_name: $first_name
-      last_name: $last_name
+      firstName: $firstName
+      lastName: $lastName
       company: $company
       phone: $phone
-      address_line1: $address_line1
-      address_line2: $address_line2
+      addressLine1: $addressLine1
+      addressLine2: $addressLine2
       city: $city
       country: $country
       state: $state
       pincode: $pincode
-      default_address: $default_address
+      defaultAddress: $defaultAddress
     ) {
       message
       success
@@ -303,12 +303,12 @@ const UPDATE_ADDRESSBOOK = gql`
 //   mutation($id: ID!) {
 //     deleteCustomer(id: $id) {
 //       id
-//       first_name
-//       last_name
+//       firstName
+//       lastName
 //       email
 //       company
 //       phone
-//       address_book
+//       addressBook
 //       date
 //       updated
 //     }
@@ -327,12 +327,12 @@ const DELETE_CUSTOMER = gql`
 //   mutation($id: ID!, $_id: ID!) {
 //     deleteAddressBook(id: $id, _id: $_id) {
 //       id
-//       first_name
-//       last_name
+//       firstName
+//       lastName
 //       email
 //       company
 //       phone
-//       address_book
+//       addressBook
 //       date
 //       updated
 //     }

@@ -39,12 +39,12 @@ function cartReducer(state = [], action) {
                         product.quantity = product.quantity + quantity;
                         var Cartt = productInCart.map(product => {
                             return {
-                                product_id: product._id,
+                                productId: product._id,
                                 qty: product.quantity,
-                                product_title: product.name,
-                                product_image: product.feature_image?.original,
-                                product_price: product.pricing.sellprice,
-                                product_quantity: product.product_quantity,
+                                productTitle: product.name,
+                                productImage: product.feature_image?.original,
+                                productPrice: product.pricing.sellprice,
+                                productQuantity: product.productQuantity,
                                 attributes: product.attributes
                             }
                         })
@@ -68,12 +68,12 @@ function cartReducer(state = [], action) {
                     productToAdd.quantity = quantity;
                     let variables = {
                         total: productToAdd.pricing.sellprice * quantity,
-                        user_id: id,
-                        product_id: productToAdd._id,
+                        userId: id,
+                        productId: productToAdd._id,
                         qty: quantity,
-                        product_title: productToAdd.name,
-                        product_image: productToAdd.feature_image?.original,
-                        product_price: productToAdd.pricing.sellprice
+                        productTitle: productToAdd.name,
+                        productImage: productToAdd.feature_image?.original,
+                        productPrice: productToAdd.pricing.sellprice
                     }
 
 
@@ -88,7 +88,7 @@ function cartReducer(state = [], action) {
 
                 for (let i = 0; i < productInCart?.length; i++) {
                     const product = productInCart[i];
-                    if (product._id === productToAdd._id && product.variant_id === productToAdd.variant_id) {
+                    if (product._id === productToAdd._id && product.variantId === productToAdd.variantId) {
                         product.quantity = product.quantity + quantity;
                         isProductInCart = true;
                         break;
@@ -104,7 +104,7 @@ function cartReducer(state = [], action) {
 
         case CREATE_CART_ON_LOGIN: {
             const { id, cart } = action.payload;
-            let variables = { user_id: id, products: cart }
+            let variables = { userId: id, products: cart }
             mutation(ADD_CART, variables);
 
             return action.payload.cart || [];
@@ -120,7 +120,9 @@ function cartReducer(state = [], action) {
 
         case REMOVE_VALUE:
             const Cards = JSON.parse(localStorage.getItem("cart"))
-            const product = Cards?.filter(item => item._id !== action.payload.id && item.variant_id !== action.payload.variant_id)
+
+            const product = Cards.filter(item => item._id !== action.payload.id && item.variantId !== action.payload.variantId)
+
             localStorage.setItem("cart", JSON.stringify(product))
             return product;
 
@@ -131,11 +133,11 @@ function cartReducer(state = [], action) {
         case INCRESE_QUANTITY:
 
             const cart = JSON.parse(localStorage.getItem("cart"))   //api for increasing particulat users carts items quantity if user is authhenticated
-            let isExisted = cart.some(item => item._id === action.payload._id && item.variant_id === action.payload.variant_id)
+            let isExisted = cart.some(item => item._id === action.payload._id && item.variantId === action.payload.variantId)
             if (isExisted) {
                 for (let item of cart) {
 
-                    if (item._id === action.payload._id && item.variant_id === action.payload.variant_id) {
+                    if (item._id === action.payload._id && item.variantId === action.payload.variantId) {
                         action.payload.originalQuantity > item.quantity && (item.quantity += 1);
                         break;
                     }
@@ -146,10 +148,10 @@ function cartReducer(state = [], action) {
 
         case DECREASE_QUANTITY:
             const CardItem = JSON.parse(localStorage.getItem("cart"))
-            let isExisteds = CardItem.filter(item => item._id === action.payload._id && item.variant_id === action.payload.variant_id)
+            let isExisteds = CardItem.filter(item => item._id === action.payload._id && item.variantId === action.payload.variantId)
             if (isExisteds) {
                 CardItem.forEach((item) => {
-                    if (item._id === action.payload._id && item.variant_id === action.payload.variant_id) {
+                    if (item._id === action.payload._id && item.variantId === action.payload.variantId) {
                         item.quantity -= 1;
                     }
                     return isExisted;
