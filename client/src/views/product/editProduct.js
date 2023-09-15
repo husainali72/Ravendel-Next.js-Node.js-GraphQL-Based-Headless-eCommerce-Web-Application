@@ -175,6 +175,7 @@ const EditProductComponent = ({ params }) => {
     e.preventDefault();
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     let custom_field = ''
+
     if (product.custom_field) {
       custom_field = validatenested('custom_field', ['key', 'value'], product)
     }
@@ -183,6 +184,7 @@ const EditProductComponent = ({ params }) => {
       combination_price_error = validatenestedArray("pricing", ["price"], product.combinations)
 
     }
+
     let Errors = validatenested("pricing", ["price"], product);
     if (!isEmpty(errors)) {
       dispatch({
@@ -204,6 +206,16 @@ const EditProductComponent = ({ params }) => {
         },
       });
     }
+    else if (!isEmpty(combination_price_error)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: combination_price_error,
+          error: true,
+        },
+      });
+    }
     else if (!isEmpty(combination_error)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -215,6 +227,7 @@ const EditProductComponent = ({ params }) => {
       });
     }
     else if (!isEmpty(custom_field)) {
+
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -225,11 +238,12 @@ const EditProductComponent = ({ params }) => {
       });
     }
     else if (!isEmpty(combination_price_error)) {
+
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
           boolean: false,
-          message: combination_price_error,
+          message: custom_field,
           error: true,
         },
       });
@@ -538,7 +552,9 @@ const EditProductComponent = ({ params }) => {
             <CardBlocks title="Tax">
               <TaxComponent
                 product={taxClass}
+
                 taxClass={taxClass}
+
                 onTaxInputChange={(value) => {
                   setTaxClass(value)
                 }}

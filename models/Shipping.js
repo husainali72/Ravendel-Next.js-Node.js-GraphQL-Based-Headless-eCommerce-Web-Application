@@ -7,10 +7,13 @@ const ShippingSchema = new Schema({
     is_global: {
       type: Boolean,
     },
-    shippingClass: {
+    is_per_order: {
+      type: Boolean,
+    },
+      shippingClass: {
       type: Schema.ObjectId,
     },
-    is_per_order: {
+      overwrite: {
       type: Boolean,
     },
   },

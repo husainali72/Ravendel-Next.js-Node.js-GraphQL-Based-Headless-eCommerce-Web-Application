@@ -17,14 +17,20 @@ export const validate = (names, args) => {
   }
   return errors;
 };
-export const validatenestedArray = (main, names, args) => {
+export const validatenestedArray = (main, names, args, key) => {
   let errors = "";
   if (names && names.length > 0) {
     args.map((obj) => {
       names.map((name) => {
         if (!obj[main][name]) {
-          let msg = name.charAt(0).toUpperCase() + name.slice(1)
-          return (errors = `${msg}  is required`);
+          if (key) {
+            let msg = name.charAt(0).toUpperCase() + name.slice(1)
+            return (errors = `${key} ${msg}  is required`);
+          }
+          else {
+            let msg = name.charAt(0).toUpperCase() + name.slice(1)
+            return (errors = `${msg}  is required`);
+          }
         }
       })
 
@@ -32,7 +38,7 @@ export const validatenestedArray = (main, names, args) => {
   }
   return errors;
 }
-export const validatenested = (main, names, args) => {
+export const validatenested = (main, names, args, key) => {
   let errors = "";
   if (names && names.length > 0) {
     if (Array.isArray(args[main])) {
@@ -41,7 +47,10 @@ export const validatenested = (main, names, args) => {
           if (obj[name] === '' && name === 'handle') {
             let msg = obj.name.charAt(0).toUpperCase() + obj.name.slice(1)
             return (errors = `${msg} Link is required`);
-          } else if (!obj[name]) {
+          } else if (key && obj[name] === '') {
+            let msg = `${key} ${name.charAt(0).toUpperCase() + name.slice(1)}`
+            return (errors = `${msg}  is required`);
+          } else if (obj[name] === '') {
             let msg = main.charAt(0).toUpperCase() + main.slice(1)
             return (errors = `${msg?.replace('_', ' ')} is required`);
           }
@@ -51,10 +60,10 @@ export const validatenested = (main, names, args) => {
     } else {
       names.map((name) => {
         if (args[main] === '') {
-          return (errors = `${main} is required`);
+          return (errors = `${main.charAt(0).toUpperCase() + main.slice(1)} is required`);
         }
         if (args[main][name] === '') {
-          return (errors = `${name} is required`);
+          return (errors = `${name.charAt(0).toUpperCase() + name.slice(1)} is required`);
         }
       })
     }

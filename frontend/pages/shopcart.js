@@ -61,6 +61,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                     let cartitems2 = [];
 
                     carts?.map(cart => {
+
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
                         const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
                         // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
@@ -104,6 +105,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                             cartitems2.push(cartProduct);
                         }
                     })
+
                     setCartItems([...cartitems2])
                 }).finally(() => { allProducts?.products.length > 0 && cartItems.length >= 0 && setCartLoading(false) })
             }

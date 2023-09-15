@@ -161,6 +161,7 @@ export const CheckOut = ({ currencyStore }) => {
                     let carts = res?.data?.cartbyUser?.cartItem;
                     let cartitems2 = [];
                     carts?.map(cart => {
+
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
                         const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
                         // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
@@ -200,6 +201,7 @@ export const CheckOut = ({ currencyStore }) => {
                                     shippingClass: originalProduct?.shipping?.shippingClass,
                                     taxClass: originalProduct?.taxClass,
                                 }
+
                             }
                             cartitems2.push(cartProduct);
                         }
@@ -406,6 +408,7 @@ export const CheckOut = ({ currencyStore }) => {
     const doApplyCouponCode = async (e) => {
         e.preventDefault();
 
+
         let cart = cartItems.map((product) => {
 
             return {
@@ -414,6 +417,7 @@ export const CheckOut = ({ currencyStore }) => {
                 productTotal: (product?.pricing ? product?.pricing * product.quantity : product?.pricing * product.quantity).toString(),
             }
         })
+
 
         let variables = {
             couponCode: `${couponCode}`,
@@ -457,6 +461,7 @@ export const CheckOut = ({ currencyStore }) => {
                 setCouponCode("")
                 setCouponFeild(true);
             }
+
             // if (couponValueGet) {
             //     let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
             //     let calculate = {
@@ -473,6 +478,7 @@ export const CheckOut = ({ currencyStore }) => {
             //         setTax_amount(response?.total_tax)
             //     })
             // }
+
         }
         ).finally(() => setCouponLoading(false))
 

@@ -45,7 +45,6 @@ export const MenuProps = {
 };
 
 export const getSelectedName = (id, element, products, categories) => {
-
   if (element === "includeProducts" || element === "excludeProducts") {
     for (let i in products) {
       if (id === products[i]._id) {
@@ -75,10 +74,12 @@ export const couponObj = {
   minimumSpend: 0,
   maximumSpend: 0,
   products: [],
+
   includeProducts: [],
 
   excludeProducts: [],
   categories: [],
   includeCategories: [],
   excludeCategories: [],
+
 };
