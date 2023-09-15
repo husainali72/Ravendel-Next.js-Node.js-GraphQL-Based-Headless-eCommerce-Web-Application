@@ -91,12 +91,14 @@ export const ADD_ORDER = gql`
                 shipping: $shipping
                 billing: $billing
                 products: $products
-                cart_total:$cart_total
+                cartTotal:$cart_total
               shipping_amount:$shipping_amount
                 tax_amount:$tax_amount
                 discount_amount:$discount_amount
                   grand_total :$grand_total
                   coupon_code :$coupon_code
+
+               
     ){
         message
         success

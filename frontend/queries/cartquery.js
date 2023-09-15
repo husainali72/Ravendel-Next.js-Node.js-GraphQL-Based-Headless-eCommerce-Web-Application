@@ -57,8 +57,11 @@ export const GET_USER_CART = gql`
     userId
     status
     total
-    products
+    cartItem
+    availableItem
+    unavailableItem
     date
+
 
     updated
   }
@@ -147,7 +150,7 @@ export const DELETE_CART = gql`
 
 export const UPDATE_CART_PRODUCT = gql`
   mutation($id: ID!, $products: [cartProduct]){
-    updateCart(id:$id,products:$products){
+    updateCart(userId:$id,products:$products){
          
     message
     success
@@ -156,9 +159,9 @@ export const UPDATE_CART_PRODUCT = gql`
 `;
 
 export const CALCULATE_CART_TOTAL = gql`
-                            query ($total_coupon : String,
+                            query (
                               $cartItem : [calculateCartProducts]){
-                            calculateCart(total_coupon : $total_coupon,cartItem: $cartItem
+                            calculateCart(cartItem: $cartItem
                             ) {
                               totalShipping
                               grandTotal

@@ -20,8 +20,8 @@ import { ADD_ORDER } from "../queries/orderquery";
 import CreditCards from "../components/checkoutcomponent/myCard/CreditCards";
 import { useRouter } from "next/router";
 import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
-import { APPLY_couponCode } from "../queries/couponquery";
-import { CALCULATE_cartTotal, GET_USER_CART, UPDATE_CART_PRODUCT } from "../queries/cartquery";
+import { APPLY_COUPON_CODE, APPLY_couponCode } from "../queries/couponquery";
+import { CALCULATE_CART_TOTAL, CALCULATE_cartTotal, GET_USER_CART, UPDATE_CART_PRODUCT } from "../queries/cartquery";
 import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
 import { query2 } from "../utills/cartHelperfun"
 import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
@@ -107,6 +107,7 @@ export const CheckOut = ({ currencyStore }) => {
     }
     const cartProducts = useSelector((state) => state.cart);
     const [cartTotal, setCartTotal] = useState(0)
+    const [grandTotal, setgrandTotal] = useState(0)
     const [cartItems, setCartItems] = useState([])
     const [couponfield, setCouponFeild] = useState(false);
     const [billingInfo, setBillingInfo] = useState(billingInfoObject);
@@ -115,11 +116,11 @@ export const CheckOut = ({ currencyStore }) => {
     const [coupon, setCoupon] = useState("0");
     const [paymentMethod, setPaymentMethod] = useState("");
     const [delivery, setDelivery] = useState("0");
-    const [taxAmount, settaxAmount] = useState(0);
+    const [taxAmount, settaxAmount] = useState('0');
     const [showItem, setShowItem] = useState(false);
     const [formStep, setFormStep] = useState(1)
     const [couponCode, setCouponCode] = useState('')
-    const [subtotal, setSubTotal] = useState(0);
+    const [subtotal, setSubTotal] = useState('0');
     const [cartId, setCartId] = useState('');
     const [CouponLoading, setCouponLoading] = useState(false);
     const [isCouponApplied, setIsCouponApplied] = useState(false);
@@ -156,8 +157,8 @@ export const CheckOut = ({ currencyStore }) => {
                 let variables = { id: id }
                 mutation(GET_USER_CART, variables).then(res => {
 
-                    setCartId(res.data.cartbyUser.id)
-                    let carts = res?.data?.cartbyUser?.products;
+                    setCartId(res?.data?.cartbyUser?.id)
+                    let carts = res?.data?.cartbyUser?.cartItem;
                     let cartitems2 = [];
                     carts?.map(cart => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
@@ -168,7 +169,7 @@ export const CheckOut = ({ currencyStore }) => {
                             if (orginal_attributes) {
                                 cartProduct = {
                                     _id: originalProduct?._id,
-                                    variantId: cart.variantId,
+                                    variantId: cart?.variantId,
                                     quantity: parseInt(cart?.qty),
                                     productQuantity: parseInt(orginal_attributes?.quantity),
                                     name: originalProduct?.name,
@@ -185,7 +186,7 @@ export const CheckOut = ({ currencyStore }) => {
                             else {
                                 cartProduct = {
                                     _id: originalProduct?._id,
-                                    variantId: cart.variantId,
+                                    variantId: cart?.variantId,
                                     quantity: parseInt(cart?.qty),
                                     productQuantity: parseInt(originalProduct?.quantity),
 
@@ -195,7 +196,7 @@ export const CheckOut = ({ currencyStore }) => {
                                     feature_image: originalProduct?.productImage
                                         || originalProduct?.feature_image,
                                     url: originalProduct?.url,
-                                    attributes: cart.attributes || [],
+                                    attributes: cart?.attributes || [],
                                     shippingClass: originalProduct?.shipping?.shippingClass,
                                     taxClass: originalProduct?.taxClass,
                                 }
@@ -237,8 +238,8 @@ export const CheckOut = ({ currencyStore }) => {
                 let token = session2.user.accessToken.token;
                 let variables = { id: id }
                 mutation(GET_USER_CART, variables).then(res => {
-                    let carts = res?.data?.cartbyUser?.products;
-                    if (carts.length <= 0) {
+                    let carts = res?.data?.cartbyUser?.cartItem;
+                    if (carts?.length <= 0) {
                         router.push("/")
                     }
                 })
@@ -249,18 +250,20 @@ export const CheckOut = ({ currencyStore }) => {
     useEffect(() => {
         let cartsData = cartItems.map((product) => { return { productId: product._id, qty: product.quantity, total: product?.pricing * product.quantity } })
         let calculate = {
-            total_coupon: '0.0',
+            // total_coupon: '0.0',
             cartItem: cartsData
         }
+        console.log(cartsData, 'cartsData')
         if (cartsData.length > 0) {
-            query2(CALCULATE_cartTotal, calculate, token).then(res => {
+            query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
 
-                let response = res.data.calculateCart
-                setCartTotal(response?.grand_total)
-                setSubTotal(response?.cart_total)
-                setCoupon(response?.total_coupon)
-                setDelivery(response?.total_shipping)
-                setTax_amount(response?.total_tax)
+                let response = res?.data?.calculateCart
+                setgrandTotal(response?.grandTotal && !isNaN(response?.grandTotal) ? response?.grandTotal : '0')
+                setCartTotal(response?.grandTotal && !isNaN(response?.grandTotal) ? response?.grandTotal : '0')
+                setSubTotal(response?.cartTotal && !isNaN(response?.cartTotal) ? response?.cartTotal : '0')
+                // setCoupon(response?.total_coupon)
+                setDelivery(response?.totalShipping && !isNaN(response?.totalShipping) ? response?.totalShipping : '0')
+                settaxAmount(response?.totalTax && !isNaN(response?.totalTax) ? response?.totalTax : '0')
             })
         }
     }, [cartItems])
@@ -314,15 +317,13 @@ export const CheckOut = ({ currencyStore }) => {
     };
 
     const getOrderDetailsData = (val) => {
-        console.log(val)
         setBillingDetails({ ...billingDetails, ...val });
     };
     const getCalculationDetails = (val) => {
-        val.cart_total = val.subtotal
+        val.cartTotal = val.subtotal
         val.discount_amount = val?.discount_amount || '0'
         delete val.subtotal
         // let data = { ...val, cart_total: val.subTotal }
-        console.log(val)
         setBillingDetails({ ...billingDetails, ...val });
     }
     const handleShippingChange = (e) => {
@@ -401,7 +402,7 @@ export const CheckOut = ({ currencyStore }) => {
         checkCode();
         setBillingInfo(billing);
     }
-    console.log(delivery, tax_amount, cartTotal, subtotal, 'ydsfsdsdgsdessssss')
+
     const doApplyCouponCode = async (e) => {
         e.preventDefault();
 
@@ -410,12 +411,17 @@ export const CheckOut = ({ currencyStore }) => {
             return {
                 productId: product._id,
                 qty: product.quantity,
-                product_total: (product?.pricing ? product?.pricing * product.quantity : product?.pricing * product.quantity.toString()),
+                productTotal: (product?.pricing ? product?.pricing * product.quantity : product?.pricing * product.quantity).toString(),
             }
         })
-        console.log(delivery, tax_amount, cartTotal, subtotal, 'yessssss', coupon)
+
         let variables = {
-            coupon_code: `${couponCode}`, cart: cart,
+            couponCode: `${couponCode}`,
+            cartItem: cart,
+            totalShipping: delivery,
+            grandTotal: grandTotal,
+            totalTax: taxAmount,
+            cartTotal: subtotal
         }
         let couponResponse = 0
         let couponValue = 0.00
@@ -423,41 +429,50 @@ export const CheckOut = ({ currencyStore }) => {
         setCouponLoading(true)
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
 
-            couponResponse = res.data.calculateCoupon.total_coupon
-            if (res.data.calculateCoupon.success) {
+            couponResponse = res?.data?.calculateCoupon
+            if (res?.data?.calculateCoupon.success) {
                 setBillingDetails((previousDetails) => ({ ...previousDetails, coupon_code: couponCode }))
-                notify(res.data.calculateCoupon.message, true)
+                notify(res?.data?.calculateCoupon?.message, true)
                 setIsCouponApplied(true)
             }
             else {
-                notify(res.data.calculateCoupon.message)
+                notify(res?.data?.calculateCoupon?.message)
                 if (isCouponApplied) {
                     setIsCouponApplied(false)
                 }
             }
             couponValueGet = true;
-            if (!res.data.laoding) {
-                setCoupon(couponResponse?.total_coupon)
+            if (!res?.data?.laoding) {
+                // couponResponse?.grandTotal && !isNaN(couponResponse?.grandTotal) && !couponResponse?.discountGrandTotal ? couponResponse?.grandTotal : (couponResponse?.discountGrandTotal && !isNaN(couponResponse?.discountGrandTotal) ? couponResponse?.discountGrandTotal : "0")
+                let grandTotal = couponResponse?.discountGrandTotal ? couponResponse?.discountGrandTotal : couponResponse?.grandTotal
+                console.log(grandTotal, 'grand')
+                setCoupon(couponResponse?.totalCoupon && !isNaN(couponResponse?.totalCoupon) ? couponResponse?.totalCoupon : "0")
                 setAppliedCoupon(couponCode)
+                setCartTotal(!isNaN(grandTotal) ? grandTotal : '0')
+                setgrandTotal(!isNaN(couponResponse?.grandTotal) ? couponResponse?.grandTotal : '0')
+                setSubTotal(couponResponse?.cartTotal && !isNaN(couponResponse?.cartTotal) ? couponResponse?.cartTotal : '0')
+                // setCoupon(couponResponse?.total_coupon)
+                setDelivery(couponResponse?.totalShipping && !isNaN(couponResponse?.totalShipping) ? couponResponse?.totalShipping : '0')
+                settaxAmount(couponResponse?.totalTax && !isNaN(couponResponse?.totalTax) ? couponResponse?.totalTax : '0')
                 setCouponCode("")
                 setCouponFeild(true);
             }
-            if (couponValueGet) {
-                let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
-                let calculate = {
-                    total_coupon: couponResponse,
-                    cart: cartsData,
-                }
+            // if (couponValueGet) {
+            //     let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
+            //     let calculate = {
+            //         total_coupon: couponResponse,
+            //         cart: cartsData,
+            //     }
 
-                query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
-                    let response = res.data.calculateCart
-                    setCartTotal(response?.grand_total)
-                    setSubTotal(response?.cart_total)
-                    setCoupon(couponResponse)
-                    setDelivery(response?.total_shipping)
-                    setTax_amount(response?.total_tax)
-                })
-            }
+            //     query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
+            //         let response = res.data.calculateCart
+            //         setCartTotal(response?.grand_total)
+            //         setSubTotal(response?.cart_total)
+            //         setCoupon(couponResponse)
+            //         setDelivery(response?.total_shipping)
+            //         setTax_amount(response?.total_tax)
+            //     })
+            // }
         }
         ).finally(() => setCouponLoading(false))
 

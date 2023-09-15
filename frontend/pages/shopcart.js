@@ -56,7 +56,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                 token = sessionn.user.accessToken.token
                 let variables = { id: id }
                 mutation(GET_USER_CART, variables).then(res => {
-                    let carts = res?.data?.cartbyUser?.products;
+                    let carts = res?.data?.cartbyUser?.cartItem;
                     const cartProducts = [...carts];
                     let cartitems2 = [];
 
