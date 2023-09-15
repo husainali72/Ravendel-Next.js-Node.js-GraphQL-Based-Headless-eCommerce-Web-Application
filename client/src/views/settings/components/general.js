@@ -86,7 +86,7 @@ const GeneralTheme = () => {
               </RadioGroup>
             </FormControl>
           </Box>
-          {timeZone ?
+          {timeZone || timeZone == 0 ?
             <Box component="div" className={classes.marginBottom2}>
               <Typography variant="h5" className={classes.marginBottom2}>
                 Time Zone

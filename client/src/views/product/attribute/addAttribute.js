@@ -23,7 +23,7 @@ const AddAttributeTheme = () => {
     name: "",
     values: [],
   });
-  const attributeState = useSelector((state) => state.product_attributes);
+  const attributeState = useSelector((state) => state.productAttributes);
 
   const onDeleteTag = (i) => {
     attribute.values.splice(i, 1);

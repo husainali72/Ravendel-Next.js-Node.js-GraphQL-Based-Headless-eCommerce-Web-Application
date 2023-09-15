@@ -21,67 +21,46 @@ import toast, { Toaster } from 'react-hot-toast';
 
 
 function transform(node, index) {
-    if (node.type === "tag" && node.name === "h1" || node.name === "h2" || node.name === "h3" ) {
-      node.name = "p";
-      return convertNodeToElement(node, index, transform);
+    if (node.type === "tag" && node.name === "h1" || node.name === "h2" || node.name === "h3") {
+        node.name = "p";
+        return convertNodeToElement(node, index, transform);
     }
-    if (node.type === "tag" && node.name === "a" ) {
-      node.name = "p";
-      return convertNodeToElement(node, index, transform);
+    if (node.type === "tag" && node.name === "a") {
+        node.name = "p";
+        return convertNodeToElement(node, index, transform);
     }
-    if (node.type === "tag" && node.name === "strong" ) {
-      node.name = "span";
-      return convertNodeToElement(node, index, transform);
+    if (node.type === "tag" && node.name === "strong") {
+        node.name = "span";
+        return convertNodeToElement(node, index, transform);
     }
 }
 const options = {
     decodeEntities: true,
     transform
-  };
+};
 
-const SingleProduct = ({ recentProducts,singleproducts, productReviews, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
+const SingleProduct = ({ allProduct, recentProducts, singleproducts, productReviews, currencyStore, homepageData, lowStockThreshold, outOfStockVisibility, outOfStockThreshold }) => {
     const router = useRouter();
     const session = useSession()
     const currencyOpt = currencyStore?.currency_options?.currency
     const decimal = currencyStore?.currency_options?.number_of_decimals
     const [currency, setCurrency] = useState("$")
-    const [allProduct, setAllProduct] = useState([])
     const [singleProduct, setSingleProduct] = useState(null);
     const [sliderImages, setSliderImages] = useState([]);
-    const [singleProductReview,setSingleProductReview] = useState([])
-    const productss = useSelector(state => state.products ) 
-    const settingss =  useSelector(state => state.setting);
+    const [singleProductReview, setSingleProductReview] = useState([])
+    const productss = useSelector(state => state.products)
+    const settingss = useSelector(state => state.setting);
     const [stockClass, setStockClass] = useState("")
     if (router.isFallback) {
         return <div>Loading...</div>
     }
     useEffect(() => {
-        currencySetter(currencyOpt,setCurrency);
+        currencySetter(currencyOpt, setCurrency);
     }, [])
-    useEffect(() => {
-        getRelatedProducts();
-    }, [singleproducts])
-    const category = singleproducts?.categoryId.map(cat => cat?.id);
-    const productID = singleproducts._id;
-    const getRelatedProducts = async ()=>{  
-        try {
-            const { data: shopproductcategory } = await client.query({
-                query: GET_RELATED_PRODUCTS_QUERY,
-                variables: { category,productID }
-            });
-            recentProducts = shopproductcategory;
-            const productss = shopproductcategory.relatedProducts;
-            setAllProduct(productss)
-        }
-        catch (e) {
-            console.log("ShopProduct Error===", e)
-        }
-    }
-    
 
     useEffect(() => {
         setSingleProductReview(productReviews)
-    }, [ singleproducts ])
+    }, [singleproducts])
     useEffect(() => {
         var product = singleproducts;
         setSingleProduct(product);
@@ -112,13 +91,13 @@ const SingleProduct = ({ recentProducts,singleproducts, productReviews, currency
             </Head>
             <BreadCrumb title={`product`} />
             <section className="product-cart-section">
-            <Toaster />
+                <Toaster />
                 <Container>
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="product-detail accordion-detail">
                                 <div>
-                                    <GalleryImagesComponents decimal={decimal} stockClass={stockClass} setStockClass={setStockClass} outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility ={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency = {currency} />
+                                    <GalleryImagesComponents decimal={decimal} stockClass={stockClass} setStockClass={setStockClass} outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency={currency} />
                                 </div>
                             </div>
                             <div>
@@ -134,7 +113,7 @@ const SingleProduct = ({ recentProducts,singleproducts, productReviews, currency
                                                 <Tab.Pane eventKey="description">
                                                     <div style={{ padding: "20px", marginTop: "15px" }}>
                                                         {singleproducts.description !== null && singleproducts.description !== "" ?
-                                                        ReactHtmlParser(singleproducts.description, options) : <p>Product Discription not available</p>}
+                                                            ReactHtmlParser(singleproducts.description, options) : <p>Product Discription not available</p>}
                                                     </div>
                                                 </Tab.Pane>
                                             </Tab.Content>
@@ -158,6 +137,7 @@ const SingleProduct = ({ recentProducts,singleproducts, productReviews, currency
                                     onSaleProduct={allProduct}
                                     hidetitle
                                     currencyProp={currency}
+                                    currencyOpt={currencyStore}
                                     decimal={decimal}
                                 />
                             </div>
@@ -193,11 +173,11 @@ export async function getStaticPaths() {
 }
 export async function getStaticProps({ params }) {
     const url = params.singleproduct
-    let id ="";
+    let id = "";
     let homepageData = [];
     let singleproducts = [];
     let allProduct = [];
-    let recentProducts =[];
+    let recentProducts = [];
     let productReviews = [];
     var currencyStore = []
     let lowStockThreshold = 4
@@ -229,28 +209,32 @@ export async function getStaticProps({ params }) {
         });
         singleproducts = singleproductsData.productbyurl.data;
         id = singleproducts._id;
-       
+
     }
     catch (e) {
         console.log("ShopProduct Error===", e.networkError.result.errors)
     }
-    /* ========================================= get featureProduct ========================================*/
-    // try {
-    //     const { data: shopproductcategory } = await client.query({
-    //         query: GET_RECENT_PRODUCTS_QUERY,
-    //     });
-    //     allProduct = shopproductcategory.recentproducts;
-    // }
-    // catch (e) { 
-    //     console.log("ShopProduct Error===", e)
-    // }
-    //
-    
+    /* ========================================= get Related Products ========================================*/
 
+    const category = singleproducts?.categoryId.map(cat => cat?.id);
+    const productID = singleproducts._id;
+    try {
+        const { data: shopproductcategory } = await client.query({
+            query: GET_RELATED_PRODUCTS_QUERY,
+            variables: { category, productID }
+        });
+        recentProducts = shopproductcategory;
+        allProduct = shopproductcategory.relatedProducts;
+    }
+    catch (e) {
+        console.log("ShopProduct Error===", e)
+    }
+
+    /* ========================================= get Product Reviews ========================================*/
     try {
         const { data: productReviewData } = await client.query({
             query: GET_PRODUCT_REVIEWS,
-            variables : {id}
+            variables: { id }
         })
         productReviews = productReviewData.productwisereview.data;
     }

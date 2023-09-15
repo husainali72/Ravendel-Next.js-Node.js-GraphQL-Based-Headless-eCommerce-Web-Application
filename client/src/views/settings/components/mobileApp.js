@@ -79,7 +79,7 @@ const MobileAppSetting = () => {
       let newImge =
         bucketBaseURL +
         settingState.settings.appearance.mobile.slider[i].image;
-      newSliderArr.push({ image: newImge  });
+      newSliderArr.push({ image: newImge });
     }
     setSlider(newSliderArr)
   },
@@ -257,17 +257,17 @@ const MobileAppSetting = () => {
       <Alerts />
       {loading ? <Loading /> : null}
 
-         {/* ============SLIDER============ */}
-         
+      {/* ============SLIDER============ */}
+
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>
-          <Grid container spacing={2}>
-          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
                 <Typography variant="h5" className={classes.paddingBottom1}>
                   Slider
                 </Typography>
-               
+                <Grid container spacing={2}>
                   {settingMobile.slider && settingMobile.slider.map((slide, index) => (
                     <Grid item md={4} sm={6} xs={12} key={index}>
                       <Box className={classes.sliderImageWrapper}>
@@ -290,6 +290,7 @@ const MobileAppSetting = () => {
                               src={slider[index] && slider[index].image}
                               className={classes.sliderImagePreview}
                               alt="Featured"
+                              onError={imageOnError}
                             />
                           )}
 
@@ -340,22 +341,23 @@ const MobileAppSetting = () => {
                       </Box>
                     </Grid>
                   ))}
-                 </Grid>
+                </Grid>
               </Grid>
-              <Grid item xs={12}>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={addSlide}
-                  size="small"
-                >
-                  + Add Slide
-                </Button>
-              </Grid>
-              </Box>
-              {/* ===========Add section for Website===========  */}
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={addSlide}
+                size="small"
+              >
+                + Add Slide
+              </Button>
+            </Grid>
+          </Box>
+          {/* ===========Add section for Website===========  */}
 
-              <Box component="div" className={classes.marginBottom2}>
+          <Box component="div" className={classes.marginBottom2}>
             <Typography variant="h5" className={classes.paddingBottom1}>
               Add Section in Mobile App
             </Typography>
@@ -449,15 +451,15 @@ const MobileAppSetting = () => {
                             : null}
 
                           <label htmlFor={`htmltag${index}`}>
-                            {select.section_img  ? (
+                            {select.section_img ? (
                               <Box className={classes.logoImageBox}>
-                               
-                                <img 
-                                  className= "mobileImage"
-                                  src={select.section_img.startsWith("blob") ? select.section_img : (bucketBaseURL + select.section_img )}
+
+                                <img
+                                  className="mobileImage"
+                                  src={select.section_img.startsWith("blob") ? select.section_img : (bucketBaseURL + select.section_img)}
                                   onError={imageOnError}
-                                   />
-                                 
+                                />
+
                               </Box>
                             ) : (
                               <>
@@ -492,7 +494,7 @@ const MobileAppSetting = () => {
                     style={{ marginTop: "25px", minWidth: "30px" }}
                     onClick={addCategory}
                   >
-                      <AddIcon />
+                    <AddIcon />
                   </Button>
 
                   <Button

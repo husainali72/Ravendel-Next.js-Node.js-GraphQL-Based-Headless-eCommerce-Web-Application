@@ -21,16 +21,16 @@ export const removeCartItemAction = (cartProduct) => (dispatch) => {
     });
 };
 
-export const increaseQuantity = (_id) => (dispatch) => {
+export const increaseQuantity = (_id, originalQuantity, variantId) => (dispatch) => {
     dispatch({
         type: INCRESE_QUANTITY,
-        payload: { _id },
+        payload: { _id, originalQuantity, variantId },
     })
 }
-export const decreaseQuantity = (_id) => (dispatch) => {
+export const decreaseQuantity = (object) => (dispatch) => {
     dispatch({
         type: DECREASE_QUANTITY,
-        payload: { _id },
+        payload: object,
     })
 }
 export const RemoveAllCartItemsAction = ([]) => (dispatch) => {
@@ -40,9 +40,9 @@ export const RemoveAllCartItemsAction = ([]) => (dispatch) => {
     })
 }
 export const createCart = (id, cart) => (dispatch) => {
-    dispatch({type: CREATE_CART_ON_LOGIN, payload: {id, cart}});
+    dispatch({ type: CREATE_CART_ON_LOGIN, payload: { id, cart } });
 }
 
 export const updateCart = (id, cart) => (dispatch) => {
-    dispatch({type: UPDATE_CART_ON_LOGIN, payload: {id, cart}});
+    dispatch({ type: UPDATE_CART_ON_LOGIN, payload: { id, cart } });
 }

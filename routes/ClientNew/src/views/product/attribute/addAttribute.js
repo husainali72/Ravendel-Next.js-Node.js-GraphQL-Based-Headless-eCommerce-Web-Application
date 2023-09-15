@@ -15,7 +15,7 @@ const AddAttribute = () => {
     name: "",
     values: [],
   });
-  const attributeState = useSelector((state) => state.product_attributes);
+  const attributeState = useSelector((state) => state.productAttributes);
   const dispatch = useDispatch();
 
   const onDeleteTag = (i) => {

@@ -18,10 +18,10 @@ router.post('/pay', async(req, res) => {
     let currency = await Setting.findOne({})
     currency = _.get(currency, 'store.currency_options.currency').toUpperCase() || "USD"
     const line_items = req.body.customerCart.map(item=>{
-        total += (item.product_price*item.qty)
+        total += (item.productPrice*item.qty)
         return{
-            name: item.product_title,
-            price: item.product_price,
+            name: item.productTitle,
+            price: item.productPrice,
             currency: currency,
             quantity: item.qty,
         }
@@ -29,7 +29,7 @@ router.post('/pay', async(req, res) => {
     const create_payment_json = {
         "intent": "sale",
         "payer": {
-            "payment_method": "paypal"
+            "paymentMethod": "paypal"
         },
         "redirect_urls": {
             "return_url": RETURN_URL,

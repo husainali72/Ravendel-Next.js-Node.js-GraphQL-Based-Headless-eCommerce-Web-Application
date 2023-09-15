@@ -20,19 +20,61 @@ products {
       gallery_image
       meta
       shipping
-      tax_class
+      taxClass
       status
       featured_product
       product_type
       custom_field
       date
+      attribute
+      attribute_master {
+        id
+        name
+        attribute_values
+        createdAt
+        updatedAt
+      }
+
+      variation_master {
+        id
+        productId
+        combination
+        quantity
+        sku
+        image
+        pricing
+        createdAt
+        updatedAt
+      }
       updated
       short_description
     }
   }
 }
 `;
-
+const ATTRIBUTE_TILE = gql`
+  fragment AttributeTile on productAttribute {
+    id
+    name
+    values
+    date
+    updated
+  }
+`;
+export const GET_ATTRIBUTES = gql`
+  {
+    productAttributes {
+      data {
+        ...AttributeTile
+      }
+      message {
+        message
+        success
+      }
+    }
+  }
+  ${ATTRIBUTE_TILE}
+`;
 export const GET_SINGLE_PRODUCT = gql`
   query ($url: String!) {
   productbyurl(url: $url) {
@@ -49,17 +91,36 @@ export const GET_SINGLE_PRODUCT = gql`
       gallery_image
       meta
       shipping
-      tax_class
+      taxClass
       status
       featured_product
       product_type
       custom_field
       date
       updated
+      attribute
+      attribute_master {
+        id
+        name
+        attribute_values
+        createdAt
+        updatedAt
+      }
       categoryId {
         id
         name
         __typename
+      }
+      variation_master {
+        id
+        productId
+        combination
+        quantity
+        sku
+        image
+        pricing
+        createdAt
+        updatedAt
       }
       short_description
       variant
@@ -76,15 +137,15 @@ export const GET_SINGLE_PRODUCT = gql`
 `;
 export const GET_PRODUCT_REVIEWS = gql`
 query ($id: ID!) {
-    productwisereview(product_id: $id) {
+    productwisereview(productId: $id) {
         data{
       id
       title
-      customer_id {
+      customerId {
         id
-        first_name
+        firstName
       }
-      product_id {
+      productId {
         _id
         name
       }
@@ -108,11 +169,11 @@ export const GET_REVIEWS = gql`
       data {
         id
         title
-        customer_id {
+        customerId {
           id
-          first_name
+          firstName
         }
-        product_id {
+        productId {
           _id
           name
         }
@@ -133,8 +194,8 @@ export const GET_REVIEWS = gql`
 export const ADD_REVIEW = gql`
   mutation(
     $title: String
-    $customer_id: String
-    $product_id: String
+    $customerId: String
+    $productId: String
     $email: String
     $review: String
     $rating: String
@@ -142,8 +203,8 @@ export const ADD_REVIEW = gql`
   ) {
     addReview(
       title: $title
-      customer_id: $customer_id
-      product_id: $product_id
+      customerId: $customerId
+      productId: $productId
       email: $email
       review: $review
       rating: $rating
@@ -153,6 +214,15 @@ export const ADD_REVIEW = gql`
     message
     success
 
+    }
+  }
+`;
+
+export const CHECK_ZIPCODE = gql`
+  query($zipcode: String!) {
+    checkZipcode(zipcode: $zipcode) {
+        message
+        success
     }
   }
 `;

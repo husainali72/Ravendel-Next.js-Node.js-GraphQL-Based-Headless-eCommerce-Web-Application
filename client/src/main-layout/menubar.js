@@ -37,7 +37,7 @@ const MenuBarComponenet = () => {
     return menus.map((menu) => {
       if (!menu.children) {
         return (
-          <Link to={`${client_app_route_url + menu.url}`} key={menu.name}>
+          <Link to={`${client_app_route_url + menu.url}`} state={{editMode: false}} key={menu.name}>
             <ListItem className={classes.item} disableGutters>
               <Button
                 className={classes.button}

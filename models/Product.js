@@ -96,11 +96,11 @@ const ProductSchema = new Schema({
       type: Number,
       default: 0,
     },
-    shipping_class: {
+    shippingClass: {
       type: Schema.ObjectId,
     },
   },
-  tax_class: {
+  taxClass: {
     type: Schema.ObjectId,
   },
   featured_product: {

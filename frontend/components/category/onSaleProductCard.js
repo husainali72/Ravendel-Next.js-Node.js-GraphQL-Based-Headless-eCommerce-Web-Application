@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { Container, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 import StarRating from "../breadcrumb/rating";
-import { currencySetter, getImage, mutation, getPrice } from "../../utills/helpers";
+import { currencySetter, getImage, mutation, getPrice, isDiscount } from "../../utills/helpers";
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
 import { useSession } from "next-auth/react";
@@ -12,7 +12,7 @@ import calculateDiscount from "../../utills/calculateDiscount";
 import { query } from "../../utills/helpers";
 import { capitalize } from "lodash";
 var placeholder = "https://dummyimage.com/300";
-const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }) => {
+const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, currencyOpt }) => {
     var id = ""
     var token = ""
     const dispatch = useDispatch();
@@ -30,12 +30,20 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
 
     }, [settings?.currencyOption, currencyProp])
 
+    useEffect(() => {
+        if (currencyOpt) {
+            currencySetter(currencyOpt.currency_options.currency, setCurrency)
+            setdecimal(currencyOpt.currency_options.number_of_decimals)
+        }
+    }, [currencyOpt])
+
 
     if (session.status === "authenticated") {
         id = session.data.user.accessToken.customer._id
         token = session.data.user.accessToken.token
     }
-    const ProductAdd = async (product) => {
+    const ProductAdd = async (e, product) => {
+        e.stopPropagation();
         let quantity = 1
         let href = '/shopcart'
         if (session.status === "authenticated") {
@@ -46,25 +54,29 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                 const inCartProducts = res?.data?.cartbyUser?.products;
                 inCartProducts.map(inCartProduct => {
                     const productt = inCartProduct;
-                    if (productt.product_id === product?._id) {
+                    if (productt.productId === product?._id) {
                         let qant = product.qty + quantity;
                         productInCart = true;
                         var Cartt = inCartProducts.map(producttt => {
-                            if (producttt.product_id === product._id) {
+                            if (producttt.productId === product._id) {
                                 return {
-                                    product_id: producttt?.product_id,
+                                    productId: producttt?.productId,
                                     qty: producttt.qty + quantity,
-                                    product_title: producttt.product_title,
-                                    product_image: producttt.product_image,
-                                    product_price: producttt.product_price
+                                    productTitle: producttt.productTitle,
+                                    productImage: producttt.productImage,
+                                    productPrice: producttt.productPrice,
+                                    shippingClass: product?.shipping?.shippingClass,
+                                    taxClass: product?.taxClass
                                 }
                             } else {
                                 return {
-                                    product_id: producttt?.product_id,
+                                    productId: producttt?.productId,
                                     qty: producttt.qty,
-                                    product_title: producttt.product_title,
-                                    product_image: producttt.product_image,
-                                    product_price: producttt.product_price
+                                    productTitle: producttt.productTitle,
+                                    productImage: producttt.productImage,
+                                    productPrice: producttt.productPrice,
+                                    shippingClass: product?.shipping?.shippingClass,
+                                    taxClass: product?.taxClass
                                 }
                             }
                         })
@@ -78,15 +90,18 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                         })
                     }
                 })
+
                 if (!productInCart) {
                     let variables = {
                         total: product?.pricing.sellprice * quantity,
-                        user_id: id,
-                        product_id: product?._id,
+                        userId: id,
+                        productId: product?._id,
                         qty: quantity,
-                        product_title: product?.name,
-                        product_image: product?.feature_image?.original,
-                        product_price: product?.pricing.sellprice
+                        productTitle: product?.name,
+                        productImage: product?.feature_image?.original,
+                        productPrice: product?.pricing.sellprice,
+                        shippingClass: product?.shipping?.shippingClass,
+                        taxClass: product?.taxClass
                     }
                     mutation(ADD_TO_CART_QUERY, variables, token).then(res => {
                         router.push("/shopcart")
@@ -105,7 +120,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
         <section className="product-cart-section" >
             <Container style={{ padding: '0' }}>
                 {!hidetitle ? <div>
-                    <h4 className="theme-color my-5">{titleShow ? titleShow : "On Sale"} <span className="text-black">Product</span></h4>
+                    <h4 className="theme-color my-5">{titleShow ? capitalize(titleShow) : "On Sale"} <span className="text-black">Products</span></h4>
                 </div>
                     : null}
                 <div>
@@ -126,7 +141,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                                 />
                                             </div>
                                             <div className="on-sale-product-card-body">
-                                                {product?.pricing?.sellprice > 0 && product?.pricing?.sellprice < product?.pricing?.price &&  ((100 /product?.pricing?.price)*(product?.pricing?.price - product?.pricing?.sellprice))>0  ? (<div className="save-price">
+                                                {isDiscount(product) ? (<div className="save-price">
                                                     <span className="percantage-save">
                                                         {calculateDiscount(product?.pricing?.price, product?.pricing?.sellprice)}
                                                     </span>
@@ -160,7 +175,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                                             ) : (
                                                                 <strong className="sale-price">{currency} {getPrice(product?.pricing.price, decimal)}</strong>
                                                             )}</span>
-                                                        {product?.pricing.sellprice && product?.pricing.sellprice < product?.pricing.price ?  <span
+                                                        {product?.pricing.sellprice && product?.pricing.sellprice < product?.pricing.price ? <span
                                                             className={
                                                                 product?.pricing.sellprice ? "has-sale-price" : ""
                                                             }
@@ -169,19 +184,24 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp }
                                                         </span> : null}
 
                                                     </div>
-                                                    { product?.quantity > 0 ? <OverlayTrigger style={{ backgroundColor: "#088178" }}
-                                                        placement="top"
-                                                        overlay={
-                                                            <Tooltip style={{ color: "#088178" }} id={"tooltip-top"}>
-                                                                add to cart
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <div className="add-to-cart"> <a className="cart-icon" onClick={() => ProductAdd(product)}>
-                                                            <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
-                                                        </a>
-                                                        </div>
-                                                    </OverlayTrigger> : <p className="out-of-stock-card">Out Of Stock</p>}
+
+                                                    {product?.quantity > 0 ?
+
+                                                        <OverlayTrigger style={{ backgroundColor: "#088178" }}
+                                                            placement="top"
+                                                            overlay={
+                                                                <Tooltip style={{ color: "#088178" }} id={"tooltip-top"}>
+                                                                    add to cart
+                                                                </Tooltip>
+                                                            }
+                                                        >
+                                                            <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
+                                                                <div className="add-to-cart"> <a className="cart-icon">
+                                                                    <i className="fas fa-shopping-bag font-awesome-icon" aria-hidden="true"></i>
+                                                                </a>
+                                                                </div>
+                                                            </Link>
+                                                        </OverlayTrigger> : <p className="out-of-stock-card">Out Of Stock</p>}
 
                                                 </div>
                                             </div>

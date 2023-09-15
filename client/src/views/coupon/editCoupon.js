@@ -22,6 +22,7 @@ import {
   productsAction,
   couponUpdateAction,
   couponsAction,
+  couponAddAction,
 } from "../../store/action/";
 import { useSelector, useDispatch } from "react-redux";
 import { Alert, Loading, TopBar, TextInput, CardBlocks } from "../components";
@@ -41,7 +42,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { get } from "lodash";
 
 const EditCouponComponent = ({ params }) => {
-  const ID = params.id || "";
+  const id = params?.id || "";
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -55,10 +56,15 @@ const EditCouponComponent = ({ params }) => {
   const inputLabel = React.useRef(null);
   const [labelWidth, setLabelWidth] = useState(0);
 
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  const currentDate = `${yyyy}-${mm}-${dd}`;
   useEffect(() => {
     if (!isEmpty(get(Coupons, "coupons"))) {
       Coupons.coupons.map((editcoupon) => {
-        if (editcoupon.id === ID) {
+        if (editcoupon.id === id) {
           setCoupon({ ...coupon, ...editcoupon });
         }
       });
@@ -87,13 +93,14 @@ const EditCouponComponent = ({ params }) => {
       dispatch(couponsAction());
     }
 
+
   }, []);
 
   const tabChange = (event, newValue) => {
     setTabVal(newValue);
   };
 
-  const updateCoupon = () => {
+  const addUpdateCoupon = () => {
     var errors = validate(["code", "expire"], coupon);
 
     if (!isEmpty(errors)) {
@@ -106,48 +113,81 @@ const EditCouponComponent = ({ params }) => {
         },
       });
     }
+
     else {
-      dispatch(couponUpdateAction(coupon, navigate));
+      if (id) {
+        if ((coupon.minimum_spend >= 0 || coupon.maximum_spend >= 0) && coupon.minimum_spend > coupon.maximum_spend) {
+
+          showAlert(true, false, 'Maximum spend  must be greater than minimum spend ')
+        } else {
+
+          dispatch(couponUpdateAction(coupon, navigate));
+
+        }
+      } else {
+        if ((coupon.minimum_spend >= 0 || coupon.maximum_spend >= 0) && coupon.minimum_spend > coupon.maximum_spend) {
+          showAlert(true, false, 'Maximum spend  must be greater than minimum spend ')
+        } else {
+          if (coupon.minimum_spend === '' || coupon.minimum_spend === null) {
+            coupon.minimum_spend = 0
+          } if (coupon.maximum_spend === '' || coupon.minimum_spend === null) {
+            coupon.maximum_spend = 0
+          }
+          dispatch(couponAddAction(coupon, navigate));
+
+        }
+
+
+      }
     }
 
   };
+  const showAlert = (error, success, message) => {
+    dispatch({
+      type: ALERT_SUCCESS,
+      payload: {
+        boolean: success,
+        message: message,
+        error: error,
+      },
+    });
+  }
 
   const handleChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
 
-    if (name === "discount_value" || name === "minimum_spend" || name === "maximum_spend") {
+    if (name === "discountValue" || name === "minimumSpend" || name === "maximumSpend") {
       value = parseInt(value);
     }
-
     setCoupon({ ...coupon, [name]: value });
 
   };
 
   const selectChange = (e) => {
-
-
     setCoupon({ ...coupon, [e.target.name]: e.target.value });
   };
   const IncludeProduct = (id) => {
-    return coupon.products.some((included_product) => {
+
+    return coupon.includeProducts?.some((included_product) => {
       return included_product === id
     })
 
   }
   const ExcludeProduct = (id) => {
-    return coupon.exclude_products.some((excluded_product) => {
+    return coupon.excludeProducts.some((excluded_product) => {
       return excluded_product === id
     })
   }
   const IncludeCategories = (id) => {
 
-    return coupon.categories.some((included_categorie) => {
+
+    return coupon.includeCategories?.some((included_categorie) => {
       return included_categorie === id
     })
   }
   const ExcludeCategories = (id) => {
-    return coupon.exclude_categories.some((excluded_categorie) => {
+    return coupon.excludeCategories.some((excluded_categorie) => {
       return excluded_categorie === id
     })
   }
@@ -201,9 +241,9 @@ const EditCouponComponent = ({ params }) => {
       <Alert />
       {loading ? <Loading /> : null}
       <TopBar
-        title="Edit Coupon"
-        onSubmit={updateCoupon}
-        submitTitle="Update"
+        title={id ? "Edit Coupon" : "Add Coupon"}
+        onSubmit={addUpdateCoupon}
+        submitTitle={id ? "Update" : "Add"}
         backLink={`${client_app_route_url}all-coupons`}
       />
 
@@ -270,15 +310,15 @@ const EditCouponComponent = ({ params }) => {
                         labelWidth={labelWidth}
                         onChange={handleChange}
                         inputProps={{
-                          name: "discount_type",
-                          value: coupon.discount_type,
+                          name: "discountType",
+                          value: coupon.discountType,
                         }}
                       >
                         <MenuItem value="amount-discount">
                           Fixed Amount Discount
                         </MenuItem>
                         <MenuItem value="precantage-discount">
-                          Fixed Precantage Discount
+                          Fixed Percentage Discount
                         </MenuItem>
                       </Select>
                     </FormControl>
@@ -286,9 +326,9 @@ const EditCouponComponent = ({ params }) => {
                   <Grid item md={6} sm={12} xs={12}>
                     <TextInput
                       type="number"
-                      value={coupon.discount_value}
-                      label="Coupon Amount"
-                      name="discount_value"
+                      value={coupon.discountValue}
+                      label={coupon.discountType === 'amount-discount' ? "Coupon Amount" : 'Coupon Percent'}
+                      name="discountValue"
                       onInputChange={handleChange}
 
                     />
@@ -303,6 +343,7 @@ const EditCouponComponent = ({ params }) => {
                       variant="outlined"
                       className={clsx(classes.width100, "top-helper")}
                       type="date"
+                      min={currentDate}
 
                     />
                   </Grid>
@@ -313,11 +354,11 @@ const EditCouponComponent = ({ params }) => {
                   control={
                     <Checkbox
                       color="primary"
-                      checked={coupon.free_shipping}
+                      checked={coupon.freeShipping}
                       onChange={(e) =>
                         setCoupon({
                           ...coupon,
-                          free_shipping: e.target.checked,
+                          freeShipping: e.target.checked,
                         })
                       }
                     />
@@ -331,29 +372,33 @@ const EditCouponComponent = ({ params }) => {
                 <Box component="div" mb={2}>
                   <TextInput
                     type="Number"
-                    value={coupon.minimum_spend}
+                    value={coupon.minimumSpend}
                     label="Minimum Spend"
-                    name="minimum_spend"
+                    name="minimumSpend"
                     onInputChange={handleChange}
+                    min={0}
 
                   />
                 </Box>
                 <Box component="div" mb={2}>
                   <TextInput
                     type="Number"
-                    value={coupon.maximum_spend}
+                    value={coupon.maximumSpend}
                     label="Maximum Spend"
-                    name="maximum_spend"
+                    name="maximumSpend"
                     onInputChange={handleChange}
+                    min={0}
 
                   />
                 </Box>
 
                 {/*  ================== Products Select ================== */}
                 <SelectOptionField
-                  name="products"
+
+                  name="includeProducts"
                   label="Products"
-                  value={coupon.products}
+                  value={coupon.includeProducts}
+
                   id="products"
 
                 >
@@ -368,10 +413,10 @@ const EditCouponComponent = ({ params }) => {
 
                 {/* ================== Exclude Products Select ================== */}
                 <SelectOptionField
-                  name="exclude_products"
+                  name="excludeProducts"
                   label="Exclude Products"
-                  value={coupon.exclude_products}
-                  id="exclude_products"
+                  value={coupon.excludeProducts}
+                  id="excludeProducts"
                 >
                   {Products.products.map((product) =>
                     !IncludeProduct(product._id) ?
@@ -385,9 +430,11 @@ const EditCouponComponent = ({ params }) => {
 
                 {/*  ================== Category Select ==================*/}
                 <SelectOptionField
-                  name="categories"
+
+                  name="includeCategories"
                   label="Categories"
-                  value={coupon.categories}
+                  value={coupon.includeCategories}
+
                   id="categories"
                 >
                   {Products.categories.map((category) =>
@@ -400,10 +447,10 @@ const EditCouponComponent = ({ params }) => {
 
                 {/* ================== Exclude Category Select ===================== */}
                 <SelectOptionField
-                  name="exclude_categories"
+                  name="excludeCategories"
                   label="Exclude Categories"
-                  value={coupon.exclude_categories}
-                  id="exclude_categories"
+                  value={coupon.excludeCategories}
+                  id="excludeCategories"
                 >
                   {Products.categories.map((category) =>
                     !IncludeCategories(category.id) ?

@@ -27,12 +27,14 @@ import General from "./components/general";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme";
 import Notification from "./components/notification";
+import ZipCodes from "./components/zipcode";
+import Google from "./components/google";
 const SettingsComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const [value, setValue] = useState(7);
+  const [value, setValue] = useState(9);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -72,7 +74,9 @@ const SettingsComponent = () => {
                       <Tab label="Store" {...TabProps(4)} />
                       <Tab label="Payment" {...TabProps(5)} />
                       <Tab label="Notification" {...TabProps(6)} />
-                      <Tab label="Appearance" {...TabProps(7)} />
+                      <Tab label="ZipCodes" {...TabProps(7)} />
+                      <Tab label="Google" {...TabProps(8)} />
+                      <Tab label="Appearance" {...TabProps(9)} />
                     </Tabs>
                   </Box>
                   <Box
@@ -101,6 +105,12 @@ const SettingsComponent = () => {
                         <Notification />
                       </TabPanel>
                       <TabPanel value={value} index={7}>
+                        <ZipCodes />
+                      </TabPanel>
+                      <TabPanel value={value} index={8}>
+                        <Google />
+                      </TabPanel>
+                      <TabPanel value={value} index={9}>
                         <Appearance />
                       </TabPanel>
                     </Box>

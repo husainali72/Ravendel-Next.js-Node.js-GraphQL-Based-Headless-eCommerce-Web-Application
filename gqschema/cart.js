@@ -2,10 +2,12 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Cart {
     id: ID
-    user_id: ID
+    userId: ID
     status: String
-    total: Float
-    products: metaKeyValueArray
+    total: String
+    cartItem: metaKeyValueArray
+    availableItem: customArray
+    unavailableItem: customArray
     date: Date
     updated: Date
   }
@@ -26,83 +28,125 @@ module.exports = gql`
   }
 
   type cartItem {
-    product_id: ID
-    qty: Int
-    price: Float
-    combination: customArray
-    tax: taxObj
-    shipping: shippingObj
+    productId: ID
+    productTitle:String
+    productImage : String
+    productPrice : String
+    qty: Int,
+    productTotal : String,
+    productTax: String
+    productShipping: String
   }
 
   type calculatedCart {
-    subtotal: Float
-    total_shipping: shippingObj
-    total_tax: taxObj
-    total_coupon: Float
-    grand_total: Float
+    totalShipping: String
+    totalTax: String
+    totalCoupon: Float
+    grandTotal: String
+    cartItem:[cartItem]
+    cartTotal :String
   }
 
   input cartProduct {
-    product_id: ID
+    productId: ID
     qty: Int
-    product_title: String
-    product_price: Float
-    product_image: String
+    productTitle: String
+    productPrice: String
+    productImage: String
     combination: [String]
+    taxClass: String
+    shippingClass: String
+    productQuantity:Int
+    attributes:customArray
+    variantId:String
   }
 
-  input cartProducts {
-    product_id: ID
+  input calculateCartProducts {
+    productId: ID
     qty: Int
     total: Float
+    taxClass: String
+    shippingClass: String
+    variantId:String
+    productTotal : String
+  }
+
+  input couponCartProducts {
+    productId: ID
+    qty: Int
+    productImage : String
+    productTitle : String
+    productShipping : String
+    productTax : String
+    productPrice : String
+    productTotal : String
+    variantId:String
+  }
+
+  type calculateCouponCartItem {
+    productId: ID
+    qty: Int
+    productImage : String
+    productTitle : String
+    productShipping : String
+    productTax : String
+    productPrice : String
+    productTotal : String
+    variantId:String
+    discountGrandTotal : String
   }
 
   type CartRES {
     data:[Cart]
     message: statusSchema
   } 
+
   type Cart_by_id_RES {
     data:Cart
     message: statusSchema
   }
 
   type calculateCoupon {
-    total_coupon: Float
+    totalCoupon: String
     message: String
     success: Boolean
+    cartItem :[calculateCouponCartItem]
+    cartTotal : String
+    totalShipping : String
+    totalTax : String,
+  grandTotal:String
+  discountGrandTotal : String
   }
 
   extend type Query {
     carts: CartRES
-    cart(id: ID!): Cart 
-    cartbyUser(user_id: ID!): Cart
-    calculateCart(total_coupon : Float, cart: [cartProducts]): calculatedCart
-    calculateCoupon(coupon_code: String, cart: [cartProducts]): calculateCoupon
+    cart(id: ID!): Cart
+    cartbyUser(userId: ID!): Cart
+    calculateCart(cartItem: [calculateCartProducts]): calculatedCart
+    calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
+      totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
   }
 
   extend type Mutation {
-    addCart(user_id: ID, total: Float, products: [cartProduct]): statusSchema
+    addCart(userId: ID, total: Float, products: [cartProduct]): statusSchema
     updateCart(id: ID!, total: Float, products: [cartProduct]): statusSchema
-    changeQty(user_id: ID!, product_id: ID!, qty: Int!): statusSchema
+    changeQty(userId: ID!, productId: ID!, qty: Int!): statusSchema
     deleteCart(id: ID!): statusSchema
-    deleteCartProduct(id: ID!, product_id: ID!): statusSchema
+    deleteCartProduct(id: ID!, productId: ID!): statusSchema
     addToCart(
-      user_id: ID
+      userId: ID
       total: Float
-      product_id: String
-      product_title: String
-      product_price: Float
-      product_image: String
+      productId: String
+      productTitle: String
+      productPrice: String
+      productImage: String
       qty: Int
+      attributes:customArray
+      variantId:String
+      productQuantity:Int
+      shippingClass : String,
+      taxClass : String
+
     ): statusSchema
   }
 `;
-
-/* type calculatedCart {
-  items: [cartItem]
-  subtotal: Float,
-  total_shipping: shippingObj,
-  total_tax: taxObj,
-  total_coupon: Float,
-  grand_total: Float,
-} */

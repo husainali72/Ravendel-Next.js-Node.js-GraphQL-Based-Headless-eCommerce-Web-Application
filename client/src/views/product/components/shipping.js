@@ -30,10 +30,15 @@ const ShippingComponent = ({
   }, []);
 
   useEffect(() => {
-    if (shippingState.shipping.shipping_class.length) {
-      onShippingClassChange(shippingState.shipping.shipping_class[0]._id);
+    if (shippingState.shipping.shippingClass.length) {
+      let shippingClass = product?.shipping?.shippingClass && shippingState.shipping.shippingClass.some((shippingClass) => shippingClass._id === product?.shipping?.shippingClass);
+      shippingState.shipping.shippingClass.some((shippingClass) => {
+        return shippingClass === product?.shipping?.shippingClass;
+      });
+      onShippingClassChange(shippingClass ? product?.shipping?.shippingClass : shippingState.shipping.shippingClass[0]._id);
     }
   }, [shippingState.shipping]);
+
 
   return (
     <>
@@ -50,10 +55,10 @@ const ShippingComponent = ({
                 labelId='Shipping-name'
                 id='Shipping-name'
                 name='Shipping-name'
-                value={product.shipping.shipping_class}
+                value={product.shipping.shippingClass}
                 onChange={(e) => onShippingClassChange(e.target.value)}
               >
-                {shippingState.shipping.shipping_class.map(
+                {shippingState.shipping.shippingClass.map(
                   (shipping, index) => {
                     return (
                       <MenuItem value={shipping._id} key={index}>
@@ -110,7 +115,7 @@ const ShippingComponent = ({
 
         <Grid item md={3}>
           <TextInput
-            label='Weigth'
+            label='Weight'
             name='weigth'
             variant='outlined'
             type='number'

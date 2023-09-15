@@ -26,7 +26,6 @@ const ThemesComponent = () => {
     { name: 'twitter', handle: '' },
     { name: 'youtube', handle: '' },
   ])
-
   useEffect(() => {
     if (!isEmpty(get(settingState.settings.appearance, 'theme'))) {
       setThemeSetting({ ...settingState.settings.appearance.theme })
@@ -42,7 +41,7 @@ const ThemesComponent = () => {
     delete theme.__typename;
     let errors = validate(['playstore', "appstore", "email", 'hours'], themeSetting);
     let phoneNumberError = validatePhone(["phone_number"], themeSetting)
-    let nested_validation = validatenested("social_media", ["name", "handle"], themeSetting);
+    let nested_validation = validatenested("social_media", ["handle"], themeSetting);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -78,7 +77,6 @@ const ThemesComponent = () => {
       dispatch(appearanceThemeUpdateAction(themeSetting));
     }
   };
-
   const fileChange = (e) => {
     themeSetting.logo = URL.createObjectURL(e.target.files[0]);
     themeSetting.new_logo = e.target.files
@@ -101,7 +99,6 @@ const ThemesComponent = () => {
     data.splice(i, 1)
     setSocialMedia([...data])
   }
-
   return (
     <>
       <Alerts />

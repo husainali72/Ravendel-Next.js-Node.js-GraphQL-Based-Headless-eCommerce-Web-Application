@@ -7,7 +7,7 @@ import 'react-phone-input-2/lib/bootstrap.css';
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { handleEnter } from "../../utills/helpers";
 const BillingDetails = (props) => {
-    const { control, getBillingInfo, registerRef, errorRef, billingInfo, shippingAddressToggle, handleShippingChange, shippingAdd, shippingInfo, handlePhoneInput, setShippingInfo, setBillingInfo, handleBillingInfo } = props;
+    const { handleShippingPhone, control, getBillingInfo, registerRef, errorRef, billingInfo, handleZipCode, ZipMessage, shippingAddressToggle, handleShippingChange, shippingAdd, shippingInfo, handlePhoneInput, setShippingInfo, setBillingInfo, handleBillingInfo } = props;
     useEffect(() => {
         var allData = {
             billing: billingInfo,
@@ -205,24 +205,22 @@ const BillingDetails = (props) => {
                                         value: (billingInfo.zip ? false : true),
                                         message: "zip is Required",
                                     },
-                                    minLength: {
-                                        value: 6,
-                                        message: "zip Min length is 6",
-                                    },
-                                    maxLength: {
-                                        value: 6,
-                                        message: "zip Max length is 6",
-                                    },
+                                    // minLength: {
+                                    //     value: 6,
+                                    //     message: "zip Min length is 6",
+                                    // },
+                                    // maxLength: {
+                                    //     value: 6,
+                                    //     message: "zip Max length is 6",
+                                    // },
                                 })}
                                 value={billingInfo.zip}
-                                onChange={handleBillingInfo}
+                                onChange={handleZipCode}
                                 onKeyDown={(e) => handleEnter(e)}
                             />
                             <p>
-                                <small style={{ color: 'red' }}>
-                                    {errorRef.zip?.type === "required" ? errorRef.zip?.message : undefined}
-                                    {errorRef.zip?.type === "minLength" ? errorRef.zip?.message : undefined}
-                                    {errorRef.zip?.type === "maxLength" ? errorRef.zip?.message : undefined}
+                                <small style={{ color: ZipMessage.zipSuccess ? '#4BB543' : 'red' }}>
+                                    {ZipMessage.zipMessage}
                                 </small>
                             </p>
                         </div>
@@ -242,9 +240,8 @@ const BillingDetails = (props) => {
                                 render={({ field: { onChange, value } }) => (
                                     <PhoneInput
                                         enableSearch='true'
-                                        country={'in'}
+                                        country={'us'}
                                         inputClass={'custom-input'}
-                                        // buttonClass={'select-flag'}
                                         placeholder="Enter phone number"
                                         value={billingInfo.phone}
                                         onChange={(value) => handlePhoneInput('phone', value)}
@@ -336,6 +333,7 @@ const BillingDetails = (props) => {
                                 <p>
                                     <small style={{ color: 'red' }}>
                                         {errorRef.shippingfirstname?.type === "required" ? errorRef.shippingfirstname?.message : undefined}
+                                        {errorRef.shippingfirstname?.type === "minLength" ? errorRef.shippingfirstname?.message : undefined}
                                     </small>
                                 </p>
                                 <input
@@ -347,7 +345,11 @@ const BillingDetails = (props) => {
                                         required: {
                                             value: (shippingAdd ? ((shippingInfo?.lastname ? false : true)) : false),
                                             message: "Last Name is Required",
-                                        }
+                                        },
+                                        minLength: {
+                                            value: 3,
+                                            message: "Lastname Min length is 3",
+                                        },
                                     })}
                                     value={shippingInfo?.lastname}
                                     onChange={handleShippingChange}
@@ -355,7 +357,8 @@ const BillingDetails = (props) => {
                                 />
                                 <p>
                                     <small style={{ color: 'red' }}>
-                                        {errorRef.shippinglastname?.type === "required" ? errorRef.shippinglastname?.message : undefined}
+                                        {errorRef.shippinglastname?.type === "required" || "minLength" ? errorRef.shippinglastname?.message : undefined}
+                                        {/* {errorRef.shippinglastname?.type === "minLength" ? errorRef.shippinglastname?.message : undefined} */}
                                     </small>
                                 </p>
                                 <input
@@ -400,22 +403,22 @@ const BillingDetails = (props) => {
                                 </p>
                                 <input className="input-filled"
                                     type="text"
-                                    name="shippingaddress_line2"
+                                    name="shippingaddressLine2"
                                     label="address_line_2"
                                     placeholder="address_line_2 *"
-                                    {...registerRef("shippingaddress_line2", {
+                                    {...registerRef("shippingaddressLine2", {
                                         required: {
-                                            value: (shippingAdd ? ((shippingInfo?.address_line2 ? false : true)) : false),
+                                            value: (shippingAdd ? ((shippingInfo?.addressLine2 ? false : true)) : false),
                                             message: "Address is Required",
                                         }
                                     })}
-                                    value={shippingInfo?.address_line2}
+                                    value={shippingInfo?.addressLine2}
                                     onChange={handleShippingChange}
                                     onKeyDown={(e) => handleEnter(e)}
                                 />
                                 <p>
                                     <small style={{ color: 'red' }}>
-                                        {errorRef.shippingaddress_line2?.type === "required" ? errorRef.shippingaddress_line2?.message : undefined}
+                                        {errorRef.shippingaddressLine2?.type === "required" ? errorRef.shippingaddressLine2?.message : undefined}
                                     </small>
                                 </p>
                                 <input
@@ -468,14 +471,14 @@ const BillingDetails = (props) => {
                                             value: (shippingAdd ? ((shippingInfo?.zip ? false : true)) : false),
                                             message: "Zip is Required",
                                         },
-                                        minLength: {
-                                            value: 6,
-                                            message: "zip Min length is 6",
-                                        },
-                                        maxLength: {
-                                            value: 6,
-                                            message: "zip Max length is 6",
-                                        },
+                                        // minLength: {
+                                        //     value: 6,
+                                        //     message: "zip Min length is 6",
+                                        // },
+                                        // maxLength: {
+                                        //     value: 6,
+                                        //     message: "zip Max length is 6",
+                                        // },
                                     })}
                                     value={shippingInfo?.zip}
                                     onChange={handleShippingChange} />
@@ -486,7 +489,7 @@ const BillingDetails = (props) => {
                                         {errorRef.shippingzip?.type === "maxLength" ? errorRef.shippingzip?.message : undefined}
                                     </small>
                                 </p>
-                                <input className="input-filled"
+                                {/* <input className="input-filled"
                                     type="text"
                                     name="shippingphone"
                                     label="phone"
@@ -505,6 +508,35 @@ const BillingDetails = (props) => {
                                         {errorRef.shippingphone?.type === "minLength" ? errorRef.shippingphone?.message : undefined}
                                         {errorRef.shippingphone?.type === "maxLength" ? errorRef.shippingphone?.message : undefined}
                                         {errorRef.shippingphone?.type === "pattern" ? errorRef.shippingphone?.message : undefined}
+                                    </small>
+                                </p> */}
+                                <Controller
+                                    name="shippingphone"
+                                    control={control}
+                                    rules={{
+                                        required: {
+                                            value: (shippingAdd ? (shippingInfo.phone ? false : true) : false),
+                                            message: "Phone number is Required",
+                                        },
+                                        validate: () => {
+                                            return isValidPhoneNumber(`+${shippingInfo.phone}`)
+                                        }
+                                    }}
+                                    render={({ field: { onChange, value } }) => (
+                                        <PhoneInput
+                                            enableSearch='true'
+                                            country={'in'}
+                                            inputClass={'custom-input'}
+                                            placeholder="Enter phone number"
+                                            value={shippingInfo.phone}
+                                            onChange={(value) => handleShippingPhone('phone', value)}
+                                        />
+                                    )}
+                                />
+                                <p>
+                                    <small style={{ color: 'red' }}>
+                                        {errorRef.shippingphone?.type === "required" ? errorRef.shippingphone?.message : undefined}
+                                        {errorRef.shippingphone?.type === "validate" ? "Phone number is invalid" : undefined}
                                     </small>
                                 </p>
                                 <input className="input-filled"
@@ -554,7 +586,7 @@ const BillingDetails = (props) => {
                     {/* </form> */}
 
                 </div >
-            </div>
+            </div >
         </>
 
     )

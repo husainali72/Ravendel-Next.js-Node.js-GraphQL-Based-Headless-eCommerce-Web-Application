@@ -14,18 +14,17 @@ import AccountSettings from "../../components/account/component/account-setting"
 import AddressDetail from "../../components/account/component/address-details"
 import OrdersDetails from "../../components/account/component/orders-details"
 import { getSession, useSession } from "next-auth/react";
+import { Toaster } from "react-hot-toast";
 
 var accountDetailObject = {
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     company: "",
     phone: "",
 }
 const MyWishList = ({ id, customeraddres }) => {
-    // console.log("customeraddres==", customeraddres)
-    // const { accountDetailInfo, getcustomer, refreshData, token } = props;
     const session = useSession();
     const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -34,30 +33,21 @@ const MyWishList = ({ id, customeraddres }) => {
         setIsRefreshing(true);
     }
     const router = useRouter()
-    // console.log("router", router)
     if (router.isFallback) {
         return <div>Loading...</div>
     }
-    // let id = router.query.mywishlist
-    // console.log("id", id)
     var token = ""
     if (session.status === "authenticated") {
         token = session.data.user.accessToken.token
     }
-
-
     const [accountDetails, setAccountDetails] = useState(accountDetailObject)
     const [accountAddress, setAccountAddress] = useState([])
     const [Address, setAddress] = useState([])
     useEffect(() => {
-        // let id = router.query.mywishlist
         setAccountDetails(customeraddres)
         setAccountAddress(customeraddres)
-        // setAddress(customeraddres.address_book)
         query(GET_CUSTOMER_QUERY, id).then((response) => {
             const customeradd = response.data.customer.data
-            // console.log("==", customeradd)
-            // setAccountDetails(customeradd)
         })
 
     }, [])
@@ -65,31 +55,19 @@ const MyWishList = ({ id, customeraddres }) => {
         setIsRefreshing(false);
     }, [customeraddres])
 
-    // console.log("==", accountDetails)
     const updateAccountDetail = (e) => {
         e.preventDefault();
-        // console.log("updateAccount", accountDetails)
-        // console.log("tok", token)
         mutation(UPDATE_CUSTOMER, accountDetails, token).then(async (response) => {
-            // console.log("response", response)
             if (response.data.updateCustomer.success) {
                 let id = "622ae63d3aa0f0f63835ef8e"
-                // await router.push("/account/profile")
                 query(GET_CUSTOMER_QUERY, id).then((response) => {
                     const customeradd = response.data.customer.data
                     console.log("==", customeradd)
-                    // setAccountDetails(customeradd)
                 })
                 refreshData()
-                // console.log("beforeget")
             }
         })
     }
-
-    // useEffect(() => {
-    //     setAccountDetails(accountDetailInfo)
-    // }, [accountDetailInfo])
-
     return (
         <>
             <BreadCrumb title={"my wishlist"} />
@@ -102,8 +80,8 @@ const MyWishList = ({ id, customeraddres }) => {
                                 name="firstname"
                                 label="firstname"
                                 placeholder="First name *"
-                                value={accountDetails.first_name || ''}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, first_name: e.target.value })}
+                                value={accountDetails.firstName || ''}
+                                onChange={(e) => setAccountDetails({ ...accountDetails, firstName: e.target.value })}
                                 className="update-account-details-input"
                             />
                         </Col>
@@ -113,8 +91,8 @@ const MyWishList = ({ id, customeraddres }) => {
                                 name="lastname"
                                 label="lastname"
                                 placeholder="Last name *"
-                                value={accountDetails.last_name || ""}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, last_name: e.target.value })}
+                                value={accountDetails.lastName || ""}
+                                onChange={(e) => setAccountDetails({ ...accountDetails, lastName: e.target.value })}
                                 className="update-account-details-input"
                             />
                         </Col>
@@ -194,15 +172,15 @@ const MyWishList = ({ id, customeraddres }) => {
                 </form>
                 <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
                     <Tab eventKey="profile" title="Profile">
-                        <AccountSettings
+                        {/* <AccountSettings
                             accountDetailInfo={accountDetails}
                             token={token}
                             refreshData={refreshData}
-                        />
+                        /> */}
                         <Card>
                             <ListGroup variant="flush">
-                                <ListGroup.Item>firstname :{customeraddres?.first_name}</ListGroup.Item>
-                                <ListGroup.Item> lastname :{customeraddres?.last_name}</ListGroup.Item>
+                                <ListGroup.Item>firstname :{customeraddres?.firstName}</ListGroup.Item>
+                                <ListGroup.Item> lastname :{customeraddres?.lastName}</ListGroup.Item>
                                 <ListGroup.Item>email : {customeraddres?.email}</ListGroup.Item>
                                 <ListGroup.Item>company : {customeraddres?.company}</ListGroup.Item>
                                 <ListGroup.Item>phone: {customeraddres?.phone}</ListGroup.Item>
@@ -222,7 +200,6 @@ const MyWishList = ({ id, customeraddres }) => {
                             address={accountAddress}
                             token={token}
                             refreshData={refreshData}
-
                         />
                     </Tab>
                     <Tab eventKey="recent-view" title="Recent Views">

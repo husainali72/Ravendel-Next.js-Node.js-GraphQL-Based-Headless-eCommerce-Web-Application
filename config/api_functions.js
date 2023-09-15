@@ -201,9 +201,9 @@ const CREATE_FUNC = async (
     }
 
     if(name === "Review"){
-      const customer = await Customer.findById(mongoose.Types.ObjectId(data.customer_id))
+      const customer = await Customer.findById(mongoose.Types.ObjectId(data.customerId))
       if(!customer) return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
-      const product = await Product.findById(mongoose.Types.ObjectId(data.product_id))
+      const product = await Product.findById(mongoose.Types.ObjectId(data.productId))
       if(!product) return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
     }
     //console.log('DATA', data) ;
@@ -232,7 +232,7 @@ const CREATE_FUNC = async (
         image = data.feature_image.file;
       }
 
-      if (name && name === "ProductCategory") {
+      if (name && name === "Product Category") {
         image = data.image[0].file;
       }
 
@@ -254,7 +254,7 @@ const CREATE_FUNC = async (
         };
       }
 
-      if ((name && name === "ProductCategory") || name && name === "User") {
+      if ((name && name === "Product Category") || name && name === "User") {
         data.image = imgObject.data || imgObject;
       } else {
         data.feature_image = imgObject.data || imgObject;
@@ -270,10 +270,10 @@ const CREATE_FUNC = async (
       }
     }
     if (data.email && name !== "Review") {
-      const emailresponse = await modal.find({$and: [{product_id: data.product_id},{email: data.email}]});
+      const emailresponse = await modal.find({$and: [{productId: data.productId},{email: data.email}]});
       //console.log("emailres===",emailresponse)
       if (emailresponse.length>0) {
-        return MESSAGE_RESPONSE("DUPLICATE", "email", false);
+        return MESSAGE_RESPONSE("DUPLICATE", "Email", false);
       }
     }
     //console.log('DATA--------',data);
@@ -283,7 +283,7 @@ const CREATE_FUNC = async (
       response.password = await bcrypt.hash(data.password, 10);
     }
 
-    if(name !== "Page" && name !== "ProductAttribute") response.updated = Date.now()
+    if(name !== "Page" && name !== "Product Attribute") response.updated = Date.now()
 
     await response.save();
     return MESSAGE_RESPONSE("AddSuccess", name, true);
@@ -345,7 +345,7 @@ const UPDATE_FUNC = async (
           };
         } else {
 
-          if (name && name === "ProductCategory") {
+          if (name && name === "Product Category") {
             imageUnlink(response.image);
             data.image = imgObject.data || imgObject;
           } else {
@@ -369,13 +369,13 @@ const UPDATE_FUNC = async (
           success: false,
         }
       }
-      if(name !== "Page" && name !== "ProductAttribute") response.updated = Date.now()
+      if(name !== "Page" && name !== "Product Attribute") response.updated = Date.now()
 
       response = await modal.findByIdAndUpdate({_id: response._id}, {...response})
       await response.save();
       // update average rating of product related to reviews
       if(name === "Review"){
-        await prodAvgRating(data.product_id, modal, modal2)
+        await prodAvgRating(data.productId, modal, modal2)
       }
       return MESSAGE_RESPONSE("UpdateSuccess", name, true);
     }

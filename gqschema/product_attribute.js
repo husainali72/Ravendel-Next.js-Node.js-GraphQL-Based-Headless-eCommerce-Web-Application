@@ -54,8 +54,8 @@ module.exports = gql`
       orderBy: String
       order: String
     ): productAttributeResponse
-    product_attributes: productAttributeRES
-    product_attribute(id: ID!): productAttributeIdRES
+    productAttributes: productAttributeRES
+    productAttribute(id: ID!): productAttributeIdRES
   }
 
   extend type Mutation {

@@ -5,7 +5,7 @@ export const GET_ORDERS_QUERY = gql`
     orders {
       data {
         id
-        customer_id
+        customerId
         status
         shipping
         billing
@@ -22,22 +22,22 @@ export const GET_ORDERS_QUERY = gql`
 `;
 export const GET_CUSTOMER_ORDERS_QUERY = gql`
   query ($id:ID!){
-  orderbyUser(user_id: $id) {
+  orderbyUser(userId: $id) {
            data {
             billing
-      customer_id
+            userId
       date
-      coupon_code
-      discount_amount
-      grand_total
+      couponCode
+      discountAmount
+      grandTotal
       id
       products
       shipping
-      shipping_amount
-      shipping_status
-      payment_status
-      subtotal
-      tax_amount
+      shippingAmount
+      shippingStatus
+      paymentStatus
+      cartTotal
+      taxAmount
       updated
   }
   message {
@@ -52,7 +52,7 @@ export const GET_SINGLE_ORDER_DETAILS = gql`
   order(id: $id) {
             data{
                 id
-                customer_id
+                customerId
                 status
                 shipping
                 billing
@@ -60,10 +60,10 @@ export const GET_SINGLE_ORDER_DETAILS = gql`
                 date
                 updated
                 subtotal
-                shipping_amount
-                tax_amount
-                discount_amount
-                grand_total
+                shippingAmount
+                taxAmount
+                discountAmount
+                grandTotal
             }
             message{
                 message
@@ -75,28 +75,30 @@ export const GET_SINGLE_ORDER_DETAILS = gql`
 
 export const ADD_ORDER = gql`
   mutation(
-            $customer_id: ID
+            $userId: ID
               $billing: customObject
               $shipping: customObject
               $products: customArray
-              $subtotal: String
-              $shipping_amount: String
-              $tax_amount: String
-              $discount_amount: String
-              $grand_total: String
-              $coupon_code: String
+              $cartTotal: String
+              $shippingAmount: String
+              $taxAmount: String
+              $discountAmount: String
+              $grandTotal: String
+              $couponCode: String
      ){
        addOrder(
-                customer_id: $customer_id
+                userId: $userId
                 shipping: $shipping
                 billing: $billing
                 products: $products
-                subtotal:$subtotal
-              shipping_amount:$shipping_amount
-                tax_amount:$tax_amount
-                discount_amount:$discount_amount
-                  grand_total :$grand_total
-                  coupon_code :$coupon_code
+                cartTotal:$cartTotal
+              shippingAmount:$shippingAmount
+                taxAmount:$taxAmount
+                discountAmount:$discountAmount
+                  grandTotal :$grandTotal
+                  couponCode :$couponCode
+
+               
     ){
         message
         success

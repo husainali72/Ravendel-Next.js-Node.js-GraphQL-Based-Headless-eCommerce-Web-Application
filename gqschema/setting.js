@@ -66,8 +66,8 @@ module.exports = gql`
   }
 
   type STORE_ADDRESS {
-    address_line1: String
-    address_line2: String
+    addressLine1: String
+    addressLine2: String
     city: String
     country: String
     state: String
@@ -319,8 +319,8 @@ module.exports = gql`
       number_of_decimals: Int
     ): Setting
     updateStoreAddress(
-      address_line1: String
-      address_line2: String
+      addressLine1: String
+      addressLine2: String
       city: String
       country: String
       state: String

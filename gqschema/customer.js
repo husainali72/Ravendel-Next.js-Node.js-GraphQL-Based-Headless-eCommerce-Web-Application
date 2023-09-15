@@ -2,13 +2,13 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Customer {
     id: ID
-    first_name: String
-    last_name: String
+    firstName: String
+    lastName: String
     email: String
     company: String
     phone: String
     password: String
-    address_book: customArray
+    addressBook: customArray
     date: Date
     updated: Date
     gender: String
@@ -17,12 +17,12 @@ module.exports = gql`
   type AddressBook {
     id: ID
     _id: ID
-    first_name: String
-    last_name: String
+    firstName: String
+    lastName: String
     company: String
     phone: String
-    address_line1: String
-    address_line2: String
+    addressLine1: String
+    addressLine2: String
     city: String
     country: String
     state: String
@@ -36,11 +36,11 @@ module.exports = gql`
     pagination: paginationInfo
     message: statusSchema
   }
-  type Customers_response {
+  type CustomersResponse {
     data: [Customer]
     message: statusSchema
   }
-  type Customer_By_Id {
+  type CustomerById {
     data: Customer
     message: statusSchema
   }
@@ -52,14 +52,14 @@ module.exports = gql`
       orderBy: String
       order: String
     ): customersResponse
-    customers:  Customers_response
-    customer(id: ID!): Customer_By_Id
+    customers:  CustomersResponse
+    customer(id: ID!): CustomerById
   }
 
   extend type Mutation {
     addCustomer(
-      first_name: String
-      last_name: String
+      firstName: String
+      lastName: String
       email: String
       company: String
       phone: String
@@ -67,8 +67,8 @@ module.exports = gql`
     ): statusSchema
     updateCustomer(
       id: ID!
-      first_name: String
-      last_name: String
+      firstName: String
+      lastName: String
       email: String
       company: String
       phone: String
@@ -82,32 +82,32 @@ module.exports = gql`
     deleteCustomer(id: ID!): statusSchema
     addAddressBook(
       id: ID!
-      first_name: String
-      last_name: String
+      firstName: String
+      lastName: String
       company: String
       phone: String
-      address_line1: String
-      address_line2: String
+      addressLine1: String
+      addressLine2: String
       city: String
       country: String
       state: String
       pincode: String
-      default_address: Boolean
+      defaultAddress: Boolean
     ): statusSchema
     updateAddressBook(
       id: ID!
       _id: ID!
-      first_name: String
-      last_name: String
+      firstName: String
+      lastName: String
       company: String
       phone: String
-      address_line1: String
-      address_line2: String
+      addressLine1: String
+      addressLine2: String
       city: String
       country: String
       state: String
       pincode: String
-      default_address: Boolean
+      defaultAddress: Boolean
     ): statusSchema
     deleteAddressBook(id: ID!, _id: ID!): statusSchema
   }

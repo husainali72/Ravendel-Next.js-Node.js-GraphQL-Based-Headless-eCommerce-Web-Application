@@ -35,7 +35,7 @@ export default function CheckoutForm() {
         case "processing":
           setMessage("Your payment is processing.");
           break;
-        case "requires_payment_method":
+        case "requires_paymentMethod":
           setMessage("Your payment was not successful, please try again.");
           break;
         default:

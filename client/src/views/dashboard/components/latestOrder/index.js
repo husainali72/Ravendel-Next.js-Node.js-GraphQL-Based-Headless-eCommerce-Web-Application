@@ -29,17 +29,51 @@ const LatestOrdersTheme = ({
   const navigate = useNavigate();
   const badgefilter = [
     {
-      name: 'payment_status',
-      title: ['pending', 'failed', 'success', 'cancelled']
+      name: 'paymentStatus',
+      status: [{
+        name: 'pending',
+        title: 'Pending'
+      },
+      {
+        name: 'failed',
+        title: 'Failed'
+      },
+      {
+        name: 'success',
+        title: 'Success'
+      },
+      {
+        name: 'cancelled',
+        title: 'Cancelled'
+      }
+      ]
     },
     {
-      name: 'shipping_status',
-      title: ['inprogress', 'shipped', 'outfordelivery', 'delivered']
+      name: 'shippingStatus',
+      status: [
+        {
+          name: 'inprogress',
+          title: 'Inprogress'
+        },
+        {
+          name: 'shipped',
+          title: 'Shipped'
+        },
+        {
+          name: 'outfordelivery',
+          title: 'Out For Delivery'
+        },
+        {
+          name: 'delivered',
+          title: 'Delivered'
+        }
+      ]
     },
   ]
+
   const columndata = [
     {
-      name: 'order_number',
+      name: 'orderNumber',
       title: "Order Number",
       sortingactive: true
     },
@@ -54,12 +88,12 @@ const LatestOrdersTheme = ({
       sortingactive: true
     },
     {
-      name: 'payment_status',
+      name: 'paymentStatus',
       title: "payment status",
       sortingactive: false
     },
     {
-      name: 'shipping_status',
+      name: 'shippingStatus',
       title: "shipping status",
       sortingactive: false
     },

@@ -23,7 +23,6 @@ import {
   Bar,
   Legend
 } from "recharts";
-import { currencyFormat } from "../order/CurrencyFormat";
 import { get } from "lodash";
 const DashboardComponent = () => {
   const theme = useTheme();
@@ -37,9 +36,7 @@ const DashboardComponent = () => {
   const [latestOrders, setlatestOrders] = useState([])
   const [filteredLatestOrders, setFilteredLatestOrders] = useState([])
   useEffect(() => {
-    if (isEmpty(get(data, "dashboard_data"))) {
-      dispatch(dashboardAction());
-    }
+    dispatch(dashboardAction());
   }, []);
   useEffect(() => {
     if (!isEmpty(get(data, "dashboard_data"))) {
@@ -47,11 +44,11 @@ const DashboardComponent = () => {
       data.dashboard_data.latestOrders.map((order) => {
         let object = {
           id: order._id,
-          order_number: order.order_number,
+          orderNumber: order.orderNumber,
           date: order.date,
           name: order.billing.firstname + " " + order.billing.lastname,
-          payment_status: order.payment_status,
-          shipping_status: order.shipping_status
+          paymentStatus: order.paymentStatus,
+          shippingStatus: order.shippingStatus
         }
         latestdata.push(object)
       })
@@ -118,7 +115,7 @@ const DashboardComponent = () => {
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <DashboardCard
-            count={currencyFormat(dashBoardData.totalSales)}
+            totalsale={dashBoardData.totalSales}
             title={"TOTAL SALES"}
             Icon={({ className }) => (
               <AttachMoneyOutlinedIcon className={className} />
@@ -161,7 +158,7 @@ const DashboardComponent = () => {
                 <Tooltip offset={10} />
                 <Bar name="Payment Success NetSales" dataKey="paymentSuccessNetSales" stackId="x" fill="#FFB26B" barSize={30} />
                 <Bar name="Net Sales" dataKey="NetSales" barSize={9} stackId="x" fill="#89C4E1" />
-                <Bar name="Payment Success NetSales" dataKey="paymentSuccessNetSales" stackId="x" fill="#0081B4" barSize={30} />
+                <Bar name="Payment Success GrossSales" dataKey="paymentSuccessGrossSales" stackId="x" fill="#0081B4" barSize={30} />
                 <Bar name="Gross Sales" dataKey="GrossSales" stackId="x" barSize={30} fill="#F55050" />
               </BarChart>
             </ResponsiveContainer>

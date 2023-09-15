@@ -40,13 +40,13 @@ module.exports = {
     },
     ///let check it...................
     productwisereview: async (root, args) => {
-      // console.log("Productwisereview===", args.product_id)
-      if (!args.product_id) {
+      // console.log("Productwisereview===", args.productId)
+      if (!args.productId) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
       try {
         const reviews = await Review.find({
-          product_id: { $in: args.product_id },
+          productId: { $in: args.productId },
           status: "approved"
         });
         //console.log("review", reviews);
@@ -67,12 +67,12 @@ module.exports = {
     },
   },
   Review: {
-    product_id: async (root, args) => {
-      if (!root.product_id) {
+    productId: async (root, args) => {
+      if (!root.productId) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
       try {
-        const product = await Product.findById(root.product_id);
+        const product = await Product.findById(root.productId);
         // console.log("product found", product)
         if(product) return product
         return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
@@ -80,12 +80,12 @@ module.exports = {
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
       }
     },
-    customer_id: async (root, args) => {
-      if (!root.customer_id) {
+    customerId: async (root, args) => {
+      if (!root.customerId) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
       try {
-        const customer = await Customer.findById(root.customer_id);
+        const customer = await Customer.findById(root.customerId);
         if(customer) return customer
         return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
       } catch (error) {
@@ -99,16 +99,16 @@ module.exports = {
       let data = {
         title: args.title,
         review: args.review,
-        product_id: args.product_id,
-        customer_id: args.customer_id,
+        productId: args.productId,
+        customerId: args.customerId,
         email: args.email,
         rating: args.rating,
         status: args.status,
       };
       //console.log("data==", data)
-      let validation = ["review", "title", "email", "rating"];
-      const duplicate = await duplicateData({review: args.review, customer_id: args.customer_id}, Review)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review Title", false);
+      let validation = ["title", "rating", "review", "email"];
+      const duplicate = await duplicateData({review: args.review, customerId: args.customerId, productId: args.productId}, Review)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
       return await CREATE_FUNC(
         id,
         "Review",
@@ -124,22 +124,16 @@ module.exports = {
       let data = {
         title: args.title,
         review: args.review,
-        product_id: args.product_id,
-        customer_id: args.customer_id,
+        productId: args.productId,
+        customerId: args.customerId,
         email: args.email,
         rating: args.rating,
         status: args.status,
       };
-      let validation = [
-        "review",
-        "title",
-        "email",
-        "product_id",
-        "customer_id",
-      ];
+      let validation = ["title", "rating", "review", "email", "productId", "customerId",];
       if(Number(args.rating) === 0) return MESSAGE_RESPONSE("InvalidField", "Rating", false);
-      const duplicate = await duplicateData({review: args.review, customer_id: args.customer_id}, Review, args.id)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review Title", false);
+      const duplicate = await duplicateData({review: args.review, customerId: args.customerId, productId: args.productId}, Review, args.id)
+      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
       return await UPDATE_FUNC(
         id,
         args.id,

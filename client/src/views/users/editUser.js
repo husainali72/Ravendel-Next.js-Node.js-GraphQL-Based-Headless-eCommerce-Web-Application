@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { userUpdateAction, usersAction } from "../../store/action";
+import { userUpdateAction, usersAction, userAddAction } from "../../store/action";
 import {
   isEmpty,
   client_app_route_url,
@@ -30,10 +30,11 @@ var defaultObj = {
   email: "",
   role: "",
   password: "",
+  image: ""
 };
 
 const EditUserComponent = ({ params }) => {
-  const User_id = params.id || "";
+  const userId = params.id || "";
   const classes = viewStyles();
   const navigate = useNavigate();
   const UsersState = useSelector((state) => state.users);
@@ -41,6 +42,7 @@ const EditUserComponent = ({ params }) => {
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
   const [loading, setloading] = useState(false);
+
   useEffect(() => {
     if (isEmpty(get(UsersState, "users"))) {
       dispatch(usersAction());
@@ -54,26 +56,34 @@ const EditUserComponent = ({ params }) => {
   useEffect(() => {
     document.forms[0].reset();
     setuser(defaultObj);
+    if(userId){
     if (!isEmpty(get(UsersState, "users"))) {
       UsersState.users.map((edituser) => {
-        if (edituser.id === User_id) {
+        if (edituser.id === userId) {
           setuser({ ...edituser });
           if (edituser.image) {
             setfeatureImage(bucketBaseURL + edituser.image);
           }
         }
       });
+    }} else {
+      setuser(defaultObj)
+      setfeatureImage(null)
     }
-
-  }, [get(UsersState, "users")]);
+  }, [get(UsersState, "users"), userId]);
 
   const fileChange = (e) => {
-    setuser({ ...user, ["updatedImage"]: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
+    if (userId) {
+      setuser({ ...user, ["updatedImage"]: e.target.files[0] });
+    }
+    else {
+      setuser({ ...user, ["image"]: e.target.files[0] });
+    }
   };
 
-  const updateUser = (e) => {
+  const addUpdateUser = (e) => {
     e.preventDefault();
     let errors = validate(["role", "password", 'email', "name"], user);
 
@@ -87,17 +97,21 @@ const EditUserComponent = ({ params }) => {
         },
       });
     }
-    else {
+   else { 
+    if (userId) {
       dispatch(userUpdateAction(user, navigate));
-
     }
+    else {
+      dispatch(userAddAction(user, navigate));
+    }}
 
   };
-
   const handleChange = (e) => {
     setuser({ ...user, [e.target.name]: e.target.value });
   };
-
+  const toInputLowercase = e => {
+    e.target.value = ("" + e.target.value).toLowerCase();
+  };
   return (
     <>
       <Alert />
@@ -105,9 +119,9 @@ const EditUserComponent = ({ params }) => {
 
       <form>
         <TopBar
-          title="Edit Users"
-          onSubmit={updateUser}
-          submitTitle="Update"
+          title={userId ? "Edit Users" : "Add Users"}
+          onSubmit={addUpdateUser}
+          submitTitle={userId ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-users`}
         />
         <Grid container spacing={3} className={classes.secondmainrow}>
@@ -137,6 +151,7 @@ const EditUserComponent = ({ params }) => {
                       label="Email"
                       name="email"
                       onInputChange={handleChange}
+                      onInput={toInputLowercase}
                     />
                   </Box>
                   <Box component="div" mb={2}>

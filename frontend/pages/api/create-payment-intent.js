@@ -10,7 +10,7 @@ export default async function handler(req, res) {
    
     amount: 1099,
     currency: 'inr',
-    automatic_payment_methods: {
+    automatic_paymentMethods: {
       enabled: true,
     },
   });

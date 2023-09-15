@@ -40,21 +40,21 @@ module.exports = {
       let data = {
         code: args.code,
         description: args.description,
-        discount_type: args.discount_type,
-        discount_value: args.discount_value,
-        free_shipping: args.free_shipping,
+        discountType: args.discountType,
+        discountValue: args.discountValue,
+        freeShipping: args.freeShipping,
         expire: args.expire,
-        minimum_spend: args.minimum_spend,
-        maximum_spend: args.maximum_spend,
+        minimumSpend: args.minimumSpend,
+        maximumSpend: args.maximumSpend,
         product: args.product,
-        include_products: args.include_products,
-        exclude_products: args.exclude_products,
+        includeProducts: args.includeProducts,
+        excludeProducts: args.excludeProducts,
         category: args.category,
-        include_categories: args.include_categories,
-        exclude_categories: args.exclude_categories,
+        includeCategories: args.includeCategories,
+        excludeCategories: args.excludeCategories,
       };
       let validation = ["code", "expire"];
-      const duplicate = await duplicateData({code: {$regex: `${data.code}`, $options: "i"}}, Coupon)
+      const duplicate = await duplicateData({code: data.code}, Coupon)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Coupon Code", false);
       return await CREATE_FUNC(
         id,
@@ -70,21 +70,21 @@ module.exports = {
       let data = {
         code: args.code,
         description: args.description,
-        discount_type: args.discount_type,
-        discount_value: args.discount_value,
-        free_shipping: args.free_shipping,
+        discountType: args.discountType,
+        discountValue: args.discountValue,
+        freeShipping: args.freeShipping,
         expire: args.expire,
-        minimum_spend: args.minimum_spend,
-        maximum_spend: args.maximum_spend,
+        minimumSpend: args.minimumSpend,
+        maximumSpend: args.maximumSpend,
         product: args.product,
-        include_products: args.include_products,
-        exclude_products: args.exclude_products,
+        includeProducts: args.includeProducts,
+        excludeProducts: args.excludeProducts,
         category: args.category,
-        include_categories: args.include_categories,
-        exclude_categories: args.exclude_categories,
+        includeCategories: args.includeCategories,
+        excludeCategories: args.excludeCategories,
       };
       let validation = ["code", "expire"];
-      const duplicate = await duplicateData({code: {$regex: `${data.code}`, $options: "i"} }, Coupon, args.id)
+      const duplicate = await duplicateData({code: data.code }, Coupon, args.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Coupon Code", false);
       return await UPDATE_FUNC(
         id,

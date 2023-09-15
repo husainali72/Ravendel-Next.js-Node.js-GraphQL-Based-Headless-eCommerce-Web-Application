@@ -54,15 +54,15 @@ const GlobalShippingComponentComponent = ({
                   labelId="Shipping-name"
                   id="Shipping-name"
                   name="Shipping-name"
-                  value={shippingGlobalState.shipping_class}
+                  value={shippingGlobalState.shippingClass}
                   onChange={(e) =>
                     onGlobalShippingInputChange(
-                      "shipping_class",
+                      "shippingClass",
                       e.target.value
                     )
                   }
                 >
-                  {shippingState.shipping.shipping_class.map(
+                  {shippingState.shipping.shippingClass.map(
                     (shipping, index) => {
                       return (
                         <MenuItem value={shipping._id} key={index}>

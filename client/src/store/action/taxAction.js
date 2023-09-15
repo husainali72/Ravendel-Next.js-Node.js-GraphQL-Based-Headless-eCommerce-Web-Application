@@ -182,8 +182,8 @@ export const taxClassUpdateAction = (object) => (dispatch) => {
     type: TAX_LOADING,
   });
 
-  if (object && object.tax_class.percentage && object.tax_class.percentage) {
-    object.tax_class.percentage = object.tax_class.percentage.toString();
+  if (object && object.taxClass.percentage && object.taxClass.percentage) {
+    object.taxClass.percentage = object.taxClass.percentage.toString();
   }
   mutation(UPDATE_TAXCLASS, object)
     .then((response) => {

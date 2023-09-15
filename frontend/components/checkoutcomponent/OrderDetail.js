@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { getImage, getPrice } from "../../utills/helpers";
 import Form from 'react-bootstrap/Form';
-import Stripes from "./reactstripe/StripeContainer";
 import Link from "next/link";
+import { capitalize } from "lodash";
 const Orderdetail = (props) => {
-    const { decimal, currency, getOrderDetails, cartItems, billingInfo, handleBillingInfo, tax_amount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal } = props;
+    const { decimal, currency, getOrderDetails, cartItems, billingInfo, handleBillingInfo, taxAmount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal } = props;
     const cart = cartItems;
     const [cartProduct, setCartProduct] = useState([]);
     const cartSubTotal = () => {
@@ -34,7 +33,19 @@ const Orderdetail = (props) => {
         }
     }, [cart])
     useEffect(() => {
-        let cartItem = cart.map((product) => { return { product_id: product._id, name: product.name, cost: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price, qty: product.quantity } })
+        let cartItem = cart.map((product) => {
+            return {
+                productId: product._id,
+                productTitle: product.name,
+                productPrice: product.pricing.toString(),
+                qty: product.quantity,
+                taxClass: product?.tax_class,
+                shippingClass: product?.shipping_class,
+                attributes: product?.attributes || [],
+
+            }
+        })
+
         var allData = {
             products: cartItem,
             billing: billingInfo,
@@ -42,26 +53,35 @@ const Orderdetail = (props) => {
             checkoutDate: new Date(),
         };
         getOrderDetails(allData);
-    }, [billingInfo, shippingInfo, cart, cartTotal, tax_amount, delivery])
+    }, [billingInfo, shippingInfo, cart, cartTotal, taxAmount, delivery])
     return (
         <>
             <div className="table-responsive order_table text-center">
                 <table className="table checkout-table">
                     <thead>
                         <tr>
-                            <th colSpan="2">Product</th>
-                            <th>Total</th>
+                            <th colSpan="1">Image</th>
+                            <th>Title</th>
+                            <th>Attributes</th>
+                            <th> Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         {cartItems.map((item, i) => (
-                            
+
                             <tr key={i}>
                                 <td className="image product-thumbnail"><img src={getImage(item.feature_image, 'feature_image')} alt="" /></td>
                                 <td><i className="ti-check-box font-small text-muted mr-10"></i>
-                                    <h5><Link href={"/product/"+cart[i]?.url}><a >{item?.name}</a></Link></h5> <span className="product-qty">x {item.quantity}</span>
+                                    <h5><Link href={"/product/" + cart[i]?.url}><a >{item?.name}</a></Link></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>
-                                <td>{currency}{item.pricing.sellprice ? getPrice(item.pricing.sellprice, decimal) : getPrice(item.pricing.price * item.quantity, decimal)}</td>
+                                <td>
+                                    {item.attributes.map((attribute) => (
+                                        <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)
+
+                                    )}
+                                </td>
+                                <td>{currency}{getPrice(item?.pricing, decimal)
+                                } </td>
                             </tr>
                         ))}
                         {/* <tr>
@@ -78,7 +98,7 @@ const Orderdetail = (props) => {
                         </tr>
                         <tr>
                             <th>Tax</th>
-                            <td colSpan="2"> {tax_amount === "0" ? "$0" : "$" + tax_amount.toFixed(2)}</td>
+                            <td colSpan="2"> {taxAmount === "0" ? "$0" : "$" + taxAmount.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <th>Total</th>
@@ -96,26 +116,26 @@ const Orderdetail = (props) => {
                         <table className="table">
                             <tbody>
                                 <tr>
-                                    <td className="cart_total_label">Cart Total</td>
-                                    <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
+                                    <td className="cartTotal_label">Cart Total</td>
+                                    <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
                                         $ {subtotal.toFixed(2)}
                                     </span></td>
                                 </tr>
                                 <tr>
-                                    <td className="cart_total_label">Tax</td>
-                                    <td className="cart_total_amount"> <i className="ti-gift mr-5">{tax_amount === "0" ? "$0.00" : "$ " + tax_amount?.toFixed(2)}</i></td>
+                                    <td className="cartTotal_label">Tax</td>
+                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5">{taxAmount === "0" ? "$0.00" : "$ " + taxAmount?.toFixed(2)}</i></td>
                                 </tr>
                                 <tr>
-                                    <td className="cart_total_label">Shipping</td>
-                                    <td className="cart_total_amount"> <i className="ti-gift mr-5"></i>{delivery === "0" ? "Free Shipping" : "$ " + delivery?.toFixed(2)}</td>
+                                    <td className="cartTotal_label">Shipping</td>
+                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i>{delivery === "0" ? "Free Shipping" : "$ " + delivery?.toFixed(2)}</td>
                                 </tr>
                                 <tr>
-                                    <td className="cart_total_label">Coupon</td>
-                                    <td className="cart_total_amount"><i className="ti-gift mr-5"></i>{coupon === "0" ? "$ 0.00" : "$" + coupon?.toFixed(2)}</td>
+                                    <td className="cartTotal_label">Coupon</td>
+                                    <td className="cartTotal_amount"><i className="ti-gift mr-5"></i>{coupon === "0" ? "$ 0.00" : "$" + coupon?.toFixed(2)}</td>
                                 </tr>
                                 <tr>
-                                    <td className="cart_total_label">Grand Total</td>
-                                    <td className="cart_total_amount"><strong><span className="font-xl fw-900 text-brand">
+                                    <td className="cartTotal_label">Grand Total</td>
+                                    <td className="cartTotal_amount"><strong><span className="font-xl fw-900 text-brand">
                                         $ {cartTotal.toFixed(2)}
                                     </span></strong></td>
                                 </tr>
@@ -129,29 +149,29 @@ const Orderdetail = (props) => {
                 <div className="payment-method">
                     <h5>Payment Mode</h5>
                     <Form>
-                        <Form.Group value={billingInfo.payment_method}
+                        <Form.Group value={billingInfo.paymentMethod}
                             onChange={(e) => handleBillingInfo(e)}>
                             {['radio'].map((type) => (
                                 <div key={`inline-${type}`} className="mb-3">
                                     <Form.Check
                                         label="Cash on delivery"
-                                        name="payment_method"
+                                        name="paymentMethod"
                                         type={type}
                                         value="Cash On Delivery"
                                         id={`inline-${type}-1`}
                                     />
                                     <Form.Check
                                         label="Stripe"
-                                        name="payment_method"
+                                        name="paymentMethod"
                                         type={type}
                                         value="stripe"
-                                        id={`inline-${type}-1`}
+                                        id={`inline-${type}-2`}
                                     />
                                     <Form.Check
                                         label="Credit Card"
-                                        name="payment_method"
+                                        name="paymentMethod"
                                         type={type}
-                                        id={`inline-${type}-2`}
+                                        id={`inline-${type}-3`}
                                         value="creditCard"
                                     />
                                 </div>

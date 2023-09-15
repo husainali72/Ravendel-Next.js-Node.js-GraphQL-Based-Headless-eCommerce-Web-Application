@@ -46,13 +46,13 @@ const ShippingComponent = () => {
     useState(ShippingObject);
   const [shippingGlobal, setshippingGlobal] = useState({
     is_global: false,
-    shipping_class: "",
+    shippingClass: "",
     is_per_order: true,
     overwrite: false,
   });
 
   useEffect(() => {
-    if (isEmpty(shippingState.shipping.shipping_class)) {
+    if (isEmpty(shippingState.shipping.shippingClass)) {
       dispatch(shippingAction());
     }
   }, []);
@@ -78,7 +78,7 @@ const ShippingComponent = () => {
   };
 
   const addCustomShipping = () => {
-    var errors = validate(["name", "amount"], customShippingClass);
+    var errors = validate(["amount", "name"], customShippingClass);
 
     if (!isEmpty(errors)) {
       dispatch({
@@ -91,7 +91,7 @@ const ShippingComponent = () => {
       });
     }
     else {
-      dispatch(shippingClassAddAction({ shipping_class: customShippingClass }));
+      dispatch(shippingClassAddAction({ shippingClass: customShippingClass }));
     }
 
 
@@ -124,7 +124,7 @@ const ShippingComponent = () => {
     else {
 
       dispatch(
-        shippingClassUpdateAction({ shipping_class: customShippingClass })
+        shippingClassUpdateAction({ shippingClass: customShippingClass })
       );
     }
 

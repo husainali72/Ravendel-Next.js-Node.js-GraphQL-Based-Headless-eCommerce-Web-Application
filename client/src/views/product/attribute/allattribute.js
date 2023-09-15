@@ -14,7 +14,7 @@ import ActionButton from "../../components/actionbutton";
 const AllAttributeComponent = () => {
   const dispatch = useDispatch();
   const classes = viewStyles()
-  const attributeState = useSelector((state) => state.product_attributes);
+  const attributeState = useSelector((state) => state.productAttributes);
   const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
   const [AllAttribute, setAllAttributes] = useState([]);

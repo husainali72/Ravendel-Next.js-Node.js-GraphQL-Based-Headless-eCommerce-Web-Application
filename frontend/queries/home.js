@@ -18,10 +18,10 @@ import { gql } from "@apollo/client";
 //                             capture
 //                             test_mode
 //                             publishable_key
-                           
+
 //                             webhook_key
 //                    }
- 
+
 //            }
 //            store{
 //                     currency_options{
@@ -32,8 +32,8 @@ import { gql } from "@apollo/client";
 //                   number_of_decimals
 //                     }
 //                     store_address{
-//                                     address_line1
-//                               address_line2
+//                                     addressLine1
+//                               addressLine2
 //                               city
 //                               country
 //                               state
@@ -102,12 +102,13 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           number_of_decimals
         }
         store_address {
-          address_line1
-          address_line2
+          addressLine1
+          addressLine2
           city
           country
           state
           zip
+          hour
         }
         measurements {
           weight_unit
@@ -204,6 +205,12 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           phone_number
           email
           logo
+          social_media {
+            name
+            handle
+            
+          }
+          
         }
         mobile {
           mobile_section {
@@ -228,11 +235,11 @@ export const GET_REVIEWS = gql`
       data {
         id
         title
-        customer_id {
+        customerId {
           id
-          first_name
+          firstName
         }
-        product_id {
+        productId {
           _id
           name
         }
@@ -268,6 +275,8 @@ export const FEATURE_PRODUCT_QUERY = gql`
           featured_product
           status
           variant
+          shipping
+          taxClass
         }
       }
     `;
@@ -287,6 +296,8 @@ export const GET_RECENT_PRODUCTS_QUERY = gql`
       featured_product
       status
       variant
+      shipping
+      taxClass
     }
   }
 `;
@@ -306,6 +317,8 @@ export const GET_RELATED_PRODUCTS_QUERY = gql`
       featured_product
       status
       variant
+      shipping
+      taxClass
     }
   }
 `;
@@ -350,6 +363,8 @@ export const ON_SALE_PRODUCTS_QUERY = gql`
     featured_product
     status
     variant
+    shipping
+    taxClass
     __typename
   }
   }

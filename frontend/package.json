@@ -12,6 +12,12 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
+    "@emotion/react": "^11.10.6",
+    "@emotion/server": "^11.10.0",
+    "@emotion/styled": "^11.10.8",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/lab": "^5.0.0-alpha.125",
+    "@mui/material": "^5.12.2",
     "@react-hook/resize-observer": "^1.2.6",
     "@stripe/react-stripe-js": "^1.16.4",
     "@stripe/stripe-js": "^1.46.0",
@@ -35,6 +41,7 @@
     "react-bootstrap": "^2.1.1",
     "react-credit-cards": "^0.8.3",
     "react-dom": "^17.0.2",
+    "react-gtm-module": "^2.0.11",
     "react-hook-form": "^7.27.1",
     "react-hot-toast": "^2.4.0",
     "react-html-parser": "^2.0.2",
@@ -43,13 +50,13 @@
     "react-phone-input-2": "^2.15.1",
     "react-phone-number-input": "^3.2.18",
     "react-redux": "^7.2.6",
+    "react-select": "^5.7.2",
     "react-slick": "^0.28.1",
     "redux": "^4.1.2",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.1",
     "server.js": "^1.0.0",
-    "stripe": "^11.7.0",
-    "swr": "^2.0.1"
+    "stripe": "^11.7.0"
   },
   "devDependencies": {
     "eslint": "8.7.0",

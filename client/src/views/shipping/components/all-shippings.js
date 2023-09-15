@@ -32,7 +32,7 @@ const AllShippingComponentComponent = ({
   useEffect(() => {
 
     let data = []
-    shippingState.shipping.shipping_class.map((shipping) => {
+    shippingState.shipping.shippingClass.map((shipping) => {
 
       let object = {
         id: shipping._id,
@@ -45,7 +45,7 @@ const AllShippingComponentComponent = ({
     setAllshipping(data)
     setfilterdData(data)
 
-  }, [shippingState.shipping.shipping_class])
+  }, [shippingState.shipping.shippingClass])
   const handleOnChangeSearch = (filtereData) => {
 
     setfilterdData(filtereData)

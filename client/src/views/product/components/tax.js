@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { taxAction } from "../../../store/action/";
 import viewStyles from "../../viewStyles";
 
-const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange }) => {
+const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange, tax_class }) => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const taxState = useSelector((state) => state.taxs);
@@ -19,9 +19,12 @@ const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange }) => {
   }, []);
 
   useEffect(() => {
-    if (taxState.tax.tax_class.length) {
-      var taxClass = taxState.tax.tax_class[0]._id;
-      onTaxClassChange(taxClass)
+
+    if (taxState.tax.taxClass.length) {
+
+      let taxClass = product && taxState.tax.taxClass?.some((taxClass) => taxClass._id === product)
+      onTaxInputChange(taxClass ? product : taxClass);
+
     }
   }, [taxState.tax]);
 
@@ -38,10 +41,10 @@ const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange }) => {
             labelId="tax-name"
             id="tax-name"
             name="tax-name"
-            value={product.tax_class}
-            onChange={(e) => onTaxInputChange("tax_class", e.target.value)}
+            value={product}
+            onChange={(e) => onTaxInputChange(e.target.value)}
           >
-            {taxState.tax.tax_class.map((tax) => {
+            {taxState.tax.taxClass.map((tax) => {
               return (
                 <MenuItem value={tax._id} key={tax._id}>
                   {tax.name}

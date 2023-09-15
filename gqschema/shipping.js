@@ -3,7 +3,7 @@ module.exports = gql`
   type Shipping {
     id: ID
     global: customObject
-    shipping_class: [customObject]
+    shippingClass: [customObject]
     date: Date
     updated: Date
   }
@@ -17,8 +17,8 @@ module.exports = gql`
 
   extend type Mutation {
     updateGlobalShipping(global: customObject): statusSchema
-    addShippingClass(shipping_class: customObject): statusSchema
-    updateShippingClass(shipping_class: customObject): statusSchema
+    addShippingClass(shippingClass: customObject): statusSchema
+    updateShippingClass(shippingClass: customObject): statusSchema
     deleteShippingClass(_id: String): statusSchema
   }
 `;

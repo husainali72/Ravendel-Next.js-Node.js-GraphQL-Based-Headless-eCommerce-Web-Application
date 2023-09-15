@@ -14,7 +14,7 @@ const taxResolvers = require("./tax");
 const shippingResolvers = require("./shipping");
 const couponResolvers = require("./coupon");
 const reviewResolvers = require("./review");
-const product_attribute = require("./product_attribute");
+const productAttribute = require("./product_attribute");
 const zipcodeResolvers = require("./zipcode");
 const faqResolvers = require("./faq");
 
@@ -52,8 +52,8 @@ module.exports = [
   shippingResolvers,
   couponResolvers,
   reviewResolvers,
-  product_attribute,
+  productAttribute,
   faqResolvers,
   zipcodeResolvers,
-  product_attribute
+  productAttribute
 ];

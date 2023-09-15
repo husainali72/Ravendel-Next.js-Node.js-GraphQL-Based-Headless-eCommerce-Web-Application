@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const OrderSchema = new Schema({
-  customer_id: {
+  userId: {
     type: Schema.ObjectId,
     required: true
   },
-  order_number: {
+  orderNumber: {
     type: String,
     required: true
   },
@@ -22,7 +22,7 @@ const OrderSchema = new Schema({
     state: String,
     email: String,
     phone: String,
-    payment_method: String,
+    paymentMethod: String,
     transaction_id: String
   },
   shipping: {
@@ -37,75 +37,38 @@ const OrderSchema = new Schema({
     email: String,
     phone: String,
     notes: String
+  }, 
+  cartTotal: {
+    type: Number,
+    required: true
   },
-  products: [
-    {
-      product_id: {
-        type: Schema.ObjectId,
-        required: true
-      },
-      name: {
-        type: String,
-        required: true
-      },
-      cost: {
-        type: Number,
-        required: true
-      },
-      qty: {
-        type: Number,
-        required: true
-      }
-    }
-  ],
-  subtotal: {
-        type: Number,
-        required: true
+  shippingAmount: {
+    type: Number,
+    required: true
   },
-  shipping_amount: {
-        type: Number,
-        required: true
+  taxAmount: {
+    type: Number,
+    required: true
   },
-  tax_amount: {
-        type: Number,
-        required: true
-  },
-  coupon_code: {
-        type: String,
-  },
-  discount_amount: {
-        type: Number,
-        required: true
-      },
-  grand_total: {
-        type: Number,
-        required: true
-  },
-  sub_total_details: {
-    shipping_name: String,
-    tax_name: String,
-    coupon_code: String,
-    coupon_type: String,
-    coupon_value: Number
-  },
-  sub_total_summary: [
-    {
-      total: Number,
-      coupon_type: String,
-      coupon_value: Number,
-      tax_value: Number,
-      shipping_value: Number,
-      sub_total: Number
-    }
-  ],
-  payment_status: {
+  couponCode: {
     type: String,
-    enum : ['pending','failed','success','cancelled'],
+  },
+  discountAmount: {
+    type: Number,
+    required: true
+  },
+  grandTotal: {
+    type: Number,
+    required: true
+  },    
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'failed', 'success', 'cancelled'],
     default: 'pending'
   },
-  shipping_status: {
+  shippingStatus: {
     type: String,
-    enum : ['inprogress','shipped','outfordelivery','delivered'],
+    enum: ['inprogress', 'shipped', 'outfordelivery', 'delivered'],
     default: 'inprogress'
   },
   date: {
@@ -114,7 +77,55 @@ const OrderSchema = new Schema({
   },
   updated: {
     type: Date
-  }
+  },
+  products: [
+    {
+      productId: {
+        type: Schema.ObjectId,
+        required: true
+      },
+      productTitle: {
+        type: String,
+        required: true
+      },
+      productPrice: {
+        type: Number,
+        required: true
+      },
+      qty: {
+        type: Number,
+        required: true
+      },
+      feature_image: {
+        type: Number,
+      },
+      productTotal : {
+        type: Number,
+      },
+      productShipping : {
+        type: Number,
+      },
+      productTax : {
+        type: Number
+      },
+      attributes: []
+    }
+  ]
+  // sub_total_details: {
+  //   shipping_name: String,
+  //   tax_name: String,
+  //   couponCode: String,
+  //   coupon_type: String,
+  //   coupon_value: Number
+  // },
+  // sub_total_summary: {
+  //   shipping_value: Number,
+  //   tax_value: Number,
+  //   coupon_value: Number,
+  //   coupon_type: String,
+  //   sub_total: Number,
+  //   total: Number
+  // },
 });
 
 module.exports = mongoose.model("Order", OrderSchema);

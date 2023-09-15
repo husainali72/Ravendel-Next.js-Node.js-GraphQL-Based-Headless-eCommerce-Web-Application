@@ -179,10 +179,9 @@ const AllCategoryComponent = () => {
   };
 
   const isUrlExist = async (url) => {
-    let updatedUrl = await getUpdatedUrl("ProductCat", url);
     setSingleCategory({
       ...singlecategory,
-      url: updatedUrl,
+      url: url,
     });
   };
   const handleOnChangeSearch = (filtereData) => {
@@ -279,15 +278,15 @@ const AllCategoryComponent = () => {
                       feautedImageChange={(e) => updatefileChange(e)}
                     />
                   </CardBlocks>
-                 </Box>
-                 :
+                </Box>
+                :
                 <Box component="span" >
-<CardBlocks title="Choose Category Image" className={classes.flex1}>
-                  <FeaturedImageComponent
-                    image={featuredImage}
-                    feautedImageChange={(e) => fileChange(e)}
+                  <CardBlocks title="Choose Category Image" className={classes.flex1}>
+                    <FeaturedImageComponent
+                      image={featuredImage}
+                      feautedImageChange={(e) => fileChange(e)}
                     // style={{marginBottom: '200px'}}
-                  />
+                    />
                   </CardBlocks>
                 </Box>}
 
@@ -300,7 +299,7 @@ const AllCategoryComponent = () => {
                 rows={3}
                 value={singlecategory.description}
                 onChange={handleChange}
-                style={{marginRight: '20px'}}
+                style={{ marginRight: '20px' }}
               />
 
               <Box component="div" mb={2}>

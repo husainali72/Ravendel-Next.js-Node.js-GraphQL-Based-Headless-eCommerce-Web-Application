@@ -21,10 +21,15 @@ import {
   UPDATE_APPEARANCE_MOBILE_NEW,
   UPDATE_NOTIFICATION_ONESIGNAL,
   UPDATE_STORE_ORDER,
+  ADD_ZIPCODE,
+  GET_ZIPCODE,
+  UPDATE_ZIPCODE,
+  DELETE_ZIPCODE,
 } from "../../queries/settingQuery";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
+import { mutationResponseHandler } from "../../utils/helper";
 
 export const getDatesAction = () => (dispatch) => {
   dispatch({
@@ -53,7 +58,23 @@ export const getSettings = () => (dispatch) => {
     }
   });
 };
+export const getZipCode = (id) => (dispatch) => {
+  dispatch({
+    type: SETING_LOADING,
+  });
+  query(GET_ZIPCODE, { id }).then((response) => {
+    if (response) {
+      dispatch(getSettings())
+      return dispatch({
+        type: SETTING_SUCCESS,
+        payload: response.data.zipcode.data
+      });
 
+    }
+  }).catch((error) => {
+    console.log('error', error)
+  })
+};
 export const generalUpdateAction = (object) => (dispatch) => {
   dispatch({
     type: SETING_LOADING,
@@ -514,6 +535,112 @@ export const orderOptionUpdateAction = (object) => (dispatch) => {
     });
 };
 
+export const zipCodeAddAction = (object) => (dispatch) => {
+  dispatch({
+    type: SETING_LOADING,
+  });
+  mutation(ADD_ZIPCODE, object)
+    .then((response) => {
+      dispatch({
+        type: LOADING_FALSE,
+      });
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "addZipcode"
+      );
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: false, message: message, error: true },
+        });
+      }
+      if (success) {
+        dispatch(getSettings());
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: SETTING_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
+export const zipCodeUpdateAction = (object) => (dispatch) => {
+  dispatch({
+    type: SETING_LOADING,
+  });
+  mutation(UPDATE_ZIPCODE, object)
+    .then((response) => {
+      dispatch({
+        type: LOADING_FALSE,
+      });
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "updateZipcode"
+      );
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: false, message: message, error: true },
+        });
+      }
+      if (success) {
+        dispatch(getSettings());
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: SETTING_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
+export const zipCodeDeleteAction = (id) => (dispatch) => {
+  dispatch({
+    type: SETING_LOADING,
+  });
+  mutation(DELETE_ZIPCODE, { id })
+    .then((response) => {
+      if (response) {
+        dispatch({
+          type: LOADING_FALSE,
+        });
+        dispatch(getSettings());
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: true,
+            message: response.data.deleteZipcode.message,
+            error: false,
+          },
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: SETTING_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
 export const appearanceHomeUpdateAction = (object) => (dispatch) => {
   dispatch({
     type: SETING_LOADING,
@@ -617,3 +744,4 @@ export const SETING_LOADING = "SETING_LOADING";
 export const SETTING_SUCCESS = "SETTING_SUCCESS";
 export const SETTING_FAIL = "SETTING_FAIL";
 export const LIST_DATE_FORMAT = "LIST_DATE_FORMAT";
+export const LOADING_FALSE = "LOADING_FALSE";

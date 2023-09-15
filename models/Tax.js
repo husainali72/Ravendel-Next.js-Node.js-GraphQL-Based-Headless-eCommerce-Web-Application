@@ -10,11 +10,17 @@ const TaxSchema = new Schema({
     is_global: {
       type: Boolean,
     },
-    tax_class: {
+    overwrite: {
+      type: Boolean,
+    },
+    taxClass: {
       type: Schema.ObjectId,
     },
+
+
+
   },
-  tax_class: [
+  taxClass: [
     {
       name: {
         type: String,
@@ -51,7 +57,7 @@ module.exports.createTax = async () => {
     global: {
       is_global: true,
     },
-    tax_class: [
+    taxClass: [
       {
         name: "Tax Free",
         percentage: 0,
@@ -62,7 +68,7 @@ module.exports.createTax = async () => {
 
   newTax.save(async (err, defaultTax) => {
     if (err) throw err;
-    defaultTax.global.tax_class = defaultTax.tax_class[0]._id;
+    defaultTax.global.taxClass = defaultTax.taxClass[0]._id;
     let result = await defaultTax.save();
     console.log(result);
   });

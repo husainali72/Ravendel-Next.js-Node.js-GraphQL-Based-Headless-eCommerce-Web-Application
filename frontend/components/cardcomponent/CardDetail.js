@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { Spinner } from "react-bootstrap";
 import Table from 'react-bootstrap/Table';
 import { getImage, getPrice } from '../../utills/helpers';
+import { capitalize } from "lodash";
 const CartTable = (props) => {
     const { cartItems,
         decimal,
@@ -13,9 +14,9 @@ const CartTable = (props) => {
         AllCartItemsClear,
         quantity,
         removeToCart,
-        updateCartProduct, currency
+        updateCartProduct, currency,
+        unAvailableProducts
     } = props;
-    const [loadingIndex, setLoadingIndex] = useState(-1);
     return (
         <div>
             <div className="table-responsive">
@@ -25,6 +26,7 @@ const CartTable = (props) => {
                             <th>Image</th>
                             <th>Name</th>
                             <th>Price</th>
+                            <th>Attributes</th>
                             <th>Quantity</th>
                             <th>SubTotal</th>
                             <th>Remove</th>
@@ -34,34 +36,45 @@ const CartTable = (props) => {
                         {cartItems && cartItems?.length > 0 && cartItems.map((item, i) => (
                             <tr key={i}>
                                 <td>
-                                    <div className="td-flex">
-                                        <img src={getImage(item.feature_image, 'thumbnail')} />
-                                    </div>
+                                    <Link href={"/product/" + item.url}>
+                                        <div className="td-flex cursor-pointer">
+                                            <img src={getImage(item.feature_image, 'thumbnail')} />
+                                        </div>
+                                    </Link>
+                                </td>
+                                <td>
+                                    <Link href={"/product/" + item.url}>
+                                        <div className="td-flex cursor-pointer table-product-title">
+                                            <h3>{item.name}</h3>
+                                        </div>
+                                    </Link>
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <h3>{item.name}</h3>
+                                        <span>{currency} {(item.pricing?.sellprice ? getPrice(item.pricing, decimal) : getPrice(item.pricing, decimal))}</span>
                                     </div>
                                 </td>
                                 <td>
-                                    <div className="td-flex">
-                                        <span>{currency} {(item.pricing?.sellprice ? getPrice(item.pricing?.sellprice, decimal) : getPrice(item.pricing?.price, decimal))}</span>
-                                    </div>
+                                    {item?.attributes?.map((obj) => {
+                                        let classname = item.attributes.length === 1 ? "td-flex" : "td-Flex"
+                                        return (<div className={classname}>
+                                            {capitalize(obj.name)} :   {capitalize(obj.value)}
+                                        </div>)
+
+                                    })}
                                 </td>
                                 <td>
                                     <div className="td-flex">
                                         <span className={`btn btn-primary btn-less ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
                                             DecreaseQuantity(item)
-                                            setLoadingIndex(i)
                                         }}>
                                             <i className="fas fa-chevron-down" ></i>
                                         </span>
                                         <span className="btn btn-info max-button-width-load">
-                                            {i === loadingIndex && isQuantityBtnLoading ? <Spinner style={{ paddingLeft: '4px' }} animation="border" size="sm" /> : `${item.quantity} ${" "}` || quantity}
+                                            {item?.quantity}
                                         </span>
                                         <span className={`btn btn-primary btn-more ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
                                             IncreaseQuantity(item)
-                                            setLoadingIndex(i)
                                         }}>
                                             <i className="fas fa-chevron-up"></i>
                                         </span>
@@ -69,7 +82,7 @@ const CartTable = (props) => {
                                 </td>
                                 <td>
                                     <div className="td-flex">
-                                        <span>{currency} {((item.pricing?.sellprice ? getPrice(item.pricing?.sellprice * item.quantity, decimal) : getPrice(item.pricing?.price * item.quantity, decimal)) || 0)}</span>
+                                        <span>{currency} {((item.pricing?.sellprice ? getPrice(item.pricing * item.quantity, decimal) : getPrice(item.pricing * item.quantity, decimal)) || 0)}</span>
                                     </div>
                                 </td>
                                 <td>
@@ -92,9 +105,7 @@ const CartTable = (props) => {
                     </tbody>
                 </Table>
             </div>
-            <div className="cart-action text-end">
-                <Link href="/shop"><a className="card-btons "><i className="fas fa-shopping-bag"></i> Continue Shopping</a></Link>
-            </div>
+
 
         </div>
     )

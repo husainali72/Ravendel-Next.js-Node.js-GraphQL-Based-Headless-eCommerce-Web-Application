@@ -89,7 +89,7 @@ const AddCouponComponent = () => {
 
     let name = e.target.name;
     let value = e.target.value;
-    if (name === "discount_value" || name === "minimum_spend" || name === "maximum_spend") {
+    if (name === "discountValue" || name === "minimumSpend" || name === "maximumSpend") {
       value = parseInt(value);
     }
     setCoupon({ ...coupon, [name]: value });
@@ -102,7 +102,7 @@ const AddCouponComponent = () => {
 
   }
   const ExcludeProduct = (id) => {
-    return coupon.exclude_products.some((excluded_product) => {
+    return coupon.excludeProducts.some((excluded_product) => {
       return excluded_product === id
     })
   }
@@ -113,7 +113,7 @@ const AddCouponComponent = () => {
     })
   }
   const ExcludeCategories = (id) => {
-    return coupon.exclude_categories.some((excluded_categorie) => {
+    return coupon.excludeCategories.some((excluded_categorie) => {
       return excluded_categorie === id
     })
   }
@@ -238,15 +238,15 @@ const AddCouponComponent = () => {
                         labelWidth={labelWidth}
                         onChange={handleChange}
                         inputProps={{
-                          name: "discount_type",
-                          value: coupon.discount_type,
+                          name: "discountType",
+                          value: coupon.discountType,
                         }}
                       >
                         <MenuItem value="amount-discount">
                           Fixed Amount Discount
                         </MenuItem>
                         <MenuItem value="precantage-discount">
-                          Fixed Precantage Discount
+                          Fixed Percentage Discount
                         </MenuItem>
                       </Select>
                     </FormControl>
@@ -254,9 +254,9 @@ const AddCouponComponent = () => {
                   <Grid item md={6} sm={12} xs={12}>
                     <TextInput
                       type="number"
-                      value={coupon.discount_value}
-                      label="Coupon Amount"
-                      name="discount_value"
+                      value={coupon.discountValue}
+                      label={coupon.discountType === 'amount-discount' ? "Coupon Amount" : 'Coupon Percent'}
+                      name="discountValue"
                       onInputChange={handleChange}
 
                     />
@@ -280,11 +280,11 @@ const AddCouponComponent = () => {
                   control={
                     <Checkbox
                       color="primary"
-                      checked={coupon.free_shipping}
+                      checked={coupon.freeShipping}
                       onChange={(e) =>
                         setCoupon({
                           ...coupon,
-                          free_shipping: e.target.checked,
+                          freeShipping: e.target.checked,
                         })
                       }
                     />
@@ -298,9 +298,9 @@ const AddCouponComponent = () => {
                 <Box component="div" mb={2}>
                   <TextInput
                     type="Number"
-                    value={coupon.minimum_spend}
+                    value={coupon.minimumSpend}
                     label="Minimum Spend"
-                    name="minimum_spend"
+                    name="minimumSpend"
                     onInputChange={handleChange}
 
                   />
@@ -308,9 +308,9 @@ const AddCouponComponent = () => {
                 <Box component="div" mb={2}>
                   <TextInput
                     type="Number"
-                    value={coupon.maximum_spend}
+                    value={coupon.maximumSpend}
                     label="Maximum Spend"
-                    name="maximum_spend"
+                    name="maximumSpend"
                     onInputChange={handleChange}
 
                   />
@@ -333,9 +333,9 @@ const AddCouponComponent = () => {
 
                 {/* ================== Exclude Products Select ================== */}
                 <SelectOptionField
-                  name="exclude_products"
+                  name="excludeProducts"
                   label="Exclude Products"
-                  value={coupon.exclude_products}
+                  value={coupon.excludeProducts}
                 >
                   {Products.products.map((product) =>
                     !IncludeProduct(product._id) ?
@@ -363,9 +363,9 @@ const AddCouponComponent = () => {
 
                 {/* ==================Exclude Category Select===================== */}
                 <SelectOptionField
-                  name="exclude_categories"
+                  name="excludeCategories"
                   label="Exclude Categories"
-                  value={coupon.exclude_categories}
+                  value={coupon.excludeCategories}
                 >
                   {Products.categories.map((category) =>
                     !IncludeCategories(category.id) ?

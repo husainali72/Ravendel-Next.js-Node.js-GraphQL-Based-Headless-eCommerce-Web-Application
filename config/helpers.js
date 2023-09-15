@@ -3,7 +3,7 @@ const Validator = require("validator");
 const moment = require("moment")
 const nodemailer = require('nodemailer')
 const APP_KEYS = require('../config/keys')
-const { readFile } = require('node:fs/promises')
+const { readFile } = require('fs').promises
 
 const { uploadFile, FileDelete } = require("../config/aws");
 
@@ -250,7 +250,7 @@ const imageUpload = async (upload, uploadPath, nametype) => {
             awsFilePath = 'setting'
           }
 
-          if (nametype == 'ProductCategory') {
+          if (nametype == 'Product Category') {
             // awsoriginalpath = 'product/category/original';
             // awslargepath = 'product/category/large';
             // awsmediumpath = 'product/category/medium';
@@ -533,9 +533,10 @@ module.exports.checkRole = checkRole;
 const duplicateData = async(args, model, updateId) => {
   let docs
   if(!updateId){
-    docs = await model.find(args)
+    docs = await model.find(args).collation({locale: "en", strength: 2})
   }else{
-    docs = await model.find(args)
+    docs = await model.find(args).collation({locale: "en", strength: 2})
+    console.log(docs)
     docs = docs.filter(doc=>{
       if(doc._id.toString() !== updateId.toString()) return doc
     })
@@ -545,86 +546,83 @@ const duplicateData = async(args, model, updateId) => {
 }
 module.exports.duplicateData = duplicateData
 
-const subTotalDetailsEntry = async(couponCode, couponModel, shippingModel, taxModel) => {
+const subTotalDetailsEntry = async(data, couponModel, shippingModel, taxModel) => {
   const subTotalDetails = {}
   // assign shipping_name
-  let shipping = await shippingModel.findOne({})
-  shipping = shipping.shipping_class.filter(shipClass => {
-    if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) return subTotalDetails.shipping_name = shipClass.name
-  })
+  // let shipping = await shippingModel.findOne({})
+  // shipping.shippingClass.filter(shipClass => {
+  //   if(shipping.global.is_global && shipping.global.shippingClass.toString() === shipClass._id.toString()) subTotalDetails.shipping_name = shipClass.name
+  //   else subTotalDetails.shipping_name = "None"
+  // })
   // assign tax_name
-  let tax = await taxModel.findOne({})
-  tax = tax.tax_class.filter(taxClass => {
-    if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return subTotalDetails.tax_name = taxClass.name
-  })
-  // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: {$regex: `${couponCode}`, $options: "i"} })
+  // let tax = await taxModel.findOne({})
+  // tax.taxClass.filter(taxClass => {
+  //   if(tax.global.is_global && tax.global.taxClass.toString() === taxClass._id.toString()) subTotalDetails.tax_name = taxClass.name
+  //   else subTotalDetails.tax_name = "None"
+  // })
+  // assign couponCode, amount, type
+  const coupon = await couponModel.findOne({code: {$regex: `${data.couponCode}`, $options: "i"} })
   if(!coupon) {
-    subTotalDetails.coupon_code = "None"
+    subTotalDetails.couponCode = "None"
     subTotalDetails.coupon_type = ""
     subTotalDetails.coupon_value = 0
   } else {
-    subTotalDetails.coupon_code = couponCode
-    subTotalDetails.coupon_type = coupon.discount_type
-    subTotalDetails.coupon_value = coupon.discount_value
+    subTotalDetails.couponCode = coupon.code
+    subTotalDetails.coupon_type = coupon.discountType
+    subTotalDetails.coupon_value = coupon.discountValue
   } 
+  subTotalDetails.shipping_name = "Shipping"
+  subTotalDetails.tax_name = "Tax"
   return subTotalDetails
 }
 module.exports.subTotalDetailsEntry = subTotalDetailsEntry
 
-const subTotalSummaryEntry = async(products, couponCode, couponModel, shippingModel, taxModel) => {
-  const subTotalSummary = []
+const subTotalSummaryEntry = async(data, couponModel, shippingModel, taxModel) => {
+  const subTotalSummary = {}
   let orderSubTotal = 0, orderGrandTotal = 0;
-  let shippingValue, taxValue, couponValue, couponType;
-  // assign shipping_value
-  let shipping = await shippingModel.findOne({})
-  shipping = shipping.shipping_class.filter(shipClass => {
-    if(shipping.global.is_global && shipping.global.shipping_class.toString() === shipClass._id.toString()) return shippingValue = shipClass.amount
-    else return shippingValue = 0
-  })
-  // assign tax_value
-  let tax = await taxModel.findOne({})
-  tax = tax.tax_class.filter(taxClass => {
-    if(tax.global.is_global && tax.global.tax_class.toString() === taxClass._id.toString()) return taxValue = taxClass.percentage
-    else return taxValue = 0
-  })
-  // assign coupon_code, amount, type
-  const coupon = await couponModel.findOne({code: {$regex: `${couponCode}`, $options: "i"} })
+  let shippingAmount = 0, taxAmount = 0, couponType, couponAmount = Number(data.discountAmount);
+  // get shipping class array and tax class array
+  let shippingClasses = await shippingModel.findOne()
+  shippingClasses = shippingClasses.shippingClass
+  let taxClasses = await taxModel.findOne()
+  taxClasses = taxClasses.taxClass
+  // assign couponType
+  const coupon = await couponModel.findOne({code: {$regex: `${data.couponCode}`, $options: "i"} })
   if(!coupon) {
     couponType = ""
-    couponValue = 0
   } else {
-    couponType = coupon.discount_type
-    couponValue = coupon.discount_value
-  } 
-  // assign total and subtotal for individual product
-  products.map(product=>{
+    couponType = coupon.discountType
+  }
+  for(let product of data.products){
     // console.log(product)
-    let subTotalSummaryItem = {}
-    let subTotal, taxCalc, shippingCalc, couponCalc;
-    subTotalSummaryItem.coupon_type = couponType
-    subTotalSummaryItem.coupon_value = couponValue
-    subTotalSummaryItem.shipping_value = shippingValue
-    subTotalSummaryItem.tax_value = taxValue
-    subTotal = product.cost * product.qty
-    subTotalSummaryItem.sub_total = subTotal
-    // calculate tax
-    taxCalc = taxValue !== 0 ? subTotal*taxValue/100 : 0
-    // calculate shipping
-    shippingCalc = shippingValue !== 0 ? subTotal+shippingValue : 0
-    // calculate coupon
-    if(!couponType || !couponValue) couponCalc = 0
-    else if(couponType === "precantage-discount") couponCalc = couponValue !== 0 ? subTotal*couponValue/100 : 0
-    else if(couponType === "amount-discount") couponCalc = couponValue !== 0 ? couponValue : 0
-    // add tax add shipping subtract coupon
-    subTotalSummaryItem.total = subTotal + taxCalc + shippingCalc - couponCalc
-    // add subtotal value for order subtotal
-    orderSubTotal += subTotal
-    // add grandtotal value for order grandtotal
-    orderGrandTotal += subTotalSummaryItem.total
-    // push item to orderSummary array
-    subTotalSummary.push(subTotalSummaryItem)
-  })
+    let shippingValue, taxValue;
+    productTotal = product.cost * product.qty
+    for(let shippingClass of shippingClasses){
+      shippingClass._id.toString() === product.shippingClass.toString() ?
+        shippingValue = shippingClass.amount :
+        shippingValue = 0
+    }
+    for(let taxClass of taxClasses){
+      taxClass._id.toString() === product.taxClass.toString() ?
+        taxValue = (taxClass.percentage / 100 * productTotal) :
+        taxValue = 0
+    }
+    // console.log(shippingValue, taxValue)
+    orderSubTotal += productTotal
+    orderGrandTotal += productTotal + shippingValue + taxValue
+    
+    shippingAmount += shippingValue
+    taxAmount += taxValue
+    // console.log(shippingAmount, taxAmount, orderSubTotal, orderGrandTotal)
+  }
+  orderGrandTotal -= couponAmount
+  // console.log(orderGrandTotal)
+  subTotalSummary.coupon_type = couponType
+  subTotalSummary.shipping_value = shippingAmount
+  subTotalSummary.tax_value = taxAmount
+  subTotalSummary.coupon_value = couponAmount
+  subTotalSummary.sub_total = orderSubTotal
+  subTotalSummary.total = orderGrandTotal
   return {
     subTotalSummary,
     orderSubTotal,
@@ -638,7 +636,7 @@ const populateYearMonth = (order, orderYear, orderMonth, paymentSuccessSubTotal,
     month: moment(orderMonth+1, "MM").format("MMM"),
     orders: [order],
     GrossSales: order.subtotal,
-    NetSales: order.grand_total,
+    NetSales: order.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal
   }
@@ -646,7 +644,7 @@ const populateYearMonth = (order, orderYear, orderMonth, paymentSuccessSubTotal,
     year: orderYear,
     months: [monthObj],
     GrossSales: order.subtotal,
-    NetSales: order.grand_total,
+    NetSales: order.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal
   }
@@ -660,7 +658,7 @@ module.exports.populateYearMonth = populateYearMonth;
 
 const populateSales = (data, order, paymentSuccessSubTotal, paymentSuccessGrandTotal) => {
   data.GrossSales += order.subtotal
-  data.NetSales += order.grand_total
+  data.NetSales += order.grandTotal
   data.paymentSuccessGrossSales += paymentSuccessSubTotal
   data.paymentSuccessNetSales += paymentSuccessGrandTotal
 }
@@ -702,19 +700,50 @@ const generateOrderNumber = async (Order, Setting) => {
   let prefix = setting.store.order_options.order_prefix
   let code = ""
   // prefix = ""
+  // let pipeline = [
+  //   {$project: {
+  //     orderPrefix: {
+  //       $substrBytes: [
+  //         "$order_number", 
+  //         0, 
+  //         {$subtract: [ {$strLenBytes: "$order_number"}, orderDigits ]}
+  //       ]
+  //     }
+  //   }},
+  //   {$match: {"orderPrefix": prefix}},
+  //   {$project: {orderPrefix: 0}}
+  // ] 
+
   let pipeline = [
-    {$project: {
-      orderPrefix: {
-        $substrBytes: [
-          "$order_number", 
-          0, 
-          {$subtract: [ {$strLenBytes: "$order_number"}, orderDigits ]}
-        ]
+    {
+      $match: {
+        "orderNumber": { $exists: true, $type: "string" } // Filter out missing or non-string values
       }
-    }},
-    {$match: {"orderPrefix": prefix}},
-    {$project: {orderPrefix: 0}}
-  ] 
+    },
+    {
+      $project: {
+        orderPrefix: {
+          $substrBytes: [
+            "$orderNumber",
+            0,
+            {
+              $subtract: [
+                { $strLenBytes: "$orderNumber" },
+                orderDigits
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      $match: { "orderPrefix": prefix }
+    },
+    {
+      $project: { orderPrefix: 0 }
+    }
+  ];
+
   if(!prefix) pipeline = [{$project: {onlen: {$strLenBytes: "$order_number"}}},
                           {$match: {onlen: orderDigits}}]
   // if orders with specified prefix exists then continue number series
@@ -736,7 +765,7 @@ module.exports.generateOrderNumber = generateOrderNumber
 
 const prodAvgRating = async(productID, reviewModel, productModel) => {
   let avgRating = 0
-  const reviews = await reviewModel.find({product_id: productID, status: {$ne: "pending"}})
+  const reviews = await reviewModel.find({productId: productID, status: {$ne: "pending"}})
   if(reviews.length >= 5){
     reviews.map(review => {
       avgRating += review.rating
@@ -749,47 +778,71 @@ const prodAvgRating = async(productID, reviewModel, productModel) => {
 }
 module.exports.prodAvgRating = prodAvgRating
 
-const calculateCart = async(coupon, cart, productModel, amountDiscount) => {
-  let discountAmount = 0
-  for(let item of cart) {
-    let product = await productModel.findById(item.product_id)
-    if(product){
-      let includeProduct = true
-      if(coupon.category){
-        if(product.categoryId && product.categoryId.length){
-          product.categoryId.map(catID => {
-            if(coupon.include_categories.length){
-              includeProduct = coupon.include_categories.includes(catID) 
-            }
-            else if(coupon.exclude_categories.length){
-              includeProduct = !coupon.exclude_categories.includes(catID) 
-            }
-          })
-        }
-      }
-      else if(coupon.product){
-        if(coupon.include_products.length){
-          includeProduct = coupon.include_products.includes(product._id.toString()) 
-        }
-        else if(coupon.exclude_products.length){
-          includeProduct = !coupon.exclude_products.includes(product._id.toString()) 
-        }
-      }
-      if(includeProduct){
-        amountDiscount ?
-          discountAmount += parseFloat(coupon.discount_value) :
-          discountAmount += parseFloat(item.total/100) * parseFloat(coupon.discount_value)
-      }
-    }
+const againCalculateCart = async(coupon, args, productModel, amountDiscount) => {
+
+  let discountAmount = 0;
+  let forCouponCartTotal= 0;
+let IsApplicableDiscount = false;
+
+  for(let item of args.cartItem){
+
+        let product = await productModel.findById(item.productId)
+        if(product){
+                      let includeProduct = true
+                    let  includeProductTotal;
+                      //if coupon category is abilable
+                          if(coupon.category){
+
+                            if(product.categoryId && product.categoryId.length){
+                              product.categoryId.map(catID => {
+                                if(coupon.includeCategories.length){
+                                  includeProduct = coupon.includeCategories.includes(catID)
+                                 
+                                }
+                                else if(coupon.excludeCategories.length){
+                                  includeProduct = !coupon.excludeCategories.includes(catID) 
+                                }
+                              })
+                            }
+
+                      }
+
+                      //if coupon category is not abilable but product is included in category;
+
+                      else if(coupon.product){
+                        if(coupon.includeProducts.length){
+                          includeProduct = coupon.includeProducts.includes(product._id.toString()) 
+                        }
+                        else if(coupon.excludeProducts.length){
+                          includeProduct = !coupon.excludeProducts.includes(product._id.toString());
+                        }
+                      }
+                      if(includeProduct)  includeProductTotal = +item.productTotal;                    
+                        forCouponCartTotal += includeProductTotal;                      
+        } 
   }
-  return discountAmount
+
+          if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= forCouponCartTotal) && (coupon.maximumSpend === 0 || coupon.maximumSpend > forCouponCartTotal)) {
+            
+            IsApplicableDiscount = true;
+
+          }
+
+              if(IsApplicableDiscount){
+                  amountDiscount ?
+                  discountAmount += parseFloat(coupon.discountValue) :
+                  discountAmount += parseFloat(+forCouponCartTotal/100) * parseFloat(coupon.discountValue)
+              }
+
+  return discountAmount;
+
 }
-module.exports.calculateCart = calculateCart
+module.exports.againCalculateCart = againCalculateCart
 
 const emptyCart = async(cart) => {
   cart.total = 0
   cart.products = []
-  await cart.save()
+  await cart.save();
 }
 module.exports.emptyCart = emptyCart
 

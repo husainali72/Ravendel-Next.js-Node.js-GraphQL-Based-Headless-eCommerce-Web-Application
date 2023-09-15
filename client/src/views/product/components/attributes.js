@@ -24,33 +24,37 @@ import ReactSelect from "react-select";
 import { useSelector, useDispatch } from "react-redux";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { isEmpty, allPossibleCases } from "../../../utils/helper";
+import { isEmpty, allPossibleCases, bucketBaseURL } from "../../../utils/helper";
 import { CardBlocks } from "../../components";
-import { attributesAction } from "../../../store/action/";
+import { attributesAction } from "../../../store/action";
 import viewStyles from "../../viewStyles";
 
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
+import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 const AttributesComponent = ({
   product,
   productStateChange,
   onCombinationUpdate,
   EditMode,
 }) => {
+
   const classes = viewStyles();
   const dispatch = useDispatch();
   const inputLabel = useRef(null);
-  const attributeState = useSelector((state) => state.product_attributes);
+  const attributeState = useSelector((state) => state.productAttributes);
   const [labelWidth, setLabelWidth] = useState(0);
   const [currentVariants, setcurrentVariants] = useState({
     combinations: [],
     allValues: {},
   });
+
   const [currentAttribute, setcurrentAttribute] = useState({
     id: "",
     attribute_list: [],
   });
   const [loading, setLoading] = useState(false);
+  const [variantImage, setVariantImage] = useState(null);
 
   useEffect(() => {
     onCombinationUpdate(currentVariants.combinations);
@@ -69,8 +73,7 @@ const AttributesComponent = ({
         currentVariants.allValues[j._id] = j.name;
       }
     }
-
-    if (EditMode && product && attributeState.attributes.length) {
+    if (product && attributeState.attributes.length) {
       let attrWithValue = {};
       for (const attr of product.attribute) {
         if (!Array.isArray(attrWithValue[attr.attribute_id])) {
@@ -106,8 +109,20 @@ const AttributesComponent = ({
           }
         }
       }
+      let selected_variants = []
+      let allAttributes = []
 
-      currentVariants.combinations = product.variation_master;
+      for (const [key, attribute] of attributeState.attributes.entries()) {
+
+        for (const value of attribute.values) {
+          product.variation_master?.forEach((variation_master) => {
+            if (variation_master?.combination.includes(value._id) && !selected_variants.some((selected) => selected.id === variation_master.id)) {
+              selected_variants.push(variation_master);
+            }
+          });
+        }
+      }
+      currentVariants.combinations = selected_variants;
 
       setcurrentAttribute({
         ...currentAttribute,
@@ -117,7 +132,7 @@ const AttributesComponent = ({
         ...currentVariants,
       });
     }
-  }, [attributeState.attributes]);
+  }, [attributeState.attributes, product.variation_master]);
 
   const changeSelectedValue = (e, i) => {
     currentAttribute.attribute_list[i].selected_values = e;
@@ -133,13 +148,18 @@ const AttributesComponent = ({
     setcurrentAttribute({
       ...currentAttribute,
     });
-
-    createVariants();
+    saveAttribute()
   };
-
   const addAttribute = () => {
     if (!currentAttribute.id) {
-      alert("invalid");
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: "Please Select The Correct Attribute",
+          error: true,
+        }
+      })
       return;
     }
 
@@ -174,26 +194,55 @@ const AttributesComponent = ({
     setLoading(true);
     product.attribute = [];
     product.variant = [];
-    currentAttribute.attribute_list.forEach((attr, index) => {
-      if (attr.selected_values.length) {
-        attr.selected_values.forEach((val) => {
-          product.attribute.push({
-            attribute_id: attr.id,
-            attribute_value_id: val.value,
+    let isValidattribute = false
+    if (currentAttribute.attribute_list && currentAttribute.attribute_list.length > 0) {
+      currentAttribute.attribute_list.forEach((attr, index) => {
+        if (attr.selected_values.length > 0) {
+          attr.selected_values.forEach((val) => {
+            product.attribute.push({
+              attribute_id: attr.id,
+              attribute_value_id: val.value,
+            });
           });
-        });
 
-        if (attr.isVariant) {
-          product.variant.push(attr.id);
+          if (attr.isVariant) {
+            product.variant.push(attr.id);
+          }
+          isValidattribute = true;
+        } else {
+          isValidattribute = false;
+          dispatch({
+            type: ALERT_SUCCESS,
+            payload: {
+              boolean: false,
+              message: "Attribute value is required",
+              error: true,
+            }
+          })
         }
-      }
-    });
+      });
+    } else {
+      isValidattribute = true
+    }
+    if (isValidattribute) {
+      productStateChange({
+        ...product,
+      });
 
-    productStateChange({
-      ...product,
-    });
+      createVariants();
+    }
+    else {
+      setLoading(false)
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: "Attribute value is required",
+          error: true,
+        }
+      })
+    }
 
-    createVariants();
   };
 
   const createVariants = () => {
@@ -201,13 +250,11 @@ const AttributesComponent = ({
     for (const i of product.variant) {
       variants[i] = [];
     }
-
     for (let attr of product.attribute) {
       if (variants.hasOwnProperty(attr.attribute_id)) {
         variants[attr.attribute_id].push(attr.attribute_value_id);
       }
     }
-
     if (!Object.keys(variants).length) {
       setLoading(false);
       return;
@@ -215,13 +262,11 @@ const AttributesComponent = ({
 
     variants = Object.values(variants);
     let combinations = allPossibleCases(variants);
-
     let countMatch = [];
     let generatedVariants = [];
-
     combinations.forEach((comb, i) => {
       countMatch = [];
-      currentVariants.combinations.forEach((prevComb, j) => {
+      currentVariants.combinations?.forEach((prevComb, j) => {
         countMatch[j] = 0;
         prevComb.combination.forEach((v) => {
           if (~comb.indexOf(v)) {
@@ -238,14 +283,16 @@ const AttributesComponent = ({
           index = key;
         }
       });
-
       if (max) {
         generatedVariants.push({
           combination: comb,
           sku: currentVariants.combinations[index].sku,
           quantity: currentVariants.combinations[index].quantity,
-          price: currentVariants.combinations[index].price,
-          image: currentVariants.combinations[index].image,
+          pricing: {
+            price: currentVariants.combinations[index].pricing.price,
+            sellprice: currentVariants.combinations[index].pricing.sellprice,
+          },
+          image: currentVariants.combinations[index].image || ""
         });
 
         currentVariants.combinations.splice(index, 1);
@@ -253,26 +300,26 @@ const AttributesComponent = ({
         generatedVariants.push({
           combination: comb,
           sku: "",
-          quantity: "",
-          price: "",
-          image: {},
+          quantity: 0,
+          pricing: {
+            price: 0,
+            sellprice: 0,
+          },
+          image: "",
         });
       }
     });
-
     currentVariants.combinations = generatedVariants;
     setcurrentVariants({
       ...currentVariants,
     });
-
     setLoading(false);
   };
 
   const variantChange = (e, index) => {
-
     if (e.target.name === "image") {
-      currentVariants.combinations[index][e.target.name].file = e.target.files;
-      currentVariants.combinations[index][e.target.name].view =
+      currentVariants.combinations[index]['upload_image'] = e.target.files;
+      currentVariants.combinations[index][e.target.name] =
         URL.createObjectURL(e.target.files[0]);
     } else {
       currentVariants.combinations[index][e.target.name] = e.target.value;
@@ -280,6 +327,7 @@ const AttributesComponent = ({
     setcurrentVariants({
       ...currentVariants,
     });
+    onCombinationUpdate(currentVariants.combinations);
   };
 
   const variantDelete = (i) => {
@@ -428,7 +476,7 @@ const AttributesComponent = ({
           ) : (
             ""
           )}
-          {currentVariants.combinations.length ? (
+          {currentVariants.combinations && currentVariants.combinations.length ? (
             <Box component="span" m={1}>
               <CardBlocks title="Variants">
                 <TableContainer>
@@ -437,6 +485,7 @@ const AttributesComponent = ({
                       <TableRow>
                         <TableCell>Variant</TableCell>
                         <TableCell>Price</TableCell>
+                        <TableCell>Sale Price</TableCell>
                         <TableCell>Quantity</TableCell>
                         <TableCell>SKU</TableCell>
                         <TableCell>Image</TableCell>
@@ -458,8 +507,63 @@ const AttributesComponent = ({
                               name="price"
                               fullWidth
                               type="number"
-                              value={variant.price}
-                              onChange={(e) => variantChange(e, index)}
+                              value={variant.pricing.price}
+                              onChange={(e) => {
+
+                                if (e.target.value >= 0) {
+                                  if (e.target.value > variant.pricing.sellprice) {
+                                    currentVariants.combinations[index].pricing[e.target.name] = Number(e.target.value)
+                                    setcurrentVariants({
+                                      ...currentVariants,
+                                    });
+                                    onCombinationUpdate(currentVariants.combinations);
+                                  } else {
+                                    dispatch({
+                                      type: ALERT_SUCCESS,
+                                      payload: {
+                                        boolean: false,
+                                        message: "Sale price couldn't exceed original price",
+                                        error: true,
+                                      }
+                                    })
+                                  }
+                                }
+                              }
+                              }
+                              size="small"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <TextField
+                              label="Sale Price"
+                              variant="outlined"
+                              name="sellprice"
+                              fullWidth
+                              type="number"
+                              value={variant.pricing.sellprice}
+                              onChange={(e) => {
+                                if (e.target.value >= 0) {
+                                  if (e.target.value < variant.pricing.price) {
+                                    currentVariants.combinations[index].pricing[e.target.name] = Number(e.target.value)
+
+                                    setcurrentVariants({
+                                      ...currentVariants,
+                                    });
+                                    onCombinationUpdate(currentVariants.combinations);
+                                  } else {
+                                    dispatch({
+                                      type: ALERT_SUCCESS,
+                                      payload: {
+                                        boolean: false,
+                                        message: "Sale price couldn't exceed original price",
+                                        error: true,
+                                      }
+                                    })
+                                  }
+                                }
+
+                              }
+                              }
                               size="small"
                             />
                           </TableCell>
@@ -491,8 +595,7 @@ const AttributesComponent = ({
                               {!isEmpty(variant.image) ? (
                                 <img
                                   src={
-                                    variant.image.view ||
-                                    variant.image.thumbnail
+                                    variant.image.startsWith("blob") ? variant.image : (bucketBaseURL + variant.image)
                                   }
                                   className={classes.variantImage}
                                   alt="variant"
@@ -541,7 +644,8 @@ const AttributesComponent = ({
             ""
           )}
         </>
-      )}
+      )
+      }
     </>
   );
 };

@@ -24,6 +24,10 @@ import theme from "../../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 const LatestProductsTheme = ({ products, loader }) => {
   const classes = DashboardStyles();
+  const imageOnError = (event) => {
+    event.target.src = NoImagePlaceholder
+
+  }
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -52,10 +56,12 @@ const LatestProductsTheme = ({ products, loader }) => {
                     alt="Product"
                     className={classes.productImage}
                     src={
-                      product.feature_image 
+                      product.feature_image
                         ? bucketBaseURL + product.feature_image
                         : NoImagePlaceholder
+
                     }
+                    onError={imageOnError}
                   />
                 </ListItemAvatar>
                 <ListItemText

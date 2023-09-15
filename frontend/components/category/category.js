@@ -29,7 +29,7 @@ const Category = ({ category }) => {
             <Container className="container">
                 {showSlider ? <MdChevronLeft onClick={slideLeft} className='cat-left-icon' size={24} /> : null}
                 <div>
-                    <h4 className='theme-color my-3'>Product <span className='black-color'>Category</span></h4>
+                    <h4 className='theme-color my-3'>Products <span className='black-color'>Category</span></h4>
                     <div
                         className={showSlider ? "category pro-cat px-3" : " pro-cat category categoryShow "}
                         ref={slider}>

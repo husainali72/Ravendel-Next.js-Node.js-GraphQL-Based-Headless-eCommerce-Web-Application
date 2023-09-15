@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import {
+  customerAddAction,
   customerUpdateAction,
   addressbookAddAction,
   addressbookUpdateAction,
@@ -53,21 +54,21 @@ import PhoneNumber from "../components/phoneNumberValidation";
 var SingleCustomerObject = {
   id: "",
   _id: "",
-  first_name: "",
-  last_name: "",
+  firstName: "",
+  lastName: "",
   company: "",
   phone: "",
-  address_line1: "",
-  address_line2: "",
+  addressLine1: "",
+  addressLine2: "",
   city: "",
   country: "",
   state: "",
   pincode: "",
-  default_address: false,
+  defaultAddress: false,
 };
 var customerObj = {
-  first_name: "",
-  last_name: "",
+  firstName: "",
+  lastName: "",
   email: "",
   password: "",
   company: "",
@@ -84,43 +85,39 @@ const EditCustomerComponent = ({ params }) => {
   const [editMode, setEditMode] = useState(false);
   const [singleCustomer, setSingleCustomer] = useState(SingleCustomerObject);
   const [customer, setcustomer] = useState(customerObj);
-
   const [loading, setloading] = useState(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     setloading(get(Customers, "loading"));
   }, [get(Customers, "loading")]);
+
   useEffect(() => {
     document.forms[0].reset();
-    setcustomer(customerObj);
-
     if (isEmpty(get(Customers, "customers"))) {
       dispatch(customersAction());
     } else {
-      for (let i in Customers.customers) {
+      if (ID) {
+        for (let i in Customers.customers) {
         if (Customers.customers[i].id === ID) {
           SingleCustomerObject.id = Customers.customers[i].id;
           setSingleCustomer(SingleCustomerObject);
           setcustomer({ ...customer, ...Customers.customers[i] });
-
-
           break;
         }
+        } setEditMode(false);
+      } else {
+        setcustomer(customerObj)
       }
-      setEditMode(false);
     }
-  }, [get(Customers, "customers")]);
+  }, [get(Customers, "customers"), ID]);
 
-  const updateCustomer = (e) => {
-
+  const addUpdateCustomer = (e) => {
     e.preventDefault();
-
-
-    let errors = validate(['company', "email", "last_name", "first_name"], customer);
-
+    let errors = validate(['company', "email", "lastName", "firstName"], customer);
     let phoneNumberError = validatePhone(["phone"], customer)
+    let passwordError = validate(["password"], customer)
+
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -141,13 +138,24 @@ const EditCustomerComponent = ({ params }) => {
         },
       });
     }
-
     else {
-
-      dispatch(customerUpdateAction(customer, navigate));
+      if (ID) {
+        dispatch(customerUpdateAction(customer, navigate));
+      } else {
+        if (!isEmpty(passwordError)) {
+          dispatch({
+            type: ALERT_SUCCESS,
+            payload: {
+              boolean: false,
+              message: passwordError,
+              error: true,
+            },
+          });
+        } else {
+          dispatch(customerAddAction(customer, navigate));
+        }
+      }
     }
-
-
   };
 
   const handleChange = (e) => {
@@ -194,7 +202,7 @@ const EditCustomerComponent = ({ params }) => {
   const updateAddress = () => {
 
     let phoneNumberError = validatePhone(["phone"], singleCustomer)
-    let errors = validate(["pincode", "country", "state", "city", "address_line1", 'company',"last_name", "first_name",], singleCustomer);
+    let errors = validate(["pincode", "country", "state", "city", "addressLine1", 'company',"lastName", "firstName",], singleCustomer);
     if (!isEmpty(errors)) {
      dispatch({
        type: ALERT_SUCCESS,
@@ -220,7 +228,7 @@ const EditCustomerComponent = ({ params }) => {
 
   const addAddress = () => {
     let phoneNumberError = validatePhone(["phone"], singleCustomer)
-    let errors = validate(["pincode", "country", "state", "city", "address_line1", 'company',"last_name", "first_name",], singleCustomer);
+    let errors = validate(["pincode", "country", "state", "city", "addressLine1", 'company',"lastName", "firstName",], singleCustomer);
     if (!isEmpty(errors)) {
      dispatch({
        type: ALERT_SUCCESS,
@@ -273,9 +281,9 @@ const EditCustomerComponent = ({ params }) => {
       {loading && <Loading />}
       <form>
         <TopBar
-          title="Edit Customer"
-          onSubmit={updateCustomer}
-          submitTitle="Update"
+          title={ID ? "Edit Customer" : "Add Customer"}
+          onSubmit={addUpdateCustomer}
+          submitTitle={ID ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-customer`}
         />
 
@@ -287,21 +295,21 @@ const EditCustomerComponent = ({ params }) => {
           className={classes.secondmainrow}
         >
           <Grid item lg={12}>
-            <CardBlocks title="Customer Information" nomargin>
+            <CardBlocks title={ID ? "Customer Information" : "Add Customer"} nomargin>
               <Grid container spacing={isSmall ? 2 : 4}>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
-                    value={customer.first_name}
+                    value={customer.firstName}
                     label="First Name"
-                    name="first_name"
+                    name="firstName"
                     onInputChange={handleChange}
                   />
                 </Grid>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
-                    value={customer.last_name}
+                    value={customer.lastName}
                     label="Last Name"
-                    name="last_name"
+                    name="lastName"
                     onInputChange={handleChange}
                   />
                 </Grid>
@@ -334,7 +342,7 @@ const EditCustomerComponent = ({ params }) => {
                 </Grid>
 
                 <Grid item md={3} sm={6} xs={12} >
-                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={customer.phone} width= "100%"/>
+                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={customer.phone} width="100%" />
 
                 </Grid>
               </Grid>
@@ -342,21 +350,22 @@ const EditCustomerComponent = ({ params }) => {
           </Grid>
 
           {/* ==============Address Books============== */}
-
+          {ID ?
+            <>
           <Grid item md={4} sm={12} xs={12}>
             <CardBlocks title={`${editMode ? "Edit" : "Add"} Adress`}>
               <Grid container spacing={2}>
-                {addressInput("First Name", "first_name")}
+                {addressInput("First Name", "firstName")}
 
-                {addressInput("Last Name", "last_name")}
+                {addressInput("Last Name", "lastName")}
 
                 {addressInput("Company", "company")}
 
                 {addressInput("Phone", "phone")}
 
-                {addressInput("Address line1", "address_line1")}
+                {addressInput("Address line1", "addressLine1")}
 
-                {addressInput("Address line2", "address_line2")}
+                {addressInput("Address line2", "addressLine2")}
 
                 {addressInput("City", "city")}
 
@@ -370,11 +379,11 @@ const EditCustomerComponent = ({ params }) => {
                     control={
                       <Checkbox
                         color="primary"
-                        checked={singleCustomer.default_address}
+                        checked={singleCustomer.defaultAddress}
                         onChange={(e) =>
                           setSingleCustomer({
                             ...singleCustomer,
-                            default_address: e.target.checked,
+                            defaultAddress: e.target.checked,
                           })
                         }
                       />
@@ -407,8 +416,8 @@ const EditCustomerComponent = ({ params }) => {
           <Grid item md={8} sm={12} xs={12}>
             <Grid container spacing={isSmall ? 2 : 4}>
               {customer &&
-                customer.address_book &&
-                customer.address_book.map((address, index) => (
+                customer.addressBook &&
+                customer.addressBook.map((address, index) => (
                   <Grid item md={6} sm={6} xs={12} key={index} >
                     <Box style={{ marginTop: "22px" }}>
                       <Card>
@@ -422,7 +431,7 @@ const EditCustomerComponent = ({ params }) => {
                               >
                                 <Tooltip
                                   title={
-                                    address.default_address
+                                    address.defaultAddress
                                       ? "Default Address"
                                       : "Edit the address and check the 'Default Address' option to make it your default address."
                                   }
@@ -431,7 +440,7 @@ const EditCustomerComponent = ({ params }) => {
                                   <Button>
                                     <Rating
                                       name="customized-10"
-                                      value={address.default_address ? 1 : 0}
+                                      value={address.defaultAddress ? 1 : 0}
                                       max={1}
                                       readOnly
                                     />
@@ -467,7 +476,7 @@ const EditCustomerComponent = ({ params }) => {
                               </ListItemIcon>
                               <ListItemText
                                 primary={
-                                  address.first_name + " " + address.last_name
+                                  address.firstName + " " + address.lastName
                                 }
                               />
                             </ListItem>
@@ -489,7 +498,7 @@ const EditCustomerComponent = ({ params }) => {
                               </ListItemIcon>
                               <ListItemText
                                 primary={
-                                  address.address_line1 +
+                                  address.addressLine1 +
                                   ", " +
                                   address.city +
                                   ", " +
@@ -509,6 +518,7 @@ const EditCustomerComponent = ({ params }) => {
                 ))}
             </Grid>
           </Grid>
+            </> : null}
         </Grid>
       </form>
     </>

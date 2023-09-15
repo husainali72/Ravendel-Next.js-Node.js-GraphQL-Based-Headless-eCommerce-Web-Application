@@ -6,10 +6,10 @@ const ReviewSchema = new Schema({
   title: {
     type: String
   },
-  customer_id: {
+  customerId: {
     type: Schema.ObjectId
   },
-  product_id: {
+  productId: {
     type: Schema.ObjectId
   },
   email: {

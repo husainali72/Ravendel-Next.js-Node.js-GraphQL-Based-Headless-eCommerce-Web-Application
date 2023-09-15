@@ -34,8 +34,8 @@ import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { customStyles } from "../../theme/ReactSelectCustomStyles";
 var reviewObj = {
   title: "",
-  customer_id: "",
-  product_id: "",
+  customerId: "",
+  productId: "",
   email: "",
   review: "",
   rating: "",
@@ -73,15 +73,15 @@ const EditReviewComponent = ({ params }) => {
             setreview({
               ...review,
               ...reviewState.reviews[i],
-              customer_id: reviewState.reviews[i].customer_id.id,
-              product_id: reviewState.reviews[i].product_id._id,
+              customerId: reviewState.reviews[i].customerId.id,
+              productId: reviewState.reviews[i].productId._id,
               customer: {
-                value: reviewState.reviews[i].customer_id.id,
-                label: reviewState.reviews[i].customer_id.first_name,
+                value: reviewState.reviews[i].customerId.id,
+                label: reviewState.reviews[i].customerId.firstName,
               },
               product: {
-                value: reviewState.reviews[i].product_id._id,
-                label: reviewState.reviews[i].product_id.name,
+                value: reviewState.reviews[i].productId._id,
+                label: reviewState.reviews[i].productId.name,
               },
             });
             break;
@@ -106,7 +106,7 @@ const EditReviewComponent = ({ params }) => {
     const customerArr = customerState.customers.map((customer) => {
       return {
         value: customer.id,
-        label: customer.first_name,
+        label: customer.firstName,
       };
     });
 
@@ -183,11 +183,11 @@ const EditReviewComponent = ({ params }) => {
                 <Typography variant="h3">Product</Typography>
                 <Select
                   value={review.product}
-                  name="product_id"
+                  name="productId"
                   onChange={(e) =>
                     setreview({
                       ...review,
-                      product_id: e.value,
+                      productId: e.value,
                       product: { value: e.value, label: e.label },
                     })
                   }
@@ -204,11 +204,11 @@ const EditReviewComponent = ({ params }) => {
 
                 <Select
                   value={review.customer}
-                  name="customer_id"
+                  name="customerId"
                   onChange={(e) =>
                     setreview({
                       ...review,
-                      customer_id: e.value,
+                      customerId: e.value,
                       customer: { value: e.value, label: e.label },
                     })
                   }

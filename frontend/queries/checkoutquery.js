@@ -1,12 +1,12 @@
 import { gql } from "@apollo/client";
 
 export const CHECKOUT_ORDER_QUERY = gql`
-mutation($user_id: ID, $products: [checkoutProduct]) {
-    addCheckout(user_id:$user_id ,
+mutation($userId: ID, $products: [checkoutProduct]) {
+    addCheckout(userId:$userId ,
     products:$products
     ) {
       id
-    user_id
+    userId
     shipping
     payment
     products
@@ -20,7 +20,7 @@ export const GET_CHECKOUTS = gql`
 query {
     checkouts {
        id
-    user_id
+    userId
     shipping
     payment
     products
@@ -30,11 +30,11 @@ query {
   }
   }`;
 
-export const GET_CHECKOUT_DETAILS_BY_USER_ID = gql` 
-query($user_id: ID!) {
-    checkoutbyUser(user_id:$user_id) {
+export const GET_CHECKOUT_DETAILS_BY_userId = gql` 
+query($userId: ID!) {
+    checkoutbyUser(userId:$userId) {
     id
-    user_id
+    userId
     shipping
     payment
     products

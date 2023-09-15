@@ -7,7 +7,7 @@ import PruductCart from "../components/category/pruductcart";
 import RavendelBanner from "../components/banner/banners";
 import FeatureBrand from "../components/category/featurebrand";
 import OnSaleProductCard from "../components/category/onSaleProductCard";
-import { GET_HOMEPAGE_DATA_QUERY, FEATURE_PRODUCT_QUERY, GET_RECENT_PRODUCTS_QUERY, GET_CATEGORIES_QUERY, ON_SALE_PRODUCTS_QUERY ,GET_REVIEWS} from '../queries/home';
+import { GET_HOMEPAGE_DATA_QUERY, FEATURE_PRODUCT_QUERY, GET_RECENT_PRODUCTS_QUERY, GET_CATEGORIES_QUERY, ON_SALE_PRODUCTS_QUERY, GET_REVIEWS } from '../queries/home';
 import { useSession } from 'next-auth/react';
 import { useState, useEffect, useRef, useMemo } from "react";
 import { mutation } from "../utills/helpers";
@@ -19,21 +19,21 @@ import { GET_BRANDS_QUERY } from "../queries/shopquery";
 import SpecificProducts from "../components/SpecificProducts";
 import CustomBanner from "../components/banner/CustomBanner";
 
-export default function Home({ homepageData, seoInfo,brands, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts,allReviews }) {
+export default function Home({ homepageData, seoInfo, brands, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts, allReviews }) {
   const [press, setPress] = useState(false);
   const initialRender = useRef(true)
   const dispatch = useDispatch()
   const session = useSession()
   const userCart = useSelector(state => state.userCart)
   const cart = useSelector(state => state.cart)
-  const productss = useSelector(state => state.products )  
+  const productss = useSelector(state => state.products)
   useEffect(() => {
     dispatch(stripePaymentKeyAction(stripe_Public_key))
     dispatch(settingActionCreator(currencyStore.currency_options))
   }, [currencyStore.currency_options])
-  useEffect(()=>{
-    dispatch(loadReviewAction(allReviews?.reviews?.data)) ;
-  },[allReviews])
+  useEffect(() => {
+    dispatch(loadReviewAction(allReviews?.reviews?.data));
+  }, [allReviews])
 
   useEffect(() => {
     if (initialRender.current) {
@@ -51,11 +51,11 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
     let token = await session.data.user.accessToken.token
     var Cart = await cart.map(product => {
       return {
-        product_id: product._id,
+        productId: product._id,
         qty: product.quantity,
-        product_title: product.name,
-        product_image: product.feature_image?.original,
-        product_price: product.pricing?.sellprice || 0
+        productTitle: product?.name,
+        productImage: product?.feature_image?.original,
+        productPrice: product?.pricing?.toString() || '0'
       }
     })
 
@@ -64,19 +64,19 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
       products: Cart,
       total: 0,
     }
+
     if (userCart.card_id === undefined) {
       return undefined;
     } else {
-      // console.log('idx var', variables)
       await mutation(UPDATE_CART_PRODUCT, variables, token).then(res => res)
     }
   }
-  const HomePageSeq = 
-  useMemo(() => homepageData?.getSettings?.appearance?.home?.add_section_web, [homepageData])
-  const renderSwitch = (section)=> {
-    switch(section.name) {
+  const HomePageSeq =
+    useMemo(() => homepageData?.getSettings?.appearance?.home?.add_section_web, [homepageData])
+  const renderSwitch = (section) => {
+    switch (section.name) {
       case 'products_on_sales':
-        if(section.visible){
+        if (section.visible) {
           return (onSaleProducts?.length > 0 ?
             <>
               <CustomBanner variant={"sale-banner"} />
@@ -85,9 +85,9 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
             : null)
         }
         break;
-        
+
       case 'recently_added_products':
-        if(section.visible){
+        if (section.visible) {
           return (recentproducts?.length > 0 ?
             <>
               <CustomBanner variant={"new-arrival-banner"} />
@@ -96,30 +96,30 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
             : null)
         }
         break;
-    
+
       case 'feature_product':
-        if(section.visible){
-          return(  featureproducts?.length > 0 ?
+        if (section.visible) {
+          return (featureproducts?.length > 0 ?
             <>
               <CustomBanner variant={"fashion-banner"} />
-              <PruductCart productDetail={recentproducts} featureproducts={featureproducts} />
+              <OnSaleProductCard onSaleProduct={featureproducts} titleShow={"featured"} />
             </>
             : null)
         }
-      
+
         break;
 
       case 'product_from_specific_category':
-        if(section.visible && section.category){
-          return <SpecificProducts section = {section} />
+        if (section.visible && section.category) {
+          return <SpecificProducts section={section} />
         }
-      break;
-        
+        break;
+
       default:
         break;
     }
   }
- 
+
   return (
     <div>
       <Head>
@@ -137,20 +137,19 @@ export default function Home({ homepageData, seoInfo,brands, homePageInfo, curre
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
       </Head>
-
       {homePageInfo && homePageInfo.slider && homePageInfo.slider?.length > 0 ?
         <Homebanner slider={homePageInfo.slider} Image={Image} />
         : null}
 
       {category?.length > 0 ? <Category category={category} /> : null}
-      
-      {brands?.length > 0 ? <FeatureBrand brands = {brands} /> : null}
+
+      {brands?.length > 0 ? <FeatureBrand brands={brands} /> : null}
       {/* <RavendelBanner /> */}
 
-          {HomePageSeq?.map(section => (
-            renderSwitch(section)
-          ))}
-      
+      {HomePageSeq?.map(section => (
+        renderSwitch(section)
+      ))}
+
     </div>
   )
 };
@@ -172,7 +171,7 @@ export async function getStaticProps() {
       query: GET_HOMEPAGE_DATA_QUERY
     })
     homepageData = homepagedata
-    
+
     currencyStore = homepagedata?.getSettings?.store
     stripe_Public_key = homepagedata?.getSettings?.paymnet?.stripe
   }
@@ -182,27 +181,27 @@ export async function getStaticProps() {
 
   /* ===============================================Get Settings ===============================================*/
   // if (homepageData?.getSettings?.appearance.home.add_section_in_home.feature_product) {
-    try {
-      const { data: featureproductsData } = await client.query({
-        query: FEATURE_PRODUCT_QUERY
-      });
+  try {
+    const { data: featureproductsData } = await client.query({
+      query: FEATURE_PRODUCT_QUERY
+    });
 
-      featureproducts = featureproductsData?.featureproducts;
-    } catch (e) {
-      console.log('homepage Setting Error===============', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
-    }
+    featureproducts = featureproductsData?.featureproducts;
+  } catch (e) {
+    console.log('homepage Setting Error===============', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
+  }
   // }
   /* ===============================================Get Recent Prdouct ===============================================*/
   // if (homepageData?.getSettings?.appearance.home.add_section_in_home?.recently_added_products) {
-    try {
-      const { data: recentprductData } = await client.query({
-        query: GET_RECENT_PRODUCTS_QUERY
-      });
-      recentproducts = recentprductData?.recentproducts
-    }
-    catch (e) {
-      console.log('Recent Product Error===============', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
-    }
+  try {
+    const { data: recentprductData } = await client.query({
+      query: GET_RECENT_PRODUCTS_QUERY
+    });
+    recentproducts = recentprductData?.recentproducts
+  }
+  catch (e) {
+    console.log('Recent Product Error===============', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
+  }
   // }
 
   /* ===============================================Get Category Prdouct ===============================================*/
@@ -220,13 +219,13 @@ export async function getStaticProps() {
 
   try {
     const { data: brandproductData } = await client.query({
-        query: GET_BRANDS_QUERY
+      query: GET_BRANDS_QUERY
     })
     brands = brandproductData.brands.data;
-}
-catch (e) {
+  }
+  catch (e) {
     console.log("===brand", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
-}
+  }
 
   /* ===============================================Get All product Reviews  ===============================================*/
 
@@ -244,16 +243,16 @@ catch (e) {
 
 
   // if (!homepageData?.getSettings?.appearance.home.add_section_in_home.products_on_sales) {           //dont know why in this if condition the product on sale is false so I have to change the if conditon to work if it is false which is not good I think
-    try {
-      const { data: onSaleProductsData } = await client.query({
-        query: ON_SALE_PRODUCTS_QUERY
-      });
-     
-      onSaleProducts = onSaleProductsData?.onSaleProducts
-    }
-    catch (e) {
-      console.log("=======", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
-    }
+  try {
+    const { data: onSaleProductsData } = await client.query({
+      query: ON_SALE_PRODUCTS_QUERY
+    });
+
+    onSaleProducts = onSaleProductsData?.onSaleProducts
+  }
+  catch (e) {
+    console.log("=======", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
+  }
   // }
 
   let seoInfo = {};

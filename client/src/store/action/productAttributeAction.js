@@ -23,7 +23,7 @@ export const attributesAction = () => (dispatch) => {
     .then((response) => {
       const [error, success, message, data] = getResponseHandler(
         response,
-        "product_attributes"
+        "productAttributes"
       );
       dispatch({
         type: LOADING_FALSE,
@@ -63,7 +63,7 @@ export const attributeAction = (id) => (dispatch) => {
     .then((response) => {
       const [error, success, message, data] = getResponseHandler(
         response,
-        "product_attribute"
+        "productAttribute"
       );
       dispatch({
         type: LOADING_FALSE,

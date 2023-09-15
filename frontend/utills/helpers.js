@@ -26,7 +26,7 @@ import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
 export const getImage = (img, type, isBanner) => {
 
     let imagaPath = ""
-    if(!isBanner){
+    if (!isBanner) {
         imagaPath = NoImagePlaceHolder.src;
     }
     if (img) {
@@ -124,7 +124,7 @@ export const handleEnter = (event) => {
 export const stripeCheckout = (billDetails, cartItems, baseUrl) => {
     axios.post(`${baseUrl}/stripe/create-checkout-session`, {
         customerCart: cartItems,
-        customer_id: billDetails.customer_id
+        customerId: billDetails.customerId
     }).then(res => {
         if (res.data.url) {
             window.location.href = res.data.url
@@ -146,10 +146,31 @@ export const getPrice = (price, decimal) => {
     if (typeof price === 'string')
         return parseInt(price)?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     else
-        return price?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        return typeof price === 'number' &&  price?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 
 }
-export function capitalize(word)
-{
+export function capitalize(word) {
     return word[0].toUpperCase() + word.slice(1);
+}
+
+export const isDiscount = (product) => {
+    if (product.pricing.sellprice > 0 &&
+        product.pricing.sellprice < product.pricing.price &&
+        ((100 / product?.pricing?.price) * (product?.pricing?.price - product?.pricing?.sellprice)) > 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+export const isVariantDiscount = (variantProduct) => {
+    if (variantProduct[0]?.pricing.sellprice > 0 &&
+        variantProduct[0].pricing.sellprice < variantProduct[0].pricing.price &&
+        ((100 / variantProduct[0]?.pricing?.price) * (variantProduct[0]?.pricing?.price - variantProduct[0]?.pricing?.sellprice)) > 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }

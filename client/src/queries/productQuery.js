@@ -36,19 +36,26 @@ const PRODUCT_TILE_DATA = gql`
     featured_product
     product_type
     shipping
-    tax_class
+    taxClass
     meta
     custom_field
     attribute
+    attribute_master {
+      id
+      name
+      attribute_values
+      createdAt
+      updatedAt
+    }
     variant
     variation_master {
       id
-      product_id
+      productId
       combination
-      price
       quantity
       sku
       image
+      pricing
       createdAt
       updatedAt
     }
@@ -279,13 +286,13 @@ const GET_PRODUCTS = gql`
 //     order(id: $id) {
 //       data {
 //         id
-//         customer_id
-//         payment_status
-//         shipping_status
+//         customerId
+//         paymentStatus
+//         shippingStatus
 //         shipping
 //         billing
 //         products
-//         coupon_code
+//         couponCode
 //         date
 //         updated
 //       }
@@ -328,7 +335,7 @@ const ADD_PRODUCT = gql`
     $featured_product: Boolean
     $product_type: customObject
     $shipping: customObject
-    $tax_class: String
+    $taxClass: String
     $meta: customObject
     $custom_field: [customObject]
     $attribute: [customObject]
@@ -351,7 +358,7 @@ const ADD_PRODUCT = gql`
       featured_product: $featured_product
       product_type: $product_type
       shipping: $shipping
-      tax_class: $tax_class
+      taxClass: $taxClass
       meta: $meta
       custom_field: $custom_field
       attribute: $attribute
@@ -383,7 +390,7 @@ const UPDATE_PRODUCT = gql`
     $featured_product: Boolean
     $product_type: customObject
     $shipping: customObject
-    $tax_class: String
+    $taxClass: String
     $meta: customObject
     $custom_field: [customObject]
     $attribute: [customObject]
@@ -408,7 +415,7 @@ const UPDATE_PRODUCT = gql`
       featured_product: $featured_product
       product_type: $product_type
       shipping: $shipping
-      tax_class: $tax_class
+      taxClass: $taxClass
       meta: $meta
       custom_field: $custom_field
       attribute: $attribute

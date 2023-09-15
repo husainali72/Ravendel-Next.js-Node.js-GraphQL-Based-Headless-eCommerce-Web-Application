@@ -1,3 +1,4 @@
+import { capitalize } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap'
 import client from '../apollo-client'
@@ -44,6 +45,8 @@ const SpecificProducts = ({section}) => {
                         quantity: product.quantity,
                         status:product.status,
                         url:product.url,
+                        taxClass:product?.taxClass,
+                        shipping:product?.shipping,
                         __typename: product.__typename,
                         _id:product._id} ])
                 } )
@@ -78,7 +81,7 @@ const SpecificProducts = ({section}) => {
   return (
        <div>
             {products?.length > 0 ?  <Container>
-                <h4 className='theme-color my-5' >Products For <span className='black-color' >{category?.name}</span></h4>
+                <h4 className='theme-color my-5' >Products For <span className='black-color' >{capitalize(category?.name)}</span></h4>
                     <OnSaleProductCard
                         onSaleProduct={products}
                         hidetitle

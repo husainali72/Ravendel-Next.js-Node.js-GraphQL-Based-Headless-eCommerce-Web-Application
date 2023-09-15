@@ -56,7 +56,7 @@ module.exports = {
     blogsbytagurl: async (root, args, { id }) => {
       if (!args.tag_url) {
         return {
-          message: MESSAGE_RESPONSE("URL_ERROR", "blogTag", false),
+          message: MESSAGE_RESPONSE("URL_ERROR", "blog Tag", false),
         };
       }
       try {
@@ -64,7 +64,7 @@ module.exports = {
         console.log('blogtag----', args.tag_url)
         if (!blogtag) {
           return {
-            message: MESSAGE_RESPONSE("NOT_EXIST", "blogTag", false),
+            message: MESSAGE_RESPONSE("NOT_EXIST", "blog Tag", false),
           };
         }
         const blogs = await Blog.find({
@@ -81,7 +81,7 @@ module.exports = {
       }
     },
     blogsbytagid: async (root, args) => {
-      return await GET_SINGLE_FUNC(args.tag_id, BlogTag, "BlogTag");
+      return await GET_SINGLE_FUNC(args.tag_id, BlogTag, "Blog Tag");
     },
     blogTags_pagination: async (
       root,
@@ -101,7 +101,7 @@ module.exports = {
     },
 
     blogtags: async (root, args) => {
-      return await GET_ALL_FUNC(BlogTag, "BlogTags");
+      return await GET_ALL_FUNC(BlogTag, "Blog Tags");
     },
   },
   Mutation: {
@@ -186,7 +186,7 @@ module.exports = {
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Tag", false);
       return await CREATE_FUNC(
         user.id,
-        "BlogTag",
+        "Blog Tag",
         BlogTag,
         data,
         args,

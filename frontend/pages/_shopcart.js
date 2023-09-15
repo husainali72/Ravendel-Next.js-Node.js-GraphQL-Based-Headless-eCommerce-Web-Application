@@ -12,7 +12,7 @@ import { CHECKOUT_ORDER_QUERY } from "../queries/checkoutquery";
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { query2 } from "../utills/cartHelperfun";
-import { APPLY_COUPON_CODE } from "../queries/couponquery";
+import { APPLY_couponCode } from "../queries/couponquery";
 
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity) || product.pricing?.price * product.quantity, 0)
 
@@ -70,12 +70,12 @@ const YourCard = ({ customercart, cart_id }) => {
                 carts = CartsData.cartbyUser
                 let cartitems = carts.products.map(product => {
                     return {
-                        _id: product.product_id,
-                        name: product.product_title,
+                        _id: product.productId,
+                        name: product.productTitle,
                         pricing: {
-                            sellprice: product.product_price
+                            sellprice: product.productPrice
                         },
-                        feature_image: { thumbnail: product.product_image },
+                        feature_image: { thumbnail: product.productImage },
                         quantity: product.qty
                     }
                 })
@@ -123,7 +123,7 @@ const YourCard = ({ customercart, cart_id }) => {
             token = session.data.user.accessToken.token
             let variables = {
                 id: usercart.card_id,
-                product_id: item._id,
+                productId: item._id,
             }
             mutation(DELETE_CART_PRODUCTS, variables, token).then(res => {
                 console.log("res delete", res)
@@ -143,11 +143,11 @@ const YourCard = ({ customercart, cart_id }) => {
 
     }
     const doApplyCouponCode = () => {
-        let cart = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity } })
+        let cart = cartItems.map((product) => { return { productId: product._id, qty: product.quantity } })
         let variables = {
-            coupon_code: couponCode, cart: cart
+            couponCode: couponCode, cart: cart
         }
-        query2(APPLY_COUPON_CODE, variables, token).then(res => console.log("res", res))
+        query2(APPLY_couponCode, variables, token).then(res => console.log("res", res))
     }
     const ProcessToCheckOut = () => {
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))
@@ -160,13 +160,13 @@ const YourCard = ({ customercart, cart_id }) => {
         let carts = productsCard.map(product => {
 
             return {
-                product_id: product._id,
+                productId: product._id,
                 qty: product.quantity,
                 total: product.pricing.sellprice * product.quantity
             }
         })
         let variables = {
-            user_id: id,
+            userId: id,
             products: carts,
         }
     }
@@ -181,11 +181,11 @@ const YourCard = ({ customercart, cart_id }) => {
         }
         let carts = productsCard.cart.map(product => {
             return {
-                product_id: product._id,
+                productId: product._id,
                 qty: product.quantity,
-                product_title: product.name,
-                product_image: product.feature_image.original,
-                product_price: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price
+                productTitle: product.name,
+                productImage: product.feature_image.original,
+                productPrice: product.pricing.sellprice ? product.pricing.sellprice : product.pricing.price
             }
         })
         let variables = {
@@ -255,18 +255,18 @@ const YourCard = ({ customercart, cart_id }) => {
                                                 <table className="table">
                                                     <tbody>
                                                         <tr>
-                                                            <td className="cart_total_label">Cart Subtotal</td>
-                                                            <td className="cart_total_amount"><span className="font-lg fw-900 text-brand">
+                                                            <td className="cartTotal_label">Cart Subtotal</td>
+                                                            <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
                                                                 {currency}  {getPrice(CalculateProductTotal(cartItems), decimal)}
                                                             </span></td>
                                                         </tr>
                                                         <tr>
-                                                            <td className="cart_total_label">Shipping</td>
-                                                            <td className="cart_total_amount"> <i className="ti-gift mr-5"></i> Free Shipping</td>
+                                                            <td className="cartTotal_label">Shipping</td>
+                                                            <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i> Free Shipping</td>
                                                         </tr>
                                                         <tr>
-                                                            <td className="cart_total_label">Total</td>
-                                                            <td className="cart_total_amount"><strong><span className="font-xl fw-900 text-brand">
+                                                            <td className="cartTotal_label">Total</td>
+                                                            <td className="cartTotal_amount"><strong><span className="font-xl fw-900 text-brand">
                                                                 {currency} {getPrice(CalculateProductTotal(cartItems), decimal)}
                                                             </span></strong></td>
                                                         </tr>
@@ -314,12 +314,12 @@ export async function getServerSideProps(context) {
             let cartitems = customercarts.map(product => {
 
                 return {
-                    _id: product?.product_id,
-                    name: product?.product_title,
+                    _id: product?.productId,
+                    name: product?.productTitle,
                     pricing: {
-                        sellprice: product?.product_price
+                        sellprice: product?.productPrice
                     },
-                    feature_image: { thumbnail: product?.product_image === undefined ? null : product?.product_image },
+                    feature_image: { thumbnail: product?.productImage === undefined ? null : product?.productImage },
                     quantity: product?.qty
                 }
             })

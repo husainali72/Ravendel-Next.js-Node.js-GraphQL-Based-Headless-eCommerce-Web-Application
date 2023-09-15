@@ -1,48 +1,71 @@
 import Link from "next/link";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import { useEffect, useState } from "react";
 import { query } from "../utills/helpers";
 import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 import { get } from "lodash";
+import logoutDispatch from "../redux/actions/userlogoutAction";
+import { useDispatch } from "react-redux";
+
+
+
 export default function Footer() {
     const [Address, setAddress] = useState({
-        address_line1: "",
-        address_line2: "",
+        addressLine1: "",
+        addressLine2: "",
         city: "",
         phone_number: "",
         email: "",
         playStoreUrl: "",
-        appStoreUrl: ""
+        appStoreUrl: "",
+        socailMedia: []
     });
-
+    const dispatch = useDispatch();
+    const LogOutUser = async () => {
+        const data = await signOut({ redirect: false, callbackUrl: "/" })
+        localStorage.setItem("userCart", JSON.stringify([]));
+        localStorage.setItem("cart", JSON.stringify([]));
+        dispatch(logoutDispatch())
+    }
     useEffect(() => {
         query(GET_HOMEPAGE_DATA_QUERY).then(res => {
-            const addressPath1 = "data.getSettings.store.store_address.address_line1";
-            const addressPath2 = "data.getSettings.store.store_address.address_line2";
+
+            const addressPath1 = "data.getSettings.store.store_address.addressLine1";
+            const addressPath2 = "data.getSettings.store.store_address.addressLine2";
+            const hour = "data.getSettings.store.store_address.hour";
             const cityPath = "data.getSettings.store.store_address.city";
             const phonePath = "data.getSettings.appearance.theme.phone_number";
             const emailPath = "data.getSettings.appearance.theme.email";
             const playStorePath = "data.getSettings.appearance.theme.playstore";
             const appStorePath = "data.getSettings.appearance.theme.appstore";
+            const socialMediaPath = "data.getSettings.appearance.theme.social_media";
             setAddress((previousAddress) => ({
                 ...previousAddress,
-                address_line1: get(res, addressPath1, "Central Park"),
-                address_line2: get(res, addressPath2, ""),
+                addressLine1: get(res, addressPath1, "Central Park"),
+                addressLine2: get(res, addressPath2, ""),
                 city: get(res, cityPath, "Paris"),
                 email: get(res, emailPath, "ravendel@gmail.com"),
                 phone_number: get(res, phonePath, "+91 9124192994"),
                 appStoreUrl: get(res, appStorePath, "#"),
                 playStoreUrl: get(res, playStorePath, "#"),
+                hour: get(res, hour, '#'),
+                socailMedia: get(res, socialMediaPath, '#')
             }
             ))
         })
     }, [])
-
-    const { address_line1, address_line2, city, email, phone_number, appStoreUrl, playStoreUrl } = Address;
+    const { addressLine1, addressLine2, city, email, phone_number, appStoreUrl, playStoreUrl } = Address;
     const session = useSession();
     const customerId = session?.data?.user?.accessToken?.customer?._id;
+    const iconSetter = (iconName) => {
+        if (iconName === 'twitter') return 'fab fa-twitter mx-2 icon-footer'
+        if (iconName === 'facebook') return 'fab fa-facebook mx-2 icon-footer'
+        if (iconName === 'instagram') return 'fab fa-instagram mx-2 icon-footer'
+        if (iconName === 'youtube') return 'fab fa-youtube mx-2 icon-footer'
+        if (iconName === 'pinterest') return 'fab fa-pinterest mx-2 icon-footer'
+    }
     return (
         <section className="product-cart-section">
             <Container>
@@ -60,7 +83,7 @@ export default function Footer() {
                                     <div className="address">
                                         <h5 className="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated animated animated">Contact</h5>
                                         <strong>Address : </strong>
-                                        <span>{address_line1 && address_line1 + ", "}{address_line2 && address_line2 + ", "}{city}</span>
+                                        <span>{addressLine1 && addressLine1 + ", "}{addressLine2 && addressLine2 + ", "}{city}</span>
                                         <br />
                                         <strong>Phone : </strong>
                                         <Link href={"tel:" + phone_number}>
@@ -73,18 +96,16 @@ export default function Footer() {
                                         </Link>
                                         <br />
                                         <strong>Hour: </strong>
-                                        <span> Mon to Fri 9am to 6pm</span>
+
+                                        {Address.hour ? <span>{Address.hour}</span> : <span></span>}
                                     </div>
 
                                     <div className="mt-4 follow">
                                         <h5>Follow us</h5>
                                         {/* <ui> */}
-                                        <Link href="#"><a className="fab fa-facebook-f mx-2 icon-footer" aria-hidden="true"></a></Link>
-                                        <Link href="#"><a className="fab fa-twitter mx-2 icon-footer" aria-hidden="true"></a></Link>
-                                        <Link href="#"><a className="fab fa-instagram mx-2 icon-footer" aria-hidden="true"></a></Link>
-                                        <Link href="#"><a className="fab fa-pinterest-p mx-2 icon-footer" aria-hidden="true"></a></Link>
-                                        <Link href="#"><a className="fab fa-youtube mx-2 icon-footer" aria-hidden="true"></a></Link>
-                                        {/* </ui> */}
+                                        {Address.socailMedia && Address.socailMedia.length > 0 ? Address.socailMedia.map((media) => {
+                                            return <Link href={media.handle}><a href={media.handle} className={iconSetter(media.name)} aria-hidden="true" target="_blank"></a></Link>
+                                        }) : null}
                                     </div>
                                 </div>
                                 <div className="col-lg-2 col-md-3 col-xl-2 mx-auto mb-4 mt-2 ">
@@ -134,8 +155,8 @@ export default function Footer() {
                                     {session.status === "authenticated" ? (
                                         <>
                                             <p className="link-hover">
-                                                <Link href="/account" >
-                                                    <a className="text-reset">Log Out</a>
+                                                <Link href="/" >
+                                                    <a onClick={LogOutUser} className="text-reset">Log Out</a>
                                                 </Link>
                                             </p>
                                             <p className="link-hover">

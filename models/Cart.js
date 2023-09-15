@@ -3,28 +3,34 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const CartSchema = new Schema({
-  user_id: {
+  userId: {
     type: Schema.ObjectId,
     required: true
   },
   total: {
     type: Number,
-    required: true
-  },
+     },
   products: [
     {
-      product_id: {
+      productId: {
         type: Schema.ObjectId,
         required: true
       },
-      product_title: {
+      
+      productTitle: {
         type: String,
-        required: true
+        
       },
-      product_image: {
+      productImage: {
         type: String,
       },
-      product_price: {
+      productPrice: {
+        type: Number,
+      },
+      productTaxPercentage: {
+        type: Number,
+      },
+      productTax: {
         type: Number,
       },
       qty: {
@@ -33,7 +39,27 @@ const CartSchema = new Schema({
       },
       total: {
         type: Number,
-        required: true
+       
+      },
+      attributes: [
+        {
+          name:
+            { type: String },
+          value:
+            { type: String }
+        }
+      ],
+      productQuantity: {
+        type: Number
+      },
+      variantId: {
+        type: String
+      },
+      shippingClass: {
+        type: Schema.ObjectId,        
+      },
+      taxClass: {
+        type: Schema.ObjectId,        
       }
     }
   ],

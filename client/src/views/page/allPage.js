@@ -44,7 +44,7 @@ const AllPagesComponent = () => {
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          navigate(`${client_app_route_url}edit-page/${id}`)
+          navigate(`${client_app_route_url}edit-page/${id}`, {state : {editMode: true}})
         } else if (type === "delete") {
           dispatch(pageDeleteAction(id))
         }

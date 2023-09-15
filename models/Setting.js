@@ -82,10 +82,10 @@ const SeetingSchema = new Schema(
         },
       },
       store_address: {
-        address_line1: {
+        addressLine1: {
           type: String,
         },
-        address_line2: {
+        addressLine2: {
           type: String,
         },
         city: {
@@ -444,8 +444,8 @@ module.exports.createSettings = async () => {
         number_of_decimals: 2,
       },
       store_address: {
-        address_line1: "Central Perk",
-        address_line2: "",
+        addressLine1: "Central Perk",
+        addressLine2: "",
         city: "New York",
         country: "USA",
         state: "New York",

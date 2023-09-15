@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { API_BASE_URL as baseUrl } from "../config";
 import Link from "next/link";
 import client from "../apollo-client";
-import { GET_CHECKOUT_DETAILS_BY_USER_ID } from "../queries/checkoutquery"
+import { GET_CHECKOUT_DETAILS_BY_userId } from "../queries/checkoutquery"
 import BreadCrumb from "../components/breadcrumb/breadcrumb";
 import { Container, Button, Form } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,8 +20,8 @@ import { ADD_ORDER } from "../queries/orderquery";
 import CreditCards from "../components/checkoutcomponent/myCard/CreditCards";
 import { useRouter } from "next/router";
 import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
-import { APPLY_COUPON_CODE } from "../queries/couponquery";
-import { CALCULATE_CART_TOTAL, GET_USER_CART, UPDATE_CART_PRODUCT } from "../queries/cartquery";
+import { APPLY_COUPON_CODE, APPLY_couponCode } from "../queries/couponquery";
+import { CALCULATE_CART_TOTAL, CALCULATE_cartTotal, GET_USER_CART, UPDATE_CART_PRODUCT } from "../queries/cartquery";
 import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
 import { query2 } from "../utills/cartHelperfun"
 import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
@@ -29,6 +29,7 @@ import { removeCartItemAction } from "../redux/actions/cartAction";
 import toast, { Toaster } from 'react-hot-toast';
 import { currencySetter } from "../utills/helpers"
 import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
+import { CHECK_ZIPCODE } from "../queries/productquery";
 
 
 const notify = (message, success) => {
@@ -54,7 +55,7 @@ var billingInfoObject = {
     lastname: "",
     firstname: "",
     country: "UK",
-    payment_method: "",
+    paymentMethod: "",
     transaction_id: ""
 
 };
@@ -71,7 +72,7 @@ var shippingObject = {
     lastname: "",
     firstname: "",
     country: "UK",
-    payment_method: "",
+    paymentMethod: "",
 };
 
 var savedShippingInfo;
@@ -84,29 +85,29 @@ export const CheckOut = ({ currencyStore }) => {
     const [islogin, setIsLogin] = useState(false)
     const router = useRouter();
     let address_book = [];
-    let customer_id = "";
+    let customerId = "";
     let token = ""
-    const [billingDetails, setBillingDetails] = useState({ customer_id: customer_id || "" });
+    const [billingDetails, setBillingDetails] = useState({ userId: customerId || "" });
     useEffect(() => {
         if (session.status === "authenticated") {
             address_book = session?.data?.user.accessToken.customer.address_book
             token = session.data?.user.accessToken.token
-            let customer_id = session.data.user.accessToken.customer._id
-            setBillingDetails({ ...billingDetails, customer_id: customer_id })
+            let customerId = session.data.user.accessToken.customer._id
+            setBillingDetails({ ...billingDetails, userId: customerId })
 
         }
     }, [session, session?.data?.user.accessToken.customer.address_book])
 
 
-
     if (session.status === "authenticated") {
         address_book = session?.data?.user.accessToken.customer.address_book
         token = session.data?.user.accessToken.token
-        customer_id = session.data.user.accessToken.customer._id
+        customerId = session.data.user.accessToken.customer._id
 
     }
     const cartProducts = useSelector((state) => state.cart);
     const [cartTotal, setCartTotal] = useState(0)
+    const [grandTotal, setgrandTotal] = useState(0)
     const [cartItems, setCartItems] = useState([])
     const [couponfield, setCouponFeild] = useState(false);
     const [billingInfo, setBillingInfo] = useState(billingInfoObject);
@@ -115,11 +116,11 @@ export const CheckOut = ({ currencyStore }) => {
     const [coupon, setCoupon] = useState("0");
     const [paymentMethod, setPaymentMethod] = useState("");
     const [delivery, setDelivery] = useState("0");
-    const [tax_amount, setTax_amount] = useState(0);
+    const [taxAmount, settaxAmount] = useState('0');
     const [showItem, setShowItem] = useState(false);
     const [formStep, setFormStep] = useState(1)
     const [couponCode, setCouponCode] = useState('')
-    const [subtotal, setSubTotal] = useState(0);
+    const [subtotal, setSubTotal] = useState('0');
     const [cartId, setCartId] = useState('');
     const [CouponLoading, setCouponLoading] = useState(false);
     const [isCouponApplied, setIsCouponApplied] = useState(false);
@@ -129,16 +130,18 @@ export const CheckOut = ({ currencyStore }) => {
     const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
     const currencyOpt = currencyStore?.currency_options?.currency
     const [currency, setCurrency] = useState("$")
+    const [ZipMessage, setZipMessage] = useState("");
     const decimal = currencyStore?.currency_options?.number_of_decimals
     useEffect(() => {
         currencySetter(currencyOpt, setCurrency);
     }, [])
-    
+
+
     useEffect(() => {
         if (session.status === "authenticated") {
             address_book = session?.data?.user.accessToken.customer.address_book
             token = session.data?.user.accessToken.token
-            customer_id = session.data.user.accessToken.customer._id
+            customerId = session.data.user.accessToken.customer._id
             setIsLogin(true)
         }
     }, [])
@@ -153,21 +156,69 @@ export const CheckOut = ({ currencyStore }) => {
                 let token = session2.user.accessToken.token;
                 let variables = { id: id }
                 mutation(GET_USER_CART, variables).then(res => {
-                    setCartId(res.data.cartbyUser.id)
-                    let carts = res?.data?.cartbyUser?.products;
+                    setCartId(res?.data?.cartbyUser?.id)
+                    let carts = res?.data?.cartbyUser;
                     let cartitems2 = [];
-                    carts?.map(cart => {
-                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-                        const cartProduct = {
-                            _id: originalProduct?._id,
-                            quantity: parseInt(cart?.qty),
-                            name: originalProduct?.name,
-                            pricing: originalProduct?.pricing,
-                            feature_image: originalProduct?.feature_image,
-                            url: originalProduct?.url
+                    carts?.availableItem?.map(cart => {
+                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
+                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
+                        // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
+                        if (originalProduct) {
+                            const cartProduct = {}
+                            if (orginal_attributes) {
+                                cartProduct = {
+                                    _id: originalProduct?._id,
+                                    variantId: cart?.variantId,
+                                    quantity: parseInt(cart?.qty),
+                                    productQuantity: parseInt(orginal_attributes?.quantity),
+                                    name: originalProduct?.name,
+                                    pricing: (orginal_attributes?.pricing
+                                        ?.sellprice * cart?.qty),
+                                    feature_image: orginal_attributes?.productImage
+                                        || orginal_attributes?.feature_image,
+                                    url: originalProduct?.url,
+                                    attributes: cart.attributes || [],
+                                    shippingClass: originalProduct?.shipping?.shippingClass,
+                                    taxClass: originalProduct?.taxClass,
+                                }
+                            }
+                            else {
+                                cartProduct = {
+                                    _id: originalProduct?._id,
+                                    variantId: cart?.variantId,
+                                    quantity: parseInt(cart?.qty),
+                                    productQuantity: parseInt(originalProduct?.quantity),
+
+                                    name: originalProduct?.name,
+                                    pricing: (originalProduct?.pricing
+                                        ?.sellprice * cart?.qty),
+                                    feature_image: originalProduct?.productImage
+                                        || originalProduct?.feature_image,
+                                    url: originalProduct?.url,
+                                    attributes: cart?.attributes || [],
+                                    shippingClass: originalProduct?.shipping?.shippingClass,
+                                    taxClass: originalProduct?.taxClass,
+                                }
+
+                            }
+                            cartitems2.push(cartProduct);
                         }
-                        cartitems2.push(cartProduct);
                     })
+                    // carts?.map(cart => {
+                    //     const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
+                    //     const cartProduct = {
+                    //         _id: originalProduct?._id,
+                    //         quantity: parseInt(cart?.qty),
+                    //         name: originalProduct?.name,
+                    //         pricing: cart?.productPrice || originalProduct?.pricing,
+                    //         feature_image: originalProduct?.feature_image,
+                    //         url: originalProduct?.url,
+                    //         taxClass: originalProduct?.taxClass,
+                    //         shippingClass: originalProduct?.shipping?.shippingClass,
+                    //         attributes: cart.attributes
+                    //     }
+                    //     cartitems2.push(cartProduct);
+                    // })
                     setCartItems([...cartitems2])
                 })
             }
@@ -178,19 +229,41 @@ export const CheckOut = ({ currencyStore }) => {
         getProducts();
     }, [cartProducts, allProducts]);
     useEffect(() => {
-        let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
-        let calculate = {
-            total_coupon: 0.0,
-            cart: cartsData
+        const checkCart = async () => {
+            const session2 = await getSession();
+            if (session?.status === "authenticated" || session2 !== null) {
+                setIsLogin(true)
+                let id = session2.user.accessToken.customer._id;
+                let token = session2.user.accessToken.token;
+                let variables = { id: id }
+                mutation(GET_USER_CART, variables).then(res => {
+                    let carts = res?.data?.cartbyUser?.cartItem;
+                    if (carts?.length <= 0) {
+                        router.push("/")
+                    }
+                })
+            }
         }
-        query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
-            let response = res.data.calculateCart
-            setCartTotal(response?.grand_total)
-            setSubTotal(response?.subtotal)
-            setCoupon(response?.total_coupon)
-            setDelivery(response?.total_shipping.amount)
-            setTax_amount(response?.total_tax.amount)
-        })
+        checkCart();
+    }, []);
+    useEffect(() => {
+        let cartsData = cartItems.map((product) => { return { productId: product._id, qty: product.quantity, total: product?.pricing * product.quantity } })
+        let calculate = {
+            // total_coupon: '0.0',
+            cartItem: cartsData
+        }
+        if (cartsData.length > 0) {
+            query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
+
+                let response = res?.data?.calculateCart
+                setgrandTotal(response?.grandTotal && !isNaN(response?.grandTotal) ? response?.grandTotal : '0')
+                setCartTotal(response?.grandTotal && !isNaN(response?.grandTotal) ? response?.grandTotal : '0')
+                setSubTotal(response?.cartTotal && !isNaN(response?.cartTotal) ? response?.cartTotal : '0')
+                // setCoupon(response?.total_coupon)
+                setDelivery(response?.totalShipping && !isNaN(response?.totalShipping) ? response?.totalShipping : '0')
+                settaxAmount(response?.totalTax && !isNaN(response?.totalTax) ? response?.totalTax : '0')
+            })
+        }
     }, [cartItems])
     const {
         register,
@@ -199,7 +272,7 @@ export const CheckOut = ({ currencyStore }) => {
         control
     } = useForm({ mode: "onSubmit", });
     const onSubmit = (data) => {
-        nextFormStep()
+        if (ZipMessage && ZipMessage.zipSuccess) { nextFormStep() }
     };
     const handleBillingInfo = (e) => {
         if (!shippingAdd) {
@@ -209,15 +282,45 @@ export const CheckOut = ({ currencyStore }) => {
             });
         }
         setBillingInfo({ ...billingInfo, [e.target.name]: e.target.value })
+
     };
+    const handleZipCode = (e) => {
+        if (!shippingAdd) {
+            setShippingInfo({
+                ...shippingInfo,
+                [e.target.name]: e.target.value,
+            });
+        }
+        setBillingInfo({ ...billingInfo, [e.target.name]: e.target.value })
+        const checkCode = async () => {
+            try {
+                const { data: result } = await client.query({
+                    query: CHECK_ZIPCODE,
+
+                    variables: { zipcode: e.target.value.toString() }
+                });
+                setZipMessage({ ...ZipMessage, zipMessage: result.checkZipcode.message, zipSuccess: result.checkZipcode.success })
+            } catch (e) {
+                console.log('ZipCode error ==>', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
+            }
+        }
+        checkCode();
+
+    };
+
     const getBillingData = (val) => {
+
         setBillingDetails({ ...billingDetails, ...val });
+
     };
 
     const getOrderDetailsData = (val) => {
         setBillingDetails({ ...billingDetails, ...val });
     };
     const getCalculationDetails = (val) => {
+        val.cartTotal = val.subtotal
+        delete val.subtotal
+        // let data = { ...val, cart_total: val.subTotal }
         setBillingDetails({ ...billingDetails, ...val });
     }
     const handleShippingChange = (e) => {
@@ -233,12 +336,19 @@ export const CheckOut = ({ currencyStore }) => {
         setBillingInfo({ ...billingInfo, [name]: value })
     };
 
+    const handleShippingPhone = (name, value) => {
+        setShippingInfo({
+            ...shippingInfo,
+            [name]: value,
+        });
+    };
+
     const shippingAddressToggle = (e) => {
         if (e.target.checked) {
             savedShippingInfo = shippingInfo;
             setShippingInfo(shippingObject);
         } else {
-            setShippingInfo(savedShippingInfo);
+            setShippingInfo(billingInfo);
         }
         setShippingAdd(e.target.checked);
     };
@@ -248,8 +358,8 @@ export const CheckOut = ({ currencyStore }) => {
             state: address.state,
             city: address.city,
             address: address.address_line1 + ", " + address.address_line1,
-            address_line2: address.address_line1,
-            address_line1: address.address_line2,
+            addressLine2: address.address_line1,
+            addressLine1: address.address_line2,
             phone: address.phone,
             company: address.company,
             email: address.email,
@@ -263,8 +373,8 @@ export const CheckOut = ({ currencyStore }) => {
             state: address.state,
             city: address.city,
             address: address.address_line1 + ', ' + address.address_line2,
-            address_line2: address.address_line1,
-            address_line1: address.address_line2,
+            addressLine2: address.address_line1,
+            addressLine1: address.address_line2,
             phone: address.phone,
             company: address.company,
             email: address.email,
@@ -275,56 +385,99 @@ export const CheckOut = ({ currencyStore }) => {
         if (!shippingAdd) {
             setShippingInfo(shipping);
         }
+        const checkCode = async () => {
+            try {
+                const { data: result } = await client.query({
+                    query: CHECK_ZIPCODE,
+                    variables: { zipcode: address?.pincode?.toString() }
+                });
+                setZipMessage({ ...ZipMessage, zipMessage: result.checkZipcode.message, zipSuccess: result.checkZipcode.success })
+            } catch (e) {
+                console.log('ZipCode error ==>', e.networkError && e.networkError.result ? e.networkError.result.errors : '')
+            }
+        }
+        checkCode();
         setBillingInfo(billing);
     }
+
     const doApplyCouponCode = async (e) => {
         e.preventDefault();
-        let cart = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
+
+
+        let cart = cartItems.map((product) => {
+
+            return {
+                productId: product._id,
+                qty: product.quantity,
+                productTotal: (product?.pricing ? product?.pricing * product.quantity : product?.pricing * product.quantity).toString(),
+            }
+        })
+
+
         let variables = {
-            coupon_code: `${couponCode}`, cart: cart,
+            couponCode: `${couponCode}`,
+            cartItem: cart,
+            totalShipping: delivery,
+            grandTotal: grandTotal,
+            totalTax: taxAmount,
+            cartTotal: subtotal
         }
         let couponResponse = 0
         let couponValue = 0.00
         let couponValueGet = false;
         setCouponLoading(true)
         query2(APPLY_COUPON_CODE, variables, token).then(res => {
-            couponResponse = res.data.calculateCoupon.total_coupon
-            if (res.data.calculateCoupon.success) {
-                setBillingDetails((previousDetails)=>({...previousDetails,coupon_code:couponCode}))
-                notify(res.data.calculateCoupon.message, true)
+
+            couponResponse = res?.data?.calculateCoupon
+            if (res?.data?.calculateCoupon.success) {
+                setBillingDetails((previousDetails) => ({ ...previousDetails, couponCode: couponCode }))
+                notify(res?.data?.calculateCoupon?.message, true)
                 setIsCouponApplied(true)
             }
             else {
-                notify(res.data.calculateCoupon.message)
-
+                notify(res?.data?.calculateCoupon?.message)
+                if (isCouponApplied) {
+                    setIsCouponApplied(false)
+                }
             }
             couponValueGet = true;
-            if (!res.data.laoding) {
-                setCoupon(couponResponse)
+            if (!res?.data?.laoding) {
+                // couponResponse?.grandTotal && !isNaN(couponResponse?.grandTotal) && !couponResponse?.discountGrandTotal ? couponResponse?.grandTotal : (couponResponse?.discountGrandTotal && !isNaN(couponResponse?.discountGrandTotal) ? couponResponse?.discountGrandTotal : "0")
+                let grandTotal = couponResponse?.discountGrandTotal ? couponResponse?.discountGrandTotal : couponResponse?.grandTotal
+                setCoupon(couponResponse?.totalCoupon && !isNaN(couponResponse?.totalCoupon) ? couponResponse?.totalCoupon : "0")
                 setAppliedCoupon(couponCode)
+                setCartTotal(!isNaN(grandTotal) ? grandTotal : '0')
+                setgrandTotal(!isNaN(couponResponse?.grandTotal) ? couponResponse?.grandTotal : '0')
+                setSubTotal(couponResponse?.cartTotal && !isNaN(couponResponse?.cartTotal) ? couponResponse?.cartTotal : '0')
+                // setCoupon(couponResponse?.total_coupon)
+                setDelivery(couponResponse?.totalShipping && !isNaN(couponResponse?.totalShipping) ? couponResponse?.totalShipping : '0')
+                settaxAmount(couponResponse?.totalTax && !isNaN(couponResponse?.totalTax) ? couponResponse?.totalTax : '0')
                 setCouponCode("")
                 setCouponFeild(true);
             }
-            if (couponValueGet) {
-                let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
-                let calculate = {
-                    total_coupon: couponResponse,
-                    cart: cartsData,
-                }
 
-                query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
-                    let response = res.data.calculateCart
-                    setCartTotal(response?.grand_total)
-                    setSubTotal(response?.subtotal)
-                    setCoupon(response?.total_coupon)
-                    setDelivery(response?.total_shipping.amount)
-                    setTax_amount(response?.total_tax.amount)
-                })
-            }
+            // if (couponValueGet) {
+            //     let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
+            //     let calculate = {
+            //         total_coupon: couponResponse,
+            //         cart: cartsData,
+            //     }
+
+            //     query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
+            //         let response = res.data.calculateCart
+            //         setCartTotal(response?.grand_total)
+            //         setSubTotal(response?.cart_total)
+            //         setCoupon(couponResponse)
+            //         setDelivery(response?.total_shipping)
+            //         setTax_amount(response?.total_tax)
+            //     })
+            // }
+
         }
         ).finally(() => setCouponLoading(false))
 
     }
+
     const detailsOfBill = billingDetails
     const handleOrderPlaced = (e) => {
         e.preventDefault();
@@ -332,11 +485,13 @@ export const CheckOut = ({ currencyStore }) => {
             stripeCheckout(billingDetails, cartItems, baseUrl)
         }
         dispatch(checkoutDetailAction(billingDetails));
+
         mutation(ADD_ORDER, billingDetails, token).then(res => {
             let response = res.data.addOrder.success
+
             if (response) {
                 billingDetails.products.forEach(product => {
-                    dispatch(removeCartItemAction(product.product_id))
+                    dispatch(removeCartItemAction(product.productId))
                 })
                 if (session.status === "authenticated") {
                     let id = session.data.user.accessToken.customer._id
@@ -348,6 +503,7 @@ export const CheckOut = ({ currencyStore }) => {
                         products: [],
                         total: 0
                     }
+
                     mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("delet res while auth ", res))
 
                 }
@@ -362,6 +518,7 @@ export const CheckOut = ({ currencyStore }) => {
         }
         )
     }
+
     if (islogin) {
         switch (formStep) {
             case 1:
@@ -378,9 +535,10 @@ export const CheckOut = ({ currencyStore }) => {
                                     />
                                     <div className="col-lg-12 first-checkout-page">
                                         <div style={{ padding: "20px", maxWidth: "700px" }}>
+
                                             <CustomerDetail
                                                 decimal={decimal}
-                                                address_book={address_book}
+                                                addressBook={address_book}
                                                 setBillingInfo={setBillingInfo}
                                                 SelectAddressBook={SelectAddressBook}
                                                 billingInfo={billingInfo}
@@ -392,6 +550,8 @@ export const CheckOut = ({ currencyStore }) => {
                                             <form onSubmit={handleSubmit(onSubmit)}>
                                                 <BillingDetails
                                                     control={control}
+                                                    ZipMessage={ZipMessage}
+                                                    handleZipCode={handleZipCode}
                                                     decimal={decimal}
                                                     coupon={coupon}
                                                     setCoupon={setCoupon}
@@ -404,6 +564,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                     shippingInfo={shippingInfo}
                                                     setShippingInfo={setShippingInfo}
                                                     handlePhoneInput={handlePhoneInput}
+                                                    handleShippingPhone={handleShippingPhone}
                                                     shippingAdd={shippingAdd}
                                                     setShippingAdd={setShippingAdd}
                                                     handleBillingInfo={handleBillingInfo}
@@ -412,7 +573,8 @@ export const CheckOut = ({ currencyStore }) => {
                                                     registerRef={register}
                                                     errorRef={errors}
                                                     getBillingInfo={getBillingData} />
-                                                <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }}>Continue</button>
+
+                                                <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} >Continue</button>
                                             </form>
                                         </div>
                                         <div className="cupon-cart" >
@@ -426,7 +588,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 subTotal={subtotal}
                                                 coupon={coupon}
                                                 delivery={delivery}
-                                                tax_amount={tax_amount}
+                                                taxAmount={taxAmount}
                                                 doApplyCouponCode={doApplyCouponCode}
                                                 couponCode={couponCode}
                                                 setCouponCode={setCouponCode}
@@ -454,14 +616,14 @@ export const CheckOut = ({ currencyStore }) => {
                                     <div className="col-lg-12" style={{ display: 'flex' }}>
                                         <div style={{ width: "60%", padding: "20px" }}>
                                             <ShippingTaxCoupon
-                                                currency={currency}
+
                                                 couponCode={couponCode}
                                                 setCouponCode={setCouponCode}
                                                 coupon={coupon}
                                                 setCoupon={setCoupon}
                                                 setCouponFeild={setCouponFeild}
-                                                tax_amount={tax_amount}
-                                                setTax_amount={setTax_amount}
+                                                taxAmount={taxAmount}
+                                                settaxAmount={settaxAmount}
                                                 doApplyCouponCode={doApplyCouponCode}
                                                 couponfield={couponfield}
                                                 delivery={delivery}
@@ -477,13 +639,14 @@ export const CheckOut = ({ currencyStore }) => {
                                             <OrderSummary
                                                 AppliedCoupon={AppliedCoupon}
                                                 isCouponApplied={isCouponApplied}
+                                                decimal={decimal}
                                                 CouponLoading={CouponLoading}
                                                 currency={currency}
                                                 cartTotal={cartTotal}
                                                 subTotal={subtotal}
                                                 coupon={coupon}
                                                 delivery={delivery}
-                                                tax_amount={tax_amount}
+                                                taxAmount={taxAmount}
                                                 doApplyCouponCode={doApplyCouponCode}
                                                 couponCode={couponCode}
                                                 setCouponCode={setCouponCode}
@@ -518,8 +681,8 @@ export const CheckOut = ({ currencyStore }) => {
                                                 coupon={coupon}
                                                 setCoupon={setCoupon}
                                                 setCouponFeild={setCouponFeild}
-                                                tax_amount={tax_amount}
-                                                setTax_amount={setTax_amount}
+                                                taxAmount={taxAmount}
+                                                settaxAmount={settaxAmount}
                                                 doApplyCouponCode={doApplyCouponCode}
                                                 couponfield={couponfield}
                                                 delivery={delivery}
@@ -533,7 +696,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 decimal={decimal}
                                                 currency={currency}
                                                 billingDetails={billingDetails}
-                                                customer_id={customer_id}
+                                                customerId={customerId}
                                                 billingInfo={billingInfo}
                                                 shippingInfo={shippingInfo}
                                                 setBillingInfo={setBillingInfo}
@@ -548,7 +711,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 subTotal={subtotal}
                                                 coupon={coupon}
                                                 delivery={delivery}
-                                                tax_amount={tax_amount}
+                                                taxAmount={taxAmount}
                                             />
                                             {/* </form> */}
                                             {billingInfo.payment_method === "stripe" &&
@@ -560,7 +723,8 @@ export const CheckOut = ({ currencyStore }) => {
                                                     cartItems={cartItems}
                                                 />
                                             }
-                                            <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} onClick={handleOrderPlaced} disabled={!billingInfo.payment_method}>Continue </button>
+
+                                            <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", float: "right" }} onClick={handleOrderPlaced} disabled={!billingInfo.paymentMethod}>Continue </button>
                                         </div>
                                         <div style={{ width: "40%", borderLeft: "2px solid whitesmoke", padding: "20px" }}>
                                             <OrderSummary
@@ -573,7 +737,7 @@ export const CheckOut = ({ currencyStore }) => {
                                                 subTotal={subtotal}
                                                 coupon={coupon}
                                                 delivery={delivery}
-                                                tax_amount={tax_amount}
+                                                taxAmount={taxAmount}
                                                 doApplyCouponCode={doApplyCouponCode}
                                                 couponCode={couponCode}
                                                 setCouponCode={setCouponCode}
@@ -624,6 +788,8 @@ export const CheckOut = ({ currencyStore }) => {
                                                 <h5>Billing Details</h5>
                                                 <BillingDetails
                                                     control={control}
+                                                    ZipMessage={ZipMessage}
+                                                    handleZipCode={handleZipCode}
                                                     coupon={coupon}
                                                     setCoupon={setCoupon}
                                                     setCouponFeild={setCouponFeild}
@@ -722,12 +888,12 @@ export async function getStaticProps() {
 // export async function getServerSideProps(context) {
 //     const session = await getSession(context)
 //     // console.log("session", session);
-//     let user_id = session?.user?.accessToken?.customer._id
+//     let userId = session?.user?.accessToken?.customer._id
 //     var checkoutDetail = {};
 //     try {
 //         const { data: checkoutData } = await client.query({
-//             query: GET_CHECKOUT_DETAILS_BY_USER_ID,
-//             variables: { user_id }
+//             query: GET_CHECKOUT_DETAILS_BY_userId,
+//             variables: { userId }
 //         });
 //         checkoutDetail = checkoutData.checkoutbyUser
 //         console.log("checkout", checkoutDetail);

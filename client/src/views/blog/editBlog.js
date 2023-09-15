@@ -3,6 +3,7 @@ import {
   Grid,
   TextField,
   Box,
+  Typography,
   RadioGroup,
   FormControlLabel,
   useMediaQuery,
@@ -14,6 +15,7 @@ import {
   blogUpdateAction,
   blogtagsAction,
   blogAction,
+  blogAddAction
 } from "../../store/action/";
 import clsx from "clsx";
 import {
@@ -29,6 +31,7 @@ import {
   TopBar,
   StyledRadio,
   CardBlocks,
+  TextInput,
   FeaturedImageComponent,
   URLComponent,
   TinymceEditor,
@@ -63,62 +66,104 @@ const EditBlogComponenet = ({ params }) => {
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
+  const [clearTags, setclearTags] = useState([]);
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(blogAction(Id));
+    if (Id) {
+      dispatch(blogAction(Id));
+    } else {
+      dispatch(blogtagsAction())
+    }
   }, []);
 
-  useEffect(() => {
-    if (!isEmpty(get(blogState, "blog"))) {
-      setBlog({ ...blog, ...blogState.blog });
-      if (
-        blogState.blog.feature_image
 
-      ) {
-        setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
+  useEffect(() => {
+    if (Id) {
+      if (!isEmpty(get(blogState, "blog"))) {
+        setBlog({ ...blog, ...blogState.blog });
+        if (
+          blogState.blog.feature_image
+
+        ) {
+          setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
+        }
+        dispatch(blogtagsAction());
       }
-      dispatch(blogtagsAction());
+    } else {
+      setBlog(defaultObj)
+      setfeatureImage(null)
     }
-  }, [get(blogState, "blog")]);
+  }, [get(blogState, "blog"), Id]);
+
+  useEffect(() => {
+    if (!Id) {
+      if (isEmpty(get(blogState, "success"))) {
+        document.forms[0].reset();
+        setBlog(defaultObj);
+        setfeatureImage(null);
+        setclearTags([]);
+      }
+    }
+  }, [get(blogState, "success")]);
+
   useEffect(() => {
     setloading(get(blogState, "loading"));
   }, [get(blogState, "loading")]);
 
   useEffect(() => {
     if (!isEmpty(get(blogState, "tags"))) {
-      setTimeout(() => {
-        var defaultTags = [];
-        const tagObj = blogState.tags.map((tag) => {
-          if (~blog.blog_tag.indexOf(tag.id)) {
-            defaultTags.push({
+      if (Id) {
+        setTimeout(() => {
+          var defaultTags = [];
+          const tagObj = blogState.tags.map((tag) => {
+            if (~blog.blog_tag.indexOf(tag.id)) {
+              defaultTags.push({
+                value: tag.id,
+                label: tag.name,
+              });
+            }
+
+            return {
               value: tag.id,
               label: tag.name,
-            });
-          }
-
+            };
+          });
+          setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
+        }, 1000)
+      }
+      else {
+        const tagObj = blogState.tags.map((tag) => {
           return {
             value: tag.id,
             label: tag.name,
           };
         });
-        setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
-      }, 1000);
+
+        setTags({ ...tagObj, tags: tagObj });
+      }
     }
   }, [get(blogState, "tags")]);
 
   const tagChange = (e) => {
-    setBlog({
-      ...blog,
-      blog_tag: e && e.length > 0 ? e.map((tag) => tag.value) : [],
-    });
-    setTags({ ...tags, defaultTags: e });
+    if (Id) {
+      setBlog({
+        ...blog,
+        blog_tag: e && e.length > 0 ? e.map((tag) => tag.value) : [],
+      });
+      setTags({ ...tags, defaultTags: e })
+    } else {
+      if (!isEmpty(e)) {
+        setclearTags(e);
+        setBlog({ ...blog, blog_tag: e.map((tag) => tag.value) });
+      }
+    }
   };
 
-  const updateBlog = (e) => {
+  const addUpdateBlog = (e) => {
     e.preventDefault();
-    var errors = validate(["title"], blog);
+    var errors = validate(["content", "title"], blog);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -128,11 +173,14 @@ const EditBlogComponenet = ({ params }) => {
           error: true,
         },
       });
+    } else {
+      if (Id) {
+        dispatch(blogUpdateAction(blog, navigate));
+      }
+      else {
+        dispatch(blogAddAction(blog, navigate));
+      }
     }
-    else {
-      dispatch(blogUpdateAction(blog, navigate));
-    }
-
   };
 
   const handleChange = (e) => {
@@ -146,19 +194,32 @@ const EditBlogComponenet = ({ params }) => {
     });
   };
 
+  const onBlur = (e) => {
+    if (!blog.url || blog.url !== e.target.value) {
+      isUrlExist(blog.title)
+    }
+  }
+
   const fileChange = (e) => {
-    setBlog({ ...blog, updatedImage: e.target.files[0] });
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
+    if (Id) {
+      setBlog({ ...blog, updatedImage: e.target.files[0] });
+    }
+    else {
+      setBlog({ ...blog, [e.target.name]: e.target.files[0] });
+    }
   };
 
   const isUrlExist = async (url) => {
+
     let updatedUrl = await getUpdatedUrl("Blog", url);
     setBlog({
       ...blog,
       url: updatedUrl,
     });
   };
+
   return (
     <Fragment>
       <Alerts />
@@ -166,9 +227,9 @@ const EditBlogComponenet = ({ params }) => {
       {loading ? <Loading /> : null}
       <form>
         <TopBar
-          title="Edit Blog"
-          onSubmit={updateBlog}
-          submitTitle="Update"
+          title={Id ? "Edit Blog" : "Add Blog"}
+          onSubmit={addUpdateBlog}
+          submitTitle={Id ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-blogs`}
         />
 
@@ -186,16 +247,15 @@ const EditBlogComponenet = ({ params }) => {
                   name="title"
                   onChange={handleChange}
                   variant="outlined"
-                  onBlur={(e) => (
-                    !blog.url || blog.url !== e.target.value ? isUrlExist(blog.title) : null
-                  )}
                   value={blog.title}
+                  onBlur={onBlur}
                   fullWidth
                 />
               </Box>
               <Box component="div" mb={2}>
                 <URLComponent
                   url={blog.url}
+                  onBlur={onBlur}
                   onInputChange={(updatedUrl) => {
                     setBlog({
                       ...blog,
@@ -286,6 +346,9 @@ const EditBlogComponenet = ({ params }) => {
             </CardBlocks>
 
             <CardBlocks title="Tags">
+              <Typography variant="subtitle1" className={classes.marginBottom1}>
+                Select Tags
+              </Typography>
               <Select
                 isMulti
                 value={tags.defaultTags}

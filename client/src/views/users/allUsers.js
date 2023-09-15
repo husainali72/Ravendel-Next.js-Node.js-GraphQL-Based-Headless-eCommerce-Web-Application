@@ -51,7 +51,7 @@ const AllUsersComponent = () => {
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          navigate(`${client_app_route_url}edit-user/${id}`)
+          navigate(`${client_app_route_url}edit-user/${id}`, {state : {editMode: true}})
         } else if (type === "delete") {
           dispatch(userDeleteAction(id))
         }

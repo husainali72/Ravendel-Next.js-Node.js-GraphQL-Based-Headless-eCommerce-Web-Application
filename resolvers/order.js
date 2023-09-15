@@ -35,12 +35,13 @@ module.exports = {
       return await GET_SINGLE_FUNC(args.id, Order, "Order");
     },
     orderbyUser: async (root, args) => {
-      //console.log("payload", args)
-      if (!args.user_id) {
+      console.log("payload", args)
+      if (!args.userId) {
         return MESSAGE_RESPONSE("ID_ERROR", "Order", false);
       }
       try {
-        const order = await Order.find({ customer_id: args.user_id }).sort({date: -1});
+        const order = await Order.find({ userId: args.userId }).sort({ date: -1 });
+        console.log("ooorder", order[0].products)
         if (!order) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
         }
@@ -59,15 +60,13 @@ module.exports = {
   },
   Mutation: {
     addOrder: async (root, args, { id }) => {
-      // if (!id) {
-      //   return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
-      // }
       try {
-        var errors = _validate(["customer_id"], args);
+        var errors = _validate(["userId"], args);
         if (!isEmpty(errors)) {
           return {
             message: errors,
             success: false,
+
           };
         }
         errors = _validatenested(
@@ -80,7 +79,7 @@ module.exports = {
             "zip",
             "email",
             "phone",
-            "payment_method",
+            "paymentMethod",
           ], args);
         if (!isEmpty(errors)) {
           return {
@@ -90,80 +89,76 @@ module.exports = {
         }
 
         const setting = await Setting.findOne({});
-        //console.log('publishable_key',setting.paymnet.stripe.publishable_key);
-        //console.log('secret_key',setting.paymnet.stripe.secret_key);
         var Secret_Key = setting.paymnet.stripe.secret_key;
         const stripe = require('stripe')(Secret_Key);
 
-        var c_grand_total = parseFloat(args.subtotal) +  parseFloat(args.shipping_amount) + parseFloat(args.tax_amount) - parseFloat(args.discount_amount);
-        // console.log('c_grand_total',c_grand_total);
+        // var c_grandTotal = parseFloat(args.subtotal) + parseFloat(args.shippingAmount) + parseFloat(args.taxAmount) - parseFloat(args.discountAmount);
 
-        if (args.billing.payment_method === 'Cash On Delivery') {
+        var c_grandTotal = parseFloat(args.grandTotal) - parseFloat(args.discountAmount);
+        if (args.billing.paymentMethod === 'Cash On Delivery') {
           var status = 'pending';
-          var user_id = args.customer_id;
-          const cart = await Cart.findOne({ user_id: args.customer_id });
+          var userId = args.userId;
+          const cart = await Cart.findOne({ userId: args.userId });
           emptyCart(cart)
         } else {
-          let currencycode ;
-          if( setting.store.currency_options.currency == 'eur'){
+          let currencycode;
+          if (setting.store.currency_options.currency == 'eur') {
             currencycode = 'EUR'
-          }else if( setting.store.currency_options.currency == 'gbp'){
+          } else if (setting.store.currency_options.currency == 'gbp') {
             currencycode = 'GBP';
-          }else if( setting.store.currency_options.currency == 'cad'){
+          } else if (setting.store.currency_options.currency == 'cad') {
             currencycode = 'CAD';
-          }else{
+          } else {
             currencycode = 'USD';
           }
-            const payment = await stripe.paymentIntents.create({
-            amount : c_grand_total * 100 ,
+          const payment = await stripe.paymentIntents.create({
+            amount: c_grandTotal * 100,
             currency: currencycode,
             description: args.billing.email,
-            payment_method: args.billing.transaction_id,
+            paymentMethod: args.billing.transaction_id,
             confirm: true
           })
-            if( payment.status == 'succeeded'){
+          if (payment.status == 'succeeded') {
             status = 'success';
-          }else{
+          } else {
             status = 'pending';
           }
-          const cart = await Cart.findOne({ user_id: args.customer_id });
+          const cart = await Cart.findOne({ userId: args.userId });
           emptyCart(cart)
         }
 
         const orderNumber = await generateOrderNumber(Order, Setting)
 
         const newOrder = new Order({
-          order_number: orderNumber,
-          customer_id: args.customer_id,
+          orderNumber: orderNumber,
+          userId: args.userId,
           billing: args.billing,
           shipping: args.shipping,
-          payment_status: status,
-          shipping_status: "inprogress",
-          subtotal: args.subtotal,
-          shipping_amount: args.shipping_amount,
-          tax_amount: args.tax_amount,
-          coupon_code: args.coupon_code,
-          discount_amount: args.discount_amount,
-          grand_total: c_grand_total,
+          paymentStatus: status,
+          shippingStatus: "inprogress",
+          cartTotal: args.cartTotal, // previous sub_total
+          shippingAmount: args.shippingAmount,
+          taxAmount: args.taxAmount,
+          couponCode: args.couponCode,
+          discountAmount: args.discountAmount,
+          grandTotal: c_grandTotal,
         });
         newOrder.products = args.products;
-        const subTotalDetails = await subTotalDetailsEntry(args.coupon_code, Coupon, Shipping, Tax)
-        const subTotalSummary = await subTotalSummaryEntry(args.products, args.coupon_code, Coupon, Shipping, Tax)
-        newOrder.sub_total_details = subTotalDetails
-        newOrder.sub_total_summary = subTotalSummary.subTotalSummary
-        newOrder.subtotal = subTotalSummary.orderSubTotal
-        newOrder.grand_total = subTotalSummary.orderGrandTotal
-        // console.log(newOrder.sub_total_details)
-        //console.log(newOrder);
+        // const subTotalDetails = await subTotalDetailsEntry(args, Coupon, Shipping, Tax)
+        // const subTotalSummary = await subTotalSummaryEntry(args, Coupon, Shipping, Tax)
+        // newOrder.sub_total_details = subTotalDetails
+        // newOrder.sub_total_summary = subTotalSummary.subTotalSummary
+        // newOrder.subtotal = subTotalSummary.orderSubTotal
+        // newOrder.grandTotal = subTotalSummary.orderGrandTotal
         await newOrder.save();
         // send order create email
-        const customer = await Customer.findById(args.customer_id);
+        const customer = await Customer.findById(args.userId);
         mailData = {
-          subject: `Order Placed`, 
+          subject: `Order Placed`,
           mailTemplate: "template",
           order: newOrder
         }
-        sendEmail(mailData, APP_KEYS.smptUser, customer.email)
+        sendEmail(mailData, APP_KEYS.smptUser, customer?.email)
 
         return MESSAGE_RESPONSE("AddSuccess", "Order", true);
       } catch (error) {
@@ -187,7 +182,7 @@ module.exports = {
             "zip",
             "email",
             "phone",
-            "payment_method",
+            "paymentMethod",
           ],
           args
         );
@@ -222,14 +217,14 @@ module.exports = {
         }
         const order = await Order.findById(args.id);
         if (order) {
-          order.payment_status = args.payment_status;
-          order.shipping_status = args.shipping_status;
+          order.paymentStatus = args.paymentStatus;
+          order.shippingStatus = args.shippingStatus;
           order.billing = args.billing;
           order.shipping = args.shipping;
           await order.save();
           // send order create email
           mailData = {
-            subject: `Order Updated`, 
+            subject: `Order Updated`,
             mailTemplate: "template",
             order: order
           }

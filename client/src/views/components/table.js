@@ -42,7 +42,10 @@ const Tablecomponent = ({
     handleOnChangeSearch,
     dropdown,
     statusTabData,
-    searchbydate }) => {
+    searchbydate,
+    addDialogBox,
+    AddZipCodeDialogBox
+}) => {
 
     const [order, setOrder] = useState('desc');
     const classes = viewStyles();
@@ -64,7 +67,7 @@ const Tablecomponent = ({
                 <CardHeader
                     action={
                         <>
-                            {addpage ? <Link to={`${client_app_route_url + addpage}`} className={classes.addbtnlink}>
+                            {addpage ? <Link to={`${client_app_route_url + addpage}`} state={{ editMode: false }} className={classes.addbtnlink}>
                                 <Button
                                     color="success"
                                     className={classes.addUserBtn}
@@ -74,6 +77,15 @@ const Tablecomponent = ({
                                     {addpage.replaceAll('-', ' ')}
                                 </Button>
                             </Link> : null}
+                            {addDialogBox ? <Button
+                                color="success"
+                                className={classes.addUserBtn}
+                                size="small"
+                                variant="contained"
+                                onClick={AddZipCodeDialogBox}
+                            >
+                                {addDialogBox.replaceAll('-', ' ')}
+                            </Button> : null}
                         </>
                     }
                     title={title}
@@ -115,7 +127,9 @@ const Tablecomponent = ({
                                                             return <TableCell>
                                                                 <Avatar
                                                                     alt={data.name}
-                                                                    src={data.image} />
+                                                                    src={data.image}
+                                                                    sx={{ '& .MuiAvatar-img': { objectFit: 'contain' } }}
+                                                                />
                                                             </TableCell>
                                                         case 'rating':
                                                             return <TableCell>
@@ -133,14 +147,13 @@ const Tablecomponent = ({
                                                             return <TableCell style={{ textTransform: "lowercase" }}>{data.email}</TableCell>
                                                         case 'role':
                                                             return <TableCell style={{ textTransform: "capitalize" }}>{data.role}</TableCell>
-                                                        case 'shipping_status':
+                                                        case 'shippingStatus':
                                                             return <TableCell>
-                                                                <Badge badgeContent={data.shipping_status} color={badgeColor(data.shipping_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
+                                                                <Badge badgeContent={data.shippingStatus} color={badgeColor(data.shippingStatus)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
                                                             </TableCell>
-
-                                                        case 'payment_status':
+                                                        case 'paymentStatus':
                                                             return <TableCell>
-                                                                <Badge badgeContent={data.payment_status} color={badgeColor(data.payment_status)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
+                                                                <Badge badgeContent={data.paymentStatus} color={badgeColor(data.paymentStatus)} className={classes.badge} sx={{ ml: '60px', "& .MuiBadge-badge": { width: "120px", fontSize: 10, padding: "10px", minWidth: 15, } }} />
                                                             </TableCell>
                                                         case "actions":
                                                             return <TableCell>
@@ -195,7 +208,10 @@ export default function TableComponent({
     dropdown,
     statusTabData,
     showDeleteButton,
-    searchbydate }) {
+    addDialogBox,
+    searchbydate,
+    AddZipCodeDialogBox
+}) {
     return (
         <ThemeProvider theme={theme}>
             <Tablecomponent
@@ -211,6 +227,8 @@ export default function TableComponent({
                 handleOnChangeSearch={handleOnChangeSearch}
                 searchdata={searchdata}
                 statusTabData={statusTabData}
+                addDialogBox={addDialogBox}
+                AddZipCodeDialogBox={AddZipCodeDialogBox}
             />
         </ThemeProvider>
     );

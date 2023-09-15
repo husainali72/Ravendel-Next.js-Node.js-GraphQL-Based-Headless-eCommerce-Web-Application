@@ -2,27 +2,25 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
   type Order {
     id: ID
-    order_number: String
-    customer_id: ID
-    payment_status: String
-    shipping_status: String
+    orderNumber: String
+    userId: ID
+    paymentStatus: String
+    shippingStatus: String
     shipping: customObject
     billing: customObject
     products: customArray
-    sub_total_details: customObject
-    sub_total_summary: customArray
     date: Date
     updated: Date
-    subtotal: String
-    shipping_amount: String
-    tax_amount: String
-    coupon_code: String
-    discount_amount: String
-    grand_total: String
+    cartTotal: String
+    shippingAmount: String
+    taxAmount: String
+    couponCode: String
+    discountAmount: String
+    grandTotal: String
   }
 
   input orderProduct {
-    product_id: ID
+    productId: ID
     qty: Int
   }
   type OrderIdRES {
@@ -40,31 +38,30 @@ module.exports = gql`
   extend type Query {
     orders: OrderRES
     order(id: ID!): OrderIdRES
-    orderbyUser(user_id: ID!): OrderByUser
+    orderbyUser(userId: ID!): OrderByUser
   }
 
   extend type Mutation {
     addOrder(
-      customer_id: ID
-      order_number: String
+      userId: ID
+      orderNumber: String
       billing: customObject
       shipping: customObject
-      products: customArray
-      sub_total_details: customObject
-      sub_total_summary: customArray
-      subtotal: String
-      shipping_amount: String
-      tax_amount: String
-      coupon_code: String
-      discount_amount: String
-      grand_total: String
+      products: customArray   
+      cartTotal : String
+      shippingAmount: String
+      taxAmount: String
+      couponCode: String
+      attributes:customArray
+      discountAmount: String
+      grandTotal: String
     ): statusSchema
     updateOrder(
       id: ID
       billing: customObject
       shipping: customObject
-      payment_status: String
-      shipping_status: String
+      paymentStatus: String
+      shippingStatus: String
     ): statusSchema
     deleteOrder(id: ID!): statusSchema
   }

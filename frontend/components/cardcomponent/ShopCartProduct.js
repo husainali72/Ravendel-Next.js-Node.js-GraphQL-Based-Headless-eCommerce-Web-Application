@@ -60,7 +60,7 @@ export const ShopCart = () => {
             token = session.data.user.accessToken.token
             let variables = {
                 id: usercart.card_id,
-                product_id: item._id,
+                productId: item._id,
             }
             mutation(DELETE_CART_PRODUCTS, variables, token).then(res => {
                 if (res.data.deleteCartProduct.success) {

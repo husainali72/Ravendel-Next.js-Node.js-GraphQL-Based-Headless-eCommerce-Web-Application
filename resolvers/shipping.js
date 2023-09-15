@@ -26,7 +26,7 @@ module.exports = {
   Mutation: {
     updateGlobalShipping: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "GlobalShipping", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Global Shipping", false);
       }
       try {
         // Check Validation
@@ -44,22 +44,22 @@ module.exports = {
           await Product.updateMany(
             {},
             {
-              $set: { "shipping.shipping_class": args.global.shipping_class },
+              $set: { "shipping.shippingClass": args.global.shippingClass },
             }
           );
         }
-        return MESSAGE_RESPONSE("UpdateSuccess", "GlobalShipping", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "Global Shipping", true);
       } catch (error) {
         console.log(error)
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "GlobalShipping", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Global Shipping", false);
       }
     },
     addShippingClass: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "ShippingClass", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Shipping Class", false);
       }
       try {
-        const errors = _validate(["name", "amount"], args.shipping_class);
+        const errors = _validate(["name", "amount"], args.shippingClass);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -67,28 +67,28 @@ module.exports = {
           };
         }
         const shipping = await Shipping.findOne({});
-        const result = shipping.shipping_class.map(shipping=>{
-          if(shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase() || 
-          shipping.amount === parseInt(args.shipping_class.amount)){
+        const result = shipping.shippingClass.map(shipping=>{
+          if(shipping.name.toLowerCase() === args.shippingClass.name.toLowerCase() || 
+          shipping.amount === parseInt(args.shippingClass.amount)){
             return false
           } else return true
         })
         if(result.includes(false)) return MESSAGE_RESPONSE("DUPLICATE", "Shipping", false)
-        shipping.shipping_class.push(args.shipping_class);
+        shipping.shippingClass.push(args.shippingClass);
         shipping.updated = Date.now();
         await shipping.save();
         await Shipping.findOne({});
-        return MESSAGE_RESPONSE("AddSuccess", "ShippingClass", true);
+        return MESSAGE_RESPONSE("AddSuccess", "Shipping Class", true);
       } catch (error) {
-        return MESSAGE_RESPONSE("CREATE_ERROR", "ShippingClass", false);
+        return MESSAGE_RESPONSE("CREATE_ERROR", "Shipping Class", false);
       }
     },
     updateShippingClass: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "ShippingClass", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Shipping Class", false);
       }
       try {
-        const errors = _validate(["name"], args.shipping_class);
+        const errors = _validate(["name"], args.shippingClass);
         if (!isEmpty(errors)) {
           return {
             message: errors,
@@ -97,41 +97,41 @@ module.exports = {
         }
 
         const shipping = await Shipping.findOne({});
-        const result = shipping.shipping_class.map(shipping=>{
-          if((shipping.name.toLowerCase() === args.shipping_class.name.toLowerCase() || 
-            shipping.amount === parseInt(args.shipping_class.amount)) && 
-            shipping._id.toString() !== args.shipping_class._id.toString()){
+        const result = shipping.shippingClass.map(shipping=>{
+          if((shipping.name.toLowerCase() === args.shippingClass.name.toLowerCase() || 
+            shipping.amount === parseInt(args.shippingClass.amount)) && 
+            shipping._id.toString() !== args.shippingClass._id.toString()){
             return false
           } else return true
         })
         console.log(result)
         if(result.includes(false)) return MESSAGE_RESPONSE("DUPLICATE", "Shipping", false)
-        for (let i in shipping.shipping_class) {
-          if (shipping.shipping_class[i]._id == args.shipping_class._id) {
-            shipping.shipping_class[i] = args.shipping_class;
+        for (let i in shipping.shippingClass) {
+          if (shipping.shippingClass[i]._id == args.shippingClass._id) {
+            shipping.shippingClass[i] = args.shippingClass;
             break;
           }
         }
 
-        //tax.tax_class.push(args.tax_class);
+        //tax.taxClass.push(args.taxClass);
         shipping.updated = Date.now();
         await shipping.save();
         // await Shipping.findOne({});
-        return MESSAGE_RESPONSE("UpdateSuccess", "ShippingClass", true);
+        return MESSAGE_RESPONSE("UpdateSuccess", "Shipping Class", true);
       } catch (error) {
         console.log('err', error);
-        return MESSAGE_RESPONSE("UPDATE_ERROR", "ShippingClass", false);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Shipping Class", false);
       }
     },
     deleteShippingClass: async (root, args, { id }) => {
       if (!id) {
-        return MESSAGE_RESPONSE("TOKEN_REQ", "ShippingClass", false);
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Shipping Class", false);
       }
       try {
         const shipping = await Shipping.findOne({});
         console.log(shipping)
 
-        var ShippingClass = shipping.shipping_class;
+        var ShippingClass = shipping.shippingClass;
         // for (let i in ShippingClass) {
         //   if (ShippingClass[i]._id == args._id) {
         //     console.log('Matched')
@@ -142,14 +142,14 @@ module.exports = {
         //   }
         // }
         let balanceShipping = ShippingClass.filter(ship => ship._id != args._id);
-        shipping.shipping_class = balanceShipping;
+        shipping.shippingClass = balanceShipping;
         shipping.updated = Date.now();
         await shipping.save();
         // await Shipping.findOne({});
-        return MESSAGE_RESPONSE("DELETE", "ShippingClass", true);
+        return MESSAGE_RESPONSE("DELETE", "Shipping Class", true);
       } catch (error) {
         console.log('delete', error)
-        return MESSAGE_RESPONSE("DELETE_ERROR", "ShippingClass", false);
+        return MESSAGE_RESPONSE("DELETE_ERROR", "Shipping Class", false);
       }
     },
   },

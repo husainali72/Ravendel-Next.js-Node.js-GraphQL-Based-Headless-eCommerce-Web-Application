@@ -20,11 +20,19 @@ export const GET_PRODUCTS_QUERY = gql`
       gallery_image
       meta
       shipping
-      tax_class
+      taxClass
       status
       featured_product
       product_type
       custom_field
+      attribute
+      attribute_master {
+        id
+        name
+        attribute_values
+        createdAt
+        updatedAt
+      }
       date
       updated
       short_description
@@ -150,12 +158,22 @@ fragment ProductTile on Product {
     name
     __typename
   }
+  attribute_master {
+    id
+    name
+    attribute_values
+    createdAt
+    updatedAt
+  }
   categoryId {
     id
     name
     __typename
   }
   attribute
+
+  shipping
+  taxClass
   __typename
 }
 `;

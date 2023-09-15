@@ -41,8 +41,8 @@ const SETTING_TILE_DATA = gql`
         number_of_decimals
       }
       store_address {
-        address_line1
-        address_line2
+        addressLine1
+        addressLine2
         city
         country
         state
@@ -163,6 +163,7 @@ const SETTING_TILE_DATA = gql`
         }
         
       }
+     
       mobile {
         slider {
           image
@@ -177,6 +178,10 @@ const SETTING_TILE_DATA = gql`
           category
         }
       }
+    }
+    zipcode{
+      id
+      zipcode
     }
     createdAt
     updatedAt
@@ -273,8 +278,8 @@ const UPDATE_STORE_CURRENCY = gql`
 
 const UPDATE_STORE_ADDRESS = gql`
   mutation(
-    $address_line1: String
-    $address_line2: String
+    $addressLine1: String
+    $addressLine2: String
     $city: String
     $country: String
     $state: String
@@ -282,8 +287,8 @@ const UPDATE_STORE_ADDRESS = gql`
     $hour: String
   ) {
     updateStoreAddress(
-      address_line1: $address_line1
-      address_line2: $address_line2
+      addressLine1: $addressLine1
+      addressLine2: $addressLine2
       city: $city
       country: $country
       state: $state
@@ -523,7 +528,61 @@ const UPDATE_APPEARANCE_MOBILE_NEW = gql`
   }
   ${SETTING_TILE_DATA}
 `;
+const GET_ZIPCODE = gql`
+  query($id: ID!) {
+    zipcode(id: $id) {
+      data {
+        id
+        zipcode
+      }
+      message {
+        message
+        success
+      }
+    }
+  }
+`;
 
+const ADD_ZIPCODE = gql`
+  mutation(
+    $zipcode: String!
+  ) {
+    addZipcode(
+      zipcode: $zipcode
+    ) {
+      message
+      success
+    }
+  }
+`;
+
+const UPDATE_ZIPCODE = gql`
+  mutation(
+    $id: ID!
+    $zipcode: String!
+  ) {
+    updateZipcode(
+      id: $id
+      zipcode: $zipcode
+    ) {
+      message
+      success
+    }
+  }
+`;
+
+const DELETE_ZIPCODE = gql`
+  mutation(
+    $id: ID!
+  ) {
+    deleteZipcode(
+      id: $id
+    ) {
+      message
+      success
+    }
+  }
+`;
 const UPDATE_APPEARANCE_THEME = gql`
   mutation($primary_color: String, $new_logo: Upload, $playstore: String, $appstore: String, $phone_number: String, $email: String, $logo: String, $social_media: [social_media_input]) {
     updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo, playstore: $playstore, appstore: $appstore, phone_number: $phone_number, email: $email, logo: $logo, social_media: $social_media) {
@@ -555,5 +614,9 @@ export {
   UPDATE_APPEARANCE_MOBILE,
   UPDATE_APPEARANCE_THEME,
   UPDATE_APPEARANCE_HOME_NEW,
-  UPDATE_APPEARANCE_MOBILE_NEW
+  UPDATE_APPEARANCE_MOBILE_NEW,
+  GET_ZIPCODE,
+  ADD_ZIPCODE,
+  UPDATE_ZIPCODE,
+  DELETE_ZIPCODE
 };

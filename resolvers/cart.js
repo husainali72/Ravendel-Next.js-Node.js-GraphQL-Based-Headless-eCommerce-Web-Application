@@ -2,6 +2,7 @@ const Cart = require("../models/Cart");
 const Customer = require("../models/Customer");
 const Product = require("../models/Product");
 const Tax = require("../models/Tax");
+let {default:mongoose}= require("mongoose");
 const Coupon = require("../models/Coupon");
 const Shipping = require("../models/Shipping");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
@@ -21,71 +22,122 @@ const {
   checkError,
   checkToken,
   MESSAGE_RESPONSE,
-  calculateCart,
-  _validate,getdate
+  againCalculateCart,
+  _validate, getdate
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
 module.exports = {
   Query: {
+
     carts: async (root, args) => {
       return await GET_ALL_FUNC(Cart, "Carts");
     },
+
     cart: async (root, args) => {
       return await GET_SINGLE_FUNC(args.id, Cart, "Cart");
     },
-    cartbyUser: async (root, args) => {
+
+
+cartbyUser: async (root, args) => {
       try {
-        // console.log("cart by user=======",args.user_id)
-        const cart = await Cart.findOne({ user_id: args.user_id });
-        // console.log("cart by user=========",cart)
+        const cart = await Cart.findOne({ userId: mongoose.Types.ObjectId(args.userId) });
         if (!cart) {
           throw putError("Cart not found");
         }
-        return cart; 
+
+ let availableItem = [];
+ let unavailableItem = [];
+ let cartItem = cart.products;
+
+  let productsArray = cart.products
+        for (let a=0;a<productsArray.length;a++) 
+        {
+          let product = productsArray[a];
+          let isProductAvilable = await Product.findOne({_id:product.productId,quantity:{$gte:product.qty}});
+          if(isProductAvilable){
+            availableItem.push(product)
+          }
+          else {
+            unavailableItem.push(product)
+          }
+        }
+
+
+        return {
+          id:cart._id,
+          cartItem,
+          availableItem,
+          unavailableItem,
+          status:cart.status,
+          total:cart.total,
+          date:cart.date,
+          updated:cart.updated
+        };
+
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
     },
 
-    calculateCoupon: async (root, args, { id }) => {
-      //  checkToken(id);
-      // console.log("args cart=======", args.cart)
-    
+
+  calculateCoupon: async (root, args, { id }) => {
       try {
-        const coupon = await Coupon.findOne({ code: {$regex: `${args.coupon_code}`, $options: "i"} });
-        // console.log('coupon',coupon);
+        const coupon = await Coupon.findOne({ code: { $regex: `${args.couponCode}`, $options: "i" } });
+        
+        let discountGrandTotal;
         let calculated = {
-          total_coupon: {},
+          totalCoupon: {},
           message: '',
-          success: false
+          success: false,
+          cartItem: args.cartItem,
+          cartTotal:args.cartTotal,
+          totalShipping : args.totalShipping,
+          totalTax : args.totalTax,
+  grandTotal : args.grandTotal,
         };
+
         let date = getdate('2');
-        if(!coupon){
-          calculated.total_coupon = 0.0;
-          calculated.message = 'Invalid coupon codeeee';
-        }else{
-          // console.log('expiredate',coupon.expire);
-          if(coupon.expire >= date){
+
+        if (!coupon) {
+          calculated.totalCoupon = "0.0";
+          calculated.message = 'Invalid coupon code';
+        } 
+        else {
+            
+          if (coupon.expire >= date) {
             let cartTotal = 0
-            args.cart.map(item => cartTotal += item.total)
-            if((coupon.minimum_spend === 0 || coupon.minimum_spend <= cartTotal) && (coupon.maximum_spend === 0 || coupon.maximum_spend > cartTotal)){
-              var discountAmount = 0
-              coupon.discount_type === "amount-discount" ? 
-              discountAmount = await calculateCart(coupon, args.cart, Product, true) :
-              discountAmount = await calculateCart(coupon, args.cart, Product, false)
-              calculated.total_coupon = Math.round(discountAmount).toFixed(2);
-              calculated.message = 'Coupon code applied successfully';
-              calculated.success = true;
+            // args.cart.map(item => cartTotal += item.productTotal)     
+             cartTotal = args.cartTotal;
+
+            if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) && (coupon.maximumSpend === 0 || coupon.maximumSpend > cartTotal)) {
+
+                  var calculatedCartWithDiscount = 0
+
+                  coupon.discountType === "amount-discount" ?
+                  calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, true) :
+                  calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, false)
+ 
+                if(calculatedCartWithDiscount==0){
+                  calculated.totalCoupon = "0.0";
+                  calculated.message = 'Coupon not applicable on cart';
+                }
+                  else {
+                    calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+                    calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
+                    calculated.message = 'Coupon code applied successfully';
+                    calculated.success = true;
+                }
+
             }
-            else{
-              calculated.total_coupon = 0.0;
+            else {
+              calculated.totalCoupon = "0.0";
               calculated.message = 'Coupon not applicable on cart';
             }
 
-          }else{
-            calculated.total_coupon = 0.0;
+          } else {
+            calculated.totalCoupon = "0.0";
             calculated.message = 'Coupon no longer applicable';
           }
         }
@@ -96,253 +148,498 @@ module.exports = {
       }
     },
 
+
+
     calculateCart: async (root, args, { id }) => {
-      //checkToken(id);
       try {
-        let cartItems = [];
-        let calculated = {
-          items: [],
-          total_tax: {},
-          total_shipping: {},
-          grand_total: {},
-        };
 
-        const shipping = await Shipping.find({});
-        const tax = await Tax.find({});
-        const productAttribute = await ProductAttribute.find({});
 
-        let isGlobalTaxObj = {};
-        if (!tax[0].is_inclusive && tax[0].global.is_global) {
-          for (const taxval of tax[0].tax_class) {
-            if (tax[0].global.tax_class.toString() === taxval._id.toString()) {
-              isGlobalTaxObj = {
-                name: taxval.name,
-                percentage: taxval.percentage,
-              };
-              //console.log("global tax=====",isGlobalTaxObj)
-              break;
-            }
-          }
-        }
+        const shipping = await Shipping.findOne({});
+        const tax = await Tax.findOne({});
+     // const productAttribute = await ProductAttribute.find({});
 
-        let isGlobalShippingObj = {};
-        if (shipping[0].global.is_global) {
-          for (const shippingVal of shipping[0].shipping_class) {
-            if (
-              shipping[0].global.shipping_class.toString() ===
-              shippingVal._id.toString()
-            ) {
-              isGlobalShippingObj = {
-                name: shippingVal.name,
-                amount: shippingVal.amount,
-              };
+        
+        let items = [];
+              let totalTax=0
+              let totalShipping=0             
+              let grandTotal=0
+              let cartTotal =0
+              
 
-              break;
-            }
-          }
-        }
+              let global_tax = false;
+              let taxPercentage;
+                if (tax.global.is_global){
 
-        let productById = {};
-        let productIds = [];
-        args.cart.forEach((item, i) => {
-          item.combination = []
-          productIds.push(item.product_id);
-          if (typeof productById[item.product_id.toString()] !== "object") {
-            productById[item.product_id.toString()] = {};
-            productById[item.product_id.toString()].carts = [];
-          }
-          productById[item.product_id.toString()].carts.push(item);
-        });
+                    let taxClassId = tax.global.taxClass;
 
-        const products = await Product.find({ _id: { $in: productIds } });
+                          tax.taxClass.forEach((taxObject)=>{
 
-        for (const prod of products) {
-          productById[prod._id.toString()].price = prod.pricing.sellprice ? prod.pricing.sellprice : prod.pricing.price
-          productById[prod._id.toString()].product = {
-            product_id: prod._id,
-            variant: prod.variant,
-            shipping: prod.shipping,
-            tax_class: prod.tax_class,
-          };
-        }
+                                      if(taxObject._id.toString() == taxClassId.toString()){
+                                        global_tax = true;
+                                        taxPercentage = taxObject.percentage
+                                      }
+                          })
+                }
 
-        // const productAttributeVariation = await ProductAttributeVariation.find({
-        //   product_id: { $in: productIds },
-        // });
+                let global_shipping = false;
+                let globalShippingAmount;
+                let globalShippingPerOrder = false;
 
-        // for (const prod of productAttributeVariation) {
-        //   if (prod.combination.length) {
-        //     let attributeVariation = {
-        //       combination_values: [],
-        //       price: prod.price,
-        //     };
+                if(shipping.global.is_global){
 
-        //     for (const attr of productAttribute) {
-        //       for (const attrVal of attr.values) {
-        //         if (~prod.combination.indexOf(attrVal._id.toString())) {
-        //           productById[prod.product_id.toString()].carts[0].combination.push(attrVal._id.toString())
-        //           attributeVariation.combination_values.push({
-        //             id: attrVal._id,
-        //             name: attrVal.name,
-        //           });
-        //         }
-        //       }
-        //     }
+                  let shippingClassId = shipping.global.shippingClass;
 
-        //     if (!productById[prod.product_id.toString()].attributeVariation) {
-        //       productById[prod.product_id.toString()].attributeVariation = [];
-        //     }
+                  shipping.shippingClass.forEach((shippingObject)=>{
 
-        //     productById[prod.product_id.toString()].attributeVariation.push(
-        //       attributeVariation
-        //     );
-        //   } else {
-        //     productById[prod.product_id.toString()].price = prod.price;
-        //   }
-        // }
+                    if(shippingObject._id.toString() == shippingClassId.toString()){
 
-        for (let i in productById) {
-          for (const cart of productById[i].carts) {
-            let item = {
-              combination: [],
-              qty: cart.qty,
-            };
-
-            if (cart.combination && cart.combination.length) {
-              for (const varProduct of productById[i].attributeVariation) {
-                let isMatch = true;
-                if (
-                  cart.combination.length ===
-                  varProduct.combination_values.length
-                ) {
-                  for (let i of varProduct.combination_values) {
-                    if (!~cart.combination.indexOf(i.id.toString())) {
-                      isMatch = false;
-                      break;
+                      global_shipping = true;
+                      globalShippingAmount = shippingObject.amount;
+                      
                     }
+                  })
+
+                  if(shipping.global.is_per_order){
+                    globalShippingPerOrder = true
                   }
-                } else {
-                  continue;
+
                 }
 
-                if (isMatch) {
-                  item.price = varProduct.price * item.qty;
-                  item.product_id = productById[i].product.product_id;
-                  item.combination = varProduct.combination_values;
-                }
-              }
-            } else {
-              item.price = productById[i].price * item.qty;
-              item.product_id = productById[i].product.product_id;
-              //console.log(item);
-            }
 
-            if (!tax[0].is_inclusive && !tax[0].global.is_global) {
-              for (const taxval of tax[0].tax_class) {
-                // console.log(productById[i]);
-                if (
-                  productById[i].product.tax_class.toString() ===
-                  taxval._id.toString()
-                ) {
-                  let taxAmount =
-                    (parseFloat(item.price) / 100) *
-                    parseFloat(taxval.percentage);
-                  item.tax = {
-                    name: taxval.name,
-                    amount: taxAmount,
-                  };
-                  break;
-                }
-              }
-            }
+// if global tax applicable
 
-            if (
-              shipping[0].global.is_global &&
-              !shipping[0].global.is_per_order
-            ) {
-              item.shipping = {
-                name: isGlobalShippingObj.name,
-                amount: isGlobalShippingObj.amount,
-              };
-            } else if (!shipping[0].global.is_global) {
-              for (const shippingVal of shipping[0].shipping_class) {
-                if (
-                  productById[i].product.shipping.shipping_class.toString() ===
-                  shippingVal._id.toString()
-                ) {
-                  item.shipping = {
-                    name: shippingVal.name,
-                    amount: shippingVal.amount,
-                  };
-                }
-              }
-            }
+              if(global_tax){
 
-            calculated.items.push(item);
-          }
-        }
+                for(let a=0;a<args.cartItem.length;a++){
 
-        calculated.subtotal = 0;
-        calculated.total_tax = {
-          name: "",
-          amount: 0,
-        };
+                  cartProduct = args.cartItem[a];                 
+                  let productShippingAmount ;
+                  let productTax;
 
-        calculated.total_shipping = {
-          name: "",
-          amount: 0,
-        };
+                  const product = await Product.findById({ _id:cartProduct.productId}).lean();
+                  let odredQuantity = cartProduct.qty
 
-        for (const item of calculated.items) {
-          calculated.subtotal += parseFloat(item.price);
-          if (
-            item.tax &&
-            item.tax.hasOwnProperty("amount") &&
-            item.tax.amount >= 0
-          ) {
-            calculated.total_tax.amount += item.tax.amount;
-          }
+                  let productPrice = product.pricing.sellprice>0 ? product.pricing.sellprice : product.pricing.price;
+                       cartTotal += productPrice * odredQuantity;
 
-          if (
-            item.shipping &&
-            item.shipping.hasOwnProperty("amount") &&
-            item.shipping.amount >= 0
-          ) {
-            calculated.total_shipping.amount += item.shipping.amount;
-          }
-        }
+                  // product tax calculation
+                      if(taxPercentage != 0) {grandTotal= grandTotal+(productPrice * odredQuantity)+((productPrice*taxPercentage/100)*odredQuantity);
+                                      
+                            totalTax = totalTax + (productPrice*taxPercentage/100)*odredQuantity;                       
+                            productTax = (productPrice*taxPercentage/100)*odredQuantity
+                      }
+                      else {
 
-        if (shipping[0].global.is_global && shipping[0].global.is_per_order) {
-          calculated.total_shipping.amount = isGlobalShippingObj.amount;
-          calculated.total_shipping.name = isGlobalShippingObj.name;
-        }
+                                grandTotal= grandTotal+(productPrice * odredQuantity)                                   
+                                totalTax=0;
+                                productTax =0;                  
+                          }        
 
-        if (isGlobalTaxObj && isGlobalTaxObj.hasOwnProperty("percentage")) {
-          calculated.total_tax.amount =
-            (calculated.subtotal / 100) * isGlobalTaxObj.percentage;
-          calculated.total_tax.name = isGlobalTaxObj.name;
-        }
 
-        calculated.total_coupon = args.total_coupon;
-        calculated.grand_total =
-          calculated.subtotal +
-          calculated.total_shipping.amount +
-          calculated.total_tax.amount - calculated.total_coupon;
+                       // product shipping calculation
 
-        //console.log(calculated);
+                      if(global_shipping){
+
+                                          if(!globalShippingPerOrder){                              
+                                                totalShipping +=globalShippingAmount;
+                                                grandTotal+=globalShippingAmount;
+                                                productShippingAmount = +globalShippingAmount
+                                              }                                                                          
+                                        }
+
+                      else if(!global_shipping){
+                     
+                              productShippingAmount=0;
+
+                                let productShippingClass = product.shipping.shippingClass;
+
+                                shipping.shippingClass.forEach((shippingObject)=>{
+
+                                  if(shippingObject._id.toString() == productShippingClass.toString()){                        
+                                    productShippingAmount = shippingObject.amount*odredQuantity;
+                                  }
+
+                                })
+
+                                totalShipping+=productShippingAmount;
+                                grandTotal+=productShippingAmount;
+
+                          }
+
+                     let pushValue = {
+                      productId : product._id,
+                      productTitle: product.name,
+                      productImage: product.feature_image,
+                      productPrice :productPrice.toFixed(2),
+                      qty : +odredQuantity,
+                      productTotal : productPrice*(+odredQuantity),
+                      productTax:productTax.toFixed(2)
+                    }
+                      if(productShippingAmount){
+                        pushValue.productShippingAmount = productShippingAmount.toFixed(2);
+                      }
+
+                      items.push(pushValue)
+                    }
+
+                    if(global_shipping && globalShippingPerOrder){
+                      grandTotal+=globalShippingAmount;
+                      totalShipping = globalShippingAmount;
+                    }                    
+
+                  }
+
+              //if global tax is not applicable;
+
+              else{    
+
+                        for(let a=0;a<args.cartItem.length;a++){
+                          
+                          cartProduct = args.cartItem[a]                     
+                          let productShippingAmount;
+
+                          const product = await Product.findById({ _id:cartProduct.productId}).lean();
+                          let odredQuantity = cartProduct.qty
+        
+                          let productPrice = product.pricing.sellprice>0 ? product.pricing.sellprice : product.pricing.price;
+                           cartTotal += productPrice * odredQuantity;
+
+                          let productTaxClass = product.taxClass;
+                          let productTaxPercentage;
+                          let productTaxAmount;
+                          
+                          tax.taxClass.forEach((taxObject)=>{
+
+                            if(taxObject._id.toString() == productTaxClass.toString()){
+                              productTaxPercentage = taxObject.percentage;
+                            }
+                              })
+
+                          //calculating product tax amount,adding product price and product tax in grand total;    
+
+                          if(productTaxPercentage !=0){
+
+                            grandTotal= grandTotal+(productPrice * odredQuantity)+((productPrice*productTaxPercentage/100)*odredQuantity);
+                            productTaxAmount = (productPrice*productTaxPercentage/100)*odredQuantity;
+                              totalTax += +productTaxAmount;
+
+                          }
+                          else {
+
+                            productTaxAmount =0;
+                            totalTax += +productTaxAmount;
+                            grandTotal+=+productTaxAmount;
+                          }
+                          
+
+
+        //calculating product shipping and adding product shipping in grand total amount
+
+                      if(global_shipping){
+        
+                                        if(!globalShippingPerOrder){
+                                          
+                                          totalShipping +=globalShippingAmount;
+                                          grandTotal+=globalShippingAmount;
+                                          productShippingAmount = +globalShippingAmount
+                                        }
+
+                                  }
+                          else if(!global_shipping){   
+                            
+                                      productShippingAmount=0;
+              
+                                  let productShippingClass = product.shipping.shippingClass;
+              
+                                  shipping.shippingClass.forEach((shippingObject)=>{
+              
+                                    if(shippingObject._id.toString() == productShippingClass.toString()){                        
+                                      productShippingAmount = shippingObject.amount*odredQuantity;
+                                    }
+              
+                                  })    
+
+                                totalShipping+=productShippingAmount;
+                                grandTotal+=productShippingAmount;
+
+                              }
+        
+
+                              let pushValue = {
+                                productId : product._id,
+                                productTitle: product.name,
+                                productImage: product.feature_image,
+                                productPrice :productPrice.toFixed(2),
+                                qty : +odredQuantity,
+                                productTotal : productPrice*(+odredQuantity),                             
+                                productTax:+productTaxAmount.toFixed(2)                           
+                              }
+                                if(productShippingAmount){
+                                  pushValue.productShippingAmount= productShippingAmount.toFixed(2)
+                                }
+
+                              items.push(pushValue)    
+    
+                        }
+
+                        if(global_shipping && globalShippingPerOrder){
+                          grandTotal+=globalShippingAmount;
+                          totalShipping = globalShippingAmount;
+                        }
+
+                      }
+                  
+                        let calculated = {
+                          cartItem:items,
+                          totalTax:totalTax.toFixed(2),
+                          totalShipping:totalShipping.toFixed(2),
+                          grandTotal:grandTotal.toFixed(2),
+                          cartTotal : cartTotal.toFixed(2)
+                   }
+
+            console.log("calculated cart----",calculated)
+      
         return calculated;
-      } catch (error) {
-        console.log(error)
-        error = checkError(error);
-        throw new Error(error.custom_message);
+
+      }
+      catch (error) {
+
+            console.log(error)
+            error = checkError(error);
+            throw new Error(error.custom_message);
+
       }
     },
+
+    // old code of calculate Cart
+//     calculateCart : async (root,args,{id})=>{
+//         // let isGlobalTaxObj = {};
+//         // if (!tax[0].is_inclusive && tax[0].global.is_global) {
+//         //   for (const taxval of tax[0].taxClass) {
+//         //     if (tax[0].global.taxClass.toString() === taxval._id.toString()) {
+//         //       isGlobalTaxObj = {
+//         //         name: taxval.name,
+//         //         percentage: taxval.percentage,
+//         //       };
+//         //       break;
+//         //     }
+//         //   }
+//         // }
+
+//         // let isGlobalShippingObj = {};
+//         // if (shipping[0].global.is_global) {
+//         //   for (const shippingVal of shipping[0].shippingClass) {
+//         //     if (
+//         //       shipping[0].global.shippingClass.toString() ===
+//         //       shippingVal._id.toString()
+//         //     ) {
+//         //       isGlobalShippingObj = {
+//         //         name: shippingVal.name,
+//         //         amount: shippingVal.amount,
+//         //       };
+
+//         //       break;
+//         //     }
+//         //   }
+//         // }
+// //productById = {"id":{carts:[]}}
+
+//         // let productById = {};
+//         // let productIds = [];
+//         // args.cart.forEach((item, i) => {
+//         //   item.combination = []
+//         //   productIds.push(item.productId);
+//         //   if (typeof productById[item.productId.toString()] !== "object") {
+//         //     productById[item.productId.toString()] = {};
+//         //     productById[item.productId.toString()].carts = [];
+//         //   }
+//         //   productById[item.productId.toString()].carts.push(item);
+//         // });
+
+//         // const products = await Product.find({ _id: { $in: productIds } });
+
+//         // for (const prod of products) {
+//         //   productById[prod._id.toString()].price = prod.pricing.sellprice ? prod.pricing.sellprice : prod.pricing.price
+//         //   productById[prod._id.toString()].product = {
+//         //     productId: prod._id,
+//         //     variant: prod.variant,
+//         //     shipping: prod.shipping,
+//         //     taxClass: prod.taxClass,
+//         //   };
+//         // }
+
+//         // const productAttributeVariation = await ProductAttributeVariation.find({
+//         //   productId: { $in: productIds },
+//         // });
+
+//         // for (const prod of productAttributeVariation) {
+//         //   if (prod.combination.length) {
+//         //     let attributeVariation = {
+//         //       combination_values: [],
+//         //       price: prod.price,
+//         //     };
+
+//         //     for (const attr of productAttribute) {
+//         //       for (const attrVal of attr.values) {
+//         //         if (~prod.combination.indexOf(attrVal._id.toString())) {
+//         //           productById[prod.productId.toString()].carts[0].combination.push(attrVal._id.toString())
+//         //           attributeVariation.combination_values.push({
+//         //             id: attrVal._id,
+//         //             name: attrVal.name,
+//         //           });
+//         //         }
+//         //       }
+//         //     }
+
+//         //     if (!productById[prod.productId.toString()].attributeVariation) {
+//         //       productById[prod.productId.toString()].attributeVariation = [];
+//         //     }
+
+//         //     productById[prod.productId.toString()].attributeVariation.push(
+//         //       attributeVariation
+//         //     );
+//         //   } else {
+//         //     productById[prod.productId.toString()].price = prod.price;
+//         //   }
+//         // }
+
+//         // for (let i in productById) {
+//         //   for (const cart of productById[i].carts) {
+//         //     let item = {
+//         //       combination: [],
+//         //       qty: cart.qty,
+//         //     };
+
+//         //     if (cart.combination && cart.combination.length) {
+//         //       for (const varProduct of productById[i].attributeVariation) {
+//         //         let isMatch = true;
+//         //         if (
+//         //           cart.combination.length ===
+//         //           varProduct.combination_values.length
+//         //         ) {
+//         //           for (let i of varProduct.combination_values) {
+//         //             if (!~cart.combination.indexOf(i.id.toString())) {
+//         //               isMatch = false;
+//         //               break;
+//         //             }
+//         //           }
+//         //         } else {
+//         //           continue;
+//         //         }
+
+//         //         if (isMatch) {
+//         //           item.price = varProduct.price * item.qty;
+//         //           item.productId = productById[i].product.productId;
+//         //           item.combination = varProduct.combination_values;
+//         //         }
+//         //       }
+//         //     } 
+//         //     else {
+//         //       item.price = productById[i].price * item.qty;
+//         //       item.productId = productById[i].product.productId;
+//         //       //console.log(item);
+//         //     }
+
+//         //     if (!tax[0].is_inclusive && !tax[0].global.is_global) {
+//         //       for (const taxval of tax[0].taxClass) {
+//         //         // console.log(productById[i]);
+//         //         if (
+//         //           productById[i].product.taxClass.toString() ===
+//         //           taxval._id.toString()
+//         //         ) {
+//         //           let taxAmount =
+//         //             (parseFloat(item.price) / 100) *
+//         //             parseFloat(taxval.percentage);
+//         //           item.tax = {
+//         //             name: taxval.name,
+//         //             amount: taxAmount,
+//         //           };
+//         //           break;
+//         //         }
+//         //       }
+//         //     }
+
+//         //     if (
+//         //       shipping[0].global.is_global &&
+//         //       !shipping[0].global.is_per_order
+//         //     ) {
+//         //       item.shipping = {
+//         //         name: isGlobalShippingObj.name,
+//         //         amount: isGlobalShippingObj.amount,
+//         //       };
+//         //     } else if (!shipping[0].global.is_global) {
+//         //       for (const shippingVal of shipping[0].shippingClass) {
+//         //         if (
+//         //           productById[i].product.shipping.shippingClass.toString() ===
+//         //           shippingVal._id.toString()
+//         //         ) {
+//         //           item.shipping = {
+//         //             name: shippingVal.name,
+//         //             amount: shippingVal.amount,
+//         //           };
+//         //         }
+//         //       }
+//         //     }
+
+//         //     calculated.items.push(item);
+//         //   }
+//         // }
+
+//         // calculated.subtotal = 0;
+//         // calculated.totalTax = {
+//         //   name: "",
+//         //   amount: 0,
+//         // };
+
+//         // calculated.totalShipping = {
+//         //   name: "",
+//         //   amount: 0,
+//         // };
+
+//         // for (const item of calculated.items) {
+//         //   calculated.subtotal += parseFloat(item.price);
+//         //   if (
+//         //     item.tax &&
+//         //     item.tax.hasOwnProperty("amount") &&
+//         //     item.tax.amount >= 0
+//         //   ) {
+//         //     calculated.totalTax.amount += item.tax.amount;
+//         //   }
+
+//         //   if (
+//         //     item.shipping &&
+//         //     item.shipping.hasOwnProperty("amount") &&
+//         //     item.shipping.amount >= 0
+//         //   ) {
+//         //     calculated.totalShipping.amount += item.shipping.amount;
+//         //   }
+//         // }
+
+//         // if (shipping[0].global.is_global && shipping[0].global.is_per_order) {
+//         //   calculated.totalShipping.amount = isGlobalShippingObj.amount;
+//         //   calculated.totalShipping.name = isGlobalShippingObj.name;
+//         // }
+
+//         // if (isGlobalTaxObj && isGlobalTaxObj.hasOwnProperty("percentage")) {
+//         //   calculated.totalTax.amount =
+//         //     (calculated.subtotal / 100) * isGlobalTaxObj.percentage;
+//         //   calculated.totalTax.name = isGlobalTaxObj.name;
+//         // }
+
+//         // calculated.totalCoupon = args.totalCoupon;
+//         // calculated.grandTotal =
+//         //   calculated.subtotal +
+//         //   calculated.totalShipping.amount +
+//         //   calculated.totalTax.amount - calculated.totalCoupon;
+
+//         //console.log(calculated);
+//     }
   },
   Mutation: {
     // addToCart: async (root, args, { id }) => {
     //   //checkToken(id);
     //   try {
-    //     const customer = await Customer.findById(args.customer_id);
+    //     const customer = await Customer.findById(args.customerId);
     //     if (customer) {
     //       customer.cart.items = args.cart;
     //       await customer.save();
@@ -366,7 +663,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
       try {
-        const cart = await Cart.findOne({ user_id: args.user_id });
+        const cart = await Cart.findOne({ userId: args.userId });
         if (cart) {
           cart.total = args.total;
           cart.products.unshift(args.product);
@@ -375,7 +672,7 @@ module.exports = {
         }
 
         const newCart = new Cart({
-          user_id: args.user_id,
+          userId: args.userId,
           total: args.total,
         });
 
@@ -389,7 +686,7 @@ module.exports = {
       }
     },*/
 
-
+// runing With login
     addToCart: async (root, args, { id }) => {
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
@@ -397,61 +694,137 @@ module.exports = {
       try {
 
         //console.log('args',args);
-        const cart = await Cart.findOne({ user_id: args.user_id });
+        const cart = await Cart.findOne({ userId: args.userId });
 
-        if (cart) {
-          delete args.user_id;
-          delete args.total;
+          if (cart) {
 
-          const product = await Product.findById({ _id: args.product_id });
-          if (product.pricing.sellprice > 0) {
-            args.total = args.qty * product.pricing.sellprice;
-          } else {
-            args.total = args.qty * product.pricing.price;
-          }
-          cart.products.push(args);
-          cart.total = cart.total + args.total;
-          cart.updated = Date.now();
-          await cart.save();
-        } else {
-          // console.log('nocart',);
+                delete args.userId;
+                delete args.total;
+
+                let globalTax = true;
+                let isGlobalTax = await Tax.findOne({}).lean();
+
+                if(!isGlobalTax.global.is_global){
+                  globalTax=false;
+                }
 
 
-          const product = await Product.findById({ _id: args.product_id });
-          if (product.pricing.sellprice > 0) {
-            args.total = args.qty * product.pricing.sellprice;
-          } else {
-            args.total = args.qty * product.pricing.price;
-          }
+                let taxPercentage;
+                if(!globalTax){
+
+                  isGlobalTax.taxClass.forEach((taxObject)=>{
+
+                  if (taxObject._id.toString()==args.taxClass){
+                    taxPercentage = taxObject.percentage
+                  }
+
+                  })
+                }
 
 
-          // cart.products.product_id =  args.product_id;
-          // cart.products.qty =  args.qty;
-          // cart.products.total =  args.total;
-          // cart.total =   args.total;
-          // cart.updated = Date.now();
-          // await cart.save();
+              const product = await Product.findById({ _id: args.productId });
+
+                    if(+taxPercentage!=0 && taxPercentage){   
+
+                      let tax;
+                      if (+product.pricing.sellprice > 0) {
+
+                        tax = (+product.pricing.sellprice*(+taxPercentage))/100;
+
+                        args.productPrice = product.pricing.sellprice;
+                        args.total = args.qty * product.pricing.sellprice+(tax*args.qty);
+
+                      }
+                      else {
+
+                        tax = (+product.pricing.price*(+taxPercentage))/100;
+
+                        args.productPrice = product.pricing.price;
+                        args.total = args.qty * product.pricing.price+(tax*args.qty);
+
+                      };
+
+                      args.productTaxPercentage=+taxPercentage;
+                      args.productTax=+tax;
+                      cart.products.push(args);
+                      if(cart.total){
+                        cart.total = (cart.total+ args.total);
+                      }
+                      else {
+                        cart.total = args.total;
+                      }
+                      cart.updated = Date.now();
+                      await cart.save();
+
+                    }
 
 
-          let prductarry = [
-            {
-              product_id: args.product_id,
-              product_title: args.product_title,
-              product_price: args.product_price,
-              product_image: args.product_image,
-              qty: args.qty,
-              total: args.total,
-            }
-          ]
-          const newCart = new Cart({
-            user_id: args.user_id,
-            total: args.total,
-            products: prductarry
-          });
-          await newCart.save();
-          return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
+                else
+                    {
 
-        }
+                          if (product.pricing.sellprice > 0) {
+
+                            args.productPrice = product.pricing.sellprice;
+                            args.total = args.qty * product.pricing.sellprice;
+
+                          } else {
+
+                            args.productPrice = product.pricing.price;
+                            args.total = args.qty * product.pricing.price;
+                            
+                          }
+
+                          // args.productTaxPercentage=0;
+                          // args.productTax=0;
+                          cart.products.push(args);
+                          cart.total = cart.total||0 + args.total;
+                          cart.updated = Date.now();
+                          await cart.save();
+                          
+                  }
+              } 
+        // never run that code;
+        // else {
+        //   // console.log('nocart',);
+        //   const product = await Product.findById({ _id: args.productId });
+        //   if (product.pricing.sellprice > 0) {
+        //     args.productPrice = product.pricing.sellprice;
+        //     args.total = args.qty * product.pricing.sellprice;
+        //   } else {
+        //     args.productPrice = product.pricing.price;
+        //     args.total = args.qty * product.pricing.price;
+        //   }
+
+
+        //   // cart.products.productId =  args.productId;
+        //   // cart.products.qty =  args.qty;
+        //   // cart.products.total =  args.total;
+        //   // cart.total =   args.total;
+        //   // cart.updated = Date.now();
+        //   // await cart.save();
+
+
+        //   let prductarry = [
+        //     {
+        //       productId: args.productId,
+        //       productTitle: args.productTitle,
+        //       productPrice: args.productPrice,
+        //       productImage: args.productImage,
+        //       qty: args.qty,
+        //       total: args.total,
+        //       taxClass: args.taxClass,
+        //       shippingClass: args.shippingClass,
+        //     }
+        //   ]
+        //   const newCart = new Cart({
+        //     userId: args.userId,
+        //     total: args.total,
+        //     products: prductarry
+        //   });
+        //   await newCart.save();
+        //   return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
+
+        // }
         return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
 
       } catch (error) {
@@ -462,60 +835,137 @@ module.exports = {
 
 
 
+// runing WithOut login
     addCart: async (root, args, { id }) => {
+      // console.log("withOutLogin----args-2", args);
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
       try {
-        const cart = await Cart.findOne({ user_id: args.user_id });
-        let existingCartProducts = cart && cart.products ? cart.products : []
-        let carttotal = 0;
+        const cart = await Cart.findOne({ userId: args.userId });
+        let existingCartProducts = cart && cart.products ? cart.products : [];
+        // let carttotal = 0;
         // if local products exists then only run loop for adding products in customer cart
-        if(args.products)
-        for(let localProd of args.products){
-          let product = await Product.findById({ _id: localProd.product_id });
+        if (args.products)
+          for (let localProd of args.products) {
+            if (localProd.variantId) {
+              // let productAttributeValue =
+              //   await ProductAttributeVariation.findById(localProd.variantId);
+    
+              // let product = await Product.findById({
+              //   _id: localProd.productId,
+              // });
+              let productId = localProd.productId;           
+              let qty = localProd.qty;
+              
+              // let shippingClass = product.shipping.shippingClass
+              //   ? product.shipping.shippingClass
+              //   : "";
+              // let taxClass = product.taxClass ? product.taxClass : "";
+    
+              if (!existingCartProducts.length) {
+                existingCartProducts.push({
+                  productId,
+                  variantId: localProd.variantId.toString(),             
+                  qty,
+                  shippingClass,
+                  taxClass,
+                });
+              } else {
+                // check local product id with customer cart product id
+                let existingProduct = existingCartProducts.find((prod) =>
+                  prod.productId.toString() ===
+                    localProd.productId.toString() &&
+                  prod.variantId == localProd.variantId.toString()
+                    ? prod
+                    : false
+                );
+                // if matches then update customer cart product with local product
+                if (existingProduct) {
+                  existingProduct.qty += localProd.qty
+                }
+                // else add local product to customer cart
+                else {
+                  existingCartProducts.push({
+                    productId,                   
+                    variantId,
+                    qty,                
+                    // shippingClass,
+                    // taxClass,
+                  });
+                }
+              }
+            }
+          
+        // ==============================================================================================================
+        else {
+          let product = await Product.findById({ _id: localProd.productId });
           // declare variables to be used for adding product to cart
-          let product_price = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price
-          let total = product.pricing.sellprice > 0 ? localProd.qty * product.pricing.sellprice : localProd.qty * product.pricing.price
-          let product_image = product.feature_image
-          let product_id = localProd.product_id
-          let product_title = product.name
-          let qty = localProd.qty
+          
+          let productId = localProd.productId;
+        
+          let shippingClass = product.shipping.shippingClass;
+          let taxClass = product.taxClass;
+          let qty = localProd.qty;
           // if customer cart is empty then add product from local
-          if(!existingCartProducts.length){
-            existingCartProducts.push({product_id, product_title, product_image, product_price, qty, total})
+          if (!existingCartProducts.length) {
+            existingCartProducts.push({
+              productId,            
+              qty,
+              shippingClass,
+              taxClass,
+            });
           }
           // else update customer cart with local
-          else{
+          else {
             // check local product id with customer cart product id
-            let existingProduct = existingCartProducts.find(prod=>prod.product_id.toString() === localProd.product_id.toString() ? product : false)
+            let existingProduct = existingCartProducts.find((prod) =>
+              prod.productId.toString() === localProd.productId.toString() && !prod.variantId
+                ? prod
+                : false
+            );
             // if matches then update customer cart product with local product
-            if(existingProduct){
-              existingProduct.qty += localProd.qty
-              existingProduct.total = existingProduct.product_price * existingProduct.qty
-            }
+            if (existingProduct) {
+              existingProduct.qty += localProd.qty;
+               }
             // else add local product to customer cart
-            else{
-              existingCartProducts.push({product_id, product_title, product_image, product_price, qty, total})
+            else {
+              existingCartProducts.push({
+                productId,
+                qty,
+                shippingClass,
+                taxClass,
+              });
             }
           }
         }
+      }
+        //---------------------------------------------------------------------------------------------------------------
+    
         // calculate carttotal from total of all products in customer cart
-        existingCartProducts.map(cartProduct=>{
-          carttotal += cartProduct.total
-        })
+        // existingCartProducts.map(async (cartProduct) => {
+        //   if(cartProduct.variantId){          
+        //   let productAttributeValue =
+        //         await ProductAttributeVariation.findById(cartProduct.variantId);
+        //  let price = productAttributeValue.pricing.sellprice>0 ?  productAttributeValue.pricing.sellprice : productAttributeValue.pricing.price
+        //    carttotal += price;
+        //   }
+        //   else {
+    
+        //   }
+        // });
         // if customer cart exists then update
-        if(cart) {
-          cart.total = carttotal
-          cart.products = existingCartProducts
+        if (cart) {
+          cart.products = existingCartProducts;
           await cart.save();
         }
         // else create new cart
-        else{
+        else {
           const newCart = new Cart({
-            user_id: args.user_id,
-            total: carttotal,
-            products: existingCartProducts
+            userId: args.userId,
+            products: existingCartProducts,
+            total:0,
+            productQuantity:0
           });
           await newCart.save();
         }
@@ -552,7 +1002,6 @@ module.exports = {
     },*/
 
     updateCart: async (root, args, { id }) => {
-      //console.log("updateCart", args)
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
@@ -563,25 +1012,94 @@ module.exports = {
         const cart = await Cart.findById({ _id: args.id });
         //console.log("cart========",cart)
         if (cart) {
-          var carttotal = 0;
-          for (let i in args.products) {
-            if (args.products[i].product_id) {
-              const product = await Product.findById({ _id: args.products[i].product_id });
 
-              if (product.pricing.sellprice > 0) {
-                args.products[i].total = args.products[i].qty * product.pricing.sellprice;
-              } else {
-                args.products[i].total = args.products[i].qty * product.pricing.price;
-              }
+                var carttotal = 0;
+
+                let globalTax = true;
+                let isGlobalTax = await Tax.findOne({}).lean();
+
+                if(!isGlobalTax.global.is_global){
+                  globalTax=false;
+                }
+                
+              
+                if(!globalTax){
+
+                for (let i in args.products) {
+
+                    if (args.products[i].productId) {
+
+
+                      const product = await Product.findById({ _id: args.products[i].productId });
+
+
+
+                                let taxPercentage;
+                                isGlobalTax.taxClass.forEach((taxObject)=>{
+
+                                  if (taxObject._id.toString()==args.products[i].taxClass){
+                                    taxPercentage = taxObject.percentage
+                                  }
+                
+                                  })
+
+
+                        let tax;
+                        if (product.pricing.sellprice > 0) {
+
+                          tax = (+product.pricing.sellprice*(+taxPercentage))/100;
+                                    args.products[i].productPrice = product.pricing.sellprice;
+                                    args.products[i].total = args.products[i].qty * product.pricing.sellprice+(tax*args.products[i].qty);
+
+                        } else {
+
+                          tax = (+product.pricing.price*(+taxPercentage))/100;
+                                    args.products[i].productPrice = product.pricing.price;
+                                    args.products[i].total = args.products[i].qty * product.pricing.price+(tax*args.products[i].qty);
+
+                        }
+
+                        args.products[i].productTax= tax
+                        args.products[i].productTaxPercentage= taxPercentage
+
+                    }
+                      carttotal = carttotal + args.products[i].total;
+                  }
+
+                    cart.total = carttotal;
+                    cart.products = args.products;
+                    cart.updated = Date.now();
+                    await cart.save();
+                    return MESSAGE_RESPONSE("UpdateSuccess", "Cart", true);
+
             }
-            carttotal = carttotal + args.products[i].total;
-          }
-          cart.total = carttotal;
-          cart.products = args.products;
-          cart.updated = Date.now();
-          await cart.save();
-          return MESSAGE_RESPONSE("UpdateSuccess", "Cart", true);
-        } else {
+
+          else {
+
+                  for (let i in args.products) {
+
+                        if (args.products[i].productId) {
+                          const product = await Product.findById({ _id: args.products[i].productId });
+
+                          if (product.pricing.sellprice > 0) {
+                            args.products[i].total = args.products[i].qty * product.pricing.sellprice;
+                          } else {
+                            args.products[i].total = args.products[i].qty * product.pricing.price;
+                          }
+                        }
+                        carttotal = carttotal + args.products[i].total;
+
+                }
+                
+                cart.total = carttotal;
+                cart.products = args.products;
+                cart.updated = Date.now();
+                await cart.save();
+                return MESSAGE_RESPONSE("UpdateSuccess", "Cart", true);
+
+        }
+        } 
+        else {
           return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
         }
       } catch (error) {
@@ -593,10 +1111,10 @@ module.exports = {
     changeQty: async (root, args, { id }) => {
       checkToken(id);
       try {
-        const cart = await Cart.findOne({ user_id: args.user_id });
+        const cart = await Cart.findOne({ userId: args.userId });
         for (let i in cart.products) {
           // console.log(cart.products[i])
-          if(cart.products[i].product_id.toString() === args.product_id.toString()){
+          if (cart.products[i].productId.toString() === args.productId.toString()) {
             cart.products[i].qty = args.qty
           }
         }
@@ -624,7 +1142,7 @@ module.exports = {
       // console.log(cart);
       if (cart) {
         // for (let i in cart.products) {
-        //   if (cart.products[i].product_id === args.product_id) {
+        //   if (cart.products[i].productId === args.productId) {
         //     cart.products.splice(i, 1);
         //     cart.updated = Date.now();
         //     return await cart.save();
@@ -632,7 +1150,7 @@ module.exports = {
         // }
         var customer_cart = cart.products;
         for (let i in customer_cart) {
-          if (customer_cart[i].product_id == args.product_id) {
+          if (customer_cart[i].productId == args.productId) {
             cart.products = [];
             delete customer_cart[i];
 
@@ -645,8 +1163,8 @@ module.exports = {
 
         var carttotal = 0;
         for (let i in cart.products) {
-          if (cart.products[i].product_id) {
-            const product = await Product.findById({ _id: cart.products[i].product_id });
+          if (cart.products[i].productId) {
+            const product = await Product.findById({ _id: cart.products[i].productId });
 
             if (product.pricing.sellprice > 0) {
               cart.products[i].total = cart.products[i].qty * product.pricing.sellprice;

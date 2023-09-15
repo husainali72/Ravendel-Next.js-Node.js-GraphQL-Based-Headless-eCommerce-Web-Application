@@ -8,9 +8,9 @@ const Homebanner = ({ slider, Image }) => {
             <Carousel>
                 {slider.map((slide, i) => (
                     <Carousel.Item key={i}>
-                        <Link href="/">
+                        <a href={`${slide.link}`} target={slide.open_in_tab ? "_blank" : null}>
                             <Image src={getImage(slide.image, 'original', true)} width={2000} height={500} sx={{ alignItems: 'center', mt: 0 }} className="d-block w-100" alt={`slider`} />
-                        </Link>
+                        </a>
                     </Carousel.Item>
                 ))}
             </Carousel>

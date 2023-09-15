@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 // Create Schema
 const CustomerSchema = new Schema({
-  first_name: {
+  firstName: {
     type: String,
     required: true,
   },
-  last_name: {
+  lastName: {
     type: String,
     required: true,
   },
@@ -29,12 +29,12 @@ const CustomerSchema = new Schema({
     type: String,
     required: true,
   },
-  address_book: [
+  addressBook: [
     {
-      first_name: {
+      firstName: {
         type: String,
       },
-      last_name: {
+      lastName: {
         type: String,
       },
       company: {
@@ -43,10 +43,10 @@ const CustomerSchema = new Schema({
       phone: {
         type: String,
       },
-      address_line1: {
+      addressLine1: {
         type: String,
       },
-      address_line2: {
+      addressLine2: {
         type: String,
       },
       city: {
@@ -61,7 +61,7 @@ const CustomerSchema = new Schema({
       pincode: {
         type: String,
       },
-      default_address: {
+      defaultAddress: {
         type: Boolean,
       },
     },
@@ -69,7 +69,7 @@ const CustomerSchema = new Schema({
   cart: {
     items: [
       {
-        product_id: {
+        productId: {
           type: Schema.ObjectId,
           required: true,
         },
