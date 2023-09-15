@@ -747,42 +747,50 @@ const prodAvgRating = async(productID, reviewModel, productModel) => {
 }
 module.exports.prodAvgRating = prodAvgRating
 
-const calculateCart = async(coupon, cart, productModel, amountDiscount) => {
-  let discountAmount = 0
-  for(let item of cart) {
+const againCalculateCart = async(coupon, cart, productModel, amountDiscount) => {
+  let discountAmount = 0;
+  for(let item of cart){
     let product = await productModel.findById(item.product_id)
     if(product){
-      let includeProduct = true
-      if(coupon.category){
-        if(product.categoryId && product.categoryId.length){
-          product.categoryId.map(catID => {
-            if(coupon.include_categories.length){
-              includeProduct = coupon.include_categories.includes(catID) 
-            }
-            else if(coupon.exclude_categories.length){
-              includeProduct = !coupon.exclude_categories.includes(catID) 
-            }
-          })
-        }
-      }
-      else if(coupon.product){
-        if(coupon.include_products.length){
-          includeProduct = coupon.include_products.includes(product._id.toString()) 
-        }
-        else if(coupon.exclude_products.length){
-          includeProduct = !coupon.exclude_products.includes(product._id.toString()) 
-        }
-      }
-      if(includeProduct){
-        amountDiscount ?
-          discountAmount += parseFloat(coupon.discount_value) :
-          discountAmount += parseFloat(item.total/100) * parseFloat(coupon.discount_value)
-      }
+                  let includeProduct = true
+
+                  //if coupon category is abilable
+                  if(coupon.category){
+                    if(product.categoryId && product.categoryId.length){
+                      product.categoryId.map(catID => {
+                        if(coupon.include_categories.length){
+                          includeProduct = coupon.include_categories.includes(catID)
+                        }
+                        else if(coupon.exclude_categories.length){
+                          includeProduct = !coupon.exclude_categories.includes(catID) 
+                        }
+                      })
+                    }
+                  }
+
+                  //if coupon category is not abilable but product is included in category;
+
+                  else if(coupon.product){
+                    if(coupon.include_products.length){
+                      includeProduct = coupon.include_products.includes(product._id.toString()) 
+                    }
+                    else if(coupon.exclude_products.length){
+                      includeProduct = !coupon.exclude_products.includes(product._id.toString()) 
+                    }
+                  }
+
+                // if any product is applicable for discount so includeproduct will be true,or if product category is applicable for discount so include product will be true;
+
+                  if(includeProduct){
+                    amountDiscount ?
+                      discountAmount += parseFloat(coupon.discount_value) :
+                      discountAmount += parseFloat(+item.product_total/100) * parseFloat(coupon.discount_value)
+                  }
     }
   }
-  return discountAmount
+  return discountAmount;
 }
-module.exports.calculateCart = calculateCart
+module.exports.againCalculateCart = againCalculateCart
 
 const emptyCart = async(cart) => {
   cart.total = 0

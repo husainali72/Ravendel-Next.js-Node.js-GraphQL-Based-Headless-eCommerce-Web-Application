@@ -9,22 +9,28 @@ const CartSchema = new Schema({
   },
   total: {
     type: Number,
-    required: true
-  },
+     },
   products: [
     {
       product_id: {
         type: Schema.ObjectId,
         required: true
       },
+      
       product_title: {
         type: String,
-        required: true
+        
       },
       product_image: {
         type: String,
       },
       product_price: {
+        type: Number,
+      },
+      product_taxPercentage: {
+        type: Number,
+      },
+      product_tax: {
         type: Number,
       },
       qty: {
@@ -33,7 +39,7 @@ const CartSchema = new Schema({
       },
       total: {
         type: Number,
-        required: true
+       
       },
       attributes: [
         {
@@ -50,12 +56,10 @@ const CartSchema = new Schema({
         type: String
       },
       shipping_class: {
-        type: Schema.ObjectId,
-        required: true
+        type: Schema.ObjectId,        
       },
       tax_class: {
-        type: Schema.ObjectId,
-        required: true
+        type: Schema.ObjectId,        
       }
     }
   ],
