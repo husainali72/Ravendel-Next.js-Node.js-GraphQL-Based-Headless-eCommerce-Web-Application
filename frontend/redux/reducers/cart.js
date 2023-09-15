@@ -120,7 +120,7 @@ function cartReducer(state = [], action) {
 
         case REMOVE_VALUE:
             const Cards = JSON.parse(localStorage.getItem("cart"))
-            const product = Cards.filter(item => item._id !== action.payload.id && item.variant_id !== action.payload.variant_id)
+            const product = Cards?.filter(item => item._id !== action.payload.id && item.variant_id !== action.payload.variant_id)
             localStorage.setItem("cart", JSON.stringify(product))
             return product;
 
