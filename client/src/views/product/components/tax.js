@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { taxAction } from "../../../store/action/";
 import viewStyles from "../../viewStyles";
 
-const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange }) => {
+const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange, tax_class }) => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const taxState = useSelector((state) => state.taxs);
@@ -21,7 +21,7 @@ const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange }) => {
   useEffect(() => {
     if (taxState.tax.tax_class.length) {
       var taxClass = taxState.tax.tax_class[0]._id;
-      onTaxInputChange(taxClass);
+      onTaxInputChange(tax_class || taxClass);
     }
   }, [taxState.tax]);
 

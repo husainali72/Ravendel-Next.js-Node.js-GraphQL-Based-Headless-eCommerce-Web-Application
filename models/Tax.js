@@ -10,6 +10,9 @@ const TaxSchema = new Schema({
     is_global: {
       type: Boolean,
     },
+    overwrite: {
+      type: Boolean,
+    },
     tax_class: {
       type: Schema.ObjectId,
     },

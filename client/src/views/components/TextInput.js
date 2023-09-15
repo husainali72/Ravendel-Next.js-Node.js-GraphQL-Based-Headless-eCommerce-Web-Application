@@ -2,7 +2,7 @@ import React from "react";
 import { TextField } from "@mui/material";
 import viewStyles from "../viewStyles.js";
 
-const TextInput = ({ name, onBlur, value, label, onInputChange, type, sizeSmall, ...other }) => {
+const TextInput = ({ name, onBlur, value, label, onInputChange, type, sizeSmall, min, ...other }) => {
   return (
     <TextField
       type={type || "text"}
@@ -14,6 +14,7 @@ const TextInput = ({ name, onBlur, value, label, onInputChange, type, sizeSmall,
       fullWidth
       size={sizeSmall ? "small" : 'medium'}
       onBlur={onBlur}
+      InputProps={{ inputProps: { min: min } }}
       {...other}
 
     />

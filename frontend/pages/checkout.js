@@ -160,18 +160,20 @@ export const CheckOut = ({ currencyStore }) => {
                     let cartitems2 = [];
                     carts?.map(cart => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.product_id);
-                        const cartProduct = {
-                            _id: originalProduct?._id,
-                            quantity: parseInt(cart?.qty),
-                            name: originalProduct?.name,
-                            pricing: cart?.product_price || originalProduct?.pricing,
-                            feature_image: originalProduct?.feature_image,
-                            url: originalProduct?.url,
-                            tax_class: originalProduct?.tax_class,
-                            shipping_class: originalProduct?.shipping?.shipping_class,
-                            attributes: cart.attributes
+                        if (originalProduct) {
+                            const cartProduct = {
+                                _id: originalProduct?._id,
+                                quantity: parseInt(cart?.qty),
+                                name: originalProduct?.name,
+                                pricing: cart?.product_price || originalProduct?.pricing,
+                                feature_image: originalProduct?.feature_image,
+                                url: originalProduct?.url,
+                                tax_class: originalProduct?.tax_class,
+                                shipping_class: originalProduct?.shipping?.shipping_class,
+                                attributes: cart.attributes
+                            }
+                            cartitems2.push(cartProduct);
                         }
-                        cartitems2.push(cartProduct);
                     })
                     setCartItems([...cartitems2])
                 })
@@ -334,7 +336,11 @@ export const CheckOut = ({ currencyStore }) => {
     }
     const doApplyCouponCode = async (e) => {
         e.preventDefault();
-        let cart = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
+        let cart = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product.pricing * product.quantity } })
+        cartItems.map((product) => {
+
+            return { product_id: product._id, qty: product.quantity, total: product.pricing * product.quantity }
+        })
         let variables = {
             coupon_code: `${couponCode}`, cart: cart,
         }
@@ -364,6 +370,7 @@ export const CheckOut = ({ currencyStore }) => {
             }
             if (couponValueGet) {
                 let cartsData = cartItems.map((product) => { return { product_id: product._id, qty: product.quantity, total: product?.pricing?.sellprice ? product?.pricing?.sellprice * product.quantity : product?.pricing?.price * product.quantity } })
+
                 let calculate = {
                     total_coupon: couponResponse,
                     cart: cartsData,
