@@ -3,7 +3,7 @@ const Validator = require("validator");
 const moment = require("moment")
 const nodemailer = require('nodemailer')
 const APP_KEYS = require('../config/keys')
-const { readFile } = require('node:fs/promises')
+const { readFile } = require('fs').promises
 
 const { uploadFile, FileDelete } = require("../config/aws");
 
