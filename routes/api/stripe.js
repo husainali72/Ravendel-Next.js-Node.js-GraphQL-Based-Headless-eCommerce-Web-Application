@@ -21,9 +21,9 @@ router.post('/create-checkout-session', async (req, res) => {
             id: item.productId
           },
         },
-        unit_amount: item.productPrice*100,
+        unit_amount: (+item.productPrice)*100,
       },
-      quantity: item.qty,
+      quantity: (+item.qty),
     }
   })
     const session = await stripe.checkout.sessions.create({

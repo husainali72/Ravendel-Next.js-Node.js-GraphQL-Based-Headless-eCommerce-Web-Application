@@ -213,7 +213,7 @@ cartbyUser: async (root, args) => {
                 for(let a=0;a<args.cartItem.length;a++){
 
                   cartProduct = args.cartItem[a];                 
-                  let productShippingAmount ;
+                  let productShipping ;
                   let productTax;
 
                   const product = await Product.findById({ _id:cartProduct.productId}).lean();
@@ -243,26 +243,26 @@ cartbyUser: async (root, args) => {
                                           if(!globalShippingPerOrder){                              
                                                 totalShipping +=globalShippingAmount;
                                                 grandTotal+=globalShippingAmount;
-                                                productShippingAmount = +globalShippingAmount
+                                                productShipping = +globalShippingAmount
                                               }                                                                          
                                         }
 
                       else if(!global_shipping){
                      
-                              productShippingAmount=0;
+                              productShipping=0;
 
                                 let productShippingClass = product.shipping.shippingClass;
 
                                 shipping.shippingClass.forEach((shippingObject)=>{
 
                                   if(shippingObject._id.toString() == productShippingClass.toString()){                        
-                                    productShippingAmount = shippingObject.amount*odredQuantity;
+                                    productShipping = shippingObject.amount*odredQuantity;
                                   }
 
                                 })
 
-                                totalShipping+=productShippingAmount;
-                                grandTotal+=productShippingAmount;
+                                totalShipping+=productShipping;
+                                grandTotal+=productShipping;
 
                           }
 
@@ -275,8 +275,8 @@ cartbyUser: async (root, args) => {
                       productTotal : productPrice*(+odredQuantity),
                       productTax:productTax.toFixed(2)
                     }
-                      if(productShippingAmount){
-                        pushValue.productShippingAmount = productShippingAmount.toFixed(2);
+                      if(productShipping){
+                        pushValue.productShipping = productShipping.toFixed(2);
                       }
 
                       items.push(pushValue)
@@ -296,7 +296,7 @@ cartbyUser: async (root, args) => {
                         for(let a=0;a<args.cartItem.length;a++){
                           
                           cartProduct = args.cartItem[a]                     
-                          let productShippingAmount;
+                          let productShipping;
 
                           const product = await Product.findById({ _id:cartProduct.productId}).lean();
                           let odredQuantity = cartProduct.qty
@@ -341,26 +341,26 @@ cartbyUser: async (root, args) => {
                                           
                                           totalShipping +=globalShippingAmount;
                                           grandTotal+=globalShippingAmount;
-                                          productShippingAmount = +globalShippingAmount
+                                          productShipping = +globalShippingAmount
                                         }
 
                                   }
                           else if(!global_shipping){   
                             
-                                      productShippingAmount=0;
+                                      productShipping=0;
               
                                   let productShippingClass = product.shipping.shippingClass;
               
                                   shipping.shippingClass.forEach((shippingObject)=>{
               
                                     if(shippingObject._id.toString() == productShippingClass.toString()){                        
-                                      productShippingAmount = shippingObject.amount*odredQuantity;
+                                      productShipping = shippingObject.amount*odredQuantity;
                                     }
               
                                   })    
 
-                                totalShipping+=productShippingAmount;
-                                grandTotal+=productShippingAmount;
+                                totalShipping+=productShipping;
+                                grandTotal+=productShipping;
 
                               }
         
@@ -374,8 +374,8 @@ cartbyUser: async (root, args) => {
                                 productTotal : productPrice*(+odredQuantity),                             
                                 productTax:+productTaxAmount.toFixed(2)                           
                               }
-                                if(productShippingAmount){
-                                  pushValue.productShippingAmount= productShippingAmount.toFixed(2)
+                                if(productShipping){
+                                  pushValue.productShipping= productShipping.toFixed(2)
                                 }
 
                               items.push(pushValue)    

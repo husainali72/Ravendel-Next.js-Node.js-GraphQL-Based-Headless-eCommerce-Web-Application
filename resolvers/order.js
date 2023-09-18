@@ -118,6 +118,7 @@ module.exports = {
             paymentMethod: args.billing.transaction_id,
             confirm: true
           })
+          
           if (payment.status == 'succeeded') {
             status = 'success';
           } else {
@@ -166,6 +167,7 @@ module.exports = {
         return MESSAGE_RESPONSE("CREATE_ERROR", "Order", false);
       }
     },
+
     updateOrder: async (root, args, { id }) => {
       console.log('firedddd')
       if (!id) {
