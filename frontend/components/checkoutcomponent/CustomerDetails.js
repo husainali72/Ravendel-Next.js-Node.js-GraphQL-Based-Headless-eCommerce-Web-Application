@@ -81,7 +81,7 @@ const CustomerDetail = (props) => {
                                 </Card>
                             </Card.Body>
                         </>
-                    ) : null}
+                    ) : 'No data'}
 
                 </div>
             </div>

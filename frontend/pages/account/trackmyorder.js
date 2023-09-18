@@ -88,7 +88,9 @@ const TrackMyOrder = () => {
                             billingInfo={customerOrder[0]?.billing}
                             shippingInfo={customerOrder[0]?.shipping}
                             tax={customerOrder[0]?.taxAmount}
-                            subtotal={customerOrder[0]?.subtotal}
+                            subtotal={customerOrder[0]?.cartTotal}
+                            couponCode={customerOrder[0]?.couponCode}
+                            couponValue={customerOrder[0]?.discountAmount}
                             shippingAmount={customerOrder[0]?.shippingAmount}
                             total={customerOrder[0]?.grandTotal}
                         />

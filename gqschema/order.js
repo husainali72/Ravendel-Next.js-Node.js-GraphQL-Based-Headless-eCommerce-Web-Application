@@ -16,6 +16,7 @@ module.exports = gql`
     taxAmount: String
     couponCode: String
     discountAmount: String
+    discountGrandTotal :String
     grandTotal: String
   }
 

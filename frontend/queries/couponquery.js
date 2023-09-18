@@ -32,7 +32,7 @@ export const APPLY_COUPON_CODE = gql`
     productPrice 
     productTotal 
     variantId   
-     discountGrandTotal 
+
     }
     cartTotal 
     totalShipping 

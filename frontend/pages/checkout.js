@@ -319,6 +319,7 @@ export const CheckOut = ({ currencyStore }) => {
     };
     const getCalculationDetails = (val) => {
         val.cartTotal = val.subtotal
+        // if (val.discountGrandTotal) { val.grandTotal = val.discountGrandTotal }
         delete val.subtotal
         // let data = { ...val, cart_total: val.subTotal }
         setBillingDetails({ ...billingDetails, ...val });

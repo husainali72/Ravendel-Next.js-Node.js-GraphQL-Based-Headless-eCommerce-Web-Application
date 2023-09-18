@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../../queries/home";
 import client from "../../../apollo-client";
 import { getSession } from "next-auth/react";
-const CalculateProductTotal = product => product.reduce((total, product) => total + (product.cost * product.qty), 0)
+const CalculateProductTotal = product => product.reduce((total, product) => total + (product.productPrice * product.qty), 0)
 
 
 export const convertDateToStringFormat = (date) => {
@@ -18,7 +18,7 @@ export const convertDateToStringFormat = (date) => {
     }
     return convertedDate;
 };
-const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, subtotal, tax, shippingAmount, homepageData }) => {
+const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, subtotal, tax, shippingAmount, homepageData, couponValue, couponCode }) => {
     const Details = useSelector(state => state.checkout)
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
@@ -115,13 +115,13 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                 <tbody>
                                     {orderDetail.map((order, i) =>
                                         <tr key={i}>
-                                            <th>{order?.name}</th>
+                                            <th>{order?.productTitle}</th>
                                             <td>x {order?.quantity ? order.quantity : order.qty}</td>
 
                                             <th>    {order?.attributes.map((attribute) => {
                                                 return <div> {attribute.name} : {attribute.value}</div>
                                             })}</th>
-                                            <td>{currency} {getPrice(order?.cost, decimal)}</td>
+                                            <td>{currency} {getPrice(order?.productPrice, decimal)}</td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -137,6 +137,10 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                     <th colSpan={3} className="order-text-align">Shipping</th>
                                     <td>{currency} {shippingAmount ? getPrice(shippingAmount, decimal) : "0.00"}</td>
                                 </tr>
+                                {couponCode && <tr>
+                                    <th colSpan={3} className="order-text-align" style={{ color: '#4BB543' }}>Coupon - {couponCode}</th>
+                                    <td style={{ color: '#4BB543' }} >- {currency} {couponValue ? getPrice(couponValue, decimal) : "0.00"}</td>
+                                </tr>}
                                 <tr className="total">
                                     <th colSpan={3} className="order-text-align" >Total</th>
                                     <td>{currency} {total ? getPrice(total, decimal) : getPrice(CalculateProductTotal(orderDetail), decimal)}</td>

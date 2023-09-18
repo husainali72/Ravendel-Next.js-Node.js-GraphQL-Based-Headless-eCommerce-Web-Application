@@ -116,23 +116,34 @@ const EditCouponComponent = ({ params }) => {
 
     else {
       if (id) {
-        if ((coupon.minimum_spend >= 0 || coupon.maximum_spend >= 0) && coupon.minimum_spend > coupon.maximum_spend) {
+        if ((coupon.minimumSpend >= 0 || coupon.maximumSpend >= 0) && coupon.minimumSpend > coupon.maximumSpend) {
 
           showAlert(true, false, 'Maximum spend  must be greater than minimum spend ')
         } else {
 
+          if (coupon.minimumSpend === '' || coupon.minimumSpend === null) {
+
+            coupon.minimumSpend = 0
+          } if (coupon.maximumSpend === '' || coupon.maximumSpend === null) {
+
+            coupon.maximumSpend = 0
+          }
+          coupon.product = coupon.includeProducts.length > 0 || coupon.excludeProducts.length > 0
+          coupon.category = coupon.includeCategories.length > 0 || coupon.excludeCategories.length > 0
           dispatch(couponUpdateAction(coupon, navigate));
 
         }
       } else {
-        if ((coupon.minimum_spend >= 0 || coupon.maximum_spend >= 0) && coupon.minimum_spend > coupon.maximum_spend) {
+        if ((coupon.minimumSpend >= 0 || coupon.maximumSpend >= 0) && coupon.minimumSpend > coupon.maximumSpend) {
           showAlert(true, false, 'Maximum spend  must be greater than minimum spend ')
         } else {
-          if (coupon.minimum_spend === '' || coupon.minimum_spend === null) {
-            coupon.minimum_spend = 0
-          } if (coupon.maximum_spend === '' || coupon.minimum_spend === null) {
-            coupon.maximum_spend = 0
+          if (coupon.minimumSpend === '' || coupon.minimumSpend === null) {
+            coupon.minimumSpend = 0
+          } if (coupon.maximumSpend === '' || coupon.maximumSpend === null) {
+            coupon.maximumSpend = 0
           }
+          coupon.product = coupon.includeProducts.length > 0 || coupon.excludeProducts.length > 0
+          coupon.category = coupon.includeCategories.length > 0 || coupon.excludeCategories.length > 0
           dispatch(couponAddAction(coupon, navigate));
 
         }
@@ -165,7 +176,9 @@ const EditCouponComponent = ({ params }) => {
   };
 
   const selectChange = (e) => {
-    setCoupon({ ...coupon, [e.target.name]: e.target.value });
+    // let include = (e.target.name === 'includeProducts' || e.target.name === 'excludeProducts') ? 'product' : (e.target.name === 'includeCategories' || e.target.name === 'excludeCategories' ? 'category' : null)
+
+    setCoupon({ ...coupon, [e.target.name]: e.target.value, });
   };
   const IncludeProduct = (id) => {
 
