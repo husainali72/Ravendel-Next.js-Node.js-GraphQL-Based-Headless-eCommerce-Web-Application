@@ -16,7 +16,6 @@ const CartSchema = new Schema({
         type: Schema.ObjectId,
         required: true
       },
-      
       productTitle: {
         type: String,
         

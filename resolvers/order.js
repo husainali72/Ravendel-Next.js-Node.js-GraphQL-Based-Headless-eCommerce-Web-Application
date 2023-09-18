@@ -99,7 +99,7 @@ module.exports = {
           var status = 'pending';
           var userId = args.userId;
           const cart = await Cart.findOne({ userId: args.userId });
-          emptyCart(cart)
+          emptyCart(cart);
         } else {
           let currencycode;
           if (setting.store.currency_options.currency == 'eur') {

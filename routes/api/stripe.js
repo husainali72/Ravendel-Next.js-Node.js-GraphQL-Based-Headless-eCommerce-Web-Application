@@ -9,7 +9,7 @@ const stripe=require('stripe')(STRIPE_KEY)
 router.post('/create-checkout-session', async (req, res) => { 
   let currency = await Setting.findOne({})
   currency = _.get(currency, 'store.currency_options.currency').toUpperCase() || "USD"
-  const line_items = req.body.userCart.map(item=>{
+  const line_items = req.body.customerCart.map(item=>{
     const itemImage = `${BUCKET_BASE_URL}${item.productImage}`
     return{
       price_data: {
@@ -21,7 +21,7 @@ router.post('/create-checkout-session', async (req, res) => {
             id: item.productId
           },
         },
-        unit_amount: (+item.productPrice)*100,
+        unit_amount: (+item.productPrice)*100
       },
       quantity: (+item.qty),
     }
