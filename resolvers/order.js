@@ -129,7 +129,7 @@ module.exports = {
         }
 
         const orderNumber = await generateOrderNumber(Order, Setting)
-        
+
         const newOrder = new Order({
           orderNumber: orderNumber,
           userId: args.userId,
@@ -159,7 +159,7 @@ module.exports = {
           mailTemplate: "template",
           order: newOrder
         }
-        sendEmail(mailData, APP_KEYS.smptUser, customer.email)
+        sendEmail(mailData, APP_KEYS.smptUser, customer?.email)
 
         return MESSAGE_RESPONSE("AddSuccess", "Order", true);
       } catch (error) {

@@ -51,7 +51,7 @@ module.exports = gql`
     productId: ID
     qty: Int
     productTitle: String
-    productPrice: Float
+    productPrice: String
     productImage: String
     combination: [String]
     taxClass: String

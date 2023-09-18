@@ -53,9 +53,9 @@ export default function Home({ homepageData, seoInfo, brands, homePageInfo, curr
       return {
         productId: product._id,
         qty: product.quantity,
-        productTitle: product.name,
-        productImage: product.feature_image?.original,
-        productPrice: product.pricing?.sellprice || 0
+        productTitle: product?.name,
+        productImage: product?.feature_image?.original,
+        productPrice: product?.pricing?.toString() || '0'
       }
     })
 
@@ -64,6 +64,7 @@ export default function Home({ homepageData, seoInfo, brands, homePageInfo, curr
       products: Cart,
       total: 0,
     }
+
     if (userCart.card_id === undefined) {
       return undefined;
     } else {

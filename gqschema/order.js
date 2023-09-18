@@ -11,7 +11,7 @@ module.exports = gql`
     products: customArray
     date: Date
     updated: Date
-    subtotal: String
+    cartTotal: String
     shippingAmount: String
     taxAmount: String
     couponCode: String

@@ -29,56 +29,56 @@ const CustomerDetail = (props) => {
                 <div style={{ display: "flex", margin: "25px 0" }}>
                     {addressBook && addressBook?.length > 0 ? (
                         <>
-                        <Card.Body className="cust-detail-container" >
-                            <Card className="disable-hover">
-                            {addressBook.map((address, i) => ( i<5 ?
-                                <>
-                                <div className="col-md-12 d-flex flex-md-row flex-column align-items-center justify-content-between" key={i}>
-                                            <div className="defination-table" >
-                                            <dl>
-                                                <dt>First Name</dt>
-                                                <dd>{address.firstName}</dd>
+                            <Card.Body className="cust-detail-container" >
+                                <Card className="disable-hover">
+                                    {addressBook.map((address, i) => (i < 5 ?
+                                        <>
+                                            <div className="col-md-12 d-flex flex-md-row flex-column align-items-center justify-content-between" key={i}>
+                                                <div className="defination-table" >
+                                                    <dl>
+                                                        <dt>First Name</dt>
+                                                        <dd>{address.firstName}</dd>
 
-                                                <dt>Lastname</dt>
-                                                <dd> {address.lastName}</dd>
-                                                
-                                                <dt>Phone</dt>
-                                                <dd>{address.phone}</dd>
+                                                        <dt>Lastname</dt>
+                                                        <dd> {address.lastName}</dd>
 
-                                                <dt>City</dt>
-                                                <dd>{address.city} </dd>
+                                                        <dt>Phone</dt>
+                                                        <dd>{address.phone}</dd>
 
-                                                <dt> Address 1</dt>
-                                                <dd> {address.addressLine1}</dd>
-                                                
-                                                <dt> Address 2</dt>
-                                                <dd>{address.addressLine2}</dd>
+                                                        <dt>City</dt>
+                                                        <dd>{address.city} </dd>
 
-                                                <dt>Pincode</dt>
-                                                <dd>{address.pincode}</dd>
+                                                        <dt> Address 1</dt>
+                                                        <dd> {address.addressLine1}</dd>
 
-                                                <dt>State</dt>
-                                                <dd> {address.state}</dd>
-                                                
-                                                <dt>Company</dt>
-                                                <dd>{address.company}</dd>
+                                                        <dt> Address 2</dt>
+                                                        <dd>{address.addressLine2}</dd>
 
-                                                <dt>City</dt>
-                                                <dd>{address.city}</dd>
-                                                
-                                            </dl>
-                                            </div>
-                                             
-                                            {/* <span className="cust-detail-select-btn"><i onClick={(e) => SelectAddressBook(address, e)}>select</i></span> */}
-                                            <div className=" select-button">
-                                                <Button size="sm" variant="secondary" onClick={(e) => SelectAddressBook(address, e)}>Select</Button>
-                                            </div>
-                                            {/* <Card.Text></Card.Text> */}
-                                            
-                                </div><hr className={`customer-hr ${i===addressBook.length -1 && "d-none" }`} /></> : null
-                            ))}
-                           
-                            </Card>
+                                                        <dt>Pincode</dt>
+                                                        <dd>{address.pincode}</dd>
+
+                                                        <dt>State</dt>
+                                                        <dd> {address.state}</dd>
+
+                                                        <dt>Company</dt>
+                                                        <dd>{address.company}</dd>
+
+                                                        <dt>City</dt>
+                                                        <dd>{address.city}</dd>
+
+                                                    </dl>
+                                                </div>
+
+                                                {/* <span className="cust-detail-select-btn"><i onClick={(e) => SelectAddressBook(address, e)}>select</i></span> */}
+                                                <div className=" select-button">
+                                                    <Button size="sm" variant="secondary" onClick={(e) => SelectAddressBook(address, e)}>Select</Button>
+                                                </div>
+                                                {/* <Card.Text></Card.Text> */}
+
+                                            </div><hr className={`customer-hr ${i === addressBook.length - 1 && "d-none"}`} /></> : null
+                                    ))}
+
+                                </Card>
                             </Card.Body>
                         </>
                     ) : null}

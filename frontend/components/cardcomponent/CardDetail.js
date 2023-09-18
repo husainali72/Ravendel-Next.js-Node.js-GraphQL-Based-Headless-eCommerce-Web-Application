@@ -14,7 +14,8 @@ const CartTable = (props) => {
         AllCartItemsClear,
         quantity,
         removeToCart,
-        updateCartProduct, currency
+        updateCartProduct, currency,
+        unAvailableProducts
     } = props;
     return (
         <div>
@@ -104,9 +105,7 @@ const CartTable = (props) => {
                     </tbody>
                 </Table>
             </div>
-            <div className="cart-action text-end">
-                <Link href="/shop"><a className="card-btons "><i className="fas fa-shopping-bag"></i> Continue Shopping</a></Link>
-            </div>
+
 
         </div>
     )

@@ -67,8 +67,10 @@ const AllCouponsTheme = () => {
           code: coupon.code,
           expire_date: coupon.expire,
           date: coupon.date,
+
           discountType: coupon.discountType,
           discountValue: coupon.discountValue
+
         }
         data.push(object)
       })

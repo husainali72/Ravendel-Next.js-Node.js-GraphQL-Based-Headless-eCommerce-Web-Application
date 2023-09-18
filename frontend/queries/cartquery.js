@@ -5,7 +5,7 @@ export const ADD_TO_CART_QUERY = gql`
      $userId:ID!,
     $productId:String,
     $productTitle:String,
-    $productPrice:Float,
+    $productPrice:String,
     $productImage:String,
     $total:Float,
     $qty:Int,
@@ -150,7 +150,7 @@ export const DELETE_CART = gql`
 
 export const UPDATE_CART_PRODUCT = gql`
   mutation($id: ID!, $products: [cartProduct]){
-    updateCart(userId:$id,products:$products){
+    updateCart(id:$id,products:$products){
          
     message
     success
