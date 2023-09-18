@@ -27,7 +27,8 @@ const AccountSettings = (props) => {
     const { register, formState: { errors }, handleSubmit, control, reset } = useForm();
     const onSubmit = (data) => console.log(data);
     const updateAccountDetail = (e) => {
-        e.preventDefault()
+
+        // e?.preventDefault()
         mutation(UPDATE_CUSTOMER, accountDetails, token).then(async (response) => {
             if (response.data.updateCustomer.success) {
                 notify(response.data.updateCustomer.message, true);
@@ -120,7 +121,7 @@ const AccountSettings = (props) => {
                     <Col >
                         <label className="textlabel">Phone</label>
                         <input
-                            type="text"
+                            type="number"
 
                             name="phone"
                             label="phone"
