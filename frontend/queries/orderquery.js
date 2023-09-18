@@ -38,6 +38,8 @@ export const GET_CUSTOMER_ORDERS_QUERY = gql`
       paymentStatus
       cartTotal
       taxAmount
+      discountGrandTotal 
+      
       updated
   }
   message {
