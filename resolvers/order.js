@@ -35,13 +35,13 @@ module.exports = {
       return await GET_SINGLE_FUNC(args.id, Order, "Order");
     },
     orderbyUser: async (root, args) => {
-      console.log("payload", args)
+
       if (!args.userId) {
         return MESSAGE_RESPONSE("ID_ERROR", "Order", false);
       }
       try {
         const order = await Order.find({ userId: args.userId }).sort({ date: -1 });
-        console.log("ooorder", order[0].products)
+
         if (!order) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
         }
@@ -94,12 +94,12 @@ module.exports = {
 
         // var c_grandTotal = parseFloat(args.subtotal) + parseFloat(args.shippingAmount) + parseFloat(args.taxAmount) - parseFloat(args.discountAmount);
 
-        var c_grandTotal = parseFloat(args.grandTotal) - parseFloat(args.discountAmount);
+        // var c_grandTotal = parseFloat(args.grandTotal) - parseFloat(args.discountAmount);
         if (args.billing.paymentMethod === 'Cash On Delivery') {
           var status = 'pending';
           var userId = args.userId;
           const cart = await Cart.findOne({ userId: args.userId });
-          emptyCart(cart)
+          emptyCart(cart);
         } else {
           let currencycode;
           if (setting.store.currency_options.currency == 'eur') {
@@ -112,7 +112,7 @@ module.exports = {
             currencycode = 'USD';
           }
           const payment = await stripe.paymentIntents.create({
-            amount: c_grandTotal * 100,
+            amount: args.grandTotal * 100,
             currency: currencycode,
             description: args.billing.email,
             paymentMethod: args.billing.transaction_id,
@@ -141,7 +141,7 @@ module.exports = {
           taxAmount: args.taxAmount,
           couponCode: args.couponCode,
           discountAmount: args.discountAmount,
-          grandTotal: c_grandTotal,
+          grandTotal: args.grandTotal,
         });
         newOrder.products = args.products;
         // const subTotalDetails = await subTotalDetailsEntry(args, Coupon, Shipping, Tax)

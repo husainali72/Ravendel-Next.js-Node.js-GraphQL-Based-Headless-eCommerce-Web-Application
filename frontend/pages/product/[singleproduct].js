@@ -59,7 +59,22 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
     }, [])
 
     useEffect(() => {
-        setSingleProductReview(productReviews)
+
+        const getReviews = async () => {
+            try {
+                const id = singleproducts?._id
+                const { data: productReviewData } = await client.query({
+                    query: GET_PRODUCT_REVIEWS,
+                    variables: { id }
+                })
+                const productreviews = productReviewData.productwisereview.data;
+                setSingleProductReview(productreviews)
+            }
+            catch (e) {
+                console.log("review Error", e?.networkError?.result?.errors, e);
+            }
+        }
+        getReviews()
     }, [singleproducts])
     useEffect(() => {
         var product = singleproducts;
@@ -236,6 +251,7 @@ export async function getStaticProps({ params }) {
             query: GET_PRODUCT_REVIEWS,
             variables: { id }
         })
+
         productReviews = productReviewData.productwisereview.data;
     }
     catch (e) {

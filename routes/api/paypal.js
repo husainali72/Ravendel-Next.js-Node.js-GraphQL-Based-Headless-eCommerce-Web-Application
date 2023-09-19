@@ -1,6 +1,6 @@
 const dotenv = require('dotenv')
 dotenv.config({path:'./.env'})
-const {PAYPAL_CLIENT, PAYPAL_KEY, RETURN_URL, CANCEL_URL} = process.env
+const {PAYPAL_CLIENT, PAYPAL_KEY, RETURN_URL_payPal, CANCEL_URL} = process.env
 const Setting = require('../../models/Setting')
 const paypal = require('paypal-rest-sdk')
 const _ = require('lodash')
@@ -25,14 +25,14 @@ router.post('/pay', async(req, res) => {
             currency: currency,
             quantity: item.qty,
         }
-    })
+    }) 
     const create_payment_json = {
         "intent": "sale",
-        "payer": {
-            "paymentMethod": "paypal"
+        "payer": { 
+            "payment_method": "paypal"
         },
         "redirect_urls": {
-            "return_url": RETURN_URL,
+            "return_url": RETURN_URL_payPal,
             "cancel_url": CANCEL_URL
         },
         "transactions": [{
@@ -49,10 +49,11 @@ router.post('/pay', async(req, res) => {
     
     paypal.payment.create(create_payment_json, function (error, payment) {
         if (error) {
+            console.log(error)
             throw error;
         } else {
             payment = payment.links.filter(data => data.rel === "approval_url")[0]
-            // console.log(payment)
+            console.log(payment)
             // res.redirect(payment.href)
             res.send({url: payment.href})
         }
@@ -60,31 +61,27 @@ router.post('/pay', async(req, res) => {
       
 });
 
-router.get('/success', (req, res) => {
-    const {payerId, paymentId} = req.query;
-
+router.get('/success', async(req, res) => {
+    const {PayerID, paymentId} = req.query;
+    let currency = await Setting.findOne({})
+    currency = _.get(currency, 'store.currency_options.currency').toUpperCase() || "USD"
     const execute_payment_json = {
-        "payer_id": payerId,
-        "transactions": [{
-            "amount": {
-                "currency": currency,
-                "total": total
-            }
-        }]
+        "payer_id": PayerID
     };
-
     paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
         if (error) {
-            // console.log(error.response);
+            console.log(error.response);
             throw error;
         } else {
-            // console.log(JSON.stringify(payment));
+            console.log(JSON.stringify(payment));
+            let PayerID = payment.id;
+            
             res.send({success: true});
         }
     });
 });
 
-router.get('/cancel', (req, res) => res.send('Cancelled'));
+router.get('/cancel', (req, res) => res.render(CANCEL_URL));
 
 
 module.exports = router

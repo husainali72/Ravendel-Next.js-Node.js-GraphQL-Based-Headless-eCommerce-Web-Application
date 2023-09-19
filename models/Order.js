@@ -99,6 +99,9 @@ const OrderSchema = new Schema({
       feature_image: {
         type: Number,
       },
+      productImage: {
+        type: String,
+      },
       productTotal : {
         type: Number,
       },
@@ -108,7 +111,24 @@ const OrderSchema = new Schema({
       productTax : {
         type: Number
       },
-      attributes: []
+      productTaxPercentage: {
+        type: Number,
+      },
+      attributes: [{
+        name:
+          { type: String },
+        value:
+          { type: String }
+      }],
+      variantId: {
+        type: String
+      },
+      shippingClass: {
+        type: Schema.ObjectId,        
+      },
+      taxClass: {
+        type: Schema.ObjectId,        
+      }
     }
   ]
   // sub_total_details: {
