@@ -681,15 +681,15 @@ const ViewOrderComponent = ({ params }) => {
                           {order.products.map((product, index) => (
                             <TableRow key={index}>
 
-                              <TableCell>{product.name}</TableCell>
+                              <TableCell>{product?.productTitle}</TableCell>
                               <TableCell>
-                                {currencyFormat(product.cost)}
+                                {currencyFormat(product?.productPrice)}
                               </TableCell>
                               <TableCell>{product.qty}</TableCell>
 
                               <TableCell>{product?.attributes?.map((attribute) => <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)}</TableCell>
                               <TableCell>
-                                {currencyFormat(product.qty * product.cost)}
+                                {currencyFormat(product.qty * product.productPrice)}
                               </TableCell>
                             </TableRow>
                           ))}

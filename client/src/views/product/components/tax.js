@@ -23,7 +23,7 @@ const TaxComponent = ({ product, onTaxInputChange, onTaxClassChange, tax_class }
     if (taxState.tax.taxClass.length) {
 
       let taxClass = product && taxState.tax.taxClass?.some((taxClass) => taxClass._id === product)
-      onTaxInputChange(taxClass ? product : taxClass);
+      onTaxInputChange(taxClass ? product : taxState?.tax?.taxClass[0]?._id);
 
     }
   }, [taxState.tax]);

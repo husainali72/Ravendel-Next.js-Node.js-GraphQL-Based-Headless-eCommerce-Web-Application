@@ -56,13 +56,12 @@ const MyWishList = ({ id, customeraddres }) => {
     }, [customeraddres])
 
     const updateAccountDetail = (e) => {
-        e.preventDefault();
+        e?.preventDefault();
         mutation(UPDATE_CUSTOMER, accountDetails, token).then(async (response) => {
             if (response.data.updateCustomer.success) {
                 let id = "622ae63d3aa0f0f63835ef8e"
                 query(GET_CUSTOMER_QUERY, id).then((response) => {
                     const customeradd = response.data.customer.data
-                    console.log("==", customeradd)
                 })
                 refreshData()
             }
@@ -249,7 +248,6 @@ export async function getStaticPaths() {
         console.log("Blog Error=======", e.networkError);
 
     }
-    console.log("AllCustomerData", AllCustomerData);
     const paths = AllCustomerData.customers.data.map((curElem) => ({
         params: { mywishlist: curElem.id.toString() }
 
