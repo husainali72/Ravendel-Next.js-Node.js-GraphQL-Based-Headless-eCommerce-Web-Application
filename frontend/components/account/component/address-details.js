@@ -42,20 +42,20 @@ const AddressDetail = (props) => {
     const [address, setAddress] = useState(addressObject)
     const [allAddressBook, setAllAddressBook] = useState([])
     useEffect(() => {
-        if (addressDetail.id) {
-            addressObject.id = addressDetail.id
-            setAddress({ ...address, id: addressDetail.id })
+        if (addressDetail?.id) {
+            addressObject.id = addressDetail?.id
+            setAddress({ ...address, id: addressDetail?.id })
         }
     }, [])
     useEffect(() => {
-        if (addressDetail.id) {
-            addressObject.id = addressDetail.id
-            setAddress({ ...address, id: addressDetail.id })
+        if (addressDetail?.id) {
+            addressObject.id = addressDetail?.id
+            setAddress({ ...address, id: addressDetail?.id })
         }
     }, [addMode, editMode])
     useEffect(() => {
-        if (addressDetail.addressBook && addressDetail.addressBook?.length > 0) {
-            setAllAddressBook(addressDetail.addressBook)
+        if (addressDetail?.addressBook && addressDetail?.addressBook?.length > 0) {
+            setAllAddressBook(addressDetail?.addressBook)
         }
         else {
             setAllAddressBook(allAddressBook)
@@ -78,13 +78,13 @@ const AddressDetail = (props) => {
 
 
     const updateAddress = async (e) => {
-        if (address.firstName && address.lastName && address.addressLine1 && address.city && address.company && address.country && address.state && address.phone) {
+        if (address?.firstName && address?.lastName && address?.addressLine1 && address?.city && address?.company && address?.country && address?.state && address?.phone) {
             mutation(UPDATE_ADDRESSBOOK, address, token).then(async (response) => {
-                if (response.data.updateAddressBook.success) {
+                if (response?.data?.updateAddressBook?.success) {
                     getcustomer()
                     setEditMode(false);
                     setAddress(addressObject)
-                    notify(response.data.updateAddressBook.message, true);
+                    notify(response?.data?.updateAddressBook?.message, true);
 
                 }
             }
@@ -92,15 +92,15 @@ const AddressDetail = (props) => {
         }
     };
     const addNewAddress = async () => {
-        if (address.firstName && address.lastName && address.addressLine1 && address.city && address.company && address.country && address.state && address.phone) {
+        if (address?.firstName && address?.lastName && address?.addressLine1 && address?.city && address?.company && address?.country && address?.state && address?.phone) {
             mutation(ADD_ADDRESSBOOK, address, token).then(async (response) => {
 
-                if (response.data.addAddressBook.success) {
+                if (response?.data?.addAddressBook?.success) {
                     setAddMode(false);
                     setEditMode(false);
                     getcustomer()
                     setAddress(addressObject)
-                    notify(response.data.addAddressBook.message, true);
+                    notify(response?.data?.addAddressBook?.message, true);
                 }
             })
         }
@@ -117,14 +117,14 @@ const AddressDetail = (props) => {
         reset()
     };
     const deleteAddressBook = (_id, index) => {
-        if (addressDetail && addressDetail.id) {
-            addressObject.id = addressDetail.id
-            setAddress({ ...address, id: addressDetail.id })
+        if (addressDetail && addressDetail?.id) {
+            addressObject.id = addressDetail?.id
+            setAddress({ ...address, id: addressDetail?.id })
         }
         const id = address.id;
         let variables = { id, _id }
         mutation(DELETE_ADDRESSBOOK, variables, token).then(async (response) => {
-            if (response.data.deleteAddressBook.success) {
+            if (response?.data?.deleteAddressBook?.success) {
                 refreshData()
                 await router.push("/account/profile")
                 let list = [...allAddressBook]
@@ -150,14 +150,14 @@ const AddressDetail = (props) => {
                                         name="firstname"
                                         label="firstname"
                                         placeholder="First name *"
-                                        value={address.firstName || ""}
+                                        value={address?.firstName || ""}
 
                                         className="update-account-details-input"
 
                                         {...register('firstname', {
 
                                             required: {
-                                                value: (address.firstName ? false : true),
+                                                value: (address?.firstName ? false : true),
                                                 message: "First name is required",
                                             },
                                         })}
@@ -165,7 +165,7 @@ const AddressDetail = (props) => {
                                     />
                                     <p>
                                         <small style={{ color: 'red' }}>
-                                            {errors.firstname?.type === "required" ? errors.firstname?.message : undefined}
+                                            {errors.firstname?.type === "required" ? errors?.firstname?.message : undefined}
                                         </small>
                                     </p>
                                 </Col>
@@ -175,13 +175,13 @@ const AddressDetail = (props) => {
                                         name="lastname"
                                         label="lastname"
                                         placeholder="Last name *"
-                                        value={address.lastName}
+                                        value={address?.lastName}
 
                                         className="update-account-details-input"
                                         {...register('lastname', {
 
                                             required: {
-                                                value: (address.lastName ? false : true),
+                                                value: (address?.lastName ? false : true),
                                                 message: "Last name is required",
                                             },
 
@@ -190,7 +190,7 @@ const AddressDetail = (props) => {
                                     />
                                     <p>
                                         <small style={{ color: 'red' }}>
-                                            {errors.lastname?.type === "required" ? errors.lastname?.message : undefined}
+                                            {errors?.lastname?.type === "required" ? errors?.lastname?.message : undefined}
                                         </small>
                                     </p>
                                 </Col>
@@ -200,12 +200,12 @@ const AddressDetail = (props) => {
                                         name="company"
                                         label="company"
                                         placeholder="Company*"
-                                        value={address.company}
+                                        value={address?.company}
                                         className="update-account-details-input"
                                         {...register('company', {
 
                                             required: {
-                                                value: (address.company ? false : true),
+                                                value: (address?.company ? false : true),
                                                 message: "company is required",
                                             },
                                         })}
@@ -215,7 +215,7 @@ const AddressDetail = (props) => {
 
                                     <p>
                                         <small style={{ color: 'red' }}>
-                                            {errors.company?.type === "required" ? errors.company?.message : undefined}
+                                            {errors.company?.type === "required" ? errors?.company?.message : undefined}
                                         </small>
                                     </p>
                                 </Col>
@@ -225,7 +225,7 @@ const AddressDetail = (props) => {
                                         name="phone"
                                         label="phone"
                                         placeholder="Phone *"
-                                        value={address.phone}
+                                        value={address?.phone}
                                         {...register('phone', {
 
                                             required: {
@@ -239,7 +239,7 @@ const AddressDetail = (props) => {
                                     />
                                     <p>
                                         <small style={{ color: 'red' }}>
-                                            {errors.phone?.type === "required" ? errors.phone?.message : undefined}
+                                            {errors.phone?.type === "required" ? errors?.phone?.message : undefined}
                                         </small>
                                     </p>
                                 </Col>
@@ -251,11 +251,11 @@ const AddressDetail = (props) => {
                                         name="address"
                                         label="address"
                                         placeholder="Address *"
-                                        value={address.addressLine1}
+                                        value={address?.addressLine1}
                                         {...register('addressLine1', {
 
                                             required: {
-                                                value: (address.addressLine1 ? false : true),
+                                                value: (address?.addressLine1 ? false : true),
                                                 message: "Address is required",
                                             },
                                         })}
@@ -277,7 +277,7 @@ const AddressDetail = (props) => {
                                         name="address"
                                         label="address"
                                         placeholder="Address *"
-                                        value={address.addressLine2}
+                                        value={address?.addressLine2}
                                         onChange={(e) => setAddress({ ...address, addressLine2: e.target.value })}
 
                                         className="update-account-details-input"
@@ -291,11 +291,11 @@ const AddressDetail = (props) => {
                                         name="city"
                                         label="city"
                                         placeholder="City *"
-                                        value={address.city}
+                                        value={address?.city}
                                         {...register('city', {
 
                                             required: {
-                                                value: (address.city ? false : true),
+                                                value: (address?.city ? false : true),
                                                 message: "City is required",
                                             },
                                         })}
@@ -315,11 +315,11 @@ const AddressDetail = (props) => {
                                         name="country"
                                         label="country"
                                         placeholder="Country *"
-                                        value={address.country}
+                                        value={address?.country}
                                         {...register('country', {
 
                                             required: {
-                                                value: (address.country ? false : true),
+                                                value: (address?.country ? false : true),
                                                 message: "Country is required",
                                             },
                                         })}
@@ -339,7 +339,7 @@ const AddressDetail = (props) => {
                                         name="state"
                                         label="state"
                                         placeholder="State *"
-                                        value={address.state}
+                                        value={address?.state}
                                         {...register('state', {
 
                                             required: {
@@ -363,11 +363,11 @@ const AddressDetail = (props) => {
                                         name="pincode"
                                         label="pincode"
                                         placeholder="PinCode *"
-                                        value={address.pincode || ""}
+                                        value={address?.pincode || ""}
                                         {...register('pincode', {
 
                                             required: {
-                                                value: (address.pincode ? false : true),
+                                                value: (address?.pincode ? false : true),
                                                 message: "Pincode is required",
                                             },
                                         })}
@@ -385,7 +385,7 @@ const AddressDetail = (props) => {
                                 <Form.Check
                                     type="checkbox"
                                     name="checkedB"
-                                    value={address.defaultAddress}
+                                    value={address?.defaultAddress}
                                     onChange={(e) => setAddress({ ...address, defaultAddress: e.target.checked })}
                                     label="Make it Default Address"
                                 />
@@ -424,12 +424,12 @@ const AddressDetail = (props) => {
                 </Button>
             </Fade>
             <div className="address-details-container">
-                {addressDetail && addressDetail.addressBook && allAddressBook.map((addressBook, index) => (
+                {addressDetail && addressDetail?.addressBook && allAddressBook?.map((addressBook, index) => (
                     <Card key={index}>
                         <Card.Body>
                             <Row className="address-card-row">
 
-                                <Col style={{ fontWeight: 700 }}><i className="fas fa-user"></i>  {capitalize(addressBook.firstName)}</Col>
+                                <Col style={{ fontWeight: 700 }}><i className="fas fa-user"></i>  {capitalize(addressBook?.firstName)}</Col>
 
                                 <Col style={{ float: 'right', marginRight: "-400px" }}>
                                     <OverlayTrigger
@@ -442,10 +442,10 @@ const AddressDetail = (props) => {
                                 </Col>
                             </Row>
                             <Card.Text>
-                                <div style={{ margin: "10px", padding: "10px" }}><i className="fas fa-home"></i>{capitalize(addressBook.city)}</div>
-                                <div style={{ margin: "10px", padding: "10px" }}><i className="fas fa-phone-alt"></i>{capitalize(addressBook.phone)}</div>
-                                <div style={{ margin: "10px", padding: "10px" }}><i className="fas fa-envelope"></i>{capitalize(addressBook.pincode)}</div>
-                                <div style={{ margin: "10px", padding: "10px" }}><i className="far fa-building"></i>{capitalize(addressBook.company)}</div>
+                                <div style={{ margin: "10px", padding: "10px" }}><i className="fas fa-home"></i>{capitalize(addressBook?.city)}</div>
+                                <div style={{ margin: "10px", padding: "10px" }}><i className="fas fa-phone-alt"></i>{capitalize(addressBook?.phone)}</div>
+                                <div style={{ margin: "10px", padding: "10px" }}><i className="fas fa-envelope"></i>{capitalize(addressBook?.pincode)}</div>
+                                <div style={{ margin: "10px", padding: "10px" }}><i className="far fa-building"></i>{capitalize(addressBook?.company)}</div>
                             </Card.Text>
                             <Button
                                 className="me-2"
@@ -458,7 +458,7 @@ const AddressDetail = (props) => {
                             <Button
                                 variant="danger"
                                 size="sm"
-                                onClick={() => deleteAddressBook(addressBook._id, index)}
+                                onClick={() => deleteAddressBook(addressBook?._id, index)}
                             >
                                 DELETE
                             </Button>

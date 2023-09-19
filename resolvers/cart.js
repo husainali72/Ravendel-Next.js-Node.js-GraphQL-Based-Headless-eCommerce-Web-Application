@@ -212,8 +212,10 @@ module.exports = {
           for (let a = 0; a < args.cartItem.length; a++) {
 
             cartProduct = args.cartItem[a];
+
             let productShipping;
-            let productTax;
+
+            let productTax;yaha 
 
             const product = await Product.findById({ _id: cartProduct.productId }).lean();
             let odredQuantity = cartProduct.qty
@@ -243,26 +245,34 @@ module.exports = {
               if (!globalShippingPerOrder) {
                 totalShipping += globalShippingAmount;
                 grandTotal += globalShippingAmount;
+
                 productShipping = +globalShippingAmount
+
               }
             }
 
             else if (!global_shipping) {
 
+
               productShipping = 0;
+
 
               let productShippingClass = product.shipping.shippingClass;
 
               shipping.shippingClass.forEach((shippingObject) => {
 
                 if (shippingObject._id.toString() == productShippingClass.toString()) {
+
                   productShipping = shippingObject.amount * odredQuantity;
+
                 }
 
               })
 
+
               totalShipping += productShipping;
               grandTotal += productShipping;
+
 
             }
 
@@ -275,8 +285,10 @@ module.exports = {
               productTotal: productPrice * (+odredQuantity),
               productTax: productTax.toFixed(2)
             }
+
             if (productShipping) {
               pushValue.productShipping = productShipping.toFixed(2);
+
             }
 
             items.push(pushValue)
@@ -296,7 +308,9 @@ module.exports = {
           for (let a = 0; a < args.cartItem.length; a++) {
 
             cartProduct = args.cartItem[a]
+
             let productShipping;
+
 
             const product = await Product.findById({ _id: cartProduct.productId }).lean();
             let odredQuantity = cartProduct.qty
@@ -341,11 +355,14 @@ module.exports = {
 
                 totalShipping += globalShippingAmount;
                 grandTotal += globalShippingAmount;
+
                 productShipping = +globalShippingAmount
+
               }
 
             }
             else if (!global_shipping) {
+
 
               productShipping = 0;
 
@@ -355,12 +372,15 @@ module.exports = {
 
                 if (shippingObject?._id?.toString() == productShippingClass?.toString()) {
                   productShipping = shippingObject.amount * odredQuantity;
+
                 }
 
               })
 
+
               totalShipping += productShipping;
               grandTotal += productShipping;
+
 
             }
 
@@ -374,8 +394,10 @@ module.exports = {
               productTotal: productPrice * (+odredQuantity),
               productTax: +productTaxAmount.toFixed(2)
             }
+
             if (productShipping) {
               pushValue.productShipping = productShipping.toFixed(2)
+
             }
 
             items.push(pushValue)

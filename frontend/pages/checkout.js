@@ -183,7 +183,9 @@ export const CheckOut = ({ currencyStore }) => {
                                 }
                             }
                             else {
+
                                 cartProduct = {
+
                                     _id: originalProduct?._id,
                                     variantId: cart?.variantId,
                                     quantity: parseInt(cart?.qty),
@@ -247,7 +249,11 @@ export const CheckOut = ({ currencyStore }) => {
         checkCart();
     }, []);
     useEffect(() => {
-        let cartsData = cartItems.map((product) => { return { productId: product._id, qty: product.quantity, total: product?.pricing * product.quantity } })
+        let cartsData = cartItems.map((product) => {
+            return {
+                productId: product._id, qty: product.quantity, total: product?.pricing * product.quantity,
+            }
+        })
         let calculate = {
             // total_coupon: '0.0',
             cartItem: cartsData
@@ -406,11 +412,17 @@ export const CheckOut = ({ currencyStore }) => {
 
 
         let cart = cartItems.map((product) => {
-
             return {
                 productId: product._id,
                 qty: product.quantity,
-                productTotal: (product?.pricing ? product?.pricing * product.quantity : product?.pricing * product.quantity).toString(),
+                productTotal: (product?.pricing * product.quantity).toString(),
+                productImage: product?.feature_image,
+                productTitle: product?.name,
+                productShipping: product?.shippingClass,
+                productTax: product?.taxClass,
+                productPrice: product?.pricing?.toString(),
+
+                variantId: product?.variantId
             }
         })
 

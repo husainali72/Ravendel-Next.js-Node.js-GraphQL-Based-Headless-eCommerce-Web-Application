@@ -5,7 +5,9 @@ const GET_ORDERS = gql`
       data {
         id
         orderNumber
+
    userId
+
         paymentStatus
         shippingStatus
         shipping
@@ -29,7 +31,9 @@ const GET_ORDER = gql`
       data {
         id
         orderNumber
+
      userId
+
         paymentStatus
         shippingStatus
         shipping
@@ -38,11 +42,13 @@ const GET_ORDER = gql`
         couponCode
         date
         updated
+
         shippingAmount 
         taxAmount
 grandTotal
 cartTotal
 discountAmount
+
       }
       message {
         message

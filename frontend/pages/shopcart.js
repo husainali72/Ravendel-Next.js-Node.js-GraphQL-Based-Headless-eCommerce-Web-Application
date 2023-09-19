@@ -253,7 +253,9 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                 qty: qty,
                                 productTitle: product.name,
                                 productImage: product.feature_image,
+
                                 productPrice: product.pricing?.toString(),
+
                                 shippingClass: product?.shippingClass,
                                 taxClass: product?.taxClass,
                                 attributes: product.attributes,
@@ -266,7 +268,9 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                 qty: product.quantity,
                                 productTitle: product.name,
                                 productImage: product.feature_image,
+
                                 productPrice: product.pricing?.toString(),
+
                                 shippingClass: product?.shippingClass,
                                 taxClass: product?.taxClass,
                                 attributes: product.attributes,
@@ -328,7 +332,9 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                     qty: product.quantity,
                                     productTitle: product.name,
                                     productImage: product.feature_image?.original,
+
                                     productPrice: product.pricing?.toString(),
+
                                     attributes: product.attributes,
                                     variantId: product.variantId,
                                     productQuantity: product.productQuantity,
@@ -482,7 +488,9 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                     currency={currency}
 
                                 />
-                                {unAvailableProducts && unAvailableProducts?.length > 0 ? <><h3 style={{ color: 'red' }}>Out of stock</h3>
+
+                                {unAvailableProducts && unAvailableProducts?.length > 0 ? <><h3 style={{ color: 'red', fontSize: '15px' }}>Out of stock</h3>
+
                                     <CartTable
                                         decimal={decimal}
                                         isQuantityBtnLoading={isQuantityBtnLoading}

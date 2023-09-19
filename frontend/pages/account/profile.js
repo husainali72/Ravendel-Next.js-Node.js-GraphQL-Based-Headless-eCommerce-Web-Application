@@ -18,7 +18,7 @@ const Profile = ({ customeraddres }) => {
     const [ID, setID] = useState("")
     const session = useSession();
     const session2 = getSession();
-    session2.then(res => setID(res.user.accessToken.customer._id))
+    session2.then(res => setID(res?.user?.accessToken?.customer?._id))
     const router = useRouter();
     if (router.isFallback) {
         return <div>Loading...</div>

@@ -689,7 +689,9 @@ const ViewOrderComponent = ({ params }) => {
 
                               <TableCell>{product?.attributes?.map((attribute) => <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)}</TableCell>
                               <TableCell>
+
                                 {currencyFormat(product.qty * product?.productPrice)}
+
                               </TableCell>
                             </TableRow>
                           ))}
