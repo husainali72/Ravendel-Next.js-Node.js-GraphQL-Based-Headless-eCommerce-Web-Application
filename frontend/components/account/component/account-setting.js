@@ -27,7 +27,8 @@ const AccountSettings = (props) => {
     const { register, formState: { errors }, handleSubmit, control, reset } = useForm();
     const onSubmit = (data) => console.log(data);
     const updateAccountDetail = (e) => {
-        e.preventDefault()
+
+        // e?.preventDefault()
         mutation(UPDATE_CUSTOMER, accountDetails, token).then(async (response) => {
             if (response.data.updateCustomer.success) {
                 notify(response.data.updateCustomer.message, true);
@@ -50,11 +51,11 @@ const AccountSettings = (props) => {
                             name="firstname"
                             label="firstname"
                             placeholder="First name *"
-                            value={accountDetails.firstName || ''}
+                            value={accountDetails?.firstName || ''}
                             {...register('firstname', {
 
                                 required: {
-                                    value: (accountDetails.firstName ? false : true),
+                                    value: (accountDetails?.firstName ? false : true),
                                     message: "First name is required",
                                 },
                             })}
@@ -75,11 +76,11 @@ const AccountSettings = (props) => {
                             name="lastname"
                             label="lastname"
                             placeholder="Last name *"
-                            value={accountDetails.lastName || ""}
+                            value={accountDetails?.lastName || ""}
                             {...register('lastname', {
 
                                 required: {
-                                    value: (accountDetails.lastName ? false : true),
+                                    value: (accountDetails?.lastName ? false : true),
                                     message: "Last name is required",
                                 },
 
@@ -100,11 +101,11 @@ const AccountSettings = (props) => {
                             name="company"
                             label="company"
                             placeholder="Company*"
-                            value={accountDetails.company || ""}
+                            value={accountDetails?.company || ""}
                             {...register('company', {
 
                                 required: {
-                                    value: (accountDetails.company ? false : true),
+                                    value: (accountDetails?.company ? false : true),
                                     message: "company is required",
                                 },
                             })}
@@ -120,16 +121,16 @@ const AccountSettings = (props) => {
                     <Col >
                         <label className="textlabel">Phone</label>
                         <input
-                            type="text"
+                            type="number"
 
                             name="phone"
                             label="phone"
                             placeholder="Phone *"
-                            value={accountDetails.phone || ""}
+                            value={accountDetails?.phone || ""}
                             {...register('phone', {
 
                                 required: {
-                                    value: (accountDetails.phone ? false : true),
+                                    value: (accountDetails?.phone ? false : true),
                                     message: "Phone is required",
                                 },
                             })}
@@ -152,11 +153,11 @@ const AccountSettings = (props) => {
                             name="email"
                             label="email"
                             placeholder="Email *"
-                            value={accountDetails.email}
+                            value={accountDetails?.email}
                             {...register('email', {
 
                                 required: {
-                                    value: (accountDetails.email ? false : true),
+                                    value: (accountDetails?.email ? false : true),
                                     message: "Email is required",
                                 },
                             })}
@@ -177,11 +178,11 @@ const AccountSettings = (props) => {
                             name="password"
                             label="password"
                             placeholder="Password *"
-                            value={accountDetails.password}
+                            value={accountDetails?.password}
                             {...register('password', {
 
                                 required: {
-                                    value: (accountDetails.password ? false : true),
+                                    value: (accountDetails?.password ? false : true),
                                     message: "Password  is required",
                                 },
                             })}
@@ -201,11 +202,11 @@ const AccountSettings = (props) => {
                             name="confirmPassword"
                             label="confirmPassword"
                             placeholder="Confirm Password *"
-                            value={accountDetails.confirmPassword || ""}
+                            value={accountDetails?.confirmPassword || ""}
                             {...register('confirmPassword', {
 
                                 required: {
-                                    value: (accountDetails.confirmPassword ? false : true),
+                                    value: (accountDetails?.confirmPassword ? false : true),
                                     message: "Confirm password  is required",
                                 },
                             })}
@@ -225,11 +226,11 @@ const AccountSettings = (props) => {
                             name="currentpassword"
                             label="currentpassword"
                             placeholder="Current Password *"
-                            value={accountDetails.currentpassword || ""}
+                            value={accountDetails?.currentpassword || ""}
                             {...register('currentpassword', {
 
                                 required: {
-                                    value: (accountDetails.currentpassword ? false : true),
+                                    value: (accountDetails?.currentpassword ? false : true),
                                     message: "Current password is required",
                                 },
                             })}

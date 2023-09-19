@@ -32,7 +32,7 @@ const AllShippingComponentComponent = ({
   useEffect(() => {
 
     let data = []
-    shippingState.shipping.shippingClass.map((shipping) => {
+    shippingState?.shipping?.shippingClass?.map((shipping) => {
 
       let object = {
         id: shipping._id,

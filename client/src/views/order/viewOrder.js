@@ -681,15 +681,17 @@ const ViewOrderComponent = ({ params }) => {
                           {order.products.map((product, index) => (
                             <TableRow key={index}>
 
-                              <TableCell>{product.name}</TableCell>
+                              <TableCell>{product?.productTitle}</TableCell>
                               <TableCell>
-                                {currencyFormat(product.cost)}
+                                {currencyFormat(product?.productPrice)}
                               </TableCell>
-                              <TableCell>{product.qty}</TableCell>
+                              <TableCell>{product?.qty}</TableCell>
 
                               <TableCell>{product?.attributes?.map((attribute) => <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)}</TableCell>
                               <TableCell>
-                                {currencyFormat(product.qty * product.cost)}
+
+                                {currencyFormat(product.qty * product?.productPrice)}
+
                               </TableCell>
                             </TableRow>
                           ))}
@@ -718,9 +720,9 @@ const ViewOrderComponent = ({ params }) => {
                         <Typography variant="body1" className={classes.mtb1}>
                           Shipping
                         </Typography>
-                        {order.sub_total_details.couponCode && order.sub_total_details.couponCode !== 'None' ?
+                        {order.couponCode && order.couponCode !== 'None' ?
                           <Typography variant="body1" className={classes.mtb2coupon} sx={{ color: '#4BB543' }}>
-                            Coupon - ( {order.sub_total_details.couponCode} )
+                            Coupon - ( {order.couponCode} )
                           </Typography> : null}
                         <Divider sx={{ mt: "10px", mb: "10px" }} />
                         <Typography variant="body1" className={classes.mtb1}>
@@ -729,21 +731,21 @@ const ViewOrderComponent = ({ params }) => {
                       </Grid>
                       <Grid item md={3} className={classes.textRight}>
                         <Typography variant="body2" className={classes.mtb2}>
-                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.total, decimal)}
+                          {currencySetter(currency, '12px')}{getPrice(order?.cartTotal, decimal)}
                         </Typography>
                         <Typography variant="body2" className={classes.mtb2}>
-                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.tax_value, decimal)}
+                          {currencySetter(currency, '12px')}{getPrice(order?.taxAmount, decimal)}
                         </Typography>
                         <Typography variant="body2" className={classes.mtb2}>
-                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.shipping_value, decimal)}
+                          {currencySetter(currency, '12px')}{getPrice(order?.shippingAmount, decimal)}
                         </Typography>
-                        {order.sub_total_details.couponCode && order.sub_total_details.couponCode !== 'None' ?
+                        {order?.couponCode && order?.couponCode !== 'None' ?
                           <Typography variant="body2" className={classes.mtb2coupon} sx={{ color: '#4BB543', }}>
-                            <span className={classes.minus}>-</span>  {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.coupon_value, decimal)}
+                            <span className={classes.minus}>-</span>  {currencySetter(currency, '12px')}{getPrice(order?.discountAmount, decimal)}
                           </Typography> : null}
                         <Divider sx={{ mt: "10px", mb: "10px" }} />
                         <Typography variant="body2" className={classes.mtb2}>
-                          {currencySetter(currency, '12px')}{getPrice(order.sub_total_summary.sub_total, decimal)}
+                          {currencySetter(currency, '12px')}{getPrice(order?.grandTotal, decimal)}
                         </Typography>
                       </Grid>
                     </Grid>

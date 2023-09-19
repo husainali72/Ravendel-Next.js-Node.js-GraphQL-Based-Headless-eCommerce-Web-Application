@@ -74,7 +74,8 @@ export const couponObj = {
   minimumSpend: 0,
   maximumSpend: 0,
   products: [],
-
+  product: false,
+  category: false,
   includeProducts: [],
 
   excludeProducts: [],

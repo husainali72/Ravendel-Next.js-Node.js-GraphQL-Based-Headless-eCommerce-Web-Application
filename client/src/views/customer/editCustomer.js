@@ -91,25 +91,25 @@ const EditCustomerComponent = ({ params }) => {
   useEffect(() => {
     setloading(get(Customers, "loading"));
   }, [get(Customers, "loading")]);
-
+  useEffect(() => {
+    dispatch(customersAction());
+  }, []);
   useEffect(() => {
     document.forms[0].reset();
-    if (isEmpty(get(Customers, "customers"))) {
-      dispatch(customersAction());
-    } else {
-      if (ID) {
-        for (let i in Customers.customers) {
+
+    if (ID) {
+      for (let i in Customers.customers) {
         if (Customers.customers[i].id === ID) {
           SingleCustomerObject.id = Customers.customers[i].id;
           setSingleCustomer(SingleCustomerObject);
           setcustomer({ ...customer, ...Customers.customers[i] });
           break;
         }
-        } setEditMode(false);
-      } else {
-        setcustomer(customerObj)
-      }
+      } setEditMode(false);
+    } else {
+      setcustomer(customerObj)
     }
+
   }, [get(Customers, "customers"), ID]);
 
   const addUpdateCustomer = (e) => {
@@ -186,7 +186,7 @@ const EditCustomerComponent = ({ params }) => {
     return (
       <Grid item md={12} sm={6} xs={12}>
 
-        {label === 'Phone' ? <PhoneNumber handleOnChange={AddressBookPhonehandlechange} phoneValue={singleCustomer.phone} width="100%" className="phoneValidation"/> :
+        {label === 'Phone' ? <PhoneNumber handleOnChange={AddressBookPhonehandlechange} phoneValue={singleCustomer.phone} width="100%" className="phoneValidation" /> :
 
           <TextInput
             label={label}
@@ -202,56 +202,57 @@ const EditCustomerComponent = ({ params }) => {
   const updateAddress = () => {
 
     let phoneNumberError = validatePhone(["phone"], singleCustomer)
-    let errors = validate(["pincode", "country", "state", "city", "addressLine1", 'company',"lastName", "firstName",], singleCustomer);
+    let errors = validate(["pincode", "country", "state", "city", "addressLine1", 'company', "lastName", "firstName",], singleCustomer);
     if (!isEmpty(errors)) {
-     dispatch({
-       type: ALERT_SUCCESS,
-       payload: {
-         boolean: false,
-         message: errors,
-         error: true,
-       },
-     });
-   } else if (!isEmpty(phoneNumberError)) {
-    dispatch({
-      type: ALERT_SUCCESS,
-      payload: {
-        boolean: false,
-        message: phoneNumberError,
-        error: true,
-      },
-    });
-  }
-   else {
-    dispatch(addressbookUpdateAction(singleCustomer))}
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    } else if (!isEmpty(phoneNumberError)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: phoneNumberError,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(addressbookUpdateAction(singleCustomer))
+    }
   };
 
   const addAddress = () => {
     let phoneNumberError = validatePhone(["phone"], singleCustomer)
-    let errors = validate(["pincode", "country", "state", "city", "addressLine1", 'company',"lastName", "firstName",], singleCustomer);
+    let errors = validate(["pincode", "country", "state", "city", "addressLine1", 'company', "lastName", "firstName",], singleCustomer);
     if (!isEmpty(errors)) {
-     dispatch({
-       type: ALERT_SUCCESS,
-       payload: {
-         boolean: false,
-         message: errors,
-         error: true,
-       },
-     });
-   }  else if (!isEmpty(phoneNumberError)) {
-    dispatch({
-      type: ALERT_SUCCESS,
-      payload: {
-        boolean: false,
-        message: phoneNumberError,
-        error: true,
-      },
-    });
-  }
-   else {
-    dispatch(addressbookAddAction(singleCustomer))
- };
-   
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errors,
+          error: true,
+        },
+      });
+    } else if (!isEmpty(phoneNumberError)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: phoneNumberError,
+          error: true,
+        },
+      });
+    }
+    else {
+      dispatch(addressbookAddAction(singleCustomer))
+    };
+
 
   };
 
@@ -352,172 +353,172 @@ const EditCustomerComponent = ({ params }) => {
           {/* ==============Address Books============== */}
           {ID ?
             <>
-          <Grid item md={4} sm={12} xs={12}>
-            <CardBlocks title={`${editMode ? "Edit" : "Add"} Adress`}>
-              <Grid container spacing={2}>
-                {addressInput("First Name", "firstName")}
+              <Grid item md={4} sm={12} xs={12}>
+                <CardBlocks title={`${editMode ? "Edit" : "Add"} Adress`}>
+                  <Grid container spacing={2}>
+                    {addressInput("First Name", "firstName")}
 
-                {addressInput("Last Name", "lastName")}
+                    {addressInput("Last Name", "lastName")}
 
-                {addressInput("Company", "company")}
+                    {addressInput("Company", "company")}
 
-                {addressInput("Phone", "phone")}
+                    {addressInput("Phone", "phone")}
 
-                {addressInput("Address line1", "addressLine1")}
+                    {addressInput("Address line1", "addressLine1")}
 
-                {addressInput("Address line2", "addressLine2")}
+                    {addressInput("Address line2", "addressLine2")}
 
-                {addressInput("City", "city")}
+                    {addressInput("City", "city")}
 
-                {addressInput("State", "state")}
+                    {addressInput("State", "state")}
 
-                {addressInput("Country", "country")}
+                    {addressInput("Country", "country")}
 
-                {addressInput("Pincode", "pincode")}
-                <Grid item md={12}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        color="primary"
-                        checked={singleCustomer.defaultAddress}
-                        onChange={(e) =>
-                          setSingleCustomer({
-                            ...singleCustomer,
-                            defaultAddress: e.target.checked,
-                          })
+                    {addressInput("Pincode", "pincode")}
+                    <Grid item md={12}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            color="primary"
+                            checked={singleCustomer.defaultAddress}
+                            onChange={(e) =>
+                              setSingleCustomer({
+                                ...singleCustomer,
+                                defaultAddress: e.target.checked,
+                              })
+                            }
+                          />
                         }
+                        label="Make it Default Address"
                       />
-                    }
-                    label="Make it Default Address"
-                  />
+                    </Grid>
+                  </Grid>
+                  <CardActions>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={editMode ? updateAddress : addAddress}
+                      variant="contained"
+                    >
+                      {editMode ? "Update" : "Add"}
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={cancelAddress}
+                      variant="contained"
+                      className={classes.cancelBtn}
+                    >
+                      Cancel
+                    </Button>
+                  </CardActions>
+                </CardBlocks>
+              </Grid>
+
+              <Grid item md={8} sm={12} xs={12}>
+                <Grid container spacing={isSmall ? 2 : 4}>
+                  {customer &&
+                    customer.addressBook &&
+                    customer.addressBook.map((address, index) => (
+                      <Grid item md={6} sm={6} xs={12} key={index} >
+                        <Box style={{ marginTop: "22px" }}>
+                          <Card>
+                            <CardHeader
+                              title="Address"
+                              action={
+                                <Fragment>
+                                  <ButtonGroup
+                                    variant="text"
+                                    aria-label="address-card-action"
+                                  >
+                                    <Tooltip
+                                      title={
+                                        address.defaultAddress
+                                          ? "Default Address"
+                                          : "Edit the address and check the 'Default Address' option to make it your default address."
+                                      }
+                                      aria-label="Default-Address"
+                                    >
+                                      <Button>
+                                        <Rating
+                                          name="customized-10"
+                                          value={address.defaultAddress ? 1 : 0}
+                                          max={1}
+                                          readOnly
+                                        />
+                                      </Button>
+                                    </Tooltip>
+                                    <Tooltip title="Edit Address" aria-label="edit">
+                                      <Button onClick={() => editAddress(address)}>
+                                        <EditIcon />
+                                      </Button>
+                                    </Tooltip>
+                                    <Tooltip
+                                      title="Delete Address"
+                                      aria-label="delete"
+                                    >
+                                      <Button
+                                        className={classes.deleteicon}
+                                        onClick={() =>
+                                          deleteAddressBook(address._id)
+                                        }
+                                      >
+                                        <DeleteIcon />
+                                      </Button>
+                                    </Tooltip>
+                                  </ButtonGroup>
+                                </Fragment>
+                              }
+                            />
+                            <CardContent>
+                              <List dense>
+                                <ListItem>
+                                  <ListItemIcon>
+                                    <AccountCircleIcon />
+                                  </ListItemIcon>
+                                  <ListItemText
+                                    primary={
+                                      address.firstName + " " + address.lastName
+                                    }
+                                  />
+                                </ListItem>
+                                <ListItem>
+                                  <ListItemIcon>
+                                    <BusinessIcon />
+                                  </ListItemIcon>
+                                  <ListItemText primary={address.company} />
+                                </ListItem>
+                                <ListItem>
+                                  <ListItemIcon>
+                                    <PhoneIcon />
+                                  </ListItemIcon>
+                                  <ListItemText primary={address.phone} />
+                                </ListItem>
+                                <ListItem>
+                                  <ListItemIcon>
+                                    <HomeIcon />
+                                  </ListItemIcon>
+                                  <ListItemText
+                                    primary={
+                                      address.addressLine1 +
+                                      ", " +
+                                      address.city +
+                                      ", " +
+                                      address.country +
+                                      ", " +
+                                      address.state +
+                                      ", " +
+                                      address.pincode
+                                    }
+                                  />
+                                </ListItem>
+                              </List>
+                            </CardContent>
+                          </Card>
+                        </Box>
+                      </Grid>
+                    ))}
                 </Grid>
               </Grid>
-              <CardActions>
-                <Button
-                  size="small"
-                  color="primary"
-                  onClick={editMode ? updateAddress : addAddress}
-                  variant="contained"
-                >
-                  {editMode ? "Update" : "Add"}
-                </Button>
-                <Button
-                  size="small"
-                  onClick={cancelAddress}
-                  variant="contained"
-                  className={classes.cancelBtn}
-                >
-                  Cancel
-                </Button>
-              </CardActions>
-            </CardBlocks>
-          </Grid>
-
-          <Grid item md={8} sm={12} xs={12}>
-            <Grid container spacing={isSmall ? 2 : 4}>
-              {customer &&
-                customer.addressBook &&
-                customer.addressBook.map((address, index) => (
-                  <Grid item md={6} sm={6} xs={12} key={index} >
-                    <Box style={{ marginTop: "22px" }}>
-                      <Card>
-                        <CardHeader
-                          title="Address"
-                          action={
-                            <Fragment>
-                              <ButtonGroup
-                                variant="text"
-                                aria-label="address-card-action"
-                              >
-                                <Tooltip
-                                  title={
-                                    address.defaultAddress
-                                      ? "Default Address"
-                                      : "Edit the address and check the 'Default Address' option to make it your default address."
-                                  }
-                                  aria-label="Default-Address"
-                                >
-                                  <Button>
-                                    <Rating
-                                      name="customized-10"
-                                      value={address.defaultAddress ? 1 : 0}
-                                      max={1}
-                                      readOnly
-                                    />
-                                  </Button>
-                                </Tooltip>
-                                <Tooltip title="Edit Address" aria-label="edit">
-                                  <Button onClick={() => editAddress(address)}>
-                                    <EditIcon />
-                                  </Button>
-                                </Tooltip>
-                                <Tooltip
-                                  title="Delete Address"
-                                  aria-label="delete"
-                                >
-                                  <Button
-                                    className={classes.deleteicon}
-                                    onClick={() =>
-                                      deleteAddressBook(address._id)
-                                    }
-                                  >
-                                    <DeleteIcon />
-                                  </Button>
-                                </Tooltip>
-                              </ButtonGroup>
-                            </Fragment>
-                          }
-                        />
-                        <CardContent>
-                          <List dense>
-                            <ListItem>
-                              <ListItemIcon>
-                                <AccountCircleIcon />
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={
-                                  address.firstName + " " + address.lastName
-                                }
-                              />
-                            </ListItem>
-                            <ListItem>
-                              <ListItemIcon>
-                                <BusinessIcon />
-                              </ListItemIcon>
-                              <ListItemText primary={address.company} />
-                            </ListItem>
-                            <ListItem>
-                              <ListItemIcon>
-                                <PhoneIcon />
-                              </ListItemIcon>
-                              <ListItemText primary={address.phone} />
-                            </ListItem>
-                            <ListItem>
-                              <ListItemIcon>
-                                <HomeIcon />
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={
-                                  address.addressLine1 +
-                                  ", " +
-                                  address.city +
-                                  ", " +
-                                  address.country +
-                                  ", " +
-                                  address.state +
-                                  ", " +
-                                  address.pincode
-                                }
-                              />
-                            </ListItem>
-                          </List>
-                        </CardContent>
-                      </Card>
-                    </Box>
-                  </Grid>
-                ))}
-            </Grid>
-          </Grid>
             </> : null}
         </Grid>
       </form>

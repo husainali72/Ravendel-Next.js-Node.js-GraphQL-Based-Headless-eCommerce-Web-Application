@@ -31,6 +31,8 @@ export default function Header({ }) {
             query(GET_USER_CART, id, token).then(res => {
                 userCart = res.data.cartbyUser;
                 setCart(userCart);
+            }).catch((err) => {
+                setCart({ ...cart, cartItem: [] })
             })
         }
     }
@@ -43,6 +45,7 @@ export default function Header({ }) {
     useEffect(() => {
         getCartLength()
     }, [cartItem, data])
+
     useEffect(() => {
         getHomepageData()
     }, [])

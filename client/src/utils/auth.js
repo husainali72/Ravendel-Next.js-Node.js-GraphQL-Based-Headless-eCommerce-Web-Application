@@ -1,4 +1,5 @@
 import cookie from "react-cookies";
+import { removeCookie } from 'react-cookies';
 import { client_app_route_url } from "../utils/helper";
 
 var user_token = cookie.load("auth");
@@ -21,7 +22,7 @@ const setUserToken = (new_token) => {
 
 const logout = () => {
   cookie.remove("auth");
-  window.location.pathname = `${client_app_route_url}login`;
+  if (!cookie.load("auth")) { window.location.pathname = `${client_app_route_url}login`; }
 };
 
 export default {

@@ -40,7 +40,7 @@ const AllCustomersComponent = () => {
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          navigate(`${client_app_route_url}edit-customer/${id}`, {state : {editMode: true}} )
+          navigate(`${client_app_route_url}edit-customer/${id}`, { state: { editMode: true } })
         } else if (type === "delete") {
           dispatch(customerDeleteAction(id))
         }
@@ -54,7 +54,7 @@ const AllCustomersComponent = () => {
   useEffect(() => {
     if (!isEmpty(get(Customers, 'customers'))) {
       let data = []
-      Customers.customers.map((customer) => {
+      Customers?.customers?.map((customer) => {
         let object = {
           id: customer.id,
           date: customer.date,
