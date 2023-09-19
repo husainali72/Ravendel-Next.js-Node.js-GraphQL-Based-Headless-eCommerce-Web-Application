@@ -134,7 +134,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                     <div style={{ marginTop: '30px' }}>
                                         <MultiRangeSlider
                                             min={0}
-                                            max={100000}
+                                            max={1000000}
                                             onChange={({ min, max }) => setRangevalue(`${min}-${max}`)}
                                         />
                                         <p style={{ paddingTop: "10px", fontWeight: "600" }}>range : {currency} {rangevalue}</p>

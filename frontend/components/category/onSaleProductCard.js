@@ -120,7 +120,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, 
         <section className="product-cart-section" >
             <Container style={{ padding: '0' }}>
                 {!hidetitle ? <div>
-                    <h4 className="theme-color my-5">{titleShow ? capitalize(titleShow) : "On Sale"} <span className="text-black">Products</span></h4>
+                    <h4 className="theme-color my-2">{titleShow ? capitalize(titleShow) : "On Sale"} <span className="text-black">Products</span></h4>
                 </div>
                     : null}
                 <div>

@@ -270,6 +270,7 @@ export async function getServerSideProps({ params }) {
     var fillterProduct = [];
     var brandProduct = [];
     var shopProduct = [];
+    var stripe_Public_key = ''
     /* ===============================================Get HomepageData Settings ===============================================*/
 
     try {
@@ -294,7 +295,7 @@ export async function getServerSideProps({ params }) {
         singlecategory = shopproductcategory.productsbycaturl.data;
     }
     catch (e) {
-        console.log("ShopProduct Error===", e.networkError.result.errors)
+        console.log("ShopProduct Error===", e?.networkError?.result?.errors)
     }
     /* ===============================================Get fillter Product Category ===============================================*/
 

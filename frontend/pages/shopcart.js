@@ -63,6 +63,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                     carts?.availableItem?.map((cart) => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
                         const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
+
                         let cartProduct = {}
                         if (orginal_attributes) {
                             cartProduct = {

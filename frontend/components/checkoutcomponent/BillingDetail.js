@@ -92,6 +92,7 @@ const BillingDetails = (props) => {
                                 onChange={handleBillingInfo}
                                 onKeyDown={(e) => handleEnter(e)}
                             />
+
                             <p>
                                 <small style={{ color: 'red' }}>
                                     {errorRef.company?.type === "required" ? errorRef.company?.message : undefined}
@@ -234,7 +235,11 @@ const BillingDetails = (props) => {
                                         message: "Phone number is Required",
                                     },
                                     validate: () => {
-                                        return isValidPhoneNumber(`+${billingInfo.phone}`)
+                                        const cleanedPhoneNumber = billingInfo.phone.replace(/\D/g, '');
+
+                                        // Add '91' to the cleaned phone number
+                                        const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
+                                        return isValidPhoneNumber(formattedPhoneNumber)
                                     }
                                 }}
                                 render={({ field: { onChange, value } }) => (
@@ -519,7 +524,11 @@ const BillingDetails = (props) => {
                                             message: "Phone number is Required",
                                         },
                                         validate: () => {
-                                            return isValidPhoneNumber(`+${shippingInfo.phone}`)
+                                            const cleanedPhoneNumber = billingInfo.phone.replace(/\D/g, '');
+
+                                            // Add '91' to the cleaned phone number
+                                            const formattedPhoneNumber = `+${cleanedPhoneNumber}`
+                                            return isValidPhoneNumber(formattedPhoneNumber)
                                         }
                                     }}
                                     render={({ field: { onChange, value } }) => (

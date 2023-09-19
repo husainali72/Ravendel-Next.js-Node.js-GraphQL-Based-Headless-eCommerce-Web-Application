@@ -180,8 +180,8 @@ const EditProductComponent = ({ params }) => {
       custom_field = validatenested('custom_field', ['key', 'value'], product)
     }
     if (product.combinations) {
-      combination_error = validatenested("combinations", ["sku", 'quantity'], product);
-      combination_price_error = validatenestedArray("pricing", ["price"], product.combinations)
+      combination_error = validatenested("combinations", ["sku", 'quantity'], product, 'Variant');
+      combination_price_error = validatenestedArray("pricing", ["price"], product.combinations, 'Variant')
 
     }
 

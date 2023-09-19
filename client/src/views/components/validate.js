@@ -23,9 +23,10 @@ export const validatenestedArray = (main, names, args, key) => {
     args.map((obj) => {
       names.map((name) => {
         if (!obj[main][name]) {
+          console.log(obj[main][name], 'obj[main][name]', key)
           if (key) {
-            let msg = name.charAt(0).toUpperCase() + name.slice(1)
-            return (errors = `${key} ${msg}  is required`);
+
+            return (errors = `${key} ${name}  is required`);
           }
           else {
             let msg = name.charAt(0).toUpperCase() + name.slice(1)
@@ -102,6 +103,7 @@ export const validateNestedPhone = (main, names, args) => {
       try {
         let valid = false
         const phoneUtil = PhoneNumberUtil.getInstance();
+
         valid = phoneUtil.isValidNumber(phoneUtil.parse(args[main][name]));
         if (!valid) {
           return (errors = "Phone number is invalid")

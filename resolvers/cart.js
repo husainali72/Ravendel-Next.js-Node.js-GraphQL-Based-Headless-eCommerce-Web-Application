@@ -215,7 +215,7 @@ module.exports = {
 
             let productShipping;
 
-            let productTax;yaha 
+            let productTax;
 
             const product = await Product.findById({ _id: cartProduct.productId }).lean();
             let odredQuantity = cartProduct.qty

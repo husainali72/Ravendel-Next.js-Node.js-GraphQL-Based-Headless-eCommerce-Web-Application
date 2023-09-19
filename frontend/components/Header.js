@@ -154,14 +154,14 @@ export default function Header({ }) {
                                     </li>
                                     <li className="nav-header">
                                         <Link href="/contact">
-                                            <a className="nav-link" aria-selected="false">Contact Us</a>
+                                            <a className="nav-link" aria-selected="false">Contact</a>
                                         </Link>
                                     </li>
-                                    <li className="nav-item">
+                                    {/* <li className="nav-item">
                                         <Link href="/about">
                                             <a className="nav-link" aria-selected="false">About Us</a>
                                         </Link>
-                                    </li>
+                                    </li> */}
                                 </ul>
                             </nav>
                         </div>

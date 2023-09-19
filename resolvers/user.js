@@ -27,7 +27,7 @@ const {
 } = require("../config/api_functions");
 const bcrypt = require("bcryptjs");
 const moment = require('moment')
-const {checkAwsFolder} = require("../config/aws");
+const { checkAwsFolder } = require("../config/aws");
 const roleOptions = ["USER", "AUTHOR", "SUBSCRIBER", "MANAGER", "EDITOR"]
 const fs = require("fs");
 
@@ -104,37 +104,37 @@ module.exports = {
         let totalSales = 0;
         const ordersByYearMonth = []
         const existingOrders = await Order.find({})
-        if(existingOrders.length){
-          existingOrders.map(orderSale=>{
+        if (existingOrders.length) {
+          existingOrders.map(orderSale => {
             totalSales += orderSale.grandTotal
           })
           // orders and sales by year and month
-          for(let order of existingOrders){
-            let paymentSuccessSubTotal = order.paymentStatus !== "success" ? 0 : order.subtotal
+          for (let order of existingOrders) {
+            let paymentSuccessSubTotal = order.paymentStatus !== "success" ? 0 : order.cartTotal
             let paymentSuccessGrandTotal = order.paymentStatus !== "success" ? 0 : order.grandTotal
             let orderMonth = order.date.getMonth()
             let orderYear = order.date.getFullYear()
             // if year array is empty add new year with month
-            if(!ordersByYearMonth.length){
+            if (!ordersByYearMonth.length) {
               let populateYear = populateYearMonth(order, orderYear, orderMonth, paymentSuccessSubTotal, paymentSuccessGrandTotal, true)
               ordersByYearMonth.push(populateYear)
             }
             // else add data in existing year array
-            else{
+            else {
               // find existing year
-              let existingYear = ordersByYearMonth.find(year=>(year.year === orderYear) ? year : false)
+              let existingYear = ordersByYearMonth.find(year => (year.year === orderYear) ? year : false)
               // if existing year and order year matches then
-              if(existingYear){
+              if (existingYear) {
                 // find existing month
-                let existingMonth = existingYear.months.find(month=>(month.month === moment(orderMonth+1, "MM").format("MMM")) ? month : false)
+                let existingMonth = existingYear.months.find(month => (month.month === moment(orderMonth + 1, "MM").format("MMM")) ? month : false)
                 // if existing month and order month matches then add order in that month
-                if(existingMonth){
+                if (existingMonth) {
                   existingMonth.orders.push(order)
                   // set sales figure in month
                   populateSales(existingMonth, order, paymentSuccessSubTotal, paymentSuccessGrandTotal)
                 }
                 // else add new month
-                else{
+                else {
                   let populateMonth = populateYearMonth(order, orderYear, orderMonth, paymentSuccessSubTotal, paymentSuccessGrandTotal, false)
                   existingYear.months.push(populateMonth)
                 }
@@ -142,20 +142,20 @@ module.exports = {
                 populateSales(existingYear, order, paymentSuccessSubTotal, paymentSuccessGrandTotal)
               }
               // else add new year with month
-              else{
+              else {
                 let populateYear = populateYearMonth(order, orderYear, orderMonth, paymentSuccessSubTotal, paymentSuccessGrandTotal, true)
                 ordersByYearMonth.push(populateYear)
               }
             }
           }
           // sort year and months if two or more years exist
-          if(ordersByYearMonth.length > 1)
-            ordersByYearMonth.sort((year1, year2)=>{
-              year1.months.sort((month1, month2)=>{
+          if (ordersByYearMonth.length > 1)
+            ordersByYearMonth.sort((year1, year2) => {
+              year1.months.sort((month1, month2) => {
                 // sort months in ascending order - jan, feb, mar...
                 return moment().month(month1.month).format("M") - moment().month(month2.month).format("M")
               })
-              year2.months.sort((month1, month2)=>{
+              year2.months.sort((month1, month2) => {
                 // sort months in ascending order - jan, feb, mar...
                 return moment().month(month1.month).format("M") - moment().month(month2.month).format("M")
               })
@@ -163,22 +163,22 @@ module.exports = {
               return Number.parseInt(year2.year) - Number.parseInt(year1.year)
             })
           // sort only months when only one year exist
-          else 
-            ordersByYearMonth[0].months.sort((month1, month2)=>{
+          else
+            ordersByYearMonth[0].months.sort((month1, month2) => {
               // sort months in ascending order - jan, feb, mar...
               return moment().month(month1.month).format("M") - moment().month(month2.month).format("M")
             })
         }
         // insert values to dashboard object
         const dashboardData = {}
-        dashboardData.productCount = await Product.countDocuments({status: "Publish"});
+        dashboardData.productCount = await Product.countDocuments({ status: "Publish" });
         dashboardData.userCount = await User.countDocuments({});
         dashboardData.customerCount = await Customer.countDocuments({});
         dashboardData.latestProducts = await Product.find({}).sort({ date: "desc" }).limit(2);
         dashboardData.latestOrders = existingOrders ? existingOrders.reverse().splice(0, 2) : []
         dashboardData.totalSales = totalSales
         dashboardData.ordersByYearMonth = ordersByYearMonth
-        return dashboardData 
+        return dashboardData
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -206,10 +206,10 @@ module.exports = {
     addUser: async (root, args, { id }) => {
       await checkAwsFolder('user');
       let path = "/assets/images/user/";
-      const duplicate = await duplicateData({email: args.email}, User)
-        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
+      const duplicate = await duplicateData({ email: args.email }, User)
+      if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
       const result = checkRole(args.role, roleOptions)
-      if(result.success) args.role = result.role
+      if (result.success) args.role = result.role
       let data = {
         name: args.name,
         email: args.email,
@@ -230,12 +230,12 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "User", false);
       }
       try {
-        const duplicate = await duplicateData({email: args.email}, User, args.id)
-        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
+        const duplicate = await duplicateData({ email: args.email }, User, args.id)
+        if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
 
-        if(args.role){
+        if (args.role) {
           const result = checkRole(args.role, roleOptions)
-          if(result.success) args.role = result.role
+          if (result.success) args.role = result.role
           else return MESSAGE_RESPONSE("InvalidRole", "User", false);
         }
         const user = await User.findById({ _id: args.id });
@@ -255,7 +255,7 @@ module.exports = {
           if (args.updatedImage) {
             let imgObject = await imageUpload(
               args.updatedImage.file,
-              "/assets/images/user/",'User'
+              "/assets/images/user/", 'User'
             );
             user.image = imgObject.data;
           }
@@ -282,7 +282,7 @@ module.exports = {
               user.meta.unshift(metArra[i]);
             }
           }
-        //  console.log('USERDATA',user);
+          //  console.log('USERDATA',user);
           await user.save();
           return MESSAGE_RESPONSE("UpdateSuccess", "User", true);
         } else {

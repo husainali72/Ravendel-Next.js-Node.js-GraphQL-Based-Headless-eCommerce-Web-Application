@@ -90,21 +90,26 @@ export const CheckOut = ({ currencyStore }) => {
     const [billingDetails, setBillingDetails] = useState({ userId: customerId || "" });
     useEffect(() => {
         if (session.status === "authenticated") {
+
             address_book = session?.data?.user.accessToken.customer.address_book
             token = session.data?.user.accessToken.token
             let customerId = session.data.user.accessToken.customer._id
             setBillingDetails({ ...billingDetails, userId: customerId })
 
         }
-    }, [session, session?.data?.user.accessToken.customer.address_book])
+    }, [session, session?.data?.user.accessToken.customer.addressBook
+    ])
 
 
     if (session.status === "authenticated") {
-        address_book = session?.data?.user.accessToken.customer.address_book
+
+        address_book = session?.data?.user.accessToken.customer.addressBook
+
         token = session.data?.user.accessToken.token
         customerId = session.data.user.accessToken.customer._id
 
     }
+
     const cartProducts = useSelector((state) => state.cart);
     const [cartTotal, setCartTotal] = useState(0)
     const [grandTotal, setgrandTotal] = useState(0)
@@ -139,7 +144,7 @@ export const CheckOut = ({ currencyStore }) => {
 
     useEffect(() => {
         if (session.status === "authenticated") {
-            address_book = session?.data?.user.accessToken.customer.address_book
+            address_book = session?.data?.user.accessToken.customer.addressBook
             token = session.data?.user.accessToken.token
             customerId = session.data.user.accessToken.customer._id
             setIsLogin(true)
@@ -163,6 +168,7 @@ export const CheckOut = ({ currencyStore }) => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
                         const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
                         // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
+
                         if (originalProduct) {
                             const cartProduct = {}
                             if (orginal_attributes) {
@@ -249,9 +255,11 @@ export const CheckOut = ({ currencyStore }) => {
         checkCart();
     }, []);
     useEffect(() => {
+
         let cartsData = cartItems.map((product) => {
             return {
-                productId: product._id, qty: product.quantity, total: product?.pricing * product.quantity,
+                productId: product._id, qty: product.quantity, total: product?.pricing * product.quantity, variantId: product?.variantId
+
             }
         })
         let calculate = {
@@ -364,29 +372,29 @@ export const CheckOut = ({ currencyStore }) => {
             zip: address.pincode,
             state: address.state,
             city: address.city,
-            address: address.address_line1 + ", " + address.address_line1,
-            addressLine2: address.address_line1,
-            addressLine1: address.address_line2,
+            address: address.addressLine1 + ', ' + address.addressLine2,
+            addressLine2: address.addressLine1,
+            addressLine1: address.addressLine2,
             phone: address.phone,
             company: address.company,
             email: address.email,
-            lastname: address.last_name,
-            firstname: address.first_name,
+            lastname: address.lastName,
+            firstname: address.firstName,
             country: address.country,
-            payment_method: address.payment_method,
+            payment_method: address.paymentMethod,
         }
         let billing = {
             zip: address.pincode,
             state: address.state,
             city: address.city,
-            address: address.address_line1 + ', ' + address.address_line2,
-            addressLine2: address.address_line1,
-            addressLine1: address.address_line2,
+            address: address.addressLine1 + ', ' + address.addressLine2,
+            addressLine2: address.addressLine1,
+            addressLine1: address.addressLine2,
             phone: address.phone,
             company: address.company,
             email: address.email,
-            lastname: address.last_name,
-            firstname: address.first_name,
+            lastname: address.lastName,
+            firstname: address.firstName,
             country: address.country,
         }
         if (!shippingAdd) {

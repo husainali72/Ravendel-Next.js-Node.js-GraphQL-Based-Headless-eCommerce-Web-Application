@@ -161,7 +161,7 @@ nav .nav-link:hover {
 
 .header-bottom {
   height: auto;
-  padding: 25px;
+  padding: 7px;
   position: relative;
   display: flex;
   justify-content: space-between;
@@ -746,11 +746,11 @@ a.action-btn:after {
 
 .brand-card-container {
 
-  padding: 10px;
+  /* padding: 10px; */
   position: relative;
   background: transparent;
   text-align: center;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; */
 }
 
 
@@ -790,6 +790,7 @@ a.action-btn:after {
   border-radius: 0.3rem;
   font-weight: 600 !important;
   line-height: 1.4 !important;
+  font-size: 13px;
   justify-content: center;
 
 }
@@ -878,7 +879,7 @@ a.action-btn:after {
   min-height: unset;
   padding: unset;
   margin: unset;
-  font-size: 16px !important;
+  font-size: 13px !important;
   color: #088178;
 }
 
@@ -2289,7 +2290,7 @@ footer .btn:hover a {
 .page-title {
   background-image: unset;
   background-color: #cee8e0 !important;
-  padding: 24px 0;
+  padding: 13px 0;
   height: auto;
 }
 

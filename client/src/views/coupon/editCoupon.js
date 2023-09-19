@@ -120,12 +120,9 @@ const EditCouponComponent = ({ params }) => {
 
           showAlert(true, false, 'Maximum spend  must be greater than minimum spend ')
         } else {
-
-          if (coupon.minimumSpend === '' || coupon.minimumSpend === null) {
-
+          if (coupon.minimumSpend === '' || coupon.minimumSpend === null || isNaN(coupon.minimumSpend)) {
             coupon.minimumSpend = 0
-          } if (coupon.maximumSpend === '' || coupon.maximumSpend === null) {
-
+          } if (coupon.maximumSpend === '' || coupon.maximumSpend === null || isNaN(coupon.maximumSpend)) {
             coupon.maximumSpend = 0
           }
           coupon.product = coupon.includeProducts.length > 0 || coupon.excludeProducts.length > 0

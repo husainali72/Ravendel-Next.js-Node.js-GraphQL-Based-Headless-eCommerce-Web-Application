@@ -97,15 +97,15 @@ const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduc
     return (
         <>
             <Head>
-            {singlecategory && singlecategory.meta && singlecategory.meta.title ?
-            <title>{capitalize(singlecategory?.meta?.title) + " | Ravendel" }</title>
-            : null}
-            {singlecategory && singlecategory?.meta && singlecategory?.meta?.description ?
-            <meta name="description" content={singlecategory?.meta?.description} />
-            : null}
-            {singlecategory && singlecategory?.meta && singlecategory?.meta?.keywords ?
-            <meta name="keywords" content={singlecategory?.meta?.keywords} />
-            : null}
+                {singlecategory && singlecategory.meta && singlecategory.meta.title ?
+                    <title>{capitalize(singlecategory?.meta?.title) + " | Ravendel"}</title>
+                    : null}
+                {singlecategory && singlecategory?.meta && singlecategory?.meta?.description ?
+                    <meta name="description" content={singlecategory?.meta?.description} />
+                    : null}
+                {singlecategory && singlecategory?.meta && singlecategory?.meta?.keywords ?
+                    <meta name="keywords" content={singlecategory?.meta?.keywords} />
+                    : null}
             </Head>
             {subCat.length > 0 ? <div className='categories-cart-container' >
                 <BreadCrumb title={`category  >  ${categoryDetail.name}`} />
@@ -203,7 +203,7 @@ export async function getStaticProps({ params }) {
         singlecategory = shopproductcategory.productsbycaturl.data;
     }
     catch (e) {
-        console.log("ShopProduct Error===", e.networkError.result.errors)
+        console.log("ShopProduct Error===", e?.networkError?.result?.errors)
     }
     /* ===============================================Get fillter Product Category ===============================================*/
 
