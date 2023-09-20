@@ -32,7 +32,7 @@ const MegaMenu = ({ openMenu, categories, newProducts, setOpenMenu }) => {
 
             parentIds.forEach(parentId => {
                 const parentCategory = mainCategories.findIndex((main) => main.id === parentId);
-                console.log(parentCategory, 'mainCategories', mainCategories[parentCategory])
+
                 if (parentCategory !== -1) {
                     mainCategories[parentCategory].subcategories.push(category);
                 }
@@ -41,9 +41,9 @@ const MegaMenu = ({ openMenu, categories, newProducts, setOpenMenu }) => {
         });
         mainCategories?.sort((a, b) => b?.subcategories?.length - a?.subcategories?.length);
         setproductCategories([...mainCategories])
-        console.log(mainCategories, 'mainCategories')
+
     }, [categories])
-    console.log(categories, 'productCategories', newProducts)
+
     return (
         <>
 
