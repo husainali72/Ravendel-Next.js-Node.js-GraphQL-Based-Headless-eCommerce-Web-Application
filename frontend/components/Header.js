@@ -10,7 +10,7 @@ import { logoutDispatch } from "../redux/actions/userlogoutAction"
 import { GET_USER_CART } from '../queries/cartquery';
 import { getImage, query } from '../utills/helpers';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
-export default function Header({ }) {
+export default function Header({ setOpenMenu }) {
     const data = useSession();
     const cartItem = useSelector(state => state.cart)
     const dispatch = useDispatch();
@@ -142,11 +142,21 @@ export default function Header({ }) {
                                             <a id="" className="nav-link" aria-current="page" aria-selected="true" >Home</a>
                                         </Link>
                                     </li>
-                                    <li className="nav-item">
-                                        <Link href="/shop">
-                                            <a className="nav-link" aria-selected="false">Shop</a>
-                                        </Link>
-                                    </li>
+                                    <div className='header'>
+                                        <div className='container'>
+                                            <button className='icon-btn' onMouseMove={() => setOpenMenu(true)} >
+                                                <div className="d-flex justify-content-between">
+                                                    <li className="nav-item">
+                                                        <Link href="/shop">
+                                                            <a className="nav-link" aria-selected="false">Shop</a>
+                                                        </Link>
+                                                    </li>
+
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+
                                     <li className="nav-item">
                                         <Link href="/blog">
                                             <a className="nav-link" aria-selected="false">Blog</a>

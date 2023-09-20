@@ -32,6 +32,7 @@ export function MyApp({
 
 }) {
   const router = useRouter()
+  const [openMenu, setOpenMenu] = useState(false);
   const [loading, setLoading] = useState(false);
   Router.events.on("routeChangeStart", (url) => {
     setLoading(true)
@@ -47,7 +48,7 @@ export function MyApp({
   useEffect(() => {
     TagManager.initialize(tagManagerArgs)
   }, [])
-  
+
 
   return (<>
     <CacheProvider value={emotionCache}>
@@ -55,8 +56,8 @@ export function MyApp({
         <SessionProvider session={pageProps.session}>
           <ThemeProvider theme={theme}>
             {loading && <LoadingSpinner />}
-            <Layout>
-              <Component {...pageProps} key={router.asPath} />
+            <Layout setOpenMenu={(open) => setOpenMenu(open)}>
+              <Component {...pageProps} key={router.asPath} openMenu={openMenu} setOpenMenu={(open) => setOpenMenu(open)} />
               <Script src="https://kit.fontawesome.com/60e73f4013.js" crossOrigin="anonymous"></Script>
               <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
               <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
@@ -80,7 +81,7 @@ MyApp.propTypes = {
   emotionCache: PropTypes.object,
   pageProps: PropTypes.object.isRequired,
 };
-  
+
 
 
 

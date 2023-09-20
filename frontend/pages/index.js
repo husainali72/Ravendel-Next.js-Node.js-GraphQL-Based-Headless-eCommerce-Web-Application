@@ -18,8 +18,11 @@ import { loadReviewAction } from "../redux/actions/productAction";
 import { GET_BRANDS_QUERY } from "../queries/shopquery";
 import SpecificProducts from "../components/SpecificProducts";
 import CustomBanner from "../components/banner/CustomBanner";
+import MegaMenu from "../components/megaMenu";
 
-export default function Home({ homepageData, seoInfo, brands, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts, allReviews }) {
+export default function Home({ homepageData, setOpenMenu, openMenu, seoInfo, brands, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts, allReviews }) {
+
+
   const [press, setPress] = useState(false);
   const initialRender = useRef(true)
   const dispatch = useDispatch()
@@ -137,6 +140,7 @@ export default function Home({ homepageData, seoInfo, brands, homePageInfo, curr
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
       </Head>
+      {openMenu && <MegaMenu openMenu={openMenu} categories={category} newProducts={recentproducts} setOpenMenu={setOpenMenu} />}
       {homePageInfo && homePageInfo.slider && homePageInfo.slider?.length > 0 ?
         <Homebanner slider={homePageInfo.slider} Image={Image} />
         : null}
