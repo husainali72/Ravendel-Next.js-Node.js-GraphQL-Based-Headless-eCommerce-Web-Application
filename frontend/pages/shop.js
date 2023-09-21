@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { currencySetter, getImage, getPrice } from "../utills/helpers";
 import client from "../apollo-client";
 import StarRating from "../components/breadcrumb/rating";
@@ -32,6 +32,22 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
     const [onSaleProduct, setonSaleProduct] = useState([])
     const [onSaleAllProduct, setonSaleAllProduct] = useState([])
     const [number, setNumber] = useState(0)
+    const dropdownRef = useRef(null);
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef?.current && !dropdownRef?.current?.contains(event?.target)) {
+            CloseSortMenu()
+            CloseMenu()
+        }
+
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
     useEffect(() => {
         if (shopProducts && shopProducts?.products?.data?.length > 0) {
             setloading(false)
@@ -207,8 +223,8 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                 <p> We found <strong className="text-brand">{number}</strong> items for you!</p>
                             </div>
                             {loading ? <h5>loading...</h5> : null}
-                            <div className="sort-by-product-area">
-                                <div className="sort-by-cover mr-10">
+                            <div className="sort-by-product-area" >
+                                <div className="sort-by-cover mr-10" ref={dropdownRef}>
                                     <div className="sort-by-product-wrap">
                                         <div className="sort-by">
                                             <span><i className="fas fa-border-all" aria-hidden="true"></i>Show:</span>
@@ -232,7 +248,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="sort-by-cover">
+                                <div className="sort-by-cover" ref={dropdownRef}>
                                     <div className="sort-by-product-wrap">
                                         <div className="sort-by">
                                             <span><i className="fas fa-border-all" aria-hidden="true"></i>Sort by:</span>

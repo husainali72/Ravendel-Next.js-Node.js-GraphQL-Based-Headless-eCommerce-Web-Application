@@ -88,6 +88,10 @@ export const GET_SINGLE_PRODUCT = gql`
       quantity
       pricing
       feature_image
+      brand{
+        id
+        name
+      }
       gallery_image
       meta
       shipping

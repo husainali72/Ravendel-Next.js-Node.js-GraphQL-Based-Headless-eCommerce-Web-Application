@@ -40,7 +40,7 @@ export const RemoveAllCartItemsAction = ([]) => (dispatch) => {
     })
 }
 export const createCart = (id, cart) => (dispatch) => {
-    dispatch({ type: CREATE_CART_ON_LOGIN, payload: { id, cart } });
+    dispatch({ type: CREATE_CART_ON_LOGIN, payload: { id, cart, dispatch } });
 }
 
 export const updateCart = (id, cart) => (dispatch) => {

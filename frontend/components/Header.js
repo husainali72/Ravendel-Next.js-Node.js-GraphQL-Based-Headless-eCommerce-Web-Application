@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { OpenNav } from '../utills/app';
 import { CloseNav } from '../utills/app';
 import ShopCartProducts from "./cardcomponent/ShopCartProduct"
@@ -13,6 +13,8 @@ import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 export default function Header({ setOpenMenu }) {
     const data = useSession();
     const cartItem = useSelector(state => state.cart)
+    const addedCart = useSelector(state => state.addedCart)
+    console.log(addedCart, 'addedCart')
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [cart, setCart] = useState(null);
@@ -23,6 +25,21 @@ export default function Header({ setOpenMenu }) {
         localStorage.setItem("cart", JSON.stringify([]));
         dispatch(logoutDispatch())
     }
+
+    const dropdownRef = useRef(null);
+    const handleClickOutside = (event) => {
+        if (dropdownRef?.current && !dropdownRef?.current?.contains(event?.target)) {
+            setOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const getCartLength = async () => {
         let userCart
         if (data.status === "authenticated") {
@@ -30,6 +47,7 @@ export default function Header({ setOpenMenu }) {
             let token = data.data.user.accessToken.token
             query(GET_USER_CART, id, token).then(res => {
                 userCart = res.data.cartbyUser;
+                console.log(userCart, 'userCart')
                 setCart(userCart);
             }).catch((err) => {
                 setCart({ ...cart, cartItem: [] })
@@ -42,9 +60,11 @@ export default function Header({ setOpenMenu }) {
             setHomeData(homepageData);
         })
     }
+    console.log("cartItem", cartItem)
     useEffect(() => {
+        console.log("useEffect")
         getCartLength()
-    }, [cartItem, data])
+    }, [cartItem, data, addedCart])
 
     useEffect(() => {
         getHomepageData()
@@ -86,7 +106,7 @@ export default function Header({ setOpenMenu }) {
                                                     </span>
                                                 )}
                                                 {open ? (
-                                                    <div className="logout-dropdown" style={{
+                                                    <div className="logout-dropdown" ref={dropdownRef} style={{
                                                         background: "white", height: "auto",
                                                         padding: "20px 30px"
                                                     }}>
@@ -144,6 +164,7 @@ export default function Header({ setOpenMenu }) {
                                     </li>
                                     <div className='header'>
                                         <div className='container'>
+
                                             <button className='icon-btn' onMouseMove={() => setOpenMenu(true)} >
                                                 <div className="d-flex justify-content-between">
                                                     <li className="nav-item">
