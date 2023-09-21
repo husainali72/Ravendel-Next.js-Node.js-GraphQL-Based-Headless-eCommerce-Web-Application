@@ -103,9 +103,9 @@ function cartReducer(state = [], action) {
             }
 
         case CREATE_CART_ON_LOGIN: {
-            const { id, cart } = action.payload;
+            const { id, cart, dispatch } = action.payload;
             let variables = { userId: id, products: cart }
-            mutation(ADD_CART, variables);
+            mutation(ADD_CART, variables).then((res) => dispatch({ type: 'ADDED_CART', payload: res?.data?.addCart?.success }));
 
             return action.payload.cart || [];
         }

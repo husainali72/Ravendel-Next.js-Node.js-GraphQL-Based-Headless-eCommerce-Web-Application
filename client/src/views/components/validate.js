@@ -81,8 +81,9 @@ export const validatePhone = (names, args) => {
       }
       try {
         let valid = false
+        const phone = args[name].replace(/^(\d{2})(\d{5})(\d{5})$/, '+$1 $2-$3')
         const phoneUtil = PhoneNumberUtil.getInstance();
-        valid = phoneUtil.isValidNumber(phoneUtil.parse(args[name]));
+        valid = phoneUtil.isValidNumber(phoneUtil.parse(phone));
         if (!valid) {
           return (errors = "Phone number is invalid")
         }
@@ -102,9 +103,10 @@ export const validateNestedPhone = (main, names, args) => {
       }
       try {
         let valid = false
+        const phone = args[main][name].replace(/^(\d{2})(\d{5})(\d{5})$/, '+$1 $2-$3')
         const phoneUtil = PhoneNumberUtil.getInstance();
 
-        valid = phoneUtil.isValidNumber(phoneUtil.parse(args[main][name]));
+        valid = phoneUtil.isValidNumber(phoneUtil.parse(phone));
         if (!valid) {
           return (errors = "Phone number is invalid")
         }

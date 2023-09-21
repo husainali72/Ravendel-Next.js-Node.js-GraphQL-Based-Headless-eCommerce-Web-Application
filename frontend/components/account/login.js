@@ -19,13 +19,13 @@ const LogIn = () => {
     const router = useRouter();
     const dispatch = useDispatch();
     const localCartItem = useSelector(state => state.cart)
-    const productss = useSelector(state => state.products )
+    const productss = useSelector(state => state.products)
     const [loginUser, setLoginUser] = useState(loginObject);
     const [loginSuccess, setLoginSuccess] = useState(false);
     const [cart_id, setCart_Id] = useState("")
     const [error, setError] = useState(false)
     const [login, setlogin] = useState(false)
-    
+
     const doLogin = async (e) => {
         e.preventDefault();
         setlogin(true);
@@ -48,12 +48,12 @@ const LogIn = () => {
             const productsInCart = JSON.parse(localStorage.getItem("cart"))
             const id = session?.user.accessToken.customer._id;
 
-            const products =  productsInCart?.map(prod => {
-                return{
+            const products = productsInCart?.map(prod => {
+                return {
                     productId: prod._id,
                     qty: prod.quantity
                 }
-            } )
+            })
             dispatch(createCart(id, products));
             // localStorage.setItem("cart", JSON.stringify([]))
 
@@ -92,7 +92,7 @@ const LogIn = () => {
         //                 // name: product.productTitle,
         //                 // pricing: { price: 0, sellprice: product.productPrice },
         //             })) : [];
-                    
+
         //             updatedLocalCart = productsInCart ? productsInCart?.cart?.map(product =>({
         //                 qty: product.quantity,
         //                 productId: product._id,
@@ -110,7 +110,7 @@ const LogIn = () => {
         //         //         quantity: product.qty,
         //         //         _id: product.productId,
         //         //     }));
-        
+
         //         //     updatedLocalCart = productsInCart?.cart?.map(product =>({
         //         //         feature_image: { original: product.feature_image.original },
         //         //         name: product.name,
@@ -119,23 +119,23 @@ const LogIn = () => {
         //         //         _id: product._id,
         //         //     }))
         //         // }
-    
+
         //         const mergedCart = [...updatedUserCart, ...updatedLocalCart];
         //         const finalCart = [];
-    
+
         //         mergedCart.map((val, i) => {
         //             let exist = mergedCart.find(n=>(n._id === val._id) && (n.quantity > val.quantity))
         //             if(!finalCart.find(n => n._id === val._id)) {
-    
+
         //                 if (exist) {
         //                     finalCart.push(exist)
         //                 }else{
         //                     finalCart.push(val)
         //                 }
-    
+
         //             }
         //         })
-    
+
         //         console.log('finalCart', finalCart)
         //         console.log('cart_id', cart_id)
         //         if(!cart_id) {
@@ -145,7 +145,7 @@ const LogIn = () => {
         //         }
         //     })
         // }
-        
+
 
         if (res.ok) await router.push("/");
 
@@ -156,7 +156,7 @@ const LogIn = () => {
     //         console.log('useeffect ran')
     //         if(login) {
     //         console.log('useeffect ran islogin')
-            
+
     //         let updatedUserCart = userCart?.map((product) => ({
     //             feature_image: { original: product.productImage },
     //             name: product.productTitle,
