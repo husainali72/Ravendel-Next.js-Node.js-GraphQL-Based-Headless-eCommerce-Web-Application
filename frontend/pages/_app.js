@@ -19,6 +19,7 @@ import { CacheProvider } from '@emotion/react';
 import theme from '../src/theme';
 import { ThemeProvider } from '@mui/material';
 import TagManager from 'react-gtm-module';
+import MegaMenu from '../components/megaMenu';
 const clientSideEmotionCache = createEmotionCache();
 
 
@@ -56,6 +57,8 @@ export function MyApp({
         <SessionProvider session={pageProps.session}>
           <ThemeProvider theme={theme}>
             {loading && <LoadingSpinner />}
+
+            {openMenu && <MegaMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}
             <Layout setOpenMenu={(open) => setOpenMenu(open)}>
               <Component {...pageProps} key={router.asPath} openMenu={openMenu} setOpenMenu={(open) => setOpenMenu(open)} />
               <Script src="https://kit.fontawesome.com/60e73f4013.js" crossOrigin="anonymous"></Script>

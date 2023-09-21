@@ -5,15 +5,47 @@ import { CgClose } from 'react-icons/cg';
 import { Row, Col } from 'react-bootstrap';
 import Link from 'next/link';
 import { getImage } from '../utills/helpers';
+import client from '../apollo-client';
+import { GET_CATEGORIES_QUERY, GET_RECENT_PRODUCTS_QUERY } from '../queries/home';
 
 // import { newProducts, productCategories } from './dummyContent';
 
 // import { newProducts, productCategories } from '../dummyContent';
 
-const MegaMenu = ({ openMenu, categories, newProducts, setOpenMenu }) => {
+const MegaMenu = ({ openMenu, setOpenMenu }) => {
 
+    const [categories, setCategories] = useState([])
     const [productCategories, setproductCategories] = useState([])
+    const [newProducts, setNewProducts] = useState([])
+    const getCategories = async () => {
+        try {
+            const { data: categoryData } = await client.query({
+                query: GET_CATEGORIES_QUERY
+            });
+            const category = categoryData?.productCategories.data
+            setCategories([...category])
+        }
+        catch (e) {
+            console.log("Categories Error=======", e);
+        }
+    }
+    const getNewProducts = async () => {
+        try {
+            const { data: recentprductData } = await client.query({
+                query: GET_RECENT_PRODUCTS_QUERY
+            });
+            const recentproducts = recentprductData?.recentproducts
+            setNewProducts([...recentproducts])
+        }
+        catch (e) {
+            console.log('Recent Product Error===============', e)
+        }
+    }
+    useEffect(() => {
 
+        getCategories()
+        getNewProducts()
+    }, [openMenu])
 
     useEffect(() => {
 
