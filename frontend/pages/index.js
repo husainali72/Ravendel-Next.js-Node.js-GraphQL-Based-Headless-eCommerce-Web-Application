@@ -71,7 +71,7 @@ export default function Home({ homepageData, setOpenMenu, openMenu, seoInfo, bra
     if (userCart.card_id === undefined) {
       return undefined;
     } else {
-      await mutation(UPDATE_CART_PRODUCT, variables, token).then(res => res)
+      // await mutation(UPDATE_CART_PRODUCT, variables, token).then(res => res)
     }
   }
   const HomePageSeq =
