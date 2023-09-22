@@ -39,7 +39,7 @@ import { isEmpty, client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { useParams, useNavigate } from "react-router-dom";
-import { get } from "lodash";
+import { capitalize, get, upperCase } from "lodash";
 
 const EditCouponComponent = ({ params }) => {
   const id = params?.id || "";
@@ -65,7 +65,12 @@ const EditCouponComponent = ({ params }) => {
     if (!isEmpty(get(Coupons, "coupons"))) {
       Coupons.coupons.map((editcoupon) => {
         if (editcoupon.id === id) {
-          setCoupon({ ...coupon, ...editcoupon });
+          editcoupon?.code?.toUpperCase()
+          let val = {
+            ...editcoupon, code: editcoupon?.code?.toUpperCase()
+          }
+
+          setCoupon({ ...coupon, ...val });
         }
       });
       if (isEmpty(get(inputLabel, "current.offsetWidth"))) {
@@ -127,6 +132,7 @@ const EditCouponComponent = ({ params }) => {
           }
           coupon.product = coupon.includeProducts.length > 0 || coupon.excludeProducts.length > 0
           coupon.category = coupon.includeCategories.length > 0 || coupon.excludeCategories.length > 0
+          coupon.code = coupon?.code?.toUpperCase()
           dispatch(couponUpdateAction(coupon, navigate));
 
         }
@@ -141,6 +147,7 @@ const EditCouponComponent = ({ params }) => {
           }
           coupon.product = coupon.includeProducts.length > 0 || coupon.excludeProducts.length > 0
           coupon.category = coupon.includeCategories.length > 0 || coupon.excludeCategories.length > 0
+          coupon.code = coupon?.code?.toUpperCase()
           dispatch(couponAddAction(coupon, navigate));
 
         }
@@ -163,8 +170,8 @@ const EditCouponComponent = ({ params }) => {
 
   const handleChange = (e) => {
     let name = e.target.name;
-    let value = e.target.value;
-
+    let value = name === 'code' ? e.target.value?.toUpperCase() : e.target.value;
+    console.log(name, value)
     if (name === "discountValue" || name === "minimumSpend" || name === "maximumSpend") {
       value = parseInt(value);
     }
