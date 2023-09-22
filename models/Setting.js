@@ -52,6 +52,17 @@ const SeetingSchema = new Schema(
         type: Number,
       },
     },
+    imageStorage: {
+      status: {
+        type: String,
+      },
+      s3_id: {
+        type: String,
+      },
+      s3_key: {
+        type: String,
+      },
+    },
     seo: {
       meta_title: {
         type: String,
@@ -593,19 +604,19 @@ module.exports.createSettings = async () => {
           },
           {
             name: "Instagram",
-            handle: "",            
+            handle: "",
           },
           {
             name: "Pinterest",
-            handle: "",            
+            handle: "",
           },
           {
             name: "Youtube",
-            handle: "",            
+            handle: "",
           },
           {
             name: "Twitter",
-            handle: "",            
+            handle: "",
           }
         ]
       },

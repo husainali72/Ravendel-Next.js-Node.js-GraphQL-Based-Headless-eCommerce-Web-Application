@@ -10,9 +10,16 @@ import { logoutDispatch } from "../redux/actions/userlogoutAction"
 import { GET_USER_CART } from '../queries/cartquery';
 import { getImage, query } from '../utills/helpers';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
-export default function Header({ }) {
+export const LogOutUser1 = async () => {
+    const data = await signOut({ redirect: false, callbackUrl: "/" })
+    localStorage.setItem("userCart", JSON.stringify([]));
+    localStorage.setItem("cart", JSON.stringify([]));
+    // dispatch(logoutDispatch())
+}
+export default function Header({ setOpenMenu }) {
     const data = useSession();
     const cartItem = useSelector(state => state.cart)
+    const addedCart = useSelector(state => state.addedCart)
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [cart, setCart] = useState(null);
@@ -21,7 +28,7 @@ export default function Header({ }) {
         const data = await signOut({ redirect: false, callbackUrl: "/" })
         localStorage.setItem("userCart", JSON.stringify([]));
         localStorage.setItem("cart", JSON.stringify([]));
-        dispatch(logoutDispatch())
+        // dispatch(logoutDispatch())
     }
     const getCartLength = async () => {
         let userCart
@@ -44,7 +51,7 @@ export default function Header({ }) {
     }
     useEffect(() => {
         getCartLength()
-    }, [cartItem, data])
+    }, [cartItem, data, addedCart])
 
     useEffect(() => {
         getHomepageData()

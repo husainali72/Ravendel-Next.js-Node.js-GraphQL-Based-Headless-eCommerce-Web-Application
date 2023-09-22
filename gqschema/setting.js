@@ -9,6 +9,7 @@ module.exports = gql`
     store: Store
     paymnet: Payment
     notification: Notification
+    imageStorage: ImageStorage
     appearance: Appearance
     zipcode: [Zipcode]
     createdAt: Date
@@ -18,6 +19,11 @@ module.exports = gql`
   type dateformat {
     id: String
     value: String
+  }
+  type ImageStorage {
+    status: String
+    s3_id: String
+    s3_key: String
   }
 
   type General {
@@ -388,6 +394,11 @@ module.exports = gql`
     updateNotificationOneSignal(
       app_id: String
       rest_api_key: String
+    ): Setting
+    updateImageStorage(
+      status:String
+      s3_id: String
+      s3_key: String
     ): Setting
     updateAppearanceHome(
       slider: [slider_input]

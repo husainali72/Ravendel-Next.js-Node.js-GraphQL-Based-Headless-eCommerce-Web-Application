@@ -29,12 +29,13 @@ import theme from "../../theme";
 import Notification from "./components/notification";
 import ZipCodes from "./components/zipcode";
 import Google from "./components/google";
+import ImageSetting from "./components/imageSetting";
 const SettingsComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const [value, setValue] = useState(9);
+  const [value, setValue] = useState(10);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -76,7 +77,8 @@ const SettingsComponent = () => {
                       <Tab label="Notification" {...TabProps(6)} />
                       <Tab label="ZipCodes" {...TabProps(7)} />
                       <Tab label="Google" {...TabProps(8)} />
-                      <Tab label="Appearance" {...TabProps(9)} />
+                      <Tab label="Image" {...TabProps(9)} />
+                      <Tab label="Appearance" {...TabProps(10)} />
                     </Tabs>
                   </Box>
                   <Box
@@ -111,8 +113,12 @@ const SettingsComponent = () => {
                         <Google />
                       </TabPanel>
                       <TabPanel value={value} index={9}>
+                        <ImageSetting />
+                      </TabPanel>
+                      <TabPanel value={value} index={10}>
                         <Appearance />
                       </TabPanel>
+
                     </Box>
                   </Box>
                 </Box>

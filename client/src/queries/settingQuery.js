@@ -149,6 +149,7 @@ const SETTING_TILE_DATA = gql`
           category
         }
       }
+  
       theme {
         primary_color
         playstore
@@ -178,6 +179,11 @@ const SETTING_TILE_DATA = gql`
           category
         }
       }
+    }
+    imageStorage{
+      status
+      s3_id
+      s3_key
     }
     zipcode{
       id
@@ -248,6 +254,18 @@ const UPDATE_SEO = gql`
       meta_title: $meta_title
       meta_tag: $meta_tag
       meta_description: $meta_description
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+const UPDATE_IMAGE_STORAGE = gql`
+  mutation($status: String, $s3_id: String, $s3_key: String) {
+    updateImageStorage(
+      status: $status
+      s3_id: $s3_id
+      s3_key: $s3_key
     ) {
       ...SettingTile
     }
@@ -350,6 +368,23 @@ const UPDATE_STORE_ORDER = gql`
     updateStoreOrder(
       order_prefix: $order_prefix
       order_digits: $order_digits
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+const UPDATE_IMAGE_STORE = gql`
+  mutation(
+    $status: String
+    $s3_id: String
+    $s3_key: String
+  ) {
+    updateImageStorage(
+      status: $status
+      s3_id: $s3_id
+      s3_key: $s3_key
+
     ) {
       ...SettingTile
     }
@@ -618,5 +653,6 @@ export {
   GET_ZIPCODE,
   ADD_ZIPCODE,
   UPDATE_ZIPCODE,
-  DELETE_ZIPCODE
+  DELETE_ZIPCODE,
+  UPDATE_IMAGE_STORAGE
 };

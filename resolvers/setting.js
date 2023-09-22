@@ -13,7 +13,7 @@ const {
 } = require("../config/helpers");
 //const setting = require("../validations/setting");
 //const sanitizeHtml = require("sanitize-html");
-const {checkAwsFolder} = require("../config/aws");
+const { checkAwsFolder } = require("../config/aws");
 const fs = require("fs");
 
 var sdir = './assets/images/setting';
@@ -22,7 +22,7 @@ var sdir = './assets/images/setting';
 // var tdir = './assets/images/setting/thumbnail';
 // var odir = './assets/images/setting/original';
 
-if (!fs.existsSync(sdir)){
+if (!fs.existsSync(sdir)) {
   fs.mkdirSync(sdir);
 }
 // if (!fs.existsSync(ldir)){
@@ -73,7 +73,7 @@ module.exports = {
     zipcode: async (root, args) => {
       try {
         const zipcodes = await Zipcode.find()
-        if(zipcodes) return zipcodes
+        if (zipcodes) return zipcodes
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -209,7 +209,7 @@ module.exports = {
           args.stock_display_format;
         setting.store.inventory.manage_zipcodes =
           args.manage_zipcodes;
-        if(args.zipcode_file) await addZipcodes(args.zipcode_file, "/assets/images/setting", Zipcode)
+        if (args.zipcode_file) await addZipcodes(args.zipcode_file, "/assets/images/setting", Zipcode)
 
         return await setting.save();
       } catch (error) {
@@ -221,8 +221,8 @@ module.exports = {
       checkToken(id);
       try {
         const setting = await Setting.findOne({});
-        let {order_prefix, order_digits} = args
-        if(!setting.store.order_options.order_prefix_list.includes(order_prefix)){
+        let { order_prefix, order_digits } = args
+        if (!setting.store.order_options.order_prefix_list.includes(order_prefix)) {
           setting.store.order_options.order_prefix_list.push(order_prefix)
         }
         setting.store.order_options.order_prefix = order_prefix
@@ -333,6 +333,25 @@ module.exports = {
         throw new Error(error.custom_message);
       }
     },
+    updateImageStorage: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        await checkAwsFolder('setting');
+        const setting = await Setting.findOne({});
+        setting.imageStorage.status = args.status
+        if (args.status === 's3') {
+          setting.imageStorage.s3_id = args.s3_id
+          setting.imageStorage.s3_key = args.s3_key
+        } else if (args.status !== 's3') {
+          setting.imageStorage.s3_id = ''
+          setting.imageStorage.s3_key = ''
+        }
+        return await setting.save();
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     updateAppearanceHome: async (root, args, { id }) => {
       checkToken(id);
       try {
@@ -347,7 +366,7 @@ module.exports = {
           if (args.slider[i].update_image) {
             imgObject = await imageUpload(
               args.slider[i].update_image[0].file,
-              "/assets/images/setting/","Setting"
+              "/assets/images/setting/", "Setting"
             );
 
             if (imgObject.success === false) {
@@ -398,7 +417,7 @@ module.exports = {
           if (args.slider[i].update_image) {
             imgObject = await imageUpload(
               args.slider[i].update_image[0].file,
-              "/assets/images/setting/","Setting"
+              "/assets/images/setting/", "Setting"
             );
 
             if (imgObject.success === false) {
@@ -419,7 +438,7 @@ module.exports = {
           if (args.mobile_section[i].update_image) {
             imgObject = await imageUpload(
               args.mobile_section[i].update_image[0].file,
-              "/assets/images/setting/","Setting"
+              "/assets/images/setting/", "Setting"
             );
 
             if (imgObject.success === false) {
@@ -435,7 +454,7 @@ module.exports = {
             category: args.mobile_section[i].category ? args.mobile_section[i].category : null
           });
         }
-        
+
         setting.appearance.mobile.slider = slider;
         setting.appearance.mobile.mobile_section = mobile_section;
         return await setting.save();
@@ -453,22 +472,22 @@ module.exports = {
         if (args.new_logo) {
           imgObject = await imageUpload(
             args.new_logo[0].file,
-            "/assets/images/setting/","Setting"
+            "/assets/images/setting/", "Setting"
           );
 
           if (imgObject.success === false) {
             throw putError(imgObject.message);
           }
         }
-        
+
         let socialMedia = []
-        for(let media of args.social_media){
+        for (let media of args.social_media) {
           socialMedia.push({
             name: media.name,
             handle: media.handle,
           })
         }
-        
+
         const theme = {
           primary_color: args.primary_color,
           playstore: args.playstore,

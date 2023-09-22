@@ -25,6 +25,7 @@ import {
   GET_ZIPCODE,
   UPDATE_ZIPCODE,
   DELETE_ZIPCODE,
+  UPDATE_IMAGE_STORAGE,
 } from "../../queries/settingQuery";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
@@ -535,6 +536,40 @@ export const orderOptionUpdateAction = (object) => (dispatch) => {
     });
 };
 
+
+export const ImageStorageUpdateAction = (object) => (dispatch) => {
+  dispatch({
+    type: SETING_LOADING,
+  });
+  console.log(object, 'object')
+  mutation(UPDATE_IMAGE_STORAGE, object)
+    .then((response) => {
+      if (response) {
+        dispatch({
+          type: SETTING_SUCCESS,
+          payload: response.data.updateImageStorage,
+        });
+
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: true,
+            message: "Updated successfully",
+            error: false,
+          },
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: SETTING_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
 export const zipCodeAddAction = (object) => (dispatch) => {
   dispatch({
     type: SETING_LOADING,
