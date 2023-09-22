@@ -77,7 +77,7 @@ const SettingsComponent = () => {
                       <Tab label="Notification" {...TabProps(6)} />
                       <Tab label="ZipCodes" {...TabProps(7)} />
                       <Tab label="Google" {...TabProps(8)} />
-                      <Tab label="Image" {...TabProps(9)} />
+                      <Tab label="Image Storage" {...TabProps(9)} />
                       <Tab label="Appearance" {...TabProps(10)} />
                     </Tabs>
                   </Box>
