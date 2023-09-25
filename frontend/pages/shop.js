@@ -304,8 +304,8 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="sort-by-cover">
-                                    <div className="sort-by-product-wrap" ref={dropdownRef}>
+                                <div className="sort-by-cover" >
+                                    <div className="sort-by-product-wrap" ref={dropdownRef} onMouseEnter={() => OpenSortMenu()} onMouseLeave={() => CloseSortMenu()}>
                                         <div className="sort-by">
                                             <span><i className="fas fa-border-all" aria-hidden="true"></i>Sort by: {sortingName?.title}</span>
                                         </div>
@@ -315,7 +315,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                         <span className="drop-down-btn item-up" id="menuUp2" >
                                             <i className="fas fa-angle-up" onClick={() => CloseSortMenu()}></i>
                                         </span>
-                                        <div className="drop-down-item-menu" id="sort-menu">
+                                        <div className="drop-down-item-menu" id="sort-menu" style={{ width: '100%' }}>
                                             {sortingData?.map((sorting) => {
                                                 return (<li onClick={() => sortData(sorting)}>
                                                     <a href="#">{sorting?.title}</a>

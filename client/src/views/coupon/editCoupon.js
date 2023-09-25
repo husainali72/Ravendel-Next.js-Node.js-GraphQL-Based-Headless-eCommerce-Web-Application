@@ -171,11 +171,14 @@ const EditCouponComponent = ({ params }) => {
   const handleChange = (e) => {
     let name = e.target.name;
     let value = name === 'code' ? e.target.value?.toUpperCase() : e.target.value;
-    console.log(name, value)
     if (name === "discountValue" || name === "minimumSpend" || name === "maximumSpend") {
       value = parseInt(value);
     }
-    setCoupon({ ...coupon, [name]: value });
+    let checkExpireDate = true
+    if (name === 'expire') {
+      checkExpireDate = name === 'expire' && value >= currentDate
+    }
+    if (checkExpireDate) { setCoupon({ ...coupon, [name]: value }) }
 
   };
 
