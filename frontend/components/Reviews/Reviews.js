@@ -25,7 +25,7 @@ const Reviews = ({ singleProductReview }) => {
               <span className='singleReviewUsername'>	{product.customerId.firstName} </span>
             </div>
             <div className='starWidTitle'>
-              <StarRating className="rating" stars={product.rating} />
+              <StarRating className="rating" stars={product?.rating} singleproducts={product} />
               <span className='reviewTitle'>{product.title}</span>
             </div>
 

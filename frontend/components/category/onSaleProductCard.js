@@ -167,7 +167,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, 
                                                     )}</div>
                                                 <div className="on-sale-product-detail">
                                                     <div className="product-price" style={{ justifyContent: "left", alignContent: "left", m: 0 }}>
-                                                        <StarRating className="rating" stars="4" />
+                                                        <StarRating className="rating" stars={product?.rating} singleproducts={product} />
                                                         <span >
                                                             {product.pricing.sellprice ? (
                                                                 <strong className="sale-price">{currency} {getPrice(product?.pricing?.sellprice, decimal)}

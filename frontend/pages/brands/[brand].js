@@ -289,6 +289,7 @@ export async function getStaticProps({ params }) {
                     status: product.status,
                     url: product.url,
                     attribute_master: product.attribute_master,
+                    rating: product.rating,
                     __typename: product.__typename,
                     _id: product._id
                 }

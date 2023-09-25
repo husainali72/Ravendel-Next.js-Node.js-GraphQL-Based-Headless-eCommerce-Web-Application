@@ -91,6 +91,7 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
                         quantity: product.quantity,
                         status: product.status,
                         url: product.url,
+                        rating: product.rating,
                         __typename: product.__typename,
                         attribute_master: product?.attribute_master,
                         _id: product._id
@@ -104,6 +105,7 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
                         quantity: product.quantity,
                         status: product.status,
                         url: product.url,
+                        rating: product.rating,
                         __typename: product.__typename,
                         attribute_master: product?.attribute_master,
                         _id: product._id

@@ -72,7 +72,7 @@ export const ProductNav = (props) => {
                         </div>
                         <div className="on-sale-product-detail">
                             <div className="product-price" style={{ justifyContent: "left", alignContent: "left", m: 0 }}>
-                                <StarRating className="rating" stars={"4"} />
+                                <StarRating className="rating" stars={product?.name} singleproducts={product} />
                                 <span >{product.pricing.sellprice ? (
                                     <strong className="sale-price">{currency} {getPrice(product?.pricing?.sellprice, decimal)}
                                     </strong>
@@ -90,7 +90,7 @@ export const ProductNav = (props) => {
                                 </span> : null}
 
                             </div>
-                            {product?.quantity>0 ? <OverlayTrigger style={{ backgroundColor: "#088178" }}
+                            {product?.quantity > 0 ? <OverlayTrigger style={{ backgroundColor: "#088178" }}
                                 placement="top"
                                 overlay={
                                     <Tooltip style={{ color: "#088178" }} id={"tooltip-top"}>

@@ -11,6 +11,7 @@ export const GET_PRODUCTS_QUERY = gql`
         name
         __typename
       }
+      rating
       url
       sku
       description
@@ -79,6 +80,7 @@ query ($url: String!) {
       name
       parentId
       url
+      rating
       description
       image
       meta
@@ -151,6 +153,7 @@ fragment ProductTile on Product {
   url
   pricing
   quantity
+  rating
   feature_image
   status
   brand {
