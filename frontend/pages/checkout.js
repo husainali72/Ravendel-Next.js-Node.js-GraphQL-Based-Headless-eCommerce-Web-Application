@@ -430,12 +430,11 @@ export const CheckOut = ({ currencyStore }) => {
                 productTitle: product?.productTitle,
                 productShipping: product?.productShipping,
                 productTax: product?.productTax,
-                productPrice: product?.productPrice?.toString(),
-
+                productTotal: product?.productPrice?.toString(),
                 variantId: product?.variantId
             }
         })
-        console.log(cartItems, 'cartItems')
+
 
         let variables = {
             couponCode: `${couponCode}`,
