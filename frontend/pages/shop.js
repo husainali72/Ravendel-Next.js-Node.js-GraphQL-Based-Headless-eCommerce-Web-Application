@@ -33,11 +33,12 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
     const [onSaleAllProduct, setonSaleAllProduct] = useState([])
     const [sortingdata, setSortingdata] = useState([])
     const [number, setNumber] = useState(0)
+
     const [sortingName, setSortingName] = useState({
         name: 'latest',
         title: "Release date"
     },)
-    const dropdownRef = useRef(null);
+
     const sortingData = [
         {
             name: 'desc',
@@ -52,6 +53,24 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
             title: "Release date"
         },
     ]
+
+    const dropdownRef = useRef(null);
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef?.current && !dropdownRef?.current?.contains(event?.target)) {
+            CloseSortMenu()
+            CloseMenu()
+        }
+
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     useEffect(() => {
         if (shopProducts && shopProducts?.products?.data?.length > 0) {
             setloading(false)
@@ -279,7 +298,9 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                 <p> We found <strong className="text-brand">{number}</strong> items for you!</p>
                             </div>
                             {loading ? <h5>loading...</h5> : null}
+
                             <div className="sort-by-product-area">
+
                                 <div className="sort-by-cover mr-10" ref={dropdownRef}>
                                     <div className="sort-by-product-wrap">
                                         <div className="sort-by">
@@ -304,8 +325,10 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                         </div>
                                     </div>
                                 </div>
+
                                 <div className="sort-by-cover" >
                                     <div className="sort-by-product-wrap" ref={dropdownRef} onMouseEnter={() => OpenSortMenu()} onMouseLeave={() => CloseSortMenu()}>
+
                                         <div className="sort-by">
                                             <span><i className="fas fa-border-all" aria-hidden="true"></i>Sort by: {sortingName?.title}</span>
                                         </div>

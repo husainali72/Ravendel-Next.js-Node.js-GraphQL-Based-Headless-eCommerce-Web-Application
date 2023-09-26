@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { OpenNav } from '../utills/app';
 import { CloseNav } from '../utills/app';
 import ShopCartProducts from "./cardcomponent/ShopCartProduct"
@@ -10,12 +10,14 @@ import { logoutDispatch } from "../redux/actions/userlogoutAction"
 import { GET_USER_CART } from '../queries/cartquery';
 import { getImage, query } from '../utills/helpers';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
+
 export const LogOutUser1 = async () => {
     const data = await signOut({ redirect: false, callbackUrl: "/" })
     localStorage.setItem("userCart", JSON.stringify([]));
     localStorage.setItem("cart", JSON.stringify([]));
     // dispatch(logoutDispatch())
 }
+
 export default function Header({ setOpenMenu }) {
     const data = useSession();
     const cartItem = useSelector(state => state.cart)
@@ -30,6 +32,21 @@ export default function Header({ setOpenMenu }) {
         localStorage.setItem("cart", JSON.stringify([]));
         // dispatch(logoutDispatch())
     }
+
+    const dropdownRef = useRef(null);
+    const handleClickOutside = (event) => {
+        if (dropdownRef?.current && !dropdownRef?.current?.contains(event?.target)) {
+            setOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const getCartLength = async () => {
         let userCart
         if (data.status === "authenticated") {
@@ -37,6 +54,7 @@ export default function Header({ setOpenMenu }) {
             let token = data.data.user.accessToken.token
             query(GET_USER_CART, id, token).then(res => {
                 userCart = res.data.cartbyUser;
+                console.log(userCart, 'userCart')
                 setCart(userCart);
             }).catch((err) => {
                 setCart({ ...cart, cartItem: [] })
@@ -49,7 +67,9 @@ export default function Header({ setOpenMenu }) {
             setHomeData(homepageData);
         })
     }
+    console.log("cartItem", cartItem)
     useEffect(() => {
+        console.log("useEffect")
         getCartLength()
     }, [cartItem, data, addedCart])
 
@@ -93,7 +113,7 @@ export default function Header({ setOpenMenu }) {
                                                     </span>
                                                 )}
                                                 {open ? (
-                                                    <div className="logout-dropdown" style={{
+                                                    <div className="logout-dropdown" ref={dropdownRef} style={{
                                                         background: "white", height: "auto",
                                                         padding: "20px 30px"
                                                     }}>
@@ -149,11 +169,22 @@ export default function Header({ setOpenMenu }) {
                                             <a id="" className="nav-link" aria-current="page" aria-selected="true" >Home</a>
                                         </Link>
                                     </li>
-                                    <li className="nav-item">
-                                        <Link href="/shop">
-                                            <a className="nav-link" aria-selected="false">Shop</a>
-                                        </Link>
-                                    </li>
+                                    <div className='header'>
+                                        <div className='container'>
+
+                                            <button className='icon-btn' onMouseMove={() => setOpenMenu(true)} >
+                                                <div className="d-flex justify-content-between">
+                                                    <li className="nav-item">
+                                                        <Link href="/shop">
+                                                            <a className="nav-link" aria-selected="false">Shop</a>
+                                                        </Link>
+                                                    </li>
+
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+
                                     <li className="nav-item">
                                         <Link href="/blog">
                                             <a className="nav-link" aria-selected="false">Blog</a>

@@ -83,7 +83,8 @@ module.exports = {
 
     calculateCoupon: async (root, args, { id }) => {
       try {
-        const coupon = await Coupon.findOne({ code: { $regex: `${args.couponCode}`, $options: "i" } });
+        // const coupon = await Coupon.findOne({ code: { $regex: `${args.couponCode}`, $options: "i" } });
+        const coupon = await Coupon.findOne({ code: args.couponCode})
 
         let discountGrandTotal;
         let calculated = {
@@ -121,6 +122,7 @@ module.exports = {
               if (calculatedCartWithDiscount == 0) {
                 calculated.totalCoupon = "0.0";
                 calculated.message = 'Coupon not applicable on cart';
+                calculated.discountGrandTotal="0.00"
               }
               else {
                 calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);

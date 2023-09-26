@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import client from "../../apollo-client";
 import PageTitle from "../../components/PageTitle";
-import BreadCrumb from "../../components/breadcrumb/breadcrumb";
+
 import { Container, Form } from "react-bootstrap";
 import OnSaleProductCard from "../../components/category/onSaleProductCard";
 import { GET_SINGLE_PRODUCT, GET_FILTEREDPRODUCTS, GET_BRANDS_QUERY } from "../../queries/shopquery";
@@ -15,8 +15,10 @@ import { capitalize } from 'lodash';
 import MultiRangeSlider from '../../components/breadcrumb/multirangeSlider';
 import { currencySetter } from '../../utills/helpers';
 import { getAllAttributes } from '../../redux/actions/productAction';
+
+import CategoryBreadCrumb from './component/breadcrumb';
 const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProduct, brandProduct }) => {
-    const breadCrumbTitle = shopProduct?.data?.find((catt) => catt.id === singlecategory.parentId)?.name;
+    const breadCrumbTitle = shopProduct?.data?.find((catt) => catt.id === singlecategory.parentId);
     const attributes = useSelector(state => state.products.attributes)
     const [cats, setCats] = useState({})
     const decimal = currencyStore?.currency_options?.number_of_decimals
@@ -194,7 +196,7 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
                     : null}
             </Head>
             <PageTitle title={"category"} />
-            <BreadCrumb title={`category  > ${breadCrumbTitle !== undefined ? (breadCrumbTitle + ">") : ""}  ${capitalize(categoryDetail?.name)}`} />
+            <CategoryBreadCrumb breadCrumbTitle={breadCrumbTitle} categoryDetail={categoryDetail} />
             <section className="product-cart-section">
                 <Container>
                     <div className="single-category-page">

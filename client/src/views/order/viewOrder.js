@@ -678,19 +678,21 @@ const ViewOrderComponent = ({ params }) => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
+
                           {order.products.map((product, index) => (
                             <TableRow key={index}>
 
                               <TableCell>{product?.productTitle}</TableCell>
                               <TableCell>
-                                {currencyFormat(product?.productPrice)}
+
+                                {product?.productPrice && product?.qty && !isNaN(product?.qty) && !isNaN(product?.productPrice) ? currencyFormat(product?.productPrice / product?.qty) : '0.00'}
                               </TableCell>
                               <TableCell>{product?.qty}</TableCell>
 
                               <TableCell>{product?.attributes?.map((attribute) => <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)}</TableCell>
                               <TableCell>
 
-                                {currencyFormat(product.qty * product?.productPrice)}
+                                {currencyFormat(product?.productPrice)}
 
                               </TableCell>
                             </TableRow>
