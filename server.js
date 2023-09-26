@@ -63,6 +63,7 @@ app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
 app.use("/api/stripe", require("./routes/api/stripe"));
 app.use("/api/paypal", require("./routes/api/paypal"));
+app.use("/api/razorpay", require("./routes/api/razorpay"));
 
 app.use("/api/customers", require("./routes/api/customers"));
 
