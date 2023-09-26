@@ -56,13 +56,13 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
 
     const dropdownRef = useRef(null);
 
-    const handleClickOutside = (event) => {
-        if (dropdownRef?.current && !dropdownRef?.current?.contains(event?.target)) {
-            CloseSortMenu()
-            CloseMenu()
-        }
+    // const handleClickOutside = (event) => {
+    //     if (dropdownRef?.current && !dropdownRef?.current?.contains(event?.target)) {
+    //         CloseSortMenu()
+    //         CloseMenu()
+    //     }
 
-    };
+    // };
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);

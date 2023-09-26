@@ -80,7 +80,7 @@ query ($url: String!) {
       name
       parentId
       url
-      rating
+
       description
       image
       meta
