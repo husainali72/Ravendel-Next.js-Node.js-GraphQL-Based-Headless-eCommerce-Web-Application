@@ -54,7 +54,7 @@ export default function Header({ setOpenMenu }) {
             let token = data.data.user.accessToken.token
             query(GET_USER_CART, id, token).then(res => {
                 userCart = res.data.cartbyUser;
-                console.log(userCart, 'userCart')
+
                 setCart(userCart);
             }).catch((err) => {
                 setCart({ ...cart, cartItem: [] })
@@ -72,9 +72,9 @@ export default function Header({ setOpenMenu }) {
             dispatch(logoutDispatch())
         }
     }, [addedCart])
-    console.log("cartItem", cartItem)
+
     useEffect(() => {
-        console.log("useEffect")
+
         getCartLength()
     }, [cartItem, data, addedCart])
 
