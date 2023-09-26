@@ -75,8 +75,8 @@ const Orderdetail = (props) => {
                                     <h5><Link href={"/product/" + cart[i]?.url}><a >{item?.name}</a></Link></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>
                                 <td>
-                                    {item.attributes.map((attribute) => (
-                                        <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)
+                                    {item?.attributes?.map((attribute) => (
+                                        <div>{capitalize(attribute?.name)} : {capitalize(attribute?.value)}</div>)
 
                                     )}
                                 </td>

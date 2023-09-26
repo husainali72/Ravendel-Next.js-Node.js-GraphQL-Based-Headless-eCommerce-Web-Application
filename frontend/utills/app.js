@@ -46,7 +46,7 @@ export function OpenSortMenu() {
    up.style.display = "block";
    down.style.display = "none";
    menu.style.height = "auto";
-   menu.style.padding = "20px 30px";
+   menu.style.padding = "20px 15px";
 }
 export function CloseSortMenu() {
    var up = document.getElementById('menuUp2');

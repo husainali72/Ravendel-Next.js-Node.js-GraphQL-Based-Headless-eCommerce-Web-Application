@@ -10,6 +10,7 @@ import userCartReducer from "./userReducer";
 import stripeReducer from "./stripePaymentReducer";
 import { USER_LOGGED_OUT } from "../actions/userlogoutAction";
 import productReducer from './productReducer';
+import { addedCart } from './addedCart';
 
 const appReducer = combineReducers({
     setting: settingReducer,
@@ -21,7 +22,8 @@ const appReducer = combineReducers({
     blogtags: blogReducer,
     userCart: userCartReducer,
     stripe_Key: stripeReducer,
-    products: productReducer
+    products: productReducer,
+    addedCart: addedCart
 });
 
 const rootReducer = (state, action) => {

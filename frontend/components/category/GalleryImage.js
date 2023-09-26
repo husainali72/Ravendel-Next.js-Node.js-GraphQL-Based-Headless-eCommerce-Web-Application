@@ -378,12 +378,15 @@ const GalleryImagesComponents = (props) => {
                         <h2>{capitalize(singleproducts.name)}</h2>
                         <div className="product-detail-rating">
                             <div className="pro-details-brand">
-                                <span> Category: {singleproducts.categoryId.map((item, index) => <span>{index < singleproducts.categoryId.length - 1 ? (item.name + ", ") : item.name}</span>)}</span>
+                                <span> Category: {singleproducts.categoryId.map((item, index) => <span>{index < singleproducts.categoryId.length - 1 ? (capitalize(item.name) + ", ") : capitalize(item.name)}</span>)}</span>
                             </div>
                             <div className="pro-details-rating">
                                 <StarRating singleproducts={singleproducts} stars={singleproducts?.rating} />
                             </div>
                         </div>
+                        {singleproducts?.brand?.name && <div className="pro-details-brand">
+                            <span> Brand: {capitalize(singleproducts?.brand?.name)}</span>
+                        </div>}
                         <div className="clearfix product-price-cover">
                             {comboData && comboData.length || !variantSelect ?
                                 <div className="product-price primary-color float-left">
@@ -395,11 +398,11 @@ const GalleryImagesComponents = (props) => {
                                                 {comboData && comboData.length ?
                                                     (comboData && comboData.length > 1 ?
                                                         (sellpriceRange ?
-                                                            (currency + " " + getPrice(Math.min(...sellpriceRange)) + "  -  " + currency + " " + getPrice(Math.max(...sellpriceRange)))
+                                                            (currency + " " + getPrice(Math.min(...sellpriceRange), decimal) + "  -  " + currency + " " + getPrice(Math.max(...sellpriceRange), decimal))
                                                             :
                                                             null)
                                                         : currency + " " + getPrice(comboData[0]?.pricing?.sellprice || comboData[0]?.pricing?.price, decimal))
-                                                    : (variantSelect ? null : currency + " " + getPrice(singleproducts?.pricing?.sellprice))}
+                                                    : (variantSelect ? null : currency + " " + getPrice(singleproducts?.pricing?.sellprice, decimal))}
                                             </strong>
                                         ) : (
 
@@ -413,7 +416,7 @@ const GalleryImagesComponents = (props) => {
                                             singleproducts?.pricing?.sellprice ? "has-sale-price mx-2" : ""
                                         } style={{ fontSize: "17px" }}
                                     >
-                                        {comboData && comboData.length ? (comboData && comboData.length > 1 ? (priceRange ? (currency + " " + getPrice(Math.min(...priceRange)) + "  -  " + currency + " " + getPrice(Math.max(...priceRange))) : null) : comboData[0]?.pricing?.sellprice ? currency + " " + getPrice(comboData[0]?.pricing?.price, decimal) : null) : (variantSelect ? null : currency + " " + singleproducts?.pricing?.sellprice ? getPrice(singleproducts?.pricing?.price, decimal) : null)}
+                                        {comboData && comboData.length ? (comboData && comboData.length > 1 ? (priceRange ? (currency + " " + getPrice(Math.min(...priceRange), decimal) + "  -  " + currency + " " + getPrice(Math.max(...priceRange), decimal)) : null) : comboData[0]?.pricing?.sellprice ? currency + " " + getPrice(comboData[0]?.pricing?.price, decimal) : null) : (variantSelect ? null : currency + " " + singleproducts?.pricing?.sellprice ? getPrice(singleproducts?.pricing?.price, decimal) : null)}
                                     </span>
                                         : null}
                                     {comboData && comboData.length > 1 ? null :
@@ -486,7 +489,7 @@ const GalleryImagesComponents = (props) => {
                         </ul>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 };

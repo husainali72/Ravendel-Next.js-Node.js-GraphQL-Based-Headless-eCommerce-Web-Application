@@ -4410,3 +4410,140 @@ header {
   border-radius: 5px !important;
 
 }
+
+.header {}
+
+.logo {
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 24px;
+  color: #fff;
+}
+
+.icon-btn {
+  color: #fff;
+  font-weight: 600;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.mega-menu-wrapper {
+  /* background: rgba(255, 255, 255, 0.8);
+  /* position: fixed; */
+  /* width: 100%;
+  height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  transition: 0.4s ease-in-out; */
+  position: absolute;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  /* padding: 10 20px; */
+
+
+  overflow: hidden;
+  top: 46px;
+  transition: 0.4s ease-in-out;
+  /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); */
+  height: 0;
+}
+
+.mega-menu-wrapper.open {
+  height: auto;
+  overflow: auto;
+  /* padding: 40px 0; */
+  position: absolute;
+  top: 117px;
+  /* background-color: red; */
+  /* background-color: rgba(255, 255, 255, 0.5); */
+}
+
+.mega-menu-wrapper .container {
+  background-color: white;
+  height: 100%;
+  z-index: 10;
+  /* margin-top: 20px; */
+}
+
+.row {
+  margin: 0;
+}
+
+.new-products-col {
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #ed63b2;
+  padding: 0 40px;
+}
+
+.new-products-col .product img {
+  width: 130px;
+  margin-right: 20px;
+  transition: 0.2s ease-in-out;
+}
+
+.mega-menu-wrapper h2 {
+  font-size: 25px;
+  color: #272144;
+  margin-bottom: 30px;
+}
+
+.new-products-col .product {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  border-bottom: 1px solid #cccccc;
+  padding: 10px 0;
+}
+
+.new-products-col .product:hover img {
+  transform: scale(1.1);
+}
+
+.new-products-col .product h4 {
+  font-size: 18px;
+  color: #707070;
+  transition: 0.2s ease-in-out;
+}
+
+.new-products-col .product:hover h4 {
+  color: #ed63b2;
+}
+
+.product-categories-col {
+  padding: 20px 40px;
+}
+
+.product-categories-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 30px;
+}
+
+.product-categories-wrapper .category {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-categories-wrapper .category h4 {
+  font-size: 18px;
+  color: #ed63b2;
+  line-height: 26px;
+  margin-bottom: 5px;
+}
+
+.product-categories-wrapper .category a {
+  color: #707070;
+  line-height: 24px;
+  margin-bottom: 5px;
+  font-size: 15px;
+  transition: 0.15s ease-in;
+}
+
+.product-categories-wrapper .category a:hover {
+  color: #272144;
+  margin-left: 4px;
+}

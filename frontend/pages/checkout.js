@@ -113,6 +113,7 @@ export const CheckOut = ({ currencyStore }) => {
     const cartProducts = useSelector((state) => state.cart);
     const [cartTotal, setCartTotal] = useState(0)
     const [grandTotal, setgrandTotal] = useState(0)
+    const [cartItems1, setCartItems1] = useState([])
     const [cartItems, setCartItems] = useState([])
     const [couponfield, setCouponFeild] = useState(false);
     const [billingInfo, setBillingInfo] = useState(billingInfoObject);
@@ -270,6 +271,7 @@ export const CheckOut = ({ currencyStore }) => {
             query2(CALCULATE_CART_TOTAL, calculate, token).then(res => {
 
                 let response = res?.data?.calculateCart
+                setCartItems1([...response.cartItem])
                 setgrandTotal(response?.grandTotal && !isNaN(response?.grandTotal) ? response?.grandTotal : '0')
                 setCartTotal(response?.grandTotal && !isNaN(response?.grandTotal) ? response?.grandTotal : '0')
                 setSubTotal(response?.cartTotal && !isNaN(response?.cartTotal) ? response?.cartTotal : '0')
@@ -419,17 +421,16 @@ export const CheckOut = ({ currencyStore }) => {
         e.preventDefault();
 
 
-        let cart = cartItems.map((product) => {
+        let cart = cartItems1.map((product) => {
             return {
-                productId: product._id,
-                qty: product.quantity,
-                productTotal: (product?.pricing * product.quantity).toString(),
-                productImage: product?.feature_image,
-                productTitle: product?.name,
-                productShipping: product?.shippingClass,
-                productTax: product?.taxClass,
-                productPrice: product?.pricing?.toString(),
-
+                productId: product.productId,
+                qty: product.qty,
+                productTotal: (product?.productPrice * product.qty).toString(),
+                productImage: product?.productImage,
+                productTitle: product?.productTitle,
+                productShipping: product?.productShipping,
+                productTax: product?.productTax,
+                productTotal: product?.productPrice?.toString(),
                 variantId: product?.variantId
             }
         })

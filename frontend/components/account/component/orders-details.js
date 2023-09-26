@@ -65,7 +65,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                     <tr>
                                         <th>Total</th>
 
-                                        <td>{currency} {total ? getPrice(total, decimal) : getPrice(CalculateProductTotal(orderDetail), decimal)}</td>
+                                        <td>{currency} {total ? getPrice(total, decimal) : getPrice(total, decimal)}</td>
                                     </tr>
                                     <tr>
                                         <th>Payment Method</th>
@@ -127,7 +127,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                 </tbody>
                                 <tr>
                                     <th colSpan={3} className="order-text-align" >Subtotal</th>
-                                    <td>{currency} {getPrice(CalculateProductTotal(orderDetail), decimal)}</td>
+                                    <td>{currency} {getPrice(subtotal, decimal)}</td>
                                 </tr>
                                 <tr>
                                     <th colSpan={3} className="order-text-align">Tax</th>
@@ -143,7 +143,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                 </tr>}
                                 <tr className="total">
                                     <th colSpan={3} className="order-text-align" >Total</th>
-                                    <td>{currency} {total ? getPrice(total, decimal) : getPrice(CalculateProductTotal(orderDetail), decimal)}</td>
+                                    <td>{currency} {total ? getPrice(total, decimal) : getPrice(total, decimal)}</td>
                                 </tr>
                             </table>
                         </div>
