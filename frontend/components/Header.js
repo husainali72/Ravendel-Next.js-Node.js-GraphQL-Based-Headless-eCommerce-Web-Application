@@ -30,7 +30,7 @@ export default function Header({ setOpenMenu }) {
         const data = await signOut({ redirect: false, callbackUrl: "/" })
         localStorage.setItem("userCart", JSON.stringify([]));
         localStorage.setItem("cart", JSON.stringify([]));
-        // dispatch(logoutDispatch())
+        dispatch(logoutDispatch())
     }
 
     const dropdownRef = useRef(null);
@@ -67,6 +67,11 @@ export default function Header({ setOpenMenu }) {
             setHomeData(homepageData);
         })
     }
+    useEffect(() => {
+        if (!addedCart && data.status !== 'authenticated') {
+            dispatch(logoutDispatch())
+        }
+    }, [addedCart])
     console.log("cartItem", cartItem)
     useEffect(() => {
         console.log("useEffect")
