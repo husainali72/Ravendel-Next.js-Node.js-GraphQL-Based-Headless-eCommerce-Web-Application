@@ -6,50 +6,55 @@ import { GET_CATEGORIES_QUERY } from '../queries/home'
 import { GET_FILTEREDPRODUCTS } from '../queries/shopquery'
 import OnSaleProductCard from './category/onSaleProductCard'
 
-const SpecificProducts = ({section}) => {
+const SpecificProducts = ({ section }) => {
 
 
-    const [products,setProducts] = useState([]) 
-    const [category,setCategory] = useState({}) 
+    const [products, setProducts] = useState([])
+    const [category, setCategory] = useState({})
     let config = { category: [section.category], brand: [], attribute: [], price: [] }
-    
 
-    let filter = {  category: section?.category,
+
+    let filter = {
+        category: section?.category,
         brand: "",
         most_reviewed: false,
         product_type: "",
         rating: {
-          min: 0,
-          max: 5
+            min: 0,
+            max: 5
         },
         price: {
-          min: 1,
-          max: 100000
+            min: 1,
+            max: 100000
         },
-        search: ""}
+        search: ""
+    }
 
-    const getProducts = async () =>{
-        try { 
+    const getProducts = async () => {
+        try {
             const { data: fillterPrroducts } = await client.query({
                 query: GET_FILTEREDPRODUCTS,
-                variables: {  filter },
+                variables: { filter },
             })
             let fillterProduct = fillterPrroducts?.filteredProducts
-            if(fillterProduct.length>0){
-                 fillterProduct.map(product =>{
-                    setProducts((prev)=>[...prev,{brand: product.brand,
+            if (fillterProduct.length > 0) {
+                fillterProduct.map(product => {
+                    setProducts((prev) => [...prev, {
+                        brand: product.brand,
                         categoryId: product.categoryId,
                         feature_image: product.feature_image,
-                        name:product.name,
-                        pricing:product.pricing,
+                        name: product.name,
+                        pricing: product.pricing,
                         quantity: product.quantity,
-                        status:product.status,
-                        url:product.url,
-                        taxClass:product?.taxClass,
-                        shipping:product?.shipping,
+                        status: product.status,
+                        url: product.url,
+                        taxClass: product?.taxClass,
+                        rating: product?.rating,
+                        shipping: product?.shipping,
                         __typename: product.__typename,
-                        _id:product._id} ])
-                } )
+                        _id: product._id
+                    }])
+                })
             }
         }
         catch (e) {
@@ -57,15 +62,15 @@ const SpecificProducts = ({section}) => {
         }
     }
 
-    const getAllCategories = async () =>{
+    const getAllCategories = async () => {
         const shopProduct = ""
         try {
             const { data: shopproductcategory } = await client.query({
                 query: GET_CATEGORIES_QUERY
             });
             shopProduct = shopproductcategory.productCategories;
-            
-            const cat = shopProduct.data.find((cat)=> cat.id === section.category)
+
+            const cat = shopProduct.data.find((cat) => cat.id === section.category)
             setCategory(cat)
         }
         catch (e) {
@@ -73,23 +78,23 @@ const SpecificProducts = ({section}) => {
         }
     }
     useEffect(() => {
-     getProducts()
-     getAllCategories()
+        getProducts()
+        getAllCategories()
     }, [section.id])
-    
-   
-  return (
-       <div>
-            {products?.length > 0 ?  <Container>
+
+
+    return (
+        <div>
+            {products?.length > 0 ? <Container>
                 <h4 className='theme-color my-5' >Products For <span className='black-color' >{capitalize(category?.name)}</span></h4>
-                    <OnSaleProductCard
-                        onSaleProduct={products}
-                        hidetitle
-                    /> 
-            </Container> : null }
-        
-       </div>
-  )
+                <OnSaleProductCard
+                    onSaleProduct={products}
+                    hidetitle
+                />
+            </Container> : null}
+
+        </div>
+    )
 }
 
 export default SpecificProducts

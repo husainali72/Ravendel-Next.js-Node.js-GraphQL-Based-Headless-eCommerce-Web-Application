@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import StarRating from '../breadcrumb/rating'
 import moment from 'moment';
+import { capitalize } from 'lodash';
 const convertDateToStringFormat = (date) => {
   var convertedDate = ""
   if (date) {
@@ -22,16 +23,16 @@ const Reviews = ({ singleProductReview }) => {
           return <div key={index} className='singleReview'>
             <div className='usernameWidProfile'>
               <img className='userImg' src='/assets/userProfile/icons8.png' alt='img' />
-              <span className='singleReviewUsername'>	{product.customerId.firstName} </span>
+              <span className='singleReviewUsername'>	{capitalize(product?.customerId?.firstName)} </span>
             </div>
             <div className='starWidTitle'>
-              <StarRating className="rating" stars={product.rating} />
-              <span className='reviewTitle'>{product.title}</span>
+              <StarRating className="rating" stars={product?.rating} singleproducts={product} />
+              <span className='reviewTitle'>{capitalize(product.title)}</span>
             </div>
 
             <p className='reviewDate'>{`Reviewed in India on ${convertDateToStringFormat(product.date)}`}</p>
 
-            <h2 className='reviewDesc'> {product.review} </h2>
+            <h2 className='reviewDesc'> {capitalize(product.review)} </h2>
 
           </div>
         }) : <p className='fw-light text-muted'>There are no reviews yet. Be the first one to write one. </p>

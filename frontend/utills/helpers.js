@@ -4,6 +4,7 @@ import { isEmpty } from "./service";
 import axios from 'axios'
 import { getSession } from 'next-auth/react';
 import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
+import { LogOutUser1 } from '../components/Header';
 
 /* -------------------------------image funtion ------------------------------- */
 
@@ -63,6 +64,8 @@ export const query = async (query, id) => {
             !isEmpty(errors.networkError) &&
             errors.networkError.statusCode === 400
         ) {
+
+            if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { LogOutUser1() }
             return Promise.reject(errors.message);
         }
         return Promise.reject("Something went wrong");
@@ -74,6 +77,7 @@ export const query = async (query, id) => {
 export const mutation = async (query, variables) => {
     const session = await getSession();
     const token = session?.user?.accessToken?.token;
+
     try {
         if (!variables.queryName) {
             var response = await client.mutate({
@@ -97,12 +101,15 @@ export const mutation = async (query, variables) => {
             errors.graphQLErrors?.length &&
             !isEmpty(errors.graphQLErrors[0].message)
         ) {
+
             return Promise.reject(errors.graphQLErrors[0].message);
         }
         if (
             !isEmpty(errors.networkError) &&
             errors.networkError.statusCode === 400
         ) {
+            console.log(errors, 'errors')
+            if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { LogOutUser1() }
             return Promise.reject(errors.message);
         }
         return Promise.reject("Something went wrong");

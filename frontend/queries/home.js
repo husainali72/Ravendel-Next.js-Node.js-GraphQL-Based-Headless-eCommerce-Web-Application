@@ -266,6 +266,7 @@ export const FEATURE_PRODUCT_QUERY = gql`
           name
           feature_image
           pricing
+          rating
           url
           categoryId {
             id
@@ -286,6 +287,7 @@ export const GET_RECENT_PRODUCTS_QUERY = gql`
       _id
       name
       feature_image
+      rating
       pricing
       url
       categoryId {
@@ -308,6 +310,7 @@ export const GET_RELATED_PRODUCTS_QUERY = gql`
       name
       feature_image
       pricing
+      rating
       url
       categoryId {
         id
@@ -353,6 +356,7 @@ export const ON_SALE_PRODUCTS_QUERY = gql`
     name
     feature_image
     pricing
+    rating
     url
     categoryId {
       id

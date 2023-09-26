@@ -20,7 +20,7 @@ const Star = ({ starId, marked }) => {
 };
 
 const ReviewForm = ({ productId }) => {
-    const [CustomerId,setCustomerId] = useState("");
+    const [CustomerId, setCustomerId] = useState("");
     var reviewObject = {
         title: "",
         email: "ravendel@test.com",
@@ -38,26 +38,26 @@ const ReviewForm = ({ productId }) => {
     const [selection, setSelection] = React.useState(0);
 
     useEffect(() => {
-        setReview((prev)=>({...prev, customerId:session?.data?.user?.accessToken?.customer?._id}))
-        setReview({...review,customerId:session?.data?.user?.accessToken?.customer?._id})
+        setReview((prev) => ({ ...prev, customerId: session?.data?.user?.accessToken?.customer?._id }))
+        setReview({ ...review, customerId: session?.data?.user?.accessToken?.customer?._id })
         if (session?.status === "authenticated") {
             token = session?.data?.user?.accessToken?.token;
             setCustomerId(session?.data?.user?.accessToken?.customer?._id);
         }
     }, [session])
-    
+
 
     useEffect(() => {
         setReview({ ...review, productId: productId });
         // setReview({ ...review, customerId: CustomerId })
-        
+
     }, [productId])
 
-useEffect(() => {
-    if (session?.status === "authenticated") {
-        setReview((prev)=>({...prev, customerId:session?.data?.user?.accessToken?.customer?._id}))
-    }
-}, [CustomerId])
+    useEffect(() => {
+        if (session?.status === "authenticated") {
+            setReview((prev) => ({ ...prev, customerId: session?.data?.user?.accessToken?.customer?._id }))
+        }
+    }, [CustomerId])
 
     const hoverOver = event => {
         let starId = 0;
@@ -69,18 +69,20 @@ useEffect(() => {
 
     const addReview = (e) => {
         e.preventDefault();
+
+        review.customerId = session?.data?.user?.accessToken?.customer?._id
         mutation(ADD_REVIEW, review, token).then((response) => {
-            if(!response?.data?.addReview?.success){
-                notify(response?.data?.addReview?.message,response?.data?.addReview?.success);               
+            if (!response?.data?.addReview?.success) {
+                notify(response?.data?.addReview?.message, response?.data?.addReview?.success);
             }
-            else if(response?.data?.addReview?.success){
-                notify(response?.data?.addReview?.message,response?.data?.addReview?.success);
+            else if (response?.data?.addReview?.success) {
+                notify(response?.data?.addReview?.message, response?.data?.addReview?.success);
                 setReview(reviewObject);
                 setWriteReview(!writeReview);
-                
+
             }
         })
-        
+
     }
     return (
         <>

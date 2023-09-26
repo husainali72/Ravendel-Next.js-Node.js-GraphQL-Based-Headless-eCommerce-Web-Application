@@ -15,7 +15,8 @@ const CartTable = (props) => {
         quantity,
         removeToCart,
         updateCartProduct, currency,
-        unAvailableProducts
+        unAvailableProducts,
+        available
     } = props;
     return (
         <div>
@@ -66,7 +67,7 @@ const CartTable = (props) => {
                                 <td>
                                     <div className="td-flex">
                                         <span className={`btn btn-primary btn-less ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
-                                            DecreaseQuantity(item)
+                                            if (available) { DecreaseQuantity(item) }
                                         }}>
                                             <i className="fas fa-chevron-down" ></i>
                                         </span>
@@ -74,7 +75,7 @@ const CartTable = (props) => {
                                             {item?.quantity}
                                         </span>
                                         <span className={`btn btn-primary btn-more ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
-                                            IncreaseQuantity(item)
+                                            if (available) { IncreaseQuantity(item) }
                                         }}>
                                             <i className="fas fa-chevron-up"></i>
                                         </span>

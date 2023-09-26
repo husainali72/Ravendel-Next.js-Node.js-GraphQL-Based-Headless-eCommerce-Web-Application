@@ -487,6 +487,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                     AllCartItemsClear={AllCartItemsClear}
                                     updateCartProduct={updateCartProduct}
                                     currency={currency}
+                                    available={true}
 
                                 />
 
@@ -504,6 +505,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                         AllCartItemsClear={AllCartItemsClear}
                                         updateCartProduct={updateCartProduct}
                                         currency={currency}
+                                        available={false}
 
                                     /></> : null}
                                 <div className="cart-action text-end">

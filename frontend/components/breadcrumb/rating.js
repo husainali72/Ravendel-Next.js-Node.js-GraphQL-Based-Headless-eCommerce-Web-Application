@@ -12,7 +12,7 @@ const Star = ({ starId, marked }) => {
     );
 };
 
-const StarRating = ({ stars,singleproducts }) => {
+const StarRating = ({ stars, singleproducts }) => {
     const [selection, setSelection] = React.useState(0);
     const [rating, setRating] = React.useState(0);
 
@@ -33,7 +33,7 @@ const StarRating = ({ stars,singleproducts }) => {
             onMouseOut={() => hoverOver(null)}
             onClick={event => setRating(event.target.getAttribute("star-id"))}
         >
-            {Array.from({ length: 5 }, (v, i) => (              
+            {stars === '0' || stars === 0 ? '' : Array.from({ length: 5 }, (v, i) => (
                 // <Star key={i} starId={i + 1} marked={selection ? selection > i : rating > i} />
                 <Star key={i} starId={i + 1} marked={selection && selection > i ? true : false} />
             ))}

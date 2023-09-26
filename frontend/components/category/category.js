@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import useResizeObserver from '@react-hook/resize-observer';
 import { capitalize } from 'lodash';
+import NoImagePlaceHolder from '../../components/images/NoImagePlaceHolder.png';
 const Category = ({ category }) => {
     const [showSlider, setShowSlider] = useState(false)
     const [inlineSize, setInlineSize] = useState(0)
@@ -40,7 +41,7 @@ const Category = ({ category }) => {
                                         <img
                                             src={getImage(item?.image, 'original')}
                                             className="  cimg"
-                                            onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
+                                            onError={(e) => e.type === 'error' ? e.target.src = NoImagePlaceHolder.src : null}
                                             alt={item?.name}
                                         />
                                     </div>

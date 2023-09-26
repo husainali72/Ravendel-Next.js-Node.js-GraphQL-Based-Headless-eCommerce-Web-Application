@@ -31,7 +31,29 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
     const [loading, setloading] = useState(false)
     const [onSaleProduct, setonSaleProduct] = useState([])
     const [onSaleAllProduct, setonSaleAllProduct] = useState([])
+    const [sortingdata, setSortingdata] = useState([])
     const [number, setNumber] = useState(0)
+
+    const [sortingName, setSortingName] = useState({
+        name: 'latest',
+        title: "Release date"
+    },)
+
+    const sortingData = [
+        {
+            name: 'desc',
+            title: "High to low"
+        },
+        {
+            name: 'asc',
+            title: "Low to high"
+        },
+        {
+            name: 'latest',
+            title: "Release date"
+        },
+    ]
+
     const dropdownRef = useRef(null);
 
     const handleClickOutside = (event) => {
@@ -48,6 +70,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
     useEffect(() => {
         if (shopProducts && shopProducts?.products?.data?.length > 0) {
             setloading(false)
@@ -74,6 +97,19 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
             dispatch(categoryAction(shopProduct.data))
         }
     }, [brandProduct])
+    const handleClickOutside = (event) => {
+        if (dropdownRef?.current && !dropdownRef?.current?.contains(event?.target)) {
+            CloseSortMenu()
+            CloseMenu()
+        }
+
+    };
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
     const handleFilterData = (e, attribute) => {
         let index = FilterAttribute.findIndex((data) => data.name === attribute)
         if (index !== -1) {
@@ -107,10 +143,47 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
             setFilterAttribute([...productAttribute])
         }
     }
+
+    const compareFunction = (a, b, sortObject) => {
+        switch (sortObject?.name) {
+
+            case 'desc':
+                {
+
+                    return b.pricing.sellprice - a.pricing.sellprice;
+                }// Sort in descending order
+            case 'asc':
+                {
+
+                    return a.pricing.sellprice - b.pricing.sellprice;
+                }// Sort in ascending order
+            case 'latest': {
+
+                return new Date(b.date) - new Date(a.date);
+            }
+            default: {
+
+                return 0;
+            }
+        }
+    };
+
+    // Function to sort data based on the selected sorting criteria
+    const sortData = (sortObject) => {
+        setSortingName(sortObject)
+        const data = sortingdata.length > 0 ? sortingdata : onSaleAllProduct
+        const sortedData = data?.slice()?.sort((a, b) => compareFunction(a, b, sortObject));
+        setonSaleProduct([...sortedData])
+        CloseSortMenu()
+        CloseMenu()
+    };
+    useEffect(() => {
+        if (sortingdata && sortingdata?.length > 0) { sortData(sortingName) }
+    }, [sortingdata])
     const filterData = () => {
         let priceRange = rangevalue.split('-')
         if (FilterAttribute && FilterAttribute.length > 0) {
-            let data = onSaleAllProduct.filter((data) => {
+            let data = onSaleAllProduct?.filter((data) => {
                 return (data.attribute_master.some((attribute_value) => {
                     return FilterAttribute.some((filteredData) => {
                         return (filteredData.name === attribute_value.id && filteredData.value.some((data1) =>
@@ -122,13 +195,15 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
 
             })
             setonSaleProduct([...data])
+            setSortingdata([...data])
             setNumber(data.length)
         }
         else {
-            let data = onSaleAllProduct.filter((data) => {
+            let data = onSaleAllProduct?.filter((data) => {
                 return (data.pricing.sellprice >= parseInt(priceRange[0]) && data.pricing.sellprice <= parseInt(priceRange[1]))
             })
             setonSaleProduct([...data])
+            setSortingdata([...data])
             setNumber(data.length)
         }
 
@@ -205,7 +280,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                                             ) : (
                                                                 <strong>{product.name}</strong>
                                                             )}
-                                                            <StarRating stars={"5"} />
+                                                            <StarRating stars={product?.rating} singleproducts={product} />
                                                             <p style={{ marginTop: 0 }}>{currency} {getPrice(product.pricing.sellprice || product.pricing.price, decimal)}</p>
                                                         </div>
                                                     </div>
@@ -223,7 +298,9 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                 <p> We found <strong className="text-brand">{number}</strong> items for you!</p>
                             </div>
                             {loading ? <h5>loading...</h5> : null}
-                            <div className="sort-by-product-area" >
+
+                            <div className="sort-by-product-area">
+
                                 <div className="sort-by-cover mr-10" ref={dropdownRef}>
                                     <div className="sort-by-product-wrap">
                                         <div className="sort-by">
@@ -248,10 +325,12 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="sort-by-cover" ref={dropdownRef}>
-                                    <div className="sort-by-product-wrap">
+
+                                <div className="sort-by-cover" >
+                                    <div className="sort-by-product-wrap" ref={dropdownRef} onMouseEnter={() => OpenSortMenu()} onMouseLeave={() => CloseSortMenu()}>
+
                                         <div className="sort-by">
-                                            <span><i className="fas fa-border-all" aria-hidden="true"></i>Sort by:</span>
+                                            <span><i className="fas fa-border-all" aria-hidden="true"></i>Sort by: {sortingName?.title}</span>
                                         </div>
                                         <span className="drop-down-btn item-down" id="menuDown2">
                                             <i className="fas fa-angle-down" onClick={() => OpenSortMenu()}></i>
@@ -259,16 +338,19 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                         <span className="drop-down-btn item-up" id="menuUp2" >
                                             <i className="fas fa-angle-up" onClick={() => CloseSortMenu()}></i>
                                         </span>
-                                        <div className="drop-down-item-menu" id="sort-menu">
-                                            <li>
-                                                <a href="#">Low To High</a>
-                                            </li>
-                                            <li>
+                                        <div className="drop-down-item-menu" id="sort-menu" style={{ width: '100%' }}>
+                                            {sortingData?.map((sorting) => {
+                                                return (<li onClick={() => sortData(sorting)}>
+                                                    <a href="#">{sorting?.title}</a>
+                                                </li>)
+                                            })}
+
+                                            {/* <li>
                                                 <a href="#">High to Low</a>
                                             </li>
                                             <li>
                                                 <a href="#">Release Date</a>
-                                            </li>
+                                            </li> */}
                                         </div>
 
                                     </div>
@@ -282,6 +364,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                     hidetitle
                                     currencyProp={currency}
                                     decimal={decimal}
+
                                 />
                             </div>) :
                             <div style={{ padding: "50px" }}>
