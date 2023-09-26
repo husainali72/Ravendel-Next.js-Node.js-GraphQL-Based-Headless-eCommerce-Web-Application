@@ -29,6 +29,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     const [cartLoading, setCartLoading] = useState(false)
     const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false)
     const [cartItems, setCartItems] = useState([]);
+    const [AllCartItems, setAllCartItems] = useState([]);
     const [quantityy, setQuantity] = useState();
     const dispatch = useDispatch();
     const [couponCode, setCouponCode] = useState("")
@@ -170,12 +171,14 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
                     // })
                     setCartItems([...cartitems2])
+                    // setAllCartItems([...carts?.cartItem])
                     setUnAvailableProduct([...unAvailable])
                 }).finally(() => { allProducts?.products.length > 0 && cartItems.length >= 0 && setCartLoading(false) })
             }
             else {
 
                 setCartItems(productsCard || []);
+                setAllCartItems(productsCard || [])
                 setCartLoading(false)
 
             }
@@ -210,7 +213,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
     const AllCartItemsClear = async () => {
         setCartItems([])
-
+        setAllCartItems([])
         if (session.status === "authenticated") {
             let id = session.data.user.accessToken.customer._id
             let token = session.data.user.accessToken.token
@@ -295,6 +298,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         if (item.quantity > 1) {
             setIsQuantityBtnLoading(true)
             setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (itemm.quantity -= 1) : itemm.qyantity))
+
             setQuantity(item.quantity)
             if (session?.status !== "authenticated") {
                 let variables = {
@@ -370,8 +374,10 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         let idx = cartItems.findIndex(cartItem => cartItem._id === item._id)
         const prod = cartItems.find(cart => cart._id === item._id);
         if (session?.status === "authenticated") {
-            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id || (itemm._id === item._id && itemm.variantId !== item.variantId))
-            setCartItems(cartItemsfilter);
+            // let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id || (itemm._id === item._id && itemm.variantId !== item.variantId))
+            // let unavailableItem = unAvailableProducts.filter(itemm => itemm._id !== item._id || (itemm._id === item._id && itemm.variantId !== item.variantId))
+            // setCartItems(cartItemsfilter);
+            // setUnAvailableProduct([...unavailableItem])
             let id = session.data.user.accessToken.customer._id
             let token = session.data.user.accessToken.token
 
@@ -577,10 +583,26 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                             </div>
                         </div>
                     ) :
-                        <p
-                            style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        (unAvailableProducts && unAvailableProducts?.length > 0 ? <><h3 style={{ color: 'red', fontSize: '15px' }}>Out of stock</h3>
+
+                            <CartTable
+                                decimal={decimal}
+                                isQuantityBtnLoading={isQuantityBtnLoading}
+                                cartItems={unAvailableProducts}
+                                quantity={quantityy}
+                                IncreaseQuantity={IncreaseQuantity}
+                                DecreaseQuantity={DecreaseQuantity}
+                                removeToCart={removeToCart}
+                                CalculateProductTotal={CalculateProductTotal}
+                                AllCartItemsClear={AllCartItemsClear}
+                                updateCartProduct={updateCartProduct}
+                                currency={currency}
+                                available={false}
+
+                            /></> : <p
+                                style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                             No product available in cart
-                        </p>
+                        </p>)
                     }
                 </Container>
             </section>
