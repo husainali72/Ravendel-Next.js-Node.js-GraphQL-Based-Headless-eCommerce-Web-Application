@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, Box, FormControlLabel, Checkbox, Button } from "@mui/material";
+import { Grid, Box, FormControlLabel, Checkbox, Button, TextareaAutosize } from "@mui/material";
 import viewStyles from "../../viewStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
@@ -12,7 +12,7 @@ import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
 import { Typography } from "@mui/material";
 import { SettingTextInput } from "./setting-components";
-import TextareaAutosize from '@mui/base/TextareaAutosize';
+// import TextareaAutosize from '@mui/base/TextareaAutosize';
 const GoogleAnalyticsComponent = () => {
     const classes = viewStyles();
     const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const GoogleAnalyticsComponent = () => {
                     </Box>
                     <Box component="div" >
                         <div>
-                            <TextareaAutosize label="Google Analytics Key" placeholder="Google Analytics Key" value={googleAnalytics.key} onChange={(e) => { setGoogleAnalytics({ ...googleAnalytics, key: e.target.value }) }} minRows={3} style={{ width: '300px', padding: '10px', borderRadius: '5px' }} />
+                            <TextareaAutosize        label="Google Analytics Key" placeholder="Google Analytics Key" value={googleAnalytics.key} onChange={(e) => { setGoogleAnalytics({ ...googleAnalytics, key: e.target.value }) }} minRows={3} style={{ width: '300px', padding: '10px', borderRadius: '5px' }} />
                         </div>
                     </Box>
                 </Grid>
