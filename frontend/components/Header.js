@@ -67,11 +67,11 @@ export default function Header({ setOpenMenu }) {
             setHomeData(homepageData);
         })
     }
-    useEffect(() => {
-        if (!addedCart && data.status !== 'authenticated') {
-            dispatch(logoutDispatch())
-        }
-    }, [addedCart])
+    // useEffect(() => {
+    //     if (addedCart && data.status !== 'authenticated') {
+    //         dispatch(logoutDispatch())
+    //     }
+    // }, [addedCart])
 
     useEffect(() => {
 

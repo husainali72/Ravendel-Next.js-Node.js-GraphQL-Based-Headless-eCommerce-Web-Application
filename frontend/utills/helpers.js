@@ -76,7 +76,7 @@ export const query = async (query, id) => {
 
 export const mutation = async (query, variables) => {
     const session = await getSession();
-    const token = session?.user?.accessToken?.token;
+    const token = session?.user?.accessToken?.token
 
     try {
         if (!variables.queryName) {
@@ -108,7 +108,7 @@ export const mutation = async (query, variables) => {
             !isEmpty(errors.networkError) &&
             errors.networkError.statusCode === 400
         ) {
-            console.log(errors, 'errors')
+
             if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { LogOutUser1() }
             return Promise.reject(errors.message);
         }

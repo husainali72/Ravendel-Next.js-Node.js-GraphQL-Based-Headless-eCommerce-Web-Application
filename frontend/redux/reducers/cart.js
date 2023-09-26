@@ -121,7 +121,11 @@ function cartReducer(state = [], action) {
         case REMOVE_VALUE:
             const Cards = JSON.parse(localStorage.getItem("cart"))
 
-            const product = Cards.filter(item => item._id !== action.payload.id && item.variantId !== action.payload.variantId)
+            const product = Cards.filter((item) => {
+                if (item.variantId && action.payload.variantId) { return item._id !== action.payload.id && item.variantId !== action.payload.variantId } else {
+                    return item._id !== action.payload.id
+                }
+            })
 
             localStorage.setItem("cart", JSON.stringify(product))
             return product;
@@ -137,9 +141,16 @@ function cartReducer(state = [], action) {
             if (isExisted) {
                 for (let item of cart) {
 
-                    if (item._id === action.payload._id && item.variantId === action.payload.variantId) {
-                        action.payload.originalQuantity > item.quantity && (item.quantity += 1);
-                        break;
+                    if (item.variantId && action.payload.variantId) {
+                        if (item._id === action.payload._id && item.variantId === action.payload.variantId) {
+                            action.payload.originalQuantity > item.quantity && (item.quantity += 1);
+                            break;
+                        }
+                    } else {
+                        if (item._id === action.payload._id) {
+                            action.payload.originalQuantity > item.quantity && (item.quantity += 1);
+                            break;
+                        }
                     }
                 }
             }
@@ -151,6 +162,7 @@ function cartReducer(state = [], action) {
             let isExisteds = CardItem.filter(item => item._id === action.payload._id && item.variantId === action.payload.variantId)
             if (isExisteds) {
                 CardItem.forEach((item) => {
+
                     if (item._id === action.payload._id && item.variantId === action.payload.variantId) {
                         item.quantity -= 1;
                     }

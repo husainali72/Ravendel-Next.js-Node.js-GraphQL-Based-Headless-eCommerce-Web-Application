@@ -103,7 +103,7 @@ export default function Footer() {
                                     <div className="mt-4 follow">
                                         <h5>Follow us</h5>
                                         {/* <ui> */}
-                                        {Address.socailMedia && Address.socailMedia.length > 0 ? Address.socailMedia.map((media) => {
+                                        {Address?.socailMedia && Address?.socailMedia?.length > 0 ? Address?.socailMedia?.map((media) => {
                                             return <Link href={media.handle}><a href={media.handle} className={iconSetter(media.name)} aria-hidden="true" target="_blank"></a></Link>
                                         }) : null}
                                     </div>

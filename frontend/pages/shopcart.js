@@ -25,6 +25,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     const router = useRouter();
     const session = useSession();
     const allProducts = useSelector(state => state.products);
+    const cart = useSelector(state => state.cart);
     const [cartLoading, setCartLoading] = useState(false)
     const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false)
     const [cartItems, setCartItems] = useState([]);
@@ -52,7 +53,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
             setCartLoading(true)
             const sessionn = await getSession()
             if (session?.status === "authenticated" || sessionn !== null) {
-                id = sessionn.user.accessToken.customer._id
+                id = sessionn?.user?.accessToken?.customer?._id
                 token = sessionn.user.accessToken.token
                 let variables = { id: id }
                 mutation(GET_USER_CART, variables).then(res => {
@@ -181,7 +182,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         }
         getProducts();
 
-    }, [allProducts]);
+    }, [allProducts, cart]);
     const handlePayment = async () => {
 
         if (session?.status !== "authenticated") {
