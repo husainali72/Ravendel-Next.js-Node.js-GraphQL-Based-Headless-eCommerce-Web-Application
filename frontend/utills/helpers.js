@@ -41,7 +41,8 @@ export const getImage = (img, type, isBanner) => {
 
 export const query = async (query, id) => {
     const session = await getSession();
-    const token = session?.user.accessToken.token
+    const token = session?.user?.accessToken?.token
+
     try {
         const response = await client.query({
             query: query,
@@ -110,7 +111,7 @@ export const mutation = async (query, variables) => {
         ) {
 
             if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { LogOutUser1() }
-            return Promise.reject(errors.message);
+            return Promise.reject(errors);
         }
         return Promise.reject("Something went wrong");
     }

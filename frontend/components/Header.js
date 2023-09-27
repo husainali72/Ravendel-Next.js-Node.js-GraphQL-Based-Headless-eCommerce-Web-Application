@@ -49,6 +49,10 @@ export default function Header({ setOpenMenu }) {
 
     const getCartLength = async () => {
         let userCart
+
+        if (addedCart) {
+            dispatch(logoutDispatch())
+        }
         if (data.status === "authenticated") {
             let id = data.data.user.accessToken.customer._id
             let token = data.data.user.accessToken.token
@@ -68,7 +72,7 @@ export default function Header({ setOpenMenu }) {
         })
     }
     // useEffect(() => {
-    //     if (addedCart && data.status !== 'authenticated') {
+    //     if (addedCart) {
     //         dispatch(logoutDispatch())
     //     }
     // }, [addedCart])

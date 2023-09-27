@@ -6,19 +6,19 @@ import CredentialsProvider from "next-auth/providers/credentials"
 const options = {
     session: {
         strategy: "jwt",
-      },
+    },
     providers: [
         CredentialsProvider({
-            type:'credentials',
+            type: 'credentials',
             credentials: {
-               
+
             },
             async authorize(credentials, req) {
                 // const url = "https://ravendel.herokuapp.com/api/customers/login";
                 const { email, password } = credentials
-                // const url = "http://localhost:8000/api/customers/login";
-                
-                const url = "https://ravendel-node.onrender.com/api/customers/login";
+                const url = "http://localhost:8000/api/customers/login";
+
+                // const url = "https://ravendel-node.onrender.com/api/customers/login";
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
