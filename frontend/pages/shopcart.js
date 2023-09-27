@@ -62,6 +62,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
                     let cartitems2 = [];
                     let unAvailable = [];
+                    let allItem = []
                     carts?.availableItem?.map((cart) => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
                         const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
@@ -86,31 +87,59 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                         }
                         else {
                             cartProduct = {
-                                _id: originalProduct?._id,
+                                _id: cart?.productId,
                                 variantId: cart.variantId,
                                 quantity: parseInt(cart?.qty),
                                 productQuantity: parseInt(originalProduct?.quantity),
 
-                                name: originalProduct?.name,
-                                pricing: (originalProduct?.pricing
-                                    ?.sellprice),
-                                feature_image: originalProduct?.productImage
-                                    || originalProduct?.feature_image,
-                                url: originalProduct?.url,
+                                name: cart?.productTitle
+                                ,
+                                pricing: (cart?.productPrice),
+                                feature_image: cart?.productImage
+                                ,
+                                url: cart?.url || '',
                                 attributes: cart.attributes || [],
-                                shippingClass: originalProduct?.shipping?.shippingClass,
-                                taxClass: originalProduct?.taxClass,
+                                shippingClass: cart?.shippingClass,
+                                taxClass: cart?.taxClass,
                             }
                         }
                         cartitems2.push(cartProduct);
 
                     })
-                    carts?.unavailableItem?.map((cart) => {
+                    carts?.cartItem?.map((cart) => {
+                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
+                        console.log(cart, 'klfkdjgf', originalProduct, originalProduct?.quantity)
                         let cartProduct = {
-                            _id: cart?._id,
+                            _id: cart?.productId,
                             variantId: cart.variantId,
                             quantity: parseInt(cart?.qty),
-                            productQuantity: parseInt(cart?.productQuantity),
+                            productQuantity: originalProduct ? parseInt(originalProduct?.quantity
+                            ) : parseInt(cart?.productQuantity
+
+                            ),
+
+                            name: cart?.productTitle,
+                            pricing: (cart?.productPrice
+                            ),
+                            feature_image: cart?.productImage
+                            ,
+                            url: cart?.url || '',
+                            attributes: cart.attributes || [],
+                            shippingClass: cart?.shippingClass
+                            ,
+                            taxClass: cart?.taxClass,
+                        }
+
+                        allItem.push(cartProduct);
+
+                    })
+                    carts?.unavailableItem?.map((cart) => {
+                        let cartProduct = {
+                            _id: cart?.productId,
+                            variantId: cart.variantId,
+                            quantity: parseInt(cart?.qty),
+                            productQuantity: parseInt(cart?.productQuantity
+                            ),
                             name: cart?.productTitle,
                             pricing: (cart?.productPrice),
                             feature_image: cart?.productImage
@@ -171,7 +200,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
 
                     // })
                     setCartItems([...cartitems2])
-                    // setAllCartItems([...carts?.cartItem])
+                    setAllCartItems([...allItem])
                     setUnAvailableProduct([...unAvailable])
                 }).finally(() => { allProducts?.products.length > 0 && cartItems.length >= 0 && setCartLoading(false) })
             }
@@ -237,8 +266,19 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     }
 
     const IncreaseQuantity = async (item) => {
+        console.log(AllCartItems, 'kjhjkhjkhj')
+        // AllCartItems.filter(itemm => {
+        //     if (itemm._id === item._id) {
+        //         console.log('if', item?.productQuantity, itemm.quantity, item?.productQuantity > itemm.quantity + 1, itemm, item)
+        //         if (item?.productQuantity > itemm.quantity + 1) console.log(itemm.quantity += 1, '>')
+        //     } else {
+        //         console.log(itemm.quantity, 'item')
+        //     }
 
+        // })
         setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
+        setAllCartItems([...AllCartItems], AllCartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
+        // console.log(cartItems, '======', AllCartItems, '========', item._id, AllCartItems.filter(itemm => itemm._id === item._id ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
         if (session?.status !== "authenticated") {
             dispatch(increaseQuantity(item._id, item.productQuantity, item.variantId))
         }
@@ -250,7 +290,8 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                 let token = session.data.user.accessToken.token
                 query(GET_USER_CART, id, token).then(res => {
                     cart_id = res.data.cartbyUser.id
-                    const cCartItems = [...cartItems];
+                    const cCartItems = [...AllCartItems];
+
                     const Cartt = cCartItems.map(product => {
                         if (product._id === item._id && product.variantId === item.variantId) {
                             return {
@@ -298,7 +339,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         if (item.quantity > 1) {
             setIsQuantityBtnLoading(true)
             setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (itemm.quantity -= 1) : itemm.qyantity))
-
+            setAllCartItems([...AllCartItems], AllCartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
             setQuantity(item.quantity)
             if (session?.status !== "authenticated") {
                 let variables = {
@@ -317,7 +358,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                     let token = session.data.user.accessToken.token
                     query(GET_USER_CART, id, token).then(res => {
                         cart_id = res.data.cartbyUser.id
-                        const cCartItems = [...cartItems];
+                        const cCartItems = [...AllCartItems];
                         const Cartt = cCartItems.map(product => {
                             if (product._id === item._id && product.variantId === item.variantId) {
                                 return {

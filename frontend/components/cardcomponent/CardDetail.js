@@ -37,11 +37,13 @@ const CartTable = (props) => {
                         {cartItems && cartItems?.length > 0 && cartItems.map((item, i) => (
                             <tr key={i}>
                                 <td>
-                                    <Link href={"/product/" + item.url}>
+                                    {available ? <Link href={"/product/" + item.url}>
                                         <div className="td-flex cursor-pointer">
                                             <img src={getImage(item.feature_image, 'thumbnail')} />
                                         </div>
-                                    </Link>
+                                    </Link> : <div className="td-flex cursor-pointer">
+                                        <img src={getImage(item.feature_image, 'thumbnail')} />
+                                    </div>}
                                 </td>
                                 <td>
                                     <Link href={"/product/" + item.url}>
