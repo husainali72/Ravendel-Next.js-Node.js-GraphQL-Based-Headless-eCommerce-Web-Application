@@ -97,7 +97,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                 pricing: (cart?.productPrice),
                                 feature_image: cart?.productImage
                                 ,
-                                url: cart?.url || '',
+                                url: originalProduct?.url || '',
                                 attributes: cart.attributes || [],
                                 shippingClass: cart?.shippingClass,
                                 taxClass: cart?.taxClass,

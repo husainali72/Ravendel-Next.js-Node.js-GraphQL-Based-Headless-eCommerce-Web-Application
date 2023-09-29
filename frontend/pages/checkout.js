@@ -425,12 +425,11 @@ export const CheckOut = ({ currencyStore }) => {
             return {
                 productId: product.productId,
                 qty: product.qty,
-                productTotal: (product?.productPrice * product.qty).toString(),
                 productImage: product?.productImage,
                 productTitle: product?.productTitle,
                 productShipping: product?.productShipping,
                 productTax: product?.productTax,
-                productTotal: product?.productPrice?.toString(),
+                productTotal: (product?.productPrice * product.qty)?.toString(),
                 variantId: product?.variantId
             }
         })
@@ -463,7 +462,7 @@ export const CheckOut = ({ currencyStore }) => {
                 }
             }
             couponValueGet = true;
-            if (!res?.data?.laoding) {
+            if (!res?.data?.laoding && res?.data?.calculateCoupon.success) {
                 // couponResponse?.grandTotal && !isNaN(couponResponse?.grandTotal) && !couponResponse?.discountGrandTotal ? couponResponse?.grandTotal : (couponResponse?.discountGrandTotal && !isNaN(couponResponse?.discountGrandTotal) ? couponResponse?.discountGrandTotal : "0")
                 let grandTotal = couponResponse?.discountGrandTotal ? couponResponse?.discountGrandTotal : couponResponse?.grandTotal
                 setCoupon(couponResponse?.totalCoupon && !isNaN(couponResponse?.totalCoupon) ? couponResponse?.totalCoupon : "0")

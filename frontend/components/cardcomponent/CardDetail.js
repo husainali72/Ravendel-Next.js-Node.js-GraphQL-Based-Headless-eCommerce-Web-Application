@@ -46,11 +46,13 @@ const CartTable = (props) => {
                                     </div>}
                                 </td>
                                 <td>
-                                    <Link href={"/product/" + item.url}>
+                                    {available ? <Link href={"/product/" + item.url}>
                                         <div className="td-flex cursor-pointer table-product-title">
                                             <h3>{item.name}</h3>
                                         </div>
-                                    </Link>
+                                    </Link> : <div className="td-flex cursor-pointer table-product-title">
+                                        <h3>{item.name}</h3>
+                                    </div>}
                                 </td>
                                 <td>
                                     <div className="td-flex">

@@ -113,23 +113,37 @@ module.exports = {
             cartTotal = args.cartTotal;
 
             if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) && (coupon.maximumSpend === 0 || coupon.maximumSpend > cartTotal)) {
-
-              var calculatedCartWithDiscount = 0
-
-              coupon.discountType === "amount-discount" ?
-                calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, true) :
-                calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, false)
-
-              if (calculatedCartWithDiscount == 0) {
-                calculated.totalCoupon = "0.0";
-                calculated.message = 'Coupon not applicable on cart';
-                calculated.discountGrandTotal = "0.00"
-              }
-              else {
+              if (!coupon.category && !coupon.product) {
+                var calculatedCartWithDiscount = coupon.discountType === 'amount-discount'
+                  ? parseFloat(coupon.discountValue)
+                  :
+                  parseFloat(cartTotal / 100) *
+                  parseFloat(coupon.discountValue);
                 calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+
                 calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
                 calculated.message = 'Coupon code applied successfully';
                 calculated.success = true;
+              }
+              else {
+                var calculatedCartWithDiscount = 0
+
+                coupon.discountType === "amount-discount" ?
+                  calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, true) :
+                  calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, false)
+
+
+                if (calculatedCartWithDiscount == 0) {
+                  calculated.totalCoupon = "0.0";
+                  calculated.message = 'Coupon not applicable on cart';
+                  calculated.discountGrandTotal = "0.00"
+                }
+                else {
+                  calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+                  calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
+                  calculated.message = 'Coupon code applied successfully';
+                  calculated.success = true;
+                }
               }
 
             }
@@ -345,7 +359,7 @@ module.exports = {
 
               productTaxAmount = 0;
               totalTax += +productTaxAmount;
-              grandTotal += +productTaxAmount;
+              grandTotal += (productPrice * odredQuantity) + productTaxAmount;
             }
 
 
@@ -422,7 +436,7 @@ module.exports = {
           cartTotal: cartTotal.toFixed(2)
         }
 
-        console.log("calculated cart----", calculated)
+
 
         return calculated;
 
@@ -1192,14 +1206,17 @@ module.exports = {
         for (let i in cart.products) {
           if (cart.products[i].productId) {
             const product = await Product.findById({ _id: cart.products[i].productId });
+            console.log(product, '78678678', cart)
+            if (product) {
+              if (product.pricing.sellprice > 0) {
+                cart.products[i].total = cart.products[i].qty * product.pricing.sellprice;
+              } else {
+                cart.products[i].total = cart.products[i].qty * product.pricing.price;
+              }
 
-            if (product.pricing.sellprice > 0) {
-              cart.products[i].total = cart.products[i].qty * product.pricing.sellprice;
-            } else {
-              cart.products[i].total = cart.products[i].qty * product.pricing.price;
+              carttotal = carttotal + cart.products[i].total;
             }
           }
-          carttotal = carttotal + cart.products[i].total;
         }
         cart.total = carttotal;
         cart.products = cart.products;

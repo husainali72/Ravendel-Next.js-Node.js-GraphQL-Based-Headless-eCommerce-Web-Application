@@ -635,7 +635,7 @@ const populateYearMonth = (
   let monthObj = {
     month: moment(orderMonth + 1, "MM").format("MMM"),
     orders: [order],
-    GrossSales: order.subtotal,
+    GrossSales: order.cartTotal,
     NetSales: order.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal,
@@ -643,7 +643,7 @@ const populateYearMonth = (
   let yearObj = {
     year: orderYear,
     months: [monthObj],
-    GrossSales: order.subtotal,
+    GrossSales: order.cartTotal,
     NetSales: order.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal,
@@ -662,10 +662,11 @@ const populateSales = (
   paymentSuccessSubTotal,
   paymentSuccessGrandTotal
 ) => {
-  data.GrossSales += order.subtotal;
+  data.GrossSales += order.cartTotal;
   data.NetSales += order.grandTotal;
   data.paymentSuccessGrossSales += paymentSuccessSubTotal;
   data.paymentSuccessNetSales += paymentSuccessGrandTotal;
+
 };
 module.exports.populateSales = populateSales;
 
@@ -790,58 +791,62 @@ const prodAvgRating = async (productID, reviewModel, productModel) => {
 };
 module.exports.prodAvgRating = prodAvgRating;
 
-const againCalculateCart = async (coupon,args,productModel,amountDiscount) => {
-
+const againCalculateCart = async (coupon, args, productModel, amountDiscount) => {
+  console.log(coupon, args, productModel, amountDiscount, '=============')
   let discountAmount = 0;
-  let forCouponCartTotal;
+  let forCouponCartTotal = 0;
   let IsApplicableDiscount = false;
 
   for (let item of args.cartItem) {
-        let product = await productModel.findById(item.productId);
-        if (product) {
+    let product = await productModel.findById(item.productId);
+    if (product) {
 
-          let includeProduct = false;
-          let includeProductTotal;
+      let includeProduct = false;
+      let excludeProduct = false;
+      let includeProductTotal;
 
-          //if coupon category is abilable
-                  if (coupon.category) {
+      //if coupon category is abilable
+      if (coupon.category) {
 
-                      if (product.categoryId && product.categoryId.length) {
-                        product.categoryId.map((catID) => {
-                          if (coupon.includeCategories.length) {
-                            includeProduct = coupon.includeCategories.includes(catID);
-                          } else if (coupon.excludeCategories.length) {
-                            includeProduct = !coupon.excludeCategories.includes(catID);
-                          }
-                        });
-                      }
-
-                  }
-
-          //if coupon category is not abilable but product is included in category;
-                  if (coupon.product && !includeProduct) {
-                    if (coupon.includeProducts.length) {
-                      includeProduct = coupon.includeProducts.includes(
-                        product._id.toString()
-                      );
-                    } 
-                    if (coupon.excludeProducts.length) {
-                      includeProduct = !coupon.excludeProducts.includes(
-                        product._id.toString()
-                      );
-                    }
-                  }
-
-                
-                if (includeProduct) {
-                  includeProductTotal = 0;
-                  includeProductTotal = +item.productTotal;
-                  forCouponCartTotal = forCouponCartTotal || 0;
-                  forCouponCartTotal += includeProductTotal;
-                }
-
+        if (product.categoryId && product.categoryId.length) {
+          product.categoryId.map((catID) => {
+            if (coupon.includeCategories.length && coupon.includeCategories.includes(catID)) {
+              includeProduct = coupon.includeCategories.includes(catID);
+            } else if (coupon.excludeCategories.length) {
+              console.log('mfhgkfjdghkjfdhf')
+              includeProduct = !coupon.excludeCategories.includes(catID);
+              excludeProduct = coupon.excludeCategories.includes(catID);
+            }
+          });
         }
+
+      }
+
+      //if coupon category is not abilable but product is included in category;
+      if (coupon.product && !includeProduct && !excludeProduct) {
+        if (coupon.includeProducts.length) {
+          includeProduct = coupon.includeProducts.includes(
+            product._id.toString()
+          );
+        }
+        if (coupon.excludeProducts.length) {
+          includeProduct = !coupon.excludeProducts.includes(
+            product._id.toString()
+          );
+        }
+      }
+      console.log(includeProduct, 'includeProduct', excludeProduct, item.productTotal)
+
+      if (includeProduct && !excludeProduct) {
+        includeProductTotal = 0;
+        includeProductTotal = +item.productTotal;
+        forCouponCartTotal = forCouponCartTotal || 0;
+        forCouponCartTotal += includeProductTotal;
+      }
+
+    }
   }
+  console.log(forCouponCartTotal, 'forCouponCartTotal')
 
   if (forCouponCartTotal && forCouponCartTotal != 0) {
     if (
@@ -857,16 +862,16 @@ const againCalculateCart = async (coupon,args,productModel,amountDiscount) => {
     amountDiscount
       ? (discountAmount += parseFloat(coupon.discountValue))
       : (discountAmount +=
-          parseFloat(+forCouponCartTotal / 100) *
-          parseFloat(coupon.discountValue));
+        parseFloat(+forCouponCartTotal / 100) *
+        parseFloat(coupon.discountValue));
   }
-  if (discountAmount&&(discountAmount <= (forCouponCartTotal||0))) {
+  if (discountAmount && (discountAmount <= (forCouponCartTotal || 0))) {
     return discountAmount;
-  } else if(discountAmount&&(discountAmount > (forCouponCartTotal||0))){
-    return discountAmount = forCouponCartTotal ||0;
+  } else if (discountAmount && (discountAmount > (forCouponCartTotal || 0))) {
+    return discountAmount = forCouponCartTotal || 0;
   }
-  else{
-    return discountAmount=0
+  else {
+    return discountAmount = 0
   }
 };
 module.exports.againCalculateCart = againCalculateCart;
