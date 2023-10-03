@@ -23,11 +23,14 @@ import theme from "../theme";
 import RavendelLogo from "../assets/images/RavendelLogo.png"
 import "../App.css"
 import { get, isEmpty } from "lodash";
+import { useDispatch } from "react-redux";
+import { getSettings } from "../store/action";
 const HeaderComponenet = () => {
   const classes = useStyles();
   const login = useSelector((state) => state.login);
   const logoState = useSelector((state) => state.settings)
   const [logo, setlogo] = useState('')
+  const dispatch = useDispatch()
   const { onSidebarOpen } = login;
   const [activeUser, setActiveUser] = useState({
     name: "",
@@ -40,6 +43,9 @@ const HeaderComponenet = () => {
       setlogo(get(logoState.settings.appearance.theme, 'logo'))
     }
   }, [get(logoState, 'settings')])
+  useEffect(() => {
+    dispatch(getSettings())
+  }, [])
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };

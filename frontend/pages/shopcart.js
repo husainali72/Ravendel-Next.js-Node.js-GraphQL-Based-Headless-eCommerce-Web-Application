@@ -276,8 +276,8 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         //     }
 
         // })
-        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
-        setAllCartItems([...AllCartItems], AllCartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
+        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
+        setAllCartItems([...AllCartItems], AllCartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
         // console.log(cartItems, '======', AllCartItems, '========', item._id, AllCartItems.filter(itemm => itemm._id === item._id ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
         if (session?.status !== "authenticated") {
             dispatch(increaseQuantity(item._id, item.productQuantity, item.variantId))
@@ -299,9 +299,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                 qty: qty,
                                 productTitle: product.name,
                                 productImage: product.feature_image,
-
                                 productPrice: product.pricing?.toString(),
-
                                 shippingClass: product?.shippingClass,
                                 taxClass: product?.taxClass,
                                 attributes: product.attributes,

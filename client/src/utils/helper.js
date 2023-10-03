@@ -179,3 +179,8 @@ export const mutationResponseHandler = (response, key) => {
 
   return [error, success, message];
 };
+
+export const checkImageStorageLocalSetting = (setting) => {
+  if (setting?.settings?.imageStorage?.status === 's3') return false
+  else if (setting?.settings?.imageStorage?.status === 'localStorage') return true
+}

@@ -25,7 +25,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
-const {checkAwsFolder} = require("../config/aws");
+const { checkAwsFolder } = require("../config/aws");
 var mongoose = require("mongoose");
 
 /* =============================WILL FIX LATER============================= */
@@ -140,6 +140,7 @@ const getTree = async (id) => {
 module.exports = {
   Query: {
     productCategories: async (root, args) => {
+      // console.log(await GET_ALL_FUNC(ProductCat, "Product Cats"), 'get all')
       return await GET_ALL_FUNC(ProductCat, "Product Cats");
     },
     productCategories_pagination: async (
@@ -268,21 +269,23 @@ module.exports = {
     },
     filteredProducts: async (root, args) => {
       try {
-        const category = args.filter.category 
-        const brand = args.filter.brand 
-        const most_reviewed = args.filter.most_reviewed 
-        const search = args.filter.search 
-        const product_type = args.filter.product_type 
-        const rating = args.filter.rating 
-        const price = args.filter.price 
+        const category = args.filter.category
+        const brand = args.filter.brand
+        const most_reviewed = args.filter.most_reviewed
+        const search = args.filter.search
+        const product_type = args.filter.product_type
+        const rating = args.filter.rating
+        const price = args.filter.price
 
-        const pipeline=[
-          {$match: {
-            $and: [
-              {status: "Publish"},
-              {name: {$regex: search, $options: "i"}},
-            ]
-          }},
+        const pipeline = [
+          {
+            $match: {
+              $and: [
+                { status: "Publish" },
+                { name: { $regex: search, $options: "i" } },
+              ]
+            }
+          },
         ]
         // category filter
         if (category) pipeline[0].$match.$and.push({ categoryId: { $in: [`${category}`] } })
@@ -361,7 +364,7 @@ module.exports = {
     },
     brand: async (root, args) => {
       try {
-        if(!root.brand) return ""
+        if (!root.brand) return ""
         const brand = await Brand.findById(root.brand);
         return brand;
       } catch (error) {
@@ -520,7 +523,7 @@ module.exports = {
     addProductCategory: async (root, args, { id }) => {
 
       await checkAwsFolder('productcategory');
-      let path = "/assets/images/product/category/";
+      let path = "assets/images/product/category";
       let url = "";
       if (args.url || args.title) {
         url = await updateUrl(args.url || args.name, "ProductCat");
@@ -548,7 +551,7 @@ module.exports = {
     },
     updateProductCategory: async (root, args, { id }) => {
       await checkAwsFolder('productcategory');
-      let path = "/assets/images/product/category/";
+      let path = "assets/images/product/category";
       let url = "";
       if (args.url || args.title) {
         url = await updateUrl(args.url || args.name, "ProductCat", args.id);
@@ -584,12 +587,15 @@ module.exports = {
       }
       try {
         const cat = await ProductCat.findByIdAndRemove(args.id);
+
         if (cat) {
           // if (cat.image) {
           //   imageUnlink(cat.image);
           // }
+
           if (cat.image) {
-            imageUnlink(cat.feature_image);
+            imageUnlink(cat.image);
+
           }
           let _id = args.id;
           const product = await Product.updateMany(
@@ -848,13 +854,13 @@ module.exports = {
             //     imageUnlink(imgObject);
             //     gallery_images.splice(i, 1)
             //   }
-              // if(gallery_images[i] && ~args.removed_image.indexOf(String(gallery_images[i])))
-              // if (gallery_images[i] === args.removed_image.gallery_images[i]){
-              //   let imgObject = gallery_images[i]
-              //   imageUnlink(imgObject);
-              //   gallery_images.splice(i, 1)
-              //   // delete gallery_images[i];
-              // }
+            // if(gallery_images[i] && ~args.removed_image.indexOf(String(gallery_images[i])))
+            // if (gallery_images[i] === args.removed_image.gallery_images[i]){
+            //   let imgObject = gallery_images[i]
+            //   imageUnlink(imgObject);
+            //   gallery_images.splice(i, 1)
+            //   // delete gallery_images[i];
+            // }
             // }
           }
 
@@ -953,7 +959,7 @@ module.exports = {
 
           const productVariants = product.variant
           await ProductAttribute.deleteMany({
-            _id: {$in: [productVariants] }
+            _id: { $in: [productVariants] }
           })
 
           const variations = await ProductAttributeVariation.find({

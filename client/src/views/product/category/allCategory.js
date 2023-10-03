@@ -15,7 +15,7 @@ import {
   categoryUpdateAction,
   categoryAddAction,
 } from "../../../store/action/";
-import { bucketBaseURL } from "../../../utils/helper";
+import { baseUrl, bucketBaseURL, checkImageStorageLocalSetting } from "../../../utils/helper";
 import { getUpdatedUrl } from "../../../utils/service";
 import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png"
 import UserPlaceholder from "../../../assets/images/user-placeholder.png";
@@ -54,6 +54,7 @@ const AllCategoryComponent = () => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
   const [categories, setCategories] = useState([]);
+  const setting = useSelector((state) => state.settings)
   const [singlecategory, setSingleCategory] = useState(categoryObject);
   const [editMode, setEditmode] = useState(false);
   const [featuredImage, setfeaturedImage] = useState(null);
@@ -96,6 +97,9 @@ const AllCategoryComponent = () => {
       setCategories(products.categories);
       setfilterdData(products.categories)
       cancelCat();
+    } else {
+      setCategories([]);
+      setfilterdData([])
     }
   }, [get(products, "categories")]);
 
@@ -107,7 +111,11 @@ const AllCategoryComponent = () => {
     setEditmode(true);
     setfeaturedImage(null);
     if (cat.image) {
-      setfeaturedImage(bucketBaseURL + cat.image);
+      if (checkImageStorageLocalSetting(setting)) {
+        setfeaturedImage(baseUrl + '/' + cat.image);
+      } else {
+        setfeaturedImage(bucketBaseURL + '/' + cat.image);
+      }
     }
     setSingleCategory({ ...singlecategory, ...cat });
   };

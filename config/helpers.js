@@ -4,8 +4,15 @@ const moment = require("moment");
 const nodemailer = require("nodemailer");
 const APP_KEYS = require("../config/keys");
 const { readFile } = require("fs").promises;
-
+const Setting = require("../models/Setting");
 const { uploadFile, FileDelete } = require("../config/aws");
+const multer = require('multer');
+const path = require('path');
+
+
+
+
+
 
 const isEmpty = (value) =>
   value === undefined ||
@@ -115,6 +122,29 @@ const updateUrl = async (url, table, updateId) => {
 };
 
 module.exports.updateUrl = updateUrl;
+/*----------------------------------------------store image in local storage---------------------------------------------------------*/
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'uploads/');
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+//     cb(null, uniqueSuffix + path.extname(file.originalname));
+//   },
+// });
+// const upload = multer({ storage: storage });
+const UploadImageLocal = async (image, path, name) => {
+  console.log('name', name)
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+  const { createReadStream, filename } = await image
+  const stream = createReadStream();
+  const imagePath = `${path}/${uniqueSuffix + filename}`;
+  const fileStream = fs.createWriteStream(imagePath);
+  stream.pipe(fileStream);
+  return imagePath
+};
+
+module.exports.UploadImageLocal = UploadImageLocal;
 
 /*-------------------------------------------------------------------------------------------------------*/
 
@@ -366,11 +396,26 @@ const imageUpload = async (upload, uploadPath, nametype) => {
 module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
-const imageUnlink = (imgObject) => {
+const imageUnlink = async (imgObject) => {
   // for (let i in imgObject) {
   // console.log(imgObject)
   //console.log('IMAGEOBJECT',imgObject[i]);
-  FileDelete(imgObject);
+  const setting = await Setting.findOne({});
+  const storageType = setting?.imageStorage?.status
+  console.log(storageType, imgObject, '==========imgObject')
+  if (storageType === 's3') {
+    FileDelete(imgObject);
+  } else {
+    if (imgObject) {
+      fs.unlink(imgObject, (err) => {
+        if (err) {
+          console.error('Error deleting image:', err);
+        } else {
+          console.log('Image deleted successfully');
+        }
+      });
+    }
+  }
   // fs.unlink("./assets/images/" + imgObject[i], function (err) {
   //   if (err) console.log(err);
   // });
@@ -846,7 +891,7 @@ const againCalculateCart = async (coupon, args, productModel, amountDiscount) =>
 
     }
   }
-  console.log(forCouponCartTotal, 'forCouponCartTotal')
+
 
   if (forCouponCartTotal && forCouponCartTotal != 0) {
     if (

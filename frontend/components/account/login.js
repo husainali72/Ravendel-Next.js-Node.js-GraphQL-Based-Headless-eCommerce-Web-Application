@@ -62,8 +62,13 @@ const LogIn = () => {
 
             const products = productsInCart?.map(prod => {
                 return {
-                    productId: prod._id,
-                    qty: prod.quantity
+                    productId: prod?._id,
+                    productTitle: prod?.name,
+                    productPrice: prod?.pricing?.toString(),
+                    productImage: prod?.feature_image,
+                    shippingClass: prod?.shippingClass,
+                    taxClass: prod?.taxClass,
+                    qty: prod?.quantity
                 }
             })
             dispatch(createCart(id, products));

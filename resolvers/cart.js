@@ -942,13 +942,20 @@ module.exports = {
 
               let productId = localProd.productId;
 
-              let shippingClass = product.shipping.shippingClass;
-              let taxClass = product.taxClass;
-              let qty = localProd.qty;
+              let shippingClass = product ? product?.shipping?.shippingClass : localProd?.shippingClass;
+              let taxClass = product?.taxClass || localProd?.shippingClass;
+              let qty = localProd?.qty || 1;
+              let productTitle = product?.name || localProd?.productTitle;
+              let productPrice = product?.pricing?.sellprice || localProd?.productPrice;
+              let productImage = product?.feature_image || localProd?.productImage
               // if customer cart is empty then add product from local
+
               if (!existingCartProducts.length) {
                 existingCartProducts.push({
                   productId,
+                  productTitle,
+                  productPrice,
+                  productImage,
                   qty,
                   shippingClass,
                   taxClass,
@@ -964,19 +971,26 @@ module.exports = {
                 );
                 // if matches then update customer cart product with local product
                 if (existingProduct) {
+
                   existingProduct.qty += localProd.qty;
                 }
                 // else add local product to customer cart
                 else {
+
                   existingCartProducts.push({
                     productId,
+                    productTitle,
+                    productPrice,
+                    productImage,
                     qty,
                     shippingClass,
                     taxClass,
                   });
                 }
               }
+
             }
+
           }
         //---------------------------------------------------------------------------------------------------------------
 
@@ -993,6 +1007,7 @@ module.exports = {
         //   }
         // });
         // if customer cart exists then update
+
         if (cart) {
           cart.products = existingCartProducts;
           await cart.save();
@@ -1070,7 +1085,7 @@ module.exports = {
 
                 const product = await Product.findById({ _id: args.products[i].productId });
 
-                console.log(product, 'product')
+
                 if (product) {
                   let taxPercentage;
                   isGlobalTax.taxClass.forEach((taxObject) => {
@@ -1206,7 +1221,7 @@ module.exports = {
         for (let i in cart.products) {
           if (cart.products[i].productId) {
             const product = await Product.findById({ _id: cart.products[i].productId });
-            console.log(product, '78678678', cart)
+
             if (product) {
               if (product.pricing.sellprice > 0) {
                 cart.products[i].total = cart.products[i].qty * product.pricing.sellprice;

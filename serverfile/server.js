@@ -24,7 +24,7 @@ const Shipping = require("./models/Shipping");
 Shipping.createShipping();
 
 const Settings = require("./models/Setting");
-Settings.createSettings(); 
+Settings.createSettings();
 
 var port = process.env.PORT || 8000;
 
@@ -37,7 +37,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context,
-  uploads:false
+  uploads: false
 });
 
 // const server = new ApolloServer({
@@ -51,7 +51,11 @@ const server = new ApolloServer({
 //   },
 
 // });
-
+app.use('/assets', (req, res, next) => {
+  console.log('Request to /assets received');
+  // Continue processing the request
+  next();
+}, express.static('assets'));
 app.use(graphqlUploadExpress({ maxFileSize: 1000000000, maxFiles: 10 }));
 server.applyMiddleware({ app, path: "/graphql" });
 
@@ -66,21 +70,23 @@ app.use("/api/customers", require("./routes/api/customers"));
 
 //app.use(express.static("public"));
 
-app.use("/assets", express.static(__dirname + "/assets"));
+// app.use("/assets", express.static(__dirname + "/assets"));
+// app.use("/uploads", express.static(__dirname + "/uploads"));
+
 
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "frontend", "build")));
   app.use(express.static(path.join(__dirname, "client", "build")));
-  
+
   app.get('/admin', (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
-  
+
   app.get('/admin/*', (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
-  
+
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
   });

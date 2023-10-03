@@ -1,5 +1,5 @@
 const dotenv = require('dotenv');
-dotenv.config({path:'./.env'});
+dotenv.config({ path: './.env' });
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
@@ -69,7 +69,9 @@ app.use("/api/customers", require("./routes/api/customers"));
 
 //app.use(express.static("public"));
 
-app.use("/assets", express.static(__dirname + "/assets"));
+// app.use("/assets", express.static(__dirname + "/assets"));
+// app.use('/uploads', express.static(__dirname + "/uploads"));
+app.use('/assets', express.static('assets'));
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "frontend", "build")));
