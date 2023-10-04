@@ -653,7 +653,7 @@ module.exports = {
             // console.log('fimage',args.feature_image);
             imgObject = await imageUpload(
               args.feature_image[0].file,
-              "/assets/images/product/feature/", "productfeature"
+              "assets/images/product/feature/", "productfeature"
             );
 
             if (imgObject.success === false) {
@@ -669,7 +669,7 @@ module.exports = {
             for (let i in args.gallery_image) {
               galleryObject = await imageUpload(
                 args.gallery_image[i].file,
-                "/assets/images/product/gallery/", "productgallery"
+                "assets/images/product/gallery/", "productgallery"
               );
               if (galleryObject.success) {
                 imgArray.push(galleryObject.data);
@@ -724,7 +724,7 @@ module.exports = {
               if (combination.upload_image && combination.upload_image.length) {
                 imgObject = await imageUpload(
                   combination.upload_image[0].file,
-                  "/assets/images/product/variant/", "productvariant"
+                  "assets/images/product/variant/", "productvariant"
                 );
                 combination.image = imgObject.data || imgObject;
                 delete combination.upload_image
@@ -807,16 +807,16 @@ module.exports = {
           if (args.update_feature_image) {
             imgObject = await imageUpload(
               args.update_feature_image[0].file,
-              "/assets/images/product/feature/", "productfeature"
+              "assets/images/product/feature/", "productfeature"
             );
 
             if (imgObject.success === false) {
               throw putError(imgObject.message);
             }
 
-            // if (product.feature_image) {
-            //   imageUnlink(product.feature_image);
-            // }
+            if (product.feature_image && imgObject.success === true) {
+              imageUnlink(product.feature_image);
+            }
 
             product.feature_image = imgObject.data;
           }
@@ -828,7 +828,7 @@ module.exports = {
             for (let i in args.update_gallery_image) {
               galleryObject = await imageUpload(
                 args.update_gallery_image[i].file,
-                "/assets/images/product/gallery/", "productgallery"
+                "assets/images/product/gallery/", "productgallery"
               );
 
               if (galleryObject.success) {
@@ -898,8 +898,13 @@ module.exports = {
               ) {
                 imgObject = await imageUpload(
                   combination.upload_image[0].file,
-                  "/assets/images/product/variant/", "productvariant"
+                  "assets/images/product/variant/", "productvariant"
                 );
+
+                if (imgObject?.success && combination?.previous_img) {
+
+                  imageUnlink(combination?.previous_img)
+                }
                 combination.image = imgObject.data || imgObject;
                 delete combination.upload_image;
               }
@@ -919,11 +924,13 @@ module.exports = {
               },
             ];
           }
+
           await ProductAttributeVariation.deleteMany({
             productId: args.id,
           });
 
           let result = await ProductAttributeVariation.insertMany(combinations);
+
           return MESSAGE_RESPONSE("UpdateSuccess", "Product", true);
         } else {
           return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);

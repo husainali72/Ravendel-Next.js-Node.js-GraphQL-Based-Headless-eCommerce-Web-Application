@@ -1,3 +1,6 @@
+
+
+
 import React, { useState, useEffect } from "react";
 import viewStyles from "../viewStyles";
 import {
@@ -63,11 +66,48 @@ const EditCouponComponent = ({ params }) => {
   const currentDate = `${yyyy}-${mm}-${dd}`;
   useEffect(() => {
     if (!isEmpty(get(Coupons, "coupons"))) {
-      Coupons.coupons.map((editcoupon) => {
+      Coupons?.coupons?.map((editcoupon) => {
         if (editcoupon.id === id) {
           editcoupon?.code?.toUpperCase()
+
+          let includeCategories = [];
+          let excludeCategories = [];
+          let includeProducts = [];
+          let excludeProducts = [];
+
+          editcoupon?.includeCategories?.map((includeCategory) => {
+            if (getSelectedName(includeCategory, 'includeCategories', Products.products, Products.categories)) {
+
+              includeCategories.push(includeCategory)
+            }
+          })
+          editcoupon?.excludeCategories?.map((excludeCategory) => {
+
+            if (getSelectedName(excludeCategory, 'excludeCategories', Products.products, Products.categories)) {
+              excludeCategories.push(excludeCategory)
+            }
+          })
+          editcoupon?.includeProducts.map((includeProduct) => {
+
+            if (getSelectedName(includeProduct, 'includeProducts', Products.products, Products.categories)) {
+              includeProducts.push(includeProduct)
+            }
+          })
+          editcoupon?.excludeProducts.map((excludeProduct) => {
+
+            if (getSelectedName(excludeProduct, 'excludeProducts', Products.products, Products.categories)) {
+              excludeProducts.push(excludeProduct)
+            }
+          })
+
           let val = {
-            ...editcoupon, code: editcoupon?.code?.toUpperCase()
+            ...editcoupon,
+            code: editcoupon?.code?.toUpperCase(),
+            includeCategories,
+            excludeCategories,
+            includeProducts,
+            excludeProducts,
+
           }
 
           setCoupon({ ...coupon, ...val });
@@ -77,7 +117,7 @@ const EditCouponComponent = ({ params }) => {
         setLabelWidth(get(inputLabel, "current.offsetWidth"));
       }
     }
-  }, [get(Coupons, "coupons")]);
+  }, [get(Coupons, "coupons"), get(Products, "category"), get(Products, "products")]);
 
   useEffect(() => {
     setloading(get(Coupons, "loading"));
@@ -88,6 +128,7 @@ const EditCouponComponent = ({ params }) => {
   }, [get(Products, "loading")]);
 
   useEffect(() => {
+
     if (isEmpty(Products.products)) {
       dispatch(productsAction());
     }
@@ -95,6 +136,7 @@ const EditCouponComponent = ({ params }) => {
       dispatch(categoriesAction());
     }
     if (isEmpty(get(Coupons, "coupons"))) {
+
       dispatch(couponsAction());
     }
 
@@ -221,6 +263,7 @@ const EditCouponComponent = ({ params }) => {
 
       >
         <InputLabel id={id}>{label}</InputLabel>
+
         <Select
           labelId={id}
           multiple

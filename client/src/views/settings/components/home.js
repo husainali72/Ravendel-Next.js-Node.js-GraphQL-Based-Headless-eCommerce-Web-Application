@@ -14,7 +14,7 @@ import {
 import clsx from "clsx";
 import viewStyles from "../../viewStyles";
 import { useDispatch, useSelector } from "react-redux";
-import { bucketBaseURL } from "../../../utils/helper";
+import { bucketBaseURL, getBaseUrl } from "../../../utils/helper";
 import CloseIcon from '@mui/icons-material/Close';
 import { get } from "lodash";
 import { Draggable } from "react-drag-reorder";
@@ -76,7 +76,7 @@ const HomeSettingsTheme = () => {
       i++
     ) {
       let newImge =
-        bucketBaseURL +
+        getBaseUrl(settingState) +
         settingState.settings.appearance.home.slider[i].image;
       newSliderArr.push({ image: newImge });
     }

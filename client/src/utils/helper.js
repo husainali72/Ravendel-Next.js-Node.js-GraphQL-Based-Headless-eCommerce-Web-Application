@@ -1,10 +1,11 @@
+import NoImagePlaceHolder from "../assets/images/NoImagePlaceHolder.png"
 export const isEmpty = (value) =>
   value === undefined ||
   value === null ||
   (typeof value === "object" && Object.keys(value).length === 0) ||
   (typeof value === "string" && value.trim().length === 0);
 
-export const baseUrl = "http://localhost:8000";
+export const baseUrl = "http://localhost:8000/";
 export const client_app_route_url = "/admin/";
 
 export var bucketName = "revendal-image";
@@ -17,6 +18,9 @@ if (process.env.NODE_ENV === "production") {
 
 /*-------------------------------------------------------------------------------------------------------------------------------------- */
 //simple category array to Tree array
+export const imageOnError = (event) => {
+  event.target.src = NoImagePlaceHolder
+}
 export const unflatten = (arr) => {
 
   var tree = [],
@@ -180,7 +184,8 @@ export const mutationResponseHandler = (response, key) => {
   return [error, success, message];
 };
 
-export const checkImageStorageLocalSetting = (setting) => {
-  if (setting?.settings?.imageStorage?.status === 's3') return false
-  else if (setting?.settings?.imageStorage?.status === 'localStorage') return true
+export const getBaseUrl = (setting) => {
+  if (setting?.settings?.imageStorage?.status === 's3') return bucketBaseURL
+  else if (setting?.settings?.imageStorage?.status === 'localStorage') return baseUrl
+  else return bucketBaseURL
 }

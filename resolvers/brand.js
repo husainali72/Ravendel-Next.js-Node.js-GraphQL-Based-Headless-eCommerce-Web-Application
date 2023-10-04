@@ -17,7 +17,7 @@ const {
   GET_ALL_FUNC,
 } = require("../config/api_functions");
 
-const {checkAwsFolder} = require("../config/aws");
+const { checkAwsFolder } = require("../config/aws");
 const fs = require("fs");
 
 var sdir = './assets/images/brand';
@@ -26,7 +26,7 @@ var sdir = './assets/images/brand';
 // var tdir = './assets/images/brand/thumbnail';
 // var odir = './assets/images/brand/original';
 
-if (!fs.existsSync(sdir)){
+if (!fs.existsSync(sdir)) {
   fs.mkdirSync(sdir);
 }
 // if (!fs.existsSync(ldir)){
@@ -92,17 +92,17 @@ module.exports = {
         let duplicateBrands = "";
         for (let i in args.brands) {
           if (
-            !isEmpty(args.brands[i].name) && 
+            !isEmpty(args.brands[i].name) &&
             !brandList.includes(args.brands[i].name.toLowerCase())
           ) {
             args.brands[i].url = await updateUrl(args.brands[i].name, "Brand");
             args.brands[i].meta = { title: "", description: "", keywords: "" };
             addBrands.push(args.brands[i]);
           } else {
-            duplicateBrands += args.brands[i].name+" "
+            duplicateBrands += args.brands[i].name + " "
           }
         }
-        if(duplicateBrands.length) return {
+        if (duplicateBrands.length) return {
           message: `${duplicateBrands} already exists`,
           success: false,
         };
@@ -133,7 +133,7 @@ module.exports = {
           if (args.updated_brand_logo) {
             let imgObject = await imageUpload(
               args.updated_brand_logo.file,
-              "/assets/images/brand/",'Brand'
+              "assets/images/brand/", 'Brand'
             );
             if (imgObject.success === false) {
               throw putError(imgObject.message);
@@ -151,8 +151,8 @@ module.exports = {
           brand.updated = Date.now();
 
           // console.log('BRAND',brand);
-          const duplicate = await duplicateData({name: args.name}, Brand, args.id)
-          if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Brand Name", false)
+          const duplicate = await duplicateData({ name: args.name }, Brand, args.id)
+          if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Brand Name", false)
           await brand.save();
           return MESSAGE_RESPONSE("UpdateSuccess", "Brands", true);
         } else {

@@ -6,6 +6,7 @@ import {
   isEmpty,
   client_app_route_url,
   bucketBaseURL,
+  getBaseUrl,
 } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
@@ -38,6 +39,7 @@ const EditUserComponent = ({ params }) => {
   const classes = viewStyles();
   const navigate = useNavigate();
   const UsersState = useSelector((state) => state.users);
+  const setting = useSelector((state) => state.settings);
   const dispatch = useDispatch();
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
@@ -56,17 +58,18 @@ const EditUserComponent = ({ params }) => {
   useEffect(() => {
     document.forms[0].reset();
     setuser(defaultObj);
-    if(userId){
-    if (!isEmpty(get(UsersState, "users"))) {
-      UsersState.users.map((edituser) => {
-        if (edituser.id === userId) {
-          setuser({ ...edituser });
-          if (edituser.image) {
-            setfeatureImage(bucketBaseURL + edituser.image);
+    if (userId) {
+      if (!isEmpty(get(UsersState, "users"))) {
+        UsersState.users.map((edituser) => {
+          if (edituser.id === userId) {
+            setuser({ ...edituser });
+            if (edituser.image) {
+              setfeatureImage(getBaseUrl(setting) + edituser.image);
+            }
           }
-        }
-      });
-    }} else {
+        });
+      }
+    } else {
       setuser(defaultObj)
       setfeatureImage(null)
     }
@@ -97,13 +100,14 @@ const EditUserComponent = ({ params }) => {
         },
       });
     }
-   else { 
-    if (userId) {
-      dispatch(userUpdateAction(user, navigate));
-    }
     else {
-      dispatch(userAddAction(user, navigate));
-    }}
+      if (userId) {
+        dispatch(userUpdateAction(user, navigate));
+      }
+      else {
+        dispatch(userAddAction(user, navigate));
+      }
+    }
 
   };
   const handleChange = (e) => {

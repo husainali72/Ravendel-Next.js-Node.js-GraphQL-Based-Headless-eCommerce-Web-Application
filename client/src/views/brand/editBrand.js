@@ -10,6 +10,9 @@ import {
   client_app_route_url,
   bucketBaseURL,
   isEmpty,
+
+  baseUrl,
+  getBaseUrl,
 } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
@@ -28,6 +31,7 @@ const EditBrandComponenet = ({ params }) => {
   const Brands = useSelector((state) => state.brands);
   const [logoImage, setLogoImage] = useState(null);
   const [loading, setloading] = useState(false);
+  const setting = useSelector((state) => state.settings)
   const [brand, setBrand] = useState({
     id: "",
     _id: "",
@@ -50,7 +54,8 @@ const EditBrandComponenet = ({ params }) => {
               brand.id = editbrand.id;
               setBrand({ ...brand, ...editbrand });
               if (editbrand.brand_logo) {
-                setLogoImage(bucketBaseURL + editbrand.brand_logo);
+                const baseurl = getBaseUrl(setting)
+                setLogoImage(baseurl + editbrand.brand_logo);
               }
             }
           });

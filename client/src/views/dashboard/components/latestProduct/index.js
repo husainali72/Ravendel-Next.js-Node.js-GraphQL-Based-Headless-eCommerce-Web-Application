@@ -18,11 +18,11 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { Link } from "react-router-dom";
 import { convertDateToStringFormat } from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
-import { client_app_route_url, bucketBaseURL, } from "../../../../utils/helper";
+import { client_app_route_url, } from "../../../../utils/helper";
 import NoImagePlaceholder from "../../../../assets/images/NoImagePlaceHolder.png";
 import theme from "../../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
-const LatestProductsTheme = ({ products, loader }) => {
+const LatestProductsTheme = ({ products, loader, bucketBaseURL }) => {
   const classes = DashboardStyles();
   const imageOnError = (event) => {
     event.target.src = NoImagePlaceholder
@@ -91,10 +91,10 @@ const LatestProductsTheme = ({ products, loader }) => {
   );
 };
 
-const LatestProducts = ({ products, loader }) => {
+const LatestProducts = ({ products, loader, bucketBaseURL }) => {
   return (
     <ThemeProvider theme={theme}>
-      <LatestProductsTheme products={products} loader={loader} />
+      <LatestProductsTheme products={products} loader={loader} bucketBaseURL={bucketBaseURL} />
     </ThemeProvider>
   );
 };

@@ -205,7 +205,7 @@ module.exports = {
   Mutation: {
     addUser: async (root, args, { id }) => {
       await checkAwsFolder('user');
-      let path = "/assets/images/user/";
+      let path = "assets/images/user/";
       const duplicate = await duplicateData({ email: args.email }, User)
       if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "User", false);
       const result = checkRole(args.role, roleOptions)
@@ -255,7 +255,7 @@ module.exports = {
           if (args.updatedImage) {
             let imgObject = await imageUpload(
               args.updatedImage.file,
-              "/assets/images/user/", 'User'
+              "assets/images/user/", 'User'
             );
             user.image = imgObject.data;
           }

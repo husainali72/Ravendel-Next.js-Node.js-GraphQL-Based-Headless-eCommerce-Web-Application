@@ -15,7 +15,7 @@ import {
   categoryUpdateAction,
   categoryAddAction,
 } from "../../../store/action/";
-import { baseUrl, bucketBaseURL, checkImageStorageLocalSetting } from "../../../utils/helper";
+import { baseUrl, bucketBaseURL, getBaseUrl, } from "../../../utils/helper";
 import { getUpdatedUrl } from "../../../utils/service";
 import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png"
 import UserPlaceholder from "../../../assets/images/user-placeholder.png";
@@ -111,11 +111,9 @@ const AllCategoryComponent = () => {
     setEditmode(true);
     setfeaturedImage(null);
     if (cat.image) {
-      if (checkImageStorageLocalSetting(setting)) {
-        setfeaturedImage(baseUrl + '/' + cat.image);
-      } else {
-        setfeaturedImage(bucketBaseURL + '/' + cat.image);
-      }
+
+      setfeaturedImage(getBaseUrl(setting) + cat.image);
+
     }
     setSingleCategory({ ...singlecategory, ...cat });
   };

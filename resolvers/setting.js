@@ -366,7 +366,7 @@ module.exports = {
           if (args.slider[i].update_image) {
             imgObject = await imageUpload(
               args.slider[i].update_image[0].file,
-              "/assets/images/setting/", "Setting"
+              "assets/images/setting/", "Setting"
             );
 
             if (imgObject.success === false) {
@@ -417,7 +417,7 @@ module.exports = {
           if (args.slider[i].update_image) {
             imgObject = await imageUpload(
               args.slider[i].update_image[0].file,
-              "/assets/images/setting/", "Setting"
+              "assets/images/setting/", "Setting"
             );
 
             if (imgObject.success === false) {
@@ -438,7 +438,7 @@ module.exports = {
           if (args.mobile_section[i].update_image) {
             imgObject = await imageUpload(
               args.mobile_section[i].update_image[0].file,
-              "/assets/images/setting/", "Setting"
+              "assets/images/setting/", "Setting"
             );
 
             if (imgObject.success === false) {
@@ -472,7 +472,7 @@ module.exports = {
         if (args.new_logo) {
           imgObject = await imageUpload(
             args.new_logo[0].file,
-            "/assets/images/setting/", "Setting"
+            "assets/images/setting/", "Setting"
           );
 
           if (imgObject.success === false) {

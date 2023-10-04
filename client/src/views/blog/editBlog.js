@@ -22,6 +22,7 @@ import {
   isEmpty,
   client_app_route_url,
   bucketBaseURL,
+  getBaseUrl,
 } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import { ThemeProvider } from "@mui/material/styles";
@@ -63,6 +64,7 @@ const EditBlogComponenet = ({ params }) => {
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
   const blogState = useSelector((state) => state.blogs);
+  const setting = useSelector((state) => state.settings);
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
@@ -87,7 +89,7 @@ const EditBlogComponenet = ({ params }) => {
           blogState.blog.feature_image
 
         ) {
-          setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
+          setfeatureImage(getBaseUrl(setting) + blogState.blog.feature_image);
         }
         dispatch(blogtagsAction());
       }

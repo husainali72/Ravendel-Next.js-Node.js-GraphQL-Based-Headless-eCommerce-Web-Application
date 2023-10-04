@@ -351,7 +351,7 @@ const UPDATE_FUNC = async (
           imgObject = await UploadImageLocal(image, path, name);
         }
 
-        if (imgObject.success === false) {
+        if (imgObject?.success === false) {
           return {
             message:
               imgObject.message ||
@@ -359,13 +359,14 @@ const UPDATE_FUNC = async (
             success: false,
           };
         } else {
-
-          if (name && name === "Product Category") {
-            imageUnlink(response.image);
-            data.image = imgObject.data || imgObject;
-          } else {
-            imageUnlink(response.feature_image);
-            data.feature_image = imgObject.data || imgObject;
+          if (imgObject?.success === true) {
+            if (name && name === "Product Category") {
+              imageUnlink(response.image);
+              data.image = imgObject.data || imgObject;
+            } else {
+              imageUnlink(response.feature_image);
+              data.feature_image = imgObject.data || imgObject;
+            }
           }
           // console.log("response 2", response);
         }

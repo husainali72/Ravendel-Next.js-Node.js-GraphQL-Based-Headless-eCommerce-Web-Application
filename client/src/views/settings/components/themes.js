@@ -3,7 +3,7 @@ import { Grid, TextField, Box, Button, MenuItem, FormControl, InputLabel, Select
 import viewStyles from "../../viewStyles";
 import { useDispatch, useSelector } from "react-redux";
 import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png";
-import { bucketBaseURL, isEmpty } from "../../../utils/helper";
+import { bucketBaseURL, getBaseUrl, isEmpty } from "../../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { get } from "lodash";
@@ -123,7 +123,7 @@ const ThemesComponent = () => {
           <Box className={classes.themeLogoWrapper}>
             {themeSetting.logo ? (
               <img
-                src={themeSetting.logo.startsWith("blob") ? themeSetting.logo : bucketBaseURL + themeSetting.logo}
+                src={themeSetting.logo.startsWith("blob") ? themeSetting.logo : getBaseUrl(settingState) + themeSetting.logo}
                 className={classes.themeLogoBoxPreview}
                 alt="img"
               />

@@ -17,7 +17,7 @@ import Auth from "../utils/auth";
 import palette from "../theme/palette";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { bucketBaseURL, client_app_route_url } from "../utils/helper";
+import { bucketBaseURL, client_app_route_url, getBaseUrl } from "../utils/helper";
 import { ThemeProvider } from "@mui/material";
 import theme from "../theme";
 import RavendelLogo from "../assets/images/RavendelLogo.png"
@@ -60,6 +60,7 @@ const HeaderComponenet = () => {
   };
 
   useEffect(() => {
+
     setActiveUser(login.user_token);
   }, [login.user_token]);
   const imageOnError = (event) => {
@@ -71,7 +72,7 @@ const HeaderComponenet = () => {
       <Toolbar className={classes.header}>
         <Link to={`${client_app_route_url}dashboard`}>
           <Typography variant="h6" component="h1" className={classes.textWhite}>
-            <img src={bucketBaseURL + logo} onError={imageOnError} className="ravendelLogo" alt="Ravendel"></img>
+            <img src={getBaseUrl(logoState) + logo} onError={imageOnError} className="ravendelLogo" alt="Ravendel"></img>
           </Typography>
         </Link>
 
@@ -87,7 +88,7 @@ const HeaderComponenet = () => {
               <Box display="flex" alignItems="center">
                 <Avatar
                   alt="user-thumbnail"
-                  src={activeUser.image && activeUser.image.thumbnail}
+                  src={activeUser.image && getBaseUrl(logoState) + activeUser.image}
                 />
                 <span className={classes.userName}>{activeUser.name}</span>
               </Box>

@@ -29,6 +29,9 @@ import {
   isEmpty,
   client_app_route_url,
   bucketBaseURL,
+  baseUrl,
+  getBaseUrl,
+
 } from "../../utils/helper";
 import {
   Alert,
@@ -112,6 +115,7 @@ const EditProductComponent = ({ params }) => {
   const [taxClass, setTaxClass] = useState('')
   const [product, setProduct] = useState(defaultobj
   );
+  const setting = useSelector((state) => state.settings)
 
   useEffect(() => {
     if (productId) {
@@ -151,10 +155,14 @@ const EditProductComponent = ({ params }) => {
             categoryId: productState.product.categoryId.map((cat) => cat.id),
             brand: defaultBrand || "",
           });
+
           if (productState.product.feature_image) {
+
+
             setfeatureImage(
-              bucketBaseURL + productState.product.feature_image
+              getBaseUrl(setting) + productState.product.feature_image
             );
+
           } else {
             setfeatureImage(
               NoImagePlaceHolder
@@ -167,6 +175,7 @@ const EditProductComponent = ({ params }) => {
       setfeatureImage(null)
     }
   }, [get(productState, "product"), productId]);
+
   const addUpdateProduct = (e) => {
     product.combinations = combination;
     product.taxClass = taxClass
@@ -600,8 +609,10 @@ const EditProductComponent = ({ params }) => {
                   })
                 }
                 onCombinationUpdate={(combination) => {
+
                   setCombination(combination);
                 }}
+                setting={setting}
               />
             </CardBlocks>
             {/* ===================Custom Fields=================== */}
@@ -780,6 +791,7 @@ const EditProductComponent = ({ params }) => {
                       });
                     }}
                     product={product}
+                    setting={setting}
                   />
                   : <GalleryImageSelection
                     onAddGalleryImage={(e) => {
@@ -793,6 +805,7 @@ const EditProductComponent = ({ params }) => {
                     onRemoveGalleryImage={(images) => {
                       setProduct({ ...product, ["gallery_image"]: images });
                     }}
+
                   />}
               </CardBlocks>
             </Box>

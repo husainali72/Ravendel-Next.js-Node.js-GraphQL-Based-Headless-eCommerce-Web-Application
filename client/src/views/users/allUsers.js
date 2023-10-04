@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid } from "@mui/material";
-import { isEmpty, client_app_route_url } from "../../utils/helper";
+import { isEmpty, client_app_route_url, getBaseUrl } from "../../utils/helper";
 import { bucketBaseURL } from "../../utils/helper";
 import { ThemeProvider } from "@mui/material/styles";
 import { userDeleteAction, usersAction } from "../../store/action";
@@ -14,6 +14,7 @@ import viewStyles from "../viewStyles";
 const AllUsersComponent = () => {
 
   const UsersState = useSelector((state) => state.users);
+  const setting = useSelector((state) => state.settings);
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const classes = viewStyles()
@@ -51,7 +52,7 @@ const AllUsersComponent = () => {
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          navigate(`${client_app_route_url}edit-user/${id}`, {state : {editMode: true}})
+          navigate(`${client_app_route_url}edit-user/${id}`, { state: { editMode: true } })
         } else if (type === "delete") {
           dispatch(userDeleteAction(id))
         }
@@ -68,7 +69,7 @@ const AllUsersComponent = () => {
       UsersState.users.map((user) => {
         let object = {
           id: user.id,
-          image: bucketBaseURL + user.image,
+          image: getBaseUrl(setting) + user.image,
           name: user.name,
           email: user.email,
           role: user.role

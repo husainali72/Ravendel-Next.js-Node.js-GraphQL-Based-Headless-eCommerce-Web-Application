@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import ActionButton from "../components/actionbutton";
 import { useNavigate } from "react-router-dom";
-import { isEmpty, client_app_route_url, bucketBaseURL } from "../../utils/helper";
+import { isEmpty, client_app_route_url, bucketBaseURL, getBaseUrl } from "../../utils/helper";
 import { brandDeleteAction, brandsAction, } from "../../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
@@ -14,6 +14,7 @@ const AllbrandComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const Brands = useSelector((state) => state.brands);
+  const setting = useSelector((state) => state.settings);
   const classes = viewStyles()
   const [Allbrand, setAllbrand] = useState([])
   const [filtered, setfilterdData] = useState([])
@@ -54,10 +55,11 @@ const AllbrandComponent = () => {
   useEffect(() => {
     if (!isEmpty(get(Brands, 'brands'))) {
       let data = []
+
       Brands.brands.map((brand) => {
         let object = {
           id: brand.id,
-          image: bucketBaseURL + brand.brand_logo,
+          image: getBaseUrl(setting) + brand.brand_logo,
           date: brand.date,
           name: brand.name,
         }

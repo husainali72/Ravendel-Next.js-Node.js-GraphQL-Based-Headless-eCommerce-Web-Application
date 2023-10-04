@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid } from "@mui/material";
-import { isEmpty, bucketBaseURL, client_app_route_url } from "../../utils/helper";
+import { isEmpty, bucketBaseURL, client_app_route_url, getBaseUrl } from "../../utils/helper";
 import ActionButton from "../components/actionbutton";
 import { get } from 'lodash'
 import TableComponent from "../components/table";
@@ -14,6 +14,7 @@ const AllBlogComponent = () => {
   const classes = viewStyles()
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
+  const setting = useSelector((state) => state.settings);
   const [Allblogs, setAllblogs] = useState([])
   const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
@@ -50,7 +51,7 @@ const AllBlogComponent = () => {
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          navigate(`${client_app_route_url}edit-blog/${id}`, {state : {editMode: true}})
+          navigate(`${client_app_route_url}edit-blog/${id}`, { state: { editMode: true } })
         } else if (type === "delete") {
           dispatch(blogDeleteAction(id))
         }
@@ -69,7 +70,7 @@ const AllBlogComponent = () => {
       blogs.blogs.map((blog) => {
         let object = {
           id: blog.id,
-          image: bucketBaseURL + blog.feature_image,
+          image: getBaseUrl(setting) + blog.feature_image,
           title: blog.title,
           date: blog.date,
           status: blog.status
