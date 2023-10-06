@@ -16,6 +16,8 @@ import { useRef } from 'react';
 import Head from 'next/head';
 import { capitalize } from 'lodash';
 const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduct, url }) => {
+    const getSetting = useSelector(state => state.setting)
+
     const slider = useRef();
     const slideLeft = () => {
         slider.current.scrollLeft = slider.current.scrollLeft - 500;
@@ -120,7 +122,7 @@ const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduc
                                         style={{ display: "flex", flexDirection: "row", height: "100%" }}>
                                         <div className='card-img-wrapper'>
                                             <img
-                                                src={getImage(cat?.image, 'original')}
+                                                src={getImage(cat?.image, 'original', false, getSetting?.setting)}
                                                 className='subcat-img'
                                                 onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
                                                 alt={cat?.name}

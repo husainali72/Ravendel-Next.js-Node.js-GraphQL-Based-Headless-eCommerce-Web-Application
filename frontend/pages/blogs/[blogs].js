@@ -4,14 +4,14 @@ import { Container, Card } from "react-bootstrap";
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import { useRouter } from 'next/router';
 import { GET_BLOGS_QUERY, GET_BLOG_BY_ID_QUERY } from "../../queries/blogquery";
-import { getImage } from "../../utills/helpers";
+import { getImage, imageOnError } from "../../utills/helpers";
 import { useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts"
 const SingleBlogPages = ({ singleBlog }) => {
     // console.log(singleBlog)
     const blogtags = useSelector(state => state.blogtags)
 
-
+    const getSetting = useSelector(state => state.setting)
     const router = useRouter();
     const { blog_id } = router.query.blogs;
     if (router.isFallback) {
@@ -25,7 +25,7 @@ const SingleBlogPages = ({ singleBlog }) => {
                     <div className="col-lg-9">
                         <h1>{singleBlog.title}</h1>
                         <hr></hr>
-                        <img src={getImage(singleBlog.feature_image, 'original')} width={"100%"} />
+                        <img src={getImage(singleBlog.feature_image, 'original', false, getSetting?.setting)} width={"100%"} onError={imageOnError} />
                         <div>
                             <p>{singleBlog?.content?.replace(/(<([^>]+)>)/ig, '')}</p>
                         </div>

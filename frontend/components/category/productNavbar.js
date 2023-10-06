@@ -43,7 +43,7 @@ export const ProductNav = (props) => {
                         <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
                             <img
                                 className="img-on-sale"
-                                src={getImage(product?.feature_image, 'original')}
+                                src={getImage(product?.feature_image, 'original', false, settings?.setting)}
                                 onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
                             />
                         </Link>

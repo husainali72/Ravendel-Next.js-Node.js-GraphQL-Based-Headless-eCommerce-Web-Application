@@ -2,9 +2,11 @@ import Link from "next/link";
 import { useState, useEffect } from "react"
 import { Spinner } from "react-bootstrap";
 import Table from 'react-bootstrap/Table';
-import { getImage, getPrice } from '../../utills/helpers';
+import { getImage, getPrice, imageOnError } from '../../utills/helpers';
 import { capitalize } from "lodash";
+import { useSelector } from "react-redux";
 const CartTable = (props) => {
+    const settings = useSelector((state) => state.setting)
     const { cartItems,
         decimal,
         isQuantityBtnLoading,
@@ -16,7 +18,8 @@ const CartTable = (props) => {
         removeToCart,
         updateCartProduct, currency,
         unAvailableProducts,
-        available
+        available,
+
     } = props;
     return (
         <div>
@@ -38,11 +41,12 @@ const CartTable = (props) => {
                             <tr key={i}>
                                 <td>
                                     {available ? <Link href={"/product/" + item.url}>
+
                                         <div className="td-flex cursor-pointer">
-                                            <img src={getImage(item.feature_image, 'thumbnail')} />
+                                            <img src={getImage(item.feature_image, 'thumbnail', false, settings?.setting)} onError={imageOnError} />
                                         </div>
                                     </Link> : <div className="td-flex cursor-pointer">
-                                        <img src={getImage(item.feature_image, 'thumbnail')} />
+                                        <img src={getImage(item.feature_image, 'thumbnail', false, settings?.setting)} onError={imageOnError} />
                                     </div>}
                                 </td>
                                 <td>

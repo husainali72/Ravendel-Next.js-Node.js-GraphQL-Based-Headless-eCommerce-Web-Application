@@ -1,4 +1,4 @@
-import { IMAGE_BASE_URL, bucketBaseURL } from '../config';
+import { IMAGE_BASE_URL, baseUrl, bucketBaseURL } from '../config';
 import client from '../apollo-client';
 import { isEmpty } from "./service";
 import axios from 'axios'
@@ -23,16 +23,21 @@ import { LogOutUser1 } from '../components/Header';
 //     }
 //     return imagaPath;
 // }
+export const imageOnError = (event) => {
+    event.target.src = NoImagePlaceHolder.src
+}
+export const getImage = (img, type, isBanner, setting) => {
 
-export const getImage = (img, type, isBanner) => {
+    let localStorage = setting?.imageStorage?.status === 's3' ? false : (setting?.imageStorage?.status === 'localStorage' ? true : '')
 
     let imagaPath = ""
     if (!isBanner) {
         imagaPath = NoImagePlaceHolder.src;
     }
     if (img) {
-        imagaPath = bucketBaseURL + img
+        imagaPath = localStorage ? baseUrl + img : bucketBaseURL + img
     }
+
     return imagaPath;
 
 }
@@ -78,6 +83,7 @@ export const query = async (query, id) => {
 export const mutation = async (query, variables) => {
     const session = await getSession();
     const token = session?.user?.accessToken?.token
+    // const token = `${session?.user?.accessToken?.token}343243`
 
     try {
         if (!variables.queryName) {

@@ -10,6 +10,7 @@ import { logoutDispatch } from "../redux/actions/userlogoutAction"
 import { GET_USER_CART } from '../queries/cartquery';
 import { getImage, query } from '../utills/helpers';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
+import { getSettings } from '../redux/actions/settingAction';
 
 export const LogOutUser1 = async () => {
     const data = await signOut({ redirect: false, callbackUrl: "/" })
@@ -22,6 +23,8 @@ export default function Header({ setOpenMenu }) {
     const data = useSession();
     const cartItem = useSelector(state => state.cart)
     const addedCart = useSelector(state => state.addedCart)
+
+
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [cart, setCart] = useState(null);
@@ -41,6 +44,7 @@ export default function Header({ setOpenMenu }) {
     };
 
     useEffect(() => {
+        dispatch(getSettings())
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);

@@ -32,6 +32,7 @@ const EditBrandComponenet = ({ params }) => {
   const [logoImage, setLogoImage] = useState(null);
   const [loading, setloading] = useState(false);
   const setting = useSelector((state) => state.settings)
+  const baseURl = getBaseUrl(setting)
   const [brand, setBrand] = useState({
     id: "",
     _id: "",
@@ -54,15 +55,15 @@ const EditBrandComponenet = ({ params }) => {
               brand.id = editbrand.id;
               setBrand({ ...brand, ...editbrand });
               if (editbrand.brand_logo) {
-                const baseurl = getBaseUrl(setting)
-                setLogoImage(baseurl + editbrand.brand_logo);
+
+                setLogoImage(baseURl + editbrand.brand_logo);
               }
             }
           });
         }
       }
     }
-  }, [get(Brands, "brands")]);
+  }, [get(Brands, "brands"), baseURl]);
 
   useEffect(() => {
     setloading(get(Brands, "loading"));

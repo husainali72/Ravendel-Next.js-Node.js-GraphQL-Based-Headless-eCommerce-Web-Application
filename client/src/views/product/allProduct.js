@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { productDeleteAction, productsAction } from "../../store/action";
+import { getSettings, productDeleteAction, productsAction } from "../../store/action";
 import { baseUrl, client_app_route_url, getBaseUrl } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
@@ -64,15 +64,17 @@ const AllproductComponent = () => {
 
   useEffect(() => {
     dispatch(productsAction());
+
   }, []);
+
   useEffect(() => {
     if (!isEmpty(get(products, 'products'))) {
       let data = []
-      const baseurl = getBaseUrl(setting)
+
       products.products.map((product) => {
         let object = {
           id: product._id,
-          image: product.feature_image ? baseurl + product.feature_image : NoImagePlaceHolder,
+          image: product.feature_image ? product.feature_image : NoImagePlaceHolder,
           date: product.date,
           status: product.status,
           name: product.name,

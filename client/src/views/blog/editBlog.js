@@ -71,7 +71,7 @@ const EditBlogComponenet = ({ params }) => {
   const [clearTags, setclearTags] = useState([]);
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
-
+  const baseURl = getBaseUrl(setting)
   useEffect(() => {
     if (Id) {
       dispatch(blogAction(Id));
@@ -89,7 +89,7 @@ const EditBlogComponenet = ({ params }) => {
           blogState.blog.feature_image
 
         ) {
-          setfeatureImage(getBaseUrl(setting) + blogState.blog.feature_image);
+          setfeatureImage(baseURl + blogState.blog.feature_image);
         }
         dispatch(blogtagsAction());
       }
@@ -97,7 +97,7 @@ const EditBlogComponenet = ({ params }) => {
       setBlog(defaultObj)
       setfeatureImage(null)
     }
-  }, [get(blogState, "blog"), Id]);
+  }, [get(blogState, "blog"), Id, baseURl]);
 
   useEffect(() => {
     if (!Id) {

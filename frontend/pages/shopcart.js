@@ -66,19 +66,18 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                     carts?.availableItem?.map((cart) => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
                         const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
-
                         let cartProduct = {}
                         if (orginal_attributes) {
                             cartProduct = {
                                 _id: originalProduct?._id,
-                                variantId: cart.variantId,
+                                variantId: cart?.variantId,
                                 quantity: parseInt(cart?.qty),
                                 productQuantity: parseInt(orginal_attributes?.quantity),
                                 name: originalProduct?.name,
                                 pricing: (orginal_attributes?.pricing
                                     ?.sellprice),
-                                feature_image: orginal_attributes?.productImage
-                                    || orginal_attributes?.feature_image,
+                                feature_image: orginal_attributes?.image
+                                    || cart?.productImage,
                                 url: originalProduct?.url,
                                 attributes: cart.attributes || [],
                                 shippingClass: originalProduct?.shipping?.shippingClass,
@@ -276,6 +275,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         //     }
 
         // })
+        console.log(item.variantId)
         setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
         setAllCartItems([...AllCartItems], AllCartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
         // console.log(cartItems, '======', AllCartItems, '========', item._id, AllCartItems.filter(itemm => itemm._id === item._id ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
@@ -534,6 +534,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                     updateCartProduct={updateCartProduct}
                                     currency={currency}
                                     available={true}
+                                    settings={settings}
 
                                 />
 
@@ -552,6 +553,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                         updateCartProduct={updateCartProduct}
                                         currency={currency}
                                         available={false}
+                                        settings={settings}
 
                                     /></> : null}
                                 <div className="cart-action text-end">

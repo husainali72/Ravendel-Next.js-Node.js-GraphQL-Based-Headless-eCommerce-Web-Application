@@ -167,7 +167,7 @@ export const CheckOut = ({ currencyStore }) => {
                     let cartitems2 = [];
                     carts?.availableItem?.map(cart => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
-                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
+                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart?.variantId)
                         // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
 
                         if (originalProduct) {
@@ -181,8 +181,8 @@ export const CheckOut = ({ currencyStore }) => {
                                     name: originalProduct?.name,
                                     pricing: (orginal_attributes?.pricing
                                         ?.sellprice * cart?.qty),
-                                    feature_image: orginal_attributes?.productImage
-                                        || orginal_attributes?.feature_image,
+                                    feature_image: orginal_attributes?.image
+                                        || originalProduct?.feature_image,
                                     url: originalProduct?.url,
                                     attributes: cart.attributes || [],
                                     shippingClass: originalProduct?.shipping?.shippingClass,

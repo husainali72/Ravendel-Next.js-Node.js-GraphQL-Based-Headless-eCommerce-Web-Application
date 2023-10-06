@@ -116,7 +116,7 @@ const EditProductComponent = ({ params }) => {
   const [product, setProduct] = useState(defaultobj
   );
   const setting = useSelector((state) => state.settings)
-
+  const baseURl = getBaseUrl(setting)
   useEffect(() => {
     if (productId) {
       dispatch(productAction(productId));
@@ -160,7 +160,7 @@ const EditProductComponent = ({ params }) => {
 
 
             setfeatureImage(
-              getBaseUrl(setting) + productState.product.feature_image
+              baseURl + productState.product.feature_image
             );
 
           } else {
@@ -174,7 +174,7 @@ const EditProductComponent = ({ params }) => {
       setProduct(defaultobj)
       setfeatureImage(null)
     }
-  }, [get(productState, "product"), productId]);
+  }, [get(productState, "product"), productId, baseURl]);
 
   const addUpdateProduct = (e) => {
     product.combinations = combination;

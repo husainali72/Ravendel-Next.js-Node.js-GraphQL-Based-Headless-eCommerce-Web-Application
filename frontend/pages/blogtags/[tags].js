@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 const BlogsTags = ({ blogTagByUrl }) => {
     const blogTag = useSelector(state => state.blogtags)
     // console.log("blogTag", blogTag)
+    const getSetting = useSelector(state => state.setting)
 
     const router = useRouter();
     const [blogTagsDetail, setBlogTagsDetail] = useState([])
@@ -37,7 +38,7 @@ const BlogsTags = ({ blogTagByUrl }) => {
                                     <Card>
                                         <div className="card-img"><Card.Img
                                             variant="top"
-                                            src={getImage(blog.feature_image, 'original')}
+                                            src={getImage(blog.feature_image, 'original', false, getSetting?.setting)}
                                             onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
                                         /></div>
                                         <Card.Body>

@@ -59,7 +59,7 @@ const AllbrandComponent = () => {
       Brands.brands.map((brand) => {
         let object = {
           id: brand.id,
-          image: getBaseUrl(setting) + brand.brand_logo,
+          image: brand.brand_logo,
           date: brand.date,
           name: brand.name,
         }

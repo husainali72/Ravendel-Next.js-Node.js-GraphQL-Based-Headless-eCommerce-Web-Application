@@ -175,6 +175,11 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           api_signature
         }
       }
+      imageStorage{
+        status
+        s3_id
+        s3_key
+      }
       appearance {
         home {
           slider {
@@ -212,6 +217,7 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           }
           
         }
+
         mobile {
           mobile_section {
             label

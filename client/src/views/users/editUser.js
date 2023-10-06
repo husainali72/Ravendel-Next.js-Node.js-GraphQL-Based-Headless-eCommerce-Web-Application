@@ -44,7 +44,7 @@ const EditUserComponent = ({ params }) => {
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
   const [loading, setloading] = useState(false);
-
+  const baseURl = getBaseUrl(setting)
   useEffect(() => {
     if (isEmpty(get(UsersState, "users"))) {
       dispatch(usersAction());
@@ -64,7 +64,7 @@ const EditUserComponent = ({ params }) => {
           if (edituser.id === userId) {
             setuser({ ...edituser });
             if (edituser.image) {
-              setfeatureImage(getBaseUrl(setting) + edituser.image);
+              setfeatureImage(baseURl + edituser.image);
             }
           }
         });
@@ -73,8 +73,8 @@ const EditUserComponent = ({ params }) => {
       setuser(defaultObj)
       setfeatureImage(null)
     }
-  }, [get(UsersState, "users"), userId]);
-
+  }, [get(UsersState, "users"), userId, baseURl]);
+  console.log(featureImage, 'feature')
   const fileChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));

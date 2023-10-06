@@ -54,9 +54,39 @@ module.exports = {
         for (let a = 0; a < productsArray.length; a++) {
           let product = productsArray[a];
 
-          let isProductAvilable = await Product.findOne({ _id: product.productId, quantity: { $gte: product.qty } });
-          if (isProductAvilable) {
-            availableItem.push(product)
+          let isProductAvilable = {}
+
+          let addvariants = false
+          let attribute = []
+          if (product?.variantId) {
+            addvariants = true
+            isProductAvilable = await Product.findOne({ _id: product.productId });
+            attribute = await ProductAttributeVariation.find({
+              productId: product.productId, _id: product?.variantId, quantity: { $gte: product.qty }
+            });
+
+          } else {
+            isProductAvilable = await Product.findOne({ _id: product.productId, quantity: { $gte: product.qty } });
+          }
+
+          if (isProductAvilable && ((!addvariants && attribute?.length === 0) || (addvariants && attribute?.length > 0))) {
+
+
+            let prod = {
+              productId: product?.productId,
+              productTitle: isProductAvilable?.name,
+              productImage: isProductAvilable?.feature_image,
+              productPrice: isProductAvilable?.pricing?.sellprice || isProductAvilable?.pricing?.price || product?.productPrice,
+              qty: product?.qty,
+              total: (product?.qty * isProductAvilable?.pricing?.sellprice || isProductAvilable?.pricing?.price || product?.productPrice),
+              attributes: product?.attributes,
+              productQuantity: isProductAvilable?.quantity,
+              variantId: product?.variantId,
+              shippingClass: isProductAvilable?.shipping?.shippingClass,
+              taxClass: isProductAvilable?.taxClass,
+              _id: product?._id
+            }
+            availableItem.push(prod)
           }
           else {
             unavailableItem.push(product)
@@ -237,8 +267,16 @@ module.exports = {
             const product = await Product.findById({ _id: cartProduct.productId }).lean();
             let odredQuantity = cartProduct.qty
 
-            let productPrice = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price;
-            cartTotal += productPrice * odredQuantity;
+            let productPrice = product.pricing.sellprice
+            if (cartProduct?.variantId) {
+              const variations = await ProductAttributeVariation.find({
+                productId: cartProduct.productId, _id: cartProduct?.variantId
+              });
+              productPrice = variations[0]?.pricing?.sellprice
+              cartTotal += (productPrice * odredQuantity);
+            } else {
+              cartTotal += productPrice * odredQuantity;
+            }
 
             // product tax calculation
             if (taxPercentage != 0) {
@@ -260,10 +298,11 @@ module.exports = {
             if (global_shipping) {
 
               if (!globalShippingPerOrder) {
-                totalShipping += globalShippingAmount;
-                grandTotal += globalShippingAmount;
 
-                productShipping = +globalShippingAmount
+                totalShipping += (globalShippingAmount * cartProduct?.qty);
+                grandTotal += (globalShippingAmount * cartProduct?.qty);
+
+                productShipping = +(globalShippingAmount * cartProduct?.qty)
 
               }
             }

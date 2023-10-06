@@ -148,13 +148,14 @@ function cartReducer(state = [], action) {
                 for (let item of cart) {
 
                     if (item.variantId && action.payload.variantId) {
+
                         if (item._id === action.payload._id && item.variantId === action.payload.variantId) {
-                            action.payload.originalQuantity > item.quantity && (item.quantity += 1);
+                            action.payload.originalQuantity >= item.quantity && (item.quantity += 1);
                             break;
                         }
                     } else {
                         if (item._id === action.payload._id) {
-                            action.payload.originalQuantity > item.quantity && (item.quantity += 1);
+                            action.payload.originalQuantity >= item.quantity && (item.quantity += 1);
                             break;
                         }
                     }

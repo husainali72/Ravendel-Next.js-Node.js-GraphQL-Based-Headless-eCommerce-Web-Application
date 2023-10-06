@@ -13,8 +13,9 @@ import { useDispatch } from "react-redux";
 const Blog = (blogData, blogTagsData) => {
     const dispatch = useDispatch();
     const [blog, setBlog] = useState([])
-    const [tags, setTags] = useState([])
 
+    const [tags, setTags] = useState([])
+    const getSetting = useSelector(state => state.setting)
     useEffect(() => {
         if (blogData && blogData.blogData?.length > 0) {
             setBlog(blogData.blogData)
@@ -39,7 +40,7 @@ const Blog = (blogData, blogTagsData) => {
                                         <Card>
                                             <div className="card-img"><Card.Img
                                                 variant="top"
-                                                src={getImage(blog.feature_image, 'original')}
+                                                src={getImage(blog.feature_image, 'original', false, getSetting?.setting)}
                                                 onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
                                             /></div>
 
@@ -69,7 +70,7 @@ const Blog = (blogData, blogTagsData) => {
                         </div> */}
                     </div>
                 ) : (
-                    <div className="d-flex  justify-content-center mt-5"> 
+                    <div className="d-flex  justify-content-center mt-5">
                         <p className="" >No blogs available</p>
                     </div>
                 )}

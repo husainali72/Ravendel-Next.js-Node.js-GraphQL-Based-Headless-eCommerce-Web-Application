@@ -95,6 +95,7 @@ export const ShopCart = () => {
                                         onError={(e) => e.type === 'error' ? e.target.src = placeholder : null}
                                         width={"80px"}
                                         height={"80px"}
+
                                     />
                                 </Link>
                             </div>

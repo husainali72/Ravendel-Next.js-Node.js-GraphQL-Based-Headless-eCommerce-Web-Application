@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import StarRating from '../breadcrumb/rating'
 import moment from 'moment';
 import { capitalize } from 'lodash';
+import { imageOnError } from '../../utills/helpers';
 const convertDateToStringFormat = (date) => {
   var convertedDate = ""
   if (date) {
@@ -22,7 +23,7 @@ const Reviews = ({ singleProductReview }) => {
         reviews.map((product, index) => {
           return <div key={index} className='singleReview'>
             <div className='usernameWidProfile'>
-              <img className='userImg' src='/assets/userProfile/icons8.png' alt='img' />
+              <img className='userImg' src='/assets/userProfile/icons8.png' alt='img' onError={imageOnError} />
               <span className='singleReviewUsername'>	{capitalize(product?.customerId?.firstName)} </span>
             </div>
             <div className='starWidTitle'>

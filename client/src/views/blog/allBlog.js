@@ -70,7 +70,7 @@ const AllBlogComponent = () => {
       blogs.blogs.map((blog) => {
         let object = {
           id: blog.id,
-          image: getBaseUrl(setting) + blog.feature_image,
+          image: blog.feature_image,
           title: blog.title,
           date: blog.date,
           status: blog.status

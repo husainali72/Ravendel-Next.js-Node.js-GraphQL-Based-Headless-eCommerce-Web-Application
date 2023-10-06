@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
-import { getImage, getPrice } from "../../utills/helpers";
+import { getImage, getPrice, imageOnError } from "../../utills/helpers";
 import Form from 'react-bootstrap/Form';
 import Link from "next/link";
 import { capitalize } from "lodash";
+import { useSelector } from "react-redux";
 const Orderdetail = (props) => {
+    const settings = useSelector(state => state.setting)
     const { decimal, currency, getOrderDetails, cartItems, billingInfo, handleBillingInfo, taxAmount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal } = props;
     const cart = cartItems;
     const [cartProduct, setCartProduct] = useState([]);
+
     const cartSubTotal = () => {
         var subtotalVar = 0;
         if (cartProduct && cartProduct?.length > 0) {
@@ -70,7 +73,7 @@ const Orderdetail = (props) => {
                         {cartItems.map((item, i) => (
 
                             <tr key={i}>
-                                <td className="image product-thumbnail"><img src={getImage(item.feature_image, 'feature_image')} alt="" /></td>
+                                <td className="image product-thumbnail"><img src={getImage(item.feature_image, 'feature_image', false, settings?.setting)} alt="" onError={imageOnError} /></td>
                                 <td><i className="ti-check-box font-small text-muted mr-10"></i>
                                     <h5><Link href={"/product/" + cart[i]?.url}><a >{item?.name}</a></Link></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>

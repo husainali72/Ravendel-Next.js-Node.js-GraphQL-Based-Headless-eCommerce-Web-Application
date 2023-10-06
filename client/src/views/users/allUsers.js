@@ -69,7 +69,7 @@ const AllUsersComponent = () => {
       UsersState.users.map((user) => {
         let object = {
           id: user.id,
-          image: getBaseUrl(setting) + user.image,
+          image: user.image,
           name: user.name,
           email: user.email,
           role: user.role
