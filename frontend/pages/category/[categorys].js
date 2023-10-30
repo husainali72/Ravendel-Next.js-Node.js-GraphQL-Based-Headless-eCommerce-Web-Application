@@ -122,7 +122,7 @@ const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduc
                                         style={{ display: "flex", flexDirection: "row", height: "100%" }}>
                                         <div className='card-img-wrapper'>
                                             <img
-                                                src={getImage(cat?.image, 'original', false, getSetting?.setting)}
+                                                src={getImage(cat?.image, 'original', false, getSetting)}
                                                 className='subcat-img'
                                                 onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
                                                 alt={cat?.name}

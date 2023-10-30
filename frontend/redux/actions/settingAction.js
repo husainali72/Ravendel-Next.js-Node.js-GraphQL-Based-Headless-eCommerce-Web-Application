@@ -24,15 +24,32 @@ export const getSettings = (payload) => async (dispatch) => {
       // })
       // homepageData = homepagedata
       // currencyStore = homepagedata?.getSettings?.store
-      query(GET_HOMEPAGE_DATA_QUERY).then((res) => {
-         console.log(res, '=============')
-         let response = res?.data?.getSettings
-         if (response) {
-            dispatch({
-               type: GET_SETTING, payload: response
-            })
-         }
-      })
+
+      if (payload) {
+         dispatch({
+            type: GET_SETTING, payload: payload
+         })
+
+         dispatch({
+            type: SET_SETTING, payload: payload?.store?.currency_options
+
+         })
+      } else {
+         query(GET_HOMEPAGE_DATA_QUERY).then((res) => {
+
+            let response = res?.data?.getSettings
+
+            if (response) {
+               dispatch({
+                  type: GET_SETTING, payload: response
+               })
+               dispatch({
+                  type: SET_SETTING, payload: response?.store?.currency_options
+
+               })
+            }
+         })
+      }
    }
    catch (e) {
       console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');

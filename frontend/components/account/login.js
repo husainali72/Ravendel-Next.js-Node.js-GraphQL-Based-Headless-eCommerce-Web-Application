@@ -68,10 +68,14 @@ const LogIn = () => {
                     productImage: prod?.feature_image,
                     shippingClass: prod?.shippingClass,
                     taxClass: prod?.taxClass,
-                    qty: prod?.quantity
+                    variantId: prod?.variantId,
+                    qty: prod?.quantity,
+                    attributes: prod?.attributes
                 }
             })
+
             dispatch(createCart(id, products));
+
             // localStorage.setItem("cart", JSON.stringify([]))
 
         }

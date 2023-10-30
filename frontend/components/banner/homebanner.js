@@ -20,7 +20,7 @@ const Homebanner = ({ slider, Image }) => {
                 {slider.map((slide, i) => (
                     <Carousel.Item key={i}>
                         <a href={`${slide.link}`} target={slide.open_in_tab ? "_blank" : null}>
-                            <Image src={imageSrc ? imageSrc : getImage(slide.image, 'original', true, getSetting?.setting)} width={2000} height={500} sx={{ alignItems: 'center', mt: 0 }} className="d-block w-100" alt={`slider`} onError={handleImageError} />
+                            <Image src={imageSrc ? imageSrc : getImage(slide.image, 'original', true, getSetting)} width={2000} height={500} sx={{ alignItems: 'center', mt: 0 }} className="d-block w-100" alt={`slider`} onError={handleImageError} />
                         </a>
                     </Carousel.Item>
                 ))}

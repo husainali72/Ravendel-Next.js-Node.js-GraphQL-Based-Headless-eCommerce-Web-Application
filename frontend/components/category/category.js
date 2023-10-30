@@ -6,12 +6,16 @@ import { useEffect, useRef, useState } from 'react';
 import useResizeObserver from '@react-hook/resize-observer';
 import { capitalize } from 'lodash';
 import NoImagePlaceHolder from '../../components/images/NoImagePlaceHolder.png';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSettings } from '../../redux/actions/settingAction';
 const Category = ({ category }) => {
     const [showSlider, setShowSlider] = useState(false)
+    const dispatch = useDispatch()
     const [inlineSize, setInlineSize] = useState(0)
     const getSetting = useSelector(state => state.setting)
+
     const slider = useRef();
+
     const slideLeft = () => {
         slider.current.scrollLeft = slider.current.scrollLeft - 500;
     }
@@ -40,13 +44,15 @@ const Category = ({ category }) => {
                             item.parentId === null && (
                                 <Link href={`/subcategory/[category]?url=${item.url}`} as={`/subcategory/${item.url}`}><div className="category-cards" key={i}>
                                     <div className="category-card-image">
+
                                         <img
-                                            src={getImage(item?.image, 'original', false, getSetting?.setting)}
+                                            src={getImage(item?.image, 'original', false, getSetting)}
                                             className="  cimg"
                                             onError={(e) => e.type === 'error' ? e.target.src = NoImagePlaceHolder.src : null}
                                             alt={item?.name}
                                         />
                                     </div>
+
                                     <div className="card-body">
                                         <p
                                             className="card-title category-card-title">

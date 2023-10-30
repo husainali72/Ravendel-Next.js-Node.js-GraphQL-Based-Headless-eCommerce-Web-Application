@@ -93,8 +93,8 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
 
                                         <div className='product'>
 
-                                            <img src={getImage(product?.feature_image, '', '', getSetting?.setting)} alt="" onError={imageOnError} />
-                                            {console.log(getImage(product?.feature_image, '', '', getSetting?.setting), product.feature_image,)}
+                                            <img src={getImage(product?.feature_image, '', '', getSetting)} alt="" onError={imageOnError} />
+
                                             <div className="details">
                                                 <h4>{product?.name}</h4>
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>

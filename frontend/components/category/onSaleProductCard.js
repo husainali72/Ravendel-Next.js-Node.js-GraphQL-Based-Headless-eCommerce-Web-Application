@@ -134,7 +134,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, 
                                             <div className="on-sale-image-wrapper">
                                                 <img
                                                     className="img-on-sale"
-                                                    src={getImage(product.feature_image, 'original', false, settings?.setting)}
+                                                    src={getImage(product.feature_image, 'original', false, settings)}
                                                     height="280px"
                                                     width="100%"
                                                     onError={(e) => e.type === 'error' ? e.target.src = placeholder : null}

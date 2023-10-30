@@ -10,13 +10,15 @@ import { logoutDispatch } from "../redux/actions/userlogoutAction"
 import { GET_USER_CART } from '../queries/cartquery';
 import { getImage, query } from '../utills/helpers';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
-import { getSettings } from '../redux/actions/settingAction';
+import { GET_SETTING, getSettings } from '../redux/actions/settingAction';
+
 
 export const LogOutUser1 = async () => {
     const data = await signOut({ redirect: false, callbackUrl: "/" })
     localStorage.setItem("userCart", JSON.stringify([]));
     localStorage.setItem("cart", JSON.stringify([]));
     // dispatch(logoutDispatch())
+    // window.location.pathname = '/'
 }
 
 export default function Header({ setOpenMenu }) {
@@ -34,6 +36,8 @@ export default function Header({ setOpenMenu }) {
         localStorage.setItem("userCart", JSON.stringify([]));
         localStorage.setItem("cart", JSON.stringify([]));
         dispatch(logoutDispatch())
+        // window.location.reload();
+        window.location.pathname = '/'
     }
 
     const dropdownRef = useRef(null);
@@ -44,7 +48,6 @@ export default function Header({ setOpenMenu }) {
     };
 
     useEffect(() => {
-        dispatch(getSettings())
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
@@ -72,6 +75,10 @@ export default function Header({ setOpenMenu }) {
     const getHomepageData = () => {
         query(GET_HOMEPAGE_DATA_QUERY).then(res => {
             let homepageData = res?.data?.getSettings;
+            console.log(homepageData, 'homepageData')
+            dispatch({
+                type: GET_SETTING, payload: homepageData
+            })
             setHomeData(homepageData);
         })
     }
@@ -82,11 +89,12 @@ export default function Header({ setOpenMenu }) {
     // }, [addedCart])
 
     useEffect(() => {
-
         getCartLength()
+        dispatch(getSettings())
     }, [cartItem, data, addedCart])
 
     useEffect(() => {
+
         getHomepageData()
     }, [])
     return (

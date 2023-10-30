@@ -12,6 +12,7 @@ const SingleBlogPages = ({ singleBlog }) => {
     const blogtags = useSelector(state => state.blogtags)
 
     const getSetting = useSelector(state => state.setting)
+
     const router = useRouter();
     const { blog_id } = router.query.blogs;
     if (router.isFallback) {
@@ -25,7 +26,7 @@ const SingleBlogPages = ({ singleBlog }) => {
                     <div className="col-lg-9">
                         <h1>{singleBlog.title}</h1>
                         <hr></hr>
-                        <img src={getImage(singleBlog.feature_image, 'original', false, getSetting?.setting)} width={"100%"} onError={imageOnError} />
+                        <img src={getImage(singleBlog.feature_image, 'original', false, getSetting)} width={"100%"} onError={imageOnError} />
                         <div>
                             <p>{singleBlog?.content?.replace(/(<([^>]+)>)/ig, '')}</p>
                         </div>

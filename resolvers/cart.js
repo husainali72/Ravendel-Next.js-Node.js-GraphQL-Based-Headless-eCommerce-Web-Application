@@ -921,29 +921,34 @@ module.exports = {
       try {
         const cart = await Cart.findOne({ userId: args.userId });
         let existingCartProducts = cart && cart.products ? cart.products : [];
+
         // let carttotal = 0;
         // if local products exists then only run loop for adding products in customer cart
         if (args.products)
           for (let localProd of args.products) {
             if (localProd.variantId) {
-              // let productAttributeValue =
-              //   await ProductAttributeVariation.findById(localProd.variantId);
-
-              // let product = await Product.findById({
-              //   _id: localProd.productId,
-              // });
+              let productAttributeValue =
+                await ProductAttributeVariation.findById(localProd.variantId);
+              // console.log(productAttributeValue, 'productAttributeValue')
+              let product = await Product.findById({
+                _id: localProd.productId,
+              });
               let productId = localProd.productId;
               let qty = localProd.qty;
 
-              // let shippingClass = product.shipping.shippingClass
-              //   ? product.shipping.shippingClass
-              //   : "";
-              // let taxClass = product.taxClass ? product.taxClass : "";
-
+              let shippingClass = product.shipping.shippingClass
+                ? product.shipping.shippingClass
+                : "";
+              let taxClass = product.taxClass ? product.taxClass : "";
+              // console.log(productAttributeValue?.image || product?.feature_image || localProd?.productImage, 'imageeeeeeeeeee')
               if (!existingCartProducts.length) {
                 existingCartProducts.push({
                   productId,
                   variantId: localProd.variantId.toString(),
+                  productTitle: product?.name || localProd?.productTitle,
+                  productPrice: productAttributeValue?.pricing?.sellprice || product?.pricing?.sellprice || localProd?.productPrice,
+                  attributes: localProd?.attributes,
+                  productImage: productAttributeValue?.image || product?.feature_image || localProd?.productImage,
                   qty,
                   shippingClass,
                   taxClass,
@@ -965,10 +970,14 @@ module.exports = {
                 else {
                   existingCartProducts.push({
                     productId,
-                    variantId,
+                    variantId: localProd.variantId.toString(),
+                    productTitle: product?.name || localProd?.productTitle,
+                    productPrice: productAttributeValue?.pricing?.sellprice || product?.pricing?.sellprice || localProd?.productPrice,
+                    productImage: productAttributeValue?.image || product?.feature_image || localProd?.productImage,
+                    attributes: localProd?.attributes,
                     qty,
-                    // shippingClass,
-                    // taxClass,
+                    shippingClass,
+                    taxClass,
                   });
                 }
               }
@@ -1046,7 +1055,7 @@ module.exports = {
         //   }
         // });
         // if customer cart exists then update
-
+        console.log(existingCartProducts, '========existingCartProducts')
         if (cart) {
           cart.products = existingCartProducts;
           await cart.save();

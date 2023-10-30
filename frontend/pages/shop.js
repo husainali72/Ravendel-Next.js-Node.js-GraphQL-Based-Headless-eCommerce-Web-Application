@@ -34,6 +34,8 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
     const [sortingdata, setSortingdata] = useState([])
     const [number, setNumber] = useState(0)
     const getSetting = useSelector(state => state.setting)
+
+
     const [sortingName, setSortingName] = useState({
         name: 'latest',
         title: "Release date"
@@ -268,7 +270,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`} >
                                                     <div style={{ display: 'flex', marginTop: 3, cursor: 'pointer' }} key={i} >
                                                         <div>
-                                                            <img className="widget-category-img" src={getImage(product.feature_image, 'original', false, getSetting?.setting)} onError={imageOnError} />
+                                                            <img className="widget-category-img" src={getImage(product.feature_image, 'original', false, getSetting)} onError={imageOnError} />
                                                         </div>
                                                         <div style={{ padding: "3px", marginLeft: "10px" }}>
                                                             {product.name?.length > 15 ? (

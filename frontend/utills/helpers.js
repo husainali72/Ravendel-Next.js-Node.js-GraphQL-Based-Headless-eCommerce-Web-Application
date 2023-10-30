@@ -28,7 +28,7 @@ export const imageOnError = (event) => {
 }
 export const getImage = (img, type, isBanner, setting) => {
 
-    let localStorage = setting?.imageStorage?.status === 's3' ? false : (setting?.imageStorage?.status === 'localStorage' ? true : '')
+    let localStorage = setting?.setting?.imageStorage?.status === 's3' ? false : (setting?.setting?.imageStorage?.status === 'localStorage' ? true : '')
 
     let imagaPath = ""
     if (!isBanner) {

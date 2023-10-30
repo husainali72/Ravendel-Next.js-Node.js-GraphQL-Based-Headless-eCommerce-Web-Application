@@ -2,6 +2,8 @@ import { query, mutation } from "../../utills/helpers";
 import { ADD_TO_CART_QUERY, UPDATE_CART_PRODUCT, GET_USER_CART, ADD_CART } from "../../queries/cartquery";
 import { ADD_TO_CART, INCRESE_QUANTITY, REMOVE_VALUE, REMOVE_ALL_VALUE, DECREASE_QUANTITY, UPDATE_CART_ON_LOGIN, CREATE_CART_ON_LOGIN } from "../actions/cartAction";
 import logoutDispatch from "../actions/userlogoutAction";
+import { LogOutUser1 } from "../../components/Header";
+import { getSettings } from "../actions/settingAction";
 let cartProduct = []
 
 
@@ -106,10 +108,19 @@ function cartReducer(state = [], action) {
         case CREATE_CART_ON_LOGIN: {
             const { id, cart, dispatch } = action.payload;
             let variables = { userId: id, products: cart }
-            mutation(ADD_CART, variables).then((res) => dispatch({ type: 'ADDED_CART', payload: res?.data?.addCart?.success })).catch((errors) => {
+            mutation(ADD_CART, variables).then((res) => {
+                dispatch({ type: 'ADDED_CART', payload: true })
+                window.location.pathname = '/'
+            }).catch((errors) => {
 
                 if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') {
+
+
+
+                    localStorage.setItem("userCart", JSON.stringify([]));
+                    localStorage.setItem("cart", JSON.stringify([]));
                     dispatch(logoutDispatch())
+
                 }
             });
 

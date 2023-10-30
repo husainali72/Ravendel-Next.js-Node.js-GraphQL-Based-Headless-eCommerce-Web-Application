@@ -35,7 +35,8 @@ const CartTable = (props) => {
                             <th>SubTotal</th>
                             <th>Remove</th>
                         </tr>
-                    </thead>
+                    </thead  >
+
                     <tbody>
                         {cartItems && cartItems?.length > 0 && cartItems.map((item, i) => (
                             <tr key={i}>
@@ -43,12 +44,13 @@ const CartTable = (props) => {
                                     {available ? <Link href={"/product/" + item.url}>
 
                                         <div className="td-flex cursor-pointer">
-                                            <img src={getImage(item.feature_image, 'thumbnail', false, settings?.setting)} onError={imageOnError} />
+                                            <img src={getImage(item.feature_image, 'thumbnail', false, settings)} onError={imageOnError} />
                                         </div>
                                     </Link> : <div className="td-flex cursor-pointer">
-                                        <img src={getImage(item.feature_image, 'thumbnail', false, settings?.setting)} onError={imageOnError} />
+                                        <img src={getImage(item.feature_image, 'thumbnail', false, settings)} onError={imageOnError} />
                                     </div>}
                                 </td>
+
                                 <td>
                                     {available ? <Link href={"/product/" + item.url}>
                                         <div className="td-flex cursor-pointer table-product-title">

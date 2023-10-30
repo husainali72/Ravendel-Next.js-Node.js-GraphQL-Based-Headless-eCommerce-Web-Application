@@ -107,7 +107,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                     })
                     carts?.cartItem?.map((cart) => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
-                        console.log(cart, 'klfkdjgf', originalProduct, originalProduct?.quantity)
+
                         let cartProduct = {
                             _id: cart?.productId,
                             variantId: cart.variantId,
@@ -265,7 +265,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
     }
 
     const IncreaseQuantity = async (item) => {
-        console.log(AllCartItems, 'kjhjkhjkhj')
+
         // AllCartItems.filter(itemm => {
         //     if (itemm._id === item._id) {
         //         console.log('if', item?.productQuantity, itemm.quantity, item?.productQuantity > itemm.quantity + 1, itemm, item)
@@ -275,7 +275,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         //     }
 
         // })
-        console.log(item.variantId)
+
         setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
         setAllCartItems([...AllCartItems], AllCartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
         // console.log(cartItems, '======', AllCartItems, '========', item._id, AllCartItems.filter(itemm => itemm._id === item._id ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))

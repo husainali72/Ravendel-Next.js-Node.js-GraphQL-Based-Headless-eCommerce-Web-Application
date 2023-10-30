@@ -38,7 +38,7 @@ const BlogsTags = ({ blogTagByUrl }) => {
                                     <Card>
                                         <div className="card-img"><Card.Img
                                             variant="top"
-                                            src={getImage(blog.feature_image, 'original', false, getSetting?.setting)}
+                                            src={getImage(blog.feature_image, 'original', false, getSetting)}
                                             onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
                                         /></div>
                                         <Card.Body>
