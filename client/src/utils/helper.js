@@ -4,7 +4,7 @@ export const isEmpty = (value) =>
   (typeof value === "object" && Object.keys(value).length === 0) ||
   (typeof value === "string" && value.trim().length === 0);
 
-export const baseUrl = "http://localhost:8000";
+export const baseUrl = "https://demo1.ravendel.io";
 export const client_app_route_url = "/admin/";
 
 export var bucketName = "revendal-image";
