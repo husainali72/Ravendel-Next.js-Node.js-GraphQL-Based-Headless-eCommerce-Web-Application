@@ -49,7 +49,8 @@ app.use("/api/files", require("./routes/api/files"));
 app.use("/api/misc", require("./routes/api/misc"));
 app.use("/api/stripe", require("./routes/api/stripe"));
 app.use("/api/paypal", require("./routes/api/paypal"));
-app.use("/api/razorpay", require("./routes/api/razorpay"));
+// app.use("/api/razorpay", require("./routes/api/razorpay"));
+app.use("/api/razorpay", (req, res) => res.send({success: false, data: "Getting error on PM2"));
 app.use("/api/customers", require("./routes/api/customers"));
 app.use("/assets", express.static(__dirname + "/assets"));
 
