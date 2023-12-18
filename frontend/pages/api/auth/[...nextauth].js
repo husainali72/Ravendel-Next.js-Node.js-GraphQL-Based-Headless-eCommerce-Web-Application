@@ -2,6 +2,7 @@ import NextAuth from 'next-auth'
 import { loginAction, customerAction } from "../../../redux/actions/loginAction";
 import { useDispatch } from "react-redux";
 import CredentialsProvider from "next-auth/providers/credentials"
+import { BASE_URL } from '../../../config';
 
 const options = {
     session: {
@@ -18,7 +19,8 @@ const options = {
                 const { email, password } = credentials
                 // const url = "http://localhost:8000/api/customers/login";
                 
-                const url = "http://demo1.ravendel.io/api/customers/login";
+                // const url = "http://demo1.ravendel.io/api/customers/login";
+                const url = `https://${BASE_URL}/api/customers/login`;
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
