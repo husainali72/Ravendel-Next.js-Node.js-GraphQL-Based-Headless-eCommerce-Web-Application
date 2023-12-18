@@ -4,6 +4,7 @@ import { createUploadLink } from "apollo-upload-client";
 import { onError } from 'apollo-link-error'
 import { useSession } from "next-auth/react"
 import jwt from "next-auth/jwt"
+import { BASE_URL } from "./config";
 
 // const httpLink = new createUploadLink({ uri: `https://demo1.ravendel.io/graphql` });
 
