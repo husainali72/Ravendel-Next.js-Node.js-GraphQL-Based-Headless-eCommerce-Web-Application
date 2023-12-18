@@ -56,15 +56,19 @@ app.use("/assets", express.static(__dirname + "/assets"));
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "client", "build")));
-
+  app.use(express.static(path.join(__dirname, "frontend", "build")));
   app.get("/admin", (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
 
-  app.get("/admin/*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  // app.get("/admin/*", (req, res) => {
+  //   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  // });
+  app.get("/test", (req, res) => res.send(`Test Ravendel`));
+  app.get("/", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
   });
-  app.get("/", (req, res) => res.send(`Ravendel`));
+  // app.get("/", (req, res) => res.send(`Ravendel`));
 } else {
   app.get("/", (req, res) => res.send(`Ravendel is running on port: ${port}`));
 }
