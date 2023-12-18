@@ -7,7 +7,7 @@ import jwt from "next-auth/jwt"
 
 // const httpLink = new createUploadLink({ uri: `https://demo1.ravendel.io/graphql` });
 
-const httpLink = new createUploadLink({ uri: `http://${BASE_URL}/graphql` });
+const httpLink = new createUploadLink({ uri: `https://${BASE_URL}/graphql` });
 // const httpLink = new createUploadLink({ uri: `http://localhost:8000/graphql` });
 // const httpLink = new createUploadLink({ uri: `http://ravendel-node.onrender.com/graphql` });
 

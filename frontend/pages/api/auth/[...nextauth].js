@@ -20,7 +20,7 @@ const options = {
                 // const url = "http://localhost:8000/api/customers/login";
                 
                 // const url = "http://demo1.ravendel.io/api/customers/login";
-                const url = `http://${BASE_URL}/api/customers/login`;
+                const url = `https://${BASE_URL}/api/customers/login`;
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
