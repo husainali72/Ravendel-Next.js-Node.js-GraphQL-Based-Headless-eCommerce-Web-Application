@@ -53,31 +53,17 @@ app.use("/api/paypal", require("./routes/api/paypal"));
 app.use("/api/razorpay", (req, res) => res.send({success: false, data: "Getting error on PM2"}));
 app.use("/api/customers", require("./routes/api/customers"));
 
-//app.use(express.static("public"));
-
-// app.use("/assets", express.static(__dirname + "/assets"));
 // app.use('/uploads', express.static(__dirname + "/uploads"));
-
 app.use("/assets", express.static(__dirname + "/assets"));
 
-
 if (process.env.NODE_ENV === "production") {
-  console.log("Production");  
-// app.use(express.static(path.join(__dirname, "client", "build")));
   app.use(express.static(path.join(__dirname, "frontend", "out")));
-  // app.get("/admin", (req, res) => {
-  //   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-  // });
-
-  // app.get("/admin/*", (req, res) => {
-  //   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-  // });
-  // app.get("/test", (req, res) => res.send(`Test Ravendel`));
-  app.get("/*", (req, res) => {
-    console.log("Path /");
+  app.get("/", (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
   });
-  app.get("/", (req, res) => res.send(`Ravendel ${port}`));
+  app.get("/*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
+  });
 } else {
   app.get("/", (req, res) => res.send(`Ravendel is running on port: ${port}`));
 }
