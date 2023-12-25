@@ -4,16 +4,18 @@ import { HiOutlineArrowNarrowRight } from 'react-icons/hi';
 import { CgClose } from 'react-icons/cg';
 import { Row, Col } from 'react-bootstrap';
 import Link from 'next/link';
-import { getImage } from '../utills/helpers';
+import { getImage, imageOnError } from '../utills/helpers';
 import client from '../apollo-client';
 import { GET_CATEGORIES_QUERY, GET_RECENT_PRODUCTS_QUERY } from '../queries/home';
+import { useSelector } from 'react-redux';
+import { capitalize } from 'lodash';
 
 // import { newProducts, productCategories } from './dummyContent';
 
 // import { newProducts, productCategories } from '../dummyContent';
 
 const MegaMenu = ({ openMenu, setOpenMenu }) => {
-
+    const getSetting = useSelector(state => state.setting)
     const [categories, setCategories] = useState([])
     const [productCategories, setproductCategories] = useState([])
     const [newProducts, setNewProducts] = useState([])
@@ -90,7 +92,9 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
                                     i < 3 ?
 
                                         <div className='product'>
-                                            <img src={getImage(product?.feature_image)} alt="" onError={(e) => e.target.src = ''} />
+
+                                            <img src={getImage(product?.feature_image, '', '', getSetting)} alt="" onError={imageOnError} />
+
                                             <div className="details">
                                                 <h4>{product?.name}</h4>
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
@@ -120,9 +124,13 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
                                 <div className="product-categories-wrapper">
                                     {productCategories?.map((category) => (
                                         <div className="category">
-                                            <h4>{category?.name}</h4>
+                                            <div className='link'>
+                                                <Link href={`/subcategory/[category]?url=${category?.url}`} as={`/subcategory/${category?.url}`} >
+                                                    {capitalize(category?.name)}
+                                                </Link>
+                                            </div>
                                             {category?.subcategories?.map((sub_cat) => (
-                                                <Link href={`/subcategory/[category]?url=${sub_cat.url}`} as={`/subcategory/${sub_cat.url}`}>{sub_cat?.name}</Link>
+                                                <Link href={`/subcategory/[category]?url=${sub_cat.url}`} as={`/subcategory/${sub_cat.url}`} >{capitalize(sub_cat?.name)}</Link>
                                             ))}
                                         </div>
                                     ))}

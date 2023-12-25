@@ -5,13 +5,18 @@ const {
   isEmpty,
   MESSAGE_RESPONSE,
   _validate,
-  prodAvgRating
+  prodAvgRating,
+  UploadImageLocal
 } = require("./helpers");
 const bcrypt = require("bcryptjs");
-
+const Setting = require("../models/Setting");
 const Product = require("../models/Product");
 const Customer = require("../models/Customer");
 const mongoose = require("mongoose");
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
 
 const GET_BY_PAGINATIONS = async (
   limit,
@@ -141,8 +146,8 @@ const GET_BY_URL = async (modal, url, name) => {
 const GET_ALL_FUNC = async (modal, name, admin) => {
   try {
     let response;
-    if(modal === Product && !admin) response = await modal.find({status: "Publish"}).sort({date: -1}); 
-    else response = await modal.find({}).sort({date: -1});
+    if (modal === Product && !admin) response = await modal.find({ status: "Publish" }).sort({ date: -1 });
+    else response = await modal.find({}).sort({ date: -1 });
     return {
       message: MESSAGE_RESPONSE("RESULT_FOUND", name, true),
       data: response,
@@ -164,6 +169,7 @@ const DELETE_FUNC = async (token, delete_id, modal, name) => {
   }
   try {
     const response = await modal.findByIdAndRemove(delete_id);
+    const setting = await Setting.findOne({});
     if (response) {
       if (response.feature_image || response.image) {
         imageUnlink(response.feature_image || response.feature_image);
@@ -200,11 +206,11 @@ const CREATE_FUNC = async (
       };
     }
 
-    if(name === "Review"){
+    if (name === "Review") {
       const customer = await Customer.findById(mongoose.Types.ObjectId(data.customerId))
-      if(!customer) return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
+      if (!customer) return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
       const product = await Product.findById(mongoose.Types.ObjectId(data.productId))
-      if(!product) return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
+      if (!product) return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
     }
     //console.log('DATA', data) ;
     //console.log('ARGUMENT', args) ;
@@ -239,23 +245,21 @@ const CREATE_FUNC = async (
       if (name && name === "User") {
         image = data.image.file;
       }
+      const setting = await Setting.findOne({});
 
 
       // if (data.image) {
       //      image = data.image[0].file;   /// this image are in array let check it
       // }
-      imgObject = await imageUpload(image, path, name);
-      if (imgObject.success === false) {
-        return {
-          message:
-            imgObject.message ||
-            "Something went wrong with upload featured image",
-          success: false,
-        };
+      // imgObject = await imageUpload(image, path, name);
+      if (setting.imageStorage.status === 's3') {
+        imgObject = await imageUpload(image, path, name);
+      } else {
+        imgObject = await UploadImageLocal(image, path, name);
       }
 
       if ((name && name === "Product Category") || name && name === "User") {
-        data.image = imgObject.data || imgObject;
+        data.image = imgObject?.data || imgObject;
       } else {
         data.feature_image = imgObject.data || imgObject;
       }
@@ -270,20 +274,20 @@ const CREATE_FUNC = async (
       }
     }
     if (data.email && name !== "Review") {
-      const emailresponse = await modal.find({$and: [{productId: data.productId},{email: data.email}]});
+      const emailresponse = await modal.find({ $and: [{ productId: data.productId }, { email: data.email }] });
       //console.log("emailres===",emailresponse)
-      if (emailresponse.length>0) {
+      if (emailresponse.length > 0) {
         return MESSAGE_RESPONSE("DUPLICATE", "Email", false);
       }
     }
     //console.log('DATA--------',data);
     const response = new modal(data);
-    // console.log('RESPONSE--------', response)
+
     if (data.password) {
       response.password = await bcrypt.hash(data.password, 10);
     }
 
-    if(name !== "Page" && name !== "Product Attribute") response.updated = Date.now()
+    if (name !== "Page" && name !== "Product Attribute") response.updated = Date.now()
 
     await response.save();
     return MESSAGE_RESPONSE("AddSuccess", name, true);
@@ -334,9 +338,20 @@ const UPDATE_FUNC = async (
         }
 
 
-        imgObject = await imageUpload(image, path, name);
+        const setting = await Setting.findOne({});
 
-        if (imgObject.success === false) {
+
+        // if (data.image) {
+        //      image = data.image[0].file;   /// this image are in array let check it
+        // }
+        // imgObject = await imageUpload(image, path, name);
+        if (setting?.imageStorage?.status === 's3') {
+          imgObject = await imageUpload(image, path, name);
+        } else {
+          imgObject = await UploadImageLocal(image, path, name);
+        }
+
+        if (imgObject?.success === false) {
           return {
             message:
               imgObject.message ||
@@ -344,13 +359,14 @@ const UPDATE_FUNC = async (
             success: false,
           };
         } else {
-
-          if (name && name === "Product Category") {
-            imageUnlink(response.image);
-            data.image = imgObject.data || imgObject;
-          } else {
-            imageUnlink(response.feature_image);
-            data.feature_image = imgObject.data || imgObject;
+          if (imgObject?.success === true) {
+            if (name && name === "Product Category") {
+              imageUnlink(response.image);
+              data.image = imgObject.data || imgObject;
+            } else {
+              imageUnlink(response.feature_image);
+              data.feature_image = imgObject.data || imgObject;
+            }
           }
           // console.log("response 2", response);
         }
@@ -369,12 +385,12 @@ const UPDATE_FUNC = async (
           success: false,
         }
       }
-      if(name !== "Page" && name !== "Product Attribute") response.updated = Date.now()
+      if (name !== "Page" && name !== "Product Attribute") response.updated = Date.now()
 
-      response = await modal.findByIdAndUpdate({_id: response._id}, {...response})
+      response = await modal.findByIdAndUpdate({ _id: response._id }, { ...response })
       await response.save();
       // update average rating of product related to reviews
-      if(name === "Review"){
+      if (name === "Review") {
         await prodAvgRating(data.productId, modal, modal2)
       }
       return MESSAGE_RESPONSE("UpdateSuccess", name, true);
@@ -414,10 +430,10 @@ UPDATE_PASSWORD_FUNC = async (
       //  console.log("args", args);
       if (data.newPassword) {
         const isMatch = await bcrypt.compare(data.oldPassword, response.password)
-        if(!isMatch){
+        if (!isMatch) {
           return MESSAGE_RESPONSE("InvalidOldPassword", name, false);
         }
-        if(data.newPassword === data.oldPassword) {
+        if (data.newPassword === data.oldPassword) {
           return MESSAGE_RESPONSE("oldNewPasswordNotMatch", name, false);
         }
       }

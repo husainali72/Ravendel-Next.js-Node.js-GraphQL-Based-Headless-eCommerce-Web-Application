@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Slider from "react-slick";
 import { GlassMagnifier } from "react-image-magnifiers";
-import { currencySetter, getImage, getPrice, isDiscount, isVariantDiscount, mutation } from "../../utills/helpers";
+import { currencySetter, getImage, getPrice, imageOnError, isDiscount, isVariantDiscount, mutation } from "../../utills/helpers";
 import Carousel from 'react-bootstrap/Carousel'
 import StarRating from "../../components/breadcrumb/rating";
 import { addToCart } from "../../redux/actions/cartAction";
@@ -19,6 +19,7 @@ import { query } from "../../utills/helpers";
 import CheckZipcode from "../account/component/CheckZipcode";
 import { capitalize } from "lodash";
 var placeholder = "https://dummyimage.com/300";
+import NoImagePlaceHolder from '../../components/images/NoImagePlaceHolder.png';
 const GalleryImagesComponents = (props) => {
     var id = ""
     var token = ""
@@ -26,6 +27,8 @@ const GalleryImagesComponents = (props) => {
     const session = useSession()
     const router = useRouter();
     const { singleproducts, stockClass, setStockClass, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal } = props;
+    const getSetting = useSelector(state => state.setting)
+
     const [available, setavailable] = useState(false)
     const [Lable, setLable] = useState("In Stock")
     const [variantSelect, setVariantSelect] = useState()
@@ -36,6 +39,7 @@ const GalleryImagesComponents = (props) => {
     const [comboData, setComboData] = useState([])
     const [priceRange, setPriceRange] = useState([]);
     const [sellpriceRange, setSellpriceRange] = useState([]);
+
     useEffect(() => {
         if (singleproducts && !variantSelect ? (singleproducts.quantity <= lowStockThreshold) : (comboData && comboData.length > 1 && variantSelect ? null : (comboData[0]?.quantity <= lowStockThreshold))) {
             setStockClass("low-stock")
@@ -84,10 +88,10 @@ const GalleryImagesComponents = (props) => {
             return (
                 <a>
                     <img
-                        src={getImage(props.galleryImages[i], 'thumbnail')}
+                        src={getImage(props.galleryImages[i], 'thumbnail', false, getSetting)}
                         alt="Thumbnail"
                         className="thumbnail-image"
-                        onError={(e) => e.type === 'error' ? e.target.src = placeholder : null}
+                        onError={imageOnError}
                     />
                 </a>
             );
@@ -330,7 +334,7 @@ const GalleryImagesComponents = (props) => {
         setSelectedAttrs([...data])
         prepareComb(data)
     };
-
+    console.log(imgError, 'dhgjfimgError')
     return (
         <>
             <div className="single-product row mb-50" style={{ display: 'flex' }}>
@@ -339,36 +343,56 @@ const GalleryImagesComponents = (props) => {
                         <div className="singleroduct-gallery-slider">
                             {props.galleryImages && props.galleryImages?.length ? (
                                 <Slider {...settings}>
-                                    {props.galleryImages.map((gallery, index) => (
-                                        <div key={index}>
-                                            <GlassMagnifier
-                                                imageSrc={!variantSelect ?
-                                                    getImage(gallery, 'original')
+
+                                    {props.galleryImages.map((gallery, index) => {
+                                        let error = false
+                                        return <div key={index}>
+                                            {console.log(getImage(gallery, 'original', false, getSetting), '=====================jhj')}
+                                            <img
+                                                style={{ display: 'none' }}
+                                                src={!variantSelect ?
+                                                    getImage(gallery, 'original', false, getSetting)
                                                     :
                                                     (comboData?.length && variantSelect ?
                                                         (comboData?.length > 1 ?
-                                                            getImage(gallery, 'original')
+                                                            getImage(gallery, 'original', false, getSetting)
                                                             :
                                                             (comboData[0].image.length ?
-                                                                getImage(comboData[0].image, 'original')
+                                                                getImage(comboData[0].image, 'original', false, getSetting)
                                                                 :
-                                                                getImage(gallery, 'original')))
+                                                                getImage(gallery, 'original', false, getSetting)))
                                                         :
-                                                        getImage(gallery, 'original'))}
+                                                        getImage(gallery, 'original', false, getSetting))} onError={(e) => e.type === 'error' ? setImgError(true) : setImgError(false)} />
+                                            <GlassMagnifier
+                                                imageSrc={imgError ? NoImagePlaceHolder?.src : (!variantSelect ?
+                                                    getImage(gallery, 'original', false, getSetting)
+                                                    :
+                                                    (comboData?.length && variantSelect ?
+                                                        (comboData?.length > 1 ?
+                                                            getImage(gallery, 'original', false, getSetting)
+                                                            :
+                                                            (comboData[0].image.length ?
+                                                                getImage(comboData[0].image, 'original', false, getSetting)
+                                                                :
+                                                                getImage(gallery, 'original', false, getSetting)))
+                                                        :
+                                                        getImage(gallery, 'original', false, getSetting)))}
                                                 // imageSrc="https://dummyimage.com/300"
                                                 imageAlt="Example"
-                                                largeImageSrc={getImage(gallery, 'large')} // Optional
+
                                                 className="gallery-image"
                                                 magnifierSize={window.innerWidth < 1025 ? "60%" : "30%"}
                                                 magnifierBorderSize={5}
                                                 magnifierBorderColor="rgba(0, 0, 0, .5)"
-                                                onError={(e) => e.type === 'error' ? e.target.src = placeholder : null}
+
+
                                             />
+
                                         </div>
-                                    ))}
+                                    })}
                                 </Slider>)
                                 : (
-                                    <img src={getImage('', 'large')}></img>
+                                    <img src={getImage('', 'large', false, getSetting)} onError={imageOnError}></img>
                                 )}
                         </div>
                     </>
@@ -430,6 +454,7 @@ const GalleryImagesComponents = (props) => {
                         <div className="short-desc mb-30">
                             <p> {singleproducts?.short_description}</p>
                         </div>
+
                         {Lable !== "Out Of Stock" &&
                             <button type="button"
                                 className="btn btn-success button button-add-to-cart"
@@ -440,6 +465,7 @@ const GalleryImagesComponents = (props) => {
                                 Add to Cart
                             </button>
                         }
+
                         <div className="varaint-select">
                             {singleproducts?.attribute_master?.map((attr) => {
                                 return (<>

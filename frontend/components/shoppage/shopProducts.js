@@ -66,8 +66,9 @@ const ShopProducts = ({ shopcategory, name, brandProduct, brands, category, blog
                         <ul className="categories-shop">
                             {category ? <ul className="categories-shop">
                                 {getCategoryHeadings(allCategories?.find(cat => cat.id === selectedCategory?.id)).reverse().map((headingName, index) =>
-                                    <Link href={`/subcategory/[categorys]?url=${headingName?.url}`} as={`/subcategory/${headingName?.url}`} key={index}><li onClick={() => router.back()} className='fw-semibold text-black cursor-pointer mb-1'>
+                                    <Link href={`/subcategory/[categorys]?url=${headingName?.url}`} as={`/subcategory/${headingName?.url}`} key={index}><li className='fw-semibold text-black cursor-pointer mb-1'>
                                         <FiChevronLeft className='mb-1 back-category' />{headingName?.name}</li></Link>)}
+
                                 {!selectedCategory?.parentId ? <li className='fw-semibold mb-1 text-black current-parent cursor-none'>{capitalize(selectedCategory?.name)}</li> :
                                     <li className='mb-1 current-parent ps-3 text-black cursor-none fw-normal'>{capitalize(selectedCategory?.name)}</li>}
                                 {allCategories.filter(cat => cat.parentId === selectedCategory?.id).map((category, i) => (

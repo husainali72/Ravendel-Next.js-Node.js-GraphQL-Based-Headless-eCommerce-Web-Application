@@ -25,12 +25,13 @@ import { Searching } from "./searching";
 import { badgeColor } from "../components/BadgeColor";
 import viewStyles from "../viewStyles";
 import { convertDateToStringFormat } from "../utils/convertDate";
-import { client_app_route_url } from "../../utils/helper";
+import { client_app_route_url, getBaseUrl } from "../../utils/helper";
 import { ThemeProvider, } from "@mui/material/styles";
 import NodataImage from "../../assets/images/NodataImage.jpg";
 import { stableSort, getComparator } from "../components/sorting";
 import { Alert, Loading } from "../components";
 import theme from "../../theme/index";
+import { useSelector } from "react-redux";
 const Tablecomponent = ({
     searchdata,
     classname,
@@ -46,7 +47,7 @@ const Tablecomponent = ({
     addDialogBox,
     AddZipCodeDialogBox
 }) => {
-
+    const setting = useSelector((state) => state.settings)
     const [order, setOrder] = useState('desc');
     const classes = viewStyles();
     const [orderBy, setOrderBy] = useState('date');
@@ -127,7 +128,7 @@ const Tablecomponent = ({
                                                             return <TableCell>
                                                                 <Avatar
                                                                     alt={data.name}
-                                                                    src={data.image}
+                                                                    src={`${getBaseUrl(setting)}${data.image}`}
                                                                     sx={{ '& .MuiAvatar-img': { objectFit: 'contain' } }}
                                                                 />
                                                             </TableCell>

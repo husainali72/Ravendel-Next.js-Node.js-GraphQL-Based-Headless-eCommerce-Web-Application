@@ -1,5 +1,5 @@
 const dotenv = require('dotenv');
-dotenv.config({path:'./.env'});
+dotenv.config({ path: './.env' });
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
@@ -52,7 +52,14 @@ app.use("/api/paypal", require("./routes/api/paypal"));
 // app.use("/api/razorpay", require("./routes/api/razorpay"));
 app.use("/api/razorpay", (req, res) => res.send({success: false, data: "Getting error on PM2"}));
 app.use("/api/customers", require("./routes/api/customers"));
+
+//app.use(express.static("public"));
+
+// app.use("/assets", express.static(__dirname + "/assets"));
+// app.use('/uploads', express.static(__dirname + "/uploads"));
+
 app.use("/assets", express.static(__dirname + "/assets"));
+
 
 if (process.env.NODE_ENV === "production") {
   console.log("Production");  

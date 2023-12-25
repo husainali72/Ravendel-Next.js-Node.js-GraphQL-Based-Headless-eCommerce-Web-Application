@@ -19,18 +19,27 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
   }, []);
 
   useEffect(() => {
-    if (products.categories.length && selectedCategories.length) {
+    if (products.categories.length) {
       var selectedCat = JSON.parse(JSON.stringify(products.categories));
-      if (selectedCat && selectedCat.length) {
+      if (selectedCategories && selectedCategories.length > 0) {
+        if (selectedCat && selectedCat.length) {
+          selectedCat.map((cat) => {
+            if (~selectedCategories.indexOf(cat.id)) {
+              cat.checked = true;
+            } else {
+              cat.checked = false;
+            }
+          });
+
+        }
+      } else {
+        // Handle the case where selectedCategories is empty
+
         selectedCat.map((cat) => {
-          if (~selectedCategories.indexOf(cat.id)) {
-            cat.checked = true;
-          } else {
-            cat.checked = false;
-          }
+          cat.checked = false;
         });
-        setCatList(unflatten(selectedCat));
       }
+      setCatList(unflatten(selectedCat));
     }
   }, [products.categories, selectedCategories]);
 

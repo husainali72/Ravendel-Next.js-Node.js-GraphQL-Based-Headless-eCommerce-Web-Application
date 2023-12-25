@@ -25,7 +25,7 @@ const {
   CREATE_FUNC,
   UPDATE_FUNC,
 } = require("../config/api_functions");
-const {checkAwsFolder} = require("../config/aws");
+const { checkAwsFolder } = require("../config/aws");
 var mongoose = require("mongoose");
 
 /* =============================WILL FIX LATER============================= */
@@ -140,6 +140,7 @@ const getTree = async (id) => {
 module.exports = {
   Query: {
     productCategories: async (root, args) => {
+      // console.log(await GET_ALL_FUNC(ProductCat, "Product Cats"), 'get all')
       return await GET_ALL_FUNC(ProductCat, "Product Cats");
     },
     productCategories_pagination: async (
@@ -268,21 +269,23 @@ module.exports = {
     },
     filteredProducts: async (root, args) => {
       try {
-        const category = args.filter.category 
-        const brand = args.filter.brand 
-        const most_reviewed = args.filter.most_reviewed 
-        const search = args.filter.search 
-        const product_type = args.filter.product_type 
-        const rating = args.filter.rating 
-        const price = args.filter.price 
+        const category = args.filter.category
+        const brand = args.filter.brand
+        const most_reviewed = args.filter.most_reviewed
+        const search = args.filter.search
+        const product_type = args.filter.product_type
+        const rating = args.filter.rating
+        const price = args.filter.price
 
-        const pipeline=[
-          {$match: {
-            $and: [
-              {status: "Publish"},
-              {name: {$regex: search, $options: "i"}},
-            ]
-          }},
+        const pipeline = [
+          {
+            $match: {
+              $and: [
+                { status: "Publish" },
+                { name: { $regex: search, $options: "i" } },
+              ]
+            }
+          },
         ]
         // category filter
         if (category) pipeline[0].$match.$and.push({ categoryId: { $in: [`${category}`] } })
@@ -361,7 +364,7 @@ module.exports = {
     },
     brand: async (root, args) => {
       try {
-        if(!root.brand) return ""
+        if (!root.brand) return ""
         const brand = await Brand.findById(root.brand);
         return brand;
       } catch (error) {
@@ -520,7 +523,7 @@ module.exports = {
     addProductCategory: async (root, args, { id }) => {
 
       await checkAwsFolder('productcategory');
-      let path = "/assets/images/product/category/";
+      let path = "assets/images/product/category";
       let url = "";
       if (args.url || args.title) {
         url = await updateUrl(args.url || args.name, "ProductCat");
@@ -548,7 +551,7 @@ module.exports = {
     },
     updateProductCategory: async (root, args, { id }) => {
       await checkAwsFolder('productcategory');
-      let path = "/assets/images/product/category/";
+      let path = "assets/images/product/category";
       let url = "";
       if (args.url || args.title) {
         url = await updateUrl(args.url || args.name, "ProductCat", args.id);
@@ -584,12 +587,15 @@ module.exports = {
       }
       try {
         const cat = await ProductCat.findByIdAndRemove(args.id);
+
         if (cat) {
           // if (cat.image) {
           //   imageUnlink(cat.image);
           // }
+
           if (cat.image) {
-            imageUnlink(cat.feature_image);
+            imageUnlink(cat.image);
+
           }
           let _id = args.id;
           const product = await Product.updateMany(
@@ -647,7 +653,7 @@ module.exports = {
             // console.log('fimage',args.feature_image);
             imgObject = await imageUpload(
               args.feature_image[0].file,
-              "/assets/images/product/feature/", "productfeature"
+              "assets/images/product/feature/", "productfeature"
             );
 
             if (imgObject.success === false) {
@@ -663,7 +669,7 @@ module.exports = {
             for (let i in args.gallery_image) {
               galleryObject = await imageUpload(
                 args.gallery_image[i].file,
-                "/assets/images/product/gallery/", "productgallery"
+                "assets/images/product/gallery/", "productgallery"
               );
               if (galleryObject.success) {
                 imgArray.push(galleryObject.data);
@@ -718,7 +724,7 @@ module.exports = {
               if (combination.upload_image && combination.upload_image.length) {
                 imgObject = await imageUpload(
                   combination.upload_image[0].file,
-                  "/assets/images/product/variant/", "productvariant"
+                  "assets/images/product/variant/", "productvariant"
                 );
                 combination.image = imgObject.data || imgObject;
                 delete combination.upload_image
@@ -801,16 +807,16 @@ module.exports = {
           if (args.update_feature_image) {
             imgObject = await imageUpload(
               args.update_feature_image[0].file,
-              "/assets/images/product/feature/", "productfeature"
+              "assets/images/product/feature/", "productfeature"
             );
 
             if (imgObject.success === false) {
               throw putError(imgObject.message);
             }
 
-            // if (product.feature_image) {
-            //   imageUnlink(product.feature_image);
-            // }
+            if (product.feature_image && imgObject.success === true) {
+              imageUnlink(product.feature_image);
+            }
 
             product.feature_image = imgObject.data;
           }
@@ -822,7 +828,7 @@ module.exports = {
             for (let i in args.update_gallery_image) {
               galleryObject = await imageUpload(
                 args.update_gallery_image[i].file,
-                "/assets/images/product/gallery/", "productgallery"
+                "assets/images/product/gallery/", "productgallery"
               );
 
               if (galleryObject.success) {
@@ -848,13 +854,13 @@ module.exports = {
             //     imageUnlink(imgObject);
             //     gallery_images.splice(i, 1)
             //   }
-              // if(gallery_images[i] && ~args.removed_image.indexOf(String(gallery_images[i])))
-              // if (gallery_images[i] === args.removed_image.gallery_images[i]){
-              //   let imgObject = gallery_images[i]
-              //   imageUnlink(imgObject);
-              //   gallery_images.splice(i, 1)
-              //   // delete gallery_images[i];
-              // }
+            // if(gallery_images[i] && ~args.removed_image.indexOf(String(gallery_images[i])))
+            // if (gallery_images[i] === args.removed_image.gallery_images[i]){
+            //   let imgObject = gallery_images[i]
+            //   imageUnlink(imgObject);
+            //   gallery_images.splice(i, 1)
+            //   // delete gallery_images[i];
+            // }
             // }
           }
 
@@ -892,8 +898,13 @@ module.exports = {
               ) {
                 imgObject = await imageUpload(
                   combination.upload_image[0].file,
-                  "/assets/images/product/variant/", "productvariant"
+                  "assets/images/product/variant/", "productvariant"
                 );
+
+                if (imgObject?.success && combination?.previous_img) {
+
+                  imageUnlink(combination?.previous_img)
+                }
                 combination.image = imgObject.data || imgObject;
                 delete combination.upload_image;
               }
@@ -913,11 +924,13 @@ module.exports = {
               },
             ];
           }
+
           await ProductAttributeVariation.deleteMany({
             productId: args.id,
           });
 
           let result = await ProductAttributeVariation.insertMany(combinations);
+
           return MESSAGE_RESPONSE("UpdateSuccess", "Product", true);
         } else {
           return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
@@ -953,7 +966,7 @@ module.exports = {
 
           const productVariants = product.variant
           await ProductAttribute.deleteMany({
-            _id: {$in: [productVariants] }
+            _id: { $in: [productVariants] }
           })
 
           const variations = await ProductAttributeVariation.find({

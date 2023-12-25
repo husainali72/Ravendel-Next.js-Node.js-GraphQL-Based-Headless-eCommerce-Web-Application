@@ -2,7 +2,10 @@ import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
 import { getImage } from '../../utills/helpers';
 import NoImagePlaceHolder from '../../components/images/NoImagePlaceHolder.png';
+import { useSelector } from 'react-redux';
 const FeatureBrand = ({ brands }) => {
+    const getSetting = useSelector(state => state.setting)
+
     return (
         <section className="product-cart-section">
             <Container>
@@ -13,7 +16,7 @@ const FeatureBrand = ({ brands }) => {
                             <div className="category-card-image brand-card-image">
                                 <Link href={`/brands/[brand]?url=${item.url}`} as={`/brands/${item.url}`}>
                                     <img
-                                        src={getImage(item?.brand_logo, 'original')}
+                                        src={getImage(item?.brand_logo, 'original', false, getSetting)}
                                         className="category-card-img"
                                         onError={(e) => e.type === 'error' ? e.target.src = NoImagePlaceHolder.src : null}
                                     // alt={item?.name}

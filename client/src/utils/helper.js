@@ -1,3 +1,4 @@
+import NoImagePlaceHolder from "../assets/images/NoImagePlaceHolder.png"
 export const isEmpty = (value) =>
   value === undefined ||
   value === null ||
@@ -17,6 +18,9 @@ if (process.env.NODE_ENV === "production") {
 
 /*-------------------------------------------------------------------------------------------------------------------------------------- */
 //simple category array to Tree array
+export const imageOnError = (event) => {
+  event.target.src = NoImagePlaceHolder
+}
 export const unflatten = (arr) => {
 
   var tree = [],
@@ -179,3 +183,19 @@ export const mutationResponseHandler = (response, key) => {
 
   return [error, success, message];
 };
+
+export const getBaseUrl = (setting) => {
+  console.log(setting?.settings?.imageStorage?.status, setting)
+  if (setting?.settings?.imageStorage?.status === 's3') {
+
+    return bucketBaseURL
+  }
+  else if (setting?.settings?.imageStorage?.status === 'localStorage') {
+
+    return baseUrl
+  }
+  else {
+
+    return bucketBaseURL
+  };
+}

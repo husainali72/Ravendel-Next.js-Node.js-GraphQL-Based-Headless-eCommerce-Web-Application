@@ -22,6 +22,7 @@ import {
   isEmpty,
   client_app_route_url,
   bucketBaseURL,
+  getBaseUrl,
 } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import { ThemeProvider } from "@mui/material/styles";
@@ -63,13 +64,14 @@ const EditBlogComponenet = ({ params }) => {
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
   const blogState = useSelector((state) => state.blogs);
+  const setting = useSelector((state) => state.settings);
   const [featureImage, setfeatureImage] = useState(null);
   const [blog, setBlog] = useState(defaultObj);
   const [tags, setTags] = useState({ tags: [], defaultTags: [] });
   const [clearTags, setclearTags] = useState([]);
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
-
+  const baseURl = getBaseUrl(setting)
   useEffect(() => {
     if (Id) {
       dispatch(blogAction(Id));
@@ -87,7 +89,7 @@ const EditBlogComponenet = ({ params }) => {
           blogState.blog.feature_image
 
         ) {
-          setfeatureImage(bucketBaseURL + blogState.blog.feature_image);
+          setfeatureImage(baseURl + blogState.blog.feature_image);
         }
         dispatch(blogtagsAction());
       }
@@ -95,7 +97,7 @@ const EditBlogComponenet = ({ params }) => {
       setBlog(defaultObj)
       setfeatureImage(null)
     }
-  }, [get(blogState, "blog"), Id]);
+  }, [get(blogState, "blog"), Id, baseURl]);
 
   useEffect(() => {
     if (!Id) {

@@ -4,8 +4,15 @@ const moment = require("moment");
 const nodemailer = require("nodemailer");
 const APP_KEYS = require("../config/keys");
 const { readFile } = require("fs").promises;
-
+const Setting = require("../models/Setting");
 const { uploadFile, FileDelete } = require("../config/aws");
+const multer = require('multer');
+const path = require('path');
+
+
+
+
+
 
 const isEmpty = (value) =>
   value === undefined ||
@@ -115,6 +122,50 @@ const updateUrl = async (url, table, updateId) => {
 };
 
 module.exports.updateUrl = updateUrl;
+/*----------------------------------------------store image in local storage---------------------------------------------------------*/
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'uploads/');
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+//     cb(null, uniqueSuffix + path.extname(file.originalname));
+//   },
+// });
+// const upload = multer({ storage: storage });
+// const UploadImageLocal = async (image, path, name) => {
+//   console.log('name', name)
+//   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+//   const { createReadStream, filename } = await image
+//   const stream = createReadStream();
+//   const imagePath = `${path}/${uniqueSuffix + filename}`;
+//   const fileStream = fs.createWriteStream(imagePath);
+//   stream.pipe(fileStream);
+//   return imagePath
+// };
+const UploadImageLocal = async (image, path, name) => {
+  try {
+
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const { createReadStream, filename } = await image;
+    const stream = createReadStream();
+    const imagePath = `${path}/${uniqueSuffix + filename}`;
+    const fileStream = fs.createWriteStream(imagePath);
+
+    await new Promise((resolve, reject) => {
+      stream.pipe(fileStream);
+      fileStream.on('finish', resolve);
+      fileStream.on('error', reject);
+    });
+
+    return { data: imagePath, success: true, message: 'Image uploaded successfully' }; // Image uploaded successfully
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    return { data: '', success: false, message: 'Error uploading image' };; // Error occurred during upload
+  }
+};
+
+module.exports.UploadImageLocal = UploadImageLocal;
 
 /*-------------------------------------------------------------------------------------------------------*/
 
@@ -179,198 +230,219 @@ const jimpResize = (path, i, uploadPath, filename) => {
 };
 
 const imageUpload = async (upload, uploadPath, nametype) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      let { filename, mimetype, encoding, createReadStream } = await upload;
+  const setting = await Setting.findOne({});
+  if (setting?.imageStorage?.status === 's3') {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let { filename, mimetype, encoding, createReadStream } = await upload;
 
-      const extensions = ["gif", "jpeg", "jpg", "png", "webp", "svg"];
+        const extensions = ["gif", "jpeg", "jpg", "png", "webp", "svg"];
 
-      let ext = filename.split(".");
-      ext = ext.pop();
-      ext = ext.toLowerCase();
-      if (!~extensions.indexOf(ext)) {
-        return resolve({
-          success: false,
-          message: "This extension not allowed",
-        });
-      }
-
-      // console.log(upload);
-      let stream = createReadStream();
-
-      filename = slugify(filename, { lower: true, replacement: "-" });
-      filename = Date.now() + "-" + filename;
-
-      // let original = uploadPath + "original/" + filename;
-      // let large = uploadPath + "large/" + filename;
-      // let medium = uploadPath + "medium/" + filename;
-      // let thumbnail = uploadPath + "thumbnail/" + filename;
-      let path = "." + uploadPath + filename;
-
-      // if (!fs.existsSync("." + uploadPath + "original/")) {
-      if (!fs.existsSync("." + uploadPath)) {
-        return resolve({
-          success: false,
-          message: "Path does not exist",
-        });
-      }
-
-      stream
-        .on("error", (error) => {
-          console.log(JSON.stringify(error));
-
-          fs.unlink(path, function (err) {
-            if (err) console.log(err);
-          });
+        let ext = filename.split(".");
+        ext = ext.pop();
+        ext = ext.toLowerCase();
+        if (!~extensions.indexOf(ext)) {
           return resolve({
             success: false,
-            message: "This image can't be upload 1",
+            message: "This extension not allowed",
           });
-        })
+        }
 
-        .pipe(fs.createWriteStream(path))
+        // console.log(upload);
+        let stream = createReadStream();
 
-        .on("finish", async () => {
-          //console.log('nametype',nametype);
-          // let awsoriginalpath, awslargepath, awsmediumpath, awsthumbnailpath;
-          let awsFilePath;
-          if (nametype == "Blog") {
-            // awsoriginalpath = 'blog/feature/original';
-            // awslargepath = 'blog/feature/large';
-            // awsmediumpath = 'blog/feature/medium';
-            // awsthumbnailpath = 'blog/feature/thumbnail';
-            awsFilePath = "blog";
-          }
+        filename = slugify(filename, { lower: true, replacement: "-" });
+        filename = Date.now() + "-" + filename;
 
-          if (nametype == "Setting") {
-            // awsoriginalpath = 'setting/original';
-            // awslargepath = 'setting/large';
-            // awsmediumpath = 'setting/medium';
-            // awsthumbnailpath = 'setting/thumbnail';
-            awsFilePath = "setting";
-          }
+        // let original = uploadPath + "original/" + filename;
+        // let large = uploadPath + "large/" + filename;
+        // let medium = uploadPath + "medium/" + filename;
+        // let thumbnail = uploadPath + "thumbnail/" + filename;
+        let path = "." + uploadPath + filename;
 
-          if (nametype == "Product Category") {
-            // awsoriginalpath = 'product/category/original';
-            // awslargepath = 'product/category/large';
-            // awsmediumpath = 'product/category/medium';
-            // awsthumbnailpath = 'product/category/thumbnail';
-            awsFilePath = "product/category";
-          }
-
-          if (nametype == "Brand") {
-            // awsoriginalpath = 'brand/original';
-            // awslargepath = 'brand/large';
-            // awsmediumpath = 'brand/medium';
-            // awsthumbnailpath = 'brand/thumbnail';
-            awsFilePath = "brand";
-          }
-
-          if (nametype == "User") {
-            // awsoriginalpath = 'user/original';
-            // awslargepath = 'user/large';
-            // awsmediumpath = 'user/medium';
-            // awsthumbnailpath = 'user/thumbnail';
-            awsFilePath = "user";
-          }
-
-          if (nametype == "productgallery") {
-            // awsoriginalpath = 'product/gallery/original';
-            // awslargepath = 'product/gallery/large';
-            // awsmediumpath = 'product/gallery/medium';
-            // awsthumbnailpath = 'product/gallery/thumbnail';
-            awsFilePath = "product/gallery";
-          }
-
-          if (nametype == "productfeature") {
-            // awsoriginalpath = 'product/feature/original';
-            // awslargepath = 'product/feature/large';
-            // awsmediumpath = 'product/feature/medium';
-            // awsthumbnailpath = 'product/feature/thumbnail';
-            awsFilePath = "product/feature";
-          }
-
-          if (nametype == "productvariant") {
-            // awsoriginalpath = 'product/varient/original';
-            // awslargepath = 'product/varient/large';
-            // awsmediumpath = 'product/varient/medium';
-            // awsthumbnailpath = 'product/varient/thumbnail';
-            awsFilePath = "product/variant";
-          }
-
-          // const awsoriginal = await uploadFile(original, filename, awsoriginalpath);
-          const awsFile = await uploadFile(path, filename, awsFilePath);
-
-          for (let i in sizes) {
-            if (ext === "svg") {
-              fs.copyFileSync(path, `.${uploadPath + i}/${filename}`);
-              continue;
-            }
-
-            let resized = await sharpResize(path, i, uploadPath, filename);
-
-            if (resized) {
-              continue;
-            } else {
-              //fs.unlinkSync(path);
-              fs.unlink(path, function (err) {
-                if (err) console.log(err);
-              });
-              return resolve({
-                success: false,
-                message: "This image can't be upload 2",
-              });
-            }
-          }
-
-          // const awslarge = await uploadFile(large, filename, awslargepath);
-          // const awsmedium = await uploadFile(medium, filename, awsmediumpath);
-          // const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
-          // delete file if uploaded on AWS and exists in local
-          // if(!awsoriginal || awsoriginal) {
-          //   imgType.map(type => {
-          //     let filePath = `.${uploadPath}${type}/${filename}`;
-          //     if(fs.existsSync(filePath)){
-          //       fs.unlinkSync(filePath);
-          //     }
-          //   })
-          // }
-
-          if (!awsFile || awsFile) {
-            let filePath = `.${uploadPath}${filename}`;
-            if (fs.existsSync(filePath)) {
-              fs.unlinkSync(filePath);
-            }
-          }
+        // if (!fs.existsSync("." + uploadPath + "original/")) {
+        if (!fs.existsSync("." + uploadPath)) {
           return resolve({
-            success: true,
-            // data: {
-            //   original: awsoriginal,
-            //   large: awslarge,
-            //   medium: awsmedium,
-            //   thumbnail: awsthumbnail,
-            // },
-            data: awsFile,
+            success: false,
+            message: "Path does not exist",
           });
+        }
+
+        stream
+          .on("error", (error) => {
+            console.log(JSON.stringify(error));
+
+            fs.unlink(path, function (err) {
+              if (err) console.log(err);
+            });
+            return resolve({
+              success: false,
+              message: "This image can't be upload 1",
+            });
+          })
+
+          .pipe(fs.createWriteStream(path))
+
+          .on("finish", async () => {
+            //console.log('nametype',nametype);
+            // let awsoriginalpath, awslargepath, awsmediumpath, awsthumbnailpath;
+            let awsFilePath;
+            if (nametype == "Blog") {
+              // awsoriginalpath = 'blog/feature/original';
+              // awslargepath = 'blog/feature/large';
+              // awsmediumpath = 'blog/feature/medium';
+              // awsthumbnailpath = 'blog/feature/thumbnail';
+              awsFilePath = "blog";
+            }
+
+            if (nametype == "Setting") {
+              // awsoriginalpath = 'setting/original';
+              // awslargepath = 'setting/large';
+              // awsmediumpath = 'setting/medium';
+              // awsthumbnailpath = 'setting/thumbnail';
+              awsFilePath = "setting";
+            }
+
+            if (nametype == "Product Category") {
+              // awsoriginalpath = 'product/category/original';
+              // awslargepath = 'product/category/large';
+              // awsmediumpath = 'product/category/medium';
+              // awsthumbnailpath = 'product/category/thumbnail';
+              awsFilePath = "product/category";
+            }
+
+            if (nametype == "Brand") {
+              // awsoriginalpath = 'brand/original';
+              // awslargepath = 'brand/large';
+              // awsmediumpath = 'brand/medium';
+              // awsthumbnailpath = 'brand/thumbnail';
+              awsFilePath = "brand";
+            }
+
+            if (nametype == "User") {
+              // awsoriginalpath = 'user/original';
+              // awslargepath = 'user/large';
+              // awsmediumpath = 'user/medium';
+              // awsthumbnailpath = 'user/thumbnail';
+              awsFilePath = "user";
+            }
+
+            if (nametype == "productgallery") {
+              // awsoriginalpath = 'product/gallery/original';
+              // awslargepath = 'product/gallery/large';
+              // awsmediumpath = 'product/gallery/medium';
+              // awsthumbnailpath = 'product/gallery/thumbnail';
+              awsFilePath = "product/gallery";
+            }
+
+            if (nametype == "productfeature") {
+              // awsoriginalpath = 'product/feature/original';
+              // awslargepath = 'product/feature/large';
+              // awsmediumpath = 'product/feature/medium';
+              // awsthumbnailpath = 'product/feature/thumbnail';
+              awsFilePath = "product/feature";
+            }
+
+            if (nametype == "productvariant") {
+              // awsoriginalpath = 'product/varient/original';
+              // awslargepath = 'product/varient/large';
+              // awsmediumpath = 'product/varient/medium';
+              // awsthumbnailpath = 'product/varient/thumbnail';
+              awsFilePath = "product/variant";
+            }
+
+            // const awsoriginal = await uploadFile(original, filename, awsoriginalpath);
+            const awsFile = await uploadFile(path, filename, awsFilePath);
+
+            for (let i in sizes) {
+              if (ext === "svg") {
+                fs.copyFileSync(path, `.${uploadPath + i}/${filename}`);
+                continue;
+              }
+
+              let resized = await sharpResize(path, i, uploadPath, filename);
+
+              if (resized) {
+                continue;
+              } else {
+                //fs.unlinkSync(path);
+                fs.unlink(path, function (err) {
+                  if (err) console.log(err);
+                });
+                return resolve({
+                  success: false,
+                  message: "This image can't be upload 2",
+                });
+              }
+            }
+
+            // const awslarge = await uploadFile(large, filename, awslargepath);
+            // const awsmedium = await uploadFile(medium, filename, awsmediumpath);
+            // const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
+            // delete file if uploaded on AWS and exists in local
+            // if(!awsoriginal || awsoriginal) {
+            //   imgType.map(type => {
+            //     let filePath = `.${uploadPath}${type}/${filename}`;
+            //     if(fs.existsSync(filePath)){
+            //       fs.unlinkSync(filePath);
+            //     }
+            //   })
+            // }
+
+            if (!awsFile || awsFile) {
+              let filePath = `.${uploadPath}${filename}`;
+              if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+              }
+            }
+            return resolve({
+              success: true,
+              // data: {
+              //   original: awsoriginal,
+              //   large: awslarge,
+              //   medium: awsmedium,
+              //   thumbnail: awsthumbnail,
+              // },
+              data: awsFile,
+            });
+          });
+      } catch (error) {
+        //  console.log(error);
+        return resolve({
+          success: false,
+          message: "This image can't be upload 3",
         });
-    } catch (error) {
-      //  console.log(error);
-      return resolve({
-        success: false,
-        message: "This image can't be upload 3",
-      });
-    }
-  });
+      }
+    });
+  } else {
+
+    return UploadImageLocal(upload, uploadPath, nametype)
+  }
 };
 
 module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
-const imageUnlink = (imgObject) => {
+const imageUnlink = async (imgObject) => {
   // for (let i in imgObject) {
   // console.log(imgObject)
   //console.log('IMAGEOBJECT',imgObject[i]);
-  FileDelete(imgObject);
+  const setting = await Setting.findOne({});
+  const storageType = setting?.imageStorage?.status
+
+  if (storageType === 's3') {
+    FileDelete(imgObject);
+  } else {
+    if (imgObject) {
+      fs.unlink(imgObject, (err) => {
+        if (err) {
+          console.error('Error deleting image:', err);
+        } else {
+          console.log('Image deleted successfully');
+        }
+      });
+    }
+  }
   // fs.unlink("./assets/images/" + imgObject[i], function (err) {
   //   if (err) console.log(err);
   // });
@@ -635,7 +707,7 @@ const populateYearMonth = (
   let monthObj = {
     month: moment(orderMonth + 1, "MM").format("MMM"),
     orders: [order],
-    GrossSales: order.subtotal,
+    GrossSales: order.cartTotal,
     NetSales: order.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal,
@@ -643,7 +715,7 @@ const populateYearMonth = (
   let yearObj = {
     year: orderYear,
     months: [monthObj],
-    GrossSales: order.subtotal,
+    GrossSales: order.cartTotal,
     NetSales: order.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal,
@@ -662,10 +734,11 @@ const populateSales = (
   paymentSuccessSubTotal,
   paymentSuccessGrandTotal
 ) => {
-  data.GrossSales += order.subtotal;
+  data.GrossSales += order.cartTotal;
   data.NetSales += order.grandTotal;
   data.paymentSuccessGrossSales += paymentSuccessSubTotal;
   data.paymentSuccessNetSales += paymentSuccessGrandTotal;
+
 };
 module.exports.populateSales = populateSales;
 
@@ -790,58 +863,62 @@ const prodAvgRating = async (productID, reviewModel, productModel) => {
 };
 module.exports.prodAvgRating = prodAvgRating;
 
-const againCalculateCart = async (coupon,args,productModel,amountDiscount) => {
-
+const againCalculateCart = async (coupon, args, productModel, amountDiscount) => {
+  console.log(coupon, args, productModel, amountDiscount, '=============')
   let discountAmount = 0;
-  let forCouponCartTotal;
+  let forCouponCartTotal = 0;
   let IsApplicableDiscount = false;
 
   for (let item of args.cartItem) {
-        let product = await productModel.findById(item.productId);
-        if (product) {
+    let product = await productModel.findById(item.productId);
+    if (product) {
 
-          let includeProduct = false;
-          let includeProductTotal;
+      let includeProduct = false;
+      let excludeProduct = false;
+      let includeProductTotal;
 
-          //if coupon category is abilable
-                  if (coupon.category) {
+      //if coupon category is abilable
+      if (coupon.category) {
 
-                      if (product.categoryId && product.categoryId.length) {
-                        product.categoryId.map((catID) => {
-                          if (coupon.includeCategories.length) {
-                            includeProduct = coupon.includeCategories.includes(catID);
-                          } else if (coupon.excludeCategories.length) {
-                            includeProduct = !coupon.excludeCategories.includes(catID);
-                          }
-                        });
-                      }
-
-                  }
-
-          //if coupon category is not abilable but product is included in category;
-                  if (coupon.product && !includeProduct) {
-                    if (coupon.includeProducts.length) {
-                      includeProduct = coupon.includeProducts.includes(
-                        product._id.toString()
-                      );
-                    } 
-                    if (coupon.excludeProducts.length) {
-                      includeProduct = !coupon.excludeProducts.includes(
-                        product._id.toString()
-                      );
-                    }
-                  }
-
-                
-                if (includeProduct) {
-                  includeProductTotal = 0;
-                  includeProductTotal = +item.productTotal;
-                  forCouponCartTotal = forCouponCartTotal || 0;
-                  forCouponCartTotal += includeProductTotal;
-                }
-
+        if (product.categoryId && product.categoryId.length) {
+          product.categoryId.map((catID) => {
+            if (coupon.includeCategories.length && coupon.includeCategories.includes(catID)) {
+              includeProduct = coupon.includeCategories.includes(catID);
+            } else if (coupon.excludeCategories.length) {
+              console.log('mfhgkfjdghkjfdhf')
+              includeProduct = !coupon.excludeCategories.includes(catID);
+              excludeProduct = coupon.excludeCategories.includes(catID);
+            }
+          });
         }
+
+      }
+
+      //if coupon category is not abilable but product is included in category;
+      if (coupon.product && !includeProduct && !excludeProduct) {
+        if (coupon.includeProducts.length) {
+          includeProduct = coupon.includeProducts.includes(
+            product._id.toString()
+          );
+        }
+        if (coupon.excludeProducts.length) {
+          includeProduct = !coupon.excludeProducts.includes(
+            product._id.toString()
+          );
+        }
+      }
+      console.log(includeProduct, 'includeProduct', excludeProduct, item.productTotal)
+
+      if (includeProduct && !excludeProduct) {
+        includeProductTotal = 0;
+        includeProductTotal = +item.productTotal;
+        forCouponCartTotal = forCouponCartTotal || 0;
+        forCouponCartTotal += includeProductTotal;
+      }
+
+    }
   }
+
 
   if (forCouponCartTotal && forCouponCartTotal != 0) {
     if (
@@ -857,16 +934,16 @@ const againCalculateCart = async (coupon,args,productModel,amountDiscount) => {
     amountDiscount
       ? (discountAmount += parseFloat(coupon.discountValue))
       : (discountAmount +=
-          parseFloat(+forCouponCartTotal / 100) *
-          parseFloat(coupon.discountValue));
+        parseFloat(+forCouponCartTotal / 100) *
+        parseFloat(coupon.discountValue));
   }
-  if (discountAmount&&(discountAmount <= (forCouponCartTotal||0))) {
+  if (discountAmount && (discountAmount <= (forCouponCartTotal || 0))) {
     return discountAmount;
-  } else if(discountAmount&&(discountAmount > (forCouponCartTotal||0))){
-    return discountAmount = forCouponCartTotal ||0;
+  } else if (discountAmount && (discountAmount > (forCouponCartTotal || 0))) {
+    return discountAmount = forCouponCartTotal || 0;
   }
-  else{
-    return discountAmount=0
+  else {
+    return discountAmount = 0
   }
 };
 module.exports.againCalculateCart = againCalculateCart;
@@ -878,39 +955,99 @@ const emptyCart = async (cart) => {
 };
 module.exports.emptyCart = emptyCart;
 
+// const addZipcodes = async (zipcode_file, filepath, modal) => {
+//   let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0]
+//     .file;
+//   const stream = createReadStream();
+
+//   const path = `.${filepath}/${filename}`;
+
+
+//   console.log(path, '============')
+//   stream
+//     .on("error", (error) => {
+//       console.log(JSON.stringify(error));
+
+//       fs.unlink(path, function (err) {
+//         if (err) console.log(err);
+//       });
+//       return resolve({
+//         success: false,
+//         message: "This file can't be uploaded",
+//       });
+//     })
+//     .pipe(fs.createWriteStream(path));
+
+//   if (fs.existsSync(path)) {
+//     let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
+//     csvData = csvData.split(",");
+
+//     for (let zipcode of csvData) {
+//       if (zipcode.length >= 5 || zipcode.length <= 10) {
+//         const existingZipcode = await modal.findOne({ zipcode });
+//         if (!existingZipcode) {
+//           const newZipcode = new modal({ zipcode });
+//           await newZipcode.save();
+//         }
+//       }
+//     }
+//     await modal.deleteMany({ zipcode: "\r\n" });
+//   }
+// };
 const addZipcodes = async (zipcode_file, filepath, modal) => {
-  let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0]
-    .file;
-  const stream = createReadStream();
-  const path = `.${filepath}/${filename}`;
-  stream
-    .on("error", (error) => {
-      console.log(JSON.stringify(error));
+  try {
+    let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0].file;
+    const stream = createReadStream();
 
-      fs.unlink(path, function (err) {
-        if (err) console.log(err);
-      });
-      return resolve({
-        success: false,
-        message: "This file can't be uploaded",
-      });
-    })
-    .pipe(fs.createWriteStream(path));
+    const path = `.${filepath}/${filename}`;
+    console.log(path, '============');
 
-  if (fs.existsSync(path)) {
-    let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
-    csvData = csvData.split(",");
+    // Remove the existing file if it exists
+    if (fs.existsSync(path)) {
+      fs.unlinkSync(path);
+    }
 
-    for (let zipcode of csvData) {
-      if (zipcode.length >= 5 || zipcode.length <= 10) {
-        const existingZipcode = await modal.findOne({ zipcode });
-        if (!existingZipcode) {
-          const newZipcode = new modal({ zipcode });
-          await newZipcode.save();
+    await new Promise((resolve, reject) => {
+      stream
+        .on("error", (error) => {
+          console.error(JSON.stringify(error));
+          reject({
+            success: false,
+            message: "This file can't be uploaded",
+          });
+        })
+        .pipe(fs.createWriteStream(path))
+        .on("finish", resolve)
+        .on("error", reject);
+    });
+
+    if (!fs.existsSync(path)) {
+      let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
+      csvData = csvData.split(",");
+
+      for (let zipcode of csvData) {
+        if (zipcode.length >= 5 && zipcode.length <= 10) {
+          const existingZipcode = await modal.findOne({ zipcode });
+          if (!existingZipcode) {
+            const newZipcode = new modal({ zipcode });
+            await newZipcode.save();
+          }
         }
       }
+      await modal.deleteMany({ zipcode: "\r\n" });
     }
-    await modal.deleteMany({ zipcode: "\r\n" });
+
+    return {
+      success: true,
+      message: "File uploaded successfully",
+    };
+  } catch (error) {
+    console.error("Error:", error);
+    return {
+      success: false,
+      message: "An error occurred",
+    };
   }
 };
+
 module.exports.addZipcodes = addZipcodes;

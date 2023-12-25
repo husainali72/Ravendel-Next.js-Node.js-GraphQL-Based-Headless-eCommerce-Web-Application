@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { productDeleteAction, productsAction } from "../../store/action";
-import { client_app_route_url } from "../../utils/helper";
+import { getSettings, productDeleteAction, productsAction } from "../../store/action";
+import { baseUrl, client_app_route_url, getBaseUrl } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { isEmpty } from "../../utils/helper";
@@ -17,6 +17,7 @@ const AllproductComponent = () => {
   const classes = viewStyles()
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
+  const setting = useSelector((state) => state.settings)
   const navigate = useNavigate()
   const [Allproducts, setAllproduct] = useState([])
   const [filtered, setfilterdData] = useState([])
@@ -53,7 +54,7 @@ const AllproductComponent = () => {
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          navigate(`${client_app_route_url}edit-product/${id}`, {state : {editMode: true}})
+          navigate(`${client_app_route_url}edit-product/${id}`, { state: { editMode: true } })
         } else if (type === "delete") {
           dispatch(productDeleteAction(id))
         }
@@ -63,14 +64,17 @@ const AllproductComponent = () => {
 
   useEffect(() => {
     dispatch(productsAction());
+
   }, []);
+
   useEffect(() => {
     if (!isEmpty(get(products, 'products'))) {
       let data = []
+
       products.products.map((product) => {
         let object = {
           id: product._id,
-          image: product.feature_image ? bucketBaseURL + product.feature_image : NoImagePlaceHolder,
+          image: product.feature_image ? product.feature_image : NoImagePlaceHolder,
           date: product.date,
           status: product.status,
           name: product.name,

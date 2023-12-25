@@ -13,14 +13,14 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { mutation } from "../utills/helpers";
 import { UPDATE_CART_PRODUCT } from "../queries/cartquery";
 import { useSelector, useDispatch } from "react-redux";
-import { settingActionCreator, stripePaymentKeyAction } from "../redux/actions/settingAction"
+import { getSettings, settingActionCreator, stripePaymentKeyAction } from "../redux/actions/settingAction"
 import { loadReviewAction } from "../redux/actions/productAction";
 import { GET_BRANDS_QUERY } from "../queries/shopquery";
 import SpecificProducts from "../components/SpecificProducts";
 import CustomBanner from "../components/banner/CustomBanner";
 import MegaMenu from "../components/megaMenu";
 
-export default function Home({ homepageData, setOpenMenu, openMenu, seoInfo, brands, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts, allReviews }) {
+export default function Home({ homepageData, settings, setOpenMenu, openMenu, seoInfo, brands, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts, allReviews }) {
 
 
   const [press, setPress] = useState(false);
@@ -30,10 +30,17 @@ export default function Home({ homepageData, setOpenMenu, openMenu, seoInfo, bra
   const userCart = useSelector(state => state.userCart)
   const cart = useSelector(state => state.cart)
   const productss = useSelector(state => state.products)
+
   useEffect(() => {
     dispatch(stripePaymentKeyAction(stripe_Public_key))
     dispatch(settingActionCreator(currencyStore.currency_options))
+
   }, [currencyStore.currency_options])
+  useEffect(() => {
+    dispatch(getSettings(settings))
+
+  }, [settings])
+
   useEffect(() => {
     dispatch(loadReviewAction(allReviews?.reviews?.data));
   }, [allReviews])
@@ -165,6 +172,7 @@ export async function getStaticProps() {
   var recentproducts = [];
   var onSaleProducts = [];
   var currencyStore = [];
+  var settings = {};
   var allReviews = {};
   let stripe_Public_key = '';
   var brands = [];
@@ -175,7 +183,7 @@ export async function getStaticProps() {
       query: GET_HOMEPAGE_DATA_QUERY
     })
     homepageData = homepagedata
-
+    settings = homepagedata?.getSettings
     currencyStore = homepagedata?.getSettings?.store
     stripe_Public_key = homepagedata?.getSettings?.paymnet?.stripe
   }
@@ -288,7 +296,8 @@ export async function getStaticProps() {
       category,
       onSaleProducts,
       allReviews,
-      brands
+      brands,
+      settings
     },
     revalidate: 10,
   };

@@ -9,6 +9,8 @@ import { query, mutation } from "../../utills/helpers"
 import { userCartAction } from "../../redux/actions/userCartAction";
 import Link from "next/link";
 import { loadReviewAction } from "../../redux/actions/productAction";
+import Loading from "../loading";
+
 
 const loginObject = {
     email: "",
@@ -25,10 +27,11 @@ const LogIn = () => {
     const [cart_id, setCart_Id] = useState("")
     const [error, setError] = useState(false)
     const [login, setlogin] = useState(false)
-
+    const [loading, setLoading] = useState(false)
     const doLogin = async (e) => {
         e.preventDefault();
         setlogin(true);
+        setLoading(true)
         const res = await signIn('credentials', {
             email: loginUser.email,
             password: loginUser.password,
@@ -38,23 +41,41 @@ const LogIn = () => {
         const session = await getSession()
         // console.log('sesionfromlogin',session)
         if (res?.error) {
-            setError(res.error);
+            if (res?.status === 401 && res?.error === 'Invalid Email or Password') {
+                setLoading(false)
+                setError(res.error);
+            } else {
+                setLoading(false)
+                setError('Something  went wrong')
+            }
+
         } else {
+            setLoading(false)
             setError(null);
         }
 
 
         if (res?.ok) {
+            setLoading(false)
             const productsInCart = JSON.parse(localStorage.getItem("cart"))
             const id = session?.user.accessToken.customer._id;
 
             const products = productsInCart?.map(prod => {
                 return {
-                    productId: prod._id,
-                    qty: prod.quantity
+                    productId: prod?._id,
+                    productTitle: prod?.name,
+                    productPrice: prod?.pricing?.toString(),
+                    productImage: prod?.feature_image,
+                    shippingClass: prod?.shippingClass,
+                    taxClass: prod?.taxClass,
+                    variantId: prod?.variantId,
+                    qty: prod?.quantity,
+                    attributes: prod?.attributes
                 }
             })
+
             dispatch(createCart(id, products));
+
             // localStorage.setItem("cart", JSON.stringify([]))
 
         }
@@ -200,6 +221,7 @@ const LogIn = () => {
 
     return (
         <div className="login-box ">
+
             <h4>Login</h4>
             <form onSubmit={doLogin}>
                 <input
@@ -228,7 +250,7 @@ const LogIn = () => {
                         <span style={{ float: 'right' }}>forget password ?</span>
                     </Link>
                 </div>
-                <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178" }}>Login</button>
+                <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", }} ><span>Login {loading && <Loading />}</span></button>
                 {loginSuccess ? (<h4>login success full</h4>) : null}
                 {error ? <p style={{ color: "red" }}>{error}</p> : null}
             </form>

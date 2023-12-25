@@ -24,6 +24,7 @@ import {
   Legend
 } from "recharts";
 import { get } from "lodash";
+import { baseUrl, bucketBaseURL, getBaseUrl } from "../../utils/helper";
 const DashboardComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -35,6 +36,8 @@ const DashboardComponent = () => {
   const loader = useSelector((state) => state.dashboardReducer.loading);
   const [latestOrders, setlatestOrders] = useState([])
   const [filteredLatestOrders, setFilteredLatestOrders] = useState([])
+  const setting = useSelector((state) => state.settings)
+  const baseurl = getBaseUrl(setting)
   useEffect(() => {
     dispatch(dashboardAction());
   }, []);
@@ -156,10 +159,10 @@ const DashboardComponent = () => {
                 <CartesianGrid />
                 <Legend />
                 <Tooltip offset={10} />
-                <Bar name="Payment Success NetSales" dataKey="paymentSuccessNetSales" stackId="x" fill="#FFB26B" barSize={30} />
-                <Bar name="Net Sales" dataKey="NetSales" barSize={9} stackId="x" fill="#89C4E1" />
-                <Bar name="Payment Success GrossSales" dataKey="paymentSuccessGrossSales" stackId="x" fill="#0081B4" barSize={30} />
-                <Bar name="Gross Sales" dataKey="GrossSales" stackId="x" barSize={30} fill="#F55050" />
+                <Bar name="Payment Success NetSales" dataKey="paymentSuccessNetSales" fill="#FFB26B" barSize={30} />
+                <Bar name="Net Sales" dataKey="NetSales" barSize={30} fill="#89C4E1" />
+                <Bar name="Payment Success GrossSales" dataKey="paymentSuccessGrossSales" fill="#0081B4" barSize={30} />
+                <Bar name="Gross Sales" dataKey="GrossSales" barSize={30} fill="#F55050" />
               </BarChart>
             </ResponsiveContainer>
           </Paper>
@@ -168,6 +171,7 @@ const DashboardComponent = () => {
           <LatestProducts
             products={dashBoardData.latestProducts || []}
             loader={loader}
+            bucketBaseURL={baseurl}
           />
         </Grid>
       </Grid>

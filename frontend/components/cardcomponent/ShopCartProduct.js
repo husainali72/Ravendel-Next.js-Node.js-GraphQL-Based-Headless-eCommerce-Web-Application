@@ -20,6 +20,7 @@ export const ShopCart = () => {
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
 
+
     useEffect(() => {
         setdecimal(settings?.currencyOption?.number_of_decimals)
         currencySetter(settings, setCurrency);
@@ -95,6 +96,7 @@ export const ShopCart = () => {
                                         onError={(e) => e.type === 'error' ? e.target.src = placeholder : null}
                                         width={"80px"}
                                         height={"80px"}
+
                                     />
                                 </Link>
                             </div>

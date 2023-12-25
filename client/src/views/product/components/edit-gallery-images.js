@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import ImageIcon from "@mui/icons-material/Image";
 import viewStyles from "../../viewStyles";
-import { bucketBaseURL } from "../../../utils/helper";
+import { baseUrl, bucketBaseURL, getBaseUrl, imageOnError } from "../../../utils/helper";
 
 
-const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, product, onRemoveOldImage }) => {
+const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, product, onRemoveOldImage, setting }) => {
   const classes = viewStyles();
   const [gallery, setGallery] = useState([]);
 
@@ -46,9 +46,10 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
                 x
               </span>
               <img
-                src={`${bucketBaseURL}${img}`}
+                src={`${getBaseUrl(setting)}${img}`}
                 className={classes.galleryImg}
                 alt="gallery-img"
+                onError={imageOnError}
               />
             </div>
           ))
@@ -66,6 +67,7 @@ const EditGalleryImageSelection = ({ onAddGalleryImage, onRemoveGalleryImage, pr
                 src={img}
                 className={classes.galleryImg}
                 alt='product-gallery-img'
+                onError={imageOnError}
               />
             </div>
           ))

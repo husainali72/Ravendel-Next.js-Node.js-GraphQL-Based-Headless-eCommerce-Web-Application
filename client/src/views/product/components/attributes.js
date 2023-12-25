@@ -24,7 +24,7 @@ import ReactSelect from "react-select";
 import { useSelector, useDispatch } from "react-redux";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { isEmpty, allPossibleCases, bucketBaseURL } from "../../../utils/helper";
+import { isEmpty, allPossibleCases, bucketBaseURL, baseUrl, imageOnError, getBaseUrl } from "../../../utils/helper";
 import { CardBlocks } from "../../components";
 import { attributesAction } from "../../../store/action";
 import viewStyles from "../../viewStyles";
@@ -37,9 +37,11 @@ const AttributesComponent = ({
   productStateChange,
   onCombinationUpdate,
   EditMode,
+  setting
 }) => {
 
   const classes = viewStyles();
+
   const dispatch = useDispatch();
   const inputLabel = useRef(null);
   const attributeState = useSelector((state) => state.productAttributes);
@@ -319,6 +321,7 @@ const AttributesComponent = ({
   const variantChange = (e, index) => {
     if (e.target.name === "image") {
       currentVariants.combinations[index]['upload_image'] = e.target.files;
+      currentVariants.combinations[index]['previous_img'] = currentVariants.combinations[index].image
       currentVariants.combinations[index][e.target.name] =
         URL.createObjectURL(e.target.files[0]);
     } else {
@@ -592,13 +595,15 @@ const AttributesComponent = ({
                           </TableCell>
                           <TableCell>
                             <Box m={1}>
+
                               {!isEmpty(variant.image) ? (
                                 <img
                                   src={
-                                    variant.image.startsWith("blob") ? variant.image : (bucketBaseURL + variant.image)
+                                    variant.image.startsWith("blob") ? variant.image : (getBaseUrl(setting) + variant.image)
                                   }
                                   className={classes.variantImage}
                                   alt="variant"
+                                  onError={imageOnError}
                                 />
                               ) : (
                                 ""
@@ -655,6 +660,7 @@ const Attributes = ({
   productStateChange,
   onCombinationUpdate,
   EditMode,
+  setting
 }) => {
   return (
     <ThemeProvider theme={theme}>
@@ -663,6 +669,7 @@ const Attributes = ({
         productStateChange={productStateChange}
         onCombinationUpdate={onCombinationUpdate}
         EditMode={EditMode}
+        setting={setting}
       />
     </ThemeProvider>
   );

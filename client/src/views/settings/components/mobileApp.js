@@ -29,7 +29,7 @@ import { categoriesAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 import Loading from "../../components/Loading.js";
-import { bucketBaseURL } from "../../../utils/helper";
+import { bucketBaseURL, getBaseUrl } from "../../../utils/helper";
 import NoImagePlaceHolder from "../../../assets/images/NoImagePlaceHolder.png";
 import AddIcon from '@mui/icons-material/Add';
 import ReorderIcon from '@mui/icons-material/Reorder';
@@ -77,7 +77,7 @@ const MobileAppSetting = () => {
       i++
     ) {
       let newImge =
-        bucketBaseURL +
+        getBaseUrl(settingState) +
         settingState.settings.appearance.mobile.slider[i].image;
       newSliderArr.push({ image: newImge });
     }
@@ -456,7 +456,7 @@ const MobileAppSetting = () => {
 
                                 <img
                                   className="mobileImage"
-                                  src={select.section_img.startsWith("blob") ? select.section_img : (bucketBaseURL + select.section_img)}
+                                  src={select.section_img.startsWith("blob") ? select.section_img : (getBaseUrl(settingState) + select.section_img)}
                                   onError={imageOnError}
                                 />
 

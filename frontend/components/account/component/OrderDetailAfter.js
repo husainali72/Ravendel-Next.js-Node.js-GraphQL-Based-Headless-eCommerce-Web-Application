@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { currencySetter, getPrice } from "../../../utills/helpers";
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.cost * product.qty), 0)
 const OrderDetailAfter = ({ Data, id, date, grandTotal, products: orderDetail, billing: billingInfo, shipping: shippingInfo, subtotal, tax, shippingAmount }) => {
+    const showAttributes = Data?.products?.some((product) => product?.attributes?.length > 0)
     const Details = useSelector(state => state.checkout)
     const [currency, setCurrency] = useState("$")
     const [decimal, setdecimal] = useState(2)
@@ -84,7 +85,7 @@ const OrderDetailAfter = ({ Data, id, date, grandTotal, products: orderDetail, b
                                 <thead>
                                     <th>Products</th>
                                     <th>Qty</th>
-                                    {Data?.products?.some((product) => product?.attributes?.length > 0)?.attributes?.length > 0 ? <th>Attributes</th> : null}
+                                    {showAttributes ? <th>Attributes</th> : null}
                                     <th>Total</th>
                                 </thead>
                                 <tbody >
@@ -92,7 +93,7 @@ const OrderDetailAfter = ({ Data, id, date, grandTotal, products: orderDetail, b
                                         <tr key={i}>
                                             <th>{order?.productTitle}</th>
                                             <td>x {order?.quantity ? order.quantity : order.qty}</td>
-                                            {order?.attributes?.length > 0 ? < th > {order?.attributes.map((attribute) => (<div>{attribute.name} : {attribute.value}</div>))}</th> : null}
+                                            {showAttributes ? < th > {order?.attributes.map((attribute) => (<div>{attribute.name} : {attribute.value}</div>))}</th> : null}
                                             <td>{currency} {order ? getPrice(order?.productPrice, decimal) : null}</td>
                                         </tr>
                                     )}

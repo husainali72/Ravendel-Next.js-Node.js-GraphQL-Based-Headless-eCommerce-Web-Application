@@ -167,7 +167,7 @@ export const CheckOut = ({ currencyStore }) => {
                     let cartitems2 = [];
                     carts?.availableItem?.map(cart => {
                         const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
-                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
+                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart?.variantId)
                         // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
 
                         if (originalProduct) {
@@ -181,8 +181,8 @@ export const CheckOut = ({ currencyStore }) => {
                                     name: originalProduct?.name,
                                     pricing: (orginal_attributes?.pricing
                                         ?.sellprice * cart?.qty),
-                                    feature_image: orginal_attributes?.productImage
-                                        || orginal_attributes?.feature_image,
+                                    feature_image: orginal_attributes?.image
+                                        || originalProduct?.feature_image,
                                     url: originalProduct?.url,
                                     attributes: cart.attributes || [],
                                     shippingClass: originalProduct?.shipping?.shippingClass,
@@ -425,12 +425,11 @@ export const CheckOut = ({ currencyStore }) => {
             return {
                 productId: product.productId,
                 qty: product.qty,
-                productTotal: (product?.productPrice * product.qty).toString(),
                 productImage: product?.productImage,
                 productTitle: product?.productTitle,
                 productShipping: product?.productShipping,
                 productTax: product?.productTax,
-                productTotal: product?.productPrice?.toString(),
+                productTotal: (product?.productPrice * product.qty)?.toString(),
                 variantId: product?.variantId
             }
         })
@@ -463,7 +462,7 @@ export const CheckOut = ({ currencyStore }) => {
                 }
             }
             couponValueGet = true;
-            if (!res?.data?.laoding) {
+            if (!res?.data?.laoding && res?.data?.calculateCoupon.success) {
                 // couponResponse?.grandTotal && !isNaN(couponResponse?.grandTotal) && !couponResponse?.discountGrandTotal ? couponResponse?.grandTotal : (couponResponse?.discountGrandTotal && !isNaN(couponResponse?.discountGrandTotal) ? couponResponse?.discountGrandTotal : "0")
                 let grandTotal = couponResponse?.discountGrandTotal ? couponResponse?.discountGrandTotal : couponResponse?.grandTotal
                 setCoupon(couponResponse?.totalCoupon && !isNaN(couponResponse?.totalCoupon) ? couponResponse?.totalCoupon : "0")

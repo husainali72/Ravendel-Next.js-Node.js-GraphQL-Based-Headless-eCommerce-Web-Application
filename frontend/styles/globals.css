@@ -4499,6 +4499,8 @@ header {
   padding: 10px 0;
 }
 
+
+
 .new-products-col .product:hover img {
   transform: scale(1.1);
 }
@@ -4509,9 +4511,12 @@ header {
   transition: 0.2s ease-in-out;
 }
 
-.new-products-col .product:hover h4 {
-  color: #ed63b2;
+.new-products-col .product :hover h4 {
+  color: #d63384;
+  cursor: pointer;
 }
+
+
 
 .product-categories-col {
   padding: 20px 40px;
@@ -4530,7 +4535,7 @@ header {
 
 .product-categories-wrapper .category h4 {
   font-size: 18px;
-  color: #ed63b2;
+  color: #d63384;
   line-height: 26px;
   margin-bottom: 5px;
 }
@@ -4544,6 +4549,19 @@ header {
 }
 
 .product-categories-wrapper .category a:hover {
+  color: #272144;
+  margin-left: 4px;
+}
+
+.product-categories-wrapper .category .link a {
+  color: #d63384;
+  line-height: 24px;
+  margin-bottom: 5px;
+  font-size: 15px;
+  transition: 0.15s ease-in;
+}
+
+.product-categories-wrapper .category .link a:hover {
   color: #272144;
   margin-left: 4px;
 }

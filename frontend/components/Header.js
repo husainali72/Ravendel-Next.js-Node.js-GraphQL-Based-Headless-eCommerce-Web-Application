@@ -10,18 +10,23 @@ import { logoutDispatch } from "../redux/actions/userlogoutAction"
 import { GET_USER_CART } from '../queries/cartquery';
 import { getImage, query } from '../utills/helpers';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
+import { GET_SETTING, getSettings } from '../redux/actions/settingAction';
+
 
 export const LogOutUser1 = async () => {
     const data = await signOut({ redirect: false, callbackUrl: "/" })
     localStorage.setItem("userCart", JSON.stringify([]));
     localStorage.setItem("cart", JSON.stringify([]));
     // dispatch(logoutDispatch())
+    // window.location.pathname = '/'
 }
 
 export default function Header({ setOpenMenu }) {
     const data = useSession();
     const cartItem = useSelector(state => state.cart)
     const addedCart = useSelector(state => state.addedCart)
+
+
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [cart, setCart] = useState(null);
@@ -31,6 +36,8 @@ export default function Header({ setOpenMenu }) {
         localStorage.setItem("userCart", JSON.stringify([]));
         localStorage.setItem("cart", JSON.stringify([]));
         dispatch(logoutDispatch())
+        // window.location.reload();
+        window.location.pathname = '/'
     }
 
     const dropdownRef = useRef(null);
@@ -49,6 +56,10 @@ export default function Header({ setOpenMenu }) {
 
     const getCartLength = async () => {
         let userCart
+
+        if (addedCart) {
+            dispatch(logoutDispatch())
+        }
         if (data.status === "authenticated") {
             let id = data.data.user.accessToken.customer._id
             let token = data.data.user.accessToken.token
@@ -64,21 +75,26 @@ export default function Header({ setOpenMenu }) {
     const getHomepageData = () => {
         query(GET_HOMEPAGE_DATA_QUERY).then(res => {
             let homepageData = res?.data?.getSettings;
+            console.log(homepageData, 'homepageData')
+            dispatch({
+                type: GET_SETTING, payload: homepageData
+            })
             setHomeData(homepageData);
         })
     }
     // useEffect(() => {
-    //     if (addedCart && data.status !== 'authenticated') {
+    //     if (addedCart) {
     //         dispatch(logoutDispatch())
     //     }
     // }, [addedCart])
 
     useEffect(() => {
-
         getCartLength()
+        dispatch(getSettings())
     }, [cartItem, data, addedCart])
 
     useEffect(() => {
+
         getHomepageData()
     }, [])
     return (

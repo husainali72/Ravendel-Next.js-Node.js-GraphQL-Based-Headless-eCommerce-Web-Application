@@ -10,7 +10,7 @@ const CategoryBreadCrumb = ({ breadCrumbTitle, categoryDetail }) => {
                     <li className="breadcrumb-item page-active" ><Link href="/" className="breadcrumb-link">Home</Link></li>
 
                     {breadCrumbTitle && <><p style={{ marginLeft: '10px', marginRight: '10px' }}>{`>`}</p>
-                        <Link href={`/subcategory/[categorys]?url=${breadCrumbTitle?.url}`} as={`/subcategory/${breadCrumbTitle?.url}`} style={{ marginLeft: '10px' }} ><li onClick={() => router.back()} className="breadcrumb-item page-active breadcrumb-link" >
+                        <Link href={`/subcategory/[categorys]?url=${breadCrumbTitle?.url}`} as={`/subcategory/${breadCrumbTitle?.url}`} style={{ marginLeft: '10px' }} ><li className="breadcrumb-item page-active breadcrumb-link" >
                             {breadCrumbTitle?.name}</li></Link></>}
                     {categoryDetail && <><p style={{ marginLeft: '10px' }}>{`>`}</p>
                         <li className="breadcrumb-item page-active breadcrumb-link" style={{ marginLeft: '10px' }}>

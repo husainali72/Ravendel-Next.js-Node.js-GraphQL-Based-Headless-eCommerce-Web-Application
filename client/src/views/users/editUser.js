@@ -6,6 +6,7 @@ import {
   isEmpty,
   client_app_route_url,
   bucketBaseURL,
+  getBaseUrl,
 } from "../../utils/helper";
 import viewStyles from "../viewStyles";
 import {
@@ -38,11 +39,12 @@ const EditUserComponent = ({ params }) => {
   const classes = viewStyles();
   const navigate = useNavigate();
   const UsersState = useSelector((state) => state.users);
+  const setting = useSelector((state) => state.settings);
   const dispatch = useDispatch();
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
   const [loading, setloading] = useState(false);
-
+  const baseURl = getBaseUrl(setting)
   useEffect(() => {
     if (isEmpty(get(UsersState, "users"))) {
       dispatch(usersAction());
@@ -56,22 +58,23 @@ const EditUserComponent = ({ params }) => {
   useEffect(() => {
     document.forms[0].reset();
     setuser(defaultObj);
-    if(userId){
-    if (!isEmpty(get(UsersState, "users"))) {
-      UsersState.users.map((edituser) => {
-        if (edituser.id === userId) {
-          setuser({ ...edituser });
-          if (edituser.image) {
-            setfeatureImage(bucketBaseURL + edituser.image);
+    if (userId) {
+      if (!isEmpty(get(UsersState, "users"))) {
+        UsersState.users.map((edituser) => {
+          if (edituser.id === userId) {
+            setuser({ ...edituser });
+            if (edituser.image) {
+              setfeatureImage(baseURl + edituser.image);
+            }
           }
-        }
-      });
-    }} else {
+        });
+      }
+    } else {
       setuser(defaultObj)
       setfeatureImage(null)
     }
-  }, [get(UsersState, "users"), userId]);
-
+  }, [get(UsersState, "users"), userId, baseURl]);
+  console.log(featureImage, 'feature')
   const fileChange = (e) => {
     setfeatureImage(null);
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
@@ -97,13 +100,14 @@ const EditUserComponent = ({ params }) => {
         },
       });
     }
-   else { 
-    if (userId) {
-      dispatch(userUpdateAction(user, navigate));
-    }
     else {
-      dispatch(userAddAction(user, navigate));
-    }}
+      if (userId) {
+        dispatch(userUpdateAction(user, navigate));
+      }
+      else {
+        dispatch(userAddAction(user, navigate));
+      }
+    }
 
   };
   const handleChange = (e) => {

@@ -7,19 +7,16 @@ import { BASE_URL } from '../../../config';
 const options = {
     session: {
         strategy: "jwt",
-      },
+    },
     providers: [
         CredentialsProvider({
-            type:'credentials',
+            type: 'credentials',
             credentials: {
-               
+
             },
             async authorize(credentials, req) {
                 // const url = "https://ravendel.herokuapp.com/api/customers/login";
                 const { email, password } = credentials
-                // const url = "http://localhost:8000/api/customers/login";
-                
-                // const url = "http://demo1.ravendel.io/api/customers/login";
                 const url = `https://${BASE_URL}/api/customers/login`;
                 const response = await fetch(url, {
                     method: 'POST',

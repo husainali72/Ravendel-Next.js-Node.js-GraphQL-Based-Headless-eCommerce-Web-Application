@@ -53,9 +53,40 @@ module.exports = {
         let productsArray = cart.products
         for (let a = 0; a < productsArray.length; a++) {
           let product = productsArray[a];
-          let isProductAvilable = await Product.findOne({ _id: product.productId, quantity: { $gte: product.qty } });
-          if (isProductAvilable) {
-            availableItem.push(product)
+
+          let isProductAvilable = {}
+
+          let addvariants = false
+          let attribute = []
+          if (product?.variantId) {
+            addvariants = true
+            isProductAvilable = await Product.findOne({ _id: product.productId });
+            attribute = await ProductAttributeVariation.find({
+              productId: product.productId, _id: product?.variantId, quantity: { $gte: product.qty }
+            });
+
+          } else {
+            isProductAvilable = await Product.findOne({ _id: product.productId, quantity: { $gte: product.qty } });
+          }
+
+          if (isProductAvilable && ((!addvariants && attribute?.length === 0) || (addvariants && attribute?.length > 0))) {
+
+
+            let prod = {
+              productId: product?.productId,
+              productTitle: isProductAvilable?.name,
+              productImage: isProductAvilable?.feature_image,
+              productPrice: isProductAvilable?.pricing?.sellprice || isProductAvilable?.pricing?.price || product?.productPrice,
+              qty: product?.qty,
+              total: (product?.qty * isProductAvilable?.pricing?.sellprice || isProductAvilable?.pricing?.price || product?.productPrice),
+              attributes: product?.attributes,
+              productQuantity: isProductAvilable?.quantity,
+              variantId: product?.variantId,
+              shippingClass: isProductAvilable?.shipping?.shippingClass,
+              taxClass: isProductAvilable?.taxClass,
+              _id: product?._id
+            }
+            availableItem.push(prod)
           }
           else {
             unavailableItem.push(product)
@@ -84,7 +115,7 @@ module.exports = {
     calculateCoupon: async (root, args, { id }) => {
       try {
         // const coupon = await Coupon.findOne({ code: { $regex: `${args.couponCode}`, $options: "i" } });
-        const coupon = await Coupon.findOne({ code: args.couponCode})
+        const coupon = await Coupon.findOne({ code: args.couponCode })
 
         let discountGrandTotal;
         let calculated = {
@@ -112,23 +143,37 @@ module.exports = {
             cartTotal = args.cartTotal;
 
             if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) && (coupon.maximumSpend === 0 || coupon.maximumSpend > cartTotal)) {
-
-              var calculatedCartWithDiscount = 0
-
-              coupon.discountType === "amount-discount" ?
-                calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, true) :
-                calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, false)
-
-              if (calculatedCartWithDiscount == 0) {
-                calculated.totalCoupon = "0.0";
-                calculated.message = 'Coupon not applicable on cart';
-                calculated.discountGrandTotal="0.00"
-              }
-              else {
+              if (!coupon.category && !coupon.product) {
+                var calculatedCartWithDiscount = coupon.discountType === 'amount-discount'
+                  ? parseFloat(coupon.discountValue)
+                  :
+                  parseFloat(cartTotal / 100) *
+                  parseFloat(coupon.discountValue);
                 calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+
                 calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
                 calculated.message = 'Coupon code applied successfully';
                 calculated.success = true;
+              }
+              else {
+                var calculatedCartWithDiscount = 0
+
+                coupon.discountType === "amount-discount" ?
+                  calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, true) :
+                  calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, false)
+
+
+                if (calculatedCartWithDiscount == 0) {
+                  calculated.totalCoupon = "0.0";
+                  calculated.message = 'Coupon not applicable on cart';
+                  calculated.discountGrandTotal = "0.00"
+                }
+                else {
+                  calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+                  calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
+                  calculated.message = 'Coupon code applied successfully';
+                  calculated.success = true;
+                }
               }
 
             }
@@ -222,8 +267,16 @@ module.exports = {
             const product = await Product.findById({ _id: cartProduct.productId }).lean();
             let odredQuantity = cartProduct.qty
 
-            let productPrice = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price;
-            cartTotal += productPrice * odredQuantity;
+            let productPrice = product.pricing.sellprice
+            if (cartProduct?.variantId) {
+              const variations = await ProductAttributeVariation.find({
+                productId: cartProduct.productId, _id: cartProduct?.variantId
+              });
+              productPrice = variations[0]?.pricing?.sellprice
+              cartTotal += (productPrice * odredQuantity);
+            } else {
+              cartTotal += productPrice * odredQuantity;
+            }
 
             // product tax calculation
             if (taxPercentage != 0) {
@@ -245,10 +298,11 @@ module.exports = {
             if (global_shipping) {
 
               if (!globalShippingPerOrder) {
-                totalShipping += globalShippingAmount;
-                grandTotal += globalShippingAmount;
 
-                productShipping = +globalShippingAmount
+                totalShipping += (globalShippingAmount * cartProduct?.qty);
+                grandTotal += (globalShippingAmount * cartProduct?.qty);
+
+                productShipping = +(globalShippingAmount * cartProduct?.qty)
 
               }
             }
@@ -344,7 +398,7 @@ module.exports = {
 
               productTaxAmount = 0;
               totalTax += +productTaxAmount;
-              grandTotal += +productTaxAmount;
+              grandTotal += (productPrice * odredQuantity) + productTaxAmount;
             }
 
 
@@ -421,7 +475,7 @@ module.exports = {
           cartTotal: cartTotal.toFixed(2)
         }
 
-        console.log("calculated cart----", calculated)
+
 
         return calculated;
 
@@ -867,29 +921,34 @@ module.exports = {
       try {
         const cart = await Cart.findOne({ userId: args.userId });
         let existingCartProducts = cart && cart.products ? cart.products : [];
+
         // let carttotal = 0;
         // if local products exists then only run loop for adding products in customer cart
         if (args.products)
           for (let localProd of args.products) {
             if (localProd.variantId) {
-              // let productAttributeValue =
-              //   await ProductAttributeVariation.findById(localProd.variantId);
-
-              // let product = await Product.findById({
-              //   _id: localProd.productId,
-              // });
+              let productAttributeValue =
+                await ProductAttributeVariation.findById(localProd.variantId);
+              // console.log(productAttributeValue, 'productAttributeValue')
+              let product = await Product.findById({
+                _id: localProd.productId,
+              });
               let productId = localProd.productId;
               let qty = localProd.qty;
 
-              // let shippingClass = product.shipping.shippingClass
-              //   ? product.shipping.shippingClass
-              //   : "";
-              // let taxClass = product.taxClass ? product.taxClass : "";
-
+              let shippingClass = product.shipping.shippingClass
+                ? product.shipping.shippingClass
+                : "";
+              let taxClass = product.taxClass ? product.taxClass : "";
+              // console.log(productAttributeValue?.image || product?.feature_image || localProd?.productImage, 'imageeeeeeeeeee')
               if (!existingCartProducts.length) {
                 existingCartProducts.push({
                   productId,
                   variantId: localProd.variantId.toString(),
+                  productTitle: product?.name || localProd?.productTitle,
+                  productPrice: productAttributeValue?.pricing?.sellprice || product?.pricing?.sellprice || localProd?.productPrice,
+                  attributes: localProd?.attributes,
+                  productImage: productAttributeValue?.image || product?.feature_image || localProd?.productImage,
                   qty,
                   shippingClass,
                   taxClass,
@@ -911,10 +970,14 @@ module.exports = {
                 else {
                   existingCartProducts.push({
                     productId,
-                    variantId,
+                    variantId: localProd.variantId.toString(),
+                    productTitle: product?.name || localProd?.productTitle,
+                    productPrice: productAttributeValue?.pricing?.sellprice || product?.pricing?.sellprice || localProd?.productPrice,
+                    productImage: productAttributeValue?.image || product?.feature_image || localProd?.productImage,
+                    attributes: localProd?.attributes,
                     qty,
-                    // shippingClass,
-                    // taxClass,
+                    shippingClass,
+                    taxClass,
                   });
                 }
               }
@@ -927,13 +990,20 @@ module.exports = {
 
               let productId = localProd.productId;
 
-              let shippingClass = product.shipping.shippingClass;
-              let taxClass = product.taxClass;
-              let qty = localProd.qty;
+              let shippingClass = product ? product?.shipping?.shippingClass : localProd?.shippingClass;
+              let taxClass = product?.taxClass || localProd?.shippingClass;
+              let qty = localProd?.qty || 1;
+              let productTitle = product?.name || localProd?.productTitle;
+              let productPrice = product?.pricing?.sellprice || localProd?.productPrice;
+              let productImage = product?.feature_image || localProd?.productImage
               // if customer cart is empty then add product from local
+
               if (!existingCartProducts.length) {
                 existingCartProducts.push({
                   productId,
+                  productTitle,
+                  productPrice,
+                  productImage,
                   qty,
                   shippingClass,
                   taxClass,
@@ -949,19 +1019,26 @@ module.exports = {
                 );
                 // if matches then update customer cart product with local product
                 if (existingProduct) {
+
                   existingProduct.qty += localProd.qty;
                 }
                 // else add local product to customer cart
                 else {
+
                   existingCartProducts.push({
                     productId,
+                    productTitle,
+                    productPrice,
+                    productImage,
                     qty,
                     shippingClass,
                     taxClass,
                   });
                 }
               }
+
             }
+
           }
         //---------------------------------------------------------------------------------------------------------------
 
@@ -978,6 +1055,7 @@ module.exports = {
         //   }
         // });
         // if customer cart exists then update
+        console.log(existingCartProducts, '========existingCartProducts')
         if (cart) {
           cart.products = existingCartProducts;
           await cart.save();
@@ -1056,37 +1134,39 @@ module.exports = {
                 const product = await Product.findById({ _id: args.products[i].productId });
 
 
+                if (product) {
+                  let taxPercentage;
+                  isGlobalTax.taxClass.forEach((taxObject) => {
 
-                let taxPercentage;
-                isGlobalTax.taxClass.forEach((taxObject) => {
+                    if (taxObject._id.toString() == args.products[i].taxClass) {
+                      taxPercentage = taxObject.percentage
+                    }
 
-                  if (taxObject._id.toString() == args.products[i].taxClass) {
-                    taxPercentage = taxObject.percentage
+                  })
+
+
+                  let tax;
+                  if (product.pricing.sellprice > 0) {
+
+                    tax = (+product.pricing.sellprice * (+taxPercentage)) / 100;
+                    args.products[i].productPrice = product.pricing.sellprice;
+                    args.products[i].total = args.products[i].qty * product.pricing.sellprice + (tax * args.products[i].qty);
+
+                  } else {
+
+                    tax = (+product.pricing.price * (+taxPercentage)) / 100;
+                    args.products[i].productPrice = product.pricing.price;
+                    args.products[i].total = args.products[i].qty * product.pricing.price + (tax * args.products[i].qty);
+
                   }
 
-                })
+                  args.products[i].productTax = tax
+                  args.products[i].productTaxPercentage = taxPercentage
 
 
-                let tax;
-                if (product.pricing.sellprice > 0) {
-
-                  tax = (+product.pricing.sellprice * (+taxPercentage)) / 100;
-                  args.products[i].productPrice = product.pricing.sellprice;
-                  args.products[i].total = args.products[i].qty * product.pricing.sellprice + (tax * args.products[i].qty);
-
-                } else {
-
-                  tax = (+product.pricing.price * (+taxPercentage)) / 100;
-                  args.products[i].productPrice = product.pricing.price;
-                  args.products[i].total = args.products[i].qty * product.pricing.price + (tax * args.products[i].qty);
-
+                  carttotal = carttotal + args.products[i].total;
                 }
-
-                args.products[i].productTax = tax
-                args.products[i].productTaxPercentage = taxPercentage
-
               }
-              carttotal = carttotal + args.products[i].total;
             }
 
             cart.total = carttotal;
@@ -1103,15 +1183,16 @@ module.exports = {
 
               if (args.products[i].productId) {
                 const product = await Product.findById({ _id: args.products[i].productId });
+                if (product) {
+                  if (product.pricing.sellprice > 0) {
+                    args.products[i].total = args.products[i].qty * product.pricing.sellprice;
+                  } else {
+                    args.products[i].total = args.products[i].qty * product.pricing.price;
+                  }
 
-                if (product.pricing.sellprice > 0) {
-                  args.products[i].total = args.products[i].qty * product.pricing.sellprice;
-                } else {
-                  args.products[i].total = args.products[i].qty * product.pricing.price;
+                  carttotal = carttotal + args.products[i].total;
                 }
               }
-              carttotal = carttotal + args.products[i].total;
-
             }
 
             cart.total = carttotal;
@@ -1173,7 +1254,7 @@ module.exports = {
         // }
         var customer_cart = cart.products;
         for (let i in customer_cart) {
-          if (customer_cart[i].productId == args.productId) {
+          if (customer_cart[i].productId == args.productId || customer_cart[i]._id == args.productId) {
             cart.products = [];
             delete customer_cart[i];
 
@@ -1189,13 +1270,16 @@ module.exports = {
           if (cart.products[i].productId) {
             const product = await Product.findById({ _id: cart.products[i].productId });
 
-            if (product.pricing.sellprice > 0) {
-              cart.products[i].total = cart.products[i].qty * product.pricing.sellprice;
-            } else {
-              cart.products[i].total = cart.products[i].qty * product.pricing.price;
+            if (product) {
+              if (product.pricing.sellprice > 0) {
+                cart.products[i].total = cart.products[i].qty * product.pricing.sellprice;
+              } else {
+                cart.products[i].total = cart.products[i].qty * product.pricing.price;
+              }
+
+              carttotal = carttotal + cart.products[i].total;
             }
           }
-          carttotal = carttotal + cart.products[i].total;
         }
         cart.total = carttotal;
         cart.products = cart.products;

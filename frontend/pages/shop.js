@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { currencySetter, getImage, getPrice } from "../utills/helpers";
+import { currencySetter, getImage, getPrice, imageOnError } from "../utills/helpers";
 import client from "../apollo-client";
 import StarRating from "../components/breadcrumb/rating";
 import MultiRangeSlider from "../components/breadcrumb/multirangeSlider";
@@ -33,6 +33,8 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
     const [onSaleAllProduct, setonSaleAllProduct] = useState([])
     const [sortingdata, setSortingdata] = useState([])
     const [number, setNumber] = useState(0)
+    const getSetting = useSelector(state => state.setting)
+
 
     const [sortingName, setSortingName] = useState({
         name: 'latest',
@@ -268,7 +270,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`} >
                                                     <div style={{ display: 'flex', marginTop: 3, cursor: 'pointer' }} key={i} >
                                                         <div>
-                                                            <img className="widget-category-img" src={getImage(product.feature_image, 'original')} />
+                                                            <img className="widget-category-img" src={getImage(product.feature_image, 'original', false, getSetting)} onError={imageOnError} />
                                                         </div>
                                                         <div style={{ padding: "3px", marginLeft: "10px" }}>
                                                             {product.name?.length > 15 ? (

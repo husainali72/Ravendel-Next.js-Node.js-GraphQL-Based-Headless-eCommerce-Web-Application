@@ -15,12 +15,12 @@ const {
   UPDATE_FUNC,
 } = require("../config/api_functions");
 
-const {checkAwsFolder} = require("../config/aws");
+const { checkAwsFolder } = require("../config/aws");
 const fs = require('fs')
 
 var bdir = './assets/images/blog';
 
-if (!fs.existsSync(bdir)){
+if (!fs.existsSync(bdir)) {
   fs.mkdirSync(bdir);
 }
 
@@ -61,7 +61,7 @@ module.exports = {
       }
       try {
         const blogtag = await BlogTag.findOne({ url: args.tag_url });
-        console.log('blogtag----', args.tag_url)
+
         if (!blogtag) {
           return {
             message: MESSAGE_RESPONSE("NOT_EXIST", "blog Tag", false),
@@ -123,10 +123,10 @@ module.exports = {
         meta: args.meta,
         author: user.id,
       };
-      let path = "/assets/images/blog/";
+      let path = "assets/images/blog/";
       let validation = ["title", "status"];
-      const duplicate = await duplicateData({title: args.title}, Blog)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Title", false);
+      const duplicate = await duplicateData({ title: args.title }, Blog)
+      if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Title", false);
       return await CREATE_FUNC(
         user.id,
         "Blog",
@@ -140,7 +140,7 @@ module.exports = {
     updateBlog: async (root, args, { id }) => {
 
       await checkAwsFolder('blog');
-      let path = "/assets/images/blog/";
+      let path = "assets/images/blog/";
 
       let url = "";
       if (args.url || args.title) {
@@ -158,8 +158,8 @@ module.exports = {
         updated: Date.now(),
       };
       let validation = ["title", "status"];
-      const duplicate = await duplicateData({title: args.title}, Blog, args.id)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Title", false);
+      const duplicate = await duplicateData({ title: args.title }, Blog, args.id)
+      if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Title", false);
       return await UPDATE_FUNC(
         id,
         args.id,
@@ -182,8 +182,8 @@ module.exports = {
         url: url,
       };
       let validation = ["name"];
-      const duplicate = await duplicateData({name: args.name}, BlogTag)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Tag", false);
+      const duplicate = await duplicateData({ name: args.name }, BlogTag)
+      if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Tag", false);
       return await CREATE_FUNC(
         user.id,
         "Blog Tag",
@@ -202,8 +202,8 @@ module.exports = {
         updated: Date.now(),
       }
       let validation = ["name"];
-      const duplicate = await duplicateData({name: args.name}, BlogTag, args.id)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Tag", false);
+      const duplicate = await duplicateData({ name: args.name }, BlogTag, args.id)
+      if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Blog Tag", false);
       return await UPDATE_FUNC(
         id,
         args.id,

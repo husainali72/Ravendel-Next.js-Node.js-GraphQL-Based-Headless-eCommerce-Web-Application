@@ -2,9 +2,11 @@ import Link from "next/link";
 import { useState, useEffect } from "react"
 import { Spinner } from "react-bootstrap";
 import Table from 'react-bootstrap/Table';
-import { getImage, getPrice } from '../../utills/helpers';
+import { getImage, getPrice, imageOnError } from '../../utills/helpers';
 import { capitalize } from "lodash";
+import { useSelector } from "react-redux";
 const CartTable = (props) => {
+    const settings = useSelector((state) => state.setting)
     const { cartItems,
         decimal,
         isQuantityBtnLoading,
@@ -16,7 +18,8 @@ const CartTable = (props) => {
         removeToCart,
         updateCartProduct, currency,
         unAvailableProducts,
-        available
+        available,
+
     } = props;
     return (
         <div>
@@ -32,23 +35,30 @@ const CartTable = (props) => {
                             <th>SubTotal</th>
                             <th>Remove</th>
                         </tr>
-                    </thead>
+                    </thead  >
+
                     <tbody>
                         {cartItems && cartItems?.length > 0 && cartItems.map((item, i) => (
                             <tr key={i}>
                                 <td>
-                                    <Link href={"/product/" + item.url}>
+                                    {available ? <Link href={"/product/" + item.url}>
+
                                         <div className="td-flex cursor-pointer">
-                                            <img src={getImage(item.feature_image, 'thumbnail')} />
+                                            <img src={getImage(item.feature_image, 'thumbnail', false, settings)} onError={imageOnError} />
                                         </div>
-                                    </Link>
+                                    </Link> : <div className="td-flex cursor-pointer">
+                                        <img src={getImage(item.feature_image, 'thumbnail', false, settings)} onError={imageOnError} />
+                                    </div>}
                                 </td>
+
                                 <td>
-                                    <Link href={"/product/" + item.url}>
+                                    {available ? <Link href={"/product/" + item.url}>
                                         <div className="td-flex cursor-pointer table-product-title">
                                             <h3>{item.name}</h3>
                                         </div>
-                                    </Link>
+                                    </Link> : <div className="td-flex cursor-pointer table-product-title">
+                                        <h3>{item.name}</h3>
+                                    </div>}
                                 </td>
                                 <td>
                                     <div className="td-flex">
