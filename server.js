@@ -56,7 +56,7 @@ app.use("/assets", express.static(__dirname + "/assets"));
 
 if (process.env.NODE_ENV === "production") {
   // app.use(express.static(path.join(__dirname, "client", "build")));
-  // app.use(express.static(path.join(__dirname, "frontend", "build")));
+  app.use(express.static(path.join(__dirname, "frontend", "out")));
   // app.get("/admin", (req, res) => {
   //   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   // });
