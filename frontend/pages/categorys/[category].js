@@ -48,52 +48,52 @@ const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduc
     useEffect(() => {
         setCategoryDetail(singlecategory);
     }, [singlecategory]);
-    const catId = shopProduct.data.filter(product => product.url === url)[0].id
-    const subCat = shopProduct.data.filter(cat => cat.parentId === catId)
+    // const catId = shopProduct?.data && shopProduct.data.filter(product => product.url === url)[0].id
+    // const subCat = catId && shopProduct?.data && shopProduct.data.filter(cat => cat.parentId === catId)
 
-    const getProducts = async () => {
-        // let config = { category: [singlecategory.id], brand: [], attribute: [], price: [] }
-        // try { 
-        //     const { data: fillterPrroducts } = await client.query({
-        //         query: GET_FILTEREDPRODUCTS,
-        //         variables: {  config },
-        //     })
-        //     let fillterProduct = fillterPrroducts.filteredProducts
-        //     if(fillterProduct.length>0){
-        //         const pro = fillterProduct.map(product =>{
-        //             return{
-        //                 brand: product.brand,
-        //                 categoryId: product.categoryId,
-        //                 feature_image: product.feature_image,
-        //                 name:product.name,
-        //                 pricing:product.pricing,
-        //                 quantity: product.quantity,
-        //                 status:product.status,
-        //                 url:product.url,
-        //                 __typename: product.__typename,
-        //                 _id:product._id
-        //             }
-        //         } )
-        //         setProducts(pro)
-        //     }
-        //     // setProducts(fillterProduct )
-        // }
-        // catch (e) {
-        //     console.log("fillerProduct ERRoR : ", e);
-        // }
+    // const getProducts = async () => {
+    //     // let config = { category: [singlecategory.id], brand: [], attribute: [], price: [] }
+    //     // try { 
+    //     //     const { data: fillterPrroducts } = await client.query({
+    //     //         query: GET_FILTEREDPRODUCTS,
+    //     //         variables: {  config },
+    //     //     })
+    //     //     let fillterProduct = fillterPrroducts.filteredProducts
+    //     //     if(fillterProduct.length>0){
+    //     //         const pro = fillterProduct.map(product =>{
+    //     //             return{
+    //     //                 brand: product.brand,
+    //     //                 categoryId: product.categoryId,
+    //     //                 feature_image: product.feature_image,
+    //     //                 name:product.name,
+    //     //                 pricing:product.pricing,
+    //     //                 quantity: product.quantity,
+    //     //                 status:product.status,
+    //     //                 url:product.url,
+    //     //                 __typename: product.__typename,
+    //     //                 _id:product._id
+    //     //             }
+    //     //         } )
+    //     //         setProducts(pro)
+    //     //     }
+    //     //     // setProducts(fillterProduct )
+    //     // }
+    //     // catch (e) {
+    //     //     console.log("fillerProduct ERRoR : ", e);
+    //     // }
 
-    }
-    useEffect(() => {
-        getProducts()
-    }, [setCategoryDetail])
+    // }
+    // useEffect(() => {
+    //     getProducts()
+    // }, [setCategoryDetail])
 
 
-    const rederict = async () => {
-        await router.push(`/subcategory/${url}`)
-    }
-    if (subCat.length <= 0) {
-        rederict()
-    }
+    // const rederict = async () => {
+    //     await router.push(`/subcategory/${url}`)
+    // }
+    // if (subCat?.length <= 0) {
+    //     rederict()
+    // }
     return (
         <>
             <Head>
@@ -107,7 +107,7 @@ const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduc
                     <meta name="keywords" content={singlecategory?.meta?.keywords} />
                     : null}
             </Head>
-            {subCat.length > 0 ? <div className='categories-cart-container' >
+            {/* {subCat?.length > 0 ? <div className='categories-cart-container' >
                 <BreadCrumb title={`category  >  ${categoryDetail.name}`} />
                 <Container style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <h2 style={{ color: "#088178", margin: "40px" }}><strong>{categoryDetail.name}</strong></h2>
@@ -146,7 +146,7 @@ const SingleCategoryProduct = ({ singlecategory, paths, shopProduct, brandProduc
                             ))}
                         </Row> : <h2>{url}</h2>}
                 </Container>
-            </div> : null}
+            </div> : null} */}
         </>
     )
 }
@@ -164,9 +164,16 @@ export async function getStaticPaths() {
         console.log("ShopProduct Error===", e)
     }
     const filterProducts = shopProduct?.data?.filter(product => product.id !== "63d039bb58194ec30047d5bb")
-    const paths = filterProducts.map((curElem) => {
+    if (!filterProducts || filterProducts.length === 0) {
+        // Handle the case when filterProducts is undefined or empty
         return {
-            params: { categorys: curElem.url.toString() }
+          paths: [],
+          fallback: false,
+        };
+      }
+    const paths = filterProducts && filterProducts?.map((curElem) => {
+        return {
+            params: { category: curElem.url.toString() }
         }
     })
     return {
@@ -175,7 +182,7 @@ export async function getStaticPaths() {
     }
 }
 export async function getStaticProps({ params }) {
-    const url = params.categorys
+    const url = params.category || null
     var homepageData = [];
     var singlecategory = [];
     var fillterProduct = [];

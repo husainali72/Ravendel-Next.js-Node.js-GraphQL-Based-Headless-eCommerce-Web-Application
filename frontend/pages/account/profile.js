@@ -180,6 +180,7 @@ const Profile = ({ customeraddres }) => {
 export default Profile;
 
 export async function getServerSideProps(context) {
+    if (process.env.NODE_ENV === 'development' || !process.env.NEXT_EXPORT) {
     const session = await getSession(context)
 
     var id = session?.user?.accessToken.customer._id
@@ -194,7 +195,7 @@ export async function getServerSideProps(context) {
                 query: GET_CUSTOMER_QUERY,
                 variables: { id },
             })
-            customeraddres = customerssdata.customer.data
+            customeraddres = customerssdata &&  customerssdata?.customer?.data || null
         }
         catch (e) {
             console.log("customer Error===", e);
@@ -206,4 +207,5 @@ export async function getServerSideProps(context) {
             customeraddres
         }
     }
+}
 }

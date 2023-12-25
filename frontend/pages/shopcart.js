@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Container, Row, Col } from "react-bootstrap";
-import Form from 'react-bootstrap/Form'
+import { Container } from "react-bootstrap";
 import BreadCrumb from "../components/breadcrumb/breadcrumb";
 import { useSelector, useDispatch } from "react-redux";
 import CartTable from "../components/cardcomponent/CardDetail";
@@ -10,8 +9,6 @@ import { DELETE_CART_PRODUCTS, UPDATE_CART_PRODUCT, GET_USER_CART } from "../que
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
-import { query2 } from "../utills/cartHelperfun";
-import { APPLY_couponCode } from "../queries/couponquery";
 import { getAllProductsAction } from "../redux/actions/productAction";
 import { useRouter } from "next/router";
 import { settingActionCreator } from "../redux/actions/settingAction";
@@ -406,13 +403,6 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
         }
 
     }
-    const doApplyCouponCode = () => {
-        let cart = cartItems.map((product) => { return { productId: product._id, qty: product.quantity } })
-        let variables = {
-            couponCode: couponCode, cartItem: cart
-        }
-        query2(APPLY_couponCode, variables, token).then(res => console.log("res", res))
-    }
     const ProcessToCheckOut = () => {
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))
         var id = ''
@@ -614,7 +604,7 @@ export default YourCard;
 
 export async function getServerSideProps(context) {
 
-
+    if (process.env.NODE_ENV === 'development' || !process.env.NEXT_EXPORT) {
     const session = await getSession(context)
     let id = session?.user?.accessToken?.customer._id
     var customercart = [];
@@ -676,6 +666,7 @@ export async function getServerSideProps(context) {
 
 
     }
+}
 }
 
 

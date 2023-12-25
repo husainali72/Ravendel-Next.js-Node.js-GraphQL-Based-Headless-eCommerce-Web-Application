@@ -32,7 +32,7 @@ module.exports = {
       "/shop": { page: "/shop" },
       "/about": { page: "/about" },
       "/abouts/contactus": { page: "/abouts/contactus" },
-      "/abouts/deliveryinformations": { page: "/abouts/deliveryinformation" },
+      "/abouts/deliveryInformation": { page: "/abouts/deliveryInformation" },
       "/abouts/help": { page: "/abouts/help" },
       "/abouts/privacypolicy": { page: "/abouts/privacypolicy" },
       "/abouts/supportcenter": { page: "/abouts/supportcenter" },

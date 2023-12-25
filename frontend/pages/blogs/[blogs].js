@@ -13,7 +13,6 @@ const SingleBlogPages = ({ singleBlog }) => {
 
 
     const router = useRouter();
-    const { blog_id } = router.query.blogs;
     if (router.isFallback) {
         return <div>Loading...</div>
     }

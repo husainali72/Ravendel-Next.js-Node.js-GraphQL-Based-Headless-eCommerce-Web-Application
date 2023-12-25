@@ -174,7 +174,7 @@ export async function getStaticPaths() {
         allProduct = shopproducts.products.data;
     }
     catch (e) {
-        console.log("ShopProduct Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '')
+        console.log("ShopProduct Error===", e.networkError && e.networkError.result ? e.networkError?.result?.errors : '')
     }
 
     const paths = allProduct?.map((curElem) => ({
@@ -227,12 +227,12 @@ export async function getStaticProps({ params }) {
 
     }
     catch (e) {
-        console.log("ShopProduct Error===", e.networkError.result.errors)
+        console.log("ShopProduct Error===", e.networkError?.result?.errors)
     }
     /* ========================================= get Related Products ========================================*/
 
-    const category = singleproducts?.categoryId.map(cat => cat?.id);
-    const productID = singleproducts._id;
+    const category = !!singleproducts?.length && singleproducts?.categoryId.map(cat => cat?.id);
+    const productID = singleproducts._id || "";
     try {
         const { data: shopproductcategory } = await client.query({
             query: GET_RELATED_PRODUCTS_QUERY,
