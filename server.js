@@ -73,7 +73,7 @@ if (process.env.NODE_ENV === "production") {
   //   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   // });
   // app.get("/test", (req, res) => res.send(`Test Ravendel`));
-  app.get("/", (req, res) => {
+  app.get("/*", (req, res) => {
     console.log("Path /");
     res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
   });
