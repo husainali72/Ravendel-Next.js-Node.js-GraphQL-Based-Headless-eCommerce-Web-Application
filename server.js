@@ -70,7 +70,7 @@ if (process.env.NODE_ENV === "production") {
     console.log("Path /");
     res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
   });
-  // app.get("/", (req, res) => res.send(`Ravendel`));
+  app.get("/", (req, res) => res.send(`Ravendel ${port}`));
 } else {
   app.get("/", (req, res) => res.send(`Ravendel is running on port: ${port}`));
 }
