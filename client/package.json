@@ -2,6 +2,7 @@
   "name": "client",
   "version": "1.0.0",
   "private": true,
+  "homepage" : "/admin/",
   "dependencies": {
     "@apollo/client": "^3.7.3",
     "@apollo/react-hooks": "^4.0.0",

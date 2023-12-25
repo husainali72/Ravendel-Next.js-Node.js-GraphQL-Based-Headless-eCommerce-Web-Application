@@ -2,7 +2,7 @@ import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
-import CheckoutForm from "../components/CheckoutForm";
+// import CheckoutForm from "../components/CheckoutForm";
 
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -33,7 +33,7 @@ export default function App() {
     <div className="checkoutStripe">
       {clientSecret && (
         <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm />
+          // <CheckoutForm />
         </Elements>
       )}
     </div>
