@@ -12,9 +12,10 @@ import calculateDiscount from "../../utills/calculateDiscount";
 import { query } from "../../utills/helpers";
 import { capitalize } from "lodash";
 var placeholder = "https://dummyimage.com/300";
-const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, currencyOpt }) => {
+const OnSaleProductCard = ({ homepageData, onSaleProduct, hidetitle, titleShow, currencyProp, currencyOpt }) => {
     var id = ""
     var token = ""
+    const imageType = homepageData?.getSettings?.imageStorage?.status;
     const dispatch = useDispatch();
     const router = useRouter()
     const session = useSession();
@@ -134,7 +135,7 @@ const OnSaleProductCard = ({ onSaleProduct, hidetitle, titleShow, currencyProp, 
                                             <div className="on-sale-image-wrapper">
                                                 <img
                                                     className="img-on-sale"
-                                                    src={getImage(product.feature_image, 'original')}
+                                                    src={getImage(product.feature_image, imageType)}
                                                     height="280px"
                                                     width="100%"
                                                     onError={(e) => e.type === 'error' ? e.target.src = placeholder : null}

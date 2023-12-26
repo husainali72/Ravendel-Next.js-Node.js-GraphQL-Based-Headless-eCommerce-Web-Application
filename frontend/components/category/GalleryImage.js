@@ -25,7 +25,8 @@ const GalleryImagesComponents = (props) => {
     const dispatch = useDispatch();
     const session = useSession()
     const router = useRouter();
-    const { singleproducts, stockClass, setStockClass, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal } = props;
+    const { singleproducts, stockClass, setStockClass, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal, homepageData } = props;
+    const imageType = homepageData?.getSettings?.imageStorage?.status;
     const [available, setavailable] = useState(false)
     const [Lable, setLable] = useState("In Stock")
     const [variantSelect, setVariantSelect] = useState()
@@ -84,7 +85,7 @@ const GalleryImagesComponents = (props) => {
             return (
                 <a>
                     <img
-                        src={getImage(props.galleryImages[i], 'thumbnail')}
+                        src={getImage(props.galleryImages[i], imageType)}
                         alt="Thumbnail"
                         className="thumbnail-image"
                         onError={(e) => e.type === 'error' ? e.target.src = placeholder : null}
@@ -343,21 +344,21 @@ const GalleryImagesComponents = (props) => {
                                         <div key={index}>
                                             <GlassMagnifier
                                                 imageSrc={!variantSelect ?
-                                                    getImage(gallery, 'original')
+                                                    getImage(gallery,imageType)
                                                     :
                                                     (comboData?.length && variantSelect ?
                                                         (comboData?.length > 1 ?
-                                                            getImage(gallery, 'original')
+                                                            getImage(gallery, imageType)
                                                             :
                                                             (comboData[0].image.length ?
-                                                                getImage(comboData[0].image, 'original')
+                                                                getImage(comboData[0].image, imageType)
                                                                 :
-                                                                getImage(gallery, 'original')))
+                                                                getImage(gallery, imageType)))
                                                         :
-                                                        getImage(gallery, 'original'))}
+                                                        getImage(gallery, imageType))}
                                                 // imageSrc="https://dummyimage.com/300"
                                                 imageAlt="Example"
-                                                largeImageSrc={getImage(gallery, 'large')} // Optional
+                                                largeImageSrc={getImage(gallery, imageType)} // Optional
                                                 className="gallery-image"
                                                 magnifierSize={window.innerWidth < 1025 ? "60%" : "30%"}
                                                 magnifierBorderSize={5}

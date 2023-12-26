@@ -46,7 +46,7 @@ module.exports = {
       "/blogs/[blogs]": { page: "/blogs/[blogs]" },
       "/blogtags/[tags]": { page: "/blogtags/[tags]" },
       "/categorys/[category]": { page: "/categorys/[category]" },
-      "/products/[singleproduct]": { page: "/products/[singleproduct]" },
+      "/product/[singleproduct]": { page: "/product/[singleproduct]" },
       "/checkout": { page: "/checkout" },
       "/contact": { page: "/contact" },
       "/shopcart": { page: "/shopcart" },

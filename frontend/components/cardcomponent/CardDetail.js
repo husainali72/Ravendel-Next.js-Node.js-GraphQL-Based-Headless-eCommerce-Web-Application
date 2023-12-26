@@ -16,8 +16,10 @@ const CartTable = (props) => {
         removeToCart,
         updateCartProduct, currency,
         unAvailableProducts,
-        available
+        available,
+        homepageData
     } = props;
+    const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
     return (
         <div>
             <div className="table-responsive">
@@ -39,7 +41,7 @@ const CartTable = (props) => {
                                 <td>
                                     <Link href={"/product/" + item.url}>
                                         <div className="td-flex cursor-pointer">
-                                            <img src={getImage(item.feature_image, 'thumbnail')} />
+                                            <img src={getImage(item.feature_image, imageType)} />
                                         </div>
                                     </Link>
                                 </td>

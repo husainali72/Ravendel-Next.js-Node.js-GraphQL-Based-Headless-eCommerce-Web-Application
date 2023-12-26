@@ -16,7 +16,7 @@ import LoadingCartTable from "../components/cardcomponent/LoadingCard";
 import Link from "next/link";
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing * product.quantity || product.pricing * product.quantity), 0)
 const cartitems2 = []
-const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
+const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore, homepageData }) => {
     var id = "";
     var token = "";
     const router = useRouter();
@@ -357,7 +357,6 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                 variantId: item.variantId
                             }
                             // dispatch(decreaseQuantity(variables))
-                            console.log("update res while decreasing qtyyyy", res)
                         })
                     }).finally(() => setIsQuantityBtnLoading(false))
                 }
@@ -473,6 +472,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                         <div className="row">
                             <div className="col-12">
                                 <CartTable
+                                    homepageData={homepageData}
                                     decimal={decimal}
                                     isQuantityBtnLoading={isQuantityBtnLoading}
                                     cartItems={cartItems}
@@ -491,6 +491,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                 {unAvailableProducts && unAvailableProducts?.length > 0 ? <><h3 style={{ color: 'red', fontSize: '15px' }}>Out of stock</h3>
 
                                     <CartTable
+                                        homepageData={homepageData}
                                         decimal={decimal}
                                         isQuantityBtnLoading={isQuantityBtnLoading}
                                         cartItems={unAvailableProducts}
@@ -576,6 +577,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                         (unAvailableProducts && unAvailableProducts?.length > 0 ? <><h3 style={{ color: 'red', fontSize: '15px' }}>Out of stock</h3>
 
                             <CartTable
+                                homepageData={homepageData}
                                 decimal={decimal}
                                 isQuantityBtnLoading={isQuantityBtnLoading}
                                 cartItems={unAvailableProducts}
@@ -661,7 +663,8 @@ export async function getServerSideProps(context) {
             customercart,
             cart_id,
             CartsDataa,
-            currencyStore
+            currencyStore,
+            homepageData
         },
 
 

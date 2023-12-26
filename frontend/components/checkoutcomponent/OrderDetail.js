@@ -4,8 +4,9 @@ import Form from 'react-bootstrap/Form';
 import Link from "next/link";
 import { capitalize } from "lodash";
 const Orderdetail = (props) => {
-    const { decimal, currency, getOrderDetails, cartItems, billingInfo, handleBillingInfo, taxAmount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal } = props;
+    const { decimal, currency, getOrderDetails, cartItems, billingInfo, handleBillingInfo, taxAmount, shippingInfo, paymentMethod, delivery, billingDetails, subTotal, cartTotal, homepageData } = props;
     const cart = cartItems;
+    const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
     const [cartProduct, setCartProduct] = useState([]);
     const cartSubTotal = () => {
         var subtotalVar = 0;
@@ -70,7 +71,7 @@ const Orderdetail = (props) => {
                         {cartItems.map((item, i) => (
 
                             <tr key={i}>
-                                <td className="image product-thumbnail"><img src={getImage(item.feature_image, 'feature_image')} alt="" /></td>
+                                <td className="image product-thumbnail"><img src={getImage(item.feature_image, imageType)} alt="" /></td>
                                 <td><i className="ti-check-box font-small text-muted mr-10"></i>
                                     <h5><Link href={"/product/" + cart[i]?.url}><a >{item?.name}</a></Link></h5> <span className="product-qty">x {item.quantity}</span>
                                 </td>

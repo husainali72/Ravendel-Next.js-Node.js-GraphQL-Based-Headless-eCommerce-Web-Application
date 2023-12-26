@@ -6,7 +6,7 @@ import { GET_CATEGORIES_QUERY } from '../queries/home'
 import { GET_FILTEREDPRODUCTS } from '../queries/shopquery'
 import OnSaleProductCard from './category/onSaleProductCard'
 
-const SpecificProducts = ({ section }) => {
+const SpecificProducts = ({ section,  homepageData }) => {
 
 
     const [products, setProducts] = useState([])
@@ -90,6 +90,7 @@ const SpecificProducts = ({ section }) => {
                 <OnSaleProductCard
                     onSaleProduct={products}
                     hidetitle
+                    homepageData={homepageData}
                 />
             </Container> : null}
 

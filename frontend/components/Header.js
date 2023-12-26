@@ -190,11 +190,11 @@ export default function Header({ setOpenMenu }) {
                                         </div>
                                     </div>
 
-                                    <li className="nav-item">
+                                    {/* <li className="nav-item">
                                         <Link href="/blog">
                                             <a className="nav-link" aria-selected="false">Blog</a>
                                         </Link>
-                                    </li>
+                                    </li> */}
                                     <li className="nav-header">
                                         <Link href="/contact">
                                             <a className="nav-link" aria-selected="false">Contact</a>

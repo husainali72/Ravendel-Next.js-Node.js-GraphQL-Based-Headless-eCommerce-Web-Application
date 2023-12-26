@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import useResizeObserver from '@react-hook/resize-observer';
 import { capitalize } from 'lodash';
 import NoImagePlaceHolder from '../../components/images/NoImagePlaceHolder.png';
-const Category = ({ category }) => {
+const Category = ({ category, homepageData }) => {
     const [showSlider, setShowSlider] = useState(false)
     const [inlineSize, setInlineSize] = useState(0)
     const slider = useRef();
@@ -25,6 +25,7 @@ const Category = ({ category }) => {
         const { inlineSize, blockSize } = entry.contentBoxSize[0];
         setInlineSize(inlineSize)
     });
+    const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
     return (
         <section className="product-cart-section">
             <Container className="container">
@@ -39,7 +40,7 @@ const Category = ({ category }) => {
                                 <Link href={`/subcategory/[category]?url=${item.url}`} as={`/subcategory/${item.url}`}><div className="category-cards" key={i}>
                                     <div className="category-card-image">
                                         <img
-                                            src={getImage(item?.image, 'original')}
+                                            src={getImage(item?.image, imageType)}
                                             className="  cimg"
                                             onError={(e) => e.type === 'error' ? e.target.src = NoImagePlaceHolder.src : null}
                                             alt={item?.name}

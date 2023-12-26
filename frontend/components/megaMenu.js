@@ -4,9 +4,9 @@ import { HiOutlineArrowNarrowRight } from 'react-icons/hi';
 import { CgClose } from 'react-icons/cg';
 import { Row, Col } from 'react-bootstrap';
 import Link from 'next/link';
-import { getImage } from '../utills/helpers';
+import { getImage, toTitleCase } from '../utills/helpers';
 import client from '../apollo-client';
-import { GET_CATEGORIES_QUERY, GET_RECENT_PRODUCTS_QUERY } from '../queries/home';
+import { GET_CATEGORIES_QUERY, GET_HOMEPAGE_DATA_QUERY, GET_RECENT_PRODUCTS_QUERY } from '../queries/home';
 
 // import { newProducts, productCategories } from './dummyContent';
 
@@ -17,6 +17,20 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
     const [categories, setCategories] = useState([])
     const [productCategories, setproductCategories] = useState([])
     const [newProducts, setNewProducts] = useState([])
+    const [imageType, setImageType] = useState('')
+    const getHomepageData = async () => {
+        var imageStatus = []
+        try {
+            const { data: homePageData } = await client.query({
+                query: GET_HOMEPAGE_DATA_QUERY
+            });
+            imageStatus = homePageData?.getSettings?.imageStorage?.status
+            setImageType(imageStatus)
+        }
+        catch (e) {
+            console.log("Categories Error=======", e);
+        }
+    }
     const getCategories = async () => {
         try {
             const { data: categoryData } = await client.query({
@@ -42,7 +56,7 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
         }
     }
     useEffect(() => {
-
+        getHomepageData()
         getCategories()
         getNewProducts()
     }, [openMenu])
@@ -78,27 +92,23 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
 
     return (
         <>
-
-
-            <div className={`mega-menu-wrapper ${openMenu ? 'open' : ''} `} >
-                <div className="container" onMouseLeave={() => setOpenMenu(false)}>
-                    <Row>
+            <div className={` mega-menu-wrapper ${openMenu ? 'open' : ''}`} >
+                <div className="container  box-shadow margin-bottom" onMouseLeave={() => setOpenMenu(false)}>
+                    <Row className=''>
                         <Col lg={4} className='new-products-col'>
-                            <div>
+                            <div style={{width:'100%'}}>
                                 <h4 className="theme-color my-2"> New <span className="text-black">Products</span></h4>
                                 {newProducts?.map((product, i) => (
                                     i < 3 ?
-
-                                        <div className='product'>
-                                            <img src={getImage(product?.feature_image)} alt="" onError={(e) => e.target.src = ''} />
+                                        <div style={{ justifyContent:'space-between', paddingInline:'8px', margin: '8px 0px'}} className='product'>
+                                            <img src={getImage(product?.feature_image, imageType)} alt="" onError={(e) => e.target.src = ''} />
                                             <div className="details">
                                                 <h4>{product?.name}</h4>
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
-                                                    <div className="add-to-cart">
-
+                                                    <div className="card-btns">
                                                         <button type="button"
                                                             className="btn btn-success "
-                                                            style={{ backgroundColor: "#088178", width: '150px' }}
+                                                            style={{ backgroundColor: "#088178" }}
 
                                                         >
                                                             Shop Now
@@ -120,7 +130,7 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
                                 <div className="product-categories-wrapper">
                                     {productCategories?.map((category) => (
                                         <div className="category">
-                                            <h4>{category?.name}</h4>
+                                            <h4>{toTitleCase(category?.name)}</h4>
                                             {category?.subcategories?.map((sub_cat) => (
                                                 <Link href={`/subcategory/[category]?url=${sub_cat.url}`} as={`/subcategory/${sub_cat.url}`}>{sub_cat?.name}</Link>
                                             ))}

@@ -7,11 +7,10 @@ import { GET_BLOGS_QUERY, GET_BLOG_BY_ID_QUERY } from "../../queries/blogquery";
 import { getImage } from "../../utills/helpers";
 import { useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts"
-const SingleBlogPages = ({ singleBlog }) => {
+const SingleBlogPages = ({ singleBlog, homepageData }) => {
     // console.log(singleBlog)
     const blogtags = useSelector(state => state.blogtags)
-
-
+    const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
     const router = useRouter();
     if (router.isFallback) {
         return <div>Loading...</div>
@@ -24,7 +23,7 @@ const SingleBlogPages = ({ singleBlog }) => {
                     <div className="col-lg-9">
                         <h1>{singleBlog.title}</h1>
                         <hr></hr>
-                        <img src={getImage(singleBlog.feature_image, 'original')} width={"100%"} />
+                        <img src={getImage(singleBlog.feature_image, imageType)} width={"100%"} />
                         <div>
                             <p>{singleBlog?.content?.replace(/(<([^>]+)>)/ig, '')}</p>
                         </div>
@@ -88,7 +87,20 @@ export async function getStaticProps({ params }) {
     // console.log("params", params)
     const id = params.blogs
     var singleBlog = {};
+    var homepageData = [];
     {/* ----------------------- GET GETBLOG BY ID QUERY  -----------------------------*/ }
+
+    /* ===============================================Get HomepageData Settings ===============================================*/
+
+    try {
+        const { data: homepagedata } = await client.query({
+            query: GET_HOMEPAGE_DATA_QUERY
+        });
+        homepageData = homepagedata
+    }
+    catch (e) {
+        console.log("Homepage Error===", e);
+    }
     try {
         const { data: singleBlogData } = await client.query({
             query: GET_BLOG_BY_ID_QUERY,
@@ -102,6 +114,7 @@ export async function getStaticProps({ params }) {
     return {
         props: {
             singleBlog,
+            homepageData
         },
         revalidate: 10
     }

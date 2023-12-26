@@ -94,7 +94,7 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
     return (
         <div>
             <Head>
-                {singleproducts && singleproducts.meta.title ?
+                {singleproducts && singleproducts?.meta && singleproducts.meta?.title ?
                     <title>{singleproducts.meta.title + " | Ravendel"}</title>
                     : null}
                 {singleproducts && singleproducts.meta.description ?
@@ -112,7 +112,7 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
                         <div className="col-lg-12">
                             <div className="product-detail accordion-detail">
                                 <div>
-                                    <GalleryImagesComponents decimal={decimal} stockClass={stockClass} setStockClass={setStockClass} outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency={currency} />
+                                    <GalleryImagesComponents homepageData={homepageData} decimal={decimal} stockClass={stockClass} setStockClass={setStockClass} outOfStockThreshold={outOfStockThreshold} lowStockThreshold={lowStockThreshold} outOfStockVisibility={outOfStockVisibility} galleryImages={sliderImages} singleproducts={singleproducts} currency={currency} />
                                 </div>
                             </div>
                             <div>
@@ -231,7 +231,7 @@ export async function getStaticProps({ params }) {
     }
     /* ========================================= get Related Products ========================================*/
 
-    const category = !!singleproducts?.length && singleproducts?.categoryId.map(cat => cat?.id);
+    const category = !!singleproducts?.categoryId?.length && singleproducts?.categoryId.map(cat => cat?.id);
     const productID = singleproducts._id || "";
     try {
         const { data: shopproductcategory } = await client.query({

@@ -175,6 +175,9 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           api_signature
         }
       }
+      imageStorage {
+        status
+      }
       appearance {
         home {
           slider {

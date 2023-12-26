@@ -19,7 +19,8 @@ import { settingActionCreator } from "../redux/actions/settingAction";
 import Link from "next/link";
 import { getAllAttributes } from "../redux/actions/productAction";
 import { capitalize } from "lodash";
-const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
+const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore, homepageData }) => {
+    const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
     const dispatch = useDispatch();
     const attributes = useSelector(state => state.products.attributes)
     const usercart = useSelector(state => state.userCart)
@@ -268,7 +269,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore }) => {
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`} >
                                                     <div style={{ display: 'flex', marginTop: 3, cursor: 'pointer' }} key={i} >
                                                         <div>
-                                                            <img className="widget-category-img" src={getImage(product.feature_image, 'original')} />
+                                                            <img className="widget-category-img" src={getImage(product.feature_image, imageType)} />
                                                         </div>
                                                         <div style={{ padding: "3px", marginLeft: "10px" }}>
                                                             {product.name?.length > 15 ? (

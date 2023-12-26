@@ -15,6 +15,7 @@ export const API_BASE_URL = `https://${BASE_URL}/api`;
 // export var bucketName = "revendal-image-prod";
 export var bucketName = "revendal-image";
 export var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
+// export var bucketBaseURL = `https://${BASE_URL}/`;
 
 // if (process.env.NODE_ENV === "production") {
 //     bucketName = "revendal-image-prod";

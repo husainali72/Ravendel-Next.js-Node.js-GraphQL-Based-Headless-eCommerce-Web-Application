@@ -10,7 +10,8 @@ import { Container, Card, Button } from 'react-bootstrap';
 import ShopProducts from "../components/shoppage/shopProducts";
 import { blogAction } from "../redux/actions/blogAction"
 import { useDispatch } from "react-redux";
-const Blog = (blogData, blogTagsData) => {
+const Blog = (blogData) => {
+    const imageType = blogData?.homepageData && blogData?.homepageData?.getSettings?.imageStorage?.status;
     const dispatch = useDispatch();
     const [blog, setBlog] = useState([])
     const [tags, setTags] = useState([])
@@ -39,7 +40,7 @@ const Blog = (blogData, blogTagsData) => {
                                         <Card>
                                             <div className="card-img"><Card.Img
                                                 variant="top"
-                                                src={getImage(blog.feature_image, 'original')}
+                                                src={getImage(blog.feature_image, imageType)}
                                                 onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
                                             /></div>
 
@@ -95,7 +96,6 @@ export async function getStaticProps() {
     catch (e) {
         console.log("Homepage Error===", e);
     }
-    console.log("homepage", homepageData)
 
     /* ===============================================Get Blog Data =====================================================================*/
     try {
@@ -108,7 +108,6 @@ export async function getStaticProps() {
         console.log("Blog Error=======", e.networkError);
 
     }
-    console.log("blogData", blogData);
 
     /* ===============================================Get BlogTags Data =====================================================================*/
 
