@@ -2,7 +2,7 @@
   "name": "client",
   "version": "1.0.0",
   "private": true,
-  "homepage" : "/admin/",
+  "homepage": "/admin/",
   "dependencies": {
     "@apollo/client": "^3.7.3",
     "@apollo/react-hooks": "^4.0.0",
@@ -34,6 +34,7 @@
     "react": "^18.2.0",
     "react-cookies": "^0.1.1",
     "react-dom": "^18.2.0",
+    "react-drag-reorder": "^1.2.0",
     "react-hook-form": "^7.43.9",
     "react-redux": "^8.0.5",
     "react-render-html": "^0.6.0",
