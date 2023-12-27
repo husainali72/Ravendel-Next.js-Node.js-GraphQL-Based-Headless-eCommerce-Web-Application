@@ -26,9 +26,9 @@ const GalleryImagesComponents = (props) => {
     const dispatch = useDispatch();
     const session = useSession()
     const router = useRouter();
-    const { singleproducts, stockClass, setStockClass, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal } = props;
+    const { singleproducts,  setStockClass,  lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal, homepageData } = props;
+    const imageType = homepageData?.getSettings?.imageStorage?.status;
     const getSetting = useSelector(state => state.setting)
-
     const [available, setavailable] = useState(false)
     const [Lable, setLable] = useState("In Stock")
     const [variantSelect, setVariantSelect] = useState()
@@ -88,7 +88,7 @@ const GalleryImagesComponents = (props) => {
             return (
                 <a>
                     <img
-                        src={getImage(props.galleryImages[i], 'thumbnail', false, getSetting)}
+                        src={getImage(props.galleryImages[i], imageType)}
                         alt="Thumbnail"
                         className="thumbnail-image"
                         onError={imageOnError}
@@ -334,7 +334,6 @@ const GalleryImagesComponents = (props) => {
         setSelectedAttrs([...data])
         prepareComb(data)
     };
-    console.log(imgError, 'dhgjfimgError')
     return (
         <>
             <div className="single-product row mb-50" style={{ display: 'flex' }}>

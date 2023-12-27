@@ -200,7 +200,10 @@ const Contact = ({homePageData}) => {
                             <div className="get-in-touch-contact">
                                 <div className="contact-info">
                                     <h4>Contact Us</h4>
-                                    <p><span>Address:</span> {address ? (address?.addressLine1 && address?.addressLine1 + ", ") + (address?.addressLine2 && address?.addressLine2 + ", ") + address?.city :"10 Suffolk st Soho, London, UK"}</p>
+                                    {/* <p><span>Address:</span> {address ? (address?.addressLine1 && address?.addressLine1 + ", ") + (address?.addressLine2 && address?.addressLine2 + ", ") + address?.city :"10 Suffolk st Soho, London, UK"}</p> */}
+                                    <p><span>Address:</span> {
+                                        address ? (`${address?.addressLine1 ? (address?.addressLine1 + ", ") : ""} ${address?.addressLine2 ? (address?.addressLine1 + ", ") : ""}  ${address?.city || ''}`) : "10 Suffolk st Soho, London, UK"
+                                    }</p>
                                     <Link href="tel:+1234567890">
                                         <p><a>Phone : {contactDetails ? contactDetails?.phone_number : "(+01) - 2345 - 6789"}</a>
                                         </p>

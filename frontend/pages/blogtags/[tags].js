@@ -9,11 +9,9 @@ import { getImage } from "../../utills/helpers";
 import { useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts"
 import { useState, useEffect } from "react";
-const BlogsTags = ({ blogTagByUrl }) => {
+const BlogsTags = ({ blogTagByUrl, homepageData }) => {
     const blogTag = useSelector(state => state.blogtags)
-    // console.log("blogTag", blogTag)
-    const getSetting = useSelector(state => state.setting)
-
+    const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
     const router = useRouter();
     const [blogTagsDetail, setBlogTagsDetail] = useState([])
 
@@ -38,7 +36,7 @@ const BlogsTags = ({ blogTagByUrl }) => {
                                     <Card>
                                         <div className="card-img"><Card.Img
                                             variant="top"
-                                            src={getImage(blog.feature_image, 'original', false, getSetting)}
+                                            src={getImage(blog.feature_image, imageType)}
                                             onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
                                         /></div>
                                         <Card.Body>
@@ -82,7 +80,6 @@ export async function getStaticPaths() {
         console.log("Blog Error=======", e.networkError);
 
     }
-    console.log("blogTags", blogTags);
     const paths = blogTags.map((curElem) => ({
         params: { tags: curElem.url.toString() }
 
@@ -94,17 +91,29 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-    console.log("param", params);
 
     const url = params.tags
     var blogTagByUrl = [];
+    var homepageData = [];
+
+    /* ===============================================Get HomepageData Settings ===============================================*/
+
+    try {
+        const { data: homepagedata } = await client.query({
+            query: GET_HOMEPAGE_DATA_QUERY
+        });
+        homepageData = homepagedata
+    }
+    catch (e) {
+        console.log("Homepage Error===", e);
+    }
+
     try {
         const { data: blogTagsByUrlData } = await client.query({
             query: GETBLOG_BY_ID_QUERY,
             variables: { url },
         })
         blogTagByUrl = blogTagsByUrlData.blogsbytagurl.data
-        console.log("blogTagUrl", blogTagByUrl)
     }
     catch (e) {
         console.log("Error", e)
@@ -112,7 +121,8 @@ export async function getStaticProps({ params }) {
 
     return {
         props: {
-            blogTagByUrl
+            blogTagByUrl,
+            homepageData
         },
         revalidate: 10,
     }

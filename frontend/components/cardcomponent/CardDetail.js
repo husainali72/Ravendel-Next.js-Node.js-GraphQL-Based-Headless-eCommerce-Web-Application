@@ -19,8 +19,9 @@ const CartTable = (props) => {
         updateCartProduct, currency,
         unAvailableProducts,
         available,
-
+        homepageData
     } = props;
+    const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
     return (
         <div>
             <div className="table-responsive">
@@ -44,7 +45,7 @@ const CartTable = (props) => {
                                     {available ? <Link href={"/product/" + item.url}>
 
                                         <div className="td-flex cursor-pointer">
-                                            <img src={getImage(item.feature_image, 'thumbnail', false, settings)} onError={imageOnError} />
+                                            <img src={getImage(item.feature_image, imageType)}  onError={imageOnError}/>
                                         </div>
                                     </Link> : <div className="td-flex cursor-pointer">
                                         <img src={getImage(item.feature_image, 'thumbnail', false, settings)} onError={imageOnError} />

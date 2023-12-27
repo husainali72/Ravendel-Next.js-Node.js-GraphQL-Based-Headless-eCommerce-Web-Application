@@ -15,8 +15,9 @@ import { capitalize } from 'lodash';
 import MultiRangeSlider from '../../components/breadcrumb/multirangeSlider';
 import { currencySetter } from '../../utills/helpers';
 import { getAllAttributes } from '../../redux/actions/productAction';
+import CategoryBreadCrumb from '../../components/breadcrumb';
+// import CategoryBreadCrumb from './component/breadcrumb';
 
-import CategoryBreadCrumb from './component/breadcrumb';
 const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProduct, brandProduct }) => {
     const breadCrumbTitle = shopProduct?.data?.find((catt) => catt.id === singlecategory.parentId);
     const attributes = useSelector(state => state.products.attributes)

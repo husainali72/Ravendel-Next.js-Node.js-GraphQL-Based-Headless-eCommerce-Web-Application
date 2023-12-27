@@ -39,3 +39,4 @@ yarn-error.log*
 /frontend/.next
 
 assets
+.next

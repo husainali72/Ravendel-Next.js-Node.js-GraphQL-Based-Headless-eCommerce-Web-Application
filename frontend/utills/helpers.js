@@ -1,4 +1,4 @@
-import { IMAGE_BASE_URL, baseUrl, bucketBaseURL } from '../config';
+import { BASE_URL, baseUrl, bucketBaseURL } from '../config';
 import client from '../apollo-client';
 import { isEmpty } from "./service";
 import axios from 'axios'
@@ -27,10 +27,13 @@ export const imageOnError = (event) => {
     event.target.src = NoImagePlaceHolder.src
 }
 export const getImage = (img, type, isBanner, setting) => {
-
     let localStorage = setting?.setting?.imageStorage?.status === 's3' ? false : (setting?.setting?.imageStorage?.status === 'localStorage' ? true : '')
-
+// export const getImage = (img, type, isBanner) => {
     let imagaPath = ""
+    if(type && type === "localStorage"){
+        imagaPath = `https://${BASE_URL}/${img}`;
+        return imagaPath;
+    }
     if (!isBanner) {
         imagaPath = NoImagePlaceHolder.src;
     }
@@ -41,9 +44,22 @@ export const getImage = (img, type, isBanner, setting) => {
     return imagaPath;
 
 }
-
+export const toTitleCase = (str) => {
+    return str.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  }
 /* -------------------------------Graphql query function ------------------------------- */
-
+export const getHomepageData = async () => {
+    try {
+        const { data: homePageData } = await client.query({
+            query: GET_HOMEPAGE_DATA_QUERY
+        });
+    }
+    catch (e) {
+        console.log("Categories Error=======", e);
+    }
+}
 export const query = async (query, id) => {
     const session = await getSession();
     const token = session?.user?.accessToken?.token
