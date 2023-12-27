@@ -40,7 +40,6 @@ export const getImage = (img, type, isBanner, setting) => {
     if (img) {
         imagaPath = localStorage ? baseUrl + img : bucketBaseURL + img
     }
-
     return imagaPath;
 
 }

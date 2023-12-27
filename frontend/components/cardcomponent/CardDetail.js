@@ -39,7 +39,9 @@ const CartTable = (props) => {
                     </thead  >
 
                     <tbody>
-                        {cartItems && cartItems?.length > 0 && cartItems.map((item, i) => (
+                        {cartItems && cartItems?.length > 0 && cartItems.map((item, i) => {
+                            console.log('item => ', getImage(item.feature_image, imageType));
+                            return (
                             <tr key={i}>
                                 <td>
                                     {available ? <Link href={"/product/" + item.url}>
@@ -48,7 +50,7 @@ const CartTable = (props) => {
                                             <img src={getImage(item.feature_image, imageType)}  onError={imageOnError}/>
                                         </div>
                                     </Link> : <div className="td-flex cursor-pointer">
-                                        <img src={getImage(item.feature_image, 'thumbnail', false, settings)} onError={imageOnError} />
+                                        <img src={getImage(item.feature_image,imageType)} onError={imageOnError} />
                                     </div>}
                                 </td>
 
@@ -102,7 +104,7 @@ const CartTable = (props) => {
                                         <i onClick={() => removeToCart(item)} className="far fa-trash-alt"></i></div>
                                 </td>
                             </tr>
-                        ))
+                        )})
                         }
                         <tr>
                             <td></td>
