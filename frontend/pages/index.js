@@ -3,8 +3,6 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Homebanner from "../components/banner/homebanner";
 import Category from "../components/category/category";
-import PruductCart from "../components/category/pruductcart";
-import RavendelBanner from "../components/banner/banners";
 import FeatureBrand from "../components/category/featurebrand";
 import OnSaleProductCard from "../components/category/onSaleProductCard";
 import { GET_HOMEPAGE_DATA_QUERY, FEATURE_PRODUCT_QUERY, GET_RECENT_PRODUCTS_QUERY, GET_CATEGORIES_QUERY, ON_SALE_PRODUCTS_QUERY, GET_REVIEWS } from '../queries/home';
@@ -21,7 +19,6 @@ import CustomBanner from "../components/banner/CustomBanner";
 import MegaMenu from "../components/megaMenu";
 
 export default function Home({ homepageData, settings, setOpenMenu, openMenu, seoInfo, brands, homePageInfo, currencyStore, stripe_Public_key, category, recentproducts, featureproducts, onSaleProducts, allReviews }) {
-
 
   const [press, setPress] = useState(false);
   const initialRender = useRef(true)
@@ -90,7 +87,7 @@ export default function Home({ homepageData, settings, setOpenMenu, openMenu, se
           return (onSaleProducts?.length > 0 ?
             <>
               <CustomBanner variant={"sale-banner"} />
-              <OnSaleProductCard onSaleProduct={onSaleProducts} />
+              <OnSaleProductCard homepageData={homepageData}  onSaleProduct={onSaleProducts} />
             </>
             : null)
         }
@@ -101,7 +98,7 @@ export default function Home({ homepageData, settings, setOpenMenu, openMenu, se
           return (recentproducts?.length > 0 ?
             <>
               <CustomBanner variant={"new-arrival-banner"} />
-              <OnSaleProductCard onSaleProduct={recentproducts} titleShow={"Recent"} />
+              <OnSaleProductCard homepageData={homepageData} onSaleProduct={recentproducts} titleShow={"Recent"} />
             </>
             : null)
         }
@@ -112,7 +109,7 @@ export default function Home({ homepageData, settings, setOpenMenu, openMenu, se
           return (featureproducts?.length > 0 ?
             <>
               <CustomBanner variant={"fashion-banner"} />
-              <OnSaleProductCard onSaleProduct={featureproducts} titleShow={"featured"} />
+              <OnSaleProductCard homepageData={homepageData} onSaleProduct={featureproducts} titleShow={"featured"} />
             </>
             : null)
         }
@@ -121,7 +118,7 @@ export default function Home({ homepageData, settings, setOpenMenu, openMenu, se
 
       case 'product_from_specific_category':
         if (section.visible && section.category) {
-          return <SpecificProducts section={section} />
+          return <SpecificProducts  homepageData={homepageData} section={section} />
         }
         break;
 
@@ -149,12 +146,12 @@ export default function Home({ homepageData, settings, setOpenMenu, openMenu, se
       </Head>
       {openMenu && <MegaMenu openMenu={openMenu} categories={category} newProducts={recentproducts} setOpenMenu={setOpenMenu} />}
       {homePageInfo && homePageInfo.slider && homePageInfo.slider?.length > 0 ?
-        <Homebanner slider={homePageInfo.slider} Image={Image} />
+        <Homebanner homepageData={homepageData} slider={homePageInfo.slider} Image={Image} />
         : null}
 
-      {category?.length > 0 ? <Category category={category} /> : null}
+      {category?.length > 0 ? <Category homepageData={homepageData} category={category} /> : null}
 
-      {brands?.length > 0 ? <FeatureBrand brands={brands} /> : null}
+      {brands?.length > 0 ? <FeatureBrand homepageData={homepageData} brands={brands} /> : null}
       {/* <RavendelBanner /> */}
 
       {HomePageSeq?.map(section => (

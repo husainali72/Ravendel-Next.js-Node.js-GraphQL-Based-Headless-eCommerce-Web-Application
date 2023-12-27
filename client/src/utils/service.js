@@ -3,8 +3,9 @@ import axios from "axios";
 import { isEmpty, client_app_route_url } from "./helper";
 import APclient from "../Client";
 
-const location = window.location.origin;
+// const location = window.location.origin;
 // const location = "http://localhost:8000";
+const location = "https://demo1.ravendel.io";
 
 export const mutation = async (query, variables) => {
   try {

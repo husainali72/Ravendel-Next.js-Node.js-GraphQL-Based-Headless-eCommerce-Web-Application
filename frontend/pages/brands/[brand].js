@@ -7,7 +7,7 @@ import MultiRangeSlider from '../../components/breadcrumb/multirangeSlider';
 import OnSaleProductCard from '../../components/category/onSaleProductCard';
 import ShopProducts from '../../components/shoppage/shopProducts';
 import { CloseSortMenu } from '../../utills/app';
-import { currencySetter, getImage } from '../../utills/helpers';
+import { currencySetter } from '../../utills/helpers';
 import { useDispatch, useSelector } from 'react-redux';
 import { GET_HOMEPAGE_DATA_QUERY } from '../../queries/home';
 import { settingActionCreator } from '../../redux/actions/settingAction';

@@ -236,7 +236,7 @@ export default MyWishList;
 
 
 export async function getStaticPaths() {
-    var AllCustomerData = [];
+    var AllCustomerData = {};
 
     try {
         const { data: blogdata } = await client.query({
@@ -248,6 +248,13 @@ export async function getStaticPaths() {
         console.log("Blog Error=======", e.networkError);
 
     }
+    if (!AllCustomerData?.customers || AllCustomerData?.customers?.length === 0) {
+        // Handle the case when filterProducts is undefined or empty
+        return {
+          paths: [],
+          fallback: false,
+        };
+      }
     const paths = AllCustomerData.customers.data.map((curElem) => ({
         params: { mywishlist: curElem.id.toString() }
 

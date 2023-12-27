@@ -26,9 +26,9 @@ const GalleryImagesComponents = (props) => {
     const dispatch = useDispatch();
     const session = useSession()
     const router = useRouter();
-    const { singleproducts, stockClass, setStockClass, currency, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal } = props;
+    const { currency, stockClass, singleproducts, setStockClass, lowStockThreshold, outOfStockVisibility, outOfStockThreshold, decimal, homepageData } = props;
+    const imageType = homepageData?.getSettings?.imageStorage?.status;
     const getSetting = useSelector(state => state.setting)
-
     const [available, setavailable] = useState(false)
     const [Lable, setLable] = useState("In Stock")
     const [variantSelect, setVariantSelect] = useState()
@@ -39,7 +39,7 @@ const GalleryImagesComponents = (props) => {
     const [comboData, setComboData] = useState([])
     const [priceRange, setPriceRange] = useState([]);
     const [sellpriceRange, setSellpriceRange] = useState([]);
-
+    const [imgError, setImgError] = useState(false)
     useEffect(() => {
         if (singleproducts && !variantSelect ? (singleproducts.quantity <= lowStockThreshold) : (comboData && comboData.length > 1 && variantSelect ? null : (comboData[0]?.quantity <= lowStockThreshold))) {
             setStockClass("low-stock")
@@ -88,7 +88,7 @@ const GalleryImagesComponents = (props) => {
             return (
                 <a>
                     <img
-                        src={getImage(props.galleryImages[i], 'thumbnail', false, getSetting)}
+                        src={getImage(props.galleryImages[i], imageType)}
                         alt="Thumbnail"
                         className="thumbnail-image"
                         onError={imageOnError}
@@ -334,7 +334,39 @@ const GalleryImagesComponents = (props) => {
         setSelectedAttrs([...data])
         prepareComb(data)
     };
-    console.log(imgError, 'dhgjfimgError')
+
+    const getMagnifierImg = ({ variantSelect, gallery, comboData }) => {
+        if (!variantSelect) {
+            return getImage(gallery, imageType);
+        } else {
+            if (comboData?.length && variantSelect) {
+                if (comboData.length > 1) {
+                    return getImage(gallery, imageType);
+                } else {
+                    if (comboData[0].image.length) {
+                        return getImage(comboData[0].image, imageType);
+                    } else {
+                        return getImage(gallery, imageType);
+                    }
+                }
+            } else {
+                return getImage(gallery, imageType);
+            }
+        }
+        // (!variantSelect ?
+        //     getImage(gallery, imageType)
+        //     :
+        //     (comboData?.length && variantSelect ?
+        //         (comboData?.length > 1 ?
+        //             getImage(gallery, imageType)
+        //             :
+        //             (comboData[0].image.length ?
+        //                 getImage(comboData[0].image, imageType)
+        //                 :
+        //                 getImage(gallery, imageType)))
+        //         :
+        //         getImage(gallery, imageType))) || NoImagePlaceHolder?.src
+    }
     return (
         <>
             <div className="single-product row mb-50" style={{ display: 'flex' }}>
@@ -347,39 +379,31 @@ const GalleryImagesComponents = (props) => {
                                     {props.galleryImages.map((gallery, index) => {
                                         let error = false
                                         return <div key={index}>
-                                            {console.log(getImage(gallery, 'original', false, getSetting), '=====================jhj')}
                                             <img
                                                 style={{ display: 'none' }}
                                                 src={!variantSelect ?
-                                                    getImage(gallery, 'original', false, getSetting)
+                                                    // getImage(gallery, 'original', false, getSetting)
+                                                    getImage(gallery, imageType)
                                                     :
                                                     (comboData?.length && variantSelect ?
                                                         (comboData?.length > 1 ?
                                                             getImage(gallery, 'original', false, getSetting)
                                                             :
                                                             (comboData[0].image.length ?
-                                                                getImage(comboData[0].image, 'original', false, getSetting)
+                                                                // getImage(comboData[0].image, 'original', false, getSetting)
+                                                                getImage(comboData[0].image, imageType)
                                                                 :
-                                                                getImage(gallery, 'original', false, getSetting)))
+                                                                // getImage(gallery, 'original', false, getSetting)))
+                                                                getImage(gallery, 'original', imageType)))
                                                         :
-                                                        getImage(gallery, 'original', false, getSetting))} onError={(e) => e.type === 'error' ? setImgError(true) : setImgError(false)} />
+                                                        getImage(gallery, imageType))} />
+                                            {/* getImage(gallery, imageType))} onError={(e) => e.type === 'error' ? setImgError(true) : setImgError(false)} /> */}
+                                            {/* getImage(gallery, 'original', false, getSetting))} onError={(e) => e.type === 'error' ? setImgError(true) : setImgError(false)} /> */}
                                             <GlassMagnifier
-                                                imageSrc={imgError ? NoImagePlaceHolder?.src : (!variantSelect ?
-                                                    getImage(gallery, 'original', false, getSetting)
-                                                    :
-                                                    (comboData?.length && variantSelect ?
-                                                        (comboData?.length > 1 ?
-                                                            getImage(gallery, 'original', false, getSetting)
-                                                            :
-                                                            (comboData[0].image.length ?
-                                                                getImage(comboData[0].image, 'original', false, getSetting)
-                                                                :
-                                                                getImage(gallery, 'original', false, getSetting)))
-                                                        :
-                                                        getImage(gallery, 'original', false, getSetting)))}
-                                                // imageSrc="https://dummyimage.com/300"
+                                                imageSrc={getMagnifierImg({
+                                                    variantSelect, gallery, comboData
+                                                })}
                                                 imageAlt="Example"
-
                                                 className="gallery-image"
                                                 magnifierSize={window.innerWidth < 1025 ? "60%" : "30%"}
                                                 magnifierBorderSize={5}

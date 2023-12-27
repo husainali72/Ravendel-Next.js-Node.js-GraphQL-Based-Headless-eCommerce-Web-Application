@@ -4456,7 +4456,7 @@ header {
   overflow: auto;
   /* padding: 40px 0; */
   position: absolute;
-  top: 117px;
+  top: 105px;
   /* background-color: red; */
   /* background-color: rgba(255, 255, 255, 0.5); */
 }
@@ -4490,7 +4490,20 @@ header {
   color: #272144;
   margin-bottom: 30px;
 }
-
+.box-shadow{
+  -webkit-box-shadow: 0px 15px 76px -16px rgba(0,0,0,0.43);
+  -moz-box-shadow: 0px 15px 76px -16px rgba(0,0,0,0.43);
+  box-shadow: 0px 15px 76px -16px rgba(0,0,0,0.43);
+}
+.margin-bottom{
+  margin-bottom: 106px;
+}
+.card-btns{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .new-products-col .product {
   display: flex;
   align-items: center;

@@ -78,7 +78,7 @@ var shippingObject = {
 var savedShippingInfo;
 const totalCart = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity), 0)
 
-export const CheckOut = ({ currencyStore }) => {
+export const CheckOut = ({ currencyStore, homepageData }) => {
     const allProducts = useSelector(state => state.products);
     const session = useSession();
     const dispatch = useDispatch();
@@ -696,6 +696,7 @@ export const CheckOut = ({ currencyStore }) => {
                                         <div style={{ width: "60%", padding: "20px" }}>
 
                                             <ShippingTaxCoupon
+                                                homepageData={homepageData}
                                                 currency={currency}
                                                 couponCode={couponCode}
                                                 setCouponCode={setCouponCode}
@@ -714,6 +715,7 @@ export const CheckOut = ({ currencyStore }) => {
                                             />
                                             <h5>Your Order Summary</h5>
                                             <Orderdetail
+                                                homepageData = {homepageData}
                                                 decimal={decimal}
                                                 currency={currency}
                                                 billingDetails={billingDetails}
@@ -836,6 +838,7 @@ export const CheckOut = ({ currencyStore }) => {
                                             <div className="your-order-container">
                                                 <h5>Your Order</h5>
                                                 <Orderdetail
+                                                    homepageData={homepageData}
                                                     billingInfo={billingInfo}
                                                     handleBillingInfo={handleBillingInfo}
                                                     cartItems={cartItems}
@@ -877,18 +880,21 @@ export default CheckOut;
 
 export async function getStaticProps() {
     var currencyStore = [];
+    var homepageData 
     try {
         const { data: homepagedata } = await client.query({
             query: GET_HOMEPAGE_DATA_QUERY
         })
         currencyStore = homepagedata?.getSettings?.store
-    }
+        homepageData = homepagedata
+    }   
     catch (e) {
         console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
     }
     return {
         props: {
-            currencyStore
+            currencyStore,
+            homepageData
         },
         revalidate: 10
     }

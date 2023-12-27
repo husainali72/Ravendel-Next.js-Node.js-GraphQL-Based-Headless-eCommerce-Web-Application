@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Container, Row, Col } from "react-bootstrap";
-import Form from 'react-bootstrap/Form'
+import { Container } from "react-bootstrap";
 import BreadCrumb from "../components/breadcrumb/breadcrumb";
 import { useSelector, useDispatch } from "react-redux";
 import CartTable from "../components/cardcomponent/CardDetail";
@@ -10,8 +9,6 @@ import { DELETE_CART_PRODUCTS, UPDATE_CART_PRODUCT, GET_USER_CART } from "../que
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
-import { query2 } from "../utills/cartHelperfun";
-import { APPLY_couponCode } from "../queries/couponquery";
 import { getAllProductsAction } from "../redux/actions/productAction";
 import { useRouter } from "next/router";
 import { settingActionCreator } from "../redux/actions/settingAction";
@@ -19,7 +16,7 @@ import LoadingCartTable from "../components/cardcomponent/LoadingCard";
 import Link from "next/link";
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing * product.quantity || product.pricing * product.quantity), 0)
 const cartitems2 = []
-const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
+const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore, homepageData }) => {
     var id = "";
     var token = "";
     const router = useRouter();
@@ -399,7 +396,6 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                 variantId: item.variantId
                             }
                             // dispatch(decreaseQuantity(variables))
-                            console.log("update res while decreasing qtyyyy", res)
                         })
                     }).finally(() => setIsQuantityBtnLoading(false))
                 }
@@ -444,13 +440,6 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
             setCartItems(cartItemsfilter);
         }
 
-    }
-    const doApplyCouponCode = () => {
-        let cart = cartItems.map((product) => { return { productId: product._id, qty: product.quantity } })
-        let variables = {
-            couponCode: couponCode, cartItem: cart
-        }
-        query2(APPLY_couponCode, variables, token).then(res => console.log("res", res))
     }
     const ProcessToCheckOut = () => {
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))
@@ -522,6 +511,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                         <div className="row">
                             <div className="col-12">
                                 <CartTable
+                                    homepageData={homepageData}
                                     decimal={decimal}
                                     isQuantityBtnLoading={isQuantityBtnLoading}
                                     cartItems={cartItems}
@@ -541,6 +531,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                                 {unAvailableProducts && unAvailableProducts?.length > 0 ? <><h3 style={{ color: 'red', fontSize: '15px' }}>Out of stock</h3>
 
                                     <CartTable
+                                        homepageData={homepageData}
                                         decimal={decimal}
                                         isQuantityBtnLoading={isQuantityBtnLoading}
                                         cartItems={unAvailableProducts}
@@ -627,6 +618,7 @@ const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore }) => {
                         (unAvailableProducts && unAvailableProducts?.length > 0 ? <><h3 style={{ color: 'red', fontSize: '15px' }}>Out of stock</h3>
 
                             <CartTable
+                                homepageData={homepageData}
                                 decimal={decimal}
                                 isQuantityBtnLoading={isQuantityBtnLoading}
                                 cartItems={unAvailableProducts}
@@ -655,7 +647,7 @@ export default YourCard;
 
 export async function getServerSideProps(context) {
 
-
+    if (process.env.NODE_ENV === 'development' || !process.env.NEXT_EXPORT) {
     const session = await getSession(context)
     let id = session?.user?.accessToken?.customer._id
     var customercart = [];
@@ -712,11 +704,13 @@ export async function getServerSideProps(context) {
             customercart,
             cart_id,
             CartsDataa,
-            currencyStore
+            currencyStore,
+            homepageData
         },
 
 
     }
+}
 }
 
 

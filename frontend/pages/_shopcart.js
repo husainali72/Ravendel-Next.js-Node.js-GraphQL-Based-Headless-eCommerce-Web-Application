@@ -8,11 +8,9 @@ import CartTable from "../components/cardcomponent/CardDetail";
 import { removeCartItemAction, RemoveAllCartItemsAction, increaseQuantity, decreaseQuantity } from "../redux/actions/cartAction";
 import { getPrice, mutation } from "../utills/helpers";
 import { DELETE_CART_PRODUCTS, UPDATE_CART_PRODUCT, GET_USER_CART } from "../queries/cartquery";
-import { CHECKOUT_ORDER_QUERY } from "../queries/checkoutquery";
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
-import { query2 } from "../utills/cartHelperfun";
-import { APPLY_couponCode } from "../queries/couponquery";
+// import { APPLY_couponCode } from "../queries/couponquery";
 
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing.sellprice * product.quantity) || product.pricing?.price * product.quantity, 0)
 
@@ -142,13 +140,13 @@ const YourCard = ({ customercart, cart_id }) => {
         }
 
     }
-    const doApplyCouponCode = () => {
-        let cart = cartItems.map((product) => { return { productId: product._id, qty: product.quantity } })
-        let variables = {
-            couponCode: couponCode, cart: cart
-        }
-        query2(APPLY_couponCode, variables, token).then(res => console.log("res", res))
-    }
+    // const doApplyCouponCode = () => {
+    //     let cart = cartItems.map((product) => { return { productId: product._id, qty: product.quantity } })
+    //     let variables = {
+    //         couponCode: couponCode, cart: cart
+    //     }
+    //     query2(APPLY_couponCode, variables, token).then(res => console.log("res", res))
+    // }
     const ProcessToCheckOut = () => {
         const productsCard = JSON.parse(localStorage.getItem("persistantState"))
         var id = ''
@@ -239,9 +237,9 @@ const YourCard = ({ customercart, cart_id }) => {
                                                 <Form.Group as={Col} controlId="state">
                                                     <Form.Control type="text" placeholder="Your Code" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} />
                                                 </Form.Group>
-                                                <Form.Group as={Col} controlId="zip-code">
+                                                {/* <Form.Group as={Col} controlId="zip-code">
                                                     <a className="card-btons  mr-10 mb-sm-15" onClick={doApplyCouponCode}><i className="fas fa-tag"></i> Apply Code</a>
-                                                </Form.Group>
+                                                </Form.Group> */}
                                             </Row>
                                         </div>
 
