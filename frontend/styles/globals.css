@@ -42,6 +42,12 @@ text-color {
   color: #088178;
 }
 
+.megamenu-class{
+  max-height: 74px;
+  object-fit: contain;
+  width: 74px;
+}
+
 .breadcrumb-item {
   text-decoration: none;
 }
@@ -416,7 +422,11 @@ a.action-btn:after {
   font-family: "Spartan", sans-serif;
   border: 2px solid #088178;
 }
-
+.mega-detail{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
 .cart-dropdown-wrap .shopping-cart-footer .shopping-cart-button .shopping-cart-button-checkout {
   background-color: #088178;
   border-radius: 0.3rem;
@@ -3613,6 +3623,9 @@ header {
   width: 75px;
   height: 85px;
   object-fit: cover;
+}
+.last-border:last-child{
+border-bottom: none !important;
 }
 
 /* -------Responsive starts-------- */

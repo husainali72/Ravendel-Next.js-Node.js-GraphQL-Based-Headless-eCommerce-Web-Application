@@ -27,12 +27,15 @@ export const imageOnError = (event) => {
     event.target.src = NoImagePlaceHolder.src
 }
 export const getImage = (img, type, isBanner, setting) => {
-    let localStorage = setting?.setting?.imageStorage?.status === 's3' ? false : (setting?.setting?.imageStorage?.status === 'localStorage' ? true : '')
+    if(!img){
+        return NoImagePlaceHolder.src
+    }
+    let localStorage = setting && setting?.setting?.imageStorage?.status === 's3' ? false : (setting?.setting?.imageStorage?.status === 'localStorage' ? true : '')
 // export const getImage = (img, type, isBanner) => {
     let imagaPath = ""
     if(type && type === "localStorage"){
-        imagaPath = `https://${BASE_URL}/${img}`;
-        return imagaPath;
+        imagaPath = `https://${BASE_URL}/${img.toString()}`;
+        return imagaPath.toString();
     }
     if (!isBanner) {
         imagaPath = NoImagePlaceHolder.src;
