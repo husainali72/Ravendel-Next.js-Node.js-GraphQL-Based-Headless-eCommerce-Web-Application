@@ -102,9 +102,9 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
                                 <h4 className="theme-color my-2"> New <span className="text-black">Products</span></h4>
                                 {newProducts?.map((product, i) => (
                                     i < 3 ?
-                                        <div style={{ justifyContent:'space-between', paddingInline:'8px', margin: '8px 0px'}} className='product'>
-                                            <img src={getImage(product?.feature_image, imageType)} alt="" onError={(e) => e.target.src = ''} />
-                                            <div className="details">
+                                        <div style={{ justifyContent:'space-between', paddingInline:'8px', margin: '8px 0px'}} className='product last-border'>
+                                            <img src={getImage(product?.feature_image, imageType)}  className="megamenu-class" alt="" onError={(e) => e.target.src = ''} />
+                                            <div className="details mega-detail">
                                                 <h4>{product?.name}</h4>
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
                                                     <div className="card-btns">

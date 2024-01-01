@@ -39,7 +39,8 @@ const GalleryImagesComponents = (props) => {
     const [comboData, setComboData] = useState([])
     const [priceRange, setPriceRange] = useState([]);
     const [sellpriceRange, setSellpriceRange] = useState([]);
-    const [imgError, setImgError] = useState(false)
+    const [imgError, setImgError] = useState([])
+    console.log('imgError', imgError);
     useEffect(() => {
         if (singleproducts && !variantSelect ? (singleproducts.quantity <= lowStockThreshold) : (comboData && comboData.length > 1 && variantSelect ? null : (comboData[0]?.quantity <= lowStockThreshold))) {
             setStockClass("low-stock")
@@ -367,6 +368,18 @@ const GalleryImagesComponents = (props) => {
         //         :
         //         getImage(gallery, imageType))) || NoImagePlaceHolder?.src
     }
+    useEffect(() => {
+        props.galleryImages.map((gallery, index) => {
+            const img = new Image();
+            img.src = getMagnifierImg({
+                variantSelect, gallery, comboData
+            })
+            img.onerror = () => {
+                setImgError((prevErrors) => [...prevErrors, index]);
+            };
+        })
+    }, [props.galleryImages])
+
     return (
         <>
             <div className="single-product row mb-50" style={{ display: 'flex' }}>
@@ -382,7 +395,6 @@ const GalleryImagesComponents = (props) => {
                                             <img
                                                 style={{ display: 'none' }}
                                                 src={!variantSelect ?
-                                                    // getImage(gallery, 'original', false, getSetting)
                                                     getImage(gallery, imageType)
                                                     :
                                                     (comboData?.length && variantSelect ?
@@ -390,26 +402,23 @@ const GalleryImagesComponents = (props) => {
                                                             getImage(gallery, 'original', false, getSetting)
                                                             :
                                                             (comboData[0].image.length ?
-                                                                // getImage(comboData[0].image, 'original', false, getSetting)
                                                                 getImage(comboData[0].image, imageType)
                                                                 :
-                                                                // getImage(gallery, 'original', false, getSetting)))
                                                                 getImage(gallery, 'original', imageType)))
                                                         :
-                                                        getImage(gallery, imageType))} />
+                                                        getImage(gallery, imageType))}
+                                                onError={imageOnError}
+                                            />
                                             {/* getImage(gallery, imageType))} onError={(e) => e.type === 'error' ? setImgError(true) : setImgError(false)} /> */}
                                             {/* getImage(gallery, 'original', false, getSetting))} onError={(e) => e.type === 'error' ? setImgError(true) : setImgError(false)} /> */}
                                             <GlassMagnifier
-                                                imageSrc={getMagnifierImg({
-                                                    variantSelect, gallery, comboData
-                                                })}
+                                                // onImageLoad={() => checkImage(getMagnifierImg({ variantSelect, gallery, comboData}), index)}
+                                                imageSrc={imgError.indexOf(index) === -1 ? getMagnifierImg({variantSelect, gallery, comboData }) : NoImagePlaceHolder.src}
                                                 imageAlt="Example"
                                                 className="gallery-image"
                                                 magnifierSize={window.innerWidth < 1025 ? "60%" : "30%"}
                                                 magnifierBorderSize={5}
                                                 magnifierBorderColor="rgba(0, 0, 0, .5)"
-
-
                                             />
 
                                         </div>

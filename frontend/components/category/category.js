@@ -36,28 +36,30 @@ const Category = ({ category, homepageData }) => {
                     <div
                         className={showSlider ? "category pro-cat px-3" : " pro-cat category categoryShow "}
                         ref={slider}>
-                        {category.map((item, i) => (
-                            item.parentId === null && (
-                                <Link href={`/subcategory/[category]?url=${item.url}`} as={`/subcategory/${item.url}`}><div className="category-cards" key={i}>
-                                    <div className="category-card-image">
+                        {category.map((item, i) => {
+                            return (
+                                item.parentId === null && (
+                                    <Link href={`/subcategory/[category]?url=${item.url}`} as={`/subcategory/${item.url}`}><div className="category-cards" key={i}>
+                                        <div className="category-card-image">
 
-                                        <img
-                                            src={getImage(item?.image, imageType)}
-                                            className="  cimg"
-                                            onError={(e) => e.type === 'error' ? e.target.src = NoImagePlaceHolder.src : null}
-                                            alt={item?.name}
-                                        />
-                                    </div>
+                                            <img
+                                                src={getImage(item?.image, imageType)}
+                                                className="  cimg"
+                                                onError={(e) => e.type === 'error' ? e.target.src = NoImagePlaceHolder.src : null}
+                                                alt={item?.name}
+                                            />
+                                        </div>
 
-                                    <div className="card-body">
-                                        <p
-                                            className="card-title category-card-title">
-                                            {capitalize(item?.name)}
-                                        </p>
+                                        <div className="card-body">
+                                            <p
+                                                className="card-title category-card-title">
+                                                {capitalize(item?.name)}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                                </Link>)
-                        ))}
+                                    </Link>)
+                            )
+                        })}
                     </div>
                 </div>
                 {showSlider ? <MdChevronRight onClick={slideRight} className='cat-right-icon' size={24} /> : null}
