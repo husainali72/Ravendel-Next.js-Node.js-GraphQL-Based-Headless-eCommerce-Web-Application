@@ -24,9 +24,7 @@ const FeatureBrand = ({ brands, homepageData }) => {
                                     </Link>
                                 </div>
                                 <div >
-                                    <p
-                                        className="brand-card-title"
-                                    >
+                                    <p className="brand-card-title">
                                         {item?.name}
                                     </p>
                                 </div>

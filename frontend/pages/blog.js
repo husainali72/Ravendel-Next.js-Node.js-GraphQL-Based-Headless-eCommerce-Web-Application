@@ -16,7 +16,6 @@ const Blog = (blogData) => {
     const [blog, setBlog] = useState([])
 
     const [tags, setTags] = useState([])
-    const getSetting = useSelector(state => state.setting)
     useEffect(() => {
         if (blogData && blogData.blogData?.length > 0) {
             setBlog(blogData.blogData)

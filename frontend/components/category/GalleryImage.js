@@ -40,7 +40,6 @@ const GalleryImagesComponents = (props) => {
     const [priceRange, setPriceRange] = useState([]);
     const [sellpriceRange, setSellpriceRange] = useState([]);
     const [imgError, setImgError] = useState([])
-    console.log('imgError', imgError);
     useEffect(() => {
         if (singleproducts && !variantSelect ? (singleproducts.quantity <= lowStockThreshold) : (comboData && comboData.length > 1 && variantSelect ? null : (comboData[0]?.quantity <= lowStockThreshold))) {
             setStockClass("low-stock")
