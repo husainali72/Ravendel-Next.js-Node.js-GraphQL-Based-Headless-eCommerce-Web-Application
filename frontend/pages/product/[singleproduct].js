@@ -154,6 +154,7 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
                                     currencyProp={currency}
                                     currencyOpt={currencyStore}
                                     decimal={decimal}
+                                    homepageData={homepageData}
                                 />
                             </div>
                         </div>

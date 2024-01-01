@@ -367,7 +367,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore, homepage
                                     hidetitle
                                     currencyProp={currency}
                                     decimal={decimal}
-
+                                    homepageData={homepageData}
                                 />
                             </div>) :
                             <div style={{ padding: "50px" }}>
