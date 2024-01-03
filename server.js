@@ -57,13 +57,13 @@ app.use("/api/customers", require("./routes/api/customers"));
 app.use("/assets", express.static(__dirname + "/assets"));
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "frontend", "out")));
-  app.get("/", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
-  });
-  app.get("/*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
-  });
+  // app.use(express.static(path.join(__dirname, "frontend", "out")));
+  // app.get("/", (req, res) => {
+  //   res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
+  // });
+  // app.get("/*", (req, res) => {
+  //   res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
+  // });
 } else {
   app.get("/", (req, res) => res.send(`Ravendel is running on port: ${port}`));
 }
