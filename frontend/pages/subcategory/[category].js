@@ -18,7 +18,7 @@ import { getAllAttributes } from '../../redux/actions/productAction';
 import CategoryBreadCrumb from '../../components/breadcrumb';
 // import CategoryBreadCrumb from './component/breadcrumb';
 
-const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProduct, brandProduct }) => {
+const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProduct, brandProduct, homepageData }) => {
     const breadCrumbTitle = shopProduct?.data?.find((catt) => catt.id === singlecategory.parentId);
     const attributes = useSelector(state => state.products.attributes)
     const [cats, setCats] = useState({})
@@ -252,6 +252,7 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
                                     <OnSaleProductCard
                                         onSaleProduct={filteredProducts}
                                         hidetitle
+                                        homepageData={homepageData}
                                     />
                                 </div>) : (
                                 <div style={{ padding: "50px" }}>
