@@ -1,5 +1,5 @@
-const dotenv = require('dotenv');
-dotenv.config({ path: './.env' });
+const dotenv = require("dotenv");
+dotenv.config({ path: "./.env" });
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
@@ -10,7 +10,10 @@ const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
 const { graphqlUploadExpress } = require("graphql-upload");
-const { updateAdminProductLowStock, updateCustomerCheckoutCart } = require('./config/crons')
+const {
+  updateAdminProductLowStock,
+  updateCustomerCheckoutCart,
+} = require("./config/crons");
 
 connectDB();
 
@@ -29,8 +32,8 @@ var port = process.env.PORT || 8000;
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-updateAdminProductLowStock(app)
-updateCustomerCheckoutCart(app)
+updateAdminProductLowStock(app);
+updateCustomerCheckoutCart(app);
 
 const server = new ApolloServer({
   typeDefs,
@@ -50,7 +53,9 @@ app.use("/api/misc", require("./routes/api/misc"));
 app.use("/api/stripe", require("./routes/api/stripe"));
 app.use("/api/paypal", require("./routes/api/paypal"));
 // app.use("/api/razorpay", require("./routes/api/razorpay"));
-app.use("/api/razorpay", (req, res) => res.send({success: false, data: "Getting error on PM2"}));
+app.use("/api/razorpay", (req, res) =>
+  res.send({ success: false, data: "Getting error on PM2" })
+);
 app.use("/api/customers", require("./routes/api/customers"));
 
 // app.use('/uploads', express.static(__dirname + "/uploads"));
@@ -71,4 +76,3 @@ if (process.env.NODE_ENV === "production") {
 app.listen(port, () =>
   console.log(`server started on port ${port}, ${process.env.NODE_ENV}`)
 );
-
