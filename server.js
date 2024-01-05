@@ -47,16 +47,16 @@ server.applyMiddleware({ app, path: "/graphql" });
 
 // Init Middleware
 app.use(express.json({ extended: false }));
-app.use("/v1/api/users", require("./routes/api/users"));
-app.use("/v1/api/files", require("./routes/api/files"));
-app.use("/v1/api/misc", require("./routes/api/misc"));
-app.use("/v1/api/stripe", require("./routes/api/stripe"));
-app.use("/v1/api/paypal", require("./routes/api/paypal"));
+app.use("/apis/users", require("./routes/api/users"));
+app.use("/apis/files", require("./routes/api/files"));
+app.use("/apis/misc", require("./routes/api/misc"));
+app.use("/apis/stripe", require("./routes/api/stripe"));
+app.use("/apis/paypal", require("./routes/api/paypal"));
 // app.use("/api/razorpay", require("./routes/api/razorpay"));
-app.use("/v1/api/razorpay", (req, res) =>
+app.use("/apis/razorpay", (req, res) =>
   res.send({ success: false, data: "Getting error on PM2" })
 );
-app.use("/v1/api/customers", require("./routes/api/customers"));
+app.use("/apis/customers", require("./routes/api/customers"));
 
 // app.use('/uploads', express.static(__dirname + "/uploads"));
 app.use("/assets", express.static(__dirname + "/assets"));
