@@ -100,7 +100,7 @@ export const login = (email, password, navigate) => {
   };
   return service({
     method: "POST",
-    url: `${location}/api/users/login`,
+    url: `${location}/v1/api/users/login`,
     data: body,
   }, navigate).then(async (res) => {
     await Auth.setUserToken(res.data);
@@ -111,7 +111,7 @@ export const login = (email, password, navigate) => {
 export const getUpdatedUrl = (table, url) => {
   return service({
     method: "POST",
-    url: `${location}/api/misc/checkurl`,
+    url: `${location}/v1/api/misc/checkurl`,
     data: { url: url, table: table },
   }).then((res) => {
     if (res.data.success) {
@@ -123,7 +123,7 @@ export const getUpdatedUrl = (table, url) => {
 export const deleteProductVariation = (id) => {
   return service({
     method: "POST",
-    url: `${location}/api/misc/delete_variation`,
+    url: `${location}/v1/api/misc/delete_variation`,
     data: { id: id },
   }).then((res) => {
     if (res.data.success) {
@@ -135,7 +135,7 @@ export const deleteProductVariation = (id) => {
 export const deleteProductVariationImage = (obj) => {
   return service({
     method: "POST",
-    url: `${location}/api/misc/delete_image`,
+    url: `${location}/v1/api/misc/delete_image`,
     data: { image: obj },
   }).then((res) => {
     if (res.data.success) {

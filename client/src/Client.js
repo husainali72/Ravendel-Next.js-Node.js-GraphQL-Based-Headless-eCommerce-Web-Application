@@ -3,9 +3,7 @@ import { createUploadLink } from "apollo-upload-client";
 import { ApolloLink } from "apollo-link";
 import cookie from "react-cookies";
 import Auth from "./utils/auth";
-const httpLink = new createUploadLink({
-  uri: `
-https://demo1.ravendel.io/graphql` });
+const httpLink = new createUploadLink({uri: `https://demo1.ravendel.io/graphql` });
 // const httpLink = new createUploadLink({ uri: `http://localhost:8000/graphql` });
 
 const authLink = new ApolloLink((operation, forward) => {
