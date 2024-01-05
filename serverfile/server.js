@@ -61,12 +61,11 @@ server.applyMiddleware({ app, path: "/graphql" });
 
 // Init Middleware
 app.use(express.json({ extended: false }));
-app.use("/api/users", require("./routes/api/users"));
-app.use("/api/files", require("./routes/api/files"));
-app.use("/api/misc", require("./routes/api/misc"));
-app.use("/api/stripe", require("./routes/api/stripe"));
-
-app.use("/api/customers", require("./routes/api/customers"));
+app.use("/v1/api/users", require("./routes/api/users"));
+app.use("/v1/api/files", require("./routes/api/files"));
+app.use("/v1/api/misc", require("./routes/api/misc"));
+app.use("/v1/api/stripe", require("./routes/api/stripe"));
+app.use("/v1/api/customers", require("./routes/api/customers"));
 
 //app.use(express.static("public"));
 

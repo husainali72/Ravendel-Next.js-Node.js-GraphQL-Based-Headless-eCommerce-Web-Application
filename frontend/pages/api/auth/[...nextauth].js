@@ -18,7 +18,7 @@ const options = {
       async authorize(credentials, req) {
         // const url = "https://ravendel.herokuapp.com/api/customers/login";
         const { email, password } = credentials;
-        const url = `https://${BASE_URL}/api/customers/login`;
+        const url = `https://${BASE_URL}/v1/api/customers/login`;
         const response = await fetch(url, {
           method: "POST",
           headers: {
@@ -64,38 +64,5 @@ const options = {
     },
   },
   secret: 'jwtauthsecret',
-};
-const dataInitial = {
-  address: {
-    line_1: "305 W Spring Creek Pkwy, Suite 100 B, Plano, Texas 75023",
-    line_2: "",
-    country: "United States",
-    city: "Plano",
-    state: "TX",
-    zip: "75023",
-  },
-  _id: "6595496c6c5b8f1c79cc1304",
-  companyName: "WebMantra",
-  email: "mailto:info@webmantra.net",
-  websiteLink: "https://www.webmantra.net/",
-  linkedinUrl: "https://www.linkedin.com/company/webmantra/about/",
-  githubUrl: "",
-  contactNo: "",
-  whatsAppNo: "",
-  noOfEmployees: null,
-  cp_firstName: "Hetal",
-  cp_lastName: "Gandhi",
-  cp_contactNo: "",
-  cp_email: "mailto:usa@webmantra.net",
-  cp_whatsAppNo: "",
-  technologies: [],
-  projectinfo:
-    "The Shade Store, GREEN GLOBE SOLUTION, Mobile App for On Site Engineers, WEB APPLICATION FOR EV CHARGING\n\n",
-  addedBy: {
-    date: 1704282476599,
-    userId: "655ef3871fd22fe0511b2f96",
-  },
-  __v: 0,
-  cp_fullName: "Hetal Gandhi",
 };
 export default (req, res) => NextAuth(req, res, options);

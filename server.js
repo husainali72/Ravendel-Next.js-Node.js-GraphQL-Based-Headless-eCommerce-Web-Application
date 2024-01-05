@@ -1,5 +1,5 @@
 const dotenv = require("dotenv");
-dotenv.config({ path: "./.env" });
+dotenv.config({ path: "./.env.local" });
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
@@ -47,16 +47,16 @@ server.applyMiddleware({ app, path: "/graphql" });
 
 // Init Middleware
 app.use(express.json({ extended: false }));
-app.use("/api/users", require("./routes/api/users"));
-app.use("/api/files", require("./routes/api/files"));
-app.use("/api/misc", require("./routes/api/misc"));
-app.use("/api/stripe", require("./routes/api/stripe"));
-app.use("/api/paypal", require("./routes/api/paypal"));
+app.use("/v1/api/users", require("./routes/api/users"));
+app.use("/v1/api/files", require("./routes/api/files"));
+app.use("/v1/api/misc", require("./routes/api/misc"));
+app.use("/v1/api/stripe", require("./routes/api/stripe"));
+app.use("/v1/api/paypal", require("./routes/api/paypal"));
 // app.use("/api/razorpay", require("./routes/api/razorpay"));
-app.use("/api/razorpay", (req, res) =>
+app.use("/v1/api/razorpay", (req, res) =>
   res.send({ success: false, data: "Getting error on PM2" })
 );
-app.use("/api/customers", require("./routes/api/customers"));
+app.use("/v1/api/customers", require("./routes/api/customers"));
 
 // app.use('/uploads', express.static(__dirname + "/uploads"));
 app.use("/assets", express.static(__dirname + "/assets"));

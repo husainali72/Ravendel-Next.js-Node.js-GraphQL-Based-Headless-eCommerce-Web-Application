@@ -7,7 +7,7 @@ export const baseUrl = `https://${BASE_URL}/`;
 // export const BASE_URL = 'localhost:8000'
 export const IMAGE_BASE_URL = `https://${BASE_URL}`;
 
-export const API_BASE_URL = `https://${BASE_URL}/api`;
+export const API_BASE_URL = `https://${BASE_URL}/v1/api`;
 // export const API_BASE_URL = "http://demo1.ravendel.io/api";
 // export const API_BASE_URL = "http://ravendel-node.onrender.com/api";
 
