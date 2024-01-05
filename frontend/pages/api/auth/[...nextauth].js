@@ -28,7 +28,7 @@ const options = {
           body: JSON.stringify(credentials),
         });
         const user = await response.json();
-        // console.log("user", user);
+        console.log("user", user);
         if (response.status === 200) {
           return user;
         } else {
@@ -63,8 +63,7 @@ const options = {
       return token;
     },
   },
-  // secret: process.env.JWT_SECRET_KEY,
-  secret: "jwtauthsecret",
+  secret: 'jwtauthsecret',
 };
 const dataInitial = {
   address: {
