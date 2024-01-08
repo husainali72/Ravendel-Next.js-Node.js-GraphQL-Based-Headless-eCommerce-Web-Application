@@ -19,7 +19,6 @@ import { currencySetter } from "../../utills/helpers";
 import ReactHtmlParser, { convertNodeToElement } from 'react-html-parser';
 import toast, { Toaster } from 'react-hot-toast';
 
-
 function transform(node, index) {
     if (node.type === "tag" && node.name === "h1" || node.name === "h2" || node.name === "h3") {
         node.name = "p";
@@ -184,7 +183,7 @@ export async function getStaticPaths() {
     }))
     return {
         paths,
-        fallback: false,
+        fallback: 'blocking'
     }
 }
 export async function getStaticProps({ params }) {
@@ -199,6 +198,9 @@ export async function getStaticProps({ params }) {
     let lowStockThreshold = 4
     let outOfStockVisibility = true
     let outOfStockThreshold = 0
+
+    
+
 
     /* ========================================= get HomePage Data========================================*/
 
@@ -223,7 +225,7 @@ export async function getStaticProps({ params }) {
             query: GET_SINGLE_PRODUCT,
             variables: { url },
         });
-        singleproducts = singleproductsData.productbyurl.data;
+                singleproducts = singleproductsData.productbyurl.data;
         id = singleproducts._id;
 
     }
@@ -258,7 +260,7 @@ export async function getStaticProps({ params }) {
     catch (e) {
         console.log("review Error", e.networkError.result.errors);
     }
-
+    
     return {
         props: {
             singleproducts,

@@ -53,6 +53,14 @@ const client = new ApolloClient({
   ///////////////////////////////////////////////
   // link: ApolloLink.from([errorLink, authLink, httpLink]),
   cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'network-only', // For real-time queries (subscriptions)
+    },
+    query: {
+      fetchPolicy: 'network-only', // For regular queries
+    },
+  },
   onError: ({ networkError, graphQLErrors }) => {
     console.log('graphQLErrors', graphQLErrors)
     console.log('networkError', networkError)
