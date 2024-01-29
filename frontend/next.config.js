@@ -13,7 +13,8 @@ module.exports = {
   assetPrefix: '',
   basepath: "/out",
   images: {
-    domains: ['demo1.ravendel.io'],
+    // domains: ['demo1.ravendel.io'],
+    domains: ['demo1-ravendel.hbwebsol.com'],
     loader: "imgix",
     path: "",
   },
@@ -57,7 +58,7 @@ module.exports = {
   basepath: "/",
   distDir: 'build',
   images: {
-    domains: ['demo1.ravendel.io'],
+    domains: ['demo1-ravendel.hbwebsol.com'],
     loader: "imgix",
     path: "",
   },
