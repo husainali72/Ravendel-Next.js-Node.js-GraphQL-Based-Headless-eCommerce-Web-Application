@@ -2,7 +2,8 @@
 // export const IMAGE_BASE_URL = "http://demo1.ravendel.io";
 
 // export const BASE_URL = 'ravendel-node.onrender.com'
-export const BASE_URL = "demo1.ravendel.io";
+// export const BASE_URL = "demo1.ravendel.io";
+export const BASE_URL = "demo1-ravendel.hbwebsol.com";
 export const baseUrl = `https://${BASE_URL}/`;
 // export const BASE_URL = 'localhost:8000'
 export const IMAGE_BASE_URL = `https://${BASE_URL}`;
@@ -22,7 +23,6 @@ export var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
 //     bucketName = "revendal-image-prod";
 //     bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
 // }
-
 
 // add production image url to bucket
 
