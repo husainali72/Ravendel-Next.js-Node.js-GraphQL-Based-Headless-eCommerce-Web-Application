@@ -76,3 +76,22 @@ export const getAllAttributes = () => (dispatch) => {
       });
     });
 };
+export const getFilteredProducts = (data) => (dispatch) => {
+  console.log(data)
+  // dispatch({
+  //   type: PRODUCTS_LOADING,
+  // });
+  // query(GET_ATTRIBUTES)
+  //   .then((response) => {
+  //     return dispatch({
+  //       type: PRODUCTS_SUCCESS,
+  //       payload: response.data.products.data,
+  //     });
+  //   })
+  //   .catch((error) => {
+
+  //     dispatch({
+  //       type: PRODUCT_FAIL,
+  //     });
+  //   });
+};

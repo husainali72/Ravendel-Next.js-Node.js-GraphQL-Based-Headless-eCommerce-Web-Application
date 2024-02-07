@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, useRef } from "react";
 import classnames from "classnames";
 
 
-const MultiRangeSlider = ({ min, max, onChange }) => {
+const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue }) => {
     const [minVal, setMinVal] = useState(min);
     const [maxVal, setMaxVal] = useState(max);
     const minValRef = useRef(null);
@@ -41,22 +41,22 @@ const MultiRangeSlider = ({ min, max, onChange }) => {
     }, [maxVal, getPercent]);
 
     // Get min and max values when their state changes
-    useEffect(() => {
-        onChange({ min: minVal, max: maxVal });
-    }, [minVal, maxVal, onChange]);
-
+    // useEffect(() => {
+    //     // onChange({ min: minVal, max: maxVal });
+    // }, [minVal, maxVal, onChange]);
     return (
         <div>
             <input
                 type="range"
                 min={min}
                 max={max}
-                value={minVal}
+                value={minValue}
                 ref={minValRef}
                 onChange={(event) => {
                     const value = Math.min(+event.target.value, maxVal - 1);
                     setMinVal(value);
                     event.target.value = value.toString();
+                    onChange({ min: value, max: maxVal });
                 }}
                 className={classnames("thumb thumb--zindex-3", {
                     "thumb--zindex-5": minVal > max - 100
@@ -66,12 +66,13 @@ const MultiRangeSlider = ({ min, max, onChange }) => {
                 type="range"
                 min={min}
                 max={max}
-                value={maxVal}
+                value={maxValue}
                 ref={maxValRef}
                 onChange={(event) => {
                     const value = Math.max(+event.target.value, minVal + 1);
                     setMaxVal(value);
                     event.target.value = value.toString();
+                    onChange({ min: minVal, max: value });
                 }}
                 className="thumb thumb--zindex-4"
             />
