@@ -97,6 +97,21 @@ text-color {
   float: right;
 }
 
+/*password show hide button css */
+
+.password-container {
+  position: relative;
+}
+
+.password-icon {
+  position: absolute;
+  right: 10px; 
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color:rgb(8, 129, 120)
+}
+
 /* payment component css */
 .payment_card_field {
   display: flex;
