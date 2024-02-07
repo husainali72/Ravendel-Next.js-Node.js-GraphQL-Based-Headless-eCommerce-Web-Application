@@ -215,12 +215,12 @@ export default function Footer() {
                                     <div style={{ display: "flex", }}>
                                         <Button variant="outline">
                                             <Link href={appStoreUrl}>
-                                                <a className="download-btn" aria-hidden="true">
+                                                <a className="download-btn" aria-hidden="true" target="_blank">
                                                     <img src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/theme/app-store.jpg"></img>
                                                 </a></Link></Button>{' '}
                                         <Button variant="outline" className="mx-2">
                                             <Link href={playStoreUrl}>
-                                                <a className="download-btn" aria-hidden="true"><img src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/theme/google-play.jpg"></img>
+                                                <a className="download-btn" aria-hidden="true" target="_blank"><img src="http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/theme/google-play.jpg"></img>
                                                 </a></Link></Button>{' '}
                                     </div>
 
