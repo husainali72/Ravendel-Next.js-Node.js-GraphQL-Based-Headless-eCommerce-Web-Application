@@ -186,7 +186,7 @@ export function capitalize(word) {
 }
 
 export const isDiscount = (product) => {
-    if (product.pricing.sellprice > 0 &&
+    if (product?.pricing?.sellprice > 0 &&
         product.pricing.sellprice < product.pricing.price &&
         ((100 / product?.pricing?.price) * (product?.pricing?.price - product?.pricing?.sellprice)) > 0) {
         return true;

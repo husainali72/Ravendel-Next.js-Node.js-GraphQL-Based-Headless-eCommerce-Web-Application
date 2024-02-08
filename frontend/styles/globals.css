@@ -1115,6 +1115,10 @@ footer .follow h5 {
   margin-top: 0 !important;
 }
 
+.category-name-container{
+  display: flex;
+  justify-content: space-between;
+}
 .card-price {
   color: #1a1a1a;
   margin: 6px 0;
@@ -1388,7 +1392,36 @@ footer .follow h5 {
 .on-sale-product-card:hover {
   box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.15);
 }
+.on-sale-image-wrapper {
+  position: relative;
+}
 
+.wishlist-button {
+  border: 1px solid #088178 !important;
+  color: #088178 !important;
+}
+
+.cross-button {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  background-color: #f85f5f;
+  border: 1px solid  #f85f5f !important;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.clear-icon{
+  color:white;
+  font-size: 15px;
+
+}
 .disable-btn {
   border: 1px solid #cccccc !important;
   background-color: #cccccc !important;

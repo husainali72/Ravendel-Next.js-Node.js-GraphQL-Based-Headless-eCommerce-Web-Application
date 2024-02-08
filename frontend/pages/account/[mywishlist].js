@@ -15,6 +15,7 @@ import AddressDetail from "../../components/account/component/address-details"
 import OrdersDetails from "../../components/account/component/orders-details"
 import { getSession, useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
+import OnSaleProductCard from "../../components/category/onSaleProductCard";
 
 var accountDetailObject = {
     firstName: "",
@@ -24,10 +25,35 @@ var accountDetailObject = {
     company: "",
     phone: "",
 }
-const MyWishList = ({ id, customeraddres }) => {
+const MyWishList1 = ({ id, customeraddres }) => {
     const session = useSession();
     const [isRefreshing, setIsRefreshing] = useState(false);
-
+    const products = [
+        {
+            id: 1,
+            name: 'Product 1',
+            description: 'This is the description for Product 1.',
+            price: 29.99,
+            feature_image: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-ai-image%2Fplace-product-background-ecommerce-product-background_47974658.htm&psig=AOvVaw0II-Ere_Gd-FKsZAJUokD0&ust=1707467959647000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCIih2furm4QDFQAAAAAdAAAAABAD', // Placeholder image
+            category: 'Electronics',
+          },
+          {
+            id: 2,
+            name: 'Product 2',
+            description: 'This is the description for Product 2.',
+            price: 49.99,
+            feature_image: 'https://placekitten.com/200/301',
+            category: 'Clothing',
+          },
+          {
+            id: 3,
+            name: 'Product 3',
+            description: 'This is the description for Product 3.',
+            price: 19.99,
+            feature_image: 'https://placekitten.com/201/300',
+            category: 'Home',
+          },
+      ];
     const refreshData = () => {
         router.replace(router.asPath);
         setIsRefreshing(true);
@@ -40,200 +66,28 @@ const MyWishList = ({ id, customeraddres }) => {
     if (session.status === "authenticated") {
         token = session.data.user.accessToken.token
     }
-    const [accountDetails, setAccountDetails] = useState(accountDetailObject)
-    const [accountAddress, setAccountAddress] = useState([])
-    const [Address, setAddress] = useState([])
+   
     useEffect(() => {
-        setAccountDetails(customeraddres)
-        setAccountAddress(customeraddres)
-        query(GET_CUSTOMER_QUERY, id).then((response) => {
-            const customeradd = response.data.customer.data
-        })
+        
 
     }, [])
     useEffect(() => {
         setIsRefreshing(false);
     }, [customeraddres])
 
-    const updateAccountDetail = (e) => {
-        e?.preventDefault();
-        mutation(UPDATE_CUSTOMER, accountDetails, token).then(async (response) => {
-            if (response.data.updateCustomer.success) {
-                let id = "622ae63d3aa0f0f63835ef8e"
-                query(GET_CUSTOMER_QUERY, id).then((response) => {
-                    const customeradd = response.data.customer.data
-                })
-                refreshData()
-            }
-        })
+    const removeProductFromWishList = (e) => {
+        e.stopPropagation();
     }
     return (
         <>
             <BreadCrumb title={"my wishlist"} />
             <Container>
-                <form onSubmit={updateAccountDetail}>
-                    <Row>
-                        <Col>
-                            <input
-                                type="text"
-                                name="firstname"
-                                label="firstname"
-                                placeholder="First name *"
-                                value={accountDetails.firstName || ''}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, firstName: e.target.value })}
-                                className="update-account-details-input"
-                            />
-                        </Col>
-                        <Col>
-                            <input
-                                type="text"
-                                name="lastname"
-                                label="lastname"
-                                placeholder="Last name *"
-                                value={accountDetails.lastName || ""}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, lastName: e.target.value })}
-                                className="update-account-details-input"
-                            />
-                        </Col>
-                        <Col>
-                            <input
-                                type="text"
-                                name="company"
-                                label="company"
-                                placeholder="Company*"
-                                value={accountDetails.company || ""}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, company: e.target.value })}
-                                className="update-account-details-input"
-                            />
-                        </Col>
-                        <Col>
-                            <input
-                                type="text"
-                                name="phone"
-                                label="phone"
-                                placeholder="Phone *"
-                                value={accountDetails.phone || ""}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, phone: e.target.value })}
-                                className="update-account-details-input"
-                            />
-                        </Col>
-                    </Row>
-                    <Row style={{ marginTop: "25px" }}>
-                        <Col>
-                            <input
-                                type="text"
-                                name="email"
-                                label="email"
-                                placeholder="Email *"
-                                value={accountDetails.email}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, email: e.target.value })}
-                                className="update-account-details-input"
-                                disabled
-                            />
-                        </Col>
-                        <Col>
-                            <input
-                                type="password"
-                                name="password"
-                                label="password"
-                                placeholder="Password *"
-                                value={accountDetails.password}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, password: e.target.value })}
-                                className="update-account-details-input"
-                            />
-                        </Col>
-                        <Col>
-                            <input
-                                type="password"
-                                name="confirmPassword"
-                                label="confirmPassword"
-                                placeholder="Confirm Password *"
-                                value={accountDetails.confirmPassword || ""}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, password: e.target.value })}
-                                className="update-account-details-input"
-                            />
-                        </Col>
-                        <Col>
-                            <input
-                                type="password"
-                                name="currentpassword"
-                                label="currentpassword"
-                                placeholder="Current Password *"
-                                value={accountDetails.currentpassword || ""}
-                                onChange={(e) => setAccountDetails({ ...accountDetails, password: e.target.value })}
-                                className="update-account-details-input"
-                            />
-                        </Col>
-                    </Row>
-                    <div className="account-details-button">
-                        <Button type="submit" variant="outline-info">UPDATE DETAILS</Button>{' '}
-                    </div>
-                </form>
-                <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
-                    <Tab eventKey="profile" title="Profile">
-                        {/* <AccountSettings
-                            accountDetailInfo={accountDetails}
-                            token={token}
-                            refreshData={refreshData}
-                        /> */}
-                        <Card>
-                            <ListGroup variant="flush">
-                                <ListGroup.Item>firstname :{customeraddres?.firstName}</ListGroup.Item>
-                                <ListGroup.Item> lastname :{customeraddres?.lastName}</ListGroup.Item>
-                                <ListGroup.Item>email : {customeraddres?.email}</ListGroup.Item>
-                                <ListGroup.Item>company : {customeraddres?.company}</ListGroup.Item>
-                                <ListGroup.Item>phone: {customeraddres?.phone}</ListGroup.Item>
-                            </ListGroup>
-                            <Link href={`/account/${customeraddres?.id}`}>
-                                <Button>edit</Button>
-                            </Link>
-
-                        </Card>
-                    </Tab>
-                    <Tab eventKey="orders" title="Orders">
-                        <OrdersDetails />
-                    </Tab>
-                    <Tab eventKey="address" title="Address">
-                        <AddressDetail
-                            addressDetail={accountAddress}
-                            address={accountAddress}
-                            token={token}
-                            refreshData={refreshData}
-                        />
-                    </Tab>
-                    <Tab eventKey="recent-view" title="Recent Views">
-                        <h1>this is information about contact</h1>
-                    </Tab>
-                </Tabs>
+            <OnSaleProductCard onSaleProduct={products}  hidetitle showRemoveButton={true} removeButton={removeProductFromWishList}/>
             </Container>
         </>
     )
 }
-export default MyWishList;
-
-// export async function getServerSideProps({ params }) {
-//     // console.log("params", params)
-//     const id = params.mywishlist
-//     var customeraddres = [];
-//     try {
-//         const { data: singleBlogData } = await client.query({
-//             query: GET_CUSTOMER_QUERY,
-//             variables: { id },
-//         })
-//         customeraddres = singleBlogData.customer.data
-//     }
-//     catch (e) {
-//         console.log("Bolg SinglePage ERROR==", e)
-//     }
-//     return {
-//         props: {
-//             id: params.mywishlist,
-//             customeraddres
-//         }
-//     }
-// }
-
-
+export default MyWishList1;
 
 export async function getStaticPaths() {
     var AllCustomerData = {};
