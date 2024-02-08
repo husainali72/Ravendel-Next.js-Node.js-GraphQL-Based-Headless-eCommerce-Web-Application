@@ -61,7 +61,7 @@ const GalleryImagesComponents = (props) => {
             singleprod.comboData = comboData
             setSingleprod({ ...singleprod })
         }
-    }, [singleproducts.quantity, lowStockThreshold, outOfStockThreshold, comboData])
+    }, [singleproducts?.quantity, lowStockThreshold, outOfStockThreshold, comboData])
 
     useEffect(() => {
         let priceData = [];
@@ -431,10 +431,10 @@ const GalleryImagesComponents = (props) => {
                 </div>
                 <div className="single-product-detail col-md-6 col-sm-12 col-xs-12">
                     <div className="detail-info">
-                        <h2>{capitalize(singleproducts.name)}</h2>
+                        <h2>{capitalize(singleproducts?.name)}</h2>
                         <div className="product-detail-rating">
                             <div className="pro-details-brand">
-                                <span> Category: {singleproducts.categoryId.map((item, index) => <span>{index < singleproducts.categoryId.length - 1 ? (capitalize(item.name) + ", ") : capitalize(item.name)}</span>)}</span>
+                                <span> Category: {singleproducts?.categoryId?.map((item, index) => <span>{index < singleproducts?.categoryId?.length - 1 ? (capitalize(item?.name) + ", ") : capitalize(item?.name)}</span>)}</span>
                             </div>
                             <div className="pro-details-rating">
                                 <StarRating singleproducts={singleproducts} stars={singleproducts?.rating} />
@@ -448,7 +448,7 @@ const GalleryImagesComponents = (props) => {
                                 <div className="product-price primary-color float-left">
 
                                     <span className=" mx-2">
-                                        {singleproducts.pricing.sellprice ? (
+                                        {singleproducts?.pricing?.sellprice ? (
                                             <strong className="sale-price" style={{ fontSize: "25px" }}>
 
                                                 {comboData && comboData.length ?
@@ -554,6 +554,6 @@ const GalleryImagesComponents = (props) => {
 
 export default GalleryImagesComponents;
 function newFunction(singleproducts) {
-    return <p className="">Tags: {singleproducts.__typename}</p>;
+    return <p className="">Tags: {singleproducts?.__typename}</p>;
 }
 

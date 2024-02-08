@@ -79,12 +79,12 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
         var product = singleproducts;
         setSingleProduct(product);
         var allimages = [];
-        if (product.feature_image) {
+        if (product?.feature_image) {
             allimages.push(product.feature_image);
         }
-        if (product.gallery_image) {
-            product.gallery_image.map((img) => {
-                allimages.push(img);
+        if (product?.gallery_image) {
+            product?.gallery_image?.map((img) => {
+                allimages?.push(img);
             });
         }
         setSliderImages(allimages);
@@ -126,8 +126,8 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
                                             <Tab.Content>
                                                 <Tab.Pane eventKey="description">
                                                     <div style={{ padding: "20px", marginTop: "15px" }}>
-                                                        {singleproducts.description !== null && singleproducts.description !== "" ?
-                                                            ReactHtmlParser(singleproducts.description, options) : <p>Product Discription not available</p>}
+                                                        {singleproducts?.description !== null && singleproducts?.description !== "" ?
+                                                            ReactHtmlParser(singleproducts?.description, options) : <p>Product Discription not available</p>}
                                                     </div>
                                                 </Tab.Pane>
                                             </Tab.Content>
@@ -136,7 +136,7 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
                                                     {singleProduct !== null ? <Reviews singleProductReview={singleProductReview} /> : null}
 
                                                     {session.status === "authenticated" ? (
-                                                        <ReviewForm productId={singleproducts._id} />
+                                                        <ReviewForm productId={singleproducts?._id} />
                                                     ) : <div style={{ padding: "20px", marginTop: "15px" }}>
                                                         <p>No Data Found</p></div>}
 
@@ -235,7 +235,7 @@ export async function getStaticProps({ params }) {
     /* ========================================= get Related Products ========================================*/
 
     const category = !!singleproducts?.categoryId?.length && singleproducts?.categoryId.map(cat => cat?.id);
-    const productID = singleproducts._id || "";
+    const productID = singleproducts?._id || "";
     try {
         const { data: shopproductcategory } = await client.query({
             query: GET_RELATED_PRODUCTS_QUERY,
