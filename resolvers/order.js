@@ -98,7 +98,7 @@ module.exports = {
         if (args.billing.paymentMethod === 'Cash On Delivery') {
           var status = 'pending';
           var userId = args.userId;
-          const cart = await Cart.findOne({ userId: args.userId });
+          const cart = await Cart.findOne({ userId:new ObjectId(args.userId) });
           emptyCart(cart);
         } else {
           let currencycode;
@@ -123,7 +123,7 @@ module.exports = {
           } else {
             status = 'pending';
           }
-          const cart = await Cart.findOne({ userId: args.userId });
+          const cart = await Cart.findOne({ userId: new ObjectId(args.userId) });
           emptyCart(cart)
         }
 

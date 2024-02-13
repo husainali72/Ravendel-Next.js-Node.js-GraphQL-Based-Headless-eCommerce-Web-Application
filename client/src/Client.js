@@ -10,15 +10,17 @@ const httpLink = new createUploadLink({uri: `https://demo1-ravendel.hbwebsol.com
 const authLink = new ApolloLink((operation, forward) => {
 
 
-  if (!cookie.load("auth").token) {
+  if (!cookie?.load("auth")?.token) {
     Auth.logout();
   }
-  const token = cookie.load("auth").token || "";
-
+  const token = cookie?.load("auth")?.token || "";
 
   operation.setContext({
     headers: {
       authorization: token,
+      'Apollo-Require-Preflight': 'true',
+      // 'Content-Type': 'application/json',
+      
     },
   });
 

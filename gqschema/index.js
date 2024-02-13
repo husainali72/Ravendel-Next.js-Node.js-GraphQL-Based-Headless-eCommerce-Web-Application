@@ -1,4 +1,4 @@
-const { gql } = require("apollo-server-express");
+// const { gql } = require("@apollo/server");
 const userSchema = require("./user");
 const pageSchema = require("./page");
 const blogSchema = require("./blog");
@@ -18,13 +18,15 @@ const faqSchema = require("./faq");
 const miscSchema = require("./misc");
 const zipcodeSchema = require("./zipcode");
 
-const linkSchema = gql`
+const linkSchema = `
   scalar Date
   scalar metaKeyValueArray
   scalar customObject
   scalar customArray
   scalar Upload
-
+  type Mutation {
+    Upload(file: Upload!): File!
+  }
   type File {
     filename: String!
     mimetype: String!

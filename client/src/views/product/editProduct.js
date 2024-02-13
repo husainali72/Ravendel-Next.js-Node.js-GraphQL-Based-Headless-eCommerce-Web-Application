@@ -152,7 +152,7 @@ const EditProductComponent = ({ params }) => {
           setProduct({
             ...product,
             ...productState.product,
-            categoryId: productState.product.categoryId.map((cat) => cat.id),
+            categoryId: productState?.product?.categoryId?.map((cat) => cat.id),
             brand: defaultBrand || "",
           });
 

@@ -30,7 +30,7 @@ module.exports = {
     },
     checkoutbyUser: async (root, args) => {
       try {
-        const checkout = await Checkout.findOne({ userId: args.userId });
+        const checkout = await Checkout.findOne({ userId:new ObjectId(args.userId) });
         if (!checkout) {
           throw putError("Cart not found");
         }
@@ -59,7 +59,7 @@ module.exports = {
     },
     deleteCheckout: async (root, args, { id }) => {
       checkToken(id);
-      const checkout = await Checkout.findByIdAndRemove(args.id);
+      const checkout = await Checkout.deleteOne({_id:args.id});
       if (checkout) {
         return true;
       }

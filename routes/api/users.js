@@ -144,7 +144,7 @@ router.get("/", auth, (req, res) => {
 router.get("/:userId", auth, (req, res) => {
   const errors = {};
 
-  User.findOne({ _id: req.params.userId })
+  User.findOne({ _id:new ObjectId( req.params.userId  ) })
     .select("-password")
     .then((user) => {
       if (!user) {

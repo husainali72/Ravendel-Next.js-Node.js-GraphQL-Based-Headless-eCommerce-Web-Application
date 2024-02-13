@@ -42,7 +42,7 @@ const checkError = (error) => {
 module.exports.checkError = checkError;
 /*-------------------------------------------------------------------------------------------------------*/
 
-const { AuthenticationError } = require("apollo-server-express");
+const { AuthenticationError } = require("@apollo/server");
 
 const checkToken = (token) => {
   if (token === false) {

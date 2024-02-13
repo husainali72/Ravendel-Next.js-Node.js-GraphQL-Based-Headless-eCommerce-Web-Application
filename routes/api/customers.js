@@ -95,8 +95,10 @@ router.post("/login", (req, res) => {
     if (!customer) {
       return res.status(404).json({success: false,message: 'Invalid credentials.'});
     }
+
     // Check Password
     bcrypt.compare(password, customer.password).then((isMatch) => {
+
       if (isMatch) {
         // customer Matched
         const payload = { id: customer._id, firstName: customer.firstName,lastName: customer.lastName, email: customer.email,role:'customer' }; // Create JWT Payload
@@ -154,7 +156,7 @@ router.post("/forgotpassword", async (req, res) => {
 // @access  public
 router.get("/reset/:custId",  (req, res) => {
   const errors = {};
-  Customer.findOne({ _id: req.params.custId })
+  Customer.findOne({ _id:new ObjectId(req.params.custId) })
     .select("-password")
     .then((customer) => {
       if (!customer) {
@@ -246,7 +248,7 @@ router.post("/changepassword", auth, async (req, res) => {
      return res.status(400).json({success: false,message: 'Password and confirm field not match.' });
   }
   const customerid =  req.body.customerId;
-  Customer.findOne({  _id: customerid }).then((customer) => {
+  Customer.findOne({  _id:new ObjectId(customerid) }).then((customer) => {
     // Check for customer
     if (!customer) {
       return res.status(404).json({success: false,message: 'Customer not found.' });
@@ -304,7 +306,7 @@ router.post("/viewprofile", auth, async (req, res) => {
   }
   
   const customerid =  req.body.customerId;
-  Customer.findOne({  _id: customerid }).then((customer) => {
+  Customer.findOne({  _id:new ObjectId(customerid)  }).then((customer) => {
     // Check for customer
     if (!customer) {
       return res.status(404).json({success: false,message: 'Customer not found.' });
@@ -440,7 +442,7 @@ router.post("/addaddressbook", auth, async (req, res) => {
   customer.addressBook.push(cdata);
   customer.updated = Date.now();
   await customer.save();
-  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
+  Customer.findOne({  _id:new ObjectId(req.body.customerId)   }).then((customer) => {
     // Check for customer
     let ccompany ='';
     let cphone ='';
@@ -527,7 +529,7 @@ router.post("/updateaddressbook", auth, async (req, res) => {
     });
   customer.updated = Date.now();
   await customer.save();
-  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
+  Customer.findOne({  _id:new ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     let ccompany ='';
     let cphone ='';
@@ -577,7 +579,7 @@ router.post("/deleteaddressbook", auth, async (req, res) => {
     }
   }
   await customer.save();
-  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
+  Customer.findOne({  _id:new ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     let ccompany ='';
     let cphone ='';
@@ -644,7 +646,7 @@ router.post("/addtocart", auth, async (req, res) => {
   }
 
 
-  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
+  Customer.findOne({  _id: new ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     res.json({ success: true,customer  });
    });
@@ -682,7 +684,7 @@ router.post("/updatecart", auth, async (req, res) => {
     });
   
   await customer.save();
-  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
+  Customer.findOne({  _id:new ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     res.json({ success: true,customer  });
    });
@@ -720,7 +722,7 @@ router.post("/deleteproductcart", auth, async (req, res) => {
 
   //customer.cart.items = [];
   await customer.save();
-  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
+  Customer.findOne({  _id:new ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     res.json({ success: true,customer  });
    });
@@ -743,7 +745,7 @@ router.post("/getcart", auth, async (req, res) => {
     return res.status(404).json("Customer Id not found");
   }
 
-  Customer.findOne({  _id: req.body.customerId }).then((customer) => {
+  Customer.findOne({  _id:new ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     res.json({
       success: true,
@@ -763,7 +765,7 @@ router.post('/remindCart/:custId', auth, async(req, res) => {
       return res.status(400).json({message: "Something is missing", succes: false})
     
     const existingCustomer = await Customer.findById(req.params.custId)
-    const customerCart = await Cart.findOne({ userId: req.params.custId })
+    const customerCart = await Cart.findOne({ userId:new ObjectId( req.params.custId ) })
     const mailData ={
       subject: "Checkout Cart",
       mailTemplate: "template",

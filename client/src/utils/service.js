@@ -47,16 +47,16 @@ export const query = async (query, variables) => {
     const errors = JSON.parse(JSON.stringify(error));
     console.log(error);
     if (
-      errors.graphQLErrors.length &&
-      !isEmpty(errors.graphQLErrors[0].message)
+      errors?.graphQLErrors?.length &&
+      !isEmpty(errors?.graphQLErrors[0]?.message)
     ) {
-      return Promise.reject(errors.graphQLErrors[0].message);
+      return Promise.reject(errors?.graphQLErrors[0]?.message);
     }
     if (
-      !isEmpty(errors.networkError) &&
-      errors.networkError.statusCode === 400
+      !isEmpty(errors?.networkError) &&
+      errors?.networkError?.statusCode === 400
     ) {
-      return Promise.reject(errors.message);
+      return Promise.reject(errors?.message);
     }
     return Promise.reject("Something went wrong");
   }
@@ -76,6 +76,7 @@ const service = (config, navigate) => {
       return response;
     },
     function (error) {
+      
       if (!error.response) {
         error.response = {
           data: "network error",
