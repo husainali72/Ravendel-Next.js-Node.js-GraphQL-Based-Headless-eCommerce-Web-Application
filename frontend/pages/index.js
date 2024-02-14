@@ -130,13 +130,16 @@ export default function Home({ homepageData, settings, setOpenMenu, openMenu, se
   return (
     <div>
       <Head>
+        
         <title>{seoInfo?.meta_title || "Ravendel"}</title>
+        <link rel="icon" href="/favicon.ico" />
         {seoInfo && seoInfo.meta_description ?
           <meta name="description" content={seoInfo.meta_description} />
           : null}
         {seoInfo && seoInfo.meta_tag ?
           <meta name="keywords" content={seoInfo.meta_tag} />
           : null}
+ 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
