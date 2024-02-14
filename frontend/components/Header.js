@@ -13,12 +13,10 @@ import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import { GET_SETTING, getSettings } from '../redux/actions/settingAction';
 
 
-export const LogOutUser1 = async () => {
+export const logoutAndClearData = async () => {
     const data = await signOut({ redirect: false, callbackUrl: "/" })
     localStorage.setItem("userCart", JSON.stringify([]));
     localStorage.setItem("cart", JSON.stringify([]));
-    // dispatch(logoutDispatch())
-    // window.location.pathname = '/'
 }
 
 export default function Header({ setOpenMenu }) {

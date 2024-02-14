@@ -2,7 +2,6 @@ import { query, mutation } from "../../utills/helpers";
 import { ADD_TO_CART_QUERY, UPDATE_CART_PRODUCT, GET_USER_CART, ADD_CART } from "../../queries/cartquery";
 import { ADD_TO_CART, INCRESE_QUANTITY, REMOVE_VALUE, REMOVE_ALL_VALUE, DECREASE_QUANTITY, UPDATE_CART_ON_LOGIN, CREATE_CART_ON_LOGIN } from "../actions/cartAction";
 import logoutDispatch from "../actions/userlogoutAction";
-import { LogOutUser1 } from "../../components/Header";
 import { getSettings } from "../actions/settingAction";
 let cartProduct = []
 

@@ -14,7 +14,7 @@ import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
 const TrackMyOrder = () => {
     const [customerOrder, setCustomerOrder] = useState([])
     const [loading, setloading] = useState(false)
-    const [Session, setSession] = useState({})
+    const [session, setSession] = useState({})
     const [decimal, setdecimal] = useState(2)
     const [currencyStore, setCurrencyStore] = useState({})
     const [currency, setCurrency] = useState("$")
@@ -25,13 +25,13 @@ const TrackMyOrder = () => {
         { name: 'delivered', Title: 'Delivered', color: 'primary' }
     ]
     useEffect(() => {
-        const session = getSession();
-        session.then(res => setSession(res))
+        const userSession = getSession();
+        userSession.then(res => setSession(res))
     }, [])
     useEffect(() => {
         getOrderCustomer();
         getSettings()
-    }, [Session])
+    }, [session])
     const getSettings = async () => {
         try {
             const { data: homepagedata } = await client.query({
@@ -44,15 +44,13 @@ const TrackMyOrder = () => {
             console.log("homepage Error===", e);
         }
     }
-    useEffect(() => {
-        getOrderCustomer();
-    }, [Session])
+
     function getOrderCustomer() {
         var id = ""
         var token = "";
-        if (Session?.user?.accessToken?.success) {
-            id = Session.user.accessToken.customer._id
-            token = Session.user.accessToken.token
+        if (session?.user?.accessToken?.success) {
+            id = session.user.accessToken.customer._id
+            token = session.user.accessToken.token
         }
         query(GET_CUSTOMER_ORDERS_QUERY, id, token).then((response) => {
             if (response) {
