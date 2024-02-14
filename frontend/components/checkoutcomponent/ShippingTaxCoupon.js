@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button, Form, FormCheck, FormGroup } from "react-bootstrap";
+import { capitalize } from "lodash";
 
 const ShippingTaxCoupon = (props) => {
     const { currency ,shippingInfo, prevFormStep, shippingAdd, setCouponFeild, coupon, delivery, doApplyCouponCode, billingInfo } = props;
@@ -13,9 +14,9 @@ const ShippingTaxCoupon = (props) => {
                 <div className="checkout-shipping-address">
 
                     <div className="checkout-list-content">
-                        <h6 style={{ fontWeight: "600" }}> {billingInfo.firstname},{billingInfo.lastname}</h6>
+                        <h6 style={{ fontWeight: "600" }}> {capitalize(billingInfo.firstname)} {capitalize(billingInfo.lastname)}</h6>
                         <p>
-                            {billingInfo.city},{billingInfo.state},{billingInfo.zip},{billingInfo.country}
+                            {capitalize(billingInfo.city)} {capitalize(billingInfo.state)} {capitalize(billingInfo.zip)} {capitalize(billingInfo.country)}
                         </p>
                     </div>
                     <div className="checkout-shipping-edit-btn">
@@ -30,9 +31,9 @@ const ShippingTaxCoupon = (props) => {
                         </div>
                         <div className="checkout-shipping-address">
                             <div className="checkout-list-content">
-                                <h6> {shippingInfo.firstname},{shippingInfo.lastname}</h6>
+                                <h6> {capitalize(shippingInfo.firstname)} {capitalize(shippingInfo.lastname)}</h6>
                                 <p>
-                                    {shippingInfo.city},{shippingInfo.state},{shippingInfo.zip},{shippingInfo.country}
+                                    {capitalize(shippingInfo.city)} {capitalize(shippingInfo.state)} {capitalize(shippingInfo.zip)} {capitalize(shippingInfo.country)}
                                 </p>
                             </div>
                             <div className="checkout-shipping-edit-btn">

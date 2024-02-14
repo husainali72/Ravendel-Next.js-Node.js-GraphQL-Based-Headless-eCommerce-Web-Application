@@ -104,7 +104,7 @@ const BillingDetails = (props) => {
                                 className="input-filled"
                                 name="address"
                                 label="address"
-                                placeholder="address *"
+                                placeholder="Address *"
                                 {...registerRef("address", {
                                     required: {
                                         value: (billingInfo.address ? false : true),
@@ -127,8 +127,8 @@ const BillingDetails = (props) => {
                             <input className="input-filled"
                                 type="text"
                                 required=""
-                                name="city"
-                                placeholder="city / Town *"
+                                name="City"
+                                placeholder="City / Town *"
                                 {...registerRef("city", {
                                     required: {
                                         value: (billingInfo.city ? false : true),
@@ -151,7 +151,7 @@ const BillingDetails = (props) => {
                                 type="text"
                                 required=""
                                 name="state"
-                                placeholder="state *"
+                                placeholder="State *"
                                 {...registerRef("state", {
                                     required: {
                                         value: (billingInfo.state ? false : true),
@@ -174,11 +174,11 @@ const BillingDetails = (props) => {
                                 type="text"
                                 required=""
                                 name="country"
-                                placeholder="country *"
+                                placeholder="Country *"
                                 {...registerRef("country", {
                                     required: {
                                         value: (billingInfo.country ? false : true),
-                                        message: "country is Required",
+                                        message: "Country is Required",
                                     }
                                 })}
                                 value={billingInfo.country}
@@ -200,7 +200,7 @@ const BillingDetails = (props) => {
                                 required=""
                                 label="zip"
                                 name="zip"
-                                placeholder="zip *"
+                                placeholder="Zip *"
                                 {...registerRef("zip", {
                                     required: {
                                         value: (billingInfo.zip ? false : true),
@@ -265,7 +265,7 @@ const BillingDetails = (props) => {
                         type="text"
                         required=""
                         name="email"
-                        label="email"
+                        label="Email"
                         placeholder="email *"
                         {...registerRef("email", {
                             required: {
@@ -390,7 +390,7 @@ const BillingDetails = (props) => {
                                     className="input-filled"
                                     name="shippingaddress"
                                     label="address_line_1"
-                                    placeholder="address_line_1 *"
+                                    placeholder="Address line 1 *"
                                     {...registerRef("shippingaddress", {
                                         required: {
                                             value: (shippingAdd ? ((shippingInfo?.address ? false : true)) : false),
@@ -410,7 +410,7 @@ const BillingDetails = (props) => {
                                     type="text"
                                     name="shippingaddressLine2"
                                     label="address_line_2"
-                                    placeholder="address_line_2 *"
+                                    placeholder="Address line 2 *"
                                     {...registerRef("shippingaddressLine2", {
                                         required: {
                                             value: (shippingAdd ? ((shippingInfo?.addressLine2 ? false : true)) : false),
@@ -430,8 +430,8 @@ const BillingDetails = (props) => {
                                     className="input-filled"
                                     type="text"
                                     name="shippingcity"
-                                    label="city"
-                                    placeholder="city / Town *"
+                                    label="City"
+                                    placeholder="City / Town *"
                                     {...registerRef("shippingcity", {
                                         required: {
                                             value: (shippingAdd ? ((shippingInfo?.city ? false : true)) : false),
@@ -450,8 +450,8 @@ const BillingDetails = (props) => {
                                 <input className="input-filled"
                                     type="text"
                                     name="shippingstate"
-                                    label="state"
-                                    placeholder="state *"
+                                    label="State"
+                                    placeholder="State *"
                                     {...registerRef("shippingstate", {
                                         required: {
                                             value: (shippingAdd ? ((shippingInfo?.state ? false : true)) : false),
@@ -469,8 +469,8 @@ const BillingDetails = (props) => {
                                 <input
                                     className="input-filled"
                                     name="shippingzip"
-                                    label="zip"
-                                    placeholder="zip *"
+                                    label="Zip"
+                                    placeholder="Zip *"
                                     {...registerRef("shippingzip", {
                                         required: {
                                             value: (shippingAdd ? ((shippingInfo?.zip ? false : true)) : false),
@@ -551,8 +551,8 @@ const BillingDetails = (props) => {
                                 <input className="input-filled"
                                     type="text"
                                     name="shippingemail"
-                                    label="email"
-                                    placeholder="email *"
+                                    label="Email"
+                                    placeholder="Email *"
                                     {...registerRef("shippingemail", {
                                         required: {
                                             value: (shippingAdd ? (shippingInfo?.email ? false : true) : false),
