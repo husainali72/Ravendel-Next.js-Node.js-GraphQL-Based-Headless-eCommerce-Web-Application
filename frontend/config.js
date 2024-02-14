@@ -1,10 +1,7 @@
-
-
 export const BASE_URL = "demo1-ravendel.hbwebsol.com";
 export const baseUrl = `https://${BASE_URL}/`;
 export const IMAGE_BASE_URL = `https://${BASE_URL}`;
 export const API_BASE_URL = `https://${BASE_URL}/apis`;
-
 
 // export const BASE_URL = "localhost:8000";
 // export const baseUrl = `https://${BASE_URL}/`;
@@ -16,8 +13,8 @@ export const API_BASE_URL = `https://${BASE_URL}/apis`;
 // export var bucketName = "revendal-image-prod";
 export var bucketName = "revendal-image";
 // export var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
-export var bucketBaseURL = `http://localhost:8000/`;
-// export var bucketBaseURL = `https://${BASE_URL}/`;
+// export var bucketBaseURL = `http://localhost:8000/`;
+export var bucketBaseURL = `https://${BASE_URL}/`;
 
 // if (process.env.NODE_ENV === "production") {
 //     bucketName = "revendal-image-prod";

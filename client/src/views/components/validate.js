@@ -3,17 +3,14 @@ export const validate = (names, args) => {
   let errors = "";
   if (names && names.length > 0) {
     names.map((name) => {
-      console.log(args[name] === '' , /^\s/.test(args[name]),isNaN(args[name]),args[name])
       if (args[name] === '' || /^\s/.test(args[name])||(name==='discountValue'&&isNaN(args[name]))) {
         const txt =
           name === 'discountValue' ? 'Discount value is required' : name.replaceAll('_', ' ') + " is required";
         const str = txt.charAt(0).toUpperCase() + txt.slice(1);
         return (errors = str);
       }
-      if (Array.isArray(args[name])) {
-        if (args[name].length <= 0) {
-          return (errors = `Category field is required`);
-        }
+      if (Array.isArray(args[name])&&args[name].length <= 0) {
+          return (errors = `Category field is required`);      
       }
     });
   }
