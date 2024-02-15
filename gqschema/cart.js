@@ -4,12 +4,10 @@ module.exports = gql`
     id: ID
     userId: ID
     status: String
-    total: String
-    cartItem: metaKeyValueArray
-    availableItem: customArray
-    unavailableItem: customArray
+    cartItems: metaKeyValueArray
     date: Date
     updated: Date
+    totalSummary:metaKeyValueArray
   }
 
   type combinationItem {
@@ -36,6 +34,11 @@ module.exports = gql`
     productTotal : String,
     productTax: String
     productShipping: String
+    available: Boolean
+    amount : String
+    taxAmount : String
+    shippingAmount : String
+    total : String
   }
 
   type calculatedCart {
@@ -110,7 +113,7 @@ module.exports = gql`
     totalCoupon: String
     message: String
     success: Boolean
-    cartItem :[calculateCouponCartItem]
+    cartItems :[calculateCouponCartItem]
     cartTotal : String
     totalShipping : String
     totalTax : String,
