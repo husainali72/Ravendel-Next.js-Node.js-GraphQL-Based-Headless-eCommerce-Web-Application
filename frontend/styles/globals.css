@@ -2842,7 +2842,7 @@ footer .btn:hover a {
 }
 
 .textSuccess {
-  color: #4BB543;
+  color: #4BB543!important;
 }
 
 .textSuccess small {

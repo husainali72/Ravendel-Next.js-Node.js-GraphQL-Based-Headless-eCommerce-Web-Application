@@ -5,7 +5,7 @@ const Coupon = require("../models/Coupon");
 const Shipping = require("../models/Shipping");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const { GET_SINGLE_FUNC, GET_ALL_FUNC } = require("../config/api_functions");
-
+const mongoose = require('mongoose');
 const {
   putError,
   checkError,
@@ -28,7 +28,7 @@ module.exports = {
 
     cartbyUser: async (root, args) => {
       try {
-        const cart = await Cart.findById(args.userId);
+        const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(args.userId) });
         if (!cart) {
           throw putError("Cart not found");
         }
@@ -50,12 +50,12 @@ module.exports = {
             isProductAvilable = await Product.findById(product.productId);
             attribute = await ProductAttributeVariation.find({
               productId: product.productId,
-              _id: product?.variantId,
+              _id:  new mongoose.Types.ObjectId(product?.variantId),
               quantity: { $gte: product.qty },
             });
           } else {
             isProductAvilable = await Product.findOne({
-              _id: new ObjectId(product.productId),
+              _id: new  mongoose.Types.ObjectId(product.productId),
               quantity: { $gte: product.qty },
             });
           }
@@ -456,7 +456,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
       try {
-        const cart = await Cart.findOne({ userId: new ObjectId(args.userId) });
+        const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(args.userId) });
 
         if (cart) {
           delete args.userId;
@@ -533,7 +533,7 @@ module.exports = {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
       try {
-        const cart = await Cart.findOne({ userId: args.userId });
+        const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(args.userId )});
         let existingCartProducts = cart && cart.products ? cart.products : [];
         // let carttotal = 0;
         // if local products exists then only run loop for adding products in customer cart
@@ -789,7 +789,7 @@ module.exports = {
     changeQty: async (root, args, { id }) => {
       checkToken(id);
       try {
-        const cart = await Cart.findOne({ userId: new ObjectId(args.userId) });
+        const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(args.userId) });
         for (let i in cart.products) {
           if (
             cart.products[i].productId.toString() === args.productId.toString()

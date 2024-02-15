@@ -5,6 +5,7 @@ const Shipping = require("../models/Shipping");
 const Customer = require("../models/Customer");
 const Tax = require("../models/Tax");
 const Coupon = require("../models/Coupon");
+const mongoose = require('mongoose');
 const {
   isEmpty,
   MESSAGE_RESPONSE,
@@ -40,7 +41,7 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Order", false);
       }
       try {
-        const order = await Order.find({ userId: args.userId }).sort({ date: -1 });
+        const order = await Order.find({ userId: new mongoose.Types.ObjectId(args.userId) }).sort({ date: -1 });
 
         if (!order) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
@@ -92,13 +93,10 @@ module.exports = {
         var Secret_Key = setting.paymnet.stripe.secret_key;
         const stripe = require('stripe')(Secret_Key);
 
-        // var c_grandTotal = parseFloat(args.subtotal) + parseFloat(args.shippingAmount) + parseFloat(args.taxAmount) - parseFloat(args.discountAmount);
-
-        // var c_grandTotal = parseFloat(args.grandTotal) - parseFloat(args.discountAmount);
         if (args.billing.paymentMethod === 'Cash On Delivery') {
           var status = 'pending';
           var userId = args.userId;
-          const cart = await Cart.findOne({ userId:new ObjectId(args.userId) });
+          const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
           emptyCart(cart);
         } else {
           let currencycode;
@@ -123,7 +121,7 @@ module.exports = {
           } else {
             status = 'pending';
           }
-          const cart = await Cart.findOne({ userId: new ObjectId(args.userId) });
+          const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
           emptyCart(cart)
         }
 
@@ -144,12 +142,6 @@ module.exports = {
           grandTotal: args.grandTotal,
         });
         newOrder.products = args.products;
-        // const subTotalDetails = await subTotalDetailsEntry(args, Coupon, Shipping, Tax)
-        // const subTotalSummary = await subTotalSummaryEntry(args, Coupon, Shipping, Tax)
-        // newOrder.sub_total_details = subTotalDetails
-        // newOrder.sub_total_summary = subTotalSummary.subTotalSummary
-        // newOrder.subtotal = subTotalSummary.orderSubTotal
-        // newOrder.grandTotal = subTotalSummary.orderGrandTotal
         await newOrder.save();
         // send order create email
         const customer = await Customer.findById(args.userId);
@@ -167,7 +159,6 @@ module.exports = {
       }
     },
     updateOrder: async (root, args, { id }) => {
-      console.log('firedddd')
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
       }
@@ -240,7 +231,6 @@ module.exports = {
       }
     },
     deleteOrder: async (root, args, { id }) => {
-      console.log("delete", args)
       return await DELETE_FUNC(id, args.id, Order, "Order");
     },
   },

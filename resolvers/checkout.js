@@ -6,7 +6,7 @@ const {
   checkToken
 } = require("../config/helpers");
 //const validate = require("../validations/cart");
-
+const mongoose = require('mongoose');
 module.exports = {
   Query: {
     checkouts: async (root, args) => {
@@ -30,7 +30,7 @@ module.exports = {
     },
     checkoutbyUser: async (root, args) => {
       try {
-        const checkout = await Checkout.findOne({ userId:new ObjectId(args.userId) });
+        const checkout = await Checkout.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
         if (!checkout) {
           throw putError("Cart not found");
         }
@@ -52,7 +52,6 @@ module.exports = {
 
         return await newCheckout.save();
       } catch (error) {
-        // console.log(error);
         error = checkError(error);
         throw new Error(error.custom_message);
       }

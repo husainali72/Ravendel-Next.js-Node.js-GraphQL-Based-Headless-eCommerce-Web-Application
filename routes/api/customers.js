@@ -5,7 +5,6 @@ const nodemailer = require('nodemailer')
 const APP_KEYS = require("../../config/keys");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-//const auth = require("../../middleware/auth");
 const auth = require("../../middleware/customerauth");
 
 // custmer model
@@ -13,8 +12,7 @@ const Customer = require("../../models/Customer");
 const Cart = require("../../models/Cart");
 const Setting = require("../../models/Setting");
 const { sendEmail } = require("../../config/helpers");
-const { default: mongoose } = require("mongoose");
-
+const mongoose = require('mongoose');
 // @route   Post api/posts
 // @desc    Registering customer
 // @access  public
@@ -156,7 +154,7 @@ router.post("/forgotpassword", async (req, res) => {
 // @access  public
 router.get("/reset/:custId",  (req, res) => {
   const errors = {};
-  Customer.findOne({ _id:new ObjectId(req.params.custId) })
+  Customer.findOne({ _id:new new mongoose.Types.ObjectId(req.params.custId) })
     .select("-password")
     .then((customer) => {
       if (!customer) {
@@ -248,7 +246,7 @@ router.post("/changepassword", auth, async (req, res) => {
      return res.status(400).json({success: false,message: 'Password and confirm field not match.' });
   }
   const customerid =  req.body.customerId;
-  Customer.findOne({  _id:new ObjectId(customerid) }).then((customer) => {
+  Customer.findOne({  _id:new mongoose.Types.ObjectId(customerid) }).then((customer) => {
     // Check for customer
     if (!customer) {
       return res.status(404).json({success: false,message: 'Customer not found.' });
@@ -306,7 +304,7 @@ router.post("/viewprofile", auth, async (req, res) => {
   }
   
   const customerid =  req.body.customerId;
-  Customer.findOne({  _id:new ObjectId(customerid)  }).then((customer) => {
+  Customer.findOne({  _id:new mongoose.Types.ObjectId(customerid)  }).then((customer) => {
     // Check for customer
     if (!customer) {
       return res.status(404).json({success: false,message: 'Customer not found.' });
@@ -442,7 +440,7 @@ router.post("/addaddressbook", auth, async (req, res) => {
   customer.addressBook.push(cdata);
   customer.updated = Date.now();
   await customer.save();
-  Customer.findOne({  _id:new ObjectId(req.body.customerId)   }).then((customer) => {
+  Customer.findOne({  _id:new mongoose.Types.ObjectId(req.body.customerId)   }).then((customer) => {
     // Check for customer
     let ccompany ='';
     let cphone ='';
@@ -529,7 +527,7 @@ router.post("/updateaddressbook", auth, async (req, res) => {
     });
   customer.updated = Date.now();
   await customer.save();
-  Customer.findOne({  _id:new ObjectId(req.body.customerId)  }).then((customer) => {
+  Customer.findOne({  _id:new mongoose.Types.ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     let ccompany ='';
     let cphone ='';
@@ -579,7 +577,7 @@ router.post("/deleteaddressbook", auth, async (req, res) => {
     }
   }
   await customer.save();
-  Customer.findOne({  _id:new ObjectId(req.body.customerId)  }).then((customer) => {
+  Customer.findOne({  _id:new mongoose.Types.ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     let ccompany ='';
     let cphone ='';
@@ -623,7 +621,6 @@ router.post("/addtocart", auth, async (req, res) => {
         qty: req.body.qty
     }
   var customer_cart = customer.cart.items;
-  console.log(customer_cart);
 
   if(customer_cart.length === 0){
        customer.cart.items.push(cdata);
@@ -634,11 +631,6 @@ router.post("/addtocart", auth, async (req, res) => {
       if (customer_cart[i].productId == req.body.productId) {
         return res.status(400).json("Product already exist in a cart");
       }
-      // }else{
-      //    customer.cart.items.push(cdata);
-      //    await customer.save();
-      //    res.json({ success: true,customer  });
-      // }
     }
 
     customer.cart.items.push(cdata);
@@ -646,7 +638,7 @@ router.post("/addtocart", auth, async (req, res) => {
   }
 
 
-  Customer.findOne({  _id: new ObjectId(req.body.customerId)  }).then((customer) => {
+  Customer.findOne({  _id: new mongoose.Types.ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     res.json({ success: true,customer  });
    });
@@ -684,7 +676,7 @@ router.post("/updatecart", auth, async (req, res) => {
     });
   
   await customer.save();
-  Customer.findOne({  _id:new ObjectId(req.body.customerId)  }).then((customer) => {
+  Customer.findOne({  _id:new mongoose.Types.ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     res.json({ success: true,customer  });
    });
@@ -722,7 +714,7 @@ router.post("/deleteproductcart", auth, async (req, res) => {
 
   //customer.cart.items = [];
   await customer.save();
-  Customer.findOne({  _id:new ObjectId(req.body.customerId)  }).then((customer) => {
+  Customer.findOne({  _id:new mongoose.Types.ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     res.json({ success: true,customer  });
    });
@@ -745,7 +737,7 @@ router.post("/getcart", auth, async (req, res) => {
     return res.status(404).json("Customer Id not found");
   }
 
-  Customer.findOne({  _id:new ObjectId(req.body.customerId)  }).then((customer) => {
+  Customer.findOne({  _id:new mongoose.Types.ObjectId(req.body.customerId)  }).then((customer) => {
     // Check for customer
     res.json({
       success: true,
@@ -765,7 +757,7 @@ router.post('/remindCart/:custId', auth, async(req, res) => {
       return res.status(400).json({message: "Something is missing", succes: false})
     
     const existingCustomer = await Customer.findById(req.params.custId)
-    const customerCart = await Cart.findOne({ userId:new ObjectId( req.params.custId ) })
+    const customerCart = await Cart.findOne({ userId:new mongoose.Types.ObjectId( req.params.custId ) })
     const mailData ={
       subject: "Checkout Cart",
       mailTemplate: "template",
@@ -773,7 +765,6 @@ router.post('/remindCart/:custId', auth, async(req, res) => {
     }
     sendEmail(mailData, APP_KEYS.smptUser, existingCustomer.email, res)
   } catch (err) {
-    // console.log(err)
     res.status(500).json({message: "Server Error", succes: false})
   }
 })

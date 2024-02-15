@@ -101,7 +101,7 @@ const CustomerSchema = new Schema({
  * @returns {Promise<boolean>}
  */
 CustomerSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-  const user = await this.findOne({ email, _id: { $ne: new ObjectId(excludeUserId)  } });
+  const user = await this.findOne({ email, _id: { $ne: new mongoose.Types.ObjectId(excludeUserId)  } });
   return !!user;
 };
 
