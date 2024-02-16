@@ -24,14 +24,17 @@ import {
 } from "../../store/action/";
 import { getUpdatedUrl } from "../../utils/service";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
-import { validate, validatenested, validatenestedArray } from "../components/validate";
+import {
+  validate,
+  validatenested,
+  validatenestedArray,
+} from "../components/validate";
 import {
   isEmpty,
   client_app_route_url,
   bucketBaseURL,
   baseUrl,
   getBaseUrl,
-
 } from "../../utils/helper";
 import {
   Alert,
@@ -56,8 +59,8 @@ import {
   EditCategoriesComponent,
 } from "./components";
 import viewStyles from "../viewStyles";
-import Stack from '@mui/material/Stack';
-import CloseIcon from '@mui/icons-material/Close';
+import Stack from "@mui/material/Stack";
+import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme";
 import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
@@ -98,7 +101,7 @@ let defaultobj = {
   short_description: "",
   sku: "",
   quantity: "",
-}
+};
 const EditProductComponent = ({ params }) => {
   const productId = params.id || "";
   const classes = viewStyles();
@@ -112,11 +115,10 @@ const EditProductComponent = ({ params }) => {
   const [combination, setCombination] = useState([]);
   const [loading, setloading] = useState(false);
   const [gallery, setGallery] = useState([]);
-  const [taxClass, setTaxClass] = useState('')
-  const [product, setProduct] = useState(defaultobj
-  );
-  const setting = useSelector((state) => state.settings)
-  const baseURl = getBaseUrl(setting)
+  const [taxClass, setTaxClass] = useState("");
+  const [product, setProduct] = useState(defaultobj);
+  const setting = useSelector((state) => state.settings);
+  const baseURl = getBaseUrl(setting);
   useEffect(() => {
     if (productId) {
       dispatch(productAction(productId));
@@ -134,11 +136,10 @@ const EditProductComponent = ({ params }) => {
       if (!isEmpty(get(productState, "product"))) {
         if (!isEmpty(productState.product)) {
           let defaultBrand = {};
-          setTaxClass(productState.product.taxClass)
+          setTaxClass(productState.product.taxClass);
           if (productState.product.brand) {
             if (!isEmpty(get(brandState, "brands"))) {
               for (let i in brandState.brands) {
-
                 if (brandState.brands[i].id === productState.product.brand.id) {
                   defaultBrand = {
                     value: brandState.brands[i].id,
@@ -157,41 +158,59 @@ const EditProductComponent = ({ params }) => {
           });
 
           if (productState.product.feature_image) {
-
-
-            setfeatureImage(
-              baseURl + productState.product.feature_image
-            );
-
+            setfeatureImage(baseURl + productState.product.feature_image);
           } else {
-            setfeatureImage(
-              NoImagePlaceHolder
-            );
+            setfeatureImage(NoImagePlaceHolder);
           }
         }
       }
     } else {
-      setProduct(defaultobj)
-      setfeatureImage(null)
+      setProduct({
+        ...product,
+        ...defaultobj,
+        shipping: {
+          ...product.shipping,
+        },
+      });
+      setfeatureImage(null);
     }
   }, [get(productState, "product"), productId, baseURl]);
 
   const addUpdateProduct = (e) => {
     product.combinations = combination;
-    product.taxClass = taxClass
-    let combination_error = ''
-    let combination_price_error = ''
+    product.taxClass = taxClass;
+    let combination_error = "";
+    let combination_price_error = "";
     e.preventDefault();
-    let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
-    let custom_field = ''
+    let errors = validate(
+      [
+        "short_description",
+        "quantity",
+        "sku",
+        "categoryId",
+        "description",
+        "name",
+      ],
+      product
+    );
+    let custom_field = "";
 
     if (product.custom_field) {
-      custom_field = validatenested('custom_field', ['key', 'value'], product)
+      custom_field = validatenested("custom_field", ["key", "value"], product);
     }
     if (product.combinations) {
-      combination_error = validatenested("combinations", ["sku", 'quantity'], product, 'Variant');
-      combination_price_error = validatenestedArray("pricing", ["price"], product.combinations, 'Variant')
-
+      combination_error = validatenested(
+        "combinations",
+        ["sku", "quantity"],
+        product,
+        "Variant"
+      );
+      combination_price_error = validatenestedArray(
+        "pricing",
+        ["price"],
+        product.combinations,
+        "Variant"
+      );
     }
 
     let Errors = validatenested("pricing", ["price"], product);
@@ -204,8 +223,7 @@ const EditProductComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else if (!isEmpty(Errors)) {
+    } else if (!isEmpty(Errors)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -214,8 +232,7 @@ const EditProductComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else if (!isEmpty(combination_price_error)) {
+    } else if (!isEmpty(combination_price_error)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -224,8 +241,7 @@ const EditProductComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else if (!isEmpty(combination_error)) {
+    } else if (!isEmpty(combination_error)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -234,9 +250,7 @@ const EditProductComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else if (!isEmpty(custom_field)) {
-
+    } else if (!isEmpty(custom_field)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -245,9 +259,7 @@ const EditProductComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else if (!isEmpty(combination_price_error)) {
-
+    } else if (!isEmpty(combination_price_error)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -256,20 +268,16 @@ const EditProductComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else {
+    } else {
       if (productId) {
-        product.update_gallery_image = gallery
+        product.update_gallery_image = gallery;
         dispatch(productUpdateAction(product, navigate));
-      }
-      else {
-        product.gallery_image = gallery
+      } else {
+        product.gallery_image = gallery;
         dispatch(productAddAction(product, navigate));
-
       }
     }
   };
-
 
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
@@ -280,8 +288,7 @@ const EditProductComponent = ({ params }) => {
     setfeatureImage(URL.createObjectURL(e.target.files[0]));
     if (productId) {
       setProduct({ ...product, ["update_feature_image"]: e.target.files });
-    }
-    else {
+    } else {
       setProduct({ ...product, [e.target.name]: e.target.files });
     }
   };
@@ -299,7 +306,6 @@ const EditProductComponent = ({ params }) => {
       });
     }
   };
-
 
   const addCustomField = () => {
     setProduct({
@@ -339,7 +345,6 @@ const EditProductComponent = ({ params }) => {
     });
   };
 
-
   return (
     <>
       <Alert />
@@ -351,7 +356,6 @@ const EditProductComponent = ({ params }) => {
           submitTitle={productId ? "Update" : "Add"}
           backLink={`${client_app_route_url}all-products`}
         />
-
 
         <Grid container spacing={4} className={classes.secondmainrow}>
           <Grid item lg={9} md={12}>
@@ -365,7 +369,9 @@ const EditProductComponent = ({ params }) => {
                   value={product.name}
                   onChange={handleChange}
                   onBlur={(e) =>
-                    !product.url || product.url !== e.target.value ? isUrlExist(product.name) : null
+                    !product.url || product.url !== e.target.value
+                      ? isUrlExist(product.name)
+                      : null
                   }
                   variant="outlined"
                   fullWidth
@@ -399,18 +405,20 @@ const EditProductComponent = ({ params }) => {
             </CardBlocks>
             {/* ===================Categories=================== */}
             <CardBlocks title="Categories">
-              {productId ?
+              {productId ? (
                 <EditCategoriesComponent
                   selectedCategories={product.categoryId}
                   onCategoryChange={(items) => {
                     setProduct({ ...product, categoryId: items });
                   }}
-                /> :
+                />
+              ) : (
                 <CategoriesComponent
                   onCategoryChange={(items) => {
                     setProduct({ ...product, categoryId: items });
                   }}
-                />}
+                />
+              )}
             </CardBlocks>
             {/* ===================Pricing=================== */}
             <CardBlocks title="Pricing">
@@ -422,29 +430,28 @@ const EditProductComponent = ({ params }) => {
                     variant="outlined"
                     fullWidth
                     type="number"
-
                     value={product.pricing.price}
                     onChange={(e) => {
                       if (e.target.value >= 0) {
-                        e.target.value > product.pricing.sellprice ?
-                          setProduct({
-                            ...product,
-                            pricing: {
-                              ...product.pricing,
-                              price: Number(e.target.value),
-                            },
-                          })
+                        e.target.value > product.pricing.sellprice
+                          ? setProduct({
+                              ...product,
+                              pricing: {
+                                ...product.pricing,
+                                price: Number(e.target.value),
+                              },
+                            })
                           : dispatch({
-                            type: ALERT_SUCCESS,
-                            payload: {
-                              boolean: false,
-                              message: "Sale price couldn't exceed original price",
-                              error: true,
-                            }
-                          })
+                              type: ALERT_SUCCESS,
+                              payload: {
+                                boolean: false,
+                                message:
+                                  "Sale price couldn't exceed original price",
+                                error: true,
+                              },
+                            });
                       }
-                    }
-                    }
+                    }}
                   />
                 </Grid>
                 <Grid item md={4}>
@@ -454,29 +461,28 @@ const EditProductComponent = ({ params }) => {
                     variant="outlined"
                     fullWidth
                     type="number"
-
                     value={product.pricing.sellprice}
                     onChange={(e) => {
                       if (e.target.value >= 0) {
-                        e.target.value < product.pricing.price ?
-                          setProduct({
-                            ...product,
-                            pricing: {
-                              ...product.pricing,
-                              sellprice: Number(e.target.value),
-                            },
-                          })
+                        e.target.value < product.pricing.price
+                          ? setProduct({
+                              ...product,
+                              pricing: {
+                                ...product.pricing,
+                                sellprice: Number(e.target.value),
+                              },
+                            })
                           : dispatch({
-                            type: ALERT_SUCCESS,
-                            payload: {
-                              boolean: false,
-                              message: "Sale price couldn't exceed original price",
-                              error: true,
-                            }
-                          })
+                              type: ALERT_SUCCESS,
+                              payload: {
+                                boolean: false,
+                                message:
+                                  "Sale price couldn't exceed original price",
+                                error: true,
+                              },
+                            });
                       }
-                    }
-                    }
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -531,11 +537,11 @@ const EditProductComponent = ({ params }) => {
               </Grid>
             </CardBlocks>
             {/* ===================Shipping=================== */}
+
             {!product.product_type.virtual && (
               <CardBlocks title="Shipping">
                 <ShippingComponent
                   product={product}
-
                   onShippingInputChange={(name, value) => {
                     setProduct({
                       ...product,
@@ -561,16 +567,14 @@ const EditProductComponent = ({ params }) => {
             <CardBlocks title="Tax">
               <TaxComponent
                 product={taxClass}
-
                 taxClass={taxClass}
-
                 onTaxInputChange={(value) => {
-                  setTaxClass(value)
+                  setTaxClass(value);
                 }}
                 onTaxClassChange={(value) => {
                   setProduct({
                     ...product,
-                    ['taxClass']: value,
+                    ["taxClass"]: value,
                   });
                 }}
               />
@@ -609,7 +613,6 @@ const EditProductComponent = ({ params }) => {
                   })
                 }
                 onCombinationUpdate={(combination) => {
-
                   setCombination(combination);
                 }}
                 setting={setting}
@@ -647,7 +650,10 @@ const EditProductComponent = ({ params }) => {
                       />
                       <Tooltip title="Remove Field" aria-label="remove-field">
                         <Stack direction="row" spacing={1}>
-                          <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
+                          <IconButton
+                            aria-label="delete"
+                            onClick={(e) => removeCustomField(index)}
+                          >
                             <CloseIcon />
                           </IconButton>
                         </Stack>
@@ -676,7 +682,6 @@ const EditProductComponent = ({ params }) => {
                 multiline
                 rows="4"
               />
-
             </CardBlocks>
             {/* ===================Meta Information=================== */}
             <CardBlocks title="Meta Information">
@@ -770,10 +775,10 @@ const EditProductComponent = ({ params }) => {
             {/* ===================Gallery Images=================== */}
             <Box component="span" m={1}>
               <CardBlocks title="Gallery Image">
-                {productId ?
+                {productId ? (
                   <EditGalleryImageSelection
                     onAddGalleryImage={(e) => {
-                      var imagesRes = [...e.target.files]
+                      var imagesRes = [...e.target.files];
                       var images = [];
                       for (let i in imagesRes) {
                         images.push(URL.createObjectURL(imagesRes[i]));
@@ -793,20 +798,21 @@ const EditProductComponent = ({ params }) => {
                     product={product}
                     setting={setting}
                   />
-                  : <GalleryImageSelection
+                ) : (
+                  <GalleryImageSelection
                     onAddGalleryImage={(e) => {
                       var imagesRes = [...e.target.files];
                       var images = [];
                       for (let i in imagesRes) {
                         images.push(URL.createObjectURL(imagesRes[i]));
                       }
-                      setGallery([...gallery, ...imagesRes])
+                      setGallery([...gallery, ...imagesRes]);
                     }}
                     onRemoveGalleryImage={(images) => {
                       setProduct({ ...product, ["gallery_image"]: images });
                     }}
-
-                  />}
+                  />
+                )}
               </CardBlocks>
             </Box>
             {/* ===================Brands=================== */}
