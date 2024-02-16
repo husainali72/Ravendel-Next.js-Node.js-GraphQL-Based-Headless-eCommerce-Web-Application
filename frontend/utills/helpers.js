@@ -4,7 +4,7 @@ import { isEmpty } from "./service";
 import axios from "axios";
 import { getSession } from "next-auth/react";
 import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
-import { LogOutUser1 } from "../components/Header";
+import {  logoutAndClearData } from "../components/Header";
 import { get } from "lodash";
 
 /* -------------------------------image funtion ------------------------------- */
@@ -110,19 +110,23 @@ export const mutation = async (query, variables) => {
   } catch (error) {
     const errors = JSON.parse(JSON.stringify(error));
 
-    if (errors && errors.graphQLErrors?.length && !isEmpty(get(errors.graphQLErrors[0], 'message', ''))) {
-      return Promise.reject(get(errors.graphQLErrors[0], 'message'));
+    const { graphQLErrors, networkError } = errors;
+
+    if (graphQLErrors?.length && !isEmpty(get(graphQLErrors[0], 'message', ''))) {
+      return Promise.reject(get(graphQLErrors[0], 'message'));
     }
 
     if (networkError && networkError.statusCode === 400) {
       return Promise.reject(get(errors, 'message'));
     }
+
     const networkErrorExtensions = get(networkError, 'result.errors[0].extensions');
-    
     if (get(networkErrorExtensions, 'code') === 401) {
       logoutAndClearData();
+      
       return Promise.reject(get(networkError, 'result.errors[0].message'));
     }
+
     return Promise.reject('Something went wrong');
   }
 };

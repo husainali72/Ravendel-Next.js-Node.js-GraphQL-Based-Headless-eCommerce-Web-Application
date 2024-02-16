@@ -4,6 +4,7 @@ import { ADD_TO_CART, INCRESE_QUANTITY, REMOVE_VALUE, REMOVE_ALL_VALUE, DECREASE
 import logoutDispatch from "../actions/userlogoutAction";
 import { LogOutUser1 } from "../../components/Header";
 import { getSettings } from "../actions/settingAction";
+import { get } from "lodash";
 let cartProduct = []
 
 
