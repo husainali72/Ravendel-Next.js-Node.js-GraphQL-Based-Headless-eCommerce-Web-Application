@@ -56,7 +56,7 @@ const EditPageComponent = ({ params }) => {
   useEffect(() => {
     if (!PAGEID){
     if (pageState.success) {
-      document.forms[0].reset();
+      // document.forms[0]?.reset();
       setPage(defaultObj);
     }}
     if (pageState.page.content !== undefined) {

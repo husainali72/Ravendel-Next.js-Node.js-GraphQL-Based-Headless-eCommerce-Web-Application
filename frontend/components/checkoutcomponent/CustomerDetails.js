@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button, Card, Row, Col } from "react-bootstrap";
 import Link from "next/link";
+import { capitalize } from "lodash";
 
 const CustomerDetail = (props) => {
     const { addressBook, getBillingInfo, SelectAddressBook, billingInfo, shippingInfo, shippingAdd } = props;
@@ -37,34 +38,34 @@ const CustomerDetail = (props) => {
                                                 <div className="defination-table" >
                                                     <dl>
                                                         <dt>First Name</dt>
-                                                        <dd>{address.firstName}</dd>
+                                                        <dd>{capitalize(address.firstName)}</dd>
 
                                                         <dt>Lastname</dt>
-                                                        <dd> {address.lastName}</dd>
+                                                        <dd> {capitalize(address.lastName)}</dd>
 
                                                         <dt>Phone</dt>
                                                         <dd>{address.phone}</dd>
 
                                                         <dt>City</dt>
-                                                        <dd>{address.city} </dd>
+                                                        <dd>{capitalize(address.city)} </dd>
 
                                                         <dt> Address 1</dt>
-                                                        <dd> {address.addressLine1}</dd>
+                                                        <dd> {capitalize(address.addressLine1)}</dd>
 
                                                         <dt> Address 2</dt>
-                                                        <dd>{address.addressLine2}</dd>
+                                                        <dd>{capitalize(address.addressLine2)}</dd>
 
                                                         <dt>Pincode</dt>
                                                         <dd>{address.pincode}</dd>
 
                                                         <dt>State</dt>
-                                                        <dd> {address.state}</dd>
+                                                        <dd> {capitalize(address.state)}</dd>
 
                                                         <dt>Company</dt>
-                                                        <dd>{address.company}</dd>
+                                                        <dd>{capitalize(address.company)}</dd>
 
                                                         <dt>City</dt>
-                                                        <dd>{address.city}</dd>
+                                                        <dd>{capitalize(address.city)}</dd>
 
                                                     </dl>
                                                 </div>

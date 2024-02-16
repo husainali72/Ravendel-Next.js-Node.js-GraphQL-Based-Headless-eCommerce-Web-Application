@@ -41,7 +41,7 @@ const SideBarComponent = (props) => {
 
     >
       <div {...rest} className={clsx(classes.root, className)}>
-        <MenuBar />
+        <MenuBar onClose={onClose}/>
       </div>
     </Drawer >
   );
