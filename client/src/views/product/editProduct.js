@@ -171,8 +171,14 @@ const EditProductComponent = ({ params }) => {
         }
       }
     } else {
-      setProduct(defaultobj)
-      setfeatureImage(null)
+      setProduct({
+        ...product,
+        ...defaultobj,
+        shipping: {
+          ...product.shipping,
+        },
+      });
+      setfeatureImage(null);
     }
   }, [get(productState, "product"), productId, baseURl]);
 
@@ -185,13 +191,22 @@ const EditProductComponent = ({ params }) => {
     let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
     let custom_field = ''
 
-    if (product.custom_field) {
-      custom_field = validatenested('custom_field', ['key', 'value'], product)
+    if (product.custom_field&&product.custom_field.length>0) {
+      custom_field = validatenested("custom_field", ["key", "value"], product);
     }
-    if (product.combinations) {
-      combination_error = validatenested("combinations", ["sku", 'quantity'], product, 'Variant');
-      combination_price_error = validatenestedArray("pricing", ["price"], product.combinations, 'Variant')
-
+    if (product.combinations&&product.combinations.length>0) {
+      combination_error = validatenested(
+        "combinations",
+        ["sku", "quantity"],
+        product,
+        "Variant"
+      );
+      combination_price_error = validatenestedArray(
+        "pricing",
+        ["price"],
+        product.combinations,
+        "Variant"
+      );
     }
 
     let Errors = validatenested("pricing", ["price"], product);
