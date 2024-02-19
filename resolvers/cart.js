@@ -46,63 +46,173 @@ module.exports = {
           throw putError("Cart not found");
         }
 
-        let availableItem = [];
-        let unavailableItem = [];
-        let cartItem = cart.products;
+        let cartItems = [];
 
-        let productsArray = cart.products
-        for (let a = 0; a < productsArray.length; a++) {
-          let product = productsArray[a];
+        const shipping = await Shipping.findOne({});
+        const tax = await Tax.findOne({});
+        // const productAttribute = await ProductAttribute.find({});
 
-          let isProductAvilable = {}
+        let items = [];
+        let totalTax = 0
+        let totalShipping = 0
+        let grandTotal = 0
+        let cartTotal = 0
 
-          let addvariants = false
-          let attribute = []
-          if (product?.variantId) {
-            addvariants = true
-            isProductAvilable = await Product.findOne({ _id: product.productId });
-            attribute = await ProductAttributeVariation.find({
-              productId: product.productId, _id: product?.variantId, quantity: { $gte: product.qty }
-            });
+        let global_tax = false;
+        let globalTaxPercentage;
+        if (tax.global.is_global) {
+          let taxClassId = tax.global.taxClass;
+          let myTaxClass = tax.taxClass.find(taxC => taxC._id.toString() == taxClassId.toString());
+          if (myTaxClass) {
+            global_tax = true;
+            globalTaxPercentage = myTaxClass.percentage;
+          }
+          // tax.taxClass.forEach((taxObject) => {
+          //   if (taxObject._id.toString() == taxClassId.toString()) {
+          //     global_tax = true;
+          //     taxPercentage = taxObject.percentage
+          //   }
+          // })
+        }
 
-          } else {
-            isProductAvilable = await Product.findOne({ _id: product.productId, quantity: { $gte: product.qty } });
+        let global_shipping = false;
+        let globalShippingAmount;
+        let globalShippingPerOrder = false;
+
+        if (shipping.global.is_global) {
+          let shippingClassId = shipping.global.shippingClass;
+
+          let myShipClass = shipping.shippingClass.find(shipC => shipC._id.toString() == shippingClassId.toString());
+          if (myShipClass) {
+            global_shipping = true;
+            globalShippingAmount = myShipClass.amount;
           }
 
-          if (isProductAvilable && ((!addvariants && attribute?.length === 0) || (addvariants && attribute?.length > 0))) {
+          // shipping.shippingClass.forEach((shippingObject) => {
+          //   if (shippingObject._id.toString() == shippingClassId.toString()) {
+          //     global_shipping = true;
+          //     globalShippingAmount = shippingObject.amount;
+          //   }
+          // })
 
-
-            let prod = {
-              productId: product?.productId,
-              productTitle: isProductAvilable?.name,
-              productImage: isProductAvilable?.feature_image,
-              productPrice: isProductAvilable?.pricing?.sellprice || isProductAvilable?.pricing?.price || product?.productPrice,
-              qty: product?.qty,
-              total: (product?.qty * isProductAvilable?.pricing?.sellprice || isProductAvilable?.pricing?.price || product?.productPrice),
-              attributes: product?.attributes,
-              productQuantity: isProductAvilable?.quantity,
-              variantId: product?.variantId,
-              shippingClass: isProductAvilable?.shipping?.shippingClass,
-              taxClass: isProductAvilable?.taxClass,
-              _id: product?._id
-            }
-            availableItem.push(prod)
-          }
-          else {
-            unavailableItem.push(product)
+          if (shipping.global.is_per_order) {
+            globalShippingPerOrder = true
           }
         }
 
+        // console.log('global_tax', global_tax);
+        // console.log('global_shipping', global_shipping);
+
+        let taxPercentage;
+        let isFirstIteration = true;
+        for (const cartProduct of cart.products) {
+
+          let product = {}
+
+          let addvariants = false
+          let attribute = []
+          if (cartProduct?.variantId) {
+            addvariants = true
+            product = await Product.findOne({ _id: cartProduct.productId });
+            attribute = await ProductAttributeVariation.find({
+              productId: cartProduct.productId, _id: cartProduct?.variantId, quantity: { $gte: cartProduct.qty }
+            });
+
+          } else {
+            product = await Product.findOne({ _id: cartProduct.productId, quantity: { $gte: cartProduct.qty } });
+          }
+
+          let prod = {
+            productId: cartProduct?.productId,
+            productTitle: product?.name,
+            productImage: product?.feature_image,
+            productPrice: product?.pricing?.sellprice || product?.pricing?.price || cartProduct?.productPrice,
+            qty: cartProduct?.qty,
+            //total: (cartProduct?.qty * product?.pricing?.sellprice || product?.pricing?.price || cartProduct?.productPrice),
+            attributes: cartProduct?.attributes,
+            productQuantity: product?.quantity,
+            variantId: cartProduct?.variantId,
+            shippingClass: product?.shipping?.shippingClass,
+            taxClass: product?.taxClass,
+            _id: cartProduct?._id,
+            available:(product && ((!addvariants && attribute?.length === 0) || (addvariants && attribute?.length > 0)) ? true : false)
+          }
+          
+          cartItems.push(prod);
+
+          if(prod.available) {
+            prod.amount = prod.productPrice * prod.qty;
+            cartTotal += prod.amount;
+
+            // product tax calculation start
+            taxPercentage = globalTaxPercentage;
+            if(!global_tax) {
+              let productTax = tax.taxClass.find(taxC => 
+                taxC._id.toString() == product.taxClass.toString());
+              taxPercentage = productTax.percentage;
+              // console.log('taxPercentage', taxPercentage);
+            }
+
+            // console.log('before calculating tax amount');
+            prod.taxAmount = 0;
+            if (taxPercentage != 0) {
+              // console.log('tax.is_inclusive : ', tax.is_inclusive);
+              if (!tax.is_inclusive) {
+                prod.taxAmount = prod.amount * taxPercentage / 100;
+              }
+            }
+            totalTax += prod.taxAmount;
+            // product tax calculation completed
+            
+            // Product Shipping calculation start
+            prod.shippingAmount = 0;
+            // if Shipping is global
+            if (global_shipping) {
+              // console.log('globalShippingPerOrder', globalShippingPerOrder);
+              // if Shipping is applied Per Order
+              if (globalShippingPerOrder) {
+                // Applying/Adding Shipping Amount in total on loop's first iteration
+                if(isFirstIteration) {
+                  totalShipping += globalShippingAmount;
+                }
+              }
+              else {
+                prod.shippingAmount = globalShippingAmount;
+                totalShipping += prod.shippingAmount;
+              }
+            }
+            // if Shipping is not global means it will be product wise
+            else {
+              // console.log('product._id', product._id);
+              let productShippingClass = product.shipping.shippingClass;
+              let productShipping = shipping.shippingClass.find(shipClass => 
+                shipClass._id.toString() == productShippingClass.toString());
+              // console.log('productShipping', productShipping);
+              prod.shippingAmount = productShipping.amount;
+              totalShipping += prod.shippingAmount;
+            }
+            // Product Shipping calculation completed
+
+            prod.total = prod.amount + prod.taxAmount + prod.shippingAmount;
+            isFirstIteration = false;
+          }
+        }
+
+        grandTotal = cartTotal + totalTax + totalShipping;
+        const totalSummary = {
+          cartTotal: cartTotal.toFixed(2),
+          totalTax: totalTax.toFixed(2),
+          totalShipping: totalShipping.toFixed(2),
+          grandTotal: grandTotal.toFixed(2)
+        }
 
         return {
           id: cart._id,
-          cartItem,
-          availableItem,
-          unavailableItem,
+          cartItems,
           status: cart.status,
-          total: cart.total,
           date: cart.date,
-          updated: cart.updated
+          updated: cart.updated,
+          totalSummary: totalSummary
         };
 
       } catch (error) {
@@ -198,33 +308,26 @@ module.exports = {
 
     calculateCart: async (root, args, { id }) => {
       try {
-
-
         const shipping = await Shipping.findOne({});
         const tax = await Tax.findOne({});
-        // const productAttribute = await ProductAttribute.find({});
-
 
         let items = [];
-        let totalTax = 0
-        let totalShipping = 0
-        let grandTotal = 0
-        let cartTotal = 0
-
+        let totalTax = 0;
+        let totalShipping = 0;
+        let grandTotal = 0;
+        let cartTotal = 0;
 
         let global_tax = false;
         let taxPercentage;
         if (tax.global.is_global) {
-
           let taxClassId = tax.global.taxClass;
 
           tax.taxClass.forEach((taxObject) => {
-
             if (taxObject._id.toString() == taxClassId.toString()) {
               global_tax = true;
-              taxPercentage = taxObject.percentage
+              taxPercentage = taxObject.percentage;
             }
-          })
+          });
         }
 
         let global_shipping = false;
@@ -232,104 +335,90 @@ module.exports = {
         let globalShippingPerOrder = false;
 
         if (shipping.global.is_global) {
-
           let shippingClassId = shipping.global.shippingClass;
 
           shipping.shippingClass.forEach((shippingObject) => {
-
             if (shippingObject._id.toString() == shippingClassId.toString()) {
-
               global_shipping = true;
               globalShippingAmount = shippingObject.amount;
-
             }
-          })
+          });
 
           if (shipping.global.is_per_order) {
-            globalShippingPerOrder = true
+            globalShippingPerOrder = true;
           }
-
         }
-
 
         // if global tax applicable
 
         if (global_tax) {
-
           for (let a = 0; a < args.cartItem.length; a++) {
-
             cartProduct = args.cartItem[a];
 
             let productShipping;
 
             let productTax;
 
-            const product = await Product.findById({ _id: cartProduct.productId }).lean();
-            let odredQuantity = cartProduct.qty
+            const product = await Product.findById({
+              _id: cartProduct.productId,
+            }).lean();
+            let odredQuantity = cartProduct.qty;
 
-            let productPrice = product.pricing.sellprice
+            let productPrice = product.pricing.sellprice;
             if (cartProduct?.variantId) {
               const variations = await ProductAttributeVariation.find({
-                productId: cartProduct.productId, _id: cartProduct?.variantId
+                productId: cartProduct.productId,
+                _id: cartProduct?.variantId,
               });
-              productPrice = variations[0]?.pricing?.sellprice
-              cartTotal += (productPrice * odredQuantity);
+              productPrice = variations[0]?.pricing?.sellprice;
+              cartTotal += productPrice * odredQuantity;
             } else {
               cartTotal += productPrice * odredQuantity;
             }
 
             // product tax calculation
             if (taxPercentage != 0) {
-              grandTotal = grandTotal + (productPrice * odredQuantity) + ((productPrice * taxPercentage / 100) * odredQuantity);
+              grandTotal =
+                grandTotal +
+                productPrice * odredQuantity +
+                ((productPrice * taxPercentage) / 100) * odredQuantity;
 
-              totalTax = totalTax + (productPrice * taxPercentage / 100) * odredQuantity;
-              productTax = (productPrice * taxPercentage / 100) * odredQuantity
-            }
-            else {
-
-              grandTotal = grandTotal + (productPrice * odredQuantity)
+              totalTax =
+                totalTax +
+                ((productPrice * taxPercentage) / 100) * odredQuantity;
+              productTax =
+                ((productPrice * taxPercentage) / 100) * odredQuantity;
+            } else {
+              grandTotal = grandTotal + productPrice * odredQuantity;
               totalTax = 0;
               productTax = 0;
             }
 
-
             // product shipping calculation
 
             if (global_shipping) {
-
               if (!globalShippingPerOrder) {
+                totalShipping += globalShippingAmount * cartProduct?.qty;
+                grandTotal += globalShippingAmount * cartProduct?.qty;
 
-                totalShipping += (globalShippingAmount * cartProduct?.qty);
-                grandTotal += (globalShippingAmount * cartProduct?.qty);
-
-                productShipping = +(globalShippingAmount * cartProduct?.qty)
-
+                productShipping = +(globalShippingAmount * cartProduct?.qty);
               }
-            }
-
-            else if (!global_shipping) {
-
-
+            } else if (!global_shipping) {
               productShipping = 0;
-
 
               let productShippingClass = product.shipping.shippingClass;
 
               shipping.shippingClass.forEach((shippingObject) => {
-
-                if (shippingObject._id.toString() == productShippingClass.toString()) {
-
+                if (
+                  shippingObject._id.toString() ==
+                  productShippingClass.toString()
+                ) {
                   productShipping = shippingObject.amount * odredQuantity;
-
                 }
-
-              })
-
+              });
 
               totalShipping += productShipping;
               grandTotal += productShipping;
-
-
             }
 
             let pushValue = {
@@ -338,40 +427,39 @@ module.exports = {
               productImage: product.feature_image,
               productPrice: productPrice.toFixed(2),
               qty: +odredQuantity,
-              productTotal: productPrice * (+odredQuantity),
-              productTax: productTax.toFixed(2)
-            }
+              productTotal: productPrice * +odredQuantity,
+              productTax: productTax.toFixed(2),
+            };
 
             if (productShipping) {
               pushValue.productShipping = productShipping.toFixed(2);
-
             }
 
-            items.push(pushValue)
+            items.push(pushValue);
           }
 
           if (global_shipping && globalShippingPerOrder) {
             grandTotal += globalShippingAmount;
             totalShipping = globalShippingAmount;
           }
-
         }
 
         //if global tax is not applicable;
-
         else {
-
           for (let a = 0; a < args.cartItem.length; a++) {
-
-            cartProduct = args.cartItem[a]
+            cartProduct = args.cartItem[a];
 
             let productShipping;
 
+            const product = await Product.findById({
+              _id: cartProduct.productId,
+            }).lean();
+            let odredQuantity = cartProduct.qty;
 
-            const product = await Product.findById({ _id: cartProduct.productId }).lean();
-            let odredQuantity = cartProduct.qty
-
-            let productPrice = product.pricing.sellprice > 0 ? product.pricing.sellprice : product.pricing.price;
+            let productPrice =
+              product.pricing.sellprice > 0
+                ? product.pricing.sellprice
+                : product.pricing.price;
             cartTotal += productPrice * odredQuantity;
 
             let productTaxClass = product.taxClass;
@@ -379,67 +467,53 @@ module.exports = {
             let productTaxAmount;
 
             tax.taxClass.forEach((taxObject) => {
-
               if (taxObject._id.toString() == productTaxClass?.toString()) {
                 productTaxPercentage = taxObject.percentage;
               }
-            })
+            });
 
-            //calculating product tax amount,adding product price and product tax in grand total;    
+            //calculating product tax amount,adding product price and product tax in grand total;
 
             if (productTaxPercentage != 0) {
-
-              grandTotal = grandTotal + (productPrice * odredQuantity) + ((productPrice * productTaxPercentage / 100) * odredQuantity);
-              productTaxAmount = (productPrice * productTaxPercentage / 100) * odredQuantity;
+              grandTotal =
+                grandTotal +
+                productPrice * odredQuantity +
+                ((productPrice * productTaxPercentage) / 100) * odredQuantity;
+              productTaxAmount =
+                ((productPrice * productTaxPercentage) / 100) * odredQuantity;
               totalTax += +productTaxAmount;
-
-            }
-            else {
-
+            } else {
               productTaxAmount = 0;
               totalTax += +productTaxAmount;
-              grandTotal += (productPrice * odredQuantity) + productTaxAmount;
+              grandTotal += productPrice * odredQuantity + productTaxAmount;
             }
-
-
 
             //calculating product shipping and adding product shipping in grand total amount
 
             if (global_shipping) {
-
               if (!globalShippingPerOrder) {
-
                 totalShipping += globalShippingAmount;
                 grandTotal += globalShippingAmount;
 
-                productShipping = +globalShippingAmount
-
+                productShipping = +globalShippingAmount;
               }
-
-            }
-            else if (!global_shipping) {
-
-
+            } else if (!global_shipping) {
               productShipping = 0;
 
               let productShippingClass = product.shipping.shippingClass;
 
               shipping.shippingClass.forEach((shippingObject) => {
-
-                if (shippingObject?._id?.toString() == productShippingClass?.toString()) {
+                if (
+                  shippingObject?._id?.toString() ==
+                  productShippingClass?.toString()
+                ) {
                   productShipping = shippingObject.amount * odredQuantity;
-
                 }
-
-              })
-
+              });
 
               totalShipping += productShipping;
               grandTotal += productShipping;
-
-
             }
-
 
             let pushValue = {
               productId: product._id,
@@ -447,24 +521,21 @@ module.exports = {
               productImage: product.feature_image,
               productPrice: productPrice.toFixed(2),
               qty: +odredQuantity,
-              productTotal: productPrice * (+odredQuantity),
-              productTax: +productTaxAmount.toFixed(2)
-            }
+              productTotal: productPrice * +odredQuantity,
+              productTax: +productTaxAmount.toFixed(2),
+            };
 
             if (productShipping) {
-              pushValue.productShipping = productShipping.toFixed(2)
-
+              pushValue.productShipping = productShipping.toFixed(2);
             }
 
-            items.push(pushValue)
-
+            items.push(pushValue);
           }
 
           if (global_shipping && globalShippingPerOrder) {
             grandTotal += globalShippingAmount;
             totalShipping = globalShippingAmount;
           }
-
         }
 
         let calculated = {
@@ -472,20 +543,14 @@ module.exports = {
           totalTax: totalTax.toFixed(2),
           totalShipping: totalShipping.toFixed(2),
           grandTotal: grandTotal.toFixed(2),
-          cartTotal: cartTotal.toFixed(2)
-        }
-
-
+          cartTotal: cartTotal.toFixed(2),
+        };
 
         return calculated;
-
-      }
-      catch (error) {
-
-        console.log(error)
+      } catch (error) {
+        console.log('error', error);
         error = checkError(error);
         throw new Error(error.custom_message);
-
       }
     },
 
@@ -1293,3 +1358,9 @@ module.exports = {
     },
   },
 };
+
+// const calculateCartFunc = async(req) => {
+
+// }
+
+// module.exports = { calculateCartFunc };
