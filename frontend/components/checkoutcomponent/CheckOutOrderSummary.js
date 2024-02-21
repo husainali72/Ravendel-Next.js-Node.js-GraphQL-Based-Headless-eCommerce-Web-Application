@@ -3,18 +3,18 @@ import { Spinner } from "react-bootstrap";
 import { getPrice } from "../../utills/helpers";
 const OrderSummary = (props) => {
 
-    const { decimal, currency, subTotal, cartTotal, coupon, delivery, taxAmount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails, CouponLoading, isCouponApplied, AppliedCoupon } = props;
+    const { decimal, currency, subTotal, cartTotal, grandTotal,coupon, delivery, taxAmount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails, CouponLoading, isCouponApplied, AppliedCoupon } = props;
 
     useEffect(() => {
         var allData = {
-            subtotal: subTotal?.toString(),
-            grandTotal: cartTotal?.toString(),
+            cartTotal: cartTotal?.toString(),
+            grandTotal: grandTotal?.toString(),
             discountAmount: coupon?.toString(),
             shippingAmount: delivery?.toString(),
             taxAmount: taxAmount?.toString(),
         }
         getCalculationDetails(allData)
-    }, [subTotal, cartTotal, coupon, delivery, taxAmount])
+    }, [subTotal, cartTotal, coupon, delivery, taxAmount,grandTotal])
 
 
 
@@ -45,7 +45,7 @@ const OrderSummary = (props) => {
                                     <td className="cartTotal_label" >Cart Total</td>
                                     <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
 
-                                        {currency}{getPrice(subTotal, decimal)}
+                                        {currency}{getPrice(cartTotal, decimal)}
 
                                     </span></td>
                                 </tr>
@@ -66,7 +66,7 @@ const OrderSummary = (props) => {
                                 <tr style={{ borderTop: "2px solid black", marginTop: "15px" }}>
                                     <td className="cartTotal_label" >Total</td>
                                     <td className="cartTotal_amount"><strong><span className="font-xl fw-900 text-brand">
-                                        {currency}{getPrice(cartTotal, decimal)}
+                                        {currency}{getPrice(grandTotal, decimal)}
                                     </span></strong></td>
                                 </tr>
                             </tbody>

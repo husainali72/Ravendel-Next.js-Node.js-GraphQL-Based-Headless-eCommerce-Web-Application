@@ -9,7 +9,13 @@ import {
   increaseQuantity,
   decreaseQuantity,
 } from "../redux/actions/cartAction";
-import { currencySetter, getPrice, mutation, query } from "../utills/helpers";
+import {
+  currencySetter,
+  formatNumber,
+  getPrice,
+  mutation,
+  query,
+} from "../utills/helpers";
 import {
   DELETE_CART_PRODUCTS,
   UPDATE_CART_PRODUCT,
@@ -24,6 +30,7 @@ import { settingActionCreator } from "../redux/actions/settingAction";
 import LoadingCartTable from "../components/cardcomponent/LoadingCard";
 import Link from "next/link";
 import { get } from "lodash";
+import { CircularProgress } from "@mui/material";
 const CalculateProductTotal = (product) =>
   product.reduce(
     (total, product) =>
@@ -56,6 +63,7 @@ const YourCard = ({
   const [unAvailableProducts, setUnAvailableProduct] = useState([]);
   const [currency, setCurrency] = useState("$");
   const [decimal, setdecimal] = useState(2);
+  const [cartTotalLoading, setCartTotalLoading] = useState(false);
   const [totalSummary, setTotalSummary] = useState(2);
   const settings = useSelector((state) => state.setting);
   useEffect(() => {
@@ -72,43 +80,51 @@ const YourCard = ({
     const getProducts = async () => {
       const productsCard = JSON.parse(localStorage.getItem("cart"));
       setCartLoading(true);
-      const sessionn = await getSession();
-      if (session?.status === "authenticated" || sessionn !== null) {
-        id = sessionn?.user?.accessToken?.customer?._id;
-        token = sessionn.user.accessToken.token;
+      const userSession = await getSession();
+      if (session?.status === "authenticated" || userSession !== null) {
+        id = get(userSession, "user.accessToken.customer._id");
+        token = get(userSession, "user.accessToken.token");
         let variables = { id: id };
         mutation(GET_USER_CART, variables)
           .then((res) => {
-
             let carts = get(res, "data.cartbyUser");
             let cartItemsArray = [];
             let allItem = [];
             let unAvailableItems = [];
             get(carts, "cartItems", [])?.map((cart) => {
-                let cartProduct = {
-                    _id: get(cart, "productId",''),
-                    variantId: get(cart, "variantId",''),
-                    quantity: parseInt(get(cart, "qty")),
-                    productQuantity: get(cart, "productQuantity"),
-                    name: get(cart, "productTitle"),
-                    pricing: get(cart, "productPrice"),
-                    feature_image: get(cart, "productImage"),
-                    url: get(cart, "url"),
-                    attributes: get(cart, "attributes", []),
-                    shippingClass: get(cart, "shipping.shippingClass"),
-                    taxClass: get(cart, "taxClass"),
-                  };
-                  allItem.push(cartProduct)
-                if (cart.available) {
-                  cartItemsArray.push(cartProduct);
-                } else {
-                  unAvailableItems.push(cartProduct);
-                }
-              
+              let cartProduct = {
+                _id: get(cart, "productId", ""),
+                variantId: get(cart, "variantId", ""),
+                quantity: parseInt(get(cart, "qty")),
+                productQuantity: get(cart, "productQuantity"),
+                name: get(cart, "productTitle"),
+                pricing: get(cart, "productPrice"),
+                feature_image: get(cart, "productImage"),
+                url: get(cart, "url"),
+                attributes: get(cart, "attributes", []),
+                shippingClass: get(cart, "shipping.shippingClass"),
+                taxClass: get(cart, "taxClass"),
+              };
+              allItem.push(cartProduct);
+              if (cart.available) {
+                cartItemsArray.push(cartProduct);
+              } else {
+                unAvailableItems.push(cartProduct);
+              }
             });
-            setTotalSummary({...get(carts,'totalSummary')})
+            const { grandTotal, cartTotal, totalShipping, totalTax } = get(
+              carts,
+              "totalSummary"
+            );
+            setTotalSummary({
+              ...totalSummary,
+              grandTotal: formatNumber(grandTotal),
+              cartTotal: formatNumber(cartTotal),
+              totalShipping: formatNumber(totalShipping),
+              totalTax: formatNumber(totalTax),
+            });
             setCartItems([...cartItemsArray]);
-            setAllCartItems([...allItem])
+            setAllCartItems([...allItem]);
             setUnAvailableProduct([...unAvailableItems]);
           })
           .finally(() => {
@@ -164,126 +180,187 @@ const YourCard = ({
 
     localStorage.setItem("cart", JSON.stringify([]));
   };
+  const fetchUpdatedCart = async () => {
+    const userSession = await getSession();
+    if (session?.status === "authenticated" || userSession !== null) {
+      id = get(userSession, "user.accessToken.customer._id");
+      token = get(userSession, "user.accessToken.token");
+      let variables = { id: id };
+      mutation(GET_USER_CART, variables)
+        .then((res) => {
+          let carts = get(res, "data.cartbyUser");
+          const { grandTotal, cartTotal, totalShipping, totalTax } = get(
+            carts,
+            "totalSummary"
+          );
+          setTotalSummary({
+            ...totalSummary,
+            grandTotal: formatNumber(grandTotal),
+            cartTotal: formatNumber(cartTotal),
+            totalShipping: formatNumber(totalShipping),
+            totalTax: formatNumber(totalTax),
+          });
+          setCartTotalLoading(false);
+        })
+        .catch((error) => {
+          setCartTotalLoading(false);
+        });
+    }
+  };
   const IncreaseQuantity = async (item) => {
-    setAllCartItems([...AllCartItems], AllCartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
+    setCartTotalLoading(true);
+    setAllCartItems(
+      [...AllCartItems],
+      AllCartItems.filter((itemm) =>
+        itemm._id === item._id && itemm.variantId === item.variantId
+          ? item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)
+          : itemm.quantity
+      )
+    );
     if (session?.status !== "authenticated") {
-        dispatch(increaseQuantity(item._id, item.productQuantity, item.variantId))
-    }
-    else {
-      
-        const prod = cartItems.find(cart => cart._id === item._id && cart.variantId === item.variantId);
-        const qty = prod.quantity;
-        if (session?.status === "authenticated") {
-            let id = get(session,'data.user.accessToken.customer._id')
-            let token = get(session,'data.user.accessToken.token')
-            query(GET_USER_CART, id, token).then(res => {
-                cart_id = get(res,'data.cartbyUser.id')
-                const clonedCartItems  = [...AllCartItems];
+      dispatch(
+        increaseQuantity(item._id, item.productQuantity, item.variantId)
+      );
+    } else {
+      const selectedProduct = cartItems.find(
+        (cart) => cart._id === item._id && cart.variantId === item.variantId
+      );
+      const qty = selectedProduct.quantity;
+      if (session?.status === "authenticated") {
+        let id = get(session, "data.user.accessToken.customer._id");
+        let token = get(session, "data.user.accessToken.token");
+        query(GET_USER_CART, id, token)
+          .then((res) => {
+            cart_id = get(res, "data.cartbyUser.id");
+            const clonedCartItems = [...AllCartItems];
 
-                const updatedCart  = clonedCartItems?.map(product => {
-                  let singleProduct={
-                    productId: product._id,
-                    qty: qty,
-                    productTitle: product.name,
-                    productImage: product.feature_image,
-                    productPrice: product.pricing?.toString(),
-                    attributes: product.attributes,
-                    variantId: product.variantId,
-                    productQuantity: product.productQuantity,
-                    shippingClass: product?.shippingClass,
-                    taxClass: product?.taxClass,
-                }
-                    if (product?._id === item?._id && product?.variantId === item?.variantId) {
-                        return {
-                          ...singleProduct,
-                          qty: qty,
-                        }
-                    } else {
-                        return {
-                          ...singleProduct,
-                          qty: product.quantity,
-                        }
-                    }
-                })
-                let variables = {
-                    id: cart_id,
-                    products: updatedCart ,
-                    total: 0,
-                }
-                mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {})
-            }).finally(() => setIsQuantityBtnLoading(false))
-        }
-    }
-}
-const DecreaseQuantity = (item) => {
-    if (item.quantity > 1) {
-        setIsQuantityBtnLoading(true)
-        setAllCartItems([...AllCartItems], AllCartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? ( itemm.quantity-1>=  1 && (itemm.quantity -= 1)) : itemm.quantity))
-        setQuantity(item.quantity)
-        if (session?.status !== "authenticated") {
+            const updatedCart = clonedCartItems?.map((product) => {
+              let singleProduct = {
+                productId: get(product, "_id"),
+                qty: qty,
+                productTitle: get(product, "name"),
+                productImage: get(product, "feature_image"),
+                productPrice: get(product, "pricing")?.toString(),
+                attributes: get(product, "attributes"),
+                variantId: get(product, "variantId"),
+                productQuantity: get(product, "productQuantity"),
+                shippingClass: get(product, "shippingClass"),
+                taxClass: get(product, "taxClass"),
+              };
+              if (
+                product?._id === item?._id &&
+                product?.variantId === item?.variantId
+              ) {
+                return {
+                  ...singleProduct,
+                  qty: qty,
+                };
+              } else {
+                return {
+                  ...singleProduct,
+                  qty: product.quantity,
+                };
+              }
+            });
             let variables = {
-                _id: item._id,
-                variantId: item.variantId
-            }
-            dispatch(decreaseQuantity(variables))
-            setIsQuantityBtnLoading(false)
-        } else {
-
-            const prod = cartItems.find(cart => cart._id === item._id && cart.variantId === item.variantId);
-            const qty = prod.quantity;
-            if (session?.status === "authenticated") {
-                let id = get(session,'data.user.accessToken.customer._id')
-                let token = get(session,'data.user.accessToken.token')
-                query(GET_USER_CART, id, token).then(res => {
-                    cart_id = get(res,'data.cartbyUser.id')
-                    const clonedCartItems  = [...AllCartItems];
-                    const updatedCart  = clonedCartItems?.map(product => {
-                      let singleProduct={
-                        productId: product._id,
-                        qty: qty,
-                        productTitle: product.name,
-                        productImage: product.feature_image,
-                        productPrice: product.pricing?.toString(),
-                        attributes: product.attributes,
-                        variantId: product.variantId,
-                        productQuantity: product.productQuantity,
-                        shippingClass: product?.shippingClass,
-                        taxClass: product?.taxClass,
-                    }
-                        if (product._id === item._id && product.variantId === item.variantId) {
-                            return {
-                              ...singleProduct,
-                              qty: qty,
-                            }
-                        } else {
-                            return {
-                              ...singleProduct,
-                              qty: product.quantity,
-                            }
-                        }
-                    })
-                    let variables = {
-                        id: cart_id,
-                        products: updatedCart ,
-                        total: 0,
-                    }
-                    mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
-                        let variables = {
-                            _id: item._id,
-                            variantId: item.variantId
-                        }
-                    })
-                }).finally(() => setIsQuantityBtnLoading(false))
-            }
-        }
+              id: cart_id,
+              products: updatedCart,
+              total: 0,
+            };
+            mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {
+              fetchUpdatedCart();
+            });
+          })
+          .finally(() => setIsQuantityBtnLoading(false));
+      }
     }
-}
-
+  };
+  const DecreaseQuantity = (item) => {
+    setCartTotalLoading(true);
+    if (item.quantity > 1) {
+      setIsQuantityBtnLoading(true);
+      setAllCartItems(
+        [...AllCartItems],
+        AllCartItems.filter((itemm) =>
+          itemm._id === item._id && itemm.variantId === item.variantId
+            ? itemm.quantity - 1 >= 1 && (itemm.quantity -= 1)
+            : itemm.quantity
+        )
+      );
+      setQuantity(item.quantity);
+      if (session?.status !== "authenticated") {
+        let variables = {
+          _id: item._id,
+          variantId: item.variantId,
+        };
+        dispatch(decreaseQuantity(variables));
+        setIsQuantityBtnLoading(false);
+      } else {
+        const selectedProduct = cartItems.find(
+          (cart) => cart._id === item._id && cart.variantId === item.variantId
+        );
+        const qty = selectedProduct?.quantity;
+        if (session?.status === "authenticated") {
+          let id = get(session, "data.user.accessToken.customer._id");
+          let token = get(session, "data.user.accessToken.token");
+          query(GET_USER_CART, id, token)
+            .then((res) => {
+              cart_id = get(res, "data.cartbyUser.id");
+              const clonedCartItems = [...AllCartItems];
+              const updatedCart = clonedCartItems?.map((product) => {
+                let singleProduct = {
+                  productId: get(product, "_id"),
+                  qty: qty,
+                  productTitle: get(product, "name"),
+                  productImage: get(product, "feature_image"),
+                  productPrice: get(product, "pricing")?.toString(),
+                  attributes: get(product, "attributes"),
+                  variantId: get(product, "variantId"),
+                  productQuantity: get(product, "productQuantity"),
+                  shippingClass: get(product, "shippingClass"),
+                  taxClass: get(product, "taxClass"),
+                };
+                if (
+                  product._id === item._id &&
+                  product.variantId === item.variantId
+                ) {
+                  return {
+                    ...singleProduct,
+                    qty: qty,
+                  };
+                } else {
+                  return {
+                    ...singleProduct,
+                    qty: product.quantity,
+                  };
+                }
+              });
+              let variables = {
+                id: cart_id,
+                products: updatedCart,
+                total: 0,
+              };
+ 
+              mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {
+               
+                fetchUpdatedCart();
+                let variables = {
+                  _id: item._id,
+                  variantId: item.variantId,
+                };
+              });
+            })
+            .finally(() =>{
+            setIsQuantityBtnLoading(false)});
+        }
+      }
+      }else{
+        setCartTotalLoading(false);
+      }
+  };
 
   const removeToCart = async (item) => {
     let product = item?._id;
-    let idx = cartItems.findIndex((cartItem) => cartItem._id === item._id);
-    const prod = cartItems.find((cart) => cart._id === item._id);
     if (session?.status === "authenticated") {
       let id = session.data.user.accessToken.customer._id;
       let token = session.data.user.accessToken.token;
@@ -315,44 +392,25 @@ const DecreaseQuantity = (item) => {
       setCartItems(cartItemsfilter);
     }
   };
-  const ProcessToCheckOut = () => {
-    const productsCard = JSON.parse(localStorage.getItem("persistantState"));
-    var id = "";
-    var token = "";
-    if (session.status === "authenticated") {
-      id = session.data.user.accessToken.customer._id;
-      token = session.data.user.accessToken.token;
-    }
-    let carts = productsCard.map((product) => {
-      return {
-        productId: product._id,
-        qty: product.quantity,
-        total: product.pricing.sellprice * product.quantity,
-      };
-    });
-    let variables = {
-      userId: id,
-      products: carts,
-    };
-  };
 
   const updateCartProduct = () => {
     const productsCard = JSON.parse(localStorage.getItem("persistantState"));
     var id = "";
     var token = "";
     if (session.status === "authenticated") {
-      id = session.data.user.accessToken.customer._id;
-      token = session.data.user.accessToken.token;
+      id = get(session, "data.user.accessToken.customer._id");
+      token = get(session, "data.user.accessToken.token");
     }
     let carts = productsCard.cart.map((product) => {
       return {
-        productId: product?._id,
-        qty: product?.quantity,
-        productTitle: product?.name,
-        productImage: product?.feature_image?.original,
-        productPrice: (product?.pricing?.sellprice
-          ? product?.pricing?.sellprice
-          : product?.pricing?.price
+        productId: get(product, "_id", ""),
+        qty: get(product, "quantity", 0),
+        productTitle: get(product, "name", ""),
+        productImage: get(product, "feature_image", ""),
+        productPrice: get(
+          product,
+          "pricing.sellprice",
+          get(product, "pricing.price", "")
         )?.toString(),
       };
     });
@@ -361,9 +419,7 @@ const DecreaseQuantity = (item) => {
       products: carts,
     };
 
-    mutation(UPDATE_CART_PRODUCT, variables, token).then((res) =>
-{}
-    );
+    mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {});
   };
 
   if (cartLoading) {
@@ -452,11 +508,19 @@ const DecreaseQuantity = (item) => {
                                 <td className="cartTotal_label">
                                   Cart Subtotal
                                 </td>
+                                <td className="cartTotal_loading">
+                                  {cartTotalLoading && (
+                                    <CircularProgress
+                                      color="success"
+                                      size="20px"
+                                    />
+                                  )}
+                                </td>
                                 <td className="cartTotal_amount">
                                   <span className="font-lg fw-900 text-brand">
                                     {currency}{" "}
                                     {getPrice(
-                                      get(totalSummary,'cartTotal'),
+                                      get(totalSummary, "cartTotal"),
                                       decimal
                                     )}
                                   </span>
@@ -464,22 +528,25 @@ const DecreaseQuantity = (item) => {
                               </tr>
                               <tr>
                                 <td className="cartTotal_label">Shipping</td>
+                                <td></td>
                                 <td className="cartTotal_amount">
                                   {" "}
-                                  <i className="ti-gift mr-5"></i>  {getPrice(
-                                          get(totalSummary,'totalShipping'),
-                                        decimal
-                                      )}
+                                  <i className="ti-gift mr-5"></i>{" "}
+                                  {getPrice(
+                                    get(totalSummary, "totalShipping"),
+                                    decimal
+                                  )}
                                 </td>
                               </tr>
                               <tr>
                                 <td className="cartTotal_label">Total</td>
+                                <td></td>
                                 <td className="cartTotal_amount">
                                   <strong>
                                     <span className="font-xl fw-900 text-brand">
                                       {currency}{" "}
                                       {getPrice(
-                                          get(totalSummary,'grandTotal'),
+                                        get(totalSummary, "grandTotal"),
                                         decimal
                                       )}
                                     </span>
@@ -550,7 +617,7 @@ export async function getServerSideProps(context) {
     var currencyStore = [];
     if (session !== null) {
     }
-      /* ----------------------- GET USER CART -----------------------------*/
+    /* ----------------------- GET USER CART -----------------------------*/
 
     /* ----------------------- GEt currency -----------------------------*/
     try {
@@ -560,8 +627,7 @@ export async function getServerSideProps(context) {
       homepageData = homepagedata;
 
       currencyStore = homepagedata?.getSettings?.store;
-    } catch (e) {
-    }
+    } catch (e) {}
 
     return {
       props: {

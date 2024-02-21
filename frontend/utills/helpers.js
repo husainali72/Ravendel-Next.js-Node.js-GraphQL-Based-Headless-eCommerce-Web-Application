@@ -5,6 +5,7 @@ import axios from 'axios'
 import { getSession } from 'next-auth/react';
 import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
 import { LogOutUser1 } from '../components/Header';
+import { get } from 'lodash';
 
 /* -------------------------------image funtion ------------------------------- */
 
@@ -186,23 +187,19 @@ export function capitalize(word) {
 }
 
 export const isDiscount = (product) => {
-    if (product.pricing.sellprice > 0 &&
-        product.pricing.sellprice < product.pricing.price &&
-        ((100 / product?.pricing?.price) * (product?.pricing?.price - product?.pricing?.sellprice)) > 0) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    const sellPrice = get(product, 'pricing.sellprice', 0);
+    const price = get(product, 'pricing.price', 0);
+    
+    return sellPrice > 0 && sellPrice < price && ((100 / price) * (price - sellPrice)) > 0;
 }
 
 export const isVariantDiscount = (variantProduct) => {
-    if (variantProduct[0]?.pricing.sellprice > 0 &&
-        variantProduct[0].pricing.sellprice < variantProduct[0].pricing.price &&
-        ((100 / variantProduct[0]?.pricing?.price) * (variantProduct[0]?.pricing?.price - variantProduct[0]?.pricing?.sellprice)) > 0) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    const sellPrice = get(variantProduct[0], 'pricing.sellprice', 0);
+    const price = get(variantProduct[0], 'pricing.price', 0);
+    const isDiscounted = sellPrice > 0 && sellPrice < price && ((100 / price) * (price - sellPrice)) > 0;
+
+    return isDiscounted;
 }
+
+//Format a number value, returns the value if it's a valid number, otherwise returns '0'
+export const formatNumber = (value) => (value && !isNaN(value) ? value : '0');
