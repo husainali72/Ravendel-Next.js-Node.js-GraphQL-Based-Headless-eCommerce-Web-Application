@@ -75,19 +75,12 @@ export default function Header({ setOpenMenu }) {
     const getHomepageData = () => {
         query(GET_HOMEPAGE_DATA_QUERY).then(res => {
             let homepageData = res?.data?.getSettings;
-            console.log(homepageData, 'homepageData')
             dispatch({
                 type: GET_SETTING, payload: homepageData
             })
             setHomeData(homepageData);
         })
     }
-    // useEffect(() => {
-    //     if (addedCart) {
-    //         dispatch(logoutDispatch())
-    //     }
-    // }, [addedCart])
-
     useEffect(() => {
         getCartLength()
         dispatch(getSettings())
@@ -175,11 +168,8 @@ export default function Header({ setOpenMenu }) {
                 <Container>
                     <div className="header-container header-wrap">
                         <div className="app-logo" style={{ justifyContent: "flex-start" }}>
-                            {/* <img className="app-logo-img mt-2" src="https://image.freepik.com/free-vector/spa-business-logo-vector-gold-lotus-icon-design_53876-118100.jpg"
-                                alt="Ravendel" width="120" height="33.13" /> */}
                             <Link href="/">
                                 <a className="app-logo" width="120" height="33.13">RAVENDEL</a>
-                                {/* <img className="home-logo" src={getImage(homeData?.appearance?.theme?.logo, 'original',true)} alt="" /> */}
                             </Link>
                         </div>
                         <div className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding d-lg-block hover-boder" id='navigation' style={{ justifyContent: "center" }}>
@@ -205,22 +195,11 @@ export default function Header({ setOpenMenu }) {
                                             </button>
                                         </div>
                                     </div>
-
-                                    {/* <li className="nav-item">
-                                        <Link href="/blog">
-                                            <a className="nav-link" aria-selected="false">Blog</a>
-                                        </Link>
-                                    </li> */}
                                     <li className="nav-header">
                                         <Link href="/contact">
                                             <a className="nav-link" aria-selected="false">Contact</a>
                                         </Link>
                                     </li>
-                                    {/* <li className="nav-item">
-                                        <Link href="/about">
-                                            <a className="nav-link" aria-selected="false">About Us</a>
-                                        </Link>
-                                    </li> */}
                                 </ul>
                             </nav>
                         </div>
@@ -232,7 +211,7 @@ export default function Header({ setOpenMenu }) {
                                             <i className="fas fa-shopping-bag font-awesome-icon" style={{ color: "#088178" }} aria-hidden="true"></i>
                                         </a>
                                         {data.status === "authenticated" ? (
-                                            <span className="pro-count blue">{cart?.cartItem?.length}</span>
+                                            <span className="pro-count blue">{cart?.cartItems?.length}</span>
                                         ) : (
                                             <span className="pro-count blue">{cartItem?.length}</span>
                                         )}
