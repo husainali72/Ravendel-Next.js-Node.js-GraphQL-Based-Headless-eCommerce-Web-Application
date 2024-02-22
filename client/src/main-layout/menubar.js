@@ -8,6 +8,7 @@ import {
   colors,
   ListItemIcon,
   ListItemText,
+  useMediaQuery,
 } from "@mui/material";
 
 import theme from "../theme/index";
@@ -21,15 +22,24 @@ import { client_app_route_url } from "../utils/helper";
 
 import { ThemeProvider } from "@mui/material";
 
-const MenuBarComponenet = () => {
+const MenuBarComponenet = ({onClose}) => {
   const classes = useStyles();
   const [menuName, setMenuName] = useState("");
-
+  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"), {
+    defaultMatches: true,
+  });
   const handleClick = (name) => {
+   
     if (name === menuName) {
       setMenuName("");
     } else {
       setMenuName(name);
+    }
+   
+  };
+  const handleMenuClose = () => {
+    if(!isDesktop){
+      onClose()
     }
   };
 
@@ -47,6 +57,7 @@ const MenuBarComponenet = () => {
                   {menu.icon && <menu.icon />}
                 </ListItemIcon>
                 <ListItemText
+                onClick={handleMenuClose}
                   className={classes.itemtext}
                   primary={menu.name}
                   style={{ color: palette.text.secondary, fontSize: "10px" }}
@@ -129,10 +140,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MenuBar() {
+export default function MenuBar({onClose}) {
   return (
     <ThemeProvider theme={theme}>
-      <MenuBarComponenet />
+      <MenuBarComponenet onClose={onClose}/>
     </ThemeProvider>
   );
 }

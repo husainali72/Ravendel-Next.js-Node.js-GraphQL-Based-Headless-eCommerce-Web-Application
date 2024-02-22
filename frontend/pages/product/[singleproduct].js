@@ -18,6 +18,7 @@ import Reviews from "../../components/Reviews/Reviews";
 import { currencySetter } from "../../utills/helpers";
 import ReactHtmlParser, { convertNodeToElement } from 'react-html-parser';
 import toast, { Toaster } from 'react-hot-toast';
+import { get } from "lodash";
 
 function transform(node, index) {
     if (node.type === "tag" && node.name === "h1" || node.name === "h2" || node.name === "h3") {
@@ -70,7 +71,6 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
                 setSingleProductReview(productreviews)
             }
             catch (e) {
-                console.log("review Error", e?.networkError?.result?.errors, e);
             }
         }
         getReviews()
@@ -96,7 +96,7 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
                 {singleproducts && singleproducts?.meta && singleproducts.meta?.title ?
                     <title>{singleproducts.meta.title + " | Ravendel"}</title>
                     : null}
-                {singleproducts && singleproducts.meta.description ?
+                {singleproducts && singleproducts?.meta?.description ?
                     <meta name="description" content={singleproducts.meta.description} />
                     : null}
                 {singleproducts && singleproducts.meta_tag ?
@@ -126,8 +126,8 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
                                             <Tab.Content>
                                                 <Tab.Pane eventKey="description">
                                                     <div style={{ padding: "20px", marginTop: "15px" }}>
-                                                        {singleproducts.description !== null && singleproducts.description !== "" ?
-                                                            ReactHtmlParser(singleproducts.description, options) : <p>Product Discription not available</p>}
+                                                        {singleproducts?.description !== null && singleproducts?.description !== "" ?
+                                                            ReactHtmlParser(get(singleproducts,'description'), options) : <p>Product Discription not available</p>}
                                                     </div>
                                                 </Tab.Pane>
                                             </Tab.Content>
@@ -136,7 +136,7 @@ const SingleProduct = ({ allProduct, recentProducts, singleproducts, productRevi
                                                     {singleProduct !== null ? <Reviews singleProductReview={singleProductReview} /> : null}
 
                                                     {session.status === "authenticated" ? (
-                                                        <ReviewForm productId={singleproducts._id} />
+                                                        <ReviewForm productId={get(singleproducts,'_id')} />
                                                     ) : <div style={{ padding: "20px", marginTop: "15px" }}>
                                                         <p>No Data Found</p></div>}
 
@@ -174,7 +174,6 @@ export async function getStaticPaths() {
         allProduct = shopproducts.products.data;
     }
     catch (e) {
-        console.log("ShopProduct Error===", e.networkError && e.networkError.result ? e.networkError?.result?.errors : '')
     }
 
     const paths = allProduct?.map((curElem) => ({
@@ -215,7 +214,6 @@ export async function getStaticProps({ params }) {
         currencyStore = homepagedata?.getSettings?.store
     }
     catch (e) {
-        console.log("homepage Error===", e);
     }
 
     /* ========================================= get SingleProduct Data========================================*/
@@ -230,12 +228,12 @@ export async function getStaticProps({ params }) {
 
     }
     catch (e) {
-        console.log("ShopProduct Error===", e.networkError?.result?.errors)
+      
     }
     /* ========================================= get Related Products ========================================*/
 
     const category = !!singleproducts?.categoryId?.length && singleproducts?.categoryId.map(cat => cat?.id);
-    const productID = singleproducts._id || "";
+    const productID = singleproducts?._id || "";
     try {
         const { data: shopproductcategory } = await client.query({
             query: GET_RELATED_PRODUCTS_QUERY,
@@ -245,7 +243,6 @@ export async function getStaticProps({ params }) {
         allProduct = shopproductcategory.relatedProducts;
     }
     catch (e) {
-        console.log("ShopProduct Error===", e)
     }
 
     /* ========================================= get Product Reviews ========================================*/
@@ -258,7 +255,7 @@ export async function getStaticProps({ params }) {
         productReviews = productReviewData.productwisereview.data;
     }
     catch (e) {
-        console.log("review Error", e.networkError.result.errors);
+      
     }
     
     return {

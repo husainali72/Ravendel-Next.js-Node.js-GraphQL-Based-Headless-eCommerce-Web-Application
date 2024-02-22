@@ -498,8 +498,9 @@ a.action-btn:after {
 }
 
 .coupon-form-group input::placeholder {
-  font-weight: 100;
-  letter-spacing: 0
+  font-weight: 300;
+  letter-spacing: 0;
+  color: #696969;
 }
 
 .coupon-form-group input {
@@ -2852,12 +2853,13 @@ footer .btn:hover a {
 .cartTotal_label,
 .cartTotal_amount {
   text-align: left;
-  /* border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important; */
   padding: 10px;
   border: 0;
   border-style: none;
 }
-
+.cartTotal_loading{
+  text-align: start;
+}
 .theme-cart-details-summary-list-item .theme-cart-details-summary-main {
   display: flex;
   align-items: center;
