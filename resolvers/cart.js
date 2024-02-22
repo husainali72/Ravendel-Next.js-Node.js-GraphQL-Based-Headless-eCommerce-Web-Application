@@ -868,7 +868,7 @@ module.exports = {
       }
     },
 
-    
+
     addCart: async (root, args, { id }) => {
       // console.log("withOutLogin----args-2", args);
       if (!id) {
@@ -1022,16 +1022,18 @@ module.exports = {
     },
 
     changeQty: async (root, args, { id }) => {
-      checkToken(id);
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
+      }
       try {
         const cart = await Cart.findOne({ userId: args.userId });
-        for (let i in cart.products) {
-          // console.log(cart.products[i])
-          if (cart.products[i].productId.toString() === args.productId.toString()) {
-            cart.products[i].qty = args.qty
-          }
+        
+        let product = cart.products.find(p => p.productId.toString() === args.productId.toString());
+        if(!product) {
+          return MESSAGE_RESPONSE("NOT_EXIST", "Cart Product", false);
         }
-        await cart.save()
+        product.qty = args.qty
+        await cart.save();
         return MESSAGE_RESPONSE("UpdateSuccess", "Quantity", true);
       } catch (error) {
         error = checkError(error);
