@@ -62,6 +62,7 @@ const GalleryImagesComponents = (props) => {
   const [priceRange, setPriceRange] = useState([]);
   const [sellpriceRange, setSellpriceRange] = useState([]);
   const [imgError, setImgError] = useState([]);
+  const [itemInCart, setItemInCart] = useState(false);
   useEffect(() => {
     if (
       singleproducts && !variantSelect
@@ -152,245 +153,85 @@ const GalleryImagesComponents = (props) => {
   const checkzipcode = (result) => {
     setavailable(result);
   };
+  const prepareAttributesData = (selectedAttrs, product) => {
+    return selectedAttrs?.map((selectedAttribute) => {
+      const singleAttribute = product?.attribute_master.find(
+        (data) => data.id === selectedAttribute.name
+      );
+      const singleAttributeValues = singleAttribute?.attribute_values.find(
+        (data) => data._id === selectedAttribute?.value
+      );
+      return {
+        name: singleAttribute?.name,
+        value: singleAttributeValues?.name,
+      };
+    });
+  };
+
+  const prepareCommonVariables = (id, product) => {
+    return {
+      userId: id,
+      productId: get(product, "_id"),
+      qty: 1,
+      productTitle: get(product, "name"),
+    };
+  };
+
+  const addToCartAndNavigate = (variables, token) => {
+    mutation(ADD_TO_CART_QUERY, variables, token).then((res) => {
+      router.push("/shopcart");
+      dispatch(addToCart(variables));
+    });
+  };
+
+  const isProductInCart = (product, comboData, inCartProducts) => {
+    return inCartProducts?.some((inCartProduct) => {
+      const productIdMatch = product?._id === get(inCartProduct, "productId");
+      const variantIdMatch = comboData?.some(
+        (variant) => variant?.id === inCartProduct?.variantId
+      );
+      if (comboData.length === 0) {
+        return productIdMatch;
+      }
+      return productIdMatch && variantIdMatch;
+    });
+  };
   const addToCartProduct = async (product) => {
-    if (
+    const isUserAuthenticated = session?.status === "authenticated";
+    const hasAttributesMismatch =
       get(singleproducts, "attribute_master")?.length > 0 &&
-      selectedAttrs?.length !== get(singleproducts, "attribute_master")?.length
-    ) {
+      selectedAttrs?.length !== get(singleproducts, "attribute_master")?.length;
+
+    if (hasAttributesMismatch) {
       seterror(true);
-    } else {
-      seterror(false);
-      let quantity = 1;
-      // Check if user is authenticated
-      if (session.status === "authenticated") {
-        let productInCart = false;
-        query(GET_USER_CART, id, token).then((res) => {
-          let cart_id = get(res, "data.cartbyUser.id");
-          const inCartProducts = get(res, "data.cartbyUser.cartItems");
-          inCartProducts?.map((inCartProduct) => {
-            // Check if product with variant is in cart
-            if (
-              product?._id === get(inCartProduct, "productId") &&
-              comboData?.some(
-                (variant) => variant?.id === inCartProduct?.variantId
-              )
-            ) {
-              productInCart = true;
-              let Cart = inCartProducts.map((item) => {
-                const matchingVariant = comboData?.find(
-                  (variant) => variant?.id === item?.variantId
-                );
-                let singleProduct = {
-                  productId: get(item, "productId"),
-                  qty: get(item, "qty"),
-                  productTitle: get(item, "productTitle"),
-                  productImage: get(item, "productImage"),
-                  productPrice: get(item, "productPrice", "").toString(),
-                  shippingClass: get(product, "shipping.shippingClass"),
-                  taxClass: get(product, "shipping.shippingClass"),
-                  variantId: get(item, "variantId"),
-                  attributes: get(item, "attributes"),
-                  productQuantity: get(item, "productQuantity"),
-                };
-                if (matchingVariant) {
-                  // Update quantity if product with variant is already in cart
-                  return {
-                    ...singleProduct,
-                    qty:
-                      item.productId === product?._id
-                        ? item?.qty + quantity
-                        : item?.qty,
-                  };
-                } else {
-                  // Copy other properties if variant does not match
-                  return {
-                    ...singleProduct,
-                  };
-                }
-              });
-              let variables = {
-                id: cart_id,
-                products: Cart,
-                total: 0,
-              };
-              // Update cart and navigate to shop cart page
-              mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {
-                router.push("/shopcart");
-                dispatch(addToCart(variables));
-              });
-            } else if (comboData.length === 0) {
-              // Check if product without variant is in cart
-              if (product._id === inCartProduct.productId) {
-                let Cart = inCartProducts?.map((item) => {
-                  let singleProduct = {
-                    productId: item?.productId,
-                    qty: item?.qty,
-                    productTitle: item?.productTitle,
-                    productImage: item?.productImage,
-                    productPrice: item?.productPrice?.toString(),
-                    shippingClass: product?.shipping?.shippingClass,
-                    taxClass: product?.taxClass,
-                    variantId: item?.variantId,
-                    attributes: item?.attributes,
-                    productQuantity: item?.productQuantity,
-                  };
-                  // Update quantity if product without variant is already in cart
-                  productInCart = true;
-                  if (
-                    inCartProducts.some((i) => i.productId === item.productId)
-                  ) {
-                    return {
-                      ...singleProduct,
-                      qty:
-                        item.productId === product?._id
-                          ? item?.qty + quantity
-                          : item?.qty,
-                    };
-                  } else {
-                    // Copy other properties if product is in cart but quantity is not updated
-                    if (comboData.length === 0) {
-                      return {
-                        ...singleProduct,
-                      };
-                    }
-                  }
-                });
+      return;
+    }
 
-                let variables = {
-                  id: cart_id,
-                  products: Cart,
-                  total: 0,
-                };
-                mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {
-                  router.push("/shopcart");
-                  dispatch(addToCart(variables));
-                });
-              }
-            }
-          });
-          // If product is not in cart, add it
-          if (!productInCart) {
-            if (comboData.length > 0) {
-              // Prepare data for product with variant
-              let attributesData = [];
-              selectedAttrs.map((selectedAttribute) => {
-                let singleAttribute = product.attribute_master.find(
-                  (data) => data.id === selectedAttribute.name
-                );
-                let singleAttributeValues =
-                  singleAttribute.attribute_values.find(
-                    (data) => data._id === selectedAttribute.value
-                  );
-                let AttributeObject = {
-                  name: singleAttribute.name,
-                  value: singleAttributeValues.name,
-                };
-                attributesData.push(AttributeObject);
-              });
+    seterror(false);
 
-              let variables = {
-                total:
-                  get(
-                    comboData[0],
-                    "pricing.sellprice",
-                    get(
-                      comboData[0],
-                      "pricing.price",
-                      get(
-                        product,
-                        "pricing.sellprice",
-                        get(product, "pricing.price", 0)
-                      )
-                    )
-                  ) * quantity,
-                userId: id,
-                productId: get(product, "_id"),
-                qty: quantity,
-                productTitle: get(product, "name"),
-                productImage: get(
-                  comboData[0],
-                  "image",
-                  get(product, "feature_image")
-                ),
-                productPrice: get(
-                  comboData[0],
-                  "pricing.sellprice",
-                  get(
-                    comboData[0],
-                    "pricing.price",
-                    get(
-                      product,
-                      "pricing.sellprice",
-                      get(product, "pricing.price", 0)
-                    )
-                  )
-                )?.toString(),
-                variantId: get(comboData[0], "id"),
-                productQuantity: get(
-                  comboData[0],
-                  "quantity",
-                  get(product, "quantity")
-                ),
-                attributes: attributesData,
-                shippingClass: get(product, "shipping.shippingClass"),
-                taxClass: get(product, "taxClass"),
-              };
-              // Add product to cart and navigate to shop cart page
-              mutation(ADD_TO_CART_QUERY, variables, token).then((res) => {
-                router.push("/shopcart");
-                dispatch(addToCart(variables));
-              });
-            } else {
-              // Prepare data for product without variant
-              let variables = {
-                total:
-                  get(
-                    product,
-                    "pricing.sellprice",
-                    get(product, "pricing.price")
-                  ) * quantity,
-                userId: id,
-                productId: get(product, "_id"),
-                qty: quantity,
-                productTitle: get(product, "name"),
-                productImage: get(product, "feature_image"),
-                productPrice: get(
-                  product,
-                  "pricing.sellprice",
-                  get(product, "pricing.price")
-                )?.toString(),
-                variantId: "",
-                productQuantity: parseInt(get(product, "quantity")),
-                attributes: [],
-                shippingClass: get(product, "shipping?.shippingClass"),
-                taxClass: get(product, "taxClass"),
-              };
-              mutation(ADD_TO_CART_QUERY, variables, token).then((res) => {
-                router.push("/shopcart");
-                dispatch(addToCart(variables));
-              });
-            }
-          }
-        });
-      } else {
-        // User is not authenticated, add product to cart and navigate to shop cart page
-        let attributesData = [];
-        selectedAttrs.map((selectedAttribute) => {
-          let singleAttribute = product.attribute_master.find(
-            (data) => data.id === selectedAttribute.name
-          );
-          let singleAttributeValues = singleAttribute.attribute_values.find(
-            (data) => data._id === selectedAttribute.value
-          );
-          let AttributeObject = {
-            name: singleAttribute.name,
-            value: singleAttributeValues.name,
-          };
-          attributesData.push(AttributeObject);
-        });
-        let variables = {
-          total:
-            get(
+    const quantity = 1;
+
+    if (isUserAuthenticated) {
+      const res = await query(GET_USER_CART, id, token);
+      let cart_id = get(res, "data.cartbyUser.id");
+      let inCartProducts = get(res, "data.cartbyUser.cartItems");
+      const productInCart = isProductInCart(product, comboData, inCartProducts);
+      if (!productInCart) {
+        setItemInCart(false);
+        const commonVariables = prepareCommonVariables(id, product);
+
+        if (comboData.length > 0) {
+          // Prepare data for product with variant
+          const attributesData = prepareAttributesData(selectedAttrs, product);
+
+          const variables = {
+            ...commonVariables,
+            productImage: get(
+              comboData[0],
+              "image",
+              get(product, "feature_image")
+            ),
+            productPrice: get(
               comboData[0],
               "pricing.sellprice",
               get(
@@ -402,7 +243,52 @@ const GalleryImagesComponents = (props) => {
                   get(product, "pricing.price", 0)
                 )
               )
-            ) * quantity,
+            )?.toString(),
+            variantId: get(comboData[0], "id"),
+            attributes: attributesData,
+          };
+
+          addToCartAndNavigate(variables, token);
+        } else {
+          // Prepare data for product without variant
+          const variables = {
+            ...commonVariables,
+            productImage: get(product, "feature_image"),
+            productPrice: get(
+              product,
+              "pricing.sellprice",
+              get(product, "pricing.price")
+            )?.toString(),
+            variantId: "",
+            attributes: [],
+          };
+
+          addToCartAndNavigate(variables, token);
+        }
+      } else {
+        setItemInCart(true);
+      }
+    } else {
+      // User is not authenticated, add product to cart and navigate to shop cart page
+      const attributesData = prepareAttributesData(selectedAttrs, product);
+
+      const carts = localStorage.getItem("cart");
+      const productInCart = JSON.parse(carts)?.some((inCartProduct) => {
+        const productIdMatch = product?._id === get(inCartProduct, "_id");
+        const variantIdMatch = comboData?.some(
+          (variant) => variant?.id === inCartProduct?.variantId
+        );
+
+        if (comboData.length === 0) {
+          return productIdMatch;
+        }
+
+        return productIdMatch && variantIdMatch;
+      });
+
+      if (!productInCart) {
+        setItemInCart(false);
+        const variables = {
           userId: id,
           url: get(product, "url"),
           _id: get(product, "_id"),
@@ -427,17 +313,13 @@ const GalleryImagesComponents = (props) => {
             )
           ),
           variantId: get(comboData[0], "id"),
-          productQuantity: get(
-            comboData[0],
-            "quantity",
-            get(product, "quantity")
-          ),
           attributes: attributesData,
-          shippingClass: get(product, "shipping.shippingClass"),
-          taxClass: get(product, "taxClass"),
         };
+
         dispatch(addToCart(variables));
         router.push("/shopcart");
+      } else {
+        setItemInCart(true);
       }
     }
   };
@@ -540,10 +422,7 @@ const GalleryImagesComponents = (props) => {
                           }
                           onError={imageOnError}
                         />
-                        {/* getImage(gallery, imageType))} onError={(e) => e.type === 'error' ? setImgError(true) : setImgError(false)} /> */}
-                        {/* getImage(gallery, 'original', false, getSetting))} onError={(e) => e.type === 'error' ? setImgError(true) : setImgError(false)} /> */}
                         <GlassMagnifier
-                          // onImageLoad={() => checkImage(getMagnifierImg({ variantSelect, gallery, comboData}), index)}
                           imageSrc={
                             imgError.indexOf(index) === -1
                               ? getMagnifierImg({
@@ -711,23 +590,31 @@ const GalleryImagesComponents = (props) => {
             <div className="short-desc mb-30">
               <p> {singleproducts?.short_description}</p>
             </div>
-
             {Lable !== "Out Of Stock" && (
               <button
                 type="button"
                 className="btn btn-success button button-add-to-cart"
                 style={{ marginTop: 12, backgroundColor: "#088178" }}
-                onClick={() => addToCartProduct(singleproducts)}
+                onClick={() =>
+                  !isProductInCart
+                    ? addToCartProduct(singleproducts)
+                    : router.push("/shopcart")
+                }
                 disabled={
                   (comboData && comboData.length) || !variantSelect
                     ? false
                     : true
                 }
               >
-                Add to Cart
+                {!itemInCart ? "Add to Cart" : "Go To Cart"}
               </button>
             )}
-
+            {itemInCart && (
+              <p className="already-in-cart-message">
+                This item is already in your cart. Review your choice in the
+                cart.
+              </p>
+            )}
             <div className="varaint-select">
               {singleproducts?.attribute_master?.map((attr) => {
                 return (
