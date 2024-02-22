@@ -110,15 +110,19 @@ module.exports = gql`
   }
 
   type calculateCoupon {
-    totalCoupon: String
     message: String
     success: Boolean
     cartItems :[calculateCouponCartItem]
-    cartTotal : String
-    totalShipping : String
-    totalTax : String,
-  grandTotal:String
-  discountGrandTotal : String
+    totalSummary:metaKeyValueArray
+  }
+
+  type totalSummary {
+    cartTotal: String,
+    discountTotal: String
+    couponDiscountTotal: String
+    totalTax: String
+    totalShipping: String
+    grandTotal: String
   }
 
   extend type Query {

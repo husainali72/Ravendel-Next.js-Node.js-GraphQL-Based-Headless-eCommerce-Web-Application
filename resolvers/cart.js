@@ -23,7 +23,7 @@ const {
   checkToken,
   MESSAGE_RESPONSE,
   againCalculateCart,
-  _validate, getdate
+  _validate, getdate, addCart
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
@@ -122,9 +122,11 @@ module.exports = {
             product = await Product.findOne({ _id: cartProduct.productId, quantity: { $gte: cartProduct.qty } });
           }
 
+          console.log('cartProduct', cartProduct);
+          
           let prod = {
             productId: cartProduct?.productId,
-            productTitle: product?.name,
+            productTitle: product?.name || cartProduct?.productTitle,
             productImage: product?.feature_image,
             productPrice: product?.pricing?.sellprice || product?.pricing?.price || cartProduct?.productPrice,
             qty: cartProduct?.qty,
@@ -149,7 +151,12 @@ module.exports = {
             if(!global_tax) {
               let productTax = tax.taxClass.find(taxC => 
                 taxC._id.toString() == product.taxClass.toString());
-              taxPercentage = productTax.percentage;
+              if(productTax) {
+                taxPercentage = productTax.percentage;
+              }
+              else {
+                console.log('product tax class not found');
+              }
               // console.log('taxPercentage', taxPercentage);
             }
 
@@ -187,9 +194,13 @@ module.exports = {
               let productShippingClass = product.shipping.shippingClass;
               let productShipping = shipping.shippingClass.find(shipClass => 
                 shipClass._id.toString() == productShippingClass.toString());
-              // console.log('productShipping', productShipping);
-              prod.shippingAmount = productShipping.amount;
-              totalShipping += prod.shippingAmount;
+              if(productShipping) {
+                prod.shippingAmount = productShipping.amount;
+                totalShipping += prod.shippingAmount;
+              }
+              else {
+                console.log('product shipping class not found');
+              }
             }
             // Product Shipping calculation completed
 
@@ -836,137 +847,19 @@ module.exports = {
       }
       try {
 
-        //console.log('args',args);
-        const cart = await Cart.findOne({ userId: args.userId });
-
-        if (cart) {
-
-          delete args.userId;
-          delete args.total;
-
-          let globalTax = true;
-          let isGlobalTax = await Tax.findOne({}).lean();
-
-          if (!isGlobalTax.global.is_global) {
-            globalTax = false;
+        let products = [
+          {
+            productId:args.productId,
+            qty: args.qty,
+            productTitle: args.productTitle,
+            productImage: args.productImage,
+            productPrice: args.productPrice,
+            variantId: args.variantId,
+            attributes: args.attributes
           }
-
-
-          let taxPercentage;
-          if (!globalTax) {
-
-            isGlobalTax.taxClass.forEach((taxObject) => {
-
-              if (taxObject._id.toString() == args.taxClass) {
-                taxPercentage = taxObject.percentage
-              }
-
-            })
-          }
-
-
-          const product = await Product.findById({ _id: args.productId });
-
-          if (+taxPercentage != 0 && taxPercentage) {
-
-            let tax;
-            if (+product.pricing.sellprice > 0) {
-
-              tax = (+product.pricing.sellprice * (+taxPercentage)) / 100;
-
-              args.productPrice = product.pricing.sellprice;
-              args.total = args.qty * product.pricing.sellprice + (tax * args.qty);
-
-            }
-            else {
-
-              tax = (+product.pricing.price * (+taxPercentage)) / 100;
-
-              args.productPrice = product.pricing.price;
-              args.total = args.qty * product.pricing.price + (tax * args.qty);
-
-            };
-
-            args.productTaxPercentage = +taxPercentage;
-            args.productTax = +tax;
-            cart.products.push(args);
-            if (cart.total) {
-              cart.total = (cart.total + args.total);
-            }
-            else {
-              cart.total = args.total;
-            }
-            cart.updated = Date.now();
-            await cart.save();
-
-          }
-
-
-          else {
-
-            if (product.pricing.sellprice > 0) {
-
-              args.productPrice = product.pricing.sellprice;
-              args.total = args.qty * product.pricing.sellprice;
-
-            } else {
-
-              args.productPrice = product.pricing.price;
-              args.total = args.qty * product.pricing.price;
-
-            }
-
-            // args.productTaxPercentage=0;
-            // args.productTax=0;
-            cart.products.push(args);
-            cart.total = cart.total || 0 + args.total;
-            cart.updated = Date.now();
-            await cart.save();
-
-          }
-        }
-        // never run that code;
-        // else {
-        //   // console.log('nocart',);
-        //   const product = await Product.findById({ _id: args.productId });
-        //   if (product.pricing.sellprice > 0) {
-        //     args.productPrice = product.pricing.sellprice;
-        //     args.total = args.qty * product.pricing.sellprice;
-        //   } else {
-        //     args.productPrice = product.pricing.price;
-        //     args.total = args.qty * product.pricing.price;
-        //   }
-
-
-        //   // cart.products.productId =  args.productId;
-        //   // cart.products.qty =  args.qty;
-        //   // cart.products.total =  args.total;
-        //   // cart.total =   args.total;
-        //   // cart.updated = Date.now();
-        //   // await cart.save();
-
-
-        //   let prductarry = [
-        //     {
-        //       productId: args.productId,
-        //       productTitle: args.productTitle,
-        //       productPrice: args.productPrice,
-        //       productImage: args.productImage,
-        //       qty: args.qty,
-        //       total: args.total,
-        //       taxClass: args.taxClass,
-        //       shippingClass: args.shippingClass,
-        //     }
-        //   ]
-        //   const newCart = new Cart({
-        //     userId: args.userId,
-        //     total: args.total,
-        //     products: prductarry
-        //   });
-        //   await newCart.save();
-        //   return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
-
-        // }
+        ];
+        
+        await addCart(args.userId, products);
         return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
 
       } catch (error) {
@@ -975,166 +868,14 @@ module.exports = {
       }
     },
 
-
-
-    // runing WithOut login
+    
     addCart: async (root, args, { id }) => {
       // console.log("withOutLogin----args-2", args);
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       }
       try {
-        const cart = await Cart.findOne({ userId: args.userId });
-        let existingCartProducts = cart && cart.products ? cart.products : [];
-
-        // let carttotal = 0;
-        // if local products exists then only run loop for adding products in customer cart
-        if (args.products)
-          for (let localProd of args.products) {
-            if (localProd.variantId) {
-              let productAttributeValue =
-                await ProductAttributeVariation.findById(localProd.variantId);
-              // console.log(productAttributeValue, 'productAttributeValue')
-              let product = await Product.findById({
-                _id: localProd.productId,
-              });
-              let productId = localProd.productId;
-              let qty = localProd.qty;
-
-              let shippingClass = product.shipping.shippingClass
-                ? product.shipping.shippingClass
-                : "";
-              let taxClass = product.taxClass ? product.taxClass : "";
-              // console.log(productAttributeValue?.image || product?.feature_image || localProd?.productImage, 'imageeeeeeeeeee')
-              if (!existingCartProducts.length) {
-                existingCartProducts.push({
-                  productId,
-                  variantId: localProd.variantId.toString(),
-                  productTitle: product?.name || localProd?.productTitle,
-                  productPrice: productAttributeValue?.pricing?.sellprice || product?.pricing?.sellprice || localProd?.productPrice,
-                  attributes: localProd?.attributes,
-                  productImage: productAttributeValue?.image || product?.feature_image || localProd?.productImage,
-                  qty,
-                  shippingClass,
-                  taxClass,
-                });
-              } else {
-                // check local product id with customer cart product id
-                let existingProduct = existingCartProducts.find((prod) =>
-                  prod.productId.toString() ===
-                    localProd.productId.toString() &&
-                    prod.variantId == localProd.variantId.toString()
-                    ? prod
-                    : false
-                );
-                // if matches then update customer cart product with local product
-                if (existingProduct) {
-                  existingProduct.qty += localProd.qty
-                }
-                // else add local product to customer cart
-                else {
-                  existingCartProducts.push({
-                    productId,
-                    variantId: localProd.variantId.toString(),
-                    productTitle: product?.name || localProd?.productTitle,
-                    productPrice: productAttributeValue?.pricing?.sellprice || product?.pricing?.sellprice || localProd?.productPrice,
-                    productImage: productAttributeValue?.image || product?.feature_image || localProd?.productImage,
-                    attributes: localProd?.attributes,
-                    qty,
-                    shippingClass,
-                    taxClass,
-                  });
-                }
-              }
-            }
-
-            // ==============================================================================================================
-            else {
-              let product = await Product.findById({ _id: localProd.productId });
-              // declare variables to be used for adding product to cart
-
-              let productId = localProd.productId;
-
-              let shippingClass = product ? product?.shipping?.shippingClass : localProd?.shippingClass;
-              let taxClass = product?.taxClass || localProd?.shippingClass;
-              let qty = localProd?.qty || 1;
-              let productTitle = product?.name || localProd?.productTitle;
-              let productPrice = product?.pricing?.sellprice || localProd?.productPrice;
-              let productImage = product?.feature_image || localProd?.productImage
-              // if customer cart is empty then add product from local
-
-              if (!existingCartProducts.length) {
-                existingCartProducts.push({
-                  productId,
-                  productTitle,
-                  productPrice,
-                  productImage,
-                  qty,
-                  shippingClass,
-                  taxClass,
-                });
-              }
-              // else update customer cart with local
-              else {
-                // check local product id with customer cart product id
-                let existingProduct = existingCartProducts.find((prod) =>
-                  prod.productId.toString() === localProd.productId.toString() && !prod.variantId
-                    ? prod
-                    : false
-                );
-                // if matches then update customer cart product with local product
-                if (existingProduct) {
-
-                  existingProduct.qty += localProd.qty;
-                }
-                // else add local product to customer cart
-                else {
-
-                  existingCartProducts.push({
-                    productId,
-                    productTitle,
-                    productPrice,
-                    productImage,
-                    qty,
-                    shippingClass,
-                    taxClass,
-                  });
-                }
-              }
-
-            }
-
-          }
-        //---------------------------------------------------------------------------------------------------------------
-
-        // calculate carttotal from total of all products in customer cart
-        // existingCartProducts.map(async (cartProduct) => {
-        //   if(cartProduct.variantId){          
-        //   let productAttributeValue =
-        //         await ProductAttributeVariation.findById(cartProduct.variantId);
-        //  let price = productAttributeValue.pricing.sellprice>0 ?  productAttributeValue.pricing.sellprice : productAttributeValue.pricing.price
-        //    carttotal += price;
-        //   }
-        //   else {
-
-        //   }
-        // });
-        // if customer cart exists then update
-        console.log(existingCartProducts, '========existingCartProducts')
-        if (cart) {
-          cart.products = existingCartProducts;
-          await cart.save();
-        }
-        // else create new cart
-        else {
-          const newCart = new Cart({
-            userId: args.userId,
-            products: existingCartProducts,
-            total: 0,
-            productQuantity: 0
-          });
-          await newCart.save();
-        }
+        await addCart(args.userId, args.products);
         return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
       } catch (error) {
         // console.log(error);
@@ -1188,6 +929,7 @@ module.exports = {
             globalTax = false;
           }
 
+          console.log('checking global tax', globalTax);
 
           if (!globalTax) {
 
@@ -1210,6 +952,7 @@ module.exports = {
                   })
 
 
+                  console.log('calculating tax');
                   let tax;
                   if (product.pricing.sellprice > 0) {
 
@@ -1234,6 +977,7 @@ module.exports = {
               }
             }
 
+            console.log('assigning total');
             cart.total = carttotal;
             cart.products = args.products;
             cart.updated = Date.now();
