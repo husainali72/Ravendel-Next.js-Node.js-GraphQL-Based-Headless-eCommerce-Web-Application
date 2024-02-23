@@ -138,8 +138,8 @@ module.exports = gql`
     addCart(userId: ID, total: Float, products: [cartProduct]): statusSchema
     updateCart(id: ID!, total: Float, products: [cartProduct]): statusSchema
     changeQty(userId: ID!, productId: ID!, qty: Int!): statusSchema
-    deleteCart(id: ID!): statusSchema
-    deleteCartProduct(id: ID!, productId: ID!): statusSchema
+    deleteCart(userId: ID!): statusSchema
+    deleteCartProduct(userId: ID!, productId: ID!): statusSchema
     addToCart(
       userId: ID
       total: Float

@@ -43,7 +43,8 @@ module.exports = {
       try {
         const cart = await Cart.findOne({ userId: mongoose.Types.ObjectId(args.userId) });
         if (!cart) {
-          throw putError("Cart not found");
+          //throw putError("Cart not found");
+          return { cartItems:[] };
         }
 
         let cartItems = [];
@@ -122,8 +123,6 @@ module.exports = {
             product = await Product.findOne({ _id: cartProduct.productId, quantity: { $gte: cartProduct.qty } });
           }
 
-          console.log('cartProduct', cartProduct);
-          
           let prod = {
             productId: cartProduct?.productId,
             productTitle: product?.name || cartProduct?.productTitle,
@@ -847,6 +846,7 @@ module.exports = {
       }
       try {
 
+        console.log('in addToCart');
         let products = [
           {
             productId:args.productId,
@@ -858,6 +858,7 @@ module.exports = {
             attributes: args.attributes
           }
         ];
+        console.log('products', products);
         
         await addCart(args.userId, products);
         return MESSAGE_RESPONSE("AddSuccess", "Cart", true);
@@ -867,7 +868,6 @@ module.exports = {
         return MESSAGE_RESPONSE("CREATE_ERROR", "Cart", false);
       }
     },
-
 
     addCart: async (root, args, { id }) => {
       // console.log("withOutLogin----args-2", args);
@@ -1027,12 +1027,22 @@ module.exports = {
       }
       try {
         const cart = await Cart.findOne({ userId: args.userId });
+        if(!cart) {
+          return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
+        }
         
-        let product = cart.products.find(p => p.productId.toString() === args.productId.toString());
-        if(!product) {
+        let cartProduct = cart.products.find(p => p.productId.toString() === args.productId.toString());
+        if(!cartProduct) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Cart Product", false);
         }
-        product.qty = args.qty
+        let product = await Product.findById(mongoose.Types.ObjectId(cartProduct.productId));
+        if(!product) {
+          return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
+        }
+        if(product.quantity < args.qty) {
+          return MESSAGE_RESPONSE("OutOfStock", product.quantity.toString() + " Unit(s)", false);
+        }
+        cartProduct.qty = args.qty
         await cart.save();
         return MESSAGE_RESPONSE("UpdateSuccess", "Quantity", true);
       } catch (error) {
@@ -1043,63 +1053,51 @@ module.exports = {
 
     //,.........................................
     deleteCart: async (root, args, { id }) => {
-      checkToken(id);
-      const cart = await Cart.findByIdAndRemove(args.id);
-      if (cart) {
-        return MESSAGE_RESPONSE("DeleteSuccess", "Cart", true);
-        //return true;
+      try {
+        if (!id) {
+          return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
+        }
+        const cart = await Cart.deleteOne({ userId: args.userId });
+        console.log('cart', cart);
+        
+        if (cart && cart.acknowledged && cart.deletedCount > 0) {
+          return MESSAGE_RESPONSE("DeleteSuccess", "Cart", true);
+        }
+        else {
+          return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false); 
+        }
+      } catch (error) {
+        error = checkError(error);
+        return MESSAGE_RESPONSE("DELETE_ERROR", "Cart", false);
       }
-      return false;
     },
+    
     deleteCartProduct: async (root, args, { id }) => {
-      checkToken(id);
-      const cart = await Cart.findById(args.id);
-      // console.log(cart);
-      if (cart) {
-        // for (let i in cart.products) {
-        //   if (cart.products[i].productId === args.productId) {
-        //     cart.products.splice(i, 1);
-        //     cart.updated = Date.now();
-        //     return await cart.save();
-        //   }
-        // }
-        var customer_cart = cart.products;
-        for (let i in customer_cart) {
-          if (customer_cart[i].productId == args.productId || customer_cart[i]._id == args.productId) {
-            cart.products = [];
-            delete customer_cart[i];
+      try {
+        if (!id) {
+          return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
+        }
+        const cart = await Cart.findOne({ userId: args.userId });
+        if(!cart) {
+          return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
+        }
 
-            cart.products = customer_cart;
+        let product = cart.products.find(p => p.productId.toString() === args.productId.toString());
+        if(!product) {
+          return MESSAGE_RESPONSE("NOT_EXIST", "Cart Product", false);
+        }
+
+        for (let i in cart.products) {
+          if (cart.products[i].productId.toString() == args.productId.toString()) {
+            cart.products.splice(i, 1);
             break;
           }
         }
-
-        //console.log(cart.products);
-
-        var carttotal = 0;
-        for (let i in cart.products) {
-          if (cart.products[i].productId) {
-            const product = await Product.findById({ _id: cart.products[i].productId });
-
-            if (product) {
-              if (product.pricing.sellprice > 0) {
-                cart.products[i].total = cart.products[i].qty * product.pricing.sellprice;
-              } else {
-                cart.products[i].total = cart.products[i].qty * product.pricing.price;
-              }
-
-              carttotal = carttotal + cart.products[i].total;
-            }
-          }
-        }
-        cart.total = carttotal;
-        cart.products = cart.products;
-        cart.updated = Date.now();
         await cart.save();
         return MESSAGE_RESPONSE("UpdateSuccess", "Cart", true);
-      } else {
-        //throw putError("Cart not exist");
-        return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
+      } catch (error) {
+        error = checkError(error);
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Cart", false);
       }
     },
   },

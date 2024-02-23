@@ -1124,7 +1124,7 @@ const addCart = async (userId, cartItems) => {
   // else create new cart
   else {
     const newCart = new Cart({
-      userId: args.userId,
+      userId: userId,
       products: existingCartProducts
     });
     await newCart.save();
