@@ -475,7 +475,9 @@ a.action-btn:after {
   text-decoration: none;
   display: block;
 }
-
+.already-in-cart-message{
+  color:rgb(8, 129, 120)
+}
 .dropdown-content a:hover {
   background-color: #ddd;
 }
