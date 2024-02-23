@@ -389,7 +389,9 @@ const GalleryImagesComponents = (props) => {
       };
     });
   }, [props.galleryImages]);
-
+  const navigateToShopCart = () => {
+     router.push("/shopcart");
+  };
   return (
     <>
       <div className="single-product row mb-50" style={{ display: "flex" }}>
@@ -596,9 +598,9 @@ const GalleryImagesComponents = (props) => {
                 className="btn btn-success button button-add-to-cart"
                 style={{ marginTop: 12, backgroundColor: "#088178" }}
                 onClick={() =>
-                  !isProductInCart
+                  !itemInCart
                     ? addToCartProduct(singleproducts)
-                    : router.push("/shopcart")
+                    : navigateToShopCart()
                 }
                 disabled={
                   (comboData && comboData.length) || !variantSelect
