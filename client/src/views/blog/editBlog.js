@@ -15,7 +15,7 @@ import {
   blogUpdateAction,
   blogtagsAction,
   blogAction,
-  blogAddAction
+  blogAddAction,
 } from "../../store/action/";
 import clsx from "clsx";
 import {
@@ -71,31 +71,27 @@ const EditBlogComponenet = ({ params }) => {
   const [clearTags, setclearTags] = useState([]);
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
-  const baseURl = getBaseUrl(setting)
+  const baseURl = getBaseUrl(setting);
   useEffect(() => {
     if (Id) {
       dispatch(blogAction(Id));
     } else {
-      dispatch(blogtagsAction())
+      dispatch(blogtagsAction());
     }
   }, []);
-
 
   useEffect(() => {
     if (Id) {
       if (!isEmpty(get(blogState, "blog"))) {
         setBlog({ ...blog, ...blogState.blog });
-        if (
-          blogState.blog.feature_image
-
-        ) {
+        if (blogState.blog.feature_image) {
           setfeatureImage(baseURl + blogState.blog.feature_image);
         }
         dispatch(blogtagsAction());
       }
     } else {
-      setBlog(defaultObj)
-      setfeatureImage(null)
+      setBlog(defaultObj);
+      setfeatureImage(null);
     }
   }, [get(blogState, "blog"), Id, baseURl]);
 
@@ -133,9 +129,8 @@ const EditBlogComponenet = ({ params }) => {
             };
           });
           setTags({ ...tags, tags: tagObj, defaultTags: defaultTags });
-        }, 1000)
-      }
-      else {
+        }, 1000);
+      } else {
         const tagObj = blogState.tags.map((tag) => {
           return {
             value: tag.id,
@@ -154,7 +149,7 @@ const EditBlogComponenet = ({ params }) => {
         ...blog,
         blog_tag: e && e.length > 0 ? e.map((tag) => tag.value) : [],
       });
-      setTags({ ...tags, defaultTags: e })
+      setTags({ ...tags, defaultTags: e });
     } else {
       if (!isEmpty(e)) {
         setclearTags(e);
@@ -178,8 +173,7 @@ const EditBlogComponenet = ({ params }) => {
     } else {
       if (Id) {
         dispatch(blogUpdateAction(blog, navigate));
-      }
-      else {
+      } else {
         dispatch(blogAddAction(blog, navigate));
       }
     }
@@ -198,23 +192,24 @@ const EditBlogComponenet = ({ params }) => {
 
   const onBlur = (e) => {
     if (!blog.url || blog.url !== e.target.value) {
-      isUrlExist(blog.title)
+      isUrlExist(blog.title);
     }
-  }
+  };
 
   const fileChange = (e) => {
-    setfeatureImage(null);
-    setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    if (Id) {
-      setBlog({ ...blog, updatedImage: e.target.files[0] });
-    }
-    else {
-      setBlog({ ...blog, [e.target.name]: e.target.files[0] });
+    const files = get(e, "target.files");
+
+    if (files && files.length > 0) {
+      setfeatureImage(URL.createObjectURL(files[0]));
+
+      const updatedImageApiName = Id ? "updatedImage" : e.target.name;
+      setBlog({ ...blog, [updatedImageApiName]: files[0] });
+    } else {
+      setfeatureImage(featureImage);
     }
   };
 
   const isUrlExist = async (url) => {
-
     let updatedUrl = await getUpdatedUrl("Blog", url);
     setBlog({
       ...blog,

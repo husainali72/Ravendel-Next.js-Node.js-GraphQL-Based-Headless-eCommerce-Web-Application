@@ -1,5 +1,5 @@
-const { gql } = require("apollo-server-express");
-module.exports = gql`
+// const { gql } = require("@apollo/server");
+module.exports = `
   type Order {
     id: ID
     orderNumber: String

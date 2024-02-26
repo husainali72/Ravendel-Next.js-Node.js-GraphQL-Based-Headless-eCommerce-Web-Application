@@ -103,7 +103,7 @@ module.exports = {
           return MESSAGE_RESPONSE("ID_ERROR", "Zipcode", false);
         }
 
-        const zipcode = await Zipcode.findByIdAndRemove(args.id)
+        const zipcode = await Zipcode.deleteOne({_id:args.id})
         if(zipcode) {
           return MESSAGE_RESPONSE("DELETE", "Zipcode", true);
         } else {

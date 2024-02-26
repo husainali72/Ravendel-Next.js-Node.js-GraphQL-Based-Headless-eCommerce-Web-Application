@@ -148,7 +148,7 @@ const EditCouponComponent = ({ params }) => {
   };
 
   const addUpdateCoupon = () => {
-    var errors = validate(["code", "expire"], coupon);
+    var errors = validate([ "expire",'discountValue','code' ], coupon);
 
     if (!isEmpty(errors)) {
       dispatch({
