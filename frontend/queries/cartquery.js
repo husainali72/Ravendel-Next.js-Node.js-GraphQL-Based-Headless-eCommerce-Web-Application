@@ -56,12 +56,9 @@ export const GET_USER_CART = gql`
   id
     userId
     status
-    total
-    cartItem
-    availableItem
-    unavailableItem
+    cartItems
     date
-
+    totalSummary
 
     updated
   }

@@ -93,7 +93,7 @@ function cartReducer(state = [], action) {
                 for (let i = 0; i < productInCart?.length; i++) {
                     const product = productInCart[i];
                     if (product._id === productToAdd._id && product.variantId === productToAdd.variantId) {
-                        product.quantity = product.quantity + quantity;
+                        // product.quantity = product.quantity + quantity;
                         isProductInCart = true;
                         break;
                     }

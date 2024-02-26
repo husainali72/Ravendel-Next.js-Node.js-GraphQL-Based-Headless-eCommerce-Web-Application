@@ -8,6 +8,9 @@ const Setting = require("../models/Setting");
 const { uploadFile, FileDelete } = require("../config/aws");
 const multer = require('multer');
 const path = require('path');
+const Cart = require("../models/Cart");
+const Product = require("../models/Product");
+const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 
 
 
@@ -892,3 +895,81 @@ const addZipcodes = async (zipcode_file, filepath, modal) => {
 };
 
 module.exports.addZipcodes = addZipcodes;
+
+
+const addCart = async (userId, cartItems) => {
+  const cart = await Cart.findOne({ userId: userId });
+  let existingCartProducts = cart && cart.products ? cart.products : [];
+
+  // let carttotal = 0;
+  // if local products exists then only run loop for adding products in customer cart
+  if (cartItems) {
+    for (let localProd of cartItems) {
+      let productAttributeValue, product, existingProduct;
+      product = await Product.findById({ _id: localProd.productId });
+      if(!product) {
+        //return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
+        console.log(`Product not exists - productId: ${localProd.productId}, productTitle: ${localProd.productTitle}`);
+        continue;
+
+        
+      }
+
+      if (localProd.variantId) {
+        productAttributeValue = await ProductAttributeVariation.findById(localProd.variantId);
+        if(!productAttributeValue) {
+          console.log(`Product variant not exists - productId: ${localProd.productId}, variantId: ${localProd.variantId}`);
+          continue;
+        }
+        // check local product id and variant id with customer cart product id
+        existingProduct = existingCartProducts.find((prod) =>
+          prod.productId.toString() === localProd.productId.toString() &&
+          prod.variantId == localProd.variantId.toString());
+      }
+      else {
+        // check local product id with customer cart product id
+        existingProduct = existingCartProducts.find((prod) => prod.productId.toString() === localProd.productId.toString());
+      }
+      
+      // console.log(productAttributeValue, 'productAttributeValue');
+      // console.log('existingProduct', existingProduct);
+      let productId = localProd.productId;
+      let qty = localProd.qty;
+        
+      // if matches then update customer cart product with local product
+      if (existingProduct) {
+        existingProduct.qty += localProd.qty
+      }
+      // else add local product to customer cart
+      else {
+        existingCartProducts.push({
+          productId,
+          variantId: localProd.variantId?.toString(),
+          productTitle: product?.name || localProd?.productTitle,
+          productPrice: productAttributeValue?.pricing?.sellprice || product?.pricing?.sellprice || localProd?.productPrice,
+          productImage: productAttributeValue?.image || product?.feature_image || localProd?.productImage,
+          attributes: localProd?.attributes,
+          qty,
+        });
+      }
+    }
+  }
+  //---------------------------------------------------------------------------------------------------------------
+
+  // if customer cart exists then update
+  if (cart) {
+    cart.products = existingCartProducts;
+    cart.updated = Date.now();
+    await cart.save();
+  }
+  // else create new cart
+  else {
+    const newCart = new Cart({
+      userId: userId,
+      products: existingCartProducts
+    });
+    await newCart.save();
+  }
+};
+
+module.exports.addCart = addCart;

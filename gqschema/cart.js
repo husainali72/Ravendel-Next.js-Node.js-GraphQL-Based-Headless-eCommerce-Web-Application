@@ -4,12 +4,10 @@ module.exports = `
     id: ID
     userId: ID
     status: String
-    total: String
-    cartItem: metaKeyValueArray
-    availableItem: customArray
-    unavailableItem: customArray
+    cartItems: metaKeyValueArray
     date: Date
     updated: Date
+    totalSummary:metaKeyValueArray
   }
 
   type combinationItem {
@@ -36,6 +34,11 @@ module.exports = `
     productTotal : String,
     productTax: String
     productShipping: String
+    available: Boolean
+    amount : String
+    taxAmount : String
+    shippingAmount : String
+    total : String
   }
 
   type calculatedCart {
@@ -107,15 +110,19 @@ module.exports = `
   }
 
   type calculateCoupon {
-    totalCoupon: String
     message: String
     success: Boolean
-    cartItem :[calculateCouponCartItem]
-    cartTotal : String
-    totalShipping : String
-    totalTax : String,
-  grandTotal:String
-  discountGrandTotal : String
+    cartItems :[calculateCouponCartItem]
+    totalSummary:metaKeyValueArray
+  }
+
+  type totalSummary {
+    cartTotal: String,
+    discountTotal: String
+    couponDiscountTotal: String
+    totalTax: String
+    totalShipping: String
+    grandTotal: String
   }
 
   extend type Query {
@@ -131,8 +138,8 @@ module.exports = `
     addCart(userId: ID, total: Float, products: [cartProduct]): statusSchema
     updateCart(id: ID!, total: Float, products: [cartProduct]): statusSchema
     changeQty(userId: ID!, productId: ID!, qty: Int!): statusSchema
-    deleteCart(id: ID!): statusSchema
-    deleteCartProduct(id: ID!, productId: ID!): statusSchema
+    deleteCart(userId: ID!): statusSchema
+    deleteCartProduct(userId: ID!, productId: ID!): statusSchema
     addToCart(
       userId: ID
       total: Float
