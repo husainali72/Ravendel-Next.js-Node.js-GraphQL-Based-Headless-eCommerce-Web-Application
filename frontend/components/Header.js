@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { OpenNav } from '../utills/app';
-import { CloseNav } from '../utills/app';
+import { OpenNav, CloseNav } from '../utills/app';
 import ShopCartProducts from "./cardcomponent/ShopCartProduct"
 import { Container } from 'react-bootstrap';
 import { useSelector, useDispatch } from "react-redux";
@@ -12,64 +11,61 @@ import { getImage, query } from '../utills/helpers';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import { GET_SETTING, getSettings } from '../redux/actions/settingAction';
 
-
-export const LogOutUser1 = async () => {
-    const data = await signOut({ redirect: false, callbackUrl: "/" })
-    localStorage.setItem("userCart", JSON.stringify([]));
-    localStorage.setItem("cart", JSON.stringify([]));
-    // dispatch(logoutDispatch())
-    // window.location.pathname = '/'
-}
+export const logoutAndClearData = async () => {
+  const data = await signOut({ redirect: false, callbackUrl: "/" });
+  localStorage.setItem("userCart", JSON.stringify([]));
+  localStorage.setItem("cart", JSON.stringify([]));
+};
 
 export default function Header({ setOpenMenu }) {
-    const data = useSession();
-    const cartItem = useSelector(state => state.cart)
-    const addedCart = useSelector(state => state.addedCart)
+  const data = useSession();
+  const cartItem = useSelector(state => state.cart)
+  const addedCart = useSelector(state => state.addedCart)
 
 
-    const dispatch = useDispatch();
-    const [open, setOpen] = useState(false);
-    const [cart, setCart] = useState(null);
-    const [homeData, setHomeData] = useState({});
-    const LogOutUser = async () => {
-        const data = await signOut({ redirect: false, callbackUrl: "/" })
-        localStorage.setItem("userCart", JSON.stringify([]));
-        localStorage.setItem("cart", JSON.stringify([]));
-        dispatch(logoutDispatch())
-        // window.location.reload();
-        window.location.pathname = '/'
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [cart, setCart] = useState(null);
+  const [homeData, setHomeData] = useState({});
+  const LogOutUser = async () => {
+   await logoutAndClearData()
+    dispatch(logoutDispatch());
+        window.location.pathname = "/";
+  };
+
+  const dropdownRef = useRef(null);
+  const handleClickOutside = (event) => {
+    if (
+      dropdownRef?.current &&
+      !dropdownRef?.current?.contains(event?.target)
+    ) {
+      setOpen(false);
     }
+  };
 
-    const dropdownRef = useRef(null);
-    const handleClickOutside = (event) => {
-        if (dropdownRef?.current && !dropdownRef?.current?.contains(event?.target)) {
-            setOpen(false);
-        }
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
     };
+  }, []);
 
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+  const getCartLength = async () => {
+    let userCart;
 
-    const getCartLength = async () => {
+    if (addedCart) {
+      dispatch(logoutDispatch());
+    }
+  const getCartLength = async () => {
         let userCart
 
         if (addedCart) {
             dispatch(logoutDispatch())
         }
-        if (data.status === "authenticated") {
+        if (data.status === "authenticated") {   
+      
             let id = data.data.user.accessToken.customer._id
-            let token = data.data.user.accessToken.token
-            query(GET_USER_CART, id, token).then(res => {
-                userCart = res.data.cartbyUser;
-
-                setCart(userCart);
-            }).catch((err) => {
-                setCart({ ...cart, cartItem: [] })
-            })
+            dispatch(getUserCart(id))
         }
     }
     const getHomepageData = () => {
@@ -86,11 +82,11 @@ export default function Header({ setOpenMenu }) {
         dispatch(getSettings())
     }, [cartItem, data, addedCart])
 
-    useEffect(() => {
 
-        getHomepageData()
-    }, [])
-    return (
+  useEffect(() => {
+    getHomepageData();
+  }, []);
+  return (
         <header className="header-area header-style-5 mt-0">
             <div className="header-top">
                 <Container className="align-items-center">
@@ -210,11 +206,7 @@ export default function Header({ setOpenMenu }) {
                                         <a className="cart-icon action-btn">
                                             <i className="fas fa-shopping-bag font-awesome-icon" style={{ color: "#088178" }} aria-hidden="true"></i>
                                         </a>
-                                        {data.status === "authenticated" ? (
-                                            <span className="pro-count blue">{cart?.cartItems?.length}</span>
-                                        ) : (
                                             <span className="pro-count blue">{cartItem?.length}</span>
-                                        )}
                                     </div>
                                 </Link>
                                 <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
@@ -231,5 +223,5 @@ export default function Header({ setOpenMenu }) {
             </div>
             <hr className="hr_divider mt-0"></hr>
         </header >
-    )
+  );
 }

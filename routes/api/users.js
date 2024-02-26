@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("../../middleware/auth");
 const { sendEmail } = require("../../config/helpers");
-
+const mongoose = require('mongoose');
 // user model
 const User = require("../../models/User");
 const ProductCat = require("../../models/ProductCat");
@@ -27,7 +27,6 @@ router.post("/register", (req, res) => {
 
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
-          // if (err) throw err;
           newUser.password = hash;
           newUser
             .save()
@@ -110,7 +109,7 @@ router.post("/login", (req, res) => {
 // @desc    Return current user
 // @access  Private
 router.get("/current", auth, (req, res) => {
-  //console.log(req.user);
+
   res.json({
     id: req.user.id,
     name: req.user.name,
@@ -144,7 +143,7 @@ router.get("/", auth, (req, res) => {
 router.get("/:userId", auth, (req, res) => {
   const errors = {};
 
-  User.findOne({ _id: req.params.userId })
+  User.findOne({ _id:new mongoose.Types.ObjectId( req.params.userId  ) })
     .select("-password")
     .then((user) => {
       if (!user) {
@@ -162,7 +161,6 @@ router.post("/cattree", async (req, res) => {
     var categories = [...cats];
     categories[0]["children"] = [({ name: "A" }, { name: "B" }, { name: "C" })];
     res.json(categories[0].children[0]);
-    //res.json(unflatten(cats));
   } catch (error) {
     console.log(error);
     res.status(404).json(error);

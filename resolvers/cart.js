@@ -1,23 +1,12 @@
 const Cart = require("../models/Cart");
-const Customer = require("../models/Customer");
 const Product = require("../models/Product");
 const Tax = require("../models/Tax");
-let { default: mongoose } = require("mongoose");
 const Coupon = require("../models/Coupon");
 const Shipping = require("../models/Shipping");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
-const ProductAttribute = require("../models/ProductAttribute");
+const { GET_SINGLE_FUNC, GET_ALL_FUNC } = require("../config/api_functions");
+const mongoose = require('mongoose');
 const {
-  DELETE_FUNC,
-  GET_BY_PAGINATIONS,
-  GET_SINGLE_FUNC,
-  GET_ALL_FUNC,
-  CREATE_FUNC,
-  UPDATE_FUNC,
-} = require("../config/api_functions");
-
-const {
-  isEmpty,
   putError,
   checkError,
   checkToken,
@@ -114,7 +103,7 @@ module.exports = {
           let attribute = []
           if (cartProduct?.variantId) {
             addvariants = true
-            product = await Product.findOne({ _id: cartProduct.productId });
+            product = await Product.findById(mongoose.Types.ObjectId(cartProduct.productId));
             attribute = await ProductAttributeVariation.find({
               productId: cartProduct.productId, _id: cartProduct?.variantId, quantity: { $gte: cartProduct.qty }
             });

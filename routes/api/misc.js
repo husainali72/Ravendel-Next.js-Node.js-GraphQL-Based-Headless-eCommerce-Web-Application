@@ -45,8 +45,8 @@ router.post("/checkurl", auth, async (req, res) => {
 
 router.post("/delete_variation", auth, async (req, res) => {
   try {
-    const variant = await ProductAttributeVariation.findByIdAndRemove(
-      req.body.id
+    const variant = await ProductAttributeVariation.deleteOne(
+     {_id: req.body.id}
     );
     if (variant.image) {
       imageUnlink(variant.image);

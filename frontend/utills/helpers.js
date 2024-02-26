@@ -4,26 +4,10 @@ import { isEmpty } from "./service";
 import axios from 'axios'
 import { getSession } from 'next-auth/react';
 import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
-import { LogOutUser1 } from '../components/Header';
+import { logoutAndClearData } from '../components/Header';
 import { get } from 'lodash';
 
 /* -------------------------------image funtion ------------------------------- */
-
-// export const imgUrl = (img) => {
-//     var imagaPath = "https://dummyimage.com/300"
-//     if (img && img.original) {
-//         imagaPath = bucketBaseURL + img.original
-//     }
-//     return imagaPath;
-// }
-
-// export const imgUrl2 = (img) => {
-//     var imagaPath = "https://dummyimage.com/300"
-//     if (img) {
-//         imagaPath = bucketBaseURL + img
-//     }
-//     return imagaPath;
-// }
 export const imageOnError = (event) => {
     event.target.src = NoImagePlaceHolder.src
 }
@@ -32,7 +16,6 @@ export const getImage = (img, type, isBanner, setting) => {
         return NoImagePlaceHolder.src
     }
     let localStorage = setting && setting?.setting?.imageStorage?.status === 's3' ? false : (setting?.setting?.imageStorage?.status === 'localStorage' ? true : '')
-// export const getImage = (img, type, isBanner) => {
     let imagaPath = ""
     if(type && type === "localStorage"){
         imagaPath = `https://${BASE_URL}/${img.toString()}`;
@@ -90,7 +73,7 @@ export const query = async (query, id) => {
             errors.networkError.statusCode === 400
         ) {
 
-            if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { LogOutUser1() }
+            if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { logoutAndClearData() }
             return Promise.reject(errors.message);
         }
         return Promise.reject("Something went wrong");
@@ -135,7 +118,7 @@ export const mutation = async (query, variables) => {
             errors.networkError.statusCode === 400
         ) {
 
-            if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { LogOutUser1() }
+            if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { logoutAndClearData() }
             return Promise.reject(errors);
         }
         return Promise.reject("Something went wrong");
@@ -159,6 +142,7 @@ export const stripeCheckout = (billDetails, cartItems, baseUrl) => {
         customerCart: cartItems,
         customerId: billDetails.customerId
     }).then(res => {
+        console.log(res.data.url,'res.data.url')
         if (res.data.url) {
             window.location.href = res.data.url
         }

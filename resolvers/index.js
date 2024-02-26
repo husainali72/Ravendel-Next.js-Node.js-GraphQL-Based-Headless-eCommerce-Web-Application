@@ -17,9 +17,49 @@ const reviewResolvers = require("./review");
 const productAttribute = require("./product_attribute");
 const zipcodeResolvers = require("./zipcode");
 const faqResolvers = require("./faq");
+const createWriteStream = require("fs");
+// import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
+const fs = require('fs');
+const util = require('util');
+const unlink = util.promisify(fs.unlink);
 
 const customScalarResolver = {
-  Date: GraphQLDateTime,
+  // Date: GraphQLDateTime,
+  // Upload: async (parent, args) => {
+  //   const { createReadStream, filename } = await args.file;
+  //   const stream = createReadStream();
+  //   // Save the file to the desired location
+  //   // Here, we're saving it to the 'uploads' folder with its original filename
+  //   await new Promise((resolve, reject) => {
+  //     stream
+  //       .pipe(createWriteStream(`./uploads/${filename}`))
+  //       .on('finish', resolve)
+  //       .on('error', reject);
+  //   });
+  //   // Return the filename as confirmation
+  //   return filename;
+  // },
+  // Upload: GraphQLUpload,
+  Mutation: {
+    
+    Upload: async (_, { file }) => {
+      const { createReadStream, filename, mimetype, encoding } = await file;
+
+      // Create a writable stream to save the file
+      const writeStream = fs.createWriteStream(`./uploads/${filename}`);
+
+      // Pipe the file stream to the writable stream
+      await new Promise((resolve, reject) => {
+        createReadStream()
+          .pipe(writeStream)
+          .on('finish', resolve)
+          .on('error', reject);
+      });
+
+      // Return information about the uploaded file
+      return { filename, mimetype, encoding };
+    },
+  },
 };
 
 const metaKeyValueArray = {
@@ -55,5 +95,6 @@ module.exports = [
   productAttribute,
   faqResolvers,
   zipcodeResolvers,
-  productAttribute
+  productAttribute,
+
 ];

@@ -45,12 +45,16 @@ const checkError = (error) => {
 module.exports.checkError = checkError;
 /*-------------------------------------------------------------------------------------------------------*/
 
-const { AuthenticationError } = require("apollo-server-express");
+const { GraphQLError  } = require("graphql");
 
 const checkToken = (token) => {
   if (token === false) {
-    throw new AuthenticationError(
-      "Authentication token is invalid, please log in"
+    throw new GraphQLError(
+      "Authentication token is invalid, please log in" ,{
+        extensions: {
+          code:401,
+        },
+      }
     );
   }
   return;
@@ -126,26 +130,7 @@ const updateUrl = async (url, table, updateId) => {
 
 module.exports.updateUrl = updateUrl;
 /*----------------------------------------------store image in local storage---------------------------------------------------------*/
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'uploads/');
-//   },
-//   filename: function (req, file, cb) {
-//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-//     cb(null, uniqueSuffix + path.extname(file.originalname));
-//   },
-// });
-// const upload = multer({ storage: storage });
-// const UploadImageLocal = async (image, path, name) => {
-//   console.log('name', name)
-//   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-//   const { createReadStream, filename } = await image
-//   const stream = createReadStream();
-//   const imagePath = `${path}/${uniqueSuffix + filename}`;
-//   const fileStream = fs.createWriteStream(imagePath);
-//   stream.pipe(fileStream);
-//   return imagePath
-// };
+
 const UploadImageLocal = async (image, path, name) => {
   try {
 
@@ -250,20 +235,12 @@ const imageUpload = async (upload, uploadPath, nametype) => {
             message: "This extension not allowed",
           });
         }
-
-        // console.log(upload);
         let stream = createReadStream();
 
         filename = slugify(filename, { lower: true, replacement: "-" });
         filename = Date.now() + "-" + filename;
-
-        // let original = uploadPath + "original/" + filename;
-        // let large = uploadPath + "large/" + filename;
-        // let medium = uploadPath + "medium/" + filename;
-        // let thumbnail = uploadPath + "thumbnail/" + filename;
         let path = "." + uploadPath + filename;
 
-        // if (!fs.existsSync("." + uploadPath + "original/")) {
         if (!fs.existsSync("." + uploadPath)) {
           return resolve({
             success: false,
@@ -287,74 +264,38 @@ const imageUpload = async (upload, uploadPath, nametype) => {
           .pipe(fs.createWriteStream(path))
 
           .on("finish", async () => {
-            //console.log('nametype',nametype);
-            // let awsoriginalpath, awslargepath, awsmediumpath, awsthumbnailpath;
             let awsFilePath;
             if (nametype == "Blog") {
-              // awsoriginalpath = 'blog/feature/original';
-              // awslargepath = 'blog/feature/large';
-              // awsmediumpath = 'blog/feature/medium';
-              // awsthumbnailpath = 'blog/feature/thumbnail';
               awsFilePath = "blog";
             }
 
             if (nametype == "Setting") {
-              // awsoriginalpath = 'setting/original';
-              // awslargepath = 'setting/large';
-              // awsmediumpath = 'setting/medium';
-              // awsthumbnailpath = 'setting/thumbnail';
               awsFilePath = "setting";
             }
 
             if (nametype == "Product Category") {
-              // awsoriginalpath = 'product/category/original';
-              // awslargepath = 'product/category/large';
-              // awsmediumpath = 'product/category/medium';
-              // awsthumbnailpath = 'product/category/thumbnail';
               awsFilePath = "product/category";
             }
 
             if (nametype == "Brand") {
-              // awsoriginalpath = 'brand/original';
-              // awslargepath = 'brand/large';
-              // awsmediumpath = 'brand/medium';
-              // awsthumbnailpath = 'brand/thumbnail';
               awsFilePath = "brand";
             }
 
             if (nametype == "User") {
-              // awsoriginalpath = 'user/original';
-              // awslargepath = 'user/large';
-              // awsmediumpath = 'user/medium';
-              // awsthumbnailpath = 'user/thumbnail';
               awsFilePath = "user";
             }
 
             if (nametype == "productgallery") {
-              // awsoriginalpath = 'product/gallery/original';
-              // awslargepath = 'product/gallery/large';
-              // awsmediumpath = 'product/gallery/medium';
-              // awsthumbnailpath = 'product/gallery/thumbnail';
               awsFilePath = "product/gallery";
             }
 
             if (nametype == "productfeature") {
-              // awsoriginalpath = 'product/feature/original';
-              // awslargepath = 'product/feature/large';
-              // awsmediumpath = 'product/feature/medium';
-              // awsthumbnailpath = 'product/feature/thumbnail';
               awsFilePath = "product/feature";
             }
 
             if (nametype == "productvariant") {
-              // awsoriginalpath = 'product/varient/original';
-              // awslargepath = 'product/varient/large';
-              // awsmediumpath = 'product/varient/medium';
-              // awsthumbnailpath = 'product/varient/thumbnail';
               awsFilePath = "product/variant";
             }
-
-            // const awsoriginal = await uploadFile(original, filename, awsoriginalpath);
             const awsFile = await uploadFile(path, filename, awsFilePath);
 
             for (let i in sizes) {
@@ -379,18 +320,6 @@ const imageUpload = async (upload, uploadPath, nametype) => {
               }
             }
 
-            // const awslarge = await uploadFile(large, filename, awslargepath);
-            // const awsmedium = await uploadFile(medium, filename, awsmediumpath);
-            // const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
-            // delete file if uploaded on AWS and exists in local
-            // if(!awsoriginal || awsoriginal) {
-            //   imgType.map(type => {
-            //     let filePath = `.${uploadPath}${type}/${filename}`;
-            //     if(fs.existsSync(filePath)){
-            //       fs.unlinkSync(filePath);
-            //     }
-            //   })
-            // }
 
             if (!awsFile || awsFile) {
               let filePath = `.${uploadPath}${filename}`;
@@ -400,17 +329,10 @@ const imageUpload = async (upload, uploadPath, nametype) => {
             }
             return resolve({
               success: true,
-              // data: {
-              //   original: awsoriginal,
-              //   large: awslarge,
-              //   medium: awsmedium,
-              //   thumbnail: awsthumbnail,
-              // },
               data: awsFile,
             });
           });
       } catch (error) {
-        //  console.log(error);
         return resolve({
           success: false,
           message: "This image can't be upload 3",
@@ -427,9 +349,6 @@ module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
 const imageUnlink = async (imgObject) => {
-  // for (let i in imgObject) {
-  // console.log(imgObject)
-  //console.log('IMAGEOBJECT',imgObject[i]);
   const setting = await Setting.findOne({});
   const storageType = setting?.imageStorage?.status
 
@@ -446,10 +365,6 @@ const imageUnlink = async (imgObject) => {
       });
     }
   }
-  // fs.unlink("./assets/images/" + imgObject[i], function (err) {
-  //   if (err) console.log(err);
-  // });
-  // }
 };
 
 module.exports.imageUnlink = imageUnlink;
@@ -586,7 +501,6 @@ const duplicateData = async (args, model, updateId) => {
     docs = await model.find(args).collation({ locale: "en", strength: 2 });
   } else {
     docs = await model.find(args).collation({ locale: "en", strength: 2 });
-    console.log(docs);
     docs = docs.filter((doc) => {
       if (doc._id.toString() !== updateId.toString()) return doc;
     });
@@ -603,19 +517,7 @@ const subTotalDetailsEntry = async (
   taxModel
 ) => {
   const subTotalDetails = {};
-  // assign shipping_name
-  // let shipping = await shippingModel.findOne({})
-  // shipping.shippingClass.filter(shipClass => {
-  //   if(shipping.global.is_global && shipping.global.shippingClass.toString() === shipClass._id.toString()) subTotalDetails.shipping_name = shipClass.name
-  //   else subTotalDetails.shipping_name = "None"
-  // })
-  // assign tax_name
-  // let tax = await taxModel.findOne({})
-  // tax.taxClass.filter(taxClass => {
-  //   if(tax.global.is_global && tax.global.taxClass.toString() === taxClass._id.toString()) subTotalDetails.tax_name = taxClass.name
-  //   else subTotalDetails.tax_name = "None"
-  // })
-  // assign couponCode, amount, type
+  
   const coupon = await couponModel.findOne({
     code: { $regex: `${data.couponCode}`, $options: "i" },
   });
@@ -662,7 +564,6 @@ const subTotalSummaryEntry = async (
     couponType = coupon.discountType;
   }
   for (let product of data.products) {
-    // console.log(product)
     let shippingValue, taxValue;
     productTotal = product.cost * product.qty;
     for (let shippingClass of shippingClasses) {
@@ -675,16 +576,13 @@ const subTotalSummaryEntry = async (
         ? (taxValue = (taxClass.percentage / 100) * productTotal)
         : (taxValue = 0);
     }
-    // console.log(shippingValue, taxValue)
     orderSubTotal += productTotal;
     orderGrandTotal += productTotal + shippingValue + taxValue;
 
     shippingAmount += shippingValue;
     taxAmount += taxValue;
-    // console.log(shippingAmount, taxAmount, orderSubTotal, orderGrandTotal)
   }
   orderGrandTotal -= couponAmount;
-  // console.log(orderGrandTotal)
   subTotalSummary.coupon_type = couponType;
   subTotalSummary.shipping_value = shippingAmount;
   subTotalSummary.tax_value = taxAmount;
@@ -784,20 +682,6 @@ const generateOrderNumber = async (Order, Setting) => {
   let orderDigits = setting.store.order_options.order_digits;
   let prefix = setting.store.order_options.order_prefix;
   let code = "";
-  // prefix = ""
-  // let pipeline = [
-  //   {$project: {
-  //     orderPrefix: {
-  //       $substrBytes: [
-  //         "$order_number",
-  //         0,
-  //         {$subtract: [ {$strLenBytes: "$order_number"}, orderDigits ]}
-  //       ]
-  //     }
-  //   }},
-  //   {$match: {"orderPrefix": prefix}},
-  //   {$project: {orderPrefix: 0}}
-  // ]
 
   let pipeline = [
     {
@@ -867,7 +751,6 @@ const prodAvgRating = async (productID, reviewModel, productModel) => {
 module.exports.prodAvgRating = prodAvgRating;
 
 const againCalculateCart = async (coupon, args, productModel, amountDiscount) => {
-  console.log(coupon, args, productModel, amountDiscount, '=============')
   let discountAmount = 0;
   let forCouponCartTotal = 0;
   let IsApplicableDiscount = false;
@@ -888,7 +771,6 @@ const againCalculateCart = async (coupon, args, productModel, amountDiscount) =>
             if (coupon.includeCategories.length && coupon.includeCategories.includes(catID)) {
               includeProduct = coupon.includeCategories.includes(catID);
             } else if (coupon.excludeCategories.length) {
-              console.log('mfhgkfjdghkjfdhf')
               includeProduct = !coupon.excludeCategories.includes(catID);
               excludeProduct = coupon.excludeCategories.includes(catID);
             }
@@ -910,7 +792,6 @@ const againCalculateCart = async (coupon, args, productModel, amountDiscount) =>
           );
         }
       }
-      console.log(includeProduct, 'includeProduct', excludeProduct, item.productTotal)
 
       if (includeProduct && !excludeProduct) {
         includeProductTotal = 0;
@@ -958,52 +839,12 @@ const emptyCart = async (cart) => {
 };
 module.exports.emptyCart = emptyCart;
 
-// const addZipcodes = async (zipcode_file, filepath, modal) => {
-//   let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0]
-//     .file;
-//   const stream = createReadStream();
-
-//   const path = `.${filepath}/${filename}`;
-
-
-//   console.log(path, '============')
-//   stream
-//     .on("error", (error) => {
-//       console.log(JSON.stringify(error));
-
-//       fs.unlink(path, function (err) {
-//         if (err) console.log(err);
-//       });
-//       return resolve({
-//         success: false,
-//         message: "This file can't be uploaded",
-//       });
-//     })
-//     .pipe(fs.createWriteStream(path));
-
-//   if (fs.existsSync(path)) {
-//     let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
-//     csvData = csvData.split(",");
-
-//     for (let zipcode of csvData) {
-//       if (zipcode.length >= 5 || zipcode.length <= 10) {
-//         const existingZipcode = await modal.findOne({ zipcode });
-//         if (!existingZipcode) {
-//           const newZipcode = new modal({ zipcode });
-//           await newZipcode.save();
-//         }
-//       }
-//     }
-//     await modal.deleteMany({ zipcode: "\r\n" });
-//   }
-// };
 const addZipcodes = async (zipcode_file, filepath, modal) => {
   try {
     let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0].file;
     const stream = createReadStream();
 
     const path = `.${filepath}/${filename}`;
-    console.log(path, '============');
 
     // Remove the existing file if it exists
     if (fs.existsSync(path)) {

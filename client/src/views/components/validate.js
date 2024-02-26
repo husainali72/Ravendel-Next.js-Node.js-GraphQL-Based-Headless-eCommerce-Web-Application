@@ -3,15 +3,14 @@ export const validate = (names, args) => {
   let errors = "";
   if (names && names.length > 0) {
     names.map((name) => {
-      if (args[name] === '' || /^\s/.test(args[name])) {
-        const txt = name.replaceAll('_', ' ') + " is required";
+      if (args[name] === '' || /^\s+$/.test(args[name])||(name==='discountValue'&&isNaN(args[name]))) {
+        const txt =
+          name === 'discountValue' ? 'Discount value is required' : name.replaceAll('_', ' ') + " is required";
         const str = txt.charAt(0).toUpperCase() + txt.slice(1);
         return (errors = str);
       }
-      if (Array.isArray(args[name])) {
-        if (args[name].length <= 0) {
-          return (errors = `Category field is required`);
-        }
+      if (Array.isArray(args[name])&&args[name].length <= 0) {
+          return (errors = `Category field is required`);      
       }
     });
   }
@@ -23,7 +22,7 @@ export const validatenestedArray = (main, names, args, key) => {
   if (names && names.length > 0) {
     args.map((obj) => {
       names.map((name) => {
-        if (!obj[main][name] || /^\s/.test(obj[main][name])) {
+        if (!obj[main][name] || /^\s+$/.test(obj[main][name])) {
           if (key) {
             return (errors = `${key} ${name} is required`);
           } else {
@@ -43,7 +42,7 @@ export const validatenested = (main, names, args, key) => {
     if (Array.isArray(args[main])) {
       args[main].map((obj) => {
         names.map((name) => {
-          if (obj[name] === '' || /^\s/.test(obj[name])) {
+          if (obj[name] === '' || /^\s+$/.test(obj[name])) {
             if (name === 'handle') {
               let msg = obj.name.charAt(0).toUpperCase() + obj.name.slice(1);
               return (errors = `${msg} Link is required`);
@@ -59,10 +58,10 @@ export const validatenested = (main, names, args, key) => {
       });
     } else {
       names.map((name) => {
-        if (!args[main] || /^\s/.test(args[main])) {
+        if (!args[main] || /^\s+$/.test(args[main])) {
           return (errors = `${main.charAt(0).toUpperCase() + main.slice(1)} is required`);
         }
-        if (!args[main][name] || /^\s/.test(args[main][name])) {
+        if (!args[main][name] || /^\s+$/.test(args[main][name])) {
           return (errors = `${name.charAt(0).toUpperCase() + name.slice(1)} is required`);
         }
       });
