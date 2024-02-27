@@ -70,7 +70,7 @@ export default function Header({ setOpenMenu }) {
     useEffect(() => {
         getCartLength()
         dispatch(getSettings())
-    }, [ data, addedCart,cartItem])
+    }, [ data, addedCart])
 
 
   useEffect(() => {

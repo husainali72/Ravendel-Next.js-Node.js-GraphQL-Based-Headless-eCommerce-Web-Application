@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useForm } from 'react-hook-form';
 import { capitalize } from 'lodash';
 import notify from "../../../utills/notifyToast";
+import { useDispatch } from "react-redux";
 const Star = ({ starId, marked }) => {
     return (
         <span
