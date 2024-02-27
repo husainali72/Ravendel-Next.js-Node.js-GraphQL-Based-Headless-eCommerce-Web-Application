@@ -6,10 +6,10 @@ import { Container } from 'react-bootstrap';
 import { useSelector, useDispatch } from "react-redux";
 import { useSession, signOut } from "next-auth/react";
 import { logoutDispatch } from "../redux/actions/userlogoutAction"
-import { GET_USER_CART } from '../queries/cartquery';
-import { getImage, query } from '../utills/helpers';
+import { query } from '../utills/helpers';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import { GET_SETTING, getSettings } from '../redux/actions/settingAction';
+import { getUserCart } from '../redux/actions/cartAction';
 
 export const logoutAndClearData = async () => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
@@ -19,10 +19,8 @@ export const logoutAndClearData = async () => {
 
 export default function Header({ setOpenMenu }) {
   const data = useSession();
-  const cartItem = useSelector(state => state.cart)
+  const cartItem = useSelector(state => state.cart.cartItems)
   const addedCart = useSelector(state => state.addedCart)
-
-
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [cart, setCart] = useState(null);
@@ -32,7 +30,6 @@ export default function Header({ setOpenMenu }) {
     dispatch(logoutDispatch());
         window.location.pathname = "/";
   };
-
   const dropdownRef = useRef(null);
   const handleClickOutside = (event) => {
     if (
@@ -49,13 +46,6 @@ export default function Header({ setOpenMenu }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  const getCartLength = async () => {
-    let userCart;
-
-    if (addedCart) {
-      dispatch(logoutDispatch());
-    }
   const getCartLength = async () => {
         let userCart
 
@@ -80,7 +70,7 @@ export default function Header({ setOpenMenu }) {
     useEffect(() => {
         getCartLength()
         dispatch(getSettings())
-    }, [cartItem, data, addedCart])
+    }, [ data, addedCart,cartItem])
 
 
   useEffect(() => {

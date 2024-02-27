@@ -5,9 +5,11 @@ import { useSelector, useDispatch } from "react-redux";
 import CartTable from "../components/cardcomponent/CardDetail";
 import {
   removeCartItemAction,
-  RemoveAllCartItemsAction,
   increaseQuantity,
   decreaseQuantity,
+  changeQty,
+  getUserCart,
+  removeAllCartItemsAction,
 } from "../redux/actions/cartAction";
 import {
   currencySetter,
@@ -19,7 +21,6 @@ import {
 import {
   DELETE_CART_PRODUCTS,
   UPDATE_CART_PRODUCT,
-  GET_USER_CART,
 } from "../queries/cartquery";
 import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 import client from "../apollo-client";
@@ -31,6 +32,8 @@ import LoadingCartTable from "../components/cardcomponent/LoadingCard";
 import Link from "next/link";
 import { get } from "lodash";
 import { CircularProgress } from "@mui/material";
+import { Toaster } from "react-hot-toast";
+import Loading from "../components/loadingComponent";
 const CalculateProductTotal = (product) =>
   product.reduce(
     (total, product) =>
@@ -39,7 +42,6 @@ const CalculateProductTotal = (product) =>
         product.pricing * product.quantity),
     0
   );
-const cartitems2 = [];
 const YourCard = ({
   customercart,
   cart_id,
@@ -56,10 +58,9 @@ const YourCard = ({
   const [cartLoading, setCartLoading] = useState(false);
   const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
-  const [AllCartItems, setAllCartItems] = useState([]);
+  const [allCartItems, setAllCartItems] = useState([]);
   const [quantityy, setQuantity] = useState();
   const dispatch = useDispatch();
-  const [couponCode, setCouponCode] = useState("");
   const [unAvailableProducts, setUnAvailableProduct] = useState([]);
   const [currency, setCurrency] = useState("$");
   const [decimal, setdecimal] = useState(2);
@@ -73,65 +74,76 @@ const YourCard = ({
   useEffect(() => {
     dispatch(settingActionCreator(currencyStore.currency_options));
   }, [currencyStore.currency_options]);
+
+  // get all products and user cart
   useEffect(() => {
     dispatch(getAllProductsAction());
+    getUserCartData();
   }, []);
+  useEffect(() => {
+    setCartTotalLoading(get(cart, "loading"));
+  }, [get(cart, "loading")]);
+
+  const getUserCartData = async () => {
+    const userSession = await getSession();
+    if (session?.status === "authenticated" || userSession !== null) {
+      let id = get(userSession, "user.accessToken.customer._id");
+      dispatch(getUserCart(id));
+    }
+  };
   useEffect(() => {
     const getProducts = async () => {
       const productsCard = JSON.parse(localStorage.getItem("cart"));
-      setCartLoading(true);
       const userSession = await getSession();
       if (session?.status === "authenticated" || userSession !== null) {
+        setCartLoading(true);
         id = get(userSession, "user.accessToken.customer._id");
         token = get(userSession, "user.accessToken.token");
-        let variables = { id: id };
-        mutation(GET_USER_CART, variables)
-          .then((res) => {
-            let carts = get(res, "data.cartbyUser");
-            let cartItemsArray = [];
-            let allItem = [];
-            let unAvailableItems = [];
-            get(carts, "cartItems", [])?.map((cart) => {
-              let cartProduct = {
-                _id: get(cart, "productId", ""),
-                variantId: get(cart, "variantId", ""),
-                quantity: parseInt(get(cart, "qty")),
-                productQuantity: get(cart, "productQuantity"),
-                name: get(cart, "productTitle"),
-                pricing: get(cart, "productPrice"),
-                feature_image: get(cart, "productImage"),
-                url: get(cart, "url"),
-                attributes: get(cart, "attributes", []),
-                shippingClass: get(cart, "shipping.shippingClass"),
-                taxClass: get(cart, "taxClass"),
-              };
-              allItem.push(cartProduct);
-              if (cart.available) {
-                cartItemsArray.push(cartProduct);
-              } else {
-                unAvailableItems.push(cartProduct);
-              }
-            });
-            const { grandTotal, cartTotal, totalShipping, totalTax } = get(
-              carts,
-              "totalSummary"
-            );
-            setTotalSummary({
-              ...totalSummary,
-              grandTotal: formatNumber(grandTotal),
-              cartTotal: formatNumber(cartTotal),
-              totalShipping: formatNumber(totalShipping),
-              totalTax: formatNumber(totalTax),
-            });
-            setCartItems([...cartItemsArray]);
-            setAllCartItems([...allItem]);
-            setUnAvailableProduct([...unAvailableItems]);
-          })
-          .finally(() => {
-            allProducts?.products.length > 0 &&
-              cartItems.length >= 0 &&
-              setCartLoading(false);
-          });
+        let cartItemsArray = [];
+        let allItem = [];
+        let unAvailableItems = [];
+        get(cart, "cartItems", [])?.map((cart) => {
+          const originalProduct = allProducts?.products?.find(
+            (prod) => prod._id === cart.productId
+          );
+          const orginalAttributes = originalProduct?.variation_master?.find(
+            (prod) => prod.id === cart.variantId
+          );
+          let cartProduct = {
+            _id: get(cart, "productId", ""),
+            variantId: get(cart, "variantId", ""),
+            quantity: parseInt(get(cart, "qty")),
+            productQuantity: get(
+              orginalAttributes,
+              "quantity",
+              get(originalProduct, "quantity")
+            ),
+            name: get(cart, "productTitle"),
+            pricing: get(cart, "productPrice"),
+            feature_image: get(cart, "productImage"),
+            url: get(originalProduct, "url"),
+            attributes: get(cart, "attributes", []),
+            shippingClass: get(cart, "shipping.shippingClass"),
+            taxClass: get(cart, "taxClass"),
+          };
+          allItem.push(cartProduct);
+          if (cart.available) {
+            cartItemsArray.push(cartProduct);
+          } else {
+            unAvailableItems.push(cartProduct);
+          }
+        });
+        setTotalSummary({
+          ...totalSummary,
+          grandTotal: formatNumber(get(cart, "totalSummary.grandTotal")),
+          cartTotal: formatNumber(get(cart, "totalSummary.cartTotal")),
+          totalShipping: formatNumber(get(cart, "totalSummary.totalShipping")),
+          totalTax: formatNumber(get(cart, "totalSummary.totalTax")),
+        });
+        setCartItems([...cartItemsArray]);
+        setAllCartItems([...allItem]);
+        setUnAvailableProduct([...unAvailableItems]);
+        setCartLoading(false);
       } else {
         setCartItems(productsCard || []);
         setAllCartItems(productsCard || []);
@@ -139,79 +151,35 @@ const YourCard = ({
       }
     };
     getProducts();
-  }, [allProducts, cart]);
-  const handlePayment = async () => {
-    if (session?.status !== "authenticated") {
-      router.push("/account");
-    } else if (session?.status === "authenticated") {
-      const response = await fetch("/api/stripe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(cartItems),
-      });
-      const data = await response.json();
-      if (response.statusCode === 500) return;
-    }
-  };
+  }, [allProducts, get(cart, "cartItems")]);
 
+  // Function to clear all items in the cart
   const AllCartItemsClear = async () => {
     setCartItems([]);
     setAllCartItems([]);
     if (session.status === "authenticated") {
-      let id = session.data.user.accessToken.customer._id;
-      let token = session.data.user.accessToken.token;
-
-      query(GET_USER_CART, id, token).then((res) => {
-        cart_id = res.data.cartbyUser.id;
-        let variables = {
-          id: cart_id,
-          products: [],
-          total: 0,
-        };
-        mutation(UPDATE_CART_PRODUCT, variables, token).then((res) =>
-          dispatch(RemoveAllCartItemsAction([]))
-        );
-      });
+      let id = get(session, "data.user.accessToken.customer._id");
+      let variables = { userId: id };
+      dispatch(removeAllCartItemsAction(variables));
     } else {
-      dispatch(RemoveAllCartItemsAction([]));
+      dispatch(removeAllCartItemsAction([]));
     }
 
     localStorage.setItem("cart", JSON.stringify([]));
   };
-  const fetchUpdatedCart = async () => {
-    const userSession = await getSession();
-    if (session?.status === "authenticated" || userSession !== null) {
-      id = get(userSession, "user.accessToken.customer._id");
-      token = get(userSession, "user.accessToken.token");
-      let variables = { id: id };
-      mutation(GET_USER_CART, variables)
-        .then((res) => {
-          let carts = get(res, "data.cartbyUser");
-          const { grandTotal, cartTotal, totalShipping, totalTax } = get(
-            carts,
-            "totalSummary"
-          );
-          setTotalSummary({
-            ...totalSummary,
-            grandTotal: formatNumber(grandTotal),
-            cartTotal: formatNumber(cartTotal),
-            totalShipping: formatNumber(totalShipping),
-            totalTax: formatNumber(totalTax),
-          });
-          setCartTotalLoading(false);
-        })
-        .catch((error) => {
-          setCartTotalLoading(false);
-        });
-    }
-  };
+
+  // Function to increase the quantity of a cart item
   const IncreaseQuantity = async (item) => {
-    setCartTotalLoading(true);
+    setIsQuantityBtnLoading(true);
+    const isQuantityIncreased = allCartItems.some(
+      (itemm) =>
+        itemm._id === item._id &&
+        itemm.variantId === item.variantId &&
+        item?.productQuantity >= itemm.quantity + 1
+    );
     setAllCartItems(
-      [...AllCartItems],
-      AllCartItems.filter((itemm) =>
+      [...allCartItems],
+      allCartItems.filter((itemm) =>
         itemm._id === item._id && itemm.variantId === item.variantId
           ? item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)
           : itemm.quantity
@@ -221,6 +189,7 @@ const YourCard = ({
       dispatch(
         increaseQuantity(item._id, item.productQuantity, item.variantId)
       );
+      setIsQuantityBtnLoading(false);
     } else {
       const selectedProduct = cartItems.find(
         (cart) => cart._id === item._id && cart.variantId === item.variantId
@@ -228,60 +197,31 @@ const YourCard = ({
       const qty = selectedProduct.quantity;
       if (session?.status === "authenticated") {
         let id = get(session, "data.user.accessToken.customer._id");
-        let token = get(session, "data.user.accessToken.token");
-        query(GET_USER_CART, id, token)
+        let variables = {
+          userId: id,
+          productId: get(item, "_id"),
+          qty: isQuantityIncreased ? qty : qty + 1,
+        };
+        dispatch(changeQty(variables))
           .then((res) => {
-            cart_id = get(res, "data.cartbyUser.id");
-            const clonedCartItems = [...AllCartItems];
-
-            const updatedCart = clonedCartItems?.map((product) => {
-              let singleProduct = {
-                productId: get(product, "_id"),
-                qty: qty,
-                productTitle: get(product, "name"),
-                productImage: get(product, "feature_image"),
-                productPrice: get(product, "pricing")?.toString(),
-                attributes: get(product, "attributes"),
-                variantId: get(product, "variantId"),
-                productQuantity: get(product, "productQuantity"),
-                shippingClass: get(product, "shippingClass"),
-                taxClass: get(product, "taxClass"),
-              };
-              if (
-                product?._id === item?._id &&
-                product?.variantId === item?.variantId
-              ) {
-                return {
-                  ...singleProduct,
-                  qty: qty,
-                };
-              } else {
-                return {
-                  ...singleProduct,
-                  qty: product.quantity,
-                };
-              }
-            });
-            let variables = {
-              id: cart_id,
-              products: updatedCart,
-              total: 0,
-            };
-            mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {
-              fetchUpdatedCart();
-            });
+            if (get(res, "data.changeQty.success")) {
+              dispatch(getUserCart(id));
+            }
+            setIsQuantityBtnLoading(false);
           })
-          .finally(() => setIsQuantityBtnLoading(false));
+          .catch((err) => {
+            setIsQuantityBtnLoading(false);
+          });
       }
     }
   };
+  // Function to decrease the quantity of a cart item
   const DecreaseQuantity = (item) => {
-    setCartTotalLoading(true);
     if (item.quantity > 1) {
       setIsQuantityBtnLoading(true);
       setAllCartItems(
-        [...AllCartItems],
-        AllCartItems.filter((itemm) =>
+        [...allCartItems],
+        allCartItems.filter((itemm) =>
           itemm._id === item._id && itemm.variantId === item.variantId
             ? itemm.quantity - 1 >= 1 && (itemm.quantity -= 1)
             : itemm.quantity
@@ -302,82 +242,46 @@ const YourCard = ({
         const qty = selectedProduct?.quantity;
         if (session?.status === "authenticated") {
           let id = get(session, "data.user.accessToken.customer._id");
-          let token = get(session, "data.user.accessToken.token");
-          query(GET_USER_CART, id, token)
+          let variables = {
+            userId: id,
+            productId: get(item, "_id"),
+            qty: qty,
+          };
+          dispatch(changeQty(variables))
             .then((res) => {
-              cart_id = get(res, "data.cartbyUser.id");
-              const clonedCartItems = [...AllCartItems];
-              const updatedCart = clonedCartItems?.map((product) => {
-                let singleProduct = {
-                  productId: get(product, "_id"),
-                  qty: qty,
-                  productTitle: get(product, "name"),
-                  productImage: get(product, "feature_image"),
-                  productPrice: get(product, "pricing")?.toString(),
-                  attributes: get(product, "attributes"),
-                  variantId: get(product, "variantId"),
-                  productQuantity: get(product, "productQuantity"),
-                  shippingClass: get(product, "shippingClass"),
-                  taxClass: get(product, "taxClass"),
-                };
-                if (
-                  product._id === item._id &&
-                  product.variantId === item.variantId
-                ) {
-                  return {
-                    ...singleProduct,
-                    qty: qty,
-                  };
-                } else {
-                  return {
-                    ...singleProduct,
-                    qty: product.quantity,
-                  };
-                }
-              });
-              let variables = {
-                id: cart_id,
-                products: updatedCart,
-                total: 0,
-              };
- 
-              mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {
-               
-                fetchUpdatedCart();
-                let variables = {
-                  _id: item._id,
-                  variantId: item.variantId,
-                };
-              });
+              if (get(res, "data.changeQty.success")) {
+                dispatch(getUserCart(id));
+              }
+              setIsQuantityBtnLoading(false);
             })
-            .finally(() =>{
-            setIsQuantityBtnLoading(false)});
+            .catch((err) => {
+              setIsQuantityBtnLoading(false);
+            });
         }
       }
-      }else{
-        setCartTotalLoading(false);
-      }
+    } else {
+      setCartTotalLoading(false);
+      setIsQuantityBtnLoading(false);
+    }
   };
-
+  // Function to remove an item from the cart
   const removeToCart = async (item) => {
     let product = item?._id;
     if (session?.status === "authenticated") {
-      let id = session.data.user.accessToken.customer._id;
-      let token = session.data.user.accessToken.token;
+      let id = get(session, "data.user.accessToken.customer._id");
+      let variables = {
+        userId: id,
+        productId: item._id,
+        variantId: item.variantId,
+      };
 
-      query(GET_USER_CART, id, token).then((res) => {
-        cart_id = res.data.cartbyUser.id;
-
-        let variables = {
-          id: cart_id,
-          productId: item._id,
-          variantId: item.variantId,
-        };
-
-        mutation(DELETE_CART_PRODUCTS, variables, token).then((res) =>
-          dispatch(removeCartItemAction(variables))
-        );
-      });
+      mutation(DELETE_CART_PRODUCTS, variables, dispatch).then(
+        (res) => {
+          if (get(res, "data.deleteCartProduct.success")) {
+            dispatch(getUserCart(id));
+          }
+        }
+      );
     } else {
       let cartItemsfilter = cartItems.filter(
         (itemm) =>
@@ -391,35 +295,6 @@ const YourCard = ({
       dispatch(removeCartItemAction(variables));
       setCartItems(cartItemsfilter);
     }
-  };
-
-  const updateCartProduct = () => {
-    const productsCard = JSON.parse(localStorage.getItem("persistantState"));
-    var id = "";
-    var token = "";
-    if (session.status === "authenticated") {
-      id = get(session, "data.user.accessToken.customer._id");
-      token = get(session, "data.user.accessToken.token");
-    }
-    let carts = productsCard.cart.map((product) => {
-      return {
-        productId: get(product, "_id", ""),
-        qty: get(product, "quantity", 0),
-        productTitle: get(product, "name", ""),
-        productImage: get(product, "feature_image", ""),
-        productPrice: get(
-          product,
-          "pricing.sellprice",
-          get(product, "pricing.price", "")
-        )?.toString(),
-      };
-    });
-    let variables = {
-      id: cart_id,
-      products: carts,
-    };
-
-    mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {});
   };
 
   if (cartLoading) {
@@ -443,6 +318,8 @@ const YourCard = ({
         <BreadCrumb title={"Cart"} />
         <section className="shopcart-table">
           <Container>
+            <Toaster />
+            {isQuantityBtnLoading && <Loading />}
             {cartItems?.length > 0 ? (
               <div className="row">
                 <div className="col-12">
@@ -457,7 +334,6 @@ const YourCard = ({
                     removeToCart={removeToCart}
                     CalculateProductTotal={CalculateProductTotal}
                     AllCartItemsClear={AllCartItemsClear}
-                    updateCartProduct={updateCartProduct}
                     currency={currency}
                     available={true}
                     settings={settings}
@@ -480,7 +356,6 @@ const YourCard = ({
                         removeToCart={removeToCart}
                         CalculateProductTotal={CalculateProductTotal}
                         AllCartItemsClear={AllCartItemsClear}
-                        updateCartProduct={updateCartProduct}
                         currency={currency}
                         available={false}
                         settings={settings}
@@ -582,7 +457,6 @@ const YourCard = ({
                   removeToCart={removeToCart}
                   CalculateProductTotal={CalculateProductTotal}
                   AllCartItemsClear={AllCartItemsClear}
-                  updateCartProduct={updateCartProduct}
                   currency={currency}
                   available={false}
                 />

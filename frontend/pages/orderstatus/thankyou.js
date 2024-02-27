@@ -2,23 +2,17 @@
 import { Container } from "react-bootstrap";
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import PageTitle from "../../components/PageTitle";
-import { useDispatch, useSelector } from "react-redux";
-import OrdersDetails from "../../components/account/component/orders-details";
+import { useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { query } from "../../utills/helpers";
 import { GET_CUSTOMER_ORDERS_QUERY } from "../../queries/orderquery";
 import { useSession } from "next-auth/react";
-import { query2 } from "../../utills/cartHelperfun";
 import client from "../../apollo-client";
 import OrderDetailAfter from "../../components/account/component/OrderDetailAfter";
-import CheckOut from "../checkout";
 import { settingActionCreator } from "../../redux/actions/settingAction";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
 const ThankYou = ({ currencyStore }) => {
     const dispatch = useDispatch();
-    const checkoutDetail = useSelector(state => state.checkout)
-    const [showOrderDetail, setShowOrderDetail] = useState(false)
-    const [rderD, setOrderData] = useState("")
     const session = useSession();
     const [Data, setData] = useState()
     useEffect(() => {
@@ -28,7 +22,7 @@ const ThankYou = ({ currencyStore }) => {
         if (session.status === "authenticated") {
             const ID = session?.data?.user?.accessToken?.customer?._id
             const token = session?.data?.user?.accessToken?.token
-            query(GET_CUSTOMER_ORDERS_QUERY, ID, token).then((res) => {
+            query(GET_CUSTOMER_ORDERS_QUERY, ID, dispatch).then((res) => {
                 setData(res?.data?.orderbyUser?.data?.[0])
             })
 

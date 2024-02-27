@@ -2450,6 +2450,15 @@ footer .btn:hover a {
 .dropdown-menu i {
   color: #088178;
 }
+.backdrop{
+  z-index: 1101 !important;
+  color: #fff
+}
+.backdropInnerWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center
+}
 
 /* ------Home Page--------- */
 .card-title {

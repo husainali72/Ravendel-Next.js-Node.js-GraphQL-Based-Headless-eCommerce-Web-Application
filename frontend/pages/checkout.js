@@ -22,7 +22,7 @@ import { GET_USER_CART, UPDATE_CART_PRODUCT } from "../queries/cartquery";
 import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
 import { query2 } from "../utills/cartHelperfun"
 import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
-import { removeCartItemAction } from "../redux/actions/cartAction";
+import { removeAllCartItemsAction, removeCartItemAction } from "../redux/actions/cartAction";
 import toast, { Toaster } from 'react-hot-toast';
 import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 import { CHECK_ZIPCODE } from "../queries/productquery";
@@ -107,7 +107,7 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
 
     }
 
-    const cartProducts = useSelector((state) => state.cart);
+    const carts = useSelector((state) => state.cart);
     const [cartTotal, setCartTotal] = useState(0)
     const [grandTotal, setgrandTotal] = useState(0)
     const [cartItems, setCartItems] = useState([])
@@ -145,24 +145,19 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
             token = session.data?.user.accessToken.token
             customerId = session.data.user.accessToken.customer._id
             setIsLogin(true)
+        }else{
+            setIsLogin(false)
         }
-    }, [])
+    }, [get(carts,'cartItems')])
     useEffect(() => {
         const getProducts = async () => {
 
             const userSession  = await getSession();
-            const productsCard = JSON.parse(localStorage.getItem("cart"))
             if (session?.status === "authenticated" || userSession  !== null) {
                 setIsLogin(true)
-                let id = get(userSession ,'user.accessToken.customer._id');
-                let token = get(userSession ,'user.accessToken.token')
-                let variables = { id: id }
-                mutation(GET_USER_CART, variables).then(res => {
-                    
-                    let carts = get(res, "data.cartbyUser");
                     setCartId(get(carts,'id'))
                     let cartItemsArray = [];
-                    get(carts, "cartItems", [])?.map(cart => {
+                    get(carts,'cartItems',[])?.map(cart => {
                         let cartProduct = {
                             _id: get(cart, "productId",''),
                             variantId: get(cart, "variantId",''),
@@ -187,15 +182,13 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                     setDelivery(formatNumber(totalShipping));
                     settaxAmount(formatNumber(totalTax));
                     setCartItems([...cartItemsArray])
-
-                })
             }
             else {
-                setCartItems(cartProducts)
+                setCartItems(get(carts,'cartItems'))
             }
         }
         getProducts();
-    }, [cartProducts, allProducts]);
+    }, [get(carts,'cartItems'), allProducts]);
     useEffect(() => {
         const checkCart = async () => {
             const userSession  = await getSession();
@@ -204,7 +197,7 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                 let id = get(userSession ,'user.accessToken.customer._id');
                 let token =get( userSession ,'user.accessToken.token');
                 let variables = { id: id }
-                mutation(GET_USER_CART, variables).then(res => {
+                mutation(GET_USER_CART, variables,dispatch).then(res => {
                     let carts = res?.data?.cartbyUser?.cartItem;
                     if (carts?.length <= 0) {
                         router.push("/")
@@ -413,7 +406,7 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
         }
         dispatch(checkoutDetailAction(billingDetails));
 
-        mutation(ADD_ORDER, billingDetails, token).then(res => {
+        mutation(ADD_ORDER, billingDetails, dispatch).then(res => {
             let response = res.data.addOrder.success
 
             if (response) {
@@ -423,15 +416,8 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                 if (session.status === "authenticated") {
                     let id = session.data.user.accessToken.customer._id
                     let token = session.data.user.accessToken.token
-
-
-                    let variables = {
-                        id: cartId,
-                        products: [],
-                        total: 0
-                    }
-
-                    mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("delet res while auth ", res))
+                    let variables = { userId: id}
+                    dispatch(removeAllCartItemsAction(variables))
 
                 }
 

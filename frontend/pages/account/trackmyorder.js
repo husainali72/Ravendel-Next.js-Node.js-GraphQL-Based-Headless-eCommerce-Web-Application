@@ -11,6 +11,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import OrdersDetails from "../../components/account/component/orders-details";
 import client from "../../apollo-client";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
+import { useDispatch } from "react-redux";
 const TrackMyOrder = () => {
     const [customerOrder, setCustomerOrder] = useState([])
     const [loading, setloading] = useState(false)
@@ -18,6 +19,7 @@ const TrackMyOrder = () => {
     const [decimal, setdecimal] = useState(2)
     const [currencyStore, setCurrencyStore] = useState({})
     const [currency, setCurrency] = useState("$")
+    const dispatch =useDispatch()
     const OrderStatus = [
         { name: 'inprogress', Title: 'Order Confirmed', color: 'primary' },
         { name: 'shipped', Title: 'Order Shipped', color: 'primary' },
@@ -41,7 +43,6 @@ const TrackMyOrder = () => {
             setCurrencyStore(homepageData?.getSettings?.store)
         }
         catch (e) {
-            console.log("homepage Error===", e);
         }
     }
     useEffect(() => {
@@ -54,7 +55,7 @@ const TrackMyOrder = () => {
             id = Session.user.accessToken.customer._id
             token = Session.user.accessToken.token
         }
-        query(GET_CUSTOMER_ORDERS_QUERY, id, token).then((response) => {
+        query(GET_CUSTOMER_ORDERS_QUERY, id, dispatch).then((response) => {
             if (response) {
                 if (response.data.orderbyUser.data) {
                     const customeradd = response.data.orderbyUser.data

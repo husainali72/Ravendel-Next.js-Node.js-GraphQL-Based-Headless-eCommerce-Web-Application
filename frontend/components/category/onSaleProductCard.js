@@ -102,7 +102,7 @@ const OnSaleProductCard = ({
               products: Cartt,
               total: 0,
             };
-            mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {
+            mutation(UPDATE_CART_PRODUCT, variables, dispatch).then((res) => {
               router.push("/shopcart");
             });
           }
@@ -120,7 +120,7 @@ const OnSaleProductCard = ({
             shippingClass: product?.shipping?.shippingClass,
             taxClass: product?.taxClass,
           };
-          mutation(ADD_TO_CART_QUERY, variables, token).then((res) => {
+          mutation(ADD_TO_CART_QUERY, variables, dispatch).then((res) => {
             router.push("/shopcart");
             dispatch(addToCart(product));
           });

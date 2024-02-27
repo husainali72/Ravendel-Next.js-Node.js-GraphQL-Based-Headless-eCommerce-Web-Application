@@ -1,127 +1,182 @@
 import Link from "next/link";
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import { Spinner } from "react-bootstrap";
-import Table from 'react-bootstrap/Table';
-import { getImage, getPrice, imageOnError } from '../../utills/helpers';
+import Table from "react-bootstrap/Table";
+import { getImage, getPrice, imageOnError } from "../../utills/helpers";
 import { capitalize } from "lodash";
 import { useSelector } from "react-redux";
 const CartTable = (props) => {
-    const settings = useSelector((state) => state.setting)
-    const { cartItems,
-        decimal,
-        isQuantityBtnLoading,
-        CalculateProductTotal,
-        DecreaseQuantity,
-        IncreaseQuantity,
-        AllCartItemsClear,
-        quantity,
-        removeToCart,
-        updateCartProduct, currency,
-        unAvailableProducts,
-        available,
-        homepageData
-    } = props;
-    const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
-    return (
-        <div>
-            <div className="table-responsive">
-                <Table bordered>
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Attributes</th>
-                            <th>Quantity</th>
-                            <th>SubTotal</th>
-                            <th>Remove</th>
-                        </tr>
-                    </thead  >
+  const settings = useSelector((state) => state.setting);
+  const {
+    cartItems,
+    decimal,
+    isQuantityBtnLoading,
+    CalculateProductTotal,
+    DecreaseQuantity,
+    IncreaseQuantity,
+    AllCartItemsClear,
+    quantity,
+    removeToCart,
+    updateCartProduct,
+    currency,
+    unAvailableProducts,
+    available,
+    homepageData,
+  } = props;
+  const imageType =
+    homepageData && homepageData?.getSettings?.imageStorage?.status;
+  return (
+    <div>
+      <div className="table-responsive">
+        <Table bordered>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Attributes</th>
+              <th>Quantity</th>
+              <th>SubTotal</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
 
-                    <tbody>
-                        {cartItems && cartItems?.length > 0 && cartItems.map((item, i) => {
-                            console.log('item => ', getImage(item.feature_image, imageType));
-                            return (
-                            <tr key={i}>
-                                <td>
-                                    {available ? <Link href={"/product/" + item.url}>
+          <tbody>
+            {cartItems &&
+              cartItems?.length > 0 &&
+              cartItems.map((item, i) => {
+                return (
+                  <tr key={i}>
+                    <td>
+                      {available ? (
+                        <Link href={"/product/" + item.url}>
+                          <div className="td-flex cursor-pointer">
+                            <img
+                              src={getImage(item.feature_image, imageType)}
+                              onError={imageOnError}
+                            />
+                          </div>
+                        </Link>
+                      ) : (
+                        <div className="td-flex cursor-pointer">
+                          <img
+                            src={getImage(item.feature_image, imageType)}
+                            onError={imageOnError}
+                          />
+                        </div>
+                      )}
+                    </td>
 
-                                        <div className="td-flex cursor-pointer">
-                                            <img src={getImage(item.feature_image, imageType)}  onError={imageOnError}/>
-                                        </div>
-                                    </Link> : <div className="td-flex cursor-pointer">
-                                        <img src={getImage(item.feature_image,imageType)} onError={imageOnError} />
-                                    </div>}
-                                </td>
-
-                                <td>
-                                    {available ? <Link href={"/product/" + item.url}>
-                                        <div className="td-flex cursor-pointer table-product-title">
-                                            <h3>{item.name}</h3>
-                                        </div>
-                                    </Link> : <div className="td-flex cursor-pointer table-product-title">
-                                        <h3>{item.name}</h3>
-                                    </div>}
-                                </td>
-                                <td>
-                                    <div className="td-flex">
-                                        <span>{currency} {(item.pricing?.sellprice ? getPrice(item.pricing, decimal) : getPrice(item.pricing, decimal))}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    {item?.attributes?.map((obj) => {
-                                        let classname = item.attributes.length === 1 ? "td-flex" : "td-Flex"
-                                        return (<div className={classname}>
-                                            {capitalize(obj.name)} :   {capitalize(obj.value)}
-                                        </div>)
-
-                                    })}
-                                </td>
-                                <td>
-                                    <div className="td-flex">
-                                        <span className={`btn btn-primary btn-less ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
-                                            if (available) { DecreaseQuantity(item) }
-                                        }}>
-                                            <i className="fas fa-chevron-down" ></i>
-                                        </span>
-                                        <span className="btn btn-info max-button-width-load">
-                                            {item?.quantity}
-                                        </span>
-                                        <span className={`btn btn-primary btn-more ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
-                                            if (available) { IncreaseQuantity(item) }
-                                        }}>
-                                            <i className="fas fa-chevron-up"></i>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="td-flex">
-                                        <span>{currency} {((item.pricing?.sellprice ? getPrice(item.pricing * item.quantity, decimal) : getPrice(item.pricing * item.quantity, decimal)) || 0)}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="td-flex">
-                                        <i onClick={() => removeToCart(item)} className="far fa-trash-alt"></i></div>
-                                </td>
-                            </tr>
-                        )})
-                        }
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td className="clear-cart">
-                                <i onClick={() => AllCartItemsClear()} className="fas fa-times clear-cart">Clear Cart</i>
-                            </td>
-                        </tr>
-                    </tbody>
-                </Table>
-            </div>
-
-
-        </div>
-    )
-}
+                    <td>
+                      {available ? (
+                        <Link href={"/product/" + item.url}>
+                          <div className="td-flex cursor-pointer table-product-title">
+                            <h3>{item.name}</h3>
+                          </div>
+                        </Link>
+                      ) : (
+                        <div className="td-flex cursor-pointer table-product-title">
+                          <h3>{item.name}</h3>
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <div className="td-flex">
+                        <span>
+                          {currency}{" "}
+                          {item.pricing?.sellprice
+                            ? getPrice(item.pricing, decimal)
+                            : getPrice(item.pricing, decimal)}
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      {item?.attributes?.map((obj) => {
+                        let classname =
+                          item.attributes.length === 1 ? "td-flex" : "td-Flex";
+                        return (
+                          <div className={classname}>
+                            {capitalize(obj.name)} : {capitalize(obj.value)}
+                          </div>
+                        );
+                      })}
+                    </td>
+                    <td>
+                      <div className="td-flex">
+                        <span
+                          className={`btn btn-primary btn-less ${
+                            isQuantityBtnLoading && "disableButton"
+                          }`}
+                          style={{ margin: "2px" }}
+                          onClick={() => {
+                            if (available) {
+                              DecreaseQuantity(item);
+                            }
+                          }}
+                        >
+                          <i className="fas fa-chevron-down"></i>
+                        </span>
+                        <span className="btn btn-info max-button-width-load">
+                          {item?.quantity}
+                        </span>
+                        <span
+                          className={`btn btn-primary btn-more ${
+                            isQuantityBtnLoading && "disableButton"
+                          }`}
+                          style={{ margin: "2px" }}
+                          onClick={() => {
+                            if (available) {
+                              IncreaseQuantity(item);
+                            }
+                          }}
+                        >
+                          <i className="fas fa-chevron-up"></i>
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="td-flex">
+                        <span>
+                          {currency}{" "}
+                          {(item.pricing?.sellprice
+                            ? getPrice(item.pricing * item.quantity, decimal)
+                            : getPrice(
+                                item.pricing * item.quantity,
+                                decimal
+                              )) || 0}
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="td-flex">
+                        <i
+                          onClick={() => removeToCart(item)}
+                          className="far fa-trash-alt"
+                        ></i>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td className="clear-cart">
+                <i
+                  onClick={() => AllCartItemsClear()}
+                  className="fas fa-times clear-cart"
+                >
+                  Clear Cart
+                </i>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+      </div>
+    </div>
+  );
+};
 export default CartTable;

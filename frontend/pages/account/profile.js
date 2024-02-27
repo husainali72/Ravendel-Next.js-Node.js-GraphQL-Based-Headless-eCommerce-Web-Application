@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { useSession, getSession } from 'next-auth/react';
 import { capitalize } from 'lodash';
 import { Toaster } from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
 const Profile = ({ customeraddres }) => {
     const [ID, setID] = useState("")
     const session = useSession();
@@ -35,6 +36,7 @@ const Profile = ({ customeraddres }) => {
     const [customeraddress, setCustomerAddress] = useState(customeraddres)
     const [customerOrder, setCustomerOrder] = useState({})
     const [ToggleEdit, setToggleEdit] = useState(false)
+    const dispatch=useDispatch()
     var id = ""
     var token = ""
 
@@ -61,7 +63,7 @@ const Profile = ({ customeraddres }) => {
             id = session.data.user.accessToken.customer._id
             token = session.data.user.accessToken.token
         }
-        query(GET_CUSTOMER_QUERY, id, token).then((response) => {
+        query(GET_CUSTOMER_QUERY, id, dispatch).then((response) => {
             const customeradd = response.data.customer.data
             setCustomerAddress(customeradd)
             setToggleEdit(false)

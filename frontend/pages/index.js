@@ -25,7 +25,7 @@ export default function Home({ homepageData, settings, setOpenMenu, openMenu, se
   const dispatch = useDispatch()
   const session = useSession()
   const userCart = useSelector(state => state.userCart)
-  const cart = useSelector(state => state.cart)
+  const cart = useSelector(state => state.cart.cartItems)
   const productss = useSelector(state => state.products)
 
   useEffect(() => {

@@ -1,14 +1,11 @@
 import { ADD_ADDRESSBOOK, UPDATE_ADDRESSBOOK, DELETE_ADDRESSBOOK } from "../../../queries/customerquery";
-import client from "../../../apollo-client";
 import { Fragment, useEffect, useState } from "react";
 import { Card, Button, Row, Col, Collapse, Form, Fade, Tooltip, OverlayTrigger } from "react-bootstrap";
-import { mutation, query } from "../../../utills/helpers";
+import { mutation } from "../../../utills/helpers";
 import { useRouter } from "next/router";
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { capitalize } from 'lodash';
 import notify from "../../../utills/notifyToast";
-import PhoneInput from "react-phone-input-2";
-import { isValidPhoneNumber } from "react-phone-number-input";
 const Star = ({ starId, marked }) => {
     return (
         <span
@@ -41,6 +38,7 @@ const AddressDetail = (props) => {
     const [editMode, setEditMode] = useState(false);
     const [address, setAddress] = useState(addressObject)
     const [allAddressBook, setAllAddressBook] = useState([])
+    const dispatch=useDispatch()
     useEffect(() => {
         if (addressDetail?.id) {
             addressObject.id = addressDetail?.id
@@ -79,7 +77,7 @@ const AddressDetail = (props) => {
 
     const updateAddress = async (e) => {
         if (address?.firstName && address?.lastName && address?.addressLine1 && address?.city && address?.company && address?.country && address?.state && address?.phone) {
-            mutation(UPDATE_ADDRESSBOOK, address, token).then(async (response) => {
+            mutation(UPDATE_ADDRESSBOOK, address, dispatch).then(async (response) => {
                 if (response?.data?.updateAddressBook?.success) {
                     getcustomer()
                     setEditMode(false);
@@ -93,7 +91,7 @@ const AddressDetail = (props) => {
     };
     const addNewAddress = async () => {
         if (address?.firstName && address?.lastName && address?.addressLine1 && address?.city && address?.company && address?.country && address?.state && address?.phone) {
-            mutation(ADD_ADDRESSBOOK, address, token).then(async (response) => {
+            mutation(ADD_ADDRESSBOOK, address, dispatch).then(async (response) => {
 
                 if (response?.data?.addAddressBook?.success) {
                     setAddMode(false);
@@ -123,7 +121,7 @@ const AddressDetail = (props) => {
         }
         const id = address.id;
         let variables = { id, _id }
-        mutation(DELETE_ADDRESSBOOK, variables, token).then(async (response) => {
+        mutation(DELETE_ADDRESSBOOK, variables, dispatch).then(async (response) => {
             if (response?.data?.deleteAddressBook?.success) {
                 refreshData()
                 await router.push("/account/profile")

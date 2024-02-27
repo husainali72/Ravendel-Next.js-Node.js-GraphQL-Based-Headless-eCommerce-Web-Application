@@ -25,7 +25,6 @@ import {
 } from "@mui/material";
 import {
   ADD_TO_CART_QUERY,
-  GET_USER_CART,
   UPDATE_CART_PRODUCT,
 } from "../../queries/cartquery";
 import CheckZipcode from "../account/component/CheckZipcode";
@@ -51,8 +50,9 @@ const GalleryImagesComponents = (props) => {
   } = props;
   const imageType = homepageData?.getSettings?.imageStorage?.status;
   const getSetting = useSelector((state) => state.setting);
+  const cart = useSelector((state) => state.cart.cartItems);
   const [available, setavailable] = useState(false);
-  const [Lable, setLable] = useState("In Stock");
+  const [lable, setLable] = useState("In Stock");
   const [variantSelect, setVariantSelect] = useState();
   const [parentId, setParentId] = useState();
   const [error, seterror] = useState(false);
@@ -178,14 +178,13 @@ const GalleryImagesComponents = (props) => {
   };
 
   const addToCartAndNavigate = (variables, token) => {
-    mutation(ADD_TO_CART_QUERY, variables, token).then((res) => {
+    mutation(ADD_TO_CART_QUERY, variables, dispatch).then((res) => {
       router.push("/shopcart");
-      dispatch(addToCart(variables));
-    });
+    })
   };
 
-  const isProductInCart = (product, comboData, inCartProducts) => {
-    return inCartProducts?.some((inCartProduct) => {
+  const isProductInCart = (product, comboData) => {
+    return cart?.some((inCartProduct) => {
       const productIdMatch = product?._id === get(inCartProduct, "productId");
       const variantIdMatch = comboData?.some(
         (variant) => variant?.id === inCartProduct?.variantId
@@ -196,6 +195,7 @@ const GalleryImagesComponents = (props) => {
       return productIdMatch && variantIdMatch;
     });
   };
+  // Add product in a cart
   const addToCartProduct = async (product) => {
     const isUserAuthenticated = session?.status === "authenticated";
     const hasAttributesMismatch =
@@ -212,10 +212,7 @@ const GalleryImagesComponents = (props) => {
     const quantity = 1;
 
     if (isUserAuthenticated) {
-      const res = await query(GET_USER_CART, id, token);
-      let cart_id = get(res, "data.cartbyUser.id");
-      let inCartProducts = get(res, "data.cartbyUser.cartItems");
-      const productInCart = isProductInCart(product, comboData, inCartProducts);
+      const productInCart = isProductInCart(product, comboData);
       if (!productInCart) {
         setItemInCart(false);
         const commonVariables = prepareCommonVariables(id, product);
@@ -312,6 +309,7 @@ const GalleryImagesComponents = (props) => {
               )
             )
           ),
+          productQuantity: get(comboData[0], "quantity", get(product, "quantity")),
           variantId: get(comboData[0], "id"),
           attributes: attributesData,
         };
@@ -333,6 +331,7 @@ const GalleryImagesComponents = (props) => {
       });
     });
     setComboData([...com]);
+    setItemInCart(false);
     return com;
   };
 
@@ -592,7 +591,7 @@ const GalleryImagesComponents = (props) => {
             <div className="short-desc mb-30">
               <p> {singleproducts?.short_description}</p>
             </div>
-            {Lable !== "Out Of Stock" && (
+            {lable !== "Out Of Stock" && (
               <button
                 type="button"
                 className="btn btn-success button button-add-to-cart"
@@ -600,7 +599,7 @@ const GalleryImagesComponents = (props) => {
                 onClick={() =>
                   !itemInCart
                     ? addToCartProduct(singleproducts)
-                    : navigateToShopCart()
+                    :navigateToShopCart()
                 }
                 disabled={
                   (comboData && comboData.length) || !variantSelect
@@ -611,6 +610,7 @@ const GalleryImagesComponents = (props) => {
                 {!itemInCart ? "Add to Cart" : "Go To Cart"}
               </button>
             )}
+            
             {itemInCart && (
               <p className="already-in-cart-message">
                 This item is already in your cart. Review your choice in the
@@ -684,7 +684,7 @@ const GalleryImagesComponents = (props) => {
               </p>
               {newFunction(singleproducts)}
               <p className="">
-                Availablity: <span className={stockClass}>{Lable}</span>
+                Availablity: <span className={stockClass}>{lable}</span>
               </p>
             </ul>
           </div>
