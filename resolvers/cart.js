@@ -28,12 +28,12 @@ module.exports = {
     },
 
 
-    cartbyUser: async (root, args, { id }) => {
+    calculateCart: async (root, args, { id }) => {
       // if (!id) {
       //   return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
       // }
       try {
-        return calculateCart(args.userId);
+        return calculateCart(args.userId, args.cartItems);
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -126,253 +126,253 @@ module.exports = {
 
 
 
-    calculateCart: async (root, args, { id }) => {
-      try {
-        const shipping = await Shipping.findOne({});
-        const tax = await Tax.findOne({});
+    // calculateCart: async (root, args, { id }) => {
+    //   try {
+    //     const shipping = await Shipping.findOne({});
+    //     const tax = await Tax.findOne({});
 
-        let items = [];
-        let totalTax = 0;
-        let totalShipping = 0;
-        let grandTotal = 0;
-        let cartTotal = 0;
+    //     let items = [];
+    //     let totalTax = 0;
+    //     let totalShipping = 0;
+    //     let grandTotal = 0;
+    //     let cartTotal = 0;
 
-        let global_tax = false;
-        let taxPercentage;
-        if (tax.global.is_global) {
-          let taxClassId = tax.global.taxClass;
+    //     let global_tax = false;
+    //     let taxPercentage;
+    //     if (tax.global.is_global) {
+    //       let taxClassId = tax.global.taxClass;
 
-          tax.taxClass.forEach((taxObject) => {
-            if (taxObject._id.toString() == taxClassId.toString()) {
-              global_tax = true;
-              taxPercentage = taxObject.percentage;
-            }
-          });
-        }
+    //       tax.taxClass.forEach((taxObject) => {
+    //         if (taxObject._id.toString() == taxClassId.toString()) {
+    //           global_tax = true;
+    //           taxPercentage = taxObject.percentage;
+    //         }
+    //       });
+    //     }
 
-        let global_shipping = false;
-        let globalShippingAmount;
-        let globalShippingPerOrder = false;
+    //     let global_shipping = false;
+    //     let globalShippingAmount;
+    //     let globalShippingPerOrder = false;
 
-        if (shipping.global.is_global) {
-          let shippingClassId = shipping.global.shippingClass;
+    //     if (shipping.global.is_global) {
+    //       let shippingClassId = shipping.global.shippingClass;
 
-          shipping.shippingClass.forEach((shippingObject) => {
-            if (shippingObject._id.toString() == shippingClassId.toString()) {
-              global_shipping = true;
-              globalShippingAmount = shippingObject.amount;
-            }
-          });
+    //       shipping.shippingClass.forEach((shippingObject) => {
+    //         if (shippingObject._id.toString() == shippingClassId.toString()) {
+    //           global_shipping = true;
+    //           globalShippingAmount = shippingObject.amount;
+    //         }
+    //       });
 
-          if (shipping.global.is_per_order) {
-            globalShippingPerOrder = true;
-          }
-        }
+    //       if (shipping.global.is_per_order) {
+    //         globalShippingPerOrder = true;
+    //       }
+    //     }
 
-        // if global tax applicable
+    //     // if global tax applicable
 
-        if (global_tax) {
-          for (let a = 0; a < args.cartItem.length; a++) {
-            cartProduct = args.cartItem[a];
+    //     if (global_tax) {
+    //       for (let a = 0; a < args.cartItem.length; a++) {
+    //         cartProduct = args.cartItem[a];
 
-            let productShipping;
+    //         let productShipping;
 
-            let productTax;
+    //         let productTax;
 
-            const product = await Product.findById({
-              _id: cartProduct.productId,
-            }).lean();
-            let odredQuantity = cartProduct.qty;
+    //         const product = await Product.findById({
+    //           _id: cartProduct.productId,
+    //         }).lean();
+    //         let odredQuantity = cartProduct.qty;
 
-            let productPrice = product.pricing.sellprice;
-            if (cartProduct?.variantId) {
-              const variations = await ProductAttributeVariation.find({
-                productId: cartProduct.productId,
-                _id: cartProduct?.variantId,
-              });
-              productPrice = variations[0]?.pricing?.sellprice;
-              cartTotal += productPrice * odredQuantity;
-            } else {
-              cartTotal += productPrice * odredQuantity;
-            }
+    //         let productPrice = product.pricing.sellprice;
+    //         if (cartProduct?.variantId) {
+    //           const variations = await ProductAttributeVariation.find({
+    //             productId: cartProduct.productId,
+    //             _id: cartProduct?.variantId,
+    //           });
+    //           productPrice = variations[0]?.pricing?.sellprice;
+    //           cartTotal += productPrice * odredQuantity;
+    //         } else {
+    //           cartTotal += productPrice * odredQuantity;
+    //         }
 
-            // product tax calculation
-            if (taxPercentage != 0) {
-              grandTotal =
-                grandTotal +
-                productPrice * odredQuantity +
-                ((productPrice * taxPercentage) / 100) * odredQuantity;
+    //         // product tax calculation
+    //         if (taxPercentage != 0) {
+    //           grandTotal =
+    //             grandTotal +
+    //             productPrice * odredQuantity +
+    //             ((productPrice * taxPercentage) / 100) * odredQuantity;
 
-              totalTax =
-                totalTax +
-                ((productPrice * taxPercentage) / 100) * odredQuantity;
-              productTax =
-                ((productPrice * taxPercentage) / 100) * odredQuantity;
-            } else {
-              grandTotal = grandTotal + productPrice * odredQuantity;
-              totalTax = 0;
-              productTax = 0;
-            }
+    //           totalTax =
+    //             totalTax +
+    //             ((productPrice * taxPercentage) / 100) * odredQuantity;
+    //           productTax =
+    //             ((productPrice * taxPercentage) / 100) * odredQuantity;
+    //         } else {
+    //           grandTotal = grandTotal + productPrice * odredQuantity;
+    //           totalTax = 0;
+    //           productTax = 0;
+    //         }
 
-            // product shipping calculation
+    //         // product shipping calculation
 
-            if (global_shipping) {
-              if (!globalShippingPerOrder) {
-                totalShipping += globalShippingAmount * cartProduct?.qty;
-                grandTotal += globalShippingAmount * cartProduct?.qty;
+    //         if (global_shipping) {
+    //           if (!globalShippingPerOrder) {
+    //             totalShipping += globalShippingAmount * cartProduct?.qty;
+    //             grandTotal += globalShippingAmount * cartProduct?.qty;
 
-                productShipping = +(globalShippingAmount * cartProduct?.qty);
-              }
-            } else if (!global_shipping) {
-              productShipping = 0;
+    //             productShipping = +(globalShippingAmount * cartProduct?.qty);
+    //           }
+    //         } else if (!global_shipping) {
+    //           productShipping = 0;
 
-              let productShippingClass = product.shipping.shippingClass;
+    //           let productShippingClass = product.shipping.shippingClass;
 
-              shipping.shippingClass.forEach((shippingObject) => {
-                if (
-                  shippingObject._id.toString() ==
-                  productShippingClass.toString()
-                ) {
-                  productShipping = shippingObject.amount * odredQuantity;
-                }
-              });
+    //           shipping.shippingClass.forEach((shippingObject) => {
+    //             if (
+    //               shippingObject._id.toString() ==
+    //               productShippingClass.toString()
+    //             ) {
+    //               productShipping = shippingObject.amount * odredQuantity;
+    //             }
+    //           });
 
-              totalShipping += productShipping;
-              grandTotal += productShipping;
-            }
+    //           totalShipping += productShipping;
+    //           grandTotal += productShipping;
+    //         }
 
-            let pushValue = {
-              productId: product._id,
-              productTitle: product.name,
-              productImage: product.feature_image,
-              productPrice: productPrice.toFixed(2),
-              qty: +odredQuantity,
-              productTotal: productPrice * +odredQuantity,
-              productTax: productTax.toFixed(2),
-            };
+    //         let pushValue = {
+    //           productId: product._id,
+    //           productTitle: product.name,
+    //           productImage: product.feature_image,
+    //           productPrice: productPrice.toFixed(2),
+    //           qty: +odredQuantity,
+    //           productTotal: productPrice * +odredQuantity,
+    //           productTax: productTax.toFixed(2),
+    //         };
 
-            if (productShipping) {
-              pushValue.productShipping = productShipping.toFixed(2);
-            }
+    //         if (productShipping) {
+    //           pushValue.productShipping = productShipping.toFixed(2);
+    //         }
 
-            items.push(pushValue);
-          }
+    //         items.push(pushValue);
+    //       }
 
-          if (global_shipping && globalShippingPerOrder) {
-            grandTotal += globalShippingAmount;
-            totalShipping = globalShippingAmount;
-          }
-        }
+    //       if (global_shipping && globalShippingPerOrder) {
+    //         grandTotal += globalShippingAmount;
+    //         totalShipping = globalShippingAmount;
+    //       }
+    //     }
 
-        //if global tax is not applicable;
-        else {
-          for (let a = 0; a < args.cartItem.length; a++) {
-            cartProduct = args.cartItem[a];
+    //     //if global tax is not applicable;
+    //     else {
+    //       for (let a = 0; a < args.cartItem.length; a++) {
+    //         cartProduct = args.cartItem[a];
 
-            let productShipping;
+    //         let productShipping;
 
-            const product = await Product.findById({
-              _id: cartProduct.productId,
-            }).lean();
-            let odredQuantity = cartProduct.qty;
+    //         const product = await Product.findById({
+    //           _id: cartProduct.productId,
+    //         }).lean();
+    //         let odredQuantity = cartProduct.qty;
 
-            let productPrice =
-              product.pricing.sellprice > 0
-                ? product.pricing.sellprice
-                : product.pricing.price;
-            cartTotal += productPrice * odredQuantity;
+    //         let productPrice =
+    //           product.pricing.sellprice > 0
+    //             ? product.pricing.sellprice
+    //             : product.pricing.price;
+    //         cartTotal += productPrice * odredQuantity;
 
-            let productTaxClass = product.taxClass;
-            let productTaxPercentage;
-            let productTaxAmount;
+    //         let productTaxClass = product.taxClass;
+    //         let productTaxPercentage;
+    //         let productTaxAmount;
 
-            tax.taxClass.forEach((taxObject) => {
-              if (taxObject._id.toString() == productTaxClass?.toString()) {
-                productTaxPercentage = taxObject.percentage;
-              }
-            });
+    //         tax.taxClass.forEach((taxObject) => {
+    //           if (taxObject._id.toString() == productTaxClass?.toString()) {
+    //             productTaxPercentage = taxObject.percentage;
+    //           }
+    //         });
 
-            //calculating product tax amount,adding product price and product tax in grand total;
+    //         //calculating product tax amount,adding product price and product tax in grand total;
 
-            if (productTaxPercentage != 0) {
-              grandTotal =
-                grandTotal +
-                productPrice * odredQuantity +
-                ((productPrice * productTaxPercentage) / 100) * odredQuantity;
-              productTaxAmount =
-                ((productPrice * productTaxPercentage) / 100) * odredQuantity;
-              totalTax += +productTaxAmount;
-            } else {
-              productTaxAmount = 0;
-              totalTax += +productTaxAmount;
-              grandTotal += productPrice * odredQuantity + productTaxAmount;
-            }
+    //         if (productTaxPercentage != 0) {
+    //           grandTotal =
+    //             grandTotal +
+    //             productPrice * odredQuantity +
+    //             ((productPrice * productTaxPercentage) / 100) * odredQuantity;
+    //           productTaxAmount =
+    //             ((productPrice * productTaxPercentage) / 100) * odredQuantity;
+    //           totalTax += +productTaxAmount;
+    //         } else {
+    //           productTaxAmount = 0;
+    //           totalTax += +productTaxAmount;
+    //           grandTotal += productPrice * odredQuantity + productTaxAmount;
+    //         }
 
-            //calculating product shipping and adding product shipping in grand total amount
+    //         //calculating product shipping and adding product shipping in grand total amount
 
-            if (global_shipping) {
-              if (!globalShippingPerOrder) {
-                totalShipping += globalShippingAmount;
-                grandTotal += globalShippingAmount;
+    //         if (global_shipping) {
+    //           if (!globalShippingPerOrder) {
+    //             totalShipping += globalShippingAmount;
+    //             grandTotal += globalShippingAmount;
 
-                productShipping = +globalShippingAmount;
-              }
-            } else if (!global_shipping) {
-              productShipping = 0;
+    //             productShipping = +globalShippingAmount;
+    //           }
+    //         } else if (!global_shipping) {
+    //           productShipping = 0;
 
-              let productShippingClass = product.shipping.shippingClass;
+    //           let productShippingClass = product.shipping.shippingClass;
 
-              shipping.shippingClass.forEach((shippingObject) => {
-                if (
-                  shippingObject?._id?.toString() ==
-                  productShippingClass?.toString()
-                ) {
-                  productShipping = shippingObject.amount * odredQuantity;
-                }
-              });
+    //           shipping.shippingClass.forEach((shippingObject) => {
+    //             if (
+    //               shippingObject?._id?.toString() ==
+    //               productShippingClass?.toString()
+    //             ) {
+    //               productShipping = shippingObject.amount * odredQuantity;
+    //             }
+    //           });
 
-              totalShipping += productShipping;
-              grandTotal += productShipping;
-            }
+    //           totalShipping += productShipping;
+    //           grandTotal += productShipping;
+    //         }
 
-            let pushValue = {
-              productId: product._id,
-              productTitle: product.name,
-              productImage: product.feature_image,
-              productPrice: productPrice.toFixed(2),
-              qty: +odredQuantity,
-              productTotal: productPrice * +odredQuantity,
-              productTax: +productTaxAmount.toFixed(2),
-            };
+    //         let pushValue = {
+    //           productId: product._id,
+    //           productTitle: product.name,
+    //           productImage: product.feature_image,
+    //           productPrice: productPrice.toFixed(2),
+    //           qty: +odredQuantity,
+    //           productTotal: productPrice * +odredQuantity,
+    //           productTax: +productTaxAmount.toFixed(2),
+    //         };
 
-            if (productShipping) {
-              pushValue.productShipping = productShipping.toFixed(2);
-            }
+    //         if (productShipping) {
+    //           pushValue.productShipping = productShipping.toFixed(2);
+    //         }
 
-            items.push(pushValue);
-          }
+    //         items.push(pushValue);
+    //       }
 
-          if (global_shipping && globalShippingPerOrder) {
-            grandTotal += globalShippingAmount;
-            totalShipping = globalShippingAmount;
-          }
-        }
+    //       if (global_shipping && globalShippingPerOrder) {
+    //         grandTotal += globalShippingAmount;
+    //         totalShipping = globalShippingAmount;
+    //       }
+    //     }
 
-        let calculated = {
-          cartItem: items,
-          totalTax: totalTax.toFixed(2),
-          totalShipping: totalShipping.toFixed(2),
-          grandTotal: grandTotal.toFixed(2),
-          cartTotal: cartTotal.toFixed(2),
-        };
+    //     let calculated = {
+    //       cartItem: items,
+    //       totalTax: totalTax.toFixed(2),
+    //       totalShipping: totalShipping.toFixed(2),
+    //       grandTotal: grandTotal.toFixed(2),
+    //       cartTotal: cartTotal.toFixed(2),
+    //     };
 
-        return calculated;
-      } catch (error) {
-        console.log('error', error);
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
+    //     return calculated;
+    //   } catch (error) {
+    //     console.log('error', error);
+    //     error = checkError(error);
+    //     throw new Error(error.custom_message);
+    //   }
+    // },
 
     // old code of calculate Cart
     //     calculateCart : async (root,args,{id})=>{

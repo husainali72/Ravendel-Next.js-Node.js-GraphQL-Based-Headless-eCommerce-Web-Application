@@ -974,11 +974,18 @@ const addCart = async (userId, cartItems) => {
 
 module.exports.addCart = addCart;
 
-const calculateCart = async (userId, couponCode) => {
-  const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(userId) });
-  if (!cart) {
-    //throw putError("Cart not found");
-    return { success:false, message:'Cart not found', cartItems:[] };
+const calculateCart = async (userId, cartItems, couponCode) => {
+  let cart;
+  if(userId) {
+    const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(userId) });
+    if (!cart) {
+      //throw putError("Cart not found");
+      return { success:false, message:'Cart not found', cartItems:[] };
+    }
+    cartItems = cart.products;
+  }
+  else if(!cartItems || !cartItems.length) {
+    return { success:false, message:'Cart Items not found', cartItems:[] };
   }
 
   let coupon, totalCoupon = 0, message;
@@ -1042,7 +1049,7 @@ const calculateCart = async (userId, couponCode) => {
   //   }
   // }
 
-  let cartItems = [];
+  let responseCartItems = [];
 
   const shipping = await Shipping.findOne({});
   const tax = await Tax.findOne({});
@@ -1100,11 +1107,11 @@ const calculateCart = async (userId, couponCode) => {
 
   let taxPercentage;
   let isFirstIteration = true;
-  for (const cartProduct of cart.products) {
+  for (const cartProduct of cartItems) {
 
     let product = {}
 
-    let addvariants = false
+    let addvariants = false;
     let attribute = []
     if (cartProduct?.variantId) {
       addvariants = true
@@ -1133,14 +1140,17 @@ const calculateCart = async (userId, couponCode) => {
       _id: cartProduct?._id,
       available:(product && ((!addvariants && attribute?.length === 0) || (addvariants && attribute?.length > 0)) ? true : false)
     }
-    cartItems.push(prod);
+    responseCartItems.push(prod);
 
     if(prod.available) {
       prod.discountPrice = product?.pricing?.price - prod.productPrice;
       prod.discountPercentage = Math.floor(prod.discountPrice / prod.mrp * 100);
+      prod.mrpAmount = prod.mrp * prod.qty;
+      prod.discountAmount = (prod.mrp - prod.productPrice) * prod.qty;
       prod.amount = prod.productPrice * prod.qty;
-      mrpTotal += prod.mrp;
-      discountTotal += prod.discountPrice;
+
+      mrpTotal += prod.mrpAmount;
+      discountTotal += prod.discountAmount;
       cartTotal += prod.amount;
 
       // product tax calculation start
@@ -1219,11 +1229,11 @@ const calculateCart = async (userId, couponCode) => {
   return {
     success:true, message:'', 
     
-    id: cart._id,
-    cartItems,
-    status: cart.status,
-    date: cart.date,
-    updated: cart.updated,
+    id: cart?._id,
+    cartItems:responseCartItems,
+    status: cart?.status,
+    date: cart?.date,
+    updated: cart?.updated,
     totalSummary
   };
 }

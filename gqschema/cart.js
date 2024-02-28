@@ -41,6 +41,8 @@ module.exports = `
     productTax: String
     productShipping: String
     available: Boolean
+    mrpAmount : String
+    discountAmount : String
     amount : String
     taxAmount : String
     shippingAmount : String
@@ -70,14 +72,22 @@ module.exports = `
     variantId:String
   }
 
+  #input calculateCartProducts {
+    #productId: ID
+    #qty: Int
+    #total: Float
+    #taxClass: String
+    #shippingClass: String
+    #variantId:String
+    #productTotal : String
+  #}
+
   input calculateCartProducts {
     productId: ID
-    qty: Int
-    total: Float
-    taxClass: String
-    shippingClass: String
     variantId:String
-    productTotal : String
+    productTitle:String
+    attributes:customArray
+    qty: Int
   }
 
   input couponCartProducts {
@@ -134,8 +144,8 @@ module.exports = `
   extend type Query {
     carts: CartRES
     cart(id: ID!): Cart
-    cartbyUser(userId: ID!): Cart
-    calculateCart(cartItem: [calculateCartProducts]): calculatedCart
+    calculateCart(userId: ID, cartItems: [calculateCartProducts]): Cart
+    #calculateCart(cartItems: [calculateCartProducts]): calculatedCart
     calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
       totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
   }
