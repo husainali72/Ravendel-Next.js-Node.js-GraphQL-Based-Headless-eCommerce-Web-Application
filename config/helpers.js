@@ -11,10 +11,10 @@ const path = require('path');
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
-
-
-
-
+const Shipping = require("../models/Shipping");
+const Tax = require("../models/Tax");
+const Coupon = require("../models/Coupon");
+const mongoose = require('mongoose');
 
 
 const isEmpty = (value) =>
@@ -973,3 +973,258 @@ const addCart = async (userId, cartItems) => {
 };
 
 module.exports.addCart = addCart;
+
+const calculateCart = async (userId, couponCode) => {
+  const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(userId) });
+  if (!cart) {
+    //throw putError("Cart not found");
+    return { success:false, message:'Cart not found', cartItems:[] };
+  }
+
+  let coupon, totalCoupon = 0, message;
+  // if(couponCode) {
+  //   coupon = await Coupon.findOne({ code: couponCode });
+  //   if (!coupon) {
+  //     message = 'Invalid coupon code';
+  //   }
+  //   else {
+
+  //     if (coupon.expire >= date) {
+  //       let cartTotal = 0
+  //       // args.cart.map(item => cartTotal += item.productTotal)     
+  //       cartTotal = args.cartTotal;
+
+  //       if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) && 
+  //         (coupon.maximumSpend === 0 || coupon.maximumSpend > cartTotal)) {
+  //         if (!coupon.category && !coupon.product) {
+  //           var calculatedCartWithDiscount = coupon.discountType === 'amount-discount'
+  //             ? parseFloat(coupon.discountValue)
+  //             :
+  //             parseFloat(cartTotal / 100) *
+  //             parseFloat(coupon.discountValue);
+  //           calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+
+  //           calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
+  //           calculated.message = 'Coupon code applied successfully';
+  //           calculated.success = true;
+  //         }
+  //         else {
+  //           var calculatedCartWithDiscount = 0
+
+  //           coupon.discountType === "amount-discount" ?
+  //             calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, true) :
+  //             calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, false)
+
+
+  //           if (calculatedCartWithDiscount == 0) {
+  //             calculated.totalCoupon = "0.0";
+  //             calculated.message = 'Coupon not applicable on cart';
+  //             calculated.discountGrandTotal = "0.00"
+  //           }
+  //           else {
+  //             calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+  //             calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
+  //             calculated.message = 'Coupon code applied successfully';
+  //             calculated.success = true;
+  //           }
+  //         }
+
+  //       }
+  //       else {
+  //         calculated.totalCoupon = "0.0";
+  //         calculated.message = 'Coupon not applicable on cart';
+  //       }
+
+  //     } else {
+  //       calculated.totalCoupon = "0.0";
+  //       calculated.message = 'Coupon no longer applicable';
+  //     }
+  //   }
+  // }
+
+  let cartItems = [];
+
+  const shipping = await Shipping.findOne({});
+  const tax = await Tax.findOne({});
+  // const productAttribute = await ProductAttribute.find({});
+
+  let mrpTotal = 0, discountTotal = 0, cartTotal = 0;
+  let totalTax = 0
+  let totalShipping = 0
+  let grandTotal = 0
+
+  let global_tax = false;
+  let globalTaxPercentage;
+  if (tax.global.is_global) {
+    let taxClassId = tax.global.taxClass;
+    let myTaxClass = tax.taxClass.find(taxC => taxC._id.toString() == taxClassId.toString());
+    if (myTaxClass) {
+      global_tax = true;
+      globalTaxPercentage = myTaxClass.percentage;
+    }
+    // tax.taxClass.forEach((taxObject) => {
+    //   if (taxObject._id.toString() == taxClassId.toString()) {
+    //     global_tax = true;
+    //     taxPercentage = taxObject.percentage
+    //   }
+    // })
+  }
+
+  let global_shipping = false;
+  let globalShippingAmount;
+  let globalShippingPerOrder = false;
+
+  if (shipping.global.is_global) {
+    let shippingClassId = shipping.global.shippingClass;
+
+    let myShipClass = shipping.shippingClass.find(shipC => shipC._id.toString() == shippingClassId.toString());
+    if (myShipClass) {
+      global_shipping = true;
+      globalShippingAmount = myShipClass.amount;
+    }
+
+    // shipping.shippingClass.forEach((shippingObject) => {
+    //   if (shippingObject._id.toString() == shippingClassId.toString()) {
+    //     global_shipping = true;
+    //     globalShippingAmount = shippingObject.amount;
+    //   }
+    // })
+
+    if (shipping.global.is_per_order) {
+      globalShippingPerOrder = true
+    }
+  }
+
+  // console.log('global_tax', global_tax);
+  // console.log('global_shipping', global_shipping);
+
+  let taxPercentage;
+  let isFirstIteration = true;
+  for (const cartProduct of cart.products) {
+
+    let product = {}
+
+    let addvariants = false
+    let attribute = []
+    if (cartProduct?.variantId) {
+      addvariants = true
+      product = await Product.findById(new mongoose.Types.ObjectId(cartProduct.productId));
+      attribute = await ProductAttributeVariation.find({
+        productId: cartProduct.productId, _id: cartProduct?.variantId, quantity: { $gte: cartProduct.qty }
+      });
+
+    } else {
+      product = await Product.findOne({ _id: cartProduct.productId, quantity: { $gte: cartProduct.qty } });
+    }
+
+    let prod = {
+      productId: cartProduct?.productId,
+      productTitle: product?.name || cartProduct?.productTitle,
+      productImage: product?.feature_image,
+      mrp: product?.pricing?.price,
+      productPrice: product?.pricing?.sellprice || product?.pricing?.price || cartProduct?.productPrice,
+      qty: cartProduct?.qty,
+      //total: (cartProduct?.qty * product?.pricing?.sellprice || product?.pricing?.price || cartProduct?.productPrice),
+      attributes: cartProduct?.attributes,
+      productQuantity: product?.quantity,
+      variantId: cartProduct?.variantId,
+      shippingClass: product?.shipping?.shippingClass,
+      taxClass: product?.taxClass,
+      _id: cartProduct?._id,
+      available:(product && ((!addvariants && attribute?.length === 0) || (addvariants && attribute?.length > 0)) ? true : false)
+    }
+    cartItems.push(prod);
+
+    if(prod.available) {
+      prod.discountPrice = product?.pricing?.price - prod.productPrice;
+      prod.discountPercentage = Math.floor(prod.discountPrice / prod.mrp * 100);
+      prod.amount = prod.productPrice * prod.qty;
+      mrpTotal += prod.mrp;
+      discountTotal += prod.discountPrice;
+      cartTotal += prod.amount;
+
+      // product tax calculation start
+      taxPercentage = globalTaxPercentage;
+      if(!global_tax) {
+        let productTax = tax.taxClass.find(taxC => 
+          taxC._id.toString() == product.taxClass.toString());
+        if(productTax) {
+          taxPercentage = productTax.percentage;
+        }
+        else {
+          console.log('product tax class not found');
+        }
+        // console.log('taxPercentage', taxPercentage);
+      }
+
+      // console.log('before calculating tax amount');
+      prod.taxAmount = 0;
+      if (taxPercentage != 0) {
+        // console.log('tax.is_inclusive : ', tax.is_inclusive);
+        if (!tax.is_inclusive) {
+          prod.taxAmount = prod.amount * taxPercentage / 100;
+        }
+      }
+      totalTax += prod.taxAmount;
+      // product tax calculation completed
+      
+      // Product Shipping calculation start
+      prod.shippingAmount = 0;
+      // if Shipping is global
+      if (global_shipping) {
+        // console.log('globalShippingPerOrder', globalShippingPerOrder);
+        // if Shipping is applied Per Order
+        if (globalShippingPerOrder) {
+          // Applying/Adding Shipping Amount in total on loop's first iteration
+          if(isFirstIteration) {
+            totalShipping += globalShippingAmount;
+          }
+        }
+        else {
+          prod.shippingAmount = globalShippingAmount;
+          totalShipping += prod.shippingAmount;
+        }
+      }
+      // if Shipping is not global means it will be product wise
+      else {
+        // console.log('product._id', product._id);
+        let productShippingClass = product.shipping.shippingClass;
+        let productShipping = shipping.shippingClass.find(shipClass => 
+          shipClass._id.toString() == productShippingClass.toString());
+        if(productShipping) {
+          prod.shippingAmount = productShipping.amount;
+          totalShipping += prod.shippingAmount;
+        }
+        else {
+          console.log('product shipping class not found');
+        }
+      }
+      // Product Shipping calculation completed
+
+      prod.total = prod.amount + prod.taxAmount + prod.shippingAmount;
+      isFirstIteration = false;
+    }
+  }
+
+  grandTotal = cartTotal + totalTax + totalShipping;
+  const totalSummary = {
+    mrpTotal : mrpTotal.toFixed(2),
+    discountTotal : discountTotal.toFixed(2),
+    cartTotal: cartTotal.toFixed(2),
+    totalTax: totalTax.toFixed(2),
+    totalShipping: totalShipping.toFixed(2),
+    grandTotal: grandTotal.toFixed(2)
+  }
+
+  return {
+    success:true, message:'', 
+    
+    id: cart._id,
+    cartItems,
+    status: cart.status,
+    date: cart.date,
+    updated: cart.updated,
+    totalSummary
+  };
+}
+module.exports.calculateCart = calculateCart;

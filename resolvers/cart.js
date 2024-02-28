@@ -12,7 +12,7 @@ const {
   checkToken,
   MESSAGE_RESPONSE,
   againCalculateCart,
-  _validate, getdate, addCart
+  _validate, getdate, addCart, calculateCart
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
@@ -28,192 +28,12 @@ module.exports = {
     },
 
 
-    cartbyUser: async (root, args) => {
+    cartbyUser: async (root, args, { id }) => {
+      // if (!id) {
+      //   return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
+      // }
       try {
-        const cart = await Cart.findOne({ userId: mongoose.Types.ObjectId(args.userId) });
-        if (!cart) {
-          //throw putError("Cart not found");
-          return { cartItems:[] };
-        }
-
-        let cartItems = [];
-
-        const shipping = await Shipping.findOne({});
-        const tax = await Tax.findOne({});
-        // const productAttribute = await ProductAttribute.find({});
-
-        let items = [];
-        let totalTax = 0
-        let totalShipping = 0
-        let grandTotal = 0
-        let cartTotal = 0
-
-        let global_tax = false;
-        let globalTaxPercentage;
-        if (tax.global.is_global) {
-          let taxClassId = tax.global.taxClass;
-          let myTaxClass = tax.taxClass.find(taxC => taxC._id.toString() == taxClassId.toString());
-          if (myTaxClass) {
-            global_tax = true;
-            globalTaxPercentage = myTaxClass.percentage;
-          }
-          // tax.taxClass.forEach((taxObject) => {
-          //   if (taxObject._id.toString() == taxClassId.toString()) {
-          //     global_tax = true;
-          //     taxPercentage = taxObject.percentage
-          //   }
-          // })
-        }
-
-        let global_shipping = false;
-        let globalShippingAmount;
-        let globalShippingPerOrder = false;
-
-        if (shipping.global.is_global) {
-          let shippingClassId = shipping.global.shippingClass;
-
-          let myShipClass = shipping.shippingClass.find(shipC => shipC._id.toString() == shippingClassId.toString());
-          if (myShipClass) {
-            global_shipping = true;
-            globalShippingAmount = myShipClass.amount;
-          }
-
-          // shipping.shippingClass.forEach((shippingObject) => {
-          //   if (shippingObject._id.toString() == shippingClassId.toString()) {
-          //     global_shipping = true;
-          //     globalShippingAmount = shippingObject.amount;
-          //   }
-          // })
-
-          if (shipping.global.is_per_order) {
-            globalShippingPerOrder = true
-          }
-        }
-
-        // console.log('global_tax', global_tax);
-        // console.log('global_shipping', global_shipping);
-
-        let taxPercentage;
-        let isFirstIteration = true;
-        for (const cartProduct of cart.products) {
-
-          let product = {}
-
-          let addvariants = false
-          let attribute = []
-          if (cartProduct?.variantId) {
-            addvariants = true
-            product = await Product.findById(mongoose.Types.ObjectId(cartProduct.productId));
-            attribute = await ProductAttributeVariation.find({
-              productId: cartProduct.productId, _id: cartProduct?.variantId, quantity: { $gte: cartProduct.qty }
-            });
-
-          } else {
-            product = await Product.findOne({ _id: cartProduct.productId, quantity: { $gte: cartProduct.qty } });
-          }
-
-          let prod = {
-            productId: cartProduct?.productId,
-            productTitle: product?.name || cartProduct?.productTitle,
-            productImage: product?.feature_image,
-            productPrice: product?.pricing?.sellprice || product?.pricing?.price || cartProduct?.productPrice,
-            qty: cartProduct?.qty,
-            //total: (cartProduct?.qty * product?.pricing?.sellprice || product?.pricing?.price || cartProduct?.productPrice),
-            attributes: cartProduct?.attributes,
-            productQuantity: product?.quantity,
-            variantId: cartProduct?.variantId,
-            shippingClass: product?.shipping?.shippingClass,
-            taxClass: product?.taxClass,
-            _id: cartProduct?._id,
-            available:(product && ((!addvariants && attribute?.length === 0) || (addvariants && attribute?.length > 0)) ? true : false)
-          }
-          
-          cartItems.push(prod);
-
-          if(prod.available) {
-            prod.amount = prod.productPrice * prod.qty;
-            cartTotal += prod.amount;
-
-            // product tax calculation start
-            taxPercentage = globalTaxPercentage;
-            if(!global_tax) {
-              let productTax = tax.taxClass.find(taxC => 
-                taxC._id.toString() == product.taxClass.toString());
-              if(productTax) {
-                taxPercentage = productTax.percentage;
-              }
-              else {
-                console.log('product tax class not found');
-              }
-              // console.log('taxPercentage', taxPercentage);
-            }
-
-            // console.log('before calculating tax amount');
-            prod.taxAmount = 0;
-            if (taxPercentage != 0) {
-              // console.log('tax.is_inclusive : ', tax.is_inclusive);
-              if (!tax.is_inclusive) {
-                prod.taxAmount = prod.amount * taxPercentage / 100;
-              }
-            }
-            totalTax += prod.taxAmount;
-            // product tax calculation completed
-            
-            // Product Shipping calculation start
-            prod.shippingAmount = 0;
-            // if Shipping is global
-            if (global_shipping) {
-              // console.log('globalShippingPerOrder', globalShippingPerOrder);
-              // if Shipping is applied Per Order
-              if (globalShippingPerOrder) {
-                // Applying/Adding Shipping Amount in total on loop's first iteration
-                if(isFirstIteration) {
-                  totalShipping += globalShippingAmount;
-                }
-              }
-              else {
-                prod.shippingAmount = globalShippingAmount;
-                totalShipping += prod.shippingAmount;
-              }
-            }
-            // if Shipping is not global means it will be product wise
-            else {
-              // console.log('product._id', product._id);
-              let productShippingClass = product.shipping.shippingClass;
-              let productShipping = shipping.shippingClass.find(shipClass => 
-                shipClass._id.toString() == productShippingClass.toString());
-              if(productShipping) {
-                prod.shippingAmount = productShipping.amount;
-                totalShipping += prod.shippingAmount;
-              }
-              else {
-                console.log('product shipping class not found');
-              }
-            }
-            // Product Shipping calculation completed
-
-            prod.total = prod.amount + prod.taxAmount + prod.shippingAmount;
-            isFirstIteration = false;
-          }
-        }
-
-        grandTotal = cartTotal + totalTax + totalShipping;
-        const totalSummary = {
-          cartTotal: cartTotal.toFixed(2),
-          totalTax: totalTax.toFixed(2),
-          totalShipping: totalShipping.toFixed(2),
-          grandTotal: grandTotal.toFixed(2)
-        }
-
-        return {
-          id: cart._id,
-          cartItems,
-          status: cart.status,
-          date: cart.date,
-          updated: cart.updated,
-          totalSummary: totalSummary
-        };
-
+        return calculateCart(args.userId);
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
@@ -251,7 +71,8 @@ module.exports = {
             // args.cart.map(item => cartTotal += item.productTotal)     
             cartTotal = args.cartTotal;
 
-            if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) && (coupon.maximumSpend === 0 || coupon.maximumSpend > cartTotal)) {
+            if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) && 
+              (coupon.maximumSpend === 0 || coupon.maximumSpend > cartTotal)) {
               if (!coupon.category && !coupon.product) {
                 var calculatedCartWithDiscount = coupon.discountType === 'amount-discount'
                   ? parseFloat(coupon.discountValue)

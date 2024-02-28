@@ -18,8 +18,7 @@ const options = {
       async authorize(credentials, req) {
         // const url = "https://ravendel.herokuapp.com/api/customers/login";
         const { email, password } = credentials;
-        const url = `https://${BASE_URL}/apis/customers/login`;
-        // const url = `http://localhost:8000/apis/customers/login`;
+        const url = `http://${BASE_URL}/apis/customers/login`;
         const response = await fetch(url, {
           method: "POST",
           headers: {

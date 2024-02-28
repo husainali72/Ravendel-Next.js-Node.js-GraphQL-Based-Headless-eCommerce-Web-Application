@@ -5,9 +5,9 @@ import APclient from "../Client";
 import cookie from "react-cookies";
 import { get } from "lodash";
 // const location = window.location.origin;
-// const location = "http://localhost:8000";
+const location = "http://localhost:8000";
 // const location = "https://demo1.ravendel.io";
-const location = "https://demo1-ravendel.hbwebsol.com";
+// const location = "https://demo1-ravendel.hbwebsol.com";
 
 export const mutation = async (query, variables) => {
   try {

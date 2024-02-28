@@ -1,6 +1,9 @@
 // const { gql } = require("@apollo/server");
 module.exports = `
   type Cart {
+    message: String
+    success: Boolean
+
     id: ID
     userId: ID
     status: String
@@ -29,6 +32,9 @@ module.exports = `
     productId: ID
     productTitle:String
     productImage : String
+    mrp: String
+    discountPrice: String
+    discountPercentage: String
     productPrice : String
     qty: Int,
     productTotal : String,
@@ -100,7 +106,7 @@ module.exports = `
   }
 
   type CartRES {
-    data:[Cart]
+    data:Cart
     message: statusSchema
   } 
 
