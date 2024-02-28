@@ -6,6 +6,7 @@ import { getSession } from 'next-auth/react';
 import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
 import { logoutAndClearData } from '../components/Header';
 import { get } from 'lodash';
+import logoutDispatch from '../redux/actions/userlogoutAction';
 
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
@@ -46,7 +47,7 @@ export const getHomepageData = async () => {
         console.log("Categories Error=======", e);
     }
 }
-export const query = async (query, id) => {
+export const query = async (query, id,dispatch) => {
     const session = await getSession();
     const token = session?.user?.accessToken?.token
 
@@ -62,27 +63,33 @@ export const query = async (query, id) => {
         return Promise.resolve(response);
     } catch (error) {
         const errors = JSON.parse(JSON.stringify(error));
-        if (errors &&
-            errors.graphQLErrors && errors.graphQLErrors?.length &&
-            !isEmpty(errors.graphQLErrors[0].message)
-        ) {
-            return Promise.reject(errors.graphQLErrors[0].message);
-        }
-        if (
-            !isEmpty(errors.networkError) &&
-            errors.networkError.statusCode === 400
-        ) {
+        const { graphQLErrors, networkError } = errors;
 
-            if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { logoutAndClearData() }
-            return Promise.reject(errors.message);
-        }
+        if (graphQLErrors?.length && !isEmpty(graphQLErrors[0]?.message)) {
+            return Promise.reject(get(graphQLErrors[0], "message"));
+          }
+      
+          if (networkError && networkError.statusCode === 400) {
+            return Promise.reject(get(errors, "message"));
+          }
+      
+          const networkErrorExtensions = get(
+            networkError,
+            "result.errors[0].extensions"
+          );
+          if (networkErrorExtensions?.code === 401) {
+            logoutAndClearData() 
+            if(dispatch){
+               await dispatch(logoutDispatch());
+            }
+          }
         return Promise.reject("Something went wrong");
     }
 };
 
 /* -------------------------------Graphql mutation function ------------------------------- */
 
-export const mutation = async (query, variables) => {
+export const mutation = async (query, variables,dispatch) => {
     const session = await getSession();
     const token = session?.user?.accessToken?.token
     // const token = `${session?.user?.accessToken?.token}343243`
@@ -106,21 +113,26 @@ export const mutation = async (query, variables) => {
         return Promise.resolve(response);
     } catch (error) {
         const errors = JSON.parse(JSON.stringify(error));
-        if (errors && errors.graphQLErrors &&
-            errors.graphQLErrors?.length &&
-            !isEmpty(errors.graphQLErrors[0].message)
-        ) {
+        const { graphQLErrors, networkError } = errors;
 
-            return Promise.reject(errors.graphQLErrors[0].message);
-        }
-        if (
-            !isEmpty(errors.networkError) &&
-            errors.networkError.statusCode === 400
-        ) {
-
-            if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { logoutAndClearData() }
-            return Promise.reject(errors);
-        }
+        if (graphQLErrors?.length && !isEmpty(graphQLErrors[0]?.message)) {
+            return Promise.reject(get(graphQLErrors[0], "message"));
+          }
+      
+          if (networkError && networkError.statusCode === 400) {
+            return Promise.reject(get(errors, "message"));
+          }
+      
+          const networkErrorExtensions = get(
+            networkError,
+            "result.errors[0].extensions"
+          );
+          if (networkErrorExtensions?.code === 401) {
+           await logoutAndClearData() 
+            if(dispatch){
+               await dispatch(logoutDispatch());
+            }
+          }
         return Promise.reject("Something went wrong");
     }
 };
@@ -142,7 +154,6 @@ export const stripeCheckout = (billDetails, cartItems, baseUrl) => {
         customerCart: cartItems,
         customerId: billDetails.customerId
     }).then(res => {
-        console.log(res.data.url,'res.data.url')
         if (res.data.url) {
             window.location.href = res.data.url
         }

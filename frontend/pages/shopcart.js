@@ -97,6 +97,7 @@ const YourCard = ({
       const userSession = await getSession();
       if (session?.status === "authenticated" || userSession !== null) {
         setCartLoading(true);
+        setCartTotalLoading(true);
         id = get(userSession, "user.accessToken.customer._id");
         token = get(userSession, "user.accessToken.token");
         let cartItemsArray = [];
@@ -113,11 +114,7 @@ const YourCard = ({
             _id: get(cart, "productId", ""),
             variantId: get(cart, "variantId", ""),
             quantity: parseInt(get(cart, "qty")),
-            productQuantity: get(
-              orginalAttributes,
-              "quantity",
-              get(originalProduct, "quantity")
-            ),
+            productQuantity: get(originalProduct, "quantity"),
             name: get(cart, "productTitle"),
             pricing: get(cart, "productPrice"),
             feature_image: get(cart, "productImage"),
@@ -144,10 +141,12 @@ const YourCard = ({
         setAllCartItems([...allItem]);
         setUnAvailableProduct([...unAvailableItems]);
         setCartLoading(false);
+        setCartTotalLoading(false);
       } else {
         setCartItems(productsCard || []);
         setAllCartItems(productsCard || []);
         setCartLoading(false);
+        setCartTotalLoading(false);
       }
     };
     getProducts();
