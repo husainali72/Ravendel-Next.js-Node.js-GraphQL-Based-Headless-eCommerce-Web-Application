@@ -30,7 +30,6 @@ const notify = (message, success) => {
 const Register = () => {
   const [registerUser, setRegisterUser] = useState(registerObject);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
   const [Errors, setErrors] = useState({});
   const doRegister = (e) => {
     e.preventDefault();
@@ -38,7 +37,7 @@ const Register = () => {
     setErrors((prevErrors) => ({ ...prevErrors, ...errors }));
     if (Object.keys(errors).length === 0) {
       setLoading(true);
-      mutation(ADD_CUSTOMER, registerUser, dispatch)
+      mutation(ADD_CUSTOMER, registerUser)
         .then((res) => {
           if (get(res, "data.addCustomer")) {
             notify(

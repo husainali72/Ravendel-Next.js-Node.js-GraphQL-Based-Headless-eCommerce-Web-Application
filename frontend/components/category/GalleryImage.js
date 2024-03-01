@@ -11,9 +11,9 @@ import {
   query,
 } from "../../utills/helpers";
 import StarRating from "../../components/breadcrumb/rating";
-import { addToCart } from "../../redux/actions/cartAction";
+import { addToCart, calculateUnauthenticatedCart } from "../../redux/actions/cartAction";
 import { useDispatch, useSelector } from "react-redux";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import calculateDiscount from "../../utills/calculateDiscount";
 import {
@@ -178,8 +178,32 @@ const GalleryImagesComponents = (props) => {
   };
 
   const addToCartAndNavigate = (variables, token) => {
-    mutation(ADD_TO_CART_QUERY, variables, dispatch).then((res) => {
+    mutation(ADD_TO_CART_QUERY, variables).then((res) => {
       router.push("/shopcart");
+    }).then((res)=>{
+
+    }).catch(async(error)=>{
+      if(get(error,'extensions.code')===401){
+        let product=[{
+          userId: "",
+          url: get(variables,'url'),
+          _id: get(variables,'productId'),
+          quantity: get(variables,'qty'),
+          name:get(variables,'productTitle'),
+          feature_image: get(variables,'productImage'),
+          pricing: get(variables,'productPrice'),
+          productQuantity: get(variables,'productQuantity'),
+          variantId: get(variables,'variantId',""),
+          qty: get(variables,'qty'),
+          attributes: get(variables,'attributes'),
+     }]
+      const data = await signOut({ redirect: false, callbackUrl: "/" });
+      localStorage.setItem("userCart", JSON.stringify([]));
+      localStorage.setItem("cart", JSON.stringify(product));
+      
+      dispatch(calculateUnauthenticatedCart(product));
+      window.location.pathname = "/shopcart";
+      }
     })
   };
 
@@ -241,7 +265,7 @@ const GalleryImagesComponents = (props) => {
                 )
               )
             )?.toString(),
-            variantId: get(comboData[0], "id"),
+            variantId: get(comboData[0], "id",""),
             attributes: attributesData,
           };
 
@@ -310,7 +334,7 @@ const GalleryImagesComponents = (props) => {
             )
           ),
           productQuantity: get(comboData[0], "quantity", get(product, "quantity")),
-          variantId: get(comboData[0], "id"),
+          variantId: get(comboData[0], "id",""),
           attributes: attributesData,
         };
 

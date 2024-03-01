@@ -3,7 +3,7 @@ import { Spinner } from "react-bootstrap";
 import { getPrice } from "../../utills/helpers";
 const OrderSummary = (props) => {
 
-    const { decimal, currency, subTotal, cartTotal, grandTotal,coupon, delivery, taxAmount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails, CouponLoading, isCouponApplied, AppliedCoupon } = props;
+    const { decimal,totalMrp,discountOnMrp, currency, subTotal, cartTotal, grandTotal,coupon, delivery, taxAmount, couponCode, setCouponCode, doApplyCouponCode, getCalculationDetails, CouponLoading, isCouponApplied, AppliedCoupon } = props;
 
     useEffect(() => {
         var allData = {
@@ -41,12 +41,22 @@ const OrderSummary = (props) => {
                     <div className="table-responsive">
                         <table className="table">
                             <tbody>
+                            <tr >
+                                    <td className="cartTotal_label" >Total MRP</td>
+                                    <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
+                                        {currency}{getPrice(totalMrp, decimal)}
+                                    </span></td>
+                                </tr>
+                                <tr >
+                                    <td className="cartTotal_label  " >Discount on MRP</td>
+                                    <td className="cartTotal_amount "><span className="font-lg fw-900 text-brand textSuccess" >
+                                       - {currency}{getPrice(discountOnMrp, decimal)}
+                                    </span></td>
+                                </tr>
                                 <tr >
                                     <td className="cartTotal_label" >Cart Total</td>
                                     <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
-
                                         {currency}{getPrice(cartTotal, decimal)}
-
                                     </span></td>
                                 </tr>
                                 <tr>
@@ -55,9 +65,10 @@ const OrderSummary = (props) => {
                                 </tr>
                                 <tr>
                                     <td className="cartTotal_label">Shipping</td>
-
-                                    {delivery != "0" ? <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i>{currency} {getPrice(delivery, decimal)}</td> :
-                                        <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i>Free Shipping</td>}
+                                    {delivery == "0.00"||delivery == "0"? <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i>Free Shipping</td>:
+                                    <td className="cartTotal_amount"> 
+                                    <i className="ti-gift mr-5"></i>{currency} {getPrice(delivery, decimal)}</td> 
+                                    }
                                 </tr>
                                 {isCouponApplied && <tr>
                                     <td className={`cartTotal_label ${isCouponApplied && "textSuccess"}`}>Coupon {isCouponApplied && <small> - ({AppliedCoupon})</small>}</td>

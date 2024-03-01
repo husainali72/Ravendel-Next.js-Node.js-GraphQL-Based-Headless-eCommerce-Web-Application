@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Card, Row, Col, Button } from "react-bootstrap";
 import { UPDATE_CUSTOMER } from "../../../queries/customerquery";
-import { mutation } from "../../../utills/helpers";
+import { logoutAndClearData, mutation } from "../../../utills/helpers";
 import { useForm } from "react-hook-form";
 import notify from "../../../utills/notifyToast";
+import { get } from "lodash";
 import { useDispatch } from "react-redux";
 
 var accountDetailObject = {
@@ -15,6 +16,7 @@ var accountDetailObject = {
   phone: "",
 };
 const AccountSettings = (props) => {
+  const dispatch=useDispatch()
   const { accountDetailInfo, setToggleEdit, getcustomer } = props;
   const [accountDetails, setAccountDetails] = useState(accountDetailObject);
   const {
@@ -24,16 +26,19 @@ const AccountSettings = (props) => {
     control,
     reset,
   } = useForm();
-  const dispatch = useDispatch();
   const updateAccountDetail = (e) => {
-    mutation(UPDATE_CUSTOMER, accountDetails, dispatch).then(
+    mutation(UPDATE_CUSTOMER, accountDetails).then(
       async (response) => {
         if (response.data.updateCustomer.success) {
           notify(response.data.updateCustomer.message, true);
           getcustomer();
         }
       }
-    );
+    ).catch((error)=>{
+      if(get(error,'extensions.code')===401){
+        logoutAndClearData(dispatch)
+      }
+    })
   };
 
   useEffect(() => {

@@ -2,9 +2,8 @@ import { BASE_URL, baseUrl, bucketBaseURL } from '../config';
 import client from '../apollo-client';
 import { isEmpty } from "./service";
 import axios from 'axios'
-import { getSession } from 'next-auth/react';
+import { getSession, signOut } from 'next-auth/react';
 import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
-import { logoutAndClearData } from '../components/Header';
 import { get } from 'lodash';
 import logoutDispatch from '../redux/actions/userlogoutAction';
 
@@ -47,14 +46,14 @@ export const getHomepageData = async () => {
         console.log("Categories Error=======", e);
     }
 }
-export const query = async (query, id,dispatch) => {
+export const query = async (query, variables) => {
     const session = await getSession();
-    const token = session?.user?.accessToken?.token
+    const token = get(session,'user.accessToken.token')
 
     try {
         const response = await client.query({
             query: query,
-            variables: { id },
+            variables,
             fetchPolicy: 'network-only',
             context: {
                 headers: { token },
@@ -79,9 +78,6 @@ export const query = async (query, id,dispatch) => {
           );
           if (networkErrorExtensions?.code === 401) {
             logoutAndClearData() 
-            if(dispatch){
-               await dispatch(logoutDispatch());
-            }
           }
         return Promise.reject("Something went wrong");
     }
@@ -89,10 +85,9 @@ export const query = async (query, id,dispatch) => {
 
 /* -------------------------------Graphql mutation function ------------------------------- */
 
-export const mutation = async (query, variables,dispatch) => {
+export const mutation = async (query, variables) => {
     const session = await getSession();
     const token = session?.user?.accessToken?.token
-    // const token = `${session?.user?.accessToken?.token}343243`
 
     try {
         if (!variables.queryName) {
@@ -125,19 +120,25 @@ export const mutation = async (query, variables,dispatch) => {
       
           const networkErrorExtensions = get(
             networkError,
-            "result.errors[0].extensions"
+            "result.errors[0]"
           );
-          if (networkErrorExtensions?.code === 401) {
-           await logoutAndClearData() 
-            if(dispatch){
-               await dispatch(logoutDispatch());
-            }
+          if (get(networkErrorExtensions,'extensions.code') === 401) {
+            return Promise.reject(networkErrorExtensions);
           }
         return Promise.reject("Something went wrong");
     }
 };
-// autoFocus next input
 
+export const logoutAndClearData = async (dispatch) => {
+    const data = await signOut({ redirect: false, callbackUrl: "/" });
+    localStorage.setItem("userCart", JSON.stringify([]));
+    localStorage.setItem("cart", JSON.stringify([]));
+    dispatch(logoutDispatch())
+    window.location.pathname = "/account";
+  };
+  
+
+// autoFocus next input
 export const handleEnter = (event) => {
     if (event.key.toLowerCase() === "enter") {
         const form = event.target.form;

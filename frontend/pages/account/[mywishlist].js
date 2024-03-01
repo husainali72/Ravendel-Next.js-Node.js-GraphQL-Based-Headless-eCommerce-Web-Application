@@ -8,7 +8,7 @@ import { UPDATE_CUSTOMER, GET_CUSTOMER_QUERY, GET_CUSTOMERS, DELETE_ADDRESSBOOK 
 import client from "../../apollo-client";
 
 import { useRouter } from "next/router";
-import { query, mutation } from "../../utills/helpers";
+import { query, mutation, logoutAndClearData } from "../../utills/helpers";
 import AddressDetail from "../../components/account/component/address-details"
 import OrdersDetails from "../../components/account/component/orders-details"
 import { useSession } from "next-auth/react";
@@ -45,7 +45,10 @@ const MyWishList = ({ id, customeraddres }) => {
     useEffect(() => {
         setAccountDetails(customeraddres)
         setAccountAddress(customeraddres)
-        query(GET_CUSTOMER_QUERY, id,dispatch).then((response) => {
+        let variable={
+            id:id
+        }
+        query(GET_CUSTOMER_QUERY, variable).then((response) => {
             const customeradd = response.data.customer.data
         })
 
@@ -56,14 +59,19 @@ const MyWishList = ({ id, customeraddres }) => {
 
     const updateAccountDetail = (e) => {
         e?.preventDefault();
-        mutation(UPDATE_CUSTOMER, accountDetails, dispatch).then(async (response) => {
+        mutation(UPDATE_CUSTOMER, accountDetails).then(async (response) => {
             if (response.data.updateCustomer.success) {
                 let id = "622ae63d3aa0f0f63835ef8e"
-                query(GET_CUSTOMER_QUERY, id,dispatch).then((response) => {
+                let variable={id:id}
+                query(GET_CUSTOMER_QUERY, variable).then((response) => {
                     const customeradd = get(response,'data.customer.data')
                 })
                 refreshData()
             }
+        }).catch((error)=>{
+            if(get(error,'extensions.code')===401){
+                logoutAndClearData(dispatch)
+              }
         })
     }
     return (

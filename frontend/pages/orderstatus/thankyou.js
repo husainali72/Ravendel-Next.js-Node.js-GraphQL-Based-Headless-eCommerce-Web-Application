@@ -14,15 +14,18 @@ import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
 const ThankYou = ({ currencyStore }) => {
     const dispatch = useDispatch();
     const session = useSession();
-    const [Data, setData] = useState()
+    const [data, setData] = useState()
     useEffect(() => {
         dispatch(settingActionCreator(currencyStore.currency_options))
     }, [currencyStore?.currency_options])
     useEffect(() => {
         if (session.status === "authenticated") {
-            const ID = session?.data?.user?.accessToken?.customer?._id
+            const id = session?.data?.user?.accessToken?.customer?._id
             const token = session?.data?.user?.accessToken?.token
-            query(GET_CUSTOMER_ORDERS_QUERY, ID, dispatch).then((res) => {
+            let variable={
+                id:id
+            }
+            query(GET_CUSTOMER_ORDERS_QUERY, variable).then((res) => {
                 setData(res?.data?.orderbyUser?.data?.[0])
             })
 
@@ -35,7 +38,7 @@ const ThankYou = ({ currencyStore }) => {
 
             <Container>
                 <div className="thankyou-page-container"> <h1> Your order has been received.</h1>
-                    <OrderDetailAfter Data={Data} />
+                    <OrderDetailAfter Data={data} />
                 </div>
             </Container>
         </div>

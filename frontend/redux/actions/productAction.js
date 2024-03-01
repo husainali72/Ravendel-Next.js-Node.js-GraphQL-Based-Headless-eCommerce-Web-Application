@@ -15,7 +15,7 @@ export const productreviewAction = (object) => (dispatch) => {
   dispatch({
     type: PRODUCT_REVIEWS_ADD,
   })
-  mutation(ADD_REVIEW, object,dispatch).then((response) => {
+  mutation(ADD_REVIEW, object).then((response) => {
     if (response) {
       dispatch({
         type: ADD_PRODUCT_REVIEWS,

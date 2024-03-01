@@ -52,7 +52,7 @@ export const GET_CART_ITEM_QUERY = gql`
 `;
 export const GET_USER_CART = gql`
   query ($id: ID!) {
-    cartbyUser(userId: $id) {
+    calculateCart(userId: $id) {
       id
       userId
       status
@@ -60,6 +60,19 @@ export const GET_USER_CART = gql`
       date
       totalSummary
 
+      updated
+    }
+  }
+`;
+export const CALCULATE_CART_WITHOUT_LOGIN = gql`
+  query ($cartItems: [calculateCartProducts]) {
+    calculateCart(cartItems: $cartItems) {
+      id
+      userId
+      status
+      cartItems
+      date
+      totalSummary
       updated
     }
   }

@@ -1,10 +1,10 @@
 import { ADD_ADDRESSBOOK, UPDATE_ADDRESSBOOK, DELETE_ADDRESSBOOK } from "../../../queries/customerquery";
 import { Fragment, useEffect, useState } from "react";
 import { Card, Button, Row, Col, Collapse, Form, Fade, Tooltip, OverlayTrigger } from "react-bootstrap";
-import { mutation } from "../../../utills/helpers";
+import { logoutAndClearData, mutation } from "../../../utills/helpers";
 import { useRouter } from "next/router";
 import { useForm } from 'react-hook-form';
-import { capitalize } from 'lodash';
+import { capitalize, get } from 'lodash';
 import notify from "../../../utills/notifyToast";
 import { useDispatch } from "react-redux";
 const Star = ({ starId, marked }) => {
@@ -78,7 +78,7 @@ const AddressDetail = (props) => {
 
     const updateAddress = async (e) => {
         if (address?.firstName && address?.lastName && address?.addressLine1 && address?.city && address?.company && address?.country && address?.state && address?.phone) {
-            mutation(UPDATE_ADDRESSBOOK, address, dispatch).then(async (response) => {
+            mutation(UPDATE_ADDRESSBOOK, address).then(async (response) => {
                 if (response?.data?.updateAddressBook?.success) {
                     getcustomer()
                     setEditMode(false);
@@ -87,12 +87,16 @@ const AddressDetail = (props) => {
 
                 }
             }
-            )
+            ).catch((error)=>{
+                if(get(error,'extensions.code')===401){
+                    logoutAndClearData(dispatch)
+                  }
+            })
         }
     };
     const addNewAddress = async () => {
         if (address?.firstName && address?.lastName && address?.addressLine1 && address?.city && address?.company && address?.country && address?.state && address?.phone) {
-            mutation(ADD_ADDRESSBOOK, address, dispatch).then(async (response) => {
+            mutation(ADD_ADDRESSBOOK, address).then(async (response) => {
 
                 if (response?.data?.addAddressBook?.success) {
                     setAddMode(false);
@@ -101,6 +105,10 @@ const AddressDetail = (props) => {
                     setAddress(addressObject)
                     notify(response?.data?.addAddressBook?.message, true);
                 }
+            }).catch((error)=>{
+                if(get(error,'extensions.code')===401){
+                    logoutAndClearData(dispatch)
+                  }
             })
         }
     };
@@ -122,7 +130,7 @@ const AddressDetail = (props) => {
         }
         const id = address.id;
         let variables = { id, _id }
-        mutation(DELETE_ADDRESSBOOK, variables, dispatch).then(async (response) => {
+        mutation(DELETE_ADDRESSBOOK, variables).then(async (response) => {
             if (response?.data?.deleteAddressBook?.success) {
                 refreshData()
                 await router.push("/account/profile")
@@ -131,6 +139,10 @@ const AddressDetail = (props) => {
                 setAllAddressBook(list)
                 // getcustomer()
             }
+        }).catch((error)=>{
+            if(get(error,'extensions.code')===401){
+                logoutAndClearData(dispatch)
+              }
         })
     };
 

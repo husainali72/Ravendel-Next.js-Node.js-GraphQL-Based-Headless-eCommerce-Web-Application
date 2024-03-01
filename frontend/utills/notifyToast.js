@@ -2,7 +2,7 @@
 import toast, { Toaster } from 'react-hot-toast';
 const notify = (message,success) => {
     const options = {
-        duration: 3000, // Set the duration as needed
+        duration: 1000, // Set the duration as needed
       };
     if(success){
        return toast.success(message,options);

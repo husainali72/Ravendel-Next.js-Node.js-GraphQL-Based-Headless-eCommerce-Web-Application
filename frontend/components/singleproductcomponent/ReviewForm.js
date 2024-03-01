@@ -71,7 +71,7 @@ const ReviewForm = ({ productId }) => {
         e.preventDefault();
 
         review.customerId = session?.data?.user?.accessToken?.customer?._id
-        mutation(ADD_REVIEW, review, dispatch).then((response) => {
+        mutation(ADD_REVIEW, review).then((response) => {
             if (!response?.data?.addReview?.success) {
                 notify(response?.data?.addReview?.message, response?.data?.addReview?.success);
             }
