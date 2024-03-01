@@ -46,44 +46,70 @@ module.exports = {
         // const coupon = await Coupon.findOne({ code: { $regex: `${args.couponCode}`, $options: "i" } });
         const coupon = await Coupon.findOne({ code: args.couponCode })
 
+        let cart = await calculateCart(args.userId, args.cartItems, args.couponCode);
+
         let discountGrandTotal;
-        let calculated = {
-          totalCoupon: {},
-          message: '',
-          success: false,
-          cartItem: args.cartItem,
-          cartTotal: args.cartTotal,
-          totalShipping: args.totalShipping,
-          totalTax: args.totalTax,
-          grandTotal: args.grandTotal,
-        };
+        
+        // let calculated = {
+        //   totalCoupon: {},
+        //   message: '',
+        //   success: false,
+        //   cartItem: args.cartItem,
+        //   cartTotal: args.cartTotal,
+        //   totalShipping: args.totalShipping,
+        //   totalTax: args.totalTax,
+        //   grandTotal: args.grandTotal,
+        // };
 
         let date = getdate('2');
-
+        let message = "", couponDiscount = "0.0", isCouponFreeShipping;
         if (!coupon) {
-          calculated.totalCoupon = "0.0";
-          calculated.message = 'Invalid coupon code';
+          totalCoupon = "0.0";
+          message = 'Invalid coupon code';
         }
         else {
-
           if (coupon.expire >= date) {
             let cartTotal = 0
             // args.cart.map(item => cartTotal += item.productTotal)     
-            cartTotal = args.cartTotal;
+            cartTotal = cart.totalSummary.cartTotal;
 
-            if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) && 
-              (coupon.maximumSpend === 0 || coupon.maximumSpend > cartTotal)) {
-              if (!coupon.category && !coupon.product) {
-                var calculatedCartWithDiscount = coupon.discountType === 'amount-discount'
-                  ? parseFloat(coupon.discountValue)
-                  :
-                  parseFloat(cartTotal / 100) *
-                  parseFloat(coupon.discountValue);
-                calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+            if (coupon.minimumSpend === 0 || coupon.minimumSpend >= cartTotal) {
+              if (!coupon.category) {
+                if(coupon.discountType === 'amount-discount') {
+                  couponDiscount = parseFloat(coupon.discountValue);
+                }
+                else if(coupon.discountType === 'precantage-discount') {
+                  couponDiscount = parseFloat(cartTotal / 100) * parseFloat(coupon.discountValue);
+                  if(coupon.maximumSpend && coupon.maximumSpend != 0) {
+                    if (couponDiscount > coupon.maximumSpend) {
+                      couponDiscount = coupon.maximumSpend;
+                    }
+                  }
+                }
+                else if(coupon.discountType === 'free-shipping') {
+                  isCouponFreeShipping = true;
+                  couponDiscount = cart.totalSummary.totalShipping;
+                  cart.totalSummary.totalShipping = 0;
+                }
+                cart.totalSummary.couponApplied = true;
+                cart.totalSummary.appliedCouponCode = args.couponCode;
+                cart.totalSummary.appliedCouponDiscount = couponDiscount;
+                if(!isCouponFreeShipping) {
+                  cart.totalSummary.couponDiscount = couponDiscount;
+                }
+                message = 'Coupon code applied successfully';
+                success = true;
 
-                calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
-                calculated.message = 'Coupon code applied successfully';
-                calculated.success = true;
+                // var calculatedCartWithDiscount = coupon.discountType === 'amount-discount'
+                //   ? parseFloat(coupon.discountValue)
+                //   :
+                //   parseFloat(cartTotal / 100) *
+                //   parseFloat(coupon.discountValue);
+                // calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+
+                // calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
+                // calculated.message = 'Coupon code applied successfully';
+                // calculated.success = true;
               }
               else {
                 var calculatedCartWithDiscount = 0
@@ -845,7 +871,7 @@ module.exports = {
         if(!cartProduct) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Cart Product", false);
         }
-        let product = await Product.findById(mongoose.Types.ObjectId(cartProduct.productId));
+        let product = await Product.findById(new mongoose.Types.ObjectId(cartProduct.productId));
         if(!product) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
         }

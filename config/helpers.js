@@ -989,65 +989,65 @@ const calculateCart = async (userId, cartItems, couponCode) => {
   }
 
   let coupon, totalCoupon = 0, message;
-  // if(couponCode) {
-  //   coupon = await Coupon.findOne({ code: couponCode });
-  //   if (!coupon) {
-  //     message = 'Invalid coupon code';
-  //   }
-  //   else {
+  if(couponCode) {
+    coupon = await Coupon.findOne({ code: couponCode });
+    if (!coupon) {
+      message = 'Invalid coupon code';
+    }
+    else {
 
-  //     if (coupon.expire >= date) {
-  //       let cartTotal = 0
-  //       // args.cart.map(item => cartTotal += item.productTotal)     
-  //       cartTotal = args.cartTotal;
+      if (coupon.expire >= date) {
+        let cartTotal = 0
+        // args.cart.map(item => cartTotal += item.productTotal)     
+        cartTotal = args.cartTotal;
 
-  //       if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) && 
-  //         (coupon.maximumSpend === 0 || coupon.maximumSpend > cartTotal)) {
-  //         if (!coupon.category && !coupon.product) {
-  //           var calculatedCartWithDiscount = coupon.discountType === 'amount-discount'
-  //             ? parseFloat(coupon.discountValue)
-  //             :
-  //             parseFloat(cartTotal / 100) *
-  //             parseFloat(coupon.discountValue);
-  //           calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+        if ((coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) && 
+          (coupon.maximumSpend === 0 || coupon.maximumSpend > cartTotal)) {
+          if (!coupon.category && !coupon.product) {
+            var calculatedCartWithDiscount = coupon.discountType === 'amount-discount'
+              ? parseFloat(coupon.discountValue)
+              :
+              parseFloat(cartTotal / 100) *
+              parseFloat(coupon.discountValue);
+            calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
 
-  //           calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
-  //           calculated.message = 'Coupon code applied successfully';
-  //           calculated.success = true;
-  //         }
-  //         else {
-  //           var calculatedCartWithDiscount = 0
+            calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
+            calculated.message = 'Coupon code applied successfully';
+            calculated.success = true;
+          }
+          else {
+            var calculatedCartWithDiscount = 0
 
-  //           coupon.discountType === "amount-discount" ?
-  //             calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, true) :
-  //             calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, false)
+            coupon.discountType === "amount-discount" ?
+              calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, true) :
+              calculatedCartWithDiscount = await againCalculateCart(coupon, args, Product, false)
 
 
-  //           if (calculatedCartWithDiscount == 0) {
-  //             calculated.totalCoupon = "0.0";
-  //             calculated.message = 'Coupon not applicable on cart';
-  //             calculated.discountGrandTotal = "0.00"
-  //           }
-  //           else {
-  //             calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
-  //             calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
-  //             calculated.message = 'Coupon code applied successfully';
-  //             calculated.success = true;
-  //           }
-  //         }
+            if (calculatedCartWithDiscount == 0) {
+              calculated.totalCoupon = "0.0";
+              calculated.message = 'Coupon not applicable on cart';
+              calculated.discountGrandTotal = "0.00"
+            }
+            else {
+              calculated.totalCoupon = Math.round(calculatedCartWithDiscount).toFixed(2);
+              calculated.discountGrandTotal = (+args.grandTotal - Math.round(+calculatedCartWithDiscount)).toFixed(2);
+              calculated.message = 'Coupon code applied successfully';
+              calculated.success = true;
+            }
+          }
 
-  //       }
-  //       else {
-  //         calculated.totalCoupon = "0.0";
-  //         calculated.message = 'Coupon not applicable on cart';
-  //       }
+        }
+        else {
+          calculated.totalCoupon = "0.0";
+          calculated.message = 'Coupon not applicable on cart';
+        }
 
-  //     } else {
-  //       calculated.totalCoupon = "0.0";
-  //       calculated.message = 'Coupon no longer applicable';
-  //     }
-  //   }
-  // }
+      } else {
+        totalCoupon = "0.0";
+        message = 'Coupon no longer applicable';
+      }
+    }
+  }
 
   let responseCartItems = [];
 
