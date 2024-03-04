@@ -3,7 +3,7 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-}
+  }
 
 a {
   color: black;
@@ -14,17 +14,22 @@ a {
 strong {
   color: #088178;
 }
+.MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input {
+padding: 5px 31px;
+}
+.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border:1px solid #088178 !important;
+}
 
 * {
   box-sizing: border-box;
-  /* font-family: "Poppins", sans-serif; */
-  font-family: 'Raleway sans-serif';
-  /* font-family:  Assistant, Helvetica, Arial, sans-serif !important;; */
+  font-family: 'Inter', 'Raleway', 'Roboto', sans-serif;
 }
 
 section {
   padding: 25px 0;
 }
+
 
 footer {
   background-color: #fff;
@@ -64,14 +69,13 @@ text-color {
 
 .contact-details {
   text-decoration: none;
-  font-family: 'Poppins sans- serif';
+  font-family: 'Raleway sans-serif';
 }
 
 /* checkout-Details shipping */
 
 .checkout-Details-shipping {
   padding-bottom: 30px;
-  /* border-right: 1px solid #dce1e5; */
 }
 
 .checkout-details-title {
@@ -421,7 +425,8 @@ a.action-btn:after {
   line-height: 1;
   padding: 10px 16px;
   background-color: #088178;
-  font-family: "Spartan", sans-serif;
+  /* font-family: "Spartan", sans-serif; */
+  font-family: 'Raleway sans-serif';
   border: 2px solid #088178;
 }
 .mega-detail{
@@ -4674,7 +4679,10 @@ text-align: start;
   color: #333;
   font-size: 10px;
   box-shadow: none;
-  padding: 0px
+  padding: 0px;
+  border: 1px solid #eaeaec;
+  /* padding: 5px 31px; */
+  
 }
 .marginTop{
   margin-top: 16px
@@ -4964,4 +4972,8 @@ display: flex;
 }
 .freeshipping{
   color:#088178
+}
+.quantity-label{
+  font-size: 10px;
+  margin-right: 4px;
 }

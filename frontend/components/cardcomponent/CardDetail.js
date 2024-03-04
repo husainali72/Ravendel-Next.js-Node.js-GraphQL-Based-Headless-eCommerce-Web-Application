@@ -1,4 +1,11 @@
-import { Divider, Select, MenuItem, Checkbox } from "@mui/material";
+import {
+  Divider,
+  Select,
+  MenuItem,
+  Checkbox,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import { capitalize, get, upperCase } from "lodash";
 import Link from "next/link";
 import React from "react";
@@ -26,10 +33,12 @@ const CartTable = (props) => {
     currency,
     unAvailableProducts,
     available,
+    updateCartProductQuantity,
     homepageData,
-    totalSummary
+    totalSummary,
   } = props;
-  const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
+  const imageType =
+    homepageData && homepageData?.getSettings?.imageStorage?.status;
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -37,25 +46,13 @@ const CartTable = (props) => {
     <div>
       <div className="cart-main-container">
         <div className="bulkActionStrip-desktopContainer">
-          <div className="bulkActionStrip-selectionIcon">
-            {/* <Checkbox
-              {...label}
-              sx={{
-                "&.Mui-checked": {
-                  color: "#ff3f6c",
-                },
-              }}
-              className="itemComponents-base-activeProduct"
-            /> */}
-          </div>
-          <div className="bulkActionStrip-message">
-            {/* <div className="bulkActionStrip-itemSelected">
-              {cartItems?.length} ITEMS IN A CART
-            </div> */}
-          </div>
+
           <div className="inlinebuttonV2-base-actions bulkActionStrip-desktopButton">
             <div className="inlinebuttonV2-base-action bulkActionStrip-desktopActionButton">
-              <button className="inlinebuttonV2-base-actionButton bulkActionStrip-desktopBulkRemove" onClick={AllCartItemsClear}>
+              <button
+                className="inlinebuttonV2-base-actionButton bulkActionStrip-desktopBulkRemove"
+                onClick={AllCartItemsClear}
+              >
                 {" "}
                 REMOVE
               </button>
@@ -67,11 +64,6 @@ const CartTable = (props) => {
             </div>
           </div>
         </div>
-        {/* <QuantitySelector
-          handleOpen={handleOpen}
-          handleClose={handleClose}
-          open={open}
-        /> */}
         <div className="itemContainer-base-itemLeft">
           <div className="cart-product-base-container">
             {cartItems?.map((product) => (
@@ -90,19 +82,23 @@ const CartTable = (props) => {
                   </div>
                 </div>
                 <div>
-                {product?.available ? (
-                      <Link href={"/product/" + product.url}>
-                  <img
-                    src={getImage(product.feature_image, imageType)}
-                    onError={imageOnError}
-                    alt={product?.name}
-                    className="cart-product-image cursor-pointer"
-                  /></Link>): (<img
-                    src={getImage(product.feature_image, imageType)}
-                    onError={imageOnError}
-                    alt={product?.name}
-                    className="cart-product-image"
-                  />)}
+                  {product?.available ? (
+                    <Link href={"/product/" + product.url}>
+                      <img
+                        src={getImage(product.feature_image, imageType)}
+                        onError={imageOnError}
+                        alt={product?.name}
+                        className="cart-product-image cursor-pointer"
+                      />
+                    </Link>
+                  ) : (
+                    <img
+                      src={getImage(product.feature_image, imageType)}
+                      onError={imageOnError}
+                      alt={product?.name}
+                      className="cart-product-image"
+                    />
+                  )}
                 </div>
                 <div>
                   <div>
@@ -123,54 +119,71 @@ const CartTable = (props) => {
                   </div>
                   <div className="itemComponents-base-sellerContainer">
                     <div className="itemComponents-base-sellerData">
-                      {/* Sold By {capitalize(product.soldby)} */}
                     </div>
                   </div>
 
                   <div className="itemContainer-base-sizeAndQtyContainer">
                     <div className="itemContainer-base-sizeAndQty">
                       <div className="itemComponents-base-quantity">
-                        <Button
-                          className="quantity-button"
-                          endIcon={<ArrowDropDownIcon />}
-                          // onClick={() => handleOpen()}
-                          // onClick={()=>{
-                          //   if(product?.available){
-                          //     IncreaseQuantity(product)
-                          //   }
-                          // }}
-                        >
-                          QTY
-                        </Button>
+                        <label className="quantity-label">QTY : </label>
+                        <FormControl>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="quantitySelect"
+                            className="quantity-button"
+                            value={product.quantity}
+                            onChange={(e) =>
+                              updateCartProductQuantity(
+                                product,
+                                parseInt(e.target.value)
+                              )
+                            }
+                          >
+                            {Array.from(
+                              { length: 20 },
+                              (_, index) => index + 1
+                            ).map((quantity) => (
+                              <MenuItem value={quantity} sx={{fontSize:'12px'}}>{quantity}</MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       </div>
                     </div>
-                    <div className="itemComponents-base-lowUnitCount">
-                     { product?.available ?`5 Left`:'OUT OF STOCK' }
-                    </div>
-
+                    {product?.available ? (
+                      product?.productQuantity < 5 ? (
+                        <div className="itemComponents-base-lowUnitCount">
+                          {`${product?.productQuantity} Left`}
+                        </div>
+                      ) : null
+                    ) : (
+                      <div className="itemComponents-base-lowUnitCount">
+                        OUT OF STOCK
+                      </div>
+                    )}
                   </div>
-
                   <div className="itemContainer-base-price">
                     <div className="itemComponents-base-price itemComponents-base-bold ">
-                      <div>{currency}{" "}
-
-                         {getPrice(product?.amount, decimal)}</div>
+                      <div>
+                        {currency} {getPrice(get(product,'amount',0), decimal)}
+                      </div>
                     </div>
 
-                   {get(product,'discountPercentage')!==0&& <div className="itemContainer-base-discountBlock">
-                      <span className="itemComponents-base-strikedAmount">
-                        <span className="itemComponents-base-price itemComponents-base-strike itemContainer-base-strikedAmount">
-                         {getPrice(product?.mrpAmount, decimal)}
+                    {get(product, "discountPercentage",0) !== 0 && (
+                      <div className="itemContainer-base-discountBlock">
+                        <span className="itemComponents-base-strikedAmount">
+                          <span className="itemComponents-base-price itemComponents-base-strike itemContainer-base-strikedAmount">
+                            {getPrice(get(product,'mrpAmount',0), decimal)}
+                          </span>
                         </span>
-                      </span>
-                      <span className="itemComponents-base-itemDiscount">
-                       { get(product,'discountPercentage') }% OFF
-                      </span>
-                    </div>}
+                        <span className="itemComponents-base-itemDiscount">
+                          {get(product, "discountPercentage")}% OFF
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="cross-icon cursor-pointer">
-                  <CloseIcon onClick={() => removeToCart(product)}/>
+                  <CloseIcon onClick={() => removeToCart(product)} />
                 </div>
               </div>
             ))}
@@ -182,7 +195,7 @@ const CartTable = (props) => {
               <div className="carttotal-detail">
                 <p className="mrp-price">Total MRP</p>
                 <p className="mtb2" style={{ fontSize: "14px" }}>
-                  {currency}{" "}{getPrice(totalSummary?.mrpTotal, decimal)}
+                  {currency} {getPrice(get(totalSummary,'mrpTotal',0), decimal)}
                 </p>
               </div>
               <div className="priceDetail-base-row">
@@ -191,31 +204,35 @@ const CartTable = (props) => {
                   <span className="priceDetail-base-knowMore ">Know More</span>
                 </p>
                 <p className="mtb2 freeshipping" style={{ fontSize: "14px" }}>
-               - {currency}{" "}{getPrice(totalSummary?.discountTotal, decimal)}
+                  - {currency} {getPrice(get(totalSummary,'discountTotal',0), decimal)}
                 </p>
               </div>
-              {/* <div className="priceDetail-base-row">
-                <p className="mrp-price">Cart Total</p>
-                <p className="mtb2" style={{ fontSize: "14px" }}>
-                {currency}{" "}{getPrice(totalSummary?.cartTotal, decimal)}
-                </p>
-              </div> */}
+
               <div className="priceDetail-base-row">
                 <p className="mrp-price">
                   Shipping Fee
                   <span className="priceDetail-base-knowMore ">Know More</span>
                 </p>
                 <p className="mtb2" style={{ fontSize: "14px" }}>
-                  {get(totalSummary,'totalShipping')==='0.00'||get(totalSummary,'totalShipping')==='0'?
-                  <span className="freeshipping">FREE</span>:`${currency} ${getPrice(totalSummary?.totalShipping, decimal)}`}
-                
+                  {get(totalSummary, "totalShipping") === "0.00" ||
+                  get(totalSummary, "totalShipping") === "0" ? (
+                    <span className="freeshipping">FREE</span>
+                  ) : (
+                    `${currency} ${getPrice(
+                     get(totalSummary,'totalShipping',0) ,
+                      decimal
+                    )}`
+                  )}
                 </p>
               </div>
 
               <Divider />
               <div className="priceDetail-base-row marginTop">
                 <p className="mrp-price">Total Amount</p>
-                <p className="mtb2 textRight"> {currency}{" "}{getPrice(totalSummary?.grandTotal, decimal)}</p>
+                <p className="mtb2 textRight">
+                  {" "}
+                  {currency} {getPrice(get(totalSummary,'grandTotal',0), decimal)}
+                </p>
               </div>
 
               <Link href="/checkout">

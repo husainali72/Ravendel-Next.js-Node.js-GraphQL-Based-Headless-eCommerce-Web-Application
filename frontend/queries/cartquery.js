@@ -7,16 +7,12 @@ export const ADD_TO_CART_QUERY = gql`
     $productTitle: String
     $productPrice: String
     $productImage: String
-    $total: Float
     $qty: Int
-    $shippingClass: String
-    $taxClass: String
     $attributes: customArray
     $variantId: String
     $productQuantity: Int
   ) {
     addToCart(
-      total: $total
       userId: $userId
       productId: $productId
       productTitle: $productTitle
@@ -24,10 +20,8 @@ export const ADD_TO_CART_QUERY = gql`
       productImage: $productImage
       qty: $qty
       attributes: $attributes
-      productQuantity: $productQuantity
       variantId: $variantId
-      shippingClass: $shippingClass
-      taxClass: $taxClass
+      productQuantity: $productQuantity
     ) {
       message
       success

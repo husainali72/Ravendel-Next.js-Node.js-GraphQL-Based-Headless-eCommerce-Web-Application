@@ -237,10 +237,8 @@ function cartReducer(state = initialState, action) {
                     const isSameProduct = item._id === action.payload._id;
                     const isSameVariant = item.variantId === action.payload.variantId;
                     if ((isSameProduct && isSameVariant) || (isSameProduct && !item.variantId)) {
-                        if (action.payload.originalQuantity >= item.quantity) {
-                            item.quantity += 1;
+                            item.quantity = get(action,'payload.updatedQuantity',1);
                             break;
-                        }
                     }
                 }
             }

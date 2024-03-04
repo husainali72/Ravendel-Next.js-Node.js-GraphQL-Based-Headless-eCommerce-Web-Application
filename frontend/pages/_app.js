@@ -20,6 +20,7 @@ import theme from '../src/theme';
 import { ThemeProvider } from '@mui/material';
 import TagManager from 'react-gtm-module';
 import MegaMenu from '../components/megaMenu';
+import Head from 'next/head';
 const clientSideEmotionCache = createEmotionCache();
 
 
@@ -52,6 +53,11 @@ export function MyApp({
 
 
   return (<>
+   <Head>
+   <link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet"/>
+      </Head>
     <CacheProvider value={emotionCache}>
       <SSRProvider>
         <SessionProvider session={pageProps.session}>
@@ -62,8 +68,8 @@ export function MyApp({
             <Layout setOpenMenu={(open) => setOpenMenu(open)}>
               <Component {...pageProps} key={router.asPath} openMenu={openMenu} setOpenMenu={(open) => setOpenMenu(open)} />
               <Script src="https://kit.fontawesome.com/60e73f4013.js" crossOrigin="anonymous"></Script>
-              <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
-              <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
+              {/* <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
+              <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" /> */}
             </Layout>
           </ThemeProvider>
         </SessionProvider>
