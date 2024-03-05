@@ -66,7 +66,10 @@ const OnSaleProductCard = ({
     let href = "/shopcart";
     if (session.status === "authenticated") {
       let productInCart = false;
-      query(GET_USER_CART, id, token).then((res) => {
+      let variables={
+        id:id
+      }
+      query(GET_USER_CART,variables, token).then((res) => {
         let cart_id = res?.data?.cartbyUser?.id;
         const inCartProducts = res?.data?.cartbyUser?.products;
         inCartProducts.map((inCartProduct) => {
@@ -102,7 +105,7 @@ const OnSaleProductCard = ({
               products: Cartt,
               total: 0,
             };
-            mutation(UPDATE_CART_PRODUCT, variables, dispatch).then((res) => {
+            mutation(UPDATE_CART_PRODUCT, variables).then((res) => {
               router.push("/shopcart");
             });
           }
@@ -120,7 +123,7 @@ const OnSaleProductCard = ({
             shippingClass: product?.shipping?.shippingClass,
             taxClass: product?.taxClass,
           };
-          mutation(ADD_TO_CART_QUERY, variables, dispatch).then((res) => {
+          mutation(ADD_TO_CART_QUERY, variables).then((res) => {
             router.push("/shopcart");
             dispatch(addToCart(product));
           });

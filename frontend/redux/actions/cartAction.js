@@ -1,8 +1,14 @@
 import { get } from "lodash";
-import { CHANGE_QTY, DELETE_CART, DELETE_CART_PRODUCTS, GET_USER_CART } from "../../queries/cartquery";
-import { mutation, query } from "../../utills/helpers";
+import {
+  CHANGE_QTY,
+  DELETE_CART,
+  DELETE_CART_PRODUCTS,
+  GET_USER_CART,
+  CALCULATE_CART_WITHOUT_LOGIN,
+} from "../../queries/cartquery";
+import { logoutAndClearData, mutation, query } from "../../utills/helpers";
 import notify from "../../utills/notifyToast";
-
+import logoutDispatch from "./userlogoutAction";
 export const ADD_TO_CART = "ADD_TO_CART";
 export const REMOVE_TO_CART = "REMOVE_TO_CART";
 export const INCRESE_QUANTITY = "INCRESE_QUANTITY";
@@ -14,14 +20,50 @@ export const UPDATE_CART_ON_LOGIN = "UPDATE_CART_ON_LOGIN";
 export const SET_USER_CART = "SET_USER_CART";
 export const CART_LOADING = "CART_LOADING";
 export const CART_FAILURE = "CART_FAILURE";
-export const getUserCart = (id) => (dispatch) => {
-     dispatch({
-        type: CART_LOADING,
-      });
-  query(GET_USER_CART, id,dispatch)
-    .then((res) => {
-      const response = get(res, "data.cartbyUser");
+// Action for authenticated user
+export const calculateUserCart = (id) => (dispatch) => {
+  dispatch({
+    type: CART_LOADING,
+  });
+  const variable = {
+    id: id,
+  };
 
+  query(GET_USER_CART, variable)
+    .then((res) => {
+      const response = get(res, "data.calculateCart");
+
+      return dispatch({
+        type: SET_USER_CART,
+        payload: response,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: CART_FAILURE,
+      });
+    });
+};
+
+// Action for unauthenticated user
+export const calculateUnauthenticatedCart = (products) => (dispatch) => {
+  dispatch({
+    type: CART_LOADING,
+  });
+  const cartItems = products?.map((product) => ({
+    productId: get(product, "_id"),
+    variantId: get(product, "variantId"),
+    productTitle: get(product, "name"),
+    attributes: get(product, "attributes"),
+    qty: get(product, "quantity"),
+  }));
+  const variable = {
+    cartItems: cartItems,
+  };
+
+  query(CALCULATE_CART_WITHOUT_LOGIN, variable)
+    .then((res) => {
+      const response = get(res, "data.calculateCart");
       return dispatch({
         type: SET_USER_CART,
         payload: response,
@@ -43,18 +85,18 @@ export const addToCart =
     });
   };
 
-  export const removeCartItemAction = (cartProduct) => (dispatch) => {
-    dispatch({
-        type: REMOVE_VALUE,
-        payload: cartProduct,
-    });
+export const removeCartItemAction = (cartProduct) => (dispatch) => {
+  dispatch({
+    type: REMOVE_VALUE,
+    payload: cartProduct,
+  });
 };
 
 export const increaseQuantity =
-  (_id, originalQuantity, variantId) => (dispatch) => {
+  (_id, originalQuantity, variantId,updatedQuantity) => (dispatch) => {
     dispatch({
       type: INCRESE_QUANTITY,
-      payload: { _id, originalQuantity, variantId },
+      payload: { _id, originalQuantity, variantId ,updatedQuantity},
     });
   };
 export const decreaseQuantity = (object) => (dispatch) => {
@@ -71,27 +113,35 @@ export const updateCart = (id, cart) => (dispatch) => {
   dispatch({ type: UPDATE_CART_ON_LOGIN, payload: { id, cart } });
 };
 export const changeQty = (variables) => (dispatch) => {
-  return mutation(CHANGE_QTY, variables,dispatch)
+  return mutation(CHANGE_QTY, variables)
     .then((response) => {
-      const {success,message}=get(response,'data.changeQty')
+      const { success, message } = get(response, "data.changeQty");
       if (!success) {
-        notify(message, success)
+        notify(message, success);
       }
-      return response
+      return response;
     })
-    .catch((error) => {});
+    .catch(async (error) => {
+      if (get(error, "extensions.code") === 401) {
+        logoutAndClearData(dispatch);
+      }
+    });
 };
 export const removeAllCartItemsAction = (variables) => (dispatch) => {
-  return mutation(DELETE_CART, variables,dispatch)
+  return mutation(DELETE_CART, variables)
     .then((response) => {
       if (response) {
         dispatch({
-            type: REMOVE_ALL_VALUE,
-            payload: [],
-          });
-  
+          type: REMOVE_ALL_VALUE,
+          payload: [],
+        });
+        
       }
-      return response
+      return response;
     })
-    .catch((error) => {});
+    .catch((error) => {
+      if (get(error, "extensions.code") === 401) {
+        logoutAndClearData(dispatch);
+      }
+    });
 };

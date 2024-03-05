@@ -41,7 +41,10 @@ const Order = () => {
             id = Session.user.accessToken.customer._id
             token = Session.user.accessToken.token
         }
-        query(GET_CUSTOMER_ORDERS_QUERY, id, token).then((response) => {
+        let variable={
+            id:id
+        }
+        query(GET_CUSTOMER_ORDERS_QUERY, variable, token).then((response) => {
             if (response) {
                 if (response.data.orderbyUser.data) {
                     const customeradd = response.data.orderbyUser.data

@@ -1,9 +1,7 @@
-import { query, mutation } from "../../utills/helpers";
+import { query, mutation, logoutAndClearData } from "../../utills/helpers";
 import { ADD_TO_CART_QUERY, UPDATE_CART_PRODUCT, GET_USER_CART, ADD_CART } from "../../queries/cartquery";
 import { ADD_TO_CART, INCRESE_QUANTITY, REMOVE_VALUE, REMOVE_ALL_VALUE, DECREASE_QUANTITY, UPDATE_CART_ON_LOGIN, CREATE_CART_ON_LOGIN, SET_USER_CART, CART_LOADING, CART_FAILURE } from "../actions/cartAction";
-import logoutDispatch, { LOGGED_OUT } from "../actions/userlogoutAction";
-import { LogOutUser1 } from "../../components/Header";
-import { getSettings } from "../actions/settingAction";
+import  { LOGGED_OUT } from "../actions/userlogoutAction";
 import { get } from "lodash";
 const initialState = {
     cartItems: [],
@@ -89,7 +87,10 @@ function cartReducer(state = initialState, action) {
                         });
         
                         let cart_id = "";
-                        query(GET_USER_CART, id, token).then(res => {
+                        let variable={
+                            id:id
+                        }
+                        query(GET_USER_CART, variable, token).then(res => {
                             cart_id = res.data.cartbyUser.id;
                             state.cartId = res.data.cartbyUser.id;
         
@@ -161,20 +162,15 @@ function cartReducer(state = initialState, action) {
         case CREATE_CART_ON_LOGIN: {
             const { id, cart, dispatch } = action.payload;
             let variables = { userId: id, products: cart }
-            mutation(ADD_CART, variables,dispatch).then((res) => {
+            mutation(ADD_CART, variables).then((res) => {
                 dispatch({ type: 'ADDED_CART', payload: true })
+                localStorage.setItem("userCart", JSON.stringify([]));
+                localStorage.setItem("cart", JSON.stringify([]));
                 window.location.pathname = '/'
-            }).catch((errors) => {
-                const networkErrorExtensions = get(
-                    errors  ,
-                    "networkError.result.errors[0].extensions"
-                  );
-                  if (networkErrorExtensions?.code === 401) {
-                    localStorage.setItem("userCart", JSON.stringify([]));
-                    localStorage.setItem("cart", JSON.stringify([]));
-                    dispatch(logoutDispatch())
+            }).catch((error) => {
+                if(get(error,'extensions.code')===401){
+                    logoutAndClearData(dispatch)
                   }
-            
             });
 
             return {...state,
@@ -226,21 +222,23 @@ function cartReducer(state = initialState, action) {
         case INCRESE_QUANTITY:
 
             const cart = JSON.parse(localStorage.getItem("cart"))   //api for increasing particulat users carts items quantity if user is authhenticated
-            let isExisted = cart.some(item => item._id === action.payload._id && item.variantId === action.payload.variantId)
+            let isExisted = cart.some(item => {
+                if (item.variantId) {
+                    // Check both product ID and variant ID when variant ID is not an empty string
+                    return item._id === action.payload._id && item.variantId === action.payload.variantId;
+                } else {
+                    // Check only product ID when variant ID is an empty string
+                    return item._id === action.payload._id;
+                }
+            });
+            
             if (isExisted) {
                 for (let item of cart) {
-
-                    if (item.variantId && action.payload.variantId) {
-
-                        if (item._id === action.payload._id && item.variantId === action.payload.variantId) {
-                            action.payload.originalQuantity >= item.quantity && (item.quantity += 1);
+                    const isSameProduct = item._id === action.payload._id;
+                    const isSameVariant = item.variantId === action.payload.variantId;
+                    if ((isSameProduct && isSameVariant) || (isSameProduct && !item.variantId)) {
+                            item.quantity = get(action,'payload.updatedQuantity',1);
                             break;
-                        }
-                    } else {
-                        if (item._id === action.payload._id) {
-                            action.payload.originalQuantity >= item.quantity && (item.quantity += 1);
-                            break;
-                        }
                     }
                 }
             }

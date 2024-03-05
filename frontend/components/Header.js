@@ -9,13 +9,10 @@ import { logoutDispatch } from "../redux/actions/userlogoutAction"
 import { query } from '../utills/helpers';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import { GET_SETTING, getSettings } from '../redux/actions/settingAction';
-import { getUserCart } from '../redux/actions/cartAction';
+import { calculateUserCart } from '../redux/actions/cartAction';
+import { Toaster } from 'react-hot-toast';
+import { get } from 'lodash';
 
-export const logoutAndClearData = async () => {
-  const data = await signOut({ redirect: false, callbackUrl: "/" });
-  localStorage.setItem("userCart", JSON.stringify([]));
-  localStorage.setItem("cart", JSON.stringify([]));
-};
 
 export default function Header({ setOpenMenu }) {
   const data = useSession();
@@ -26,8 +23,10 @@ export default function Header({ setOpenMenu }) {
   const [cart, setCart] = useState(null);
   const [homeData, setHomeData] = useState({});
   const LogOutUser = async () => {
-   await logoutAndClearData()
-    dispatch(logoutDispatch());
+   const data = await signOut({ redirect: false, callbackUrl: "/" });
+   localStorage.setItem("userCart", JSON.stringify([]));
+   localStorage.setItem("cart", JSON.stringify([]));
+   dispatch(logoutDispatch())
         window.location.pathname = "/";
   };
   const dropdownRef = useRef(null);
@@ -54,8 +53,8 @@ export default function Header({ setOpenMenu }) {
         }
         if (data.status === "authenticated") {   
       
-            let id = data.data.user.accessToken.customer._id
-            dispatch(getUserCart(id))
+            let id = get(data,'data.user.accessToken.customer._id')
+            dispatch(calculateUserCart(id))
         }
     }
     const getHomepageData = () => {
@@ -80,6 +79,7 @@ export default function Header({ setOpenMenu }) {
         <header className="header-area header-style-5 mt-0">
             <div className="header-top">
                 <Container className="align-items-center">
+                    <Toaster/>
                     <div className="row header-smartphone">
                         <div className="col-xl-3 col-lg-4 col-sm-6 col-xs-6 align-items-center">
                             <div className="header-info">
