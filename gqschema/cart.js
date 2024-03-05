@@ -10,6 +10,7 @@ module.exports = `
     cartItems: metaKeyValueArray
     date: Date
     updated: Date
+    couponCard: metaKeyValueArray
     totalSummary:metaKeyValueArray
   }
 
@@ -64,10 +65,6 @@ module.exports = `
     productTitle: String
     productPrice: String
     productImage: String
-    combination: [String]
-    taxClass: String
-    shippingClass: String
-    productQuantity:Int
     attributes:customArray
     variantId:String
   }
@@ -132,6 +129,13 @@ module.exports = `
     totalSummary:metaKeyValueArray
   }
 
+  type couponCard {
+    couponApplied: Boolean,
+    appliedCouponCode: String
+    appliedCouponDiscount: String
+    isCouponFreeShipping: Boolean
+  }
+
   type totalSummary {
     cartTotal: String,
     discountTotal: String
@@ -146,8 +150,9 @@ module.exports = `
     cart(id: ID!): Cart
     calculateCart(userId: ID, cartItems: [calculateCartProducts]): Cart
     #calculateCart(cartItems: [calculateCartProducts]): calculatedCart
-    calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
-      totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
+    #calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
+      #totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
+    calculateCoupon(userId: ID, cartItems: [calculateCartProducts], couponCode: String!): Cart
   }
 
   extend type Mutation {
