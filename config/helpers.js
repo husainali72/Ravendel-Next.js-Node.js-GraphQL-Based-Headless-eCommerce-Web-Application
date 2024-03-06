@@ -1132,6 +1132,7 @@ const calculateCart = async (userId, cartItems) => {
       productId: cartProduct?.productId,
       productTitle: product?.name || cartProduct?.productTitle,
       productImage: product?.feature_image,
+      url: product?.url, 
       mrp: product?.pricing?.price,
       productPrice: product?.pricing?.sellprice || product?.pricing?.price || cartProduct?.productPrice,
       qty: cartProduct?.qty,
@@ -1157,7 +1158,6 @@ const calculateCart = async (userId, cartItems) => {
       discountTotal += prod.discountAmount;
       cartTotal += prod.amount;
 
-      console.log('product', product);
       // product tax calculation start
       taxPercentage = globalTaxPercentage;
       if(!global_tax) {

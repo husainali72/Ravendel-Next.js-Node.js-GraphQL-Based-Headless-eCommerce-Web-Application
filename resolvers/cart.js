@@ -49,7 +49,7 @@ module.exports = {
         let cart = await calculateCart(args.userId, args.cartItems, args.couponCode);
 
         let date = getdate('2');
-        let success = false, message = "", couponDiscount = "0.0", isCouponFreeShipping;
+        let success = false, message = "", couponDiscount = 0, isCouponFreeShipping;
         let couponCard = { couponApplied: false };
         if (!coupon) {
           success = false;
@@ -66,8 +66,11 @@ module.exports = {
                 if(coupon.discountType === 'amount-discount') {
                   couponDiscount = parseFloat(coupon.discountValue);
                 }
-                else if(coupon.discountType === 'precantage-discount') {
+                else if(coupon.discountType === 'percantage-discount') {
                   couponDiscount = parseFloat(cartTotal / 100) * parseFloat(coupon.discountValue);
+                  console.log('cartTotal', cartTotal);
+                  console.log('coupon.discountValue', coupon.discountValue);
+                  console.log('couponDiscount', couponDiscount);
                   if(coupon.maximumSpend && coupon.maximumSpend != 0) {
                     if (couponDiscount > coupon.maximumSpend) {
                       couponDiscount = coupon.maximumSpend;
@@ -79,15 +82,22 @@ module.exports = {
                   couponDiscount = cart.totalSummary.totalShipping;
                   cart.totalSummary.totalShipping = 0;
                 }
-                couponCard.couponApplied = true;
-                couponCard.appliedCouponCode = args.couponCode;
-                couponCard.appliedCouponDiscount = couponDiscount;
-                couponCard.isCouponFreeShipping = isCouponFreeShipping;
-                if(!isCouponFreeShipping) {
-                  cart.totalSummary.couponDiscountTotal = couponDiscount.toFixed(2);
+                else {
+                  console.log('Invalid discount type');
+                  success = false;
+                  message = 'Something wrong with the Coupon code';
                 }
-                success = true;
-                message = 'Coupon code applied successfully';
+                if(couponDiscount != 0) {
+                  couponCard.couponApplied = true;
+                  couponCard.appliedCouponCode = args.couponCode;
+                  couponCard.appliedCouponDiscount = couponDiscount;
+                  couponCard.isCouponFreeShipping = isCouponFreeShipping;
+                  if(!isCouponFreeShipping) {
+                    cart.totalSummary.couponDiscountTotal = couponDiscount.toFixed(2);
+                  }
+                  success = true;
+                  message = 'Coupon code applied successfully';
+                }
               }
               else {
                 couponCard = await againCalculateCart(coupon, args, cart, Product);
@@ -670,7 +680,6 @@ module.exports = {
             attributes: args.attributes
           }
         ];
-        console.log('products', products);
         
         await addCart(args.userId, products);
         return MESSAGE_RESPONSE("AddSuccess", "Cart", true);

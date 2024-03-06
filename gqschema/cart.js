@@ -33,6 +33,7 @@ module.exports = `
     productId: ID
     productTitle:String
     productImage : String
+    url: String
     mrp: String
     discountPrice: String
     discountPercentage: String
