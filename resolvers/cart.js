@@ -84,7 +84,7 @@ module.exports = {
                 couponCard.appliedCouponDiscount = couponDiscount;
                 couponCard.isCouponFreeShipping = isCouponFreeShipping;
                 if(!isCouponFreeShipping) {
-                  cart.totalSummary.couponDiscountTotal = couponDiscount;
+                  cart.totalSummary.couponDiscountTotal = couponDiscount.toFixed(2);
                 }
                 success = true;
                 message = 'Coupon code applied successfully';
@@ -93,7 +93,7 @@ module.exports = {
                 couponCard = await againCalculateCart(coupon, args, cart, Product);
                 if(couponCard.couponApplied) {
                   if(!couponCard.isCouponFreeShipping) {
-                    cart.totalSummary.couponDiscountTotal = couponCard.appliedCouponDiscount;
+                    cart.totalSummary.couponDiscountTotal = couponCard.appliedCouponDiscount.toFixed(2);
                   }
                   success = true;
                   message = 'Coupon code applied successfully';
@@ -117,7 +117,7 @@ module.exports = {
         cart.message = message;
         cart.couponCard = couponCard;
         if(cart.couponCard.couponApplied) {
-          cart.totalSummary.grandTotal -= cart.totalSummary.couponDiscountTotal;
+          cart.totalSummary.grandTotal = (parseFloat(cart.totalSummary.grandTotal) - cart.couponCard.appliedCouponDiscount).toFixed(2);
         }
         return cart;
       } catch (error) {

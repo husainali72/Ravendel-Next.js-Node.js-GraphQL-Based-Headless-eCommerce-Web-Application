@@ -419,9 +419,7 @@ module.exports._validatenested = _validatenested;
 /*---------------------------------------------------------------------------------------------------------------*/
 const getdate = (format, timezone = "UTC", date) => {
   var d;
-  console.log('date', date);
   if (isEmpty(date)) {
-    console.log('date is not empty');
     d = new Date();
   } else {
     d = new Date(date);
@@ -850,8 +848,6 @@ const againCalculateCart = async (coupon, args, cart, productModel) => {
 
         if (product.categoryId && product.categoryId.length) {
           product.categoryId.map((catID) => {
-            console.log('product catID', catID);
-            console.log('coupon.includeCategories', coupon.includeCategories);
             if (coupon.includeCategories.length && coupon.includeCategories.includes(catID)) {
               includeProduct = true;
               eligibleProductTotalAmount += item.total;
