@@ -9,6 +9,7 @@ import {
   mutation,
   getPrice,
   isDiscount,
+  imageOnError,
 } from "../../utills/helpers";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../../redux/actions/cartAction";
@@ -161,11 +162,7 @@ const OnSaleProductCard = ({
                           <img
                             className="img-on-sale"
                             src={getImage(product.feature_image, imageType)}
-                            onError={(e) => {
-                              e.type === "error"
-                                ? (e.target.src = NoImagePlaceholder.src)
-                                : null;
-                            }}
+                            onError={imageOnError}
                             height="280px"
                             width="100%"
                           />

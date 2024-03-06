@@ -1,46 +1,28 @@
 import {
-  Divider,
   Select,
   MenuItem,
-  Checkbox,
   FormControl,
-  InputLabel,
 } from "@mui/material";
-import { capitalize, get, upperCase } from "lodash";
+import { get, upperCase } from "lodash";
 import Link from "next/link";
 import React from "react";
-import Button from "@mui/material/Button";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CloseIcon from "@mui/icons-material/Close";
-// import QuantitySelector from "./quantitySelector";
-import { useSelector } from "react-redux";
 import { getImage, getPrice, imageOnError } from "../../utills/helpers";
+import CartTotalDetails from "./cartTotal";
 const CartTable = (props) => {
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  const [open, setOpen] = React.useState(false);
-  const settings = useSelector((state) => state.setting);
   const {
     cartItems,
     decimal,
-    isQuantityBtnLoading,
-    CalculateProductTotal,
-    DecreaseQuantity,
-    IncreaseQuantity,
     AllCartItemsClear,
-    quantity,
     removeToCart,
-    updateCartProduct,
     currency,
-    unAvailableProducts,
-    available,
     updateCartProductQuantity,
     homepageData,
     totalSummary,
   } = props;
   const imageType =
     homepageData && homepageData?.getSettings?.imageStorage?.status;
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+
 
   return (
     <div>
@@ -68,19 +50,6 @@ const CartTable = (props) => {
           <div className="cart-product-base-container">
             {cartItems?.map((product) => (
               <div className="itemContainer-base-item " key={product.id}>
-                <div className="itemComponents-base-selectionIconContainer itemContainer-base-selectionIndicator">
-                  <div className="itemComponents-base-animationContainer ">
-                    {/* <Checkbox
-                      {...label}
-                      sx={{
-                        "&.Mui-checked": {
-                          color: "#ff3f6c",
-                        },
-                      }}
-                      className="itemComponents-base-activeProduct"
-                    /> */}
-                  </div>
-                </div>
                 <div>
                   {product?.available ? (
                     <Link href={"/product/" + product.url}>
@@ -150,7 +119,7 @@ const CartTable = (props) => {
                       </div>
                     </div>
                     {product?.available ? (
-                      product?.productQuantity < 5 ? (
+                      product?.productQuantity <= 5 ? (
                         <div className="itemComponents-base-lowUnitCount">
                           {`${product?.productQuantity} Left`}
                         </div>
@@ -188,68 +157,7 @@ const CartTable = (props) => {
               </div>
             ))}
           </div>
-          <div className="price-detail-base-container">
-            <div className="price-detail">
-              <h4 className="price-detail-heading">PRICE DETAILS</h4>
-              <Divider className="cart-price-divider" />
-              <div className="carttotal-detail">
-                <p className="mrp-price">Total MRP</p>
-                <p className="mtb2" style={{ fontSize: "14px" }}>
-                  {currency} {getPrice(get(totalSummary,'mrpTotal',0), decimal)}
-                </p>
-              </div>
-              <div className="priceDetail-base-row">
-                <p className="mrp-price ">
-                  Discount on MRP
-                  <span className="priceDetail-base-knowMore ">Know More</span>
-                </p>
-                <p className="mtb2 freeshipping" style={{ fontSize: "14px" }}>
-                  - {currency} {getPrice(get(totalSummary,'discountTotal',0), decimal)}
-                </p>
-              </div>
-
-              <div className="priceDetail-base-row">
-                <p className="mrp-price">
-                  Shipping Fee
-                  <span className="priceDetail-base-knowMore ">Know More</span>
-                </p>
-                <p className="mtb2" style={{ fontSize: "14px" }}>
-                  {get(totalSummary, "totalShipping") === "0.00" ||
-                  get(totalSummary, "totalShipping") === "0" ? (
-                    <span className="freeshipping">FREE</span>
-                  ) : (
-                    `${currency} ${getPrice(
-                     get(totalSummary,'totalShipping',0) ,
-                      decimal
-                    )}`
-                  )}
-                </p>
-              </div>
-
-              <Divider />
-              <div className="priceDetail-base-row marginTop">
-                <p className="mrp-price">Total Amount</p>
-                <p className="mtb2 textRight">
-                  {" "}
-                  {currency} {getPrice(get(totalSummary,'grandTotal',0), decimal)}
-                </p>
-              </div>
-
-              <Link href="/checkout">
-                <a className="card-btons text-align-center">
-                  <i className="fas fa-archive"></i>
-                  <span className="text-align-center">PLACE ORDER</span>
-                </a>
-              </Link>
-            </div>
-            <div className="cart-action text-end">
-              <Link href="/shop">
-                <a className="card-btons ">
-                  <i className="fas fa-shopping-bag"></i> Continue Shopping
-                </a>
-              </Link>
-            </div>
-          </div>
+          <CartTotalDetails totalSummary={totalSummary} currency={currency} decimal={decimal}/>
         </div>
       </div>
     </div>

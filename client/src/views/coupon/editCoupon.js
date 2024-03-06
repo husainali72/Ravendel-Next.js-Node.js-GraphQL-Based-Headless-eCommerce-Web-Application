@@ -268,7 +268,7 @@ const EditCouponComponent = ({ params }) => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid item md={6} sm={12} xs={12}>
+                  {coupon.discountType!=='free-shipping'&&<Grid item md={6} sm={12} xs={12}>
                     <TextInput
                       type="number"
                       value={coupon.discountValue}
@@ -277,7 +277,7 @@ const EditCouponComponent = ({ params }) => {
                       onInputChange={handleChange}
 
                     />
-                  </Grid>
+                  </Grid>}
                   <Grid item md={6} sm={12} xs={12}>
                     <TextInput
                       id="coupon_expiry"

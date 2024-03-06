@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import BreadCrumb from "../components/breadcrumb/breadcrumb";
 import { useSelector, useDispatch } from "react-redux";
@@ -6,7 +6,6 @@ import CartTable from "../components/cardcomponent/CardDetail";
 import {
   removeCartItemAction,
   increaseQuantity,
-  decreaseQuantity,
   changeQty,
   removeAllCartItemsAction,
   REMOVE_ALL_VALUE,
@@ -16,10 +15,8 @@ import {
 import {
   currencySetter,
   formatNumber,
-  getPrice,
   logoutAndClearData,
   mutation,
-  query,
 } from "../utills/helpers";
 import { DELETE_CART_PRODUCTS } from "../queries/cartquery";
 import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
@@ -31,18 +28,7 @@ import LoadingCartTable from "../components/cardcomponent/LoadingCard";
 import { get } from "lodash";
 import Loading from "../components/loadingComponent";
 import notify from "../utills/notifyToast";
-const CalculateProductTotal = (product) =>
-  product.reduce(
-    (total, product) =>
-      total +
-      (product.pricing * product.quantity ||
-        product.pricing * product.quantity),
-    0
-  );
 const YourCard = ({
-  customercart,
-  cart_id,
-  CartsDataa,
   currencyStore,
   homepageData,
 }) => {
@@ -52,12 +38,10 @@ const YourCard = ({
   const [cartLoading, setCartLoading] = useState(false);
   const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
-  const [allCartItems, setAllCartItems] = useState([]);
-  const [quantityy, setQuantity] = useState();
   const dispatch = useDispatch();
   const [currency, setCurrency] = useState("$");
   const [decimal, setdecimal] = useState(2);
-  const [totalSummary, setTotalSummary] = useState(2);
+  const [totalSummary, setTotalSummary] = useState({});
   const settings = useSelector((state) => state.setting);
   useEffect(() => {
     setdecimal(settings?.currencyOption?.number_of_decimals);
@@ -88,14 +72,9 @@ const YourCard = ({
   };
   useEffect(() => {
     const getProducts = async () => {
-      const productsCard = JSON.parse(localStorage.getItem("cart"));
-      const userSession = await getSession();
       setCartLoading(true);
-      let id = get(userSession, "user.accessToken.customer._id");
-      let token = get(userSession, "user.accessToken.token");
       let cartItemsArray = [];
       let allItem = [];
-      let unAvailableItems = [];
       get(cart, "cartItems", [])?.map((cart) => {
         const originalProduct = allProducts?.products?.find(
           (prod) => prod._id === cart.productId
@@ -135,7 +114,6 @@ const YourCard = ({
         discountTotal: formatNumber(get(cart, "totalSummary.discountTotal")),
       });
       setCartItems([...cartItemsArray]);
-      setAllCartItems([...allItem]);
       setCartLoading(false);
     };
     getProducts();
@@ -143,7 +121,6 @@ const YourCard = ({
   // Function to clear all items in the cart
   const AllCartItemsClear = async () => {
     setCartItems([]);
-    setAllCartItems([]);
     if (session.status === "authenticated") {
       let id = get(session, "data.user.accessToken.customer._id");
       let variables = { userId: id };
@@ -274,15 +251,10 @@ const YourCard = ({
                   <CartTable
                     homepageData={homepageData}
                     decimal={decimal}
-                    isQuantityBtnLoading={isQuantityBtnLoading}
                     cartItems={cartItems}
-                    quantity={quantityy}
                     removeToCart={removeToCart}
-                    CalculateProductTotal={CalculateProductTotal}
                     AllCartItemsClear={AllCartItemsClear}
                     currency={currency}
-                    available={true}
-                    settings={settings}
                     totalSummary={totalSummary}
                     updateCartProductQuantity={updateCartProductQuantity}
                   />

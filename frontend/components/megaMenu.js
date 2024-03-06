@@ -91,7 +91,6 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
         setproductCategories([...mainCategories])
 
     }, [categories])
-
     return (
         <>
             <div className={` mega-menu-wrapper ${openMenu ? 'open' : ''}`} >
@@ -103,7 +102,7 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
                                 {newProducts?.map((product, i) => (
                                     i < 3 ?
                                         <div style={{ justifyContent:'space-between', paddingInline:'8px', margin: '8px 0px'}} className='product last-border'>
-                                            <img src={getImage(product?.feature_image, imageType)}  className="megamenu-class" alt="" onError={(e) => e.target.src = ''} />
+                                            <img src={getImage(product?.feature_image, imageType)}  className="megamenu-class" alt="" onError={imageOnError} />
                                             <div className="details mega-detail">
                                                 <h4>{product?.name}</h4>
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>

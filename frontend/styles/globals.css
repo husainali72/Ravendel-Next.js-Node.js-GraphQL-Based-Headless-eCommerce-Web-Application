@@ -4916,14 +4916,9 @@ display: flex;
   width: auto;
   margin: 0;
 }
-.inlinebuttonV2-base-action {
-  display: inline-block;
-  width: 49%;
-  text-align: center;
-  margin: 12px 0;
-}
 .inlinebuttonV2-base-action:last-child {
   border-left: 1px solid #d4d5d9;
+  padding: 3px
 }
 .bulkActionStrip-desktopActionButton {
   width: auto;
@@ -4931,9 +4926,9 @@ display: flex;
 }
 .inlinebuttonV2-base-action {
   display: inline-block;
-  width: 49%;
   text-align: center;
   margin: 12px 0;
+  margin-right: 5px;
 }
 .bulkActionStrip-desktopBulkRemove {
   color: #535766;
@@ -4976,4 +4971,61 @@ display: flex;
 .quantity-label{
   font-size: 10px;
   margin-right: 4px;
+}
+.applied-coupon-section{
+  margin-bottom: 30px;
+    border: 1px solid #e2e9e1;
+    padding: 11px 6px 13px 14px;
+display: flex;
+justify-content: space-between;
+}
+.delete-coupon{
+  color:rgb(235, 103, 103);
+  margin-right: 0;
+  cursor: pointer;
+}
+/* PaymentFailed.css */
+
+.payment-failed-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.payment-failed-content {
+  text-align: center;
+}
+
+.payment-failed-image {
+  max-width: 200px;
+}
+
+.payment-failed-heading {
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.payment-failed-message {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.retry-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #046963; 
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.retry-button:hover {
+  background-color: #046963;
+}
+
+.contact-support {
+  font-size: 14px;
+  margin-top: 20px;
 }
