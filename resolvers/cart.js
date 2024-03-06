@@ -68,9 +68,6 @@ module.exports = {
                 }
                 else if(coupon.discountType === 'percantage-discount') {
                   couponDiscount = parseFloat(cartTotal / 100) * parseFloat(coupon.discountValue);
-                  console.log('cartTotal', cartTotal);
-                  console.log('coupon.discountValue', coupon.discountValue);
-                  console.log('couponDiscount', couponDiscount);
                   if(coupon.maximumSpend && coupon.maximumSpend != 0) {
                     if (couponDiscount > coupon.maximumSpend) {
                       couponDiscount = coupon.maximumSpend;
