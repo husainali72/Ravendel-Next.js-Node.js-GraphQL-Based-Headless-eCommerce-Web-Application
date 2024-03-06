@@ -1,7 +1,9 @@
 const { get } = require("lodash")
 const { getPrice } = require("../../utills/helpers")
+import HelpIcon from '@mui/icons-material/Help';
 import {
     Divider,
+    Tooltip
   } from "@mui/material";
   import Link from "next/link";
 const CartTotalDetails=({totalSummary,decimal,currency})=>{
@@ -19,7 +21,9 @@ const CartTotalDetails=({totalSummary,decimal,currency})=>{
           <div className="priceDetail-base-row">
             <p className="mrp-price ">
               Discount on MRP
-              <span className="priceDetail-base-knowMore ">Know More</span>
+              <Tooltip title='Your total amount has already been updated with a special discount.' placement="top">
+              <HelpIcon className="priceDetail-base-knowMore "/>
+              </Tooltip>
             </p>
             <p className="mtb2 freeshipping" style={{ fontSize: "14px" }}>
               - {currency} {getPrice(get(totalSummary,'discountTotal',0), decimal)}
@@ -29,7 +33,9 @@ const CartTotalDetails=({totalSummary,decimal,currency})=>{
           <div className="priceDetail-base-row">
             <p className="mrp-price">
               Shipping Fee
-              <span className="priceDetail-base-knowMore ">Know More</span>
+              <Tooltip title='Your total amount has already been updated with a special discount.' placement="top">
+              <HelpIcon className="priceDetail-base-knowMore "/>
+              </Tooltip>
             </p>
             <p className="mtb2" style={{ fontSize: "14px" }}>
               {get(totalSummary, "totalShipping") === "0.00" ||

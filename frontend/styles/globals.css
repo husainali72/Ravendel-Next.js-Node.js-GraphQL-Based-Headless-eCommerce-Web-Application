@@ -4664,6 +4664,8 @@ text-align: start;
   margin-left: 8px;
   color: #ff3f6c;
   font-weight: 600;
+  cursor: pointer;
+  font-size: 15px;
 }
 .priceDetail-base-row {
   display: flex;

@@ -259,7 +259,7 @@ const EditCouponComponent = ({ params }) => {
                         <MenuItem value="amount-discount">
                           Fixed Amount Discount
                         </MenuItem>
-                        <MenuItem value="precantage-discount">
+                        <MenuItem value="percentage-discount">
                           Fixed Percentage Discount
                         </MenuItem>
                         <MenuItem value="free-shipping">
