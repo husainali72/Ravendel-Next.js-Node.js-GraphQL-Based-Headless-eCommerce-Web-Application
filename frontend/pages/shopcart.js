@@ -182,7 +182,9 @@ const YourCard = ({
           });
       }
     } else {
+      if(item?.productQuantity){
       notify(`Only ${item?.productQuantity} Unit(s) available in stock `);
+      }
     }
   };
   // Function to remove an item from the cart

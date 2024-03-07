@@ -171,11 +171,12 @@ export const currencySetter = (settings, setCurrency) => {
     if (currency === "cad") { setCurrency("CA$") }
 }
 export const getPrice = (price, decimal) => {
+   let  formatedprice=formatNumber(price)
     let fixed = 3
-    if (typeof price === 'string')
-        return parseFloat(price)?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    if (typeof formatedprice === 'string')
+        return parseFloat(formatedprice)?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     else
-        return typeof price === 'number' && price?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        return typeof formatedprice === 'number' && formatedprice?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 
 }
 export function capitalize(word) {
