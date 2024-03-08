@@ -12,11 +12,11 @@ import OrdersDetails from "../../components/account/component/orders-details";
 import client from "../../apollo-client";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
 import { useDispatch } from "react-redux";
+import { get } from "lodash";
 const TrackMyOrder = () => {
     const [customerOrder, setCustomerOrder] = useState([])
     const [loading, setloading] = useState(false)
     const [session, setSession] = useState({})
-    const [decimal, setdecimal] = useState(2)
     const [currencyStore, setCurrencyStore] = useState({})
     const [currency, setCurrency] = useState("$")
     const dispatch =useDispatch()
@@ -61,7 +61,7 @@ const TrackMyOrder = () => {
         query(GET_CUSTOMER_ORDERS_QUERY, variable).then((response) => {
             if (response) {
                 if (response.data.orderbyUser.data) {
-                    const customeradd = response.data.orderbyUser.data
+                    const customeradd = get(response,'data.orderbyUser.data',[])
                     setloading(false)
                     setCustomerOrder([...customeradd])
                 }
@@ -86,7 +86,7 @@ const TrackMyOrder = () => {
                                 <strong> Order id : {customerOrder[0]?.id}</strong>
                             </Col>
                             <Col>
-                                <strong>Total : {currency} {getPrice(customerOrder[0]?.grandTotal, decimal)}</strong>
+                                <strong>Total : {currency} {getPrice(customerOrder[0]?.grandTotal, get(currencyStore,'currency_options'))}</strong>
                             </Col>
                         </Accordion.Header>
                         <Accordion.Body>

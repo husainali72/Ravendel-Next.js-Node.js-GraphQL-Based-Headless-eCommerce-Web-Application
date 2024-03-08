@@ -6,18 +6,21 @@ import { Container } from 'react-bootstrap';
 import { useSelector, useDispatch } from "react-redux";
 import { useSession, signOut } from "next-auth/react";
 import { logoutDispatch } from "../redux/actions/userlogoutAction"
-import { query } from '../utills/helpers';
+import { getImage,query } from '../utills/helpers';
 import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
 import { GET_SETTING, getSettings } from '../redux/actions/settingAction';
 import { calculateUserCart } from '../redux/actions/cartAction';
 import { Toaster } from 'react-hot-toast';
 import { get } from 'lodash';
-
+import { useTheme } from '../pages/themeContext';
+import RavendelLogo from '../components/images/ravendellogo.png';
 
 export default function Header({ setOpenMenu }) {
+    const theme=get(useTheme(),'theme')
   const data = useSession();
   const cartItem = useSelector(state => state.cart.cartItems)
   const addedCart = useSelector(state => state.addedCart)
+  const settings = useSelector((state) => state.setting);
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [cart, setCart] = useState(null);
@@ -45,6 +48,8 @@ export default function Header({ setOpenMenu }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+
   const getCartLength = async () => {
         let userCart
 
@@ -154,8 +159,12 @@ export default function Header({ setOpenMenu }) {
                 <Container>
                     <div className="header-container header-wrap">
                         <div className="app-logo" style={{ justifyContent: "flex-start" }}>
-                            <Link href="/">
-                                <a className="app-logo" width="120" height="33.13">RAVENDEL</a>
+                            <Link href="/">                        
+                                <img src={getImage(get(settings,'setting.appearance.theme.logo'),get(settings,'setting.imageStorage.status'))}
+                                onError={(event)=>event.target.src =RavendelLogo.src}
+                                className='logo-image'
+
+                                />
                             </Link>
                         </div>
                         <div className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding d-lg-block hover-boder" id='navigation' style={{ justifyContent: "center" }}>
@@ -194,7 +203,7 @@ export default function Header({ setOpenMenu }) {
                                 <Link href="/shopcart">
                                     <div className="add-to-cart-header">
                                         <a className="cart-icon action-btn">
-                                            <i className="fas fa-shopping-bag font-awesome-icon" style={{ color: "#088178" }} aria-hidden="true"></i>
+                                            <i className="fas fa-shopping-bag font-awesome-icon " style={{ color: get(theme,'palette.primary.main')}} aria-hidden="true"></i>
                                         </a>
                                             <span className="pro-count blue">{cartItem?.length}</span>
                                     </div>

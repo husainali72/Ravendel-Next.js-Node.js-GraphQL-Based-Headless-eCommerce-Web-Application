@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from "../../redux/actions/cartAction";
 import { useSession } from "next-auth/react";
 import calculateDiscount from '../../utills/calculateDiscount';
-import { capitalize } from 'lodash';
+import { capitalize, get } from 'lodash';
 
 export const ProductNav = (props) => {
     const dispatch = useDispatch();
@@ -17,9 +17,9 @@ export const ProductNav = (props) => {
     const settings = useSelector(state => state.setting)
     const currencyType = settings.currencyOption
     const [currency, setCurrency] = useState("$")
-    const [decimal, setdecimal] = useState(2)
+    const [currencyOption, setCurrencyOption] = useState({})
     useEffect(() => {
-        setdecimal(settings.currencyOption.number_of_decimals)
+        setCurrencyOption(get(settings,'currencyOption'))
         currencySetter(settings, setCurrency);
     }, [settings?.currencyOption])
     const addToCartProduct = (product) => {
@@ -74,10 +74,10 @@ export const ProductNav = (props) => {
                             <div className="product-price" style={{ justifyContent: "left", alignContent: "left", m: 0 }}>
                                 <StarRating className="rating" stars={product?.name} singleproducts={product} />
                                 <span >{product.pricing.sellprice ? (
-                                    <strong className="sale-price">{currency} {getPrice(product?.pricing?.sellprice, decimal)}
+                                    <strong className="sale-price">{currency} {getPrice(get(product,'pricing.sellprice','0'), currencyOption)}
                                     </strong>
                                 ) : (
-                                    <strong className="sale-price">{currency} {getPrice(product?.pricing?.price, decimal)}</strong>
+                                    <strong className="sale-price">{currency} {getPrice(get(product,'pricing.price','0'), currencyOption)}</strong>
 
                                 )}</span>
                                 {product.pricing.sellprice ? <span
@@ -86,7 +86,7 @@ export const ProductNav = (props) => {
                                     }
                                 >
 
-                                    {currency} {getPrice(product.pricing.price, decimal)}
+                                    {currency} {getPrice(get(product,'pricing.price','0'), currencyOption)}
                                 </span> : null}
 
                             </div>

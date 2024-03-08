@@ -10,7 +10,6 @@ const ShippingTaxCoupon = (props) => {
     prevFormStep,
     shippingAdd,
     billingInfo,
-    decimal,
   } = props;
   return (
     <>

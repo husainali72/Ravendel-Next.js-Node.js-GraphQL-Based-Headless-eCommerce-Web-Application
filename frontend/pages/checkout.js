@@ -110,11 +110,13 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
   const [currency, setCurrency] = useState("$");
   const [ZipMessage, setZipMessage] = useState("");
   const [couponCartDetail, setCouponCardDetail] = useState({});
-  const decimal = currencyStore?.currency_options?.number_of_decimals;
+  const currencyOption = currencyStore?.currency_options;
 
   useEffect(() => {
     if (session.status === "authenticated") {
       selectAddressList(get(session, "data.user.accessToken.customer.addressBook")  );
+      const defaultAddress=getDefaultAddressDetails(get(session, "data.user.accessToken.customer.addressBook"))
+      setBillingInfo({...defaultAddress})
       setToken(get(session, "data.user.accessToken.token"));
       setCustomerId(get(session, "data.user.accessToken.customer._id"));
       let sessionCustomerID = get(session, "data.user.accessToken.customer._id" );
@@ -175,6 +177,27 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
       nextFormStep();
     }
   };
+  const getDefaultAddressDetails=(addresses)=>{
+if(addresses&&addresses.length>0){
+    let defaultAddress=addresses?.find((address)=>address?.defaultAddress)
+    defaultAddress=defaultAddress||addresses[0]
+    let defaultAddressInfo = {
+      zip: defaultAddress.pincode,
+      state: defaultAddress.state,
+      city: defaultAddress.city,
+      address: defaultAddress.addressLine1 + ", " + defaultAddress.addressLine2,
+      addressLine2: defaultAddress.addressLine2,
+      addressLine1: defaultAddress.addressLine1,
+      phone: defaultAddress.phone,
+      company: defaultAddress.company,
+      email: defaultAddress.email,
+      lastname: defaultAddress.lastName,
+      firstname: defaultAddress.firstName,
+      country: defaultAddress.country,
+    };
+    checkCode(get(defaultAddressInfo,'zip'))
+    return defaultAddressInfo}
+  }
   const prepareCartItemsList = (allCartItems) => {
     let cartItemsList = [];
     allCartItems?.map((cart) => {
@@ -215,6 +238,20 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
     }
     setBillingInfo({ ...billingInfo, [e.target.name]: e.target.value });
   };
+  const checkCode = async (code) => {
+    try {
+      const { data: result } = await client.query({
+        query: CHECK_ZIPCODE,
+
+        variables: { zipcode: code.toString() },
+      });
+      setZipMessage({
+        ...ZipMessage,
+        zipMessage: result.checkZipcode.message,
+        zipSuccess: result.checkZipcode.success,
+      });
+    } catch (e) {}
+  };
   const handleZipCode = (e) => {
     if (!shippingAdd) {
       setShippingInfo({
@@ -223,21 +260,8 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
       });
     }
     setBillingInfo({ ...billingInfo, [e.target.name]: e.target.value });
-    const checkCode = async () => {
-      try {
-        const { data: result } = await client.query({
-          query: CHECK_ZIPCODE,
-
-          variables: { zipcode: e.target.value.toString() },
-        });
-        setZipMessage({
-          ...ZipMessage,
-          zipMessage: result.checkZipcode.message,
-          zipSuccess: result.checkZipcode.success,
-        });
-      } catch (e) {}
-    };
-    checkCode();
+    
+    checkCode(e.target.value);
   };
 
   const getBillingData = (val) => {
@@ -299,8 +323,8 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
       state: address.state,
       city: address.city,
       address: address.addressLine1 + ", " + address.addressLine2,
-      addressLine2: address.addressLine1,
-      addressLine1: address.addressLine2,
+      addressLine2: address.addressLine2,
+      addressLine1: address.addressLine1,
       phone: address.phone,
       company: address.company,
       email: address.email,
@@ -417,7 +441,6 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                   <div className="col-lg-12 first-checkout-page">
                     <div style={{ padding: "20px", maxWidth: "700px" }}>
                       <CustomerDetail
-                        decimal={decimal}
                         addressBook={addressList}
                         setBillingInfo={setBillingInfo}
                         SelectAddressBook={SelectAddressBook}
@@ -448,10 +471,9 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
 
                         <button
                           type="submit"
-                          className="btn btn-success"
+                          className="btn btn-success primary-btn-color"
                           style={{
                             marginTop: 12,
-                            backgroundColor: "#088178",
                             float: "right",
                           }}
                         >
@@ -463,7 +485,7 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                       <OrderSummary
                         totalSummary={totalSummary}
                         removeCoupon={removeCoupon}
-                        decimal={decimal}
+                        currencyOption={currencyOption}
                         currency={currency}
                         couponCartDetail={couponCartDetail}
                         CouponLoading={CouponLoading}
@@ -493,17 +515,15 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                     <div style={{ width: "60%", padding: "20px" }}>
                       <ShippingTaxCoupon
                         currency={currency}
-                        decimal={decimal}
                         shippingInfo={shippingInfo}
                         prevFormStep={prevFormStep}
                         shippingAdd={shippingAdd}
                         billingInfo={billingInfo}
                       />
                       <button
-                        className="btn btn-success"
+                        className="btn btn-success primary-btn-color"
                         style={{
                           marginTop: 12,
-                          backgroundColor: "#088178",
                           float: "right",
                         }}
                         onClick={nextFormStep}
@@ -521,7 +541,7 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                       <OrderSummary
                         totalSummary={totalSummary}
                         removeCoupon={removeCoupon}
-                        decimal={decimal}
+                        currencyOption={currencyOption}
                         currency={currency}
                         couponCartDetail={couponCartDetail}
                         CouponLoading={CouponLoading}
@@ -551,7 +571,6 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                     <div style={{ width: "60%", padding: "20px" }}>
                       <ShippingTaxCoupon
                         currency={currency}
-                        decimal={decimal}
                         shippingInfo={shippingInfo}
                         prevFormStep={prevFormStep}
                         shippingAdd={shippingAdd}
@@ -560,7 +579,6 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                       <h5>Your Order Summary</h5>
                       <Orderdetail
                         homepageData={homepageData}
-                        decimal={decimal}
                         currency={currency}
                         billingInfo={billingInfo}
                         shippingInfo={shippingInfo}
@@ -581,10 +599,9 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
 
                       <button
                         type="submit"
-                        className="btn btn-success"
+                        className="btn btn-success primary-btn-color"
                         style={{
                           marginTop: 12,
-                          backgroundColor: "#088178",
                           float: "right",
                         }}
                         onClick={handleOrderPlaced}
@@ -603,7 +620,7 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                       <OrderSummary
                         totalSummary={totalSummary}
                         removeCoupon={removeCoupon}
-                        decimal={decimal}
+                        currencyOption={currencyOption}
                         currency={currency}
                         couponCartDetail={couponCartDetail}
                         CouponLoading={CouponLoading}
@@ -677,7 +694,6 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                       <h5>Your Order</h5>
                       <Orderdetail
                         homepageData={homepageData}
-                        decimal={decimal}
                         currency={currency}
                         billingInfo={billingInfo}
                         shippingInfo={shippingInfo}
@@ -690,8 +706,8 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
                 </div>
                 <button
                   type="submit"
-                  className="btn btn-success"
-                  style={{ marginTop: 12, backgroundColor: "#088178" }}
+                  className="btn btn-success primary-btn-color"
+                  style={{ marginTop: 12, }}
                 >
                   Place Order
                 </button>
@@ -707,8 +723,8 @@ export const CheckOut = ({ currencyStore, homepageData }) => {
               <Link href="/account">
                 <button
                   type="button"
-                  className="btn btn-success"
-                  style={{ marginTop: 12, backgroundColor: "#088178" }}
+                  className="btn btn-success primary-btn-color"
+                  style={{ marginTop: 12,  }}
                 >
                   login
                 </button>

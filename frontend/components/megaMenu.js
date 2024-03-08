@@ -108,16 +108,13 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
                                                 <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>
                                                     <div className="card-btns">
                                                         <button type="button"
-                                                            className="btn btn-success "
-                                                            style={{ backgroundColor: "#088178" }}
-
+                                                            className="btn btn-success primary-btn-color "
                                                         >
                                                             Shop Now
                                                         </button>
 
                                                     </div>
                                                 </Link>
-                                                {/* <button className='link-btn'>Shop Now <HiOutlineArrowNarrowRight /></button> */}
                                             </div>
                                         </div> : null
                                 ))}

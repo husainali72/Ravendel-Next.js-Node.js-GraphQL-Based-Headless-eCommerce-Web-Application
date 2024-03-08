@@ -2,12 +2,11 @@ import { useState, useEffect } from "react";
 import { getImage, getPrice, imageOnError } from "../../utills/helpers";
 import Form from "react-bootstrap/Form";
 import Link from "next/link";
-import { capitalize } from "lodash";
+import { capitalize, get } from "lodash";
 import { useSelector } from "react-redux";
 const Orderdetail = (props) => {
   const {
     homepageData,
-    decimal,
     currency,
     getOrderDetails,
     cartItems,
@@ -15,10 +14,9 @@ const Orderdetail = (props) => {
     handleBillingInfo,
     shippingInfo,
   } = props;
-  const settings = useSelector((state) => state.setting);
   const cart = cartItems;
-  const imageType =
-    homepageData && homepageData?.getSettings?.imageStorage?.status;
+  const imageType =get( homepageData,'getSettings.imageStorage.status');
+  const currencyOption =get(homepageData,'getSettings.store.currency_options');
   const [cartProduct, setCartProduct] = useState([]);
 
   const cartSubTotal = () => {
@@ -108,7 +106,7 @@ const Orderdetail = (props) => {
                 </td>
                 <td>
                   {currency}
-                  {getPrice(item?.pricing, decimal)}{" "}
+                  {getPrice(item?.pricing, currencyOption)}{" "}
                 </td>
               </tr>
             ))}
@@ -124,13 +122,14 @@ const Orderdetail = (props) => {
               onChange={(e) => handleBillingInfo(e)}
             >
               {["radio"].map((type) => (
-                <div key={`inline-${type}`} className="mb-3">
+                <div key={`inline-${type}`} className="mb-3 ">
                   <Form.Check
                     label="Cash on delivery"
                     name="paymentMethod"
                     type={type}
                     value="Cash On Delivery"
                     id={`inline-${type}-1`}
+                    className="primary-checked-checkbox-color"
                   />
                   <Form.Check
                     label="Stripe"
@@ -138,6 +137,7 @@ const Orderdetail = (props) => {
                     type={type}
                     value="stripe"
                     id={`inline-${type}-2`}
+                    className="primary-checked-checkbox-color"
                   />
                   <Form.Check
                     label="Credit Card"
@@ -145,6 +145,7 @@ const Orderdetail = (props) => {
                     type={type}
                     id={`inline-${type}-3`}
                     value="creditCard"
+                    className="primary-checked-checkbox-color"
                   />
                 </div>
               ))}

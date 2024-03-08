@@ -21,10 +21,10 @@ export const convertDateToStringFormat = (date) => {
 const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, subtotal, tax, shippingAmount, homepageData, couponValue, couponCode }) => {
     const Details = useSelector(state => state.checkout)
     const [currency, setCurrency] = useState("$")
-    const [decimal, setdecimal] = useState(2)
+    const [currencyOption, setCurrencyOption] = useState(2)
     const [currencyStore, setCurrencyStore] = useState({})
     useEffect(() => {
-        setdecimal(currencyStore?.currency_options?.number_of_decimals)
+        setCurrencyOption(currencyStore?.currency_options)
         currencySetter(currencyStore, setCurrency);
     }, [currencyStore])
     const handleReOrder = (detail) => {
@@ -65,7 +65,7 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                     <tr>
                                         <th>Total</th>
 
-                                        <td>{currency} {total ? getPrice(total, decimal) : getPrice(total, decimal)}</td>
+                                        <td>{currency} {total ? getPrice(total, currencyOption) : getPrice(total, currencyOption)}</td>
                                     </tr>
                                     <tr>
                                         <th>Payment Method</th>
@@ -121,29 +121,29 @@ const OrdersDetails = ({ orderDetail, billingInfo, order, shippingInfo, total, s
                                             <th>    {order?.attributes.map((attribute) => {
                                                 return <div> {attribute.name} : {attribute.value}</div>
                                             })}</th>
-                                            <td>{currency} {getPrice(order?.productPrice, decimal)}</td>
+                                            <td>{currency} {getPrice(order?.productPrice, currencyOption)}</td>
                                         </tr>
                                     )}
                                 </tbody>
                                 <tr>
                                     <th colSpan={3} className="order-text-align" >Subtotal</th>
-                                    <td>{currency} {getPrice(subtotal, decimal)}</td>
+                                    <td>{currency} {getPrice(subtotal, currencyOption)}</td>
                                 </tr>
                                 <tr>
                                     <th colSpan={3} className="order-text-align">Tax</th>
-                                    <td>{currency} {tax ? getPrice(tax, decimal) : "0.00"}</td>
+                                    <td>{currency} {tax ? getPrice(tax, currencyOption) : "0.00"}</td>
                                 </tr>
                                 <tr>
                                     <th colSpan={3} className="order-text-align">Shipping</th>
-                                    <td>{currency} {shippingAmount ? getPrice(shippingAmount, decimal) : "0.00"}</td>
+                                    <td>{currency} {shippingAmount ? getPrice(shippingAmount, currencyOption) : "0.00"}</td>
                                 </tr>
                                 {couponCode && <tr>
                                     <th colSpan={3} className="order-text-align" style={{ color: '#4BB543' }}>Coupon - {couponCode}</th>
-                                    <td style={{ color: '#4BB543' }} >- {currency} {couponValue ? getPrice(couponValue, decimal) : "0.00"}</td>
+                                    <td style={{ color: '#4BB543' }} >- {currency} {couponValue ? getPrice(couponValue, currencyOption) : "0.00"}</td>
                                 </tr>}
                                 <tr className="total">
                                     <th colSpan={3} className="order-text-align" >Total</th>
-                                    <td>{currency} {total ? getPrice(total, decimal) : getPrice(total, decimal)}</td>
+                                    <td>{currency} {total ? getPrice(total, currencyOption) : getPrice(total, currencyOption)}</td>
                                 </tr>
                             </table>
                         </div>
