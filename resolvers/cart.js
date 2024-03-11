@@ -63,10 +63,11 @@ module.exports = {
 
             if (coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) {
               if (!coupon.category) {
+                let isDiscountTypeValid = true;
                 if(coupon.discountType === 'amount-discount') {
                   couponDiscount = parseFloat(coupon.discountValue);
                 }
-                else if(coupon.discountType === 'percantage-discount') {
+                else if(coupon.discountType === 'percentage-discount') {
                   couponDiscount = parseFloat(cartTotal / 100) * parseFloat(coupon.discountValue);
                   if(coupon.maximumSpend && coupon.maximumSpend != 0) {
                     if (couponDiscount > coupon.maximumSpend) {
@@ -80,11 +81,12 @@ module.exports = {
                   cart.totalSummary.totalShipping = 0;
                 }
                 else {
+                  isDiscountTypeValid = false;
                   console.log('Invalid discount type');
                   success = false;
                   message = 'Something wrong with the Coupon code';
                 }
-                if(couponDiscount != 0) {
+                if(isDiscountTypeValid) {
                   couponCard.couponApplied = true;
                   couponCard.appliedCouponCode = args.couponCode;
                   couponCard.appliedCouponDiscount = couponDiscount;
