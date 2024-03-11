@@ -621,21 +621,22 @@ const GalleryImagesComponents = (props) => {
               </p>
             )}
             <div className="varaint-select">
-              {singleproducts?.attribute_master?.map((attr) => {
+              {singleproducts?.attribute_master?.map((singleAttribute) => {
                 return (
                   <>
                     <FormControl>
                       <FormLabel id="demo-row-radio-buttons-group-label">
-                        {capitalize(attr.name)}
+                        {capitalize(singleAttribute.name)}
                       </FormLabel>
                       <RadioGroup
                         row
                         aria-labelledby="demo-row-radio-buttons-group-label"
                         name="row-radio-buttons-group"
                         value={variantSelect}
-                        onChange={(e) => prepareData(e, attr.id)}
+                        onChange={(e) => prepareData(e, singleAttribute.id)}
                       >
-                        {attr.attribute_values.map((val) => {
+                       
+                        {get(singleAttribute,'attribute_values',[])?.map((val) => {
                           return (
                             <FormControlLabel
                               value={val._id}
@@ -649,10 +650,10 @@ const GalleryImagesComponents = (props) => {
 
                     {error &&
                     !selectedAttrs.some(
-                      (selectedAtt) => attr.id === selectedAtt.name
+                      (selectedAtt) => singleAttribute.id === selectedAtt.name
                     ) ? (
                       <p style={{ color: "red" }}>
-                        Please Select The {capitalize(attr.name)}
+                        Please Select The {capitalize(singleAttribute.name)}
                       </p>
                     ) : null}
                   </>

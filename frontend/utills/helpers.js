@@ -167,9 +167,9 @@ export const currencySetter = (settings, setCurrency) => {
 }
 export const getPrice = (price,currencyOptions) => {
     let fixed = 3;
-    const decimal=get(currencyOptions,'number_of_decimals')
-    const thousandSeparator=get(currencyOptions,'thousand_separator')
-    const decimalSeparator=get(currencyOptions,'decimal_separator')
+    const decimal=get(currencyOptions,'number_of_decimals','2')
+    const thousandSeparator=get(currencyOptions,'thousand_separator',',')
+    const decimalSeparator=get(currencyOptions,'decimal_separator','.')
     const formattedPrice = (value) => {
         return value.toFixed(decimal)
             .replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
