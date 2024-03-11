@@ -26,7 +26,7 @@ import {
   getAllAttributes,
   getFilteredProducts,
 } from "../redux/actions/productAction";
-import { capitalize } from "lodash";
+import { capitalize, get } from "lodash";
 import { useRouter } from "next/router";
 const Shop = ({
   shopProducts,
@@ -43,7 +43,7 @@ const Shop = ({
   const usercart = useSelector((state) => state.userCart);
   const [rangevalue, setRangevalue] = useState("");
   const currencyOpt = currencyStore?.currency_options?.currency;
-  const [FilterAttribute, setFilterAttribute] = useState([]);
+  const [filterAttribute, setFilterAttribute] = useState([]);
   const decimal = currencyStore?.currency_options?.number_of_decimals;
   const [currency, setCurrency] = useState("$");
   const [loading, setloading] = useState(false);
@@ -78,27 +78,21 @@ const Shop = ({
 
   const dropdownRef = useRef(null);
   useEffect(() => {
-    if (shopProducts && shopProducts?.products?.data?.length > 0) {
       setloading(false);
-      setNumber(shopProducts.products.data?.length);
-      setonSaleProduct(shopProducts.products.data);
-      setonSaleAllProduct(shopProducts.products.data);
-    } else {
-      setloading(true);
-    }
+      setNumber(get(shopProducts,'products.data')?.length);
+      setonSaleProduct(get(shopProducts,'products.data'));
+      setonSaleAllProduct(get(shopProducts,'products.data'));
+
   }, [shopProducts]);
 
   useEffect(() => {
     dispatch(getAllAttributes());
+    currencySetter(currencyOpt, setCurrency);
   }, []);
 
   useEffect(() => {
     dispatch(settingActionCreator(currencyStore.currency_options));
   }, [currencyStore?.currency_options]);
-
-  useEffect(() => {
-    currencySetter(currencyOpt, setCurrency);
-  }, []);
 
   useEffect(() => {
     if (brandProduct) {
@@ -110,7 +104,13 @@ const Shop = ({
   useEffect(() => {
     setFilterAttributesFromUrl();
   }, [router.query]);
+  useEffect(() => {
+    if (sortingdata && sortingdata?.length > 0) {
+      sortData(sortingName);
+    }
+  }, [sortingdata]);
 
+  //Retrieves filter parameters (such as price range and attribute values) from the URL
   const setFilterAttributesFromUrl = () => {
     const { query } = router;
     // Extract filter parameters from the URL
@@ -134,9 +134,9 @@ const Shop = ({
             : [attributeValue],
         };
       });
-
+      let priceRange=[minPrice,maxPrice]
     if (attributeValues.length > 2) {
-      // Create an array of filtered attributes
+      // Create an attribute array for filtering  products based on the parsed URL parameters
       const filteredProductAttribute = attributeValues
         .filter((att) => att.name !== "price.gte" && att.name !== "price.lte")
         .map((att) => {
@@ -146,9 +146,15 @@ const Shop = ({
             value: att.value,
           };
         });
-      // Update the state with filtered attributes
+
+
+
+      // apply filter
+      searchProductsByAttributeAndPrice(filteredProductAttribute,priceRange)
+     // Update the state with filtered attributes
       setFilterAttribute([...filteredProductAttribute]);
     } else {
+      searchProductsByAttributeAndPrice([],priceRange)
       setFilterAttribute([]);
     }
   };
@@ -174,31 +180,31 @@ const Shop = ({
     };
   }, []);
 
-  const updateFilterAttributes = (e, attribute, value) => {
-    let index = FilterAttribute.findIndex(
+  const handleAttributeFilterValue = (e, attribute, value) => {
+    let index = filterAttribute.findIndex(
       (data) => data?.name === attribute?.name
     );
     if (index !== -1) {
-      let val_index = FilterAttribute[index].value.findIndex(
+      let val_index = filterAttribute[index].value.findIndex(
         (att_value) => att_value === value?.name
       );
 
       if (val_index !== -1) {
         // Remove the value if it exists
-        FilterAttribute[index].value.splice(val_index, 1);
+        filterAttribute[index].value.splice(val_index, 1);
         // Check if there are no values left for the attribute, remove the attribute Name
-        if (FilterAttribute[index].value.length === 0) {
-          let FilteredProductAttribute = FilterAttribute.filter(
+        if (filterAttribute[index].value.length === 0) {
+          let FilteredProductAttribute = filterAttribute.filter(
             (FilteredAttribute) => FilteredAttribute.name !== attribute?.name
           );
 
           setFilterAttribute([...FilteredProductAttribute]);
         } else {
-          setFilterAttribute([...FilterAttribute]);
+          setFilterAttribute([...filterAttribute]);
         }
       } else {
-        FilterAttribute[index].value.push(value?.name);
-        setFilterAttribute([...FilterAttribute]);
+        filterAttribute[index].value.push(value?.name);
+        setFilterAttribute([...filterAttribute]);
       }
     } else {
       // If the attribute doesn't exist, create a new one
@@ -209,7 +215,7 @@ const Shop = ({
         name: attribute?.name,
         value: val,
       };
-      let productAttribute = FilterAttribute;
+      let productAttribute = filterAttribute;
       productAttribute.push(obj);
       setFilterAttribute([...productAttribute]);
     }
@@ -243,16 +249,12 @@ const Shop = ({
     CloseSortMenu();
     CloseMenu();
   };
-  useEffect(() => {
-    if (sortingdata && sortingdata?.length > 0) {
-      sortData(sortingName);
-    }
-  }, [sortingdata]);
+
+ //Generates a filter URL based on the specified price range and attribute filters, then applies these filters to search  products.
   const updateUrlParametersFromQuery = () => {
-    // Build the filter query parameters
     const filterQuery = [];
 
-    // Add price range filters
+    // Add price range filters to the url paramenter
     const priceRange = [];
     if (rangevalue) {
       priceRange = rangevalue.split("-");
@@ -260,35 +262,58 @@ const Shop = ({
       filterQuery.push(`filter.v.price.lte=${priceRange[1]}`);
     }
 
-    // Add attribute filters
-
-    if (FilterAttribute && FilterAttribute.length > 0) {
-      FilterAttribute?.forEach((attribute) => {
+    // Add attribute filters to the url paramenter
+    if (filterAttribute && filterAttribute.length > 0) {
+      filterAttribute?.forEach((attribute) => {
         attribute?.value?.forEach((value) => {
           filterQuery.push(`filter.v.${attribute?.label}=${value}`);
         });
       });
     }
 
-    // Combine the filter parameters into the URL
-    dispatch(
-      getFilteredProducts({
-        minPrice: priceRange[0],
-        maxPrice: priceRange[1],
-        attributes: FilterAttribute,
-      })
-    );
+    // apply filter
+    searchProductsByAttributeAndPrice(filterAttribute,priceRange)
+    //update url parameter
     const filterURL = filterQuery.length > 0 ? `?${filterQuery.join("&")}` : "";
     router.replace(`/shop${filterURL}`, undefined, { shallow: true });
     window.history.pushState(null, null, `/shop${filterURL}`);
   };
+
+  //Filters products based on specified attributes and price range
+  const searchProductsByAttributeAndPrice=(attributes,priceRange)=>{
+    let allProducts=get(shopProducts,'products.data')
+    if (attributes && attributes.length > 0) {
+      let data = allProducts?.filter((data) => {
+          return (get(data,'attribute_master',[])?.some((attribute_value) => {
+              return attributes.some((filteredData) => {
+                  return (filteredData.name === attribute_value.name && get(filteredData,'value',[])?.some((data1) =>{
+                    return   get(attribute_value,'attribute_values',[])?.some(val =>  val.name === data1)}
+                  ))
+              })
+          })
+          ) && (data.pricing.sellprice >= parseInt(priceRange[0]) && data.pricing.sellprice <= parseInt(priceRange[1]))
+
+      })
+      setonSaleProduct([...data])
+      setSortingdata([...data])
+      setNumber(data.length)
+  }
+  else {
+      let data = allProducts?.filter((data) => {
+          return (data.pricing.sellprice >= parseInt(priceRange[0]) && data.pricing.sellprice <= parseInt(priceRange[1]))
+      })
+      setonSaleProduct([...data])
+      setSortingdata([...data])
+      setNumber(data.length)
+  }
+
+  }
   const isValueChecked = (attribute, valueName) => {
-    const attributeIndex = FilterAttribute.findIndex(
+    const attributeIndex = filterAttribute.findIndex(
       (data) => data.name === attribute?.name
     );
     const attributeValueIndex =
-      FilterAttribute[attributeIndex]?.value.includes(valueName);
-
+    filterAttribute[attributeIndex]?.value.includes(valueName);
     return attributeIndex !== -1 && attributeValueIndex;
   };
 
@@ -337,6 +362,7 @@ const Shop = ({
                             return (
                               <>
                                 <h6>{capitalize(attribute.name)}</h6>
+                                
                                 <Form>
                                   <Form.Group>
                                     {attribute.values.map((value) => (
@@ -347,7 +373,7 @@ const Shop = ({
                                         data-id={value._id}
                                         data-name={value.name}
                                         onChange={(e) =>
-                                          updateFilterAttributes(
+                                          handleAttributeFilterValue(
                                             e,
                                             attribute,
                                             value
@@ -537,13 +563,6 @@ const Shop = ({
                             </li>
                           );
                         })}
-
-                        {/* <li>
-                                                    <a href="#">High to Low</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">Release Date</a>
-                                                </li> */}
                       </div>
                     </div>
                   </div>
