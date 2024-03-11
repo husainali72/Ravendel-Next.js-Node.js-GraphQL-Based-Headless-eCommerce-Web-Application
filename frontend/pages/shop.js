@@ -28,6 +28,10 @@ import {
 } from "../redux/actions/productAction";
 import { capitalize, get } from "lodash";
 import { useRouter } from "next/router";
+const defaultPrice={
+  min:0,
+  max:100000
+}
 const Shop = ({
   shopProducts,
   brandProduct,
@@ -51,7 +55,6 @@ const Shop = ({
   const [onSaleAllProduct, setonSaleAllProduct] = useState([]);
   const [sortingdata, setSortingdata] = useState([]);
   const [number, setNumber] = useState(0);
-  const getSetting = useSelector((state) => state.setting);
   const [sortingName, setSortingName] = useState({
     name: "latest",
     title: "Release date",
@@ -78,17 +81,20 @@ const Shop = ({
 
   const dropdownRef = useRef(null);
   useEffect(() => {
-      setloading(false);
-      setNumber(get(shopProducts,'products.data')?.length);
-      setonSaleProduct(get(shopProducts,'products.data'));
-      setonSaleAllProduct(get(shopProducts,'products.data'));
-
+    setloading(false);
+    setNumber(get(shopProducts, "products.data")?.length);
+    setonSaleProduct(get(shopProducts, "products.data"));
+    setonSaleAllProduct(get(shopProducts, "products.data"));
   }, [shopProducts]);
-
   useEffect(() => {
     dispatch(getAllAttributes());
     currencySetter(currencyOpt, setCurrency);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
+
 
   useEffect(() => {
     dispatch(settingActionCreator(currencyStore.currency_options));
@@ -118,10 +124,10 @@ const Shop = ({
     const maxPrice = query["filter.v.price.lte"] || "";
     setFilters({
       ...filters,
-      minPrice: minPrice || "0",
-      maxPrice: maxPrice || "100000",
+      minPrice: minPrice ||defaultPrice?.min,
+      maxPrice: maxPrice ||defaultPrice?.max,
     });
-// Extract attribute values from the URL
+    // Extract attribute values from the URL
     const attributeValues = Object.keys(query)
       .filter((key) => key.startsWith("filter.v."))
       .map((key) => {
@@ -134,7 +140,7 @@ const Shop = ({
             : [attributeValue],
         };
       });
-      let priceRange=[minPrice,maxPrice]
+    let priceRange = [minPrice, maxPrice];
     if (attributeValues.length > 2) {
       // Create an attribute array for filtering  products based on the parsed URL parameters
       const filteredProductAttribute = attributeValues
@@ -147,14 +153,12 @@ const Shop = ({
           };
         });
 
-
-
       // apply filter
-      searchProductsByAttributeAndPrice(filteredProductAttribute,priceRange)
-     // Update the state with filtered attributes
+      searchProductsByAttributeAndPrice(filteredProductAttribute, priceRange);
+      // Update the state with filtered attributes
       setFilterAttribute([...filteredProductAttribute]);
     } else {
-      searchProductsByAttributeAndPrice([],priceRange)
+      searchProductsByAttributeAndPrice([], priceRange);
       setFilterAttribute([]);
     }
   };
@@ -173,12 +177,7 @@ const Shop = ({
       CloseMenu();
     }
   };
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+
 
   const handleAttributeFilterValue = (e, attribute, value) => {
     let index = filterAttribute.findIndex(
@@ -250,7 +249,7 @@ const Shop = ({
     CloseMenu();
   };
 
- //Generates a filter URL based on the specified price range and attribute filters, then applies these filters to search  products.
+  //Generates a filter URL based on the specified price range and attribute filters, then applies these filters to search  products.
   const updateUrlParametersFromQuery = () => {
     const filterQuery = [];
 
@@ -272,7 +271,7 @@ const Shop = ({
     }
 
     // apply filter
-    searchProductsByAttributeAndPrice(filterAttribute,priceRange)
+    searchProductsByAttributeAndPrice(filterAttribute, priceRange);
     //update url parameter
     const filterURL = filterQuery.length > 0 ? `?${filterQuery.join("&")}` : "";
     router.replace(`/shop${filterURL}`, undefined, { shallow: true });
@@ -280,40 +279,52 @@ const Shop = ({
   };
 
   //Filters products based on specified attributes and price range
-  const searchProductsByAttributeAndPrice=(attributes,priceRange)=>{
-    let allProducts=get(shopProducts,'products.data')
+  const searchProductsByAttributeAndPrice = (attributes, priceRange) => {
+    let allProducts = get(shopProducts, "products.data");
     if (attributes && attributes.length > 0) {
       let data = allProducts?.filter((data) => {
-          return (get(data,'attribute_master',[])?.some((attribute_value) => {
-              return attributes.some((filteredData) => {
-                  return (filteredData.name === attribute_value.name && get(filteredData,'value',[])?.some((data1) =>{
-                    return   get(attribute_value,'attribute_values',[])?.some(val =>  val.name === data1)}
-                  ))
-              })
-          })
-          ) && (data.pricing.sellprice >= parseInt(priceRange[0]) && data.pricing.sellprice <= parseInt(priceRange[1]))
-
-      })
-      setonSaleProduct([...data])
-      setSortingdata([...data])
-      setNumber(data.length)
-  }
-  else {
+        return (
+          get(data, "attribute_master", [])?.some((attribute_value) => {
+            return attributes.some((filteredData) => {
+              return (
+                filteredData.name === attribute_value.name &&
+                get(filteredData, "value", [])?.some((data1) => {
+                  return get(attribute_value, "attribute_values", [])?.some(
+                    (val) => val.name === data1
+                  );
+                })
+              );
+            });
+          }) &&
+          data.pricing.sellprice >= parseInt(priceRange[0]||defaultPrice?.min) &&
+          data.pricing.sellprice <= parseInt(priceRange[1]||defaultPrice?.max)
+        );
+      });
+      if (data ) {
+        setonSaleProduct([...data]);
+        setSortingdata([...data]);
+        setNumber(data.length);
+      }
+    } else {
       let data = allProducts?.filter((data) => {
-          return (data.pricing.sellprice >= parseInt(priceRange[0]) && data.pricing.sellprice <= parseInt(priceRange[1]))
-      })
-      setonSaleProduct([...data])
-      setSortingdata([...data])
-      setNumber(data.length)
-  }
-
-  }
+        return (
+          data.pricing.sellprice >= parseInt(priceRange[0]||defaultPrice?.min) &&
+          data.pricing.sellprice <= parseInt(priceRange[1]||defaultPrice?.max)
+        );
+      });
+      if (data ) {
+        setonSaleProduct([...data]);
+        setSortingdata([...data]);
+        setNumber(data.length);
+      }
+    }
+  };
   const isValueChecked = (attribute, valueName) => {
     const attributeIndex = filterAttribute.findIndex(
       (data) => data.name === attribute?.name
     );
     const attributeValueIndex =
-    filterAttribute[attributeIndex]?.value.includes(valueName);
+      filterAttribute[attributeIndex]?.value.includes(valueName);
     return attributeIndex !== -1 && attributeValueIndex;
   };
 
@@ -334,8 +345,8 @@ const Shop = ({
                     </h5>
                     <div style={{ marginTop: "30px" }}>
                       <MultiRangeSlider
-                        min={0}
-                        max={100000}
+                        min={defaultPrice?.min}
+                        max={defaultPrice?.max}
                         minValue={filters?.minPrice}
                         maxValue={filters?.maxPrice}
                         onChange={({ min, max }) => {
@@ -362,7 +373,7 @@ const Shop = ({
                             return (
                               <>
                                 <h6>{capitalize(attribute.name)}</h6>
-                                
+
                                 <Form>
                                   <Form.Group>
                                     {attribute.values.map((value) => (
