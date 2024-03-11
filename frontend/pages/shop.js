@@ -24,7 +24,6 @@ import { settingActionCreator } from "../redux/actions/settingAction";
 import Link from "next/link";
 import {
   getAllAttributes,
-  getFilteredProducts,
 } from "../redux/actions/productAction";
 import { capitalize, get } from "lodash";
 import { useRouter } from "next/router";
