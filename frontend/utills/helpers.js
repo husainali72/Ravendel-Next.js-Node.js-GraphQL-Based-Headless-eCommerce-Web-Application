@@ -1,4 +1,4 @@
-import { BASE_URL, baseUrl, bucketBaseURL } from '../config';
+import { BASE_URL, IMAGE_BASE_URL, baseUrl, BUCKET_BASE_URL } from '../config';
 import client from '../apollo-client';
 import { isEmpty } from "./service";
 import axios from 'axios'
@@ -15,17 +15,12 @@ export const getImage = (img, type, isBanner, setting) => {
     if(!img){
         return NoImagePlaceHolder.src
     }
-    let localStorage = setting && setting?.setting?.imageStorage?.status === 's3' ? false : (setting?.setting?.imageStorage?.status === 'localStorage' ? true : '')
     let imagaPath = ""
-    if(type && type === "localStorage"){
-        imagaPath = `https://${BASE_URL}/${img.toString()}`;
-        return imagaPath.toString();
-    }
     if (!isBanner) {
         imagaPath = NoImagePlaceHolder.src;
     }
     if (img) {
-        imagaPath = localStorage ? baseUrl + img : bucketBaseURL + img
+        imagaPath = type && type === "localStorage" ? IMAGE_BASE_URL + img : BUCKET_BASE_URL + img
     }
     return imagaPath;
 
@@ -170,14 +165,27 @@ export const currencySetter = (settings, setCurrency) => {
     if (currency === "gbp") { setCurrency(<i className="fas fa-pound-sign"></i>) }
     if (currency === "cad") { setCurrency("CA$") }
 }
-export const getPrice = (price, decimal) => {
-    let fixed = 3
-    if (typeof price === 'string')
-        return parseFloat(price)?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-    else
-        return typeof price === 'number' && price?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+export const getPrice = (price,currencyOptions) => {
+    let fixed = 3;
+    const decimal=get(currencyOptions,'number_of_decimals')
+    const thousandSeparator=get(currencyOptions,'thousand_separator')
+    const decimalSeparator=get(currencyOptions,'decimal_separator')
+    const formattedPrice = (value) => {
+        return value.toFixed(decimal)
+            .replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
 
-}
+            .replace('.', decimalSeparator);
+    };
+
+    if (typeof price === 'string') {
+        return formattedPrice(parseFloat(price));
+    } else if (typeof price === 'number') {
+        return formattedPrice(price);
+    }
+
+    return '0.00';
+};
+
 export function capitalize(word) {
     return word[0].toUpperCase() + word.slice(1);
 }

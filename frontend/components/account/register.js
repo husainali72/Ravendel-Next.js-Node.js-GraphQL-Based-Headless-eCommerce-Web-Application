@@ -30,12 +30,12 @@ const notify = (message, success) => {
 const Register = () => {
   const [registerUser, setRegisterUser] = useState(registerObject);
   const [loading, setLoading] = useState(false);
-  const [Errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({});
   const doRegister = (e) => {
     e.preventDefault();
-    const errors = Validation(registerUser);
-    setErrors((prevErrors) => ({ ...prevErrors, ...errors }));
-    if (Object.keys(errors).length === 0) {
+    const validationErrors = Validation(registerUser);
+    setErrors((prevErrors) => ({ ...prevErrors, ...validationErrors }));
+    if (Object.keys(validationErrors).length === 0 && !errors) {
       setLoading(true);
       mutation(ADD_CUSTOMER, registerUser)
         .then((res) => {
@@ -80,7 +80,7 @@ const Register = () => {
               }
             />
             <div className="error-message">
-              <small>{Errors?.firstName && Errors?.firstName}</small>
+              <small>{errors?.firstName && errors?.firstName}</small>
             </div>
             <input
               type="lastName"
@@ -93,7 +93,7 @@ const Register = () => {
               }
             />
             <div className="error-message">
-              <small>{Errors?.lastName && Errors?.lastName}</small>
+              <small>{errors?.lastName && errors?.lastName}</small>
             </div>
             <input
               type="login-email"
@@ -107,7 +107,7 @@ const Register = () => {
               }
             />
             <div className="error-message">
-              <small>{Errors?.email && Errors?.email}</small>
+              <small>{errors?.email && errors?.email}</small>
             </div>
             <PhoneInput
               enableSearch="true"
@@ -144,7 +144,7 @@ const Register = () => {
               }}
             />
             <div className="error-message">
-              <small>{Errors?.password && Errors?.password}</small>
+              <small>{errors?.password && errors?.password}</small>
             </div>
             <div className="form-check" style={{ marginTop: 12 }}>
               <input
@@ -169,8 +169,8 @@ const Register = () => {
                 registerUser.phone == ""
               }
               type="submit"
-              className="btn btn-success loading-btn"
-              style={{ marginTop: 12, backgroundColor: "#088178" }}
+              className="btn btn-success loading-btn primary-btn-color"
+              style={{ marginTop: 12 }}
             >
               {loading ? (
                 <Spinner animation="border" size="sm" role="status" />

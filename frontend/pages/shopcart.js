@@ -40,11 +40,9 @@ const YourCard = ({
   const [cartItems, setCartItems] = useState([]);
   const dispatch = useDispatch();
   const [currency, setCurrency] = useState("$");
-  const [decimal, setdecimal] = useState(2);
   const [totalSummary, setTotalSummary] = useState({});
   const settings = useSelector((state) => state.setting);
   useEffect(() => {
-    setdecimal(settings?.currencyOption?.number_of_decimals);
     currencySetter(settings, setCurrency);
   }, [settings?.currencyOption]);
   useEffect(() => {
@@ -182,7 +180,9 @@ const YourCard = ({
           });
       }
     } else {
+      if(item?.productQuantity){
       notify(`Only ${item?.productQuantity} Unit(s) available in stock `);
+      }
     }
   };
   // Function to remove an item from the cart
@@ -250,7 +250,6 @@ const YourCard = ({
                 <div className="col-12">
                   <CartTable
                     homepageData={homepageData}
-                    decimal={decimal}
                     cartItems={cartItems}
                     removeToCart={removeToCart}
                     AllCartItemsClear={AllCartItemsClear}

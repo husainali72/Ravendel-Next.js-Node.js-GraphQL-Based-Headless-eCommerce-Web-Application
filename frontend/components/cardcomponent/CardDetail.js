@@ -12,7 +12,6 @@ import CartTotalDetails from "./cartTotal";
 const CartTable = (props) => {
   const {
     cartItems,
-    decimal,
     AllCartItemsClear,
     removeToCart,
     currency,
@@ -20,8 +19,9 @@ const CartTable = (props) => {
     homepageData,
     totalSummary,
   } = props;
-  const imageType =
-    homepageData && homepageData?.getSettings?.imageStorage?.status;
+  const imageType = get(homepageData,'getSettings.imageStorage.status');
+  const currencyOptions = get(homepageData,'getSettings.store.currency_options')
+
 
 
   return (
@@ -133,7 +133,7 @@ const CartTable = (props) => {
                   <div className="itemContainer-base-price">
                     <div className="itemComponents-base-price itemComponents-base-bold ">
                       <div>
-                        {currency} {getPrice(get(product,'amount',0), decimal)}
+                        {currency} {getPrice(get(product,'amount',0),currencyOptions)}
                       </div>
                     </div>
 
@@ -141,7 +141,7 @@ const CartTable = (props) => {
                       <div className="itemContainer-base-discountBlock">
                         <span className="itemComponents-base-strikedAmount">
                           <span className="itemComponents-base-price itemComponents-base-strike itemContainer-base-strikedAmount">
-                            {getPrice(get(product,'mrpAmount',0), decimal)}
+                            {getPrice(get(product,'mrpAmount',0), currencyOptions)}
                           </span>
                         </span>
                         <span className="itemComponents-base-itemDiscount">
@@ -157,7 +157,7 @@ const CartTable = (props) => {
               </div>
             ))}
           </div>
-          <CartTotalDetails totalSummary={totalSummary} currency={currency} decimal={decimal}/>
+          <CartTotalDetails totalSummary={totalSummary} currencyOptions={currencyOptions} currency={currency}/>
         </div>
       </div>
     </div>

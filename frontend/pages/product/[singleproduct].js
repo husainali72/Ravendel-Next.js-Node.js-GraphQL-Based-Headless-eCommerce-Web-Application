@@ -64,8 +64,7 @@ const SingleProduct = ({
 }) => {
   const router = useRouter();
   const session = useSession();
-  const currencyOpt = currencyStore?.currency_options?.currency;
-  const decimal = currencyStore?.currency_options?.number_of_decimals;
+  const currencyOption = currencyStore?.currency_options;
   const [currency, setCurrency] = useState("$");
   const [singleProduct, setSingleProduct] = useState(null);
   const [sliderImages, setSliderImages] = useState([]);
@@ -77,7 +76,7 @@ const SingleProduct = ({
     return <div>Loading...</div>;
   }
   useEffect(() => {
-    currencySetter(currencyOpt, setCurrency);
+    currencySetter(get(currencyOption,'currency'), setCurrency);
   }, []);
 
   useEffect(() => {
@@ -126,7 +125,7 @@ const SingleProduct = ({
                 <div>
                   <GalleryImagesComponents
                     homepageData={homepageData}
-                    decimal={decimal}
+                    currencyOption={currencyOption}
                     stockClass={stockClass}
                     setStockClass={setStockClass}
                     outOfStockThreshold={outOfStockThreshold}
@@ -144,6 +143,7 @@ const SingleProduct = ({
                   id="left-tabs-example"
                   defaultActiveKey="description"
                 >
+
                   <Col>
                     <Nav variant="pills" className="flex-column">
                       <Nav.Item style={{ display: "flex" }}>
@@ -198,7 +198,6 @@ const SingleProduct = ({
                   hidetitle
                   currencyProp={currency}
                   currencyOpt={currencyStore}
-                  decimal={decimal}
                   homepageData={homepageData}
                 />
               </div>

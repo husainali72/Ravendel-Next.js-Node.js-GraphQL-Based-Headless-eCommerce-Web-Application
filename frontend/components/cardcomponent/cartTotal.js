@@ -6,7 +6,7 @@ import {
     Tooltip
   } from "@mui/material";
   import Link from "next/link";
-const CartTotalDetails=({totalSummary,decimal,currency})=>{
+const CartTotalDetails=({totalSummary,currencyOptions,currency})=>{
     return (
         <div className="price-detail-base-container">
         <div className="price-detail">
@@ -15,7 +15,7 @@ const CartTotalDetails=({totalSummary,decimal,currency})=>{
           <div className="carttotal-detail">
             <p className="mrp-price">Total MRP</p>
             <p className="mtb2" style={{ fontSize: "14px" }}>
-              {currency} {getPrice(get(totalSummary,'mrpTotal',0), decimal)}
+              {currency} {getPrice(get(totalSummary,'mrpTotal',0), currencyOptions)}
             </p>
           </div>
           <div className="priceDetail-base-row">
@@ -26,7 +26,7 @@ const CartTotalDetails=({totalSummary,decimal,currency})=>{
               </Tooltip>
             </p>
             <p className="mtb2 freeshipping" style={{ fontSize: "14px" }}>
-              - {currency} {getPrice(get(totalSummary,'discountTotal',0), decimal)}
+              - {currency} {getPrice(get(totalSummary,'discountTotal',0), currencyOptions)}
             </p>
           </div>
 
@@ -42,10 +42,10 @@ const CartTotalDetails=({totalSummary,decimal,currency})=>{
               get(totalSummary, "totalShipping") === "0" ? (
                 <span className="freeshipping">FREE</span>
               ) : (
-                `${currency} ${getPrice(
+                <>{currency} {getPrice(
                  get(totalSummary,'totalShipping',0) ,
-                  decimal
-                )}`
+                 currencyOptions
+                )}</>
               )}
             </p>
           </div>
@@ -55,12 +55,12 @@ const CartTotalDetails=({totalSummary,decimal,currency})=>{
             <p className="mrp-price">Total Amount</p>
             <p className="mtb2 textRight">
               {" "}
-              {currency} {getPrice(get(totalSummary,'grandTotal',0), decimal)}
+              {currency} {getPrice(get(totalSummary,'grandTotal',0), currencyOptions)}
             </p>
           </div>
 
           <Link href="/checkout">
-            <a className="card-btons text-align-center">
+            <a className="card-btons text-align-center primary-btn-color">
               <i className="fas fa-archive"></i>
               <span className="text-align-center">PLACE ORDER</span>
             </a>
@@ -68,7 +68,7 @@ const CartTotalDetails=({totalSummary,decimal,currency})=>{
         </div>
         <div className="cart-action text-end">
           <Link href="/shop">
-            <a className="card-btons ">
+            <a className="card-btons primary-btn-color">
               <i className="fas fa-shopping-bag"></i> Continue Shopping
             </a>
           </Link>

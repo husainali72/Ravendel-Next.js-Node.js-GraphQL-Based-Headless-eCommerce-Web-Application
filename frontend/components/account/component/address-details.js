@@ -3,10 +3,11 @@ import { Fragment, useEffect, useState } from "react";
 import { Card, Button, Row, Col, Collapse, Form, Fade, Tooltip, OverlayTrigger } from "react-bootstrap";
 import { logoutAndClearData, mutation } from "../../../utills/helpers";
 import { useRouter } from "next/router";
-import { useForm } from 'react-hook-form';
 import { capitalize, get } from 'lodash';
-import notify from "../../../utills/notifyToast";
 import { useDispatch } from "react-redux";
+import {  useForm } from 'react-hook-form';
+import notify from "../../../utills/notifyToast";
+import { useTheme } from "../../../pages/themeContext";
 const Star = ({ starId, marked }) => {
     return (
         <span
@@ -34,6 +35,7 @@ const addressObject = {
 
 const AddressDetail = (props) => {
     let { addressDetail, token, refreshData, getcustomer, } = props;
+    const { theme } = useTheme()?.theme;
     const router = useRouter();
     const [addMode, setAddMode] = useState(false);
     const [editMode, setEditMode] = useState(false);
@@ -137,7 +139,6 @@ const AddressDetail = (props) => {
                 let list = [...allAddressBook]
                 list.splice(index, 1)
                 setAllAddressBook(list)
-                // getcustomer()
             }
         }).catch((error)=>{
             if(get(error,'extensions.code')===401){
@@ -427,7 +428,7 @@ const AddressDetail = (props) => {
             <Fade in={!addMode} className={editMode ? "margin-top-2" : ""}>
                 <Button
                     size="small"
-                    color="#088178"
+                    color={get(theme,'palette.primary.main')}
                     onClick={addAddress}
                     variant="contained"
                 >

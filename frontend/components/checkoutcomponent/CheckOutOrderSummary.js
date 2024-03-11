@@ -6,7 +6,7 @@ import CouponCard from "./couponCard";
 import { get } from "lodash";
 const OrderSummary = (props) => {
 
-    const { decimal,
+    const { currencyOption,
             totalSummary,
             couponCartDetail,
             currency, 
@@ -40,11 +40,11 @@ const OrderSummary = (props) => {
                             <input type="text" placeholder="Enter Coupon Code..." value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} />
                         </div>
                         <div className="form-group">
-                            <button disabled={!couponCode} type="submit" className="btn btn-md" name="coupon" style={{ minWidth: "100px", marginTop: 12, backgroundColor: "#088178", color: "#fff" }}>{CouponLoading ? <Spinner animation="border" size="sm" variant="light" /> : "Apply Coupon"}</button>
+                            <button disabled={!couponCode} type="submit" className="btn btn-md primary-btn-color" name="coupon" style={{ minWidth: "100px", marginTop: 12, color: "#fff" }}>{CouponLoading ? <Spinner animation="border" size="sm" variant="light" /> : "Apply Coupon"}</button>
                         </div>
                     </form>
                 </div>:
-                <CouponCard currency={currency} couponCartDetail={couponCartDetail} decimal={decimal} removeCoupon={removeCoupon}/>}
+                <CouponCard currency={currency} couponCartDetail={couponCartDetail} currencyOption={currencyOption} removeCoupon={removeCoupon}/>}
                 <div className="border p-md-4 p-30 border-radius cart-totals">
 
                     <div className="heading_s1 mb-3 cart-total-head">
@@ -57,34 +57,34 @@ const OrderSummary = (props) => {
                             <tr >
                                     <td className="cartTotal_label" >Total MRP</td>
                                     <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
-                                        {currency} {getPrice(get(totalSummary,'mrpTotal','0'), decimal)}
+                                        {currency} {getPrice(get(totalSummary,'mrpTotal','0'), currencyOption)}
                                     </span></td>
                                 </tr>
                                 <tr >
                                     <td className="cartTotal_label  " >Discount on MRP</td>
                                     <td className="cartTotal_amount "><span className="font-lg fw-900 text-brand textSuccess" >
-                                       - {currency} {getPrice(get(totalSummary ,'discountTotal','0'), decimal)}
+                                       - {currency} {getPrice(get(totalSummary ,'discountTotal','0'), currencyOption)}
                                     </span></td>
                                 </tr>
                                {get(totalSummary ,'totalTax')!=='0'||get(totalSummary ,'totalTax')!=='0.00'&& <tr>
                                     <td className="cartTotal_label">Tax</td>
-                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5"> {currency} {getPrice(get(totalSummary ,'totalTax','0'),decimal)}</i></td>
+                                    <td className="cartTotal_amount"> <i className="ti-gift mr-5"> {currency} {getPrice(get(totalSummary ,'totalTax','0'),currencyOption)}</i></td>
                                 </tr>}
                                 <tr>
                                     <td className="cartTotal_label">Shipping</td>
                                     {get(totalSummary ,'totalShipping')== "0.00"||get(totalSummary ,'totalShipping')== "0"? <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i>Free Shipping</td>:
                                     <td className="cartTotal_amount"> 
-                                    <i className="ti-gift mr-5"></i>{currency} {getPrice(get(totalSummary ,'totalShipping','0'),decimal)}</td> 
+                                    <i className="ti-gift mr-5"></i>{currency} {getPrice(get(totalSummary ,'totalShipping','0'),currencyOption)}</td> 
                                     }
                                 </tr>
                                 {get(couponCartDetail,'couponApplied')&&!get(couponCartDetail,'isCouponFreeShipping') && <tr>
                                     <td className={`cartTotal_label ${get(couponCartDetail,'couponApplied') && "textSuccess"}`}>Coupon Saving </td>
-                                    <td className={`cartTotal_amount ${get(couponCartDetail,'couponApplied') && "textSuccess"}`}><i className="ti-gift mr-5"></i>{"-"} {currency} {getPrice(get(totalSummary,'couponDiscountTotal','0'), decimal)}</td>
+                                    <td className={`cartTotal_amount ${get(couponCartDetail,'couponApplied') && "textSuccess"}`}><i className="ti-gift mr-5"></i>{"-"} {currency} {getPrice(get(totalSummary,'couponDiscountTotal','0'), currencyOption)}</td>
                                 </tr>}
                                 <tr style={{ borderTop: "2px solid black", marginTop: "15px" }}>
                                     <td className="cartTotal_label" >Total</td>
                                     <td className="cartTotal_amount"><strong><span className="font-xl fw-900 text-brand">
-                                        {currency} {getPrice(get(totalSummary ,'grandTotal','0'), decimal)}
+                                        {currency} {getPrice(get(totalSummary ,'grandTotal','0'), currencyOption)}
                                     </span></strong></td>
                                 </tr>
                             </tbody>

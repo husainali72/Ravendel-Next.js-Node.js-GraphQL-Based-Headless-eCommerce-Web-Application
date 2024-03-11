@@ -104,7 +104,7 @@ const Profile = ({ customeraddres }) => {
                                         <ListGroup.Item><span><strong>Company</strong></span>  <span>{capitalize(customeraddress?.company)}</span></ListGroup.Item>
                                         <ListGroup.Item><span><strong>Phone</strong></span>  <span>{capitalize(customeraddress?.phone)}</span></ListGroup.Item>
                                     </ListGroup>
-                                    <Button onClick={() => setToggleEdit(!ToggleEdit)} className='me-0'>Edit User</Button>
+                                    <Button onClick={() => setToggleEdit(!ToggleEdit)} className='me-0 primary-btn-color'>Edit User</Button>
                                 </Card>}
                             </Tab>
                             <Tab eventKey="orders" title="Orders">

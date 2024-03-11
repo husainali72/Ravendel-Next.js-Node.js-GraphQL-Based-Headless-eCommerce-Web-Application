@@ -1,20 +1,19 @@
 export const BASE_URL = "demo1-ravendel.hbwebsol.com";
-export const baseUrl = `https://${BASE_URL}/`;
+export const baseUrl = `https://${BASE_URL}/graphql`;
 export const IMAGE_BASE_URL = `https://${BASE_URL}`;
 export const API_BASE_URL = `https://${BASE_URL}/apis`;
 
 // export const BASE_URL = "localhost:8000";
-// export const baseUrl = `https://${BASE_URL}/`;
-// export const IMAGE_BASE_URL = `http://localhost:8000/graphql`;
+// export const baseUrl = `http://${BASE_URL}/graphql`;
+// export const IMAGE_BASE_URL = `http://${BASE_URL}/`;
 // export const API_BASE_URL = `https://${BASE_URL}/apis`;
+
 
 /* -------------------------------  imageURl changes to bucketURL ------------------------- */
 
 // export var bucketName = "revendal-image-prod";
 export var bucketName = "revendal-image";
-// export var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
-// export var bucketBaseURL = `http://localhost:8000/`;
-export var bucketBaseURL = `https://${BASE_URL}/`;
+export var BUCKET_BASE_URL = `https://${bucketName}.s3.amazonaws.com/`;
 
 // if (process.env.NODE_ENV === "production") {
 //     bucketName = "revendal-image-prod";

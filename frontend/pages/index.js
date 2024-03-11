@@ -78,7 +78,7 @@ export default function Home({
 
   async function userCartUpdate(userCart, cart) {
     let token = await session.data.user.accessToken.token;
-    var Cart = await cart.map((product) => {
+    var Cart = await cart?.map((product) => {
       return {
         productId: product._id,
         qty: product.quantity,

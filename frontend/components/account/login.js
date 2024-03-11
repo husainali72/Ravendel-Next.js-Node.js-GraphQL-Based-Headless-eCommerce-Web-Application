@@ -250,7 +250,7 @@ const LogIn = () => {
                         <span style={{ float: 'right' }}>forget password ?</span>
                     </Link>
                 </div>
-                <button type="submit" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178", }} ><span>Login {loading && <Loading />}</span></button>
+                <button type="submit" className="btn btn-success primary-btn-color" style={{ marginTop: 12 }} ><span>Login {loading && <Loading />}</span></button>
                 {loginSuccess ? (<h4>login success full</h4>) : null}
                 {error ? <p style={{ color: "red" }}>{error}</p> : null}
             </form>

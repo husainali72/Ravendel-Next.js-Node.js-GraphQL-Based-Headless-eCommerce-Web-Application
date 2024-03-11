@@ -40,11 +40,11 @@ const OnSaleProductCard = ({
   const router = useRouter();
   const session = useSession();
   const [currency, setCurrency] = useState("$");
-  const [decimal, setdecimal] = useState(2);
+  const [currencyOption, setCurrencyOption] = useState({});
   const settings = useSelector((state) => state.setting);
   useEffect(() => {
     currencySetter(settings, setCurrency);
-    setdecimal(settings?.currencyOption?.number_of_decimals);
+    setCurrencyOption(settings?.currencyOption);
     if (currencyProp) {
       setCurrency(currencyProp);
     }
@@ -53,7 +53,7 @@ const OnSaleProductCard = ({
   useEffect(() => {
     if (currencyOpt) {
       currencySetter(currencyOpt?.currency_options?.currency, setCurrency);
-      setdecimal(currencyOpt?.currency_options?.number_of_decimals);
+      setCurrencyOption(currencyOpt?.currency_options);
     }
   }, [currencyOpt]);
 
@@ -217,19 +217,19 @@ const OnSaleProductCard = ({
                                 stars={product?.rating}
                                 singleproducts={product}
                               />
-                              <span>
+                              <span className="no-wrap">
                                 {product.pricing.sellprice ? (
                                   <strong className="sale-price">
                                     {currency}{" "}
                                     {getPrice(
                                       product?.pricing?.sellprice,
-                                      decimal
+                                      currencyOption
                                     )}
                                   </strong>
                                 ) : (
                                   <strong className="sale-price">
                                     {currency}{" "}
-                                    {getPrice(product?.pricing.price, decimal)}
+                                    {getPrice(product?.pricing.price, currencyOption)}
                                   </strong>
                                 )}
                               </span>
@@ -239,12 +239,12 @@ const OnSaleProductCard = ({
                                 <span
                                   className={
                                     product?.pricing.sellprice
-                                      ? "has-sale-price"
+                                      ? "has-sale-price no-wrap"
                                       : ""
                                   }
+                            
                                 >
-                                  {currency}{" "}
-                                  {getPrice(product?.pricing?.price, decimal)}
+                                  {currency}{" "}{getPrice(product?.pricing?.price, currencyOption)}
                                 </span>
                               ) : null}
                             </div>
@@ -270,7 +270,7 @@ const OnSaleProductCard = ({
                                     {" "}
                                     <a className="cart-icon">
                                       <i
-                                        className="fas fa-shopping-bag font-awesome-icon"
+                                        className="fas fa-shopping-bag font-awesome-icon "
                                         aria-hidden="true"
                                       ></i>
                                     </a>

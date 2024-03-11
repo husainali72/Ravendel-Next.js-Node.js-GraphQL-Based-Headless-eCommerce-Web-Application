@@ -11,9 +11,9 @@ import {
   query,
 } from "../../utills/helpers";
 import StarRating from "../../components/breadcrumb/rating";
-import { addToCart, calculateUnauthenticatedCart } from "../../redux/actions/cartAction";
+import { addToCart } from "../../redux/actions/cartAction";
 import { useDispatch, useSelector } from "react-redux";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import calculateDiscount from "../../utills/calculateDiscount";
 import {
@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 import {
   ADD_TO_CART_QUERY,
+  GET_USER_CART,
   UPDATE_CART_PRODUCT,
 } from "../../queries/cartquery";
 import CheckZipcode from "../account/component/CheckZipcode";
@@ -45,14 +46,13 @@ const GalleryImagesComponents = (props) => {
     lowStockThreshold,
     outOfStockVisibility,
     outOfStockThreshold,
-    decimal,
+    currencyOption,
     homepageData,
   } = props;
   const imageType = homepageData?.getSettings?.imageStorage?.status;
   const getSetting = useSelector((state) => state.setting);
-  const cart = useSelector((state) => state.cart.cartItems);
   const [available, setavailable] = useState(false);
-  const [lable, setLable] = useState("In Stock");
+  const [Lable, setLable] = useState("In Stock");
   const [variantSelect, setVariantSelect] = useState();
   const [parentId, setParentId] = useState();
   const [error, seterror] = useState(false);
@@ -178,37 +178,15 @@ const GalleryImagesComponents = (props) => {
   };
 
   const addToCartAndNavigate = (variables, token) => {
-    mutation(ADD_TO_CART_QUERY, variables).then((res) => {
+    mutation(ADD_TO_CART_QUERY, variables, token).then((res) => {
       router.push("/shopcart");
-    }).then((res)=>{
-
-    }).catch(async(error)=>{
-      if(get(error,'extensions.code')===401){
-        let product=[{
-          userId: "",
-          url: get(variables,'url'),
-          _id: get(variables,'productId'),
-          quantity: get(variables,'qty'),
-          name:get(variables,'productTitle'),
-          feature_image: get(variables,'productImage'),
-          pricing: get(variables,'productPrice'),
-          productQuantity: get(variables,'productQuantity'),
-          variantId: get(variables,'variantId',""),
-          qty: get(variables,'qty'),
-          attributes: get(variables,'attributes'),
-     }]
-      const data = await signOut({ redirect: false, callbackUrl: "/" });
-      localStorage.setItem("userCart", JSON.stringify([]));
-      localStorage.setItem("cart", JSON.stringify(product));
-      
-      dispatch(calculateUnauthenticatedCart(product));
-      window.location.pathname = "/shopcart";
-      }
+      dispatch(addToCart(variables));
+    }).catch((error)=>{
     })
   };
 
-  const isProductInCart = (product, comboData) => {
-    return cart?.some((inCartProduct) => {
+  const isProductInCart = (product, comboData, inCartProducts) => {
+    return inCartProducts?.some((inCartProduct) => {
       const productIdMatch = product?._id === get(inCartProduct, "productId");
       const variantIdMatch = comboData?.some(
         (variant) => variant?.id === inCartProduct?.variantId
@@ -219,7 +197,6 @@ const GalleryImagesComponents = (props) => {
       return productIdMatch && variantIdMatch;
     });
   };
-  // Add product in a cart
   const addToCartProduct = async (product) => {
     const isUserAuthenticated = session?.status === "authenticated";
     const hasAttributesMismatch =
@@ -442,7 +419,7 @@ const GalleryImagesComponents = (props) => {
                                   )
                                 : comboData[0].image.length
                                 ? getImage(comboData[0].image, imageType)
-                                : getImage(gallery, "original", imageType)
+                                : getImage(gallery, imageType)
                               : getImage(gallery, imageType)
                           }
                           onError={imageOnError}
@@ -512,47 +489,50 @@ const GalleryImagesComponents = (props) => {
                 <div className="product-price primary-color float-left">
                   <span className=" mx-2">
                     {get(singleproducts, "pricing.sellprice") ? (
-                      <strong
-                        className="sale-price"
-                        style={{ fontSize: "25px" }}
-                      >
-                        {comboData && comboData.length
-                          ? comboData && comboData.length > 1
-                            ? sellpriceRange
-                              ? currency +
-                                " " +
-                                getPrice(Math.min(...sellpriceRange), decimal) +
-                                "  -  " +
-                                currency +
-                                " " +
-                                getPrice(Math.max(...sellpriceRange), decimal)
-                              : null
-                            : currency +
-                              " " +
-                              getPrice(
-                                comboData[0]?.pricing?.sellprice ||
-                                  comboData[0]?.pricing?.price,
-                                decimal
-                              )
-                          : variantSelect
-                          ? null
-                          : currency +
-                            " " +
-                            getPrice(
-                              singleproducts?.pricing?.sellprice,
-                              decimal
-                            )}
-                      </strong>
+                       <strong
+                         className="sale-price"
+                         style={{ fontSize: "25px" }}
+                       >
+                         {comboData && comboData.length
+                           ? comboData && comboData.length > 1
+                             ? sellpriceRange
+                               ?<>{currency} {' '}
+                                { getPrice(Math.min(...sellpriceRange), currencyOption) }
+                                {' - '}
+                                { currency} {' '}
+                                 {getPrice(Math.max(...sellpriceRange), currencyOption)}
+                                 </> 
+                               : null
+                             : <>{currency }{' '}
+                               {getPrice(
+                                 comboData[0]?.pricing?.sellprice ||
+                                   comboData[0]?.pricing?.price,
+                                 currencyOption
+                               )}
+                               </>
+                           : variantSelect
+                           ? null
+                           : 
+                           <>
+                           {currency} {' '}  {getPrice(
+                               singleproducts?.pricing?.sellprice,
+                               currencyOption
+                             )}
+                            </>
+                        }
+                       </strong>
+                      
                     ) : (
                       <strong
                         className="sale-price"
                         style={{ fontSize: "25px" }}
                       >
                         {currency}{" "}
-                        {getPrice(singleproducts?.pricing?.price, decimal)}
+                        {getPrice(singleproducts?.pricing?.price, currencyOption)}
                       </strong>
                     )}
                   </span>
+
                   {singleproducts?.pricing?.sellprice &&
                   singleproducts?.pricing?.sellprice <
                     singleproducts?.pricing?.price ? (
@@ -569,21 +549,21 @@ const GalleryImagesComponents = (props) => {
                           ? priceRange
                             ? currency +
                               " " +
-                              getPrice(Math.min(...priceRange), decimal) +
+                              getPrice(Math.min(...priceRange), currencyOption) +
                               "  -  " +
                               currency +
                               " " +
-                              getPrice(Math.max(...priceRange), decimal)
+                              getPrice(Math.max(...priceRange), currencyOption)
                             : null
                           : comboData[0]?.pricing?.sellprice
                           ? currency +
                             " " +
-                            getPrice(comboData[0]?.pricing?.price, decimal)
+                            getPrice(comboData[0]?.pricing?.price, currencyOption)
                           : null
                         : variantSelect
                         ? null
                         : currency + " " + singleproducts?.pricing?.sellprice
-                        ? getPrice(singleproducts?.pricing?.price, decimal)
+                        ? getPrice(singleproducts?.pricing?.price, currencyOption)
                         : null}
                     </span>
                   ) : null}
@@ -615,15 +595,15 @@ const GalleryImagesComponents = (props) => {
             <div className="short-desc mb-30">
               <p> {singleproducts?.short_description}</p>
             </div>
-            {lable !== "Out Of Stock" && (
+            {Lable !== "Out Of Stock" && (
               <button
                 type="button"
-                className="btn btn-success button button-add-to-cart"
-                style={{ marginTop: 12, backgroundColor: "#088178" }}
+                className="btn btn-success button button-add-to-cart primary-btn-color"
+                style={{ marginTop: 12,  }}
                 onClick={() =>
                   !itemInCart
                     ? addToCartProduct(singleproducts)
-                    :navigateToShopCart()
+                    : navigateToShopCart()
                 }
                 disabled={
                   (comboData && comboData.length) || !variantSelect
@@ -634,7 +614,6 @@ const GalleryImagesComponents = (props) => {
                 {!itemInCart ? "Add to Cart" : "Go To Cart"}
               </button>
             )}
-            
             {itemInCart && (
               <p className="already-in-cart-message">
                 This item is already in your cart. Review your choice in the
@@ -708,7 +687,7 @@ const GalleryImagesComponents = (props) => {
               </p>
               {newFunction(singleproducts)}
               <p className="">
-                Availablity: <span className={stockClass}>{lable}</span>
+                Availablity: <span className={stockClass}>{Lable}</span>
               </p>
             </ul>
           </div>
