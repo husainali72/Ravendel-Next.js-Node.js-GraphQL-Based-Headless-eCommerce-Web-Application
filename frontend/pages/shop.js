@@ -16,21 +16,16 @@ import ShopProducts from "../components/shoppage/shopProducts";
 import { GET_HOMEPAGE_DATA_QUERY, GET_CATEGORIES_QUERY } from "../queries/home";
 import { brandsAction, categoryAction } from "../redux/actions/brandAction";
 import { useSelector, useDispatch } from "react-redux";
-import { OpenMenu } from "../utills/app";
-import { CloseMenu } from "../utills/app";
-import { OpenSortMenu } from "../utills/app";
-import { CloseSortMenu } from "../utills/app";
+import { OpenMenu,CloseMenu,OpenSortMenu ,CloseSortMenu} from "../utills/app";
 import { settingActionCreator } from "../redux/actions/settingAction";
 import Link from "next/link";
-import {
-  getAllAttributes,
-} from "../redux/actions/productAction";
+import { getAllAttributes } from "../redux/actions/productAction";
 import { capitalize, get } from "lodash";
 import { useRouter } from "next/router";
-const defaultPrice={
-  min:0,
-  max:100000
-}
+const defaultPrice = {
+  min: 0,
+  max: 100000,
+};
 const Shop = ({
   shopProducts,
   brandProduct,
@@ -43,7 +38,6 @@ const Shop = ({
     homepageData && homepageData?.getSettings?.imageStorage?.status;
   const dispatch = useDispatch();
   const attributes = useSelector((state) => state.products.attributes);
-  const usercart = useSelector((state) => state.userCart);
   const [rangevalue, setRangevalue] = useState("");
   const currencyOpt = currencyStore?.currency_options?.currency;
   const [filterAttribute, setFilterAttribute] = useState([]);
@@ -54,7 +48,7 @@ const Shop = ({
   const [onSaleAllProduct, setonSaleAllProduct] = useState([]);
   const [sortingdata, setSortingdata] = useState([]);
   const [number, setNumber] = useState(0);
-  const [sortingName, setSortingName] = useState({
+  const [selectedSortingCriteria, setSelectedSortingCriteria] = useState({
     name: "latest",
     title: "Release date",
   });
@@ -63,7 +57,7 @@ const Shop = ({
     maxPrice: "10000",
   });
 
-  const sortingData = [
+  const sortingOptions = [
     {
       name: "desc",
       title: "High to low",
@@ -85,6 +79,7 @@ const Shop = ({
     setonSaleProduct(get(shopProducts, "products.data"));
     setonSaleAllProduct(get(shopProducts, "products.data"));
   }, [shopProducts]);
+
   useEffect(() => {
     dispatch(getAllAttributes());
     currencySetter(currencyOpt, setCurrency);
@@ -93,7 +88,6 @@ const Shop = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
 
   useEffect(() => {
     dispatch(settingActionCreator(currencyStore.currency_options));
@@ -111,7 +105,7 @@ const Shop = ({
   }, [router.query]);
   useEffect(() => {
     if (sortingdata && sortingdata?.length > 0) {
-      sortData(sortingName);
+      sortData(selectedSortingCriteria);
     }
   }, [sortingdata]);
 
@@ -123,8 +117,8 @@ const Shop = ({
     const maxPrice = query["filter.v.price.lte"] || "";
     setFilters({
       ...filters,
-      minPrice: minPrice ||defaultPrice?.min,
-      maxPrice: maxPrice ||defaultPrice?.max,
+      minPrice: minPrice || defaultPrice?.min,
+      maxPrice: maxPrice || defaultPrice?.max,
     });
     // Extract attribute values from the URL
     const attributeValues = Object.keys(query)
@@ -152,11 +146,21 @@ const Shop = ({
           };
         });
 
-      // apply filter
-      searchProductsByAttributeAndPrice(filteredProductAttribute, priceRange);
+      // get sorting criteria from  URL parameter
+      const sortingcriteria = sortingOptions?.find((option) => option.name === get(router, "query.sort")
+        ) || sortingOptions?.find((option) => option.name === "latest");
+
+      setSelectedSortingCriteria({ ...sortingcriteria });
+
       // Update the state with filtered attributes
       setFilterAttribute([...filteredProductAttribute]);
+
+      // apply filter
+      searchProductsByAttributeAndPrice(filteredProductAttribute, priceRange);
+
     } else {
+      const sortingcriteria = sortingOptions?.find((option) => option.name === "latest");
+      setSelectedSortingCriteria({ ...sortingcriteria });
       searchProductsByAttributeAndPrice([], priceRange);
       setFilterAttribute([]);
     }
@@ -219,8 +223,8 @@ const Shop = ({
     }
   };
 
-  const compareFunction = (a, b, sortObject) => {
-    switch (sortObject?.name) {
+  const compareFunction = (a, b, sortingcriteria) => {
+    switch (sortingcriteria?.name) {
       case "desc": {
         return b.pricing.sellprice - a.pricing.sellprice;
       } // Sort in descending order
@@ -235,17 +239,51 @@ const Shop = ({
       }
     }
   };
-
-  // Function to sort data based on the selected sorting criteria
-  const sortData = (sortObject) => {
-    setSortingName(sortObject);
+  const sortData = (sortingcriteria) => {
+    setSelectedSortingCriteria(sortingcriteria);
     const data = sortingdata.length > 0 ? sortingdata : onSaleAllProduct;
     const sortedData = data
       ?.slice()
-      ?.sort((a, b) => compareFunction(a, b, sortObject));
+      ?.sort((a, b) => compareFunction(a, b, sortingcriteria));
     setonSaleProduct([...sortedData]);
     CloseSortMenu();
     CloseMenu();
+  };
+  // Function to sort data based on the selected sorting criteria
+  const updateSortingURLAndSortData = (sortingcriteria) => {
+    sortData(sortingcriteria);
+    // Get existing filter parameters from the URL
+    const { query } = router;
+    const existingFilters = Object.keys(query)
+      .filter((key) => key.startsWith("filter.v.") && key !== "sort")
+      .reduce((acc, key) => {
+        const value = Array.isArray(query[key]) ? query[key] : [query[key]];
+        acc[key] = value;
+        return acc;
+      }, {});
+
+    // Combine existing filters with new sorting parameter
+    const updatedFilters = {
+      ...existingFilters,
+      [`filter.v.price.gte`]: filters.minPrice,
+      [`filter.v.price.lte`]: filters.maxPrice,
+    };
+
+    // Generate sorting URL
+    const sortURL = `&sort=${sortingcriteria.name}`;
+    const currentURL = window.location.pathname;
+
+    // Update the URL with existing filters and sorting parameter
+    const updatedURL = `${currentURL}?${Object.entries(updatedFilters)
+      .map(([key, value]) => {
+        return Array.isArray(value)
+          ? value.map((v) => `${key}=${v}`).join("&")
+          : `${key}=${value}`;
+      })
+      .join("&")}${sortURL}`;
+
+    router.replace(updatedURL, undefined, { shallow: true });
+    window.history.pushState(null, null, updatedURL);
   };
 
   //Generates a filter URL based on the specified price range and attribute filters, then applies these filters to search  products.
@@ -268,13 +306,15 @@ const Shop = ({
         });
       });
     }
-
+    // Add sorting criteria to the URL parameter
+    const sortingQuery = router.query.sort ? `sort=${router.query.sort}` : "";
     // apply filter
     searchProductsByAttributeAndPrice(filterAttribute, priceRange);
     //update url parameter
     const filterURL = filterQuery.length > 0 ? `?${filterQuery.join("&")}` : "";
-    router.replace(`/shop${filterURL}`, undefined, { shallow: true });
-    window.history.pushState(null, null, `/shop${filterURL}`);
+    const updatedURL = `/shop${filterURL}&${sortingQuery}`;
+    router.replace(updatedURL, undefined, { shallow: true });
+    window.history.pushState(null, null, updatedURL);
   };
 
   //Filters products based on specified attributes and price range
@@ -295,11 +335,12 @@ const Shop = ({
               );
             });
           }) &&
-          data.pricing.sellprice >= parseInt(priceRange[0]||defaultPrice?.min) &&
-          data.pricing.sellprice <= parseInt(priceRange[1]||defaultPrice?.max)
+          get(data,'pricing.sellprice',0) >=
+            parseInt(priceRange[0] || defaultPrice?.min) &&
+            get(data,'pricing.sellprice',0) <= parseInt(priceRange[1] || defaultPrice?.max)
         );
       });
-      if (data ) {
+      if (data) {
         setonSaleProduct([...data]);
         setSortingdata([...data]);
         setNumber(data.length);
@@ -307,11 +348,12 @@ const Shop = ({
     } else {
       let data = allProducts?.filter((data) => {
         return (
-          data.pricing.sellprice >= parseInt(priceRange[0]||defaultPrice?.min) &&
-          data.pricing.sellprice <= parseInt(priceRange[1]||defaultPrice?.max)
+          get(data,'pricing.sellprice',0) >=
+            parseInt(priceRange[0] || defaultPrice?.min) &&
+            get(data,'pricing.sellprice',0) <= parseInt(priceRange[1] || defaultPrice?.max)
         );
       });
-      if (data ) {
+      if (data) {
         setonSaleProduct([...data]);
         setSortingdata([...data]);
         setNumber(data.length);
@@ -546,7 +588,7 @@ const Shop = ({
                             className="fas fa-border-all"
                             aria-hidden="true"
                           ></i>
-                          Sort by: {sortingName?.title}
+                          Sort by: {selectedSortingCriteria?.title}
                         </span>
                       </div>
                       <span className="drop-down-btn item-down" id="menuDown2">
@@ -566,9 +608,13 @@ const Shop = ({
                         id="sort-menu"
                         style={{ width: "100%" }}
                       >
-                        {sortingData?.map((sorting) => {
+                        {sortingOptions?.map((sorting) => {
                           return (
-                            <li onClick={() => sortData(sorting)}>
+                            <li
+                              onClick={() =>
+                                updateSortingURLAndSortData(sorting)
+                              }
+                            >
                               <a href="#">{sorting?.title}</a>
                             </li>
                           );
@@ -625,12 +671,7 @@ export async function getStaticProps() {
     homepageData = homepagedata;
     currencyStore = homepagedata?.getSettings?.store;
   } catch (e) {
-    console.log(
-      "homepage Error===",
-      e.networkError && e.networkError.result
-        ? e.networkError.result.errors
-        : ""
-    );
+
   }
 
   /* ===============================================Get Product Shop Settings ===============================================*/
@@ -640,12 +681,7 @@ export async function getStaticProps() {
     });
     shopProducts = shopproducts;
   } catch (e) {
-    console.log(
-      "ShopProduct Error===",
-      e.networkError && e.networkError.result
-        ? e.networkError.result.errors
-        : ""
-    );
+
   }
   try {
     const { data: shopproductcategory } = await client.query({
@@ -653,12 +689,7 @@ export async function getStaticProps() {
     });
     shopProduct = shopproductcategory.productCategories;
   } catch (e) {
-    console.log(
-      "ShopProduct Error===",
-      e.networkError && e.networkError.result
-        ? e.networkError.result.errors
-        : ""
-    );
+
   }
 
   /* ===============================================Get Brand Data Settings ===============================================*/
@@ -669,12 +700,7 @@ export async function getStaticProps() {
     });
     brandProduct = brandproductData.brands.data;
   } catch (e) {
-    console.log(
-      "===brand",
-      e.networkError && e.networkError.result
-        ? e.networkError.result.errors
-        : ""
-    );
+ 
   }
 
   return {
