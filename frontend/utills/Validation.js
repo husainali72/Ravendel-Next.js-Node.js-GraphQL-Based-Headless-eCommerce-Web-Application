@@ -1,11 +1,34 @@
-const Validation =(values) =>{
-    const validPassword =  new RegExp('^(?=.*?[A-Za-z])(?=.*?[0-9]).{6,}$');
-    let errors ={}
-    var re = /^(?=(.*[a-z]){3,})(?=(.*[A-Z]){2,})(?=(.*[0-9]){2,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/;
-   
-    if (!validPassword.test(values.password) ) {
-        errors.password = "Passwords must have at least 8 characters and contain at least two of the following: uppercase letters, lowercase letters, numbers, and symbols"
-    }
-return errors
-}
-export default Validation;
+import { isValidPhoneNumber } from "react-phone-number-input";
+
+const PASSWORD_REGEX = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{6,}$/;
+const EMAIL_REGEX = /^[\w-]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$/;
+// messages.js
+
+const emailErrorMessage = "Please enter a valid email";
+const passwordErrorMessage = "Passwords must have at least 6 characters and contain at least one letter and one number";
+const phoneNumberErrorMessage = "Please enter a valid phone number";
+
+export const passwordValidation = (value) => {
+  return (
+    PASSWORD_REGEX.test(value) ||
+    passwordErrorMessage
+  );
+};
+
+export const phoneNumberValidation = (value) => {
+    console.log(value,'phone')
+  const cleanedPhoneNumber = value?.replace(/\D/g, "") || "";
+  const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
+
+  return (
+    isValidPhoneNumber(formattedPhoneNumber) ||
+    phoneNumberErrorMessage
+  );
+};
+
+export const validateEmail = (email) => {
+  return (
+    EMAIL_REGEX.test(email) ||
+    emailErrorMessage
+  );
+};
