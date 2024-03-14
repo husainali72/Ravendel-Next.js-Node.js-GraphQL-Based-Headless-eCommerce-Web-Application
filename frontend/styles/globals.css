@@ -15,12 +15,56 @@ body {
   border-color:var(--primary-color)!important;
   
 }
+.accordian-container{
+  margin: 25px 10px
+}
+
+.no-data-text{
+  text-align: center;
+}
 .primary-btn-color:hover{
   filter: brightness(0.9)
   
 }
+.header-contact-info {
+  display: flex;
+  float: left;
+  justify-content: center;
+  
+}
+.header-contact-info a{
+  align-items: center;
+  color: white;
+}
 
-
+.user-info {
+  display: flex;
+  float: right;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+.cartItems-container{
+  display: flex;
+  margin-bottom: 1rem;
+  background-color: #fff;
+}
+.cartItem-total{
+  float: right;
+  color:#088178
+}
+.error-message{
+  color: red;
+}
+.logout-btn {
+  display: flex;
+}
+.logout-link{
+color: white;
+}
+.banner-learn-more-btn{
+  margin-top: 12 
+}
 a {
   color: black;
   text-decoration: none !important;
@@ -165,6 +209,7 @@ text-color {
   margin: 0;
   align-items: center;
   color: #1a1a1a !important;
+  justify-content: flex-start;
 }
 .logo-image{
   max-height: 50px;
@@ -252,6 +297,8 @@ nav .nav-link:hover {
 
 .cart-btn {
   float: right;
+  margin-right: 8;
+  justify-content: right;
 }
 
 .pro-count {
@@ -1233,7 +1280,7 @@ footer .follow h5 {
 }
 
 .font-awesome-icon {
-  color: #777;
+  color: var(--primary-color);
   font-size: 20px;
   transition: 0.2s ease-in-out;
 }
@@ -1680,16 +1727,17 @@ footer .btn:hover a {
 }
 
 .logout-dropdown {
-
   position: absolute;
-  padding: 10 20px;
+  padding: 20px 30px;
   z-index: 10;
   background: #fff;
   top: 46px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  height: 0;
+  height: auto,
 }
-
+.login-link{
+  color: white;
+}
 .item-up {
   display: none;
 }
@@ -1754,8 +1802,6 @@ footer .btn:hover a {
 .category-box-filler .widget-category {
   position: relative;
   padding: 30px;
-  /* margin-bottom: 30px !important; */
-  /* border: 0.5px #e8e8e8; */
 }
 
 .category-box-filler .widget-category p {
@@ -3709,6 +3755,7 @@ border-bottom: none !important;
     height: 0px;
     overflow: hidden;
     transition: width 0.3s ease;
+    justify-content: center;
   }
 
   .main-menu nav {
@@ -5018,4 +5065,51 @@ justify-content: space-between;
 .contact-support {
   font-size: 14px;
   margin-top: 20px;
+}
+
+/* ------------------register--------------------- */
+.register-top-space{
+  margin-top: 12px;
+}
+/*password show hide button css */
+
+.password-container {
+  position: relative;
+}
+
+.password-icon {
+  position: absolute;
+  right: 10px; 
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color:rgb(8, 129, 120)
+}
+
+/* -----------------------------login------------------------------------------ */
+.login-top-space{
+  margin-top: 8px;
+}
+.remeber-btn-margin{
+margin-top: 12px;
+}
+.forgot-pasword-link{
+  float: right;
+}
+.login-btn{
+  margin-top: 12px;
+}
+.login-error{
+  color:red
+}
+/* ----------------------------coupon------------------------------------------------ */
+.apply-coupon-btn{
+  min-width: 100px;
+  margin-top: 12px;
+  color: #ffffff!important;
+}
+.grandtotal-row{
+  border-top: 2px solid black;
+  margin-top: 15px;
+ 
 }

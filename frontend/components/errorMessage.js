@@ -4,7 +4,7 @@ import { get } from "lodash";
 const ErrorMessage = ({ message }) => {
   return (
     <p>
-      <small style={{ color: "red" }}>{message}</small>
+      <small className="error-message">{message}</small>
     </p>
   );
 };
