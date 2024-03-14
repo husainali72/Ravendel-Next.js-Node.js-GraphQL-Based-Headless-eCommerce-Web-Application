@@ -16,7 +16,6 @@ export const passwordValidation = (value) => {
 };
 
 export const phoneNumberValidation = (value) => {
-    console.log(value,'phone')
   const cleanedPhoneNumber = value?.replace(/\D/g, "") || "";
   const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
 
