@@ -2168,6 +2168,7 @@ footer .btn:hover a {
 
 .button.button-add-to-cart {
   padding: 8px 40px;
+  margin-top: 12px;
 }
 
 .detail-info .product-meta {
@@ -2263,6 +2264,10 @@ footer .btn:hover a {
   flex-direction: column;
   height: 100%;
   background-color: #f1f1f1;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  cursor: default;
 }
 
 .single-product {
@@ -5112,4 +5117,19 @@ margin-top: 12px;
   border-top: 2px solid black;
   margin-top: 15px;
  
+}
+.gallery-image-display-non{
+  display: none;
+}
+.single-product-container{
+  display: flex;
+}
+.sale-price-font{
+  font-size: 25px;
+}
+.discount-price-font{
+  font-size: 17px;
+}
+.product-not-available{
+  color: red;
 }

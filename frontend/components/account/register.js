@@ -209,6 +209,7 @@ const Register = () => {
               buttonText="Register"
               className="btn btn-success loading-btn primary-btn-color register-top-space"
               loading={loading}
+              disabled={loading}
             ></CustomButton>
           </form>
         </div>

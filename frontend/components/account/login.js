@@ -154,6 +154,7 @@ const LogIn = () => {
           buttonText="Login"
           className="btn btn-success primary-btn-color login-btn"
           loading={loading}
+          disabled={loading}
         ></CustomButton>
         <ErrorMessage message={error} />
       </form>
