@@ -47,6 +47,8 @@ const GalleryImagesComponents = (props) => {
   const [priceRange, setPriceRange] = useState([]);
   const [sellpriceRange, setSellpriceRange] = useState([]);
   const [itemInCart, setItemInCart] = useState(false);
+  const [id, setId] = useState("");
+  const [token, setToken] = useState("");
   useEffect(() => {
     const hasComboData = comboData?.length;
     const variantProductQuantity = get(comboData, "[0].quantity");
@@ -85,29 +87,30 @@ const GalleryImagesComponents = (props) => {
     variantSelect,
   ]);
 
-  useEffect(() => {
-    let priceData = [];
-    let sellPriceData = [];
-    if (comboData && comboData.length) {
-      priceData = comboData.map((c) => {
-        return c.pricing.price;
-      });
-      sellPriceData = comboData.map((c) => {
-        return c.pricing.sellprice;
-      });
-      setPriceRange([...priceData]);
-      setSellpriceRange([...sellPriceData]);
-    }
-  }, [comboData]);
-
-  if (session.status === "authenticated") {
-    id = session?.data?.user?.accessToken?.customer?._id;
-    token = session?.data?.user?.accessToken?.token;
+useEffect(() => {
+  if (!comboData || !comboData.length) {
+    return; 
   }
+  const priceData = comboData.map(c => c.pricing.price);
+  const sellPriceData = comboData.map(c => c.pricing.sellprice);
+  setPriceRange(priceData);
+  setSellpriceRange(sellPriceData);
+}, [comboData]);
+
+useEffect(() => {
+  if (session?.status === "authenticated") {
+    const accessToken=get(session,'data.user.accessToken')
+    setId(get(accessToken,'customer._id',''));
+    setToken(get(accessToken,'token',''));
+   }
+  }, [session]);
   const checkzipcode = (result) => {
     setavailable(result);
   };
   const prepareAttributesData = (product) => {
+    if(!selectedAttributes){
+      return [];
+    }
     return selectedAttributes?.map((selectedAttribute) => {
       const singleAttribute = get(product, "attribute_master", [])?.find(
         (data) => data?.id === selectedAttribute?.name
@@ -169,7 +172,7 @@ const GalleryImagesComponents = (props) => {
       const variantIdMatch = comboData?.some(
         (variant) => variant?.id === inCartProduct?.variantId
       );
-      if (comboData.length === 0) {
+      if (comboData?.length === 0) {
         return productIdMatch;
       }
       return productIdMatch && variantIdMatch;
@@ -294,11 +297,11 @@ const GalleryImagesComponents = (props) => {
     setSelectedAttributes(updatedAttributes);
     prepareComb(updatedAttributes);
   };
-
+  
   const navigateToShopCart = () => {
     router.push("/shopcart");
   };
-
+  
   const renderProductTags = (singleproducts) => {
     return <p className="">Tags: {get(singleproducts, "__typename")}</p>;
   };
