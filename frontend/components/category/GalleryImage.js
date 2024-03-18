@@ -161,7 +161,6 @@ useEffect(() => {
               attributes: get(variables, "attributes"),
             },
           ];
-          console.log("fghjklfgh")
           await signOut({ redirect: false, callbackUrl: "/" });
           setItemToLocalStorage("cart", product);
           dispatch(calculateUnauthenticatedCart(product));
