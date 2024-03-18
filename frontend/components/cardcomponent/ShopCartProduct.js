@@ -12,7 +12,7 @@ const CalculateProductTotal = product => product.reduce((total, product) => tota
 export const ShopCart = () => {
     const session = useSession()
     const dispatch = useDispatch()
-    const cartProducts = useSelector(state => state.cart)
+    const cartProducts = useSelector(state => state.cart.cartItems)
     const { loading, success, products } = useSelector(state => state.products);
     const usercart = useSelector(state => state.userCart)
     const settings = useSelector(state => state.setting)
@@ -36,7 +36,7 @@ export const ShopCart = () => {
     useEffect(() => {
         if (success && products?.length) {
             let filteredProducts = [];
-            cartProducts.forEach(cartProduct => {
+            cartProducts?.forEach(cartProduct => {
                 filteredProducts.push(...products.filter(product => product._id === cartProduct._id));
             })
 
@@ -63,13 +63,15 @@ export const ShopCart = () => {
                 id: usercart.card_id,
                 productId: item._id,
             }
-            mutation(DELETE_CART_PRODUCTS, variables, token).then(res => {
-                if (res.data.deleteCartProduct.success) {
-                    var cartItemsfilter = cart.filter(item => item._id !== product)
-                    dispatch(removeCartItemAction(product));
-                    setCart(cartItemsfilter);
-                }
-            });
+            var cartItemsfilter = cart.filter(item => item._id !== product)
+            dispatch(removeCartItemAction(variables,cartItemsfilter));
+            // mutation(DELETE_CART_PRODUCTS, variables, token).then(res => {
+            //     if (res.data.deleteCartProduct.success) {
+            //         var cartItemsfilter = cart.filter(item => item._id !== product)
+            //         dispatch(removeCartItemAction(product));
+            //         setCart(cartItemsfilter);
+            //     }
+            // });
         }
         else {
             var cartItemsfilter = cart.filter(item => item._id !== product)

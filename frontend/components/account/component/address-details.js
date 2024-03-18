@@ -1,14 +1,13 @@
 import { ADD_ADDRESSBOOK, UPDATE_ADDRESSBOOK, DELETE_ADDRESSBOOK } from "../../../queries/customerquery";
-import client from "../../../apollo-client";
 import { Fragment, useEffect, useState } from "react";
 import { Card, Button, Row, Col, Collapse, Form, Fade, Tooltip, OverlayTrigger } from "react-bootstrap";
-import { mutation, query } from "../../../utills/helpers";
+import { logoutAndClearData, mutation } from "../../../utills/helpers";
 import { useRouter } from "next/router";
-import { Controller, useForm } from 'react-hook-form';
-import { capitalize } from 'lodash';
+import { capitalize, get } from 'lodash';
+import { useDispatch } from "react-redux";
+import {  useForm } from 'react-hook-form';
 import notify from "../../../utills/notifyToast";
-import PhoneInput from "react-phone-input-2";
-import { isValidPhoneNumber } from "react-phone-number-input";
+import { useTheme } from "../../../pages/themeContext";
 const Star = ({ starId, marked }) => {
     return (
         <span
@@ -36,11 +35,13 @@ const addressObject = {
 
 const AddressDetail = (props) => {
     let { addressDetail, token, refreshData, getcustomer, } = props;
+    const { theme } = useTheme()?.theme;
     const router = useRouter();
     const [addMode, setAddMode] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [address, setAddress] = useState(addressObject)
     const [allAddressBook, setAllAddressBook] = useState([])
+    const dispatch=useDispatch()
     useEffect(() => {
         if (addressDetail?.id) {
             addressObject.id = addressDetail?.id
@@ -79,7 +80,7 @@ const AddressDetail = (props) => {
 
     const updateAddress = async (e) => {
         if (address?.firstName && address?.lastName && address?.addressLine1 && address?.city && address?.company && address?.country && address?.state && address?.phone) {
-            mutation(UPDATE_ADDRESSBOOK, address, token).then(async (response) => {
+            mutation(UPDATE_ADDRESSBOOK, address).then(async (response) => {
                 if (response?.data?.updateAddressBook?.success) {
                     getcustomer()
                     setEditMode(false);
@@ -88,12 +89,16 @@ const AddressDetail = (props) => {
 
                 }
             }
-            )
+            ).catch((error)=>{
+                if(get(error,'extensions.code')===401){
+                    logoutAndClearData(dispatch)
+                  }
+            })
         }
     };
     const addNewAddress = async () => {
         if (address?.firstName && address?.lastName && address?.addressLine1 && address?.city && address?.company && address?.country && address?.state && address?.phone) {
-            mutation(ADD_ADDRESSBOOK, address, token).then(async (response) => {
+            mutation(ADD_ADDRESSBOOK, address).then(async (response) => {
 
                 if (response?.data?.addAddressBook?.success) {
                     setAddMode(false);
@@ -102,6 +107,10 @@ const AddressDetail = (props) => {
                     setAddress(addressObject)
                     notify(response?.data?.addAddressBook?.message, true);
                 }
+            }).catch((error)=>{
+                if(get(error,'extensions.code')===401){
+                    logoutAndClearData(dispatch)
+                  }
             })
         }
     };
@@ -123,15 +132,18 @@ const AddressDetail = (props) => {
         }
         const id = address.id;
         let variables = { id, _id }
-        mutation(DELETE_ADDRESSBOOK, variables, token).then(async (response) => {
+        mutation(DELETE_ADDRESSBOOK, variables).then(async (response) => {
             if (response?.data?.deleteAddressBook?.success) {
                 refreshData()
                 await router.push("/account/profile")
                 let list = [...allAddressBook]
                 list.splice(index, 1)
                 setAllAddressBook(list)
-                // getcustomer()
             }
+        }).catch((error)=>{
+            if(get(error,'extensions.code')===401){
+                logoutAndClearData(dispatch)
+              }
         })
     };
 
@@ -416,7 +428,7 @@ const AddressDetail = (props) => {
             <Fade in={!addMode} className={editMode ? "margin-top-2" : ""}>
                 <Button
                     size="small"
-                    color="#088178"
+                    color={get(theme,'palette.primary.main')}
                     onClick={addAddress}
                     variant="contained"
                 >

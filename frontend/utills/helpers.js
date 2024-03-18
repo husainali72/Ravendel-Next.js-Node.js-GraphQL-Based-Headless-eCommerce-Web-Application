@@ -1,11 +1,11 @@
-import { BASE_URL, baseUrl, bucketBaseURL } from '../config';
+import { BASE_URL, IMAGE_BASE_URL, baseUrl, BUCKET_BASE_URL } from '../config';
 import client from '../apollo-client';
 import { isEmpty } from "./service";
 import axios from 'axios'
-import { getSession } from 'next-auth/react';
+import { getSession, signOut } from 'next-auth/react';
 import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
-import { logoutAndClearData } from '../components/Header';
 import { get } from 'lodash';
+import logoutDispatch from '../redux/actions/userlogoutAction';
 
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
@@ -15,17 +15,12 @@ export const getImage = (img, type, isBanner, setting) => {
     if(!img){
         return NoImagePlaceHolder.src
     }
-    let localStorage = setting && setting?.setting?.imageStorage?.status === 's3' ? false : (setting?.setting?.imageStorage?.status === 'localStorage' ? true : '')
     let imagaPath = ""
-    if(type && type === "localStorage"){
-        imagaPath = `https://${BASE_URL}/${img.toString()}`;
-        return imagaPath.toString();
-    }
     if (!isBanner) {
         imagaPath = NoImagePlaceHolder.src;
     }
     if (img) {
-        imagaPath = localStorage ? baseUrl + img : bucketBaseURL + img
+        imagaPath = type && type === "localStorage" ? IMAGE_BASE_URL + img : BUCKET_BASE_URL + img
     }
     return imagaPath;
 
@@ -46,14 +41,14 @@ export const getHomepageData = async () => {
         console.log("Categories Error=======", e);
     }
 }
-export const query = async (query, id) => {
+export const query = async (query, variables) => {
     const session = await getSession();
-    const token = session?.user?.accessToken?.token
+    const token = get(session,'user.accessToken.token')
 
     try {
         const response = await client.query({
             query: query,
-            variables: { id },
+            variables,
             fetchPolicy: 'network-only',
             context: {
                 headers: { token },
@@ -62,20 +57,23 @@ export const query = async (query, id) => {
         return Promise.resolve(response);
     } catch (error) {
         const errors = JSON.parse(JSON.stringify(error));
-        if (errors &&
-            errors.graphQLErrors && errors.graphQLErrors?.length &&
-            !isEmpty(errors.graphQLErrors[0].message)
-        ) {
-            return Promise.reject(errors.graphQLErrors[0].message);
-        }
-        if (
-            !isEmpty(errors.networkError) &&
-            errors.networkError.statusCode === 400
-        ) {
+        const { graphQLErrors, networkError } = errors;
 
-            if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { logoutAndClearData() }
-            return Promise.reject(errors.message);
-        }
+        if (graphQLErrors?.length && !isEmpty(graphQLErrors[0]?.message)) {
+            return Promise.reject(get(graphQLErrors[0], "message"));
+          }
+      
+          if (networkError && networkError.statusCode === 400) {
+            return Promise.reject(get(errors, "message"));
+          }
+      
+          const networkErrorExtensions = get(
+            networkError,
+            "result.errors[0].extensions"
+          );
+          if (networkErrorExtensions?.code === 401) {
+            logoutAndClearData() 
+          }
         return Promise.reject("Something went wrong");
     }
 };
@@ -85,7 +83,6 @@ export const query = async (query, id) => {
 export const mutation = async (query, variables) => {
     const session = await getSession();
     const token = session?.user?.accessToken?.token
-    // const token = `${session?.user?.accessToken?.token}343243`
 
     try {
         if (!variables.queryName) {
@@ -106,26 +103,37 @@ export const mutation = async (query, variables) => {
         return Promise.resolve(response);
     } catch (error) {
         const errors = JSON.parse(JSON.stringify(error));
-        if (errors && errors.graphQLErrors &&
-            errors.graphQLErrors?.length &&
-            !isEmpty(errors.graphQLErrors[0].message)
-        ) {
+        const { graphQLErrors, networkError } = errors;
 
-            return Promise.reject(errors.graphQLErrors[0].message);
-        }
-        if (
-            !isEmpty(errors.networkError) &&
-            errors.networkError.statusCode === 400
-        ) {
-
-            if (errors?.networkError?.result?.errors[0]?.message === 'Context creation failed: Authentication token is invalid, please log in') { logoutAndClearData() }
-            return Promise.reject(errors);
-        }
+        if (graphQLErrors?.length && !isEmpty(graphQLErrors[0]?.message)) {
+            return Promise.reject(get(graphQLErrors[0], "message"));
+          }
+      
+          if (networkError && networkError.statusCode === 400) {
+            return Promise.reject(get(errors, "message"));
+          }
+      
+          const networkErrorExtensions = get(
+            networkError,
+            "result.errors[0]"
+          );
+          if (get(networkErrorExtensions,'extensions.code') === 401) {
+            return Promise.reject(networkErrorExtensions);
+          }
         return Promise.reject("Something went wrong");
     }
 };
-// autoFocus next input
 
+export const logoutAndClearData = async (dispatch) => {
+    const data = await signOut({ redirect: false, callbackUrl: "/" });
+    localStorage.setItem("userCart", JSON.stringify([]));
+    localStorage.setItem("cart", JSON.stringify([]));
+    dispatch(logoutDispatch())
+    window.location.pathname = "/account";
+  };
+  
+
+// autoFocus next input
 export const handleEnter = (event) => {
     if (event.key.toLowerCase() === "enter") {
         const form = event.target.form;
@@ -142,7 +150,6 @@ export const stripeCheckout = (billDetails, cartItems, baseUrl) => {
         customerCart: cartItems,
         customerId: billDetails.customerId
     }).then(res => {
-        console.log(res.data.url,'res.data.url')
         if (res.data.url) {
             window.location.href = res.data.url
         }
@@ -158,14 +165,27 @@ export const currencySetter = (settings, setCurrency) => {
     if (currency === "gbp") { setCurrency(<i className="fas fa-pound-sign"></i>) }
     if (currency === "cad") { setCurrency("CA$") }
 }
-export const getPrice = (price, decimal) => {
-    let fixed = 3
-    if (typeof price === 'string')
-        return parseFloat(price)?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-    else
-        return typeof price === 'number' && price?.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+export const getPrice = (price,currencyOptions) => {
+    let fixed = 3;
+    const decimal=get(currencyOptions,'number_of_decimals','2')
+    const thousandSeparator=get(currencyOptions,'thousand_separator',',')
+    const decimalSeparator=get(currencyOptions,'decimal_separator','.')
+    const formattedPrice = (value) => {
+        return value.toFixed(decimal)
+            .replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
 
-}
+            .replace('.', decimalSeparator);
+    };
+
+    if (typeof price === 'string') {
+        return formattedPrice(parseFloat(price));
+    } else if (typeof price === 'number') {
+        return formattedPrice(price);
+    }
+
+    return '0.00';
+};
+
 export function capitalize(word) {
     return word[0].toUpperCase() + word.slice(1);
 }

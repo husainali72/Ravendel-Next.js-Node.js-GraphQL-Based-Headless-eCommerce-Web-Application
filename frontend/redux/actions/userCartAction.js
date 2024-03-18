@@ -14,8 +14,8 @@ export const userCartAction = (card_id) => (dispatch) => {
 }
 
 export const userCarts = (id, token) => (dispatch) => {
-    query(GET_USER_CART, id, token).then(res => {
-        console.log("res", res);
+    let variable={id:id}
+    query(GET_USER_CART, variable, token).then(res => {
         return dispatch({
             type: USER_CART,
             payload: res.data.cartbyUser.products

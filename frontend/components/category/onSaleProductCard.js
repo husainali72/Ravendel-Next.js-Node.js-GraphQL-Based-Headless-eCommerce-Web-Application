@@ -9,6 +9,7 @@ import {
   mutation,
   getPrice,
   isDiscount,
+  imageOnError,
 } from "../../utills/helpers";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../../redux/actions/cartAction";
@@ -39,11 +40,11 @@ const OnSaleProductCard = ({
   const router = useRouter();
   const session = useSession();
   const [currency, setCurrency] = useState("$");
-  const [decimal, setdecimal] = useState(2);
+  const [currencyOption, setCurrencyOption] = useState({});
   const settings = useSelector((state) => state.setting);
   useEffect(() => {
     currencySetter(settings, setCurrency);
-    setdecimal(settings?.currencyOption?.number_of_decimals);
+    setCurrencyOption(settings?.currencyOption);
     if (currencyProp) {
       setCurrency(currencyProp);
     }
@@ -52,7 +53,7 @@ const OnSaleProductCard = ({
   useEffect(() => {
     if (currencyOpt) {
       currencySetter(currencyOpt?.currency_options?.currency, setCurrency);
-      setdecimal(currencyOpt?.currency_options?.number_of_decimals);
+      setCurrencyOption(currencyOpt?.currency_options);
     }
   }, [currencyOpt]);
 
@@ -66,7 +67,10 @@ const OnSaleProductCard = ({
     let href = "/shopcart";
     if (session.status === "authenticated") {
       let productInCart = false;
-      query(GET_USER_CART, id, token).then((res) => {
+      let variables={
+        id:id
+      }
+      query(GET_USER_CART,variables, token).then((res) => {
         let cart_id = res?.data?.cartbyUser?.id;
         const inCartProducts = res?.data?.cartbyUser?.products;
         inCartProducts.map((inCartProduct) => {
@@ -102,7 +106,7 @@ const OnSaleProductCard = ({
               products: Cartt,
               total: 0,
             };
-            mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {
+            mutation(UPDATE_CART_PRODUCT, variables).then((res) => {
               router.push("/shopcart");
             });
           }
@@ -120,7 +124,7 @@ const OnSaleProductCard = ({
             shippingClass: product?.shipping?.shippingClass,
             taxClass: product?.taxClass,
           };
-          mutation(ADD_TO_CART_QUERY, variables, token).then((res) => {
+          mutation(ADD_TO_CART_QUERY, variables).then((res) => {
             router.push("/shopcart");
             dispatch(addToCart(product));
           });
@@ -158,11 +162,7 @@ const OnSaleProductCard = ({
                           <img
                             className="img-on-sale"
                             src={getImage(product.feature_image, imageType)}
-                            onError={(e) => {
-                              e.type === "error"
-                                ? (e.target.src = NoImagePlaceholder.src)
-                                : null;
-                            }}
+                            onError={imageOnError}
                             height="280px"
                             width="100%"
                           />
@@ -217,19 +217,19 @@ const OnSaleProductCard = ({
                                 stars={product?.rating}
                                 singleproducts={product}
                               />
-                              <span>
+                              <span className="no-wrap">
                                 {product.pricing.sellprice ? (
                                   <strong className="sale-price">
                                     {currency}{" "}
                                     {getPrice(
                                       product?.pricing?.sellprice,
-                                      decimal
+                                      currencyOption
                                     )}
                                   </strong>
                                 ) : (
                                   <strong className="sale-price">
                                     {currency}{" "}
-                                    {getPrice(product?.pricing.price, decimal)}
+                                    {getPrice(product?.pricing.price, currencyOption)}
                                   </strong>
                                 )}
                               </span>
@@ -239,12 +239,12 @@ const OnSaleProductCard = ({
                                 <span
                                   className={
                                     product?.pricing.sellprice
-                                      ? "has-sale-price"
+                                      ? "has-sale-price no-wrap"
                                       : ""
                                   }
+                            
                                 >
-                                  {currency}{" "}
-                                  {getPrice(product?.pricing?.price, decimal)}
+                                  {currency}{" "}{getPrice(product?.pricing?.price, currencyOption)}
                                 </span>
                               ) : null}
                             </div>
@@ -270,7 +270,7 @@ const OnSaleProductCard = ({
                                     {" "}
                                     <a className="cart-icon">
                                       <i
-                                        className="fas fa-shopping-bag font-awesome-icon"
+                                        className="fas fa-shopping-bag font-awesome-icon "
                                         aria-hidden="true"
                                       ></i>
                                     </a>
