@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import React, { useState, useEffect, useRef } from "react";
 import {
   currencySetter,
@@ -9,7 +10,7 @@ import client from "../apollo-client";
 import StarRating from "../components/breadcrumb/rating";
 import MultiRangeSlider from "../components/breadcrumb/multirangeSlider";
 import BreadCrumb from "../components/breadcrumb/breadcrumb";
-import { Container, Dropdown, Form } from "react-bootstrap";
+import { Container, Form } from "react-bootstrap";
 import { GET_PRODUCTS_QUERY, GET_BRANDS_QUERY } from "../queries/shopquery";
 import OnSaleProductCard from "../components/category/onSaleProductCard";
 import ShopProducts from "../components/shoppage/shopProducts";

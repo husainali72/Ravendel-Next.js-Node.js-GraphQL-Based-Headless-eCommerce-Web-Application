@@ -91,6 +91,7 @@ section {
 }
 
 
+
 footer {
   background-color: #fff;
 }
@@ -1203,6 +1204,7 @@ footer .follow h5 {
   margin: 6px 0;
   font-weight: 500 !important;
   font-size: 18px;
+  cursor: pointer;
 }
 
 .card-price strong {
@@ -2188,6 +2190,9 @@ footer .btn:hover a {
 
 .product-price {
   line-height: 1;
+  justify-content: left;
+  align-content: center;
+  margin: 0;
 }
 
 .attr-color .attr-size {
@@ -5151,9 +5156,6 @@ margin-top: 12px;
   margin-top: 15px;
  
 }
-.gallery-image-display-non{
-  display: none;
-}
 .single-product-container{
   display: flex;
 }
@@ -5165,4 +5167,23 @@ margin-top: 12px;
 }
 .product-not-available{
   color: red;
+}
+
+/* ------------------------onSaleProduct-------------------------------------- */
+.on-sale-product-container{
+  padding: 0
+}
+.onsale-tooltip-container{
+background-color: var(--primary-color);
+}
+.onsale-tooltip{
+color: var(--primary-color);
+}
+.onsale-no-data{
+  padding: 50px
+}
+.onsale-no-data p{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

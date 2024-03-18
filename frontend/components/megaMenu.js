@@ -1,21 +1,14 @@
+/* eslint-disable react/jsx-key */
 import React, { useEffect, useState } from 'react';
-import { AiOutlineMenu } from 'react-icons/ai';
-import { HiOutlineArrowNarrowRight } from 'react-icons/hi';
-import { CgClose } from 'react-icons/cg';
 import { Row, Col } from 'react-bootstrap';
 import Link from 'next/link';
-import { getImage, imageOnError, toTitleCase } from '../utills/helpers';
+import { getImage, imageOnError, queryWithoutToken } from '../utills/helpers';
 import client from '../apollo-client';
-import { useSelector } from 'react-redux';
-import { capitalize } from 'lodash';
+import { capitalize, get } from 'lodash';
+import PropTypes from 'prop-types';
 import { GET_CATEGORIES_QUERY, GET_HOMEPAGE_DATA_QUERY, GET_RECENT_PRODUCTS_QUERY } from '../queries/home';
 
-// import { newProducts, productCategories } from './dummyContent';
-
-// import { newProducts, productCategories } from '../dummyContent';
-
 const MegaMenu = ({ openMenu, setOpenMenu }) => {
-    const getSetting = useSelector(state => state.setting)
     const [categories, setCategories] = useState([])
     const [productCategories, setproductCategories] = useState([])
     const [newProducts, setNewProducts] = useState([])
@@ -23,38 +16,29 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
     const getHomepageData = async () => {
         var imageStatus = []
         try {
-            const { data: homePageData } = await client.query({
-                query: GET_HOMEPAGE_DATA_QUERY
-            });
-            imageStatus = homePageData?.getSettings?.imageStorage?.status
+            const { data: homePageData } = queryWithoutToken(GET_HOMEPAGE_DATA_QUERY)
+            imageStatus = get(homePageData,'getSettings.imageStorage.status','')
             setImageType(imageStatus)
         }
         catch (e) {
-            console.log("Categories Error=======", e);
         }
     }
     const getCategories = async () => {
         try {
-            const { data: categoryData } = await client.query({
-                query: GET_CATEGORIES_QUERY
-            });
-            const category = categoryData?.productCategories.data
+            const { data: categoryData } = await queryWithoutToken( GET_CATEGORIES_QUERY);
+            const category = get(categoryData,'productCategories.data',[])
             setCategories([...category])
         }
         catch (e) {
-            console.log("Categories Error=======", e);
         }
     }
     const getNewProducts = async () => {
         try {
-            const { data: recentprductData } = await client.query({
-                query: GET_RECENT_PRODUCTS_QUERY
-            });
-            const recentproducts = recentprductData?.recentproducts
+            const { data: recentprductData } =queryWithoutToken( GET_RECENT_PRODUCTS_QUERY);
+            const recentproducts = get(recentprductData,'recentproducts',[])
             setNewProducts([...recentproducts])
         }
         catch (e) {
-            console.log('Recent Product Error===============', e)
         }
     }
     useEffect(() => {
@@ -72,17 +56,17 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
             }
         })
 
-        categories.forEach(category => {
+        categories?.forEach(category => {
 
-            const parentIds = Array.isArray(category.parentId)
-                ? category.parentId
-                : [category.parentId];
+            const parentIds = Array.isArray(category?.parentId)
+                ? category?.parentId
+                : [category?.parentId];
 
-            parentIds.forEach(parentId => {
-                const parentCategory = mainCategories.findIndex((main) => main.id === parentId);
+            parentIds?.forEach(parentId => {
+                const parentCategory = mainCategories?.findIndex((main) => main?.id === parentId);
 
-                if (parentCategory !== -1) {
-                    mainCategories[parentCategory].subcategories.push(category);
+                if (parentCategory>=0) {
+                   mainCategories[parentCategory]?.subcategories?.push(category);
                 }
             });
 
@@ -147,5 +131,8 @@ const MegaMenu = ({ openMenu, setOpenMenu }) => {
         </>
     )
 }
-
+MegaMenu.propTypes = {
+    openMenu: PropTypes.bool.isRequired,
+    setOpenMenu: PropTypes.func.isRequired,
+};
 export default MegaMenu
