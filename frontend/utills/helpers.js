@@ -6,6 +6,7 @@ import { getSession, signOut } from 'next-auth/react';
 import NoImagePlaceHolder from '../components/images/NoImagePlaceHolder.png';
 import { get } from 'lodash';
 import logoutDispatch from '../redux/actions/userlogoutAction';
+>>>>>>> master
 
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
@@ -57,6 +58,7 @@ export const query = async (query, variables) => {
         return Promise.resolve(response);
     } catch (error) {
         const errors = JSON.parse(JSON.stringify(error));
+
         const { graphQLErrors, networkError } = errors;
 
         if (graphQLErrors?.length && !isEmpty(graphQLErrors[0]?.message)) {
@@ -103,6 +105,7 @@ export const mutation = async (query, variables) => {
         return Promise.resolve(response);
     } catch (error) {
         const errors = JSON.parse(JSON.stringify(error));
+
         const { graphQLErrors, networkError } = errors;
 
         if (graphQLErrors?.length && !isEmpty(graphQLErrors[0]?.message)) {
@@ -193,8 +196,8 @@ export function capitalize(word) {
 export const isDiscount = (product) => {
     const sellPrice = get(product, 'pricing.sellprice', 0);
     const price = get(product, 'pricing.price', 0);
-    
     return sellPrice > 0 && sellPrice < price && ((100 / price) * (price - sellPrice)) > 0;
+
 }
 
 export const isVariantDiscount = (variantProduct) => {

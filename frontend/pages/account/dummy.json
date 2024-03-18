@@ -1,0 +1,27 @@
+[
+    {
+      "id": 1,
+      "name": "Product 1",
+      "description": "This is the description for Product 1.",
+      "price": 29.99,
+      "feature_image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-ai-image%2Fplace-product-background-ecommerce-product-background_47974658.htm&psig=AOvVaw0II-Ere_Gd-FKsZAJUokD0&ust=1707467959647000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCIih2furm4QDFQAAAAAdAAAAABAD",
+      "category": "Electronics"
+    },
+    {
+      "id": 2,
+      "name": "Product 2",
+      "description": "This is the description for Product 2.",
+      "price": 49.99,
+      "feature_image": "https://placekitten.com/200/301",
+      "category": "Clothing"
+    },
+    {
+      "id": 3,
+      "name": "Product 3",
+      "description": "This is the description for Product 3.",
+      "price": 19.99,
+      "feature_image": "https://placekitten.com/201/300",
+      "category": "Home"
+    }
+  ]
+  

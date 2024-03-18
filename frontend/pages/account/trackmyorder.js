@@ -21,14 +21,58 @@ import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
 import { Container } from "@mui/material";
 
 const TrackMyOrder = () => {
-  const componentRef = useRef();
-  const [customerOrder, setCustomerOrder] = useState([]);
-  const [loading, setloading] = useState(false);
-  const [Session, setSession] = useState({});
-  const [decimal, setdecimal] = useState(2);
-  const [currencyStore, setCurrencyStore] = useState({});
-  const [currency, setCurrency] = useState("$");
-
+    const componentRef = useRef();
+    const [customerOrder, setCustomerOrder] = useState([])
+    const [loading, setloading] = useState(false)
+    const [session, setSession] = useState({})
+    const [currencyStore, setCurrencyStore] = useState({})
+    const [currency, setCurrency] = useState("$")
+    const dispatch =useDispatch()
+    const OrderStatus = [
+        { name: 'inprogress', Title: 'Order Confirmed', color: 'primary' },
+        { name: 'shipped', Title: 'Order Shipped', color: 'primary' },
+        { name: 'outfordelivery', Title: 'Out For Delivery', color: 'primary' },
+        { name: 'delivered', Title: 'Delivered', color: 'primary' }
+    ]
+    useEffect(() => {
+        const userSession = getSession();
+        userSession.then(res => setSession(res))
+    }, [])
+    useEffect(() => {
+        getOrderCustomer();
+        getSettings()
+    }, [session])
+    const getSettings = async () => {
+        try {
+            const { data: homepagedata } = await client.query({
+                query: GET_HOMEPAGE_DATA_QUERY
+            })
+            const homepageData = homepagedata
+            setCurrencyStore(homepageData?.getSettings?.store)
+        }
+        catch (e) {
+        }
+    }
+    function getOrderCustomer() {
+        var id = ""
+        var token = "";
+        if (session?.user?.accessToken?.success) {
+            id = session.user.accessToken.customer._id
+            token = session.user.accessToken.token
+        }
+        let variable={
+            id:id
+        }
+        query(GET_CUSTOMER_ORDERS_QUERY, variable).then((response) => {
+            if (response) {
+                if (response.data.orderbyUser.data) {
+                    const customeradd = get(response,'data.orderbyUser.data',[])
+                    setloading(false)
+                    setCustomerOrder([...customeradd])
+                }
+            }
+        })
+    }
   const OrderStatus = [
     { name: "inprogress", Title: "Order Confirmed", color: "primary" },
     { name: "shipped", Title: "Order Shipped", color: "primary" },
