@@ -9,7 +9,7 @@ import { client_app_route_url, isEmpty } from "../../../utils/helper";
 import theme from "../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { attributeAddAction } from "../../../store/action";
-import { validate } from "../../components/validate";
+import { validate, validatenested } from "../../components/validate";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 import { useNavigate } from "react-router-dom";
 
@@ -36,14 +36,25 @@ const AddAttributeTheme = () => {
   };
 
   const onAdd = () => {
-    let errors = validate(["name"], attribute);
 
+    let errors = validate(["name"], attribute);
+    let errorAttributeValue = validatenested("values", [ "name"], attribute);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
           boolean: false,
           message: errors,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(errorAttributeValue)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errorAttributeValue,
           error: true,
         },
       });
