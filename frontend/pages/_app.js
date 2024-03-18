@@ -16,10 +16,10 @@ import LoadingSpinner from "../components/breadcrumb/loading"
 import { useRouter } from 'next/router'
 import createEmotionCache from '../src/createEmotionCache';
 import { CacheProvider } from '@emotion/react';
-import theme from '../src/theme';
-import { ThemeProvider } from '@mui/material';
 import TagManager from 'react-gtm-module';
 import MegaMenu from '../components/megaMenu';
+import Head from 'next/head';
+import { AlternativeThemeProvider } from './themeContext.js';
 const clientSideEmotionCache = createEmotionCache();
 
 
@@ -52,12 +52,16 @@ export function MyApp({
 
 
   return (<>
+   <Head>
+   <link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet"/>
+      </Head>
     <CacheProvider value={emotionCache}>
       <SSRProvider>
         <SessionProvider session={pageProps.session}>
-          <ThemeProvider theme={theme}>
+        <AlternativeThemeProvider>
             {loading && <LoadingSpinner />}
-
             {openMenu && <MegaMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}
             <Layout setOpenMenu={(open) => setOpenMenu(open)}>
               <Component {...pageProps} key={router.asPath} openMenu={openMenu} setOpenMenu={(open) => setOpenMenu(open)} />
@@ -65,10 +69,12 @@ export function MyApp({
               <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
               <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
             </Layout>
-          </ThemeProvider>
+         
+          </AlternativeThemeProvider>
         </SessionProvider>
       </SSRProvider>
     </CacheProvider>
+    
   </>
 
   )
@@ -86,40 +92,6 @@ MyApp.propTypes = {
 
 
 
-
-// export default MyApp;
-
-// class MyApp extends App {
-//   static async getInitialProps({ Component, ctx }) {
-//     const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
-
-//     //Anything returned here can be accessed by the client
-//     return { session, ...pageProps };
-//   }
-
-//   render() {
-//     //pageProps that were returned  from 'getInitialProps' are stored in the props i.e. pageprops
-//     const { Component, pageProps, session, store } = this.props;
-
-//     return (
-
-//       <SessionProvider session={session}>
-//         <Layout>
-//           <Component {...pageProps} />
-//           {/* <Script src="https://kit.fontawesome.com/60e73f4013.js" ></Script> */}
-//           <Script src="https://kit.fontawesome.com/60e73f4013.js" crossOrigin="anonymous"></Script>
-//           <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
-//           <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
-//         </Layout>
-
-//       </SessionProvider>
-//       // <Layout>
-//       //   <Component {...pageProps} />
-//       //   {/* <Script src="https://kit.fontawesome.com/60e73f4013.js" ></Script> */}
-//       //   <Script src="https://kit.fontawesome.com/60e73f4013.js" crossOrigin="anonymous"></Script>
-//       //   <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
-//       //   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
-//       // </Layout>
 
 
 const makeStore = () => store;

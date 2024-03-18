@@ -7,6 +7,7 @@ export const isEmpty = (value) =>
 
 // export const baseUrl = "https://demo1.ravendel.io/";
 export const baseUrl = "https://demo1-ravendel.hbwebsol.com/";
+// export const baseUrl = "http://localhost:8000/";
 export const client_app_route_url = "/admin/";
 
 export var bucketName = "revendal-image";
@@ -186,7 +187,6 @@ export const mutationResponseHandler = (response, key) => {
 };
 
 export const getBaseUrl = (setting) => {
-  console.log(setting?.settings?.imageStorage?.status, setting)
   if (setting?.settings?.imageStorage?.status === 's3') {
 
     return bucketBaseURL

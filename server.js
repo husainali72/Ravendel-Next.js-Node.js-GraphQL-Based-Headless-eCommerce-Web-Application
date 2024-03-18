@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config({ path: "./.env" });
 const express = require("express");
-const { ApolloServer } = require("apollo-server-express");
+const { ApolloServer } = require("@apollo/server");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const typeDefs = require("./gqschema");
@@ -9,70 +9,109 @@ const resolvers = require("./resolvers");
 const context = require("./context");
 const path = require("path");
 const bodyParser = require("body-parser");
+const { expressMiddleware } = require("@apollo/server/express4");
+const {
+  ApolloServerPluginDrainHttpServer,
+} = require("@apollo/server/plugin/drainHttpServer");
+const http = require("http");
+const APP_KEYS = require("./config/keys");
 const { graphqlUploadExpress } = require("graphql-upload");
+const jwt = require("jsonwebtoken");
 const {
   updateAdminProductLowStock,
   updateCustomerCheckoutCart,
 } = require("./config/crons");
 
 connectDB();
+async function startServer() {
+  const Tax = require("./models/Tax");
+  Tax.createTax();
 
-const Tax = require("./models/Tax");
-Tax.createTax();
+  const Shipping = require("./models/Shipping");
+  Shipping.createShipping();
 
-const Shipping = require("./models/Shipping");
-Shipping.createShipping();
+  const Settings = require("./models/Setting");
+  Settings.createSettings();
 
-const Settings = require("./models/Setting");
-Settings.createSettings();
+  var port = process.env.PORT || 8000;
 
-var port = process.env.PORT || 8000;
+  //middleware
+  const app = express();
+  const httpServer = http.createServer(app);
+  app.use(cors());
+  app.use(bodyParser.json());
 
-//middleware
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-updateAdminProductLowStock(app);
-updateCustomerCheckoutCart(app);
+  updateAdminProductLowStock(app);
+  updateCustomerCheckoutCart(app);
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context,
-  uploads: false,
-});
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context,
+    uploads: false,
+    csrfPrevention: true,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  });
+  await server.start();
+  app.use(graphqlUploadExpress({ maxFileSize: 1000000000, maxFiles: 10 }));
 
-app.use(graphqlUploadExpress({ maxFileSize: 1000000000, maxFiles: 10 }));
-server.applyMiddleware({ app, path: "/graphql" });
+  app.use(
+    "/graphql",
+    cors(),
+    express.json({ extended: false }),
+    expressMiddleware(server, {
+      context
+      // ({ req }) => 
+      
+      // {
+      //   const token = req?.headers?.authorization;
 
-// Init Middleware
-app.use(express.json({ extended: false }));
-app.use("/apis/users", require("./routes/api/users"));
-app.use("/apis/files", require("./routes/api/files"));
-app.use("/apis/misc", require("./routes/api/misc"));
-app.use("/apis/stripe", require("./routes/api/stripe"));
-app.use("/apis/paypal", require("./routes/api/paypal"));
-// app.use("/api/razorpay", require("./routes/api/razorpay"));
-app.use("/apis/razorpay", (req, res) =>
-  res.send({ success: false, data: "Getting error on PM2" })
-);
-app.use("/apis/customers", require("./routes/api/customers"));
+      //   //check if not token
+      //   if (!token) {
+      //     return res
+      //       .status(401)
+      //       .json({ msg: "no token, authorization denied" });
+      //   }
+      //   const decode = jwt.verify(token, APP_KEYS.jwtSecret);
 
-// app.use('/uploads', express.static(__dirname + "/uploads"));
-app.use("/assets", express.static(__dirname + "/assets"));
+      //   return {
+      //     ...context,
+      //     id: decode || "", // Include the token in the context
+      //   };
+      // },
+    })
+  );
+  // Init Middleware
+  // app.use(express.json({ extended: false }));
+  app.use("/apis/users", require("./routes/api/users"));
+  app.use("/apis/files", require("./routes/api/files"));
+  app.use("/apis/misc", require("./routes/api/misc"));
+  app.use("/apis/stripe", require("./routes/api/stripe"));
+  app.use("/apis/paypal", require("./routes/api/paypal"));
+  // app.use("/api/razorpay", require("./routes/api/razorpay"));
+  app.use("/apis/razorpay", (req, res) =>
+    res.send({ success: false, data: "Getting error on PM2" })
+  );
+  app.use("/apis/customers", require("./routes/api/customers"));
 
-if (process.env.NODE_ENV === "production") {
-  // app.use(express.static(path.join(__dirname, "frontend", "out")));
-  // app.get("/", (req, res) => {
-  //   res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
-  // });
-  // app.get("/*", (req, res) => {
-  //   res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
-  // });
-} else {
-  app.get("/", (req, res) => res.send(`Ravendel is running on port: ${port}`));
+  // app.use('/uploads', express.static(__dirname + "/uploads"));
+  app.use("/assets", express.static(__dirname + "/assets"));
+
+  if (process.env.NODE_ENV === "production") {
+    // app.use(express.static(path.join(__dirname, "frontend", "out")));
+    // app.get("/", (req, res) => {
+    //   res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
+    // });
+    // app.get("/*", (req, res) => {
+    //   res.sendFile(path.resolve(__dirname, "frontend", "out", "index.html"));
+    // });
+  } else {
+    app.get("/", (req, res) =>
+      res.send(`Ravendel is running on port: ${port}`)
+    );
+  }
+  app.listen(port, () =>
+    console.log(`server started on port ${port}, ${process.env.NODE_ENV}`)
+  );
 }
-
-app.listen(port, () =>
-  console.log(`server started on port ${port}, ${process.env.NODE_ENV}`)
-);
+startServer();

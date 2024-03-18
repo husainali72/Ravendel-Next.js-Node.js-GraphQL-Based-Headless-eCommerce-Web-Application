@@ -142,7 +142,7 @@ const Brand = ({ brand, filteredProducts, brandProduct, currencyStore }) => {
                                                 )
                                             }) : null}
 
-                                            <button type="button" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178" }} onClick={filterData}>
+                                            <button type="button" className="btn btn-success primary-btn-color" style={{ marginTop: 12}} onClick={filterData}>
                                                 <i className="fa fa-filter"></i>Fillter
                                             </button>
                                         </div>

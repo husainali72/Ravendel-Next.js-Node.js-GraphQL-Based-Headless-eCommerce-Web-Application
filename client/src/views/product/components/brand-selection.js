@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { brandsAction } from "../../../store/action/";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
+import { customStyles } from "../../../theme/ReactSelectCustomStyles";
 const BrandSelectionComponent = ({ value, onBrandChange }) => {
   const dispatch = useDispatch();
   const brandState = useSelector((state) => state.brands);
@@ -40,6 +41,7 @@ const BrandSelectionComponent = ({ value, onBrandChange }) => {
           options={brands}
           onChange={onBrandChange}
           value={value}
+          styles={customStyles}
         />
       )}
     </>

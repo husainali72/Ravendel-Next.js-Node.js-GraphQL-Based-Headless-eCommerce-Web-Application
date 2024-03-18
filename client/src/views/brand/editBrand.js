@@ -5,12 +5,19 @@ import viewStyles from "../viewStyles.js";
 import clsx from "clsx";
 import { brandUpdateAction, brandsAction } from "../../store/action/";
 import { useDispatch, useSelector } from "react-redux";
-import { Loading, TopBar, Alert, TextInput, CardBlocks, FeaturedImageComponent, URLComponent } from "../components";
+import {
+  Loading,
+  TopBar,
+  Alert,
+  TextInput,
+  CardBlocks,
+  FeaturedImageComponent,
+  URLComponent,
+} from "../components";
 import {
   client_app_route_url,
   bucketBaseURL,
   isEmpty,
-
   baseUrl,
   getBaseUrl,
 } from "../../utils/helper";
@@ -31,8 +38,8 @@ const EditBrandComponenet = ({ params }) => {
   const Brands = useSelector((state) => state.brands);
   const [logoImage, setLogoImage] = useState(null);
   const [loading, setloading] = useState(false);
-  const setting = useSelector((state) => state.settings)
-  const baseURl = getBaseUrl(setting)
+  const setting = useSelector((state) => state.settings);
+  const baseURl = getBaseUrl(setting);
   const [brand, setBrand] = useState({
     id: "",
     _id: "",
@@ -55,7 +62,6 @@ const EditBrandComponenet = ({ params }) => {
               brand.id = editbrand.id;
               setBrand({ ...brand, ...editbrand });
               if (editbrand.brand_logo) {
-
                 setLogoImage(baseURl + editbrand.brand_logo);
               }
             }
@@ -75,7 +81,7 @@ const EditBrandComponenet = ({ params }) => {
     }
   }, []);
   const updateBrand = () => {
-    let errors = validate(["name", 'url'], brand);
+    let errors = validate(["name", "url"], brand);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -85,8 +91,7 @@ const EditBrandComponenet = ({ params }) => {
           error: true,
         },
       });
-    }
-    else {
+    } else {
       dispatch(brandUpdateAction(brand, navigate));
     }
   };
@@ -103,11 +108,16 @@ const EditBrandComponenet = ({ params }) => {
   };
 
   const fileChange = (e) => {
-    setLogoImage(null);
-    setLogoImage(URL.createObjectURL(e.target.files[0]));
+    const files = get(e, "target.files");
 
-    setBrand({ ...brand, "updated_brand_logo": e.target.files[0] });
+    setLogoImage(get(files, "[0]") ? URL.createObjectURL(files[0]) : logoImage);
+
+    setBrand({
+      ...brand,
+      updated_brand_logo: get(files, "[0]", null),
+    });
   };
+
   const isUrlExist = async (url) => {
     setBrand({
       ...brand,
@@ -138,7 +148,11 @@ const EditBrandComponenet = ({ params }) => {
                   label="Brand Name"
                   name="name"
                   onInputChange={handleChange}
-                  onBlur={(e) => !brand.url || e.target.value !== brand.url ? isUrlExist(brand.name) : null}
+                  onBlur={(e) =>
+                    !brand.url || e.target.value !== brand.url
+                      ? isUrlExist(brand.name)
+                      : null
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -164,7 +178,6 @@ const EditBrandComponenet = ({ params }) => {
                       />
                     </CardBlocks>
                   </Box>
-
                 </Grid>
               </Grid>
             </Grid>

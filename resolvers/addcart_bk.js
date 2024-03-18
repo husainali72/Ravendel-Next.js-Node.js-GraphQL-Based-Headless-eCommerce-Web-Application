@@ -3,7 +3,7 @@ addCart: async (root, args, { id }) => {
       return MESSAGE_RESPONSE("TOKEN_REQ", "Cart", false);
     }
     try {
-      const cart = await Cart.findOne({ userId: args.userId });
+      const cart = await Cart.findOne({ userId:new ObjectId(args.userId)   });
       var carttotal = 0;
       console.log("cart any==========",cart)
       if(cart){

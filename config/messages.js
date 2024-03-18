@@ -59,4 +59,5 @@ module.exports = {
   videoFile: "Only one file is allowed to upload",
   videoType:
     "Only lv, mp4, 3gp, QuickTime, x-msvideo, x-ms-wmv files are allowed to upload",
+  OutOfStock: "Only :item available in stock",
 };

@@ -135,12 +135,16 @@ const MobileAppSetting = () => {
 
 
   const fileChange = (e, i) => {
+    const files = get(e, 'target.files', []);
+    if (files.length>0) {
     settingMobile.slider[i].image = URL.createObjectURL(
-      e.target.files[0]
+      files[0]
     );
-    slider[i].image = URL.createObjectURL(e.target.files[0]);
-    settingMobile.slider[i].update_image = e.target.files;
-    slider[i].update_image = e.target.files;
+    slider[i].image = URL.createObjectURL(files[0]);
+    settingMobile.slider[i].update_image = files;
+    slider[i].update_image = files;
+    }
+   
     setSettingMobile({
       ...settingMobile,
       slider: [...settingMobile.slider],
@@ -234,9 +238,13 @@ const MobileAppSetting = () => {
 
 
   const handleImageChange = (event, index) => {
+    const files = get(event, 'target.files', []);
     let data = sectionData;
+    if (files.length>0) {
     data[index].section_img = URL.createObjectURL(event.target.files[0]);
     data[index].update_image = event.target.files
+    }
+   
     setSectionData([...data]);
   };
 
