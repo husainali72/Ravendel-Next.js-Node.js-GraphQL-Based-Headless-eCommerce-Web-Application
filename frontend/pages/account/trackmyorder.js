@@ -11,13 +11,15 @@ import DoneIcon from '@mui/icons-material/Done';
 import OrdersDetails from "../../components/account/component/orders-details";
 import client from "../../apollo-client";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
+import { useDispatch } from "react-redux";
+import { get } from "lodash";
 const TrackMyOrder = () => {
     const [customerOrder, setCustomerOrder] = useState([])
     const [loading, setloading] = useState(false)
     const [session, setSession] = useState({})
-    const [decimal, setdecimal] = useState(2)
     const [currencyStore, setCurrencyStore] = useState({})
     const [currency, setCurrency] = useState("$")
+    const dispatch =useDispatch()
     const OrderStatus = [
         { name: 'inprogress', Title: 'Order Confirmed', color: 'primary' },
         { name: 'shipped', Title: 'Order Shipped', color: 'primary' },
@@ -41,10 +43,8 @@ const TrackMyOrder = () => {
             setCurrencyStore(homepageData?.getSettings?.store)
         }
         catch (e) {
-            console.log("homepage Error===", e);
         }
     }
-
     function getOrderCustomer() {
         var id = ""
         var token = "";
@@ -52,10 +52,13 @@ const TrackMyOrder = () => {
             id = session.user.accessToken.customer._id
             token = session.user.accessToken.token
         }
-        query(GET_CUSTOMER_ORDERS_QUERY, id, token).then((response) => {
+        let variable={
+            id:id
+        }
+        query(GET_CUSTOMER_ORDERS_QUERY, variable).then((response) => {
             if (response) {
                 if (response.data.orderbyUser.data) {
-                    const customeradd = response.data.orderbyUser.data
+                    const customeradd = get(response,'data.orderbyUser.data',[])
                     setloading(false)
                     setCustomerOrder([...customeradd])
                 }
@@ -80,7 +83,7 @@ const TrackMyOrder = () => {
                                 <strong> Order id : {customerOrder[0]?.id}</strong>
                             </Col>
                             <Col>
-                                <strong>Total : {currency} {getPrice(customerOrder[0]?.grandTotal, decimal)}</strong>
+                                <strong>Total : {currency} {getPrice(customerOrder[0]?.grandTotal, get(currencyStore,'currency_options'))}</strong>
                             </Col>
                         </Accordion.Header>
                         <Accordion.Body>

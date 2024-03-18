@@ -9,6 +9,8 @@ import {
   mutation,
   getPrice,
   isDiscount,
+
+  imageOnError,
 } from "../../utills/helpers";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../../redux/actions/cartAction";
@@ -21,7 +23,7 @@ import {
 import calculateDiscount from "../../utills/calculateDiscount";
 import { query } from "../../utills/helpers";
 import NoImagePlaceholder from "../images/NoImagePlaceHolder.png";
-import { capitalize } from "lodash";
+import { capitalize, get } from "lodash";
 import Image from "next/image";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -44,13 +46,11 @@ const OnSaleProductCard = ({
   const router = useRouter();
   const session = useSession();
   const [currency, setCurrency] = useState("$");
-  const [decimal, setdecimal] = useState(2);
-  const [showWishListButton, setShowWishListButton] = useState(null);
-  const [isProductInWistList, setIsProductInWistList] = useState(false);
+  const [currencyOption, setCurrencyOption] = useState({});
   const settings = useSelector((state) => state.setting);
   useEffect(() => {
     currencySetter(settings, setCurrency);
-    setdecimal(settings?.currencyOption?.number_of_decimals);
+    setCurrencyOption(settings?.currencyOption);
     if (currencyProp) {
       setCurrency(currencyProp);
     }
@@ -58,14 +58,14 @@ const OnSaleProductCard = ({
 
   useEffect(() => {
     if (currencyOpt) {
-      currencySetter(currencyOpt.currency_options.currency, setCurrency);
-      setdecimal(currencyOpt.currency_options.number_of_decimals);
+      currencySetter(currencyOpt?.currency_options?.currency, setCurrency);
+      setCurrencyOption(currencyOpt?.currency_options);
     }
   }, [currencyOpt]);
 
   if (session.status === "authenticated") {
-    id = session.data.user.accessToken.customer._id;
-    token = session.data.user.accessToken.token;
+    id = get(session, "data.user.accessToken.customer._id");
+    token = get(session, "data.user.accessToken.token");
   }
   const ProductAdd = async (e, product) => {
     e.stopPropagation();
@@ -73,7 +73,10 @@ const OnSaleProductCard = ({
     let href = "/shopcart";
     if (session.status === "authenticated") {
       let productInCart = false;
-      query(GET_USER_CART, id, token).then((res) => {
+      let variables={
+        id:id
+      }
+      query(GET_USER_CART,variables, token).then((res) => {
         let cart_id = res?.data?.cartbyUser?.id;
         const inCartProducts = res?.data?.cartbyUser?.products;
         inCartProducts.map((inCartProduct) => {
@@ -109,7 +112,7 @@ const OnSaleProductCard = ({
               products: Cartt,
               total: 0,
             };
-            mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {
+            mutation(UPDATE_CART_PRODUCT, variables).then((res) => {
               router.push("/shopcart");
             });
           }
@@ -127,7 +130,7 @@ const OnSaleProductCard = ({
             shippingClass: product?.shipping?.shippingClass,
             taxClass: product?.taxClass,
           };
-          mutation(ADD_TO_CART_QUERY, variables, token).then((res) => {
+          mutation(ADD_TO_CART_QUERY, variables).then((res) => {
             router.push("/shopcart");
             dispatch(addToCart(product));
           });
@@ -138,6 +141,7 @@ const OnSaleProductCard = ({
       router.push("/shopcart");
     }
   };
+
   const handleWishlistButtonClick = (e, product) => {
     e.stopPropagation();
     console.log(product, "product");
@@ -195,7 +199,6 @@ const OnSaleProductCard = ({
                             width="100%"
                           />
                         </div>
-
                         <div className="on-sale-product-card-body">
                           {isDiscount(product) ? (
                             <div className="save-price">

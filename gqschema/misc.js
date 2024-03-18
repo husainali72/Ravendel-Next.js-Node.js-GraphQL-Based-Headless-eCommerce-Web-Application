@@ -1,6 +1,6 @@
-const { gql } = require("apollo-server-express");
+// const { gql } = require("@apollo/server"); 
 
-module.exports = gql`
+module.exports = `
   type statusSchema {
     message: String
     success: Boolean

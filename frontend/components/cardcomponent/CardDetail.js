@@ -1,127 +1,167 @@
+import {
+  Select,
+  MenuItem,
+  FormControl,
+} from "@mui/material";
+import { get, upperCase } from "lodash";
 import Link from "next/link";
-import { useState, useEffect } from "react"
-import { Spinner } from "react-bootstrap";
-import Table from 'react-bootstrap/Table';
-import { getImage, getPrice, imageOnError } from '../../utills/helpers';
-import { capitalize } from "lodash";
-import { useSelector } from "react-redux";
+import React from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import { getImage, getPrice, imageOnError } from "../../utills/helpers";
+import CartTotalDetails from "./cartTotal";
 const CartTable = (props) => {
-    const settings = useSelector((state) => state.setting)
-    const { cartItems,
-        decimal,
-        isQuantityBtnLoading,
-        CalculateProductTotal,
-        DecreaseQuantity,
-        IncreaseQuantity,
-        AllCartItemsClear,
-        quantity,
-        removeToCart,
-        updateCartProduct, currency,
-        unAvailableProducts,
-        available,
-        homepageData
-    } = props;
-    const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
-    return (
-        <div>
-            <div className="table-responsive">
-                <Table bordered>
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Attributes</th>
-                            <th>Quantity</th>
-                            <th>SubTotal</th>
-                            <th>Remove</th>
-                        </tr>
-                    </thead  >
+  const {
+    cartItems,
+    AllCartItemsClear,
+    removeToCart,
+    currency,
+    updateCartProductQuantity,
+    homepageData,
+    totalSummary,
+  } = props;
+  const imageType = get(homepageData,'getSettings.imageStorage.status');
+  const currencyOptions = get(homepageData,'getSettings.store.currency_options')
 
-                    <tbody>
-                        {cartItems && cartItems?.length > 0 && cartItems.map((item, i) => {
-                            console.log('item => ', getImage(item.feature_image, imageType));
-                            return (
-                            <tr key={i}>
-                                <td>
-                                    {available ? <Link href={"/product/" + item.url}>
 
-                                        <div className="td-flex cursor-pointer">
-                                            <img src={getImage(item.feature_image, imageType)}  onError={imageOnError}/>
-                                        </div>
-                                    </Link> : <div className="td-flex cursor-pointer">
-                                        <img src={getImage(item.feature_image,imageType)} onError={imageOnError} />
-                                    </div>}
-                                </td>
 
-                                <td>
-                                    {available ? <Link href={"/product/" + item.url}>
-                                        <div className="td-flex cursor-pointer table-product-title">
-                                            <h3>{item.name}</h3>
-                                        </div>
-                                    </Link> : <div className="td-flex cursor-pointer table-product-title">
-                                        <h3>{item.name}</h3>
-                                    </div>}
-                                </td>
-                                <td>
-                                    <div className="td-flex">
-                                        <span>{currency} {(item.pricing?.sellprice ? getPrice(item.pricing, decimal) : getPrice(item.pricing, decimal))}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    {item?.attributes?.map((obj) => {
-                                        let classname = item.attributes.length === 1 ? "td-flex" : "td-Flex"
-                                        return (<div className={classname}>
-                                            {capitalize(obj.name)} :   {capitalize(obj.value)}
-                                        </div>)
+  return (
+    <div>
+      <div className="cart-main-container">
+        <div className="bulkActionStrip-desktopContainer">
 
-                                    })}
-                                </td>
-                                <td>
-                                    <div className="td-flex">
-                                        <span className={`btn btn-primary btn-less ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
-                                            if (available) { DecreaseQuantity(item) }
-                                        }}>
-                                            <i className="fas fa-chevron-down" ></i>
-                                        </span>
-                                        <span className="btn btn-info max-button-width-load">
-                                            {item?.quantity}
-                                        </span>
-                                        <span className={`btn btn-primary btn-more ${isQuantityBtnLoading && "disableButton"}`} style={{ margin: '2px' }} onClick={() => {
-                                            if (available) { IncreaseQuantity(item) }
-                                        }}>
-                                            <i className="fas fa-chevron-up"></i>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="td-flex">
-                                        <span>{currency} {((item.pricing?.sellprice ? getPrice(item.pricing * item.quantity, decimal) : getPrice(item.pricing * item.quantity, decimal)) || 0)}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="td-flex">
-                                        <i onClick={() => removeToCart(item)} className="far fa-trash-alt"></i></div>
-                                </td>
-                            </tr>
-                        )})
-                        }
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td className="clear-cart">
-                                <i onClick={() => AllCartItemsClear()} className="fas fa-times clear-cart">Clear Cart</i>
-                            </td>
-                        </tr>
-                    </tbody>
-                </Table>
+          <div className="inlinebuttonV2-base-actions bulkActionStrip-desktopButton">
+            <div className="inlinebuttonV2-base-action bulkActionStrip-desktopActionButton">
+              <button
+                className="inlinebuttonV2-base-actionButton bulkActionStrip-desktopBulkRemove"
+                onClick={AllCartItemsClear}
+              >
+                {" "}
+                REMOVE
+              </button>
             </div>
-
-
+            <div className="inlinebuttonV2-base-action bulkActionStrip-desktopActionButton">
+              <button className="inlinebuttonV2-base-actionButton bulkActionStrip-desktopBulkWishlist">
+                MOVE TO WISHLIST
+              </button>
+            </div>
+          </div>
         </div>
-    )
-}
+        <div className="itemContainer-base-itemLeft">
+          <div className="cart-product-base-container">
+            {cartItems?.map((product) => (
+              <div className="itemContainer-base-item " key={product.id}>
+                <div>
+                  {product?.available ? (
+                    <Link href={"/product/" + product.url}>
+                      <img
+                        src={getImage(product.feature_image, imageType)}
+                        onError={imageOnError}
+                        alt={product?.name}
+                        className="cart-product-image cursor-pointer"
+                      />
+                    </Link>
+                  ) : (
+                    <img
+                      src={getImage(product.feature_image, imageType)}
+                      onError={imageOnError}
+                      alt={product?.name}
+                      className="cart-product-image"
+                    />
+                  )}
+                </div>
+                <div>
+                  <div>
+                    {product?.available ? (
+                      <Link href={"/product/" + product.url}>
+                        <h3 className="cart-product-name  cursor-pointer">
+                          {upperCase(product.name)}
+                        </h3>
+                      </Link>
+                    ) : (
+                      <h3 className="cart-product-name">
+                        {upperCase(product.name)}
+                      </h3>
+                    )}
+                    <p className="cart-product-short-description">
+                      {upperCase(product?.short_description)}
+                    </p>
+                  </div>
+                  <div className="itemComponents-base-sellerContainer">
+                    <div className="itemComponents-base-sellerData">
+                    </div>
+                  </div>
+
+                  <div className="itemContainer-base-sizeAndQtyContainer">
+                    <div className="itemContainer-base-sizeAndQty">
+                      <div className="itemComponents-base-quantity">
+                        <label className="quantity-label">QTY : </label>
+                        <FormControl>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="quantitySelect"
+                            className="quantity-button"
+                            value={product.quantity}
+                            onChange={(e) =>
+                              updateCartProductQuantity(
+                                product,
+                                parseInt(e.target.value)
+                              )
+                            }
+                          >
+                            {Array.from(
+                              { length: 20 },
+                              (_, index) => index + 1
+                            ).map((quantity) => (
+                              <MenuItem value={quantity} sx={{fontSize:'12px'}}>{quantity}</MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </div>
+                    </div>
+                    {product?.available ? (
+                      product?.productQuantity <= 5 ? (
+                        <div className="itemComponents-base-lowUnitCount">
+                          {`${product?.productQuantity} Left`}
+                        </div>
+                      ) : null
+                    ) : (
+                      <div className="itemComponents-base-lowUnitCount">
+                        OUT OF STOCK
+                      </div>
+                    )}
+                  </div>
+                  <div className="itemContainer-base-price">
+                    <div className="itemComponents-base-price itemComponents-base-bold ">
+                      <div>
+                        {currency} {getPrice(get(product,'amount',0),currencyOptions)}
+                      </div>
+                    </div>
+
+                    {get(product, "discountPercentage",0) !== 0 && (
+                      <div className="itemContainer-base-discountBlock">
+                        <span className="itemComponents-base-strikedAmount">
+                          <span className="itemComponents-base-price itemComponents-base-strike itemContainer-base-strikedAmount">
+                            {getPrice(get(product,'mrpAmount',0), currencyOptions)}
+                          </span>
+                        </span>
+                        <span className="itemComponents-base-itemDiscount">
+                          {get(product, "discountPercentage")}% OFF
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="cross-icon cursor-pointer">
+                  <CloseIcon onClick={() => removeToCart(product)} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <CartTotalDetails totalSummary={totalSummary} currencyOptions={currencyOptions} currency={currency}/>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default CartTable;

@@ -172,7 +172,7 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Brand", false);
       }
       try {
-        const brand = await Brand.findByIdAndRemove(args.id);
+        const brand = await Brand.deleteOne({_id:args.id});
         if (brand) {
           if (brand.brand_logo) {
             imageUnlink(brand.brand_logo);
@@ -182,7 +182,7 @@ module.exports = {
             {},
             { $unset: { brand: _id } }
           );
-          console.log("dgdfhdgh");
+         
           return MESSAGE_RESPONSE("DELETE", "Brand", true);
         }
         return MESSAGE_RESPONSE("NOT_EXIST", "Brand", false);

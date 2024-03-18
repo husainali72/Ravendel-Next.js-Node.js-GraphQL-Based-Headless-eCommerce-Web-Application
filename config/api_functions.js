@@ -168,7 +168,7 @@ const DELETE_FUNC = async (token, delete_id, modal, name) => {
     return MESSAGE_RESPONSE("ID_ERROR", name, false);
   }
   try {
-    const response = await modal.findByIdAndRemove(delete_id);
+    const response = await modal.deleteOne({_id:delete_id});
     const setting = await Setting.findOne({});
     if (response) {
       if (response.feature_image || response.image) {
@@ -192,6 +192,7 @@ const CREATE_FUNC = async (
   path,
   validation
 ) => {
+
   /////////////////////////////////////////
   if (!data.queryName && !token) {
     return MESSAGE_RESPONSE("TOKEN_REQ", name, false);
@@ -266,7 +267,6 @@ const CREATE_FUNC = async (
 
 
     }
-
     if (data.name) {
       const nameresponse = await modal.findOne({ name: data.name });
       if (nameresponse) {
@@ -292,7 +292,7 @@ const CREATE_FUNC = async (
     await response.save();
     return MESSAGE_RESPONSE("AddSuccess", name, true);
   } catch (error) {
-    // console.log("CREATE_FUNC", error);
+;
     return MESSAGE_RESPONSE("CREATE_ERROR", name, false);
   }
 };

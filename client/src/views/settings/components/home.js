@@ -134,17 +134,26 @@ const HomeSettingsTheme = () => {
 
 
   const fileChange = (e, i) => {
-    settingHome.slider[i].image = URL.createObjectURL(
-      e.target.files[0]
-    );
-    slider[i].image = URL.createObjectURL(e.target.files[0]);
-    settingHome.slider[i].update_image = e.target.files;
-    slider[i].update_image = e.target.files;
-    setsettingHome({
-      ...settingHome,
-      slider: [...settingHome.slider],
-    });
+    const files = get(e, 'target.files');
+    if (files && files.length > 0) {
+      settingHome.slider[i] = {
+        ...settingHome.slider[i],
+        image: URL.createObjectURL(e.target.files[0]),
+        update_image: e.target.files,
+      };
+      slider[i] = {
+        ...slider[i],
+        image: URL.createObjectURL(e.target.files[0]),
+        update_image: e.target.files,
+      };
+  
+      setsettingHome({
+        ...settingHome,
+        slider: [...settingHome.slider],
+      });
+    }
   };
+  
 
 
   const updateHome = () => {

@@ -7,9 +7,9 @@ const CartSchema = new Schema({
     type: Schema.ObjectId,
     required: true
   },
-  total: {
-    type: Number,
-     },
+  // total: {
+  //   type: Number,
+  //    },
   products: [
     {
       productId: {
@@ -26,20 +26,20 @@ const CartSchema = new Schema({
       productPrice: {
         type: Number,
       },
-      productTaxPercentage: {
-        type: Number,
-      },
-      productTax: {
-        type: Number,
-      },
+      // productTaxPercentage: {
+      //   type: Number,
+      // },
+      // productTax: {
+      //   type: Number,
+      // },
       qty: {
         type: Number,
         required: true
       },
-      total: {
-        type: Number,
+      // total: {
+      //   type: Number,
        
-      },
+      // },
       attributes: [
         {
           name:
@@ -48,18 +48,18 @@ const CartSchema = new Schema({
             { type: String }
         }
       ],
-      productQuantity: {
-        type: Number
-      },
+      // productQuantity: {
+      //   type: Number
+      // },
       variantId: {
         type: String
       },
-      shippingClass: {
-        type: Schema.ObjectId,        
-      },
-      taxClass: {
-        type: Schema.ObjectId,        
-      }
+      // shippingClass: {
+      //   type: Schema.ObjectId,        
+      // },
+      // taxClass: {
+      //   type: Schema.ObjectId,        
+      // }
     }
   ],
   status: {

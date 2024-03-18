@@ -78,8 +78,12 @@ const ThemesComponent = () => {
     }
   };
   const fileChange = (e) => {
-    themeSetting.logo = URL.createObjectURL(e.target.files[0]);
-    themeSetting.new_logo = e.target.files
+    const files = get(e, 'target.files', []);
+    if (files.length>0) {
+    themeSetting.logo = URL.createObjectURL(files[0]);
+    themeSetting.new_logo = files  
+  }
+  
     setThemeSetting({ ...themeSetting })
   };
   const handleOnChange = (value) => {

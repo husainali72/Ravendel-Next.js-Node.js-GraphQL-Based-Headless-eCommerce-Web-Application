@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import OnSaleProductCard from "../../components/category/onSaleProductCard";
 import products from "./dummy.json";
-
 const MyWishList = ({ id, customeraddres }) => {
   const session = useSession();
   const router = useRouter();
@@ -34,6 +33,7 @@ const MyWishList = ({ id, customeraddres }) => {
     </>
   );
 };
+
 export default MyWishList;
 
 export async function getStaticPaths() {
@@ -75,6 +75,7 @@ export async function getStaticProps({ params }) {
     console.log("Bolg SinglePage ERROR==", e);
   }
   if (!customeraddres?.length < 1) {
+
     return {
       redirect: {
         destination: "/account/profile",

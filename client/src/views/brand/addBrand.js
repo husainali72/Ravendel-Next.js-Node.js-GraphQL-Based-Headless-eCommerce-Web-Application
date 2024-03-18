@@ -20,14 +20,37 @@ const AddBrandsComponent = () => {
   const [newBrands, setNewBrands] = useState(null);
 
   const addBrands = () => {
-    var string = newBrands;
+    const string = newBrands;
+  
     if (string) {
-      var newBrandArr = string.split("\n").map((brand) => {
-        return {
-          name: brand,
-        };
-      });
-      dispatch(brandAddAction({ brands: newBrandArr }, navigate));
+      const newBrandArr = string
+        .split("\n")
+        .map((brand) => {
+          // Trim leading and trailing spaces from the brand name
+          const trimmedBrand = brand.trim();
+  
+          // Check if the brand name is not empty after trimming
+          if (trimmedBrand) {
+            return {
+              name: trimmedBrand,
+            };
+          }
+          return null; // Ignore empty brand names
+        })
+        .filter(Boolean); // Remove null values from the array
+  
+      if (newBrandArr.length > 0) {
+        dispatch(brandAddAction({ brands: newBrandArr }, navigate));
+      } else {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: false,
+            message: "Brand name is required",
+            error: true,
+          },
+        });
+      }
     } else {
       dispatch({
         type: ALERT_SUCCESS,
@@ -39,6 +62,7 @@ const AddBrandsComponent = () => {
       });
     }
   };
+  
 
   const handleChange = (e) => {
     setNewBrands(e.target.value);

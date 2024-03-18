@@ -14,11 +14,12 @@ import { useRouter } from "next/router";
 import { useSession, getSession } from 'next-auth/react';
 import { capitalize } from 'lodash';
 import { Toaster } from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
 const Profile = ({ customeraddres }) => {
-    const [ID, setID] = useState("")
+    const [userid, setID] = useState("")
     const session = useSession();
-    const session2 = getSession();
-    session2.then(res => setID(res?.user?.accessToken?.customer?._id))
+    const userSession = getSession();
+    userSession.then(res => setID(res?.user?.accessToken?.customer?._id))
     const router = useRouter();
     if (router.isFallback) {
         return <div>Loading...</div>
@@ -35,6 +36,7 @@ const Profile = ({ customeraddres }) => {
     const [customeraddress, setCustomerAddress] = useState(customeraddres)
     const [customerOrder, setCustomerOrder] = useState({})
     const [ToggleEdit, setToggleEdit] = useState(false)
+    const dispatch=useDispatch()
     var id = ""
     var token = ""
 
@@ -61,7 +63,10 @@ const Profile = ({ customeraddres }) => {
             id = session.data.user.accessToken.customer._id
             token = session.data.user.accessToken.token
         }
-        query(GET_CUSTOMER_QUERY, id, token).then((response) => {
+        let variable={
+            id:id
+        }
+        query(GET_CUSTOMER_QUERY, variable).then((response) => {
             const customeradd = response.data.customer.data
             setCustomerAddress(customeradd)
             setToggleEdit(false)
@@ -71,22 +76,6 @@ const Profile = ({ customeraddres }) => {
     useEffect(() => {
         getcustomer();
     }, [])
-
-    async function getOrderCustomer() {
-        var customerorder = [];
-        try {
-            const { data: ordercustomerDataById } = await client.query({
-                query: GET_CUSTOMER_ORDERS_QUERY,
-                variables: { userId: id },
-            })
-            customerorder = ordercustomerDataById.orderbyUser.data
-            setCustomerOrder(customerorder)
-        }
-        catch (e) {
-            console.log("order Error", e)
-        }
-
-    }
 
     return (
         <>
@@ -115,7 +104,7 @@ const Profile = ({ customeraddres }) => {
                                         <ListGroup.Item><span><strong>Company</strong></span>  <span>{capitalize(customeraddress?.company)}</span></ListGroup.Item>
                                         <ListGroup.Item><span><strong>Phone</strong></span>  <span>{capitalize(customeraddress?.phone)}</span></ListGroup.Item>
                                     </ListGroup>
-                                    <Button onClick={() => setToggleEdit(!ToggleEdit)} className='me-0'>Edit User</Button>
+                                    <Button onClick={() => setToggleEdit(!ToggleEdit)} className='me-0 primary-btn-color'>Edit User</Button>
                                 </Card>}
                             </Tab>
                             <Tab eventKey="orders" title="Orders">
@@ -171,7 +160,7 @@ const Profile = ({ customeraddres }) => {
                         </Tabs>
                     )
 
-                    : <h1>Please login account</h1>}
+                    : <h5>Please log in to your account</h5>}
             </Container>
         </>
 

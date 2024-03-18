@@ -1,15 +1,17 @@
-const { gql } = require("apollo-server-express");
-module.exports = gql`
+// const { gql } = require("@apollo/server");
+module.exports = `
   type Cart {
+    message: String
+    success: Boolean
+
     id: ID
     userId: ID
     status: String
-    total: String
-    cartItem: metaKeyValueArray
-    availableItem: customArray
-    unavailableItem: customArray
+    cartItems: metaKeyValueArray
     date: Date
     updated: Date
+    couponCard: metaKeyValueArray
+    totalSummary:metaKeyValueArray
   }
 
   type combinationItem {
@@ -31,11 +33,22 @@ module.exports = gql`
     productId: ID
     productTitle:String
     productImage : String
+    url: String
+    mrp: String
+    discountPrice: String
+    discountPercentage: String
     productPrice : String
     qty: Int,
     productTotal : String,
     productTax: String
     productShipping: String
+    available: Boolean
+    mrpAmount : String
+    discountAmount : String
+    amount : String
+    taxAmount : String
+    shippingAmount : String
+    total : String
   }
 
   type calculatedCart {
@@ -53,22 +66,26 @@ module.exports = gql`
     productTitle: String
     productPrice: String
     productImage: String
-    combination: [String]
-    taxClass: String
-    shippingClass: String
-    productQuantity:Int
     attributes:customArray
     variantId:String
   }
 
+  #input calculateCartProducts {
+    #productId: ID
+    #qty: Int
+    #total: Float
+    #taxClass: String
+    #shippingClass: String
+    #variantId:String
+    #productTotal : String
+  #}
+
   input calculateCartProducts {
     productId: ID
-    qty: Int
-    total: Float
-    taxClass: String
-    shippingClass: String
     variantId:String
-    productTotal : String
+    productTitle:String
+    attributes:customArray
+    qty: Int
   }
 
   input couponCartProducts {
@@ -97,7 +114,7 @@ module.exports = gql`
   }
 
   type CartRES {
-    data:[Cart]
+    data:Cart
     message: statusSchema
   } 
 
@@ -107,32 +124,44 @@ module.exports = gql`
   }
 
   type calculateCoupon {
-    totalCoupon: String
     message: String
     success: Boolean
-    cartItem :[calculateCouponCartItem]
-    cartTotal : String
-    totalShipping : String
-    totalTax : String,
-  grandTotal:String
-  discountGrandTotal : String
+    cartItems :[calculateCouponCartItem]
+    totalSummary:metaKeyValueArray
+  }
+
+  type couponCard {
+    couponApplied: Boolean,
+    appliedCouponCode: String
+    appliedCouponDiscount: String
+    isCouponFreeShipping: Boolean
+  }
+
+  type totalSummary {
+    cartTotal: String,
+    discountTotal: String
+    couponDiscountTotal: String
+    totalTax: String
+    totalShipping: String
+    grandTotal: String
   }
 
   extend type Query {
     carts: CartRES
     cart(id: ID!): Cart
-    cartbyUser(userId: ID!): Cart
-    calculateCart(cartItem: [calculateCartProducts]): calculatedCart
-    calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
-      totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
+    calculateCart(userId: ID, cartItems: [calculateCartProducts]): Cart
+    #calculateCart(cartItems: [calculateCartProducts]): calculatedCart
+    #calculateCoupon(couponCode: String,cartItem: [couponCartProducts], totalShipping : String
+      #totalTax : String,grandTotal:String,cartTotal:String): calculateCoupon
+    calculateCoupon(userId: ID, cartItems: [calculateCartProducts], couponCode: String!): Cart
   }
 
   extend type Mutation {
     addCart(userId: ID, total: Float, products: [cartProduct]): statusSchema
     updateCart(id: ID!, total: Float, products: [cartProduct]): statusSchema
     changeQty(userId: ID!, productId: ID!, qty: Int!): statusSchema
-    deleteCart(id: ID!): statusSchema
-    deleteCartProduct(id: ID!, productId: ID!): statusSchema
+    deleteCart(userId: ID!): statusSchema
+    deleteCartProduct(userId: ID!, productId: ID!): statusSchema
     addToCart(
       userId: ID
       total: Float

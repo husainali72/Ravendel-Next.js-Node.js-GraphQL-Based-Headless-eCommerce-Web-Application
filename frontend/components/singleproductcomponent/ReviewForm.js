@@ -2,7 +2,7 @@ import { Button, Form } from 'react-bootstrap';
 import React, { useState, Fragment, useEffect } from 'react';
 import { ADD_REVIEW } from "../../queries/productquery";
 import client from '../../apollo-client';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { mutation } from "../../utills/helpers";
 import { useSession } from 'next-auth/react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -36,7 +36,7 @@ const ReviewForm = ({ productId }) => {
     const [review, setReview] = useState(reviewObject);
     const [writeReview, setWriteReview] = useState(false);
     const [selection, setSelection] = React.useState(0);
-
+    const dispatch=useDispatch()
     useEffect(() => {
         setReview((prev) => ({ ...prev, customerId: session?.data?.user?.accessToken?.customer?._id }))
         setReview({ ...review, customerId: session?.data?.user?.accessToken?.customer?._id })
@@ -71,7 +71,7 @@ const ReviewForm = ({ productId }) => {
         e.preventDefault();
 
         review.customerId = session?.data?.user?.accessToken?.customer?._id
-        mutation(ADD_REVIEW, review, token).then((response) => {
+        mutation(ADD_REVIEW, review).then((response) => {
             if (!response?.data?.addReview?.success) {
                 notify(response?.data?.addReview?.message, response?.data?.addReview?.success);
             }

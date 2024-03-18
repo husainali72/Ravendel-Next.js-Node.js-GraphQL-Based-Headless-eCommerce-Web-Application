@@ -18,17 +18,17 @@ const options = {
       async authorize(credentials, req) {
         // const url = "https://ravendel.herokuapp.com/api/customers/login";
         const { email, password } = credentials;
-        const url = `https://${BASE_URL}/apis/customers/login`;
+        const url = `http://${BASE_URL}/apis/customers/login`;
         const response = await fetch(url, {
           method: "POST",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            'Apollo-Require-Preflight': 'true',
           },
           body: JSON.stringify(credentials),
         });
         const user = await response.json();
-        console.log("user", user);
         if (response.status === 200) {
           return user;
         } else {

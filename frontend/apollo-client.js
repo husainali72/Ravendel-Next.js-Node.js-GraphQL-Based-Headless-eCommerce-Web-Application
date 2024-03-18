@@ -4,39 +4,19 @@ import { createUploadLink } from "apollo-upload-client";
 import { onError } from 'apollo-link-error'
 import { useSession } from "next-auth/react"
 import jwt from "next-auth/jwt"
-import { BASE_URL } from "./config";
+import { BASE_URL, baseUrl } from "./config";
 
 // const httpLink = new createUploadLink({ uri: `https://demo1.ravendel.io/graphql` });
 
-const httpLink = new createUploadLink({ uri: `https://${BASE_URL}/graphql` });
-// const httpLink = new createUploadLink({ uri: `http://localhost:8000/graphql` });
-// const httpLink = new createUploadLink({ uri: `http://ravendel-node.onrender.com/graphql` });
-
-// const httpLink = new createUploadLink({ uri: `http://192.168.1.6:8000/graphql` });
-// const httpLink = new createUploadLink({ uri: `https://ravendel.herokuapp.com/graphql` });
-
+const httpLink = new createUploadLink({ uri: baseUrl });
 const authLink = new ApolloLink((operation, forward) => {
   
   var token = ""
   if (typeof window !== "undefined") {
     token = JSON.parse(localStorage.getItem("customer"))
-
-    // token = JSON.parse(localStorage.getItem("session"))
-    // console.log("Authorization token:", token.token)
-    // console.log("localstorage")
   }
   else {
-    // console.log('You are on the server')
-    // 👉️ can't use localStorage
   }
-
-  // Use the setContext method to set the HTTP headers.
-  // operation.setContext({
-  //   headers: {
-  //     authorization: ''
-  //   }
-  // });
-  // Call the next link in the middleware chain.
   return forward(operation);
 });
 
@@ -46,12 +26,8 @@ const errorLink = onError(({ graphQLErrors }) => {
 })
 
 const client = new ApolloClient({
-  // uri: "https://countries.trevorblades.com",
-  // uri: "/graphql",
   ///////////////////////////////////////////////
   link: authLink.concat(httpLink),
-  ///////////////////////////////////////////////
-  // link: ApolloLink.from([errorLink, authLink, httpLink]),
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: {
