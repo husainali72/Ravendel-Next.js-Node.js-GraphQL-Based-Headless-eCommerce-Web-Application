@@ -15,6 +15,7 @@ const Shipping = require("../models/Shipping");
 const Tax = require("../models/Tax");
 const Coupon = require("../models/Coupon");
 const mongoose = require('mongoose');
+const Order = require("../models/Order");
 
 
 const isEmpty = (value) =>
@@ -831,7 +832,7 @@ module.exports.prodAvgRating = prodAvgRating;
 // };
 
 // New code for calculate coupon on product category basis by HusainSW dated 01-03-2024
-const againCalculateCart = async (coupon, args, cart, productModel) => {
+const againCalculateCart = async (coupon, cart, productModel, couponCode) => {
   let eligibleProductTotalAmount = 0;
 
   let couponCard = { couponApplied: false };
@@ -887,7 +888,7 @@ const againCalculateCart = async (coupon, args, cart, productModel) => {
         cart.totalSummary.totalShipping = 0;
       }
       couponCard.couponApplied = true;
-      couponCard.appliedCouponCode = args.couponCode;
+      couponCard.appliedCouponCode = couponCode;
       couponCard.appliedCouponDiscount = couponDiscount;
       couponCard.isCouponFreeShipping = isCouponFreeShipping;
     }
@@ -898,7 +899,6 @@ const againCalculateCart = async (coupon, args, cart, productModel) => {
 module.exports.againCalculateCart = againCalculateCart;
 
 const emptyCart = async (cart) => {
-  cart.total = 0;
   cart.products = [];
   await cart.save();
 };
@@ -1227,12 +1227,12 @@ const calculateCart = async (userId, cartItems) => {
 
   grandTotal = cartTotal + totalTax + totalShipping;
   const totalSummary = {
-    mrpTotal : mrpTotal.toFixed(2),
-    discountTotal : discountTotal.toFixed(2),
-    cartTotal: cartTotal.toFixed(2),
-    totalTax: totalTax.toFixed(2),
-    totalShipping: totalShipping.toFixed(2),
-    grandTotal: grandTotal.toFixed(2)
+    mrpTotal : mrpTotal,
+    discountTotal : discountTotal,
+    cartTotal: cartTotal,
+    totalTax: totalTax,
+    totalShipping: totalShipping,
+    grandTotal: grandTotal
   }
 
   return {
@@ -1247,3 +1247,302 @@ const calculateCart = async (userId, cartItems) => {
   };
 }
 module.exports.calculateCart = calculateCart;
+
+const calculateCoupon = async(userId, cartItems, couponCode) => {
+  // const coupon = await Coupon.findOne({ code: { $regex: `${args.couponCode}`, $options: "i" } });
+  const coupon = await Coupon.findOne({ code: couponCode });
+
+  let cart = await calculateCart(userId, cartItems, couponCode);
+
+  let date = getdate('2');
+  let success = false, message = "", couponDiscount = 0, isCouponFreeShipping;
+  let couponCard = { couponApplied: false };
+  if (!coupon) {
+    success = false;
+    message = 'Invalid coupon code';
+  }
+  else {
+    if (coupon.expire >= date) {
+      let cartTotal = 0
+      // args.cart.map(item => cartTotal += item.productTotal)     
+      cartTotal = cart.totalSummary.cartTotal;
+
+      if (coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) {
+        if (!coupon.category) {
+          let isDiscountTypeValid = true;
+          if(coupon.discountType === 'amount-discount') {
+            couponDiscount = parseFloat(coupon.discountValue);
+          }
+          else if(coupon.discountType === 'percentage-discount') {
+            couponDiscount = parseFloat(cartTotal / 100) * parseFloat(coupon.discountValue);
+            if(coupon.maximumSpend && coupon.maximumSpend != 0) {
+              if (couponDiscount > coupon.maximumSpend) {
+                couponDiscount = coupon.maximumSpend;
+              }
+            }
+          }
+          else if(coupon.discountType === 'free-shipping') {
+            isCouponFreeShipping = true;
+            couponDiscount = cart.totalSummary.totalShipping;
+            cart.totalSummary.totalShipping = 0;
+          }
+          else {
+            isDiscountTypeValid = false;
+            console.log('Invalid discount type');
+            success = false;
+            message = 'Something wrong with the Coupon code';
+          }
+          if(isDiscountTypeValid) {
+            couponCard.couponApplied = true;
+            couponCard.appliedCouponCode = couponCode;
+            couponCard.appliedCouponDiscount = couponDiscount;
+            couponCard.isCouponFreeShipping = isCouponFreeShipping;
+            if(!isCouponFreeShipping) {
+              cart.totalSummary.couponDiscountTotal = couponDiscount;
+            }
+            success = true;
+            message = 'Coupon code applied successfully';
+          }
+        }
+        else {
+          couponCard = await againCalculateCart(coupon, cart, Product, couponCode);
+          if(couponCard.couponApplied) {
+            if(!couponCard.isCouponFreeShipping) {
+              cart.totalSummary.couponDiscountTotal = couponCard.appliedCouponDiscount;
+            }
+            success = true;
+            message = 'Coupon code applied successfully';
+          }
+          else {
+            success = false;
+            message = 'Coupon not applicable on cart';
+          }
+        }
+      }
+      else {
+        success = false;
+        message = 'Coupon not applicable on cart';
+      }
+    } else {
+      success = false;
+      message = 'Coupon no longer applicable';
+    }
+  }
+  cart.success = success;
+  cart.message = message;
+  cart.couponCard = couponCard;
+  if(cart.couponCard.couponApplied) {
+    cart.totalSummary.grandTotal = cart.totalSummary.grandTotal - cart.couponCard.appliedCouponDiscount;
+  }
+  return cart;
+}
+module.exports.calculateCoupon = calculateCoupon;
+
+const addOrder = async(args) => {
+  
+  let { userId, couponCode } = args;
+
+  let calculatedCart;
+  if(couponCode) {
+    calculatedCart = await calculateCoupon(userId, null, couponCode);
+  }
+  else {
+    calculatedCart = await calculateCart(userId, null);
+  }
+
+  if(!calculatedCart.success) {
+    return {
+      message: calculatedCart.message,
+      success: calculatedCart.success,
+    };
+  }
+
+  var errors = _validate(["userId"], args);
+  if (!isEmpty(errors)) {
+    return {
+      message: errors,
+      success: false,
+    };
+  }
+  errors = _validatenested(
+    "billing",
+    [
+      "firstname",
+      "lastname",
+      "address",
+      "city",
+      "zip",
+      "email",
+      "phone",
+      "paymentMethod",
+    ], args);
+  if (!isEmpty(errors)) {
+    return {
+      message: errors,
+      success: false,
+    };
+  }
+
+  errors = _validatenested(
+    "shipping",
+    [
+      "firstname",
+      "lastname",
+      "address",
+      "city",
+      "zip",
+      "country",
+      "state",
+      "email",
+      "phone",
+    ], args);
+  if (!isEmpty(errors)) {
+    return {
+      message: errors,
+      success: false,
+    };
+  }
+
+  let validPaymentModes = ["Cash On Delivery", "Stripe"];
+  if (!validPaymentModes.includes(args.billing.paymentMethod)) {
+    return MESSAGE_RESPONSE("InvalidField", "Payment mode", false); 
+  }
+
+  const setting = await Setting.findOne({});
+  
+  let status = 'pending', redirectUrl;
+  if(args.billing.paymentMethod !== 'Cash On Delivery') {
+    status = 'processing';
+  }
+  
+  const orderNumber = await generateOrderNumber(Order, Setting)
+
+  let orderProducts = [];
+  calculatedCart.cartItems.map(item => {
+    if(item.available) {
+      let orderProduct = item;
+      orderProduct.taxPercentage=0;
+      orderProducts.push(orderProduct);
+    }
+  });
+
+  let orderCouponCard = calculatedCart.couponCard;
+  if(!orderCouponCard) {
+    orderCouponCard = {
+      couponApplied:false
+    }
+  }
+  const newOrder = new Order({
+    orderNumber: orderNumber,
+    userId: args.userId,
+    billing: args.billing,
+    shipping: args.shipping,
+    paymentStatus: status,
+    shippingStatus: "inprogress",
+    products:orderProducts,
+    couponCard:orderCouponCard,
+    totalSummary:calculatedCart.totalSummary
+  });
+  
+  const savedOrder = await newOrder.save();
+  
+  if (args.billing.paymentMethod === 'Cash On Delivery') {
+    const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
+    emptyCart(cart);
+  } else if(args.billing.paymentMethod === 'Stripe') {
+    var Secret_Key = setting.paymnet.stripe.secret_key;
+    if(!Secret_Key) {
+      return MESSAGE_RESPONSE("PaymentNotConfigured", "Stripe", false);
+    }
+    const stripe = require('stripe')(Secret_Key);
+
+    let currencycode;
+    if (setting.store.currency_options.currency == 'eur') {
+      currencycode = 'EUR'
+    } else if (setting.store.currency_options.currency == 'gbp') {
+      currencycode = 'GBP';
+    } else if (setting.store.currency_options.currency == 'cad') {
+      currencycode = 'CAD';
+    } else {
+      currencycode = 'USD';
+    }
+
+    const line_items = calculatedCart.cartItems.map(item=> {
+      let itemImage = '';
+      if(isUrlValid(`${APP_KEYS.frontendBaseUrl}${item.productImage}`)) {
+        itemImage = `${APP_KEYS.frontendBaseUrl}${item.productImage}`;
+      }
+      else {
+        itemImage = `${APP_KEYS.frontendBaseUrl}${APP_KEYS.noImagePlaceHolder}`;
+      }
+      return{
+        price_data: {
+          currency: currencycode,
+          product_data: {
+            name: item.productTitle,
+            images: [itemImage],
+            metadata: {
+              id: item.productId
+            },
+          },
+          unit_amount: (+item.productPrice)*100
+        },
+        quantity: (+item.qty),
+      }
+    })
+    
+    let successUrl = `${APP_KEYS.stripeBaseSuccessUrl}?userId=${userId}&orderId=${savedOrder._id}`;
+    let cancelUrl = `${APP_KEYS.stripeBaseCancelUrl}?userId=${userId}&orderId=${savedOrder._id}`;
+    const session = await stripe.checkout.sessions.create({
+      line_items,
+      mode: 'payment',
+      success_url: successUrl,
+      cancel_url: cancelUrl
+    });
+    // console.log('stripe session', session);
+    redirectUrl = session.url;
+
+    let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : { sessionId : session.id } }});
+    console.log('updateOrderRes', updateOrderRes);
+  }
+  // else {
+  //   return MESSAGE_RESPONSE("InvalidField", "Payment mode", false);
+  // }
+
+  // // send order create email
+  // const customer = await Customer.findById(args.userId);
+  // mailData = {
+  //   subject: `Order Placed`,
+  //   mailTemplate: "template",
+  //   order: newOrder
+  // }
+  // sendEmail(mailData, APP_KEYS.smptUser, customer?.email)
+
+  let addOrderResponse = MESSAGE_RESPONSE("AddSuccess", "Order", true);
+  addOrderResponse.redirectUrl = redirectUrl;
+
+  return addOrderResponse;
+}
+module.exports.addOrder = addOrder;
+
+const isUrlValid = (url) => {
+  // Regular expression to match a URL
+  let urlPattern = /^(?:(?:https?|ftp):\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=%]+$/;
+
+  let result = urlPattern.test(url);
+  // // Test the URL against the pattern
+  return result;
+}
+module.exports.isUrlValid = isUrlValid;
+
+const updatePaymentStatus = async (args) => {
+  let { id, paymentStatus } = args;
+  let orderUpdateRes = await Order.updateOne({_id:id }, { $set: { paymentStatus:paymentStatus } });
+  if(orderUpdateRes.acknowledged && orderUpdateRes.modifiedCount == 1) {
+    return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
+  }
+  else {
+    return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
+  }
+}
+module.exports.updatePaymentStatus = updatePaymentStatus;

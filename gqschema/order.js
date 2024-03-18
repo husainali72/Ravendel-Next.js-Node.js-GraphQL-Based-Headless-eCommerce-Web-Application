@@ -36,6 +36,11 @@ module.exports = `
     data: [Order]
     message: statusSchema
   }
+  type AddOrderResponse {
+    message: String
+    success: Boolean
+    redirectUrl: String
+  }
   extend type Query {
     orders: OrderRES
     order(id: ID!): OrderIdRES
@@ -56,13 +61,17 @@ module.exports = `
       attributes:customArray
       discountAmount: String
       grandTotal: String
-    ): statusSchema
+    ): AddOrderResponse
     updateOrder(
       id: ID
       billing: customObject
       shipping: customObject
       paymentStatus: String
       shippingStatus: String
+    ): statusSchema
+    updatePaymentStatus(
+      id: ID!
+      paymentStatus: String!
     ): statusSchema
     deleteOrder(id: ID!): statusSchema
   }
