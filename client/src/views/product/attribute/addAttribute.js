@@ -92,6 +92,7 @@ const AddAttributeTheme = () => {
                     onAddition={onAddTag}
                     delimiters={delimiters}
                     allowNew={true}
+                    minQueryLength={1}
                   />
                   <em className={classes.noteline}>
                     Press tab after adding each tag.

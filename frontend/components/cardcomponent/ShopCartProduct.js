@@ -12,7 +12,7 @@ const CalculateProductTotal = product => product.reduce((total, product) => tota
 export const ShopCart = () => {
     const session = useSession()
     const dispatch = useDispatch()
-    const cartProducts = useSelector(state => state.cart)
+    const cartProducts = useSelector(state => state.cart.cartItems)
     const { loading, success, products } = useSelector(state => state.products);
     const usercart = useSelector(state => state.userCart)
     const settings = useSelector(state => state.setting)
@@ -30,13 +30,13 @@ export const ShopCart = () => {
     const initialRender = useRef(true)
 
     useEffect(() => {
-        dispatch(getAllProductsAction());
+        // dispatch(getAllProductsAction());
     }, []);
 
     useEffect(() => {
         if (success && products?.length) {
             let filteredProducts = [];
-            cartProducts.forEach(cartProduct => {
+            cartProducts?.forEach(cartProduct => {
                 filteredProducts.push(...products.filter(product => product._id === cartProduct._id));
             })
 
