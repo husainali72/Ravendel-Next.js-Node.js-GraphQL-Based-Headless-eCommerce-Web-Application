@@ -30,7 +30,7 @@ export const ShopCart = () => {
     const initialRender = useRef(true)
 
     useEffect(() => {
-        dispatch(getAllProductsAction());
+        // dispatch(getAllProductsAction());
     }, []);
 
     useEffect(() => {
