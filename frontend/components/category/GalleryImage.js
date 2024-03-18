@@ -1,104 +1,81 @@
 import React, { useEffect, useState } from "react";
-import Slider from "react-slick";
-import { GlassMagnifier } from "react-image-magnifiers";
 import {
-  getImage,
-  getPrice,
-  imageOnError,
-  isDiscount,
-  isVariantDiscount,
+  getItemFromLocalStorage,
+  logout,
   mutation,
-  query,
+  setItemToLocalStorage,
 } from "../../utills/helpers";
+
 import StarRating from "../../components/breadcrumb/rating";
-import { addToCart } from "../../redux/actions/cartAction";
+import {
+  addToCart,
+  calculateUnauthenticatedCart,
+} from "../../redux/actions/cartAction";
 import { useDispatch, useSelector } from "react-redux";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import calculateDiscount from "../../utills/calculateDiscount";
-import {
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
-} from "@mui/material";
-import {
-  ADD_TO_CART_QUERY,
-  GET_USER_CART,
-  UPDATE_CART_PRODUCT,
-} from "../../queries/cartquery";
+import { ADD_TO_CART_QUERY } from "../../queries/cartquery";
 import CheckZipcode from "../account/component/CheckZipcode";
 import { capitalize, get } from "lodash";
-var placeholder = "https://dummyimage.com/300";
-import NoImagePlaceHolder from "../../components/images/NoImagePlaceHolder.png";
+import RadioButton from "../radioButton";
+import GalleryImageSlider from "../sliderImage";
+import RenderProductPrice from "./renderProductPrice";
+import CustomButton from "../button";
 const GalleryImagesComponents = (props) => {
+  const {
+    stockClass,
+    singleproducts,
+    setStockClass,
+    lowStockThreshold,
+    outOfStockThreshold,
+    galleryImages,
+  } = props;
   var id = "";
   var token = "";
   const dispatch = useDispatch();
   const session = useSession();
   const router = useRouter();
-  const {
-    currency,
-    stockClass,
-    singleproducts,
-    setStockClass,
-    lowStockThreshold,
-    outOfStockVisibility,
-    outOfStockThreshold,
-    decimal,
-    homepageData,
-  } = props;
-  const imageType = homepageData?.getSettings?.imageStorage?.status;
-  const getSetting = useSelector((state) => state.setting);
   const [available, setavailable] = useState(false);
   const [Lable, setLable] = useState("In Stock");
   const [variantSelect, setVariantSelect] = useState();
   const [parentId, setParentId] = useState();
   const [error, seterror] = useState(false);
+  const cart = useSelector((state) => state.cart);
   const [singleprod, setSingleprod] = useState(singleproducts);
-  const [selectedAttrs, setSelectedAttrs] = useState([]);
+  const [selectedAttributes, setSelectedAttributes] = useState([]);
   const [comboData, setComboData] = useState([]);
   const [priceRange, setPriceRange] = useState([]);
   const [sellpriceRange, setSellpriceRange] = useState([]);
-  const [imgError, setImgError] = useState([]);
   const [itemInCart, setItemInCart] = useState(false);
+  const [id, setId] = useState("");
+  const [token, setToken] = useState("");
   useEffect(() => {
-    if (
-      singleproducts && !variantSelect
-        ? singleproducts.quantity <= lowStockThreshold
-        : comboData && comboData.length > 1 && variantSelect
-        ? null
-        : comboData[0]?.quantity <= lowStockThreshold
-    ) {
+    const hasComboData = comboData?.length;
+    const variantProductQuantity = get(comboData, "[0].quantity");
+    const productQuantity = get(singleproducts, "quantity");
+    const isLowStock =
+      (hasComboData === 1 && variantProductQuantity <= lowStockThreshold) ||
+      (singleproducts && productQuantity <= lowStockThreshold);
+    const isOutOfStock =
+      (hasComboData === 1 && variantProductQuantity <= outOfStockThreshold) ||
+      (singleproducts && productQuantity <= outOfStockThreshold);
+    const inStock =
+      (hasComboData === 1 && variantProductQuantity > lowStockThreshold) ||
+      (singleproducts && productQuantity > lowStockThreshold);
+    if (isLowStock && !isOutOfStock) {
       setStockClass("low-stock");
       setLable("Low Stock");
-    }
-    if (
-      singleproducts && !variantSelect
-        ? singleproducts.quantity <= outOfStockThreshold
-        : comboData && comboData.length > 1 && variantSelect
-        ? null
-        : comboData[0]?.quantity <= outOfStockThreshold
-    ) {
+    } else if (isOutOfStock) {
       setStockClass("out-of-stock");
       setLable("Out Of Stock");
-    }
-    if (
-      singleproducts && !variantSelect
-        ? singleproducts.quantity > lowStockThreshold
-        : comboData && comboData.length > 1 && variantSelect
-        ? null
-        : comboData[0]?.quantity > lowStockThreshold
-    ) {
+    } else if (!hasComboData && variantSelect) {
+      setStockClass("not-available");
+      setLable("Not available");
+    } else if (inStock) {
       setStockClass("in-stock");
       setLable("In Stock");
     }
-    if (!comboData?.length && variantSelect) {
-      setStockClass("not-available");
-      setLable("Not available");
-    }
-    if (comboData?.length === 1 && variantSelect) {
+    if (hasComboData === 1 && variantSelect) {
       singleprod.comboData = comboData;
       setSingleprod({ ...singleprod });
     }
@@ -107,60 +84,42 @@ const GalleryImagesComponents = (props) => {
     lowStockThreshold,
     outOfStockThreshold,
     comboData,
+    variantSelect,
   ]);
 
-  useEffect(() => {
-    let priceData = [];
-    let sellPriceData = [];
-    if (comboData && comboData.length) {
-      priceData = comboData.map((c) => {
-        return c.pricing.price;
-      });
-      sellPriceData = comboData.map((c) => {
-        return c.pricing.sellprice;
-      });
-      setPriceRange([...priceData]);
-      setSellpriceRange([...sellPriceData]);
-    }
-  }, [comboData]);
-
-  if (session.status === "authenticated") {
-    id = session?.data?.user?.accessToken?.customer?._id;
-    token = session?.data?.user?.accessToken?.token;
+useEffect(() => {
+  if (!comboData || !comboData.length) {
+    return; 
   }
+  const priceData = comboData.map(c => c.pricing.price);
+  const sellPriceData = comboData.map(c => c.pricing.sellprice);
+  setPriceRange(priceData);
+  setSellpriceRange(sellPriceData);
+}, [comboData]);
 
-  const settings = {
-    customPaging: function (i) {
-      return (
-        <a>
-          <img
-            src={getImage(props.galleryImages[i], imageType)}
-            alt="Thumbnail"
-            className="thumbnail-image"
-            onError={imageOnError}
-          />
-        </a>
-      );
-    },
-    dots: true,
-    dotsClass: "slick-dots slick-thumb",
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    touchMove: false,
-  };
+useEffect(() => {
+  if (session?.status === "authenticated") {
+    const accessToken=get(session,'data.user.accessToken')
+    setId(get(accessToken,'customer._id',''));
+    setToken(get(accessToken,'token',''));
+   }
+  }, [session]);
   const checkzipcode = (result) => {
     setavailable(result);
   };
-  const prepareAttributesData = (selectedAttrs, product) => {
-    return selectedAttrs?.map((selectedAttribute) => {
-      const singleAttribute = product?.attribute_master.find(
-        (data) => data.id === selectedAttribute.name
+  const prepareAttributesData = (product) => {
+    if(!selectedAttributes){
+      return [];
+    }
+    return selectedAttributes?.map((selectedAttribute) => {
+      const singleAttribute = get(product, "attribute_master", [])?.find(
+        (data) => data?.id === selectedAttribute?.name
       );
-      const singleAttributeValues = singleAttribute?.attribute_values.find(
-        (data) => data._id === selectedAttribute?.value
-      );
+      const singleAttributeValues = get(
+        singleAttribute,
+        "attribute_values",
+        []
+      )?.find((data) => data?._id === selectedAttribute?.value);
       return {
         name: singleAttribute?.name,
         value: singleAttributeValues?.name,
@@ -178,10 +137,33 @@ const GalleryImagesComponents = (props) => {
   };
 
   const addToCartAndNavigate = (variables, token) => {
-    mutation(ADD_TO_CART_QUERY, variables, token).then((res) => {
-      router.push("/shopcart");
-      dispatch(addToCart(variables));
-    });
+    mutation(ADD_TO_CART_QUERY, variables, token)
+      .then((res) => {
+        router.push("/shopcart");
+      })
+      .catch(async (error) => {
+        if (get(error, "extensions.code") === 401) {
+          let product = [
+            {
+              userId: "",
+              url: get(variables, "url"),
+              _id: get(variables, "productId"),
+              quantity: get(variables, "qty"),
+              name: get(variables, "productTitle"),
+              feature_image: get(variables, "productImage"),
+              pricing: get(variables, "productPrice"),
+              productQuantity: get(variables, "productQuantity"),
+              variantId: get(variables, "variantId", ""),
+              qty: get(variables, "qty"),
+              attributes: get(variables, "attributes"),
+            },
+          ];
+          await logout()
+          setItemToLocalStorage("cart", product);
+          dispatch(calculateUnauthenticatedCart(product));
+          window.location.pathname = "/shopcart";
+        }
+      });
   };
 
   const isProductInCart = (product, comboData, inCartProducts) => {
@@ -190,61 +172,45 @@ const GalleryImagesComponents = (props) => {
       const variantIdMatch = comboData?.some(
         (variant) => variant?.id === inCartProduct?.variantId
       );
-      if (comboData.length === 0) {
+      if (comboData?.length === 0) {
         return productIdMatch;
       }
       return productIdMatch && variantIdMatch;
     });
   };
+
   const addToCartProduct = async (product) => {
     const isUserAuthenticated = session?.status === "authenticated";
     const hasAttributesMismatch =
       get(singleproducts, "attribute_master")?.length > 0 &&
-      selectedAttrs?.length !== get(singleproducts, "attribute_master")?.length;
-
+      selectedAttributes?.length !==
+        get(singleproducts, "attribute_master")?.length;
     if (hasAttributesMismatch) {
       seterror(true);
       return;
     }
-
     seterror(false);
-
+    const productImage =
+      get(comboData, "[0].image", "") || get(product, "feature_image", "");
+    const variantPrice = get(comboData, "[0].pricing.sellprice", 0)?.toString();
+    const productPrice = get(product, "pricing.sellprice", 0)?.toString();
     const quantity = 1;
-
     if (isUserAuthenticated) {
-      const res = await query(GET_USER_CART, id, token);
-      let cart_id = get(res, "data.cartbyUser.id");
-      let inCartProducts = get(res, "data.cartbyUser.cartItems");
-      const productInCart = isProductInCart(product, comboData, inCartProducts);
+      const cartProducts = get(cart, "cartItems", []);
+      const productInCart = isProductInCart(product, comboData, cartProducts);
       if (!productInCart) {
         setItemInCart(false);
         const commonVariables = prepareCommonVariables(id, product);
-
         if (comboData.length > 0) {
           // Prepare data for product with variant
-          const attributesData = prepareAttributesData(selectedAttrs, product);
-
+          const attributesData = prepareAttributesData(product);
           const variables = {
             ...commonVariables,
-            productImage: get(
-              comboData[0],
-              "image",
-              get(product, "feature_image")
-            ),
-            productPrice: get(
-              comboData[0],
-              "pricing.sellprice",
-              get(
-                comboData[0],
-                "pricing.price",
-                get(
-                  product,
-                  "pricing.sellprice",
-                  get(product, "pricing.price", 0)
-                )
-              )
-            )?.toString(),
-            variantId: get(comboData[0], "id"),
+            productImage: productImage,
+            productPrice: variantPrice
+              ? variantPrice.toString()
+              : productPrice?.toString(),
+            variantId: get(comboData[0], "id", ""),
             attributes: attributesData,
           };
 
@@ -254,15 +220,10 @@ const GalleryImagesComponents = (props) => {
           const variables = {
             ...commonVariables,
             productImage: get(product, "feature_image"),
-            productPrice: get(
-              product,
-              "pricing.sellprice",
-              get(product, "pricing.price")
-            )?.toString(),
+            productPrice: productPrice,
             variantId: "",
             attributes: [],
           };
-
           addToCartAndNavigate(variables, token);
         }
       } else {
@@ -270,23 +231,24 @@ const GalleryImagesComponents = (props) => {
       }
     } else {
       // User is not authenticated, add product to cart and navigate to shop cart page
-      const attributesData = prepareAttributesData(selectedAttrs, product);
-
-      const carts = localStorage.getItem("cart");
-      const productInCart = JSON.parse(carts)?.some((inCartProduct) => {
+      const attributesData = prepareAttributesData(product);
+      const carts = getItemFromLocalStorage("cart");
+      const productInCart = carts?.some((inCartProduct) => {
         const productIdMatch = product?._id === get(inCartProduct, "_id");
         const variantIdMatch = comboData?.some(
           (variant) => variant?.id === inCartProduct?.variantId
         );
-
-        if (comboData.length === 0) {
+        if (comboData?.length === 0) {
           return productIdMatch;
         }
-
         return productIdMatch && variantIdMatch;
       });
-
       if (!productInCart) {
+        const productQuantity = get(
+          comboData,
+          "[0]quantity",
+          get(product, "quantity")
+        );
         setItemInCart(false);
         const variables = {
           userId: id,
@@ -294,28 +256,12 @@ const GalleryImagesComponents = (props) => {
           _id: get(product, "_id"),
           qty: quantity,
           name: get(product, "name"),
-          feature_image: get(
-            comboData[0],
-            "image",
-            get(product, "feature_image")
-          ),
-          pricing: get(
-            comboData[0],
-            "pricing.sellprice",
-            get(
-              comboData[0],
-              "pricing.price",
-              get(
-                product,
-                "pricing.sellprice",
-                get(product, "pricing.price", 0)
-              )
-            )
-          ),
-          variantId: get(comboData[0], "id"),
+          feature_image: productImage,
+          pricing: variantPrice || productPrice,
+          productQuantity: productQuantity,
+          variantId: get(comboData, "[0].id", ""),
           attributes: attributesData,
         };
-
         dispatch(addToCart(variables));
         router.push("/shopcart");
       } else {
@@ -325,135 +271,86 @@ const GalleryImagesComponents = (props) => {
   };
 
   const prepareComb = (data) => {
-    let com = singleproducts.variation_master;
-
+    let variantProduct = get(singleproducts, "variation_master", []);
     data.map((item) => {
-      com = com.filter((combo) => {
-        return combo.combination.includes(item.value);
+      variantProduct = variantProduct.filter((combo) => {
+        return get(combo, "combination", [])?.includes(item.value);
       });
     });
-    setComboData([...com]);
-    return com;
+    setComboData([...variantProduct]);
+    setItemInCart(false);
+    return variantProduct;
   };
-
   const prepareData = (e, name) => {
-    setVariantSelect(e.target.value);
+    const value = get(e, "target.value");
+    setVariantSelect(value);
     setParentId(name);
-    let data = selectedAttrs;
-    if (data.length) {
-      if (!data.some((val) => val.name == name)) {
-        data.push({ name: name, value: e.target.value });
-      } else {
-        data.forEach((attr) => {
-          if (attr.name == name) {
-            attr.value = e.target.value;
-          }
-        });
-      }
-    } else {
-      data.push({ name: name, value: e.target.value });
+    const updatedAttributes = selectedAttributes.map((attr) =>
+      attr.name === name ? { ...attr, value } : attr
+    );
+    const isAttributeExisting = updatedAttributes.some(
+      (attr) => attr.name === name
+    );
+    if (!isAttributeExisting) {
+      updatedAttributes.push({ name, value });
     }
-    setSelectedAttrs([...data]);
-    prepareComb(data);
+    setSelectedAttributes(updatedAttributes);
+    prepareComb(updatedAttributes);
+  };
+  
+  const navigateToShopCart = () => {
+    router.push("/shopcart");
+  };
+  
+  const renderProductTags = (singleproducts) => {
+    return <p className="">Tags: {get(singleproducts, "__typename")}</p>;
   };
 
-  const getMagnifierImg = ({ variantSelect, gallery, comboData }) => {
-    if (!variantSelect) {
-      return getImage(gallery, imageType);
-    } else {
-      if (comboData?.length && variantSelect) {
-        if (comboData.length > 1) {
-          return getImage(gallery, imageType);
-        } else {
-          if (comboData[0].image.length) {
-            return getImage(comboData[0].image, imageType);
-          } else {
-            return getImage(gallery, imageType);
-          }
-        }
-      } else {
-        return getImage(gallery, imageType);
-      }
+  const checkVariantIsSelected = (singleAttribute) => {
+    const attributeName = get(singleAttribute, "name", "");
+    const isAttributeSelected = selectedAttributes?.some(
+      ({ name }) => name === singleAttribute?.id
+    );
+    if (error && !isAttributeSelected) {
+      return `Please select the ${capitalize(attributeName)}`;
     }
+    return null;
   };
-  useEffect(() => {
-    props.galleryImages.map((gallery, index) => {
-      const img = new Image();
-      img.src = getMagnifierImg({
-        variantSelect,
-        gallery,
-        comboData,
-      });
-      img.onerror = () => {
-        setImgError((prevErrors) => [...prevErrors, index]);
-      };
-    });
-  }, [props.galleryImages]);
-  const navigateToShopCart = () => {
-     router.push("/shopcart");
+  const isProductAvailable = () => {
+    return (comboData && comboData?.length > 0) || !variantSelect
+      ? false
+      : true;
   };
+
+  const createAttributeOptions = (singleAttribute) => {
+    return get(singleAttribute, "attribute_values", []).map((item) => ({
+      value: item._id,
+      label: item.name,
+    }));
+  };
+
+  const RenderCategoryNames = ({ singleproducts }) => {
+    let categoryIds = get(singleproducts, "categoryId", []);
+    return categoryIds?.map((item, index) => (
+      <span key={item._id}>
+        {index < categoryIds.length - 1
+          ? capitalize(item.name) + ", "
+          : capitalize(item.name)}
+      </span>
+    ));
+  };
+
   return (
     <>
-      <div className="single-product row mb-50" style={{ display: "flex" }}>
+      <div className="single-product row mb-50 single-product-container">
         <div className="single-product-image col-md-6 col-sm-12 col-xs-12">
-          <>
-            <div className="singleroduct-gallery-slider">
-              {props.galleryImages && props.galleryImages?.length ? (
-                <Slider {...settings}>
-                  {props.galleryImages.map((gallery, index) => {
-                    let error = false;
-                    return (
-                      <div key={index}>
-                        <img
-                          style={{ display: "none" }}
-                          src={
-                            !variantSelect
-                              ? getImage(gallery, imageType)
-                              : comboData?.length && variantSelect
-                              ? comboData?.length > 1
-                                ? getImage(
-                                    gallery,
-                                    "original",
-                                    false,
-                                    getSetting
-                                  )
-                                : comboData[0].image.length
-                                ? getImage(comboData[0].image, imageType)
-                                : getImage(gallery, "original", imageType)
-                              : getImage(gallery, imageType)
-                          }
-                          onError={imageOnError}
-                        />
-                        <GlassMagnifier
-                          imageSrc={
-                            imgError.indexOf(index) === -1
-                              ? getMagnifierImg({
-                                  variantSelect,
-                                  gallery,
-                                  comboData,
-                                })
-                              : NoImagePlaceHolder.src
-                          }
-                          imageAlt="Example"
-                          className="gallery-image"
-                          magnifierSize={
-                            window.innerWidth < 1025 ? "60%" : "30%"
-                          }
-                          magnifierBorderSize={5}
-                          magnifierBorderColor="rgba(0, 0, 0, .5)"
-                        />
-                      </div>
-                    );
-                  })}
-                </Slider>
-              ) : (
-                <img
-                  src={getImage("", "large", false, getSetting)}
-                  onError={imageOnError}
-                ></img>
-              )}
-            </div>
-          </>
+          <div className="singleroduct-gallery-slider">
+            <GalleryImageSlider
+              galleryImages={galleryImages}
+              variantSelect={variantSelect}
+              comboData={comboData}
+            />
+          </div>
         </div>
         <div className="single-product-detail col-md-6 col-sm-12 col-xs-12">
           <div className="detail-info">
@@ -463,153 +360,48 @@ const GalleryImagesComponents = (props) => {
                 <span>
                   {" "}
                   Category:{" "}
-                  {singleproducts?.categoryId?.map((item, index) => (
-                    <span>
-                      {index < singleproducts.categoryId.length - 1
-                        ? capitalize(item.name) + ", "
-                        : capitalize(item.name)}
-                    </span>
-                  ))}
+                  <RenderCategoryNames singleproducts={singleproducts} />
                 </span>
               </div>
               <div className="pro-details-rating">
                 <StarRating
                   singleproducts={singleproducts}
-                  stars={singleproducts?.rating}
+                  stars={get(singleproducts, "rating", 0)}
                 />
               </div>
             </div>
-            {singleproducts?.brand?.name && (
+            {get(singleproducts, "brand.name") && (
               <div className="pro-details-brand">
-                <span> Brand: {capitalize(singleproducts?.brand?.name)}</span>
+                <span>
+                  {" "}
+                  Brand: {capitalize(get(singleproducts, "brand.name", ""))}
+                </span>
               </div>
             )}
-            <div className="clearfix product-price-cover">
-              {(comboData && comboData.length) || !variantSelect ? (
-                <div className="product-price primary-color float-left">
-                  <span className=" mx-2">
-                    {get(singleproducts, "pricing.sellprice") ? (
-                      <strong
-                        className="sale-price"
-                        style={{ fontSize: "25px" }}
-                      >
-                        {comboData && comboData.length
-                          ? comboData && comboData.length > 1
-                            ? sellpriceRange
-                              ? currency +
-                                " " +
-                                getPrice(Math.min(...sellpriceRange), decimal) +
-                                "  -  " +
-                                currency +
-                                " " +
-                                getPrice(Math.max(...sellpriceRange), decimal)
-                              : null
-                            : currency +
-                              " " +
-                              getPrice(
-                                comboData[0]?.pricing?.sellprice ||
-                                  comboData[0]?.pricing?.price,
-                                decimal
-                              )
-                          : variantSelect
-                          ? null
-                          : currency +
-                            " " +
-                            getPrice(
-                              singleproducts?.pricing?.sellprice,
-                              decimal
-                            )}
-                      </strong>
-                    ) : (
-                      <strong
-                        className="sale-price"
-                        style={{ fontSize: "25px" }}
-                      >
-                        {currency}{" "}
-                        {getPrice(singleproducts?.pricing?.price, decimal)}
-                      </strong>
-                    )}
-                  </span>
-                  {singleproducts?.pricing?.sellprice &&
-                  singleproducts?.pricing?.sellprice <
-                    singleproducts?.pricing?.price ? (
-                    <span
-                      className={
-                        singleproducts?.pricing?.sellprice
-                          ? "has-sale-price mx-2"
-                          : ""
-                      }
-                      style={{ fontSize: "17px" }}
-                    >
-                      {comboData && comboData.length
-                        ? comboData && comboData.length > 1
-                          ? priceRange
-                            ? currency +
-                              " " +
-                              getPrice(Math.min(...priceRange), decimal) +
-                              "  -  " +
-                              currency +
-                              " " +
-                              getPrice(Math.max(...priceRange), decimal)
-                            : null
-                          : comboData[0]?.pricing?.sellprice
-                          ? currency +
-                            " " +
-                            getPrice(comboData[0]?.pricing?.price, decimal)
-                          : null
-                        : variantSelect
-                        ? null
-                        : currency + " " + singleproducts?.pricing?.sellprice
-                        ? getPrice(singleproducts?.pricing?.price, decimal)
-                        : null}
-                    </span>
-                  ) : null}
-                  {comboData && comboData.length > 1 ? null : (
-                    <span className=" mx-2">
-                      {!comboData.length && !variantSelect
-                        ? isDiscount(singleproducts) &&
-                          calculateDiscount(
-                            singleproducts?.pricing?.price,
-                            singleproducts?.pricing?.sellprice
-                          )
-                        : comboData && comboData.length > 1
-                        ? null
-                        : isVariantDiscount(comboData) &&
-                          calculateDiscount(
-                            comboData[0]?.pricing?.price,
-                            comboData[0]?.pricing?.sellprice
-                          )}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <h6 style={{ color: "red" }}>
-                  Sorry, this combination is not available. Choose another
-                  variant.
-                </h6>
-              )}
-            </div>
+            <RenderProductPrice
+              sellpriceRange={sellpriceRange}
+              priceRange={priceRange}
+              singleproducts={singleproducts}
+              comboData={comboData}
+              variantSelect={variantSelect}
+            />
             <div className="short-desc mb-30">
               <p> {singleproducts?.short_description}</p>
             </div>
             {Lable !== "Out Of Stock" && (
-              <button
-                type="button"
-                className="btn btn-success button button-add-to-cart"
-                style={{ marginTop: 12, backgroundColor: "#088178" }}
-                onClick={() =>
-                  !itemInCart
-                    ? addToCartProduct(singleproducts)
-                    : navigateToShopCart()
-                }
-                disabled={
-                  (comboData && comboData.length) || !variantSelect
-                    ? false
-                    : true
-                }
-              >
-                {!itemInCart ? "Add to Cart" : "Go To Cart"}
-              </button>
+              <>
+                <CustomButton
+                  type="button"
+                  className="btn btn-success button button-add-to-cart primary-btn-color"
+                  onClick={() =>
+                    !itemInCart
+                      ? addToCartProduct(singleproducts)
+                      : navigateToShopCart()
+                  }
+                  disabled={isProductAvailable()}
+                  buttonText={!itemInCart ? "Add to Cart" : "Go To Cart"}
+                />
+              </>
             )}
             {itemInCart && (
               <p className="already-in-cart-message">
@@ -618,51 +410,27 @@ const GalleryImagesComponents = (props) => {
               </p>
             )}
             <div className="varaint-select">
-              {singleproducts?.attribute_master?.map((attr) => {
-                return (
-                  <>
-                    <FormControl>
-                      <FormLabel id="demo-row-radio-buttons-group-label">
-                        {capitalize(attr.name)}
-                      </FormLabel>
-                      <RadioGroup
-                        row
-                        aria-labelledby="demo-row-radio-buttons-group-label"
-                        name="row-radio-buttons-group"
+              {get(singleproducts, "attribute_master", [])?.map(
+                (singleAttribute) => {
+                  return (
+                    <>
+                      <RadioButton
+                        lable={get(singleAttribute, "name", "")}
                         value={variantSelect}
-                        onChange={(e) => prepareData(e, attr.id)}
-                      >
-                        {attr.attribute_values.map((val) => {
-                          return (
-                            <FormControlLabel
-                              value={val._id}
-                              control={<Radio />}
-                              label={capitalize(val.name)}
-                            />
-                          );
-                        })}
-                      </RadioGroup>
-                    </FormControl>
-
-                    {error &&
-                    !selectedAttrs.some(
-                      (selectedAtt) => attr.id === selectedAtt.name
-                    ) ? (
-                      <p style={{ color: "red" }}>
-                        Please Select The {capitalize(attr.name)}
-                      </p>
-                    ) : null}
-                  </>
-                );
-              })}
+                        onChange={(e) => prepareData(e, singleAttribute.id)}
+                        options={createAttributeOptions(singleAttribute)}
+                        error={checkVariantIsSelected(singleAttribute)}
+                      />
+                    </>
+                  );
+                }
+              )}
             </div>
 
             <CheckZipcode checkzipcode={checkzipcode} />
-
-            {singleproducts?.custom_field &&
-            singleproducts.custom_field?.length > 0 ? (
+            {get(singleproducts, "custom_field", [])?.length > 0 ? (
               <>
-                {singleproducts?.custom_field?.map((field) => (
+                {get(singleproducts, "custom_field", [])?.map((field) => (
                   <div className="product-attributes">
                     <ul className="product-meta font-xs color-grey mt-50">
                       <p>
@@ -674,15 +442,11 @@ const GalleryImagesComponents = (props) => {
                 ))}
               </>
             ) : null}
-
             <ul className="product-meta font-xs color-grey mt-50">
               <p className="">
-                SKU:{" "}
-                {comboData && comboData.length
-                  ? comboData[0].sku
-                  : singleproducts?.sku}
+                SKU: {get(comboData, "[0].sku", get(singleproducts, "sku", ""))}
               </p>
-              {newFunction(singleproducts)}
+              {renderProductTags(singleproducts)}
               <p className="">
                 Availablity: <span className={stockClass}>{Lable}</span>
               </p>
@@ -695,6 +459,3 @@ const GalleryImagesComponents = (props) => {
 };
 
 export default GalleryImagesComponents;
-function newFunction(singleproducts) {
-  return <p className="">Tags: {get(singleproducts, "__typename")}</p>;
-}

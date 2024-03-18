@@ -12,6 +12,8 @@ import {
 
 import { Button, Col, Form, Row } from "react-bootstrap";
 import CreditCards from "../myCard/CreditCards";
+import { getPrice } from "../../../utills/helpers";
+import { get } from "lodash";
 
 const CARD_OPTIONS = {
     iconStyle: "solid",
@@ -74,10 +76,10 @@ const Field = ({
 
 const SubmitButton = ({ cartItems, billDetails, processing, error, children, disabled }) => {
     return(<button
-        className={`SubmitButton ${error ? "SubmitButton--error" : ""}`}
+        className={`SubmitButton ${error ? "SubmitButton--error" : ""} primary-btn-color`}
         type="submit"
         disabled={processing || disabled}
-        style={{ marginTop: 12, backgroundColor: "#088178" }}
+        style={{ marginTop: 12 }}
     >
         {processing ? "Processing..." : children}
     </button>)
@@ -110,8 +112,7 @@ const ResetButton = ({ onClick }) => (
     </button>
 );
 
-const CheckoutForm = ({ getOrderDetailsData, setBillingInfo, billingInfo, detailsOfBill, cartItems}) => {
-    console.log("billingInfo", billingInfo, "detailsOfBill=======", detailsOfBill, "cartitems-=========", cartItems)
+const CheckoutForm = ({ getOrderDetailsData, currency,decimal,setBillingInfo, billingInfo, detailsOfBill, cartItems}) => {
     const stripe = useStripe();
     const elements = useElements();
     const [error, setError] = useState(null);
@@ -126,7 +127,6 @@ const CheckoutForm = ({ getOrderDetailsData, setBillingInfo, billingInfo, detail
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log("handlesubmit")
 
         if (!stripe || !elements) {
             // Stripe.js has not loaded yet. Make sure to disable
@@ -148,7 +148,6 @@ const CheckoutForm = ({ getOrderDetailsData, setBillingInfo, billingInfo, detail
             card: elements.getElement(CardElement),
             billing_details: billingDetails
         });
-        // console.log(payload.paymentMethod);
         setProcessing(false);
 
         if (payload.error) {
@@ -200,7 +199,7 @@ const CheckoutForm = ({ getOrderDetailsData, setBillingInfo, billingInfo, detail
 
                 {error && <ErrorMessage>{error.message}</ErrorMessage>}
                 <SubmitButton cartItems={cartItems} billDetails={detailsOfBill} processing={processing} error={error} disabled={!stripe} >
-                    Pay ${parseInt(detailsOfBill.subtotal)+parseInt(detailsOfBill.taxAmount)+parseInt(detailsOfBill.shippingAmount)-parseInt(detailsOfBill.discountAmount)}
+                    Pay {currency} {getPrice(get(detailsOfBill,'grandTotal','0'),decimal)}
                 </SubmitButton>
             </form>
         </div>
@@ -212,11 +211,11 @@ const CheckoutForm = ({ getOrderDetailsData, setBillingInfo, billingInfo, detail
 
 const stripePromise = loadStripe("pk_test_51I1n3IBidFvtlkRG8jL8H2UJqLZv7O4mDdLcvctSIfVigfPA07fFZTARn8IseUNvOHs6UahHeV29qgXD6Q6iGkRv001Yyj8i23");
 
-const Stripes = ({ getOrderDetailsData, setBillingInfo, billingInfo, detailsOfBill, cartItems }) => {
+const Stripes = ({ getOrderDetailsData, setBillingInfo, billingInfo, detailsOfBill, cartItems,currency,decimal }) => {
     return (
         <div className="payment_card_field">
             <Elements stripe={stripePromise}>
-                <CheckoutForm getOrderDetailsData={getOrderDetailsData} setBillingInfo={setBillingInfo} billingInfo={billingInfo} detailsOfBill={detailsOfBill} cartItems={cartItems} />
+                <CheckoutForm getOrderDetailsData={getOrderDetailsData}currency={currency}decimal={decimal} setBillingInfo={setBillingInfo} billingInfo={billingInfo} detailsOfBill={detailsOfBill} cartItems={cartItems} />
             </Elements>
         </div>
     );

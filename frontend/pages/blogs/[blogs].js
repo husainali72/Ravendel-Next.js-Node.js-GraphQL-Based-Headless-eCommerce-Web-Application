@@ -8,7 +8,6 @@ import { getImage, imageOnError } from "../../utills/helpers";
 import { useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts"
 const SingleBlogPages = ({ singleBlog, homepageData }) => {
-    // console.log(singleBlog)
     const blogtags = useSelector(state => state.blogtags)
     const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
     const router = useRouter();
@@ -29,12 +28,9 @@ const SingleBlogPages = ({ singleBlog, homepageData }) => {
                         </div>
                         <div className="d-flex entry-bottom mt-50 mb-30 wow fadeIn   animated" >
                             <div className="tags w-50 w-sm-100">
-                                <button type="button" className="btn btn-success hover-up  btn-rounded mx-1" style={{ backgroundColor: "#088178" }}>deer</button>
-                                <button type="button" className="btn btn-success hover-up  btn-rounded mx-1" style={{ backgroundColor: "#088178" }}>nature</button>
-                                <button type="button" className="btn btn-success hover-up  btn-rounded mx-1" style={{ backgroundColor: "#088178" }}>conserve</button>
-                                {/* <a href="blog-category-big.html" rel="tag" className="hover-up btn btn-sm btn-rounded mr-10">deer</a>
-                                <a href="blog-category-big.html" rel="tag" className="hover-up btn btn-sm btn-rounded mr-10">nature</a>
-                                <a href="blog-category-big.html" rel="tag" className="hover-up btn btn-sm btn-rounded mr-10">conserve</a> */}
+                                <button type="button" className="btn btn-success hover-up  btn-rounded mx-1 primary-btn-color" >deer</button>
+                                <button type="button" className="btn btn-success hover-up  btn-rounded mx-1 primary-btn-color" >nature</button>
+                                <button type="button" className="btn btn-success hover-up  btn-rounded mx-1 primary-btn-color" >conserve</button>
                             </div>
                             <div className="social-icons single-share">
                                 <ul className="d-flex text-grey-5 d-inline-block mx-50">
@@ -71,9 +67,7 @@ export async function getStaticPaths() {
         blogData = blogdata.blogs.data
     }
     catch (e) {
-        console.log("Blog Error=======", e.networkError);
     }
-    // console.log("blogData", blogData);
     const paths = blogData.map((curElem) => ({
         params: { blogs: curElem.id.toString() }
 
@@ -84,7 +78,6 @@ export async function getStaticPaths() {
     }
 }
 export async function getStaticProps({ params }) {
-    // console.log("params", params)
     const id = params.blogs
     var singleBlog = {};
     var homepageData = [];
@@ -99,7 +92,6 @@ export async function getStaticProps({ params }) {
         homepageData = homepagedata
     }
     catch (e) {
-        console.log("Homepage Error===", e);
     }
     try {
         const { data: singleBlogData } = await client.query({
@@ -109,7 +101,6 @@ export async function getStaticProps({ params }) {
         singleBlog = singleBlogData.blog.data
     }
     catch (e) {
-        console.log("Bolg SinglePage ERROR==", e)
     }
     return {
         props: {

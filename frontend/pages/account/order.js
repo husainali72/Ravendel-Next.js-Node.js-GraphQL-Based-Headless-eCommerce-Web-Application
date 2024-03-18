@@ -9,6 +9,7 @@ import { getSession, useSession } from "next-auth/react";
 import { currencySetter, getPrice, query } from "../../utills/helpers";
 import { useSelector } from "react-redux";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
+import { get } from "lodash";
 
 const Order = () => {
     const { data: session, status } = useSession()
@@ -16,11 +17,11 @@ const Order = () => {
     const [customerOrder, setCustomerOrder] = useState([])
     const [loading, setloading] = useState(false)
     const [Session, setSession] = useState({})
-    const [decimal, setdecimal] = useState(2)
+    const [currencyOption, setCurrencyOption] = useState({})
     const [currency, setCurrency] = useState("$")
     const [currencyStore, setCurrencyStore] = useState({})
     useEffect(() => {
-        setdecimal(currencyStore?.currency_options?.number_of_decimals)
+        setCurrencyOption(currencyStore?.currency_options)
         currencySetter(currencyStore, setCurrency);
     }, [currencyStore])
     useEffect(() => {
@@ -41,7 +42,10 @@ const Order = () => {
             id = Session.user.accessToken.customer._id
             token = Session.user.accessToken.token
         }
-        query(GET_CUSTOMER_ORDERS_QUERY, id, token).then((response) => {
+        let variable={
+            id:id
+        }
+        query(GET_CUSTOMER_ORDERS_QUERY, variable, token).then((response) => {
             if (response) {
                 if (response.data.orderbyUser.data) {
                     const customeradd = response.data.orderbyUser.data
@@ -82,7 +86,7 @@ const Order = () => {
                                         <strong> Order id : {order.id}</strong>
                                     </Col>
                                     <Col>
-                                        <strong>Total : {currency} {getPrice(order.grandTotal, decimal)}</strong>
+                                        <strong>Total : {currency} {getPrice(get(order,'grandTotal','0'), currencyOption)}</strong>
                                     </Col>
                                 </Accordion.Header>
                                 <Accordion.Body>

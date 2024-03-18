@@ -9,6 +9,8 @@ import {
   mutation,
   getPrice,
   isDiscount,
+
+  imageOnError,
 } from "../../utills/helpers";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../../redux/actions/cartAction";
@@ -23,6 +25,9 @@ import { query } from "../../utills/helpers";
 import NoImagePlaceholder from "../images/NoImagePlaceHolder.png";
 import { capitalize, get } from "lodash";
 import Image from "next/image";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ClearIcon from '@mui/icons-material/Clear';
 var placeholder = "https://dummyimage.com/300";
 const OnSaleProductCard = ({
   homepageData,
@@ -31,6 +36,8 @@ const OnSaleProductCard = ({
   titleShow,
   currencyProp,
   currencyOpt,
+  showRemoveButton,
+  removeButton,
 }) => {
   var id = "";
   var token = "";
@@ -39,11 +46,11 @@ const OnSaleProductCard = ({
   const router = useRouter();
   const session = useSession();
   const [currency, setCurrency] = useState("$");
-  const [decimal, setdecimal] = useState(2);
+  const [currencyOption, setCurrencyOption] = useState({});
   const settings = useSelector((state) => state.setting);
   useEffect(() => {
     currencySetter(settings, setCurrency);
-    setdecimal(settings?.currencyOption?.number_of_decimals);
+    setCurrencyOption(settings?.currencyOption);
     if (currencyProp) {
       setCurrency(currencyProp);
     }
@@ -52,7 +59,7 @@ const OnSaleProductCard = ({
   useEffect(() => {
     if (currencyOpt) {
       currencySetter(currencyOpt?.currency_options?.currency, setCurrency);
-      setdecimal(currencyOpt?.currency_options?.number_of_decimals);
+      setCurrencyOption(currencyOpt?.currency_options);
     }
   }, [currencyOpt]);
 
@@ -66,7 +73,10 @@ const OnSaleProductCard = ({
     let href = "/shopcart";
     if (session.status === "authenticated") {
       let productInCart = false;
-      query(GET_USER_CART, id, token).then((res) => {
+      let variables={
+        id:id
+      }
+      query(GET_USER_CART,variables, token).then((res) => {
         let cart_id = res?.data?.cartbyUser?.id;
         const inCartProducts = res?.data?.cartbyUser?.products;
         inCartProducts.map((inCartProduct) => {
@@ -102,7 +112,7 @@ const OnSaleProductCard = ({
               products: Cartt,
               total: 0,
             };
-            mutation(UPDATE_CART_PRODUCT, variables, token).then((res) => {
+            mutation(UPDATE_CART_PRODUCT, variables).then((res) => {
               router.push("/shopcart");
             });
           }
@@ -120,7 +130,7 @@ const OnSaleProductCard = ({
             shippingClass: product?.shipping?.shippingClass,
             taxClass: product?.taxClass,
           };
-          mutation(ADD_TO_CART_QUERY, variables, token).then((res) => {
+          mutation(ADD_TO_CART_QUERY, variables).then((res) => {
             router.push("/shopcart");
             dispatch(addToCart(product));
           });
@@ -132,6 +142,16 @@ const OnSaleProductCard = ({
     }
   };
 
+  const handleWishlistButtonClick = (e, product) => {
+    e.stopPropagation();
+    console.log(product, "product");
+    // Add logic to handle adding the product to the wish list
+    // Example: dispatch(addToWishlist(product))
+  };
+  const toggleWishlistState = (i) => {
+    setIsProductInWistList((prevState) => !prevState);
+    setShowWishListButton(i);
+  };
   return (
     <section className="product-cart-section">
       <Container style={{ padding: "0" }}>
@@ -148,12 +168,24 @@ const OnSaleProductCard = ({
             {onSaleProduct && onSaleProduct?.length > 0 ? (
               <>
                 {onSaleProduct.map((product, i) => {
-                  return (
+                  return (<>
                     <Link
                       href={`/product/[singleproduct]?url=${product.url}`}
                       as={`/product/${product.url}`}
                     >
-                      <div className="on-sale-product-card" key={i}>
+                      <div
+                        className="on-sale-product-card"
+                        key={i}
+                        onMouseEnter={() => toggleWishlistState(i)}
+                        onMouseLeave={() => setShowWishListButton(null)}
+                      >
+                        {showRemoveButton && (
+                         <button onClick={(e) => {
+                            removeButton(e);
+                          }}className="cross-button">
+                            <ClearIcon className="clear-icon"/>
+                        </button>
+                        )}
                         <div className="on-sale-image-wrapper">
                           <img
                             className="img-on-sale"
@@ -178,16 +210,36 @@ const OnSaleProductCard = ({
                               </span>
                             </div>
                           ) : null}
-                          <div className="product-categoryname">
-                            {product?.categoryId?.map((item, i) => (
-                              <span key={i}>
-                                {product?.categoryId?.length - 1 === i ? (
-                                  <span>{capitalize(item?.name)} </span>
-                                ) : (
-                                  <span>{capitalize(item?.name)}, </span>
-                                )}
-                              </span>
-                            ))}
+                          <div className="product-categoryname category-name-container ">
+                            <div>
+                              {product?.categoryId?.map((item, i) => (
+                                <span key={i}>
+                                  {product?.categoryId?.length - 1 === i ? (
+                                    <span>{capitalize(item?.name)} </span>
+                                  ) : (
+                                    <span>{capitalize(item?.name)}, </span>
+                                  )}
+                                </span>
+                              ))}
+                            </div>
+                            <div>
+                              {showWishListButton === i && (
+                                <Button
+                                  variant="outlined"
+                                  className="wishlist-button"
+                                  onClick={(e) =>
+                                    handleWishlistButtonClick(e, product)
+                                  }
+                                >
+                                  {isProductInWistList ? (
+                                    <FavoriteIcon />
+                                  ) : (
+                                    <FavoriteBorderIcon />
+                                  )}{" "}
+                                  Wish List
+                                </Button>
+                              )}{" "}
+                            </div>
                           </div>
                           <div
                             className="card-price"
@@ -218,7 +270,7 @@ const OnSaleProductCard = ({
                                 singleproducts={product}
                               />
                               <span>
-                                {product.pricing.sellprice ? (
+                                {product?.pricing?.sellprice ? (
                                   <strong className="sale-price">
                                     {currency}{" "}
                                     {getPrice(
@@ -229,11 +281,11 @@ const OnSaleProductCard = ({
                                 ) : (
                                   <strong className="sale-price">
                                     {currency}{" "}
-                                    {getPrice(product?.pricing.price, decimal)}
+                                    {getPrice(product?.pricing?.price, decimal)}
                                   </strong>
                                 )}
                               </span>
-                              {product?.pricing.sellprice &&
+                              {product?.pricing?.sellprice &&
                               product?.pricing.sellprice <
                                 product?.pricing.price ? (
                                 <span
@@ -284,7 +336,7 @@ const OnSaleProductCard = ({
                         </div>
                       </div>
                     </Link>
-                  );
+                 </> );
                 })}
               </>
             ) : (

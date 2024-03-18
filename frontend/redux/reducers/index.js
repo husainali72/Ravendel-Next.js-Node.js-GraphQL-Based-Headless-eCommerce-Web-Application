@@ -23,7 +23,7 @@ const appReducer = combineReducers({
     userCart: userCartReducer,
     stripe_Key: stripeReducer,
     products: productReducer,
-    addedCart: addedCart
+    addedCart: addedCart,
 });
 
 const rootReducer = (state, action) => {
