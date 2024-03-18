@@ -1,716 +1,314 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import BreadCrumb from "../components/breadcrumb/breadcrumb";
 import { useSelector, useDispatch } from "react-redux";
 import CartTable from "../components/cardcomponent/CardDetail";
-import { removeCartItemAction, RemoveAllCartItemsAction, increaseQuantity, decreaseQuantity } from "../redux/actions/cartAction";
-import { currencySetter, getPrice, mutation, query } from "../utills/helpers";
-import { DELETE_CART_PRODUCTS, UPDATE_CART_PRODUCT, GET_USER_CART } from "../queries/cartquery";
-import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
+import {
+  removeCartItemAction,
+  increaseQuantity,
+  changeQty,
+  removeAllCartItemsAction,
+  REMOVE_ALL_VALUE,
+  calculateUserCart,
+  calculateUnauthenticatedCart,
+} from "../redux/actions/cartAction";
+import {
+  currencySetter,
+  formatNumber,
+  logoutAndClearData,
+  mutation,
+} from "../utills/helpers";
+import { DELETE_CART_PRODUCTS } from "../queries/cartquery";
+import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { getAllProductsAction } from "../redux/actions/productAction";
-import { useRouter } from "next/router";
 import { settingActionCreator } from "../redux/actions/settingAction";
 import LoadingCartTable from "../components/cardcomponent/LoadingCard";
-import Link from "next/link";
-const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing * product.quantity || product.pricing * product.quantity), 0)
-const cartitems2 = []
-const YourCard = ({ customercart, cart_id, CartsDataa, currencyStore, homepageData }) => {
-    var id = "";
-    var token = "";
-    const router = useRouter();
-    const session = useSession();
-    const allProducts = useSelector(state => state.products);
-    const cart = useSelector(state => state.cart);
-    const [cartLoading, setCartLoading] = useState(false)
-    const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false)
-    const [cartItems, setCartItems] = useState([]);
-    const [AllCartItems, setAllCartItems] = useState([]);
-    const [quantityy, setQuantity] = useState();
-    const dispatch = useDispatch();
-    const [couponCode, setCouponCode] = useState("")
-    const [unAvailableProducts, setUnAvailableProduct] = useState([])
-    const [currency, setCurrency] = useState("$")
-    const [decimal, setdecimal] = useState(2)
-    const settings = useSelector(state => state.setting);
-    useEffect(() => {
-        setdecimal(settings?.currencyOption?.number_of_decimals)
-        currencySetter(settings, setCurrency);
-    }, [settings?.currencyOption])
-    useEffect(() => {
-        dispatch(settingActionCreator(currencyStore.currency_options))
-    }, [currencyStore.currency_options])
-    useEffect(() => {
-        dispatch(getAllProductsAction());
-    }, []);
-    useEffect(() => {
-        const getProducts = async () => {
+import { get } from "lodash";
+import Loading from "../components/loadingComponent";
+import notify from "../utills/notifyToast";
+const YourCard = ({
+  currencyStore,
+  homepageData,
+}) => {
+  const session = useSession();
+  const allProducts = useSelector((state) => state.products);
+  const cart = useSelector((state) => state.cart);
+  const [cartLoading, setCartLoading] = useState(false);
+  const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const dispatch = useDispatch();
+  const [currency, setCurrency] = useState("$");
+  const [totalSummary, setTotalSummary] = useState({});
+  const settings = useSelector((state) => state.setting);
+  useEffect(() => {
+    currencySetter(settings, setCurrency);
+  }, [settings?.currencyOption]);
+  useEffect(() => {
+    dispatch(settingActionCreator(currencyStore.currency_options));
+  }, [currencyStore.currency_options]);
 
-            const productsCard = JSON.parse(localStorage.getItem("cart"))
-            setCartLoading(true)
-            const sessionn = await getSession()
-            if (session?.status === "authenticated" || sessionn !== null) {
-                id = sessionn?.user?.accessToken?.customer?._id
-                token = sessionn.user.accessToken.token
-                let variables = { id: id }
-                mutation(GET_USER_CART, variables).then(res => {
-                    let carts = res?.data?.cartbyUser;
+  // get all products and user cart
+  useEffect(() => {
+    dispatch(getAllProductsAction());
+    getUserCartData();
+  }, []);
+  useEffect(() => {
+    setIsQuantityBtnLoading(get(cart, "loading"));
+  }, [get(cart, "loading")]);
 
-                    let cartitems2 = [];
-                    let unAvailable = [];
-                    let allItem = []
-                    carts?.availableItem?.map((cart) => {
-                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
-                        const orginal_attributes = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
-                        let cartProduct = {}
-                        if (orginal_attributes) {
-                            cartProduct = {
-                                _id: originalProduct?._id,
-                                variantId: cart?.variantId,
-                                quantity: parseInt(cart?.qty),
-                                productQuantity: parseInt(orginal_attributes?.quantity),
-                                name: originalProduct?.name,
-                                pricing: (orginal_attributes?.pricing
-                                    ?.sellprice),
-                                feature_image: orginal_attributes?.image
-                                    || cart?.productImage,
-                                url: originalProduct?.url,
-                                attributes: cart.attributes || [],
-                                shippingClass: originalProduct?.shipping?.shippingClass,
-                                taxClass: originalProduct?.taxClass,
-                            }
-                        }
-                        else {
-                            cartProduct = {
-                                _id: cart?.productId,
-                                variantId: cart.variantId,
-                                quantity: parseInt(cart?.qty),
-                                productQuantity: parseInt(originalProduct?.quantity),
-
-                                name: cart?.productTitle
-                                ,
-                                pricing: (cart?.productPrice),
-                                feature_image: cart?.productImage
-                                ,
-                                url: originalProduct?.url || '',
-                                attributes: cart.attributes || [],
-                                shippingClass: cart?.shippingClass,
-                                taxClass: cart?.taxClass,
-                            }
-                        }
-                        cartitems2.push(cartProduct);
-
-                    })
-                    carts?.cartItem?.map((cart) => {
-                        const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
-
-                        let cartProduct = {
-                            _id: cart?.productId,
-                            variantId: cart.variantId,
-                            quantity: parseInt(cart?.qty),
-                            productQuantity: originalProduct ? parseInt(originalProduct?.quantity
-                            ) : parseInt(cart?.productQuantity
-
-                            ),
-
-                            name: cart?.productTitle,
-                            pricing: (cart?.productPrice
-                            ),
-                            feature_image: cart?.productImage
-                            ,
-                            url: cart?.url || '',
-                            attributes: cart.attributes || [],
-                            shippingClass: cart?.shippingClass
-                            ,
-                            taxClass: cart?.taxClass,
-                        }
-
-                        allItem.push(cartProduct);
-
-                    })
-                    carts?.unavailableItem?.map((cart) => {
-                        let cartProduct = {
-                            _id: cart?.productId,
-                            variantId: cart.variantId,
-                            quantity: parseInt(cart?.qty),
-                            productQuantity: parseInt(cart?.productQuantity
-                            ),
-                            name: cart?.productTitle,
-                            pricing: (cart?.productPrice),
-                            feature_image: cart?.productImage
-
-                                || cart?.feature_image,
-                            url: cart?.url,
-                            attributes: cart.attributes || [],
-                            shippingClass: cart?.shipping?.shippingClass,
-                            taxClass: cart?.taxClass,
-                        }
-                        unAvailable.push(cartProduct)
-                    })
-                    // carts?.map(cart => {
-                    //     const originalProduct = allProducts?.products?.find(prod => prod._id === cart.productId);
-                    //     const cart = originalProduct?.variation_master?.find(prod => prod.id === cart.variantId)
-                    //     // console.log(orginal_attributes, 'originalProduct', originalProduct, cart.variantId)
-                    //     if (originalProduct) {
-
-                    //         if (orginal_attributes) {
-                    //             cartProduct = {
-                    //                 _id: originalProduct?._id,
-                    //                 variantId: cart.variantId,
-                    //                 quantity: parseInt(cart?.qty),
-                    //                 productQuantity: parseInt(orginal_attributes?.quantity),
-                    //                 name: originalProduct?.name,
-                    //                 pricing: orginal_attributes?.pricing
-                    //                     ?.sellprice,
-                    //                 feature_image: orginal_attributes?.productImage
-                    //                     || orginal_attributes?.feature_image,
-                    //                 url: originalProduct?.url,
-                    //                 attributes: cart.attributes || [],
-                    //                 shippingClass: originalProduct?.shipping?.shippingClass,
-                    //                 taxClass: originalProduct?.taxClass,
-                    //             }
-                    //         }
-                    //         else {
-                    //             cartProduct = {
-                    //                 _id: originalProduct?._id,
-                    //                 variantId: cart.variantId,
-                    //                 quantity: parseInt(cart?.qty),
-                    //                 productQuantity: parseInt(originalProduct?.quantity),
-
-                    //                 name: originalProduct?.name,
-                    //                 pricing: originalProduct?.pricing
-                    //                     ?.sellprice,
-                    //                 feature_image: originalProduct?.productImage
-                    //                     || originalProduct?.feature_image,
-                    //                 url: originalProduct?.url,
-                    //                 attributes: cart.attributes || [],
-                    //                 shippingClass: originalProduct?.shipping?.shippingClass,
-                    //                 taxClass: originalProduct?.taxClass,
-                    //             }
-                    //         }
-                    //         cartitems2.push(cartProduct);
-                    //     } else {
-
-                    //     }
-
-                    // })
-                    setCartItems([...cartitems2])
-                    setAllCartItems([...allItem])
-                    setUnAvailableProduct([...unAvailable])
-                }).finally(() => { allProducts?.products.length > 0 && cartItems.length >= 0 && setCartLoading(false) })
-            }
-            else {
-
-                setCartItems(productsCard || []);
-                setAllCartItems(productsCard || [])
-                setCartLoading(false)
-
-            }
-        }
-        getProducts();
-
-    }, [allProducts, cart]);
-    const handlePayment = async () => {
-
-        if (session?.status !== "authenticated") {
-
-            router.push("/account")
-        }
-        else if (session?.status === "authenticated") {
-
-            const response = await fetch('/api/stripe', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(cartItems),
-            });
-            const data = await response.json();
-
-            // window.location.href = data.url
-            // window.location.href = "http://localhost:3000/checkout"
-            if (response.statusCode === 500) return;
-        }
+  const getUserCartData = async () => {
+    const userSession = await getSession();
+    if (session?.status === "authenticated" || userSession !== null) {
+      let id = get(userSession, "user.accessToken.customer._id");
+      dispatch(calculateUserCart(id));
+    } else {
+      const localStorageProducts = JSON.parse(localStorage.getItem("cart"));
+      dispatch(calculateUnauthenticatedCart(localStorageProducts));
+    }
+  };
+  useEffect(() => {
+    const getProducts = async () => {
+      setCartLoading(true);
+      let cartItemsArray = [];
+      let allItem = [];
+      get(cart, "cartItems", [])?.map((cart) => {
+        const originalProduct = allProducts?.products?.find(
+          (prod) => prod._id === cart.productId
+        );
+        const orginalAttributes = originalProduct?.variation_master?.find(
+          (prod) => prod.id === cart.variantId
+        );
+        let cartProduct = {
+          _id: get(cart, "productId", ""),
+          variantId: get(cart, "variantId", ""),
+          quantity: parseInt(get(cart, "qty")),
+          productQuantity: get(originalProduct, "quantity"),
+          name: get(cart, "productTitle"),
+          pricing: get(cart, "productPrice"),
+          price: get(originalProduct, "pricing.price"),
+          short_description: get(originalProduct, "short_description"),
+          feature_image: get(cart, "productImage"),
+          url: get(originalProduct, "url"),
+          attributes: get(cart, "attributes", []),
+          shippingClass: get(cart, "shippingClass"),
+          taxClass: get(cart, "taxClass"),
+          discountPercentage: get(cart, "discountPercentage"),
+          amount: get(cart, "amount"),
+          mrpAmount: get(cart, "mrpAmount"),
+          available: get(cart, "available"),
+        };
+        allItem.push(cartProduct);
+        cartItemsArray.push(cartProduct);
+      });
+      setTotalSummary({
+        ...totalSummary,
+        grandTotal: formatNumber(get(cart, "totalSummary.grandTotal")),
+        cartTotal: formatNumber(get(cart, "totalSummary.cartTotal")),
+        totalShipping: formatNumber(get(cart, "totalSummary.totalShipping")),
+        totalTax: formatNumber(get(cart, "totalSummary.totalTax")),
+        mrpTotal: formatNumber(get(cart, "totalSummary.mrpTotal")),
+        discountTotal: formatNumber(get(cart, "totalSummary.discountTotal")),
+      });
+      setCartItems([...cartItemsArray]);
+      setCartLoading(false);
+    };
+    getProducts();
+  }, [allProducts, get(cart, "cartItems")]);
+  // Function to clear all items in the cart
+  const AllCartItemsClear = async () => {
+    setCartItems([]);
+    if (session.status === "authenticated") {
+      let id = get(session, "data.user.accessToken.customer._id");
+      let variables = { userId: id };
+      dispatch(removeAllCartItemsAction(variables));
+    } else {
+      dispatch({
+        type: REMOVE_ALL_VALUE,
+        payload: [],
+      });
     }
 
-
-
-    const AllCartItemsClear = async () => {
-        setCartItems([])
-        setAllCartItems([])
-        if (session.status === "authenticated") {
-            let id = session.data.user.accessToken.customer._id
-            let token = session.data.user.accessToken.token
-
-            query(GET_USER_CART, id, token).then(res => {
-                cart_id = res.data.cartbyUser.id
-                let variables = {
-                    id: cart_id,
-                    products: [],
-                    total: 0
-                }
-                mutation(UPDATE_CART_PRODUCT, variables, token).then(res => dispatch(RemoveAllCartItemsAction([])))
-
-            })
-        }
-        else {
-            dispatch(RemoveAllCartItemsAction([]))
-        }
-
-        localStorage.setItem("cart", JSON.stringify([]))
-    }
-
-    const IncreaseQuantity = async (item) => {
-
-        // AllCartItems.filter(itemm => {
-        //     if (itemm._id === item._id) {
-        //         console.log('if', item?.productQuantity, itemm.quantity, item?.productQuantity > itemm.quantity + 1, itemm, item)
-        //         if (item?.productQuantity > itemm.quantity + 1) console.log(itemm.quantity += 1, '>')
-        //     } else {
-        //         console.log(itemm.quantity, 'item')
-        //     }
-
-        // })
-
-        setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
-        setAllCartItems([...AllCartItems], AllCartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity >= itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
-        // console.log(cartItems, '======', AllCartItems, '========', item._id, AllCartItems.filter(itemm => itemm._id === item._id ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
-        if (session?.status !== "authenticated") {
-            dispatch(increaseQuantity(item._id, item.productQuantity, item.variantId))
-        }
-        else {
-            const prod = cartItems.find(cart => cart._id === item._id && cart.variantId === item.variantId);
-            const qty = prod.quantity;
-            if (session?.status === "authenticated") {
-                let id = session.data.user.accessToken.customer._id
-                let token = session.data.user.accessToken.token
-                query(GET_USER_CART, id, token).then(res => {
-                    cart_id = res.data.cartbyUser.id
-                    const cCartItems = [...AllCartItems];
-
-                    const Cartt = cCartItems.map(product => {
-                        if (product._id === item._id && product.variantId === item.variantId) {
-                            return {
-                                productId: product._id,
-                                qty: qty,
-                                productTitle: product.name,
-                                productImage: product.feature_image,
-                                productPrice: product.pricing?.toString(),
-                                shippingClass: product?.shippingClass,
-                                taxClass: product?.taxClass,
-                                attributes: product.attributes,
-                                variantId: product.variantId,
-                                productQuantity: product.productQuantity
-                            }
-                        } else {
-                            return {
-                                productId: product._id,
-                                qty: product.quantity,
-                                productTitle: product.name,
-                                productImage: product.feature_image,
-
-                                productPrice: product.pricing?.toString(),
-
-                                shippingClass: product?.shippingClass,
-                                taxClass: product?.taxClass,
-                                attributes: product.attributes,
-                                variantId: product.variantId,
-                                productQuantity: product.productQuantity
-                            }
-                        }
-                    })
-                    let variables = {
-                        id: cart_id,
-                        products: Cartt,
-                        total: 0,
-                    }
-                    mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("update res while increasing qtyyyy", res))
-                }).finally(() => setIsQuantityBtnLoading(false))
-            }
-        }
-    }
-    const DecreaseQuantity = (item) => {
-        if (item.quantity > 1) {
-            setIsQuantityBtnLoading(true)
-            setCartItems([...cartItems], cartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (itemm.quantity -= 1) : itemm.qyantity))
-            setAllCartItems([...AllCartItems], AllCartItems.filter(itemm => itemm._id === item._id && itemm.variantId === item.variantId ? (item?.productQuantity > itemm.quantity + 1 && (itemm.quantity += 1)) : itemm.quantity))
-            setQuantity(item.quantity)
-            if (session?.status !== "authenticated") {
-                let variables = {
-                    _id: item._id,
-                    variantId: item.variantId
-                }
-                dispatch(decreaseQuantity(variables))
-
-                setIsQuantityBtnLoading(false)
-            } else {
-
-                const prod = cartItems.find(cart => cart._id === item._id && cart.variantId === item.variantId);
-                const qty = prod.quantity;
-                if (session?.status === "authenticated") {
-                    let id = session.data.user.accessToken.customer._id
-                    let token = session.data.user.accessToken.token
-                    query(GET_USER_CART, id, token).then(res => {
-                        cart_id = res.data.cartbyUser.id
-                        const cCartItems = [...AllCartItems];
-                        const Cartt = cCartItems.map(product => {
-                            if (product._id === item._id && product.variantId === item.variantId) {
-                                return {
-                                    productId: product._id,
-                                    qty: qty,
-                                    productTitle: product.name,
-                                    productImage: product.feature_image?.original,
-                                    productPrice: product.pricing?.toString(),
-                                    attributes: product.attributes,
-                                    variantId: product.variantId,
-                                    productQuantity: product.productQuantity,
-                                    shippingClass: product?.shippingClass,
-                                    taxClass: product?.taxClass,
-                                }
-                            } else {
-                                return {
-                                    productId: product._id,
-                                    qty: product.quantity,
-                                    productTitle: product.name,
-                                    productImage: product.feature_image?.original,
-
-                                    productPrice: product.pricing?.toString(),
-
-                                    attributes: product.attributes,
-                                    variantId: product.variantId,
-                                    productQuantity: product.productQuantity,
-                                    shippingClass: product?.shippingClass,
-                                    taxClass: product?.taxClass,
-                                }
-                            }
-                        })
-                        let variables = {
-                            id: cart_id,
-                            products: Cartt,
-                            total: 0,
-                        }
-                        mutation(UPDATE_CART_PRODUCT, variables, token).then(res => {
-                            let variables = {
-                                _id: item._id,
-                                variantId: item.variantId
-                            }
-                            // dispatch(decreaseQuantity(variables))
-                        })
-                    }).finally(() => setIsQuantityBtnLoading(false))
-                }
-            }
-        }
-    }
-
-    const removeToCart = async (item) => {
-
-        let product = item?._id
-        let idx = cartItems.findIndex(cartItem => cartItem._id === item._id)
-        const prod = cartItems.find(cart => cart._id === item._id);
-        if (session?.status === "authenticated") {
-            // let cartItemsfilter = cartItems.filter(itemm => itemm._id !== item._id || (itemm._id === item._id && itemm.variantId !== item.variantId))
-            // let unavailableItem = unAvailableProducts.filter(itemm => itemm._id !== item._id || (itemm._id === item._id && itemm.variantId !== item.variantId))
-            // setCartItems(cartItemsfilter);
-            // setUnAvailableProduct([...unavailableItem])
-            let id = session.data.user.accessToken.customer._id
-            let token = session.data.user.accessToken.token
-
-            query(GET_USER_CART, id, token).then(res => {
-                cart_id = res.data.cartbyUser.id
-
-                let variables = {
-                    id: cart_id,
-                    productId: item._id,
-                    variantId: item.variantId
-                }
-
-                mutation(DELETE_CART_PRODUCTS, variables, token).then(res => dispatch(removeCartItemAction(variables)))
-
-
-            })
-        }
-        else {
-            let cartItemsfilter = cartItems.filter(itemm => itemm._id !== product || (itemm._id === product && itemm.variantId !== item.variantId))
-            let variables = {
-                id: product,
-                variantId: item.variantId
-            }
-            dispatch(removeCartItemAction(variables));
-            setCartItems(cartItemsfilter);
-        }
-
-    }
-    const ProcessToCheckOut = () => {
-        const productsCard = JSON.parse(localStorage.getItem("persistantState"))
-        var id = ''
-        var token = ""
-        if (session.status === "authenticated") {
-            id = session.data.user.accessToken.customer._id
-            token = session.data.user.accessToken.token
-        }
-        let carts = productsCard.map(product => {
-
-            return {
-                productId: product._id,
-                qty: product.quantity,
-                total: product.pricing.sellprice * product.quantity
-            }
-        })
+    localStorage.setItem("cart", JSON.stringify([]));
+  };
+  const updateCartProductQuantity = (item, updatedQuantity) => {
+    const isQuantityIncreased = cartItems.find(
+      (itemm) =>
+        ((itemm._id === item._id && itemm.variantId === item.variantId) ||
+          (itemm._id === item._id && !itemm.variantId === item.variantId)) &&
+        item?.productQuantity >= updatedQuantity
+    );
+    if (isQuantityIncreased) {
+      let updatedCartItems = cartItems?.map((cartItem) => ({
+        ...cartItem,
+        quantity:
+          cartItem._id === item._id &&
+          (cartItem.variantId === item.variantId ||
+            (!cartItem.variantId && !item.variantId))
+            ? updatedQuantity
+            : cartItem.quantity,
+      }));
+      setCartItems([...updatedCartItems]);
+      if (session?.status !== "authenticated") {
+        dispatch(
+          increaseQuantity(
+            item._id,
+            item.productQuantity,
+            item.variantId,
+            updatedQuantity
+          )
+        );
+        dispatch(calculateUnauthenticatedCart(updatedCartItems));
+        setIsQuantityBtnLoading(false);
+      } else {
+        let id = get(session, "data.user.accessToken.customer._id");
         let variables = {
-            userId: id,
-            products: carts,
-        }
-    }
-
-    const updateCartProduct = () => {
-        const productsCard = JSON.parse(localStorage.getItem("persistantState"))
-        var id = ''
-        var token = ""
-        if (session.status === "authenticated") {
-            id = session.data.user.accessToken.customer._id
-            token = session.data.user.accessToken.token
-        }
-        let carts = productsCard.cart.map(product => {
-            return {
-                productId: product?._id,
-                qty: product?.quantity,
-                productTitle: product?.name,
-                productImage: product?.feature_image?.original,
-                productPrice: (product?.pricing?.sellprice ? product?.pricing?.sellprice : product?.pricing?.price)?.toString()
+          userId: id,
+          productId: get(item, "_id"),
+          qty: updatedQuantity,
+        };
+        dispatch(changeQty(variables))
+          .then((res) => {
+            if (get(res, "data.changeQty.success")) {
+              dispatch(calculateUserCart(id));
             }
+            setIsQuantityBtnLoading(false);
+          })
+          .catch((error) => {
+            setIsQuantityBtnLoading(false);
+          });
+      }
+    } else {
+      if(item?.productQuantity){
+      notify(`Only ${item?.productQuantity} Unit(s) available in stock `);
+      }
+    }
+  };
+  // Function to remove an item from the cart
+  const removeToCart = async (item) => {
+    let product = get(item, "_id", "");
+    if (session?.status === "authenticated") {
+      let id = get(session, "data.user.accessToken.customer._id");
+      let variables = {
+        userId: id,
+        productId: item._id,
+        variantId: get(item, "variantId", ""),
+      };
+
+      mutation(DELETE_CART_PRODUCTS, variables)
+        .then((res) => {
+          if (get(res, "data.deleteCartProduct.success")) {
+            dispatch(calculateUserCart(id));
+          }
         })
-        let variables = {
-            id: cart_id,
-            products: carts,
-        }
+        .catch((error) => {
+          if (get(error, "extensions.code") === 401) {
+            logoutAndClearData(dispatch);
+          }
+        });
+    } else {
+      let cartItemsfilter = cartItems.filter(
+        (itemm) =>
+          itemm._id !== product ||
+          (itemm._id === product && itemm.variantId !== item.variantId)
+      );
+      let variables = {
+        id: product,
+        variantId: get(item, "variantId", ""),
+      };
 
-        mutation(UPDATE_CART_PRODUCT, variables, token).then(res => console.log("res", res))
+      dispatch(removeCartItemAction(variables));
+      dispatch(calculateUnauthenticatedCart(cartItemsfilter));
+      setCartItems(cartItemsfilter);
     }
-
-    if (cartLoading) {
-        return <>
-            <BreadCrumb title={"Cart"} />
-            <section className="shopcart-table loading-table">
-                <Container>
-                    <div className="row">
-                        <div className="col-12">
-                            <LoadingCartTable />
-                        </div>
-                    </div>
-                </Container>
-            </section>
-        </>
-    }
-    else return (
-        <>
-            <BreadCrumb title={"Cart"} />
-            <section className="shopcart-table">
-                <Container>
-                    {cartItems?.length > 0 ? (
-                        <div className="row">
-                            <div className="col-12">
-                                <CartTable
-                                    homepageData={homepageData}
-                                    decimal={decimal}
-                                    isQuantityBtnLoading={isQuantityBtnLoading}
-                                    cartItems={cartItems}
-                                    quantity={quantityy}
-                                    IncreaseQuantity={IncreaseQuantity}
-                                    DecreaseQuantity={DecreaseQuantity}
-                                    removeToCart={removeToCart}
-                                    CalculateProductTotal={CalculateProductTotal}
-                                    AllCartItemsClear={AllCartItemsClear}
-                                    updateCartProduct={updateCartProduct}
-                                    currency={currency}
-                                    available={true}
-                                    settings={settings}
-
-                                />
-
-                                {unAvailableProducts && unAvailableProducts?.length > 0 ? <><h3 style={{ color: 'red', fontSize: '15px' }}>Out of stock</h3>
-
-                                    <CartTable
-                                        homepageData={homepageData}
-                                        decimal={decimal}
-                                        isQuantityBtnLoading={isQuantityBtnLoading}
-                                        cartItems={unAvailableProducts}
-                                        quantity={quantityy}
-                                        IncreaseQuantity={IncreaseQuantity}
-                                        DecreaseQuantity={DecreaseQuantity}
-                                        removeToCart={removeToCart}
-                                        CalculateProductTotal={CalculateProductTotal}
-                                        AllCartItemsClear={AllCartItemsClear}
-                                        updateCartProduct={updateCartProduct}
-                                        currency={currency}
-                                        available={false}
-                                        settings={settings}
-
-                                    /></> : null}
-                                <div className="cart-action text-end">
-                                    <Link href="/shop"><a className="card-btons "><i className="fas fa-shopping-bag"></i> Continue Shopping</a></Link>
-                                </div>
-                                {/* <div className="devider"></div> */}
-                                <div className="card-other-information flex-column-reverse">
-                                    {/* <div className="col-lg-6 col-md-12 invisible">
-                                        <h4>Shopping Calculation</h4>
-                                        <p>Flat rate : <span>5%</span></p>
-                                        <Form>
-                                            <Row className="mb-3">
-                                                <Form.Group as={Col} controlId="state">
-                                                    <Form.Control type="text" placeholder="State / Country" />
-                                                </Form.Group>
-                                                <Form.Group as={Col} controlId="zip-code">
-                                                    <Form.Control type="text" placeholder="Pincode / Zipcode" />
-                                                </Form.Group>
-                                            </Row>
-                                            <a className="card-btons  mr-10 mb-sm-15" onClick={updateCartProduct}><i className="fas fa-random"></i> Update Cart</a>
-                                        </Form>
-                                        <h4>Apply Coupon</h4>
-                                        <div>
-                                            <Row className="mb-3">
-                                                <Form.Group as={Col} controlId="state">
-                                                    <Form.Control type="text" placeholder="Your Code" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} />
-                                                </Form.Group>
-                                                <Form.Group as={Col} controlId="zip-code">
-                                                    <a className="card-btons  mr-10 mb-sm-15" onClick={doApplyCouponCode}><i className="fas fa-tag"></i> Apply Code</a>
-                                                </Form.Group>
-                                            </Row>
-                                        </div>
-
-                                    </div> */}
-                                    <div className="col-lg-12 col-md-12 col-sm-12 mt-4">
-                                        <div className="border p-md-4 p-30 border-radius cart-totals">
-                                            <div className="heading_s1 mb-3">
-                                                <h4>Cart Totals</h4>
-                                            </div>
-                                            <div className="table-responsive">
-                                                <table className="table">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td className="cartTotal_label">Cart Subtotal</td>
-                                                            <td className="cartTotal_amount"><span className="font-lg fw-900 text-brand">
-                                                                {currency}  {getPrice(CalculateProductTotal(cartItems), decimal)}
-                                                            </span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="cartTotal_label">Shipping</td>
-                                                            <td className="cartTotal_amount"> <i className="ti-gift mr-5"></i> Free Shipping</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="cartTotal_label">Total</td>
-                                                            <td className="cartTotal_amount"><strong><span className="font-xl fw-900 text-brand">
-                                                                {currency} {getPrice(CalculateProductTotal(cartItems), decimal)}
-                                                            </span></strong></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <Link href="/checkout">
-                                                <a className="card-btons" ><i className="fas fa-archive"></i> Proceed To CheckOut</a>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ) :
-                        (unAvailableProducts && unAvailableProducts?.length > 0 ? <><h3 style={{ color: 'red', fontSize: '15px' }}>Out of stock</h3>
-
-                            <CartTable
-                                homepageData={homepageData}
-                                decimal={decimal}
-                                isQuantityBtnLoading={isQuantityBtnLoading}
-                                cartItems={unAvailableProducts}
-                                quantity={quantityy}
-                                IncreaseQuantity={IncreaseQuantity}
-                                DecreaseQuantity={DecreaseQuantity}
-                                removeToCart={removeToCart}
-                                CalculateProductTotal={CalculateProductTotal}
-                                AllCartItemsClear={AllCartItemsClear}
-                                updateCartProduct={updateCartProduct}
-                                currency={currency}
-                                available={false}
-
-                            /></> : <p
-                                style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            No product available in cart
-                        </p>)
-                    }
-                </Container>
-            </section>
-
-        </>
-    )
-}
+  };
+  if (cartLoading) {
+    return (
+      <>
+        <BreadCrumb title={"Cart"} />
+        <section className="shopcart-table loading-table">
+          <Container>
+            <div className="row">
+              <div className="col-12">
+                <LoadingCartTable />
+              </div>
+            </div>
+          </Container>
+        </section>
+      </>
+    );
+  } else
+    return (
+      <>
+        <BreadCrumb title={"Cart"} />
+        <section className="shopcart-table">
+          <Container>
+            {isQuantityBtnLoading && <Loading />}
+            {cartItems?.length > 0 ? (
+              <div className="row">
+                <div className="col-12">
+                  <CartTable
+                    homepageData={homepageData}
+                    cartItems={cartItems}
+                    removeToCart={removeToCart}
+                    AllCartItemsClear={AllCartItemsClear}
+                    currency={currency}
+                    totalSummary={totalSummary}
+                    updateCartProductQuantity={updateCartProductQuantity}
+                  />
+                </div>
+              </div>
+            ) : (
+              <p
+                style={{
+                  display: "flex",
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                No product available in cart
+              </p>
+            )}
+          </Container>
+        </section>
+      </>
+    );
+};
 export default YourCard;
 
 export async function getServerSideProps(context) {
-
-    if (process.env.NODE_ENV === 'development' || !process.env.NEXT_EXPORT) {
-    const session = await getSession(context)
-    let id = session?.user?.accessToken?.customer._id
+  if (process.env.NODE_ENV === "development" || !process.env.NEXT_EXPORT) {
+    const session = await getSession(context);
+    let id = session?.user?.accessToken?.customer._id;
     var customercart = [];
-    var cart_id = ""
-    var CartsDataa = {}
+    var cart_id = "";
+    var CartsDataa = {};
     var homepageData = [];
     var currencyStore = [];
     if (session !== null) {
-
-        /* ----------------------- GET USER CART -----------------------------*/
-
-        // try {
-        //     const { data: CartsData } = await client.query({
-        //         query: GET_USER_CART,
-        //         variables: { id: id }   
-        //     })
-        //     CartsDataa =CartsData
-        //     cart_id = CartsData.cartbyUser.id
-        //     let customercarts = CartsData?.cartbyUser.products
-        //     let cartitems = await customercarts.map(product => {
-        //         return {
-        //             _id: product?.productId,
-        //             name: product?.productTitle,
-        //             pricing: {
-        //                 sellprice: product?.total
-        //             },
-        //             feature_image: { thumbnail: product?.productImage === undefined ? null : product?.productImage },
-        //             quantity: product?.qty
-        //         }
-        //     })
-        //     customercart = cartitems
-        // }
-        // catch (e) {
-        //     console.log("error==", e)
-        // }
     }
+    /* ----------------------- GET USER CART -----------------------------*/
 
     /* ----------------------- GEt currency -----------------------------*/
     try {
-        const { data: homepagedata } = await client.query({
-            query: GET_HOMEPAGE_DATA_QUERY
-        })
-        homepageData = homepagedata
+      const { data: homepagedata } = await client.query({
+        query: GET_HOMEPAGE_DATA_QUERY,
+      });
+      homepageData = homepagedata;
 
-        currencyStore = homepagedata?.getSettings?.store
-    }
-    catch (e) {
-        console.log("homepage Error===", e);
-    }
-
+      currencyStore = homepagedata?.getSettings?.store;
+    } catch (e) {}
 
     return {
-        props: {
-            customercart,
-            cart_id,
-            CartsDataa,
-            currencyStore,
-            homepageData
-        },
-
-
-    }
+      props: {
+        customercart,
+        cart_id,
+        CartsDataa,
+        currencyStore,
+        homepageData,
+      },
+    };
+  }
 }
-}
-
-

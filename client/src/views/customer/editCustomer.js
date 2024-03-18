@@ -105,18 +105,21 @@ const EditCustomerComponent = ({ params }) => {
           setcustomer({ ...customer, ...Customers.customers[i] });
           break;
         }
-      } setEditMode(false);
+      }
+      setEditMode(false);
     } else {
-      setcustomer(customerObj)
+      setcustomer(customerObj);
     }
-
   }, [get(Customers, "customers"), ID]);
 
   const addUpdateCustomer = (e) => {
     e.preventDefault();
-    let errors = validate(['company', "email", "lastName", "firstName"], customer);
-    let phoneNumberError = validatePhone(["phone"], customer)
-    let passwordError = validate(["password"], customer)
+    let errors = validate(
+      ["company", "email", "lastName", "firstName"],
+      customer
+    );
+    let phoneNumberError = validatePhone(["phone"], customer);
+    let passwordError = validate(["password"], customer);
 
     if (!isEmpty(errors)) {
       dispatch({
@@ -127,8 +130,7 @@ const EditCustomerComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else if (!isEmpty(phoneNumberError)) {
+    } else if (!isEmpty(phoneNumberError)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -137,8 +139,7 @@ const EditCustomerComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else {
+    } else {
       if (ID) {
         dispatch(customerUpdateAction(customer, navigate));
       } else {
@@ -167,7 +168,6 @@ const EditCustomerComponent = ({ params }) => {
   };
 
   const editAddress = (address) => {
-
     setEditMode(true);
     setSingleCustomer({ ...SingleCustomerObject, ...address });
   };
@@ -177,32 +177,47 @@ const EditCustomerComponent = ({ params }) => {
   };
 
   const AddressBookPhonehandlechange = (value, name) => {
-
     setSingleCustomer({ ...singleCustomer, [name]: value });
   };
 
   const addressInput = (label, name) => {
-
     return (
       <Grid item md={12} sm={6} xs={12}>
-
-        {label === 'Phone' ? <PhoneNumber handleOnChange={AddressBookPhonehandlechange} phoneValue={singleCustomer.phone} width="100%" className="phoneValidation" /> :
-
+        {label === "Phone" ? (
+          <PhoneNumber
+            handleOnChange={AddressBookPhonehandlechange}
+            phoneValue={singleCustomer.phone}
+            width="100%"
+            className="phoneValidation"
+          />
+        ) : (
           <TextInput
             label={label}
             name={name}
             value={singleCustomer[name]}
             onInputChange={handleAddressInputField}
             sizeSmall
-          />}
+          />
+        )}
       </Grid>
     );
   };
 
   const updateAddress = () => {
-
-    let phoneNumberError = validatePhone(["phone"], singleCustomer)
-    let errors = validate(["pincode", "country", "state", "city", "addressLine1", 'company', "lastName", "firstName",], singleCustomer);
+    let phoneNumberError = validatePhone(["phone"], singleCustomer);
+    let errors = validate(
+      [
+        "pincode",
+        "country",
+        "state",
+        "city",
+        "addressLine1",
+        "company",
+        "lastName",
+        "firstName",
+      ],
+      singleCustomer
+    );
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -221,15 +236,26 @@ const EditCustomerComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else {
-      dispatch(addressbookUpdateAction(singleCustomer))
+    } else {
+      dispatch(addressbookUpdateAction(singleCustomer));
     }
   };
 
   const addAddress = () => {
-    let phoneNumberError = validatePhone(["phone"], singleCustomer)
-    let errors = validate(["pincode", "country", "state", "city", "addressLine1", 'company', "lastName", "firstName",], singleCustomer);
+    let phoneNumberError = validatePhone(["phone"], singleCustomer);
+    let errors = validate(
+      [
+        "pincode",
+        "country",
+        "state",
+        "city",
+        "addressLine1",
+        "company",
+        "lastName",
+        "firstName",
+      ],
+      singleCustomer
+    );
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -248,12 +274,9 @@ const EditCustomerComponent = ({ params }) => {
           error: true,
         },
       });
+    } else {
+      dispatch(addressbookAddAction(singleCustomer));
     }
-    else {
-      dispatch(addressbookAddAction(singleCustomer))
-    };
-
-
   };
 
   const deleteAddressBook = (_id) => {
@@ -270,11 +293,9 @@ const EditCustomerComponent = ({ params }) => {
     setSingleCustomer(SingleCustomerObject);
   };
 
-  const toInputLowercase = e => {
+  const toInputLowercase = (e) => {
     e.target.value = ("" + e.target.value).toLowerCase();
   };
-
-
 
   return (
     <>
@@ -296,7 +317,10 @@ const EditCustomerComponent = ({ params }) => {
           className={classes.secondmainrow}
         >
           <Grid item lg={12}>
-            <CardBlocks title={ID ? "Customer Information" : "Add Customer"} nomargin>
+            <CardBlocks
+              title={ID ? "Customer Information" : "Add Customer"}
+              nomargin
+            >
               <Grid container spacing={isSmall ? 2 : 4}>
                 <Grid item md={3} sm={6} xs={12}>
                   <TextInput
@@ -342,16 +366,19 @@ const EditCustomerComponent = ({ params }) => {
                   />
                 </Grid>
 
-                <Grid item md={3} sm={6} xs={12} >
-                  <PhoneNumber handleOnChange={handleOnChange} phoneValue={customer.phone} width="100%" />
-
+                <Grid item md={3} sm={6} xs={12}>
+                  <PhoneNumber
+                    handleOnChange={handleOnChange}
+                    phoneValue={customer.phone}
+                    width="100%"
+                  />
                 </Grid>
               </Grid>
             </CardBlocks>
           </Grid>
 
           {/* ==============Address Books============== */}
-          {ID ?
+          {ID ? (
             <>
               <Grid item md={4} sm={12} xs={12}>
                 <CardBlocks title={`${editMode ? "Edit" : "Add"} Adress`}>
@@ -419,7 +446,7 @@ const EditCustomerComponent = ({ params }) => {
                   {customer &&
                     customer.addressBook &&
                     customer.addressBook.map((address, index) => (
-                      <Grid item md={6} sm={6} xs={12} key={index} >
+                      <Grid item md={6} sm={6} xs={12} key={index}>
                         <Box style={{ marginTop: "22px" }}>
                           <Card>
                             <CardHeader
@@ -447,8 +474,13 @@ const EditCustomerComponent = ({ params }) => {
                                         />
                                       </Button>
                                     </Tooltip>
-                                    <Tooltip title="Edit Address" aria-label="edit">
-                                      <Button onClick={() => editAddress(address)}>
+                                    <Tooltip
+                                      title="Edit Address"
+                                      aria-label="edit"
+                                    >
+                                      <Button
+                                        onClick={() => editAddress(address)}
+                                      >
                                         <EditIcon />
                                       </Button>
                                     </Tooltip>
@@ -519,7 +551,8 @@ const EditCustomerComponent = ({ params }) => {
                     ))}
                 </Grid>
               </Grid>
-            </> : null}
+            </>
+          ) : null}
         </Grid>
       </form>
     </>

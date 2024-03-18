@@ -586,7 +586,7 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Product Category", false);
       }
       try {
-        const cat = await ProductCat.findByIdAndRemove(args.id);
+        const cat = await ProductCat.deleteOne({_id:args.id});
 
         if (cat) {
           // if (cat.image) {
@@ -667,6 +667,7 @@ module.exports = {
           if (args.gallery_image) {
             let galleryObject = "";
             for (let i in args.gallery_image) {
+              console.log( args.gallery_image[i].file,' args.gallery_image[i].file')
               galleryObject = await imageUpload(
                 args.gallery_image[i].file,
                 "assets/images/product/gallery/", "productgallery"
@@ -756,7 +757,7 @@ module.exports = {
       }
     },
     updateProduct: async (root, args, { id }) => {
-
+console.log("updateProduct")
       await checkAwsFolder('product');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
@@ -803,6 +804,7 @@ module.exports = {
           if(matchedProduct && matchedProduct._id != args.id){
             isSku = true;
           } */
+          console.log("updateImage",product.update_feature_image)
           let imgObject = "";
           if (args.update_feature_image) {
             imgObject = await imageUpload(
@@ -948,7 +950,9 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
       }
       try {
-        const product = await Product.findByIdAndRemove(args.id);
+        const product =  await Product.deleteOne({ _id: args.id });
+
+
         if (product) {
           if (product.feature_image) {
             imageUnlink(product.feature_image);

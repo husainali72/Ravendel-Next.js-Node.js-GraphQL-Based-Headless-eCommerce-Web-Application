@@ -8,10 +8,13 @@ const Setting = require("../models/Setting");
 const { uploadFile, FileDelete } = require("../config/aws");
 const multer = require('multer');
 const path = require('path');
-
-
-
-
+const Cart = require("../models/Cart");
+const Product = require("../models/Product");
+const ProductAttributeVariation = require("../models/ProductAttributeVariation");
+const Shipping = require("../models/Shipping");
+const Tax = require("../models/Tax");
+const Coupon = require("../models/Coupon");
+const mongoose = require('mongoose');
 
 
 const isEmpty = (value) =>
@@ -42,12 +45,16 @@ const checkError = (error) => {
 module.exports.checkError = checkError;
 /*-------------------------------------------------------------------------------------------------------*/
 
-const { AuthenticationError } = require("apollo-server-express");
+const { GraphQLError  } = require("graphql");
 
 const checkToken = (token) => {
   if (token === false) {
-    throw new AuthenticationError(
-      "Authentication token is invalid, please log in"
+    throw new GraphQLError(
+      "Authentication token is invalid, please log in" ,{
+        extensions: {
+          code:401,
+        },
+      }
     );
   }
   return;
@@ -123,26 +130,7 @@ const updateUrl = async (url, table, updateId) => {
 
 module.exports.updateUrl = updateUrl;
 /*----------------------------------------------store image in local storage---------------------------------------------------------*/
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'uploads/');
-//   },
-//   filename: function (req, file, cb) {
-//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-//     cb(null, uniqueSuffix + path.extname(file.originalname));
-//   },
-// });
-// const upload = multer({ storage: storage });
-// const UploadImageLocal = async (image, path, name) => {
-//   console.log('name', name)
-//   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-//   const { createReadStream, filename } = await image
-//   const stream = createReadStream();
-//   const imagePath = `${path}/${uniqueSuffix + filename}`;
-//   const fileStream = fs.createWriteStream(imagePath);
-//   stream.pipe(fileStream);
-//   return imagePath
-// };
+
 const UploadImageLocal = async (image, path, name) => {
   try {
 
@@ -247,20 +235,12 @@ const imageUpload = async (upload, uploadPath, nametype) => {
             message: "This extension not allowed",
           });
         }
-
-        // console.log(upload);
         let stream = createReadStream();
 
         filename = slugify(filename, { lower: true, replacement: "-" });
         filename = Date.now() + "-" + filename;
-
-        // let original = uploadPath + "original/" + filename;
-        // let large = uploadPath + "large/" + filename;
-        // let medium = uploadPath + "medium/" + filename;
-        // let thumbnail = uploadPath + "thumbnail/" + filename;
         let path = "." + uploadPath + filename;
 
-        // if (!fs.existsSync("." + uploadPath + "original/")) {
         if (!fs.existsSync("." + uploadPath)) {
           return resolve({
             success: false,
@@ -284,74 +264,38 @@ const imageUpload = async (upload, uploadPath, nametype) => {
           .pipe(fs.createWriteStream(path))
 
           .on("finish", async () => {
-            //console.log('nametype',nametype);
-            // let awsoriginalpath, awslargepath, awsmediumpath, awsthumbnailpath;
             let awsFilePath;
             if (nametype == "Blog") {
-              // awsoriginalpath = 'blog/feature/original';
-              // awslargepath = 'blog/feature/large';
-              // awsmediumpath = 'blog/feature/medium';
-              // awsthumbnailpath = 'blog/feature/thumbnail';
               awsFilePath = "blog";
             }
 
             if (nametype == "Setting") {
-              // awsoriginalpath = 'setting/original';
-              // awslargepath = 'setting/large';
-              // awsmediumpath = 'setting/medium';
-              // awsthumbnailpath = 'setting/thumbnail';
               awsFilePath = "setting";
             }
 
             if (nametype == "Product Category") {
-              // awsoriginalpath = 'product/category/original';
-              // awslargepath = 'product/category/large';
-              // awsmediumpath = 'product/category/medium';
-              // awsthumbnailpath = 'product/category/thumbnail';
               awsFilePath = "product/category";
             }
 
             if (nametype == "Brand") {
-              // awsoriginalpath = 'brand/original';
-              // awslargepath = 'brand/large';
-              // awsmediumpath = 'brand/medium';
-              // awsthumbnailpath = 'brand/thumbnail';
               awsFilePath = "brand";
             }
 
             if (nametype == "User") {
-              // awsoriginalpath = 'user/original';
-              // awslargepath = 'user/large';
-              // awsmediumpath = 'user/medium';
-              // awsthumbnailpath = 'user/thumbnail';
               awsFilePath = "user";
             }
 
             if (nametype == "productgallery") {
-              // awsoriginalpath = 'product/gallery/original';
-              // awslargepath = 'product/gallery/large';
-              // awsmediumpath = 'product/gallery/medium';
-              // awsthumbnailpath = 'product/gallery/thumbnail';
               awsFilePath = "product/gallery";
             }
 
             if (nametype == "productfeature") {
-              // awsoriginalpath = 'product/feature/original';
-              // awslargepath = 'product/feature/large';
-              // awsmediumpath = 'product/feature/medium';
-              // awsthumbnailpath = 'product/feature/thumbnail';
               awsFilePath = "product/feature";
             }
 
             if (nametype == "productvariant") {
-              // awsoriginalpath = 'product/varient/original';
-              // awslargepath = 'product/varient/large';
-              // awsmediumpath = 'product/varient/medium';
-              // awsthumbnailpath = 'product/varient/thumbnail';
               awsFilePath = "product/variant";
             }
-
-            // const awsoriginal = await uploadFile(original, filename, awsoriginalpath);
             const awsFile = await uploadFile(path, filename, awsFilePath);
 
             for (let i in sizes) {
@@ -376,18 +320,6 @@ const imageUpload = async (upload, uploadPath, nametype) => {
               }
             }
 
-            // const awslarge = await uploadFile(large, filename, awslargepath);
-            // const awsmedium = await uploadFile(medium, filename, awsmediumpath);
-            // const awsthumbnail = await uploadFile(thumbnail, filename, awsthumbnailpath);
-            // delete file if uploaded on AWS and exists in local
-            // if(!awsoriginal || awsoriginal) {
-            //   imgType.map(type => {
-            //     let filePath = `.${uploadPath}${type}/${filename}`;
-            //     if(fs.existsSync(filePath)){
-            //       fs.unlinkSync(filePath);
-            //     }
-            //   })
-            // }
 
             if (!awsFile || awsFile) {
               let filePath = `.${uploadPath}${filename}`;
@@ -397,17 +329,10 @@ const imageUpload = async (upload, uploadPath, nametype) => {
             }
             return resolve({
               success: true,
-              // data: {
-              //   original: awsoriginal,
-              //   large: awslarge,
-              //   medium: awsmedium,
-              //   thumbnail: awsthumbnail,
-              // },
               data: awsFile,
             });
           });
       } catch (error) {
-        //  console.log(error);
         return resolve({
           success: false,
           message: "This image can't be upload 3",
@@ -424,9 +349,6 @@ module.exports.imageUpload = imageUpload;
 /*-------------------------------------------------------------------------------------------------------*/
 
 const imageUnlink = async (imgObject) => {
-  // for (let i in imgObject) {
-  // console.log(imgObject)
-  //console.log('IMAGEOBJECT',imgObject[i]);
   const setting = await Setting.findOne({});
   const storageType = setting?.imageStorage?.status
 
@@ -443,10 +365,6 @@ const imageUnlink = async (imgObject) => {
       });
     }
   }
-  // fs.unlink("./assets/images/" + imgObject[i], function (err) {
-  //   if (err) console.log(err);
-  // });
-  // }
 };
 
 module.exports.imageUnlink = imageUnlink;
@@ -583,7 +501,6 @@ const duplicateData = async (args, model, updateId) => {
     docs = await model.find(args).collation({ locale: "en", strength: 2 });
   } else {
     docs = await model.find(args).collation({ locale: "en", strength: 2 });
-    console.log(docs);
     docs = docs.filter((doc) => {
       if (doc._id.toString() !== updateId.toString()) return doc;
     });
@@ -600,19 +517,7 @@ const subTotalDetailsEntry = async (
   taxModel
 ) => {
   const subTotalDetails = {};
-  // assign shipping_name
-  // let shipping = await shippingModel.findOne({})
-  // shipping.shippingClass.filter(shipClass => {
-  //   if(shipping.global.is_global && shipping.global.shippingClass.toString() === shipClass._id.toString()) subTotalDetails.shipping_name = shipClass.name
-  //   else subTotalDetails.shipping_name = "None"
-  // })
-  // assign tax_name
-  // let tax = await taxModel.findOne({})
-  // tax.taxClass.filter(taxClass => {
-  //   if(tax.global.is_global && tax.global.taxClass.toString() === taxClass._id.toString()) subTotalDetails.tax_name = taxClass.name
-  //   else subTotalDetails.tax_name = "None"
-  // })
-  // assign couponCode, amount, type
+  
   const coupon = await couponModel.findOne({
     code: { $regex: `${data.couponCode}`, $options: "i" },
   });
@@ -659,7 +564,6 @@ const subTotalSummaryEntry = async (
     couponType = coupon.discountType;
   }
   for (let product of data.products) {
-    // console.log(product)
     let shippingValue, taxValue;
     productTotal = product.cost * product.qty;
     for (let shippingClass of shippingClasses) {
@@ -672,16 +576,13 @@ const subTotalSummaryEntry = async (
         ? (taxValue = (taxClass.percentage / 100) * productTotal)
         : (taxValue = 0);
     }
-    // console.log(shippingValue, taxValue)
     orderSubTotal += productTotal;
     orderGrandTotal += productTotal + shippingValue + taxValue;
 
     shippingAmount += shippingValue;
     taxAmount += taxValue;
-    // console.log(shippingAmount, taxAmount, orderSubTotal, orderGrandTotal)
   }
   orderGrandTotal -= couponAmount;
-  // console.log(orderGrandTotal)
   subTotalSummary.coupon_type = couponType;
   subTotalSummary.shipping_value = shippingAmount;
   subTotalSummary.tax_value = taxAmount;
@@ -781,20 +682,6 @@ const generateOrderNumber = async (Order, Setting) => {
   let orderDigits = setting.store.order_options.order_digits;
   let prefix = setting.store.order_options.order_prefix;
   let code = "";
-  // prefix = ""
-  // let pipeline = [
-  //   {$project: {
-  //     orderPrefix: {
-  //       $substrBytes: [
-  //         "$order_number",
-  //         0,
-  //         {$subtract: [ {$strLenBytes: "$order_number"}, orderDigits ]}
-  //       ]
-  //     }
-  //   }},
-  //   {$match: {"orderPrefix": prefix}},
-  //   {$project: {orderPrefix: 0}}
-  // ]
 
   let pipeline = [
     {
@@ -863,19 +750,98 @@ const prodAvgRating = async (productID, reviewModel, productModel) => {
 };
 module.exports.prodAvgRating = prodAvgRating;
 
-const againCalculateCart = async (coupon, args, productModel, amountDiscount) => {
-  console.log(coupon, args, productModel, amountDiscount, '=============')
-  let discountAmount = 0;
-  let forCouponCartTotal = 0;
-  let IsApplicableDiscount = false;
+// Old code commented by HusainSW dated 01-03-2024
+// const againCalculateCart = async (coupon, args, productModel, amountDiscount) => {
+//   let discountAmount = 0;
+//   let forCouponCartTotal = 0;
+//   let IsApplicableDiscount = false;
 
-  for (let item of args.cartItem) {
+//   for (let item of args.cartItem) {
+//     let product = await productModel.findById(item.productId);
+//     if (product) {
+
+//       let includeProduct = false;
+//       let excludeProduct = false;
+//       let includeProductTotal;
+
+//       //if coupon category is abilable
+//       if (coupon.category) {
+//         if (product.categoryId && product.categoryId.length) {
+//           product.categoryId.map((catID) => {
+//             if (coupon.includeCategories.length && coupon.includeCategories.includes(catID)) {
+//               includeProduct = coupon.includeCategories.includes(catID);
+//             } else if (coupon.excludeCategories.length) {
+//               includeProduct = !coupon.excludeCategories.includes(catID);
+//               excludeProduct = coupon.excludeCategories.includes(catID);
+//             }
+//           });
+//         }
+//       }
+
+//       //if coupon category is not abilable but product is included in category;
+//       if (coupon.product && !includeProduct && !excludeProduct) {
+//         if (coupon.includeProducts.length) {
+//           includeProduct = coupon.includeProducts.includes(
+//             product._id.toString()
+//           );
+//         }
+//         if (coupon.excludeProducts.length) {
+//           includeProduct = !coupon.excludeProducts.includes(
+//             product._id.toString()
+//           );
+//         }
+//       }
+
+//       if (includeProduct && !excludeProduct) {
+//         includeProductTotal = 0;
+//         includeProductTotal = +item.productTotal;
+//         forCouponCartTotal = forCouponCartTotal || 0;
+//         forCouponCartTotal += includeProductTotal;
+//       }
+
+//     }
+//   }
+
+
+//   if (forCouponCartTotal && forCouponCartTotal != 0) {
+//     if (
+//       (coupon.minimumSpend === 0 ||
+//         coupon.minimumSpend <= forCouponCartTotal) &&
+//       (coupon.maximumSpend === 0 || coupon.maximumSpend > forCouponCartTotal)
+//     ) {
+//       IsApplicableDiscount = true;
+//     }
+//   }
+
+//   if (IsApplicableDiscount) {
+//     amountDiscount
+//       ? (discountAmount += parseFloat(coupon.discountValue))
+//       : (discountAmount +=
+//         parseFloat(+forCouponCartTotal / 100) *
+//         parseFloat(coupon.discountValue));
+//   }
+//   if (discountAmount && (discountAmount <= (forCouponCartTotal || 0))) {
+//     return discountAmount;
+//   } else if (discountAmount && (discountAmount > (forCouponCartTotal || 0))) {
+//     return discountAmount = forCouponCartTotal || 0;
+//   }
+//   else {
+//     return discountAmount = 0
+//   }
+// };
+
+// New code for calculate coupon on product category basis by HusainSW dated 01-03-2024
+const againCalculateCart = async (coupon, args, cart, productModel) => {
+  let eligibleProductTotalAmount = 0;
+
+  let couponCard = { couponApplied: false };
+  let couponDiscount = 0, isCouponFreeShipping = false;
+
+  for (let item of cart.cartItems) {
     let product = await productModel.findById(item.productId);
     if (product) {
 
       let includeProduct = false;
-      let excludeProduct = false;
-      let includeProductTotal;
 
       //if coupon category is abilable
       if (coupon.category) {
@@ -883,68 +849,51 @@ const againCalculateCart = async (coupon, args, productModel, amountDiscount) =>
         if (product.categoryId && product.categoryId.length) {
           product.categoryId.map((catID) => {
             if (coupon.includeCategories.length && coupon.includeCategories.includes(catID)) {
-              includeProduct = coupon.includeCategories.includes(catID);
-            } else if (coupon.excludeCategories.length) {
-              console.log('mfhgkfjdghkjfdhf')
-              includeProduct = !coupon.excludeCategories.includes(catID);
-              excludeProduct = coupon.excludeCategories.includes(catID);
+              includeProduct = true;
+              eligibleProductTotalAmount += item.total;
             }
           });
         }
-
       }
 
-      //if coupon category is not abilable but product is included in category;
-      if (coupon.product && !includeProduct && !excludeProduct) {
-        if (coupon.includeProducts.length) {
-          includeProduct = coupon.includeProducts.includes(
-            product._id.toString()
-          );
-        }
-        if (coupon.excludeProducts.length) {
-          includeProduct = !coupon.excludeProducts.includes(
-            product._id.toString()
-          );
-        }
+      if (includeProduct) {
+        eligibleProductTotalAmount += item.total;
       }
-      console.log(includeProduct, 'includeProduct', excludeProduct, item.productTotal)
-
-      if (includeProduct && !excludeProduct) {
-        includeProductTotal = 0;
-        includeProductTotal = +item.productTotal;
-        forCouponCartTotal = forCouponCartTotal || 0;
-        forCouponCartTotal += includeProductTotal;
-      }
-
     }
   }
 
 
-  if (forCouponCartTotal && forCouponCartTotal != 0) {
+  if (eligibleProductTotalAmount && eligibleProductTotalAmount != 0) {
     if (
       (coupon.minimumSpend === 0 ||
-        coupon.minimumSpend <= forCouponCartTotal) &&
-      (coupon.maximumSpend === 0 || coupon.maximumSpend > forCouponCartTotal)
+        coupon.minimumSpend <= eligibleProductTotalAmount) 
+        //&&       (coupon.maximumSpend === 0 || coupon.maximumSpend > forCouponCartTotal)
     ) {
-      IsApplicableDiscount = true;
+
+      if(coupon.discountType === 'amount-discount') {
+        couponDiscount = parseFloat(coupon.discountValue);
+      }
+      else if(coupon.discountType === 'precantage-discount') {
+        couponDiscount = parseFloat(cartTotal / 100) * parseFloat(coupon.discountValue);
+        if(coupon.maximumSpend && coupon.maximumSpend != 0) {
+          if (couponDiscount > coupon.maximumSpend) {
+            couponDiscount = coupon.maximumSpend;
+          }
+        }
+      }
+      else if(coupon.discountType === 'free-shipping') {
+        isCouponFreeShipping = true;
+        couponDiscount = cart.totalSummary.totalShipping;
+        cart.totalSummary.totalShipping = 0;
+      }
+      couponCard.couponApplied = true;
+      couponCard.appliedCouponCode = args.couponCode;
+      couponCard.appliedCouponDiscount = couponDiscount;
+      couponCard.isCouponFreeShipping = isCouponFreeShipping;
     }
   }
 
-  if (IsApplicableDiscount) {
-    amountDiscount
-      ? (discountAmount += parseFloat(coupon.discountValue))
-      : (discountAmount +=
-        parseFloat(+forCouponCartTotal / 100) *
-        parseFloat(coupon.discountValue));
-  }
-  if (discountAmount && (discountAmount <= (forCouponCartTotal || 0))) {
-    return discountAmount;
-  } else if (discountAmount && (discountAmount > (forCouponCartTotal || 0))) {
-    return discountAmount = forCouponCartTotal || 0;
-  }
-  else {
-    return discountAmount = 0
-  }
+  return couponCard;
 };
 module.exports.againCalculateCart = againCalculateCart;
 
@@ -955,52 +904,12 @@ const emptyCart = async (cart) => {
 };
 module.exports.emptyCart = emptyCart;
 
-// const addZipcodes = async (zipcode_file, filepath, modal) => {
-//   let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0]
-//     .file;
-//   const stream = createReadStream();
-
-//   const path = `.${filepath}/${filename}`;
-
-
-//   console.log(path, '============')
-//   stream
-//     .on("error", (error) => {
-//       console.log(JSON.stringify(error));
-
-//       fs.unlink(path, function (err) {
-//         if (err) console.log(err);
-//       });
-//       return resolve({
-//         success: false,
-//         message: "This file can't be uploaded",
-//       });
-//     })
-//     .pipe(fs.createWriteStream(path));
-
-//   if (fs.existsSync(path)) {
-//     let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
-//     csvData = csvData.split(",");
-
-//     for (let zipcode of csvData) {
-//       if (zipcode.length >= 5 || zipcode.length <= 10) {
-//         const existingZipcode = await modal.findOne({ zipcode });
-//         if (!existingZipcode) {
-//           const newZipcode = new modal({ zipcode });
-//           await newZipcode.save();
-//         }
-//       }
-//     }
-//     await modal.deleteMany({ zipcode: "\r\n" });
-//   }
-// };
 const addZipcodes = async (zipcode_file, filepath, modal) => {
   try {
     let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0].file;
     const stream = createReadStream();
 
     const path = `.${filepath}/${filename}`;
-    console.log(path, '============');
 
     // Remove the existing file if it exists
     if (fs.existsSync(path)) {
@@ -1051,3 +960,290 @@ const addZipcodes = async (zipcode_file, filepath, modal) => {
 };
 
 module.exports.addZipcodes = addZipcodes;
+
+
+const addCart = async (userId, cartItems) => {
+  const cart = await Cart.findOne({ userId: userId });
+  let existingCartProducts = cart && cart.products ? cart.products : [];
+
+  // let carttotal = 0;
+  // if local products exists then only run loop for adding products in customer cart
+  if (cartItems) {
+    for (let localProd of cartItems) {
+      let productAttributeValue, product, existingProduct;
+      product = await Product.findById({ _id: localProd.productId });
+      if(!product) {
+        //return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
+        console.log(`Product not exists - productId: ${localProd.productId}, productTitle: ${localProd.productTitle}`);
+        continue;
+
+        
+      }
+
+      if (localProd.variantId) {
+        productAttributeValue = await ProductAttributeVariation.findById(localProd.variantId);
+        if(!productAttributeValue) {
+          console.log(`Product variant not exists - productId: ${localProd.productId}, variantId: ${localProd.variantId}`);
+          continue;
+        }
+        // check local product id and variant id with customer cart product id
+        existingProduct = existingCartProducts.find((prod) =>
+          prod.productId.toString() === localProd.productId.toString() &&
+          prod.variantId == localProd.variantId.toString());
+      }
+      else {
+        // check local product id with customer cart product id
+        existingProduct = existingCartProducts.find((prod) => prod.productId.toString() === localProd.productId.toString());
+      }
+      
+      // console.log(productAttributeValue, 'productAttributeValue');
+      // console.log('existingProduct', existingProduct);
+      let productId = localProd.productId;
+      let qty = localProd.qty;
+        
+      // if matches then update customer cart product with local product
+      if (existingProduct) {
+        existingProduct.qty += localProd.qty
+      }
+      // else add local product to customer cart
+      else {
+        existingCartProducts.push({
+          productId,
+          variantId: localProd.variantId?.toString(),
+          productTitle: product?.name || localProd?.productTitle,
+          productPrice: productAttributeValue?.pricing?.sellprice || product?.pricing?.sellprice || localProd?.productPrice,
+          productImage: productAttributeValue?.image || product?.feature_image || localProd?.productImage,
+          attributes: localProd?.attributes,
+          qty,
+        });
+      }
+    }
+  }
+  //---------------------------------------------------------------------------------------------------------------
+
+  // if customer cart exists then update
+  if (cart) {
+    cart.products = existingCartProducts;
+    cart.updated = Date.now();
+    await cart.save();
+  }
+  // else create new cart
+  else {
+    const newCart = new Cart({
+      userId: userId,
+      products: existingCartProducts
+    });
+    await newCart.save();
+  }
+};
+
+module.exports.addCart = addCart;
+
+const calculateCart = async (userId, cartItems) => {
+  let cart;
+  if(userId) {
+    const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(userId) });
+    if (!cart) {
+      //throw putError("Cart not found");
+      return { success:false, message:'Cart not found', cartItems:[] };
+    }
+    cartItems = cart.products;
+  }
+  else if(!cartItems || !cartItems.length) {
+    return { success:false, message:'Cart Items not found', cartItems:[] };
+  }
+
+  let responseCartItems = [];
+
+  const shipping = await Shipping.findOne({});
+  const tax = await Tax.findOne({});
+  // const productAttribute = await ProductAttribute.find({});
+
+  let mrpTotal = 0, discountTotal = 0, cartTotal = 0;
+  let totalTax = 0
+  let totalShipping = 0
+  let grandTotal = 0
+
+  let global_tax = false;
+  let globalTaxPercentage;
+  if (tax.global.is_global) {
+    let taxClassId = tax.global.taxClass;
+    let myTaxClass = tax.taxClass.find(taxC => taxC._id.toString() == taxClassId.toString());
+    if (myTaxClass) {
+      global_tax = true;
+      globalTaxPercentage = myTaxClass.percentage;
+    }
+    // tax.taxClass.forEach((taxObject) => {
+    //   if (taxObject._id.toString() == taxClassId.toString()) {
+    //     global_tax = true;
+    //     taxPercentage = taxObject.percentage
+    //   }
+    // })
+  }
+
+  let global_shipping = false;
+  let globalShippingAmount;
+  let globalShippingPerOrder = false;
+
+  if (shipping.global.is_global) {
+    let shippingClassId = shipping.global.shippingClass;
+
+    let myShipClass = shipping.shippingClass.find(shipC => shipC._id.toString() == shippingClassId.toString());
+    if (myShipClass) {
+      global_shipping = true;
+      globalShippingAmount = myShipClass.amount;
+    }
+
+    // shipping.shippingClass.forEach((shippingObject) => {
+    //   if (shippingObject._id.toString() == shippingClassId.toString()) {
+    //     global_shipping = true;
+    //     globalShippingAmount = shippingObject.amount;
+    //   }
+    // })
+
+    if (shipping.global.is_per_order) {
+      globalShippingPerOrder = true
+    }
+  }
+
+  // console.log('global_tax', global_tax);
+  // console.log('global_shipping', global_shipping);
+
+  let taxPercentage;
+  let isFirstIteration = true;
+  for (const cartProduct of cartItems) {
+
+    let product = {}
+
+    let addvariants = false;
+    let attribute = []
+    if (cartProduct?.variantId) {
+      addvariants = true
+      product = await Product.findById(new mongoose.Types.ObjectId(cartProduct.productId));
+      attribute = await ProductAttributeVariation.find({
+        productId: cartProduct.productId, _id: cartProduct?.variantId, quantity: { $gte: cartProduct.qty }
+      });
+
+    } else {
+      product = await Product.findOne({ _id: cartProduct.productId, quantity: { $gte: cartProduct.qty } });
+    }
+
+    let prod = {
+      productId: cartProduct?.productId,
+      productTitle: product?.name || cartProduct?.productTitle,
+      productImage: product?.feature_image,
+      url: product?.url, 
+      mrp: product?.pricing?.price,
+      productPrice: product?.pricing?.sellprice || product?.pricing?.price || cartProduct?.productPrice,
+      qty: cartProduct?.qty,
+      //total: (cartProduct?.qty * product?.pricing?.sellprice || product?.pricing?.price || cartProduct?.productPrice),
+      attributes: cartProduct?.attributes,
+      productQuantity: product?.quantity,
+      variantId: cartProduct?.variantId,
+      shippingClass: product?.shipping?.shippingClass,
+      taxClass: product?.taxClass,
+      _id: cartProduct?._id,
+      available:(product && ((!addvariants && attribute?.length === 0) || (addvariants && attribute?.length > 0)) ? true : false)
+    }
+    responseCartItems.push(prod);
+
+    if(prod.available) {
+      prod.discountPrice = product?.pricing?.price - prod.productPrice;
+      prod.discountPercentage = Math.floor(prod.discountPrice / prod.mrp * 100);
+      prod.mrpAmount = prod.mrp * prod.qty;
+      prod.discountAmount = (prod.mrp - prod.productPrice) * prod.qty;
+      prod.amount = prod.productPrice * prod.qty;
+
+      mrpTotal += prod.mrpAmount;
+      discountTotal += prod.discountAmount;
+      cartTotal += prod.amount;
+
+      // product tax calculation start
+      taxPercentage = globalTaxPercentage;
+      if(!global_tax) {
+        let productTax;
+        if(product.taxClass) {
+          productTax = tax.taxClass.find(taxC => taxC._id.toString() == product.taxClass.toString());
+        }
+        if(productTax) {
+          taxPercentage = productTax.percentage;
+        }
+        else {
+          console.log('product tax class not found');
+        }
+        // console.log('taxPercentage', taxPercentage);
+      }
+
+      // console.log('before calculating tax amount');
+      prod.taxAmount = 0;
+      if (taxPercentage != 0) {
+        // console.log('tax.is_inclusive : ', tax.is_inclusive);
+        if (!tax.is_inclusive) {
+          prod.taxAmount = prod.amount * taxPercentage / 100;
+        }
+      }
+      totalTax += prod.taxAmount;
+      // product tax calculation completed
+      
+      // Product Shipping calculation start
+      prod.shippingAmount = 0;
+      // if Shipping is global
+      if (global_shipping) {
+        // console.log('globalShippingPerOrder', globalShippingPerOrder);
+        // if Shipping is applied Per Order
+        if (globalShippingPerOrder) {
+          // Applying/Adding Shipping Amount in total on loop's first iteration
+          if(isFirstIteration) {
+            totalShipping += globalShippingAmount;
+          }
+        }
+        else {
+          prod.shippingAmount = globalShippingAmount;
+          totalShipping += prod.shippingAmount;
+        }
+      }
+      // if Shipping is not global means it will be product wise
+      else {
+        // console.log('product._id', product._id);
+        let productShipping;
+        if(product.shipping?.shippingClass) {
+          productShipping = shipping.shippingClass.find(shipClass => 
+            shipClass._id.toString() == product.shipping.shippingClass.toString());
+        }
+        if(productShipping) {
+          prod.shippingAmount = productShipping.amount;
+          totalShipping += prod.shippingAmount;
+        }
+        else {
+          console.log('product shipping class not found');
+        }
+      }
+      // Product Shipping calculation completed
+
+      prod.total = prod.amount + prod.taxAmount + prod.shippingAmount;
+      isFirstIteration = false;
+    }
+  }
+
+  grandTotal = cartTotal + totalTax + totalShipping;
+  const totalSummary = {
+    mrpTotal : mrpTotal.toFixed(2),
+    discountTotal : discountTotal.toFixed(2),
+    cartTotal: cartTotal.toFixed(2),
+    totalTax: totalTax.toFixed(2),
+    totalShipping: totalShipping.toFixed(2),
+    grandTotal: grandTotal.toFixed(2)
+  }
+
+  return {
+    success:true, message:'', 
+    
+    id: cart?._id,
+    cartItems:responseCartItems,
+    status: cart?.status,
+    date: cart?.date,
+    updated: cart?.updated,
+    totalSummary
+  };
+}
+module.exports.calculateCart = calculateCart;

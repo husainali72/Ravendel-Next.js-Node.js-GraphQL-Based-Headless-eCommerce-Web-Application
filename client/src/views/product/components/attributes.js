@@ -322,8 +322,9 @@ const AttributesComponent = ({
     if (e.target.name === "image") {
       currentVariants.combinations[index]['upload_image'] = e.target.files;
       currentVariants.combinations[index]['previous_img'] = currentVariants.combinations[index].image
-      currentVariants.combinations[index][e.target.name] =
-        URL.createObjectURL(e.target.files[0]);
+      if (e?.target?.files?.length&&e.target.files[0]) {
+        currentVariants.combinations[index][e.target.name] = URL.createObjectURL(e.target.files[0]);
+      }
     } else {
       currentVariants.combinations[index][e.target.name] = e.target.value;
     }

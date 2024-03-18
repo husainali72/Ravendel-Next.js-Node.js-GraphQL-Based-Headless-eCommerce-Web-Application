@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { userUpdateAction, usersAction, userAddAction } from "../../store/action";
+import {
+  userUpdateAction,
+  usersAction,
+  userAddAction,
+} from "../../store/action";
 import {
   isEmpty,
   client_app_route_url,
@@ -31,7 +35,7 @@ var defaultObj = {
   email: "",
   role: "",
   password: "",
-  image: ""
+  image: "",
 };
 
 const EditUserComponent = ({ params }) => {
@@ -44,7 +48,7 @@ const EditUserComponent = ({ params }) => {
   const [user, setuser] = useState(defaultObj);
   const [featureImage, setfeatureImage] = useState(null);
   const [loading, setloading] = useState(false);
-  const baseURl = getBaseUrl(setting)
+  const baseURl = getBaseUrl(setting);
   useEffect(() => {
     if (isEmpty(get(UsersState, "users"))) {
       dispatch(usersAction());
@@ -70,25 +74,25 @@ const EditUserComponent = ({ params }) => {
         });
       }
     } else {
-      setuser(defaultObj)
-      setfeatureImage(null)
+      setuser(defaultObj);
+      setfeatureImage(null);
     }
   }, [get(UsersState, "users"), userId, baseURl]);
-  console.log(featureImage, 'feature')
   const fileChange = (e) => {
-    setfeatureImage(null);
-    setfeatureImage(URL.createObjectURL(e.target.files[0]));
-    if (userId) {
-      setuser({ ...user, ["updatedImage"]: e.target.files[0] });
-    }
-    else {
-      setuser({ ...user, ["image"]: e.target.files[0] });
+    const files = get(e, "target.files", []);
+    if (files?.length > 0) {
+      const updatedUser = {
+        ...user,
+        [userId ? "updatedImage" : "image"]: files[0],
+      };
+      setfeatureImage(URL.createObjectURL(files[0]));
+      setuser(updatedUser);
     }
   };
 
   const addUpdateUser = (e) => {
     e.preventDefault();
-    let errors = validate(["role", "password", 'email', "name"], user);
+    let errors = validate(["role", "password", "email", "name"], user);
 
     if (!isEmpty(errors)) {
       dispatch({
@@ -99,21 +103,18 @@ const EditUserComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else {
+    } else {
       if (userId) {
         dispatch(userUpdateAction(user, navigate));
-      }
-      else {
+      } else {
         dispatch(userAddAction(user, navigate));
       }
     }
-
   };
   const handleChange = (e) => {
     setuser({ ...user, [e.target.name]: e.target.value });
   };
-  const toInputLowercase = e => {
+  const toInputLowercase = (e) => {
     e.target.value = ("" + e.target.value).toLowerCase();
   };
   return (

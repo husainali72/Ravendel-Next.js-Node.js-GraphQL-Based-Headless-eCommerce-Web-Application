@@ -8,13 +8,12 @@ import { UPDATE_CUSTOMER, GET_CUSTOMER_QUERY, GET_CUSTOMERS, DELETE_ADDRESSBOOK 
 import client from "../../apollo-client";
 
 import { useRouter } from "next/router";
-import { query, mutation } from "../../utills/helpers";
-// import { useSession } from "next-auth/react";
-import AccountSettings from "../../components/account/component/account-setting"
+import { query, mutation, logoutAndClearData } from "../../utills/helpers";
 import AddressDetail from "../../components/account/component/address-details"
 import OrdersDetails from "../../components/account/component/orders-details"
-import { getSession, useSession } from "next-auth/react";
-import { Toaster } from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import { useDispatch } from "react-redux";
+import { get } from "lodash";
 
 var accountDetailObject = {
     firstName: "",
@@ -26,8 +25,8 @@ var accountDetailObject = {
 }
 const MyWishList = ({ id, customeraddres }) => {
     const session = useSession();
+    const dispatch=useDispatch()
     const [isRefreshing, setIsRefreshing] = useState(false);
-
     const refreshData = () => {
         router.replace(router.asPath);
         setIsRefreshing(true);
@@ -46,7 +45,10 @@ const MyWishList = ({ id, customeraddres }) => {
     useEffect(() => {
         setAccountDetails(customeraddres)
         setAccountAddress(customeraddres)
-        query(GET_CUSTOMER_QUERY, id).then((response) => {
+        let variable={
+            id:id
+        }
+        query(GET_CUSTOMER_QUERY, variable).then((response) => {
             const customeradd = response.data.customer.data
         })
 
@@ -57,14 +59,19 @@ const MyWishList = ({ id, customeraddres }) => {
 
     const updateAccountDetail = (e) => {
         e?.preventDefault();
-        mutation(UPDATE_CUSTOMER, accountDetails, token).then(async (response) => {
+        mutation(UPDATE_CUSTOMER, accountDetails).then(async (response) => {
             if (response.data.updateCustomer.success) {
                 let id = "622ae63d3aa0f0f63835ef8e"
-                query(GET_CUSTOMER_QUERY, id).then((response) => {
-                    const customeradd = response.data.customer.data
+                let variable={id:id}
+                query(GET_CUSTOMER_QUERY, variable).then((response) => {
+                    const customeradd = get(response,'data.customer.data')
                 })
                 refreshData()
             }
+        }).catch((error)=>{
+            if(get(error,'extensions.code')===401){
+                logoutAndClearData(dispatch)
+              }
         })
     }
     return (
@@ -211,30 +218,6 @@ const MyWishList = ({ id, customeraddres }) => {
 }
 export default MyWishList;
 
-// export async function getServerSideProps({ params }) {
-//     // console.log("params", params)
-//     const id = params.mywishlist
-//     var customeraddres = [];
-//     try {
-//         const { data: singleBlogData } = await client.query({
-//             query: GET_CUSTOMER_QUERY,
-//             variables: { id },
-//         })
-//         customeraddres = singleBlogData.customer.data
-//     }
-//     catch (e) {
-//         console.log("Bolg SinglePage ERROR==", e)
-//     }
-//     return {
-//         props: {
-//             id: params.mywishlist,
-//             customeraddres
-//         }
-//     }
-// }
-
-
-
 export async function getStaticPaths() {
     var AllCustomerData = {};
 
@@ -265,7 +248,6 @@ export async function getStaticPaths() {
     }
 }
 export async function getStaticProps({ params }) {
-    // console.log("params", params)
     const id = params.mywishlist
     var customeraddres = [];
     try {
@@ -278,7 +260,6 @@ export async function getStaticProps({ params }) {
     catch (e) {
         console.log("Bolg SinglePage ERROR==", e)
     }
-    // console.log("customeraddres", customeraddres)
     if (!customeraddres?.length < 1) {
         return {
             redirect: {

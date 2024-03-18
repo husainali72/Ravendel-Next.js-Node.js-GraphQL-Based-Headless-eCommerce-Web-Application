@@ -82,7 +82,7 @@ useEffect(() => {
               <Box component="div">
                 <SettingTextInput
                   label="Description"
-                  value={bankTransferInfo.description}
+                  value={bankTransferInfo?.description}
                   onSettingInputChange={(val) =>
                     setBankTransferInfo({
                       ...bankTransferInfo,
@@ -95,7 +95,7 @@ useEffect(() => {
               <Box component="div">
                 <SettingTextInput
                   label="Instructions"
-                  value={bankTransferInfo.description}
+                  value={bankTransferInfo?.instruction}
                   onSettingInputChange={(val) =>
                     setBankTransferInfo({
                       ...bankTransferInfo,
