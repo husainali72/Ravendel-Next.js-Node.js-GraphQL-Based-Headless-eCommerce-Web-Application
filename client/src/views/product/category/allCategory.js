@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Grid,
-  TextField,
-  FormControl,
-  Select,
-  Box,
-
-} from "@mui/material";
+import { Grid, TextField, FormControl, Select, Box } from "@mui/material";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import viewStyles from "../../viewStyles.js";
@@ -15,9 +8,9 @@ import {
   categoryUpdateAction,
   categoryAddAction,
 } from "../../../store/action/";
-import { baseUrl, bucketBaseURL, getBaseUrl, } from "../../../utils/helper";
+import { baseUrl, bucketBaseURL, getBaseUrl } from "../../../utils/helper";
 import { getUpdatedUrl } from "../../../utils/service";
-import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png"
+import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png";
 import UserPlaceholder from "../../../assets/images/user-placeholder.png";
 import ImageIcon from "@mui/icons-material/Image";
 import {
@@ -54,39 +47,39 @@ const AllCategoryComponent = () => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
   const [categories, setCategories] = useState([]);
-  const setting = useSelector((state) => state.settings)
+  const setting = useSelector((state) => state.settings);
   const [singlecategory, setSingleCategory] = useState(categoryObject);
   const [editMode, setEditmode] = useState(false);
   const [featuredImage, setfeaturedImage] = useState(null);
-  const [filtered, setfilterdData] = useState([])
+  const [filtered, setfilterdData] = useState([]);
   const [loading, setloading] = useState(false);
   const columndata = [
     {
-      name: 'date',
+      name: "date",
       title: "date",
-      sortingactive: true
+      sortingactive: true,
     },
     {
-      name: 'name',
+      name: "name",
       title: "name",
-      sortingactive: true
+      sortingactive: true,
     },
     {
-      name: 'actions',
+      name: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
-        if (type === 'edit') {
+        if (type === "edit") {
+          let cat = categories.find((item) => item.id === id);
 
-          let cat = categories.find(item => item.id === id);
-
-          editCategory(cat)
+          editCategory(cat);
         } else if (type === "delete") {
-          dispatch(categoryDeleteAction(id))
+          dispatch(categoryDeleteAction(id));
         }
-      }
-    },]
+      },
+    },
+  ];
   useEffect(() => {
     if (isEmpty(get(products, "categories"))) {
       dispatch(categoriesAction());
@@ -95,11 +88,11 @@ const AllCategoryComponent = () => {
   useEffect(() => {
     if (!isEmpty(get(products, "categories"))) {
       setCategories(products.categories);
-      setfilterdData(products.categories)
+      setfilterdData(products.categories);
       cancelCat();
     } else {
       setCategories([]);
-      setfilterdData([])
+      setfilterdData([]);
     }
   }, [get(products, "categories")]);
 
@@ -111,9 +104,7 @@ const AllCategoryComponent = () => {
     setEditmode(true);
     setfeaturedImage(null);
     if (cat.image) {
-
       setfeaturedImage(getBaseUrl(setting) + cat.image);
-
     }
     setSingleCategory({ ...singlecategory, ...cat });
   };
@@ -136,8 +127,7 @@ const AllCategoryComponent = () => {
           error: true,
         },
       });
-    }
-    else {
+    } else {
       dispatch(categoryUpdateAction(singlecategory));
       setEditmode(false);
       setSingleCategory(categoryObject);
@@ -154,8 +144,7 @@ const AllCategoryComponent = () => {
           error: true,
         },
       });
-    }
-    else {
+    } else {
       dispatch(categoryAddAction(singlecategory));
     }
   };
@@ -166,22 +155,31 @@ const AllCategoryComponent = () => {
     setSingleCategory(categoryObject);
   };
   const fileChange = (e) => {
-    setfeaturedImage(null);
-    setfeaturedImage(URL.createObjectURL(e.target.files[0]));
-    setSingleCategory({
-      ...singlecategory,
-      "image": e.target.files,
-    });
+    const files = get(e, "target.files", []);
+
+    if (files.length > 0) {
+      setfeaturedImage(URL.createObjectURL(files[0]));
+      setSingleCategory({
+        ...singlecategory,
+        image: files,
+      });
+    } else {
+      setfeaturedImage(featuredImage);
+    }
   };
 
   const updatefileChange = (e) => {
-    setSingleCategory({
-      ...singlecategory,
-      "update_image": e.target.files,
-    });
-    setfeaturedImage(null);
-    setfeaturedImage(URL.createObjectURL(e.target.files[0]));
-
+    const files = get(e, 'target.files', []);
+  
+    if (files.length > 0) {
+      setfeaturedImage(URL.createObjectURL(files[0]));
+      setSingleCategory({
+        ...singlecategory,
+        update_image: files,
+      });
+    } else {
+      setfeaturedImage(featuredImage);
+    }
   };
 
   const isUrlExist = async (url) => {
@@ -191,8 +189,8 @@ const AllCategoryComponent = () => {
     });
   };
   const handleOnChangeSearch = (filtereData) => {
-    setfilterdData(filtereData)
-  }
+    setfilterdData(filtereData);
+  };
   return (
     <>
       <Alert />
@@ -228,8 +226,9 @@ const AllCategoryComponent = () => {
                 onChange={handleChange}
                 value={singlecategory.name}
                 onBlur={(e) =>
-                  !singlecategory.url || singlecategory.url !== e.target.value ? isUrlExist(singlecategory.name) : null
-
+                  !singlecategory.url || singlecategory.url !== e.target.value
+                    ? isUrlExist(singlecategory.name)
+                    : null
                 }
               />
               <Box component="div" mb={singlecategory.url ? 2 : 0}>
@@ -276,36 +275,44 @@ const AllCategoryComponent = () => {
                 </FormControl>
               </Box>
 
-              {editMode ?
+              {editMode ? (
                 <Box component="span">
-                  <CardBlocks title="Change Category Image" >
+                  <CardBlocks title="Change Category Image">
                     <FeaturedImageComponent
                       image={featuredImage}
                       feautedImageChange={(e) => updatefileChange(e)}
                     />
                   </CardBlocks>
                 </Box>
-                :
-                <Box component="span" >
-                  <CardBlocks title="Choose Category Image" className={classes.flex1}>
+              ) : (
+                <Box component="span">
+                  <CardBlocks
+                    title="Choose Category Image"
+                    className={classes.flex1}
+                  >
                     <FeaturedImageComponent
                       image={featuredImage}
                       feautedImageChange={(e) => fileChange(e)}
-                    // style={{marginBottom: '200px'}}
+                      // style={{marginBottom: '200px'}}
                     />
                   </CardBlocks>
-                </Box>}
+                </Box>
+              )}
 
               <TextField
                 label="Short Description"
                 name="description"
                 variant="outlined"
-                className={clsx(classes.marginBottom, classes.width100, classes.marginTop1)}
+                className={clsx(
+                  classes.marginBottom,
+                  classes.width100,
+                  classes.marginTop1
+                )}
                 multiline
                 rows={3}
                 value={singlecategory.description}
                 onChange={handleChange}
-                style={{ marginRight: '20px' }}
+                style={{ marginRight: "20px" }}
               />
 
               <Box component="div" mb={2}>

@@ -27,7 +27,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore, homepage
     const [rangevalue, setRangevalue] = useState('');
     const currencyOpt = currencyStore?.currency_options?.currency
     const [FilterAttribute, setFilterAttribute] = useState([])
-    const decimal = currencyStore?.currency_options?.number_of_decimals
+    const currencyOption = currencyStore?.currency_options
     const [currency, setCurrency] = useState("$")
     const [loading, setloading] = useState(false)
     const [onSaleProduct, setonSaleProduct] = useState([])
@@ -253,7 +253,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore, homepage
                                             )
                                         }) : null}
 
-                                        <button type="button" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178" }} onClick={filterData}>
+                                        <button type="button" className="btn btn-success primary-btn-color" style={{ marginTop: 12 }} onClick={filterData}>
                                             <i className="fa fa-filter"></i>Fillter
                                         </button>
                                     </div>
@@ -284,7 +284,7 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore, homepage
                                                                 <strong>{product.name}</strong>
                                                             )}
                                                             <StarRating stars={product?.rating} singleproducts={product} />
-                                                            <p style={{ marginTop: 0 }}>{currency} {getPrice(product.pricing.sellprice || product.pricing.price, decimal)}</p>
+                                                            <p style={{ marginTop: 0 }}>{currency} {getPrice(product.pricing.sellprice || product.pricing.price, currencyOption)}</p>
                                                         </div>
                                                     </div>
                                                 </Link> : null
@@ -366,7 +366,6 @@ const Shop = ({ shopProducts, brandProduct, shopProduct, currencyStore, homepage
                                     onSaleProduct={onSaleProduct}
                                     hidetitle
                                     currencyProp={currency}
-                                    decimal={decimal}
                                     homepageData={homepageData}
                                 />
                             </div>) :

@@ -22,7 +22,6 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
     const breadCrumbTitle = shopProduct?.data?.find((catt) => catt.id === singlecategory.parentId);
     const attributes = useSelector(state => state.products.attributes)
     const [cats, setCats] = useState({})
-    const decimal = currencyStore?.currency_options?.number_of_decimals
     const currencyOpt = currencyStore?.currency_options?.currency
     const [currency, setCurrency] = useState("$")
     const [FilterAttribute, setFilterAttribute] = useState([])
@@ -237,7 +236,7 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
                                                 )
                                             }) : null}
 
-                                            <button type="button" className="btn btn-success" style={{ marginTop: 12, backgroundColor: "#088178" }} onClick={filterData}>
+                                            <button type="button" className="btn btn-success primary-btn-color" style={{ marginTop: 12 }} onClick={filterData}>
                                                 <i className="fa fa-filter"></i>Fillter
                                             </button>
                                         </div>

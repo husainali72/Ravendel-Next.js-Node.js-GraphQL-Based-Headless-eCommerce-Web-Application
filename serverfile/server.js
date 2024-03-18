@@ -1,5 +1,5 @@
 const express = require("express");
-const { ApolloServer } = require("apollo-server-express");
+const { ApolloServer } = require("@apollo/server");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const typeDefs = require("./gqschema");
