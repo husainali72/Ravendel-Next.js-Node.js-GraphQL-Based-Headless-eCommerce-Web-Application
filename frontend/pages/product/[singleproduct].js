@@ -53,36 +53,24 @@ const options = {
 
 const SingleProduct = ({
   allProduct,
-  recentProducts,
-  singleproducts,
-  productReviews,
-  currencyStore,
-  homepageData,
+  singleProducts,
   lowStockThreshold,
   outOfStockVisibility,
   outOfStockThreshold,
 }) => {
   const router = useRouter();
   const session = useSession();
-  const currencyOption = currencyStore?.currency_options;
-  const [currency, setCurrency] = useState("$");
   const [singleProduct, setSingleProduct] = useState(null);
   const [sliderImages, setSliderImages] = useState([]);
   const [singleProductReview, setSingleProductReview] = useState([]);
-  const productss = useSelector((state) => state.products);
-  const settingss = useSelector((state) => state.setting);
   const [stockClass, setStockClass] = useState("");
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
   useEffect(() => {
-    currencySetter(get(currencyOption,'currency'), setCurrency);
-  }, []);
-
-  useEffect(() => {
     const getReviews = async () => {
       try {
-        const id = singleproducts?._id;
+        const id = singleProducts?._id;
         const { data: productReviewData } = await client.query({
           query: GET_PRODUCT_REVIEWS,
           variables: { id },
@@ -92,9 +80,9 @@ const SingleProduct = ({
       } catch (e) {}
     };
     getReviews();
-  }, [singleproducts]);
+  }, [singleProducts]);
   useEffect(() => {
-    var product = singleproducts;
+    var product = singleProducts;
     setSingleProduct(product);
     var allimages = [];
     allimages.push(get(product, "feature_image", ""));
@@ -103,17 +91,17 @@ const SingleProduct = ({
     });
 
     setSliderImages(allimages);
-  }, [singleproducts]);
+  }, [singleProducts]);
 
   return (
     <div>
       <Head>
-        <title>{get(singleproducts, "meta.title", "") + " | Ravendel"}</title>
+        <title>{get(singleProducts, "meta.title", "") + " | Ravendel"}</title>
         <meta
           name="description"
-          content={get(singleproducts, "meta.description")}
+          content={get(singleProducts, "meta.description")}
         />
-        <meta name="keywords" content={get(singleproducts, "meta.keywords")} />
+        <meta name="keywords" content={get(singleProducts, "meta.keywords")} />
       </Head>
       <BreadCrumb title={`product`} />
       <section className="product-cart-section">
@@ -124,16 +112,13 @@ const SingleProduct = ({
               <div className="product-detail accordion-detail">
                 <div>
                   <GalleryImagesComponents
-                    homepageData={homepageData}
-                    currencyOption={currencyOption}
                     stockClass={stockClass}
                     setStockClass={setStockClass}
                     outOfStockThreshold={outOfStockThreshold}
                     lowStockThreshold={lowStockThreshold}
                     outOfStockVisibility={outOfStockVisibility}
                     galleryImages={sliderImages}
-                    singleproducts={singleproducts}
-                    currency={currency}
+                    singleProducts={singleProducts}
                   />
                 </div>
               </div>
@@ -155,10 +140,10 @@ const SingleProduct = ({
                       <Tab.Content>
                         <Tab.Pane eventKey="description">
                           <div style={{ padding: "20px", marginTop: "15px" }}>
-                            {singleproducts?.description !== null &&
-                            singleproducts?.description !== "" ? (
+                            {singleProducts?.description !== null &&
+                            singleProducts?.description !== "" ? (
                               ReactHtmlParser(
-                                get(singleproducts, "description"),
+                                get(singleProducts, "description"),
                                 options
                               )
                             ) : (
@@ -177,7 +162,7 @@ const SingleProduct = ({
 
                           {session.status === "authenticated" ? (
                             <ReviewForm
-                              productId={get(singleproducts, "_id")}
+                              productId={get(singleProducts, "_id")}
                             />
                           ) : (
                             <div style={{ padding: "20px", marginTop: "15px" }}>
@@ -195,10 +180,7 @@ const SingleProduct = ({
                 </h4>
                 <OnSaleProductCard
                   onSaleProduct={allProduct}
-                  hidetitle
-                  currencyProp={currency}
-                  currencyOpt={currencyStore}
-                  homepageData={homepageData}
+                  hideTitle
                 />
               </div>
             </div>
@@ -231,7 +213,7 @@ export async function getStaticProps({ params }) {
   const url = get(params, "singleproduct");
   let id = "";
   let homepageData = [];
-  let singleproducts = [];
+  let singleProducts = [];
   let allProduct = [];
   let recentProducts = [];
   let productReviews = [];
@@ -269,15 +251,15 @@ export async function getStaticProps({ params }) {
       query: GET_SINGLE_PRODUCT,
       variables: { url },
     });
-    singleproducts = get(singleproductsData, "productbyurl.data", {});
-    id = get(singleproducts, "_id", "");
+    singleProducts = get(singleproductsData, "productbyurl.data", {});
+    id = get(singleProducts, "_id", "");
   } catch (e) {}
   /* ========================================= get Related Products ========================================*/
 
   const category =
-    !!get(singleproducts, "categoryId")?.length &&
-    get(singleproducts, "categoryId", [])?.map((cat) => cat?.id);
-  const productID = get(singleproducts, "_id") || "";
+    !!get(singleProducts, "categoryId")?.length &&
+    get(singleProducts, "categoryId", [])?.map((cat) => cat?.id);
+  const productID = get(singleProducts, "_id") || "";
   try {
     const { data: shopproductcategory } = await client.query({
       query: GET_RELATED_PRODUCTS_QUERY,
@@ -299,7 +281,7 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      singleproducts,
+      singleProducts,
       allProduct,
       productReviews,
       homepageData,

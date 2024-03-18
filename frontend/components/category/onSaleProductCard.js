@@ -9,6 +9,7 @@ import {
   mutation,
   getPrice,
   isDiscount,
+
   imageOnError,
 } from "../../utills/helpers";
 import { useSelector, useDispatch } from "react-redux";
@@ -24,6 +25,9 @@ import { query } from "../../utills/helpers";
 import NoImagePlaceholder from "../images/NoImagePlaceHolder.png";
 import { capitalize, get } from "lodash";
 import Image from "next/image";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ClearIcon from '@mui/icons-material/Clear';
 var placeholder = "https://dummyimage.com/300";
 const OnSaleProductCard = ({
   homepageData,
@@ -32,6 +36,8 @@ const OnSaleProductCard = ({
   titleShow,
   currencyProp,
   currencyOpt,
+  showRemoveButton,
+  removeButton,
 }) => {
   var id = "";
   var token = "";
@@ -136,6 +142,16 @@ const OnSaleProductCard = ({
     }
   };
 
+  const handleWishlistButtonClick = (e, product) => {
+    e.stopPropagation();
+    console.log(product, "product");
+    // Add logic to handle adding the product to the wish list
+    // Example: dispatch(addToWishlist(product))
+  };
+  const toggleWishlistState = (i) => {
+    setIsProductInWistList((prevState) => !prevState);
+    setShowWishListButton(i);
+  };
   return (
     <section className="product-cart-section">
       <Container style={{ padding: "0" }}>
@@ -152,17 +168,33 @@ const OnSaleProductCard = ({
             {onSaleProduct && onSaleProduct?.length > 0 ? (
               <>
                 {onSaleProduct.map((product, i) => {
-                  return (
+                  return (<>
                     <Link
                       href={`/product/[singleproduct]?url=${product.url}`}
                       as={`/product/${product.url}`}
                     >
-                      <div className="on-sale-product-card" key={i}>
+                      <div
+                        className="on-sale-product-card"
+                        key={i}
+                        onMouseEnter={() => toggleWishlistState(i)}
+                        onMouseLeave={() => setShowWishListButton(null)}
+                      >
+                        {showRemoveButton && (
+                         <button onClick={(e) => {
+                            removeButton(e);
+                          }}className="cross-button">
+                            <ClearIcon className="clear-icon"/>
+                        </button>
+                        )}
                         <div className="on-sale-image-wrapper">
                           <img
                             className="img-on-sale"
                             src={getImage(product.feature_image, imageType)}
-                            onError={imageOnError}
+                            onError={(e) => {
+                              e.type === "error"
+                                ? (e.target.src = NoImagePlaceholder.src)
+                                : null;
+                            }}
                             height="280px"
                             width="100%"
                           />
@@ -178,16 +210,36 @@ const OnSaleProductCard = ({
                               </span>
                             </div>
                           ) : null}
-                          <div className="product-categoryname">
-                            {product?.categoryId?.map((item, i) => (
-                              <span key={i}>
-                                {product?.categoryId?.length - 1 === i ? (
-                                  <span>{capitalize(item?.name)} </span>
-                                ) : (
-                                  <span>{capitalize(item?.name)}, </span>
-                                )}
-                              </span>
-                            ))}
+                          <div className="product-categoryname category-name-container ">
+                            <div>
+                              {product?.categoryId?.map((item, i) => (
+                                <span key={i}>
+                                  {product?.categoryId?.length - 1 === i ? (
+                                    <span>{capitalize(item?.name)} </span>
+                                  ) : (
+                                    <span>{capitalize(item?.name)}, </span>
+                                  )}
+                                </span>
+                              ))}
+                            </div>
+                            <div>
+                              {showWishListButton === i && (
+                                <Button
+                                  variant="outlined"
+                                  className="wishlist-button"
+                                  onClick={(e) =>
+                                    handleWishlistButtonClick(e, product)
+                                  }
+                                >
+                                  {isProductInWistList ? (
+                                    <FavoriteIcon />
+                                  ) : (
+                                    <FavoriteBorderIcon />
+                                  )}{" "}
+                                  Wish List
+                                </Button>
+                              )}{" "}
+                            </div>
                           </div>
                           <div
                             className="card-price"
@@ -217,34 +269,34 @@ const OnSaleProductCard = ({
                                 stars={product?.rating}
                                 singleproducts={product}
                               />
-                              <span className="no-wrap">
-                                {product.pricing.sellprice ? (
+                              <span>
+                                {product?.pricing?.sellprice ? (
                                   <strong className="sale-price">
                                     {currency}{" "}
                                     {getPrice(
                                       product?.pricing?.sellprice,
-                                      currencyOption
+                                      decimal
                                     )}
                                   </strong>
                                 ) : (
                                   <strong className="sale-price">
                                     {currency}{" "}
-                                    {getPrice(product?.pricing.price, currencyOption)}
+                                    {getPrice(product?.pricing?.price, decimal)}
                                   </strong>
                                 )}
                               </span>
-                              {product?.pricing.sellprice &&
+                              {product?.pricing?.sellprice &&
                               product?.pricing.sellprice <
                                 product?.pricing.price ? (
                                 <span
                                   className={
                                     product?.pricing.sellprice
-                                      ? "has-sale-price no-wrap"
+                                      ? "has-sale-price"
                                       : ""
                                   }
-                            
                                 >
-                                  {currency}{" "}{getPrice(product?.pricing?.price, currencyOption)}
+                                  {currency}{" "}
+                                  {getPrice(product?.pricing?.price, decimal)}
                                 </span>
                               ) : null}
                             </div>
@@ -270,7 +322,7 @@ const OnSaleProductCard = ({
                                     {" "}
                                     <a className="cart-icon">
                                       <i
-                                        className="fas fa-shopping-bag font-awesome-icon "
+                                        className="fas fa-shopping-bag font-awesome-icon"
                                         aria-hidden="true"
                                       ></i>
                                     </a>
@@ -284,7 +336,7 @@ const OnSaleProductCard = ({
                         </div>
                       </div>
                     </Link>
-                  );
+                 </> );
                 })}
               </>
             ) : (

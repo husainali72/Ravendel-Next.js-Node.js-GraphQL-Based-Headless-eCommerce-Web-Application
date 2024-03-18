@@ -45,9 +45,6 @@ const TrackMyOrder = () => {
         catch (e) {
         }
     }
-    useEffect(() => {
-        getOrderCustomer();
-    }, [session])
     function getOrderCustomer() {
         var id = ""
         var token = "";
