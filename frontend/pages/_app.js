@@ -20,7 +20,8 @@ import { CacheProvider } from '@emotion/react';
 import TagManager from 'react-gtm-module';
 import MegaMenu from '../components/megaMenu';
 import Head from 'next/head';
-import { AlternativeThemeProvider } from './themeContext.js';
+import { AlternativeThemeProvider } from '../components/themeContext';
+
 const clientSideEmotionCache = createEmotionCache();
 
 
