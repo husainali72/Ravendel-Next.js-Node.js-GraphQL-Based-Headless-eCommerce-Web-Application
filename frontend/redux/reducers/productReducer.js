@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { PRODUCT_REVIEWS_ADD, ADD_REVIEW, LOAD_REVIEW, PRODUCTS_FAIL, PRODUCTS_LOADING, PRODUCTS_SUCCESS, ATTRIBUTES_SUCCESS, CATEGORY_SUCCESS } from "../actions/productAction";
 
 const initialState = {

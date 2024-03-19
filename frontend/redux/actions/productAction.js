@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { get } from "lodash";
 import { GET_CATEGORIES_QUERY } from "../../queries/home";
 import { ADD_REVIEW, GET_ATTRIBUTES, GET_PRODUCTS } from "../../queries/productquery";
-import { query, queryWithoutToken } from "../../utills/helpers";
+import { mutation, query, queryWithoutToken } from "../../utills/helpers";
 export const PRODUCT_REVIEWS_ADD = 'PRODUCT_REVIEWS_ADD';
 export const PRODUCT_LOADING = "PRODUCT_LOADING";
 export const ADD_PRODUCT_REVIEWS = "ADD_PRODUCT_REVIEWS";

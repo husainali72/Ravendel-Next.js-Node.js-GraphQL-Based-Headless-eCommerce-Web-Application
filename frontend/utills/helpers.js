@@ -1,3 +1,6 @@
+/* eslint-disable no-empty */
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-redeclare */
 import { IMAGE_BASE_URL, BUCKET_BASE_URL } from "../config";
 import client from "../apollo-client";

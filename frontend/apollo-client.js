@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable no-unused-vars */
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { ApolloLink } from "apollo-link";

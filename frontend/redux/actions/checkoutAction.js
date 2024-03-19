@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { mutation } from "../../utills/helpers";
 import { ADD_ORDER } from "../../queries/orderquery";
 export const CHECKOUT_DETAIL = "CHECKOUT_DETAIL";
