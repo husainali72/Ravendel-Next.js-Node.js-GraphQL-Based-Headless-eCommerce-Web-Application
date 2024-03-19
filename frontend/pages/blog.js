@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import PageTitle from '../components/PageTitle';
 import client from '../apollo-client';
@@ -78,49 +79,48 @@ const Blog = ( blogData ) => {
 export default Blog;
 
 export async function getStaticProps() {
-    var homepageData = [];
-    var blogData = [];
-    var blogTagsData = [];
+    // var homepageData = [];
+    // var blogData = [];
+    // var blogTagsData = [];
 
-    /* ===============================================Get HomepageData Settings ===============================================*/
+    // /* ===============================================Get HomepageData Settings ===============================================*/
 
-    try {
-        const { data: homepagedata } = await client.query( {
-            query: GET_HOMEPAGE_DATA_QUERY
-        } );
-        homepageData = homepagedata;
-    } catch ( e ) {
-        console.log( 'Homepage Error===', e );
-    }
+    // try {
+    //     const { data: homepagedata } = await client.query( {
+    //         query: GET_HOMEPAGE_DATA_QUERY
+    //     } );
+    //     homepageData = homepagedata;
+    // } catch ( e ) {
+    //     console.log( 'Homepage Error===', e );
+    // }
 
-    /* ===============================================Get Blog Data =====================================================================*/
-    try {
-        const { data: blogdata } = await client.query( {
-            query: GET_BLOGS_QUERY
-        } );
-        blogData = get(blogdata,'blogs.data',[]);
-    } catch ( e ) {
-        console.log( 'Blog Error=======', e.networkError );
+    // /* ===============================================Get Blog Data =====================================================================*/
+    // try {
+    //     const { data: blogdata } = await client.query( {
+    //         query: GET_BLOGS_QUERY
+    //     } );
+    //     blogData = get(blogdata,'blogs.data',[]);
+    // } catch ( e ) {
+    //     console.log( 'Blog Error=======', e.networkError );
 
-    }
+    // }
 
-    /* ===============================================Get BlogTags Data =====================================================================*/
+    // /* ===============================================Get BlogTags Data =====================================================================*/
 
-    try {
-        const { data: blogtagsdata } = await client.query( {
-            query: GET_BLOGTAGS_QUERY
-        } );
-        blogTagsData = get(blogtagsdata,'blogtags.data',[]);
-    } catch ( e ) {
-        console.log( 'BlOG TAGS Error==', e );
-    }
+    // try {
+    //     const { data: blogtagsdata } = await client.query( {
+    //         query: GET_BLOGTAGS_QUERY
+    //     } );
+    //     blogTagsData = get(blogtagsdata,'blogtags.data',[]);
+    // } catch ( e ) {
+    //     console.log( 'BlOG TAGS Error==', e );
+    // }
 
     return {
         props: {
-            homepageData,
-            blogData,
-            blogTagsData,
+           dataa:[]
         },
         revalidate: 10,
     };
+
 }

@@ -327,7 +327,7 @@ useEffect(() => {
   };
 
   const createAttributeOptions = (singleAttribute) => {
-    return get(singleAttribute, "attribute_values", []).map((item) => ({
+    return get(singleAttribute, "attribute_values", [])?.map((item) => ({
       value: item._id,
       label: item.name,
     }));

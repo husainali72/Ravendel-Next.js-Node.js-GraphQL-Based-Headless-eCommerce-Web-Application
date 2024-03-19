@@ -11,7 +11,7 @@ import { capitalize, get } from 'lodash';
 import { useDispatch } from "react-redux";
 import {  useForm } from 'react-hook-form';
 import notify from "../../../utills/notifyToast";
-import { useTheme } from "../../../pages/themeContext";
+import { useTheme } from "../../themeContext";
 const Star = ({ starId, marked }) => {
     return (
         <span
