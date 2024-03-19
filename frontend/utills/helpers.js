@@ -264,3 +264,20 @@ export const isCouponAppliedAndNotFreeShipping = (couponCartDetail) => {
 export const logout = async () => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
 };
+export const iconSetter = (iconName) => {
+  if ("twitter" === iconName) {
+    return "fab fa-twitter mx-2 icon-footer";
+  }
+  if ("facebook" === iconName) {
+    return "fab fa-facebook mx-2 icon-footer";
+  }
+  if ("instagram" === iconName) {
+    return "fab fa-instagram mx-2 icon-footer";
+  }
+  if ("youtube" === iconName) {
+    return "fab fa-youtube mx-2 icon-footer";
+  }
+  if ("pinterest" === iconName) {
+    return "fab fa-pinterest mx-2 icon-footer";
+  }
+};

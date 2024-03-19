@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
-import { Card, Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import { UPDATE_CUSTOMER } from "../../../queries/customerquery";
-import { logoutAndClearData, mutation } from "../../../utills/helpers";
+import { handleError, mutation } from "../../../utills/helpers";
 import { useForm } from "react-hook-form";
 import notify from "../../../utills/notifyToast";
-import { get } from "lodash";
 import { useDispatch } from "react-redux";
-
+import PropTypes from 'prop-types';
+import InputField from "../../inputField";
+import { emailErrorMessage, firstNameErrorMessage, lastNameErrorMessage, passwordErrorMessage } from "../../validationMessages";
+import PhoneInputField from "../../phoneInput";
+import { confirmPasswordValidation, passwordValidation, validateEmail } from "../../../utills/Validation";
+import PasswordField from "../../passwordField";
+import { get } from "lodash";
 var accountDetailObject = {
   firstName: "",
   lastName: "",
@@ -15,51 +20,48 @@ var accountDetailObject = {
   company: "",
   phone: "",
 };
-const AccountSettings = (props) => {
+const AccountSettings = ({accountDetailInfo, setToggleEdit, getcustomer }) => {
   const dispatch=useDispatch()
-  const { accountDetailInfo, setToggleEdit, getcustomer } = props;
   const [accountDetails, setAccountDetails] = useState(accountDetailObject);
   const {
     register,
     formState: { errors },
-    handleSubmit,
-    control,
-    reset,
+    handleSubmit,control
   } = useForm();
-  const updateAccountDetail = (e) => {
+  const updateAccountDetail = () => {
     mutation(UPDATE_CUSTOMER, accountDetails).then(
       async (response) => {
-        if (response.data.updateCustomer.success) {
-          notify(response.data.updateCustomer.message, true);
+        const {success,message}=get(response,'data.updateCustomer')
+        if (success) {
+          notify(message, true);
           getcustomer();
         }
       }
     ).catch((error)=>{
-      if(get(error,'extensions.code')===401){
-        logoutAndClearData(dispatch)
-      }
+      handleError(error,dispatch)
     })
   };
 
   useEffect(() => {
     setAccountDetails(accountDetailInfo);
   }, [accountDetailInfo]);
+  const { firstName, lastName, email, phone, company, password,confirmPassword ,currentpassword} =accountDetails
   return (
     <div>
       <form className="edit-form" onSubmit={handleSubmit(updateAccountDetail)}>
         <Row>
           <Col>
             <label className="textlabel">First Name </label>
-            <input
+            <InputField
               type="text"
-              name="firstname"
-              label="firstname"
+              className="update-profile-detail-input"
               placeholder="First name *"
-              value={accountDetails?.firstName || ""}
-              {...register("firstname", {
+              value={firstName}
+              name="firstname"
+              registerRef= {register("firstname", {
                 required: {
-                  value: accountDetails?.firstName ? false : true,
-                  message: "First name is required",
+                  value: !firstName,
+                  message:firstNameErrorMessage,
                 },
               })}
               onChange={(e) =>
@@ -68,28 +70,20 @@ const AccountSettings = (props) => {
                   firstName: e.target.value,
                 })
               }
-              className="update-profile-detail-input"
+              errors={errors}
             />
-            <p className="error">
-              <small style={{ color: "red" }}>
-                {errors.firstname?.type === "required"
-                  ? errors.firstname?.message
-                  : undefined}
-              </small>
-            </p>
           </Col>
           <Col>
             <label className="textlabel">Last Name </label>
-            <input
+            <InputField
               type="text"
               name="lastname"
-              label="lastname"
               placeholder="Last name *"
-              value={accountDetails?.lastName || ""}
-              {...register("lastname", {
+              value={lastName}
+              registerRef= {register("lastname", {
                 required: {
-                  value: accountDetails?.lastName ? false : true,
-                  message: "Last name is required",
+                  value: !lastName,
+                  message: lastNameErrorMessage,
                 },
               })}
               onChange={(e) =>
@@ -99,29 +93,17 @@ const AccountSettings = (props) => {
                 })
               }
               className="update-profile-detail-input"
+              errors={errors}
             />
-            <p className="error">
-              <small style={{ color: "red" }}>
-                {errors.lastname?.type === "required"
-                  ? errors.lastname?.message
-                  : undefined}
-              </small>
-            </p>
           </Col>
           <Col>
             <label className="textlabel">Company</label>
-            <input
+            <InputField
               type="text"
               name="company"
               label="company"
               placeholder="Company*"
-              value={accountDetails?.company || ""}
-              {...register("company", {
-                required: {
-                  value: accountDetails?.company ? false : true,
-                  message: "company is required",
-                },
-              })}
+              value={company}
               onChange={(e) =>
                 setAccountDetails({
                   ...accountDetails,
@@ -130,86 +112,66 @@ const AccountSettings = (props) => {
               }
               className="update-profile-detail-input"
             />
-            <p className="error">
-              <small style={{ color: "red" }}>
-                {errors.company?.type === "required"
-                  ? errors.company?.message
-                  : undefined}
-              </small>
-            </p>
           </Col>
           <Col>
             <label className="textlabel">Phone</label>
-            <input
-              type="number"
-              name="phone"
-              label="phone"
-              placeholder="Phone *"
-              value={accountDetails?.phone || ""}
-              {...register("phone", {
-                required: {
-                  value: accountDetails?.phone ? false : true,
-                  message: "Phone is required",
-                },
-              })}
-              onChange={(e) =>
+            <PhoneInputField
+             type="phone"
+             enableSearch="true"
+             control={control}
+             country={"in"}
+             name="phone"
+             inputClass={"custom-input"}
+             placeholder="Enter phone number"
+             value={phone}
+              handleChange={(e) =>
                 setAccountDetails({ ...accountDetails, phone: e.target.value })
               }
               className="update-profile-detail-input"
+              errors={errors}
             />
-            <p>
-              <small style={{ color: "red" }}>
-                {errors.phone?.type === "required"
-                  ? errors.phone?.message
-                  : undefined}
-                {errors.phone?.type === "validate"
-                  ? "Phone number is invalid"
-                  : undefined}
-              </small>
-            </p>
           </Col>
         </Row>
         <Row style={{ marginTop: "25px" }}>
           <Col>
             <label className="textlabel">Email </label>
-            <input
-              type="text"
+            <InputField
+              type="email"
+              className="update-profile-detail-input"
               name="email"
-              label="email"
               placeholder="Email *"
-              value={accountDetails?.email}
-              {...register("email", {
+              value={email}
+              registerRef={register("email", {
                 required: {
-                  value: accountDetails?.email ? false : true,
-                  message: "Email is required",
+                  value: !email,
+                  message: emailErrorMessage,
+                },
+                validate: () => {
+                  return validateEmail(email);
                 },
               })}
               onChange={(e) =>
                 setAccountDetails({ ...accountDetails, email: e.target.value })
               }
-              className="update-profile-detail-input"
-              disabled
+              errors={errors}
+              disabled={true}
             />
-            <p className="error">
-              <small style={{ color: "red" }}>
-                {errors.email?.type === "required"
-                  ? errors.email?.message
-                  : undefined}
-              </small>
-            </p>
           </Col>
           <Col>
             <label className="textlabel">Password </label>
-            <input
+            <PasswordField
               type="password"
+              className="update-profile-detail-input"
               name="password"
-              label="password"
               placeholder="Password *"
-              value={accountDetails?.password}
-              {...register("password", {
+              value={password}
+              registerRef={register("password", {
                 required: {
-                  value: accountDetails?.password ? false : true,
-                  message: "Password  is required",
+                  value: !password,
+                  message: passwordErrorMessage,
+                },
+                validate: () => {
+                  return passwordValidation(password);
                 },
               })}
               onChange={(e) =>
@@ -218,58 +180,51 @@ const AccountSettings = (props) => {
                   password: e.target.value,
                 })
               }
-              className="update-profile-detail-input"
+             
             />
-            <p className="error">
-              <small style={{ color: "red" }}>
-                {errors.password?.type === "required"
-                  ? errors.password?.message
-                  : undefined}
-              </small>
-            </p>
           </Col>
           <Col>
             <label className="textlabel">Confirm Password </label>
-            <input
+            <PasswordField
               type="password"
+              className="update-profile-detail-input"
               name="confirmPassword"
-              label="confirmPassword"
               placeholder="Confirm Password *"
-              value={accountDetails?.confirmPassword || ""}
-              {...register("confirmPassword", {
+              value={confirmPassword }
+              registerRef={register("confirmPassword", {
                 required: {
-                  value: accountDetails?.confirmPassword ? false : true,
-                  message: "Confirm password  is required",
+                  value: !confirmPassword,
+                  message: passwordErrorMessage,
+                },
+                validate: () => {
+                  return confirmPasswordValidation(password,confirmPassword);
                 },
               })}
+              errors={errors}
               onChange={(e) =>
                 setAccountDetails({
                   ...accountDetails,
                   confirmPassword: e.target.value,
                 })
               }
-              className="update-profile-detail-input"
+
             />
-            <p className="error">
-              <small style={{ color: "red" }}>
-                {errors.confirmPassword?.type === "required"
-                  ? errors.confirmPassword?.message
-                  : undefined}
-              </small>
-            </p>
           </Col>
           <Col>
             <label className="textlabel">Current Password </label>
-            <input
+            <PasswordField
               type="password"
               name="currentpassword"
               label="currentpassword"
               placeholder="Current Password *"
               value={accountDetails?.currentpassword || ""}
-              {...register("currentpassword", {
+              registerRef={register("password", {
                 required: {
-                  value: accountDetails?.currentpassword ? false : true,
-                  message: "Current password is required",
+                  value: !currentpassword,
+                  message: passwordErrorMessage,
+                },
+                validate: () => {
+                  return passwordValidation(currentpassword);
                 },
               })}
               onChange={(e) =>
@@ -278,22 +233,16 @@ const AccountSettings = (props) => {
                   currentpassword: e.target.value,
                 })
               }
+              errors={errors}
               className="update-profile-detail-input"
             />
-            <p className="error">
-              <small style={{ color: "red" }}>
-                {errors.currentpassword?.type === "required"
-                  ? errors.currentpassword?.message
-                  : undefined}
-              </small>
-            </p>
           </Col>
         </Row>
         <div className="account-details-button my-4">
-          <Button type="submit" variant="outline-success" size="sm">
+        <Button type="submit" variant="outline-success" size="sm">
             UPDATE DETAILS
           </Button>{" "}
-          <Button
+          <Button 
             className="ms-1"
             onClick={() => setToggleEdit((previous) => !previous)}
             variant="danger"
@@ -305,5 +254,10 @@ const AccountSettings = (props) => {
       </form>
     </div>
   );
+};
+AccountSettings.propTypes = {
+  accountDetailInfo: PropTypes.object.isRequired,
+  setToggleEdit: PropTypes.func.isRequired,
+  getcustomer: PropTypes.func.isRequired,
 };
 export default AccountSettings;

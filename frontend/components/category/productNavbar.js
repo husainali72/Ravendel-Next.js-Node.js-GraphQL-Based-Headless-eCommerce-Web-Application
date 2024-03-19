@@ -72,7 +72,7 @@ export const ProductNav = (props) => {
                         </div>
                         <div className="on-sale-product-detail">
                             <div className="product-price" style={{ justifyContent: "left", alignContent: "left", m: 0 }}>
-                                <StarRating className="rating" stars={product?.name} singleproducts={product} />
+                                <StarRating className="rating" stars={product?.name} singleProducts={product} />
                                 <span >{product.pricing.sellprice ? (
                                     <strong className="sale-price">{currency} {getPrice(get(product,'pricing.sellprice','0'), currencyOption)}
                                     </strong>

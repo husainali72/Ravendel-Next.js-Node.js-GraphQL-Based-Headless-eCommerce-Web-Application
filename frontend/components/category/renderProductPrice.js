@@ -5,23 +5,23 @@ import calculateDiscount from "../../utills/calculateDiscount";
 
 const RenderProductPrice = ({
   comboData,
-  singleproducts,
-  sellpriceRange,
+  singleProducts,
+  sellPriceRange,
   priceRange,
   variantSelect,
 }) => {
   const RenderSalePrice = () => {
-    const sellPrice = get(singleproducts, "pricing.sellprice", 0);
-    const price = get(singleproducts, "pricing.price", 0);
+    const sellPrice = get(singleProducts, "pricing.sellprice", 0);
+    const price = get(singleProducts, "pricing.price", 0);
     const variantSellPrice = get(comboData, "[0].pricing.sellprice", 0);
     const variantPrice = get(comboData, "[0].pricing.price", 0);
 
-    if (comboData && comboData.length > 1 && sellpriceRange) {
+    if (comboData && comboData.length > 1 && sellPriceRange) {
       return (
         <>
-          <Price price={Math.min(...sellpriceRange)} />
+          <Price price={Math.min(...sellPriceRange)} />
           {" - "}
-          <Price price={Math.max(...sellpriceRange)} />
+          <Price price={Math.max(...sellPriceRange)} />
         </>
       );
     } else if (comboData && comboData.length === 1) {
@@ -34,8 +34,8 @@ const RenderProductPrice = ({
   };
 
   const RenderPrice = () => {
-    const sellPrice = get(singleproducts, "pricing.sellprice", 0);
-    const price = get(singleproducts, "pricing.price", 0);
+    const sellPrice = get(singleProducts, "pricing.sellprice", 0);
+    const price = get(singleProducts, "pricing.price", 0);
     const variantSellPrice = get(comboData, "[0].pricing.sellprice", 0);
     const variantPrice = get(comboData, "[0].pricing.price", 0);
 
@@ -56,9 +56,9 @@ const RenderProductPrice = ({
     }
   };
 
-  const RenderDiscount = ({ singleproducts }) => {
-    let salePrice = get(singleproducts, "pricing.sellprice", 0);
-    let price = get(singleproducts, "pricing.price", 0);
+  const RenderDiscount = ({ singleProducts }) => {
+    let salePrice = get(singleProducts, "pricing.sellprice", 0);
+    let price = get(singleProducts, "pricing.price", 0);
     let variantSalePrice = get(comboData, "[0].pricing.sellprice", 0);
     let variantPrice = get(comboData, "[0].pricing.price", 0);
     if (comboData && comboData.length > 1) {
@@ -67,7 +67,7 @@ const RenderProductPrice = ({
       return (
         <span className=" mx-2">
           {!comboData?.length && !variantSelect
-            ? isDiscount(singleproducts) &&
+            ? isDiscount(singleProducts) &&
               calculateDiscount(price, salePrice) !== 0
               ? calculateDiscount(price, salePrice)
               : null
@@ -82,13 +82,13 @@ const RenderProductPrice = ({
     }
   };
 
-  const isSellPriceLessThanPrice = (singleproducts) => {
-    const sellPrice = get(singleproducts, "pricing.sellprice");
-    const price = get(singleproducts, "pricing.price");
+  const isSellPriceLessThanPrice = (singleProducts) => {
+    const sellPrice = get(singleProducts, "pricing.sellprice");
+    const price = get(singleProducts, "pricing.price");
     return sellPrice && sellPrice < price;
   };
-  const sellPrice = get(singleproducts, "pricing.sellprice");
-  const regularPrice = get(singleproducts, "pricing.price", 0);
+  const sellPrice = get(singleProducts, "pricing.sellprice");
+  const regularPrice = get(singleProducts, "pricing.price", 0);
   return (
     <>
       <div className="clearfix product-price-cover">
@@ -97,7 +97,7 @@ const RenderProductPrice = ({
             <strong className="sale-price sale-price-font">
               {sellPrice ? <RenderSalePrice /> : <Price price={regularPrice} />}
             </strong>
-            {isSellPriceLessThanPrice(singleproducts) ? (
+            {isSellPriceLessThanPrice(singleProducts) ? (
               <span
                 className={
                   sellPrice ? "has-sale-price mx-2 discount-price-font" : ""
@@ -106,7 +106,7 @@ const RenderProductPrice = ({
                 <RenderPrice />
               </span>
             ) : null}
-            <RenderDiscount singleproducts={singleproducts} />
+            <RenderDiscount singleProducts={singleProducts} />
           </div>
         ) : (
           <h6 className="product-not-available">

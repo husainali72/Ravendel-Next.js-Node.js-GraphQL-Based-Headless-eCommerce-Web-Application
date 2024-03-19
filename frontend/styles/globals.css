@@ -202,7 +202,10 @@ text-color {
   display: grid;
   margin: 25px;
 }
-
+.app-logo-container{
+  display: flex;
+justify-content: center;
+}
 /* Header css */
 .app-logo {
   float: left;
@@ -1631,16 +1634,27 @@ footer .btn:hover a {
 .copyright {
   padding: 20px 12px;
   padding-bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  font-family: Monospace;
 }
 
 .copyright p {
   font-size: 14px;
+  float: left;
 }
 
 .co-name {
   color:var(--primary-color) !important;
   display: inline-block;
   font-weight: 600;
+  margin-left: 5px;
+}
+.design-by{
+  align-items: right;
+}
+.design-by a{
+  color: #465b52;
 }
 
 .co-name p {
@@ -5186,4 +5200,21 @@ color: var(--primary-color);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.track-order-accourdian{
+  margin: 25px 10px;
+}
+.track-order-no-data{
+  text-align: center;
+}
+.mega-menu-container{
+  width: 100%;
+}
+.mega-menu-product{
+  justify-content: space-between;
+  padding-inline: 8px;
+  margin: 8px 0px;
+}
+.install-app-footer{
+  display: flex;
 }

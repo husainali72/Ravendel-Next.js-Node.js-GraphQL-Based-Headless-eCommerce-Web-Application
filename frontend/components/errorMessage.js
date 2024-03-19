@@ -1,7 +1,7 @@
-import React from "react";
-import { get } from "lodash";
+import React from 'react';
+import { get } from 'lodash';
 
-const ErrorMessage = ({ message }) => {
+const ErrorMessage = ( { message } ) => {
   return (
     <p>
       <small className="error-message">{message}</small>

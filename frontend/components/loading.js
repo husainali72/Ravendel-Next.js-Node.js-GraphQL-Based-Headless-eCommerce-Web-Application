@@ -1,15 +1,7 @@
 import React from "react";
-import { Backdrop, CircularProgress, Typography } from "@mui/material";
-
+import { CircularProgress } from "@mui/material";
 
 const Loading = () => {
-
-    return (
-
-
-        <CircularProgress color="inherit" size='20px' />
-
-
-    );
+  return <CircularProgress color="inherit" size="20px" />;
 };
-export default Loading
+export default Loading;

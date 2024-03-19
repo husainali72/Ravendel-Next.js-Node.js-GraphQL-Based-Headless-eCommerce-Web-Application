@@ -1,53 +1,49 @@
-import { useState, useEffect } from "react";
-import PageTitle from "../components/PageTitle";
-import client from "../apollo-client";
+import { useState, useEffect } from 'react';
+import PageTitle from '../components/PageTitle';
+import client from '../apollo-client';
 import Link from 'next/link';
-import { getImage } from "../utills/helpers";
-import BreadCrumb from "../components/breadcrumb/breadcrumb";
-import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
-import { GET_BLOGS_QUERY, GET_BLOGTAGS_QUERY } from "../queries/blogquery";
-import { Container, Card, Button } from 'react-bootstrap';
-import ShopProducts from "../components/shoppage/shopProducts";
-import { blogAction } from "../redux/actions/blogAction"
-import { useDispatch } from "react-redux";
-const Blog = (blogData) => {
+import { getImage } from '../utills/helpers';
+import BreadCrumb from '../components/breadcrumb/breadcrumb';
+import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
+import { GET_BLOGS_QUERY, GET_BLOGTAGS_QUERY } from '../queries/blogquery';
+import { Container, Card } from 'react-bootstrap';
+import { blogAction } from '../redux/actions/blogAction';
+import { useDispatch } from 'react-redux';
+const Blog = ( blogData ) => {
     const imageType = blogData?.homepageData && blogData?.homepageData?.getSettings?.imageStorage?.status;
     const dispatch = useDispatch();
-    const [blog, setBlog] = useState([])
-
-    const [tags, setTags] = useState([])
-    useEffect(() => {
-        if (blogData && blogData.blogData?.length > 0) {
-            setBlog(blogData.blogData)
-            setTags(blogData.blogTagsData)
+    const [ blog, setBlog ] = useState( [] );
+    useEffect( () => {
+        if ( blogData && 0 < blogData.blogData?.length ) {
+            setBlog( blogData.blogData );
         }
-        dispatch(blogAction(blogData.blogTagsData))
-    }, [blogData])
+        dispatch( blogAction( blogData.blogTagsData ) );
+    }, [ blogData ] );
     return (
         <>
-            <PageTitle title={"All Blog"} />
-            <BreadCrumb title={"Blogs"} />
+            <PageTitle title={'All Blog'} />
+            <BreadCrumb title={'Blogs'} />
             <Container>
-                {blog && blog?.length > 0 ? (
+                {blog && 0 < blog?.length ? (
                     <div className="blog-page">
                         <div className="blog-section">
                             <h1><strong>Our Blog</strong></h1>
                             {/* <div className=" d-flex flex-row justify-content-center"> */}
                             <div className="blog-container">
-                                {blog.map((blog, i) => (
+                                {blog.map( ( blog, i ) => (
                                     // <div className="col-lg-6" key={i}>
                                     <div className="" key={i}>
                                         <Card>
                                             <div className="card-img"><Card.Img
                                                 variant="top"
-                                                src={getImage(blog.feature_image, imageType)}
-                                                onError={(e) => e.type === 'error' ? e.target.src = "https://dummyimage.com/300" : null}
+                                                src={getImage( blog.feature_image, imageType )}
+                                                onError={( e ) => 'error' === e.type ? e.target.src = 'https://dummyimage.com/300' : null}
                                             /></div>
 
                                             <Card.Body>
                                                 <div className="card-img-tags">
                                                     <span className="percantage-save">
-                                                        {blog.meta.title ? (blog.meta.title) : <span>category</span>}
+                                                        {blog.meta.title ? ( blog.meta.title ) : <span>category</span>}
                                                     </span>
                                                 </div>
                                                 <Card.Title>{blog.title}</Card.Title>
@@ -62,7 +58,7 @@ const Blog = (blogData) => {
                                         </Card>
                                     </div>
 
-                                ))}
+                                ) )}
                             </div>
                         </div>
                         {/* <div className="blog-category">
@@ -76,8 +72,8 @@ const Blog = (blogData) => {
                 )}
             </Container>
         </>
-    )
-}
+    );
+};
 export default Blog;
 
 export async function getStaticProps() {
@@ -88,37 +84,34 @@ export async function getStaticProps() {
     /* ===============================================Get HomepageData Settings ===============================================*/
 
     try {
-        const { data: homepagedata } = await client.query({
+        const { data: homepagedata } = await client.query( {
             query: GET_HOMEPAGE_DATA_QUERY
-        });
-        homepageData = homepagedata
-    }
-    catch (e) {
-        console.log("Homepage Error===", e);
+        } );
+        homepageData = homepagedata;
+    } catch ( e ) {
+        console.log( 'Homepage Error===', e );
     }
 
     /* ===============================================Get Blog Data =====================================================================*/
     try {
-        const { data: blogdata } = await client.query({
+        const { data: blogdata } = await client.query( {
             query: GET_BLOGS_QUERY
-        });
-        blogData = blogdata.blogs.data
-    }
-    catch (e) {
-        console.log("Blog Error=======", e.networkError);
+        } );
+        blogData = blogdata.blogs.data;
+    } catch ( e ) {
+        console.log( 'Blog Error=======', e.networkError );
 
     }
 
     /* ===============================================Get BlogTags Data =====================================================================*/
 
     try {
-        const { data: blogtagsdata } = await client.query({
+        const { data: blogtagsdata } = await client.query( {
             query: GET_BLOGTAGS_QUERY
-        });
-        blogTagsData = blogtagsdata.blogtags.data
-    }
-    catch (e) {
-        console.log("BlOG TAGS Error==", e)
+        } );
+        blogTagsData = blogtagsdata.blogtags.data;
+    } catch ( e ) {
+        console.log( 'BlOG TAGS Error==', e );
     }
 
     return {

@@ -185,22 +185,11 @@ export async function getStaticPaths() {
 }
 export async function getStaticProps({ params }) {
     const url = params.category || null
-    var homepageData = [];
     var singlecategory = [];
     var fillterProduct = [];
     var brandProduct = [];
     var shopProduct = [];
-    /* ===============================================Get HomepageData Settings ===============================================*/
 
-    try {
-        const { data: homepagedata } = await client.query({
-            query: GET_HOMEPAGE_DATA_QUERY
-        })
-        homepageData = homepagedata
-    }
-    catch (e) {
-        console.log("homepage Error===", e);
-    }
 
     /* ===============================================Get SinglePage Category ===============================================*/
 
@@ -238,7 +227,6 @@ export async function getStaticProps({ params }) {
     }
     return {
         props: {
-            homepageData,
             singlecategory,
             url,
             brandProduct,

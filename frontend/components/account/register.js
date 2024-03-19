@@ -130,7 +130,7 @@ const Register = () => {
                   value: !email,
                   message: emailErrorMessage,
                 },
-                validate: (value) => {
+                validate: () => {
                   return validateEmail(email);
                 },
               })}
@@ -174,7 +174,7 @@ const Register = () => {
                   value: !password,
                   message: passwordErrorMessage,
                 },
-                validate: (value) => {
+                validate: () => {
                   return passwordValidation(password);
                 },
               })}

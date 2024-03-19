@@ -11,24 +11,25 @@ import { GET_HOMEPAGE_DATA_QUERY, GET_CATEGORIES_QUERY } from '../../queries/hom
 import { useDispatch, useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts";
 import { settingActionCreator } from '../../redux/actions/settingAction';
-import { capitalize } from 'lodash';
+import { capitalize, get } from 'lodash';
 import MultiRangeSlider from '../../components/breadcrumb/multirangeSlider';
 import { currencySetter } from '../../utills/helpers';
 import { getAllAttributes } from '../../redux/actions/productAction';
 import CategoryBreadCrumb from '../../components/breadcrumb';
 // import CategoryBreadCrumb from './component/breadcrumb';
 
-const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProduct, brandProduct, homepageData }) => {
+const SingleCategoryProduct = ({  singlecategory, paths, shopProduct, brandProduct, homepageData }) => {
     const breadCrumbTitle = shopProduct?.data?.find((catt) => catt.id === singlecategory.parentId);
     const attributes = useSelector(state => state.products.attributes)
     const [cats, setCats] = useState({})
-    const currencyOpt = currencyStore?.currency_options?.currency
     const [currency, setCurrency] = useState("$")
     const [FilterAttribute, setFilterAttribute] = useState([])
     const dispatch = useDispatch()
     const [rangevalue, setRangevalue] = useState('');
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [products, setProducts] = useState([]);
+    const router = useRouter()
+    const settings = useSelector((state) => state.setting);
     const [categoryDetail, setCategoryDetail] = useState({
         name: "",
         products: [],
@@ -41,13 +42,12 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
         },
     });
     useEffect(() => {
-        currencySetter(currencyOpt, setCurrency);
+        const currencyStoreOptions = get(settings, "setting.store.currency_options", {});
+        currencySetter(currencyStoreOptions, setCurrency);
+      }, [settings]);
+    useEffect(() => {
         dispatch(getAllAttributes());
     }, [])
-    useEffect(() => {
-        dispatch(settingActionCreator(currencyStore?.currency_options))
-    }, [currencyStore?.currency_options])
-    const router = useRouter()
 
     if (router.isFallback) {
         return <div>loading...</div>
@@ -250,8 +250,7 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
                                 <div className="shop-product-list">
                                     <OnSaleProductCard
                                         onSaleProduct={filteredProducts}
-                                        hidetitle
-                                        homepageData={homepageData}
+                                        hideTitle
                                     />
                                 </div>) : (
                                 <div style={{ padding: "50px" }}>
@@ -269,26 +268,10 @@ const SingleCategoryProduct = ({ currencyStore, singlecategory, paths, shopProdu
 export default SingleCategoryProduct;
 export async function getServerSideProps({ params }) {
     const url = params.category
-    var homepageData = [];
-    var currencyStore = [];
     var singlecategory = [];
     var fillterProduct = [];
     var brandProduct = [];
     var shopProduct = [];
-    var stripe_Public_key = ''
-    /* ===============================================Get HomepageData Settings ===============================================*/
-
-    try {
-        const { data: homepagedata } = await client.query({
-            query: GET_HOMEPAGE_DATA_QUERY
-        })
-        homepageData = homepagedata
-        currencyStore = homepagedata?.getSettings?.store
-        stripe_Public_key = homepagedata?.getSettings?.paymnet?.stripe
-    }
-    catch (e) {
-        console.log("homepage Error===", e);
-    }
 
     /* ===============================================Get SinglePage Category ===============================================*/
 
@@ -326,12 +309,10 @@ export async function getServerSideProps({ params }) {
     }
     return {
         props: {
-            homepageData,
             singlecategory,
             url,
             brandProduct,
             shopProduct,
-            currencyStore
         }
     }
 }

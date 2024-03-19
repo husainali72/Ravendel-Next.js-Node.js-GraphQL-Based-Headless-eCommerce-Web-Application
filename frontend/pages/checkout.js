@@ -1,191 +1,188 @@
-import { useState, useEffect } from "react";
-import { API_BASE_URL as baseUrl } from "../config";
-import Link from "next/link";
-import client from "../apollo-client";
-import BreadCrumb from "../components/breadcrumb/breadcrumb";
-import { Container, Button } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
-import BillingDetails from "../components/checkoutcomponent/BillingDetail";
-import Orderdetail from "../components/checkoutcomponent/OrderDetail";
-import { useForm } from "react-hook-form";
-import { checkoutDetailAction } from "../redux/actions/checkoutAction";
-import CustomerDetail from "../components/checkoutcomponent/CustomerDetails";
-import { getSession, useSession } from "next-auth/react";
-import ShippingTaxCoupon from "../components/checkoutcomponent/ShippingTaxCoupon";
+import { useState, useEffect } from 'react';
+import { API_BASE_URL as baseUrl } from '../config';
+import Link from 'next/link';
+import client from '../apollo-client';
+import BreadCrumb from '../components/breadcrumb/breadcrumb';
+import { Container, Button } from 'react-bootstrap';
+import { useSelector, useDispatch } from 'react-redux';
+import BillingDetails from '../components/checkoutcomponent/BillingDetail';
+import Orderdetail from '../components/checkoutcomponent/OrderDetail';
+import { useForm } from 'react-hook-form';
+import { checkoutDetailAction } from '../redux/actions/checkoutAction';
+import CustomerDetail from '../components/checkoutcomponent/CustomerDetails';
+import { getSession, useSession } from 'next-auth/react';
+import ShippingTaxCoupon from '../components/checkoutcomponent/ShippingTaxCoupon';
 import {
-  formatNumber,
   mutation,
   stripeCheckout,
   currencySetter,
-  logoutAndClearData,
   query,
-} from "../utills/helpers";
-import { ADD_ORDER } from "../queries/orderquery";
-import { useRouter } from "next/router";
-import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
-import { APPLY_COUPON_CODE } from "../queries/couponquery";
-import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
-import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
+  handleError,
+} from '../utills/helpers';
+import { ADD_ORDER } from '../queries/orderquery';
+import { useRouter } from 'next/router';
+import Stripes from '../components/checkoutcomponent/reactstripe/StripeContainer';
+import { APPLY_COUPON_CODE } from '../queries/couponquery';
+import OrderSummary from '../components/checkoutcomponent/CheckOutOrderSummary';
+import Stepper from '../components/checkoutcomponent/stepperbar/Stepper';
 import {
   calculateUserCart,
   removeAllCartItemsAction,
   removeCartItemAction,
-} from "../redux/actions/cartAction";
-import toast, { Toaster } from "react-hot-toast";
-import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
-import { CHECK_ZIPCODE } from "../queries/productquery";
-import { get } from "lodash";
+} from '../redux/actions/cartAction';
+import toast, { Toaster } from 'react-hot-toast';
+import { CHECK_ZIPCODE } from '../queries/productquery';
+import { get } from 'lodash';
 
-const notify = (message, success) => {
-  if (success) {
-    return toast.success(message);
+const notify = ( message, success ) => {
+  if ( success ) {
+    return toast.success( message );
   } else {
-    return toast.error(message);
+    return toast.error( message );
   }
 };
 
 var billingInfoObject = {
-  order_notes: "",
-  zip: "",
-  state: "",
-  city: "",
-  address_line2: "",
-  address: "",
-  phone: "",
-  company: "",
-  email: "",
-  lastname: "",
-  firstname: "",
-  country: "UK",
-  paymentMethod: "",
-  transaction_id: "",
+  order_notes: '',
+  zip: '',
+  state: '',
+  city: '',
+  address_line2: '',
+  address: '',
+  phone: '',
+  company: '',
+  email: '',
+  lastname: '',
+  firstname: '',
+  country: 'UK',
+  paymentMethod: '',
+  transaction_id: '',
 };
 var shippingObject = {
-  order_notes: "",
-  zip: "",
-  state: "",
-  city: "",
-  address_line2: "",
-  address: "",
-  phone: "",
-  company: "",
-  email: "",
-  lastname: "",
-  firstname: "",
-  country: "UK",
-  paymentMethod: "",
+  order_notes: '',
+  zip: '',
+  state: '',
+  city: '',
+  address_line2: '',
+  address: '',
+  phone: '',
+  company: '',
+  email: '',
+  lastname: '',
+  firstname: '',
+  country: 'UK',
+  paymentMethod: '',
 };
 
 var savedShippingInfo;
-const totalCart = (product) =>
-  product.reduce(
-    (total, product) => total + product.pricing.sellprice * product.quantity,
-    0
-  );
-
-export const CheckOut = ({ currencyStore, homepageData }) => {
+export const CheckOut = () => {
   const session = useSession();
   const dispatch = useDispatch();
-  const [islogin, setIsLogin] = useState(false);
+  const [ islogin, setIsLogin ] = useState( false );
   const router = useRouter();
-  const [addressList, selectAddressList] = useState([]);
-  const [token, setToken] = useState("");
-  const [customerId, setCustomerId] = useState("");
-  const [billingDetails, setBillingDetails] = useState({
-    userId: customerId || "",
-  });
-  const carts = useSelector((state) => state.cart);
-  const [cartItems, setCartItems] = useState([]);
-  const [billingInfo, setBillingInfo] = useState(billingInfoObject);
-  const [shippingInfo, setShippingInfo] = useState(shippingObject);
-  const [shippingAdd, setShippingAdd] = useState(false);
-  const [formStep, setFormStep] = useState(1);
-  const [totalSummary, setTotalSummary] = useState({});
-  const [CouponLoading, setCouponLoading] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
-  const steps = ["Address", "Shipping", "Order Detail"];
-  const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
-  const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
-  const currencyOpt = currencyStore?.currency_options?.currency;
-  const [currency, setCurrency] = useState("$");
-  const [ZipMessage, setZipMessage] = useState("");
-  const [couponCartDetail, setCouponCardDetail] = useState({});
-  const currencyOption = currencyStore?.currency_options;
+  const [ addressList, selectAddressList ] = useState( [] );
+  const [ token, setToken ] = useState( '' );
+  const [ customerId, setCustomerId ] = useState( '' );
+  const [ billingDetails, setBillingDetails ] = useState( {
+    userId: customerId || '',
+  } );
+  const carts = useSelector( ( state ) => state.cart );
+  const [ cartItems, setCartItems ] = useState( [] );
+  const [ billingInfo, setBillingInfo ] = useState( billingInfoObject );
+  const [ shippingInfo, setShippingInfo ] = useState( shippingObject );
+  const [ shippingAdd, setShippingAdd ] = useState( false );
+  const [ formStep, setFormStep ] = useState( 1 );
+  const [ totalSummary, setTotalSummary ] = useState( {} );
+  const [ CouponLoading, setCouponLoading ] = useState( false );
+  const [ couponCode, setCouponCode ] = useState( '' );
+  const steps = [ 'Address', 'Shipping', 'Order Detail' ];
+  const nextFormStep = () => setFormStep( ( currentStep ) => currentStep + 1 );
+  const prevFormStep = () => setFormStep( ( currentStep ) => currentStep - 1 );
+  const [ currency, setCurrency ] = useState( '$' );
+  const [ ZipMessage, setZipMessage ] = useState( '' );
+  const [ couponCartDetail, setCouponCardDetail ] = useState( {} );
+  const settings = useSelector( ( state )=>state.setting );
+  const [ currencyOption, setCurrencyOption ] = useState( {} );
+  useEffect( () => {
+    const currencyStoreOptions = get( settings, 'setting.store.currency_options', {} );
+    setCurrencyOption( {...currencyStoreOptions} );
+    currencySetter( currencyStoreOptions, setCurrency );
+  }, [ settings ] );
 
-  useEffect(() => {
-    if (session.status === "authenticated") {
-      selectAddressList(get(session, "data.user.accessToken.customer.addressBook")  );
-      const defaultAddress=getDefaultAddressDetails(get(session, "data.user.accessToken.customer.addressBook"))
-      setBillingInfo({...defaultAddress})
-      setToken(get(session, "data.user.accessToken.token"));
-      setCustomerId(get(session, "data.user.accessToken.customer._id"));
-      let sessionCustomerID = get(session, "data.user.accessToken.customer._id" );
-      setBillingDetails({ ...billingDetails, userId: sessionCustomerID });
+  useEffect( () => {
+    if ( 'authenticated' === session.status ) {
+      selectAddressList( get( session, 'data.user.accessToken.customer.addressBook' )  );
+      const defaultAddress = getDefaultAddressDetails( get( session, 'data.user.accessToken.customer.addressBook' ) );
+      setBillingInfo( {...defaultAddress} );
+      setToken( get( session, 'data.user.accessToken.token' ) );
+      setCustomerId( get( session, 'data.user.accessToken.customer._id' ) );
+      let sessionCustomerID = get( session, 'data.user.accessToken.customer._id' );
+      setBillingDetails( { ...billingDetails, userId: sessionCustomerID } );
     }
-  }, [session, get(session, "data.user.accessToken.customer.addressBook")]);
-  useEffect(() => {
+  }, [ session, get( session, 'data.user.accessToken.customer.addressBook' ) ] );
+  useEffect( () => {
     const getProducts = async () => {
       const userSession = await getSession();
-      if (session?.status === "authenticated" || userSession !== null) {
-        setIsLogin(true);
-        let cartItemList = prepareCartItemsList(get(carts, "cartItems", []));
-        setTotalSummary({ ...get(carts, "totalSummary") });
-        setCartItems([...cartItemList]);
-        setCouponCardDetail({})
-      }
-       else {
-        setCartItems([]);
-        setCouponCardDetail({})
+      if ( 'authenticated' === session?.status || null !== userSession ) {
+        setIsLogin( true );
+        let cartItemList = prepareCartItemsList( get( carts, 'cartItems', [] ) );
+        setTotalSummary( { ...get( carts, 'totalSummary' ) } );
+        setCartItems( [ ...cartItemList ] );
+        setCouponCardDetail( {} );
+      } else {
+        setCartItems( [] );
+        setCouponCardDetail( {} );
       }
     };
     getProducts();
-  }, [carts]);
-  useEffect(() => {
+  }, [ carts ] );
+  useEffect( () => {
     const checkCart = async () => {
       const userSession = await getSession();
-      if (session?.status === "authenticated" || userSession !== null) {
-        setIsLogin(true);
-        if (get(carts, "cartItems", []).length <= 0) {
-          router.push("/");
+      if ( 'authenticated' === session?.status || null !== userSession ) {
+        setIsLogin( true );
+        if ( 0 >= get( carts, 'cartItems', [] ).length ) {
+          router.push( '/' );
         }
       }
     };
     checkCart();
-    currencySetter(currencyOpt, setCurrency);
-  }, []);
-  useEffect(() => {
-    if (session.status === "authenticated") {
+
+  }, [] );
+  useEffect( () => {
+    console.log( 'fkjkjhg' );
+    if ( 'authenticated' === session.status ) {
       selectAddressList(
-        get(session, "data.user.accessToken.customer.addressBook")
+        get( session, 'data.user.accessToken.customer.addressBook' )
       );
-      setToken(get(session, "data.user.accessToken.token"));
-      setCustomerId(get(session, "data.user.accessToken.customer._id"));
-      setIsLogin(true);
+      setToken( get( session, 'data.user.accessToken.token' ) );
+      setCustomerId( get( session, 'data.user.accessToken.customer._id' ) );
+      setIsLogin( true );
     } else {
-      setIsLogin(false);
+      setIsLogin( false );
     }
-  }, [get(carts, "cartItems")]);
+  }, [ get( carts, 'cartItems' ) ] );
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
     control,
-  } = useForm({ mode: "onSubmit" });
-  const onSubmit = (data) => {
-    if (ZipMessage && ZipMessage.zipSuccess) {
+  } = useForm( { mode: 'onSubmit' } );
+  const onSubmit = ( data ) => {
+    if ( ZipMessage && ZipMessage.zipSuccess ) {
       nextFormStep();
     }
   };
-  const getDefaultAddressDetails=(addresses)=>{
-if(addresses&&addresses.length>0){
-    let defaultAddress=addresses?.find((address)=>address?.defaultAddress)
-    defaultAddress=defaultAddress||addresses[0]
+  const getDefaultAddressDetails = ( addresses )=>{
+if ( addresses && 0 < addresses.length ) {
+    let defaultAddress = addresses?.find( ( address )=>address?.defaultAddress );
+    defaultAddress = defaultAddress || addresses[0];
     let defaultAddressInfo = {
       zip: defaultAddress.pincode,
       state: defaultAddress.state,
       city: defaultAddress.city,
-      address: defaultAddress.addressLine1 + ", " + defaultAddress.addressLine2,
+      address: defaultAddress.addressLine1 + ', ' + defaultAddress.addressLine2,
       addressLine2: defaultAddress.addressLine2,
       addressLine1: defaultAddress.addressLine1,
       phone: defaultAddress.phone,
@@ -195,134 +192,135 @@ if(addresses&&addresses.length>0){
       firstname: defaultAddress.firstName,
       country: defaultAddress.country,
     };
-    checkCode(get(defaultAddressInfo,'zip'))
-    return defaultAddressInfo}
-  }
-  const prepareCartItemsList = (allCartItems) => {
+    checkCode( get( defaultAddressInfo, 'zip' ) );
+    return defaultAddressInfo;
+}
+  };
+  const prepareCartItemsList = ( allCartItems ) => {
     let cartItemsList = [];
-    allCartItems?.map((cart) => {
+    allCartItems?.map( ( cart ) => {
       let cartProduct = {
-        _id: get(cart, "productId", ""),
-        variantId: get(cart, "variantId", ""),
-        quantity: parseInt(get(cart, "qty")),
-        productQuantity: get(cart, "productQuantity"),
-        name: get(cart, "productTitle"),
-        pricing: get(cart, "productPrice"),
-        feature_image: get(cart, "productImage"),
-        url: get(cart, "url"),
-        attributes: get(cart, "attributes", []),
-        shippingClass: get(cart, "shipping.shippingClass"),
-        taxClass: get(cart, "taxClass"),
-        discountPercentage: get(cart, "discountPercentage"),
-        amount: get(cart, "amount"),
-        mrpAmount: get(cart, "mrpAmount"),
-        available: get(cart, "available"),
+        _id: get( cart, 'productId', '' ),
+        variantId: get( cart, 'variantId', '' ),
+        quantity: parseInt( get( cart, 'qty' ) ),
+        productQuantity: get( cart, 'productQuantity' ),
+        name: get( cart, 'productTitle' ),
+        pricing: get( cart, 'productPrice' ),
+        feature_image: get( cart, 'productImage' ),
+        url: get( cart, 'url' ),
+        attributes: get( cart, 'attributes', [] ),
+        shippingClass: get( cart, 'shipping.shippingClass' ),
+        taxClass: get( cart, 'taxClass' ),
+        discountPercentage: get( cart, 'discountPercentage' ),
+        amount: get( cart, 'amount' ),
+        mrpAmount: get( cart, 'mrpAmount' ),
+        available: get( cart, 'available' ),
       };
-      if (cart.available) {
-        cartItemsList.push(cartProduct);
+      if ( cart.available ) {
+        cartItemsList.push( cartProduct );
       }
-    });
+    } );
     return cartItemsList;
   };
-  const removeCoupon=()=>{
-    if (session.status === "authenticated"&&customerId) {
-    dispatch(calculateUserCart(customerId))
+  const removeCoupon = ()=>{
+    if ( 'authenticated' === session.status && customerId ) {
+    dispatch( calculateUserCart( customerId ) );
     }
-  }
-  const handleBillingInfo = (e) => {
-    if (!shippingAdd) {
-      setShippingInfo({
+  };
+  const handleBillingInfo = ( e ) => {
+    if ( ! shippingAdd ) {
+      setShippingInfo( {
         ...shippingInfo,
         [e.target.name]: e.target.value,
-      });
+      } );
     }
-    setBillingInfo({ ...billingInfo, [e.target.name]: e.target.value });
+    setBillingInfo( { ...billingInfo, [e.target.name]: e.target.value } );
   };
-  const checkCode = async (code) => {
+  const checkCode = async ( code ) => {
     try {
-      const { data: result } = await client.query({
+      const { data: result } = await client.query( {
         query: CHECK_ZIPCODE,
 
         variables: { zipcode: code.toString() },
-      });
-      setZipMessage({
+      } );
+      setZipMessage( {
         ...ZipMessage,
         zipMessage: result.checkZipcode.message,
         zipSuccess: result.checkZipcode.success,
-      });
-    } catch (e) {}
+      } );
+    } catch ( e ) {}
   };
-  const handleZipCode = (e) => {
-    if (!shippingAdd) {
-      setShippingInfo({
+  const handleZipCode = ( e ) => {
+    if ( ! shippingAdd ) {
+      setShippingInfo( {
         ...shippingInfo,
         [e.target.name]: e.target.value,
-      });
+      } );
     }
-    setBillingInfo({ ...billingInfo, [e.target.name]: e.target.value });
-    
-    checkCode(e.target.value);
+    setBillingInfo( { ...billingInfo, [e.target.name]: e.target.value } );
+
+    checkCode( e.target.value );
   };
 
-  const getBillingData = (val) => {
-    setBillingDetails({ ...billingDetails, ...val });
+  const getBillingData = ( val ) => {
+    setBillingDetails( { ...billingDetails, ...val } );
   };
 
-  const getOrderDetailsData = (val) => {
-    setBillingDetails({ ...billingDetails, ...val });
+  const getOrderDetailsData = ( val ) => {
+    setBillingDetails( { ...billingDetails, ...val } );
   };
-  const getCalculationDetails = (val) => {
+  const getCalculationDetails = ( val ) => {
     let updatedBillingDetails = { ...billingDetails, ...val };
-    if (get(couponCartDetail, "couponApplied")) {
+    if ( get( couponCartDetail, 'couponApplied' ) ) {
       updatedBillingDetails = {
         ...updatedBillingDetails,
-        couponCode: get(couponCartDetail, "appliedCouponCode"),
+        couponCode: get( couponCartDetail, 'appliedCouponCode' ),
       };
     } else {
       // Remove couponCode key from updatedBillingDetails
       delete updatedBillingDetails.couponCode;
     }
 
-    setBillingDetails({ ...updatedBillingDetails });
+    setBillingDetails( { ...updatedBillingDetails } );
   };
-  const handleShippingChange = (e) => {
-    setShippingInfo({
+  const handleShippingChange = ( e ) => {
+    setShippingInfo( {
       ...shippingInfo,
-      [e.target.name.slice(8)]: e.target.value,
-    });
+      [e.target.name.slice( 8 )]: e.target.value,
+    } );
   };
-  const handlePhoneInput = (name, value) => {
-    if (!shippingAdd) {
-      setShippingInfo({
+  const handlePhoneInput = ( name, value ) => {
+    if ( ! shippingAdd ) {
+      setShippingInfo( {
         ...shippingInfo,
         [name]: value,
-      });
+      } );
     }
-    setBillingInfo({ ...billingInfo, [name]: value });
+    setBillingInfo( { ...billingInfo, [name]: value } );
   };
 
-  const handleShippingPhone = (name, value) => {
-    setShippingInfo({
+  const handleShippingPhone = ( name, value ) => {
+    setShippingInfo( {
       ...shippingInfo,
       [name]: value,
-    });
+    } );
   };
 
-  const shippingAddressToggle = (e) => {
-    if (e.target.checked) {
+  const shippingAddressToggle = ( e ) => {
+    if ( e.target.checked ) {
       savedShippingInfo = shippingInfo;
-      setShippingInfo(shippingObject);
+      setShippingInfo( shippingObject );
     } else {
-      setShippingInfo(billingInfo);
+      setShippingInfo( billingInfo );
     }
-    setShippingAdd(e.target.checked);
+    setShippingAdd( e.target.checked );
   };
-  const SelectAddressBook = (address) => {
+  const SelectAddressBook = ( address ) => {
     let commonFields = {
       zip: address.pincode,
       state: address.state,
       city: address.city,
-      address: address.addressLine1 + ", " + address.addressLine2,
+      address: address.addressLine1 + ', ' + address.addressLine2,
       addressLine2: address.addressLine2,
       addressLine1: address.addressLine1,
       phone: address.phone,
@@ -337,109 +335,107 @@ if(addresses&&addresses.length>0){
       payment_method: address.paymentMethod,
     };
     let billing = commonFields;
-    if (!shippingAdd) {
-      setShippingInfo(shipping);
+    if ( ! shippingAdd ) {
+      setShippingInfo( shipping );
     }
     const checkCode = async () => {
       try {
-        const { data: result } = await client.query({
+        const { data: result } = await client.query( {
           query: CHECK_ZIPCODE,
-          variables: { zipcode: get(address, "pincode", "").toString() },
-        });
-        setZipMessage({
+          variables: { zipcode: get( address, 'pincode', '' ).toString() },
+        } );
+        setZipMessage( {
           ...ZipMessage,
-          zipMessage: get(result, "checkZipcode.message"),
-          zipSuccess: get(result, "checkZipcode.success"),
-        });
-      } catch (e) {}
+          zipMessage: get( result, 'checkZipcode.message' ),
+          zipSuccess: get( result, 'checkZipcode.success' ),
+        } );
+      } catch ( e ) {}
     };
     checkCode();
-    setBillingInfo(billing);
+    setBillingInfo( billing );
   };
-  const doApplyCouponCode = async (e) => {
+  const doApplyCouponCode = async ( e ) => {
     e.preventDefault();
-    let cart = cartItems.map((product) => {
+    let cart = cartItems.map( ( product ) => {
       return {
-        productId: get(product, "_id"),
-        variantId: get(product, "variantId"),
-        productTitle: get(product, "name"),
-        attributes: get(product, "attributes"),
-        qty: get(product, "quantity"),
+        productId: get( product, '_id' ),
+        variantId: get( product, 'variantId' ),
+        productTitle: get( product, 'name' ),
+        attributes: get( product, 'attributes' ),
+        qty: get( product, 'quantity' ),
       };
-    });
+    } );
     let variables = {
       userId: customerId,
       couponCode: `${couponCode}`,
       // cartItems: cart,
     };
     let couponResponse = 0;
-    setCouponLoading(true);
-    query(APPLY_COUPON_CODE, variables, token)
-      .then((res) => {
-        couponResponse = get(res, "data.calculateCoupon");
+    setCouponLoading( true );
+    query( APPLY_COUPON_CODE, variables, token )
+      .then( ( res ) => {
+        couponResponse = get( res, 'data.calculateCoupon' );
 
         //Extract and update the cart items based on the coupon response
         let cartItemList = prepareCartItemsList(
-          get(couponResponse, "cartItems", [])
+          get( couponResponse, 'cartItems', [] )
         );
-        setCartItems([...cartItemList]);
-        setTotalSummary({ ...get(couponResponse, "totalSummary", {}) });
+        setCartItems( [ ...cartItemList ] );
+        setTotalSummary( { ...get( couponResponse, 'totalSummary', {} ) } );
         // Update coupon details
-        if (get(couponResponse, "success")) {
-          setCouponCardDetail({ ...get(couponResponse, "couponCard", {}) });
-          setCouponCode("");
-          notify(get(couponResponse, "message"), true);
+        if ( get( couponResponse, 'success' ) ) {
+          setCouponCardDetail( { ...get( couponResponse, 'couponCard', {} ) } );
+          setCouponCode( '' );
+          notify( get( couponResponse, 'message' ), true );
         } else {
-          notify(get(couponResponse, "message"));
-          setCouponCardDetail({ ...get(couponResponse, "couponCard", {}) });
+          notify( get( couponResponse, 'message' ) );
+          setCouponCardDetail( { ...get( couponResponse, 'couponCard', {} ) } );
         }
-      })
-      .finally(() => setCouponLoading(false));
+      } )
+      .finally( () => setCouponLoading( false ) );
   };
-  const handleOrderPlaced = (e) => {
+  const handleOrderPlaced = ( e ) => {
     e.preventDefault();
-    if (billingDetails.billing.payment_method === "stripe") {
-        stripeCheckout(billingDetails, cartItems, baseUrl)
+    if ( 'stripe' === billingDetails.billing.payment_method ) {
+        stripeCheckout( billingDetails, cartItems, baseUrl );
     }
-    dispatch(checkoutDetailAction(billingDetails));
-    mutation(ADD_ORDER, billingDetails, dispatch).then(res => {
-        let response = res.data.addOrder.success
+    dispatch( checkoutDetailAction( billingDetails ) );
+    mutation( ADD_ORDER, billingDetails, dispatch ).then( res => {
+        let response = res.data.addOrder.success;
 
-        if (response) {
-            billingDetails.products.forEach(product => {
-                dispatch(removeCartItemAction(product.productId))
-            })
-            if (session.status === "authenticated") {
-                let id = customerId
-                let variables = { userId: id}
-                dispatch(removeAllCartItemsAction(variables))
+        if ( response ) {
+            billingDetails.products.forEach( product => {
+                dispatch( removeCartItemAction( product.productId ) );
+            } );
+            if ( 'authenticated' === session.status ) {
+                let id = customerId;
+                let variables = { userId: id};
+                dispatch( removeAllCartItemsAction( variables ) );
 
             }
-            setBillingDetails("")
-            router.push("/orderstatus/thankyou")
+            setBillingDetails( '' );
+            router.push( '/orderstatus/thankyou' );
         }
 
     }
-    ).catch((error)=>{
-        if(get(error,'extensions.code')===401){
-            logoutAndClearData(dispatch)
-        }
-    })
-}
+    ).catch( ( error )=>{
+      handleError( error, dispatch );
+    } );
+};
 
-  if (islogin) {
-    switch (formStep) {
+  if ( islogin ) {
+    switch ( formStep ) {
       case 1:
         return (
           <>
             <Toaster />
             <div>
-              <BreadCrumb title={"checkout"} />
+              <BreadCrumb title={'checkout'} />
               <section className="checkout-section">
                 <Container>
                   <Stepper activeStep={formStep} steps={steps} />
                   <div className="col-lg-12 first-checkout-page">
-                    <div style={{ padding: "20px", maxWidth: "700px" }}>
+                    <div style={{ padding: '20px', maxWidth: '700px' }}>
                       <CustomerDetail
                         addressBook={addressList}
                         setBillingInfo={setBillingInfo}
@@ -450,7 +446,7 @@ if(addresses&&addresses.length>0){
                         getBillingInfo={getBillingData}
                       />
                       <h5>Billing Details</h5>
-                      <form onSubmit={handleSubmit(onSubmit)}>
+                      <form onSubmit={handleSubmit( onSubmit )}>
                         <BillingDetails
                           control={control}
                           ZipMessage={ZipMessage}
@@ -474,7 +470,7 @@ if(addresses&&addresses.length>0){
                           className="btn btn-success primary-btn-color"
                           style={{
                             marginTop: 12,
-                            float: "right",
+                            float: 'right',
                           }}
                         >
                           Continue
@@ -507,12 +503,12 @@ if(addresses&&addresses.length>0){
           <>
             <Toaster />
             <div>
-              <BreadCrumb title={"checkout"} />
+              <BreadCrumb title={'checkout'} />
               <section className="checkout-section">
                 <Container>
                   <Stepper activeStep={formStep} steps={steps} />
-                  <div className="col-lg-12" style={{ display: "flex" }}>
-                    <div style={{ width: "60%", padding: "20px" }}>
+                  <div className="col-lg-12" style={{ display: 'flex' }}>
+                    <div style={{ width: '60%', padding: '20px' }}>
                       <ShippingTaxCoupon
                         currency={currency}
                         shippingInfo={shippingInfo}
@@ -524,7 +520,7 @@ if(addresses&&addresses.length>0){
                         className="btn btn-success primary-btn-color"
                         style={{
                           marginTop: 12,
-                          float: "right",
+                          float: 'right',
                         }}
                         onClick={nextFormStep}
                       >
@@ -533,9 +529,9 @@ if(addresses&&addresses.length>0){
                     </div>
                     <div
                       style={{
-                        width: "40%",
-                        borderLeft: "2px solid whitesmoke",
-                        padding: "20px",
+                        width: '40%',
+                        borderLeft: '2px solid whitesmoke',
+                        padding: '20px',
                       }}
                     >
                       <OrderSummary
@@ -563,12 +559,12 @@ if(addresses&&addresses.length>0){
           <>
             <Toaster />
             <div>
-              <BreadCrumb title={"checkout"} />
+              <BreadCrumb title={'checkout'} />
               <section className="checkout-section">
                 <Container>
                   <Stepper activeStep={formStep} steps={steps} />
-                  <div className="col-lg-12" style={{ display: "flex" }}>
-                    <div style={{ width: "60%", padding: "20px" }}>
+                  <div className="col-lg-12" style={{ display: 'flex' }}>
+                    <div style={{ width: '60%', padding: '20px' }}>
                       <ShippingTaxCoupon
                         currency={currency}
                         shippingInfo={shippingInfo}
@@ -578,7 +574,7 @@ if(addresses&&addresses.length>0){
                       />
                       <h5>Your Order Summary</h5>
                       <Orderdetail
-                        homepageData={homepageData}
+                        settings={settings}
                         currency={currency}
                         billingInfo={billingInfo}
                         shippingInfo={shippingInfo}
@@ -587,7 +583,7 @@ if(addresses&&addresses.length>0){
                         getOrderDetails={getOrderDetailsData}
                       />
                       {/* </form> */}
-                      {billingInfo.payment_method === "stripe" && (
+                      {'stripe' === billingInfo.payment_method && (
                         <Stripes
                           getOrderDetailsData={getOrderDetailsData}
                           billingInfo={billingInfo}
@@ -602,19 +598,19 @@ if(addresses&&addresses.length>0){
                         className="btn btn-success primary-btn-color"
                         style={{
                           marginTop: 12,
-                          float: "right",
+                          float: 'right',
                         }}
                         onClick={handleOrderPlaced}
-                        disabled={!billingInfo.paymentMethod}
+                        disabled={! billingInfo.paymentMethod}
                       >
-                        Continue{" "}
+                        Continue{' '}
                       </button>
                     </div>
                     <div
                       style={{
-                        width: "40%",
-                        borderLeft: "2px solid whitesmoke",
-                        padding: "20px",
+                        width: '40%',
+                        borderLeft: '2px solid whitesmoke',
+                        padding: '20px',
                       }}
                     >
                       <OrderSummary
@@ -644,15 +640,15 @@ if(addresses&&addresses.length>0){
 
   return (
     <div>
-      <BreadCrumb title={"checkout"} />
+      <BreadCrumb title={'checkout'} />
       <section className="checkout-section">
-        {islogin && cartItems && cartItems?.length > 0 ? (
+        {islogin && cartItems && 0 < cartItems?.length ? (
           <Container>
             <div className="account-coupon-box row">
               <div className="account-check col-md-6">
                 <div className="toggle-info">
                   <p>
-                    <i class="far fa-user"></i> Already have an account ?{" "}
+                    <i class="far fa-user"></i> Already have an account ?{' '}
                     <Link href="/account">
                       <a>Click here to login</a>
                     </Link>
@@ -661,11 +657,11 @@ if(addresses&&addresses.length>0){
               </div>
             </div>
             <hr
-              style={{ borderTop: "4px solid #bbb", width: "100%" }}
+              style={{ borderTop: '4px solid #bbb', width: '100%' }}
               className="mt-50 mb-50 devider"
             />
             <div className="billing-form-container container">
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={handleSubmit( onSubmit )}>
                 <div className="checkout-bill-container row">
                   <div className="col-lg-6">
                     <div className="billing-container">
@@ -693,7 +689,7 @@ if(addresses&&addresses.length>0){
                     <div className="your-order-container">
                       <h5>Your Order</h5>
                       <Orderdetail
-                        homepageData={homepageData}
+                        settings={settings}
                         currency={currency}
                         billingInfo={billingInfo}
                         shippingInfo={shippingInfo}
@@ -716,10 +712,10 @@ if(addresses&&addresses.length>0){
           </Container>
         ) : (
           <Container className="empty-checkout-page">
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
               <h3>Please Login First</h3>
             </div>
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
               <Link href="/account">
                 <button
                   type="button"
@@ -737,22 +733,3 @@ if(addresses&&addresses.length>0){
   );
 };
 export default CheckOut;
-
-export async function getStaticProps() {
-  var currencyStore = [];
-  var homepageData = {};
-  try {
-    const { data: homepagedata } = await client.query({
-      query: GET_HOMEPAGE_DATA_QUERY,
-    });
-    currencyStore = homepagedata?.getSettings?.store;
-    homepageData = homepagedata || {};
-  } catch (e) {}
-  return {
-    props: {
-      currencyStore,
-      homepageData,
-    },
-    revalidate: 10,
-  };
-}

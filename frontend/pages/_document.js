@@ -29,29 +29,29 @@ export default class MyDocument extends Document {
         );
     }
 }
-MyDocument.getInitialProps = async (ctx) => {
+MyDocument.getInitialProps = async ( ctx ) => {
 
     const originalRenderPage = ctx.renderPage;
     const cache = createEmotionCache();
-    const { extractCriticalToChunks } = createEmotionServer(cache);
+    const { extractCriticalToChunks } = createEmotionServer( cache );
 
     ctx.renderPage = () =>
-        originalRenderPage({
-            enhanceApp: (App) =>
-                function EnhanceApp(props) {
+        originalRenderPage( {
+            enhanceApp: ( App ) =>
+                function EnhanceApp( props ) {
                     return <App emotionCache={cache} {...props} />;
                 },
-        });
+        } );
 
-    const initialProps = await Document.getInitialProps(ctx);
-    const emotionStyles = extractCriticalToChunks(initialProps.html);
-    const emotionStyleTags = emotionStyles.styles.map((style) => (
+    const initialProps = await Document.getInitialProps( ctx );
+    const emotionStyles = extractCriticalToChunks( initialProps.html );
+    const emotionStyleTags = emotionStyles.styles.map( ( style ) => (
         <style
-            data-emotion={`${style.key} ${style.ids.join(' ')}`}
+            data-emotion={`${style.key} ${style.ids.join( ' ' )}`}
             key={style.key}
             dangerouslySetInnerHTML={{ __html: style.css }}
         />
-    ));
+    ) );
 
     return {
         ...initialProps,

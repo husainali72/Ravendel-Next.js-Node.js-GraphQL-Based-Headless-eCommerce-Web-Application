@@ -1,21 +1,17 @@
 import client from '../../apollo-client'
 import { GET_BRANDS_QUERY, GET_FILTEREDPRODUCTS } from '../../queries/shopquery'
 import React, { useState, useEffect } from "react";
-import { Container, Dropdown, Form } from "react-bootstrap";
-import StarRating from '../../components/breadcrumb/rating';
+import { Container, Form } from "react-bootstrap";
 import MultiRangeSlider from '../../components/breadcrumb/multirangeSlider';
 import OnSaleProductCard from '../../components/category/onSaleProductCard';
 import ShopProducts from '../../components/shoppage/shopProducts';
-import { CloseSortMenu } from '../../utills/app';
 import { currencySetter } from '../../utills/helpers';
 import { useDispatch, useSelector } from 'react-redux';
-import { GET_HOMEPAGE_DATA_QUERY } from '../../queries/home';
-import { settingActionCreator } from '../../redux/actions/settingAction';
 import Head from 'next/head';
-import { capitalize } from 'lodash';
+import { capitalize, get } from 'lodash';
 import BreadCrumb from '../../components/breadcrumb/breadcrumb';
 import { getAllAttributes } from '../../redux/actions/productAction';
-const Brand = ({ brand, filteredProducts, brandProduct, currencyStore }) => {
+const Brand = ({ brand, filteredProducts, brandProduct }) => {
     const [products, setProducts] = useState([]);
     const dispatch = useDispatch();
     const [rangevalue, setRangevalue] = useState('');
@@ -23,12 +19,12 @@ const Brand = ({ brand, filteredProducts, brandProduct, currencyStore }) => {
     const [currency, setCurrency] = useState("$")
     const [filteredproducts, setFilteredProducts] = useState([]);
     const [FilterAttribute, setFilterAttribute] = useState([])
-    const currencyOpt = currencyStore?.currency_options?.currency
+    const settings = useSelector((state) => state.setting);
     useEffect(() => {
-        dispatch(settingActionCreator(currencyStore?.currency_options))
-    }, [currencyStore?.currency_options])
+        const currencyStoreOptions = get(settings, "setting.store.currency_options", {});
+        currencySetter(currencyStoreOptions, setCurrency);
+      }, [settings]);
     useEffect(() => {
-        currencySetter(currencyOpt, setCurrency);
         dispatch(getAllAttributes());
     }, [])
     useEffect(() => {
@@ -161,7 +157,7 @@ const Brand = ({ brand, filteredProducts, brandProduct, currencyStore }) => {
                                 <div className="shop-product-list">
                                     <OnSaleProductCard
                                         onSaleProduct={filteredproducts}
-                                        hidetitle
+                                        hideTitle
                                     />
                                 </div>) :
                                 <div style={{ padding: "50px" }}>
@@ -213,23 +209,6 @@ export async function getStaticProps({ params }) {
     var brand = {}
     var filteredProducts = []
     var brandProduct = [];
-    var homepageData = [];
-    var currencyStore = [];
-
-
-    /* ===============================================Get HomepageData Settings ===============================================*/
-
-    try {
-        const { data: homepagedata } = await client.query({
-            query: GET_HOMEPAGE_DATA_QUERY
-        })
-        homepageData = homepagedata
-        currencyStore = homepagedata?.getSettings?.store
-    }
-    catch (e) {
-        console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
-    }
-
     /* ===============================================Get Brand Product ===============================================*/
     try {
         const { data: brandproductData } = await client.query({
@@ -308,7 +287,6 @@ export async function getStaticProps({ params }) {
             brand,
             filteredProducts,
             brandProduct,
-            currencyStore
         },
         revalidate: 10,
     }

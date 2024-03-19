@@ -31,3 +31,9 @@ export const validateEmail = (email) => {
     emailErrorMessage
   );
 };
+export const confirmPasswordValidation=(password,confirmPassword)=>{
+  if (password !== confirmPassword) {
+    return "Passwords do not match";
+  }
+  return true;
+}

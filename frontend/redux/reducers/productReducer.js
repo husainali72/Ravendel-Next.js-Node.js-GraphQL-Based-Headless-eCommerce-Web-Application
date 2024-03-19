@@ -1,4 +1,4 @@
-import { PRODUCT_REVIEWS_ADD, ADD_REVIEW, LOAD_REVIEW, PRODUCTS_FAIL, PRODUCTS_LOADING, PRODUCTS_SUCCESS, ATTRIBUTES_SUCCESS } from "../actions/productAction";
+import { PRODUCT_REVIEWS_ADD, ADD_REVIEW, LOAD_REVIEW, PRODUCTS_FAIL, PRODUCTS_LOADING, PRODUCTS_SUCCESS, ATTRIBUTES_SUCCESS, CATEGORY_SUCCESS } from "../actions/productAction";
 
 const initialState = {
     productReviews: [],
@@ -29,6 +29,13 @@ const productReducer = (state = initialState, action) => {
             return {
                 ...state,
                 products: action.payload,
+                loading: false,
+                success: true,
+            };
+        case CATEGORY_SUCCESS:
+            return {
+                ...state,
+                 categories: action.payload,
                 loading: false,
                 success: true,
             };

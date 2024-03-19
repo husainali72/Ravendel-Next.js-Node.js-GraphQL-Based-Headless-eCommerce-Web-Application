@@ -1,41 +1,41 @@
-import BreadCrumb from "../components/breadcrumb/breadcrumb";
-import PageTitle from "../components/PageTitle";
-import { Container } from "react-bootstrap";
-import { useState, useEffect } from "react"
-import Link from "next/link";
+import BreadCrumb from '../components/breadcrumb/breadcrumb';
+import PageTitle from '../components/PageTitle';
+import { Container } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
-import { Controller, useForm } from "react-hook-form";
-import notify from "../utills/notifyToast";
-import PhoneInput from "react-phone-input-2";
-import { isValidPhoneNumber } from "react-phone-number-input";
-import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
-import client from "../apollo-client";
+import { Controller, useForm } from 'react-hook-form';
+import notify from '../utills/notifyToast';
+import PhoneInput from 'react-phone-input-2';
+import { isValidPhoneNumber } from 'react-phone-number-input';
+import { GET_HOMEPAGE_DATA_QUERY } from '../queries/home';
+import client from '../apollo-client';
 var defaultObj = {
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
     city: '',
-    message: "",
+    message: '',
 };
-const Contact = ({homePageData}) => {
-    const [contactDetails,setContactDetails] = useState({...homePageData?.getSettings?.appearance?.theme});
-    const [address,seAddress] = useState({...homePageData?.getSettings?.store?.store_address});
-    const [contact, setcontact] = useState(defaultObj);
-    const handleChange = (e) => {
-        setcontact({ ...contact, [e.target.name]: e.target.value });
+const Contact = ( {homePageData} ) => {
+    const [ contactDetails, setContactDetails ] = useState( {...homePageData?.getSettings?.appearance?.theme} );
+    const [ address, seAddress ] = useState( {...homePageData?.getSettings?.store?.store_address} );
+    const [ contact, setcontact ] = useState( defaultObj );
+    const handleChange = ( e ) => {
+        setcontact( { ...contact, [e.target.name]: e.target.value } );
     };
     const {
         register,
         handleSubmit, reset,
         formState: { errors },
         control,
-    } = useForm({ mode: "submit", });
+    } = useForm( { mode: 'submit', } );
 
     const onSubmit = () => {
-        setcontact(defaultObj)
-        notify("Sent succesfully", true)
-    }
+        setcontact( defaultObj );
+        notify( 'Sent succesfully', true );
+    };
     return (
         <div>
             <PageTitle title="Contact" />
@@ -58,52 +58,52 @@ const Contact = ({homePageData}) => {
                         </div>
                         <div className="col-lg-6">
                             <div className="get-in-touch-form">
-                                <form onSubmit={handleSubmit(onSubmit)}>
+                                <form onSubmit={handleSubmit( onSubmit )}>
                                     <input
                                         type="text"
                                         placeholder="Name"
                                         name='name'
-                                        {...register('name', {
+                                        {...register( 'name', {
 
                                             required: {
-                                                value: (contact.name ? false : true),
-                                                message: "Name is Required",
+                                                value: ( contact.name ? false : true ),
+                                                message: 'Name is Required',
                                             },
                                             minLength: {
                                                 value: 4,
-                                                message: "Name Min length is 4",
+                                                message: 'Name Min length is 4',
                                             },
-                                        })}
+                                        } )}
                                         onChange={handleChange}
                                         value={contact.name} />
                                     <p>
                                         <small style={{ color: 'red' }}>
-                                            {errors.name?.type === "required" ? errors.name?.message : undefined}
-                                            {errors.name?.type === "minLength" ? errors.name?.message : undefined}
+                                            {'required' === errors.name?.type ? errors.name?.message : undefined}
+                                            {'minLength' === errors.name?.type ? errors.name?.message : undefined}
                                         </small>
                                     </p>
                                     <input
                                         type="email"
                                         placeholder="Email-Address"
                                         name='email'
-                                        {...register("email", {
+                                        {...register( 'email', {
                                             required: {
-                                                value: (contact.email ? false : true),
-                                                message: "Email is Required",
+                                                value: ( contact.email ? false : true ),
+                                                message: 'Email is Required',
                                             },
                                             pattern: {
                                                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                                                message: "Invalid Email",
+                                                message: 'Invalid Email',
                                             },
-                                        })}
+                                        } )}
                                         onChange={handleChange}
                                         value={contact.email} />
                                     <p>
                                         <small style={{ color: 'red' }}>
-                                            {errors.email?.type === "required" ? errors.email?.message : undefined}
-                                            {errors.email?.type === "minLength" ? errors.email?.message : undefined}
-                                            {errors.email?.type === "maxLength" ? errors.email?.message : undefined}
-                                            {errors.email?.type === "pattern" ? errors.email?.message : undefined}
+                                            {'required' === errors.email?.type ? errors.email?.message : undefined}
+                                            {'minLength' === errors.email?.type ? errors.email?.message : undefined}
+                                            {'maxLength' === errors.email?.type ? errors.email?.message : undefined}
+                                            {'pattern' === errors.email?.type ? errors.email?.message : undefined}
                                         </small>
                                     </p>
                                     <Controller
@@ -111,29 +111,29 @@ const Contact = ({homePageData}) => {
                                         control={control}
                                         rules={{
                                             required: {
-                                                value: (contact.phone ? false : true),
-                                                message: "Phone number is Required",
+                                                value: ( contact.phone ? false : true ),
+                                                message: 'Phone number is Required',
                                             },
                                             validate: () => {
-                                                return isValidPhoneNumber(`+${contact.phone}`)
+                                                return isValidPhoneNumber( `+${contact.phone}` );
                                             }
                                         }}
-                                        render={({ field: { onChange, value } }) => (
+                                        render={( { field: { onChange, value } } ) => (
                                             <PhoneInput
                                                 inputClass={'custom-input'}
                                                 specialLabel=""
                                                 enableSearch='true'
                                                 value={contact.phone}
                                                 country={'in'}
-                                                onChange={(value) => setcontact({ ...contact, phone: value })}
+                                                onChange={( value ) => setcontact( { ...contact, phone: value } )}
                                             />
                                         )}
                                     />
-                                    {errors["phone"] && (
+                                    {errors.phone && (
                                         <p>
                                             <small style={{ color: 'red' }}>
-                                                {errors.phone?.type === "required" ? errors.phone?.message : undefined}
-                                                {errors.phone?.type === "validate" ? "Phone number is invalid" : undefined}
+                                                {'required' === errors.phone?.type ? errors.phone?.message : undefined}
+                                                {'validate' === errors.phone?.type ? 'Phone number is invalid' : undefined}
 
                                             </small>
                                         </p>
@@ -142,54 +142,54 @@ const Contact = ({homePageData}) => {
                                         type="text"
                                         placeholder="Address"
                                         name='address'
-                                        {...register('address', {
+                                        {...register( 'address', {
 
                                             required: {
-                                                value: (contact.address ? false : true),
-                                                message: "Address is Required",
+                                                value: ( contact.address ? false : true ),
+                                                message: 'Address is Required',
                                             },
-                                        })}
+                                        } )}
                                         onChange={handleChange}
                                         style={{ marginTop: '10px' }}
                                         value={contact.address} />
                                     <p>
                                         <small style={{ color: 'red' }}>
-                                            {errors.address?.type === "required" ? errors.address?.message : undefined}
+                                            {'required' === errors.address?.type ? errors.address?.message : undefined}
                                         </small>
                                     </p>
                                     <input
                                         type="text"
                                         placeholder="City"
                                         name='city'
-                                        {...register('city', {
+                                        {...register( 'city', {
                                             required: {
-                                                value: (contact.city ? false : true),
-                                                message: "City is Required",
+                                                value: ( contact.city ? false : true ),
+                                                message: 'City is Required',
                                             },
-                                        })}
+                                        } )}
                                         onChange={handleChange}
                                         value={contact.city} />
                                     <p>
                                         <small style={{ color: 'red' }}>
-                                            {errors.city?.type === "required" ? errors.city?.message : undefined}
+                                            {'required' === errors.city?.type ? errors.city?.message : undefined}
                                         </small>
                                     </p>
                                     <textarea
                                         rows="5"
                                         placeholder="Message..."
                                         name='message'
-                                        {...register('message', {
+                                        {...register( 'message', {
                                             required: {
-                                                value: (contact.message ? false : true),
-                                                message: "Message is Required",
+                                                value: ( contact.message ? false : true ),
+                                                message: 'Message is Required',
                                             },
-                                        })}
+                                        } )}
                                         onChange={handleChange}
                                         value={contact.message}>
                                     </textarea>
                                     <p>
                                         <small style={{ color: 'red' }}>
-                                            {errors.message?.type === "required" ? errors.message?.message : undefined}
+                                            {'required' === errors.message?.type ? errors.message?.message : undefined}
                                         </small>
                                     </p>
                                     <input type="submit" className="btn" value='Send' />
@@ -202,14 +202,14 @@ const Contact = ({homePageData}) => {
                                     <h4>Contact Us</h4>
                                     {/* <p><span>Address:</span> {address ? (address?.addressLine1 && address?.addressLine1 + ", ") + (address?.addressLine2 && address?.addressLine2 + ", ") + address?.city :"10 Suffolk st Soho, London, UK"}</p> */}
                                     <p><span>Address:</span> {
-                                        address ? (`${address?.addressLine1 ? (address?.addressLine1 + ", ") : ""} ${address?.addressLine2 ? (address?.addressLine1 + ", ") : ""}  ${address?.city || ''}`) : "10 Suffolk st Soho, London, UK"
+                                        address ? ( `${address?.addressLine1 ? ( address?.addressLine1 + ', ' ) : ''} ${address?.addressLine2 ? ( address?.addressLine1 + ', ' ) : ''}  ${address?.city || ''}` ) : '10 Suffolk st Soho, London, UK'
                                     }</p>
                                     <Link href="tel:+1234567890">
-                                        <p><a>Phone : {contactDetails ? contactDetails?.phone_number : "(+01) - 2345 - 6789"}</a>
+                                        <p><a>Phone : {contactDetails ? contactDetails?.phone_number : '(+01) - 2345 - 6789'}</a>
                                         </p>
                                     </Link>
                                     <Link href="mailto:support@abc.com">
-                                        <p><a>Email : {contactDetails ? contactDetails?.email : "support@abc.com"}</a></p>
+                                        <p><a>Email : {contactDetails ? contactDetails?.email : 'support@abc.com'}</a></p>
                                     </Link>
                                 </div>
                             </div>
@@ -218,25 +218,24 @@ const Contact = ({homePageData}) => {
                 </div>
             </Container >
         </div >
-    )
-}
+    );
+};
 export default Contact;
 export const getStaticProps = async () =>{
-    var homePageData = []
+    var homePageData = [];
 
-    try{
-        const { data: homePagedata} = await client.query({
+    try {
+        const { data: homePagedata} = await client.query( {
             query: GET_HOMEPAGE_DATA_QUERY
-        })
+        } );
         homePageData = homePagedata;
+    } catch ( e ) {
+        console.log( 'homepage Error===', e.networkError && e.networkError.result ? e.networkError.result.errors : '' );
     }
-    catch (e) {
-        console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
-    }
-    return{
-        props:{
+    return {
+        props: {
             homePageData
         },
         revalidate: 10,
-    }
-}
+    };
+};

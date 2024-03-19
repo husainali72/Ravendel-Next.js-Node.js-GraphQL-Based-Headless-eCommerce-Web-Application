@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import ErrorMessage from "./errorMessage";
-import { get } from "lodash";
-
-const PasswordField = ({
+import React, { useState } from 'react';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import ErrorMessage from './errorMessage';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+const PasswordField = ( {
   errors,
   placeholder,
   registerRef,
@@ -14,24 +14,24 @@ const PasswordField = ({
   className,
   id,
   type,
-}) => {
-  const [showPassword, setShowPassword] = useState(false);
+} ) => {
+  const [ showPassword, setShowPassword ] = useState( false );
 
   const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
+    setShowPassword( ! showPassword );
   };
 
   return (
     <>
       <div className="password-container">
         <input
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           className={className}
           id={id}
           placeholder={placeholder}
           value={value}
           name={name}
-          onChange={(e) => onChange(e, type)}
+          onChange={( e ) => onChange( e, type )}
           ref={registerRef}
         />
         {showPassword ? (
@@ -46,9 +46,19 @@ const PasswordField = ({
           />
         )}
       </div>
-      <ErrorMessage message={get(errors, `${name}.message`, "")} />
+      <ErrorMessage message={get( errors, `${name}.message`, '' )} />
     </>
   );
 };
-
+PasswordField.propTypes = {
+  errors: PropTypes.object.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  registerRef: PropTypes.object,
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  id: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+};
 export default PasswordField;
