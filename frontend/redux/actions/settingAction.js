@@ -1,3 +1,4 @@
+import { get } from "lodash";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
 import { query } from "../../utills/helpers";
 
