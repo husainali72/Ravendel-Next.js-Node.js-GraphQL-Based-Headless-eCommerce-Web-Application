@@ -9,6 +9,7 @@ import { GET_BLOGS_QUERY, GET_BLOGTAGS_QUERY } from '../queries/blogquery';
 import { Container, Card } from 'react-bootstrap';
 import { blogAction } from '../redux/actions/blogAction';
 import { useDispatch } from 'react-redux';
+import { get } from 'lodash';
 const Blog = ( blogData ) => {
     const imageType = blogData?.homepageData && blogData?.homepageData?.getSettings?.imageStorage?.status;
     const dispatch = useDispatch();
@@ -97,7 +98,7 @@ export async function getStaticProps() {
         const { data: blogdata } = await client.query( {
             query: GET_BLOGS_QUERY
         } );
-        blogData = blogdata.blogs.data;
+        blogData = get(blogdata,'blogs.data',[]);
     } catch ( e ) {
         console.log( 'Blog Error=======', e.networkError );
 
@@ -109,7 +110,7 @@ export async function getStaticProps() {
         const { data: blogtagsdata } = await client.query( {
             query: GET_BLOGTAGS_QUERY
         } );
-        blogTagsData = blogtagsdata.blogtags.data;
+        blogTagsData = get(blogtagsdata,'blogtags.data',[]);
     } catch ( e ) {
         console.log( 'BlOG TAGS Error==', e );
     }

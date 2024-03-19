@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts"
 import { useState, useEffect } from "react";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
+import { get } from "lodash";
 const BlogsTags = ({ blogTagByUrl, homepageData }) => {
     const blogTag = useSelector(state => state.blogtags)
     const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
@@ -77,10 +78,10 @@ export async function getStaticPaths() {
         const { data: blogdata } = await client.query({
             query: GET_BLOGTAGS_QUERY
         });
-        blogTags = blogdata.blogtags.data
+        blogTags = get(blogdata,'blogtags.data',[])
     }
     catch (e) {
-        console.log("Blog Error=======", e.networkError);
+        console.log("Blog Error tag=======", e.networkError);
 
     }
     const paths = blogTags.map((curElem) => ({
