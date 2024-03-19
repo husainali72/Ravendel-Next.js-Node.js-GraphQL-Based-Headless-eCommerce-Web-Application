@@ -52,7 +52,7 @@
     "react-redux": "^7.2.6",
     "react-select": "^5.7.2",
     "react-slick": "^0.28.1",
-    "react-to-print": "^2.14.15",
+    "react-to-print": "^2.15.1",
     "redux": "^4.1.2",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.1",
@@ -60,7 +60,7 @@
     "stripe": "^11.7.0"
   },
   "devDependencies": {
-    "eslint": "8.7.0",
+    "eslint": "^8.30.0",
     "eslint-config-next": "12.0.8"
   }
 }

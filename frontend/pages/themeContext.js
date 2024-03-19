@@ -1,56 +1,56 @@
-import { get } from "lodash";
-import { createContext, useContext, useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { ThemeProvider } from "@mui/material";
-import { createTheme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
+import { get } from 'lodash';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { ThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
+import { red } from '@mui/material/colors';
 const ThemeContext = createContext();
 
 
-const defaultTheme = createTheme({
+const defaultTheme = createTheme( {
   palette: {
     primary: {
-      main: "#088178",
+      main: '#088178',
     },
     secondary: {
-      main: "#FFFFFF",
+      main: '#FFFFFF',
     },
     error: {
       main: red.A400,
     },
   },
-});
+} );
 
-export const AlternativeThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(defaultTheme);
-  const settings = useSelector((state) => state.setting);
+export const AlternativeThemeProvider = ( { children } ) => {
+  const [ theme, setTheme ] = useState( defaultTheme );
+  const settings = useSelector( ( state ) => state.setting );
 
-  useEffect(() => {
-    const settingTheme = get(settings, "setting.appearance.theme");
-    let themeColors = createTheme({
+  useEffect( () => {
+    const settingTheme = get( settings, 'setting.appearance.theme' );
+    let themeColors = createTheme( {
       palette: {
         primary: {
-          main: get(settingTheme, "primary_color", "#088178"),
+          main: get( settingTheme, 'primary_color', '#088178' ),
         },
         secondary: {
-          main: "#FFFFFF",
+          main: '#FFFFFF',
         },
         error: {
           main: red.A400,
         },
       },
-    });
+    } );
 
     document.documentElement.style.setProperty(
-      "--primary-color",
+      '--primary-color',
       themeColors.palette.primary.main
     );
     document.documentElement.style.setProperty(
-      "--secondary-color",
+      '--secondary-color',
       themeColors.palette.secondary.main
     );
-    setTheme({ ...themeColors });
-  }, [settings]);
+    setTheme( { ...themeColors } );
+  }, [ settings ] );
 
   return (
     <ThemeContext.Provider value={{ theme }}>
@@ -60,5 +60,5 @@ export const AlternativeThemeProvider = ({ children }) => {
 };
 
 export const useTheme = () => {
-  return useContext(ThemeContext);
+  return useContext( ThemeContext );
 };

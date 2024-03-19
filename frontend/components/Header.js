@@ -6,12 +6,11 @@ import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useSession } from "next-auth/react";
 import { logoutDispatch } from "../redux/actions/userlogoutAction";
-import { logoutAndClearData, query } from "../utills/helpers";
+import { logoutAndClearData } from "../utills/helpers";
 import { getSettings } from "../redux/actions/settingAction";
 import { calculateUserCart } from "../redux/actions/cartAction";
 import { Toaster } from "react-hot-toast";
 import { get } from "lodash";
-import RavendelLogo from "../components/images/ravendellogo.png";
 import PropTypes from "prop-types";
 import ProductImage from "./imageComponent";
 const Header = ({ setOpenMenu }) => {
@@ -47,7 +46,7 @@ const Header = ({ setOpenMenu }) => {
     if (addedCart) {
       dispatch(logoutDispatch());
     }
-    if (data.status === "authenticated") {
+    if (data?.status === "authenticated") {
       let id = get(data, "data.user.accessToken.customer._id");
       if (id) {
         dispatch(calculateUserCart(id));
@@ -80,7 +79,7 @@ const Header = ({ setOpenMenu }) => {
               <div className="text-center float-right">
                 <div className="header-info align-items-center">
                   <div className="align-items-center user-info">
-                    {data.status === "authenticated" ? (
+                    {data?.status === "authenticated" ? (
                       <>
                         <div className="logout-btn">
                           <p>

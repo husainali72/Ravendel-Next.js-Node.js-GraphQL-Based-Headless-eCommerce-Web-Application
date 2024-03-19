@@ -6,7 +6,7 @@ import { capitalize, get } from "lodash";
 import { useSelector } from "react-redux";
 const Orderdetail = (props) => {
   const {
-    homepageData,
+    settings,
     currency,
     getOrderDetails,
     cartItems,
@@ -15,8 +15,8 @@ const Orderdetail = (props) => {
     shippingInfo,
   } = props;
   const cart = cartItems;
-  const imageType =get( homepageData,'getSettings.imageStorage.status');
-  const currencyOption =get(homepageData,'getSettings.store.currency_options');
+  const imageType =get( settings,'setting.imageStorage.status','');
+  const currencyOption =get(settings,'setting.store.currency_options',{});
   const [cartProduct, setCartProduct] = useState([]);
 
   const cartSubTotal = () => {
@@ -78,7 +78,7 @@ const Orderdetail = (props) => {
             </tr>
           </thead>
           <tbody>
-            {cartItems.map((item, i) => (
+            {cartItems?.map((item, i) => (
               <tr key={i}>
                 <td className="image product-thumbnail">
                   <img

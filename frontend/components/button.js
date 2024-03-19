@@ -1,7 +1,7 @@
-import React from "react";
-import Loading from "./loading";
+import React from 'react';
+import Loading from './loading';
 
-const CustomButton = ({ loading, buttonText, onClick, className, type ,disabled}) => {
+const CustomButton = ( { loading, buttonText, onClick, className, type, disabled} ) => {
   return (
     <button
       type={type}

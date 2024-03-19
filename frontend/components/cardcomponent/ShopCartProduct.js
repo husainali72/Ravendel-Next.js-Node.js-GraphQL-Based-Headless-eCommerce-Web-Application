@@ -65,13 +65,7 @@ export const ShopCart = () => {
             }
             var cartItemsfilter = cart.filter(item => item._id !== product)
             dispatch(removeCartItemAction(variables,cartItemsfilter));
-            // mutation(DELETE_CART_PRODUCTS, variables, token).then(res => {
-            //     if (res.data.deleteCartProduct.success) {
-            //         var cartItemsfilter = cart.filter(item => item._id !== product)
-            //         dispatch(removeCartItemAction(product));
-            //         setCart(cartItemsfilter);
-            //     }
-            // });
+
         }
         else {
             var cartItemsfilter = cart.filter(item => item._id !== product)

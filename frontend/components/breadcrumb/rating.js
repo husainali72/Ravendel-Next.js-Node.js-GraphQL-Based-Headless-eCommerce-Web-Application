@@ -12,7 +12,7 @@ const Star = ({ starId, marked }) => {
     );
 };
 
-const StarRating = ({ stars, singleproducts }) => {
+const StarRating = ({ stars, singleProducts }) => {
     const [selection, setSelection] = React.useState(0);
     const [rating, setRating] = React.useState(0);
 
@@ -25,7 +25,7 @@ const StarRating = ({ stars, singleproducts }) => {
     };
     useEffect(() => {
         setSelection(stars);
-    }, [singleproducts])
+    }, [singleProducts])
 
     return (
         <div

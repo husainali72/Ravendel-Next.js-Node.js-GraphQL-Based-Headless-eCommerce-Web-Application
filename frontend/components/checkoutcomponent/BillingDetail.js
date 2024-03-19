@@ -60,10 +60,10 @@ const BillingDetails = (props) => {
                 <small style={{ color: "red" }}>
                   {errorRef.firstname?.type === "required"
                     ? errorRef.firstname?.message
-                    : undefined}
+                    : ""}
                   {errorRef.firstname?.type === "minLength"
                     ? errorRef.firstname?.message
-                    : undefined}
+                    : ""}
                 </small>
               </p>
             </div>
@@ -88,7 +88,7 @@ const BillingDetails = (props) => {
                 <small style={{ color: "red" }}>
                   {errorRef.lastname?.type === "required"
                     ? errorRef.lastname?.message
-                    : undefined}
+                    : ""}
                 </small>
               </p>
             </div>
@@ -115,7 +115,7 @@ const BillingDetails = (props) => {
                 <small style={{ color: "red" }}>
                   {errorRef.company?.type === "required"
                     ? errorRef.company?.message
-                    : undefined}
+                    : ""}
                 </small>
               </p>
             </div>
@@ -139,7 +139,7 @@ const BillingDetails = (props) => {
                 <small style={{ color: "red" }}>
                   {errorRef.address?.type === "required"
                     ? errorRef.address?.message
-                    : undefined}
+                    : ""}
                 </small>
               </p>
             </div>
@@ -166,7 +166,7 @@ const BillingDetails = (props) => {
                 <small style={{ color: "red" }}>
                   {errorRef.city?.type === "required"
                     ? errorRef.city?.message
-                    : undefined}
+                    : ""}
                 </small>
               </p>
             </div>
@@ -191,7 +191,7 @@ const BillingDetails = (props) => {
                 <small style={{ color: "red" }}>
                   {errorRef.state?.type === "required"
                     ? errorRef.state?.message
-                    : undefined}
+                    : ""}
                 </small>
               </p>
             </div>
@@ -217,7 +217,7 @@ const BillingDetails = (props) => {
                 <small style={{ color: "red" }}>
                   {errorRef.country?.type === "required"
                     ? errorRef.country?.message
-                    : undefined}
+                    : ""}
                 </small>
               </p>
             </div>
@@ -285,10 +285,10 @@ const BillingDetails = (props) => {
                 <small style={{ color: "red" }}>
                   {errorRef.phone?.type === "required"
                     ? errorRef.phone?.message
-                    : undefined}
+                    : ""}
                   {errorRef.phone?.type === "validate"
                     ? "Phone number is invalid"
-                    : undefined}
+                    : ""}
                 </small>
               </p>
             </div>
@@ -318,16 +318,16 @@ const BillingDetails = (props) => {
             <small style={{ color: "red" }}>
               {errorRef.email?.type === "required"
                 ? errorRef.email?.message
-                : undefined}
+                : ""}
               {errorRef.email?.type === "minLength"
                 ? errorRef.email?.message
-                : undefined}
+                : ""}
               {errorRef.email?.type === "maxLength"
                 ? errorRef.email?.message
-                : undefined}
+                : ""}
               {errorRef.email?.type === "pattern"
                 ? errorRef.email?.message
-                : undefined}
+                : ""}
             </small>
           </p>
 
@@ -404,10 +404,10 @@ const BillingDetails = (props) => {
                   <small style={{ color: "red" }}>
                     {errorRef.shippingfirstname?.type === "required"
                       ? errorRef.shippingfirstname?.message
-                      : undefined}
+                      : ""}
                     {errorRef.shippingfirstname?.type === "minLength"
                       ? errorRef.shippingfirstname?.message
-                      : undefined}
+                      : ""}
                   </small>
                 </p>
                 <input
@@ -438,8 +438,8 @@ const BillingDetails = (props) => {
                     {errorRef.shippinglastname?.type === "required" ||
                     "minLength"
                       ? errorRef.shippinglastname?.message
-                      : undefined}
-                    {/* {errorRef.shippinglastname?.type === "minLength" ? errorRef.shippinglastname?.message : undefined} */}
+                      : ""}
+                    {/* {errorRef.shippinglastname?.type === "minLength" ? errorRef.shippinglastname?.message : ""} */}
                   </small>
                 </p>
                 <input
@@ -465,7 +465,7 @@ const BillingDetails = (props) => {
                   <small style={{ color: "red" }}>
                     {errorRef.shippingcompany?.type === "required"
                       ? errorRef.shippingcompany?.message
-                      : undefined}
+                      : ""}
                   </small>
                 </p>
                 <input
@@ -491,7 +491,7 @@ const BillingDetails = (props) => {
                   <small style={{ color: "red" }}>
                     {errorRef.shippingaddress?.type === "required"
                       ? errorRef.shippingaddress?.message
-                      : undefined}
+                      : ""}
                   </small>
                 </p>
                 <input
@@ -518,7 +518,7 @@ const BillingDetails = (props) => {
                   <small style={{ color: "red" }}>
                     {errorRef.shippingaddressLine2?.type === "required"
                       ? errorRef.shippingaddressLine2?.message
-                      : undefined}
+                      : ""}
                   </small>
                 </p>
                 <input
@@ -545,7 +545,7 @@ const BillingDetails = (props) => {
                   <small style={{ color: "red" }}>
                     {errorRef.shippingcity?.type === "required"
                       ? errorRef.shippingcity?.message
-                      : undefined}
+                      : ""}
                   </small>
                 </p>
                 <input
@@ -571,7 +571,7 @@ const BillingDetails = (props) => {
                   <small style={{ color: "red" }}>
                     {errorRef.shippingstate?.type === "required"
                       ? errorRef.shippingstate?.message
-                      : undefined}
+                      : ""}
                   </small>
                 </p>
                 <input
@@ -596,13 +596,13 @@ const BillingDetails = (props) => {
                   <small style={{ color: "red" }}>
                     {errorRef.shippingzip?.type === "required"
                       ? errorRef.shippingzip?.message
-                      : undefined}
+                      : ""}
                     {errorRef.shippingzip?.type === "minLength"
                       ? errorRef.shippingzip?.message
-                      : undefined}
+                      : ""}
                     {errorRef.shippingzip?.type === "maxLength"
                       ? errorRef.shippingzip?.message
-                      : undefined}
+                      : ""}
                   </small>
                 </p>
                 <Controller
@@ -643,10 +643,10 @@ const BillingDetails = (props) => {
                   <small style={{ color: "red" }}>
                     {errorRef.shippingphone?.type === "required"
                       ? errorRef.shippingphone?.message
-                      : undefined}
+                      : ""}
                     {errorRef.shippingphone?.type === "validate"
                       ? "Phone number is invalid"
-                      : undefined}
+                      : ""}
                   </small>
                 </p>
                 <input
@@ -676,16 +676,16 @@ const BillingDetails = (props) => {
                   <small style={{ color: "red" }}>
                     {errorRef.shippingemail?.type === "required"
                       ? errorRef.shippingemail?.message
-                      : undefined}
+                      : ""}
                     {errorRef.shippingemail?.type === "minLength"
                       ? errorRef.shippingemail?.message
-                      : undefined}
+                      : ""}
                     {errorRef.shippingemail?.type === "maxLength"
                       ? errorRef.shippingemail?.message
-                      : undefined}
+                      : ""}
                     {errorRef.shippingemail?.type === "pattern"
                       ? errorRef.shippingemail?.message
-                      : undefined}
+                      : ""}
                   </small>
                 </p>
               </div>

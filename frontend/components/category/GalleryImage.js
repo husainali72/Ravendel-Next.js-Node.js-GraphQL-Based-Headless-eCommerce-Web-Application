@@ -1,7 +1,8 @@
+/* eslint-disable react/jsx-key */
+
 import React, { useEffect, useState } from "react";
 import {
   getItemFromLocalStorage,
-  logout,
   mutation,
   setItemToLocalStorage,
 } from "../../utills/helpers";
@@ -11,6 +12,7 @@ import {
   addToCart,
   calculateUnauthenticatedCart,
 } from "../../redux/actions/cartAction";
+import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -24,14 +26,12 @@ import CustomButton from "../button";
 const GalleryImagesComponents = (props) => {
   const {
     stockClass,
-    singleproducts,
+    singleProducts,
     setStockClass,
     lowStockThreshold,
     outOfStockThreshold,
     galleryImages,
   } = props;
-  var id = "";
-  var token = "";
   const dispatch = useDispatch();
   const session = useSession();
   const router = useRouter();
@@ -41,27 +41,27 @@ const GalleryImagesComponents = (props) => {
   const [parentId, setParentId] = useState();
   const [error, seterror] = useState(false);
   const cart = useSelector((state) => state.cart);
-  const [singleprod, setSingleprod] = useState(singleproducts);
+  const [singleprod, setSingleprod] = useState(singleProducts);
   const [selectedAttributes, setSelectedAttributes] = useState([]);
   const [comboData, setComboData] = useState([]);
   const [priceRange, setPriceRange] = useState([]);
-  const [sellpriceRange, setSellpriceRange] = useState([]);
+  const [sellPriceRange, setSellPriceRange] = useState([]);
   const [itemInCart, setItemInCart] = useState(false);
   const [id, setId] = useState("");
   const [token, setToken] = useState("");
   useEffect(() => {
     const hasComboData = comboData?.length;
     const variantProductQuantity = get(comboData, "[0].quantity");
-    const productQuantity = get(singleproducts, "quantity");
+    const productQuantity = get(singleProducts, "quantity");
     const isLowStock =
       (hasComboData === 1 && variantProductQuantity <= lowStockThreshold) ||
-      (singleproducts && productQuantity <= lowStockThreshold);
+      (singleProducts && productQuantity <= lowStockThreshold);
     const isOutOfStock =
       (hasComboData === 1 && variantProductQuantity <= outOfStockThreshold) ||
-      (singleproducts && productQuantity <= outOfStockThreshold);
+      (singleProducts && productQuantity <= outOfStockThreshold);
     const inStock =
       (hasComboData === 1 && variantProductQuantity > lowStockThreshold) ||
-      (singleproducts && productQuantity > lowStockThreshold);
+      (singleProducts && productQuantity > lowStockThreshold);
     if (isLowStock && !isOutOfStock) {
       setStockClass("low-stock");
       setLable("Low Stock");
@@ -80,7 +80,7 @@ const GalleryImagesComponents = (props) => {
       setSingleprod({ ...singleprod });
     }
   }, [
-    singleproducts?.quantity,
+    singleProducts?.quantity,
     lowStockThreshold,
     outOfStockThreshold,
     comboData,
@@ -91,10 +91,11 @@ useEffect(() => {
   if (!comboData || !comboData.length) {
     return; 
   }
+  console.log(comboData)
   const priceData = comboData.map(c => c.pricing.price);
   const sellPriceData = comboData.map(c => c.pricing.sellprice);
   setPriceRange(priceData);
-  setSellpriceRange(sellPriceData);
+  setSellPriceRange(sellPriceData);
 }, [comboData]);
 
 useEffect(() => {
@@ -142,7 +143,9 @@ useEffect(() => {
         router.push("/shopcart");
       })
       .catch(async (error) => {
+        console.log("fghjklfgh",error,get(error, "extensions.code"))
         if (get(error, "extensions.code") === 401) {
+
           let product = [
             {
               userId: "",
@@ -158,7 +161,7 @@ useEffect(() => {
               attributes: get(variables, "attributes"),
             },
           ];
-          await logout()
+          await signOut({ redirect: false, callbackUrl: "/" });
           setItemToLocalStorage("cart", product);
           dispatch(calculateUnauthenticatedCart(product));
           window.location.pathname = "/shopcart";
@@ -182,9 +185,9 @@ useEffect(() => {
   const addToCartProduct = async (product) => {
     const isUserAuthenticated = session?.status === "authenticated";
     const hasAttributesMismatch =
-      get(singleproducts, "attribute_master")?.length > 0 &&
+      get(singleProducts, "attribute_master")?.length > 0 &&
       selectedAttributes?.length !==
-        get(singleproducts, "attribute_master")?.length;
+        get(singleProducts, "attribute_master")?.length;
     if (hasAttributesMismatch) {
       seterror(true);
       return;
@@ -271,7 +274,7 @@ useEffect(() => {
   };
 
   const prepareComb = (data) => {
-    let variantProduct = get(singleproducts, "variation_master", []);
+    let variantProduct = get(singleProducts, "variation_master", []);
     data.map((item) => {
       variantProduct = variantProduct.filter((combo) => {
         return get(combo, "combination", [])?.includes(item.value);
@@ -302,8 +305,8 @@ useEffect(() => {
     router.push("/shopcart");
   };
   
-  const renderProductTags = (singleproducts) => {
-    return <p className="">Tags: {get(singleproducts, "__typename")}</p>;
+  const renderProductTags = () => {
+    return <p className="">Tags: {get(singleProducts, "__typename")}</p>;
   };
 
   const checkVariantIsSelected = (singleAttribute) => {
@@ -329,8 +332,8 @@ useEffect(() => {
     }));
   };
 
-  const RenderCategoryNames = ({ singleproducts }) => {
-    let categoryIds = get(singleproducts, "categoryId", []);
+  const RenderCategoryNames = ({ singleProducts }) => {
+    let categoryIds = get(singleProducts, "categoryId", []);
     return categoryIds?.map((item, index) => (
       <span key={item._id}>
         {index < categoryIds.length - 1
@@ -354,39 +357,39 @@ useEffect(() => {
         </div>
         <div className="single-product-detail col-md-6 col-sm-12 col-xs-12">
           <div className="detail-info">
-            <h2>{capitalize(get(singleproducts, "name"))}</h2>
+            <h2>{capitalize(get(singleProducts, "name"))}</h2>
             <div className="product-detail-rating">
               <div className="pro-details-brand">
                 <span>
                   {" "}
                   Category:{" "}
-                  <RenderCategoryNames singleproducts={singleproducts} />
+                  <RenderCategoryNames singleProducts={singleProducts} />
                 </span>
               </div>
               <div className="pro-details-rating">
                 <StarRating
-                  singleproducts={singleproducts}
-                  stars={get(singleproducts, "rating", 0)}
+                  singleProducts={singleProducts}
+                  stars={get(singleProducts, "rating", 0)}
                 />
               </div>
             </div>
-            {get(singleproducts, "brand.name") && (
+            {get(singleProducts, "brand.name") && (
               <div className="pro-details-brand">
                 <span>
                   {" "}
-                  Brand: {capitalize(get(singleproducts, "brand.name", ""))}
+                  Brand: {capitalize(get(singleProducts, "brand.name", ""))}
                 </span>
               </div>
             )}
             <RenderProductPrice
-              sellpriceRange={sellpriceRange}
+              sellPriceRange={sellPriceRange}
               priceRange={priceRange}
-              singleproducts={singleproducts}
+              singleProducts={singleProducts}
               comboData={comboData}
               variantSelect={variantSelect}
             />
             <div className="short-desc mb-30">
-              <p> {singleproducts?.short_description}</p>
+              <p> {singleProducts?.short_description}</p>
             </div>
             {Lable !== "Out Of Stock" && (
               <>
@@ -395,7 +398,7 @@ useEffect(() => {
                   className="btn btn-success button button-add-to-cart primary-btn-color"
                   onClick={() =>
                     !itemInCart
-                      ? addToCartProduct(singleproducts)
+                      ? addToCartProduct(singleProducts)
                       : navigateToShopCart()
                   }
                   disabled={isProductAvailable()}
@@ -410,7 +413,7 @@ useEffect(() => {
               </p>
             )}
             <div className="varaint-select">
-              {get(singleproducts, "attribute_master", [])?.map(
+              {get(singleProducts, "attribute_master", [])?.map(
                 (singleAttribute) => {
                   return (
                     <>
@@ -428,9 +431,9 @@ useEffect(() => {
             </div>
 
             <CheckZipcode checkzipcode={checkzipcode} />
-            {get(singleproducts, "custom_field", [])?.length > 0 ? (
+            {get(singleProducts, "custom_field", [])?.length > 0 ? (
               <>
-                {get(singleproducts, "custom_field", [])?.map((field) => (
+                {get(singleProducts, "custom_field", [])?.map((field) => (
                   <div className="product-attributes">
                     <ul className="product-meta font-xs color-grey mt-50">
                       <p>
@@ -444,9 +447,9 @@ useEffect(() => {
             ) : null}
             <ul className="product-meta font-xs color-grey mt-50">
               <p className="">
-                SKU: {get(comboData, "[0].sku", get(singleproducts, "sku", ""))}
+                SKU: {get(comboData, "[0].sku", get(singleProducts, "sku", ""))}
               </p>
-              {renderProductTags(singleproducts)}
+              {renderProductTags()}
               <p className="">
                 Availablity: <span className={stockClass}>{Lable}</span>
               </p>
@@ -457,5 +460,12 @@ useEffect(() => {
     </>
   );
 };
-
+GalleryImagesComponents.propTypes = {
+  stockClass: PropTypes.string.isRequired,
+  singleProducts: PropTypes.object.isRequired,
+  setStockClass: PropTypes.func.isRequired,
+  lowStockThreshold: PropTypes.number.isRequired,
+  outOfStockThreshold: PropTypes.number.isRequired,
+  galleryImages: PropTypes.array.isRequired,
+};
 export default GalleryImagesComponents;

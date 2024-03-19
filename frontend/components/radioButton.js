@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { capitalize, get } from "lodash";
 import ErrorMessage from "./errorMessage";
+import PropTypes from "prop-types";
 const RadioButton = ({ lable, value, onChange, options, error }) => {
   return (
     <FormControl>
@@ -38,5 +39,17 @@ const RadioButton = ({ lable, value, onChange, options, error }) => {
       <ErrorMessage message={error} />
     </FormControl>
   );
+};
+RadioButton.propTypes = {
+  lable: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  error: PropTypes.string,
 };
 export default RadioButton;

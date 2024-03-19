@@ -3,19 +3,15 @@ import { Container } from "react-bootstrap";
 import { GET_CUSTOMER_QUERY, GET_CUSTOMERS } from "../../queries/customerquery";
 import client from "../../apollo-client";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 import OnSaleProductCard from "../../components/category/onSaleProductCard";
 import products from "./dummy.json";
-const MyWishList = ({ id, customeraddres }) => {
-  const session = useSession();
+const MyWishList = () => {
   const router = useRouter();
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
-  var token = "";
-  if (session.status === "authenticated") {
-    token = session.data.user.accessToken.token;
-  }
+
+
   const removeProductFromWishList = (e) => {
     e.stopPropagation();
   };

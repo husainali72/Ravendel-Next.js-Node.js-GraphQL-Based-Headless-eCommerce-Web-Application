@@ -27,7 +27,7 @@ const Reviews = ({ singleProductReview }) => {
               <span className='singleReviewUsername'>	{capitalize(product?.customerId?.firstName)} </span>
             </div>
             <div className='starWidTitle'>
-              <StarRating className="rating" stars={product?.rating} singleproducts={product} />
+              <StarRating className="rating" stars={product?.rating} singleProducts={product} />
               <span className='reviewTitle'>{capitalize(product.title)}</span>
             </div>
 

@@ -2,21 +2,17 @@ import { get } from "lodash";
 import {
   CHANGE_QTY,
   DELETE_CART,
-  DELETE_CART_PRODUCTS,
   GET_USER_CART,
   CALCULATE_CART_WITHOUT_LOGIN,
 } from "../../queries/cartquery";
-import { logoutAndClearData, mutation, query } from "../../utills/helpers";
+import { handleError, mutation, query } from "../../utills/helpers";
 import notify from "../../utills/notifyToast";
-import logoutDispatch from "./userlogoutAction";
 export const ADD_TO_CART = "ADD_TO_CART";
 export const REMOVE_TO_CART = "REMOVE_TO_CART";
 export const INCRESE_QUANTITY = "INCRESE_QUANTITY";
 export const REMOVE_VALUE = "REMOVE_VALUE";
 export const REMOVE_ALL_VALUE = "REMOVE_ALL_VALUE";
-export const DECREASE_QUANTITY = "DECREASE_QUANTITY";
 export const CREATE_CART_ON_LOGIN = "CREATE_CART_ON_LOGIN";
-export const UPDATE_CART_ON_LOGIN = "UPDATE_CART_ON_LOGIN";
 export const SET_USER_CART = "SET_USER_CART";
 export const CART_LOADING = "CART_LOADING";
 export const CART_FAILURE = "CART_FAILURE";
@@ -99,19 +95,11 @@ export const increaseQuantity =
       payload: { _id, originalQuantity, variantId ,updatedQuantity},
     });
   };
-export const decreaseQuantity = (object) => (dispatch) => {
-  dispatch({
-    type: DECREASE_QUANTITY,
-    payload: object,
-  });
-};
+
 export const createCart = (id, cart) => (dispatch) => {
   dispatch({ type: CREATE_CART_ON_LOGIN, payload: { id, cart, dispatch } });
 };
 
-export const updateCart = (id, cart) => (dispatch) => {
-  dispatch({ type: UPDATE_CART_ON_LOGIN, payload: { id, cart } });
-};
 export const changeQty = (variables) => (dispatch) => {
   return mutation(CHANGE_QTY, variables)
     .then((response) => {
@@ -122,9 +110,7 @@ export const changeQty = (variables) => (dispatch) => {
       return response;
     })
     .catch(async (error) => {
-      if (get(error, "extensions.code") === 401) {
-        logoutAndClearData(dispatch);
-      }
+      handleError(error,dispatch)
     });
 };
 export const removeAllCartItemsAction = (variables) => (dispatch) => {
@@ -135,13 +121,10 @@ export const removeAllCartItemsAction = (variables) => (dispatch) => {
           type: REMOVE_ALL_VALUE,
           payload: [],
         });
-        
       }
       return response;
     })
     .catch((error) => {
-      if (get(error, "extensions.code") === 401) {
-        logoutAndClearData(dispatch);
-      }
+      handleError(error,dispatch)
     });
 };

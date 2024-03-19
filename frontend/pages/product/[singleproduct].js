@@ -5,13 +5,11 @@ import client from "../../apollo-client";
 import { Container } from "react-bootstrap";
 import {
   GET_HOMEPAGE_DATA_QUERY,
-  GET_RECENT_PRODUCTS_QUERY,
   GET_RELATED_PRODUCTS_QUERY,
 } from "../../queries/home";
 import {
   GET_SINGLE_PRODUCT,
   GET_PRODUCT_REVIEWS,
-  GET_REVIEWS,
 } from "../../queries/productquery";
 import { GET_PRODUCTS_QUERY } from "../../queries/shopquery";
 import { Tab, Col, Nav } from "react-bootstrap";
@@ -20,14 +18,12 @@ import OnSaleProductCard from "../../components/category/onSaleProductCard";
 import ReviewForm from "../../components/singleproductcomponent/ReviewForm";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import Loading from "../../components/breadcrumb/loading";
-import { useSelector } from "react-redux";
 import Reviews from "../../components/Reviews/Reviews";
 import { currencySetter } from "../../utills/helpers";
 import ReactHtmlParser, { convertNodeToElement } from "react-html-parser";
-import toast, { Toaster } from "react-hot-toast";
+import  { Toaster } from "react-hot-toast";
 import { get } from "lodash";
-
+import PropTypes from 'prop-types';
 function transform(node, index) {
   if (
     (node.type === "tag" && node.name === "h1") ||
@@ -53,13 +49,17 @@ const options = {
 
 const SingleProduct = ({
   allProduct,
-  singleProducts,
+  singleproducts,
+  currencyStore,
+  homepageData,
   lowStockThreshold,
   outOfStockVisibility,
   outOfStockThreshold,
 }) => {
   const router = useRouter();
   const session = useSession();
+  const currencyOption = currencyStore?.currency_options;
+  const [currency, setCurrency] = useState("$");
   const [singleProduct, setSingleProduct] = useState(null);
   const [sliderImages, setSliderImages] = useState([]);
   const [singleProductReview, setSingleProductReview] = useState([]);
@@ -68,9 +68,13 @@ const SingleProduct = ({
     return <div>Loading...</div>;
   }
   useEffect(() => {
+    currencySetter(get(currencyOption,'currency'), setCurrency);
+  }, []);
+
+  useEffect(() => {
     const getReviews = async () => {
       try {
-        const id = singleProducts?._id;
+        const id = singleproducts?._id;
         const { data: productReviewData } = await client.query({
           query: GET_PRODUCT_REVIEWS,
           variables: { id },
@@ -80,10 +84,10 @@ const SingleProduct = ({
       } catch (e) {}
     };
     getReviews();
-  }, [singleProducts]);
+  }, [singleproducts]);
   useEffect(() => {
-    var product = singleProducts;
-    setSingleProduct(product);
+    var product = singleproducts;
+    setSingleProduct({...product});
     var allimages = [];
     allimages.push(get(product, "feature_image", ""));
     get(product, "gallery_image", [])?.map((img) => {
@@ -91,17 +95,17 @@ const SingleProduct = ({
     });
 
     setSliderImages(allimages);
-  }, [singleProducts]);
+  }, [singleproducts]);
 
   return (
     <div>
       <Head>
-        <title>{get(singleProducts, "meta.title", "") + " | Ravendel"}</title>
+        <title>{get(singleproducts, "meta.title", "") + " | Ravendel"}</title>
         <meta
           name="description"
-          content={get(singleProducts, "meta.description")}
+          content={get(singleproducts, "meta.description")}
         />
-        <meta name="keywords" content={get(singleProducts, "meta.keywords")} />
+        <meta name="keywords" content={get(singleproducts, "meta.keywords")} />
       </Head>
       <BreadCrumb title={`product`} />
       <section className="product-cart-section">
@@ -112,13 +116,16 @@ const SingleProduct = ({
               <div className="product-detail accordion-detail">
                 <div>
                   <GalleryImagesComponents
+                    homepageData={homepageData}
+                    currencyOption={currencyOption}
                     stockClass={stockClass}
                     setStockClass={setStockClass}
                     outOfStockThreshold={outOfStockThreshold}
                     lowStockThreshold={lowStockThreshold}
                     outOfStockVisibility={outOfStockVisibility}
                     galleryImages={sliderImages}
-                    singleProducts={singleProducts}
+                    singleProducts={singleproducts}
+                    currency={currency}
                   />
                 </div>
               </div>
@@ -140,10 +147,10 @@ const SingleProduct = ({
                       <Tab.Content>
                         <Tab.Pane eventKey="description">
                           <div style={{ padding: "20px", marginTop: "15px" }}>
-                            {singleProducts?.description !== null &&
-                            singleProducts?.description !== "" ? (
+                            {singleproducts?.description !== null &&
+                            singleproducts?.description !== "" ? (
                               ReactHtmlParser(
-                                get(singleProducts, "description"),
+                                get(singleproducts, "description"),
                                 options
                               )
                             ) : (
@@ -162,7 +169,7 @@ const SingleProduct = ({
 
                           {session.status === "authenticated" ? (
                             <ReviewForm
-                              productId={get(singleProducts, "_id")}
+                              productId={get(singleproducts, "_id")}
                             />
                           ) : (
                             <div style={{ padding: "20px", marginTop: "15px" }}>
@@ -180,7 +187,10 @@ const SingleProduct = ({
                 </h4>
                 <OnSaleProductCard
                   onSaleProduct={allProduct}
-                  hideTitle
+                  hidetitle
+                  currencyProp={currency}
+                  currencyOpt={currencyStore}
+                  homepageData={homepageData}
                 />
               </div>
             </div>
@@ -209,11 +219,23 @@ export async function getStaticPaths() {
     fallback: "blocking",
   };
 }
+SingleProduct.propTypes = {
+  allProduct: PropTypes.array.isRequired,
+  recentProducts: PropTypes.array.isRequired,
+  singleproducts: PropTypes.object.isRequired,
+  productReviews: PropTypes.array.isRequired,
+  currencyStore: PropTypes.object.isRequired,
+  homepageData: PropTypes.object.isRequired,
+  lowStockThreshold: PropTypes.number.isRequired,
+  outOfStockVisibility: PropTypes.bool.isRequired,
+  outOfStockThreshold: PropTypes.number.isRequired,
+};
+
 export async function getStaticProps({ params }) {
   const url = get(params, "singleproduct");
   let id = "";
   let homepageData = [];
-  let singleProducts = [];
+  let singleproducts = [];
   let allProduct = [];
   let recentProducts = [];
   let productReviews = [];
@@ -251,15 +273,15 @@ export async function getStaticProps({ params }) {
       query: GET_SINGLE_PRODUCT,
       variables: { url },
     });
-    singleProducts = get(singleproductsData, "productbyurl.data", {});
-    id = get(singleProducts, "_id", "");
+    singleproducts = get(singleproductsData, "productbyurl.data", {});
+    id = get(singleproducts, "_id", "");
   } catch (e) {}
   /* ========================================= get Related Products ========================================*/
 
   const category =
-    !!get(singleProducts, "categoryId")?.length &&
-    get(singleProducts, "categoryId", [])?.map((cat) => cat?.id);
-  const productID = get(singleProducts, "_id") || "";
+    !!get(singleproducts, "categoryId")?.length &&
+    get(singleproducts, "categoryId", [])?.map((cat) => cat?.id);
+  const productID = get(singleproducts, "_id") || "";
   try {
     const { data: shopproductcategory } = await client.query({
       query: GET_RELATED_PRODUCTS_QUERY,
@@ -281,7 +303,7 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      singleProducts,
+      singleproducts,
       allProduct,
       productReviews,
       homepageData,

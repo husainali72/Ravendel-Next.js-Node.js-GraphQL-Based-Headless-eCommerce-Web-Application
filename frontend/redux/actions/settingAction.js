@@ -1,3 +1,4 @@
+import { get } from "lodash";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
 import { query } from "../../utills/helpers";
 
@@ -17,40 +18,35 @@ export const stripePaymentKeyAction = (payload) => (dispatch) => {
       payload: payload
    })
 }
-export const getSettings = (payload) => async (dispatch) => {
+export const getSettings = () => async (dispatch) => {
    try {
-      // const { data: homepagedata } = await client.query({
-      //    query: GET_HOMEPAGE_DATA_QUERY
-      // })
-      // homepageData = homepagedata
-      // currencyStore = homepagedata?.getSettings?.store
-
-      if (payload) {
-         dispatch({
-            type: GET_SETTING, payload: payload
-         })
-
-         dispatch({
-            type: SET_SETTING, payload: payload?.store?.currency_options
-
-         })
-      } else {
          query(GET_HOMEPAGE_DATA_QUERY).then((res) => {
-
             let response = res?.data?.getSettings
-
             if (response) {
                dispatch({
                   type: GET_SETTING, payload: response
                })
                dispatch({
                   type: SET_SETTING, payload: response?.store?.currency_options
-
                })
             }
          })
-      }
+      
    }
+   catch (e) {
+   }
+}
+export const storeSetting = (payload) => async (dispatch) => {
+   try {
+      if (payload) {
+         dispatch({
+            type: GET_SETTING, payload: payload
+         })
+         dispatch({
+            type: SET_SETTING, payload: get(payload,'store.currency_options',{})
+         })
+   }
+}
    catch (e) {
       console.log("homepage Error===", e.networkError && e.networkError.result ? e.networkError.result.errors : '');
    }

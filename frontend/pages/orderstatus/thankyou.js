@@ -11,13 +11,9 @@ import client from "../../apollo-client";
 import OrderDetailAfter from "../../components/account/component/OrderDetailAfter";
 import { settingActionCreator } from "../../redux/actions/settingAction";
 import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
-const ThankYou = ({ currencyStore }) => {
-    const dispatch = useDispatch();
+const ThankYou = () => {
     const session = useSession();
     const [data, setData] = useState()
-    useEffect(() => {
-        dispatch(settingActionCreator(currencyStore.currency_options))
-    }, [currencyStore?.currency_options])
     useEffect(() => {
         if (session.status === "authenticated") {
             const id = session?.data?.user?.accessToken?.customer?._id
@@ -38,7 +34,7 @@ const ThankYou = ({ currencyStore }) => {
 
             <Container>
                 <div className="thankyou-page-container"> <h1> Your order has been received.</h1>
-                    <OrderDetailAfter Data={data} />
+                    <OrderDetailAfter orderInfo={data} />
                 </div>
             </Container>
         </div>
@@ -46,25 +42,3 @@ const ThankYou = ({ currencyStore }) => {
 }
 export default ThankYou;
 
-export async function getStaticProps() {
-    let currencyStore = [];
-    let homepageData = [];
-    try {
-        const { data: homepagedata } = await client.query({
-            query: GET_HOMEPAGE_DATA_QUERY
-        })
-        homepageData = homepagedata
-
-        currencyStore = homepagedata?.getSettings?.store
-    }
-    catch (e) {
-        console.log("homepage Error===", e);
-    }
-
-    return {
-        props: {
-            homepageData,
-            currencyStore
-        }
-    }
-}

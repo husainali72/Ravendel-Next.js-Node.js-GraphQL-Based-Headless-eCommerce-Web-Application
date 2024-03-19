@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import { GlassMagnifier } from "react-image-magnifiers";
 import ProductImage from "./imageComponent";
+import PropTypes from "prop-types";
 import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
+import { get } from "lodash";
 const GalleryImageSlider = ({ galleryImages, variantSelect, comboData }) => {
   const [imgError, setImgError] = useState([]);
   const settings = {
@@ -39,18 +41,18 @@ const GalleryImageSlider = ({ galleryImages, variantSelect, comboData }) => {
       return gallery;
     }
 
-    const image = comboData[0]?.image;
-    return image && image.length ? image : gallery;
+    const image = get(comboData,'[0].image');
+    return image && image?.length ? image : gallery;
   };
   const getMagnifierImg = (gallery) => {
-    if (!variantSelect || !comboData || comboData.length === 0) {
+    if (!variantSelect || !comboData || comboData?.length === 0) {
       return gallery;
     }
     const { image: comboImageData } = comboData[0];
     if (
-      comboData?.length > 1 ||
+      1 < comboData?.length ||
       !comboImageData ||
-      comboImageData?.length === 0
+      0 === comboImageData?.length
     ) {
       return gallery;
     }
@@ -70,13 +72,13 @@ const GalleryImageSlider = ({ galleryImages, variantSelect, comboData }) => {
               />
               <GlassMagnifier
                 imageSrc={
-                  imgError.indexOf(index) === -1
+                  -1 === imgError?.indexOf(index)
                     ? getMagnifierImg(gallery)
-                    : NoImagePlaceHolder.src
+                    : NoImagePlaceHolder?.src
                 }
-                imageAlt="Example"
+                imageAlt=""
                 className="gallery-image"
-                magnifierSize={window.innerWidth < 1025 ? "60%" : "30%"}
+                magnifierSize={1025 > window?.innerWidth ? "60%" : "30%"}
                 magnifierBorderSize={5}
                 magnifierBorderColor="rgba(0, 0, 0, .5)"
               />
@@ -89,5 +91,9 @@ const GalleryImageSlider = ({ galleryImages, variantSelect, comboData }) => {
     </>
   );
 };
-
+GalleryImageSlider.propTypes = {
+  galleryImages: PropTypes.array.isRequired,
+  variantSelect: PropTypes.bool.isRequired,
+  comboData: PropTypes.array.isRequired,
+};
 export default GalleryImageSlider;
