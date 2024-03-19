@@ -1,8 +1,6 @@
-import moment from "moment/moment";
-import { useEffect, useState } from "react";
+/* eslint-disable react/prop-types */
+
 import { Spinner } from "react-bootstrap";
-import { useSelector } from "react-redux";
-import { currencySetter, getPrice } from "../../../utills/helpers";
 import Table from "../../dataTable";
 import { get } from "lodash";
 import AddressDetails from "./addressDetail";

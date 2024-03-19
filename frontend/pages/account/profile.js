@@ -1,3 +1,6 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import client from "../../apollo-client"
 import { Accordion, Col } from "react-bootstrap";
@@ -7,14 +10,13 @@ import AddressDetail from '../../components/account/component/address-details';
 import OrdersDetails from '../../components/account/component/orders-details';
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import PageTitle from "../../components/PageTitle";
-import { GET_CUSTOMER_QUERY } from "../../queries/customerquery";
-import { GET_CUSTOMER_ORDERS_QUERY } from "../../queries/orderquery"
 import { query } from "../../utills/helpers";
 import { useRouter } from "next/router";
 import { useSession, getSession } from 'next-auth/react';
 import { capitalize } from 'lodash';
 import { Toaster } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
+import { GET_CUSTOMER_QUERY } from '../../queries/customerquery';
 const Profile = ({ customeraddres }) => {
     const [userid, setID] = useState("")
     const session = useSession();
@@ -117,7 +119,7 @@ const Profile = ({ customeraddres }) => {
                                                 </Col>
                                                 <Col>
                                                     {order.products.map((name, i) => (
-                                                        <strong>{name.name}</strong>)
+                                                        <strong key={i}>{name.name}</strong>)
                                                     )}
                                                 </Col>
                                                 <Col>

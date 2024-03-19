@@ -1,8 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { ADD_CUSTOMER } from "../../queries/customerquery";
 import Link from "next/link";
 import { mutation } from "../../utills/helpers";
-import { Spinner } from "react-bootstrap";
 import toast, { Toaster } from "react-hot-toast";
 import { validateEmail, passwordValidation } from "../../utills/Validation";
 import { get } from "lodash";
