@@ -5218,3 +5218,37 @@ color: var(--primary-color);
 .install-app-footer{
   display: flex;
 }
+.shop-prod-image-container{
+  display: flex;
+  margin-top: 3px;
+  cursor: pointer;
+}
+.shop-prod-name{
+  padding: 3px;
+  margin-left: 10px;
+}
+.shop-prod-price{
+  margin-top: 0;
+}
+.shop-prod-no-data{
+  padding: 50px;
+}
+.shop-prod-no-data p{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.priceRange-slider{
+  margin-top: 30px;
+}
+.range-value{
+  padding-top: 10px;
+  font-weight: 600;
+}
+.filter-btn{
+  margin-top: 12px;
+  background-color: var(--primary-color);
+}
+.product-sorting{
+  width: 100%;
+}

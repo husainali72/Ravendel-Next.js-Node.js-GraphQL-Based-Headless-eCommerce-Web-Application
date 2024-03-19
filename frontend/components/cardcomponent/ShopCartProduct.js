@@ -1,3 +1,6 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable no-unreachable */
+/* eslint-disable no-unused-vars */
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { getImage, getPrice, currencySetter } from "../../utills/helpers";

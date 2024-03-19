@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";

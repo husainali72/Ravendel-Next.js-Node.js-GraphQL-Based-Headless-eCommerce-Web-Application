@@ -1,6 +1,3 @@
-import { useSelector } from "react-redux";
-import { currencySetter } from "../../../utills/helpers";
-import { useEffect, useState } from "react";
 import Table from "../../dataTable";
 import { get } from "lodash";
 import AddressDetails from "./addressDetail";

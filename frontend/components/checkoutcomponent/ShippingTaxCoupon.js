@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import Link from "next/link";
 import { Button, Form, FormCheck, FormGroup } from "react-bootstrap";

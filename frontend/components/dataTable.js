@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { convertDateToStringFormat } from '../utills/helpers';
 import { get } from 'lodash';

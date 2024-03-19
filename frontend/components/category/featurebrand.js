@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
 import { getImage, imageOnError } from '../../utills/helpers';

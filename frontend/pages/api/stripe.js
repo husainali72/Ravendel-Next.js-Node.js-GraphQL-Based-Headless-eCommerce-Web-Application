@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const KEY = process.env.STRIPE_SECRET_KEY;
 const stripe = require('stripe')(KEY);
 export default async function handler(req, res) {

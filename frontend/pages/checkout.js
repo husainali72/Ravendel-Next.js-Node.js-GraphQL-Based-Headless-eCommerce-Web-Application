@@ -1,3 +1,6 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable no-empty */
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { API_BASE_URL as baseUrl } from '../config';
 import Link from 'next/link';

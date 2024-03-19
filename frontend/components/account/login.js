@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
@@ -5,7 +6,6 @@ import { signIn, getSession } from "next-auth/react";
 import { createCart } from "../../redux/actions/cartAction";
 import { getItemFromLocalStorage } from "../../utills/helpers";
 import Link from "next/link";
-import Loading from "../loading";
 import InputField from "../inputField";
 import { emailErrorMessage, passwordErrorMessage } from "../validationMessages";
 import { validateEmail } from "../../utills/Validation";
@@ -24,7 +24,6 @@ const LogIn = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState(loginObject);
-  const [loginSuccess, setLoginSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const {

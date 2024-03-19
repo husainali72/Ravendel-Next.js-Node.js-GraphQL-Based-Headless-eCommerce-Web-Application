@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import { Container, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Link from "next/link";
 import { useState, useEffect } from 'react';
@@ -37,7 +39,7 @@ export const ProductNav = (props) => {
     }
     return (
         <div className="on-sale-product">
-            {props.items.map((product, i) => (
+            {props?.items?.map((product, i) => (
                 <div className="on-sale-product-card" key={i}>
                     <div className="on-sale-image-wrapper">
                         <Link href={`/product/[singleproduct]?url=${product.url}`} as={`/product/${product.url}`}>

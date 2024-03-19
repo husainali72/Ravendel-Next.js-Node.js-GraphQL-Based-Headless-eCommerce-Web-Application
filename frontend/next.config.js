@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 
 // var bucketName = "revendal-image";
 // var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;

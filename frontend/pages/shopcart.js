@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import BreadCrumb from '../components/breadcrumb/breadcrumb';

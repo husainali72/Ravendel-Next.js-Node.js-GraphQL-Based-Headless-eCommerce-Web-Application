@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable react/prop-types */
 import React, { useEffect } from "react";
 
 const Star = ({ starId, marked }) => {

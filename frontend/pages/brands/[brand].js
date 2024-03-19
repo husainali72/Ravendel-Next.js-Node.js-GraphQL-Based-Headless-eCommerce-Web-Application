@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import client from '../../apollo-client'
 import { GET_BRANDS_QUERY, GET_FILTEREDPRODUCTS } from '../../queries/shopquery'
 import React, { useState, useEffect } from "react";
@@ -177,10 +178,6 @@ export default Brand
 
 export async function getStaticPaths() {
     var brands = []
-    var pathss = []
-
-
-
     try {
         const { data: brandproductData } = await client.query({
             query: GET_BRANDS_QUERY

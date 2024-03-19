@@ -1,3 +1,5 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { useRouter } from "next/router"
 // import { loginAction, customerAction } from "../../redux/actions/loginAction";

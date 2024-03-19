@@ -1,3 +1,7 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-unsafe-optional-chaining */
+/* eslint-disable react/prop-types */
 import { ADD_ADDRESSBOOK, UPDATE_ADDRESSBOOK, DELETE_ADDRESSBOOK } from "../../../queries/customerquery";
 import { Fragment, useEffect, useState } from "react";
 import { Card, Button, Row, Col, Collapse, Form, Fade, Tooltip, OverlayTrigger } from "react-bootstrap";

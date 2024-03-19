@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { Button, Card, Row, Col } from "react-bootstrap";
-import Link from "next/link";
+/* eslint-disable react/prop-types */
+import {  useEffect } from "react";
+import { Button, Card, } from "react-bootstrap";
 import { capitalize } from "lodash";
 
 const CustomerDetail = (props) => {

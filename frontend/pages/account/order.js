@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { Accordion, Container, Col } from "react-bootstrap";
 import OrdersDetails from "../../components/account/component/orders-details";

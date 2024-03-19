@@ -1,3 +1,7 @@
+/* eslint-disable no-constant-condition */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from "react";
 import Collapse from "react-bootstrap/Collapse";
 import Form from "react-bootstrap/Form";

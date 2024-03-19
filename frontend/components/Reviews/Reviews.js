@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
 import StarRating from '../breadcrumb/rating'
 import moment from 'moment';

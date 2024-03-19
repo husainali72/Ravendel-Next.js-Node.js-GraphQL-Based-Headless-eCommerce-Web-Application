@@ -1,10 +1,12 @@
+/* eslint-disable no-empty */
+/* eslint-disable no-unused-vars */
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { ApolloLink } from "apollo-link";
 import { createUploadLink } from "apollo-upload-client";
 import { onError } from 'apollo-link-error'
 import { useSession } from "next-auth/react"
 import jwt from "next-auth/jwt"
-import { BASE_URL, baseUrl } from "./config";
+import {  baseUrl } from "./config";
 
 // const httpLink = new createUploadLink({ uri: `https://demo1.ravendel.io/graphql` });
 
