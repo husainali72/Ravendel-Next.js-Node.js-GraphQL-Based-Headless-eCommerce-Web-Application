@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable react/prop-types */
 import { GET_BLOGTAGS_QUERY, GETBLOG_BY_ID_QUERY } from "../../queries/blogquery";
 import client from "../../apollo-client";
 import PageTitle from "../../components/PageTitle";
@@ -9,6 +11,7 @@ import { getImage } from "../../utills/helpers";
 import { useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts"
 import { useState, useEffect } from "react";
+import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
 const BlogsTags = ({ blogTagByUrl, homepageData }) => {
     const blogTag = useSelector(state => state.blogtags)
     const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;

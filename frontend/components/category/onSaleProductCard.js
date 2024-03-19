@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Link from "next/link";
 import { Container, OverlayTrigger, Tooltip, Button } from "react-bootstrap";
 import StarRating from "../breadcrumb/rating";

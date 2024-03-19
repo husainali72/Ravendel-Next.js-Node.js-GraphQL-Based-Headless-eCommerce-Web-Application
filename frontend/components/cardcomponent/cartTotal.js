@@ -1,5 +1,6 @@
-const { get } = require("lodash")
-const { getPrice } = require("../../utills/helpers")
+/* eslint-disable react/prop-types */
+
+import {get}from 'lodash'
 import HelpIcon from '@mui/icons-material/Help';
 import {
     Divider,

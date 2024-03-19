@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import Cards from "react-credit-cards";

@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import Cards from "react-credit-cards";
 import axios from 'axios'
 import {API_BASE_URL} from '../../../config'

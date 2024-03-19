@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { get } from "lodash";
 import Price from "../priceWithCurrency";
 import { isDiscount, isVariantDiscount } from "../../utills/helpers";

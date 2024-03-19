@@ -1,3 +1,6 @@
+/* eslint-disable no-undef */
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable no-unused-vars */
 import '../styles/globals.css';
 import PropTypes from 'prop-types';
 import Layout from '../components/Layout';

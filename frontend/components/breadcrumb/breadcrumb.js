@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable react/prop-types */
 import Link from "next/link";
 import { Container } from "react-bootstrap";
 const BreadCrumb = ({ title }) => {

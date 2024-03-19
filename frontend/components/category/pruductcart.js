@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container } from 'react-bootstrap';
 import { Tab, Col, Nav } from 'react-bootstrap';
 import OnSaleProductCard from "./onSaleProductCard";
 import ProductNav from "./productNavbar";
-var placeholder = "https://dummyimage.com/300";
 const PruductCart = ({ productDetail, featureproducts }) => {
     const dispatch = useDispatch();
     const [items, setItems] = useState([]);

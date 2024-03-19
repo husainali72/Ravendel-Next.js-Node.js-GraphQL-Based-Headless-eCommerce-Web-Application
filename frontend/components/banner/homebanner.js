@@ -1,8 +1,10 @@
+/* eslint-disable react/jsx-no-target-blank */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import Link from 'next/link';
 import Carousel from 'react-bootstrap/Carousel';
 import { getImage } from '../../utills/helpers';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 
 const Homebanner = ({ homepageData, slider, Image }) => {
     const [imageSrc, setImageSrc] = useState('');

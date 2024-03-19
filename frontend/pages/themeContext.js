@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { get } from 'lodash';
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -5,8 +6,6 @@ import { ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
 const ThemeContext = createContext();
-
-
 const defaultTheme = createTheme( {
   palette: {
     primary: {

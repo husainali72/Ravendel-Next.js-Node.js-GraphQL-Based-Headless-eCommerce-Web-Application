@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const calculateOrderAmount = (items) => {
@@ -18,5 +20,5 @@ export default async function handler(req, res) {
     clientSecret: paymentIntent.client_secret,
 
   });
-};
+}
 

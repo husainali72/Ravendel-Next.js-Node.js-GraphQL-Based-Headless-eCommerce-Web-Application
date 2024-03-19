@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Container, Row, Col } from "react-bootstrap";
@@ -6,7 +8,7 @@ import BreadCrumb from "../components/breadcrumb/breadcrumb";
 import { useSelector, useDispatch } from "react-redux";
 import CartTable from "../components/cardcomponent/CardDetail";
 import { removeCartItemAction, RemoveAllCartItemsAction, increaseQuantity, decreaseQuantity } from "../redux/actions/cartAction";
-import { getPrice, mutation } from "../utills/helpers";
+import { currencySetter, getPrice, mutation } from "../utills/helpers";
 import { DELETE_CART_PRODUCTS, UPDATE_CART_PRODUCT, GET_USER_CART } from "../queries/cartquery";
 import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";

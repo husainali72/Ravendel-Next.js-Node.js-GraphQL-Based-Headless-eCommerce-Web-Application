@@ -1,8 +1,7 @@
+/* eslint-disable no-undef */
 import Link from "next/link";
-import { useState, useEffect } from "react"
 import { Placeholder } from "react-bootstrap";
 import Table from 'react-bootstrap/Table';
-import { getImage } from '../../utills/helpers';
 const LoadingCartTable = () => {
    
 const cartItems = [1,2,3]

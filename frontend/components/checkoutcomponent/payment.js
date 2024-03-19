@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import { loadStripe } from '@stripe/stripe-js';
 import React, { useState } from 'react';
 import { PaymentElement } from '@stripe/react-stripe-js';

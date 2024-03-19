@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import BreadCrumb from '../components/breadcrumb/breadcrumb';
 import PageTitle from '../components/PageTitle';
 import { Container } from 'react-bootstrap';

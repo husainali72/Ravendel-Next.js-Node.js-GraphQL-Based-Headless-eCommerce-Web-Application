@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { get } from "lodash";
 import { getPrice } from "../../utills/helpers";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";

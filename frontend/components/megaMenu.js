@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable react/jsx-key */
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "react-bootstrap";

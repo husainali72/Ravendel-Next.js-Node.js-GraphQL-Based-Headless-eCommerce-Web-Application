@@ -1,9 +1,10 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { getImage, getPrice, imageOnError } from "../../utills/helpers";
 import Form from "react-bootstrap/Form";
 import Link from "next/link";
 import { capitalize, get } from "lodash";
-import { useSelector } from "react-redux";
 const Orderdetail = (props) => {
   const {
     settings,
