@@ -1,6 +1,6 @@
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import PageTitle from "../../components/PageTitle";
-import PaymentFailedImage from '../../components/images/PaymentFailed.png'
+import PaymentFailedImage from '../../components/images/paymentFailed.png'
 
 const PaymentFailed = () => {
   return (
