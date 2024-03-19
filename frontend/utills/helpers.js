@@ -14,13 +14,19 @@ export const imageOnError = (event) => {
   event.target.src = NoImagePlaceHolder.src;
 };
 export const getImage = (img, type, isBanner, setting) => {
-  if (!img || !isBanner) {
-    return NoImagePlaceHolder.src;
+  if(!img){
+      return NoImagePlaceHolder.src
   }
-  return type && type === "localStorage"
-    ? IMAGE_BASE_URL + img
-    : BUCKET_BASE_URL + img;
-};
+  let imagaPath = ""
+  if (!isBanner) {
+      imagaPath = NoImagePlaceHolder.src;
+  }
+  if (img) {
+      imagaPath = type && type === "localStorage" ? IMAGE_BASE_URL + img : BUCKET_BASE_URL + img
+  }
+  return imagaPath;
+
+}
 
 export const toTitleCase = (str) => {
   return str.replace(/\w\S*/g, function (txt) {
