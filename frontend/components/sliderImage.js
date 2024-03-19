@@ -76,7 +76,7 @@ const GalleryImageSlider = ({ galleryImages, variantSelect, comboData }) => {
                     ? getMagnifierImg(gallery)
                     : NoImagePlaceHolder?.src
                 }
-                imageAlt="Example"
+                imageAlt=""
                 className="gallery-image"
                 magnifierSize={1025 > window?.innerWidth ? "60%" : "30%"}
                 magnifierBorderSize={5}
