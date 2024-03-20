@@ -10,7 +10,13 @@ import {  baseUrl } from "./config";
 
 // const httpLink = new createUploadLink({ uri: `https://demo1.ravendel.io/graphql` });
 
-const httpLink = new createUploadLink({ uri: baseUrl });
+//const httpLink = new createUploadLink({ uri: `https://${BASE_URL}/graphql` });
+ const httpLink = new createUploadLink({ uri: `http://localhost:8000/graphql` });
+// const httpLink = new createUploadLink({ uri: `http://ravendel-node.onrender.com/graphql` });
+
+// const httpLink = new createUploadLink({ uri: `http://192.168.1.6:8000/graphql` });
+// const httpLink = new createUploadLink({ uri: `https://ravendel.herokuapp.com/graphql` });
+
 const authLink = new ApolloLink((operation, forward) => {
   
   var token = ""
