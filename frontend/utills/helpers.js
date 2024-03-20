@@ -17,19 +17,21 @@ export const imageOnError = (event) => {
   event.target.src = NoImagePlaceHolder.src;
 };
 export const getImage = (img, type, isBanner, setting) => {
-  if(!img){
-      return NoImagePlaceHolder.src
+  if (!img) {
+    return NoImagePlaceHolder.src;
   }
-  let imagaPath = ""
+  let imagaPath = "";
   if (!isBanner) {
-      imagaPath = NoImagePlaceHolder.src;
+    imagaPath = NoImagePlaceHolder.src;
   }
   if (img) {
-      imagaPath = type && type === "localStorage" ? IMAGE_BASE_URL + img : BUCKET_BASE_URL + img
+    imagaPath =
+      type && type === "localStorage"
+        ? IMAGE_BASE_URL + img
+        : BUCKET_BASE_URL + img;
   }
   return imagaPath;
-
-}
+};
 
 export const toTitleCase = (str) => {
   return str.replace(/\w\S*/g, function (txt) {
@@ -186,15 +188,16 @@ export const getPrice = (price, currencyOptions) => {
   return "0.00";
 };
 export const isDiscount = (product) => {
-  const sellPrice = get(product, "pricing.sellprice", 0);
-  const price = get(product, "pricing.price", 0);
+  const sellPrice = get(product, "pricing.sellprice",0);
+  const price = get(product, "pricing.price",0);
 
-  return (
-    sellPrice > 0 &&
-    sellPrice < price &&
-    (100 / price) * (price - sellPrice) > 0
-  );
+  if (sellPrice && sellPrice > 0 && price && price > 0 && sellPrice < price) {
+    const discountAmount = ((100 / price) * (price - sellPrice)).toFixed(2);
+    return Math.round(discountAmount) > 0;
+  }
+  return false;
 };
+
 
 export const isVariantDiscount = (variantProduct) => {
   const sellPrice = get(variantProduct, "[0].pricing.sellprice", 0);
