@@ -100,19 +100,24 @@ router.post("/login", (req, res) => {
       if (isMatch) {
         // customer Matched
         const payload = { id: customer._id, firstName: customer.firstName,lastName: customer.lastName, email: customer.email,role:'customer' }; // Create JWT Payload
+        const tokenExpiresIn = 36000;
+        let expiry = new Date();
+        expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);
         // Sign Token
         jwt.sign(
           payload,
           APP_KEYS.jwtSecret,
-          { expiresIn: 36000 },
+          { expiresIn: tokenExpiresIn },
           (err, token) => {
             res.status(200).json({
               success: true,
               token: token,
               customer,
+              expiry
             });
           }
         );
+        
       } else {
         return res.status(404).json({success: false,message: 'Invalid credentials.'});
       }

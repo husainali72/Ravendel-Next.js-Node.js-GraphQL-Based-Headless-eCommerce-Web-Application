@@ -1376,7 +1376,7 @@ const addOrder = async(args) => {
       "address",
       "city",
       "zip",
-      "email",
+      //"email",
       "phone",
       "paymentMethod",
     ], args);
@@ -1397,7 +1397,7 @@ const addOrder = async(args) => {
       "zip",
       "country",
       "state",
-      "email",
+      //"email",
       "phone",
     ], args);
   if (!isEmpty(errors)) {
@@ -1539,12 +1539,12 @@ const isUrlValid = (url) => {
 }
 module.exports.isUrlValid = isUrlValid;
 
-const updatePaymentStatus = async (args) => {
+const updatePaymentStatus = async (userId, args) => {
   let { id, paymentStatus } = args;
   let orderUpdateRes = await Order.updateOne({_id:id }, { $set: { paymentStatus:paymentStatus } });
-  if(orderUpdateRes.acknowledged && orderUpdateRes.modifiedCount == 1) {
+  if(orderUpdateRes.acknowledged && orderUpdateRes.matchedCount == 1) {
     if(paymentStatus == 'success') {
-      const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
+      const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(userId) });
       emptyCart(cart);
     }
     return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);

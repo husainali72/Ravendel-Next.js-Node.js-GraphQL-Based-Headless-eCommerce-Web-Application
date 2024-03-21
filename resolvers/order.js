@@ -150,7 +150,7 @@ module.exports = {
         if (!id) {
           return MESSAGE_RESPONSE("TOKEN_REQ", "Order", false);
         }
-        let myResponse = await updatePaymentStatus(args);
+        let myResponse = await updatePaymentStatus(id, args);
         return myResponse;
       } catch (error) {
         console.log(error)
