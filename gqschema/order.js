@@ -9,15 +9,10 @@ module.exports = `
     shipping: customObject
     billing: customObject
     products: customArray
+    couponCard: customObject
+    totalSummary: customObject
     date: Date
     updated: Date
-    cartTotal: String
-    shippingAmount: String
-    taxAmount: String
-    couponCode: String
-    discountAmount: String
-    discountGrandTotal :String
-    grandTotal: String
   }
 
   input orderProduct {
@@ -40,6 +35,7 @@ module.exports = `
     message: String
     success: Boolean
     redirectUrl: String
+    id: ID
   }
   extend type Query {
     orders: OrderRES
@@ -50,17 +46,9 @@ module.exports = `
   extend type Mutation {
     addOrder(
       userId: ID
-      orderNumber: String
       billing: customObject
       shipping: customObject
-      products: customArray   
-      cartTotal : String
-      shippingAmount: String
-      taxAmount: String
       couponCode: String
-      attributes:customArray
-      discountAmount: String
-      grandTotal: String
     ): AddOrderResponse
     updateOrder(
       id: ID
