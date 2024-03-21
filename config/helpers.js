@@ -1357,6 +1357,10 @@ const addOrder = async(args) => {
     };
   }
 
+  if(!calculatedCart.cartItems.length) {
+    return MESSAGE_RESPONSE("NOT_EXIST", "Cart", false);
+  }
+
   var errors = _validate(["userId"], args);
   if (!isEmpty(errors)) {
     return {
@@ -1482,7 +1486,7 @@ const addOrder = async(args) => {
             name: item.productTitle,
             images: [itemImage],
             metadata: {
-              id: item.productId
+              id: item.productId.toString()
             },
           },
           unit_amount: (+item.productPrice)*100
@@ -1503,7 +1507,6 @@ const addOrder = async(args) => {
     redirectUrl = session.url;
 
     let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : { sessionId : session.id } }});
-    console.log('updateOrderRes', updateOrderRes);
   }
   // else {
   //   return MESSAGE_RESPONSE("InvalidField", "Payment mode", false);
@@ -1520,6 +1523,7 @@ const addOrder = async(args) => {
 
   let addOrderResponse = MESSAGE_RESPONSE("AddSuccess", "Order", true);
   addOrderResponse.redirectUrl = redirectUrl;
+  addOrderResponse.id = savedOrder._id;
 
   return addOrderResponse;
 }
@@ -1539,6 +1543,10 @@ const updatePaymentStatus = async (args) => {
   let { id, paymentStatus } = args;
   let orderUpdateRes = await Order.updateOne({_id:id }, { $set: { paymentStatus:paymentStatus } });
   if(orderUpdateRes.acknowledged && orderUpdateRes.modifiedCount == 1) {
+    if(paymentStatus == 'success') {
+      const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
+      emptyCart(cart);
+    }
     return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
   }
   else {
