@@ -13,8 +13,8 @@ import { brandsAction, categoryAction } from "../redux/actions/brandAction";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
 import { get } from "lodash";
-import GlobalFilter from "./filter";
-import Sorting from "./sorting";
+import GlobalFilter from "../components/filter";
+import Sorting from "../components/sorting";
 import Price from "../components/priceWithCurrency";
 import ProductImage from "../components/imageComponent";
 import PropTypes from "prop-types";
@@ -61,7 +61,11 @@ const Shop = ({ shopProducts, brandProduct, shopProduct }) => {
       dispatch(categoryAction(shopProduct.data));
     }
   }, [brandProduct]);
-
+const handleFilter=(filterData)=>{
+  setonSaleProduct([...filterData]);
+  setSortingdata([...filterData]);
+  setNumber(filterData.length);
+}
   return (
     <>
       <BreadCrumb title={"Shop"} />
@@ -76,14 +80,13 @@ const Shop = ({ shopProducts, brandProduct, shopProduct }) => {
               />
               <ShopProducts brandProduct={brandProduct} name={"Brand"} brands />
               <GlobalFilter
-                setSortingdata={setSortingdata}
+               
                 setFilters={setFilters}
                 filters={filters}
                 sortingOptions={sortingOptions}
                 setSelectedSortingCriteria={setSelectedSortingCriteria}
-                shopProducts={shopProducts}
-                setonSaleProduct={setonSaleProduct}
-                setNumber={setNumber}
+                shopProducts={get(shopProducts, "products.data")}
+                handleFilter={handleFilter}
                 filterbaseUrl={'/shop'}
               />
               <div className="primary-sidebar sticky-sidebar category-shop-cart my-3">

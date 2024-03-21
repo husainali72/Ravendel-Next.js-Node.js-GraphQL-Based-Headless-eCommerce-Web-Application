@@ -1,6 +1,7 @@
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import PageTitle from "../../components/PageTitle";
-import PaymentFailedImage from '../../components/images/paymentFailed.png'
+import PaymentFailedImage from "../../components/images/paymentFailed.png";
+import ProductImage from "../../components/imageComponent";
 
 const PaymentFailed = () => {
   return (
@@ -9,9 +10,9 @@ const PaymentFailed = () => {
       <BreadCrumb title={"Payment-Failed"} />
       <div className="payment-failed-container">
         <div className="payment-failed-content">
-          <img
+          <ProductImage
             className="payment-failed-image"
-            src={PaymentFailedImage.src}
+            src={PaymentFailedImage?.src}
             alt="Payment Failed"
           />
           <p className="payment-failed-message">

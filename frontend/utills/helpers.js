@@ -11,7 +11,6 @@ import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
 import moment from "moment";
-
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
   event.target.src = NoImagePlaceHolder.src;
@@ -53,7 +52,6 @@ export const handleGraphQLErrors = (error) => {
   if (get(networkErrorExtensions, "extensions.code") === 401) {
     return Promise.reject(networkErrorExtensions);
   }
-  console.log(get(parsedError), "extensions");
   return Promise.reject("Something went wrong");
 };
 
@@ -164,6 +162,10 @@ export const currencySetter = (settings, setCurrency) => {
   if (currency === "cad") {
     setCurrency("CA$");
   }
+  if (currency === "inr") {
+    setCurrency(<i className='fas fa-rupee-sign'></i>);
+  }
+
 };
 export const formattedPrice = (value, currencyOptions) => {
   const decimal = get(currencyOptions, "number_of_decimals", "2");
@@ -262,7 +264,7 @@ export const getProductSellPrice = (product) => {
   return sellPrice ? formatNumber(sellPrice) : formatNumber(price);
 };
 export const isPriceZero = (price) => {
-  return price !== "0" || price !== "0.00";
+  return price !== 0;
 };
 export const isCouponAppliedAndNotFreeShipping = (couponCartDetail) => {
   return (

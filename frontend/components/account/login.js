@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-import { signIn, getSession } from "next-auth/react";
+import { signIn, getSession, useSession } from "next-auth/react";
 import { createCart } from "../../redux/actions/cartAction";
 import { getItemFromLocalStorage } from "../../utills/helpers";
 import Link from "next/link";
@@ -31,6 +31,12 @@ const LogIn = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const session = useSession();
+  useEffect(() => {
+    if (session?.status === "authenticated") {
+      router.push("/");
+    }
+  }, [session]);
   const doLogin = async (e) => {
     setLoading(true);
     try {

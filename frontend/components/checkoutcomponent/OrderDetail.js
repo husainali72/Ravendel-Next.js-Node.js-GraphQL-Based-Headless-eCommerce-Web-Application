@@ -1,14 +1,18 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import { getImage, getPrice, imageOnError } from "../../utills/helpers";
-import Form from "react-bootstrap/Form";
 import Link from "next/link";
 import { capitalize, get } from "lodash";
+import Price from "../priceWithCurrency";
+import ProductImage from "../imageComponent";
+import CheckBox from "../check";
+const paymentOptions = [
+  { label: "Cash on delivery", value: "Cash On Delivery" },
+  { label: "Stripe", value: "Stripe" },
+  { label: "Credit Card", value: "creditCard" },
+];
 const Orderdetail = (props) => {
   const {
-    settings,
-    currency,
     getOrderDetails,
     cartItems,
     billingInfo,
@@ -16,16 +20,14 @@ const Orderdetail = (props) => {
     shippingInfo,
   } = props;
   const cart = cartItems;
-  const imageType =get( settings,'setting.imageStorage.status','');
-  const currencyOption =get(settings,'setting.store.currency_options',{});
   const [cartProduct, setCartProduct] = useState([]);
-
   const cartSubTotal = () => {
     var subtotalVar = 0;
     if (cartProduct && cartProduct?.length > 0) {
-      cartProduct.map((item) => {
-        if (item.pricing.sellprice) {
-          var sellPrice = item.pricing.sellprice * item.quantity;
+      cartProduct?.map((item) => {
+        let productSellPrice = get(item, "pricing.sellprice");
+        if (productSellPrice) {
+          let sellPrice = productSellPrice * item?.quantity;
           subtotalVar = subtotalVar + sellPrice;
         }
       });
@@ -46,23 +48,9 @@ const Orderdetail = (props) => {
     }
   }, [cart]);
   useEffect(() => {
-    let cartItem = cart.map((product) => {
-      return {
-        productId: product._id,
-        productTitle: product.name,
-        productPrice: product.pricing.toString(),
-        qty: product.quantity,
-        taxClass: product?.tax_class,
-        shippingClass: product?.shipping_class,
-        attributes: product?.attributes || [],
-      };
-    });
-
-    var allData = {
-      products: cartItem,
+    let allData = {
       billing: billingInfo,
       shipping: shippingInfo,
-      checkoutDate: new Date(),
     };
     getOrderDetails(allData);
   }, [billingInfo, shippingInfo, cart]);
@@ -82,20 +70,16 @@ const Orderdetail = (props) => {
             {cartItems?.map((item, i) => (
               <tr key={i}>
                 <td className="image product-thumbnail">
-                  <img
-                    src={getImage(item.feature_image, imageType)}
-                    alt="product"
-                    onError={imageOnError}
-                  />
+                  <ProductImage src={get(item, "feature_image", "")} />
                 </td>
                 <td>
                   <i className="ti-check-box font-small text-muted mr-10"></i>
                   <h5>
-                    <Link href={"/product/" + cart[i]?.url}>
+                    <Link href={"/product/" + get(cart, "[i].url", "")}>
                       <a>{item?.name}</a>
                     </Link>
                   </h5>{" "}
-                  <span className="product-qty">x {item.quantity}</span>
+                  <span className="product-qty">x {item?.quantity}</span>
                 </td>
                 <td>
                   {item?.attributes?.map((attribute) => (
@@ -106,8 +90,7 @@ const Orderdetail = (props) => {
                   ))}
                 </td>
                 <td>
-                  {currency}
-                  {getPrice(item?.pricing, currencyOption)}{" "}
+                  <Price price={get(item, "pricing", 0)} />
                 </td>
               </tr>
             ))}
@@ -117,41 +100,11 @@ const Orderdetail = (props) => {
       <div style={{ display: "flex" }}>
         <div className="payment-method">
           <h5>Payment Mode</h5>
-          <Form>
-            <Form.Group
-              value={billingInfo.paymentMethod}
-              onChange={(e) => handleBillingInfo(e)}
-            >
-              {["radio"].map((type) => (
-                <div key={`inline-${type}`} className="mb-3 ">
-                  <Form.Check
-                    label="Cash on delivery"
-                    name="paymentMethod"
-                    type={type}
-                    value="Cash On Delivery"
-                    id={`inline-${type}-1`}
-                    className="primary-checked-checkbox-color"
-                  />
-                  <Form.Check
-                    label="Stripe"
-                    name="paymentMethod"
-                    type={type}
-                    value="stripe"
-                    id={`inline-${type}-2`}
-                    className="primary-checked-checkbox-color"
-                  />
-                  <Form.Check
-                    label="Credit Card"
-                    name="paymentMethod"
-                    type={type}
-                    id={`inline-${type}-3`}
-                    value="creditCard"
-                    className="primary-checked-checkbox-color"
-                  />
-                </div>
-              ))}
-            </Form.Group>
-          </Form>
+          <CheckBox
+            options={paymentOptions}
+            name="paymentMethod"
+            onChange={(e) => handleBillingInfo(e)}
+          />
         </div>
       </div>
     </>

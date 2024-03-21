@@ -20,13 +20,19 @@ const prepareProductHeaderData = (orderInfo) => {
 };
 const prepareOrderDetailRowData = (orderInfo) => {
   const couponCode = get(orderInfo, "couponCode", "");
+  const totalSummary = get(orderInfo, "totalSummary", {});
+
   let orderInfoDetail = [
     { label: "Order Number", value: get(orderInfo, "id", ""), type: "text" },
     { label: "Date", value: get(orderInfo, "date", ""), type: "date" },
-    { label: "SubTotal", value: get(orderInfo, "cartTotal", 0), type: "price" },
+    {
+      label: "SubTotal",
+      value: get(totalSummary, "cartTotal", 0),
+      type: "price",
+    },
     {
       label: "Grandtotal",
-      value: get(orderInfo, "grandTotal", 0),
+      value: get(totalSummary, "grandTotal", 0),
       type: "price",
     },
     couponCode
@@ -46,24 +52,37 @@ const prepareOrderDetailRowData = (orderInfo) => {
 };
 const createOrderSummaryTableData = (orderInfo) => {
   const couponCode = get(orderInfo, "couponCode", "");
+  const totalSummary = get(orderInfo, "totalSummary", {});
+  const isFreeShipping = get(orderInfo, "totalSummary.totalShipping") === 0;
+  const isFreeTax = get(orderInfo, "totalSummary.totalTax") === 0;
   const OrderSummaryDetail = [
-    { label: "Subtotal", value: get(orderInfo, "cartTotal", 0), type: "price" },
-    { label: "Tax", value: get(orderInfo, "taxAmount", 0), type: "price" },
+    {
+      label: "Subtotal",
+      value: get(totalSummary, "cartTotal", 0),
+      type: "price",
+    },
+    !isFreeTax && {
+      label: "Tax",
+      value: get(totalSummary, "totalTax ", 0),
+      type: "price",
+    },
     {
       label: "Shipping",
-      value: get(orderInfo, "shippingAmount", 0),
-      type: "price",
+      value: isFreeShipping
+        ? "Free Shipping"
+        : get(totalSummary, "totalShipping", 0),
+      type: isFreeShipping ? "text" : "price",
     },
     couponCode
       ? {
           label: `Coupon - ${couponCode}`,
-          value: get(orderInfo, "discountAmount", 0),
+          value: get(couponCode, "discountAmount", 0),
           type: "price",
         }
       : null,
     {
       label: "Grandtotal",
-      value: get(orderInfo, "grandTotal", 0),
+      value: get(totalSummary, "grandTotal", 0),
       type: "price",
     },
   ];

@@ -3348,9 +3348,9 @@ header {
 }
 
 .gallery-image img {
-  width: auto;
-  height: 540px;
-  object-fit: contain;
+  width: auto!important;
+  height: 540px !important;
+  object-fit: contain !important;
 }
 
 /* Single Product Page */
@@ -5140,7 +5140,8 @@ justify-content: space-between;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color:rgb(8, 129, 120)
+  color:rgb(8, 129, 120);
+  border:none
 }
 
 /* -----------------------------login------------------------------------------ */
@@ -5251,4 +5252,69 @@ color: var(--primary-color);
 }
 .product-sorting{
   width: 100%;
+}
+.on-sale-product-alignment{
+  justify-content: left;
+  align-content: left;
+  margin: 0;
+}
+.overlay-trigger{
+  background-color: var(--primary-color);
+}
+.overlay-trigger-tooltip{
+  color: var(--primary-color);
+} 
+.customer-detail{
+  display: flex;
+  margin:25px 0
+}
+/* -------------------------------checkout page------------------------------ */
+.first-checkout-page-container{
+  padding: 20px;
+  max-width: 700px;
+}
+.checkout-first-continue-btn{
+  margin-top: 12px;
+  float: right;
+}
+.checkout-second-page-container{
+  display: flex;
+}
+.second-container{
+  width:60%;
+  padding: 20px;
+}
+.second-continue-btn{
+  margin-top: 12;
+  float: right;
+}
+.checkout-order-summary-container{
+  width: 40%;
+  border-left: 2px solid whitesmoke;
+  padding: 20px;
+}
+.third-container-checkout{
+  display: flex;
+}
+.checkout-coupon-container{
+  width:60%;
+  padding: 20px;
+}
+.place-order-container{
+  margin-top: 12px;
+  float: right;
+}
+.checkout-billing-details{
+  border-top: 4px solid #bbb;
+  width: 100%;
+}
+.place-order-btn{
+  margin-top: 12;
+}
+.checkout-unauthorised-container{
+display: flex;
+justify-content: center;
+}
+.checkout-login-btn{
+  margin-top: 12px;
 }
