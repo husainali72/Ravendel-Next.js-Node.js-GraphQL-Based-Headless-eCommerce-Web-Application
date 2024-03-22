@@ -4,16 +4,23 @@ import Slider from "react-slick";
 import { GlassMagnifier } from "react-image-magnifiers";
 import ProductImage from "./imageComponent";
 import PropTypes from "prop-types";
-import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
 import { get } from "lodash";
+import { getImage, imageOnError } from "../utills/helpers";
+import { useSelector } from "react-redux";
 const GalleryImageSlider = ({ galleryImages, variantSelect, comboData }) => {
   const [imgError, setImgError] = useState([]);
+  const [imageType, setImageType] = useState([]);
+  const setting = useSelector(state => state.setting)
+  useEffect(()=>{
+    let type=get(setting,'setting.imageStorage.status','')
+    setImageType(type)
+  },[setting])
   const settings = {
     customPaging: function (i) {
       return (
         <a>
           <ProductImage
-            src={getGalleryImage(galleryImages, "[i]", "")}
+            src={getGalleryImage(galleryImages[i])}
             className="thumbnail-image"
             alt="Thumbnail"
           />
@@ -59,29 +66,35 @@ const GalleryImageSlider = ({ galleryImages, variantSelect, comboData }) => {
     }
     return comboImageData;
   };
-
+const getImageSrc = (gallery, imageType, variantSelect, comboData) => {
+  if (!variantSelect) {
+    return getImage(gallery, imageType);
+  }
+  if (comboData?.length && variantSelect) {
+    if (comboData.length > 1) {
+      return getImage(gallery, imageType);
+    }
+    if (get(comboData,'[0].image')?.length) {
+      return getImage(get(comboData,'[0].image'), imageType);
+    }
+  }
+  return getImage(gallery, imageType);
+};
   return (
     <>
       {galleryImages?.length ? (
         <Slider {...settings}>
-          {galleryImages.map((gallery, index) => (
+          {galleryImages?.map((gallery, index) => (
             <div key={index}>
-              <ProductImage
-                src={getGalleryImage(gallery)}
-                className="gallery-image"
-                alt=""
-              />
               <GlassMagnifier
-                imageSrc={
-                  -1 === imgError?.indexOf(index)
-                    ? getMagnifierImg(gallery)
-                    : NoImagePlaceHolder?.src
-                }
+                imageSrc={getImageSrc(gallery, imageType, variantSelect, comboData)}
                 imageAlt=""
+                largeImageSrc={getImage(gallery, imageType)}
                 className="gallery-image"
                 magnifierSize={1025 > window?.innerWidth ? "60%" : "30%"}
                 magnifierBorderSize={5}
                 magnifierBorderColor="rgba(0, 0, 0, .5)"
+                onError={(e)=>imageOnError(e)}
               />
             </div>
           ))}

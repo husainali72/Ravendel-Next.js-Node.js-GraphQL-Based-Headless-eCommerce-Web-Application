@@ -1,47 +1,62 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react'
-import StarRating from '../breadcrumb/rating'
-import moment from 'moment';
-import { capitalize } from 'lodash';
-import { imageOnError } from '../../utills/helpers';
-const convertDateToStringFormat = (date) => {
-  var convertedDate = ""
-  if (date) {
-    convertedDate = moment(date).format('ll')
-  } else {
-    convertedDate = date;
-  }
-  return convertedDate;
-};
+import React, { useEffect, useState } from "react";
+import StarRating from "../breadcrumb/rating";
+import { capitalize, get } from "lodash";
+import ProductImage from "../imageComponent";
+import PropTypes from "prop-types";
+import { convertDateToStringFormat } from "../../utills/helpers";
+
 const Reviews = ({ singleProductReview }) => {
-  const [reviews, setReviews] = useState([])
+  const [reviews, setReviews] = useState([]);
   useEffect(() => {
-    setReviews(singleProductReview)
-  }, [singleProductReview])
+    setReviews(singleProductReview);
+  }, [singleProductReview]);
   return (
-    <div className='reviewContainer'>
-      {reviews.length > 0 ?
-        reviews.map((product, index) => {
-          return <div key={index} className='singleReview'>
-            <div className='usernameWidProfile'>
-              <img className='userImg' src='/assets/userProfile/icons8.png' alt='img' onError={imageOnError} />
-              <span className='singleReviewUsername'>	{capitalize(product?.customerId?.firstName)} </span>
+    <div className="reviewContainer">
+      {reviews?.length > 0 ? (
+        reviews?.map((product, index) => {
+          return (
+            <div key={index} className="singleReview">
+              <div className="usernameWidProfile">
+                <ProductImage
+                  className="userImg"
+                  src="/assets/userProfile/icons8.png"
+                  alt="img"
+                />
+                <span className="singleReviewUsername">
+                  {" "}
+                  {capitalize(get(product,'customerId.firstName'))}{" "}
+                </span>
+              </div>
+              <div className="starWidTitle">
+                <StarRating
+                  className="rating"
+                  stars={product?.rating}
+                  singleProducts={product}
+                />
+                <span className="reviewTitle">
+                  {capitalize(product?.title)}
+                </span>
+              </div>
+
+              <p className="reviewDate">{`Reviewed in India on ${convertDateToStringFormat(
+                product?.date
+              )}`}</p>
+
+              <h2 className="reviewDesc"> {capitalize(product?.review)} </h2>
             </div>
-            <div className='starWidTitle'>
-              <StarRating className="rating" stars={product?.rating} singleProducts={product} />
-              <span className='reviewTitle'>{capitalize(product.title)}</span>
-            </div>
-
-            <p className='reviewDate'>{`Reviewed in India on ${convertDateToStringFormat(product.date)}`}</p>
-
-            <h2 className='reviewDesc'> {capitalize(product.review)} </h2>
-
-          </div>
-        }) : <p className='fw-light text-muted'>There are no reviews yet. Be the first one to write one. </p>
-      }
-      {/* <hr className='reviewHR'/> */}
+          );
+        })
+      ) : (
+        <p className="fw-light text-muted">
+          There are no reviews yet. Be the first one to write one.{" "}
+        </p>
+      )}
     </div>
-  )
-}
+  );
+};
+Reviews.propTypes = {
+  singleProductReview: PropTypes.arrayOf(PropTypes.object),
+};
 
-export default Reviews
+export default Reviews;

@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import ErrorMessage from './errorMessage';
-import { get } from 'lodash';
-import PropTypes from 'prop-types';
-const PasswordField = ( {
+import React, { useState } from "react";
+import ErrorMessage from "./errorMessage";
+import { get } from "lodash";
+import PropTypes from "prop-types";
+const PasswordField = ({
   errors,
   placeholder,
   registerRef,
@@ -14,39 +12,37 @@ const PasswordField = ( {
   className,
   id,
   type,
-} ) => {
-  const [ showPassword, setShowPassword ] = useState( false );
-
+}) => {
+  const [showPassword, setShowPassword] = useState(false);
   const handleTogglePassword = () => {
-    setShowPassword( ! showPassword );
+    setShowPassword(!showPassword);
   };
-
   return (
     <>
       <div className="password-container">
         <input
-          type={showPassword ? 'text' : 'password'}
+          type={showPassword ? "text" : "password"}
           className={className}
           id={id}
           placeholder={placeholder}
           value={value}
           name={name}
-          onChange={( e ) => onChange( e, type )}
+          onChange={(e) => onChange(e, type)}
           ref={registerRef}
         />
         {showPassword ? (
-          <VisibilityIcon
-            className="password-icon"
+          <i
+            className="fas fa-eye password-icon "
             onClick={handleTogglePassword}
-          />
+          ></i>
         ) : (
-          <VisibilityOffIcon
-            className="password-icon"
+          <i
+            className="fas fa-eye-slash password-icon"
             onClick={handleTogglePassword}
-          />
+          ></i>
         )}
       </div>
-      <ErrorMessage message={get( errors, `${name}.message`, '' )} />
+      <ErrorMessage message={get(errors, `${name}.message`, "")} />
     </>
   );
 };

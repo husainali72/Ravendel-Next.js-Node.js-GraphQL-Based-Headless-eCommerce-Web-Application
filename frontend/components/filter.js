@@ -1,6 +1,8 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Form } from "react-bootstrap";
-import MultiRangeSlider from "../components/breadcrumb/multirangeSlider";
+import MultiRangeSlider from "./breadcrumb/multirangeSlider";
 import { useRouter } from "next/router";
 import { getAllAttributes } from "../redux/actions/productAction";
 import { capitalize, get } from "lodash";
@@ -20,7 +22,8 @@ const GlobalFilter = ({
   shopProducts,
   setonSaleProduct,
   setNumber,
-  filterbaseUrl
+  filterbaseUrl,
+  handleFilter
 }) => {
   const router = useRouter();
   const attributes = useSelector((state) => state.products.attributes);
@@ -89,18 +92,15 @@ const GlobalFilter = ({
         sortingOptions?.find(
           (option) => option.name === get(router, "query.sort")
         ) || sortingOptions?.find((option) => option.name === "latest");
-
       setSelectedSortingCriteria({ ...sortingcriteria });
-
       // Update the state with filtered attributes
       setFilterAttribute([...filteredProductAttribute]);
-
       // apply filter
       searchProductsByAttributeAndPrice(filteredProductAttribute, priceRange);
     } else {
       const sortingcriteria = sortingOptions?.find(
-        (option) => option.name === "latest"
-      );
+        (option) => option.name === get(router, "query.sort")
+      ) || sortingOptions?.find((option) => option.name === "latest");
       setSelectedSortingCriteria({ ...sortingcriteria });
       searchProductsByAttributeAndPrice([], priceRange);
       setFilterAttribute([]);
@@ -108,7 +108,7 @@ const GlobalFilter = ({
   };
   //Filters products based on specified attributes and price range
   const searchProductsByAttributeAndPrice = (attributes, priceRange) => {
-    let allProducts = get(shopProducts, "products.data");
+    let allProducts =shopProducts;
     if (attributes && attributes?.length > 0) {
       let data = allProducts?.filter((data) => {
         return (
@@ -131,9 +131,7 @@ const GlobalFilter = ({
         );
       });
       if (data) {
-        setonSaleProduct([...data]);
-        setSortingdata([...data]);
-        setNumber(data.length);
+        handleFilter(data)
       }
     } else {
       let data = allProducts?.filter((data) => {
@@ -145,9 +143,7 @@ const GlobalFilter = ({
         );
       });
       if (data) {
-        setonSaleProduct([...data]);
-        setSortingdata([...data]);
-        setNumber(data.length);
+        handleFilter(data)
       }
     }
   };

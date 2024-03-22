@@ -1,13 +1,13 @@
 /* eslint-disable react/prop-types */
-import { useEffect } from "react";
 import { Spinner } from "react-bootstrap";
 import {
-  getPrice,
   isCouponAppliedAndNotFreeShipping,
   isPriceZero,
 } from "../../utills/helpers";
 import CouponCard from "./couponCard";
 import { get } from "lodash";
+import Price from "../priceWithCurrency";
+import InputField from "../inputField";
 const OrderSummary = (props) => {
   const {
     currencyOption,
@@ -17,23 +17,9 @@ const OrderSummary = (props) => {
     couponCode,
     setCouponCode,
     doApplyCouponCode,
-    getCalculationDetails,
     CouponLoading,
     removeCoupon,
   } = props;
-
-  useEffect(() => {
-    var allData = {
-      cartTotal: get(totalSummary, "cartTotal", "0")?.toString(),
-      grandTotal: get(totalSummary, "grandTotal", "0")?.toString(),
-      discountAmount: get(totalSummary, "couponDiscountTotal", "0")?.toString(),
-      shippingAmount: get(totalSummary, "totalShipping", "0")?.toString(),
-      taxAmount: get(totalSummary, "totalTax", "0")?.toString(),
-    };
-
-    getCalculationDetails(allData);
-  }, [totalSummary, couponCartDetail]);
-
   return (
     <>
       <div className="col-md-12 col-sm-12 col-md-2-5">
@@ -44,7 +30,7 @@ const OrderSummary = (props) => {
             </p>
             <form method="post" onSubmit={doApplyCouponCode}>
               <div className="coupon-form-group">
-                <input
+              <InputField
                   type="text"
                   placeholder="Enter Coupon Code..."
                   value={couponCode}
@@ -86,11 +72,7 @@ const OrderSummary = (props) => {
                   <td className="cartTotal_label">Total MRP</td>
                   <td className="cartTotal_amount">
                     <span className="font-lg fw-900 text-brand">
-                      {currency}{" "}
-                      {getPrice(
-                        get(totalSummary, "mrpTotal", "0"),
-                        currencyOption
-                      )}
+                      <Price price={get(totalSummary, "mrpTotal", 0)} />
                     </span>
                   </td>
                 </tr>
@@ -98,33 +80,24 @@ const OrderSummary = (props) => {
                   <td className="cartTotal_label  ">Discount on MRP</td>
                   <td className="cartTotal_amount ">
                     <span className="font-lg fw-900 text-brand textSuccess">
-                      - {currency}{" "}
-                      {getPrice(
-                        get(totalSummary, "discountTotal", "0"),
-                        currencyOption
-                      )}
+                      - <Price price={get(totalSummary, "discountTotal", 0)} />
                     </span>
                   </td>
                 </tr>
-                {!isPriceZero(totalSummary) && (
+                {!isPriceZero(get(totalSummary, "totalTax")) && (
                   <tr>
                     <td className="cartTotal_label">Tax</td>
                     <td className="cartTotal_amount">
                       {" "}
                       <i className="ti-gift mr-5">
-                        {" "}
-                        {currency}{" "}
-                        {getPrice(
-                          get(totalSummary, "totalTax", "0"),
-                          currencyOption
-                        )}
+                        <Price price={get(totalSummary, "totalTax", 0)} />
                       </i>
                     </td>
                   </tr>
                 )}
                 <tr>
                   <td className="cartTotal_label">Shipping</td>
-                  {isPriceZero(totalSummary) ? (
+                  {isPriceZero(get(totalSummary, "totalShipping")) ? (
                     <td className="cartTotal_amount">
                       {" "}
                       <i className="ti-gift mr-5"></i>Free Shipping
@@ -132,11 +105,7 @@ const OrderSummary = (props) => {
                   ) : (
                     <td className="cartTotal_amount">
                       <i className="ti-gift mr-5"></i>
-                      {currency}{" "}
-                      {getPrice(
-                        get(totalSummary, "totalShipping", "0"),
-                        currencyOption
-                      )}
+                      <Price price={get(totalSummary, "totalShipping", 0)} />
                     </td>
                   )}
                 </tr>
@@ -155,11 +124,9 @@ const OrderSummary = (props) => {
                       }`}
                     >
                       <i className="ti-gift mr-5"></i>
-                      {"-"} {currency}{" "}
-                      {getPrice(
-                        get(totalSummary, "couponDiscountTotal", "0"),
-                        currencyOption
-                      )}
+                      <Price
+                        price={get(totalSummary, "couponDiscountTotal", 0)}
+                      />
                     </td>
                   </tr>
                 )}
@@ -168,11 +135,7 @@ const OrderSummary = (props) => {
                   <td className="cartTotal_amount">
                     <strong>
                       <span className="font-xl fw-900 text-brand">
-                        {currency}{" "}
-                        {getPrice(
-                          get(totalSummary, "grandTotal", "0"),
-                          currencyOption
-                        )}
+                        <Price price={get(totalSummary, "grandTotal", 0)} />
                       </span>
                     </strong>
                   </td>

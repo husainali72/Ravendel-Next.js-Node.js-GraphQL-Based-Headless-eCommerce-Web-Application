@@ -1,12 +1,10 @@
 /* eslint-disable react/prop-types */
 import { get } from "lodash";
-import { getPrice } from "../../utills/helpers";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import Price from "../priceWithCurrency";
 
 const CouponCard = ({
   couponCartDetail,
-  currencyOption,
-  currency,
   removeCoupon,
 }) => {
   return (
@@ -14,11 +12,8 @@ const CouponCard = ({
       <div className="applied-coupon-section">
         <span>
           <p>
-            You Save : {currency}{" "}
-            {getPrice(
-              get(couponCartDetail, "appliedCouponDiscount", "0"),
-              currencyOption
-            )}
+            You Save :
+            <Price price={get(couponCartDetail, "appliedCouponDiscount", 0)}/>
           </p>
           <p className="textSuccess">
             Coupon Applied : {get(couponCartDetail, "appliedCouponCode")}

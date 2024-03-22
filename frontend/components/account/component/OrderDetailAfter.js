@@ -4,6 +4,7 @@ import { Spinner } from "react-bootstrap";
 import Table from "../../dataTable";
 import { get } from "lodash";
 import AddressDetails from "./addressDetail";
+import { isCouponAppliedAndNotFreeShipping } from "../../../utills/helpers";
 const prepareProductHeaderData = (orderInfo) => {
   const showAttributes = get(orderInfo, "products", [])?.some(
     (product) => product?.attributes?.length > 0
@@ -19,21 +20,30 @@ const prepareProductHeaderData = (orderInfo) => {
   return productsHeader;
 };
 const prepareOrderDetailRowData = (orderInfo) => {
-  const couponCode = get(orderInfo, "couponCode", "");
+  const couponCard = get(orderInfo, "couponCard", "");
+  const totalSummary = get(orderInfo, "totalSummary", {});
+  const isCouponApplied = get(couponCard, "couponApplied") && isCouponAppliedAndNotFreeShipping(couponCard);
+  const couponDiscount = get(couponCard, "appliedCouponDiscount");
+  const couponCode = get(couponCard, "appliedCouponCode");
   let orderInfoDetail = [
     { label: "Order Number", value: get(orderInfo, "id", ""), type: "text" },
     { label: "Date", value: get(orderInfo, "date", ""), type: "date" },
-    { label: "SubTotal", value: get(orderInfo, "cartTotal", 0), type: "price" },
     {
-      label: "Grandtotal",
-      value: get(orderInfo, "grandTotal", 0),
+      label: "SubTotal",
+      value: get(totalSummary, "cartTotal", 0),
       type: "price",
     },
-    couponCode
+    {
+      label: "Grandtotal",
+      value: get(totalSummary, "grandTotal", 0),
+      type: "price",
+    },
+    isCouponApplied
       ? {
           label: `Coupon - ${couponCode}`,
-          value: get(orderInfo, "discountAmount", 0),
+          value: couponDiscount,
           type: "price",
+          className: "textSuccess",
         }
       : null,
     {
@@ -45,25 +55,42 @@ const prepareOrderDetailRowData = (orderInfo) => {
   return orderInfoDetail;
 };
 const createOrderSummaryTableData = (orderInfo) => {
-  const couponCode = get(orderInfo, "couponCode", "");
+  const couponCard = get(orderInfo, "couponCard", "");
+  const totalSummary = get(orderInfo, "totalSummary", {});
+  const isFreeShipping = get(orderInfo, "totalSummary.totalShipping") === 0;
+  const isFreeTax = get(orderInfo, "totalSummary.totalTax") === 0;
+  const isCouponApplied =get(couponCard, "couponApplied") && isCouponAppliedAndNotFreeShipping(couponCard);
+  const couponDiscount = get(couponCard, "appliedCouponDiscount");
+  const couponCode = get(couponCard, "appliedCouponCode");
   const OrderSummaryDetail = [
-    { label: "Subtotal", value: get(orderInfo, "cartTotal", 0), type: "price" },
-    { label: "Tax", value: get(orderInfo, "taxAmount", 0), type: "price" },
     {
-      label: "Shipping",
-      value: get(orderInfo, "shippingAmount", 0),
+      label: "Subtotal",
+      value: get(totalSummary, "cartTotal", 0),
       type: "price",
     },
-    couponCode
+    !isFreeTax && {
+      label: "Tax",
+      value: get(totalSummary, "totalTax ", 0),
+      type: "price",
+    },
+    {
+      label: "Shipping",
+      value: isFreeShipping
+        ? "Free Shipping"
+        : get(totalSummary, "totalShipping", 0),
+      type: isFreeShipping ? "text" : "price",
+    },
+    isCouponApplied
       ? {
           label: `Coupon - ${couponCode}`,
-          value: get(orderInfo, "discountAmount", 0),
+          value: couponDiscount,
           type: "price",
+          className: "textSuccess",
         }
       : null,
     {
       label: "Grandtotal",
-      value: get(orderInfo, "grandTotal", 0),
+      value: get(totalSummary, "grandTotal", 0),
       type: "price",
     },
   ];

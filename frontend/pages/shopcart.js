@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
-import { Container } from 'react-bootstrap';
-import BreadCrumb from '../components/breadcrumb/breadcrumb';
-import { useSelector, useDispatch } from 'react-redux';
-import CartTable from '../components/cardcomponent/CardDetail';
+import { useState, useEffect } from "react";
+import { Container } from "react-bootstrap";
+import BreadCrumb from "../components/breadcrumb/breadcrumb";
+import { useSelector, useDispatch } from "react-redux";
+import CartTable from "../components/cardcomponent/CardDetail";
 import {
   removeCartItemAction,
   increaseQuantity,
@@ -12,205 +12,212 @@ import {
   REMOVE_ALL_VALUE,
   calculateUserCart,
   calculateUnauthenticatedCart,
-} from '../redux/actions/cartAction';
+} from "../redux/actions/cartAction";
 import {
   getItemFromLocalStorage,
   handleError,
   mutation,
-} from '../utills/helpers';
-import { DELETE_CART_PRODUCTS } from '../queries/cartquery';
-import { useSession, getSession } from 'next-auth/react';
-import { getAllProductsAction } from '../redux/actions/productAction';
-import { settingActionCreator } from '../redux/actions/settingAction';
-import LoadingCartTable from '../components/cardcomponent/LoadingCard';
-import { get } from 'lodash';
-import Loading from '../components/loadingComponent';
-import notify from '../utills/notifyToast';
+} from "../utills/helpers";
+import { DELETE_CART_PRODUCTS } from "../queries/cartquery";
+import { useSession, getSession } from "next-auth/react";
+import { getAllProductsAction } from "../redux/actions/productAction";
+import { settingActionCreator } from "../redux/actions/settingAction";
+import LoadingCartTable from "../components/cardcomponent/LoadingCard";
+import { get } from "lodash";
+import Loading from "../components/loadingComponent";
+import notify from "../utills/notifyToast";
 const YourCard = () => {
   const session = useSession();
-  const allProducts = useSelector( ( state ) => state.products );
-  const cart = useSelector( ( state ) => state.cart );
-  const [ cartLoading, setCartLoading ] = useState( false );
-  const [ isQuantityBtnLoading, setIsQuantityBtnLoading ] = useState( false );
-  const [ cartItems, setCartItems ] = useState( [] );
+  const allProducts = useSelector((state) => state.products);
+  const cart = useSelector((state) => state.cart);
+  const [cartLoading, setCartLoading] = useState(false);
+  const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
   const dispatch = useDispatch();
-  const [ totalSummary, setTotalSummary ] = useState( {} );
-
+  const [totalSummary, setTotalSummary] = useState({});
   // get all products and user cart
-  useEffect( () => {
-    dispatch( getAllProductsAction() );
+  useEffect(() => {
+    dispatch(getAllProductsAction());
     getUserCartData();
-  }, [] );
-  useEffect( () => {
-    setIsQuantityBtnLoading( get( cart, 'loading' ) );
-  }, [ get( cart, 'loading' ) ] );
+  }, []);
+  useEffect(() => {
+    setIsQuantityBtnLoading(get(cart, "loading"));
+  }, [get(cart, "loading")]);
 
   const getUserCartData = async () => {
     const userSession = await getSession();
-    if ( 'authenticated' === session?.status || null !== userSession ) {
-      let id = get( userSession, 'user.accessToken.customer._id' );
-      dispatch( calculateUserCart( id ) );
+    if ("authenticated" === session?.status || null !== userSession) {
+      let id = get(userSession, "user.accessToken.customer._id");
+      dispatch(calculateUserCart(id));
     } else {
-      const localStorageProducts = getItemFromLocalStorage( 'cart' );
-      console.log( localStorageProducts, 'localStorageProducts' );
-      dispatch( calculateUnauthenticatedCart( localStorageProducts ) );
+      const localStorageProducts = getItemFromLocalStorage("cart");
+      dispatch(calculateUnauthenticatedCart(localStorageProducts));
     }
   };
-  useEffect( () => {
+  useEffect(() => {
     const getProducts = async () => {
-      setCartLoading( true );
+      setCartLoading(true);
       let cartItemsArray = [];
       let allItem = [];
-      get( cart, 'cartItems', [] )?.map( ( cart ) => {
+      get(cart, "cartItems", [])?.map((cart) => {
         const originalProduct = allProducts?.products?.find(
-          ( prod ) => prod._id === cart.productId
+          (prod) => prod?._id === cart?.productId
         );
         const orginalAttributes = originalProduct?.variation_master?.find(
-          ( prod ) => prod.id === cart.variantId
+          (prod) => prod?.id === cart?.variantId
         );
         let cartProduct = {
-          _id: get( cart, 'productId', '' ),
-          variantId: get( cart, 'variantId', '' ),
-          quantity: parseInt( get( cart, 'qty' ) ),
-          productQuantity: get( originalProduct, 'quantity' ),
-          name: get( cart, 'productTitle' ),
-          pricing: get( cart, 'productPrice' ),
-          price: get( originalProduct, 'pricing.price' ),
-          short_description: get( originalProduct, 'short_description' ),
-          feature_image: get( cart, 'productImage' ),
-          url: get( originalProduct, 'url' ),
-          attributes: get( cart, 'attributes', [] ),
-          shippingClass: get( cart, 'shippingClass' ),
-          taxClass: get( cart, 'taxClass' ),
-          discountPercentage: get( cart, 'discountPercentage' ),
-          amount: get( cart, 'amount' ),
-          mrpAmount: get( cart, 'mrpAmount' ),
-          available: get( cart, 'available' ),
+          _id: get(cart, "productId", ""),
+          variantId: get(cart, "variantId", ""),
+          quantity: parseInt(get(cart, "qty")),
+          productQuantity: get(originalProduct, "quantity"),
+          name: get(cart, "productTitle"),
+          pricing: get(cart, "productPrice"),
+          price: get(originalProduct, "pricing.price"),
+          short_description: get(originalProduct, "short_description"),
+          feature_image: get(cart, "productImage"),
+          url: get(originalProduct, "url"),
+          attributes: get(cart, "attributes", []),
+          shippingClass: get(cart, "shippingClass"),
+          taxClass: get(cart, "taxClass"),
+          discountPercentage: get(cart, "discountPercentage"),
+          amount: get(cart, "amount"),
+          mrpAmount: get(cart, "mrpAmount"),
+          available: get(cart, "available"),
         };
-        allItem.push( cartProduct );
-        cartItemsArray.push( cartProduct );
-      } );
-      setTotalSummary( {
+        allItem.push(cartProduct);
+        cartItemsArray.push(cartProduct);
+      });
+      setTotalSummary({
         ...totalSummary,
-        grandTotal: get( cart, 'totalSummary.grandTotal' ),
-        cartTotal: get( cart, 'totalSummary.cartTotal' ),
-        totalShipping: get( cart, 'totalSummary.totalShipping' ),
-        totalTax: get( cart, 'totalSummary.totalTax' ),
-        mrpTotal: get( cart, 'totalSummary.mrpTotal' ),
-        discountTotal: get( cart, 'totalSummary.discountTotal' ),
-      } );
-      setCartItems( [ ...cartItemsArray ] );
-      setCartLoading( false );
+        grandTotal: get(cart, "totalSummary.grandTotal"),
+        cartTotal: get(cart, "totalSummary.cartTotal"),
+        totalShipping: get(cart, "totalSummary.totalShipping"),
+        totalTax: get(cart, "totalSummary.totalTax"),
+        mrpTotal: get(cart, "totalSummary.mrpTotal"),
+        discountTotal: get(cart, "totalSummary.discountTotal"),
+      });
+      setCartItems([...cartItemsArray]);
+      setCartLoading(false);
     };
     getProducts();
-  }, [ allProducts, get( cart, 'cartItems' ) ] );
+  }, [allProducts, get(cart, "cartItems")]);
   // Function to clear all items in the cart
   const clearAllCartItems = async () => {
-    setCartItems( [] );
-    if ( 'authenticated' === session.status ) {
-      let id = get( session, 'data.user.accessToken.customer._id' );
+    setCartItems([]);
+    if ("authenticated" === session.status) {
+      let id = get(session, "data.user.accessToken.customer._id");
       let variables = { userId: id };
-      dispatch( removeAllCartItemsAction( variables ) );
+      dispatch(removeAllCartItemsAction(variables));
     } else {
-      dispatch( {
+      dispatch({
         type: REMOVE_ALL_VALUE,
         payload: [],
-      } );
+      });
     }
   };
-  const updateCartProductQuantity = ( item, updatedQuantity ) => {
-    const isQuantityIncreased = cartItems.find(
-      ( itemm ) =>
-        ( ( itemm._id === item._id && itemm.variantId === item.variantId ) ||
-          ( itemm._id === item._id && ! itemm.variantId === item.variantId ) ) &&
-        item?.productQuantity >= updatedQuantity
+  const updateCartProductQuantity = (item, updatedQuantity) => {
+    const isQuantityIncreased = cartItems?.find(
+      (cartItem) =>{
+    let cartItemId = get(cartItem, '_id')
+    let cartItemVariantId = get(cartItem, 'variantId');
+    let itemId = get(item, '_id');
+    let itemVariantId = get(item, 'variantId');
+    let itemProductQuantity = get(item, 'productQuantity');
+    return (
+        ((cartItemId === itemId && cartItemVariantId === itemVariantId) ||
+        (cartItemId === itemId && !cartItemVariantId === itemVariantId)) &&
+        itemProductQuantity >= updatedQuantity
     );
-    if ( isQuantityIncreased ) {
-      let updatedCartItems = cartItems?.map( ( cartItem ) => ( {
+  }
+    );
+    if (isQuantityIncreased) {
+      let updatedCartItems = cartItems?.map((cartItem) => ({
         ...cartItem,
         quantity:
-          cartItem._id === item._id &&
-          ( cartItem.variantId === item.variantId ||
-            ( ! cartItem.variantId && ! item.variantId ) ) ?
-            updatedQuantity :
-            cartItem.quantity,
-      } ) );
-      setCartItems( [ ...updatedCartItems ] );
-      if ( 'authenticated' !== session?.status ) {
+          cartItem?._id === item?._id &&
+          (cartItem?.variantId === item?.variantId ||
+            (!cartItem?.variantId && !item?.variantId))
+            ? updatedQuantity
+            : cartItem?.quantity,
+      }));
+      setCartItems([...updatedCartItems]);
+      if ("authenticated" !== session?.status) {
         dispatch(
           increaseQuantity(
-            item._id,
-            item.productQuantity,
-            item.variantId,
+            item?._id,
+            item?.productQuantity,
+            item?.variantId,
             updatedQuantity
           )
         );
-        dispatch( calculateUnauthenticatedCart( updatedCartItems ) );
-        setIsQuantityBtnLoading( false );
+        dispatch(calculateUnauthenticatedCart(updatedCartItems));
+        setIsQuantityBtnLoading(false);
       } else {
-        let id = get( session, 'data.user.accessToken.customer._id' );
+        let id = get(session, "data.user.accessToken.customer._id");
         let variables = {
           userId: id,
-          productId: get( item, '_id' ),
+          productId: get(item, "_id"),
           qty: updatedQuantity,
         };
-        dispatch( changeQty( variables ) )
-          .then( ( res ) => {
-            if ( get( res, 'data.changeQty.success' ) ) {
-              dispatch( calculateUserCart( id ) );
+        dispatch(changeQty(variables))
+          .then((res) => {
+            if (get(res, "data.changeQty.success")) {
+              dispatch(calculateUserCart(id));
             }
-            setIsQuantityBtnLoading( false );
-          } )
-          .catch( ( error ) => {
-            setIsQuantityBtnLoading( false );
-          } );
+            setIsQuantityBtnLoading(false);
+          })
+          .catch((error) => {
+            setIsQuantityBtnLoading(false);
+          });
       }
     } else {
-      if ( item?.productQuantity ) {
-      notify( `Only ${item?.productQuantity} Unit(s) available in stock ` );
+      if (item?.productQuantity) {
+        notify(`Only ${item?.productQuantity} Unit(s) available in stock `);
       }
     }
   };
   // Function to remove an item from the cart
-  const removeToCart = async ( item ) => {
-    let product = get( item, '_id', '' );
-    if ( 'authenticated' === session?.status ) {
-      let id = get( session, 'data.user.accessToken.customer._id' );
+  const removeToCart = async (item) => {
+    let productId = get(item, "_id", "");
+    if ("authenticated" === session?.status) {
+      let id = get(session, "data.user.accessToken.customer._id");
       let variables = {
         userId: id,
-        productId: item._id,
-        variantId: get( item, 'variantId', '' ),
+        productId: item?._id,
+        variantId: get(item, "variantId", ""),
       };
 
-      mutation( DELETE_CART_PRODUCTS, variables )
-        .then( ( res ) => {
-          if ( get( res, 'data.deleteCartProduct.success' ) ) {
-            dispatch( calculateUserCart( id ) );
+      mutation(DELETE_CART_PRODUCTS, variables)
+        .then((res) => {
+          if (get(res, "data.deleteCartProduct.success")) {
+            dispatch(calculateUserCart(id));
           }
-        } )
-        .catch( ( error ) => {
-          handleError( error, dispatch );
-        } );
+        })
+        .catch((error) => {
+          handleError(error, dispatch);
+        });
     } else {
+      
       let cartItemsfilter = cartItems?.filter(
-        ( itemm ) =>
-          itemm._id !== product ||
-          ( itemm._id === product && itemm.variantId !== item.variantId )
+        (cartItem) =>
+          cartItem?._id !== productId ||
+          (cartItem?._id === productId && cartItem?.variantId !== item?.variantId)
       );
       let variables = {
-        id: product,
-        variantId: get( item, 'variantId', '' ),
+        id: productId,
+        variantId: get(item, "variantId", ""),
       };
 
-      dispatch( removeCartItemAction( variables ) );
-      dispatch( calculateUnauthenticatedCart( cartItemsfilter ) );
-      setCartItems( cartItemsfilter );
+      dispatch(removeCartItemAction(variables));
+      dispatch(calculateUnauthenticatedCart(cartItemsfilter));
+      setCartItems(cartItemsfilter);
     }
   };
-  if ( cartLoading ) {
+  if (cartLoading) {
     return (
       <>
-        <BreadCrumb title={'Cart'} />
+        <BreadCrumb title={"Cart"} />
         <section className="shopcart-table loading-table">
           <Container>
             <div className="row">
@@ -223,9 +230,9 @@ const YourCard = () => {
       </>
     );
   } else {
-return (
+    return (
       <>
-        <BreadCrumb title={'Cart'} />
+        <BreadCrumb title={"Cart"} />
         <section className="shopcart-table">
           <Container>
             {isQuantityBtnLoading && <Loading />}
@@ -244,10 +251,10 @@ return (
             ) : (
               <p
                 style={{
-                  display: 'flex',
+                  display: "flex",
                   flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
                 No product available in cart
@@ -257,6 +264,6 @@ return (
         </section>
       </>
     );
-}
+  }
 };
 export default YourCard;

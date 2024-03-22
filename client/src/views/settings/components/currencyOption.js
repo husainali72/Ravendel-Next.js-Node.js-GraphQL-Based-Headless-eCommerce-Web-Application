@@ -15,13 +15,11 @@ const CurrencyOptionsComponent = () => {
   const settingState = useSelector((state) => state.settings);
   const dispatch = useDispatch();
   const [currencyOption, setCurrencyOption] = useState({
-    ...settingState.settings.store.currency_options,
+    ...get(settingState,'settings.store.currency_options'),
   });
-
   useEffect(() => {
-    get(settingState, "settings.store.currency_options");
-  }, [settingState.settings]);
-
+    setCurrencyOption( get(settingState, "settings.store.currency_options"));
+  }, [get(settingState,'settings')]);
   const updateStoreCurrency = () => {
     dispatch(storeCurrencyUpdateAction(currencyOption));
   };
@@ -29,14 +27,15 @@ const CurrencyOptionsComponent = () => {
   return (
     <>
      <Alerts/>
-     {settingState.loading ? <Loading /> : null}
+     {settingState?.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" mb={3}>
             <SettingSelectComponent
               label="Currency"
               name="Currency"
-              value={currencyOption.currency}
+              value={get(currencyOption,'currency','')}
+              // value={currency}
               onSelecteChange={(val) =>
                 setCurrencyOption({
                   ...currencyOption,
@@ -48,6 +47,7 @@ const CurrencyOptionsComponent = () => {
                 { name: "Euro (EUR)", value: "eur" },
                 { name: "British Pound (GBP)", value: "gbp" },
                 { name: "Canadian Dollar (CAD)", value: "cad" },
+                { name: "INR", value: "inr" },
               ]}
             />
           </Box>
@@ -56,7 +56,7 @@ const CurrencyOptionsComponent = () => {
             <SettingSelectComponent
               label="Currency Position"
               name="currency-position"
-              value={currencyOption.currency_position}
+              value={get(currencyOption,'currency_position','')}
               onSelecteChange={(val) =>
                 setCurrencyOption({
                   ...currencyOption,
@@ -73,7 +73,7 @@ const CurrencyOptionsComponent = () => {
           </Box>
           <Box component="div">
             <SettingTextInput
-              value={currencyOption.thousand_separator}
+              value={get(currencyOption,'thousand_separator',)}
               label="Thousand separator"
               onSettingInputChange={(val) => {
                 setCurrencyOption({
@@ -85,7 +85,7 @@ const CurrencyOptionsComponent = () => {
           </Box>
           <Box component="div">
             <SettingTextInput
-              value={currencyOption.decimal_separator}
+              value={get(currencyOption,'decimal_separator')}
               label="Decimal separator"
               onSettingInputChange={(val) => {
                 setCurrencyOption({
@@ -97,7 +97,7 @@ const CurrencyOptionsComponent = () => {
           </Box>
           <Box component="div">
             <SettingTextInput
-              value={currencyOption.number_of_decimals}
+              value={get(currencyOption,'number_of_decimals')}
               label="Number of decimals"
               onSettingInputChange={(val) => {
                 setCurrencyOption({

@@ -14,7 +14,7 @@ const OrderSchema = new Schema({
   billing: {
     firstname: String,
     lastname: String,
-    company: String,
+    company: String, // not sure about this field
     address: String,
     city: String,
     zip: String,
@@ -22,13 +22,13 @@ const OrderSchema = new Schema({
     state: String,
     email: String,
     phone: String,
-    paymentMethod: String,
-    transaction_id: String
+    paymentMethod: String, // not sure about this field
+    transaction_id: String // not sure about this field
   },
   shipping: {
     firstname: String,
     lastname: String,
-    company: String,
+    company: String, // not sure about this field
     address: String,
     city: String,
     zip: String,
@@ -38,33 +38,14 @@ const OrderSchema = new Schema({
     phone: String,
     notes: String
   }, 
-  cartTotal: {
-    type: Number,
-    required: true
+  
+  transactionDetail : {
+    sessionId: String,
   },
-  shippingAmount: {
-    type: Number,
-    required: true
-  },
-  taxAmount: {
-    type: Number,
-    required: true
-  },
-  couponCode: {
-    type: String,
-  },
-  discountAmount: {
-    type: Number,
-    required: true
-  },
-  grandTotal: {
-    type: Number,
-    required: true
-  },    
   paymentStatus: {
     type: String,
-    enum: ['pending', 'failed', 'success', 'cancelled'],
-    default: 'pending'
+    enum: ['processing', 'pending', 'failed', 'success', 'cancelled'],
+    default: 'processing'
   },
   shippingStatus: {
     type: String,
@@ -84,35 +65,18 @@ const OrderSchema = new Schema({
         type: Schema.ObjectId,
         required: true
       },
+      variantId: {
+        type: String
+      },
       productTitle: {
         type: String,
         required: true
       },
-      productPrice: {
-        type: Number,
-        required: true
-      },
-      qty: {
-        type: Number,
-        required: true
-      },
-      feature_image: {
-        type: Number,
-      },
       productImage: {
         type: String,
       },
-      productTotal : {
-        type: Number,
-      },
-      productShipping : {
-        type: Number,
-      },
-      productTax : {
-        type: Number
-      },
-      productTaxPercentage: {
-        type: Number,
+      url: {
+        type: String
       },
       attributes: [{
         name:
@@ -120,17 +84,103 @@ const OrderSchema = new Schema({
         value:
           { type: String }
       }],
-      variantId: {
-        type: String
-      },
       shippingClass: {
         type: Schema.ObjectId,        
       },
       taxClass: {
         type: Schema.ObjectId,        
+      },
+      feature_image: {
+        type: Number,
+      }, // not sure about this field
+      
+      qty: {
+        type: Number,
+        required: true
+      },
+      mrp: {
+        type: Number,
+        required: true
+      },
+      discountPrice: {
+        type: Number
+      },
+      productPrice: {
+        type: Number,
+        required: true
+      },
+      discountPercentage: {
+        type: Number
+      },
+      taxPercentage: {
+        type: Number
+      },
+      
+      mrpAmount: {
+        type: Number,
+        required: true
+      },
+      discountAmount: {
+        type: Number
+      },
+      amount: {
+        type: Number,
+        required: true
+      },
+      taxAmount: {
+        type: Number
+      },
+      shippingAmount: {
+        type: Number
+      },
+      total: {
+        type: Number,
+        required: true
       }
     }
-  ]
+  ],
+  couponCard: {
+    couponApplied: {
+      type: Boolean,
+      required: true
+    },
+    appliedCouponCode: {
+      type: String
+    },
+    appliedCouponDiscount: {
+      type: Number,
+    },
+    isCouponFreeShipping: {
+      type: Boolean
+    }
+  },
+
+  totalSummary: {
+    mrpTotal: {
+      type: Number,
+      required: true
+    },
+    discountTotal: {
+      type: Number
+    },
+    cartTotal: {
+      type: Number
+    },
+    totalTax: {
+      type: Number
+    },
+    totalShipping: {
+      type: Number
+    },
+    grandTotal: {
+      type: Number,
+      required: true
+    },
+    couponDiscountTotal: {
+      type: Number
+    }
+  }
+
   // sub_total_details: {
   //   shipping_name: String,
   //   tax_name: String,
@@ -146,6 +196,32 @@ const OrderSchema = new Schema({
   //   sub_total: Number,
   //   total: Number
   // },
+
+  // cartTotal: {
+  //   type: Number,
+  //   required: true
+  // },
+  // shippingAmount: {
+  //   type: Number,
+  //   required: true
+  // },
+  // taxAmount: {
+  //   type: Number,
+  //   required: true
+  // },
+  // couponCode: {
+  //   type: String,
+  // },
+  // discountAmount: {
+  //   type: Number,
+  //   required: true
+  // },
+  // grandTotal: {
+  //   type: Number,
+  //   required: true
+  // },    
+
+
 });
 
 module.exports = mongoose.model("Order", OrderSchema);

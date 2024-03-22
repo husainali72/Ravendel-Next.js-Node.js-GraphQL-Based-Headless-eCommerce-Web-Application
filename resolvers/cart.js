@@ -12,7 +12,7 @@ const {
   checkToken,
   MESSAGE_RESPONSE,
   againCalculateCart,
-  _validate, getdate, addCart, calculateCart
+  _validate, getdate, addCart, calculateCart, calculateCoupon
 } = require("../config/helpers");
 const validate = require("../validations/cart");
 
@@ -43,92 +43,7 @@ module.exports = {
 
     calculateCoupon: async (root, args, { id }) => {
       try {
-        // const coupon = await Coupon.findOne({ code: { $regex: `${args.couponCode}`, $options: "i" } });
-        const coupon = await Coupon.findOne({ code: args.couponCode });
-
-        let cart = await calculateCart(args.userId, args.cartItems, args.couponCode);
-
-        let date = getdate('2');
-        let success = false, message = "", couponDiscount = 0, isCouponFreeShipping;
-        let couponCard = { couponApplied: false };
-        if (!coupon) {
-          success = false;
-          message = 'Invalid coupon code';
-        }
-        else {
-          if (coupon.expire >= date) {
-            let cartTotal = 0
-            // args.cart.map(item => cartTotal += item.productTotal)     
-            cartTotal = cart.totalSummary.cartTotal;
-
-            if (coupon.minimumSpend === 0 || coupon.minimumSpend <= cartTotal) {
-              if (!coupon.category) {
-                let isDiscountTypeValid = true;
-                if(coupon.discountType === 'amount-discount') {
-                  couponDiscount = parseFloat(coupon.discountValue);
-                }
-                else if(coupon.discountType === 'percentage-discount') {
-                  couponDiscount = parseFloat(cartTotal / 100) * parseFloat(coupon.discountValue);
-                  if(coupon.maximumSpend && coupon.maximumSpend != 0) {
-                    if (couponDiscount > coupon.maximumSpend) {
-                      couponDiscount = coupon.maximumSpend;
-                    }
-                  }
-                }
-                else if(coupon.discountType === 'free-shipping') {
-                  isCouponFreeShipping = true;
-                  couponDiscount = cart.totalSummary.totalShipping;
-                  cart.totalSummary.totalShipping = 0;
-                }
-                else {
-                  isDiscountTypeValid = false;
-                  console.log('Invalid discount type');
-                  success = false;
-                  message = 'Something wrong with the Coupon code';
-                }
-                if(isDiscountTypeValid) {
-                  couponCard.couponApplied = true;
-                  couponCard.appliedCouponCode = args.couponCode;
-                  couponCard.appliedCouponDiscount = couponDiscount;
-                  couponCard.isCouponFreeShipping = isCouponFreeShipping;
-                  if(!isCouponFreeShipping) {
-                    cart.totalSummary.couponDiscountTotal = couponDiscount.toFixed(2);
-                  }
-                  success = true;
-                  message = 'Coupon code applied successfully';
-                }
-              }
-              else {
-                couponCard = await againCalculateCart(coupon, args, cart, Product);
-                if(couponCard.couponApplied) {
-                  if(!couponCard.isCouponFreeShipping) {
-                    cart.totalSummary.couponDiscountTotal = couponCard.appliedCouponDiscount.toFixed(2);
-                  }
-                  success = true;
-                  message = 'Coupon code applied successfully';
-                }
-                else {
-                  success = false;
-                  message = 'Coupon not applicable on cart';
-                }
-              }
-            }
-            else {
-              success = false;
-              message = 'Coupon not applicable on cart';
-            }
-          } else {
-            success = false;
-            message = 'Coupon no longer applicable';
-          }
-        }
-        cart.success = success;
-        cart.message = message;
-        cart.couponCard = couponCard;
-        if(cart.couponCard.couponApplied) {
-          cart.totalSummary.grandTotal = (parseFloat(cart.totalSummary.grandTotal) - cart.couponCard.appliedCouponDiscount).toFixed(2);
-        }
-        return cart;
+        return calculateCoupon(args.userId, args.cartItems, args.couponCode);
       } catch (error) {
         error = checkError(error);
         throw new Error(error.custom_message);
