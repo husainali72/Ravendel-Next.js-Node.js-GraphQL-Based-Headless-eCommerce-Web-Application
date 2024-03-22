@@ -21,37 +21,40 @@ const ThankYou = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     getOrderDetails();
-    updateOrderPaymentStatus();
   }, [session?.status]);
 
   useEffect(() => {
     if (orderDetail) {
       setSingleOrderDetail({ ...get(orderDetail, "order", {}) });
+      updateOrderPaymentStatus();
     }
   }, [orderDetail]);
 
- // If orderId is present, dispatch action to get single order details
+  // If orderId is present, dispatch action to get single order details
   const getOrderDetails = () => {
-    const { orderId } = get(router,'query');
+    const { orderId } = get(router, "query");
     if (session?.status === "authenticated") {
       if (orderId) {
         let variable = { id: orderId };
         dispatch(getSingleOrderAction(variable));
-      } 
+      }
     }
   };
-  
-   // If payment status is not updated, dispatch action to update it
-  const updateOrderPaymentStatus=()=>{
-    const { orderId } = get(router,'query');
+
+  // If payment status is not updated, dispatch action to update it
+  const updateOrderPaymentStatus = () => {
+    const { orderId } = get(router, "query");
     let payload = {
       id: orderId,
       paymentStatus: "success",
     };
-    if (!get(orderDetail, "paymentStatus")) {
+    if (
+      !get(orderDetail, "paymentStatus") &&
+      get(orderDetail, "order.billing.paymentMethod") === "Stripe"
+    ) {
       dispatch(updatePaymentStatus(payload));
     }
-  }
+  };
 
   return (
     <div>

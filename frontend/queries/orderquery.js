@@ -57,6 +57,7 @@ export const GET_SINGLE_ORDER_DETAILS = gql`
         billing
         products
         totalSummary
+        couponCard
         date
         updated
       }
@@ -69,8 +70,8 @@ export const GET_SINGLE_ORDER_DETAILS = gql`
 `;
 
 export const ADD_ORDER = gql`
-  mutation ($userId: ID, $billing: customObject, $shipping: customObject) {
-    addOrder(userId: $userId, shipping: $shipping, billing: $billing) {
+  mutation ($userId: ID, $billing: customObject, $shipping: customObject,  $couponCode: String) {
+    addOrder(userId: $userId, shipping: $shipping, billing: $billing, couponCode: $couponCode) {
       id
       message
       success

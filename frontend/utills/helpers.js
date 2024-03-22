@@ -264,7 +264,7 @@ export const getProductSellPrice = (product) => {
   return sellPrice ? formatNumber(sellPrice) : formatNumber(price);
 };
 export const isPriceZero = (price) => {
-  return price !== 0;
+  return price === 0;
 };
 export const isCouponAppliedAndNotFreeShipping = (couponCartDetail) => {
   return (

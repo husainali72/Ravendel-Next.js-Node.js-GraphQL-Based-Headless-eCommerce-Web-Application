@@ -21,8 +21,8 @@ const Table = ({ rows, columns, colSpan, additionalRows }) => {
                 switch (column?.type) {
                   case "price":
                     return (
-                      <td>
-                        <Price price={get(row, `${[column?.name]}`, 0)} />
+                      <td className={`${column?.className}`}>
+                        <Price price={get(row, `${[column?.name]}`, 0)}  />
                       </td>
                     );
                   case "attributes":
@@ -51,10 +51,10 @@ const Table = ({ rows, columns, colSpan, additionalRows }) => {
               case "price":
                 return (
                   <tr key={`additionalRow-${index}`}>
-                    <th colSpan={colSpan || 3} className="order-text-align">
+                    <th colSpan={colSpan || 3} className={`order-text-align ${data?.className}`}>
                       {get(data, "label", "")}
                     </th>
-                    <td>
+                    <td className={`${data?.className}`}>
                       <Price price={get(data, "value", 0)} />
                     </td>
                   </tr>

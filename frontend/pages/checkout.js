@@ -427,10 +427,15 @@ export const CheckOut = () => {
     e.preventDefault();
     if ("authenticated" === session?.status) {
       setLoading(true);
-
       let paymentMethod = get(billingDetails, "billing.paymentMethod");
+      let variable = {
+        ...billingDetails,
+      };
+      if (couponCartDetail?.couponApplied) {
+        variable.couponCode = get(couponCartDetail, "appliedCouponCode");
+      }
       dispatch(checkoutDetailAction(billingDetails));
-      mutation(ADD_ORDER, billingDetails, dispatch)
+      mutation(ADD_ORDER, variable, dispatch)
         .then((response) => {
           setLoading(false);
           let success = get(response, "data.addOrder.success");
@@ -560,7 +565,7 @@ export const CheckOut = () => {
                         Continue
                       </button>
                     </div>
-                    {loading && <Loading />}
+
                     <div className="checkout-order-summary-container">
                       <OrderSummary
                         totalSummary={totalSummary}
@@ -590,6 +595,7 @@ export const CheckOut = () => {
               <section className="checkout-section">
                 <Container>
                   <Stepper activeStep={formStep} steps={steps} />
+
                   <div className="col-lg-12 third-container-checkout">
                     <div className="checkout-coupon-container">
                       <ShippingTaxCoupon
@@ -599,6 +605,7 @@ export const CheckOut = () => {
                         shippingAdd={shippingAdd}
                         billingInfo={billingInfo}
                       />
+                      {loading && <Loading />}
                       <h5>Your Order Summary</h5>
                       <Orderdetail
                         settings={settings}
