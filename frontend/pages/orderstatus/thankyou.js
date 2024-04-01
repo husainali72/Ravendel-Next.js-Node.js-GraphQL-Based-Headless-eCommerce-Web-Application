@@ -55,7 +55,8 @@ const ThankYou = () => {
       paymentStatus !== "failed" &&
       paymentMethod === "Stripe"
     ) {
-      dispatch(updatePaymentStatus(payload));
+      let customerId=get(session, "data.user.accessToken.customer._id")
+      dispatch(updatePaymentStatus(payload,customerId));
       getOrderDetails();
     }
   };

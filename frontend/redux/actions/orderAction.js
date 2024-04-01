@@ -5,8 +5,7 @@ import {
   UPDATE_PAYMENT_STATUS,
 } from "../../queries/orderquery";
 import { mutation, query } from "../../utills/helpers";
-import notify from "../../utills/notifyToast";
-import { SET_USER_CART } from "./cartAction";
+import {  calculateUserCart } from "./cartAction";
 
 export const getSingleOrderAction = (variable) => (dispatch) => {
   dispatch({
@@ -30,22 +29,17 @@ export const getSingleOrderAction = (variable) => (dispatch) => {
       });
     });
 };
-export const updatePaymentStatus = (variable) => (dispatch) => {
+export const updatePaymentStatus = (variable,customerId) => (dispatch) => {
   dispatch({
     type: ORDER_LOADING,
   });
   mutation(UPDATE_PAYMENT_STATUS, variable)
     .then((response) => {
       const success = get(response, "data.updatePaymentStatus.success", false);
-      const message = get(response, "data.updatePaymentStatus.message", true);
       if (success) {
-        if (message) {
-          notify(message, true);
-        }
-        dispatch({
-          type: SET_USER_CART,
-          payload: [],
-        });
+        if(customerId){
+        dispatch(calculateUserCart(customerId));
+      }
       }
     })
     .catch((error) => {

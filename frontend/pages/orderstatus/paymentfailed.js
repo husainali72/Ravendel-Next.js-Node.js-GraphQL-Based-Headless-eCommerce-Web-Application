@@ -42,9 +42,10 @@ const PaymentFailed = () => {
       id: orderId,
       paymentStatus: "failed",
     };
+    let customerId=get(session, "data.user.accessToken.customer._id")
     let paymentStatus = get(orderDetail, "order.paymentStatus");
     if (paymentStatus && paymentStatus !== "failed") {
-      dispatch(updatePaymentStatus(payload));
+      dispatch(updatePaymentStatus(payload,customerId));
       getOrderDetails();
     }
   };
