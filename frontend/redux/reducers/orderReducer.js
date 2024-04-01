@@ -5,7 +5,6 @@ import {
     ORDER_FAIL,
     ORDER_SUCCESS,
     LOADING_FALSE,
-    PAYMENT_UPDATED
   } from "../actions/orderAction";
   
   const initialState = {
@@ -20,9 +19,7 @@ import {
     switch (action?.type) {
       case ORDER_LOADING:
         return {
-          ...state,
-          loading: true,
-          success: false,
+         ...initialState
         };
       case ORDERS_SUCCESS:
         return {
@@ -49,11 +46,7 @@ import {
           ...state,
           loading: false,
         };
-      case PAYMENT_UPDATED:
-        return {
-          ...state,
-          paymentStatus: get(action,'payload'),
-        };
+
       default:
         return state;
     }

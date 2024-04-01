@@ -48,11 +48,15 @@ const ThankYou = () => {
       id: orderId,
       paymentStatus: "success",
     };
+    let paymentStatus = get(orderDetail, "order.paymentStatus");
+    let paymentMethod = get(orderDetail, "order.billing.paymentMethod");
     if (
-      !get(orderDetail, "paymentStatus") &&
-      get(orderDetail, "order.billing.paymentMethod") === "Stripe"
+      paymentStatus !== "success" &&
+      paymentStatus !== "failed" &&
+      paymentMethod === "Stripe"
     ) {
       dispatch(updatePaymentStatus(payload));
+      getOrderDetails();
     }
   };
 

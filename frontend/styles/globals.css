@@ -5140,7 +5140,7 @@ justify-content: space-between;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color:rgb(8, 129, 120);
+  color:var(--primary-color);
   border:none
 }
 

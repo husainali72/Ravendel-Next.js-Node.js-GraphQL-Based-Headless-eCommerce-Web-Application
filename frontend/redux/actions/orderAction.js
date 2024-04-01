@@ -31,6 +31,9 @@ export const getSingleOrderAction = (variable) => (dispatch) => {
     });
 };
 export const updatePaymentStatus = (variable) => (dispatch) => {
+  dispatch({
+    type: ORDER_LOADING,
+  });
   mutation(UPDATE_PAYMENT_STATUS, variable)
     .then((response) => {
       const success = get(response, "data.updatePaymentStatus.success", false);
@@ -43,15 +46,13 @@ export const updatePaymentStatus = (variable) => (dispatch) => {
           type: SET_USER_CART,
           payload: [],
         });
-        dispatch({
-          type: PAYMENT_UPDATED,
-          payload: success,
-        });
-      } else if (!success && message) {
-        notify(message, false);
       }
     })
-    .catch((error) => {});
+    .catch((error) => {
+      dispatch({
+        type: ORDER_FAIL,
+      });
+    });
 };
 
 export const ORDER_LOADING = "ORDER_LOADING";
@@ -59,4 +60,3 @@ export const ORDERS_SUCCESS = "ORDERS_SUCCESS";
 export const ORDER_FAIL = "ORDER_FAIL";
 export const ORDER_SUCCESS = "ORDER_SUCCESS";
 export const LOADING_FALSE = "LOADING_FALSE";
-export const PAYMENT_UPDATED = "PAYMENT_UPDATED";
