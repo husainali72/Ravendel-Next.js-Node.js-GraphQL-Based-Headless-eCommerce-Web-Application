@@ -1545,7 +1545,7 @@ const updatePaymentStatus = async (userId, args) => {
   if(orderUpdateRes.acknowledged && orderUpdateRes.matchedCount == 1) {
     if(paymentStatus == 'success') {
       const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(userId) });
-      emptyCart(cart);
+      await emptyCart(cart);
     }
     return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
   }
