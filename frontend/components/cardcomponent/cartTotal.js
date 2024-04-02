@@ -1,12 +1,15 @@
-const { get } = require("lodash")
-const { getPrice } = require("../../utills/helpers")
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+
+import {get}from 'lodash'
 import HelpIcon from '@mui/icons-material/Help';
 import {
     Divider,
     Tooltip
   } from "@mui/material";
   import Link from "next/link";
-const CartTotalDetails=({totalSummary,currencyOptions,currency})=>{
+import Price from '../priceWithCurrency';
+const CartTotalDetails=({totalSummary})=>{
     return (
         <div className="price-detail-base-container">
         <div className="price-detail">
@@ -15,18 +18,19 @@ const CartTotalDetails=({totalSummary,currencyOptions,currency})=>{
           <div className="carttotal-detail">
             <p className="mrp-price">Total MRP</p>
             <p className="mtb2" style={{ fontSize: "14px" }}>
-              {currency} {getPrice(get(totalSummary,'mrpTotal',0), currencyOptions)}
+            <Price price={get(totalSummary,'mrpTotal',0)}/>
             </p>
           </div>
           <div className="priceDetail-base-row">
             <p className="mrp-price ">
               Discount on MRP
               <Tooltip title='Your total amount has already been updated with a special discount.' placement="top">
-              <HelpIcon className="priceDetail-base-knowMore "/>
+              {/* <HelpIcon className="priceDetail-base-knowMore "/> */}
+              <i className="fa fa-question-circle priceDetail-base-knowMore" ></i>
               </Tooltip>
             </p>
             <p className="mtb2 freeshipping" style={{ fontSize: "14px" }}>
-              - {currency} {getPrice(get(totalSummary,'discountTotal',0), currencyOptions)}
+              - <Price price={get(totalSummary,'discountTotal',0)}/>
             </p>
           </div>
 
@@ -34,18 +38,14 @@ const CartTotalDetails=({totalSummary,currencyOptions,currency})=>{
             <p className="mrp-price">
               Shipping Fee
               <Tooltip title='Your total amount has already been updated with a special discount.' placement="top">
-              <HelpIcon className="priceDetail-base-knowMore "/>
+              <i className="fa fa-question-circle priceDetail-base-knowMore" ></i>
               </Tooltip>
             </p>
             <p className="mtb2" style={{ fontSize: "14px" }}>
-              {get(totalSummary, "totalShipping") === "0.00" ||
-              get(totalSummary, "totalShipping") === "0" ? (
+              {get(totalSummary, "totalShipping") === 0  ? (
                 <span className="freeshipping">FREE</span>
               ) : (
-                <>{currency} {getPrice(
-                 get(totalSummary,'totalShipping',0) ,
-                 currencyOptions
-                )}</>
+                 <Price price={ get(totalSummary,'totalShipping',0)}/>
               )}
             </p>
           </div>
@@ -55,7 +55,7 @@ const CartTotalDetails=({totalSummary,currencyOptions,currency})=>{
             <p className="mrp-price">Total Amount</p>
             <p className="mtb2 textRight">
               {" "}
-              {currency} {getPrice(get(totalSummary,'grandTotal',0), currencyOptions)}
+              <Price price={get(totalSummary,'grandTotal',0)}/>
             </p>
           </div>
 

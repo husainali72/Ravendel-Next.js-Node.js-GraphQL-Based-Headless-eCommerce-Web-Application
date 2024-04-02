@@ -3,8 +3,8 @@ import Footer from './Footer';
 import Header from './Header';
 import store from '../redux/store';
 import { Provider } from 'react-redux';
-
-export default function Layout({ children, setOpenMenu }) {
+import PropTypes from 'prop-types';
+export default function Layout( { children, setOpenMenu } ) {
     return (
         <Provider store={store}>
             <Meta />
@@ -16,5 +16,9 @@ export default function Layout({ children, setOpenMenu }) {
             </div>
             <Footer />
         </Provider>
-    )
+    );
 }
+Layout.propTypes = {
+    children: PropTypes.node.isRequired,
+    setOpenMenu: PropTypes.func.isRequired,
+};

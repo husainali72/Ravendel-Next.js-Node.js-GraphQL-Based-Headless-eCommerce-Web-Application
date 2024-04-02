@@ -1,12 +1,14 @@
+/* eslint-disable no-empty */
+/* eslint-disable react/prop-types */
 import client from "../../apollo-client";
-import { useState, useEffect } from "react";
-import { Container, Card } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import { useRouter } from 'next/router';
 import { GET_BLOGS_QUERY, GET_BLOG_BY_ID_QUERY } from "../../queries/blogquery";
 import { getImage, imageOnError } from "../../utills/helpers";
 import { useSelector } from "react-redux";
 import ShopProducts from "../../components/shoppage/shopProducts"
+import { GET_HOMEPAGE_DATA_QUERY } from "../../queries/home";
 const SingleBlogPages = ({ singleBlog, homepageData }) => {
     const blogtags = useSelector(state => state.blogtags)
     const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;

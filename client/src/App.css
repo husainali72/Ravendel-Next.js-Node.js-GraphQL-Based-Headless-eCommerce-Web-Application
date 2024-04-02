@@ -167,7 +167,9 @@
 .flex-end {
   justify-content: flex-end;
 }
-
+.text-success{
+  color:#8bc34a!important
+}
 .marginBottom2 {
   margin-bottom: 20px !important;
 }

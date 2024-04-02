@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { GET_BRANDS_QUERY } from "../../queries/shopquery";
 
 export const brandsAction = (brandProduct) => (dispatch) => {

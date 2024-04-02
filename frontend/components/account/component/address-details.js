@@ -1,13 +1,17 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-unsafe-optional-chaining */
+/* eslint-disable react/prop-types */
 import { ADD_ADDRESSBOOK, UPDATE_ADDRESSBOOK, DELETE_ADDRESSBOOK } from "../../../queries/customerquery";
 import { Fragment, useEffect, useState } from "react";
 import { Card, Button, Row, Col, Collapse, Form, Fade, Tooltip, OverlayTrigger } from "react-bootstrap";
-import { logoutAndClearData, mutation } from "../../../utills/helpers";
+import { handleError, logoutAndClearData, mutation } from "../../../utills/helpers";
 import { useRouter } from "next/router";
 import { capitalize, get } from 'lodash';
 import { useDispatch } from "react-redux";
 import {  useForm } from 'react-hook-form';
 import notify from "../../../utills/notifyToast";
-import { useTheme } from "../../../pages/themeContext";
+import { useTheme } from "../../themeContext";
 const Star = ({ starId, marked }) => {
     return (
         <span
@@ -79,38 +83,38 @@ const AddressDetail = (props) => {
 
 
     const updateAddress = async (e) => {
-        if (address?.firstName && address?.lastName && address?.addressLine1 && address?.city && address?.company && address?.country && address?.state && address?.phone) {
+        const {firstName,lastName,addressLine1,city,company,country,state,phone}=address
+        if (firstName &&lastName &&addressLine1 &&city &&company &&country &&state &&phone) {
             mutation(UPDATE_ADDRESSBOOK, address).then(async (response) => {
-                if (response?.data?.updateAddressBook?.success) {
+                const success=get(response,'data.updateAddressBook.success')
+                const message=get(response,'data.updateAddressBook.message')
+                if (success) {
                     getcustomer()
                     setEditMode(false);
                     setAddress(addressObject)
-                    notify(response?.data?.updateAddressBook?.message, true);
-
+                    notify(message, true);
                 }
             }
             ).catch((error)=>{
-                if(get(error,'extensions.code')===401){
-                    logoutAndClearData(dispatch)
-                  }
+                handleError(error,dispatch)
             })
         }
     };
-    const addNewAddress = async () => {
-        if (address?.firstName && address?.lastName && address?.addressLine1 && address?.city && address?.company && address?.country && address?.state && address?.phone) {
+    const addNewAddress = async () => {  
+        const {firstName,lastName,addressLine1,city,company,country,state,phone}=address
+        if (firstName &&lastName &&addressLine1 &&city &&company &&country &&state &&phone) {
             mutation(ADD_ADDRESSBOOK, address).then(async (response) => {
-
-                if (response?.data?.addAddressBook?.success) {
+                const success=get(response,'data.addAddressBook.success')
+                const message=get(response,'data.addAddressBook.message')
+                if (success) {
                     setAddMode(false);
                     setEditMode(false);
                     getcustomer()
                     setAddress(addressObject)
-                    notify(response?.data?.addAddressBook?.message, true);
+                    notify(message, true);
                 }
             }).catch((error)=>{
-                if(get(error,'extensions.code')===401){
-                    logoutAndClearData(dispatch)
-                  }
+                handleError(error,dispatch)
             })
         }
     };
@@ -141,9 +145,7 @@ const AddressDetail = (props) => {
                 setAllAddressBook(list)
             }
         }).catch((error)=>{
-            if(get(error,'extensions.code')===401){
-                logoutAndClearData(dispatch)
-              }
+            handleError(error,dispatch)
         })
     };
 

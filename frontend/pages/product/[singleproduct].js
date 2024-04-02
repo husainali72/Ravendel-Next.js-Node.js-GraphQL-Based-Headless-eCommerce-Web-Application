@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
@@ -5,13 +6,11 @@ import client from "../../apollo-client";
 import { Container } from "react-bootstrap";
 import {
   GET_HOMEPAGE_DATA_QUERY,
-  GET_RECENT_PRODUCTS_QUERY,
   GET_RELATED_PRODUCTS_QUERY,
 } from "../../queries/home";
 import {
   GET_SINGLE_PRODUCT,
   GET_PRODUCT_REVIEWS,
-  GET_REVIEWS,
 } from "../../queries/productquery";
 import { GET_PRODUCTS_QUERY } from "../../queries/shopquery";
 import { Tab, Col, Nav } from "react-bootstrap";
@@ -20,14 +19,12 @@ import OnSaleProductCard from "../../components/category/onSaleProductCard";
 import ReviewForm from "../../components/singleproductcomponent/ReviewForm";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import Loading from "../../components/breadcrumb/loading";
-import { useSelector } from "react-redux";
 import Reviews from "../../components/Reviews/Reviews";
 import { currencySetter } from "../../utills/helpers";
 import ReactHtmlParser, { convertNodeToElement } from "react-html-parser";
-import toast, { Toaster } from "react-hot-toast";
+import  { Toaster } from "react-hot-toast";
 import { get } from "lodash";
-
+import PropTypes from 'prop-types';
 function transform(node, index) {
   if (
     (node.type === "tag" && node.name === "h1") ||
@@ -53,9 +50,7 @@ const options = {
 
 const SingleProduct = ({
   allProduct,
-  recentProducts,
   singleproducts,
-  productReviews,
   currencyStore,
   homepageData,
   lowStockThreshold,
@@ -69,8 +64,6 @@ const SingleProduct = ({
   const [singleProduct, setSingleProduct] = useState(null);
   const [sliderImages, setSliderImages] = useState([]);
   const [singleProductReview, setSingleProductReview] = useState([]);
-  const productss = useSelector((state) => state.products);
-  const settingss = useSelector((state) => state.setting);
   const [stockClass, setStockClass] = useState("");
   if (router.isFallback) {
     return <div>Loading...</div>;
@@ -95,7 +88,7 @@ const SingleProduct = ({
   }, [singleproducts]);
   useEffect(() => {
     var product = singleproducts;
-    setSingleProduct(product);
+    setSingleProduct({...product});
     var allimages = [];
     allimages.push(get(product, "feature_image", ""));
     get(product, "gallery_image", [])?.map((img) => {
@@ -132,7 +125,7 @@ const SingleProduct = ({
                     lowStockThreshold={lowStockThreshold}
                     outOfStockVisibility={outOfStockVisibility}
                     galleryImages={sliderImages}
-                    singleproducts={singleproducts}
+                    singleProducts={singleproducts}
                     currency={currency}
                   />
                 </div>
@@ -227,6 +220,18 @@ export async function getStaticPaths() {
     fallback: "blocking",
   };
 }
+SingleProduct.propTypes = {
+  allProduct: PropTypes.array.isRequired,
+  recentProducts: PropTypes.array.isRequired,
+  singleproducts: PropTypes.object.isRequired,
+  productReviews: PropTypes.array.isRequired,
+  currencyStore: PropTypes.object.isRequired,
+  homepageData: PropTypes.object.isRequired,
+  lowStockThreshold: PropTypes.number.isRequired,
+  outOfStockVisibility: PropTypes.bool.isRequired,
+  outOfStockThreshold: PropTypes.number.isRequired,
+};
+
 export async function getStaticProps({ params }) {
   const url = get(params, "singleproduct");
   let id = "";

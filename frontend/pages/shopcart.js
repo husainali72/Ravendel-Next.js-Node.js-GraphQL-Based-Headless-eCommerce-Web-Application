@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import BreadCrumb from "../components/breadcrumb/breadcrumb";
@@ -13,14 +14,11 @@ import {
   calculateUnauthenticatedCart,
 } from "../redux/actions/cartAction";
 import {
-  currencySetter,
-  formatNumber,
-  logoutAndClearData,
+  getItemFromLocalStorage,
+  handleError,
   mutation,
 } from "../utills/helpers";
 import { DELETE_CART_PRODUCTS } from "../queries/cartquery";
-import { GET_HOMEPAGE_DATA_QUERY } from "../queries/home";
-import client from "../apollo-client";
 import { useSession, getSession } from "next-auth/react";
 import { getAllProductsAction } from "../redux/actions/productAction";
 import { settingActionCreator } from "../redux/actions/settingAction";
@@ -28,10 +26,7 @@ import LoadingCartTable from "../components/cardcomponent/LoadingCard";
 import { get } from "lodash";
 import Loading from "../components/loadingComponent";
 import notify from "../utills/notifyToast";
-const YourCard = ({
-  currencyStore,
-  homepageData,
-}) => {
+const YourCard = () => {
   const session = useSession();
   const allProducts = useSelector((state) => state.products);
   const cart = useSelector((state) => state.cart);
@@ -39,16 +34,7 @@ const YourCard = ({
   const [isQuantityBtnLoading, setIsQuantityBtnLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const dispatch = useDispatch();
-  const [currency, setCurrency] = useState("$");
   const [totalSummary, setTotalSummary] = useState({});
-  const settings = useSelector((state) => state.setting);
-  useEffect(() => {
-    currencySetter(settings, setCurrency);
-  }, [settings?.currencyOption]);
-  useEffect(() => {
-    dispatch(settingActionCreator(currencyStore.currency_options));
-  }, [currencyStore.currency_options]);
-
   // get all products and user cart
   useEffect(() => {
     dispatch(getAllProductsAction());
@@ -60,11 +46,11 @@ const YourCard = ({
 
   const getUserCartData = async () => {
     const userSession = await getSession();
-    if (session?.status === "authenticated" || userSession !== null) {
+    if ("authenticated" === session?.status || null !== userSession) {
       let id = get(userSession, "user.accessToken.customer._id");
       dispatch(calculateUserCart(id));
     } else {
-      const localStorageProducts = JSON.parse(localStorage.getItem("cart"));
+      const localStorageProducts = getItemFromLocalStorage("cart");
       dispatch(calculateUnauthenticatedCart(localStorageProducts));
     }
   };
@@ -75,10 +61,10 @@ const YourCard = ({
       let allItem = [];
       get(cart, "cartItems", [])?.map((cart) => {
         const originalProduct = allProducts?.products?.find(
-          (prod) => prod._id === cart.productId
+          (prod) => prod?._id === cart?.productId
         );
         const orginalAttributes = originalProduct?.variation_master?.find(
-          (prod) => prod.id === cart.variantId
+          (prod) => prod?.id === cart?.variantId
         );
         let cartProduct = {
           _id: get(cart, "productId", ""),
@@ -104,12 +90,12 @@ const YourCard = ({
       });
       setTotalSummary({
         ...totalSummary,
-        grandTotal: formatNumber(get(cart, "totalSummary.grandTotal")),
-        cartTotal: formatNumber(get(cart, "totalSummary.cartTotal")),
-        totalShipping: formatNumber(get(cart, "totalSummary.totalShipping")),
-        totalTax: formatNumber(get(cart, "totalSummary.totalTax")),
-        mrpTotal: formatNumber(get(cart, "totalSummary.mrpTotal")),
-        discountTotal: formatNumber(get(cart, "totalSummary.discountTotal")),
+        grandTotal: get(cart, "totalSummary.grandTotal"),
+        cartTotal: get(cart, "totalSummary.cartTotal"),
+        totalShipping: get(cart, "totalSummary.totalShipping"),
+        totalTax: get(cart, "totalSummary.totalTax"),
+        mrpTotal: get(cart, "totalSummary.mrpTotal"),
+        discountTotal: get(cart, "totalSummary.discountTotal"),
       });
       setCartItems([...cartItemsArray]);
       setCartLoading(false);
@@ -117,9 +103,9 @@ const YourCard = ({
     getProducts();
   }, [allProducts, get(cart, "cartItems")]);
   // Function to clear all items in the cart
-  const AllCartItemsClear = async () => {
+  const clearAllCartItems = async () => {
     setCartItems([]);
-    if (session.status === "authenticated") {
+    if ("authenticated" === session.status) {
       let id = get(session, "data.user.accessToken.customer._id");
       let variables = { userId: id };
       dispatch(removeAllCartItemsAction(variables));
@@ -129,33 +115,39 @@ const YourCard = ({
         payload: [],
       });
     }
-
-    localStorage.setItem("cart", JSON.stringify([]));
   };
   const updateCartProductQuantity = (item, updatedQuantity) => {
-    const isQuantityIncreased = cartItems.find(
-      (itemm) =>
-        ((itemm._id === item._id && itemm.variantId === item.variantId) ||
-          (itemm._id === item._id && !itemm.variantId === item.variantId)) &&
-        item?.productQuantity >= updatedQuantity
+    const isQuantityIncreased = cartItems?.find(
+      (cartItem) =>{
+    let cartItemId = get(cartItem, '_id')
+    let cartItemVariantId = get(cartItem, 'variantId');
+    let itemId = get(item, '_id');
+    let itemVariantId = get(item, 'variantId');
+    let itemProductQuantity = get(item, 'productQuantity');
+    return (
+        ((cartItemId === itemId && cartItemVariantId === itemVariantId) ||
+        (cartItemId === itemId && !cartItemVariantId === itemVariantId)) &&
+        itemProductQuantity >= updatedQuantity
+    );
+  }
     );
     if (isQuantityIncreased) {
       let updatedCartItems = cartItems?.map((cartItem) => ({
         ...cartItem,
         quantity:
-          cartItem._id === item._id &&
-          (cartItem.variantId === item.variantId ||
-            (!cartItem.variantId && !item.variantId))
+          cartItem?._id === item?._id &&
+          (cartItem?.variantId === item?.variantId ||
+            (!cartItem?.variantId && !item?.variantId))
             ? updatedQuantity
-            : cartItem.quantity,
+            : cartItem?.quantity,
       }));
       setCartItems([...updatedCartItems]);
-      if (session?.status !== "authenticated") {
+      if ("authenticated" !== session?.status) {
         dispatch(
           increaseQuantity(
-            item._id,
-            item.productQuantity,
-            item.variantId,
+            item?._id,
+            item?.productQuantity,
+            item?.variantId,
             updatedQuantity
           )
         );
@@ -180,19 +172,19 @@ const YourCard = ({
           });
       }
     } else {
-      if(item?.productQuantity){
-      notify(`Only ${item?.productQuantity} Unit(s) available in stock `);
+      if (item?.productQuantity) {
+        notify(`Only ${item?.productQuantity} Unit(s) available in stock `);
       }
     }
   };
   // Function to remove an item from the cart
   const removeToCart = async (item) => {
-    let product = get(item, "_id", "");
-    if (session?.status === "authenticated") {
+    let productId = get(item, "_id", "");
+    if ("authenticated" === session?.status) {
       let id = get(session, "data.user.accessToken.customer._id");
       let variables = {
         userId: id,
-        productId: item._id,
+        productId: item?._id,
         variantId: get(item, "variantId", ""),
       };
 
@@ -203,18 +195,17 @@ const YourCard = ({
           }
         })
         .catch((error) => {
-          if (get(error, "extensions.code") === 401) {
-            logoutAndClearData(dispatch);
-          }
+          handleError(error, dispatch);
         });
     } else {
-      let cartItemsfilter = cartItems.filter(
-        (itemm) =>
-          itemm._id !== product ||
-          (itemm._id === product && itemm.variantId !== item.variantId)
+      
+      let cartItemsfilter = cartItems?.filter(
+        (cartItem) =>
+          cartItem?._id !== productId ||
+          (cartItem?._id === productId && cartItem?.variantId !== item?.variantId)
       );
       let variables = {
-        id: product,
+        id: productId,
         variantId: get(item, "variantId", ""),
       };
 
@@ -238,22 +229,20 @@ const YourCard = ({
         </section>
       </>
     );
-  } else
+  } else {
     return (
       <>
         <BreadCrumb title={"Cart"} />
         <section className="shopcart-table">
           <Container>
             {isQuantityBtnLoading && <Loading />}
-            {cartItems?.length > 0 ? (
+            {0 < cartItems?.length ? (
               <div className="row">
                 <div className="col-12">
                   <CartTable
-                    homepageData={homepageData}
                     cartItems={cartItems}
                     removeToCart={removeToCart}
-                    AllCartItemsClear={AllCartItemsClear}
-                    currency={currency}
+                    clearAllCartItems={clearAllCartItems}
                     totalSummary={totalSummary}
                     updateCartProductQuantity={updateCartProductQuantity}
                   />
@@ -275,40 +264,6 @@ const YourCard = ({
         </section>
       </>
     );
+  }
 };
 export default YourCard;
-
-export async function getServerSideProps(context) {
-  if (process.env.NODE_ENV === "development" || !process.env.NEXT_EXPORT) {
-    const session = await getSession(context);
-    let id = session?.user?.accessToken?.customer._id;
-    var customercart = [];
-    var cart_id = "";
-    var CartsDataa = {};
-    var homepageData = [];
-    var currencyStore = [];
-    if (session !== null) {
-    }
-    /* ----------------------- GET USER CART -----------------------------*/
-
-    /* ----------------------- GEt currency -----------------------------*/
-    try {
-      const { data: homepagedata } = await client.query({
-        query: GET_HOMEPAGE_DATA_QUERY,
-      });
-      homepageData = homepagedata;
-
-      currencyStore = homepagedata?.getSettings?.store;
-    } catch (e) {}
-
-    return {
-      props: {
-        customercart,
-        cart_id,
-        CartsDataa,
-        currencyStore,
-        homepageData,
-      },
-    };
-  }
-}

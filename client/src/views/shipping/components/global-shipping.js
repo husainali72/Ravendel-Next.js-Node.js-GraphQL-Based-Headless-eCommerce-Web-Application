@@ -75,7 +75,7 @@ const GlobalShippingComponentComponent = ({
               </FormControl>
             </Grid>
           </Grid>
-          <Grid item md={12} sm={12} xs={12}>
+        {shippingGlobalState?.is_global&&  <Grid item md={12} sm={12} xs={12}>
             <RadioGroup
               aria-label="taxOption"
               value={
@@ -99,7 +99,7 @@ const GlobalShippingComponentComponent = ({
                 label="Per Product"
               />
             </RadioGroup>
-          </Grid>
+          </Grid>}
 
           {shippingGlobalState.is_global && (
             <Grid item md={12} sm={12} xs={12}>

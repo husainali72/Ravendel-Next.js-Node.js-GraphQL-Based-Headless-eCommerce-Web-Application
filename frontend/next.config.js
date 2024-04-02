@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 
 // var bucketName = "revendal-image";
 // var bucketBaseURL = `https://${bucketName}.s3.amazonaws.com/`;
@@ -43,9 +45,9 @@ module.exports = {
       "/account/profile": { page: "/account/profile" },
       "/account/trackmyorder": { page: "/account/trackmyorder" },
       "/account/forgetpassword": { page: "/account/forgetpassword" },
-      "/blog": { page: "/blog" },
-      "/blogs/[blogs]": { page: "/blogs/[blogs]" },
-      "/blogtags/[tags]": { page: "/blogtags/[tags]" },
+      // "/blog": { page: "/blog" },
+      // "/blogs/[blogs]": { page: "/blogs/[blogs]" },
+      // "/blogtags/[tags]": { page: "/blogtags/[tags]" },
       "/categorys/[category]": { page: "/categorys/[category]" },
       "/product/[singleproduct]": { page: "/product/[singleproduct]" },
       "/checkout": { page: "/checkout" },

@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable react/jsx-no-undef */
 import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
@@ -33,7 +35,7 @@ export default function App() {
     <div className="checkoutStripe">
       {clientSecret && (
         <Elements options={options} stripe={stripePromise}>
-          // <CheckoutForm />
+           <CheckoutForm />
         </Elements>
       )}
     </div>

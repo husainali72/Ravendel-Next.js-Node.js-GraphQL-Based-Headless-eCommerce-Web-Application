@@ -1,145 +1,46 @@
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
+/* eslint-disable no-unused-vars */
 import Link from "next/link";
 import { Container, OverlayTrigger, Tooltip, Button } from "react-bootstrap";
 import StarRating from "../breadcrumb/rating";
-import {
-  currencySetter,
-  getImage,
-  mutation,
-  getPrice,
-  isDiscount,
-  imageOnError,
-} from "../../utills/helpers";
-import { useSelector, useDispatch } from "react-redux";
-import { addToCart } from "../../redux/actions/cartAction";
+import { isDiscount, imageOnError } from "../../utills/helpers";
 import { useSession } from "next-auth/react";
-import {
-  ADD_TO_CART_QUERY,
-  GET_USER_CART,
-  UPDATE_CART_PRODUCT,
-} from "../../queries/cartquery";
 import calculateDiscount from "../../utills/calculateDiscount";
-import { query } from "../../utills/helpers";
-import NoImagePlaceholder from "../images/NoImagePlaceHolder.png";
 import { capitalize, get } from "lodash";
-import Image from "next/image";
-var placeholder = "https://dummyimage.com/300";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ClearIcon from "@mui/icons-material/Clear";
+import Price from "../priceWithCurrency";
+import ProductImage from "../imageComponent";
+import { useState } from "react";
+import PropTypes from "prop-types";
 const OnSaleProductCard = ({
-  homepageData,
   onSaleProduct,
-  hidetitle,
+  hideTitle,
   titleShow,
-  currencyProp,
-  currencyOpt,
+  showRemoveButton,
+  removeButton,
 }) => {
-  var id = "";
-  var token = "";
-  const imageType = homepageData?.getSettings?.imageStorage?.status;
-  const dispatch = useDispatch();
-  const router = useRouter();
-  const session = useSession();
-  const [currency, setCurrency] = useState("$");
-  const [currencyOption, setCurrencyOption] = useState({});
-  const settings = useSelector((state) => state.setting);
-  useEffect(() => {
-    currencySetter(settings, setCurrency);
-    setCurrencyOption(settings?.currencyOption);
-    if (currencyProp) {
-      setCurrency(currencyProp);
-    }
-  }, [settings?.currencyOption, currencyProp]);
+  const [showWishListButton, setShowWishListButton] = useState(-1);
+  const [isProductInWistList, setIsProductInWistList] = useState(-1);
 
-  useEffect(() => {
-    if (currencyOpt) {
-      currencySetter(currencyOpt?.currency_options?.currency, setCurrency);
-      setCurrencyOption(currencyOpt?.currency_options);
-    }
-  }, [currencyOpt]);
 
-  if (session.status === "authenticated") {
-    id = get(session, "data.user.accessToken.customer._id");
-    token = get(session, "data.user.accessToken.token");
-  }
-  const ProductAdd = async (e, product) => {
+  const handleWishlistButtonClick = (e, product) => {
     e.stopPropagation();
-    let quantity = 1;
-    let href = "/shopcart";
-    if (session.status === "authenticated") {
-      let productInCart = false;
-      let variables={
-        id:id
-      }
-      query(GET_USER_CART,variables, token).then((res) => {
-        let cart_id = res?.data?.cartbyUser?.id;
-        const inCartProducts = res?.data?.cartbyUser?.products;
-        inCartProducts.map((inCartProduct) => {
-          const productt = inCartProduct;
-          if (productt.productId === product?._id) {
-            let qant = product.qty + quantity;
-            productInCart = true;
-            var Cartt = inCartProducts.map((producttt) => {
-              if (producttt.productId === product._id) {
-                return {
-                  productId: producttt?.productId,
-                  qty: producttt.qty + quantity,
-                  productTitle: producttt.productTitle,
-                  productImage: producttt.productImage,
-                  productPrice: producttt.productPrice,
-                  shippingClass: product?.shipping?.shippingClass,
-                  taxClass: product?.taxClass,
-                };
-              } else {
-                return {
-                  productId: producttt?.productId,
-                  qty: producttt.qty,
-                  productTitle: producttt.productTitle,
-                  productImage: producttt.productImage,
-                  productPrice: producttt.productPrice,
-                  shippingClass: product?.shipping?.shippingClass,
-                  taxClass: product?.taxClass,
-                };
-              }
-            });
-            let variables = {
-              id: cart_id,
-              products: Cartt,
-              total: 0,
-            };
-            mutation(UPDATE_CART_PRODUCT, variables).then((res) => {
-              router.push("/shopcart");
-            });
-          }
-        });
-
-        if (!productInCart) {
-          let variables = {
-            total: product?.pricing.sellprice * quantity,
-            userId: id,
-            productId: product?._id,
-            qty: quantity,
-            productTitle: product?.name,
-            productImage: product?.feature_image?.original,
-            productPrice: product?.pricing.sellprice,
-            shippingClass: product?.shipping?.shippingClass,
-            taxClass: product?.taxClass,
-          };
-          mutation(ADD_TO_CART_QUERY, variables).then((res) => {
-            router.push("/shopcart");
-            dispatch(addToCart(product));
-          });
-        }
-      });
-    } else {
-      dispatch(addToCart(product));
-      router.push("/shopcart");
-    }
   };
-
+  const toggleWishlistState = (i) => {
+    setIsProductInWistList((prevState) => !prevState);
+    setShowWishListButton(i);
+  };
+  const getSalePrice = (product) => {
+    return get(product, "pricing.sellprice", 0);
+  };
+  const getProductPrice = (product) => {
+    return get(product, "pricing.price", 0);
+  };
   return (
     <section className="product-cart-section">
-      <Container style={{ padding: "0" }}>
-        {!hidetitle ? (
+      <Container>
+        {!hideTitle ? (
           <div>
             <h4 className="theme-color my-2">
               {titleShow ? capitalize(titleShow) : "On Sale"}{" "}
@@ -153,151 +54,142 @@ const OnSaleProductCard = ({
               <>
                 {onSaleProduct.map((product, i) => {
                   return (
-                    <Link
-                      href={`/product/[singleproduct]?url=${product.url}`}
-                      as={`/product/${product.url}`}
-                    >
-                      <div className="on-sale-product-card" key={i}>
-                        <div className="on-sale-image-wrapper">
-                          <img
-                            className="img-on-sale"
-                            src={getImage(product.feature_image, imageType)}
-                            onError={imageOnError}
-                            height="280px"
-                            width="100%"
-                          />
-                        </div>
-                        <div className="on-sale-product-card-body">
-                          {isDiscount(product) ? (
-                            <div className="save-price">
-                              <span className="percantage-save">
-                                {calculateDiscount(
-                                  product?.pricing?.price,
-                                  product?.pricing?.sellprice
-                                )}
-                              </span>
-                            </div>
-                          ) : null}
-                          <div className="product-categoryname">
-                            {product?.categoryId?.map((item, i) => (
-                              <span key={i}>
-                                {product?.categoryId?.length - 1 === i ? (
-                                  <span>{capitalize(item?.name)} </span>
-                                ) : (
-                                  <span>{capitalize(item?.name)}, </span>
-                                )}
-                              </span>
-                            ))}
-                          </div>
-                          <div
-                            className="card-price"
-                            style={{ cursor: "pointer" }}
-                          >
-                            {product.name?.length > 18 ? (
-                              <strong
-                                dangerouslySetInnerHTML={{
-                                  __html: product.name.substring(0, 17) + "...",
-                                }}
-                              ></strong>
-                            ) : (
-                              product.name
-                            )}
-                          </div>
-                          <div className="on-sale-product-detail">
-                            <div
-                              className="product-price"
-                              style={{
-                                justifyContent: "left",
-                                alignContent: "left",
-                                m: 0,
+                    <>
+                      <Link
+                        href={`/product/[singleproduct]?url=${product.url}`}
+                        as={`/product/${product.url}`}
+                      >
+                        <div
+                          className="on-sale-product-card"
+                          key={i}
+                          onMouseEnter={() => toggleWishlistState(i)}
+                          onMouseLeave={() => setShowWishListButton(null)}
+                        >
+                          {showRemoveButton && (
+                            <button
+                              onClick={(e) => {
+                                removeButton(e);
                               }}
+                              className="cross-button"
                             >
-                              <StarRating
-                                className="rating"
-                                stars={product?.rating}
-                                singleproducts={product}
-                              />
-                              <span className="no-wrap">
-                                {product.pricing.sellprice ? (
-                                  <strong className="sale-price">
-                                    {currency}{" "}
-                                    {getPrice(
-                                      product?.pricing?.sellprice,
-                                      currencyOption
-                                    )}
-                                  </strong>
-                                ) : (
-                                  <strong className="sale-price">
-                                    {currency}{" "}
-                                    {getPrice(product?.pricing.price, currencyOption)}
-                                  </strong>
-                                )}
-                              </span>
-                              {product?.pricing.sellprice &&
-                              product?.pricing.sellprice <
-                                product?.pricing.price ? (
-                                <span
-                                  className={
-                                    product?.pricing.sellprice
-                                      ? "has-sale-price no-wrap"
-                                      : ""
-                                  }
-                            
-                                >
-                                  {currency}{" "}{getPrice(product?.pricing?.price, currencyOption)}
+                              <ClearIcon className="clear-icon" />
+                            </button>
+                          )}
+                          <div className="on-sale-image-wrapper">
+                            <ProductImage
+                              src={get(product, "feature_image", "")}
+                              alt={product?.name}
+                              className="img-on-sale"
+                            />
+                          </div>
+                          <div className="on-sale-product-card-body">
+                            {isDiscount(product) ? (
+                              <div className="save-price">
+                                <span className="percantage-save">
+                                  {calculateDiscount(
+                                    getProductPrice(product),
+                                    getSalePrice(product)
+                                  )}
                                 </span>
-                              ) : null}
+                              </div>
+                            ) : null}
+                            <div className="product-categoryname category-name-container ">
+                              <div>
+                                {product?.categoryId?.map((item, i) => (
+                                  <span key={i}>
+                                    {product?.categoryId?.length - 1 === i ? (
+                                      <span>{capitalize(get(item,'name',''))} </span>
+                                    ) : (
+                                      <span>{capitalize(get(item,'name',''))}, </span>
+                                    )}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
-
-                            {product?.quantity > 0 ? (
-                              <OverlayTrigger
-                                style={{ backgroundColor: "#088178" }}
-                                placement="top"
-                                overlay={
-                                  <Tooltip
-                                    style={{ color: "#088178" }}
-                                    id={"tooltip-top"}
+                            <div className="card-price">
+                              {product?.name?.length > 18 ? (
+                                <strong
+                                  dangerouslySetInnerHTML={{
+                                    __html:
+                                      product?.name?.substring(0, 17) + "...",
+                                  }}
+                                ></strong>
+                              ) : (
+                                product.name
+                              )}
+                            </div>
+                            <div className="on-sale-product-detail">
+                              <div className="product-price">
+                                <StarRating
+                                  className="rating"
+                                  stars={get(product,'rating',0)}
+                                  singleProducts={product}
+                                />
+                                <span className="no-wrap">
+                                  <strong className="sale-price">
+                                    <Price
+                                      price={
+                                        getSalePrice(product) ||
+                                        getProductPrice(product)
+                                      }
+                                    />
+                                  </strong>
+                                </span>
+                                {getSalePrice(product) &&
+                                getSalePrice(product)  <
+                                getProductPrice(product) ? (
+                                  <span
+                                    className={
+                                      product?.pricing.sellprice
+                                        ? "has-sale-price"
+                                        : ""
+                                    }
                                   >
-                                    add to cart
-                                  </Tooltip>
-                                }
-                              >
-                                <Link
-                                  href={`/product/[singleproduct]?url=${product.url}`}
-                                  as={`/product/${product.url}`}
+                                    <Price price={getProductPrice(product)} />
+                                  </span>
+                                ) : null}
+                              </div>
+                              {product?.quantity > 0 ? (
+                                <OverlayTrigger
+                                  className="on-sale-product-tooltip"
+                                  placement="top"
+                                  overlay={
+                                    <Tooltip id={"tooltip-top"}>
+                                      add to cart
+                                    </Tooltip>
+                                  }
                                 >
-                                  <div className="add-to-cart">
-                                    {" "}
-                                    <a className="cart-icon">
-                                      <i
-                                        className="fas fa-shopping-bag font-awesome-icon "
-                                        aria-hidden="true"
-                                      ></i>
-                                    </a>
-                                  </div>
-                                </Link>
-                              </OverlayTrigger>
-                            ) : (
-                              <p className="out-of-stock-card">Out Of Stock</p>
-                            )}
+                                  <Link
+                                    href={`/product/[singleproduct]?url=${product.url}`}
+                                    as={`/product/${product.url}`}
+                                  >
+                                    <div className="add-to-cart">
+                                      {" "}
+                                      <a className="cart-icon">
+                                        <i
+                                          className="fas fa-shopping-bag font-awesome-icon"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    </div>
+                                  </Link>
+                                </OverlayTrigger>
+                              ) : (
+                                <p className="out-of-stock-card">
+                                  Out Of Stock
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Link>
+                      </Link>
+                    </>
                   );
                 })}
               </>
             ) : (
-              <div style={{ padding: "50px" }}>
-                <p
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  No Data Found
-                </p>
+              <div className="onsale-no-data">
+                <p>No Data Found</p>
               </div>
             )}
           </div>
@@ -305,5 +197,14 @@ const OnSaleProductCard = ({
       </Container>
     </section>
   );
+};
+OnSaleProductCard.propTypes = {
+  onSaleProduct: PropTypes.array.isRequired,
+  hideTitle: PropTypes.bool,
+  titleShow: PropTypes.string,
+  currencyProp: PropTypes.string,
+  currencyOpt: PropTypes.object,
+  showRemoveButton: PropTypes.bool,
+  removeButton: PropTypes.func,
 };
 export default OnSaleProductCard;

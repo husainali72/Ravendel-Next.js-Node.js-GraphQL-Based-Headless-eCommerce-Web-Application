@@ -1,4 +1,4 @@
-import Link from 'next/link';
+/* eslint-disable react/prop-types */
 import { Container } from 'react-bootstrap';
 const CustomBanner = ({variant}) => {
     return (

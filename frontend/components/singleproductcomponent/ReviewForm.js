@@ -1,12 +1,12 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable react/prop-types */
 import { Button, Form } from 'react-bootstrap';
 import React, { useState, Fragment, useEffect } from 'react';
 import { ADD_REVIEW } from "../../queries/productquery";
-import client from '../../apollo-client';
-import { useDispatch, useSelector } from "react-redux";
 import { mutation } from "../../utills/helpers";
 import { useSession } from 'next-auth/react';
-import toast, { Toaster } from 'react-hot-toast';
 import notify from '../../utills/notifyToast';
+import { get } from 'lodash';
 const Star = ({ starId, marked }) => {
     return (
         <span
@@ -30,19 +30,16 @@ const ReviewForm = ({ productId }) => {
         productId: productId || "",
         customerId: "",
     }
-    const login = useSelector(state => state.login);
     const session = useSession()
-    var token = "";
     const [review, setReview] = useState(reviewObject);
     const [writeReview, setWriteReview] = useState(false);
     const [selection, setSelection] = React.useState(0);
-    const dispatch=useDispatch()
     useEffect(() => {
         setReview((prev) => ({ ...prev, customerId: session?.data?.user?.accessToken?.customer?._id }))
         setReview({ ...review, customerId: session?.data?.user?.accessToken?.customer?._id })
         if (session?.status === "authenticated") {
-            token = session?.data?.user?.accessToken?.token;
-            setCustomerId(session?.data?.user?.accessToken?.customer?._id);
+            let customerId=get(session,'data.user.accessToken.customer._id','')
+            setCustomerId(customerId);
         }
     }, [session])
 

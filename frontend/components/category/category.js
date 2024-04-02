@@ -1,70 +1,93 @@
-import Container from 'react-bootstrap/Container';
-import { getImage } from "../../utills/helpers";
-import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
-import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-import useResizeObserver from '@react-hook/resize-observer';
-import { capitalize } from 'lodash';
-import NoImagePlaceHolder from '../../components/images/NoImagePlaceHolder.png';
-import { useDispatch, useSelector } from 'react-redux';
-const Category = ({ category, homepageData }) => {
-    const [showSlider, setShowSlider] = useState(false)
-    const [inlineSize, setInlineSize] = useState(0)
-    const slider = useRef();
-    const slideLeft = () => {
-        slider.current.scrollLeft = slider.current.scrollLeft - 500;
-    }
-    const slideRight = () => {
-        slider.current.scrollLeft = slider.current.scrollLeft + 500;
-    }
-    const bool = slider?.current?.offsetWidth < slider?.current?.scrollWidth;
-    useEffect(() => {
-        setShowSlider(bool)
-    }, [inlineSize])
+import Container from "react-bootstrap/Container";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import useResizeObserver from "@react-hook/resize-observer";
+import { capitalize, get } from "lodash";
+import ProductImage from "../../components/imageComponent";
+import PropTypes from "prop-types";
+const Category = ({ category }) => {
+  const [showSlider, setShowSlider] = useState(false);
+  const [inlineSize, setInlineSize] = useState(0);
+  const slider = useRef();
+  const slideLeft = () => {
+    slider.current.scrollLeft = get(slider, "current.scrollLeft") - 500;
+  };
+  const slideRight = () => {
+    slider.current.scrollLeft = get(slider, "current.scrollLeft") + 500;
+  };
+  const bool =
+    get(slider, "current.offsetWidth") < get(slider, "current.scrollWidth");
+  useEffect(() => {
+    setShowSlider(bool);
+  }, [inlineSize]);
 
-    useResizeObserver(slider, entry => {
-        const { inlineSize, blockSize } = entry.contentBoxSize[0];
-        setInlineSize(inlineSize)
-    });
-    const imageType = homepageData && homepageData?.getSettings?.imageStorage?.status;
-    return (
-        <section className="product-cart-section">
-            <Container className="container">
-                {showSlider ? <MdChevronLeft onClick={slideLeft} className='cat-left-icon' size={24} /> : null}
-                <div>
-                    <h4 className='theme-color my-3'>Products <span className='black-color'>Category</span></h4>
-                    <div
-                        className={showSlider ? "category pro-cat px-3" : " pro-cat category categoryShow "}
-                        ref={slider}>
-                        {category.map((item, i) => {
-                            return (
-                                item.parentId === null && (
-                                    <Link href={`/subcategory/[category]?url=${item.url}`} as={`/subcategory/${item.url}`}><div className="category-cards" key={i}>
-                                        <div className="category-card-image">
+  useResizeObserver(slider, (entry) => {
+    const { inlineSize } = get(entry, "contentBoxSize[0]");
+    setInlineSize(inlineSize);
+  });
+  return (
+    <section className="product-cart-section">
+      <Container className="container">
+        {showSlider ? (
+          <MdChevronLeft
+            onClick={slideLeft}
+            className="cat-left-icon"
+            size={24}
+          />
+        ) : null}
+        <div>
+          <h4 className="theme-color my-3">
+            Products <span className="black-color">Category</span>
+          </h4>
+          <div
+            className={
+              showSlider
+                ? "category pro-cat px-3"
+                : " pro-cat category categoryShow "
+            }
+            ref={slider}
+          >
+            {category?.length > 0 ? (
+              category?.map((item, i) => {
+                return (
+                  item.parentId === null && (
+                    <Link
+                      href={`/subcategory/[category]?url=${item?.url}`}
+                      as={`/subcategory/${item?.url}`}
+                    >
+                      <div className="category-cards" key={i}>
+                        <div className="category-card-image">
+                          <ProductImage src={get(item, "image")} />
+                        </div>
 
-                                            <img
-                                                src={getImage(item?.image, imageType)}
-                                                className="  cimg"
-                                                onError={(e) => e.type === 'error' ? e.target.src = NoImagePlaceHolder.src : null}
-                                                alt={item?.name}
-                                            />
-                                        </div>
-
-                                        <div className="card-body">
-                                            <p
-                                                className="card-title category-card-title">
-                                                {capitalize(item?.name)}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    </Link>)
-                            )
-                        })}
-                    </div>
-                </div>
-                {showSlider ? <MdChevronRight onClick={slideRight} className='cat-right-icon' size={24} /> : null}
-            </Container>
-        </section>
-    )
-}
+                        <div className="card-body">
+                          <p className="card-title category-card-title">
+                            {capitalize(item?.name)}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  )
+                );
+              })
+            ) : (
+              <p>No Category Found</p>
+            )}
+          </div>
+        </div>
+        {showSlider ? (
+          <MdChevronRight
+            onClick={slideRight}
+            className="cat-right-icon"
+            size={24}
+          />
+        ) : null}
+      </Container>
+    </section>
+  );
+};
+Category.propTypes = {
+  category: PropTypes.array.isRequired,
+};
 export default Category;

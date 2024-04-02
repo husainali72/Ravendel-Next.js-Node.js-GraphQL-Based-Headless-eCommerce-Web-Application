@@ -1,39 +1,30 @@
-import {
-  Select,
-  MenuItem,
-  FormControl,
-} from "@mui/material";
+/* eslint-disable react/jsx-key */
+/* eslint-disable react/prop-types */
 import { get, upperCase } from "lodash";
 import Link from "next/link";
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import { getImage, getPrice, imageOnError } from "../../utills/helpers";
 import CartTotalDetails from "./cartTotal";
+import Price from "../priceWithCurrency";
+import ProductImage from "../imageComponent";
 const CartTable = (props) => {
   const {
     cartItems,
-    AllCartItemsClear,
+    clearAllCartItems,
     removeToCart,
-    currency,
     updateCartProductQuantity,
-    homepageData,
     totalSummary,
   } = props;
-  const imageType = get(homepageData,'getSettings.imageStorage.status');
-  const currencyOptions = get(homepageData,'getSettings.store.currency_options')
-
-
 
   return (
     <div>
       <div className="cart-main-container">
         <div className="bulkActionStrip-desktopContainer">
-
           <div className="inlinebuttonV2-base-actions bulkActionStrip-desktopButton">
             <div className="inlinebuttonV2-base-action bulkActionStrip-desktopActionButton">
               <button
                 className="inlinebuttonV2-base-actionButton bulkActionStrip-desktopBulkRemove"
-                onClick={AllCartItemsClear}
+                onClick={clearAllCartItems}
               >
                 {" "}
                 REMOVE
@@ -53,19 +44,17 @@ const CartTable = (props) => {
                 <div>
                   {product?.available ? (
                     <Link href={"/product/" + product.url}>
-                      <img
-                        src={getImage(product.feature_image, imageType)}
-                        onError={imageOnError}
+                      <ProductImage
+                        src={get(product, "feature_image", "")}
                         alt={product?.name}
                         className="cart-product-image cursor-pointer"
                       />
                     </Link>
                   ) : (
-                    <img
-                      src={getImage(product.feature_image, imageType)}
-                      onError={imageOnError}
+                    <ProductImage
+                      src={get(product, "feature_image", "")}
                       alt={product?.name}
-                      className="cart-product-image"
+                      className="cart-product-image cursor-pointer"
                     />
                   )}
                 </div>
@@ -87,15 +76,14 @@ const CartTable = (props) => {
                     </p>
                   </div>
                   <div className="itemComponents-base-sellerContainer">
-                    <div className="itemComponents-base-sellerData">
-                    </div>
+                    <div className="itemComponents-base-sellerData"></div>
                   </div>
 
                   <div className="itemContainer-base-sizeAndQtyContainer">
                     <div className="itemContainer-base-sizeAndQty">
                       <div className="itemComponents-base-quantity">
                         <label className="quantity-label">QTY : </label>
-                        <FormControl>
+                        {/* <FormControl>
                           <Select
                             labelId="demo-simple-select-label"
                             id="quantitySelect"
@@ -115,7 +103,27 @@ const CartTable = (props) => {
                               <MenuItem value={quantity} sx={{fontSize:'12px'}}>{quantity}</MenuItem>
                             ))}
                           </Select>
-                        </FormControl>
+                        </FormControl> */}
+                        <select
+                          id="quantitySelect"
+                          className="quantity-button"
+                          value={get(product,'quantity',1)}
+                          onChange={(e) =>
+                            updateCartProductQuantity(
+                              product,
+                              parseInt(get(e,'target.value',1))
+                            )
+                          }
+                        >
+                          {Array.from(
+                            { length: 20 },
+                            (_, index) => index + 1
+                          ).map((quantity) => (
+                            <option key={quantity} value={quantity}>
+                              {quantity}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                     {product?.available ? (
@@ -133,15 +141,15 @@ const CartTable = (props) => {
                   <div className="itemContainer-base-price">
                     <div className="itemComponents-base-price itemComponents-base-bold ">
                       <div>
-                        {currency} {getPrice(get(product,'amount',0),currencyOptions)}
+                        <Price price={get(product, "amount", 0)} />
                       </div>
                     </div>
 
-                    {get(product, "discountPercentage",0) !== 0 && (
+                    {get(product, "discountPercentage", 0) !== 0 && (
                       <div className="itemContainer-base-discountBlock">
                         <span className="itemComponents-base-strikedAmount">
                           <span className="itemComponents-base-price itemComponents-base-strike itemContainer-base-strikedAmount">
-                            {getPrice(get(product,'mrpAmount',0), currencyOptions)}
+                            <Price price={get(product, "mrpAmount", 0)} />
                           </span>
                         </span>
                         <span className="itemComponents-base-itemDiscount">
@@ -157,7 +165,7 @@ const CartTable = (props) => {
               </div>
             ))}
           </div>
-          <CartTotalDetails totalSummary={totalSummary} currencyOptions={currencyOptions} currency={currency}/>
+          <CartTotalDetails totalSummary={totalSummary} />
         </div>
       </div>
     </div>

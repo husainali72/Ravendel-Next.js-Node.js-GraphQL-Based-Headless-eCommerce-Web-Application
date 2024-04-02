@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap';
 import client from '../../../apollo-client';

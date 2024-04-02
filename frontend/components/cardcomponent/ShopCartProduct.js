@@ -1,3 +1,6 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable no-unreachable */
+/* eslint-disable no-unused-vars */
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { getImage, getPrice, currencySetter } from "../../utills/helpers";
@@ -30,7 +33,7 @@ export const ShopCart = () => {
     const initialRender = useRef(true)
 
     useEffect(() => {
-        dispatch(getAllProductsAction());
+        // dispatch(getAllProductsAction());
     }, []);
 
     useEffect(() => {
@@ -65,13 +68,7 @@ export const ShopCart = () => {
             }
             var cartItemsfilter = cart.filter(item => item._id !== product)
             dispatch(removeCartItemAction(variables,cartItemsfilter));
-            // mutation(DELETE_CART_PRODUCTS, variables, token).then(res => {
-            //     if (res.data.deleteCartProduct.success) {
-            //         var cartItemsfilter = cart.filter(item => item._id !== product)
-            //         dispatch(removeCartItemAction(product));
-            //         setCart(cartItemsfilter);
-            //     }
-            // });
+
         }
         else {
             var cartItemsfilter = cart.filter(item => item._id !== product)

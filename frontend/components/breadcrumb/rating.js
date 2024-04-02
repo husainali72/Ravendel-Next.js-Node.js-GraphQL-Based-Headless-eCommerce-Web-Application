@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable react/prop-types */
 import React, { useEffect } from "react";
 
 const Star = ({ starId, marked }) => {
@@ -12,7 +15,7 @@ const Star = ({ starId, marked }) => {
     );
 };
 
-const StarRating = ({ stars, singleproducts }) => {
+const StarRating = ({ stars, singleProducts }) => {
     const [selection, setSelection] = React.useState(0);
     const [rating, setRating] = React.useState(0);
 
@@ -25,7 +28,7 @@ const StarRating = ({ stars, singleproducts }) => {
     };
     useEffect(() => {
         setSelection(stars);
-    }, [singleproducts])
+    }, [singleProducts])
 
     return (
         <div

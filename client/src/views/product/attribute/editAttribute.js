@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme";
 import { get } from "lodash";
-import { validate } from "../../components/validate";
+import { validate, validatenested } from "../../components/validate";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 const delimiters = ["Enter", "Tab"];
 
@@ -57,14 +57,24 @@ const EditAttributeComponent = ({ params }) => {
   };
 
   const onUpdate = () => {
-    var errors = validate(["name"], attribute);
-
+    let errors = validate(["name"], attribute);
+    let errorAttributeValue = validatenested("values", [ "name"], attribute);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
           boolean: false,
           message: errors,
+          error: true,
+        },
+      });
+    }
+    else if (!isEmpty(errorAttributeValue)) {
+      dispatch({
+        type: ALERT_SUCCESS,
+        payload: {
+          boolean: false,
+          message: errorAttributeValue,
           error: true,
         },
       });
@@ -115,6 +125,7 @@ const EditAttributeComponent = ({ params }) => {
                     onAddition={onAddTag}
                     delimiters={delimiters}
                     allowNew={true}
+                    minQueryLength={1}
                   />
                   <em className={classes.noteline}>
                     Press tab after adding each tag.

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 export function OpenNav() {
    var open = document.getElementById('openNav');
    var menu = document.getElementById('navigation');

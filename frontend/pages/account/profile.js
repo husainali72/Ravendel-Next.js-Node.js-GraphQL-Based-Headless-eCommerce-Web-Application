@@ -1,3 +1,6 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import client from "../../apollo-client"
 import { Accordion, Col } from "react-bootstrap";
@@ -7,14 +10,13 @@ import AddressDetail from '../../components/account/component/address-details';
 import OrdersDetails from '../../components/account/component/orders-details';
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import PageTitle from "../../components/PageTitle";
-import { GET_CUSTOMER_QUERY } from "../../queries/customerquery";
-import { GET_CUSTOMER_ORDERS_QUERY } from "../../queries/orderquery"
 import { query } from "../../utills/helpers";
 import { useRouter } from "next/router";
 import { useSession, getSession } from 'next-auth/react';
 import { capitalize } from 'lodash';
 import { Toaster } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
+import { GET_CUSTOMER_QUERY } from '../../queries/customerquery';
 const Profile = ({ customeraddres }) => {
     const [userid, setID] = useState("")
     const session = useSession();
@@ -35,7 +37,7 @@ const Profile = ({ customeraddres }) => {
 
     const [customeraddress, setCustomerAddress] = useState(customeraddres)
     const [customerOrder, setCustomerOrder] = useState({})
-    const [ToggleEdit, setToggleEdit] = useState(false)
+    const [toggleEdit, setToggleEdit] = useState(false)
     const dispatch=useDispatch()
     var id = ""
     var token = ""
@@ -89,14 +91,14 @@ const Profile = ({ customeraddres }) => {
                         <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
 
                             <Tab className='my-3' eventKey="profile" title="Profile">
-                                {ToggleEdit && <AccountSettings
+                                {toggleEdit && <AccountSettings
                                     setToggleEdit={setToggleEdit}
                                     accountDetailInfo={customeraddress}
                                     getcustomer={getcustomer}
                                     refreshData={refreshData}
                                     token={token}
                                 />}
-                                {!ToggleEdit && <Card className='box-shadow w-50 pt-2' >
+                                {!toggleEdit && <Card className='box-shadow w-50 pt-2' >
                                     <ListGroup className='profile-list' variant="flush">
                                         <ListGroup.Item><span><strong>Firstname</strong></span>  <span>{capitalize(customeraddress?.firstName)}</span></ListGroup.Item>
                                         <ListGroup.Item><span><strong> Lastname</strong></span>  <span>{capitalize(customeraddress?.lastName)}</span></ListGroup.Item>
@@ -104,7 +106,7 @@ const Profile = ({ customeraddres }) => {
                                         <ListGroup.Item><span><strong>Company</strong></span>  <span>{capitalize(customeraddress?.company)}</span></ListGroup.Item>
                                         <ListGroup.Item><span><strong>Phone</strong></span>  <span>{capitalize(customeraddress?.phone)}</span></ListGroup.Item>
                                     </ListGroup>
-                                    <Button onClick={() => setToggleEdit(!ToggleEdit)} className='me-0 primary-btn-color'>Edit User</Button>
+                                    <Button onClick={() => setToggleEdit(!toggleEdit)} className='me-0 primary-btn-color'>Edit User</Button>
                                 </Card>}
                             </Tab>
                             <Tab eventKey="orders" title="Orders">
@@ -117,7 +119,7 @@ const Profile = ({ customeraddres }) => {
                                                 </Col>
                                                 <Col>
                                                     {order.products.map((name, i) => (
-                                                        <strong>{name.name}</strong>)
+                                                        <strong key={i}>{name.name}</strong>)
                                                     )}
                                                 </Col>
                                                 <Col>

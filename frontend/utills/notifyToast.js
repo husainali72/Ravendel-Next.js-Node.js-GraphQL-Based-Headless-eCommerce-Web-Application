@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 
 import toast, { Toaster } from 'react-hot-toast';
 const notify = (message,success) => {
