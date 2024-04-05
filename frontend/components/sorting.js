@@ -19,6 +19,7 @@ const Sorting = ({
 }) => {
   const dropdownRef = useRef(null);
   const router = useRouter();
+
   useEffect(() => {
     if (sortingData && sortingData?.length > 0) {
       sortData(selectedSortingCriteria);
@@ -42,13 +43,13 @@ const Sorting = ({
   const compareFunction = (a, b, sortingcriteria) => {
     switch (sortingcriteria?.name) {
       case "desc": {
-        return b.pricing.sellprice - a.pricing.sellprice;
+        return b?.pricing?.sellprice - a?.pricing?.sellprice;
       } // Sort in descending order
       case "asc": {
-        return a.pricing.sellprice - b.pricing.sellprice;
+        return a?.pricing?.sellprice - b?.pricing?.sellprice;
       } // Sort in ascending order
       case "latest": {
-        return new Date(b.date) - new Date(a.date);
+        return new Date(b?.date) - new Date(a?.date);
       }
       default: {
         return 0;
@@ -71,9 +72,7 @@ const Sorting = ({
     sortData(sortingcriteria);
     // Get existing filter parameters from the URL
     const { query } = router;
-    const existingFilters = Object.keys(query)
-      .filter((key) => key.startsWith("filter.v.") && key !== "sort")
-      .reduce((acc, key) => {
+    const existingFilters = Object.keys(query)?.filter((key) => key.startsWith("filter.v.") && key !== "sort")?.reduce((acc, key) => {
         const value = Array.isArray(query[key]) ? query[key] : [query[key]];
         acc[key] = value;
         return acc;
@@ -82,8 +81,8 @@ const Sorting = ({
     // Combine existing filters with new sorting parameter
     const updatedFilters = {
       ...existingFilters,
-      [`filter.v.price.gte`]: filters.minPrice,
-      [`filter.v.price.lte`]: filters.maxPrice,
+      [`filter.v.price.gte`]: filters?.minPrice,
+      [`filter.v.price.lte`]: filters?.maxPrice,
     };
 
     // Generate sorting URL
@@ -94,7 +93,7 @@ const Sorting = ({
     const updatedURL = `${currentURL}?${Object.entries(updatedFilters)
       .map(([key, value]) => {
         return Array.isArray(value)
-          ? value.map((v) => `${key}=${v}`).join("&")
+          ? value?.map((v) => `${key}=${v}`).join("&")
           : `${key}=${value}`;
       })
       .join("&")}${sortURL}`;

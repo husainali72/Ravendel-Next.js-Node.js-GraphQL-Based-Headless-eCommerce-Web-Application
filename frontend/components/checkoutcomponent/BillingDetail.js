@@ -31,7 +31,7 @@ const BillingDetails = (props) => {
     var allData = {
       billing: billingInfo,
       shipping: shippingInfo,
-      shippingAddress: shippingAdd,
+      // shippingAddress: shippingAdd,
     };
     getBillingInfo(allData);
   }, [shippingInfo, billingInfo, shippingAdd]);

@@ -11,5 +11,9 @@ module.exports = {
   bucketBaseURL : process.env.BUCKET_BASE_URL,
   smptUser: process.env.SMTP_USERNAME,
   smptPass: process.env.SMTP_PASSWORD,
-  codeString: process.env.SECRET_STRING
+  codeString: process.env.SECRET_STRING,
+  stripeBaseSuccessUrl: process.env.SUCCESS_URL,
+  stripeBaseCancelUrl: process.env.CANCEL_URL,
+  frontendBaseUrl: process.env.FRONTEND_BASEURL,
+  noImagePlaceHolder: process.env.NO_IMAGE_PLACE_HOLDER
 };

@@ -1,10 +1,5 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
-import {
-  Select,
-  MenuItem,
-  FormControl,
-} from "@mui/material";
 import { get, upperCase } from "lodash";
 import Link from "next/link";
 import React from "react";
@@ -20,15 +15,11 @@ const CartTable = (props) => {
     updateCartProductQuantity,
     totalSummary,
   } = props;
-  
-
-
 
   return (
     <div>
       <div className="cart-main-container">
         <div className="bulkActionStrip-desktopContainer">
-
           <div className="inlinebuttonV2-base-actions bulkActionStrip-desktopButton">
             <div className="inlinebuttonV2-base-action bulkActionStrip-desktopActionButton">
               <button
@@ -53,10 +44,18 @@ const CartTable = (props) => {
                 <div>
                   {product?.available ? (
                     <Link href={"/product/" + product.url}>
-                      <ProductImage src={get(product,'feature_image','')}  alt={product?.name} className="cart-product-image cursor-pointer"/>
+                      <ProductImage
+                        src={get(product, "feature_image", "")}
+                        alt={product?.name}
+                        className="cart-product-image cursor-pointer"
+                      />
                     </Link>
                   ) : (
-                    <ProductImage src={get(product,'feature_image','')}  alt={product?.name} className="cart-product-image cursor-pointer"/>
+                    <ProductImage
+                      src={get(product, "feature_image", "")}
+                      alt={product?.name}
+                      className="cart-product-image cursor-pointer"
+                    />
                   )}
                 </div>
                 <div>
@@ -77,15 +76,14 @@ const CartTable = (props) => {
                     </p>
                   </div>
                   <div className="itemComponents-base-sellerContainer">
-                    <div className="itemComponents-base-sellerData">
-                    </div>
+                    <div className="itemComponents-base-sellerData"></div>
                   </div>
 
                   <div className="itemContainer-base-sizeAndQtyContainer">
                     <div className="itemContainer-base-sizeAndQty">
                       <div className="itemComponents-base-quantity">
                         <label className="quantity-label">QTY : </label>
-                        <FormControl>
+                        {/* <FormControl>
                           <Select
                             labelId="demo-simple-select-label"
                             id="quantitySelect"
@@ -105,7 +103,27 @@ const CartTable = (props) => {
                               <MenuItem value={quantity} sx={{fontSize:'12px'}}>{quantity}</MenuItem>
                             ))}
                           </Select>
-                        </FormControl>
+                        </FormControl> */}
+                        <select
+                          id="quantitySelect"
+                          className="quantity-button"
+                          value={get(product,'quantity',1)}
+                          onChange={(e) =>
+                            updateCartProductQuantity(
+                              product,
+                              parseInt(get(e,'target.value',1))
+                            )
+                          }
+                        >
+                          {Array.from(
+                            { length: 20 },
+                            (_, index) => index + 1
+                          ).map((quantity) => (
+                            <option key={quantity} value={quantity}>
+                              {quantity}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                     {product?.available ? (
@@ -123,15 +141,15 @@ const CartTable = (props) => {
                   <div className="itemContainer-base-price">
                     <div className="itemComponents-base-price itemComponents-base-bold ">
                       <div>
-                        <Price price={get(product,'amount',0)}/>
+                        <Price price={get(product, "amount", 0)} />
                       </div>
                     </div>
 
-                    {get(product, "discountPercentage",0) !== 0 && (
+                    {get(product, "discountPercentage", 0) !== 0 && (
                       <div className="itemContainer-base-discountBlock">
                         <span className="itemComponents-base-strikedAmount">
-                          <span className="itemComponents-base-price itemComponents-base-strike itemContainer-base-strikedAmount"> 
-                          <Price price={get(product,'mrpAmount',0)}/>
+                          <span className="itemComponents-base-price itemComponents-base-strike itemContainer-base-strikedAmount">
+                            <Price price={get(product, "mrpAmount", 0)} />
                           </span>
                         </span>
                         <span className="itemComponents-base-itemDiscount">
@@ -147,7 +165,7 @@ const CartTable = (props) => {
               </div>
             ))}
           </div>
-          <CartTotalDetails totalSummary={totalSummary}/>
+          <CartTotalDetails totalSummary={totalSummary} />
         </div>
       </div>
     </div>

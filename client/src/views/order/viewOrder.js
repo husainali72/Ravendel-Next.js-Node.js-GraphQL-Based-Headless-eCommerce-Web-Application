@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useNavigation, useParams } from "react-router-dom";
 import Alerts from "../components/Alert";
-import { orderUpdateAction, orderAction, getSettings } from "../../store/action/";
+import {
+  orderUpdateAction,
+  orderAction,
+  getSettings,
+} from "../../store/action/";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -48,6 +52,7 @@ import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { isEmpty } from "../../utils/helper";
 import PhoneNumber from "../components/phoneNumberValidation";
 import { currencySetter, getPrice } from "./CurrencyFormat";
+import TotalSummaryComponent from "./totalSummary";
 
 const ViewOrderComponent = ({ params }) => {
   const ORDERID = params.id || "";
@@ -57,9 +62,9 @@ const ViewOrderComponent = ({ params }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const singleOrder = useSelector((state) => state.order);
-  const currencyState = useSelector((state) => state.settings)
-  const [currency, setcurrency] = useState('usd')
-  const [decimal, setdecimal] = useState(2)
+  const currencyState = useSelector((state) => state.settings);
+  const [currency, setcurrency] = useState("usd");
+  const [decimal, setdecimal] = useState(2);
   const [loading, setloading] = useState(false);
   const [phoneValue, setPhoneValue] = useState("");
   const [order, setorder] = useState({
@@ -97,38 +102,71 @@ const ViewOrderComponent = ({ params }) => {
     date: "",
   });
 
-
   useEffect(() => {
     dispatch(orderAction(ORDERID));
     dispatch(getSettings());
   }, []);
   useEffect(() => {
-    if (!isEmpty(get(currencyState, 'settings'))) {
-      if (!isEmpty(get(currencyState.settings, 'store'))) {
-        setcurrency(get(currencyState.settings.store.currency_options, 'currency'))
-        setdecimal(get(currencyState.settings.store.currency_options, 'number_of_decimals'))
+    if (!isEmpty(get(currencyState, "settings"))) {
+      if (!isEmpty(get(currencyState.settings, "store"))) {
+        setcurrency(
+          get(currencyState.settings.store.currency_options, "currency")
+        );
+        setdecimal(
+          get(
+            currencyState.settings.store.currency_options,
+            "number_of_decimals"
+          )
+        );
       }
     }
-  }, [get(currencyState, 'settings')])
+  }, [get(currencyState, "settings")]);
 
   useEffect(() => {
     if (!isEmpty(get(singleOrder, "order"))) {
       const singleorder = get(singleOrder, "order");
       setorder({ ...order, ...singleorder });
-      setPhoneValue(singleorder.billing.phone)
+      setPhoneValue(singleorder.billing.phone);
     }
-
   }, [get(singleOrder, "order")]);
 
   useEffect(() => {
     setloading(get(singleOrder, "loading"));
   }, [get(singleOrder, "loading")]);
   const updateOrder = (e) => {
-    order.billing.phone = phoneValue
+    order.billing.phone = phoneValue;
     e.preventDefault();
-    let errors = validatenested("billing", ["paymentMethod", "email", "state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
-    let Errors = validatenested("shipping", ["state", "country", "zip", "city", "address", "company", "lastname", "firstname"], order);
-    let phoneNumberError = validateNestedPhone("billing", ["phone"], order)
+    let errors = validatenested(
+      "billing",
+      [
+        "paymentMethod",
+        "email",
+        "state",
+        "country",
+        "zip",
+        "city",
+        "address",
+        "company",
+        "lastname",
+        "firstname",
+      ],
+      order
+    );
+    let Errors = validatenested(
+      "shipping",
+      [
+        "state",
+        "country",
+        "zip",
+        "city",
+        "address",
+        "company",
+        "lastname",
+        "firstname",
+      ],
+      order
+    );
+    let phoneNumberError = validateNestedPhone("billing", ["phone"], order);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -138,9 +176,7 @@ const ViewOrderComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-
-    else if (!isEmpty(Errors)) {
+    } else if (!isEmpty(Errors)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -149,8 +185,7 @@ const ViewOrderComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else if (!isEmpty(phoneNumberError)) {
+    } else if (!isEmpty(phoneNumberError)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
@@ -159,12 +194,11 @@ const ViewOrderComponent = ({ params }) => {
           error: true,
         },
       });
-    }
-    else {
+    } else {
       setEditBilling(false);
       setEditShipping(false);
       dispatch(orderUpdateAction(order, navigate));
-      setPhoneValue("")
+      setPhoneValue("");
     }
   };
   const changeBilling = (e) => {
@@ -198,7 +232,7 @@ const ViewOrderComponent = ({ params }) => {
   };
 
   const handleOnChange = (value) => {
-    setPhoneValue(value)
+    setPhoneValue(value);
   };
   const ShippingInput = (label, name, type, value) => {
     return (
@@ -215,7 +249,7 @@ const ViewOrderComponent = ({ params }) => {
     );
   };
 
-  const toInputLowercase = e => {
+  const toInputLowercase = (e) => {
     e.target.value = ("" + e.target.value).toLowerCase();
   };
 
@@ -256,9 +290,7 @@ const ViewOrderComponent = ({ params }) => {
                   color="error"
                   className={classes.cancelBtn}
                 >
-
                   Cancel
-
                 </Button>
               </Link>
             </Grid>
@@ -272,7 +304,9 @@ const ViewOrderComponent = ({ params }) => {
                   <CardHeader title="Order Details" />
                   <Divider />
                   <CardContent>
-                    <Typography variant="body1">Order: {order.orderNumber}</Typography>
+                    <Typography variant="body1">
+                      Order: {order.orderNumber}
+                    </Typography>
                     <Typography variant="body1" mt={2}>
                       Payment via {order.billing.paymentMethod} paid on{" "}
                       {convertDateToStringFormat(order.date)}
@@ -280,7 +314,7 @@ const ViewOrderComponent = ({ params }) => {
                       number {order.billing.transaction_id} */}
                     </Typography>
                     <FormControl className={classes.statusSelect}>
-                      <InputLabel id="status" sx={{ marginTop: '20px' }} >
+                      <InputLabel id="status" sx={{ marginTop: "20px" }}>
                         Payment Status
                       </InputLabel>
                       <Select
@@ -288,7 +322,7 @@ const ViewOrderComponent = ({ params }) => {
                         labelId="paymentStatus
                         "
                         id="paymentStatus"
-                        sx={{ marginTop: '20px' }}
+                        sx={{ marginTop: "20px" }}
                         value={order.paymentStatus}
                         name="paymentStatus"
                         onChange={(e) => {
@@ -297,17 +331,18 @@ const ViewOrderComponent = ({ params }) => {
                             [e.target.name]: e.target.value,
                           });
                         }}
-
                       >
-
                         <MenuItem value="pending">Pending </MenuItem>
                         <MenuItem value="failed">Failed</MenuItem>
                         <MenuItem value="success">Completed</MenuItem>
                         <MenuItem value="cancelled">Cancelled</MenuItem>
                       </Select>
                     </FormControl>
-                    <FormControl className={classes.statusSelect} sx={{ ml: '20px' }}>
-                      <InputLabel id="status" sx={{ marginTop: '20px' }} >
+                    <FormControl
+                      className={classes.statusSelect}
+                      sx={{ ml: "20px" }}
+                    >
+                      <InputLabel id="status" sx={{ marginTop: "20px" }}>
                         Shipping Status
                       </InputLabel>
                       <Select
@@ -315,7 +350,7 @@ const ViewOrderComponent = ({ params }) => {
                         labelId="shippingStatus
                         "
                         id="shippingStatus"
-                        sx={{ marginTop: '20px' }}
+                        sx={{ marginTop: "20px" }}
                         value={order.shippingStatus}
                         name="shippingStatus"
                         onChange={(e) => {
@@ -324,11 +359,12 @@ const ViewOrderComponent = ({ params }) => {
                             [e.target.name]: e.target.value,
                           });
                         }}
-
                       >
                         <MenuItem value="inprogress">Inprogress </MenuItem>
                         <MenuItem value="shipped">Shipped</MenuItem>
-                        <MenuItem value="outfordelivery">Out For Delivery</MenuItem>
+                        <MenuItem value="outfordelivery">
+                          Out For Delivery
+                        </MenuItem>
                         <MenuItem value="delivered">Delivered</MenuItem>
                       </Select>
                     </FormControl>
@@ -431,7 +467,12 @@ const ViewOrderComponent = ({ params }) => {
                           )}
                         </Grid>
                         <Grid item md={4}>
-                          <PhoneNumber className="phoneValidation" handleOnChange={handleOnChange} phoneValue={phoneValue} width="100%" />
+                          <PhoneNumber
+                            className="phoneValidation"
+                            handleOnChange={handleOnChange}
+                            phoneValue={phoneValue}
+                            width="100%"
+                          />
                         </Grid>
                         <Grid item md={4}>
                           {BillingInput(
@@ -674,26 +715,34 @@ const ViewOrderComponent = ({ params }) => {
                             <TableCell variet="contained" color="primary">
                               Total
                             </TableCell>
-
                           </TableRow>
                         </TableHead>
                         <TableBody>
-
                           {order.products.map((product, index) => (
                             <TableRow key={index}>
-
                               <TableCell>{product?.productTitle}</TableCell>
                               <TableCell>
-
-                                {product?.productPrice && product?.qty && !isNaN(product?.qty) && !isNaN(product?.productPrice) ? currencyFormat(product?.productPrice / product?.qty) : '0.00'}
+                                {product?.productPrice &&
+                                product?.qty &&
+                                !isNaN(product?.qty) &&
+                                !isNaN(product?.productPrice)
+                                  ? currencyFormat(
+                                      product?.productPrice / product?.qty
+                                    )
+                                  : "0.00"}
                               </TableCell>
                               <TableCell>{product?.qty}</TableCell>
 
-                              <TableCell>{product?.attributes?.map((attribute) => <div>{capitalize(attribute.name)} : {capitalize(attribute.value)}</div>)}</TableCell>
                               <TableCell>
-
+                                {product?.attributes?.map((attribute) => (
+                                  <div>
+                                    {capitalize(attribute.name)} :{" "}
+                                    {capitalize(attribute.value)}
+                                  </div>
+                                ))}
+                              </TableCell>
+                              <TableCell>
                                 {currencyFormat(product?.productPrice)}
-
                               </TableCell>
                             </TableRow>
                           ))}
@@ -711,46 +760,12 @@ const ViewOrderComponent = ({ params }) => {
                   <CardHeader title="Total" />
                   <Divider />
                   <CardContent>
-                    <Grid container justify="flex-end">
-                      <Grid item className={classes.textRight}>
-                        <Typography variant="body1" className={classes.mtb1}>
-                          SubTotal
-                        </Typography>
-                        <Typography variant="body1" className={classes.mtb1}>
-                          Tax
-                        </Typography>
-                        <Typography variant="body1" className={classes.mtb1}>
-                          Shipping
-                        </Typography>
-                        {order.couponCode && order.couponCode !== 'None' ?
-                          <Typography variant="body1" className={classes.mtb2coupon} sx={{ color: '#4BB543' }}>
-                            Coupon - ( {order.couponCode} )
-                          </Typography> : null}
-                        <Divider sx={{ mt: "10px", mb: "10px" }} />
-                        <Typography variant="body1" className={classes.mtb1}>
-                          Total
-                        </Typography>
-                      </Grid>
-                      <Grid item md={3} className={classes.textRight}>
-                        <Typography variant="body2" className={classes.mtb2}>
-                          {currencySetter(currency, '12px')}{getPrice(order?.cartTotal, decimal)}
-                        </Typography>
-                        <Typography variant="body2" className={classes.mtb2}>
-                          {currencySetter(currency, '12px')}{getPrice(order?.taxAmount, decimal)}
-                        </Typography>
-                        <Typography variant="body2" className={classes.mtb2}>
-                          {currencySetter(currency, '12px')}{getPrice(order?.shippingAmount, decimal)}
-                        </Typography>
-                        {order?.couponCode && order?.couponCode !== 'None' ?
-                          <Typography variant="body2" className={classes.mtb2coupon} sx={{ color: '#4BB543', }}>
-                            <span className={classes.minus}>-</span>  {currencySetter(currency, '12px')}{getPrice(order?.discountAmount, decimal)}
-                          </Typography> : null}
-                        <Divider sx={{ mt: "10px", mb: "10px" }} />
-                        <Typography variant="body2" className={classes.mtb2}>
-                          {currencySetter(currency, '12px')}{getPrice(order?.grandTotal, decimal)}
-                        </Typography>
-                      </Grid>
-                    </Grid>
+                    <TotalSummaryComponent
+                      decimal={decimal}
+                      currency={currency}
+                      totalSummary={order?.totalSummary}
+                      couponCard={order?.couponCard}
+                    />
                   </CardContent>
                 </Card>
               </Box>
@@ -759,8 +774,7 @@ const ViewOrderComponent = ({ params }) => {
         </>
       ) : (
         "No data"
-      )
-      }
+      )}
     </>
   );
 };

@@ -2,7 +2,7 @@
 import { get } from 'lodash';
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { ThemeProvider } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 import { createTheme } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
 const ThemeContext = createContext();
@@ -23,7 +23,6 @@ const defaultTheme = createTheme( {
 export const AlternativeThemeProvider = ( { children } ) => {
   const [ theme, setTheme ] = useState( defaultTheme );
   const settings = useSelector( ( state ) => state.setting );
-
   useEffect( () => {
     const settingTheme = get( settings, 'setting.appearance.theme' );
     let themeColors = createTheme( {
