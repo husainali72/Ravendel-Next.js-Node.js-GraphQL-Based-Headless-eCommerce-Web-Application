@@ -76,6 +76,7 @@ export const ADD_ORDER = gql`
       message
       success
       redirectUrl
+      paypalOrderId
     }
   }
 `;

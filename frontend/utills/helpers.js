@@ -11,6 +11,7 @@ import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
 import moment from "moment";
+import { PAYPAL, STRIPE } from "./constant";
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
   event.target.src = NoImagePlaceHolder.src;
@@ -165,9 +166,8 @@ export const currencySetter = (settings, setCurrency) => {
     setCurrency("CA$");
   }
   if (currency === "inr") {
-    setCurrency(<i className='fas fa-rupee-sign'></i>);
+    setCurrency(<i className="fas fa-rupee-sign"></i>);
   }
-
 };
 export const formattedPrice = (value, currencyOptions) => {
   const decimal = get(currencyOptions, "number_of_decimals", "2");
@@ -190,8 +190,8 @@ export const getPrice = (price, currencyOptions) => {
   return "0.00";
 };
 export const isDiscount = (product) => {
-  const sellPrice = get(product, "pricing.sellprice",0);
-  const price = get(product, "pricing.price",0);
+  const sellPrice = get(product, "pricing.sellprice", 0);
+  const price = get(product, "pricing.price", 0);
 
   if (sellPrice && sellPrice > 0 && price && price > 0 && sellPrice < price) {
     const discountAmount = ((100 / price) * (price - sellPrice)).toFixed(2);
@@ -199,7 +199,6 @@ export const isDiscount = (product) => {
   }
   return false;
 };
-
 
 export const isVariantDiscount = (variantProduct) => {
   const sellPrice = get(variantProduct, "[0].pricing.sellprice", 0);
@@ -294,4 +293,9 @@ export const iconSetter = (iconName) => {
   if ("pinterest" === iconName) {
     return "fab fa-pinterest mx-2 icon-footer";
   }
+};
+
+export const checkPaymentMethod = (paymentMethod) => {
+  if (paymentMethod === STRIPE || paymentMethod === PAYPAL) return true;
+  return false;
 };

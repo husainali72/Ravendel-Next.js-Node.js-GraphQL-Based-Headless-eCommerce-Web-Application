@@ -72,7 +72,7 @@ const SETTING_TILE_DATA = gql`
         order_digits
       }
     }
-    paymnet {
+    payment {
       cash_on_delivery {
         enable
         title

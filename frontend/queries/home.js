@@ -127,7 +127,7 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           stock_display_format
         }
       }
-      paymnet {
+      payment {
         cash_on_delivery {
           enable
           title
