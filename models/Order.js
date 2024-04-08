@@ -39,8 +39,11 @@ const OrderSchema = new Schema({
     notes: String
   }, 
   
+  // transactionDetail : {
+  //   sessionId: String,
+  // },
   transactionDetail : {
-    sessionId: String,
+    type: Object,
   },
   paymentStatus: {
     type: String,

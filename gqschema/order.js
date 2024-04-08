@@ -34,8 +34,9 @@ module.exports = `
   type AddOrderResponse {
     message: String
     success: Boolean
-    redirectUrl: String
     id: ID
+    redirectUrl: String
+    paypalOrderId: String
   }
   extend type Query {
     orders: OrderRES

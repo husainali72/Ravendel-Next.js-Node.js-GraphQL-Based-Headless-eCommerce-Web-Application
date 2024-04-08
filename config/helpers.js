@@ -16,6 +16,7 @@ const Tax = require("../models/Tax");
 const Coupon = require("../models/Coupon");
 const mongoose = require('mongoose');
 const Order = require("../models/Order");
+const _ = require('lodash');
 
 
 const isEmpty = (value) =>
@@ -1407,14 +1408,14 @@ const addOrder = async(args) => {
     };
   }
 
-  let validPaymentModes = ["Cash On Delivery", "Stripe"];
+  let validPaymentModes = ["Cash On Delivery", "Stripe", "Paypal"];
   if (!validPaymentModes.includes(args.billing.paymentMethod)) {
     return MESSAGE_RESPONSE("InvalidField", "Payment mode", false); 
   }
 
   const setting = await Setting.findOne({});
   
-  let status = 'pending', redirectUrl;
+  let status = 'pending', redirectUrl, paypalOrderId;
   if(args.billing.paymentMethod !== 'Cash On Delivery') {
     status = 'processing';
   }
@@ -1450,26 +1451,17 @@ const addOrder = async(args) => {
   
   const savedOrder = await newOrder.save();
   
+  let currencycode = setting.store.currency_options.currency.toUpperCase();
+
   if (args.billing.paymentMethod === 'Cash On Delivery') {
     const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
     emptyCart(cart);
   } else if(args.billing.paymentMethod === 'Stripe') {
-    var Secret_Key = setting.paymnet.stripe.secret_key;
+    var Secret_Key = setting.payment.stripe.secret_key;
     if(!Secret_Key) {
       return MESSAGE_RESPONSE("PaymentNotConfigured", "Stripe", false);
     }
     const stripe = require('stripe')(Secret_Key);
-
-    let currencycode;
-    if (setting.store.currency_options.currency == 'eur') {
-      currencycode = 'EUR'
-    } else if (setting.store.currency_options.currency == 'gbp') {
-      currencycode = 'GBP';
-    } else if (setting.store.currency_options.currency == 'cad') {
-      currencycode = 'CAD';
-    } else {
-      currencycode = 'USD';
-    }
 
     const line_items = calculatedCart.cartItems.map(item=> {
       let itemImage = '';
@@ -1506,7 +1498,65 @@ const addOrder = async(args) => {
     // console.log('stripe session', session);
     redirectUrl = session.url;
 
-    let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : { sessionId : session.id } }});
+    //let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : { sessionId : session.id } }});
+    let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : session } });
+    
+  } else if(args.billing.paymentMethod === 'Paypal') {
+    
+    const paypal = require('@paypal/checkout-server-sdk');
+
+    let paypal_client_id = _.get(setting, 'payment.paypal.api_password');
+    let paypal_client_secret = _.get(setting, 'payment.paypal.api_signature');
+
+    const Environment = process.env.NODE_ENV === 'production' ? paypal.core.LiveEnvironment : paypal.core.SandboxEnvironment
+    const paypalClient = new paypal.core.PayPalHttpClient(
+      new Environment(
+        paypal_client_id, paypal_client_secret
+      )
+    )
+
+    const request = new paypal.orders.OrdersCreateRequest();
+    request.prefer('return=representation');
+    const paypalItems = calculatedCart.cartItems.map(item=> {
+      return{
+        name: item.productTitle,
+        unit_amount: {
+          currency_code: currencycode,
+          value: (+item.productPrice)
+        },
+        quantity: (+item.qty)
+      }
+    });
+    request.requestBody({
+      intent:'CAPTURE',
+      purchase_units: [
+        {
+          amount: {
+            currency_code: currencycode,
+            value: calculatedCart.totalSummary.grandTotal,
+            breakdown: {
+              item_total: {
+                currency_code: currencycode,
+                value: calculatedCart.totalSummary.cartTotal
+              },
+              shipping: {
+                currency_code: currencycode,
+                value: calculatedCart.totalSummary.totalShipping
+              },
+              discount: {
+                currency_code: currencycode,
+                value: (!calculatedCart.totalSummary.couponDiscountTotal ? 0 : calculatedCart.totalSummary.couponDiscountTotal)
+              }
+            }
+          },
+          items: paypalItems
+        }
+      ]
+    });
+    const order = await paypalClient.execute(request);
+    paypalOrderId = order.result.id;
+    
+    let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : order } });
   }
   // else {
   //   return MESSAGE_RESPONSE("InvalidField", "Payment mode", false);
@@ -1523,6 +1573,7 @@ const addOrder = async(args) => {
 
   let addOrderResponse = MESSAGE_RESPONSE("AddSuccess", "Order", true);
   addOrderResponse.redirectUrl = redirectUrl;
+  addOrderResponse.paypalOrderId = paypalOrderId;
   addOrderResponse.id = savedOrder._id;
 
   return addOrderResponse;
@@ -1541,6 +1592,13 @@ module.exports.isUrlValid = isUrlValid;
 
 const updatePaymentStatus = async (userId, args) => {
   let { id, paymentStatus } = args;
+  
+  // will add some validation to update payment status as success
+  if(paymentStatus == 'success') {
+    
+  }
+  //
+
   let orderUpdateRes = await Order.updateOne({_id:id }, { $set: { paymentStatus:paymentStatus } });
   if(orderUpdateRes.acknowledged && orderUpdateRes.matchedCount == 1) {
     if(paymentStatus == 'success') {
