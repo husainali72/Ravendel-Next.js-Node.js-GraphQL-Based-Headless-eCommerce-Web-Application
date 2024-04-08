@@ -7,7 +7,7 @@ module.exports = `
     smtp: SMTP
     seo: SEO
     store: Store
-    paymnet: Payment
+    payment: Payment
     notification: Notification
     imageStorage: ImageStorage
     appearance: Appearance
