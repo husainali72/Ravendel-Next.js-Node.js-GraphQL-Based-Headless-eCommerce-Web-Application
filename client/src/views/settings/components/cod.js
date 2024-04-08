@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SettingTextInput } from "./setting-components/";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
-import { get } from "lodash";
+import { get, isEmpty } from "lodash";
 import { paymentCodUpdateAction } from "../../../store/action/settingAction.js";
 import Alerts from "../../components/Alert.js";
 import Loading from "../../components/Loading.js";
@@ -19,12 +19,8 @@ const CashOnDeliveryTheme = () => {
   });
 
   useEffect(() => {
-    if (
-      settingState.settings &&
-      settingState.settings.paymnet &&
-      settingState.settings.paymnet.cash_on_delivery
-    ) {
-      setCodInfo({ ...settingState.settings.paymnet.cash_on_delivery });
+    if (!isEmpty(get(settingState, "settings.payment.cash_on_delivery"))) {
+      setCodInfo({ ...get(settingState, "settings.payment.cash_on_delivery") });
     }
   }, [get(settingState, "settings")]);
 
@@ -34,14 +30,14 @@ const CashOnDeliveryTheme = () => {
 
   const checkBoxOnChange = (index) => {
     let data = codInfo;
-    data.enable = !data.enable
+    data.enable = !get(data,'enable')
     setCodInfo({ ...data })
   };
 
   return (
     <>
       <Alerts />
-      {settingState.loading ? <Loading /> : null}
+      {get(settingState,'loading') ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>
@@ -49,9 +45,9 @@ const CashOnDeliveryTheme = () => {
               control={
                 <Checkbox
                   color="primary"
-                  checked={codInfo.enable}
+                  checked={get(codInfo,'enable')}
                   onChange={(e) => {
-                    checkBoxOnChange(e.target.checked)
+                    checkBoxOnChange(get(e,'target.checked'))
                   }}
                 />
               }
@@ -60,11 +56,11 @@ const CashOnDeliveryTheme = () => {
           </Box>
 
           {codInfo.enable ? (
-            <Box  >
+            <Box>
               <Box component="div">
                 <SettingTextInput
                   label="Title"
-                  value={codInfo.title}
+                  value={get(codInfo,'title')}
                   onSettingInputChange={(val) =>
                     setCodInfo({ ...codInfo, title: val })
                   }
@@ -74,7 +70,7 @@ const CashOnDeliveryTheme = () => {
               <Box component="div">
                 <SettingTextInput
                   label="Description"
-                  value={codInfo.description}
+                  value={get(codInfo,'description')}
                   onSettingInputChange={(val) =>
                     setCodInfo({ ...codInfo, description: val })
                   }
@@ -84,7 +80,7 @@ const CashOnDeliveryTheme = () => {
               <Box component="div">
                 <SettingTextInput
                   label="Instructions"
-                  value={codInfo.instructions}
+                  value={get(codInfo,'instructions')}
                   onSettingInputChange={(val) =>
                     setCodInfo({ ...codInfo, instructions: val })
                   }
@@ -93,7 +89,6 @@ const CashOnDeliveryTheme = () => {
             </Box>
           ) : null}
         </Grid>
-        
         <Grid item xs={12}>
           <Button
             size="small"

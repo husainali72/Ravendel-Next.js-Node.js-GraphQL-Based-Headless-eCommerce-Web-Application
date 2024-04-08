@@ -5,6 +5,7 @@ import Table from "../../dataTable";
 import { get } from "lodash";
 import AddressDetails from "./addressDetail";
 import { isCouponAppliedAndNotFreeShipping } from "../../../utills/helpers";
+import { CASH_ON_DELIVERY } from "../../../utills/constant";
 const prepareProductHeaderData = (orderInfo) => {
   const showAttributes = get(orderInfo, "products", [])?.some(
     (product) => product?.attributes?.length > 0
@@ -48,7 +49,7 @@ const prepareOrderDetailRowData = (orderInfo) => {
       : null,
     {
       label: "Payment Method",
-      value: get(orderInfo, "billing.paymentMethod", "Cash On Delivery"),
+      value: get(orderInfo, "billing.paymentMethod", CASH_ON_DELIVERY),
       type: "text",
     },
   ];

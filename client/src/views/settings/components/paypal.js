@@ -15,14 +15,13 @@ const PaypalComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [paypalInfo, setPaypalInfo] = useState({enable: false});
+  const [paypalInfo, setPaypalInfo] = useState({ enable: false });
 
   useEffect(() => {
-    if (settingState.settings && settingState.settings.paymnet && settingState.settings.paymnet.paypal){
-      setPaypalInfo({...settingState.settings.paymnet.paypal})
+    if (get(settingState, "settings.payment.paypal")) {
+      setPaypalInfo({ ...get(settingState, "settings.payment.paypal") });
     }
-   }, [get(settingState,"settings")])
- 
+  }, [get(settingState, "settings")]);
 
   const updatePaypal = () => {
     dispatch(paymentPaypalUpdateAction(paypalInfo));
@@ -30,8 +29,8 @@ const PaypalComponent = () => {
 
   return (
     <>
-     <Alerts/>
-     {settingState.loading ? <Loading /> : null}
+      <Alerts />
+      {get(settingState, "loading") ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item md={6} sm={12} xs={12}>
           <Box component="div" className={classes.marginBottom2}>
@@ -39,21 +38,24 @@ const PaypalComponent = () => {
               control={
                 <Checkbox
                   color="primary"
-                  checked={paypalInfo.enable}
+                  checked={get(paypalInfo, "enable")}
                   onChange={(e) =>
-                    setPaypalInfo({ ...paypalInfo, enable: e.target.checked })
+                    setPaypalInfo({
+                      ...paypalInfo,
+                      enable: get(e, "target.checked"),
+                    })
                   }
                 />
               }
               label="Enable PayPal Standard"
             />
           </Box>
-          {paypalInfo.enable && (
+          {get(paypalInfo, "enable") && (
             <Box component="div">
               <Box component="div">
                 <SettingTextInput
                   label="Title"
-                  value={paypalInfo.title}
+                  value={get(paypalInfo, "title")}
                   onSettingInputChange={(val) =>
                     setPaypalInfo({ ...paypalInfo, title: val })
                   }
@@ -63,7 +65,7 @@ const PaypalComponent = () => {
               <Box component="div">
                 <SettingTextInput
                   label="Description"
-                  value={paypalInfo.description}
+                  value={get(paypalInfo, "description")}
                   onSettingInputChange={(val) =>
                     setPaypalInfo({ ...paypalInfo, description: val })
                   }
@@ -75,7 +77,7 @@ const PaypalComponent = () => {
               <Box component="div">
                 <SettingTextInput
                   label="PayPal email"
-                  value={paypalInfo.paypal_email}
+                  value={get(paypalInfo, "paypal_email")}
                   onSettingInputChange={(val) =>
                     setPaypalInfo({ ...paypalInfo, paypal_email: val })
                   }
@@ -88,11 +90,11 @@ const PaypalComponent = () => {
                   control={
                     <Checkbox
                       color="primary"
-                      checked={paypalInfo.ipn_email_notification}
+                      checked={get(paypalInfo, "ipn_email_notification")}
                       onChange={(e) =>
                         setPaypalInfo({
                           ...paypalInfo,
-                          ipn_email_notification: e.target.checked,
+                          ipn_email_notification: get(e, "target.checked"),
                         })
                       }
                     />
@@ -104,7 +106,7 @@ const PaypalComponent = () => {
               <Box component="div">
                 <SettingTextInput
                   label="Receiver email"
-                  value={paypalInfo.receiver_email}
+                  value={get(paypalInfo, "receiver_email")}
                   onSettingInputChange={(val) =>
                     setPaypalInfo({ ...paypalInfo, receiver_email: val })
                   }
@@ -115,7 +117,7 @@ const PaypalComponent = () => {
               <Box component="div">
                 <SettingTextInput
                   label="PayPal identity token"
-                  value={paypalInfo.paypal_identity_token}
+                  value={get(paypalInfo, "paypal_identity_token")}
                   onSettingInputChange={(val) =>
                     setPaypalInfo({ ...paypalInfo, paypal_identity_token: val })
                   }
@@ -125,7 +127,7 @@ const PaypalComponent = () => {
               <Box component="div">
                 <SettingTextInput
                   label="Invoice prefix"
-                  value={paypalInfo.invoice_prefix}
+                  value={get(paypalInfo, "invoice_prefix")}
                   onSettingInputChange={(val) =>
                     setPaypalInfo({ ...paypalInfo, invoice_prefix: val })
                   }
@@ -137,18 +139,18 @@ const PaypalComponent = () => {
 
         {/* ===================SandBox ANd Live=================== */}
 
-        {paypalInfo.enable && (
+        {get(paypalInfo,'enable') && (
           <Grid item md={6} sm={12} xs={12}>
             <Box component="div" className={classes.marginBottom2}>
               <FormControlLabel
                 control={
                   <Checkbox
                     color="primary"
-                    checked={paypalInfo.test_mode}
+                    checked={get(paypalInfo, "test_mode")}
                     onChange={(e) =>
                       setPaypalInfo({
                         ...paypalInfo,
-                        test_mode: e.target.checked,
+                        test_mode: get(e, "target.checked"),
                       })
                     }
                   />
@@ -160,7 +162,7 @@ const PaypalComponent = () => {
             <Box component="div">
               <SettingTextInput
                 label="API Username"
-                value={paypalInfo.api_username}
+                value={get(paypalInfo, "api_username")}
                 onSettingInputChange={(val) =>
                   setPaypalInfo({ ...paypalInfo, api_username: val })
                 }
@@ -170,7 +172,7 @@ const PaypalComponent = () => {
             <Box component="div">
               <SettingTextInput
                 label="API password"
-                value={paypalInfo.api_password}
+                value={get(paypalInfo, "api_password")}
                 onSettingInputChange={(val) =>
                   setPaypalInfo({ ...paypalInfo, api_password: val })
                 }
@@ -181,7 +183,7 @@ const PaypalComponent = () => {
             <Box component="div">
               <SettingTextInput
                 label="API signature"
-                value={paypalInfo.api_signature}
+                value={get(paypalInfo, "api_signature")}
                 onSettingInputChange={(val) =>
                   setPaypalInfo({ ...paypalInfo, api_signature: val })
                 }

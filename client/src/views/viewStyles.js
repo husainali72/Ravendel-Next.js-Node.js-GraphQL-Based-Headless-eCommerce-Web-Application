@@ -629,6 +629,13 @@ const viewStyles = makeStyles((theme) => ({
     marginTop: '25px',
     paddingLeft: '20px',
   },
+  noOptions:{
+    textAlign:'center'
+  },
+  orderOptionContainer:{
+    minWidth: 120,
+    width: "300px"
+  }
 }));
 
 
