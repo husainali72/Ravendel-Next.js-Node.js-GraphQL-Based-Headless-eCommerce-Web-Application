@@ -57,7 +57,8 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.1",
     "server.js": "^1.0.0",
-    "stripe": "^11.7.0"
+    "stripe": "^11.7.0",
+    "sweetalert2": "^11.10.7"
   },
   "devDependencies": {
     "eslint": "^8.30.0",

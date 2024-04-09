@@ -118,7 +118,7 @@ export const queryWithoutToken = async (query, variables) => {
 };
 export const logoutAndClearData = async (dispatch) => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
-  removeItemFromLocalStorage("cart");
+  await removeItemFromLocalStorage("cart");
   dispatch(logoutDispatch());
   window.location.pathname = "/account";
 };
