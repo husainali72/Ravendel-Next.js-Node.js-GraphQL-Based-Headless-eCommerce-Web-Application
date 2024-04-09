@@ -10,6 +10,8 @@ import theme from "../../../theme/index.js";
 import { paymentPaypalUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
+import ToggleSwitch from "../../components/switch.js";
+import { getValue } from "../../../utils/helper.js";
 
 const PaypalComponent = () => {
   const classes = viewStyles();
@@ -25,6 +27,9 @@ const PaypalComponent = () => {
 
   const updatePaypal = () => {
     dispatch(paymentPaypalUpdateAction(paypalInfo));
+  };
+  const checkPaypalMode = () => {
+    return get(paypalInfo, "test_mode");
   };
 
   return (
@@ -139,59 +144,54 @@ const PaypalComponent = () => {
 
         {/* ===================SandBox ANd Live=================== */}
 
-        {get(paypalInfo,'enable') && (
-          <Grid item md={6} sm={12} xs={12}>
-            <Box component="div" className={classes.marginBottom2}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color="primary"
-                    checked={get(paypalInfo, "test_mode")}
-                    onChange={(e) =>
-                      setPaypalInfo({
-                        ...paypalInfo,
-                        test_mode: get(e, "target.checked"),
-                      })
-                    }
-                  />
-                }
-                label="Enable PayPal sandbox"
-              />
-            </Box>
-
-            <Box component="div">
-              <SettingTextInput
-                label="API Username"
-                value={get(paypalInfo, "api_username")}
-                onSettingInputChange={(val) =>
-                  setPaypalInfo({ ...paypalInfo, api_username: val })
-                }
-              />
-            </Box>
-
-            <Box component="div">
-              <SettingTextInput
-                label="API password"
-                value={get(paypalInfo, "api_password")}
-                onSettingInputChange={(val) =>
-                  setPaypalInfo({ ...paypalInfo, api_password: val })
-                }
-                type="password"
-              />
-            </Box>
-
-            <Box component="div">
-              <SettingTextInput
-                label="API signature"
-                value={get(paypalInfo, "api_signature")}
-                onSettingInputChange={(val) =>
-                  setPaypalInfo({ ...paypalInfo, api_signature: val })
-                }
-                type="password"
-              />
-            </Box>
-          </Grid>
-        )}
+        <Grid item md={6} sm={12} xs={12}>
+          <Box component="div" className={classes.marginBottom2}>
+            <ToggleSwitch
+              color="primary"
+              checked={get(paypalInfo, "test_mode", false)}
+              onChange={(e) =>
+                setPaypalInfo({
+                  ...paypalInfo,
+                  test_mode: get(e, "target.checked"),
+                })
+              }
+            />
+          </Box>
+          <Box component="div">
+            <SettingTextInput
+              label={checkPaypalMode() ? "Sandbox Client Id" : "Live Client Id"}
+              name={checkPaypalMode() ? "sandbox_client_id" : "live_client_id"}
+              value={getValue(get(
+                paypalInfo,
+                checkPaypalMode() ? "sandbox_client_id" : "live_client_id",
+                ""
+              ))}
+              onSettingInputChange={(val, name) => {
+                setPaypalInfo({ ...paypalInfo, [name]: val });
+              }}
+              type="password"
+            />
+          </Box>
+          <Box component="div">
+            <SettingTextInput
+              label={
+                checkPaypalMode() ? "Sandbox Secrete Key" : "Live Secrete Key"
+              }
+              value={getValue(get(
+                paypalInfo,
+                checkPaypalMode() ? "sandbox_secrete_key" : "live_secrete_key",
+                ""
+              ))}
+              name={
+                checkPaypalMode() ? "sandbox_secrete_key" : "live_secrete_key"
+              }
+              onSettingInputChange={(val, name) =>
+                setPaypalInfo({ ...paypalInfo, [name]: val })
+              }
+              type="password"
+            />
+          </Box>
+        </Grid>
 
         <Grid item xs={12}>
           <Button

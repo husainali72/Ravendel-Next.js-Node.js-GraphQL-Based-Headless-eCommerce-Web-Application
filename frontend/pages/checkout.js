@@ -25,8 +25,8 @@ import { CHECK_ZIPCODE } from "../queries/productquery";
 import { get } from "lodash";
 import Loading from "../components/loadingComponent";
 import Paypal from "../components/checkoutcomponent/paypal/paypal";
-import { handleOrderPlaced } from "./handleOrder";
 import { PAYPAL } from "../utills/constant";
+import { handleOrderPlaced } from "../components/checkoutcomponent/handleOrder";
 
 const notify = (message, success) => {
   if (success) {

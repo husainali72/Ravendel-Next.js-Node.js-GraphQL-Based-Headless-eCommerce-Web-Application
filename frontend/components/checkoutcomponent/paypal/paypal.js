@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import React, { useRef, useEffect, useState } from "react";
-import { handleOrderPlaced } from "../../../pages/handleOrder";
 import PropTypes from "prop-types";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
@@ -8,6 +7,7 @@ import { Container } from "react-bootstrap";
 import Loading from "../../loadingComponent";
 import { get } from "lodash";
 import { thankyouPageRoute } from "../../../utills/constant";
+import { handleOrderPlaced } from "../handleOrder";
 
 const PaypalButtonStyle = {
   layout: "vertical",

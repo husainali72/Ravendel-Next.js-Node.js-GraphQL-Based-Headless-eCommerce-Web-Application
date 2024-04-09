@@ -1,16 +1,16 @@
 /* eslint-disable no-unused-vars */
 import { get } from "lodash";
-import { checkoutDetailAction } from "../redux/actions/checkoutAction";
-import { ADD_ORDER } from "../queries/orderquery";
-import { handleError, mutation } from "../utills/helpers";
-import { removeAllCartItemsAction } from "../redux/actions/cartAction";
-import notify from "../utills/notifyToast";
+import { checkoutDetailAction } from "../../redux/actions/checkoutAction";
+import { ADD_ORDER } from "../../queries/orderquery";
+import { handleError, mutation } from "../../utills/helpers";
+import { removeAllCartItemsAction } from "../../redux/actions/cartAction";
+import notify from "../../utills/notifyToast";
 import {
   CASH_ON_DELIVERY,
   PAYPAL,
   STRIPE,
   thankyouPageRoute,
-} from "../utills/constant";
+} from "../../utills/constant";
 
 export const handleOrderPlaced = (
   customerId,
