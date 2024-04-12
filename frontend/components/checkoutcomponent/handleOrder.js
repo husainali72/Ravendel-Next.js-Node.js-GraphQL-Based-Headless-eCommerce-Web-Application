@@ -8,6 +8,7 @@ import notify from "../../utills/notifyToast";
 import {
   CASH_ON_DELIVERY,
   PAYPAL,
+  RAZORPAY,
   STRIPE,
   thankyouPageRoute,
 } from "../../utills/constant";
@@ -23,7 +24,7 @@ export const handleOrderPlaced = (
   router
 ) => {
   return new Promise((resolve, reject) => {
-    if ("authenticated" === session?.status) {
+    if (session?.status === "authenticated") {
       setLoading(true);
       let paymentMethod = get(billingDetails, "billing.paymentMethod");
       let variable = {
@@ -36,12 +37,10 @@ export const handleOrderPlaced = (
       mutation(ADD_ORDER, variable, dispatch)
         .then((response) => {
           setLoading(false);
-          let success = get(response, "data.addOrder.success");
-          let message = get(response, "data.addOrder.message");
-          let redirectUrl = get(response, "data.addOrder.redirectUrl");
-          let orderId = get(response, "data.addOrder.id");
-          let paypalOrderId = get(response, "data.addOrder.paypalOrderId");
-
+          const { success, message, redirectUrl, orderId, paypalOrderId } = get(
+            response,
+            "data.addOrder"
+          );
           // Handle different payment methods
           switch (paymentMethod) {
             case STRIPE:

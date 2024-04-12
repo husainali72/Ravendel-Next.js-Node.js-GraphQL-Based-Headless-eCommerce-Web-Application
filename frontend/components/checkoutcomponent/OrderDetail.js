@@ -5,12 +5,13 @@ import Price from "../priceWithCurrency";
 import ProductImage from "../imageComponent";
 import CheckBox from "../check";
 import PropTypes from "prop-types";
-import { CASH_ON_DELIVERY, PAYPAL, STRIPE } from "../../utills/constant";
+import { CASH_ON_DELIVERY, CREDIT_CARD, PAYPAL, RAZORPAY, STRIPE } from "../../utills/constant";
 const paymentOptions = [
   { label: "Cash on delivery", value: CASH_ON_DELIVERY },
   { label: "Stripe", value: STRIPE },
-  { label: "Credit Card", value: "creditCard" },
+  { label: "Credit Card", value: CREDIT_CARD },
   { label: "Paypal", value: PAYPAL },
+  { label: "Razor Pay", value: RAZORPAY },
 ];
 const Orderdetail = (props) => {
   const {

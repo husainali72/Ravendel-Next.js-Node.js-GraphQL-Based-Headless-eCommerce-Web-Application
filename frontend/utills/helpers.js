@@ -153,22 +153,17 @@ export const stripeCheckout = (billDetails, cartItems, baseUrl) => {
 
 export const currencySetter = (settings, setCurrency) => {
   const currency = get(settings, "currency", "usd") || settings;
-  if (currency === "usd") {
-    setCurrency("$");
-  }
-  if (currency === "eur") {
-    setCurrency(<i className="fas fa-euro-sign"></i>);
-  }
-  if (currency === "gbp") {
-    setCurrency(<i className="fas fa-pound-sign"></i>);
-  }
-  if (currency === "cad") {
-    setCurrency("CA$");
-  }
-  if (currency === "inr") {
-    setCurrency(<i className="fas fa-rupee-sign"></i>);
-  }
+  const currencySymbols = {
+    usd: "$",
+    eur: <i className="fas fa-euro-sign"></i>,
+    gbp: <i className="fas fa-pound-sign"></i>,
+    cad: "CA$",
+    inr: <i className="fas fa-rupee-sign"></i>,
+  };
+  const selectedSymbol = currencySymbols[currency];
+  if (selectedSymbol) setCurrency(selectedSymbol);
 };
+
 export const formattedPrice = (value, currencyOptions) => {
   const decimal = get(currencyOptions, "number_of_decimals", "2");
   const thousandSeparator = get(currencyOptions, "thousand_separator", ",");
@@ -296,6 +291,5 @@ export const iconSetter = (iconName) => {
 };
 
 export const checkPaymentMethod = (paymentMethod) => {
-  if (paymentMethod === STRIPE || paymentMethod === PAYPAL) return true;
-  return false;
+  return paymentMethod === STRIPE || paymentMethod === PAYPAL;
 };

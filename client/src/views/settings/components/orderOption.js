@@ -36,7 +36,7 @@ const OrderOptionComponent = () => {
   return (
     <>
       <Alerts />
-      {settingState.loading ? <Loading /> : null}
+      {settingState?.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item md={6} sm={12} xs={12}>
           <Box component="div">
@@ -78,7 +78,7 @@ const OrderOptionComponent = () => {
                   });
                 }}
               >
-                {get(orderOption, "order_prefix_liqst")?.length > 0 ? (
+                {get(orderOption, "order_prefix_list")?.length > 0 ? (
                   get(orderOption, "order_prefix_list")?.map((orderPrefix) => {
                     return (
                       <MenuItem value={orderPrefix}>{orderPrefix}</MenuItem>
