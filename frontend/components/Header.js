@@ -39,14 +39,12 @@ const Header = ({ setOpenMenu }) => {
   }, [data?.status]);
 
   const checkSessionExpiration = async () => {
-    if (data?.status === "authenticated" && data) {
+    if (data && data?.status === "authenticated") {
       const expires = get(data, "data.user.accessToken.expiry");
       if (expires) {
         const expirationTime = new Date(expires).getTime();
         const currentTime = Date.now();
-        if (currentTime > expirationTime) {
-          setShowModal(true);
-        }
+        setShowModal(currentTime > expirationTime);
       }
     }
   };

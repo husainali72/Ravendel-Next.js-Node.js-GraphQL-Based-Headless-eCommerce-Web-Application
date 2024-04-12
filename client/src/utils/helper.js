@@ -188,14 +188,8 @@ export const mutationResponseHandler = (response, key) => {
 };
 
 export const getBaseUrl = (setting) => {
-  let status=get(setting,'settings.imageStorage.status','')
-  if (status === "s3") {
-    return bucketBaseURL;
-  } else if (status === "localStorage") {
-    return baseUrl;
-  } else {
-    return bucketBaseURL;
-  }
+  let status = get(setting, "settings.imageStorage.status", "");
+  return status === "localStorage" ? baseUrl : bucketBaseURL;
 };
 
 export const getValue = (value) => {

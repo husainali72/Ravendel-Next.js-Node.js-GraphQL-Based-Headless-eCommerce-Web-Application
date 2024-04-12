@@ -635,6 +635,12 @@ const viewStyles = makeStyles((theme) => ({
   orderOptionContainer:{
     minWidth: 120,
     width: "300px"
+  },
+  toggleBtn:{
+    display: "flex", alignItems: "center" 
+  },
+  toggleBtnLable:{
+    marginRight: "8px" 
   }
 }));
 
