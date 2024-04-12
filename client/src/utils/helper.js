@@ -1,4 +1,5 @@
-import NoImagePlaceHolder from "../assets/images/NoImagePlaceHolder.png"
+import { get } from "lodash";
+import NoImagePlaceHolder from "../assets/images/NoImagePlaceHolder.png";
 export const isEmpty = (value) =>
   value === undefined ||
   value === null ||
@@ -187,14 +188,10 @@ export const mutationResponseHandler = (response, key) => {
 };
 
 export const getBaseUrl = (setting) => {
-  if (setting?.settings?.imageStorage?.status === 's3') {
+  let status = get(setting, "settings.imageStorage.status", "");
+  return status === "localStorage" ? baseUrl : bucketBaseURL;
+};
 
-    return bucketBaseURL
-  }
-  else if (setting?.settings?.imageStorage?.status === 'localStorage') {
-    return baseUrl
-  }
-  else {
-    return bucketBaseURL
-  };
-}
+export const getValue = (value) => {
+  return value === null ? "" : value;
+};

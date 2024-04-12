@@ -13,6 +13,7 @@ import {
   getSingleOrderAction,
   updatePaymentStatus,
 } from "../../redux/actions/orderAction";
+import { checkPaymentMethod } from "../../utills/helpers";
 const ThankYou = () => {
   const session = useSession();
   const [singleOrderDetail, setSingleOrderDetail] = useState();
@@ -53,7 +54,7 @@ const ThankYou = () => {
     if (
       paymentStatus !== "success" &&
       paymentStatus !== "failed" &&
-      paymentMethod === "Stripe"
+      checkPaymentMethod(paymentMethod)
     ) {
       let customerId=get(session, "data.user.accessToken.customer._id")
       dispatch(updatePaymentStatus(payload,customerId));

@@ -2,42 +2,31 @@
 /* eslint-disable no-empty */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-import { API_BASE_URL, baseUrl } from "../config";
 import Link from "next/link";
 import client from "../apollo-client";
 import BreadCrumb from "../components/breadcrumb/breadcrumb";
-import { Container, Button } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import BillingDetails from "../components/checkoutcomponent/BillingDetail";
 import Orderdetail from "../components/checkoutcomponent/OrderDetail";
 import { useForm } from "react-hook-form";
-import { checkoutDetailAction } from "../redux/actions/checkoutAction";
 import CustomerDetail from "../components/checkoutcomponent/CustomerDetails";
 import { getSession, useSession } from "next-auth/react";
 import ShippingTaxCoupon from "../components/checkoutcomponent/ShippingTaxCoupon";
-import {
-  mutation,
-  stripeCheckout,
-  currencySetter,
-  query,
-  handleError,
-  queryWithoutToken,
-} from "../utills/helpers";
-import { ADD_ORDER } from "../queries/orderquery";
+import { currencySetter, query, queryWithoutToken } from "../utills/helpers";
 import { useRouter } from "next/router";
 import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
 import OrderSummary from "../components/checkoutcomponent/CheckOutOrderSummary";
 import Stepper from "../components/checkoutcomponent/stepperbar/Stepper";
-import {
-  calculateUserCart,
-  removeAllCartItemsAction,
-  removeCartItemAction,
-} from "../redux/actions/cartAction";
+import { calculateUserCart } from "../redux/actions/cartAction";
 import toast, { Toaster } from "react-hot-toast";
 import { CHECK_ZIPCODE } from "../queries/productquery";
 import { get } from "lodash";
 import Loading from "../components/loadingComponent";
+import Paypal from "../components/checkoutcomponent/paypal/paypal";
+import { PAYPAL } from "../utills/constant";
+import { handleOrderPlaced } from "../components/checkoutcomponent/handleOrder";
 
 const notify = (message, success) => {
   if (success) {
@@ -93,6 +82,7 @@ export const CheckOut = () => {
   });
   const carts = useSelector((state) => state.cart);
   const [cartItems, setCartItems] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [billingInfo, setBillingInfo] = useState(billingInfoObject);
   const [shippingInfo, setShippingInfo] = useState(shippingObject);
   const [shippingAdd, setShippingAdd] = useState(false);
@@ -423,53 +413,25 @@ export const CheckOut = () => {
       })
       .finally(() => setCouponLoading(false));
   };
-  const handleOrderPlaced = (e) => {
+  const handlePlacedOrder = (e) => {
+    let paymentMethod = get(billingDetails, "billing.paymentMethod");
     e.preventDefault();
-    if ("authenticated" === session?.status) {
-      setLoading(true);
-      let paymentMethod = get(billingDetails, "billing.paymentMethod");
-      let variable = {
-        ...billingDetails,
-      };
-      if (couponCartDetail?.couponApplied) {
-        variable.couponCode = get(couponCartDetail, "appliedCouponCode");
-      }
-      dispatch(checkoutDetailAction(billingDetails));
-      mutation(ADD_ORDER, variable, dispatch)
-        .then((response) => {
-          setLoading(false);
-          let success = get(response, "data.addOrder.success");
-          let message = get(response, "data.addOrder.message");
-          let redirectUrl = get(response, "data.addOrder.redirectUrl");
-          let orderId = get(response, "data.addOrder.id");
-          if (success && paymentMethod === "Stripe") {
-            if (redirectUrl) {
-              router.push(redirectUrl);
-            }
-          } else if (success && paymentMethod == "Cash On Delivery") {
-            let id = customerId;
-            let variables = { userId: id };
-            dispatch(removeAllCartItemsAction(variables));
-            setBillingDetails("");
-            if (orderId) {
-              router.push({
-                pathname: "/orderstatus/thankyou",
-                query: {
-                  orderId: orderId,
-                },
-              });
-            }
-          }
-          if (!success) {
-            notify(message, false);
-          }
-        })
-        .catch((error) => {
-          setLoading(false);
-          handleError(error, dispatch);
-        });
+    if (paymentMethod === PAYPAL) {
+      setPaymentMethod(paymentMethod);
+    } else {
+      handleOrderPlaced(
+        customerId,
+        session,
+        setLoading,
+        billingDetails,
+        dispatch,
+        couponCartDetail,
+        setBillingDetails,
+        router
+      );
     }
   };
+
   if (islogin) {
     switch (formStep) {
       case 1:
@@ -595,62 +557,72 @@ export const CheckOut = () => {
               <section className="checkout-section">
                 <Container>
                   <Stepper activeStep={formStep} steps={steps} />
-
-                  <div className="col-lg-12 third-container-checkout">
-                    <div className="checkout-coupon-container">
-                      <ShippingTaxCoupon
-                        currency={currency}
-                        shippingInfo={shippingInfo}
-                        prevFormStep={prevFormStep}
-                        shippingAdd={shippingAdd}
-                        billingInfo={billingInfo}
-                      />
-                      {loading && <Loading />}
-                      <h5>Your Order Summary</h5>
-                      <Orderdetail
-                        settings={settings}
-                        currency={currency}
-                        billingInfo={billingInfo}
-                        shippingInfo={shippingInfo}
-                        handleBillingInfo={handleBillingInfo}
-                        cartItems={cartItems}
-                        getOrderDetails={getOrderDetailsData}
-                      />
-                      {/* </form> */}
-                      {"stripe" === billingInfo.payment_method && (
-                        <Stripes
-                          getOrderDetailsData={getOrderDetailsData}
+                  {paymentMethod === PAYPAL ? (
+                    <Paypal
+                      customerId={customerId}
+                      session={session}
+                      setLoading={setLoading}
+                      billingDetails={billingDetails}
+                      couponCartDetail={couponCartDetail}
+                      setBillingDetails={setBillingDetails}
+                    />
+                  ) : (
+                    <div className="col-lg-12 third-container-checkout">
+                      <div className="checkout-coupon-container">
+                        <ShippingTaxCoupon
+                          currency={currency}
+                          shippingInfo={shippingInfo}
+                          prevFormStep={prevFormStep}
+                          shippingAdd={shippingAdd}
                           billingInfo={billingInfo}
-                          setBillingInfo={setBillingInfo}
-                          detailsOfBill={billingDetails}
-                          cartItems={cartItems}
                         />
-                      )}
+                        {loading && <Loading />}
+                        <h5>Your Order Summary</h5>
+                        <Orderdetail
+                          settings={settings}
+                          currency={currency}
+                          billingInfo={billingInfo}
+                          shippingInfo={shippingInfo}
+                          handleBillingInfo={handleBillingInfo}
+                          cartItems={cartItems}
+                          getOrderDetails={getOrderDetailsData}
+                        />
+                        {/* </form> */}
+                        {"stripe" === billingInfo.payment_method && (
+                          <Stripes
+                            getOrderDetailsData={getOrderDetailsData}
+                            billingInfo={billingInfo}
+                            setBillingInfo={setBillingInfo}
+                            detailsOfBill={billingDetails}
+                            cartItems={cartItems}
+                          />
+                        )}
 
-                      <button
-                        type="submit"
-                        className="btn btn-success primary-btn-color place-order-container"
-                        onClick={handleOrderPlaced}
-                        disabled={!billingInfo.paymentMethod}
-                      >
-                        Continue{" "}
-                      </button>
+                        <button
+                          type="submit"
+                          className="btn btn-success primary-btn-color place-order-container"
+                          onClick={handlePlacedOrder}
+                          disabled={!billingInfo.paymentMethod}
+                        >
+                          Continue{" "}
+                        </button>
+                      </div>
+                      <div className="checkout-order-summary-container">
+                        <OrderSummary
+                          totalSummary={totalSummary}
+                          removeCoupon={removeCoupon}
+                          currencyOption={currencyOption}
+                          currency={currency}
+                          couponCartDetail={couponCartDetail}
+                          CouponLoading={CouponLoading}
+                          Data
+                          doApplyCouponCode={doApplyCouponCode}
+                          couponCode={couponCode}
+                          setCouponCode={setCouponCode}
+                        />
+                      </div>
                     </div>
-                    <div className="checkout-order-summary-container">
-                      <OrderSummary
-                        totalSummary={totalSummary}
-                        removeCoupon={removeCoupon}
-                        currencyOption={currencyOption}
-                        currency={currency}
-                        couponCartDetail={couponCartDetail}
-                        CouponLoading={CouponLoading}
-                        Data
-                        doApplyCouponCode={doApplyCouponCode}
-                        couponCode={couponCode}
-                        setCouponCode={setCouponCode}
-                      />
-                    </div>
-                  </div>
+                  )}
                 </Container>
               </section>
             </div>

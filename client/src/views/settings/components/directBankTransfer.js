@@ -14,7 +14,7 @@ import { SettingTextInput, SettingBlock } from "./setting-components/";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../../theme/index.js";
 import { useEffect } from "react";
-import  { get } from "lodash";
+import { get } from "lodash";
 import { paymentBankUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
@@ -25,16 +25,15 @@ const DirectBankTransferTheme = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const settingState = useSelector((state) => state.settings);
-  const [bankTransferInfo, setBankTransferInfo] = useState({enable: false});
-   
-useEffect(() => {
-  if (
-    settingState.settings && settingState.settings.paymnet.bank_transfer
-  ){
-    setBankTransferInfo({...settingState.settings.paymnet.bank_transfer})
-  }
-}, [get(settingState, "settings")])
- 
+  const [bankTransferInfo, setBankTransferInfo] = useState({ enable: false });
+
+  useEffect(() => {
+    if (get(settingState, "settings.payment.bank_transfer")) {
+      setBankTransferInfo({
+        ...get(settingState, "settings.payment.bank_transfer"),
+      });
+    }
+  }, [get(settingState, "settings")]);
 
   const updateBank = () => {
     delete bankTransferInfo.account_details.__typename;
@@ -43,8 +42,8 @@ useEffect(() => {
 
   return (
     <>
-     <Alerts/>
-     {settingState.loading ? <Loading /> : null}
+      <Alerts />
+      {get(settingState, "loading") ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" className={classes.marginBottom2}>
@@ -52,11 +51,11 @@ useEffect(() => {
               control={
                 <Checkbox
                   color="primary"
-                  checked={bankTransferInfo.enable}
+                  checked={get(bankTransferInfo, "enable")}
                   onChange={(e) =>
                     setBankTransferInfo({
                       ...bankTransferInfo,
-                      enable: e.target.checked,
+                      enable: get(e, "target.checked"),
                     })
                   }
                 />
@@ -64,12 +63,12 @@ useEffect(() => {
               label="Enable bank transfer"
             />
           </Box>
-          {bankTransferInfo.enable && (
+          {get(bankTransferInfo, "enable") && (
             <Box>
               <Box component="div">
                 <SettingTextInput
                   label="Title"
-                  value={bankTransferInfo.title}
+                  value={get(bankTransferInfo, "title")}
                   onSettingInputChange={(val) =>
                     setBankTransferInfo({
                       ...bankTransferInfo,
@@ -82,7 +81,7 @@ useEffect(() => {
               <Box component="div">
                 <SettingTextInput
                   label="Description"
-                  value={bankTransferInfo?.description}
+                  value={get(bankTransferInfo, "description")}
                   onSettingInputChange={(val) =>
                     setBankTransferInfo({
                       ...bankTransferInfo,
@@ -95,7 +94,7 @@ useEffect(() => {
               <Box component="div">
                 <SettingTextInput
                   label="Instructions"
-                  value={bankTransferInfo?.instruction}
+                  value={get(bankTransferInfo, "instruction")}
                   onSettingInputChange={(val) =>
                     setBankTransferInfo({
                       ...bankTransferInfo,
@@ -110,12 +109,15 @@ useEffect(() => {
                   <Grid item lg={4} md={6} xs={12}>
                     <SettingTextInput
                       label="Account Name"
-                      value={bankTransferInfo.account_details.account_name}
+                      value={get(
+                        bankTransferInfo,
+                        "account_details.account_name"
+                      )}
                       onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
-                            ...bankTransferInfo.account_details,
+                            ...get(bankTransferInfo, "account_details"),
                             account_name: val,
                           },
                         })
@@ -126,12 +128,15 @@ useEffect(() => {
                   <Grid item lg={4} md={6} xs={12}>
                     <SettingTextInput
                       label="Account number"
-                      value={bankTransferInfo.account_details.account_number}
+                      value={get(
+                        bankTransferInfo,
+                        "account_details.account_number"
+                      )}
                       onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
-                            ...bankTransferInfo.account_details,
+                            ...get(bankTransferInfo, "account_details"),
                             account_number: val,
                           },
                         })
@@ -142,12 +147,12 @@ useEffect(() => {
                   <Grid item lg={4} md={6} xs={12}>
                     <SettingTextInput
                       label="Bank name"
-                      value={bankTransferInfo.account_details.bank_name}
+                      value={get(bankTransferInfo, "account_details.bank_name")}
                       onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
-                            ...bankTransferInfo.account_details,
+                            ...get(bankTransferInfo, "account_details"),
                             bank_name: val,
                           },
                         })
@@ -158,12 +163,15 @@ useEffect(() => {
                   <Grid item lg={4} md={6} xs={12}>
                     <SettingTextInput
                       label="Sort code"
-                      value={bankTransferInfo.account_details.short_code}
+                      value={get(
+                        bankTransferInfo,
+                        "account_details.short_code"
+                      )}
                       onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
-                            ...bankTransferInfo.account_details,
+                            ...get(bankTransferInfo, "account_details"),
                             short_code: val,
                           },
                         })
@@ -174,12 +182,12 @@ useEffect(() => {
                   <Grid item lg={4} md={6} xs={12}>
                     <SettingTextInput
                       label="IBAN"
-                      value={bankTransferInfo.account_details.iban}
+                      value={get(bankTransferInfo, "account_details.iban")}
                       onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
-                            ...bankTransferInfo.account_details,
+                            ...get(bankTransferInfo, "account_details"),
                             iban: val,
                           },
                         })
@@ -190,12 +198,12 @@ useEffect(() => {
                   <Grid item lg={4} md={6} xs={12}>
                     <SettingTextInput
                       label="BIC / Swift"
-                      value={bankTransferInfo.account_details.bic_swift}
+                      value={get(bankTransferInfo, "account_details.bic_swift")}
                       onSettingInputChange={(val) =>
                         setBankTransferInfo({
                           ...bankTransferInfo,
                           account_details: {
-                            ...bankTransferInfo.account_details,
+                            ...get(bankTransferInfo, "account_details"),
                             bic_swift: val,
                           },
                         })

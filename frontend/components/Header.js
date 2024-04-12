@@ -13,6 +13,9 @@ import { Toaster } from "react-hot-toast";
 import { get } from "lodash";
 import PropTypes from "prop-types";
 import ProductImage from "./imageComponent";
+import AlertModal from "./alert/alertModal";
+import { expiredTimeErrorMessage } from "./validationMessages";
+const SessionCheckInterval = 60000;
 const Header = ({ setOpenMenu }) => {
   const data = useSession();
   const cartItem = useSelector((state) => state.cart.cartItems);
@@ -20,7 +23,31 @@ const Header = ({ setOpenMenu }) => {
   const settings = useSelector((state) => state.setting);
   const dispatch = useDispatch();
   const dropdownRef = useRef(null);
+  const [timerId, setTimerId] = useState(null);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  useEffect(() => {
+    checkSessionExpiration();
+    const intervalId = setInterval(
+      checkSessionExpiration,
+      SessionCheckInterval
+    );
+    setTimerId(intervalId);
+    return () => {
+      clearInterval(timerId);
+    };
+  }, [data?.status]);
+
+  const checkSessionExpiration = async () => {
+    if (data && data?.status === "authenticated") {
+      const expires = get(data, "data.user.accessToken.expiry");
+      if (expires) {
+        const expirationTime = new Date(expires).getTime();
+        const currentTime = Date.now();
+        setShowModal(currentTime > expirationTime);
+      }
+    }
+  };
   const logOutUser = async () => {
     await logoutAndClearData(dispatch);
     window.location.pathname = "/";
@@ -57,11 +84,27 @@ const Header = ({ setOpenMenu }) => {
     getCartLength();
     dispatch(getSettings());
   }, [data, addedCart]);
+  const alertHandleConfirm = async () => {
+    setShowModal(false);
+    await logoutAndClearData(dispatch);
+  };
   return (
     <header className="header-area header-style-5 mt-0">
       <div className="header-top">
         <Container className="align-items-center">
           <Toaster />
+          {showModal && (
+            <AlertModal
+              confirmAction={alertHandleConfirm}
+              icon="error"
+              title="Oops..."
+              text={expiredTimeErrorMessage}
+              showConfirmButton={true}
+              confirmButtonText="OK"
+              confirmButtonColor="#dc3545"
+              allowOutsideClick={false}
+            />
+          )}
           <div className="row header-smartphone">
             <div className="col-xl-3 col-lg-4 col-sm-6 col-xs-6 align-items-center">
               <div className="header-info">

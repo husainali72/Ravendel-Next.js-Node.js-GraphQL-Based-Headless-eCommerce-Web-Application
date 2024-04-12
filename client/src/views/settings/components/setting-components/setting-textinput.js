@@ -4,6 +4,7 @@ import viewStyles from "../../../viewStyles";
 import clsx from "clsx";
 import theme from "../../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
+import { get } from "lodash";
 const SettingsTextInput = ({
   value,
   label,
@@ -11,6 +12,7 @@ const SettingsTextInput = ({
   otherClass,
   type,
   fullWidth,
+  name,
   ...other
 }) => {
   const classes = viewStyles();
@@ -19,13 +21,18 @@ const SettingsTextInput = ({
       type={type || "text"}
       variant="outlined"
       size="small"
+      name={name}
       className={clsx(
         fullWidth ? {} : classes.settingInput,
         otherClass ? otherClass : {}
       )}
       label={label}
       value={value}
-      onChange={(e) => onSettingInputChange(e.target.value)}
+      onChange={(e) => {
+        const name = get(e, "target.name", "");
+        const value = get(e, "target.value", "");
+        onSettingInputChange(value, name);
+      }}
       {...other}
       fullWidth={fullWidth}
     />
@@ -38,6 +45,7 @@ const SettingTextInput = ({
   onSettingInputChange,
   otherClass,
   type,
+  name,
   fullWidth,
   ...other
 }) => {
@@ -51,6 +59,7 @@ const SettingTextInput = ({
         type={type}
         fullWidth={fullWidth}
         other={other}
+        name={name}
       />
     </ThemeProvider>
   );

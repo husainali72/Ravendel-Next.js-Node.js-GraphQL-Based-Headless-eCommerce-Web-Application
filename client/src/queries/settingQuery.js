@@ -72,7 +72,7 @@ const SETTING_TILE_DATA = gql`
         order_digits
       }
     }
-    paymnet {
+    payment {
       cash_on_delivery {
         enable
         title
@@ -101,9 +101,10 @@ const SETTING_TILE_DATA = gql`
         statement_descriptor
         capture
         test_mode
-        publishable_key
-        secret_key
-        webhook_key
+        sandbox_publishable_key
+        live_publishable_key
+        sandbox_secret_key
+        live_secret_key
       }
       paypal {
         enable
@@ -115,9 +116,10 @@ const SETTING_TILE_DATA = gql`
         paypal_identity_token
         invoice_prefix
         test_mode
-        api_username
-        api_password
-        api_signature
+        sandbox_secrete_key
+        live_secrete_key
+        sandbox_client_id
+        live_client_id
       }
     }
     notification {
@@ -441,9 +443,10 @@ const UPDATE_PAYMENT_STRIPE = gql`
     $statement_descriptor: String
     $capture: Boolean
     $test_mode: Boolean
-    $publishable_key: String
-    $secret_key: String
-    $webhook_key: String
+    $sandbox_secret_key: String
+    $live_secret_key: String
+    $sandbox_publishable_key: String
+    $live_publishable_key: String
   ) {
     updatePaymnetStripe(
       enable: $enable
@@ -453,9 +456,10 @@ const UPDATE_PAYMENT_STRIPE = gql`
       statement_descriptor: $statement_descriptor
       capture: $capture
       test_mode: $test_mode
-      publishable_key: $publishable_key
-      secret_key: $secret_key
-      webhook_key: $webhook_key
+      sandbox_secret_key: $sandbox_secret_key
+      live_secret_key: $live_secret_key
+      sandbox_publishable_key: $sandbox_publishable_key
+      live_publishable_key: $live_publishable_key
     ) {
       ...SettingTile
     }
@@ -474,9 +478,10 @@ const UPDATE_PAYMENT_PAYPAL = gql`
     $paypal_identity_token: String
     $invoice_prefix: String
     $test_mode: Boolean
-    $api_username: String
-    $api_password: String
-    $api_signature: String
+    $sandbox_secrete_key: String
+    $live_secrete_key: String
+    $sandbox_client_id: String
+    $live_client_id: String
   ) {
     updatePaymentPaypal(
       enable: $enable
@@ -488,9 +493,10 @@ const UPDATE_PAYMENT_PAYPAL = gql`
       paypal_identity_token: $paypal_identity_token
       invoice_prefix: $invoice_prefix
       test_mode: $test_mode
-      api_username: $api_username
-      api_password: $api_password
-      api_signature: $api_signature
+      sandbox_secrete_key: $sandbox_secrete_key
+      live_secrete_key: $live_secrete_key
+      sandbox_client_id: $sandbox_client_id
+      live_client_id: $live_client_id
     ) {
       ...SettingTile
     }

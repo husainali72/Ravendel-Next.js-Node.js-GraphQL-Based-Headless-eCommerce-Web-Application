@@ -165,7 +165,7 @@ const SeetingSchema = new Schema(
         }
       }
     },
-    paymnet: {
+    payment: {
       cash_on_delivery: {
         enable: {
           type: Boolean,
@@ -487,7 +487,7 @@ module.exports.createSettings = async () => {
         order_digits: 5
       }
     },
-    paymnet: {
+    payment: {
       cash_on_delivery: {
         enable: true,
         title: "Title comes here",

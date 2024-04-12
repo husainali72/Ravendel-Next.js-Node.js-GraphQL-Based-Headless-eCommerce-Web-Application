@@ -11,6 +11,7 @@ import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
 import moment from "moment";
+import { PAYPAL, STRIPE } from "./constant";
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
   event.target.src = NoImagePlaceHolder.src;
@@ -117,7 +118,7 @@ export const queryWithoutToken = async (query, variables) => {
 };
 export const logoutAndClearData = async (dispatch) => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
-  removeItemFromLocalStorage("cart");
+  await removeItemFromLocalStorage("cart");
   dispatch(logoutDispatch());
   window.location.pathname = "/account";
 };
@@ -152,23 +153,17 @@ export const stripeCheckout = (billDetails, cartItems, baseUrl) => {
 
 export const currencySetter = (settings, setCurrency) => {
   const currency = get(settings, "currency", "usd") || settings;
-  if (currency === "usd") {
-    setCurrency("$");
-  }
-  if (currency === "eur") {
-    setCurrency(<i className="fas fa-euro-sign"></i>);
-  }
-  if (currency === "gbp") {
-    setCurrency(<i className="fas fa-pound-sign"></i>);
-  }
-  if (currency === "cad") {
-    setCurrency("CA$");
-  }
-  if (currency === "inr") {
-    setCurrency(<i className='fas fa-rupee-sign'></i>);
-  }
-
+  const currencySymbols = {
+    usd: "$",
+    eur: <i className="fas fa-euro-sign"></i>,
+    gbp: <i className="fas fa-pound-sign"></i>,
+    cad: "CA$",
+    inr: <i className="fas fa-rupee-sign"></i>,
+  };
+  const selectedSymbol = currencySymbols[currency];
+  if (selectedSymbol) setCurrency(selectedSymbol);
 };
+
 export const formattedPrice = (value, currencyOptions) => {
   const decimal = get(currencyOptions, "number_of_decimals", "2");
   const thousandSeparator = get(currencyOptions, "thousand_separator", ",");
@@ -190,8 +185,8 @@ export const getPrice = (price, currencyOptions) => {
   return "0.00";
 };
 export const isDiscount = (product) => {
-  const sellPrice = get(product, "pricing.sellprice",0);
-  const price = get(product, "pricing.price",0);
+  const sellPrice = get(product, "pricing.sellprice", 0);
+  const price = get(product, "pricing.price", 0);
 
   if (sellPrice && sellPrice > 0 && price && price > 0 && sellPrice < price) {
     const discountAmount = ((100 / price) * (price - sellPrice)).toFixed(2);
@@ -199,7 +194,6 @@ export const isDiscount = (product) => {
   }
   return false;
 };
-
 
 export const isVariantDiscount = (variantProduct) => {
   const sellPrice = get(variantProduct, "[0].pricing.sellprice", 0);
@@ -294,4 +288,8 @@ export const iconSetter = (iconName) => {
   if ("pinterest" === iconName) {
     return "fab fa-pinterest mx-2 icon-footer";
   }
+};
+
+export const checkPaymentMethod = (paymentMethod) => {
+  return paymentMethod === STRIPE || paymentMethod === PAYPAL;
 };

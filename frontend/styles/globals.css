@@ -5318,3 +5318,6 @@ justify-content: center;
 .checkout-login-btn{
   margin-top: 12px;
 }
+.payment-method-container{
+  display: flex;
+}
