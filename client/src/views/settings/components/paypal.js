@@ -175,15 +175,15 @@ const PaypalComponent = () => {
           <Box component="div">
             <SettingTextInput
               label={
-                checkPaypalMode() ? "Sandbox Secrete Key" : "Live Secrete Key"
+                checkPaypalMode() ? "Sandbox Secret Key" : "Live Secret Key"
               }
               value={getValue(get(
                 paypalInfo,
-                checkPaypalMode() ? "sandbox_secrete_key" : "live_secrete_key",
+                checkPaypalMode() ? "sandbox_secret_key" : "live_secret_key",
                 ""
               ))}
               name={
-                checkPaypalMode() ? "sandbox_secrete_key" : "live_secrete_key"
+                checkPaypalMode() ? "sandbox_secret_key" : "live_secret_key"
               }
               onSettingInputChange={(val, name) =>
                 setPaypalInfo({ ...paypalInfo, [name]: val })

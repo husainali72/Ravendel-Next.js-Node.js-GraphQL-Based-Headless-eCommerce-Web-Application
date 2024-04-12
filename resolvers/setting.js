@@ -282,14 +282,14 @@ module.exports = {
         setting.payment.stripe.enable = args.enable;
         setting.payment.stripe.title = args.title;
         setting.payment.stripe.description = args.description;
-        setting.payment.stripe.inline_credit_card_form =
-          args.inline_credit_card_form;
+        setting.payment.stripe.inline_credit_card_form = args.inline_credit_card_form;
         setting.payment.stripe.statement_descriptor = args.statement_descriptor;
         setting.payment.stripe.capture = args.capture;
         setting.payment.stripe.test_mode = args.test_mode;
-        setting.payment.stripe.publishable_key = args.publishable_key;
-        setting.payment.stripe.secret_key = args.secret_key;
-        setting.payment.stripe.webhook_key = args.webhook_key;
+        setting.payment.stripe.sandbox_secret_key = args.sandbox_secret_key;
+        setting.payment.stripe.live_secret_key = args.live_secret_key;
+        setting.payment.stripe.sandbox_publishable_key = args.sandbox_publishable_key;
+        setting.payment.stripe.live_publishable_key = args.live_publishable_key;
         return await setting.save();
       } catch (error) {
         error = checkError(error);
@@ -311,9 +311,28 @@ module.exports = {
           args.paypal_identity_token;
         setting.payment.paypal.invoice_prefix = args.invoice_prefix;
         setting.payment.paypal.test_mode = args.test_mode;
-        setting.payment.paypal.api_username = args.api_username;
-        setting.payment.paypal.api_password = args.api_password;
-        setting.payment.paypal.api_signature = args.api_signature;
+        setting.payment.paypal.sandbox_secret_key = args.sandbox_secret_key;
+        setting.payment.paypal.live_secret_key = args.live_secret_key;
+        setting.payment.paypal.sandbox_client_id = args.sandbox_client_id;
+        setting.payment.paypal.live_client_id = args.live_client_id;
+        return await setting.save();
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
+    updatePaymentRazorpay: async (root, args, { id }) => {
+      checkToken(id);
+      try {
+        const setting = await Setting.findOne({});
+        setting.payment.razorpay.enable = args.enable;
+        setting.payment.razorpay.title = args.title;
+        setting.payment.razorpay.description = args.description;
+        setting.payment.razorpay.test_mode = args.test_mode;
+        setting.payment.razorpay.sandbox_secret_key = args.sandbox_secret_key;
+        setting.payment.razorpay.live_secret_key = args.live_secret_key;
+        setting.payment.razorpay.sandbox_client_id = args.sandbox_client_id;
+        setting.payment.razorpay.live_client_id = args.live_client_id;
         return await setting.save();
       } catch (error) {
         error = checkError(error);

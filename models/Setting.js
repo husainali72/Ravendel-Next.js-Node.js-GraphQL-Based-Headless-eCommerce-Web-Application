@@ -236,15 +236,22 @@ const SeetingSchema = new Schema(
         test_mode: {
           type: Boolean,
         },
-        publishable_key: {
-          type: String,
-        },
-        secret_key: {
-          type: String,
-        },
         webhook_key: {
           type: String,
         },
+        sandbox_secret_key: {
+          type: String
+        },
+        live_secret_key: { 
+          type: String
+        },
+        sandbox_publishable_key: {
+          type: String
+        },
+        live_publishable_key: {
+          type: String
+        },
+
       },
       paypal: {
         enable: {
@@ -274,16 +281,46 @@ const SeetingSchema = new Schema(
         test_mode: {
           type: Boolean,
         },
-        api_username: {
-          type: String,
+        sandbox_secret_key: {
+          type: String
         },
-        api_password: {
-          type: String,
+        live_secret_key: { 
+          type: String
         },
-        api_signature: {
-          type: String,
+        sandbox_client_id: {
+          type: String
+        },
+        live_client_id: {
+          type: String
         },
       },
+      razorpay: {
+        enable: {
+          type: Boolean
+        },
+        title: {
+          type: String
+        },
+        description: {
+          type: String
+        },
+        test_mode: {
+          type: Boolean
+        },
+        sandbox_secret_key: {
+          type: String
+        },
+        live_secret_key: { 
+          type: String
+        },
+        sandbox_client_id: {
+          type: String
+        },
+        live_client_id: {
+          type: String
+        },
+
+      }
     },
     notification: {
       one_signal: {
@@ -516,9 +553,10 @@ module.exports.createSettings = async () => {
         statement_descriptor: "",
         capture: true,
         test_mode: true,
-        publishable_key: "",
-        secret_key: "",
-        webhook_key: "",
+        sandbox_secret_key: "",
+        live_secret_key: "",
+        sandbox_publishable_key: "",
+        live_publishable_key: ""
       },
       paypal: {
         enable: true,
@@ -530,9 +568,20 @@ module.exports.createSettings = async () => {
         paypal_identity_token: "",
         invoice_prefix: "",
         test_mode: true,
-        api_username: "",
-        api_password: "",
-        api_signature: "",
+        sandbox_secret_key: "",
+        live_secret_key: "",
+        sandbox_client_id: "",
+        live_client_id: ""
+      },
+      razorpay: {
+        enable: true,
+        title: "",
+        description: "",
+        test_mode: true,
+        sandbox_secret_key: "",
+        live_secret_key: "",
+        sandbox_client_id: "",
+        live_client_id: ""
       },
     },
     notification: {

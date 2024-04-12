@@ -116,8 +116,8 @@ const SETTING_TILE_DATA = gql`
         paypal_identity_token
         invoice_prefix
         test_mode
-        sandbox_secrete_key
-        live_secrete_key
+        sandbox_secret_key
+        live_secret_key
         sandbox_client_id
         live_client_id
       }
@@ -478,8 +478,8 @@ const UPDATE_PAYMENT_PAYPAL = gql`
     $paypal_identity_token: String
     $invoice_prefix: String
     $test_mode: Boolean
-    $sandbox_secrete_key: String
-    $live_secrete_key: String
+    $sandbox_secret_key: String
+    $live_secret_key: String
     $sandbox_client_id: String
     $live_client_id: String
   ) {
@@ -493,8 +493,8 @@ const UPDATE_PAYMENT_PAYPAL = gql`
       paypal_identity_token: $paypal_identity_token
       invoice_prefix: $invoice_prefix
       test_mode: $test_mode
-      sandbox_secrete_key: $sandbox_secrete_key
-      live_secrete_key: $live_secrete_key
+      sandbox_secret_key: $sandbox_secret_key
+      live_secret_key: $live_secret_key
       sandbox_client_id: $sandbox_client_id
       live_client_id: $live_client_id
     ) {
