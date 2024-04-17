@@ -12,6 +12,7 @@ import {
   STRIPE,
   thankyouPageRoute,
 } from "../../utills/constant";
+import { razorPay } from "./razorpay/rajorpay";
 
 export const handleOrderPlaced = (
   customerId,
@@ -21,7 +22,8 @@ export const handleOrderPlaced = (
   dispatch,
   couponCartDetail,
   setBillingDetails,
-  router
+  router,
+  razorpayKey
 ) => {
   return new Promise((resolve, reject) => {
     if (session?.status === "authenticated") {
@@ -37,7 +39,7 @@ export const handleOrderPlaced = (
       mutation(ADD_ORDER, variable, dispatch)
         .then((response) => {
           setLoading(false);
-          const { success, message, redirectUrl, orderId, paypalOrderId } = get(
+          const { success, message, redirectUrl, id:orderId, paypalOrderId,razorpayOrderId } = get(
             response,
             "data.addOrder"
           );
@@ -67,6 +69,11 @@ export const handleOrderPlaced = (
                     orderId: orderId,
                   },
                 });
+              }
+              break;
+            case RAZORPAY:
+              if (success && razorpayOrderId) {
+                razorPay(razorpayKey,razorpayOrderId)
               }
               break;
             default:

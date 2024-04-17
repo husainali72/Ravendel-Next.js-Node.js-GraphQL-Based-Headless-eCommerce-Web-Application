@@ -52,7 +52,13 @@ export function MyApp({
     TagManager.initialize(tagManagerArgs);
   }, []);
   useEffect(() => {
-    let clientId = get(settings, "setting.payment.paypal.api_password");
+    let paypalmode = get(settings, "setting.payment.paypal.test_mode");
+    let clientId = "";
+    if (paypalmode) {
+      clientId = get(settings, "setting.payment.paypal.sandbox_client_id");
+    } else {
+      clientId = get(settings, "setting.payment.paypal.live_client_id");
+    }
     setPaypalClientId(clientId);
   }, [settings]);
 
@@ -85,6 +91,7 @@ export function MyApp({
                   src="https://kit.fontawesome.com/60e73f4013.js"
                   crossOrigin="anonymous"
                 ></Script>
+                <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
                 <PaypalScriptLoader clientId={paypalClientId} />
                 <link
                   rel="stylesheet"
