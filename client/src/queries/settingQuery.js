@@ -121,6 +121,16 @@ const SETTING_TILE_DATA = gql`
         sandbox_client_id
         live_client_id
       }
+      razorpay {
+        enable
+        title
+        description
+        test_mode
+        sandbox_secret_key
+        live_secret_key
+        sandbox_client_id
+        live_client_id
+      }
     }
     notification {
       one_signal {
@@ -503,6 +513,36 @@ const UPDATE_PAYMENT_PAYPAL = gql`
   }
   ${SETTING_TILE_DATA}
 `;
+const UPDATE_PAYMENT_RAZORPAY = gql`
+  mutation(
+    $enable: Boolean
+    $title: String
+    $description: String
+    $razorpay_email: String
+    $receiver_email: String
+    $test_mode: Boolean
+    $sandbox_secret_key: String
+    $live_secret_key: String
+    $sandbox_client_id: String
+    $live_client_id: String
+  ) {
+    updatePaymentRazorpay(
+      enable: $enable
+      title: $title
+      description: $description
+      razorpay_email: $razorpay_email
+      receiver_email: $receiver_email
+      test_mode: $test_mode
+      sandbox_secret_key: $sandbox_secret_key
+      live_secret_key: $live_secret_key
+      sandbox_client_id: $sandbox_client_id
+      live_client_id: $live_client_id
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
 
 const UPDATE_NOTIFICATION_ONESIGNAL = gql`
   mutation($app_id: String, $rest_api_key: String) {
@@ -650,6 +690,7 @@ export {
   UPDATE_PAYMENT_BANK,
   UPDATE_PAYMENT_STRIPE,
   UPDATE_PAYMENT_PAYPAL,
+  UPDATE_PAYMENT_RAZORPAY,
   UPDATE_NOTIFICATION_ONESIGNAL,
   UPDATE_APPEARANCE_HOME,
   UPDATE_APPEARANCE_MOBILE,
