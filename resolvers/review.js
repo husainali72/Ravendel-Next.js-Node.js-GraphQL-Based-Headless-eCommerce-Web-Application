@@ -95,7 +95,6 @@ module.exports = {
   },
   Mutation: {
     addReview: async (root, args, { id }) => {
-      //console.log("addReview")
       let data = {
         title: args.title,
         review: args.review,
@@ -105,7 +104,6 @@ module.exports = {
         rating: args.rating,
         status: args.status,
       };
-      //console.log("data==", data)
       let validation = ["title", "rating", "review", "email"];
       const duplicate = await duplicateData({review: args.review, customerId: args.customerId, productId: args.productId}, Review)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Review", false);
@@ -120,7 +118,7 @@ module.exports = {
       );
     },
     updateReview: async (root, args, { id }) => {
-      //console.log(args)
+      console.log(args)
       let data = {
         title: args.title,
         review: args.review,
