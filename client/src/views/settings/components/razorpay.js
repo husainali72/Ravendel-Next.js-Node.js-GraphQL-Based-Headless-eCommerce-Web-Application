@@ -73,121 +73,85 @@ const RazorPayComponent = () => {
                   rows="5"
                 />
               </Box>
-
-              <Box component="div">
-                <SettingTextInput
-                  label="Razor Pay email"
-                  value={get(razorPayInfo, "razorpay_email")}
-                  onSettingInputChange={(val) =>
-                    setRazorPayInfo({ ...razorPayInfo, razorpay_email: val })
-                  }
-                  type="email"
-                />
-              </Box>
-
-              <Box component="div" className={classes.marginBottom2}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      color="primary"
-                      checked={get(razorPayInfo, "ipn_email_notification")}
-                      onChange={(e) =>
-                        setRazorPayInfo({
-                          ...razorPayInfo,
-                          ipn_email_notification: get(e, "target.checked"),
-                        })
-                      }
-                    />
-                  }
-                  label="Enable IPN email notifications"
-                />
-              </Box>
-
-              <Box component="div">
-                <SettingTextInput
-                  label="Receiver email"
-                  value={get(razorPayInfo, "receiver_email")}
-                  onSettingInputChange={(val) =>
-                    setRazorPayInfo({ ...razorPayInfo, receiver_email: val })
-                  }
-                  type="email"
-                />
-              </Box>
             </Box>
           )}
         </Grid>
 
         {/* ===================SandBox ANd Live=================== */}
 
-        <Grid item md={6} sm={12} xs={12}>
-          <Box component="div" className={classes.marginBottom2}>
-            <ToggleSwitch
-              color="primary"
-              checked={get(razorPayInfo, "test_mode", false)}
-              onChange={(e) =>
-                setRazorPayInfo({
-                  ...razorPayInfo,
-                  test_mode: get(e, "target.checked"),
-                })
-              }
-            />
-          </Box>
-          <Box component="div">
-            <SettingTextInput
-              label="Sandbox Client Id"
-              name="sandbox_client_id"
-              value={getValue(get(razorPayInfo, "sandbox_client_id", ""))}
-              onSettingInputChange={(val, name) => {
-                setRazorPayInfo({ ...razorPayInfo, [name]: val });
-              }}
-              type="password"
-            />
-          </Box>
-          <Box component="div">
-            <SettingTextInput
-              label="Sandbox Secret Key"
-              value={getValue(get(razorPayInfo, "sandbox_secret_key", ""))}
-              name="sandbox_secret_key"
-              onSettingInputChange={(val, name) =>
-                setRazorPayInfo({ ...razorPayInfo, [name]: val })
-              }
-              type="password"
-            />
-          </Box>
-          <Box component="div">
-            <SettingTextInput
-              label="Live Client Id"
-              name="live_client_id"
-              value={getValue(get(razorPayInfo, "live_client_id", ""))}
-              onSettingInputChange={(val, name) => {
-                setRazorPayInfo({ ...razorPayInfo, [name]: val });
-              }}
-              type="password"
-            />
-          </Box>
-          <Box component="div">
-            <SettingTextInput
-              label="Live Secret Key"
-              value={getValue(get(razorPayInfo, "live_secret_key", ""))}
-              name="live_secret_key"
-              onSettingInputChange={(val, name) =>
-                setRazorPayInfo({ ...razorPayInfo, [name]: val })
-              }
-              type="password"
-            />
-          </Box>
-        </Grid>
+        {get(razorPayInfo, "enable") && (
+          <>
+            <Grid item md={6} sm={12} xs={12}>
+              <Box component="div" className={classes.marginBottom2}>
+                <ToggleSwitch
+                  color="primary"
+                  checked={get(razorPayInfo, "test_mode", false)}
+                  onChange={(e) =>
+                    setRazorPayInfo({
+                      ...razorPayInfo,
+                      test_mode: get(e, "target.checked"),
+                    })
+                  }
+                />
+              </Box>
+              <Box component="div">
+                <SettingTextInput
+                  label="Sandbox Client Id"
+                  name="sandbox_client_id"
+                  value={getValue(get(razorPayInfo, "sandbox_client_id", ""))}
+                  onSettingInputChange={(val, name) => {
+                    setRazorPayInfo({ ...razorPayInfo, [name]: val });
+                  }}
+                  type="password"
+                />
+              </Box>
+              <Box component="div">
+                <SettingTextInput
+                  label="Sandbox Secret Key"
+                  value={getValue(get(razorPayInfo, "sandbox_secret_key", ""))}
+                  name="sandbox_secret_key"
+                  onSettingInputChange={(val, name) =>
+                    setRazorPayInfo({ ...razorPayInfo, [name]: val })
+                  }
+                  type="password"
+                />
+              </Box>
+              <Box component="div">
+                <SettingTextInput
+                  label="Live Client Id"
+                  name="live_client_id"
+                  value={getValue(get(razorPayInfo, "live_client_id", ""))}
+                  onSettingInputChange={(val, name) => {
+                    setRazorPayInfo({ ...razorPayInfo, [name]: val });
+                  }}
+                  type="password"
+                />
+              </Box>
+              <Box component="div">
+                <SettingTextInput
+                  label="Live Secret Key"
+                  value={getValue(get(razorPayInfo, "live_secret_key", ""))}
+                  name="live_secret_key"
+                  onSettingInputChange={(val, name) =>
+                    setRazorPayInfo({ ...razorPayInfo, [name]: val })
+                  }
+                  type="password"
+                />
+              </Box>
+            </Grid>
 
-        <Grid item xs={12}>
-          <Button
-            size="small"
-            color="primary"
-            variant="contained"
-            onClick={updateRazorPay}
-          >
-            Save Change
-          </Button>
-        </Grid>
+            <Grid item xs={12}>
+              <Button
+                size="small"
+                color="primary"
+                variant="contained"
+                onClick={updateRazorPay}
+              >
+                Save Change
+              </Button>
+            </Grid>
+          </>
+        )}
       </Grid>
     </>
   );
