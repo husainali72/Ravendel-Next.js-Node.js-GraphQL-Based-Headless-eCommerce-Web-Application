@@ -99,41 +99,31 @@ const StripeComponent = () => {
               />
             </Box>
             <Box component="div">
-                <SettingTextInput
-                  label="Sandbox Publishable Key"
-                  value={getValue(
-                    get(
-                      stripeInfo,"sandbox_publishable_key",
-                      ""
-                    )
-                  )}
-                  name="sandbox_publishable_key"
-                  onSettingInputChange={(val, name) =>
-                    setstripeInfo({
-                      ...stripeInfo,
-                      [name]: val,
-                    })
-                  }
-                />
-              </Box>
+              <SettingTextInput
+                label="Sandbox Publishable Key"
+                value={getValue(get(stripeInfo, "sandbox_publishable_key", ""))}
+                name="sandbox_publishable_key"
+                onSettingInputChange={(val, name) =>
+                  setstripeInfo({
+                    ...stripeInfo,
+                    [name]: val,
+                  })
+                }
+              />
+            </Box>
             <Box component="div">
-                <SettingTextInput
-                  label="Live Publishable Key"
-                  value={getValue(
-                    get(
-                      stripeInfo,"live_publishable_key",
-                      ""
-                    )
-                  )}
-                  name="live_publishable_key"
-                  onSettingInputChange={(val, name) =>
-                    setstripeInfo({
-                      ...stripeInfo,
-                      [name]: val,
-                    })
-                  }
-                />
-              </Box>
+              <SettingTextInput
+                label="Live Publishable Key"
+                value={getValue(get(stripeInfo, "live_publishable_key", ""))}
+                name="live_publishable_key"
+                onSettingInputChange={(val, name) =>
+                  setstripeInfo({
+                    ...stripeInfo,
+                    [name]: val,
+                  })
+                }
+              />
+            </Box>
             <Box component="div">
               <SettingTextInput
                 label="Sandbox Secret Key"
