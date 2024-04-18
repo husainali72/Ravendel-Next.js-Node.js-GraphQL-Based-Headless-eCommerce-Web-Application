@@ -290,7 +290,7 @@ module.exports = {
         // category filter
         if (category) pipeline[0].$match.$and.push({ categoryId: { $in: [`${category}`] } })
         // brand filter
-        if (brand) pipeline[0].$match.$and.push({ brand: mongoose.Types.ObjectId(brand) })
+        if (brand) pipeline[0].$match.$and.push({ brand: new mongoose.Types.ObjectId(brand) })
         // product type filter
         if (product_type === "virtual") pipeline[0].$match.$and.push({ 'product_type.virtual': true })
         else if (product_type === "downloadable") pipeline[0].$match.$and.push({ 'product_type.downloadable': true })
