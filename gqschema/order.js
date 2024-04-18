@@ -37,6 +37,7 @@ module.exports = `
     id: ID
     redirectUrl: String
     paypalOrderId: String
+    razorpayOrderId: String
   }
   extend type Query {
     orders: OrderRES

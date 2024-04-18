@@ -25,7 +25,7 @@ import { CHECK_ZIPCODE } from "../queries/productquery";
 import { get } from "lodash";
 import Loading from "../components/loadingComponent";
 import Paypal from "../components/checkoutcomponent/paypal/paypal";
-import { PAYPAL } from "../utills/constant";
+import { PAYPAL, RAZORPAY } from "../utills/constant";
 import { handleOrderPlaced } from "../components/checkoutcomponent/handleOrder";
 
 const notify = (message, success) => {
@@ -182,6 +182,12 @@ export const CheckOut = () => {
       setIsLogin(false);
     }
   }, [get(carts, "cartItems")]);
+
+  useEffect(() => {
+    // Scroll to the top when the form step changes
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [formStep]);
+  
   const {
     register,
     handleSubmit,
@@ -413,12 +419,13 @@ export const CheckOut = () => {
       })
       .finally(() => setCouponLoading(false));
   };
-  const handlePlacedOrder = (e) => {
+  const handlePlacedOrder = async (e) => {
     let paymentMethod = get(billingDetails, "billing.paymentMethod");
+    let razorpayKey=get(settings,'setting.payment.razorpay.sandbox_client_id','')
     e.preventDefault();
     if (paymentMethod === PAYPAL) {
       setPaymentMethod(paymentMethod);
-    } else {
+    }else {
       handleOrderPlaced(
         customerId,
         session,
@@ -427,7 +434,8 @@ export const CheckOut = () => {
         dispatch,
         couponCartDetail,
         setBillingDetails,
-        router
+        router,
+        razorpayKey
       );
     }
   };
@@ -587,17 +595,6 @@ export const CheckOut = () => {
                           cartItems={cartItems}
                           getOrderDetails={getOrderDetailsData}
                         />
-                        {/* </form> */}
-                        {"stripe" === billingInfo.payment_method && (
-                          <Stripes
-                            getOrderDetailsData={getOrderDetailsData}
-                            billingInfo={billingInfo}
-                            setBillingInfo={setBillingInfo}
-                            detailsOfBill={billingDetails}
-                            cartItems={cartItems}
-                          />
-                        )}
-
                         <button
                           type="submit"
                           className="btn btn-success primary-btn-color place-order-container"

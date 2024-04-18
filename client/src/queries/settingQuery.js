@@ -116,8 +116,18 @@ const SETTING_TILE_DATA = gql`
         paypal_identity_token
         invoice_prefix
         test_mode
-        sandbox_secrete_key
-        live_secrete_key
+        sandbox_secret_key
+        live_secret_key
+        sandbox_client_id
+        live_client_id
+      }
+      razorpay {
+        enable
+        title
+        description
+        test_mode
+        sandbox_secret_key
+        live_secret_key
         sandbox_client_id
         live_client_id
       }
@@ -478,8 +488,8 @@ const UPDATE_PAYMENT_PAYPAL = gql`
     $paypal_identity_token: String
     $invoice_prefix: String
     $test_mode: Boolean
-    $sandbox_secrete_key: String
-    $live_secrete_key: String
+    $sandbox_secret_key: String
+    $live_secret_key: String
     $sandbox_client_id: String
     $live_client_id: String
   ) {
@@ -493,8 +503,38 @@ const UPDATE_PAYMENT_PAYPAL = gql`
       paypal_identity_token: $paypal_identity_token
       invoice_prefix: $invoice_prefix
       test_mode: $test_mode
-      sandbox_secrete_key: $sandbox_secrete_key
-      live_secrete_key: $live_secrete_key
+      sandbox_secret_key: $sandbox_secret_key
+      live_secret_key: $live_secret_key
+      sandbox_client_id: $sandbox_client_id
+      live_client_id: $live_client_id
+    ) {
+      ...SettingTile
+    }
+  }
+  ${SETTING_TILE_DATA}
+`;
+const UPDATE_PAYMENT_RAZORPAY = gql`
+  mutation(
+    $enable: Boolean
+    $title: String
+    $description: String
+    $razorpay_email: String
+    $receiver_email: String
+    $test_mode: Boolean
+    $sandbox_secret_key: String
+    $live_secret_key: String
+    $sandbox_client_id: String
+    $live_client_id: String
+  ) {
+    updatePaymentRazorpay(
+      enable: $enable
+      title: $title
+      description: $description
+      razorpay_email: $razorpay_email
+      receiver_email: $receiver_email
+      test_mode: $test_mode
+      sandbox_secret_key: $sandbox_secret_key
+      live_secret_key: $live_secret_key
       sandbox_client_id: $sandbox_client_id
       live_client_id: $live_client_id
     ) {
@@ -650,6 +690,7 @@ export {
   UPDATE_PAYMENT_BANK,
   UPDATE_PAYMENT_STRIPE,
   UPDATE_PAYMENT_PAYPAL,
+  UPDATE_PAYMENT_RAZORPAY,
   UPDATE_NOTIFICATION_ONESIGNAL,
   UPDATE_APPEARANCE_HOME,
   UPDATE_APPEARANCE_MOBILE,

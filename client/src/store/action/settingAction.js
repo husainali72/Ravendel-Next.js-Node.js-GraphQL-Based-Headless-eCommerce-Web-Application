@@ -14,10 +14,9 @@ import {
   UPDATE_PAYMENT_BANK,
   UPDATE_PAYMENT_STRIPE,
   UPDATE_PAYMENT_PAYPAL,
-  UPDATE_APPEARANCE_HOME,
+  UPDATE_PAYMENT_RAZORPAY,
   UPDATE_APPEARANCE_THEME,
   UPDATE_APPEARANCE_HOME_NEW,
-  UPDATE_APPEARANCE_MOBILE,
   UPDATE_APPEARANCE_MOBILE_NEW,
   UPDATE_NOTIFICATION_ONESIGNAL,
   UPDATE_STORE_ORDER,
@@ -31,6 +30,7 @@ import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
 import jumpTo from "../../utils/navigation";
 import { mutationResponseHandler } from "../../utils/helper";
+import { get } from "lodash";
 
 export const getDatesAction = () => (dispatch) => {
   dispatch({
@@ -448,7 +448,39 @@ export const paymentPaypalUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updatePaymentPaypal,
+          payload: get(response,'data.updatePaymentPaypal'),
+        });
+
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: true,
+            message: "Updated successfully",
+            error: false,
+          },
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: SETTING_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
+export const paymentRazorPayUpdateAction = (object) => (dispatch) => {
+  dispatch({
+    type: SETING_LOADING,
+  });
+  mutation(UPDATE_PAYMENT_RAZORPAY, object)
+    .then((response) => {
+      if (response) {
+        dispatch({
+          type: SETTING_SUCCESS,
+          payload: get(response,'data.updatePaymentRazorpay'),
         });
 
         return dispatch({

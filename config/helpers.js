@@ -1408,14 +1408,14 @@ const addOrder = async(args) => {
     };
   }
 
-  let validPaymentModes = ["Cash On Delivery", "Stripe", "Paypal"];
+  let validPaymentModes = ["Cash On Delivery", "Stripe", "Paypal", "Razor Pay"];
   if (!validPaymentModes.includes(args.billing.paymentMethod)) {
     return MESSAGE_RESPONSE("InvalidField", "Payment mode", false); 
   }
 
   const setting = await Setting.findOne({});
   
-  let status = 'pending', redirectUrl, paypalOrderId;
+  let status = 'pending', redirectUrl, paypalOrderId, razorpayOrderId;
   if(args.billing.paymentMethod !== 'Cash On Delivery') {
     status = 'processing';
   }
@@ -1453,11 +1453,18 @@ const addOrder = async(args) => {
   
   let currencycode = setting.store.currency_options.currency.toUpperCase();
 
+  let environmentBool = process.env.NODE_ENV.trim() === 'production';
+
   if (args.billing.paymentMethod === 'Cash On Delivery') {
     const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
     emptyCart(cart);
   } else if(args.billing.paymentMethod === 'Stripe') {
-    var Secret_Key = setting.payment.stripe.secret_key;
+    
+    const testMode = _.get(setting, 'payment.stripe.test_mode');
+    const secretKey = environmentBool ? (testMode ? 'sandbox_secret_key' : 'live_secret_key') : 'sandbox_secret_key';
+
+    let Secret_Key = _.get(setting, `payment.stripe.${secretKey}`);
+
     if(!Secret_Key) {
       return MESSAGE_RESPONSE("PaymentNotConfigured", "Stripe", false);
     }
@@ -1505,10 +1512,16 @@ const addOrder = async(args) => {
     
     const paypal = require('@paypal/checkout-server-sdk');
 
-    let paypal_client_id = _.get(setting, 'payment.paypal.api_password');
-    let paypal_client_secret = _.get(setting, 'payment.paypal.api_signature');
+    const testMode = _.get(setting, 'payment.paypal.test_mode');
 
-    const Environment = process.env.NODE_ENV === 'production' ? paypal.core.LiveEnvironment : paypal.core.SandboxEnvironment
+    const clientIdKey = environmentBool ? (testMode ? 'sandbox_client_id' : 'live_client_id') : 'sandbox_client_id';
+    const secretKey = environmentBool ? (testMode ? 'sandbox_secret_key' : 'live_secret_key') : 'sandbox_secret_key';
+
+    let paypal_client_id = _.get(setting, `payment.paypal.${clientIdKey}`);
+    let paypal_client_secret = _.get(setting, `payment.paypal.${secretKey}`);
+
+    // const Environment = process.env.NODE_ENV === 'production' ? paypal.core.LiveEnvironment : paypal.core.SandboxEnvironment
+    const Environment = environmentBool ? (testMode ? paypal.core.SandboxEnvironment : paypal.core.LiveEnvironment) : paypal.core.SandboxEnvironment;
     const paypalClient = new paypal.core.PayPalHttpClient(
       new Environment(
         paypal_client_id, paypal_client_secret
@@ -1557,7 +1570,38 @@ const addOrder = async(args) => {
     paypalOrderId = order.result.id;
     
     let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : order } });
+  } else if(args.billing.paymentMethod === 'Razor Pay') {
+  
+    const Razorpay = require('razorpay');
+    
+    const testMode = _.get(setting, 'payment.razorpay.test_mode');
+
+    const clientIdKey = environmentBool ? (testMode ? 'sandbox_client_id' : 'live_client_id') : 'sandbox_client_id';
+    const secretKey = environmentBool ? (testMode ? 'sandbox_secret_key' : 'live_secret_key') : 'sandbox_secret_key';
+
+    let razorpay_client_id = _.get(setting, `payment.razorpay.${clientIdKey}`);
+    let razorpay_client_secret = _.get(setting, `payment.razorpay.${secretKey}`);
+
+    const razorpayInstance = new Razorpay({
+      key_id: razorpay_client_id,
+      key_secret: razorpay_client_secret
+    });
+    
+    let totalAmount = calculatedCart.totalSummary.grandTotal;
+    totalAmount = totalAmount * 100;
+
+    const options = {
+      amount: totalAmount,
+      currency: currencycode,
+      receipt: savedOrder._id
+    }
+
+    const order = await razorpayInstance.orders.create(options)
+    razorpayOrderId = order.id;
+    
+    let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : order } });
   }
+  // ====================
   // else {
   //   return MESSAGE_RESPONSE("InvalidField", "Payment mode", false);
   // }
@@ -1574,6 +1618,7 @@ const addOrder = async(args) => {
   let addOrderResponse = MESSAGE_RESPONSE("AddSuccess", "Order", true);
   addOrderResponse.redirectUrl = redirectUrl;
   addOrderResponse.paypalOrderId = paypalOrderId;
+  addOrderResponse.razorpayOrderId = razorpayOrderId // Afterfrontend
   addOrderResponse.id = savedOrder._id;
 
   return addOrderResponse;
@@ -1591,24 +1636,141 @@ const isUrlValid = (url) => {
 module.exports.isUrlValid = isUrlValid;
 
 const updatePaymentStatus = async (userId, args) => {
-  let { id, paymentStatus } = args;
-  
-  // will add some validation to update payment status as success
-  if(paymentStatus == 'success') {
+  try {
     
-  }
-  //
+    const {id, paymentStatus} = args;
+    let eligibleToUpdateSuccess = false; 
+    let testMode, clientIdKey, secretKey;
 
-  let orderUpdateRes = await Order.updateOne({_id:id }, { $set: { paymentStatus:paymentStatus } });
-  if(orderUpdateRes.acknowledged && orderUpdateRes.matchedCount == 1) {
-    if(paymentStatus == 'success') {
-      const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(userId) });
-      await emptyCart(cart);
+    let orderData = await Order.findOne({_id:id }, { billing:1, transactionDetail:1 });
+
+    if(!orderData){
+      return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status 1 ", false);
     }
-    return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
-  }
-  else {
+    let paymentMethod = orderData.billing.paymentMethod;
+
+    const setting = await Setting.findOne({}, {payment:1});
+    let environmentBool = process.env.NODE_ENV.trim() === 'production';
+    switch (paymentMethod) {
+      case "Stripe":
+
+        testMode = _.get(setting, 'payment.stripe.test_mode');
+        secretKey = environmentBool ? (testMode ? 'sandbox_secret_key' : 'live_secret_key') : 'sandbox_secret_key';
+    
+        let Secret_Key = _.get(setting, `payment.stripe.${secretKey}`);
+    
+        if(!Secret_Key) {
+          return MESSAGE_RESPONSE("PaymentNotConfigured", "Stripe", false);
+        }
+
+        const stripe = require('stripe')(Secret_Key);
+
+        const session = await stripe.checkout.sessions.retrieve(orderData.transactionDetail.id);
+
+        if(session.payment_status == 'paid') {
+          eligibleToUpdateSuccess = true;
+        }
+
+        break;
+      case "Paypal":
+
+        const paypal = require('@paypal/checkout-server-sdk');
+
+        testMode = _.get(setting, 'payment.paypal.test_mode');
+        clientIdKey = environmentBool ? (testMode ? 'sandbox_client_id' : 'live_client_id') : 'sandbox_client_id';
+        secretKey = environmentBool ? (testMode ? 'sandbox_secret_key' : 'live_secret_key') : 'sandbox_secret_key';
+
+        let paypal_client_id = _.get(setting, `payment.paypal.${clientIdKey}`);
+        let paypal_client_secret = _.get(setting, `payment.paypal.${secretKey}`);
+
+        const Environment = environmentBool ? (testMode ? paypal.core.SandboxEnvironment : paypal.core.LiveEnvironment) : paypal.core.SandboxEnvironment;
+        // const Environment = paypal.core.LiveEnvironment;
+        const paypalClient = new paypal.core.PayPalHttpClient(
+          new Environment(
+            paypal_client_id, paypal_client_secret
+          )
+        )
+      
+        const request = new paypal.orders.OrdersGetRequest(orderData.transactionDetail.result.id);
+        const paypalOrder = await paypalClient.execute(request);
+  
+        if(paypalOrder?.result?.status == 'COMPLETED') {
+          eligibleToUpdateSuccess = true;
+        }
+       
+        break;
+      case "Razor Pay":
+        let orderId = orderData.transactionDetail.id
+
+        const Razorpay = require('razorpay');
+    
+        testMode = _.get(setting, 'payment.razorpay.test_mode');
+        clientIdKey = testMode ? 'sandbox_client_id' : 'live_client_id';
+        secretKey = testMode ? 'sandbox_secret_key' : 'live_secret_key';
+    
+        let razorpay_client_id = _.get(setting, `payment.razorpay.${clientIdKey}`);
+        let razorpay_client_secret = _.get(setting, `payment.razorpay.${secretKey}`);
+    
+        const razorpayInstance = new Razorpay({
+          key_id: razorpay_client_id,
+          key_secret: razorpay_client_secret
+        });
+
+        let razorpayOrderData = await razorpayInstance.orders.fetch(orderId)
+        razorpayOrderData.status = "paid"
+
+        if(razorpayOrderData.status == "paid"){
+          eligibleToUpdateSuccess = true;
+        }
+
+        break;
+      default:
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
+        break;
+    }
+
+    if(!eligibleToUpdateSuccess){
+      return MESSAGE_RESPONSE("PaymentUnpaid", null, false);
+    }
+
+    let orderUpdateRes = await Order.updateOne(
+      { _id: id },
+      { $set: { paymentStatus: paymentStatus } }
+    );
+
+    if (orderUpdateRes.acknowledged && orderUpdateRes.matchedCount == 1) {
+      if (paymentStatus == "success") {
+        const cart = await Cart.findOne({
+          userId: new mongoose.Types.ObjectId(userId),
+        });
+        await emptyCart(cart);
+      }
+      return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
+    } else {
+      return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
+    }
+
+  } catch (error) {
     return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
   }
+  // let { id, paymentStatus } = args;
+  
+  // // will add some validation to update payment status as success
+  // if(paymentStatus == 'success') {
+    
+  // }
+  // //
+
+  // let orderUpdateRes = await Order.updateOne({_id:id }, { $set: { paymentStatus:paymentStatus } });
+  // if(orderUpdateRes.acknowledged && orderUpdateRes.matchedCount == 1) {
+  //   if(paymentStatus == 'success') {
+  //     const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(userId) });
+  //     await emptyCart(cart);
+  //   }
+  //   return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
+  // }
+  // else {
+  //   return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
+  // }
 }
 module.exports.updatePaymentStatus = updatePaymentStatus;

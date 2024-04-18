@@ -7,24 +7,24 @@ import { ThemeProvider } from "@mui/material/styles";
 import { useEffect } from "react";
 import { get } from "lodash";
 import theme from "../../../theme/index.js";
-import { paymentPaypalUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
 import ToggleSwitch from "../../components/switch.js";
 import { getValue } from "../../../utils/helper.js";
+import { paymentRazorPayUpdateAction } from "../../../store/action/settingAction.js";
 
-const PaypalComponent = () => {
+const RazorPayComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
-  const [paypalInfo, setPaypalInfo] = useState({ enable: false });
+  const [razorPayInfo, setRazorPayInfo] = useState({ enable: false });
 
   useEffect(() => {
-    setPaypalInfo({ ...get(settingState, "settings.payment.paypal", {}) });
+    setRazorPayInfo({ ...get(settingState, "settings.payment.razorpay", {}) });
   }, [get(settingState, "settings")]);
 
-  const updatePaypal = () => {
-    dispatch(paymentPaypalUpdateAction(paypalInfo));
+  const updateRazorPay = () => {
+    dispatch(paymentRazorPayUpdateAction(razorPayInfo));
   };
 
   return (
@@ -38,26 +38,26 @@ const PaypalComponent = () => {
               control={
                 <Checkbox
                   color="primary"
-                  checked={get(paypalInfo, "enable")}
+                  checked={get(razorPayInfo, "enable")}
                   onChange={(e) =>
-                    setPaypalInfo({
-                      ...paypalInfo,
+                    setRazorPayInfo({
+                      ...razorPayInfo,
                       enable: get(e, "target.checked"),
                     })
                   }
                 />
               }
-              label="Enable PayPal Standard"
+              label="Enable RazorPay Standard"
             />
           </Box>
-          {get(paypalInfo, "enable") && (
+          {get(razorPayInfo, "enable") && (
             <Box component="div">
               <Box component="div">
                 <SettingTextInput
                   label="Title"
-                  value={get(paypalInfo, "title")}
+                  value={get(razorPayInfo, "title")}
                   onSettingInputChange={(val) =>
-                    setPaypalInfo({ ...paypalInfo, title: val })
+                    setRazorPayInfo({ ...razorPayInfo, title: val })
                   }
                 />
               </Box>
@@ -65,9 +65,9 @@ const PaypalComponent = () => {
               <Box component="div">
                 <SettingTextInput
                   label="Description"
-                  value={get(paypalInfo, "description")}
+                  value={get(razorPayInfo, "description")}
                   onSettingInputChange={(val) =>
-                    setPaypalInfo({ ...paypalInfo, description: val })
+                    setRazorPayInfo({ ...razorPayInfo, description: val })
                   }
                   multiline
                   rows="5"
@@ -79,16 +79,16 @@ const PaypalComponent = () => {
 
         {/* ===================SandBox ANd Live=================== */}
 
-        {get(paypalInfo, "enable") && (
+        {get(razorPayInfo, "enable") && (
           <>
             <Grid item md={6} sm={12} xs={12}>
               <Box component="div" className={classes.marginBottom2}>
                 <ToggleSwitch
                   color="primary"
-                  checked={get(paypalInfo, "test_mode", false)}
+                  checked={get(razorPayInfo, "test_mode", false)}
                   onChange={(e) =>
-                    setPaypalInfo({
-                      ...paypalInfo,
+                    setRazorPayInfo({
+                      ...razorPayInfo,
                       test_mode: get(e, "target.checked"),
                     })
                   }
@@ -98,20 +98,9 @@ const PaypalComponent = () => {
                 <SettingTextInput
                   label="Sandbox Client Id"
                   name="sandbox_client_id"
-                  value={getValue(get(paypalInfo, "sandbox_client_id", ""))}
+                  value={getValue(get(razorPayInfo, "sandbox_client_id", ""))}
                   onSettingInputChange={(val, name) => {
-                    setPaypalInfo({ ...paypalInfo, [name]: val });
-                  }}
-                  type="password"
-                />
-              </Box>
-              <Box component="div">
-                <SettingTextInput
-                  label="Live Client Id"
-                  name="live_client_id"
-                  value={getValue(get(paypalInfo, "live_client_id", ""))}
-                  onSettingInputChange={(val, name) => {
-                    setPaypalInfo({ ...paypalInfo, [name]: val });
+                    setRazorPayInfo({ ...razorPayInfo, [name]: val });
                   }}
                   type="password"
                 />
@@ -119,21 +108,32 @@ const PaypalComponent = () => {
               <Box component="div">
                 <SettingTextInput
                   label="Sandbox Secret Key"
-                  value={getValue(get(paypalInfo, "sandbox_secret_key", ""))}
+                  value={getValue(get(razorPayInfo, "sandbox_secret_key", ""))}
                   name="sandbox_secret_key"
                   onSettingInputChange={(val, name) =>
-                    setPaypalInfo({ ...paypalInfo, [name]: val })
+                    setRazorPayInfo({ ...razorPayInfo, [name]: val })
                   }
                   type="password"
                 />
               </Box>
               <Box component="div">
                 <SettingTextInput
+                  label="Live Client Id"
+                  name="live_client_id"
+                  value={getValue(get(razorPayInfo, "live_client_id", ""))}
+                  onSettingInputChange={(val, name) => {
+                    setRazorPayInfo({ ...razorPayInfo, [name]: val });
+                  }}
+                  type="password"
+                />
+              </Box>
+              <Box component="div">
+                <SettingTextInput
                   label="Live Secret Key"
-                  value={getValue(get(paypalInfo, "live_secret_key", ""))}
+                  value={getValue(get(razorPayInfo, "live_secret_key", ""))}
                   name="live_secret_key"
                   onSettingInputChange={(val, name) =>
-                    setPaypalInfo({ ...paypalInfo, [name]: val })
+                    setRazorPayInfo({ ...razorPayInfo, [name]: val })
                   }
                   type="password"
                 />
@@ -145,7 +145,7 @@ const PaypalComponent = () => {
                 size="small"
                 color="primary"
                 variant="contained"
-                onClick={updatePaypal}
+                onClick={updateRazorPay}
               >
                 Save Change
               </Button>
@@ -157,10 +157,10 @@ const PaypalComponent = () => {
   );
 };
 
-export default function Paypal() {
+export default function RazorPay() {
   return (
     <ThemeProvider theme={theme}>
-      <PaypalComponent />
+      <RazorPayComponent />
     </ThemeProvider>
   );
 }

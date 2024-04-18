@@ -208,9 +208,9 @@ const CREATE_FUNC = async (
     }
 
     if (name === "Review") {
-      const customer = await Customer.findById(mongoose.Types.ObjectId(data.customerId))
+      const customer = await Customer.findById(new mongoose.Types.ObjectId(data.customerId));
       if (!customer) return MESSAGE_RESPONSE("NOT_EXIST", "Customer", false);
-      const product = await Product.findById(mongoose.Types.ObjectId(data.productId))
+      const product = await Product.findById(new mongoose.Types.ObjectId(data.productId))
       if (!product) return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);
     }
     //console.log('DATA', data) ;
@@ -264,8 +264,6 @@ const CREATE_FUNC = async (
       } else {
         data.feature_image = imgObject.data || imgObject;
       }
-
-
     }
     if (data.name) {
       const nameresponse = await modal.findOne({ name: data.name });
@@ -292,7 +290,6 @@ const CREATE_FUNC = async (
     await response.save();
     return MESSAGE_RESPONSE("AddSuccess", name, true);
   } catch (error) {
-;
     return MESSAGE_RESPONSE("CREATE_ERROR", name, false);
   }
 };

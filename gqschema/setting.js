@@ -113,6 +113,7 @@ module.exports = `
     bank_transfer: BANK_TRANSFER
     stripe: STRIPE
     paypal: PAYPAL
+    razorpay: RAZORPAY
   }
 
   type CASH_ON_DELIVERY {
@@ -147,9 +148,10 @@ module.exports = `
     statement_descriptor: String
     capture: Boolean
     test_mode: Boolean
-    publishable_key: String
-    secret_key: String
-    webhook_key: String
+    sandbox_secret_key: String
+    live_secret_key: String
+    sandbox_publishable_key: String
+    live_publishable_key: String
   }
 
   type PAYPAL {
@@ -162,9 +164,21 @@ module.exports = `
     paypal_identity_token: String
     invoice_prefix: String
     test_mode: Boolean
-    api_username: String
-    api_password: String
-    api_signature: String
+    sandbox_secret_key: String
+    live_secret_key: String
+    sandbox_client_id: String
+    live_client_id: String
+  }
+
+  type RAZORPAY {
+    enable: Boolean
+    title: String
+    description: String
+    test_mode: Boolean
+    sandbox_secret_key: String
+    live_secret_key: String
+    sandbox_client_id: String
+    live_client_id: String
   }
 
   type Notification {
@@ -373,9 +387,10 @@ module.exports = `
       statement_descriptor: String
       capture: Boolean
       test_mode: Boolean
-      publishable_key: String
-      secret_key: String
-      webhook_key: String
+      sandbox_secret_key: String
+      live_secret_key: String
+      sandbox_publishable_key: String
+      live_publishable_key: String
     ): Setting
     updatePaymentPaypal(
       enable: Boolean
@@ -387,9 +402,25 @@ module.exports = `
       paypal_identity_token: String
       invoice_prefix: String
       test_mode: Boolean
-      api_username: String
-      api_password: String
-      api_signature: String
+      sandbox_secret_key: String
+      live_secret_key: String
+      sandbox_client_id: String
+      live_client_id: String
+    ): Setting
+    updatePaymentRazorpay(
+      enable: Boolean
+      title: String
+      description: String
+      razorpay_email: String
+      ipn_email_notification: Boolean
+      receiver_email: String
+      razorpay_identity_token: String
+      invoice_prefix: String
+      test_mode: Boolean
+      sandbox_secret_key: String
+      live_secret_key: String
+      sandbox_client_id: String
+      live_client_id: String
     ): Setting
     updateNotificationOneSignal(
       app_id: String

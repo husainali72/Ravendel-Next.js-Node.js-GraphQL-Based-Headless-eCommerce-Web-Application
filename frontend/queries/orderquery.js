@@ -77,6 +77,7 @@ export const ADD_ORDER = gql`
       success
       redirectUrl
       paypalOrderId
+      razorpayOrderId
     }
   }
 `;

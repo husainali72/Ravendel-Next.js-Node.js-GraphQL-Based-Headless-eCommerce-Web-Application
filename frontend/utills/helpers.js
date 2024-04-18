@@ -11,7 +11,7 @@ import NoImagePlaceHolder from "../components/images/NoImagePlaceHolder.png";
 import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
 import moment from "moment";
-import { PAYPAL, STRIPE } from "./constant";
+import { PAYPAL, RAZORPAY, STRIPE } from "./constant";
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
   event.target.src = NoImagePlaceHolder.src;
@@ -291,5 +291,5 @@ export const iconSetter = (iconName) => {
 };
 
 export const checkPaymentMethod = (paymentMethod) => {
-  return paymentMethod === STRIPE || paymentMethod === PAYPAL;
+  return paymentMethod === STRIPE || paymentMethod === PAYPAL||paymentMethod === RAZORPAY;
 };

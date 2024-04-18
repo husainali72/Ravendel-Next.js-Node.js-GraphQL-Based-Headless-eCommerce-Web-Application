@@ -78,126 +78,82 @@ const StripeComponent = () => {
                   rows="5"
                 />
               </Box>
-
-              <Box component="div" className={classes.marginBottom2}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      color="primary"
-                      checked={get(stripeInfo, "inline_credit_card_form")}
-                      onChange={(e) =>
-                        setstripeInfo({
-                          ...stripeInfo,
-                          inline_credit_card_form: get(e, "target.checked"),
-                        })
-                      }
-                    />
-                  }
-                  label="Inline Credit Card Form"
-                />
-              </Box>
-
-              <Box component="div">
-                <SettingTextInput
-                  label="Statement Descriptor"
-                  value={get(stripeInfo, "statement_descriptor")}
-                  onSettingInputChange={(val) =>
-                    setstripeInfo({ ...stripeInfo, statement_descriptor: val })
-                  }
-                />
-              </Box>
-
-              <Box component="div" className={classes.marginBottom2}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      color="primary"
-                      checked={get(stripeInfo, "capture")}
-                      onChange={(e) =>
-                        setstripeInfo({
-                          ...stripeInfo,
-                          capture: get(e, "target.checked"),
-                        })
-                      }
-                    />
-                  }
-                  label="Capture charge immediately"
-                />
-              </Box>
             </Box>
           )}
         </Grid>
 
         {/* ===================SandBox ANd Live=================== */}
 
-        <Grid item md={6} sm={12} xs={12}>
-          <Box component="div" className={classes.marginBottom2}>
-            <ToggleSwitch
-              color="primary"
-              checked={get(stripeInfo, "test_mode")}
-              onChange={(e) =>
-                setstripeInfo({
-                  ...stripeInfo,
-                  test_mode: get(e, "target.checked"),
-                })
-              }
-            />
-          </Box>
-          <Box component="div">
-            <SettingTextInput
-              label={
-                checkStripeMode()
-                  ? "Sandbox Publishable Key"
-                  : "Live Publishable Key"
-              }
-              value={getValue(
-                get(
-                  stripeInfo,
-                  checkStripeMode()
-                    ? "sandbox_publishable_key"
-                    : "live_publishable_key",
-                  ""
-                )
-              )}
-              name={
-                checkStripeMode()
-                  ? "sandbox_publishable_key"
-                  : "live_publishable_key"
-              }
-              onSettingInputChange={(val, name) =>
-                setstripeInfo({
-                  ...stripeInfo,
-                  [name]: val,
-                })
-              }
-            />
-          </Box>
-
-          <Box component="div">
-            <SettingTextInput
-              label={
-                checkStripeMode() ? "Sandbox Secret Key" : "Live Secret Key"
-              }
-              value={getValue(
-                get(
-                  stripeInfo,
-                  checkStripeMode() ? "sandbox_secret_key" : "live_secret_key",
-                  ""
-                )
-              )}
-              name={
-                checkStripeMode() ? "sandbox_secret_key" : "live_secret_key"
-              }
-              onSettingInputChange={(val, name) =>
-                setstripeInfo({
-                  ...stripeInfo,
-                  [name]: val,
-                })
-              }
-              type="password"
-            />
-          </Box>
-        </Grid>
+        {get(stripeInfo, "enable") && (
+          <Grid item md={6} sm={12} xs={12}>
+            <Box component="div" className={classes.marginBottom2}>
+              <ToggleSwitch
+                color="primary"
+                checked={get(stripeInfo, "test_mode")}
+                onChange={(e) =>
+                  setstripeInfo({
+                    ...stripeInfo,
+                    test_mode: get(e, "target.checked"),
+                  })
+                }
+              />
+            </Box>
+            <Box component="div">
+              <SettingTextInput
+                label="Sandbox Publishable Key"
+                value={getValue(get(stripeInfo, "sandbox_publishable_key", ""))}
+                name="sandbox_publishable_key"
+                onSettingInputChange={(val, name) =>
+                  setstripeInfo({
+                    ...stripeInfo,
+                    [name]: val,
+                  })
+                }
+              />
+            </Box>
+            <Box component="div">
+              <SettingTextInput
+                label="Live Publishable Key"
+                value={getValue(get(stripeInfo, "live_publishable_key", ""))}
+                name="live_publishable_key"
+                onSettingInputChange={(val, name) =>
+                  setstripeInfo({
+                    ...stripeInfo,
+                    [name]: val,
+                  })
+                }
+              />
+            </Box>
+            <Box component="div">
+              <SettingTextInput
+                label="Sandbox Secret Key"
+                value={getValue(get(stripeInfo, "sandbox_secret_key", ""))}
+                name="sandbox_secret_key"
+                onSettingInputChange={(val, name) =>
+                  setstripeInfo({
+                    ...stripeInfo,
+                    [name]: val,
+                  })
+                }
+                type="password"
+              />
+            </Box>
+            <Box component="div">
+              <SettingTextInput
+                label="Live Secret Key"
+                value={getValue(get(stripeInfo, "live_secret_key", ""))}
+                name="live_secret_key"
+                onSettingInputChange={(val, name) =>
+                  setstripeInfo({
+                    ...stripeInfo,
+                    [name]: val,
+                  })
+                }
+                type="password"
+              />
+            </Box>
+          </Grid>
+        )}
 
         <Grid item md={12} xs={12}>
           <Button
