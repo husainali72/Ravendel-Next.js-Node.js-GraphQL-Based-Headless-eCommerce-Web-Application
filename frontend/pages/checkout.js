@@ -182,6 +182,12 @@ export const CheckOut = () => {
       setIsLogin(false);
     }
   }, [get(carts, "cartItems")]);
+
+  useEffect(() => {
+    // Scroll to the top when the form step changes
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [formStep]);
+  
   const {
     register,
     handleSubmit,

@@ -73,7 +73,7 @@ export const handleOrderPlaced = (
               break;
             case RAZORPAY:
               if (success && razorpayOrderId) {
-                razorPay(razorpayKey,razorpayOrderId)
+                razorPay(razorpayKey,razorpayOrderId,router,orderId)
               }
               break;
             default:
