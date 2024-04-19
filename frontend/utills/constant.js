@@ -1,8 +1,8 @@
-export const STRIPE='Stripe' 
-export const PAYPAL='Paypal' 
-export const CASH_ON_DELIVERY='Cash On Delivery' 
-export const RAZORPAY='Razor Pay' 
-export const CREDIT_CARD='Credit Card' 
+export const STRIPE='stripe' 
+export const PAYPAL='paypal' 
+export const CASH_ON_DELIVERY='cashondelivery' 
+export const RAZORPAY='razorpay' 
+export const CREDIT_CARD='creditcard' 
 
 {/* ===================Routes constant=================== */}
 export const thankyouPageRoute='/orderstatus/thankyou' 

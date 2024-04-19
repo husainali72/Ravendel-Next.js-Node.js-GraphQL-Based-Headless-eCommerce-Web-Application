@@ -91,7 +91,7 @@ const DirectBankTransferTheme = () => {
                 />
               </Box>
 
-              <Box component="div">
+              {/* <Box component="div">
                 <SettingTextInput
                   label="Instructions"
                   value={get(bankTransferInfo, "instruction")}
@@ -102,7 +102,7 @@ const DirectBankTransferTheme = () => {
                     })
                   }
                 />
-              </Box>
+              </Box> */}
 
               <SettingBlock label="Account details">
                 <Grid container spacing={isSmall ? 0 : 2}>

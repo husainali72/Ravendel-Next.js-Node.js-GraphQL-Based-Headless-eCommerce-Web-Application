@@ -41,7 +41,7 @@ import {
 import "../../App.css";
 import { convertDateToStringFormat } from "../utils/convertDate";
 import viewStyles from "../viewStyles";
-import { client_app_route_url } from "../../utils/helper";
+import { client_app_route_url, getPaymentMethodLabel } from "../../utils/helper";
 import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../theme/index";
@@ -53,6 +53,7 @@ import { isEmpty } from "../../utils/helper";
 import PhoneNumber from "../components/phoneNumberValidation";
 import { currencySetter, getPrice } from "./CurrencyFormat";
 import TotalSummaryComponent from "./totalSummary";
+import { CASH_ON_DELIVERY } from "../../utils/constant";
 
 const ViewOrderComponent = ({ params }) => {
   const ORDERID = params.id || "";
@@ -308,8 +309,13 @@ const ViewOrderComponent = ({ params }) => {
                       Order: {order.orderNumber}
                     </Typography>
                     <Typography variant="body1" mt={2}>
-                      Payment via {order.billing.paymentMethod} paid on{" "}
-                      {convertDateToStringFormat(order.date)}
+                      Payment via{" "}
+                      {
+                        getPaymentMethodLabel(
+                          get(order, "billing.paymentMethod", CASH_ON_DELIVERY)
+                        )
+                      }{" "}
+                      paid on {convertDateToStringFormat(order.date)}
                       {/* Transaction
                       number {order.billing.transaction_id} */}
                     </Typography>

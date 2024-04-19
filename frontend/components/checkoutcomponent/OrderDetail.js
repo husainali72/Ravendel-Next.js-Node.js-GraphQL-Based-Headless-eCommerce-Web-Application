@@ -6,13 +6,7 @@ import ProductImage from "../imageComponent";
 import CheckBox from "../check";
 import PropTypes from "prop-types";
 import { CASH_ON_DELIVERY, CREDIT_CARD, PAYPAL, RAZORPAY, STRIPE } from "../../utills/constant";
-const paymentOptions = [
-  { label: "Cash on delivery", value: CASH_ON_DELIVERY },
-  { label: "Stripe", value: STRIPE },
-  { label: "Credit Card", value: CREDIT_CARD },
-  { label: "Paypal", value: PAYPAL },
-  { label: "Razor Pay", value: RAZORPAY },
-];
+import { getPaymentMethodLabel } from "../../utills/helpers";
 const Orderdetail = (props) => {
   const {
     getOrderDetails,
@@ -20,9 +14,26 @@ const Orderdetail = (props) => {
     billingInfo,
     handleBillingInfo,
     shippingInfo,
+    settings
   } = props;
   const cart = cartItems;
   const [cartProduct, setCartProduct] = useState([]);
+  const paymentOptions = [
+    { label: getPaymentMethodLabel(CASH_ON_DELIVERY), value: CASH_ON_DELIVERY },
+    { label: getPaymentMethodLabel(STRIPE), value: STRIPE },
+    { label: getPaymentMethodLabel(CREDIT_CARD), value: CREDIT_CARD },
+    { label: getPaymentMethodLabel(PAYPAL), value: PAYPAL },
+    { label: getPaymentMethodLabel(RAZORPAY), value: RAZORPAY },
+  ];
+  useEffect(()=>{
+    console.log(get(settings,'setting.payment'))
+    const paymentOption = Object.entries(get(settings,'setting.payment'))
+    .filter(([_, methodData]) => methodData.enable)
+    .map(([method, _]) => ({
+      label: getPaymentMethodLabel(method),
+      value: method,
+    }));
+  },[settings])
   const cartSubTotal = () => {
     var subtotalVar = 0;
     if (cartProduct && cartProduct?.length > 0) {

@@ -240,8 +240,6 @@ module.exports = {
         setting.payment.cash_on_delivery.enable = args.enable;
         setting.payment.cash_on_delivery.title = args.title;
         setting.payment.cash_on_delivery.description = args.description;
-        setting.payment.cash_on_delivery.instructions = args.instructions;
-
         return await setting.save();
       } catch (error) {
         error = checkError(error);
@@ -255,7 +253,6 @@ module.exports = {
         setting.payment.bank_transfer.enable = args.enable;
         setting.payment.bank_transfer.title = args.title;
         setting.payment.bank_transfer.description = args.description;
-        setting.payment.bank_transfer.instructions = args.instructions;
         setting.payment.bank_transfer.account_details.account_name =
           args.account_details.account_name;
         setting.payment.bank_transfer.account_details.account_number =
@@ -282,9 +279,6 @@ module.exports = {
         setting.payment.stripe.enable = args.enable;
         setting.payment.stripe.title = args.title;
         setting.payment.stripe.description = args.description;
-        setting.payment.stripe.inline_credit_card_form = args.inline_credit_card_form;
-        setting.payment.stripe.statement_descriptor = args.statement_descriptor;
-        setting.payment.stripe.capture = args.capture;
         setting.payment.stripe.test_mode = args.test_mode;
         setting.payment.stripe.sandbox_secret_key = args.sandbox_secret_key;
         setting.payment.stripe.live_secret_key = args.live_secret_key;
@@ -303,13 +297,6 @@ module.exports = {
         setting.payment.paypal.enable = args.enable;
         setting.payment.paypal.title = args.title;
         setting.payment.paypal.description = args.description;
-        setting.payment.paypal.paypal_email = args.paypal_email;
-        setting.payment.paypal.ipn_email_notification =
-          args.ipn_email_notification;
-        setting.payment.paypal.receiver_email = args.receiver_email;
-        setting.payment.paypal.paypal_identity_token =
-          args.paypal_identity_token;
-        setting.payment.paypal.invoice_prefix = args.invoice_prefix;
         setting.payment.paypal.test_mode = args.test_mode;
         setting.payment.paypal.sandbox_secret_key = args.sandbox_secret_key;
         setting.payment.paypal.live_secret_key = args.live_secret_key;

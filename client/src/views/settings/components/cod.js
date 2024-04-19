@@ -77,7 +77,7 @@ const CashOnDeliveryTheme = () => {
                 />
               </Box>
 
-              <Box component="div">
+              {/* <Box component="div">
                 <SettingTextInput
                   label="Instructions"
                   value={get(codInfo,'instructions')}
@@ -85,7 +85,7 @@ const CashOnDeliveryTheme = () => {
                     setCodInfo({ ...codInfo, instructions: val })
                   }
                 />
-              </Box>
+              </Box> */}
             </Box>
           ) : null}
         </Grid>

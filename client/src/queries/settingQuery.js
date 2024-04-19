@@ -77,13 +77,11 @@ const SETTING_TILE_DATA = gql`
         enable
         title
         description
-        instructions
       }
       bank_transfer {
         enable
         title
         description
-        instructions
         account_details {
           account_name
           account_number
@@ -97,9 +95,6 @@ const SETTING_TILE_DATA = gql`
         enable
         title
         description
-        inline_credit_card_form
-        statement_descriptor
-        capture
         test_mode
         sandbox_publishable_key
         live_publishable_key
@@ -110,11 +105,6 @@ const SETTING_TILE_DATA = gql`
         enable
         title
         description
-        paypal_email
-        ipn_email_notification
-        receiver_email
-        paypal_identity_token
-        invoice_prefix
         test_mode
         sandbox_secret_key
         live_secret_key
@@ -408,14 +398,10 @@ const UPDATE_PAYMENT_COD = gql`
   mutation(
     $enable: Boolean
     $title: String
-    $description: String
-    $instructions: String
   ) {
     updatePaymnetCOD(
       enable: $enable
       title: $title
-      description: $description
-      instructions: $instructions
     ) {
       ...SettingTile
     }
@@ -428,14 +414,12 @@ const UPDATE_PAYMENT_BANK = gql`
     $enable: Boolean
     $title: String
     $description: String
-    $instructions: String
     $account_details: account_details
   ) {
     updatePaymnetBank(
       enable: $enable
       title: $title
       description: $description
-      instructions: $instructions
       account_details: $account_details
     ) {
       ...SettingTile
@@ -449,9 +433,6 @@ const UPDATE_PAYMENT_STRIPE = gql`
     $enable: Boolean
     $title: String
     $description: String
-    $inline_credit_card_form: Boolean
-    $statement_descriptor: String
-    $capture: Boolean
     $test_mode: Boolean
     $sandbox_secret_key: String
     $live_secret_key: String
@@ -462,9 +443,6 @@ const UPDATE_PAYMENT_STRIPE = gql`
       enable: $enable
       title: $title
       description: $description
-      inline_credit_card_form: $inline_credit_card_form
-      statement_descriptor: $statement_descriptor
-      capture: $capture
       test_mode: $test_mode
       sandbox_secret_key: $sandbox_secret_key
       live_secret_key: $live_secret_key
@@ -482,11 +460,6 @@ const UPDATE_PAYMENT_PAYPAL = gql`
     $enable: Boolean
     $title: String
     $description: String
-    $paypal_email: String
-    $ipn_email_notification: Boolean
-    $receiver_email: String
-    $paypal_identity_token: String
-    $invoice_prefix: String
     $test_mode: Boolean
     $sandbox_secret_key: String
     $live_secret_key: String
@@ -497,11 +470,6 @@ const UPDATE_PAYMENT_PAYPAL = gql`
       enable: $enable
       title: $title
       description: $description
-      paypal_email: $paypal_email
-      ipn_email_notification: $ipn_email_notification
-      receiver_email: $receiver_email
-      paypal_identity_token: $paypal_identity_token
-      invoice_prefix: $invoice_prefix
       test_mode: $test_mode
       sandbox_secret_key: $sandbox_secret_key
       live_secret_key: $live_secret_key
