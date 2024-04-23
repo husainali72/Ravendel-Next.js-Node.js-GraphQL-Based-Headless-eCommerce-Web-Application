@@ -1,6 +1,6 @@
 import { PhoneNumberUtil } from "google-libphonenumber";
 import { capitalize } from "lodash";
-const isNullOrWhitespace = (value) => value === "" || /^\s*$/.test(value);
+const isNullOrWhitespace = (value) => !value  || /^\s*$/.test(value);
 export const validate = (names, args) => {
   let errors = "";
   if (names && names.length > 0) {
@@ -26,7 +26,7 @@ export const validate = (names, args) => {
 export const validatenestedArray = (main, names, args, key) => {
   let errors = "";
   if (names && names.length > 0) {
-    args.map((obj) => {
+    args?.map((obj) => {
       names.map((name) => {
         if (!obj[main][name]) {
           if (key) {

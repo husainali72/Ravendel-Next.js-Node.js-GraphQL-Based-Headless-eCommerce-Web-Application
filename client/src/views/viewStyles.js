@@ -1,14 +1,12 @@
-
 import { makeStyles } from "@mui/styles";
 import { deepPurple } from "@mui/material/colors";
-
 
 const viewStyles = makeStyles((theme) => ({
   marginTop1: {
     marginTop: 10,
   },
   badge: {
-    marginLeft: "40px"
+    marginLeft: "40px",
   },
   mainrow: {
     "&&": {
@@ -39,7 +37,6 @@ const viewStyles = makeStyles((theme) => ({
   },
   addUserBtn: {
     color: "#fff",
-
   },
 
   backdrop: {
@@ -57,7 +54,6 @@ const viewStyles = makeStyles((theme) => ({
   },
   avtarTd: {
     width: "50px",
-
   },
   container: {
     maxHeight: 600,
@@ -296,7 +292,6 @@ const viewStyles = makeStyles((theme) => ({
   statusSelect: {
     marginTop: 25,
     width: 300,
-
   },
   fullWidth: {
     width: "100%",
@@ -305,7 +300,6 @@ const viewStyles = makeStyles((theme) => ({
     display: "block",
   },
   textRight: {
-
     textAlign: "right",
   },
   discount: {
@@ -315,29 +309,26 @@ const viewStyles = makeStyles((theme) => ({
     marginTop: 10,
     marginBottom: 10,
     minHeight: 25,
-    textTransform: 'capitalize',
-
+    textTransform: "capitalize",
   },
   mtb2coupon: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 10,
     marginBottom: 10,
     minHeight: 25,
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   mtb1: {
     marginTop: 10,
     marginBottom: 10,
     minHeight: 25,
-    textTransform: 'capitalize',
-    textAlign: 'left'
+    textTransform: "capitalize",
+    textAlign: "left",
   },
   removefilter: {
-    marginLeft: '10px!important',
-    marginRight: '10px!important',
-
-  }
-  ,
+    marginLeft: "10px!important",
+    marginRight: "10px!important",
+  },
   radioRoot: {
     "&:hover": {
       backgroundColor: "transparent",
@@ -433,7 +424,7 @@ const viewStyles = makeStyles((theme) => ({
     },
   },
   marginTop1: {
-    marginTop: "20px !important"
+    marginTop: "20px !important",
   },
   marginBottom2: {
     marginBottom: "20px !important",
@@ -460,7 +451,7 @@ const viewStyles = makeStyles((theme) => ({
     marginBottom: "30px !important",
   },
   minus: {
-    fontWeight: 800
+    fontWeight: 800,
   },
   themeLogoWrapper: {
     background: "rgb(240,240,240)",
@@ -480,9 +471,9 @@ const viewStyles = makeStyles((theme) => ({
   closeIcon: {
     position: "absolute",
     right: 0,
-    top: '10px',
-    marginRight: '10px',
-    cursor: 'pointer'
+    top: "10px",
+    marginRight: "10px",
+    cursor: "pointer",
   },
 
   TableSearchRow: {
@@ -493,7 +484,7 @@ const viewStyles = makeStyles((theme) => ({
   searchDiv: {
     display: "flex",
     flexDirection: "row",
-    width: "100 %"
+    width: "100 %",
   },
   searchOption: {
     marginLeft: "100px",
@@ -505,22 +496,20 @@ const viewStyles = makeStyles((theme) => ({
     width: "200px",
   },
   addbtnlink: {
-    marginTop: '5px'
+    marginTop: "5px",
   },
   box: {
     width: "250px",
     borderRadius: "25px",
     marginRight: "10px",
     backgroundColor: "white",
-
   },
   searchWrapper: {
     position: "relative",
     width: "250px",
-    padding: '2px',
+    padding: "2px",
     borderRadius: "25px",
     backgroundColor: "#f1f1f1",
-
   },
   searchIcon: {
     position: "absolute",
@@ -530,75 +519,71 @@ const viewStyles = makeStyles((theme) => ({
   },
 
   textFieldWrapper: {
-    padding: '5px',
+    padding: "5px",
     paddingLeft: "40px",
     paddingRight: "40px",
     // marginTop: '10px',
-    color: 'white',
+    color: "white",
 
-    border: '0ch'
+    border: "0ch",
   },
   insidecardheader: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
   },
   datepicker: {
-    width: '107px'
+    width: "107px",
   },
   enddatepicker: {
-    width: '105px',
-    marginLeft: '10px'
+    width: "105px",
+    marginLeft: "10px",
   },
   Datepickerclass: {
-    marginLeft: '20px',
-    width: '150px'
+    marginLeft: "20px",
+    width: "150px",
   },
   Timepickerclass: {
-    width: '145px',
-    marginTop: '20px'
+    width: "145px",
+    marginTop: "20px",
   },
   search: {
-    display: 'flex',
-    flexDirection: 'row',
-    paddingBottom: '10px'
+    display: "flex",
+    flexDirection: "row",
+    paddingBottom: "10px",
   },
   muitabs: {
-    marginRight: '10px'
+    marginRight: "10px",
   },
 
   noDataImage: {
-    display: 'flex',
-    justifyContent: 'center'
+    display: "flex",
+    justifyContent: "center",
   },
   socialmediaSelectIcon: {
-    height: '50px',
+    height: "50px",
     mt: 0,
     boxShadow: "none",
-    overflow: 'revert!important'
+    overflow: "revert!important",
   },
   divContainer: {
     width: "300px",
     height: "50px",
-    border: '1px solid black',
+    border: "1px solid black",
     borderRadius: "5px",
-    display: 'flex',
-    marginTop: '20px',
-    lineHeight: '0px',
-
+    display: "flex",
+    marginTop: "20px",
+    lineHeight: "0px",
   },
   iconDiv: {
-    width: '20%',
-    padding: '5px',
-
-
+    width: "20%",
+    padding: "5px",
   },
   container: {
-    display: 'flex',
+    display: "flex",
   },
   socialMediaIcon: {
-    textAlign: 'center',
-    objectFit: 'contain',
-
+    textAlign: "center",
+    objectFit: "contain",
   },
   iconLogoBox: {
     width: 30,
@@ -607,43 +592,47 @@ const viewStyles = makeStyles((theme) => ({
     margin: "0px 5px",
 
     overflow: "hidden",
-    objectFit: 'contain',
-    border: '1px solid lightgrey'
+    objectFit: "contain",
+    border: "1px solid lightgrey",
   },
   iconImage: {
-    objectFit: 'contain',
-    height: ' 100%',
-    width: '100%',
+    objectFit: "contain",
+    height: " 100%",
+    width: "100%",
   },
   iconSelect: {
-    borderRadius: '5px',
+    borderRadius: "5px",
   },
   IconBox: {
-    margin: '10px',
-    display: 'flex'
+    margin: "10px",
+    display: "flex",
   },
   AddIconButton: {
-    minWidth: "30px"
+    minWidth: "30px",
   },
   AddIconDiv: {
-    marginTop: '25px',
-    paddingLeft: '20px',
+    marginTop: "25px",
+    paddingLeft: "20px",
   },
-  noOptions:{
-    textAlign:'center'
+  noOptions: {
+    textAlign: "center",
   },
-  orderOptionContainer:{
+  orderOptionContainer: {
     minWidth: 120,
-    width: "300px"
+    width: "300px",
   },
-  toggleBtn:{
-    display: "flex", alignItems: "center" 
+  toggleBtn: {
+    display: "flex",
+    alignItems: "center",
   },
-  toggleBtnLable:{
-    marginRight: "8px" 
-  }
+  toggleBtnLable: {
+    marginRight: "8px",
+  },
+  settingTextArea: {
+    width: "300px",
+    padding: "10px",
+    borderRadius: "5px",
+  },
 }));
-
-
 
 export default viewStyles;

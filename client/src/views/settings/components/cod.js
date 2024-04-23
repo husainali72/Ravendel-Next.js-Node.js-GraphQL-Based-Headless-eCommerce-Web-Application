@@ -9,6 +9,7 @@ import { get, isEmpty } from "lodash";
 import { paymentCodUpdateAction } from "../../../store/action/settingAction.js";
 import Alerts from "../../components/Alert.js";
 import Loading from "../../components/Loading.js";
+import SettingTextArea from "./setting-components/setting-textArea.js";
 
 const CashOnDeliveryTheme = () => {
   const classes = viewStyles();
@@ -68,24 +69,20 @@ const CashOnDeliveryTheme = () => {
               </Box>
 
               <Box component="div">
-                <SettingTextInput
+                 <SettingTextArea
                   label="Description"
-                  value={get(codInfo,'description')}
-                  onSettingInputChange={(val) =>
-                    setCodInfo({ ...codInfo, description: val })
+                  placeholder="Description"
+                  value={get(codInfo, "description")}
+                  onSettingInputChange={(e) =>{
+                    setCodInfo({
+                      ...codInfo,
+                      description: get(e,'target.value'),
+                    })}
                   }
+                  minRows={3}
+                  className={classes.settingTextArea}
                 />
               </Box>
-
-              {/* <Box component="div">
-                <SettingTextInput
-                  label="Instructions"
-                  value={get(codInfo,'instructions')}
-                  onSettingInputChange={(val) =>
-                    setCodInfo({ ...codInfo, instructions: val })
-                  }
-                />
-              </Box> */}
             </Box>
           ) : null}
         </Grid>

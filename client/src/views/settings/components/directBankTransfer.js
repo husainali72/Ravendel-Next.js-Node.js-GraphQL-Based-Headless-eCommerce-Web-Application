@@ -6,6 +6,7 @@ import {
   Checkbox,
   Button,
   useMediaQuery,
+  TextareaAutosize,
 } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import viewStyles from "../../viewStyles";
@@ -18,6 +19,7 @@ import { get } from "lodash";
 import { paymentBankUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
+import SettingTextArea from "./setting-components/setting-textArea.js";
 
 const DirectBankTransferTheme = () => {
   const classes = viewStyles();
@@ -28,11 +30,9 @@ const DirectBankTransferTheme = () => {
   const [bankTransferInfo, setBankTransferInfo] = useState({ enable: false });
 
   useEffect(() => {
-    if (get(settingState, "settings.payment.bank_transfer")) {
-      setBankTransferInfo({
-        ...get(settingState, "settings.payment.bank_transfer"),
-      });
-    }
+    setBankTransferInfo({
+      ...get(settingState, "settings.payment.bank_transfer", {}),
+    });
   }, [get(settingState, "settings")]);
 
   const updateBank = () => {
@@ -79,30 +79,20 @@ const DirectBankTransferTheme = () => {
               </Box>
 
               <Box component="div">
-                <SettingTextInput
+                <SettingTextArea
                   label="Description"
+                  placeholder="Description"
                   value={get(bankTransferInfo, "description")}
-                  onSettingInputChange={(val) =>
+                  onSettingInputChange={(e) =>{
                     setBankTransferInfo({
                       ...bankTransferInfo,
-                      description: val,
-                    })
+                      description: get(e,'target.value'),
+                    })}
                   }
+                  minRows={3}
+                  className={classes.settingTextArea}
                 />
-              </Box>
-
-              {/* <Box component="div">
-                <SettingTextInput
-                  label="Instructions"
-                  value={get(bankTransferInfo, "instruction")}
-                  onSettingInputChange={(val) =>
-                    setBankTransferInfo({
-                      ...bankTransferInfo,
-                      instructions: val,
-                    })
-                  }
-                />
-              </Box> */}
+              </Box> 
 
               <SettingBlock label="Account details">
                 <Grid container spacing={isSmall ? 0 : 2}>

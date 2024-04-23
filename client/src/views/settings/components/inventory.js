@@ -22,22 +22,18 @@ const InventoryComponent = () => {
   const settingState = useSelector((state) => state.settings);
   const [zipcode, setZipCode] = useState([]);
   const [inventory, setinventory] = useState({
-    ...settingState.settings.store.inventory,
+    ...get(settingState,'settings.store.inventory'),
     notifications: {
       show_out_of_stock:
-        settingState.settings.store.inventory.notifications.show_out_of_stock,
+        get(settingState,'settings.store.inventory.notifications.show_out_of_stock'),
       alert_for_minimum_stock:
-        settingState.settings.store.inventory.notifications
-          .alert_for_minimum_stock,
+        get(settingState,'settings.store.inventory.notifications.alert_for_minimum_stock'),
     },
   });
   const handleFileChange = (e) => {
-    setinventory({ ...inventory, [e.target.name]: e.target.files })
+    const {name,files}=get(e,'target')
+    setinventory({ ...inventory, [name]: files })
   };
-  useEffect(() => {
-
-    get(settingState, "settings.store.inventory")
-  }, [settingState.settings])
 
   const updateInventory = () => {
     dispatch(storeInventoryUpdateAction(inventory));
