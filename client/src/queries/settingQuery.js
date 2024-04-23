@@ -48,6 +48,10 @@ const SETTING_TILE_DATA = gql`
         state
         zip
         hour
+        social_media {
+          name
+          handle
+        }
       }
       measurements {
         weight_unit
@@ -158,11 +162,6 @@ const SETTING_TILE_DATA = gql`
         phone_number
         email
         logo
-        social_media {
-          name
-          handle
-          
-        }
         
       }
      
