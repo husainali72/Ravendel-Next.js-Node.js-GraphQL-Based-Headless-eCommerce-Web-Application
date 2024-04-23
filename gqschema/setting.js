@@ -79,6 +79,14 @@ module.exports = `
     state: String
     zip: String
     hour: String
+    email: String
+    phoneNo: String
+    social_media: [SOCIAL_MEDIA]
+  }
+
+  type SOCIAL_MEDIA {
+    name: String
+    handle: String
   }
 
   type MEASUREMENTS {
@@ -103,7 +111,6 @@ module.exports = `
   }
 
   type ORDER_OPTIONS {
-    order_prefix_list: customArray
     order_prefix: String
     order_digits: Int
   }
@@ -236,13 +243,9 @@ module.exports = `
     phone_number: String
     email: String
     logo: String
-    social_media: [SOCIAL_MEDIA]
   }
 
-  type SOCIAL_MEDIA {
-    name: String
-    handle: String
-  }
+
 
   input inventory_notification {
     show_out_of_stock: Boolean
@@ -336,6 +339,9 @@ module.exports = `
       state: String
       zip: String
       hour: String
+      email: String
+      phoneNo: String
+      social_media: [social_media_input]
     ): Setting
     updateStoreMeasurements(
       weight_unit: String
@@ -428,7 +434,6 @@ module.exports = `
       email: String
       new_logo: Upload
       logo: String
-      social_media: [social_media_input]
     ): Setting
   }
 `;

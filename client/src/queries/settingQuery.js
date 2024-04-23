@@ -67,7 +67,6 @@ const SETTING_TILE_DATA = gql`
         manage_zipcodes
       }
       order_options {
-        order_prefix_list
         order_prefix
         order_digits
       }

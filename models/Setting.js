@@ -113,7 +113,19 @@ const SeetingSchema = new Schema(
         },
         hour: {
           type: String
-        }
+        },
+        email: {
+          type: String
+        },
+        phoneNo: {
+          type: Number
+        },
+        social_media: [
+          {
+            name: String,
+            handle: String
+          }
+        ]
       },
       measurements: {
         weight_unit: {
@@ -156,7 +168,6 @@ const SeetingSchema = new Schema(
         zipcodes: [String]
       },
       order_options: {
-        order_prefix_list: [String],
         order_prefix: {
           type: String,
         },
@@ -393,13 +404,7 @@ const SeetingSchema = new Schema(
         },
         logo: {
           type: String
-        },
-        social_media: [
-          {
-            name: String,
-            handle: String
-          }
-        ]
+        }
       },
     },
     zipcode: [
@@ -469,6 +474,30 @@ module.exports.createSettings = async () => {
         state: "New York",
         zip: "100104",
         hour: "Mon to Fri, 9am to 6pm",
+        email: "example@gmail.com",
+        phoneNo: "9898989898",
+        social_media: [
+          {
+            name: "Facebook",
+            handle: "",
+          },
+          {
+            name: "Instagram",
+            handle: "",
+          },
+          {
+            name: "Pinterest",
+            handle: "",
+          },
+          {
+            name: "Youtube",
+            handle: "",
+          },
+          {
+            name: "Twitter",
+            handle: "",
+          }
+        ]
       },
       measurements: {
         weight_unit: "kg",
@@ -489,7 +518,6 @@ module.exports.createSettings = async () => {
         zipcodes: []
       },
       order_options: {
-        order_prefix_list: ["#"],
         order_prefix: "#",
         order_digits: 5
       }
@@ -605,29 +633,7 @@ module.exports.createSettings = async () => {
         appstore: "https://apps.apple.com/us/app/ravendel/id1351162341",
         phone_number: "9797979797",
         email: "abc@gmail.com",
-        logo: "",
-        social_media: [
-          {
-            name: "Facebook",
-            handle: "",
-          },
-          {
-            name: "Instagram",
-            handle: "",
-          },
-          {
-            name: "Pinterest",
-            handle: "",
-          },
-          {
-            name: "Youtube",
-            handle: "",
-          },
-          {
-            name: "Twitter",
-            handle: "",
-          }
-        ]
+        logo: ""
       },
       mobile: {
         slider: [

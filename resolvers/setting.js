@@ -171,6 +171,18 @@ module.exports = {
         setting.store.store_address.state = args.state;
         setting.store.store_address.zip = args.zip;
         setting.store.store_address.hour = args.hour;
+        setting.store.store_address.email = args.email;
+        setting.store.store_address.phoneNo = args.phoneNo;
+
+        let socialMedia = []
+        for (let media of args.social_media) {
+          socialMedia.push({
+            name: media.name,
+            handle: media.handle,
+          })
+        }
+
+        setting.store.store_address.social_media = socialMedia;
         return await setting.save();
       } catch (error) {
         error = checkError(error);
@@ -222,9 +234,6 @@ module.exports = {
       try {
         const setting = await Setting.findOne({});
         let { order_prefix, order_digits } = args
-        if (!setting.store.order_options.order_prefix_list.includes(order_prefix)) {
-          setting.store.order_options.order_prefix_list.push(order_prefix)
-        }
         setting.store.order_options.order_prefix = order_prefix
         setting.store.order_options.order_digits = order_digits
         return await setting.save();
@@ -486,22 +495,13 @@ module.exports = {
           }
         }
 
-        let socialMedia = []
-        for (let media of args.social_media) {
-          socialMedia.push({
-            name: media.name,
-            handle: media.handle,
-          })
-        }
-
         const theme = {
           primary_color: args.primary_color,
           playstore: args.playstore,
           appstore: args.appstore,
           phone_number: args.phone_number,
           email: args.email,
-          logo: imgObject.data || args.logo,
-          social_media: socialMedia
+          logo: imgObject.data || args.logo
         };
 
         setting.appearance.theme = theme

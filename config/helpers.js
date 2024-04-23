@@ -1586,12 +1586,10 @@ const addOrder = async(args) => {
       key_id: razorpay_client_id,
       key_secret: razorpay_client_secret
     });
-    
     let totalAmount = calculatedCart.totalSummary.grandTotal;
     totalAmount = totalAmount * 100;
-
     const options = {
-      amount: totalAmount,
+      amount: parseInt(totalAmount),
       currency: currencycode,
       receipt: savedOrder._id
     }
