@@ -27,8 +27,8 @@ const GeneralTheme = () => {
   const settingState = useSelector((state) => state.settings);
   const [timeZone, setTimeZone] = useState(null);
   const [general, setgeneral] = useState({
-    date_format: settingState.settings.general.date_format,
-    time_zone: settingState.settings.general.time_zone,
+    date_format: get(settingState,'settings.general.date_format'),
+    time_zone: get(settingState,'settings.general.time_zone'),
   });
   useEffect(() => {
     if (general.time_zone === null) {
@@ -46,7 +46,7 @@ const GeneralTheme = () => {
       setgeneral({ ...general, time_zone: null });
     }
     else {
-      let timeIndex = TimeZones.findIndex((tz) => tz.value === val.value)
+      let timeIndex = TimeZones?.findIndex((tz) => tz?.value === val?.value)
       setTimeZone(timeIndex);
       setgeneral({ ...general, time_zone: val.value });
     }

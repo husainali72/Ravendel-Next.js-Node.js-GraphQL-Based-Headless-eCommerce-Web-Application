@@ -5321,3 +5321,8 @@ justify-content: center;
 .payment-method-container{
   display: flex;
 }
+.payment_method_description{
+  font-size: 12px;
+  margin-left: 22px;
+  color: #777;
+}

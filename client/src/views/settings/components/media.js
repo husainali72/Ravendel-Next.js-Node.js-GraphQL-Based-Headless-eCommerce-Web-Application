@@ -17,9 +17,9 @@ const MediaComponent = () => {
   const dispatch = useDispatch();
   const settingState = useSelector((state) => state.settings);
   const [media, setMedia] = useState({
-    thumbnail: settingState.settings.media.thumbnail,
-    medium: settingState.settings.media.medium,
-    large: settingState.settings.media.large,
+    thumbnail: get(settingState,'settings.media.thumbnail'),
+    medium: get(settingState,'settings.media.medium'),
+    large: get(settingState,'settings.media.large'),
   });
   const updateGeneral = () => {
     dispatch(mediaUpdateAction(media));
@@ -38,7 +38,7 @@ const MediaComponent = () => {
           <SettingBlock label="Thumbnail Size">
             <Box display="flex" flexDirection={isSmall ? "column" : "row"}>
               <SettingTextInput
-                value={media.thumbnail.width}
+                value={get(media,'thumbnail.width')}
                 label="Width"
                 onSettingInputChange={(val) => {
                   setMedia({
@@ -53,7 +53,7 @@ const MediaComponent = () => {
                 type="number"
               />
               <SettingTextInput
-                value={media.thumbnail.height}
+                value={get(media,'thumbnail.height')}
                 label="Height"
                 onSettingInputChange={(val) => {
                   setMedia({
@@ -71,7 +71,7 @@ const MediaComponent = () => {
           <SettingBlock label="Medium size">
             <Box display="flex" flexDirection={isSmall ? "column" : "row"}>
               <SettingTextInput
-                value={media.medium.width}
+                value={get(media,'medium.width')}
                 label="Max Width"
                 onSettingInputChange={(val) => {
                   setMedia({
@@ -86,13 +86,13 @@ const MediaComponent = () => {
                 otherClass={classes.marginRight2}
               />
               <SettingTextInput
-                value={media.medium.height}
+                value={get(media,'medium.height')}
                 label="Max Height"
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
                     medium: {
-                      ...media.medium,
+                      ...get(media,'medium'),
                       height: val,
                     },
                   });
@@ -105,13 +105,13 @@ const MediaComponent = () => {
           <SettingBlock label="Large Size">
             <Box display="flex" flexDirection={isSmall ? "column" : "row"}>
               <SettingTextInput
-                value={media.large.width}
+                value={get(media,'large.width')}
                 label="Max Width"
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
                     large: {
-                      ...media.large,
+                      ...get(media,'large'),
                       width: val,
                     },
                   });
@@ -120,13 +120,13 @@ const MediaComponent = () => {
                 otherClass={classes.marginRight2}
               />
               <SettingTextInput
-                value={media.large.height}
+                value={get(media,'large.height')}
                 label="Max Height"
                 onSettingInputChange={(val) => {
                   setMedia({
                     ...media,
                     large: {
-                      ...media.large,
+                      ...get(media,'large'),
                       height: val,
                     },
                   });

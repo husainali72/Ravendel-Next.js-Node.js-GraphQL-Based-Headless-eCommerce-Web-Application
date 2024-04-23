@@ -16,9 +16,8 @@ const StoreAddressComponent = () => {
   const [address, setAddress] = useState({});
 
   useEffect(() => {
-    if(settingState.settings.store.store_address){
-      setAddress({...settingState.settings.store.store_address,})
-    }
+      setAddress({...get(settingState,'settings.store.store_address')})
+
   }, [get(settingState, "settings")])
 
   const updateStoreAddress = () => {
@@ -33,7 +32,7 @@ const StoreAddressComponent = () => {
         <Grid item xs={12}>
           <Box component="div">
             <SettingTextInput
-              value={address.addressLine1}
+              value={get(address,'addressLine1')}
               label="Address line 1"
               onSettingInputChange={(val) => {
                 setAddress({ ...address, addressLine1: val });
@@ -42,7 +41,7 @@ const StoreAddressComponent = () => {
           </Box>
           <Box component="div">
             <SettingTextInput
-              value={address.addressLine2}
+              value={get(address,'addressLine2')}
               label="Address line 2"
               onSettingInputChange={(val) => {
                 setAddress({ ...address, addressLine2: val });
@@ -51,7 +50,7 @@ const StoreAddressComponent = () => {
           </Box>
           <Box component="div">
             <SettingTextInput
-              value={address.city}
+              value={get(address,'city')}
               label="City"
               onSettingInputChange={(val) => {
                 setAddress({ ...address, city: val });
@@ -60,7 +59,7 @@ const StoreAddressComponent = () => {
           </Box>
           <Box component="div">
             <SettingTextInput
-              value={address.state}
+              value={get(address,'state')}
               label="State"
               onSettingInputChange={(val) => {
                 setAddress({ ...address, state: val });
@@ -69,7 +68,7 @@ const StoreAddressComponent = () => {
           </Box>
           <Box component="div">
             <SettingTextInput
-              value={address.country}
+              value={get(address,'country')}
               label="Country"
               onSettingInputChange={(val) => {
                 setAddress({ ...address, country: val });
@@ -78,7 +77,7 @@ const StoreAddressComponent = () => {
           </Box>
           <Box component="div">
             <SettingTextInput
-              value={address.zip}
+              value={get(address,'zip')}
               label="Postcode / ZIP"
               onSettingInputChange={(val) => {
                 setAddress({ ...address, zip: val });
@@ -87,7 +86,7 @@ const StoreAddressComponent = () => {
           </Box>
           <Box component="div">
             <SettingTextInput
-              value={address.hour}
+              value={get(address,'hour')}
               label="Hour"
               onSettingInputChange={(val) => {
                 setAddress({ ...address, hour: val });

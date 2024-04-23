@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Form } from "react-bootstrap";
+import { get } from "lodash";
 
 const CheckBox = ({ options, value, name, onChange, className }) => {
+  const [selectedOption, setSelectedOption] = useState("");
+  const handleOptionChange = (e) => {
+    if(name==='paymentMethod'){
+    const selectedValue = e.target.value;
+    setSelectedOption(selectedValue);
+    }
+    onChange(e); 
+  };
   return (
     <Form>
-      <Form.Group value={value} onChange={onChange}>
+      <Form.Group value={value} onChange={handleOptionChange}>
         {options?.map((option, index) => (
           <div key={`inline-${option.value}-${index}`} className="mb-3">
             <Form.Check
@@ -16,6 +25,11 @@ const CheckBox = ({ options, value, name, onChange, className }) => {
               id={`inline-${option.value}-${index}`}
               className={className}
             />
+            {selectedOption === get(option,'value') && (
+              <p className="payment_method_description">
+             Description : {get(option,'description')}
+              </p>
+            )}
           </div>
         ))}
       </Form.Group>

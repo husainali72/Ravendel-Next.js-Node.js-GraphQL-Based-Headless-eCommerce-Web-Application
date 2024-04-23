@@ -27,8 +27,8 @@ export const socialMediaIconSetter = (IconName, setIcon,) => {
 const SocialMediaComponent = ({ handleChange, selectedIcons, removeInput, menuItem, onhandleChange }) => {
     const classes = viewStyles()
     const checkSelectedIcons = (Icons) => {
-        return selectedIcons.some((item) => {
-            return item.name === Icons.name;
+        return selectedIcons?.some((item) => {
+            return item?.name === Icons?.name;
         });
     };
     const SelectOptionField = ({ label, name, value, children, id }) => {
@@ -45,11 +45,11 @@ const SocialMediaComponent = ({ handleChange, selectedIcons, removeInput, menuIt
                         multiple
                         onChange={(e) => onhandleChange(e)}
                         className={classes.iconSelect}
-                        value={value}
+                        value={value||[]}
                         name={name}
                         renderValue={(selected) => (
                             <div style={{ display: "flex", flexWrap: "wrap", }} >
-                                {selected.map((value) => (
+                                {selected?.map((value) => (
                                     socialMediaIconSetter(value.name)))}
                             </div>
                         )
