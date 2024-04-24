@@ -154,7 +154,6 @@ const SETTING_TILE_DATA = gql`
           category
         }
       }
-  
       theme {
         primary_color
         playstore
@@ -162,9 +161,7 @@ const SETTING_TILE_DATA = gql`
         phone_number
         email
         logo
-        
       }
-     
       mobile {
         slider {
           image
@@ -180,12 +177,12 @@ const SETTING_TILE_DATA = gql`
         }
       }
     }
-    imageStorage{
+    imageStorage {
       status
       s3_id
       s3_key
     }
-    zipcode{
+    zipcode {
       id
       zipcode
     }
@@ -213,7 +210,7 @@ const GET_SETTINGS = gql`
 `;
 
 const UPDATE_GENERAL = gql`
-  mutation($date_format: String, $time_zone: String) {
+  mutation ($date_format: String, $time_zone: String) {
     updateGeneral(date_format: $date_format, time_zone: $time_zone) {
       ...SettingTile
     }
@@ -222,7 +219,7 @@ const UPDATE_GENERAL = gql`
 `;
 
 const UPDATE_MEDIA = gql`
-  mutation(
+  mutation (
     $thumbnail: customObject
     $medium: customObject
     $large: customObject
@@ -235,7 +232,7 @@ const UPDATE_MEDIA = gql`
 `;
 
 const UPDATE_SMTP = gql`
-  mutation($server: String, $username: String, $password: String, $port: Int) {
+  mutation ($server: String, $username: String, $password: String, $port: Int) {
     updateSMTP(
       server: $server
       username: $username
@@ -249,7 +246,7 @@ const UPDATE_SMTP = gql`
 `;
 
 const UPDATE_SEO = gql`
-  mutation($meta_title: String, $meta_tag: String, $meta_description: String) {
+  mutation ($meta_title: String, $meta_tag: String, $meta_description: String) {
     updateSEO(
       meta_title: $meta_title
       meta_tag: $meta_tag
@@ -261,12 +258,8 @@ const UPDATE_SEO = gql`
   ${SETTING_TILE_DATA}
 `;
 const UPDATE_IMAGE_STORAGE = gql`
-  mutation($status: String, $s3_id: String, $s3_key: String) {
-    updateImageStorage(
-      status: $status
-      s3_id: $s3_id
-      s3_key: $s3_key
-    ) {
+  mutation ($status: String, $s3_id: String, $s3_key: String) {
+    updateImageStorage(status: $status, s3_id: $s3_id, s3_key: $s3_key) {
       ...SettingTile
     }
   }
@@ -274,7 +267,7 @@ const UPDATE_IMAGE_STORAGE = gql`
 `;
 
 const UPDATE_STORE_CURRENCY = gql`
-  mutation(
+  mutation (
     $currency: String
     $currency_position: String
     $thousand_separator: String
@@ -295,14 +288,14 @@ const UPDATE_STORE_CURRENCY = gql`
 `;
 
 const UPDATE_STORE_ADDRESS = gql`
-  mutation(
+  mutation (
     $addressLine1: String
     $addressLine2: String
     $city: String
     $country: String
     $state: String
-    $zip: String
     $hour: String
+    $social_media: [social_media_input]
   ) {
     updateStoreAddress(
       addressLine1: $addressLine1
@@ -310,8 +303,8 @@ const UPDATE_STORE_ADDRESS = gql`
       city: $city
       country: $country
       state: $state
-      zip: $zip
       hour: $hour
+      social_media: $social_media
     ) {
       ...SettingTile
     }
@@ -320,7 +313,7 @@ const UPDATE_STORE_ADDRESS = gql`
 `;
 
 const UPDATE_STORE_MEASUREMENTS = gql`
-  mutation($weight_unit: String, $dimensions_unit: String) {
+  mutation ($weight_unit: String, $dimensions_unit: String) {
     updateStoreMeasurements(
       weight_unit: $weight_unit
       dimensions_unit: $dimensions_unit
@@ -332,7 +325,7 @@ const UPDATE_STORE_MEASUREMENTS = gql`
 `;
 
 const UPDATE_STORE_INVENTORY = gql`
-  mutation(
+  mutation (
     $manage_stock: Boolean
     $notifications: inventory_notification
     $notification_recipients: String
@@ -341,7 +334,7 @@ const UPDATE_STORE_INVENTORY = gql`
     $out_of_stock_visibility: Boolean
     $stock_display_format: String
     $manage_zipcodes: Boolean
-    $zipcode_file: Upload 
+    $zipcode_file: Upload
   ) {
     updateStoreInventory(
       manage_stock: $manage_stock
@@ -361,31 +354,16 @@ const UPDATE_STORE_INVENTORY = gql`
 `;
 
 const UPDATE_STORE_ORDER = gql`
-  mutation(
-    $order_prefix: String
-    $order_digits: Int
-  ) {
-    updateStoreOrder(
-      order_prefix: $order_prefix
-      order_digits: $order_digits
-    ) {
+  mutation ($order_prefix: String, $order_digits: Int) {
+    updateStoreOrder(order_prefix: $order_prefix, order_digits: $order_digits) {
       ...SettingTile
     }
   }
   ${SETTING_TILE_DATA}
 `;
 const UPDATE_IMAGE_STORE = gql`
-  mutation(
-    $status: String
-    $s3_id: String
-    $s3_key: String
-  ) {
-    updateImageStorage(
-      status: $status
-      s3_id: $s3_id
-      s3_key: $s3_key
-
-    ) {
+  mutation ($status: String, $s3_id: String, $s3_key: String) {
+    updateImageStorage(status: $status, s3_id: $s3_id, s3_key: $s3_key) {
       ...SettingTile
     }
   }
@@ -393,14 +371,8 @@ const UPDATE_IMAGE_STORE = gql`
 `;
 
 const UPDATE_PAYMENT_COD = gql`
-  mutation(
-    $enable: Boolean
-    $title: String
-  ) {
-    updatePaymnetCOD(
-      enable: $enable
-      title: $title
-    ) {
+  mutation ($enable: Boolean, $title: String) {
+    updatePaymnetCOD(enable: $enable, title: $title) {
       ...SettingTile
     }
   }
@@ -408,7 +380,7 @@ const UPDATE_PAYMENT_COD = gql`
 `;
 
 const UPDATE_PAYMENT_BANK = gql`
-  mutation(
+  mutation (
     $enable: Boolean
     $title: String
     $description: String
@@ -427,7 +399,7 @@ const UPDATE_PAYMENT_BANK = gql`
 `;
 
 const UPDATE_PAYMENT_STRIPE = gql`
-  mutation(
+  mutation (
     $enable: Boolean
     $title: String
     $description: String
@@ -454,7 +426,7 @@ const UPDATE_PAYMENT_STRIPE = gql`
 `;
 
 const UPDATE_PAYMENT_PAYPAL = gql`
-  mutation(
+  mutation (
     $enable: Boolean
     $title: String
     $description: String
@@ -480,7 +452,7 @@ const UPDATE_PAYMENT_PAYPAL = gql`
   ${SETTING_TILE_DATA}
 `;
 const UPDATE_PAYMENT_RAZORPAY = gql`
-  mutation(
+  mutation (
     $enable: Boolean
     $title: String
     $description: String
@@ -511,11 +483,8 @@ const UPDATE_PAYMENT_RAZORPAY = gql`
 `;
 
 const UPDATE_NOTIFICATION_ONESIGNAL = gql`
-  mutation($app_id: String, $rest_api_key: String) {
-    updateNotificationOneSignal(
-      app_id: $app_id
-      rest_api_key: $rest_api_key
-    ) {
+  mutation ($app_id: String, $rest_api_key: String) {
+    updateNotificationOneSignal(app_id: $app_id, rest_api_key: $rest_api_key) {
       ...SettingTile
     }
   }
@@ -523,7 +492,10 @@ const UPDATE_NOTIFICATION_ONESIGNAL = gql`
 `;
 
 const UPDATE_APPEARANCE_HOME = gql`
-  mutation($slider: [slider_input], $add_section_in_home: add_section_in_home) {
+  mutation (
+    $slider: [slider_input]
+    $add_section_in_home: add_section_in_home
+  ) {
     updateAppearanceHome(
       slider: $slider
       add_section_in_home: $add_section_in_home
@@ -534,22 +506,25 @@ const UPDATE_APPEARANCE_HOME = gql`
   ${SETTING_TILE_DATA}
 `;
 
-
 const UPDATE_APPEARANCE_HOME_NEW = gql`
-mutation($slider: [slider_input], $add_section_in_home: add_section_in_home, $add_section_web: [add_section_web_input]) {
-  updateAppearanceHome(
-    slider: $slider
-    add_section_in_home: $add_section_in_home
-    add_section_web: $add_section_web
+  mutation (
+    $slider: [slider_input]
+    $add_section_in_home: add_section_in_home
+    $add_section_web: [add_section_web_input]
   ) {
-    ...SettingTile
+    updateAppearanceHome(
+      slider: $slider
+      add_section_in_home: $add_section_in_home
+      add_section_web: $add_section_web
+    ) {
+      ...SettingTile
+    }
   }
-}
   ${SETTING_TILE_DATA}
 `;
 
 const UPDATE_APPEARANCE_MOBILE = gql`
-  mutation($mobile_add_section_in_home: [mobile_add_section_in_home]) {
+  mutation ($mobile_add_section_in_home: [mobile_add_section_in_home]) {
     updateAppearanceMobile(
       slider: $slider
       mobile_add_section_in_home: $mobile_add_section_in_home
@@ -561,22 +536,15 @@ const UPDATE_APPEARANCE_MOBILE = gql`
 `;
 
 const UPDATE_APPEARANCE_MOBILE_NEW = gql`
-  mutation(
-    $slider: [slider_input],
-    $mobile_section: [mobile_section_input]
-  ) {
-    updateAppearanceMobile(
-      slider: $slider
-      mobile_section: $mobile_section
-    ) {
+  mutation ($slider: [slider_input], $mobile_section: [mobile_section_input]) {
+    updateAppearanceMobile(slider: $slider, mobile_section: $mobile_section) {
       ...SettingTile
     }
-
   }
   ${SETTING_TILE_DATA}
 `;
 const GET_ZIPCODE = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     zipcode(id: $id) {
       data {
         id
@@ -591,12 +559,8 @@ const GET_ZIPCODE = gql`
 `;
 
 const ADD_ZIPCODE = gql`
-  mutation(
-    $zipcode: String!
-  ) {
-    addZipcode(
-      zipcode: $zipcode
-    ) {
+  mutation ($zipcode: String!) {
+    addZipcode(zipcode: $zipcode) {
       message
       success
     }
@@ -604,14 +568,16 @@ const ADD_ZIPCODE = gql`
 `;
 
 const UPDATE_ZIPCODE = gql`
-  mutation(
-    $id: ID!
-    $zipcode: String!
-  ) {
-    updateZipcode(
-      id: $id
-      zipcode: $zipcode
-    ) {
+  mutation ($zip: String) {
+    updateZipcode(zip: $zip) {
+      message
+      success
+    }
+  }
+`;
+const UPLOAD_ZIPCODE_FILE = gql`
+  mutation ($zip: String) {
+    uploadZipcodeFile(zip: $zip) {
       message
       success
     }
@@ -619,20 +585,32 @@ const UPDATE_ZIPCODE = gql`
 `;
 
 const DELETE_ZIPCODE = gql`
-  mutation(
-    $id: ID!
-  ) {
-    deleteZipcode(
-      id: $id
-    ) {
+  mutation ($id: ID!) {
+    deleteZipcode(id: $id) {
       message
       success
     }
   }
 `;
 const UPDATE_APPEARANCE_THEME = gql`
-  mutation($primary_color: String, $new_logo: Upload, $playstore: String, $appstore: String, $phone_number: String, $email: String, $logo: String, $social_media: [social_media_input]) {
-    updateAppeanranceTheme(primary_color: $primary_color, new_logo: $new_logo, playstore: $playstore, appstore: $appstore, phone_number: $phone_number, email: $email, logo: $logo, social_media: $social_media) {
+  mutation (
+    $primary_color: String
+    $new_logo: Upload
+    $playstore: String
+    $appstore: String
+    $phone_number: String
+    $email: String
+    $logo: String
+  ) {
+    updateAppeanranceTheme(
+      primary_color: $primary_color
+      new_logo: $new_logo
+      playstore: $playstore
+      appstore: $appstore
+      phone_number: $phone_number
+      email: $email
+      logo: $logo
+    ) {
       ...SettingTile
     }
   }
@@ -667,5 +645,6 @@ export {
   ADD_ZIPCODE,
   UPDATE_ZIPCODE,
   DELETE_ZIPCODE,
-  UPDATE_IMAGE_STORAGE
+  UPDATE_IMAGE_STORAGE,
+  UPLOAD_ZIPCODE_FILE,
 };

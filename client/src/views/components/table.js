@@ -32,9 +32,10 @@ import { stableSort, getComparator } from "../components/sorting";
 import { Alert, Loading } from "../components";
 import theme from "../../theme/index";
 import { useSelector } from "react-redux";
+import { get, lowerCase } from "lodash";
 const Tablecomponent = ({
   searchdata,
-  classname,
+  headerButtons,
   rows,
   columns,
   showDeleteButton,
@@ -85,6 +86,10 @@ const Tablecomponent = ({
                   </Button>
                 </Link>
               ) : null}
+              {headerButtons &&
+                headerButtons?.map((headerButton) => {
+                  return headerButton?.component||<></>;
+                })}
               {addDialogBox ? (
                 <Button
                   color="success"
@@ -153,9 +158,9 @@ const Tablecomponent = ({
                                 return (
                                   <TableCell>
                                     <Avatar
-                                      alt={data.name}
+                                      alt={get(data,'name','')}
                                       src={`${getBaseUrl(setting)}${
-                                        data.image
+                                        get(data,'image','')
                                       }`}
                                       sx={{
                                         "& .MuiAvatar-img": {
@@ -178,7 +183,10 @@ const Tablecomponent = ({
                               case "date":
                                 return (
                                   <TableCell>
-                                    {convertDateToStringFormat(data.date,setting)}
+                                    {convertDateToStringFormat(
+                                      get(data,'date',null),
+                                      setting
+                                    )}
                                   </TableCell>
                                 );
                               case "email":
@@ -186,7 +194,7 @@ const Tablecomponent = ({
                                   <TableCell
                                     style={{ textTransform: "lowercase" }}
                                   >
-                                    {data.email}
+                                    {get(data,'email','')}
                                   </TableCell>
                                 );
                               case "role":
@@ -194,15 +202,15 @@ const Tablecomponent = ({
                                   <TableCell
                                     style={{ textTransform: "capitalize" }}
                                   >
-                                    {data.role}
+                                    {get(data,'role')}
                                   </TableCell>
                                 );
                               case "shippingStatus":
                                 return (
                                   <TableCell>
                                     <Badge
-                                      badgeContent={data.shippingStatus}
-                                      color={badgeColor(data.shippingStatus)}
+                                      badgeContent={get(data,'shippingStatus')}
+                                      color={badgeColor(get(data,'shippingStatus'))}
                                       className={classes.badge}
                                       sx={{
                                         ml: "60px",
@@ -220,8 +228,8 @@ const Tablecomponent = ({
                                 return (
                                   <TableCell>
                                     <Badge
-                                      badgeContent={data.paymentStatus}
-                                      color={badgeColor(data.paymentStatus)}
+                                      badgeContent={get(data,'paymentStatus')}
+                                      color={badgeColor(get(data,'paymentStatus'))}
                                       className={classes.badge}
                                       sx={{
                                         ml: "60px",
@@ -240,7 +248,7 @@ const Tablecomponent = ({
                                   <TableCell>
                                     <column.component
                                       onClick={(type) =>
-                                        column.buttonOnClick(type, data.id)
+                                        column?.buttonOnClick(type, data?.id)
                                       }
                                       showDeleteButton={
                                         data.system ? false : showDeleteButton
@@ -248,9 +256,11 @@ const Tablecomponent = ({
                                     />
                                   </TableCell>
                                 );
-                              case column.name:
+                              default:
                                 return (
-                                  <TableCell>{data[column.name]}</TableCell>
+                                  <TableCell>
+                                    {get(data, `${[column?.name]}`, "")}
+                                  </TableCell>
                                 );
                             }
                           })}
@@ -290,6 +300,7 @@ export default function TableComponent({
   searchdata,
   rows,
   columns,
+  headerButtons,
   title,
   editpage,
   addpage,
@@ -309,6 +320,7 @@ export default function TableComponent({
         columns={columns}
         rows={rows}
         loading={loading}
+        headerButtons={headerButtons}
         classname={classname}
         editpage={editpage}
         title={title}

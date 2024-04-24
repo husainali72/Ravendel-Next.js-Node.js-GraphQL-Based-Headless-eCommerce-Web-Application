@@ -38,6 +38,10 @@ const viewStyles = makeStyles((theme) => ({
   addUserBtn: {
     color: "#fff",
   },
+  importBtn: {
+    color: "#fff",
+    marginRight: "20px !important",
+  },
 
   backdrop: {
     zIndex: "1101 !important",
@@ -600,6 +604,9 @@ const viewStyles = makeStyles((theme) => ({
     height: " 100%",
     width: "100%",
   },
+  settingTextField:{
+    marginLeft: "20px !important",
+  },
   iconSelect: {
     borderRadius: "5px",
   },
@@ -633,6 +640,29 @@ const viewStyles = makeStyles((theme) => ({
     padding: "10px",
     borderRadius: "5px",
   },
+  marginRight:{
+    marginLeft: "10px !important",
+  },
+  socialMediaContainer:{
+    display:'flex'
+  },
+  socialMediaSelect:{
+    display: "flex", 
+    flexWrap: "wrap"
+  },
+  socialMediaIconName:{
+    marginLeft: "20px !important",
+  },
+  textTransformlowerCase:{
+    textTransform: "lowercase !important"
+  },
+  SocialContainer:{
+    width: "300px",
+     minWidth: 10 
+  },
+  SocialCloseIcon:{
+    margin:"20px"
+  }
 }));
 
 export default viewStyles;

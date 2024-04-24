@@ -315,7 +315,7 @@ const ViewOrderComponent = ({ params }) => {
                           get(order, "billing.paymentMethod", CASH_ON_DELIVERY)
                         )
                       }{" "}
-                      paid on {convertDateToStringFormat(order.date)}
+                      paid on {convertDateToStringFormat(get(order,'date'),currencyState)}
                       {/* Transaction
                       number {order.billing.transaction_id} */}
                     </Typography>
