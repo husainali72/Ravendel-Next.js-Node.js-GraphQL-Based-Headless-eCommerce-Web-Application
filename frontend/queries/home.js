@@ -3,6 +3,10 @@ import { gql } from "@apollo/client";
 export const GET_HOMEPAGE_DATA_QUERY = gql`
   query HomePageSettings {
     getSettings {
+      general {
+        date_format
+        time_zone
+      }
       seo {
         meta_title
         meta_tag
@@ -24,6 +28,10 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           state
           zip
           hour
+          social_media {
+            name
+            handle
+          }
         }
         measurements {
           weight_unit
@@ -72,8 +80,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           title
           description
           test_mode
-          sandbox_secret_key
-          live_secret_key
           sandbox_client_id
           live_client_id
         }
@@ -82,8 +88,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           title
           description
           test_mode
-          sandbox_secret_key
-          live_secret_key
           sandbox_client_id
           live_client_id
         }
@@ -123,10 +127,7 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           phone_number
           email
           logo
-          social_media {
-            name
-            handle
-          }
+
         }
 
         mobile {

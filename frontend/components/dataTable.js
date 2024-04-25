@@ -4,8 +4,10 @@ import React from "react";
 import { convertDateToStringFormat } from "../utills/helpers";
 import { get } from "lodash";
 import Price from "./priceWithCurrency";
+import { useSelector } from "react-redux";
 
 const Table = ({ rows, columns, colSpan, additionalRows }) => {
+  const settings=useSelector((state)=>state.setting)
   return (
     <table className="product-detail">
       <thead>
@@ -65,7 +67,7 @@ const Table = ({ rows, columns, colSpan, additionalRows }) => {
                     <th colSpan={colSpan || 3} className="order-text-align">
                       {get(data, "label", "")}
                     </th>
-                    <td>{convertDateToStringFormat(get(data, "value", ""))}</td>
+                    <td>{convertDateToStringFormat(get(data, "value", null),settings)}</td>
                   </tr>
                 );
               default:
