@@ -15,7 +15,7 @@ const RemainingQuantity = ({ quantity }) => {
     );
     switch (stockDisplayFormat) {
       case "leftStock":
-        setShowQuantity(quantity <= get(stockOption, "quantity"));
+        setShowQuantity(quantity <= get(stockOption, "left_quantity"));
         break;
       case "never":
         setShowQuantity(false);

@@ -172,7 +172,7 @@ module.exports = {
         setting.store.store_address.zip = args.zip;
         setting.store.store_address.hour = args.hour;
         setting.store.store_address.email = args.email;
-        setting.store.store_address.phoneNo = args.phoneNo;
+        setting.store.store_address.phone_number = args.phoneNo;
 
         let socialMedia = []
         for (let media of args.social_media) {

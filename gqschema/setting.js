@@ -80,7 +80,7 @@ module.exports = `
     zip: String
     hour: String
     email: String
-    phoneNo: String
+    phone_number: String
     social_media: [SOCIAL_MEDIA]
   }
 

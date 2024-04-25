@@ -117,7 +117,7 @@ const SeetingSchema = new Schema(
         email: {
           type: String
         },
-        phoneNo: {
+        phone_number: {
           type: Number
         },
         social_media: [
@@ -468,7 +468,7 @@ module.exports.createSettings = async () => {
         zip: "100104",
         hour: "Mon to Fri, 9am to 6pm",
         email: "example@gmail.com",
-        phoneNo: "9898989898",
+        phone_number: "9898989898",
         social_media: [
           {
             name: "Facebook",

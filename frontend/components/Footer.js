@@ -129,7 +129,7 @@ export default function Footer() {
                           ></a>
                         </Link>
                       );
-                    })} */}
+                    })}
                   </div>
                 </div>
                 <div className="col-lg-2 col-md-3 col-xl-2 mx-auto mb-4 mt-2 ">
