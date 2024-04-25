@@ -3,6 +3,7 @@ const userSchema = require("./user");
 const pageSchema = require("./page");
 const blogSchema = require("./blog");
 const productSchema = require("./product");
+const groupSchema = require("./group");
 const cartSchema = require("./cart");
 const checkoutSchema = require("./checkout");
 const orderSchema = require("./order");
@@ -63,6 +64,7 @@ module.exports = [
   pageSchema,
   blogSchema,
   productSchema,
+  groupSchema,
   cartSchema,
   checkoutSchema,
   orderSchema,
