@@ -11,6 +11,7 @@ module.exports = `
     name: String
     slug: String
     values: [customObject]
+    allow_filter: Boolean
     attribute_values: [customObject]
     date: Date
     updated: Date
@@ -30,6 +31,7 @@ module.exports = `
   input AttributeInput {
     id: ID
     name: String
+    allow_filter: Boolean
     values: [customObject]
   }
   
