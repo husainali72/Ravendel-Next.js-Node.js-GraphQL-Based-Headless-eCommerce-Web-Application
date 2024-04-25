@@ -162,10 +162,9 @@ const SeetingSchema = new Schema(
         stock_display_format: {
           type: String,
         },
-        manage_zipcodes: {
-          type: Boolean
+        left_quantity: {
+          type: Number,
         },
-        zipcodes: [String]
       },
       order_options: {
         order_prefix: {
@@ -396,12 +395,6 @@ const SeetingSchema = new Schema(
         appstore: {
           type: String
         },
-        phone_number: {
-          type: String
-        },
-        email: {
-          type: String
-        },
         logo: {
           type: String
         }
@@ -514,8 +507,7 @@ module.exports.createSettings = async () => {
         out_of_stock_threshold: 1,
         out_of_stock_visibility: true,
         stock_display_format: "1",
-        manage_zipcodes: true,
-        zipcodes: []
+        left_quantity: "0"
       },
       order_options: {
         order_prefix: "#",
@@ -631,8 +623,6 @@ module.exports.createSettings = async () => {
         primary_color: "#154050",
         playstore: "https://play.google.com/store/apps/details?id=com.ravendel",
         appstore: "https://apps.apple.com/us/app/ravendel/id1351162341",
-        phone_number: "9797979797",
-        email: "abc@gmail.com",
         logo: ""
       },
       mobile: {

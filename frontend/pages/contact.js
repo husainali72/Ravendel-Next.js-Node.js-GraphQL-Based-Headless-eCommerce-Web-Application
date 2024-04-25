@@ -21,7 +21,7 @@ var defaultObj = {
     message: '',
 };
 const Contact = ( {homePageData} ) => {
-    const [ contactDetails, setContactDetails ] = useState( {...homePageData?.getSettings?.appearance?.theme} );
+    const [ contactDetails, setContactDetails ] = useState( {...homePageData?.getSettings?.store?.store_address} );
     const [ address, seAddress ] = useState( {...homePageData?.getSettings?.store?.store_address} );
     const [ contact, setcontact ] = useState( defaultObj );
     const handleChange = ( e ) => {

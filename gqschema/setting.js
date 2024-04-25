@@ -102,7 +102,7 @@ module.exports = `
     out_of_stock_threshold: Int
     out_of_stock_visibility: Boolean
     stock_display_format: String
-    manage_zipcodes: Boolean
+    left_quantity: Int
   }
 
   type INVENTORY_NOTIFICATIONS {
@@ -240,8 +240,6 @@ module.exports = `
     primary_color: String
     playstore: String
     appstore: String
-    phone_number: String
-    email: String
     logo: String
   }
 
@@ -355,8 +353,7 @@ module.exports = `
       out_of_stock_threshold: Int
       out_of_stock_visibility: Boolean
       stock_display_format: String
-      manage_zipcodes: Boolean
-      zipcode_file: Upload
+      left_quantity: Int
     ): Setting
     updateStoreOrder(
       order_prefix: String
@@ -430,8 +427,6 @@ module.exports = `
       primary_color: String, 
       playstore: String
       appstore: String
-      phone_number: String
-      email: String
       new_logo: Upload
       logo: String
     ): Setting

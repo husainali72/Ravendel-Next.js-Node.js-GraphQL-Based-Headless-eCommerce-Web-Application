@@ -37,11 +37,11 @@ export default function Footer() {
       const addressPath2 = "data.getSettings.store.store_address.addressLine2";
       const hour = "data.getSettings.store.store_address.hour";
       const cityPath = "data.getSettings.store.store_address.city";
-      const phonePath = "data.getSettings.appearance.theme.phone_number";
-      const emailPath = "data.getSettings.appearance.theme.email";
+      const phonePath = "data.getSettings.store.store_address.phone_number";
+      const emailPath = "data.getSettings.store.store_address.email";
       const playStorePath = "data.getSettings.appearance.theme.playstore";
       const appStorePath = "data.getSettings.appearance.theme.appstore";
-      const socialMediaPath = "data.getSettings.appearance.theme.social_media";
+      const socialMediaPath = "data.getSettings.store.social_media";
       setAddress((previousAddress) => ({
         ...previousAddress,
         addressLine1: get(res, addressPath1, "Central Park"),
@@ -116,11 +116,11 @@ export default function Footer() {
                   <div className="mt-4 follow">
                     <h5>Follow us</h5>
                     {/* <ui> */}
-                    {get(Address, "socailMedia", [])?.map((media, i) => {
+                    {/* {get(Address, "socailMedia", [])?.map((media, i) => {
                       return (
-                        <Link href={media.handle} key={i}>
+                        <Link href={media?.handle} key={i}>
                           <a
-                            href={media.handle}
+                            href={media?.handle}
                             className={iconSetter(media.name)}
                             aria-hidden="true"
                             target="_blank"
@@ -128,7 +128,7 @@ export default function Footer() {
                           ></a>
                         </Link>
                       );
-                    })}
+                    })} */}
                   </div>
                 </div>
                 <div className="col-lg-2 col-md-3 col-xl-2 mx-auto mb-4 mt-2 ">

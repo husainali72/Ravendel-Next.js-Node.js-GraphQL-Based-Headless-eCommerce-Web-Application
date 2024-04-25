@@ -1408,13 +1408,16 @@ const addOrder = async(args) => {
     };
   }
 
-  let validPaymentModes = ["cashondelivery", "stripe", "paypal", "razorpay"];
+  const setting = await Setting.findOne({});
+
+  const validPaymentModes = Object.entries(setting.payment)
+  .filter(([key, value]) => value.enable)
+  .map(([key, value]) => value.title.toLowerCase().replaceAll(" ",""));
+
   if (!validPaymentModes.includes(args.billing.paymentMethod)) {
     return MESSAGE_RESPONSE("InvalidField", "Payment mode", false); 
   }
 
-  const setting = await Setting.findOne({});
-  
   let status = 'pending', redirectUrl, paypalOrderId, razorpayOrderId;
   if(args.billing.paymentMethod !== 'cashondelivery') {
     status = 'processing';
