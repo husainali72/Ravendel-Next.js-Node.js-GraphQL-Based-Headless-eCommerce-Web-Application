@@ -79,6 +79,14 @@ module.exports = `
     state: String
     zip: String
     hour: String
+    email: String
+    phoneNo: String
+    social_media: [SOCIAL_MEDIA]
+  }
+
+  type SOCIAL_MEDIA {
+    name: String
+    handle: String
   }
 
   type MEASUREMENTS {
@@ -103,7 +111,6 @@ module.exports = `
   }
 
   type ORDER_OPTIONS {
-    order_prefix_list: customArray
     order_prefix: String
     order_digits: Int
   }
@@ -120,14 +127,12 @@ module.exports = `
     enable: Boolean
     title: String
     description: String
-    instructions: String
   }
 
   type BANK_TRANSFER {
     enable: Boolean
     title: String
     description: String
-    instructions: String
     account_details: ACCOUNT_DETAILS
   }
 
@@ -144,9 +149,6 @@ module.exports = `
     enable: Boolean
     title: String
     description: String
-    inline_credit_card_form: Boolean
-    statement_descriptor: String
-    capture: Boolean
     test_mode: Boolean
     sandbox_secret_key: String
     live_secret_key: String
@@ -158,11 +160,6 @@ module.exports = `
     enable: Boolean
     title: String
     description: String
-    paypal_email: String
-    ipn_email_notification: Boolean
-    receiver_email: String
-    paypal_identity_token: String
-    invoice_prefix: String
     test_mode: Boolean
     sandbox_secret_key: String
     live_secret_key: String
@@ -246,13 +243,9 @@ module.exports = `
     phone_number: String
     email: String
     logo: String
-    social_media: [SOCIAL_MEDIA]
   }
 
-  type SOCIAL_MEDIA {
-    name: String
-    handle: String
-  }
+
 
   input inventory_notification {
     show_out_of_stock: Boolean
@@ -346,6 +339,9 @@ module.exports = `
       state: String
       zip: String
       hour: String
+      email: String
+      phoneNo: String
+      social_media: [social_media_input]
     ): Setting
     updateStoreMeasurements(
       weight_unit: String
@@ -370,22 +366,17 @@ module.exports = `
       enable: Boolean
       title: String
       description: String
-      instructions: String
     ): Setting
     updatePaymnetBank(
       enable: Boolean
       title: String
       description: String
-      instructions: String
       account_details: account_details
     ): Setting
     updatePaymnetStripe(
       enable: Boolean
       title: String
       description: String
-      inline_credit_card_form: Boolean
-      statement_descriptor: String
-      capture: Boolean
       test_mode: Boolean
       sandbox_secret_key: String
       live_secret_key: String
@@ -396,11 +387,6 @@ module.exports = `
       enable: Boolean
       title: String
       description: String
-      paypal_email: String
-      ipn_email_notification: Boolean
-      receiver_email: String
-      paypal_identity_token: String
-      invoice_prefix: String
       test_mode: Boolean
       sandbox_secret_key: String
       live_secret_key: String
@@ -448,7 +434,6 @@ module.exports = `
       email: String
       new_logo: Upload
       logo: String
-      social_media: [social_media_input]
     ): Setting
   }
 `;

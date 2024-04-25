@@ -47,13 +47,11 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           enable
           title
           description
-          instructions
         }
         bank_transfer {
           enable
           title
           description
-          instructions
           account_details {
             account_name
             account_number
@@ -67,9 +65,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           enable
           title
           description
-          inline_credit_card_form
-          statement_descriptor
-          capture
           test_mode
         }
         paypal {

@@ -4,7 +4,7 @@ import { Spinner } from "react-bootstrap";
 import Table from "../../dataTable";
 import { get } from "lodash";
 import AddressDetails from "./addressDetail";
-import { isCouponAppliedAndNotFreeShipping } from "../../../utills/helpers";
+import { isCouponAppliedAndNotFreeShipping ,getPaymentMethodLabel} from "../../../utills/helpers";
 import { CASH_ON_DELIVERY } from "../../../utills/constant";
 const prepareProductHeaderData = (orderInfo) => {
   const showAttributes = get(orderInfo, "products", [])?.some(
@@ -49,7 +49,7 @@ const prepareOrderDetailRowData = (orderInfo) => {
       : null,
     {
       label: "Payment Method",
-      value: get(orderInfo, "billing.paymentMethod", CASH_ON_DELIVERY),
+      value: getPaymentMethodLabel(get(orderInfo, "billing.paymentMethod", CASH_ON_DELIVERY)),
       type: "text",
     },
   ];

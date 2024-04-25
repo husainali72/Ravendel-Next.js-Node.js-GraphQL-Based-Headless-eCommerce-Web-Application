@@ -26,7 +26,7 @@ export const validate = (names, args) => {
 export const validatenestedArray = (main, names, args, key) => {
   let errors = "";
   if (names && names.length > 0) {
-    args.map((obj) => {
+    args?.map((obj) => {
       names.map((name) => {
         if (!obj[main][name]) {
           if (key) {

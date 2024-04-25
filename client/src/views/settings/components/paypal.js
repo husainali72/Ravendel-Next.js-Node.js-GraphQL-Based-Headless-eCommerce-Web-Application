@@ -12,6 +12,7 @@ import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
 import ToggleSwitch from "../../components/switch.js";
 import { getValue } from "../../../utils/helper.js";
+import SettingTextArea from "./setting-components/setting-textArea.js";
 
 const PaypalComponent = () => {
   const classes = viewStyles();
@@ -63,14 +64,18 @@ const PaypalComponent = () => {
               </Box>
 
               <Box component="div">
-                <SettingTextInput
+                <SettingTextArea
                   label="Description"
+                  placeholder="Description"
                   value={get(paypalInfo, "description")}
-                  onSettingInputChange={(val) =>
-                    setPaypalInfo({ ...paypalInfo, description: val })
-                  }
-                  multiline
-                  rows="5"
+                  onSettingInputChange={(e) => {
+                    setPaypalInfo({
+                      ...paypalInfo,
+                      description: get(e, "target.value"),
+                    });
+                  }}
+                  minRows={3}
+                  className={classes.settingTextArea}
                 />
               </Box>
             </Box>
@@ -139,19 +144,19 @@ const PaypalComponent = () => {
                 />
               </Box>
             </Grid>
-
-            <Grid item xs={12}>
-              <Button
-                size="small"
-                color="primary"
-                variant="contained"
-                onClick={updatePaypal}
-              >
-                Save Change
-              </Button>
-            </Grid>
           </>
         )}
+
+        <Grid item xs={12}>
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updatePaypal}
+          >
+            Save Change
+          </Button>
+        </Grid>
       </Grid>
     </>
   );

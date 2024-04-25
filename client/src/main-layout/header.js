@@ -28,7 +28,7 @@ import RavendelLogo from "../assets/images/RavendelLogo.png";
 import "../App.css";
 import { get, isEmpty } from "lodash";
 import { useDispatch } from "react-redux";
-import { getSettings } from "../store/action";
+import { getDatesAction, getSettings } from "../store/action";
 const HeaderComponenet = ({onSidebarOpen}) => {
   const classes = useStyles();
   const login = useSelector((state) => state.login);
@@ -48,7 +48,9 @@ const HeaderComponenet = ({onSidebarOpen}) => {
   }, [get(logoState, "settings")])
   useEffect(() => {
     dispatch(getSettings())
+    dispatch(getDatesAction())
   }, [])
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };

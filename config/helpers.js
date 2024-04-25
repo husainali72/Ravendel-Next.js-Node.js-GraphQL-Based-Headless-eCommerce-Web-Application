@@ -1408,7 +1408,7 @@ const addOrder = async(args) => {
     };
   }
 
-  let validPaymentModes = ["Cash On Delivery", "Stripe", "Paypal", "Razor Pay"];
+  let validPaymentModes = ["cashondelivery", "stripe", "paypal", "razorpay"];
   if (!validPaymentModes.includes(args.billing.paymentMethod)) {
     return MESSAGE_RESPONSE("InvalidField", "Payment mode", false); 
   }
@@ -1416,7 +1416,7 @@ const addOrder = async(args) => {
   const setting = await Setting.findOne({});
   
   let status = 'pending', redirectUrl, paypalOrderId, razorpayOrderId;
-  if(args.billing.paymentMethod !== 'Cash On Delivery') {
+  if(args.billing.paymentMethod !== 'cashondelivery') {
     status = 'processing';
   }
   
@@ -1455,10 +1455,10 @@ const addOrder = async(args) => {
 
   let environmentBool = process.env.NODE_ENV.trim() === 'production';
 
-  if (args.billing.paymentMethod === 'Cash On Delivery') {
+  if (args.billing.paymentMethod === 'cashondelivery') {
     const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
     emptyCart(cart);
-  } else if(args.billing.paymentMethod === 'Stripe') {
+  } else if(args.billing.paymentMethod === 'stripe') {
     
     const testMode = _.get(setting, 'payment.stripe.test_mode');
     const secretKey = environmentBool ? (testMode ? 'sandbox_secret_key' : 'live_secret_key') : 'sandbox_secret_key';
@@ -1508,7 +1508,7 @@ const addOrder = async(args) => {
     //let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : { sessionId : session.id } }});
     let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : session } });
     
-  } else if(args.billing.paymentMethod === 'Paypal') {
+  } else if(args.billing.paymentMethod === 'paypal') {
     
     const paypal = require('@paypal/checkout-server-sdk');
 
@@ -1570,7 +1570,7 @@ const addOrder = async(args) => {
     paypalOrderId = order.result.id;
     
     let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : order } });
-  } else if(args.billing.paymentMethod === 'Razor Pay') {
+  } else if(args.billing.paymentMethod === 'razorpay') {
   
     const Razorpay = require('razorpay');
     
@@ -1586,12 +1586,10 @@ const addOrder = async(args) => {
       key_id: razorpay_client_id,
       key_secret: razorpay_client_secret
     });
-    
     let totalAmount = calculatedCart.totalSummary.grandTotal;
     totalAmount = totalAmount * 100;
-
     const options = {
-      amount: totalAmount,
+      amount: parseInt(totalAmount),
       currency: currencycode,
       receipt: savedOrder._id
     }
@@ -1645,14 +1643,14 @@ const updatePaymentStatus = async (userId, args) => {
     let orderData = await Order.findOne({_id:id }, { billing:1, transactionDetail:1 });
 
     if(!orderData){
-      return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status 1 ", false);
+      return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
     }
     let paymentMethod = orderData.billing.paymentMethod;
 
     const setting = await Setting.findOne({}, {payment:1});
     let environmentBool = process.env.NODE_ENV.trim() === 'production';
     switch (paymentMethod) {
-      case "Stripe":
+      case "stripe":
 
         testMode = _.get(setting, 'payment.stripe.test_mode');
         secretKey = environmentBool ? (testMode ? 'sandbox_secret_key' : 'live_secret_key') : 'sandbox_secret_key';
@@ -1672,7 +1670,7 @@ const updatePaymentStatus = async (userId, args) => {
         }
 
         break;
-      case "Paypal":
+      case "paypal":
 
         const paypal = require('@paypal/checkout-server-sdk');
 
@@ -1699,7 +1697,7 @@ const updatePaymentStatus = async (userId, args) => {
         }
        
         break;
-      case "Razor Pay":
+      case "razorpay":
         let orderId = orderData.transactionDetail.id
 
         const Razorpay = require('razorpay');

@@ -42,7 +42,15 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Order", false);
       }
       try {
-        const order = await Order.find({ userId: new mongoose.Types.ObjectId(args.userId) }).sort({ date: -1 });
+        const order = await Order.find(
+          { 
+            userId: new mongoose.Types.ObjectId(args.userId),
+            $or: [
+              { 'billing.paymentMethod': "cashondelivery" },
+              { paymentStatus: "success" },
+            ],
+          }
+        ).sort({ date: -1 });
 
         if (!order) {
           return MESSAGE_RESPONSE("NOT_EXIST", "Order", false);
@@ -56,6 +64,7 @@ module.exports = {
         }
         // return MESSAGE_RESPONSE("RESULT_FOUND", "Order", true);
       } catch (error) {
+        console.log(error.message)
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Order", false);
       }
     },

@@ -113,7 +113,19 @@ const SeetingSchema = new Schema(
         },
         hour: {
           type: String
-        }
+        },
+        email: {
+          type: String
+        },
+        phoneNo: {
+          type: Number
+        },
+        social_media: [
+          {
+            name: String,
+            handle: String
+          }
+        ]
       },
       measurements: {
         weight_unit: {
@@ -156,7 +168,6 @@ const SeetingSchema = new Schema(
         zipcodes: [String]
       },
       order_options: {
-        order_prefix_list: [String],
         order_prefix: {
           type: String,
         },
@@ -176,9 +187,6 @@ const SeetingSchema = new Schema(
         description: {
           type: String,
         },
-        instructions: {
-          type: String,
-        },
       },
       bank_transfer: {
         enable: {
@@ -188,9 +196,6 @@ const SeetingSchema = new Schema(
           type: String,
         },
         description: {
-          type: String,
-        },
-        instructions: {
           type: String,
         },
         account_details: {
@@ -224,15 +229,6 @@ const SeetingSchema = new Schema(
         description: {
           type: String,
         },
-        inline_credit_card_form: {
-          type: Boolean,
-        },
-        statement_descriptor: {
-          type: String,
-        },
-        capture: {
-          type: Boolean,
-        },
         test_mode: {
           type: Boolean,
         },
@@ -261,21 +257,6 @@ const SeetingSchema = new Schema(
           type: String,
         },
         description: {
-          type: String,
-        },
-        paypal_email: {
-          type: String,
-        },
-        ipn_email_notification: {
-          type: Boolean,
-        },
-        receiver_email: {
-          type: String,
-        },
-        paypal_identity_token: {
-          type: String,
-        },
-        invoice_prefix: {
           type: String,
         },
         test_mode: {
@@ -423,13 +404,7 @@ const SeetingSchema = new Schema(
         },
         logo: {
           type: String
-        },
-        social_media: [
-          {
-            name: String,
-            handle: String
-          }
-        ]
+        }
       },
     },
     zipcode: [
@@ -499,6 +474,30 @@ module.exports.createSettings = async () => {
         state: "New York",
         zip: "100104",
         hour: "Mon to Fri, 9am to 6pm",
+        email: "example@gmail.com",
+        phoneNo: "9898989898",
+        social_media: [
+          {
+            name: "Facebook",
+            handle: "",
+          },
+          {
+            name: "Instagram",
+            handle: "",
+          },
+          {
+            name: "Pinterest",
+            handle: "",
+          },
+          {
+            name: "Youtube",
+            handle: "",
+          },
+          {
+            name: "Twitter",
+            handle: "",
+          }
+        ]
       },
       measurements: {
         weight_unit: "kg",
@@ -519,7 +518,6 @@ module.exports.createSettings = async () => {
         zipcodes: []
       },
       order_options: {
-        order_prefix_list: ["#"],
         order_prefix: "#",
         order_digits: 5
       }
@@ -529,13 +527,11 @@ module.exports.createSettings = async () => {
         enable: true,
         title: "Title comes here",
         description: "Description comes here",
-        instructions: "Instruction comes here",
       },
       bank_transfer: {
         enable: true,
         title: "Title comes here",
         description: "Description comes here",
-        instructions: "Instruction comes here",
         account_details: {
           account_name: "",
           account_number: "",
@@ -549,9 +545,6 @@ module.exports.createSettings = async () => {
         enable: true,
         title: "",
         description: "",
-        inline_credit_card_form: true,
-        statement_descriptor: "",
-        capture: true,
         test_mode: true,
         sandbox_secret_key: "",
         live_secret_key: "",
@@ -562,11 +555,6 @@ module.exports.createSettings = async () => {
         enable: true,
         title: "",
         description: "",
-        paypal_email: "",
-        ipn_email_notification: true,
-        receiver_email: "abc@gmail.com",
-        paypal_identity_token: "",
-        invoice_prefix: "",
         test_mode: true,
         sandbox_secret_key: "",
         live_secret_key: "",
@@ -645,29 +633,7 @@ module.exports.createSettings = async () => {
         appstore: "https://apps.apple.com/us/app/ravendel/id1351162341",
         phone_number: "9797979797",
         email: "abc@gmail.com",
-        logo: "",
-        social_media: [
-          {
-            name: "Facebook",
-            handle: "",
-          },
-          {
-            name: "Instagram",
-            handle: "",
-          },
-          {
-            name: "Pinterest",
-            handle: "",
-          },
-          {
-            name: "Youtube",
-            handle: "",
-          },
-          {
-            name: "Twitter",
-            handle: "",
-          }
-        ]
+        logo: ""
       },
       mobile: {
         slider: [

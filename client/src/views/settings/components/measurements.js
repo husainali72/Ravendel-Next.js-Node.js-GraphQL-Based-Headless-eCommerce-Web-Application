@@ -14,22 +14,21 @@ const MeasurementsComponent = () => {
   const settingState = useSelector((state) => state.settings);
   const dispatch = useDispatch();
   const [measurementVal, setMeasurementVal] = useState({
-    ...settingState.settings.store.measurements,
+    ...get(settingState,'settings.store.measurements'),
   });
 
   useEffect(() => {
    get(settingState, "settings.store.measurements")
-  }, [settingState.settings])
+  }, [get(settingState,'settings')])
 
   const updateMeasures = () => {
     dispatch(storeMeasuresUpdateAction(measurementVal));
   };
 
-  
   return (
     <>
      <Alerts/>
-     {settingState.loading ? <Loading /> : null}
+     {settingState?.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div" mb={3}>
