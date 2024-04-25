@@ -239,10 +239,27 @@ export const removeItemFromLocalStorage = (key) => {
   } catch (error) {}
 };
 
-export const convertDateToStringFormat = (date) => {
-  var convertedDate = "";
+export const convertDateToStringFormat = (date, setting) => {
+  const selectedDateFormat = get(setting, "setting.general.date_format", "");
+  let convertedDate = "";
   if (date) {
-    convertedDate = moment(date)?.format("ll");
+    switch (selectedDateFormat) {
+      case "1":
+        convertedDate = moment(date).format("MMMM D, YYYY");
+        break;
+      case "2":
+        convertedDate = moment(date).format("YYYY-MM-DD");
+        break;
+      case "3":
+        convertedDate = moment(date).format("MM/DD/YYYY");
+        break;
+      case "4":
+        convertedDate = moment(date).format("DD/MM/YYYY");
+        break;
+      default:
+        convertedDate = moment(date).format("ll");
+        break;
+    }
   } else {
     convertedDate = date;
   }
