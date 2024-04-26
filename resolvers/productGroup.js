@@ -13,25 +13,9 @@ const {
 module.exports = {
   Query: {
     groups: async (root, args) => {
-      const existingGroups = await Group.find()
-      if(!existingGroups.length) {
-        return {
-          message: MESSAGE_RESPONSE("NOT_EXIST", "Groups", false),
-          data: []
-        }
-      }
-
       return await GET_ALL_FUNC(Group, "Groups");
     },
     group: async (root, args) => {
-      const existingGroup = await Group.findById(args.id)
-      if(!existingGroup) {
-        return {
-          message: MESSAGE_RESPONSE("NOT_EXIST", "Group", false),
-          data: []
-        }
-      }
-
       return await GET_SINGLE_FUNC(args.id, Group, "Group");
     },
   },
@@ -48,9 +32,9 @@ module.exports = {
             success: false,
           };
         }
-        if ( variations.some(variation => isEmpty(variation.productID))) {
+        if ( variations.some(variation => isEmpty(variation.productId))) {
           return {
-            message: "ProductID is required",
+            message: "ProductId is required",
             success: false,
           };
         }
@@ -84,9 +68,9 @@ module.exports = {
             success: false,
           };
         }
-        if ( variations.some(variation => isEmpty(variation.productID))) {
+        if ( variations.some(variation => isEmpty(variation.productId))) {
           return {
-            message: "ProductID is required",
+            message: "ProductId is required",
             success: false,
           };
         }

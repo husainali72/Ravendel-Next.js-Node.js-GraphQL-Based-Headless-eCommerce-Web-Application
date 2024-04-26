@@ -100,17 +100,17 @@ module.exports = `
 
   type productSpecification {
     key: String
-    attributeID: ID
+    attributeId: ID
     value: String
-    attributeValueID: ID
+    attributeValueId: ID
     group: String
   }
 
   input productSpecificationInput {
     key: String
-    attributeID: ID
+    attributeId: ID
     value: String
-    attributeValueID: ID
+    attributeValueId: ID
     group: String
   }
 
