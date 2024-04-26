@@ -32,7 +32,7 @@ const addOrUpdateProductGroup = async (args, token, isAdd = false) => {
         return MESSAGE_RESPONSE("ID_ERROR", "Group", false);
       }
 
-      existingGroup = await Group.findOne({_id: {$ne: args.id}, title: title}).countDocuments()
+      existingGroup = await Group.findOne({_id: {$ne: args.id}, title}).countDocuments()
     }
     if(existingGroup) {
       return {
@@ -48,10 +48,23 @@ const addOrUpdateProductGroup = async (args, token, isAdd = false) => {
       };
     }
     
-    const existingGroups = await Group.find({title: {$ne: title}, productIds: {$in: toObjectID(productIds)}}).populate("productIds")
-    if(existingGroups.length) {
+    const existingSimilarGroupQuery = {
+      title: {$ne: title},
+      productIds: {$in: toObjectID(productIds)}
+    }
+    if(!isAdd) {
+      existingSimilarGroupQuery["_id"] = {$ne: args.id}
+    }
+    const existingSimilarGroup = await Group.findOne(existingSimilarGroupQuery).populate("productIds")
+    if(existingSimilarGroup) {
+      const productNames = existingSimilarGroup.productIds.map(prod => {
+        if(productIds.includes(prod._id.toString())){
+          return prod.name
+        } 
+      })
+
       return {
-        message: `${existingGroups[0].productIds.map(prod => prod.name)} are already assigned to a group.`,
+        message: `${productNames.join(", ")} are already assigned to a group.`,
         success: false,
       }
     }
