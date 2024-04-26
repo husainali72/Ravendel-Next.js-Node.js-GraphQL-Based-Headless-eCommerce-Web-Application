@@ -60,6 +60,10 @@ const ProductSchema = new Schema({
       type: Number,
       default: 0,
     },
+    discountPercentage: {
+      type: Number,
+      default: 0,
+    },
   },
   url: {
     type: String,

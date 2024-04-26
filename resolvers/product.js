@@ -643,6 +643,7 @@ module.exports = {
             pricing: {
               price: args.pricing.price || 0,
               sellprice: args.pricing.sellprice || 0,
+              discountPercentage: args.pricing.discountPercentage || 0,
             },
             feature_image: imgObject.data || imgObject,
             gallery_image: imgArray,
