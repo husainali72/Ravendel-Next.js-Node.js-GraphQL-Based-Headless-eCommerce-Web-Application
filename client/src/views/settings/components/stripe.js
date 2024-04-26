@@ -12,6 +12,7 @@ import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
 import ToggleSwitch from "../../components/switch.js";
 import { getValue } from "../../../utils/helper.js";
+import SettingTextArea from "./setting-components/setting-textArea.js";
 
 const StripeComponent = () => {
   const classes = viewStyles();
@@ -68,14 +69,18 @@ const StripeComponent = () => {
               </Box>
 
               <Box component="div">
-                <SettingTextInput
+                <SettingTextArea
                   label="Description"
+                  placeholder="Description"
                   value={get(stripeInfo, "description")}
-                  onSettingInputChange={(val) =>
-                    setstripeInfo({ ...stripeInfo, description: val })
-                  }
-                  multiline
-                  rows="5"
+                  onSettingInputChange={(e) => {
+                    setstripeInfo({
+                      ...stripeInfo,
+                      description: get(e, "target.value"),
+                    });
+                  }}
+                  minRows={3}
+                  className={classes.settingTextArea}
                 />
               </Box>
             </Box>

@@ -24,6 +24,7 @@ import RadioButton from "../radioButton";
 import GalleryImageSlider from "../sliderImage";
 import RenderProductPrice from "./renderProductPrice";
 import CustomButton from "../button";
+import RemainingQuantity from "../remainingQuantity";
 const GalleryImagesComponents = (props) => {
   const {
     stockClass,
@@ -92,7 +93,6 @@ useEffect(() => {
   if (!comboData || !comboData.length) {
     return; 
   }
-  console.log(comboData)
   const priceData = comboData.map(c => c.pricing.price);
   const sellPriceData = comboData.map(c => c.pricing.sellprice);
   setPriceRange(priceData);
@@ -144,9 +144,7 @@ useEffect(() => {
         router.push("/shopcart");
       })
       .catch(async (error) => {
-        console.log("fghjklfgh",error,get(error, "extensions.code"))
         if (get(error, "extensions.code") === 401) {
-
           let product = [
             {
               userId: "",
@@ -451,9 +449,13 @@ useEffect(() => {
                 SKU: {get(comboData, "[0].sku", get(singleProducts, "sku", ""))}
               </p>
               {renderProductTags()}
-              <p className="">
-                Availablity: <span className={stockClass}>{Lable}</span>
-              </p>
+              <div className="stock-availabilty">
+                <div className="singleproduct-stock">
+                Availablity: <span className={stockClass}>{Lable}</span> 
+                </div>
+                <div>
+                <RemainingQuantity quantity={get(singleProducts,'quantity',0)}/></div>
+              </div>
             </ul>
           </div>
         </div>

@@ -13,6 +13,7 @@ import Price from "../priceWithCurrency";
 import ProductImage from "../imageComponent";
 import { useState } from "react";
 import PropTypes from "prop-types";
+import RemainingQuantity from "../remainingQuantity";
 const OnSaleProductCard = ({
   onSaleProduct,
   hideTitle,
@@ -107,6 +108,7 @@ const OnSaleProductCard = ({
                               </div>
                             </div>
                             <div className="card-price">
+                              <div>
                               {product?.name?.length > 18 ? (
                                 <strong
                                   dangerouslySetInnerHTML={{
@@ -117,7 +119,10 @@ const OnSaleProductCard = ({
                               ) : (
                                 product.name
                               )}
+                              </div>
+                              <RemainingQuantity quantity={get(product,'quantity',0)}/>
                             </div>
+
                             <div className="on-sale-product-detail">
                               <div className="product-price">
                                 <StarRating
