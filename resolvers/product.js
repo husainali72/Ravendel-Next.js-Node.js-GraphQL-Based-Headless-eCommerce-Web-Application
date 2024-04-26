@@ -4,6 +4,7 @@ const Brand = require("../models/Brand");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const ProductAttribute = require("../models/ProductAttribute");
 const Review = require("../models/Review");
+const ProductGroup = require("../models/ProductGroup");
 const {
   isEmpty,
   putError,
@@ -14,7 +15,8 @@ const {
   MESSAGE_RESPONSE,
   _validate,
   _validatenested,
-  duplicateData
+  duplicateData,
+  toObjectID
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -817,9 +819,15 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
       }
       try {
+        const existingGroup = await ProductGroup.findOne({productIds: toObjectID(args.id)}).select("title")
+        if(existingGroup) {
+          return {
+            message: `Couldn't remove product as being used in ${existingGroup.title}`,
+            success: false,
+          };
+        }
+
         const product =  await Product.deleteOne({ _id: args.id });
-
-
         if (product) {
           if (product.feature_image) {
             imageUnlink(product.feature_image);
