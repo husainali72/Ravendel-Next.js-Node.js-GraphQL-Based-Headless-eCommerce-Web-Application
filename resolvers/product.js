@@ -371,58 +371,7 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    },
-    variation_master: async (root, args) => {
-      try {
-        const variations = await ProductAttributeVariation.find({
-          productId: root.id,
-        });
-        //console.log(variations);
-        return variations || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
-    attribute_master: async (root, args) => {
-      try {
-        if (!root.attribute && !root.attribute.length) {
-          return [];
-        }
-        let attributes = {};
-        for (let attr of root.attribute) {
-          if (!Array.isArray(attributes[attr.attribute_id.toString()])) {
-            attributes[attr.attribute_id.toString()] = [];
-          }
-
-          attributes[attr.attribute_id.toString()].push(
-            attr.attribute_value_id.toString()
-          );
-        }
-
-        const attrMaster = await ProductAttribute.find({
-          _id: { $in: Object.keys(attributes) },
-        });
-
-        for (const [i, attr] of attrMaster.entries()) {
-          for (const [j, val] of attr.values.entries()) {
-            if (~attributes[attr._id.toString()].indexOf(val._id.toString())) {
-              if (!Array.isArray(attrMaster[i].attribute_values)) {
-                attrMaster[i].attribute_values = [];
-              }
-              attrMaster[i].attribute_values.push(val);
-            }
-          }
-
-          attrMaster[i].values = [];
-        }
-
-        return attrMaster || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
+    }
   },
   //.............
   Category: {
@@ -708,46 +657,10 @@ module.exports = {
             featured_product: args.featured_product,
             product_type: args.product_type,
             custom_field: args.custom_field,
-            attribute: args.attribute,
-            variant: args.variant,
+            specifications: args.specifications
           });
-          let lastProduct = await newProduct.save();
-          let combinations = [];
-          if (args.variant.length && args.combinations.length) {
-            combinations = args.combinations;
-            console.log('ttt', combinations);
+          await newProduct.save();
 
-            for (const combination of combinations) {
-              combination.productId = lastProduct.id;
-
-              let imgObject = "";
-
-              if (combination.upload_image && combination.upload_image.length) {
-                imgObject = await imageUpload(
-                  combination.upload_image[0].file,
-                  "assets/images/product/variant/", "productvariant"
-                );
-                combination.image = imgObject.data || imgObject;
-                delete combination.upload_image
-              }
-            }
-          } else {
-            combinations = [
-              {
-                combination: [],
-                productId: lastProduct.id,
-                sku: args.sku,
-                quantity: args.quantity,
-                pricing: {
-                  price: args.pricing.price,
-                  sellprice: args.pricing.sellprice
-                },
-                image: "",
-              },
-            ];
-          }
-
-          let result = await ProductAttributeVariation.insertMany(combinations);
           return MESSAGE_RESPONSE("AddSuccess", "Product", true);
         }
       } catch (error) {
@@ -757,7 +670,7 @@ module.exports = {
       }
     },
     updateProduct: async (root, args, { id }) => {
-console.log("updateProduct")
+      // console.log("updateProduct")
       await checkAwsFolder('product');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
@@ -883,55 +796,9 @@ console.log("updateProduct")
           product.product_type = args.product_type;
           product.custom_field = args.custom_field;
           product.status = args.status;
-          product.attribute = args.attribute,
-            product.variant = args.variant,
-            product.updated = Date.now();
+          product.specifications = args.specifications;  
+          product.updated = Date.now();
           await product.save();
-
-          let combinations = [];
-          if (args.variant.length && args.combinations.length) {
-            combinations = args.combinations;
-            for (const combination of combinations) {
-              combination.productId = args.id;
-              let imgObject = "";
-              if (
-                combination.upload_image &&
-                combination.upload_image.length
-              ) {
-                imgObject = await imageUpload(
-                  combination.upload_image[0].file,
-                  "assets/images/product/variant/", "productvariant"
-                );
-
-                if (imgObject?.success && combination?.previous_img) {
-
-                  imageUnlink(combination?.previous_img)
-                }
-                combination.image = imgObject.data || imgObject;
-                delete combination.upload_image;
-              }
-            }
-          } else {
-            combinations = [
-              {
-                combination: [],
-                productId: args.id,
-                sku: args.sku,
-                quantity: args.quantity,
-                pricing: {
-                  price: args.pricing.price,
-                  sellprice: args.pricing.sellprice
-                },
-                image: "",
-              },
-            ];
-          }
-
-          await ProductAttributeVariation.deleteMany({
-            productId: args.id,
-          });
-
-          let result = await ProductAttributeVariation.insertMany(combinations);
 
           return MESSAGE_RESPONSE("UpdateSuccess", "Product", true);
         } else {
@@ -968,24 +835,6 @@ console.log("updateProduct")
             productId: args.id
           })
 
-          const productVariants = product.variant
-          await ProductAttribute.deleteMany({
-            _id: { $in: [productVariants] }
-          })
-
-          const variations = await ProductAttributeVariation.find({
-            productId: args.id,
-          });
-
-          await ProductAttributeVariation.deleteMany({
-            productId: args.id,
-          });
-
-          for (const variation of variations) {
-            if (variation.image) {
-              imageUnlink(variation.image);
-            }
-          }
           return MESSAGE_RESPONSE("DELETE", "Product", true);
         }
         return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);

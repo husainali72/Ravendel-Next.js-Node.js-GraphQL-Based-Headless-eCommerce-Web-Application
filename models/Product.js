@@ -4,7 +4,26 @@ const Schema = mongoose.Schema;
 /* brand: {
   type: Schema.Types.ObjectId,
   ref: "Brand",
-}, */
+}, */ 
+const specificationSchema = new Schema({
+  key: {
+    type: String,
+  },
+  attributeID: {
+    type: Schema.Types.ObjectId,
+    ref: "productattributes"
+  },
+  value: {
+    type: String,
+  },
+  attributeValueID: {
+    type: Schema.Types.ObjectId,
+    ref: "productattributes"
+  },
+  group: {
+    type: String,
+  },
+}, {_id: false})
 
 // Create Schema
 const ProductSchema = new Schema({
@@ -124,17 +143,7 @@ const ProductSchema = new Schema({
       },
     },
   ],
-  attribute: [
-    {
-      attribute_id: {
-        type: Schema.ObjectId,
-      },
-      attribute_value_id: {
-        type: Schema.ObjectId,
-      },
-    },
-  ],
-  variant: [],
+  specifications: [specificationSchema],
   date: {
     type: Date,
     default: Date.now,

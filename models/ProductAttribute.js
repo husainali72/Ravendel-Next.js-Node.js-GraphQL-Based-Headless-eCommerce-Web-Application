@@ -16,6 +16,10 @@ const ProductAttributeSchema = new Schema(
       type: String,
       default: "",
     },
+    allow_filter: {
+      type: Boolean,
+      default: false,
+    },
     values: [
       {
         name: {

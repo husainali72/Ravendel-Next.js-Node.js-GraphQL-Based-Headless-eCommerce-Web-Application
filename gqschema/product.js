@@ -98,6 +98,22 @@ module.exports = `
     updatedAt: Date
   }
 
+  type productSpecification {
+    key: String
+    attributeID: ID
+    value: String
+    attributeValueID: ID
+    group: String
+  }
+
+  input productSpecificationInput {
+    key: String
+    attributeID: ID
+    value: String
+    attributeValueID: ID
+    group: String
+  }
+
   type Product {
     _id: ID
     name: String
@@ -118,10 +134,7 @@ module.exports = `
     featured_product: Boolean
     product_type: customObject
     custom_field: [customObject]
-    attribute: [customObject]
-    attribute_master: [ProductAttribute]
-    variant: customArray
-    variation_master: [ProductVariations]
+    specifications: [productSpecification]
     date: Date
     rating: Float
     updated: Date
@@ -241,9 +254,7 @@ module.exports = `
       product_type: customObject
       meta: customObject
       custom_field: [customObject]
-      attribute: [customObject]
-      variant: customArray
-      combinations: [customObject]
+      specifications: [productSpecificationInput]
     ): statusSchema
     updateProduct(
       id: ID
@@ -266,9 +277,7 @@ module.exports = `
       product_type: customObject
       meta: customObject
       custom_field: [customObject]
-      attribute: [customObject]
-      variant: customArray
-      combinations: [customObject]
+      specifications: [productSpecificationInput]
     ): statusSchema
     deleteProduct(id: ID!): statusSchema
   }

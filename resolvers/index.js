@@ -4,6 +4,7 @@ const userResolvers = require("./user");
 const pageResolvers = require("./page");
 const blogResolvers = require("./blog");
 const productResolvers = require("./product");
+const groupResolvers = require("./productGroup");
 const cartResolvers = require("./cart");
 const checkoutResolvers = require("./checkout");
 const orderResolvers = require("./order");
@@ -82,6 +83,7 @@ module.exports = [
   pageResolvers,
   blogResolvers,
   productResolvers,
+  groupResolvers,
   cartResolvers,
   checkoutResolvers,
   orderResolvers,
