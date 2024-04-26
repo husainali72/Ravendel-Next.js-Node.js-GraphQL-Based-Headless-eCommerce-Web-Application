@@ -48,9 +48,9 @@ module.exports = {
             success: false,
           };
         }
-        if ( variations.some(variation => isEmpty(variation.productID))) {
+        if ( variations.some(variation => isEmpty(variation.productId))) {
           return {
-            message: "ProductID is required",
+            message: "ProductId is required",
             success: false,
           };
         }
@@ -84,9 +84,9 @@ module.exports = {
             success: false,
           };
         }
-        if ( variations.some(variation => isEmpty(variation.productID))) {
+        if ( variations.some(variation => isEmpty(variation.productId))) {
           return {
-            message: "ProductID is required",
+            message: "ProductId is required",
             success: false,
           };
         }

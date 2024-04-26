@@ -4,7 +4,7 @@ module.exports = `
     title: String
     attributes: [Attribute]
     variations: [Variation]
-    productIDs: [ID]
+    productIds: [ID]
     updatedAt: Date
     createdAt: Date
   }
@@ -17,11 +17,11 @@ module.exports = `
   type Variation {
     _id: ID,
     combinations: [Combination]
-    productID: ID
+    productId: ID
   }
   type Combination {
-    attributeID: ID,
-    attributeValue: ID,
+    attributeId: ID,
+    attributeValueId: ID,
   }
 
   type GroupResponse {
@@ -46,11 +46,11 @@ module.exports = `
   input VariationInput {
     _id: ID,
     combinations: [CombinationInput]
-    productID: ID
+    productId: ID
   }
   input CombinationInput {
-    attributeID: ID,
-    attributeValue: ID,
+    attributeId: ID,
+    attributeValueId: ID,
   }
   
   extend type Mutation {
@@ -58,14 +58,14 @@ module.exports = `
       title: String!
       attributes: [AttributeInput]
       variations: [VariationInput]
-      productIDs: [ID]
+      productIds: [ID]
     ): statusSchema
     updateGroup(
       id: ID!
       title: String!
       attributes: [AttributeInput]
       variations: [VariationInput]
-      productIDs: [ID]
+      productIds: [ID]
     ): statusSchema
     deleteGroup(id: ID!): statusSchema
   }

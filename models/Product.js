@@ -9,14 +9,14 @@ const specificationSchema = new Schema({
   key: {
     type: String,
   },
-  attributeID: {
+  attributeId: {
     type: Schema.Types.ObjectId,
     ref: "productattributes"
   },
   value: {
     type: String,
   },
-  attributeValueID: {
+  attributeValueId: {
     type: Schema.Types.ObjectId,
     ref: "productattributes"
   },

@@ -15,12 +15,12 @@ const attributeSchema = new Schema({
 })
 
 const combinationSchema = new Schema({
-  attributeID: {
+  attributeId: {
     type: Schema.Types.ObjectId,
     ref: "productattributes",
     required: true
   },
-  attributeValue: {
+  attributeValueId: {
     type: Schema.Types.ObjectId,
     ref: "productattributes",
     required: true
@@ -29,7 +29,7 @@ const combinationSchema = new Schema({
 
 const variationSchema = new Schema({
   combinations: [combinationSchema],
-  productID: {
+  productId: {
     type: Schema.Types.ObjectId,
     ref: "products",
     required: true
@@ -44,7 +44,7 @@ const ProductGroupSchema = new Schema({
   },
   attributes: [attributeSchema],
   variations: [variationSchema],
-  productIDs: [
+  productIds: [
     {
       type: Schema.Types.ObjectId,
       ref: "products"
