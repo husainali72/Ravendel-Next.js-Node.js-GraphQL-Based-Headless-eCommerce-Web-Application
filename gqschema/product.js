@@ -100,13 +100,17 @@ module.exports = `
 
   type productSpecification {
     key: String
+    attributeID: ID
     value: String
+    attributeValueID: ID
     group: String
   }
 
   input productSpecificationInput {
     key: String
+    attributeID: ID
     value: String
+    attributeValueID: ID
     group: String
   }
 

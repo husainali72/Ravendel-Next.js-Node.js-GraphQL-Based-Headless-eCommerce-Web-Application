@@ -9,8 +9,16 @@ const specificationSchema = new Schema({
   key: {
     type: String,
   },
+  attributeID: {
+    type: Schema.Types.ObjectId,
+    ref: "productattributes"
+  },
   value: {
     type: String,
+  },
+  attributeValueID: {
+    type: Schema.Types.ObjectId,
+    ref: "productattributes"
   },
   group: {
     type: String,
