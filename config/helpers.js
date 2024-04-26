@@ -17,6 +17,7 @@ const Coupon = require("../models/Coupon");
 const mongoose = require('mongoose');
 const Order = require("../models/Order");
 const _ = require('lodash');
+const {Types: {ObjectId}} = require("mongoose")
 
 
 const isEmpty = (value) =>
@@ -1774,3 +1775,12 @@ const updatePaymentStatus = async (userId, args) => {
   // }
 }
 module.exports.updatePaymentStatus = updatePaymentStatus;
+
+const toObjectID = (entryID) => {
+  if(Array.isArray(entryID)) {
+    return entryID.map(id => new ObjectId(id))
+  }
+
+  return new ObjectId(entryID)
+}
+module.exports.toObjectID = toObjectID
