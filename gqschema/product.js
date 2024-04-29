@@ -170,7 +170,31 @@ module.exports = `
     data:Product
     message: statusSchema
   }
+  type products_v1 {
+    message: String
+    success: Boolean
+    data: [customObject]
+  } 
+
+  input getProductsRequest {
+    mainFilter: customObject
+    filters: customArray
+  }
+  type getProductsResponse {
+    message: String
+    success: Boolean
+    category: customObject
+    filterData: customArray,
+    productGroup: customObject
+  }
+
   extend type Query {
+    getProducts(
+      mainFilter: customObject
+      filters: customArray
+      pageNo: Int
+      limit: Int
+    ): getProductsResponse
     productCategories: productCategoriesRES
     productCategories_pagination(
       limit: Int
