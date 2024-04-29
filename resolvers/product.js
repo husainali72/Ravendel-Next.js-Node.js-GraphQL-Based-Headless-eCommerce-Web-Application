@@ -350,7 +350,126 @@ module.exports = {
       }
     },
     product: async (root, args) => {
-      return await GET_SINGLE_FUNC(args.id, Product, "Product");
+      if (!args.id) {
+        return {
+          message: MESSAGE_RESPONSE("ID_ERROR", "Product", false),
+        };
+      }
+      const pipeline = [
+        // match on the basis of id
+        {
+          $match: {
+            _id: toObjectID(args.id),
+          },
+        },
+        // populate attributes and varaitions
+        {
+          $lookup: {
+            from: "productgroups",
+            let: { productId: "$_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ["$$productId", "$productIds"],
+                  },
+                },
+              },
+              {
+                $unwind: "$attributes",
+              },
+              {
+                $lookup: {
+                  from: "productattributes",
+                  localField: "attributes._id",
+                  foreignField: "_id",
+                  as: "attributeDetails",
+                },
+              },
+              {
+                $unwind: "$attributeDetails",
+              },
+              
+              {
+                $addFields: {
+                  "attributes.name":
+                    "$attributeDetails.name",
+                  "attributes.values": {
+                    $filter: {
+                      input: "$attributeDetails.values",
+                      as: "value",
+                      cond: {
+                        $in: [
+                          "$$value._id",
+                          "$attributes.values",
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                $group: {
+                  _id: "$_id",
+                  attributes: { $push: "$attributes" },
+                  variations: { $first: "$variations" },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  attributes: {
+                    _id: 1,
+                    name: 1,
+                    values: {
+                      _id: 1,
+                      name: 1,
+                    },
+                  },
+                  variations: 1,
+                },
+              },
+            ],
+            as: "group",
+          },
+        },
+        {
+          $addFields: {
+            group: {
+              $arrayElemAt: ["$group", 0]
+            }
+          }
+        },
+      ]
+      let existingProducts = await Product.aggregate(pipeline);
+      const response = existingProducts[0]
+      if (!response) {
+        return {
+          message: MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false),
+          data: response,
+        };
+      }
+      
+      const { attributes, variations } = response.group
+      variations.map(variant => {
+        variant.combinations.map(combo => {
+          let foundAttribute = attributes.find(attr => attr._id.toString() === combo.attributeId.toString())
+          if(foundAttribute) {
+            combo["attributeName"] = foundAttribute.name
+            let foundAttributeValue = foundAttribute.values.find(value => value._id.toString() === combo.attributeValueId.toString())
+            if(foundAttributeValue) {
+              combo["attributeValueName"] = foundAttributeValue.name
+            }
+          }
+        })
+      })
+      response["attributes"] = attributes
+      response["variations"] = variations
+
+      return {
+        message: MESSAGE_RESPONSE("SINGLE_RESULT_FOUND", "Product", true),
+        data: response,
+      };
     },
   },
   Product: {

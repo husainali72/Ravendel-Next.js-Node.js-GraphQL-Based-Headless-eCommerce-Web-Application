@@ -90,14 +90,6 @@ module.exports = `
     updatedAt: Date
   }
 
-  type ProductAttribute {
-    id: ID
-    name: String
-    attribute_values: customArray
-    createdAt: Date
-    updatedAt: Date
-  }
-
   type productSpecification {
     key: String
     attributeId: ID
@@ -135,6 +127,8 @@ module.exports = `
     product_type: customObject
     custom_field: [customObject]
     specifications: [productSpecification]
+    attributes: customArray
+    variations: customArray
     date: Date
     rating: Float
     updated: Date
