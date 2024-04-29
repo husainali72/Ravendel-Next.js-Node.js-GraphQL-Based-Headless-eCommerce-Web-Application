@@ -117,7 +117,7 @@ const SeetingSchema = new Schema(
         email: {
           type: String
         },
-        phoneNo: {
+        phone_number: {
           type: Number
         },
         social_media: [
@@ -162,10 +162,9 @@ const SeetingSchema = new Schema(
         stock_display_format: {
           type: String,
         },
-        manage_zipcodes: {
-          type: Boolean
+        left_quantity: {
+          type: Number,
         },
-        zipcodes: [String]
       },
       order_options: {
         order_prefix: {
@@ -396,12 +395,6 @@ const SeetingSchema = new Schema(
         appstore: {
           type: String
         },
-        phone_number: {
-          type: String
-        },
-        email: {
-          type: String
-        },
         logo: {
           type: String
         }
@@ -475,7 +468,7 @@ module.exports.createSettings = async () => {
         zip: "100104",
         hour: "Mon to Fri, 9am to 6pm",
         email: "example@gmail.com",
-        phoneNo: "9898989898",
+        phone_number: "9898989898",
         social_media: [
           {
             name: "Facebook",
@@ -514,8 +507,7 @@ module.exports.createSettings = async () => {
         out_of_stock_threshold: 1,
         out_of_stock_visibility: true,
         stock_display_format: "1",
-        manage_zipcodes: true,
-        zipcodes: []
+        left_quantity: "0"
       },
       order_options: {
         order_prefix: "#",
@@ -613,11 +605,11 @@ module.exports.createSettings = async () => {
             name: "products_on_sales",
             visible: true,
           },
-          {
-            label: "Product Recommendation",
-            name: "product_recommendation",
-            visible: true,
-          },
+          // {
+          //   label: "Product Recommendation",
+          //   name: "product_recommendation",
+          //   visible: true,
+          // },
           {
             label: "Product from Specific Category",
             name: "product_from_specific_category",
@@ -631,8 +623,6 @@ module.exports.createSettings = async () => {
         primary_color: "#154050",
         playstore: "https://play.google.com/store/apps/details?id=com.ravendel",
         appstore: "https://apps.apple.com/us/app/ravendel/id1351162341",
-        phone_number: "9797979797",
-        email: "abc@gmail.com",
         logo: ""
       },
       mobile: {
@@ -662,12 +652,12 @@ module.exports.createSettings = async () => {
             visible: false,
             url: "products_on_sales",
           },
-          {
-            label: "Product Recommendation",
-            section_img: "",
-            visible: false,
-            url: "product_recommendation",
-          },
+          // {
+          //   label: "Product Recommendation",
+          //   section_img: "",
+          //   visible: false,
+          //   url: "product_recommendation",
+          // },
           {
             label: "Product from Specific Categories",
             section_img: "",

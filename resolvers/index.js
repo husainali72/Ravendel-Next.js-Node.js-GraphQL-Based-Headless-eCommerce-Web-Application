@@ -17,6 +17,8 @@ const reviewResolvers = require("./review");
 const productAttribute = require("./product_attribute");
 const zipcodeResolvers = require("./zipcode");
 const faqResolvers = require("./faq");
+const homepageResolvers = require("./homepage")
+
 const createWriteStream = require("fs");
 // import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
 const fs = require('fs');
@@ -96,5 +98,5 @@ module.exports = [
   faqResolvers,
   zipcodeResolvers,
   productAttribute,
-
+  homepageResolvers
 ];

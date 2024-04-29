@@ -15,9 +15,7 @@ import { get } from "lodash";
 import { appearanceThemeUpdateAction } from "../../../store/action";
 import Alerts from "../../components/Alert";
 import Loading from "../../components/Loading.js";
-import PhoneNumber from "../../components/phoneNumberValidation";
 import {
-  validatePhone,
   validate,
 } from "../../components/validate";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
@@ -35,10 +33,9 @@ const ThemesComponent = () => {
   }, [get(settingState, "settings.appearance.theme")]);
   const updateTheme = () => {
     let errors = validate(
-      ["playstore", "appstore", "email", "hours"],
+      ["playstore", "appstore", "hours"],
       themeSetting
     );
-    let phoneNumberError = validatePhone(["phone_number"], themeSetting);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -48,16 +45,6 @@ const ThemesComponent = () => {
           error: true,
         },
       });
-    } else if (!isEmpty(phoneNumberError)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: phoneNumberError,
-          error: true,
-        },
-      });
-    
     } else {
       dispatch(appearanceThemeUpdateAction(themeSetting));
     }
@@ -71,9 +58,7 @@ const ThemesComponent = () => {
 
     setThemeSetting({ ...themeSetting });
   };
-  const handleOnChange = (value) => {
-    setThemeSetting({ ...themeSetting, ["phone_number"]: value });
-  };
+
   return (
     <>
       <Alerts />
@@ -152,29 +137,6 @@ const ThemesComponent = () => {
                 setThemeSetting({
                   ...themeSetting,
                   appstore: get(e,'target.value'),
-                })
-              }
-            />
-          </Box>
-
-          <Box component="div" mb={3}>
-            <PhoneNumber
-              handleOnChange={handleOnChange}
-              phoneValue={themeSetting.phone_number}
-              width="300px"
-            />
-          </Box>
-          <Box component="div">
-            <TextField
-              type="text"
-              variant="outlined"
-              label="Email"
-              className={classes.settingInput}
-              value={get(themeSetting,'email')}
-              onChange={(e) =>
-                setThemeSetting({
-                  ...themeSetting,
-                  email: e.target.value,
                 })
               }
             />

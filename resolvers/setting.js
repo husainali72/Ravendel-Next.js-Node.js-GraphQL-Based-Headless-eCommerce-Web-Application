@@ -172,7 +172,7 @@ module.exports = {
         setting.store.store_address.zip = args.zip;
         setting.store.store_address.hour = args.hour;
         setting.store.store_address.email = args.email;
-        setting.store.store_address.phoneNo = args.phoneNo;
+        setting.store.store_address.phone_number = args.phoneNo;
 
         let socialMedia = []
         for (let media of args.social_media) {
@@ -219,9 +219,7 @@ module.exports = {
           args.out_of_stock_visibility;
         setting.store.inventory.stock_display_format =
           args.stock_display_format;
-        setting.store.inventory.manage_zipcodes =
-          args.manage_zipcodes;
-        if (args.zipcode_file) await addZipcodes(args.zipcode_file, "/assets/images/setting", Zipcode)
+        setting.store.inventory.left_quantity = args.left_quantity;
 
         return await setting.save();
       } catch (error) {
@@ -499,8 +497,6 @@ module.exports = {
           primary_color: args.primary_color,
           playstore: args.playstore,
           appstore: args.appstore,
-          phone_number: args.phone_number,
-          email: args.email,
           logo: imgObject.data || args.logo
         };
 
