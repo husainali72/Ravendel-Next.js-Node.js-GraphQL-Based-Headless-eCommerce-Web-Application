@@ -7,7 +7,7 @@ import Price from "./priceWithCurrency";
 import { useSelector } from "react-redux";
 
 const Table = ({ rows, columns, colSpan, additionalRows }) => {
-  const settings=useSelector((state)=>state.setting)
+  const settings = useSelector((state) => state.setting);
   return (
     <table className="product-detail">
       <thead>
@@ -16,35 +16,37 @@ const Table = ({ rows, columns, colSpan, additionalRows }) => {
         })}
       </thead>
       <tbody>
-        {rows?.map((row, index) => {
-          return (
-            <tr key={index}>
-              {columns?.map((column) => {
-                switch (column?.type) {
-                  case "price":
-                    return (
-                      <td className={`${column?.className}`}>
-                        <Price price={get(row, `${[column?.name]}`, 0)}  />
-                      </td>
-                    );
-                  case "attributes":
-                    return (
-                      <th>
-                        {get(row, "attributes", [])?.map((attribute, i) => (
-                          <div key={`attributes-${i}`}>
-                            {get(attribute, "name", "")} :{" "}
-                            {get(attribute, "value", "")}
-                          </div>
-                        ))}
-                      </th>
-                    );
-                  default:
-                    return <td>{get(row, `${[column?.name]}`, "")}</td>;
-                }
-              })}
-            </tr>
-          );
-        })}
+        {rows &&
+          rows?.length > 0 &&
+          rows?.map((row, index) => {
+            return (
+              <tr key={index}>
+                {columns?.map((column) => {
+                  switch (column?.type) {
+                    case "price":
+                      return (
+                        <td className={`${column?.className}`}>
+                          <Price price={get(row, `${[column?.name]}`, 0)} />
+                        </td>
+                      );
+                    case "attributes":
+                      return (
+                        <th>
+                          {get(row, "attributes", [])?.map((attribute, i) => (
+                            <div key={`attributes-${i}`}>
+                              {get(attribute, "name", "")} :{" "}
+                              {get(attribute, "value", "")}
+                            </div>
+                          ))}
+                        </th>
+                      );
+                    default:
+                      return <td>{get(row, `${[column?.name]}`, "")}</td>;
+                  }
+                })}
+              </tr>
+            );
+          })}
       </tbody>
       {additionalRows && additionalRows?.length ? (
         additionalRows?.map((data, index) => {
@@ -53,7 +55,10 @@ const Table = ({ rows, columns, colSpan, additionalRows }) => {
               case "price":
                 return (
                   <tr key={`additionalRow-${index}`}>
-                    <th colSpan={colSpan || 3} className={`order-text-align ${data?.className}`}>
+                    <th
+                      colSpan={colSpan || 3}
+                      className={`order-text-align ${data?.className}`}
+                    >
                       {get(data, "label", "")}
                     </th>
                     <td className={`${data?.className}`}>
@@ -67,7 +72,12 @@ const Table = ({ rows, columns, colSpan, additionalRows }) => {
                     <th colSpan={colSpan || 3} className="order-text-align">
                       {get(data, "label", "")}
                     </th>
-                    <td>{convertDateToStringFormat(get(data, "value", null),settings)}</td>
+                    <td>
+                      {convertDateToStringFormat(
+                        get(data, "value", null),
+                        settings
+                      )}
+                    </td>
                   </tr>
                 );
               default:
