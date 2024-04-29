@@ -269,31 +269,34 @@ module.exports = {
         //
         // preparing product group facet to get no of products count and products as per page no and limit - START
         //
-        let productFilters = [], productFilter;
-        for(let filterElement of filters) {
-          productFilter = {};
-          productFilter[filterElement.field] = {};
-          if(filterElement.type == 'array') {
-            let values = [];
-            for(let value of filterElement.data) {
-              values.push(filterElement.valueType == "ObjectId" ? new mongoose.Types.ObjectId(value) : value);
+        let productFilters = [], productFilter, productGroupFacet = [];
+        if(filters && filters.length) {
+          for(let filterElement of filters) {
+            productFilter = {};
+            productFilter[filterElement.field] = {};
+            if(filterElement.type == 'array') {
+              let values = [];
+              for(let value of filterElement.data) {
+                values.push(filterElement.valueType == "ObjectId" ? new mongoose.Types.ObjectId(value) : value);
+              }
+              productFilter[filterElement.field]["$in"] = values;
             }
-            productFilter[filterElement.field]["$in"] = values;
-          }
-          else if(filterElement.type == 'range' || filterElement.type == 'choice') {
-            productFilter[filterElement.field]["$gte"] = filterElement.data.minValue;
-            if(filterElement.data.maxValue) {
-              productFilter[filterElement.field]["$lte"] = filterElement.data.maxValue;
+            else if(filterElement.type == 'range' || filterElement.type == 'choice') {
+              productFilter[filterElement.field]["$gte"] = filterElement.data.minValue;
+              if(filterElement.data.maxValue) {
+                productFilter[filterElement.field]["$lte"] = filterElement.data.maxValue;
+              }
             }
+            productFilters.push(productFilter);
           }
-          productFilters.push(productFilter);
-        }
-        let productGroupFacet = [
-          {
+          productGroupFacet.push({
             $match: {
               $and: productFilters
             },
-          },
+          });
+        }
+        
+        productGroupFacet.push(
           {
             $group: {
               _id: null,
@@ -304,9 +307,6 @@ module.exports = {
           {
             $project: {
               count: 1,
-              products: {
-                $slice: ["$products", pageNo - 1, limit],
-              },
               products: {
                 $map: {
                   input: "$products",
@@ -323,9 +323,12 @@ module.exports = {
                   }
                 },
               },
+              products: {
+                $slice: ["$products", pageNo - 1, limit],
+              },
             },
           },
-        ];
+        );
         //
         // preparing product group facet to get no of products count and products as per page no and limit - END
         //
