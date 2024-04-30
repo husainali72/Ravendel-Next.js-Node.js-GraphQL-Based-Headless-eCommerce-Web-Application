@@ -450,21 +450,23 @@ module.exports = {
         };
       }
       
-      const { attributes, variations } = response.group
-      variations.map(variant => {
-        variant.combinations.map(combo => {
-          let foundAttribute = attributes.find(attr => attr._id.toString() === combo.attributeId.toString())
-          if(foundAttribute) {
-            combo["attributeName"] = foundAttribute.name
-            let foundAttributeValue = foundAttribute.values.find(value => value._id.toString() === combo.attributeValueId.toString())
-            if(foundAttributeValue) {
-              combo["attributeValueName"] = foundAttributeValue.name
+      if(response.group) {
+        const { attributes, variations } = response.group
+        variations.map(variant => {
+          variant.combinations.map(combo => {
+            let foundAttribute = attributes.find(attr => attr._id.toString() === combo.attributeId.toString())
+            if(foundAttribute) {
+              combo["attributeName"] = foundAttribute.name
+              let foundAttributeValue = foundAttribute.values.find(value => value._id.toString() === combo.attributeValueId.toString())
+              if(foundAttributeValue) {
+                combo["attributeValueName"] = foundAttributeValue.name
+              }
             }
-          }
+          })
         })
-      })
-      response["attributes"] = attributes
-      response["variations"] = variations
+        response["attributes"] = attributes
+        response["variations"] = variations
+      }
 
       return {
         message: MESSAGE_RESPONSE("SINGLE_RESULT_FOUND", "Product", true),
