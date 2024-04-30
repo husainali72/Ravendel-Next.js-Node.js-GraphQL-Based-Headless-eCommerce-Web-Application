@@ -464,7 +464,7 @@ module.exports = {
         if(filters) {
           reqPriceFilter = filters.find(filter => filter.field == "pricing.sellprice");
           if(reqPriceFilter) {
-            priceFilterData.select = reqPriceFilter.data;
+            priceFilterData.select = reqPriceFilter.select;
           }
         }
         filterData.push(priceFilterData);
@@ -506,8 +506,8 @@ module.exports = {
               value:i,
               select:false
             };
-            if(reqRatingFilter && reqRatingFilter.data) {
-              loopRatingFilterData.select = reqRatingFilter.data.minValue == i;
+            if(reqRatingFilter && reqRatingFilter.select) {
+              loopRatingFilterData.select = reqRatingFilter.select.minValue == i;
             }
             ratingFilterData.data.push(loopRatingFilterData);
           }
