@@ -185,7 +185,7 @@ module.exports = `
     success: Boolean
     category: customObject
     filterData: customArray,
-    productGroup: customObject
+    productData: customObject
   }
 
   extend type Query {

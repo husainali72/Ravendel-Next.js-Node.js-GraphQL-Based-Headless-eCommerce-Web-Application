@@ -269,34 +269,34 @@ module.exports = {
         //
         // preparing product group facet to get no of products count and products as per page no and limit - START
         //
-        let productFilters = [], productFilter, productGroupFacet = [];
+        let productFilters = [], productFilter, productDataFacet = [];
         if(filters && filters.length) {
           for(let filterElement of filters) {
             productFilter = {};
             productFilter[filterElement.field] = {};
             if(filterElement.type == 'array') {
               let values = [];
-              for(let value of filterElement.data) {
+              for(let value of filterElement.select) {
                 values.push(filterElement.valueType == "ObjectId" ? new mongoose.Types.ObjectId(value) : value);
               }
               productFilter[filterElement.field]["$in"] = values;
             }
             else if(filterElement.type == 'range' || filterElement.type == 'choice') {
-              productFilter[filterElement.field]["$gte"] = filterElement.data.minValue;
-              if(filterElement.data.maxValue) {
-                productFilter[filterElement.field]["$lte"] = filterElement.data.maxValue;
+              productFilter[filterElement.field]["$gte"] = filterElement.select.minValue;
+              if(filterElement.select.maxValue) {
+                productFilter[filterElement.field]["$lte"] = filterElement.select.maxValue;
               }
             }
             productFilters.push(productFilter);
           }
-          productGroupFacet.push({
+          productDataFacet.push({
             $match: {
               $and: productFilters
             },
           });
         }
         
-        productGroupFacet.push(
+        productDataFacet.push(
           {
             $group: {
               _id: null,
@@ -308,23 +308,26 @@ module.exports = {
             $project: {
               count: 1,
               products: {
-                $map: {
-                  input: "$products",
-                  as: "prod",
-                  in: {
-                    _id: "$$prod._id",
-                    name: "$$prod.name",
-                    quantity: "$$prod.quantity",
-                    pricing: "$$prod.pricing",
-                    url: "$$prod.url",
-                    feature_image: "$$prod.feature_image",
-                    rating: "$$prod.rating",
-                    categoryId: "$$prod.categoryId",
-                  }
-                },
-              },
-              products: {
-                $slice: ["$products", pageNo - 1, limit],
+                $slice: [
+                  {
+                    $map: {
+                      input: "$products",
+                      as: "prod",
+                      in: {
+                        _id: "$$prod._id",
+                        name: "$$prod.name",
+                        quantity: "$$prod.quantity",
+                        pricing: "$$prod.pricing",
+                        url: "$$prod.url",
+                        feature_image: "$$prod.feature_image",
+                        rating: "$$prod.rating",
+                        categoryId: "$$prod.categoryId",
+                      },
+                    },
+                  },
+                  pageNo - 1,
+                  limit,
+                ]
               },
             },
           },
@@ -395,7 +398,7 @@ module.exports = {
                 }
               }
             ],
-            productGroup:productGroupFacet
+            productData:productDataFacet
           },
         });
 
@@ -424,6 +427,7 @@ module.exports = {
           type:"array",
           field:"brand",
           category:"static",
+          valueType: "ObjectId",
           data:[]
         };
         let loopBrandFilterData, reqBrandFilter;
@@ -451,6 +455,7 @@ module.exports = {
           type:"range",
           field:"pricing.sellprice",
           category:"static",
+          valueType: "Decimal",
           data:{}
         };
         priceFilterData.data.minPrice = aggrResult.price.minPrice;
@@ -469,9 +474,10 @@ module.exports = {
         let ratingFilterData;
         ratingFilterData = {
           heading:"Rating",
-          type:"array",
+          type:"Choice",
           field:"rating",
           category:"static",
+          valueType:"Integer",
           data:[]
         };
         let loopRatingFilterData, reqRatingFilter;
@@ -516,7 +522,7 @@ module.exports = {
           success:true,
           category,
           filterData,
-          productGroup:aggrResult.productGroup[0]
+          productData:aggrResult.productData[0]
         }
 
         // console.log('returnResponse', returnResponse);
