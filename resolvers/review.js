@@ -11,7 +11,8 @@ const {
 } = require("../config/api_functions");
 const {
   MESSAGE_RESPONSE,
-  duplicateData
+  duplicateData,
+  toObjectID
 } = require('../config/helpers');
 
 module.exports = {
@@ -39,27 +40,36 @@ module.exports = {
       return await GET_SINGLE_FUNC(args.id, Review, "Review");
     },
     ///let check it...................
-    productwisereview: async (root, args) => {
-      // console.log("Productwisereview===", args.productId)
+    productWiseReviews: async (root, args) => {
       if (!args.productId) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
       try {
-        const reviews = await Review.find({
-          productId: { $in: args.productId },
-          status: "approved"
-        });
-        //console.log("review", reviews);
-
-        // return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
-
-        return {
-          message: {
-            message: "All review are fetched",
-            success: true
+        const pipeline = [
+          {
+            $match: {
+              productId: toObjectID(args.productId),
+              status: "approved",
+            },
           },
-          data: reviews,
-        }
+          {
+            $sort: {
+              updated: -1,
+            },
+          },
+          {
+            $skip: (args.page - 1) * args.limit
+          },
+          {
+            $limit: args.limit
+          }
+        ]
+        const existingReviews = await Review.aggregate(pipeline);
+        
+        return {
+          message: MESSAGE_RESPONSE("RESULT_FOUND", "Review", true),
+          data: existingReviews,
+        };
       }
       catch (error) {
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
