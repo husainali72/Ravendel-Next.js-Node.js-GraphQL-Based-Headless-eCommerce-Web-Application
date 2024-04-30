@@ -440,8 +440,8 @@ module.exports = {
             value:brand._id,
             select:false
           };
-          if(reqBrandFilter && reqBrandFilter.data) {
-            loopBrandFilterData.select = reqBrandFilter.data.includes(brand._id.toString());
+          if(reqBrandFilter && reqBrandFilter.select) {
+            loopBrandFilterData.select = reqBrandFilter.select.includes(brand._id.toString());
           }
           brandFilterData.data.push(loopBrandFilterData);
         }
@@ -474,7 +474,7 @@ module.exports = {
         let ratingFilterData;
         ratingFilterData = {
           heading:"Rating",
-          type:"Choice",
+          type:"choice",
           field:"rating",
           category:"static",
           valueType:"Integer",
