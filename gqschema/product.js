@@ -132,6 +132,7 @@ module.exports = `
     date: Date
     rating: Float
     ratingCount: Int
+    levelWiseRating: customObject
     updated: Date
   }
 

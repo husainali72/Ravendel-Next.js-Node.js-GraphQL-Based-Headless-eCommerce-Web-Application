@@ -368,7 +368,7 @@ module.exports = {
             from: "reviews",
             localField: "_id",
             foreignField: "productId",
-            as: "ratingCount"
+            as: "reviewDetails"
           }
         },
         // populate attributes and varaitions
@@ -444,9 +444,6 @@ module.exports = {
         },
         {
           $addFields: {
-            ratingCount: {
-              $size: "$ratingCount"
-            },
             group: {
               $arrayElemAt: ["$group", 0]
             }
@@ -478,6 +475,22 @@ module.exports = {
         })
         response["attributes"] = attributes
         response["variations"] = variations
+      }
+
+      if(response.reviewDetails) {
+        let reviewDetails = response.reviewDetails.filter(review => review.status === "approved")
+        const fetchRatings = (min, max) => {
+          return reviewDetails.filter(review => review.rating >= min && review.rating < max).length
+        }
+
+        response["ratingCount"] = reviewDetails.length
+        response["levelWiseRating"] = {
+          fiveStar: fetchRatings(5, 6),
+          fourStar: fetchRatings(4, 5),
+          threeStar: fetchRatings(3, 4),
+          twoStar: fetchRatings(2, 3),
+          oneStar: fetchRatings(1, 2),
+        }
       }
 
       return {
