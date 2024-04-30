@@ -114,7 +114,8 @@ module.exports = {
         data,
         args,
         "",
-        validation
+        validation,
+        Product
       );
     },
     updateReview: async (root, args, { id }) => {

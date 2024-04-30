@@ -131,6 +131,7 @@ module.exports = `
     variations: customArray
     date: Date
     rating: Float
+    ratingCount: Int
     updated: Date
   }
 

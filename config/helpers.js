@@ -739,14 +739,14 @@ const prodAvgRating = async (productID, reviewModel, productModel) => {
   let avgRating = 0;
   const reviews = await reviewModel.find({
     productId: productID,
-    status: { $ne: "pending" },
+    status: { $eq: "approved" },
   });
-  if (reviews.length >= 5) {
-    reviews.map((review) => {
-      avgRating += review.rating;
-    });
-    avgRating /= reviews.length;
-  }
+  
+  reviews.map((review) => {
+    avgRating += review.rating;
+  });
+  avgRating /= reviews.length;
+
   const product = await productModel.findById(productID);
   product.rating = avgRating.toFixed(1);
   await product.save();

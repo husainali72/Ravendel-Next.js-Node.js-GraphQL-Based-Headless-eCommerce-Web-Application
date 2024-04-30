@@ -362,6 +362,15 @@ module.exports = {
             _id: toObjectID(args.id),
           },
         },
+        // fetch rating count
+        {
+          $lookup: {
+            from: "reviews",
+            localField: "_id",
+            foreignField: "productId",
+            as: "ratingCount"
+          }
+        },
         // populate attributes and varaitions
         {
           $lookup: {
@@ -435,6 +444,9 @@ module.exports = {
         },
         {
           $addFields: {
+            ratingCount: {
+              $size: "$ratingCount"
+            },
             group: {
               $arrayElemAt: ["$group", 0]
             }
