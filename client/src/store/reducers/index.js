@@ -5,6 +5,7 @@ import users from "./userReducer";
 import alert from "./alertReducer";
 import blogs from "./blogReducer";
 import products from "./productReducer";
+import groupProducts from "./groupProductsReducer";
 import orders from "./orderReducer";
 import customers from "./customerReducer";
 import brands from "./brandReducer";
@@ -36,6 +37,7 @@ const MasterReducer = combineReducers({
   settings,
   productAttributes,
   dashboardReducer,
+  groupProducts
 });
 
 export default MasterReducer;

@@ -11,6 +11,8 @@ import {
   AllAttribute,
   AddAttribute,
   EditAttribute,
+  GroupProducts,
+  AddGroup
 } from "../views/product";
 import { AllOrders, ViewOrder } from "../views/order";
 import { AllPages, AddPage, EditPage } from "../views/page";
@@ -142,6 +144,18 @@ const RoutesPath = [
     exact: true,
     name: "Products",
     component: AllProduct,
+  },
+  {
+    path: `${client_app_route_url}group-products`,
+    exact: true,
+    name: "Products",
+    component: GroupProducts,
+  },
+  {
+    path: `${client_app_route_url}add-group`,
+    exact: true,
+    name: "Add Group",
+    component: AddGroup,
   },
   {
     path: `${client_app_route_url}add-product`,
