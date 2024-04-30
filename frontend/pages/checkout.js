@@ -51,6 +51,7 @@ var billingInfoObject = {
   country: "UK",
   paymentMethod: "",
   transaction_id: "",
+  addressType: ''
 };
 var shippingObject = {
   order_notes: "",
@@ -66,6 +67,7 @@ var shippingObject = {
   firstname: "",
   country: "UK",
   paymentMethod: "",
+  addressType: ''
 };
 
 var savedShippingInfo;
@@ -268,15 +270,25 @@ export const CheckOut = () => {
       dispatch(calculateUserCart(customerId));
     }
   };
-  const handleBillingInfo = (e) => {
-    let { name, value } = get(e, "target");
-    if (!shippingAdd && name !== "paymentMethod") {
-      setShippingInfo({
-        ...shippingInfo,
-        [name]: value,
-      });
+  const handleBillingInfo = (e, nm) => {
+    if(nm){
+      if (!shippingAdd && name !== "paymentMethod") {
+        setShippingInfo({
+          ...shippingInfo,
+          [nm]: e,
+        });
+      }
+      setBillingInfo({ ...billingInfo, [nm]: e });
+    } else{
+      let { name, value } = get(e, "target");
+      if (!shippingAdd && name !== "paymentMethod") {
+        setShippingInfo({
+          ...shippingInfo,
+          [name]: value,
+        });
+      }
+      setBillingInfo({ ...billingInfo, [name]: value });
     }
-    setBillingInfo({ ...billingInfo, [name]: value });
   };
   const checkCode = async (code) => {
     try {
@@ -491,7 +503,7 @@ export const CheckOut = () => {
                           type="submit"
                           className="btn btn-success primary-btn-color checkout-first-continue-btn"
                         >
-                          Continue
+                          Next
                         </button>
                       </form>
                     </div>

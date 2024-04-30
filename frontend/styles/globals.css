@@ -10,10 +10,13 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
+h5{
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
 .primary-btn-color{
   background-color:var(--primary-color) !important;
   border-color:var(--primary-color)!important;
-  
 }
 .accordian-container{
   margin: 25px 10px
@@ -2680,13 +2683,12 @@ footer .btn:hover a {
 .stepper-head li {
   display: inline-block;
   padding: 0;
-  margin: 0 30px;
+  margin: 0 100px;
   position: relative;
 }
-
 .stepper-head li:not(:last-child):after {
   content: "";
-  width: 45px;
+  width: 180px;
   height: 1px;
   border-bottom: 2px dashed #dce1e5;
   position: absolute;
@@ -2694,21 +2696,38 @@ footer .btn:hover a {
   top: 50%;
   transform: translate(10px, -50%);
 }
-
 .stepper-head li {
   display: block;
   padding: 10px 0;
   position: relative;
   cursor: default;
+  font-weight: 500;
   pointer-events: none;
-  opacity: .5;
   color: #000
 }
-
-.stepper-head .active {
-  font-weight: bold;
-  border-bottom: 2px solid var(--primary-color);
-  padding: 10px;
+.stepper-head .active span{
+  color: var(--primary-color);
+}
+.stepper-head .circle{
+  position: absolute;
+  top: -20px;
+  width: 24px;
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
+  height: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.stepper-head .active .circle::after{
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  content: "";
+  background-color: var(--primary-color);
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
 }
 
 /* -----Shop Cart----------- */
@@ -3153,7 +3172,7 @@ header {
   font-size: 22px;
 }
 
-.billing-container input {
+.billing-container input , .billing-container select{
   width: 100%;
   padding: 12px 20px;
   border: 1px solid #e2e9e1;
@@ -3163,12 +3182,12 @@ header {
   transition: 0.3s ease-in-out;
 }
 
-.billing-container input::placeholder {
+.billing-container input::placeholder , .billing-container select::placeholder{
   font-size: 14px;
 }
 
-.billing-container input:focus,
-.billing-container input:hover {
+.billing-container input:focus, .billing-container select:focus,
+.billing-container input:hover , .billing-container select:hover {
   border: 1px solid var(--primary-color);
   outline: none;
 }
@@ -4230,6 +4249,7 @@ border-bottom: none !important;
 .custom-input {
   width: 100% !important;
   height: 46.9px !important;
+  margin-bottom: 0;
   border-radius: 8px !important;
   border: 1px solid #e2e9e1 !important;
   font-size: 14px !important;
@@ -4444,20 +4464,22 @@ border-bottom: none !important;
 }
 
 .chek-form .form-check-input {
-  width: 1em;
-  height: 1em;
-  margin-top: .25em;
-  vertical-align: top;
+  width: 20px;
+  height: 20px;
+  margin-top: 0;
   background-color: #fff;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   border: 0px solid rgba(0, 0, 0, .25);
   appearance: none;
+  display: block !important;
 }
 
 .chek-form .form-check-input input {
   border-radius: 0.19em;
+  width: 100%;
+  height: 100%;
   padding: 1px 9px;
   margin: 0;
   border: 1.5px solid #777 !important;
@@ -5284,10 +5306,13 @@ color: var(--primary-color);
 .checkout-first-continue-btn{
   margin-top: 12px;
   float: right;
+  min-width: 200px;
+  border-radius: 20px !important;
 }
 .checkout-second-page-container{
   display: flex;
 }
+
 .second-container{
   width:60%;
   padding: 20px;
@@ -5333,4 +5358,17 @@ justify-content: center;
   font-size: 12px;
   margin-left: 22px;
   color: #777;
+}
+.custom-select{
+  margin-right: 0;
+  width: 100%; 
+}
+.custom-select > div{
+  border-color: #e2e9e1;
+  padding: 4px 0;
+  border-radius: 8px;
+}
+.custom-select div{
+  color: #777;
+  font-size: 15px;
 }
