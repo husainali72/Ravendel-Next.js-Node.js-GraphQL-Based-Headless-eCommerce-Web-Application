@@ -311,6 +311,11 @@ export const checkPaymentMethod = (paymentMethod) => {
   return paymentMethod === STRIPE || paymentMethod === PAYPAL||paymentMethod === RAZORPAY;
 };
 
+export const generateCategoryUrl = (slug) => {
+
+  return {href:`/subcategory/[categorys]?url=/${slug}`,as:`/subcategory/${slug}`}
+};
+
 export  const getPaymentMethodLabel=(paymentMethod)=>{
   switch (paymentMethod) {
     case CASH_ON_DELIVERY:

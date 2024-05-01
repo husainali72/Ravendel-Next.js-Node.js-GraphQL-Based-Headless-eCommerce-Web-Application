@@ -284,7 +284,7 @@ useEffect(() => {
     return variantProduct;
   };
   const prepareData = (e, name) => {
-    const value = get(e, "target.value");
+    const value = e;
     setVariantSelect(value);
     setParentId(name);
     const updatedAttributes = selectedAttributes.map((attr) =>
@@ -411,13 +411,13 @@ useEffect(() => {
                 cart.
               </p>
             )}
-            <div className="varaint-select">
+            <div className="varaint-select">        
               {get(singleProducts, "attribute_master", [])?.map(
                 (singleAttribute) => {
                   return (
                     <>
                       <RadioButton
-                        lable={get(singleAttribute, "name", "")}
+                        label={get(singleAttribute, "name", "")}
                         value={variantSelect}
                         onChange={(e) => prepareData(e, singleAttribute.id)}
                         options={createAttributeOptions(singleAttribute)}

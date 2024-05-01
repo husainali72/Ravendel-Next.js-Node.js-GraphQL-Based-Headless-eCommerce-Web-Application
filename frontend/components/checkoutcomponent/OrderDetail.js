@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+  /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { capitalize, get } from "lodash";
@@ -135,6 +135,7 @@ const Orderdetail = (props) => {
         <div className="payment-method">
           <h5>Payment Mode</h5>
           <CheckBox
+            type="radio"
             options={paymentOptions}
             name="paymentMethod"
             onChange={(e) => handleBillingInfo(e)}

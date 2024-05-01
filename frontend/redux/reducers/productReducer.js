@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { PRODUCT_REVIEWS_ADD, ADD_REVIEW, LOAD_REVIEW, PRODUCTS_FAIL, PRODUCTS_LOADING, PRODUCTS_SUCCESS, ATTRIBUTES_SUCCESS, CATEGORY_SUCCESS } from "../actions/productAction";
+import { PRODUCT_REVIEWS_ADD, ADD_REVIEW, LOAD_REVIEW, PRODUCTS_FAIL, PRODUCTS_LOADING, PRODUCTS_SUCCESS, ATTRIBUTES_SUCCESS, CATEGORY_SUCCESS, PRODUCTS_FILTER_SUCCESS } from "../actions/productAction";
 
 const initialState = {
     productReviews: [],
@@ -59,6 +59,14 @@ const productReducer = (state = initialState, action) => {
                 ...state,
                 loading: false,
                 productReviews: action.payload,
+                success: true,
+
+            }
+        case PRODUCTS_FILTER_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                productFilter: action.payload,
                 success: true,
 
             }

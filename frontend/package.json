@@ -47,6 +47,7 @@
     "react-html-parser": "^2.0.2",
     "react-icons": "^4.7.1",
     "react-image-magnifiers": "^1.4.0",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-phone-input-2": "^2.15.1",
     "react-phone-number-input": "^3.2.18",
     "react-redux": "^7.2.6",

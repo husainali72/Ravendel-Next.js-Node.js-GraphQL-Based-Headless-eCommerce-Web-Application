@@ -9,7 +9,6 @@ import { removeCartItemAction } from "../../redux/actions/cartAction";
 import { DELETE_CART_PRODUCTS } from "../../queries/cartquery";
 import { mutation } from "../../utills/helpers";
 import { useSession } from "next-auth/react"
-import { getAllProductsAction } from "../../redux/actions/productAction";
 var placeholder = "https://dummyimage.com/300";
 const CalculateProductTotal = product => product.reduce((total, product) => total + (product.pricing?.sellprice * product.quantity), 0)
 export const ShopCart = () => {
@@ -31,10 +30,6 @@ export const ShopCart = () => {
     const [cart, setCart] = useState([])
     const [press, setPress] = useState(false);
     const initialRender = useRef(true)
-
-    useEffect(() => {
-        // dispatch(getAllProductsAction());
-    }, []);
 
     useEffect(() => {
         if (success && products?.length) {
