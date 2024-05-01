@@ -15,11 +15,11 @@ import PageTitle from "../../components/PageTitle";
 import { GET_CUSTOMER_ORDERS_QUERY } from "../../queries/orderquery";
 import { getSession } from "next-auth/react";
 import { query } from "../../utills/helpers";
-import OrdersDetails from "../../components/account/component/orders-details";
 import { Container } from "@mui/material";
 import { get } from "lodash";
 import Price from "../../components/priceWithCurrency";
 import { useReactToPrint } from "react-to-print";
+import OrderDetailAfter from "../../components/account/component/OrderDetailAfter";
 
 const TrackMyOrder = () => {
   const componentRef = useRef();
@@ -89,23 +89,12 @@ const TrackMyOrder = () => {
                   <strong> Order id : {customerOrder[0]?.id}</strong>
                 </Col>
                 <Col>
-                  <Price price={get(customerOrder, "[0].grandTotal", 0)} />
+                  <Price price={get(customerOrder, "[0].totalSummary.grandTotal", 0)} />
                 </Col>
               </Accordion.Header>
               <Accordion.Body>
                 <div ref={componentRef}>
-                  <OrdersDetails
-                    orderDetail={get(customerOrder[0], "products", [])}
-                    order={customerOrder[0]}
-                    billingInfo={get(customerOrder[0], "billing", {})}
-                    shippingInfo={get(customerOrder[0], "shipping", {})}
-                    tax={get(customerOrder[0], "taxAmount", 0)}
-                    subtotal={get(customerOrder[0], "cartTotal", 0)}
-                    couponCode={get(customerOrder[0], "couponCode", "")}
-                    couponValue={get(customerOrder[0], "discountAmount", 0)}
-                    shippingAmount={get(customerOrder[0], "shippingAmount", 0)}
-                    total={get(customerOrder[0], "grandTotal", 0)}
-                  />
+                <OrderDetailAfter orderInfo={customerOrder[0]}/>
                 </div>
                 <div className="row order-btn-row">
                   <div>

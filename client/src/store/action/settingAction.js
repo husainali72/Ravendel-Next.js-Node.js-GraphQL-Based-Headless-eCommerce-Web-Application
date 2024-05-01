@@ -1,4 +1,3 @@
-
 import {
   GET_DATES,
   UPDATE_GENERAL,
@@ -25,10 +24,10 @@ import {
   UPDATE_ZIPCODE,
   DELETE_ZIPCODE,
   UPDATE_IMAGE_STORAGE,
+  UPLOAD_ZIPCODE_FILE,
 } from "../../queries/settingQuery";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import jumpTo from "../../utils/navigation";
 import { mutationResponseHandler } from "../../utils/helper";
 import { get } from "lodash";
 
@@ -40,7 +39,7 @@ export const getDatesAction = () => (dispatch) => {
     if (response) {
       return dispatch({
         type: LIST_DATE_FORMAT,
-        payload: response.data.getDateformat,
+        payload: get(response,'data.getDateformat'),
       });
     }
   });
@@ -54,7 +53,7 @@ export const getSettings = () => (dispatch) => {
     if (response) {
       return dispatch({
         type: SETTING_SUCCESS,
-        payload: response.data.getSettings,
+        payload: get(response,'data.getSettings'),
       });
     }
   });
@@ -63,18 +62,19 @@ export const getZipCode = (id) => (dispatch) => {
   dispatch({
     type: SETING_LOADING,
   });
-  query(GET_ZIPCODE, { id }).then((response) => {
-    if (response) {
-      dispatch(getSettings())
-      return dispatch({
-        type: SETTING_SUCCESS,
-        payload: response.data.zipcode.data
-      });
-
-    }
-  }).catch((error) => {
-    console.log('error', error)
-  })
+  query(GET_ZIPCODE, { id })
+    .then((response) => {
+      if (response) {
+        dispatch(getSettings());
+        return dispatch({
+          type: SETTING_SUCCESS,
+          payload: get(response,'data.zipcode.data'),
+        });
+      }
+    })
+    .catch((error) => {
+      console.log("error", error);
+    });
 };
 export const generalUpdateAction = (object) => (dispatch) => {
   dispatch({
@@ -85,7 +85,7 @@ export const generalUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateGeneral,
+          payload: get(response,'data.updateGeneral'),
         });
 
         return dispatch({
@@ -118,7 +118,7 @@ export const mediaUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateMedia,
+          payload: get(response,'data.updateMedia'),
         });
 
         return dispatch({
@@ -151,7 +151,7 @@ export const smtpUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateSMTP,
+          payload: get(response,'data.updateSMTP'),
         });
 
         return dispatch({
@@ -184,7 +184,7 @@ export const seoUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateSEO,
+          payload: get(response,'data.updateSEO'),
         });
 
         return dispatch({
@@ -217,7 +217,7 @@ export const storeCurrencyUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateStoreCurrency,
+          payload: get(response,'data.updateStoreCurrency'),
         });
 
         return dispatch({
@@ -250,7 +250,7 @@ export const storeAddressUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateStoreAddress,
+          payload: get(response,'data.updateStoreAddress'),
         });
 
         return dispatch({
@@ -283,7 +283,7 @@ export const storeMeasuresUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateStoreMeasurements,
+          payload: get(response,'data.updateStoreMeasurements'),
         });
 
         return dispatch({
@@ -316,7 +316,7 @@ export const storeInventoryUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateStoreInventory,
+          payload: get(response,'data.updateStoreInventory'),
         });
 
         return dispatch({
@@ -349,7 +349,7 @@ export const paymentCodUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updatePaymnetCOD,
+          payload: get(response,'data.updatePaymnetCOD'),
         });
 
         return dispatch({
@@ -382,7 +382,7 @@ export const paymentBankUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updatePaymnetBank,
+          payload: get(response,'data.updatePaymnetBank'),
         });
 
         return dispatch({
@@ -415,7 +415,7 @@ export const paymentStripeUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updatePaymnetStripe,
+          payload: get(response,'data.updatePaymnetStripe'),
         });
 
         return dispatch({
@@ -448,7 +448,7 @@ export const paymentPaypalUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: get(response,'data.updatePaymentPaypal'),
+          payload: get(response, "data.updatePaymentPaypal"),
         });
 
         return dispatch({
@@ -480,7 +480,7 @@ export const paymentRazorPayUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: get(response,'data.updatePaymentRazorpay'),
+          payload: get(response, "data.updatePaymentRazorpay"),
         });
 
         return dispatch({
@@ -512,7 +512,7 @@ export const oneSignalUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateNotificationOneSignal,
+          payload: get(response,'data.updateNotificationOneSignal'),
         });
 
         return dispatch({
@@ -544,7 +544,7 @@ export const orderOptionUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateStoreOrder,
+          payload: get(response,'data.updateStoreOrder'),
         });
 
         return dispatch({
@@ -568,18 +568,16 @@ export const orderOptionUpdateAction = (object) => (dispatch) => {
     });
 };
 
-
 export const ImageStorageUpdateAction = (object) => (dispatch) => {
   dispatch({
     type: SETING_LOADING,
   });
-  console.log(object, 'object')
   mutation(UPDATE_IMAGE_STORAGE, object)
     .then((response) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateImageStorage,
+          payload: get(response,'data.updateImageStorage'),
         });
 
         return dispatch({
@@ -677,6 +675,43 @@ export const zipCodeUpdateAction = (object) => (dispatch) => {
       });
     });
 };
+export const zipCodeUploadFileAction = (object) => (dispatch) => {
+  dispatch({
+    type: SETING_LOADING,
+  });
+  mutation(UPLOAD_ZIPCODE_FILE, object)
+    .then((response) => {
+      dispatch({
+        type: LOADING_FALSE,
+      });
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "uploadedZipcodeFile"
+      );
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: false, message: message, error: true },
+        });
+      }
+      if (success) {
+        dispatch(getSettings());
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: SETTING_FAIL,
+      });
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
 export const zipCodeDeleteAction = (id) => (dispatch) => {
   dispatch({
     type: SETING_LOADING,
@@ -692,7 +727,7 @@ export const zipCodeDeleteAction = (id) => (dispatch) => {
           type: ALERT_SUCCESS,
           payload: {
             boolean: true,
-            message: response.data.deleteZipcode.message,
+            message: get(response,'data.deleteZipcode.message'),
             error: false,
           },
         });
@@ -717,7 +752,7 @@ export const appearanceHomeUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateAppearanceHome,
+          payload: get(response,'data.updateAppearanceHome'),
         });
 
         return dispatch({
@@ -750,7 +785,7 @@ export const appearanceMobileUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateAppearanceMobile,
+          payload: get(response,'data.updateAppearanceMobile'),
         });
 
         return dispatch({
@@ -783,7 +818,7 @@ export const appearanceThemeUpdateAction = (object) => (dispatch) => {
       if (response) {
         dispatch({
           type: SETTING_SUCCESS,
-          payload: response.data.updateAppeanranceTheme,
+          payload: get(response,'data.updateAppeanranceTheme'),
         });
 
         return dispatch({

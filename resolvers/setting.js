@@ -171,6 +171,18 @@ module.exports = {
         setting.store.store_address.state = args.state;
         setting.store.store_address.zip = args.zip;
         setting.store.store_address.hour = args.hour;
+        setting.store.store_address.email = args.email;
+        setting.store.store_address.phone_number = args.phoneNo;
+
+        let socialMedia = []
+        for (let media of args.social_media) {
+          socialMedia.push({
+            name: media.name,
+            handle: media.handle,
+          })
+        }
+
+        setting.store.store_address.social_media = socialMedia;
         return await setting.save();
       } catch (error) {
         error = checkError(error);
@@ -207,9 +219,7 @@ module.exports = {
           args.out_of_stock_visibility;
         setting.store.inventory.stock_display_format =
           args.stock_display_format;
-        setting.store.inventory.manage_zipcodes =
-          args.manage_zipcodes;
-        if (args.zipcode_file) await addZipcodes(args.zipcode_file, "/assets/images/setting", Zipcode)
+        setting.store.inventory.left_quantity = args.left_quantity;
 
         return await setting.save();
       } catch (error) {
@@ -222,9 +232,6 @@ module.exports = {
       try {
         const setting = await Setting.findOne({});
         let { order_prefix, order_digits } = args
-        if (!setting.store.order_options.order_prefix_list.includes(order_prefix)) {
-          setting.store.order_options.order_prefix_list.push(order_prefix)
-        }
         setting.store.order_options.order_prefix = order_prefix
         setting.store.order_options.order_digits = order_digits
         return await setting.save();
@@ -240,8 +247,6 @@ module.exports = {
         setting.payment.cash_on_delivery.enable = args.enable;
         setting.payment.cash_on_delivery.title = args.title;
         setting.payment.cash_on_delivery.description = args.description;
-        setting.payment.cash_on_delivery.instructions = args.instructions;
-
         return await setting.save();
       } catch (error) {
         error = checkError(error);
@@ -255,7 +260,6 @@ module.exports = {
         setting.payment.bank_transfer.enable = args.enable;
         setting.payment.bank_transfer.title = args.title;
         setting.payment.bank_transfer.description = args.description;
-        setting.payment.bank_transfer.instructions = args.instructions;
         setting.payment.bank_transfer.account_details.account_name =
           args.account_details.account_name;
         setting.payment.bank_transfer.account_details.account_number =
@@ -282,9 +286,6 @@ module.exports = {
         setting.payment.stripe.enable = args.enable;
         setting.payment.stripe.title = args.title;
         setting.payment.stripe.description = args.description;
-        setting.payment.stripe.inline_credit_card_form = args.inline_credit_card_form;
-        setting.payment.stripe.statement_descriptor = args.statement_descriptor;
-        setting.payment.stripe.capture = args.capture;
         setting.payment.stripe.test_mode = args.test_mode;
         setting.payment.stripe.sandbox_secret_key = args.sandbox_secret_key;
         setting.payment.stripe.live_secret_key = args.live_secret_key;
@@ -303,13 +304,6 @@ module.exports = {
         setting.payment.paypal.enable = args.enable;
         setting.payment.paypal.title = args.title;
         setting.payment.paypal.description = args.description;
-        setting.payment.paypal.paypal_email = args.paypal_email;
-        setting.payment.paypal.ipn_email_notification =
-          args.ipn_email_notification;
-        setting.payment.paypal.receiver_email = args.receiver_email;
-        setting.payment.paypal.paypal_identity_token =
-          args.paypal_identity_token;
-        setting.payment.paypal.invoice_prefix = args.invoice_prefix;
         setting.payment.paypal.test_mode = args.test_mode;
         setting.payment.paypal.sandbox_secret_key = args.sandbox_secret_key;
         setting.payment.paypal.live_secret_key = args.live_secret_key;
@@ -400,6 +394,31 @@ module.exports = {
           });
         }
 
+        let add_section_web = [];
+        for (let i in args.add_section_web) {
+          let imgObject = {};
+          if (args.add_section_web[i].update_image) {
+            imgObject = await imageUpload(
+              args.add_section_web[i].update_image[0].file,
+              "assets/images/setting/", "Setting"
+            );
+
+            if (imgObject.success === false) {
+              throw putError(imgObject.message);
+            }
+          }
+
+          add_section_web.push({
+            label: args.add_section_web[i].label,
+            section_img: imgObject.data || args.add_section_web[i].section_img,
+            visible: args.add_section_web[i].visible,
+            category: args.add_section_web[i].category ? args.add_section_web[i].category : null,
+            url: args.add_section_web[i].url,
+            display_type : args.add_section_web[i].display_type
+          });
+        }
+
+
         // if(setting.appearance.home.add_section_in_home.product_from_specific_categories === true) {
         //   setting.appearance.home.add_section_in_home.category_id = args.add_section_in_home.category_id
         // }else{
@@ -417,7 +436,7 @@ module.exports = {
 
         setting.appearance.home.slider = slider;
         setting.appearance.home.add_section_in_home = args.add_section_in_home;
-        setting.appearance.home.add_section_web = args.add_section_web;
+        setting.appearance.home.add_section_web = add_section_web;
         return await setting.save();
       } catch (error) {
         error = checkError(error);
@@ -470,7 +489,8 @@ module.exports = {
             section_img: imgObject.data || args.mobile_section[i].section_img,
             url: args.mobile_section[i].url,
             visible: args.mobile_section[i].visible,
-            category: args.mobile_section[i].category ? args.mobile_section[i].category : null
+            category: args.mobile_section[i].category ? args.mobile_section[i].category : null,
+            display_type : args.mobile_section[i].display_type
           });
         }
 
@@ -499,22 +519,11 @@ module.exports = {
           }
         }
 
-        let socialMedia = []
-        for (let media of args.social_media) {
-          socialMedia.push({
-            name: media.name,
-            handle: media.handle,
-          })
-        }
-
         const theme = {
           primary_color: args.primary_color,
           playstore: args.playstore,
           appstore: args.appstore,
-          phone_number: args.phone_number,
-          email: args.email,
-          logo: imgObject.data || args.logo,
-          social_media: socialMedia
+          logo: imgObject.data || args.logo
         };
 
         setting.appearance.theme = theme

@@ -3,6 +3,10 @@ import { gql } from "@apollo/client";
 export const GET_HOMEPAGE_DATA_QUERY = gql`
   query HomePageSettings {
     getSettings {
+      general {
+        date_format
+        time_zone
+      }
       seo {
         meta_title
         meta_tag
@@ -24,6 +28,12 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           state
           zip
           hour
+          email
+          phone_number
+          social_media {
+            name
+            handle
+          }
         }
         measurements {
           weight_unit
@@ -40,6 +50,7 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           out_of_stock_threshold
           out_of_stock_visibility
           stock_display_format
+          left_quantity
         }
       }
       payment {
@@ -47,13 +58,11 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           enable
           title
           description
-          instructions
         }
         bank_transfer {
           enable
           title
           description
-          instructions
           account_details {
             account_name
             account_number
@@ -67,9 +76,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           enable
           title
           description
-          inline_credit_card_form
-          statement_descriptor
-          capture
           test_mode
         }
         paypal {
@@ -77,8 +83,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           title
           description
           test_mode
-          sandbox_secret_key
-          live_secret_key
           sandbox_client_id
           live_client_id
         }
@@ -87,8 +91,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           title
           description
           test_mode
-          sandbox_secret_key
-          live_secret_key
           sandbox_client_id
           live_client_id
         }
@@ -125,13 +127,7 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           primary_color
           playstore
           appstore
-          phone_number
-          email
           logo
-          social_media {
-            name
-            handle
-          }
         }
 
         mobile {

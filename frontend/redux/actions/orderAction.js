@@ -29,7 +29,15 @@ export const getSingleOrderAction = (variable) => (dispatch) => {
       });
     });
 };
-export const updatePaymentStatus = (variable,customerId) => (dispatch) => {
+const getOrderDetails = (orderId,session,dispatch) => {
+  if (session?.status === "authenticated") {
+    if (orderId) {
+      let variable = { id: orderId };
+      dispatch(getSingleOrderAction(variable));
+    }
+  }
+};
+export const updatePaymentStatus = (variable,customerId,orderId,session) => (dispatch) => {
   dispatch({
     type: ORDER_LOADING,
   });
@@ -40,6 +48,7 @@ export const updatePaymentStatus = (variable,customerId) => (dispatch) => {
         if(customerId){
         dispatch(calculateUserCart(customerId));
       }
+      getOrderDetails(orderId,session,dispatch);
       }
     })
     .catch((error) => {

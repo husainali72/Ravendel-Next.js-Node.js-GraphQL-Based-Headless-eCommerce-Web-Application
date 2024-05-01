@@ -3,6 +3,7 @@ import { get } from "lodash";
 import AddressDetails from "./addressDetail";
 import PropTypes from "prop-types";
 import { CASH_ON_DELIVERY } from "../../../utills/constant";
+import { getPaymentMethodLabel } from "../../../utills/helpers";
 const columns = [
   { title: "Products", name: "productTitle" },
   { title: "Qty", name: "qty", type: "text" },
@@ -16,7 +17,7 @@ const prepareOrderDetailRowData = (order) => {
     { label: "Total", value: get(order, "grandTotal", 0), type: "price" },
     {
       label: "Payment Method",
-      value: get(order, "billing.paymentMethod", CASH_ON_DELIVERY),
+      value: getPaymentMethodLabel(get(order,"billing.paymentMethod", CASH_ON_DELIVERY)),
       type: "text",
     },
   ];

@@ -1202,7 +1202,15 @@ footer .follow h5 {
   display: flex;
   justify-content: space-between;
 }
+.stock-availabilty{
+  display: flex;
+}
+.singleproduct-stock{
+  margin-right: 10px;
+}
 .card-price {
+  display: flex;
+  justify-content: space-between;
   color: #1a1a1a;
   margin: 6px 0;
   font-weight: 500 !important;
@@ -5320,4 +5328,9 @@ justify-content: center;
 }
 .payment-method-container{
   display: flex;
+}
+.payment_method_description{
+  font-size: 12px;
+  margin-left: 22px;
+  color: #777;
 }
