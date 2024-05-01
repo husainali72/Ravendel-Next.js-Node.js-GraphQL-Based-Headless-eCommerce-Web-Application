@@ -134,6 +134,7 @@ module.exports = `
     rating: Float
     ratingCount: Int
     levelWiseRating: customObject
+    breadcrumb: customArray
     updated: Date
   }
 
