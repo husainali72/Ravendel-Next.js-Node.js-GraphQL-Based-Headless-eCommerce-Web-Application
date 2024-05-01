@@ -133,6 +133,7 @@ const updateUrl = async (url, table, updateId) => {
 module.exports.updateUrl = updateUrl;
 
 const validateAndSetUrl = async (url, modal, entryId) => {
+  url = stringTourl(url)
   const urlRegex = new RegExp(url)
   const pipeline = [
     {
