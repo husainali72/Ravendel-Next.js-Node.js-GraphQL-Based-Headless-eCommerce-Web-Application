@@ -274,6 +274,7 @@ module.exports = `
     addProduct(
       name: String
       categoryId: customArray
+      categoryTree: customArray
       brand: ID
       url: String
       short_description: String
@@ -296,6 +297,7 @@ module.exports = `
       id: ID
       name: String
       categoryId: customArray
+      categoryType: customArray
       brand: ID
       url: String
       short_description: String
