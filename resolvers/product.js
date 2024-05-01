@@ -162,7 +162,6 @@ module.exports = {
         "Product Categories"
       );
     },
-
     productCategoriesByFilter: async (root, args) => {
       try {
         const cats = await ProductCat.find(args.filter);
@@ -192,6 +191,36 @@ module.exports = {
         Product,
         "Products"
       );
+    },
+    searchProducts: async (root, args, { id }) => {
+      let {searchTerm, page, limit} = args
+      searchTerm = searchTerm.split(" ")
+      const regexPattern = searchTerm.map(search => `(?=.*${search})`).join('|');
+      const searchRegex = new RegExp(regexPattern, "i")
+      
+      const pipeline = [
+        {
+          $match: {
+            name: {
+               $regex: searchRegex
+            }
+          }
+        },
+        {
+          $skip: (page - 1) * limit
+        },
+        {
+          $limit: limit
+        },
+        {
+          $sort: {
+            updated: -1
+          }
+        }
+      ]
+      const searchedProducts = await Product.aggregate(pipeline)
+
+      return searchedProducts || [];
     },
     productswithcat: async (root, args, { id }) => {
       return await GET_ALL_FUNC(Product, "Products with category");

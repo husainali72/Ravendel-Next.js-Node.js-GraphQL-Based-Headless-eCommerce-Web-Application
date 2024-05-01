@@ -204,6 +204,11 @@ module.exports = `
       orderBy: String
       order: String
     ): CategoriesResponse
+    searchProducts(
+      searchTerm: String!
+      page: Int!,
+      limit: Int!
+    ): [Product]
     productswithcat: products_with_cat_RES
     featureproducts: [Product]
     recentproducts: [Product]
