@@ -181,7 +181,7 @@ module.exports = `
     message: statusSchema
   }
 
-  type productUrl {
+  type entryUrl {
     url: String
   }
 
@@ -250,8 +250,8 @@ module.exports = `
   extend type Mutation {
     validateUrl(
       url: String!
-      productId: ID
-    ): productUrl
+      entryId: ID
+    ): entryUrl
     addProductCategory(
       name: String
       parentId: ID

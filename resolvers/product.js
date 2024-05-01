@@ -1341,8 +1341,8 @@ module.exports = {
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
       }
-      const {url, productId} = args
-      const validUrl = await validateAndSetUrl(url, Product, productId)
+      const {url, entryId} = args
+      const validUrl = await validateAndSetUrl(url, Product, entryId)
 
       return {
         url: validUrl,
