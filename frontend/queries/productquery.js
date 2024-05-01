@@ -52,6 +52,19 @@ products {
   }
 }
 `;
+export const GET_FILTERED_PRODUCTS = gql`
+query GetProducts($mainFilter: customObject, $filters: customArray, $pageNo: Int, $limit: Int) {
+  getProducts(mainFilter: $mainFilter, filters: $filters, pageNo: $pageNo, limit: $limit) {
+    message
+    success
+    category
+    filterData
+    productData
+  }
+}
+`;
+
+
 const ATTRIBUTE_TILE = gql`
   fragment AttributeTile on productAttribute {
     id

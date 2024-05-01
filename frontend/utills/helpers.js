@@ -293,3 +293,7 @@ export const iconSetter = (iconName) => {
 export const checkPaymentMethod = (paymentMethod) => {
   return paymentMethod === STRIPE || paymentMethod === PAYPAL;
 };
+export const generateCategoryUrl = (slug) => {
+
+  return {href:`/subcategory/[categorys]?url=/${slug}`,as:`/subcategory/${slug}`}
+};

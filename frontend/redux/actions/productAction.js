@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { get } from "lodash";
 import { GET_CATEGORIES_QUERY } from "../../queries/home";
-import { ADD_REVIEW, GET_ATTRIBUTES, GET_PRODUCTS } from "../../queries/productquery";
+import { ADD_REVIEW, GET_ATTRIBUTES, GET_FILTERED_PRODUCTS, GET_PRODUCTS } from "../../queries/productquery";
 import { mutation, query, queryWithoutToken } from "../../utills/helpers";
 export const PRODUCT_REVIEWS_ADD = 'PRODUCT_REVIEWS_ADD';
 export const PRODUCT_LOADING = "PRODUCT_LOADING";
@@ -13,6 +13,7 @@ export const ATTRIBUTES_SUCCESS = "ATTRIBUTES_SUCCESS";
 export const PRODUCTS_FAIL = "PRODUCTS_FAIL";
 export const LOAD_REVIEW = "LOAD_REVIEW";
 export const CATEGORY_SUCCESS = "CATEGORY_SUCCESS";
+export const PRODUCTS_FILTER_SUCCESS = "PRODUCTS_FILTER_SUCCESS";
 
 
 export const productreviewAction = (object) => (dispatch) => {
@@ -51,6 +52,27 @@ export const getAllProductsAction = () => (dispatch) => {
         return dispatch({
           type: PRODUCTS_SUCCESS,
           payload: get(response,'data.products.data'),
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: PRODUCT_FAIL,
+      });
+    });
+};
+export const getFilteredProductsAction = (variable) => (dispatch) => {
+  dispatch({
+    type: PRODUCTS_LOADING,
+  });
+  queryWithoutToken(GET_FILTERED_PRODUCTS,variable)
+    .then((response) => {
+      let filteredProducts=get(response,'data.getProducts')
+      let success=get(filteredProducts,'success')
+      if (success) {
+        return dispatch({
+          type: PRODUCTS_FILTER_SUCCESS,
+          payload: filteredProducts,
         });
       }
     })
