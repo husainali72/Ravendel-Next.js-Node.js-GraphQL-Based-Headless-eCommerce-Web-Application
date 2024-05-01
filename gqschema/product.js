@@ -110,6 +110,7 @@ module.exports = `
     _id: ID
     name: String
     categoryId: [productCategory]
+    categoryTree: customArray
     brand: productBrand
     url: String
     sku: String

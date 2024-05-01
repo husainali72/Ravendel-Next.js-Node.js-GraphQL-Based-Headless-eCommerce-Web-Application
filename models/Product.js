@@ -32,6 +32,7 @@ const ProductSchema = new Schema({
     required: true,
   },
   categoryId: [],
+  categoryTree: [],
   brand: {
     type: Schema.Types.ObjectId,
     ref: "Brand",

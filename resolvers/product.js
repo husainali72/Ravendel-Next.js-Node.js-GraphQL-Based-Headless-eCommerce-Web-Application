@@ -815,6 +815,7 @@ module.exports = {
             name: args.name,
             url: url,
             categoryId: args.categoryId,
+            categoryTree: args.categoryTree,
             brand: args.brand,
             short_description: args.short_description,
             description: args.description,
@@ -964,6 +965,7 @@ module.exports = {
 
           product.name = args.name;
           product.categoryId = args.categoryId;
+          product.categoryTree = args.categoryTree;
           product.brand = args.brand || null,
           product.url = await validateAndSetUrl(args.url, "Product", args.id);
           product.short_description = args.short_description;
