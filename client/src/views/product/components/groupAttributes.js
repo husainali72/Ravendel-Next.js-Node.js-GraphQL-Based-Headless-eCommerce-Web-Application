@@ -26,7 +26,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { isEmpty, allPossibleCases, bucketBaseURL, baseUrl, imageOnError, getBaseUrl } from "../../../utils/helper";
 import { CardBlocks } from "../../components";
-import { attributesAction } from "../../../store/action";
+import { attributesAction, productsAction } from "../../../store/action";
 import viewStyles from "../../viewStyles";
 
 import { ThemeProvider } from "@mui/material/styles";
@@ -45,6 +45,7 @@ const AttributesComponent = ({
   const dispatch = useDispatch();
   const inputLabel = useRef(null);
   const attributeState = useSelector((state) => state.productAttributes);
+  const {products} = useSelector((state) => state.products);
   const [labelWidth, setLabelWidth] = useState(0);
   const [currentVariants, setcurrentVariants] = useState({
     combinations: [],
@@ -61,6 +62,11 @@ const AttributesComponent = ({
   useEffect(() => {
     onCombinationUpdate(currentVariants.combinations);
   }, [currentVariants.combinations]);
+
+  useEffect(() => {
+    dispatch(productsAction());
+
+  }, []);
 
   useEffect(() => {
     setLabelWidth(inputLabel.current.offsetWidth);
@@ -118,7 +124,7 @@ const AttributesComponent = ({
 
         for (const value of attribute.values) {
           product.variation_master?.forEach((variation_master) => {
-            if (variation_master?.combination.includes(value._id) && !selected_variants.some((selected) => selected.id === variation_master.id)) {
+            if (variation_master?.combinations.includes(value._id) && !selected_variants.some((selected) => selected.id === variation_master.id)) {
               selected_variants.push(variation_master);
             }
           });
@@ -270,7 +276,7 @@ const AttributesComponent = ({
       countMatch = [];
       currentVariants.combinations?.forEach((prevComb, j) => {
         countMatch[j] = 0;
-        prevComb.combination.forEach((v) => {
+        prevComb.combinations.forEach((v) => {
           if (~comb.indexOf(v)) {
             countMatch[j] = countMatch[j] + 1;
           }
@@ -287,7 +293,8 @@ const AttributesComponent = ({
       });
       if (max) {
         generatedVariants.push({
-          combination: comb,
+          combinations: comb,
+          productID: currentVariants.combinations[index]?.productID,
           sku: currentVariants.combinations[index].sku,
           quantity: currentVariants.combinations[index].quantity,
           pricing: {
@@ -300,7 +307,8 @@ const AttributesComponent = ({
         currentVariants.combinations.splice(index, 1);
       } else {
         generatedVariants.push({
-          combination: comb,
+          combinations: comb,
+          productID:'',
           sku: "",
           quantity: 0,
           pricing: {
@@ -421,7 +429,6 @@ const AttributesComponent = ({
                                 value={attribute.selected_values}
                                 options={attribute.values}
                                 onChange={(e) => {
-
                                   changeSelectedValue(e, index);
                                 }}
                                 styles={{
@@ -479,7 +486,8 @@ const AttributesComponent = ({
           ) : (
             ""
           )}
-          {currentVariants.combinations && currentVariants.combinations.length ? (
+          {currentVariants.combinations &&
+          currentVariants.combinations.length ? (
             <Box component="span" m={1}>
               <CardBlocks title="Variants">
                 <TableContainer>
@@ -487,11 +495,12 @@ const AttributesComponent = ({
                     <TableHead>
                       <TableRow>
                         <TableCell>Variant</TableCell>
-                        <TableCell>Price</TableCell>
+                        <TableCell>Product</TableCell>
+                        {/* <TableCell>Price</TableCell>
                         <TableCell>Sale Price</TableCell>
                         <TableCell>Quantity</TableCell>
                         <TableCell>SKU</TableCell>
-                        <TableCell>Image</TableCell>
+                        <TableCell>Image</TableCell> */}
                         <TableCell>Remove</TableCell>
                       </TableRow>
                     </TableHead>
@@ -499,11 +508,44 @@ const AttributesComponent = ({
                       {currentVariants.combinations.map((variant, index) => (
                         <TableRow hover key={index}>
                           <TableCell>
-                            {variant.combination
+                            {variant.combinations
                               .map((val) => currentVariants.allValues[val])
                               .join(" / ")}
                           </TableCell>
                           <TableCell>
+                            <FormControl
+                              style={{ width: 250 }}
+                              variant="outlined"
+                            >
+                              <InputLabel ref={inputLabel} id="product-name">
+                                Select Product
+                              </InputLabel>
+                              <Select
+                                size="small"
+                                label="Select Product"
+                                // labelWidth={labelWidth}
+                                name="productID"
+                                labelId="product-name"
+                                value={variant.product}
+                                onChange={(e) => variantChange(e, index)}
+                              >
+                                {!!products?.length && products?.map(
+                                  (product, index) => {
+                                    return (
+                                      <MenuItem
+                                        value={product._id}
+                                        key={index}
+                                      >
+                                        {product.name}
+                                      </MenuItem>
+                                    );
+                                  }
+                                )}
+                              </Select>
+                            </FormControl>
+                          </TableCell>
+
+                          {/* <TableCell>
                             <TextField
                               label="Price"
                               variant="outlined"
@@ -512,27 +554,32 @@ const AttributesComponent = ({
                               type="number"
                               value={variant.pricing.price}
                               onChange={(e) => {
-
                                 if (e.target.value >= 0) {
-                                  if (e.target.value > variant.pricing.sellprice) {
-                                    currentVariants.combinations[index].pricing[e.target.name] = Number(e.target.value)
+                                  if (
+                                    e.target.value > variant.pricing.sellprice
+                                  ) {
+                                    currentVariants.combinations[index].pricing[
+                                      e.target.name
+                                    ] = Number(e.target.value);
                                     setcurrentVariants({
                                       ...currentVariants,
                                     });
-                                    onCombinationUpdate(currentVariants.combinations);
+                                    onCombinationUpdate(
+                                      currentVariants.combinations
+                                    );
                                   } else {
                                     dispatch({
                                       type: ALERT_SUCCESS,
                                       payload: {
                                         boolean: false,
-                                        message: "Sale price couldn't exceed original price",
+                                        message:
+                                          "Sale price couldn't exceed original price",
                                         error: true,
-                                      }
-                                    })
+                                      },
+                                    });
                                   }
                                 }
-                              }
-                              }
+                              }}
                               size="small"
                             />
                           </TableCell>
@@ -547,26 +594,29 @@ const AttributesComponent = ({
                               onChange={(e) => {
                                 if (e.target.value >= 0) {
                                   if (e.target.value < variant.pricing.price) {
-                                    currentVariants.combinations[index].pricing[e.target.name] = Number(e.target.value)
+                                    currentVariants.combinations[index].pricing[
+                                      e.target.name
+                                    ] = Number(e.target.value);
 
                                     setcurrentVariants({
                                       ...currentVariants,
                                     });
-                                    onCombinationUpdate(currentVariants.combinations);
+                                    onCombinationUpdate(
+                                      currentVariants.combinations
+                                    );
                                   } else {
                                     dispatch({
                                       type: ALERT_SUCCESS,
                                       payload: {
                                         boolean: false,
-                                        message: "Sale price couldn't exceed original price",
+                                        message:
+                                          "Sale price couldn't exceed original price",
                                         error: true,
-                                      }
-                                    })
+                                      },
+                                    });
                                   }
                                 }
-
-                              }
-                              }
+                              }}
                               size="small"
                             />
                           </TableCell>
@@ -595,11 +645,12 @@ const AttributesComponent = ({
                           </TableCell>
                           <TableCell>
                             <Box m={1}>
-
                               {!isEmpty(variant.image) ? (
                                 <img
                                   src={
-                                    variant.image.startsWith("blob") ? variant.image : (getBaseUrl(setting) + variant.image)
+                                    variant.image.startsWith("blob")
+                                      ? variant.image
+                                      : getBaseUrl(setting) + variant.image
                                   }
                                   className={classes.variantImage}
                                   alt="variant"
@@ -626,7 +677,8 @@ const AttributesComponent = ({
                               <ImageIcon />
                               {"Set Image"}
                             </label>
-                          </TableCell>
+                          </TableCell> */}
+
                           <TableCell>
                             <Tooltip title="Delete" aria-label="delete">
                               <IconButton
@@ -649,13 +701,12 @@ const AttributesComponent = ({
             ""
           )}
         </>
-      )
-      }
+      )}
     </>
   );
 };
 
-const Attributes = ({
+const GroupAttributes = ({
   product,
   productStateChange,
   onCombinationUpdate,
@@ -674,4 +725,4 @@ const Attributes = ({
     </ThemeProvider>
   );
 };
-export default Attributes;
+export default GroupAttributes;

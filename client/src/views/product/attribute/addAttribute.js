@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, TextField } from "@mui/material";
+import { Checkbox, FormControlLabel, Grid, TextField } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 
 import ReactTags from "react-tag-autocomplete";
@@ -22,6 +22,7 @@ const AddAttributeTheme = () => {
   const [attribute, setattribute] = useState({
     name: "",
     values: [],
+    allow_filter: false,
   });
   const attributeState = useSelector((state) => state.productAttributes);
 
@@ -38,7 +39,7 @@ const AddAttributeTheme = () => {
   const onAdd = () => {
 
     let errors = validate(["name"], attribute);
-    let errorAttributeValue = validatenested("values", [ "name"], attribute);
+    let errorAttributeValue = validatenested("values", ["name"], attribute);
     if (!isEmpty(errors)) {
       dispatch({
         type: ALERT_SUCCESS,
@@ -108,6 +109,26 @@ const AddAttributeTheme = () => {
                   <em className={classes.noteline}>
                     Press tab after adding each tag.
                   </em>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControlLabel
+                  sx={{mt:1}}
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={attribute.allow_filter}
+                        name="allow_filter"
+                        value="allow_filter"
+                        onChange={(e) =>
+                          setattribute({
+                            ...attribute,
+                            allow_filter: e.target.checked
+                          })
+                        }
+                      />
+                    }
+                    label="Allow Filter"
+                  />
                 </Grid>
               </Grid>
             </CardBlocks>
