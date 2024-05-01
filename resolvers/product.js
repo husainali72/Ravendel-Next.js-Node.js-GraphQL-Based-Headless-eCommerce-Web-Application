@@ -141,8 +141,9 @@ module.exports = {
   Query: {
     getProducts: async (root, args) => {
       try {
-        let { mainFilter, filters, pageNo, limit } = args;
-        
+        let { mainFilter, filters, sort, pageNo, limit } = args;
+        pageNo = (!pageNo || pageNo == 0 ? 1 : pageNo);
+        limit = (!limit || limit == 0 ? 10 : limit);
         // let req = 
         // {
         //   mainFilter: {
@@ -296,6 +297,15 @@ module.exports = {
           });
         }
         
+        const slicePosition = (pageNo == 1 ? 0 : (pageNo - 1) * limit);
+        let sortByExpression = {};
+        if(sort && sort.field) {
+          sortByExpression[sort.field] = (sort.type == "desc" ? -1 : 1);
+        }
+        else {
+          sortByExpression = { "date": -1 };
+        }
+        console.log('sortByExpression', sortByExpression);
         productDataFacet.push(
           {
             $group: {
@@ -310,24 +320,30 @@ module.exports = {
               products: {
                 $slice: [
                   {
-                    $map: {
-                      input: "$products",
-                      as: "prod",
-                      in: {
-                        _id: "$$prod._id",
-                        name: "$$prod.name",
-                        quantity: "$$prod.quantity",
-                        pricing: "$$prod.pricing",
-                        url: "$$prod.url",
-                        feature_image: "$$prod.feature_image",
-                        rating: "$$prod.rating",
-                        categoryId: "$$prod.categoryId",
+                    $sortArray: {
+                      input: {
+                        $map: {
+                          input: "$products",
+                          as: "prod",
+                          in: {
+                            _id: "$$prod._id",
+                            name: "$$prod.name",
+                            quantity:"$$prod.quantity",
+                            pricing:"$$prod.pricing",
+                            url: "$$prod.url",
+                            feature_image:"$$prod.feature_image",
+                            rating: "$$prod.rating",
+                            categoryId:"$$prod.categoryId",
+                            date: "$$prod.date",
+                          },
+                        },
                       },
+                      sortBy: sortByExpression,
                     },
                   },
-                  pageNo - 1,
+                  slicePosition,
                   limit,
-                ]
+                ],
               },
             },
           },

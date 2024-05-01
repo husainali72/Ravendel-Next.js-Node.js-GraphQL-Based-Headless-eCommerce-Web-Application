@@ -192,6 +192,7 @@ module.exports = `
     getProducts(
       mainFilter: customObject
       filters: customArray
+      sort: customObject
       pageNo: Int
       limit: Int
     ): getProductsResponse
