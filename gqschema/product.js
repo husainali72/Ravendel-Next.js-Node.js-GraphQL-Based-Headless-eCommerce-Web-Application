@@ -90,18 +90,27 @@ module.exports = `
     updatedAt: Date
   }
 
-  type ProductAttribute {
-    id: ID
-    name: String
-    attribute_values: customArray
-    createdAt: Date
-    updatedAt: Date
+  type productSpecification {
+    key: String
+    attributeId: ID
+    value: String
+    attributeValueId: ID
+    group: String
+  }
+
+  input productSpecificationInput {
+    key: String
+    attributeId: ID
+    value: String
+    attributeValueId: ID
+    group: String
   }
 
   type Product {
     _id: ID
     name: String
     categoryId: [productCategory]
+    categoryTree: customArray
     brand: productBrand
     url: String
     sku: String
@@ -118,12 +127,13 @@ module.exports = `
     featured_product: Boolean
     product_type: customObject
     custom_field: [customObject]
-    attribute: [customObject]
-    attribute_master: [ProductAttribute]
-    variant: customArray
-    variation_master: [ProductVariations]
+    specifications: [productSpecification]
+    attributes: customArray
+    variations: customArray
     date: Date
     rating: Float
+    ratingCount: Int
+    levelWiseRating: customObject
     updated: Date
   }
 
@@ -170,6 +180,11 @@ module.exports = `
     data:Product
     message: statusSchema
   }
+
+  type productUrl {
+    url: String
+  }
+
   type products_v1 {
     message: String
     success: Boolean
@@ -215,6 +230,11 @@ module.exports = `
       orderBy: String
       order: String
     ): CategoriesResponse
+    searchProducts(
+      searchTerm: String!
+      page: Int!,
+      limit: Int!
+    ): [Product]
     productswithcat: products_with_cat_RES
     featureproducts: [Product]
     recentproducts: [Product]
@@ -228,6 +248,10 @@ module.exports = `
   }
 
   extend type Mutation {
+    validateUrl(
+      url: String!
+      productId: ID
+    ): productUrl
     addProductCategory(
       name: String
       parentId: ID
@@ -266,9 +290,7 @@ module.exports = `
       product_type: customObject
       meta: customObject
       custom_field: [customObject]
-      attribute: [customObject]
-      variant: customArray
-      combinations: [customObject]
+      specifications: [productSpecificationInput]
     ): statusSchema
     updateProduct(
       id: ID
@@ -291,9 +313,7 @@ module.exports = `
       product_type: customObject
       meta: customObject
       custom_field: [customObject]
-      attribute: [customObject]
-      variant: customArray
-      combinations: [customObject]
+      specifications: [productSpecificationInput]
     ): statusSchema
     deleteProduct(id: ID!): statusSchema
   }

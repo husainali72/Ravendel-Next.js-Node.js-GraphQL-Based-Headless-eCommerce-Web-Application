@@ -44,6 +44,7 @@ module.exports = {
       let data = {
         name: args.attribute.name,
         values: args.attribute.values,
+        allow_filter: args.attribute.allow_filter,
       };
       const duplicate = await duplicateData({name: args.name}, ProductAttribute)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Attribute", false);
@@ -62,6 +63,7 @@ module.exports = {
       let data = {
         name: args.attribute.name,
         values: args.attribute.values,
+        allow_filter: args.attribute.allow_filter,
       };
       const duplicate = await duplicateData({name: args.name}, ProductAttribute, args.attribute.id)
       if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Attribute", false);
