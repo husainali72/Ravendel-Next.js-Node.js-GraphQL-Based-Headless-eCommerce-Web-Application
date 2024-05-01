@@ -4,6 +4,18 @@
   --secondary-color: white;
   /* ... other color variables */
 }
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
 body {
   padding: 0;
   margin: 0;
@@ -1352,13 +1364,18 @@ footer .follow h5 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: url(http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/banner/banner-8.jpg);
+  /* background: url(http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/banner/banner-8.jpg); */
   background-size: cover;
   background-position: center;
   padding: 100px 0px;
   width: 100%;
 }
-
+.section-banner{
+  padding: 260px 0px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
 .fashion-banner {
   background: url(../components/images/Frame\ 23.png);
   padding: 260px 0px;
@@ -1673,7 +1690,13 @@ footer .btn:hover a {
   width: 100%;
   margin-top: 10px;
 }
+.totall-product{
+  width: 100%;
 
+}
+.totalcount-text{
+  text-align: center;
+}
 .shop-product-fillter {
   display: flex;
   align-items: center;
@@ -4047,7 +4070,10 @@ border-bottom: none !important;
   .shop-product-container {
     padding: 0;
   }
-
+  .shop-product-scroll {
+    height: 300px !important; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
   .shop-Container .col-lg-3 {
     width: 100%;
   }
@@ -5320,4 +5346,43 @@ justify-content: center;
 }
 .payment-method-container{
   display: flex;
+}
+.search-container {
+  display: flex;
+  align-items: center;
+}
+
+.input-container {
+  position: relative;
+}
+
+.search-field {
+  border: none !important;
+  border-bottom: 1px solid grey !important;
+  padding: 5px;
+  margin-right: 5px;
+  flex-grow: 1;
+}
+.search-field:focus {
+  outline: none;
+  border-bottom: 1px solid grey !important; 
+}
+.search-field::placeholder {
+  font-size: 12px;
+}
+.clear-icon {
+  position: absolute;
+  top: 30%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: grey;
+}
+.show-more-btn{
+  border: none !important;
+  background-color: transparent;
+  color: var(--primary-color);
+  font-size: 14px;
+  font-weight: 600;
+
 }

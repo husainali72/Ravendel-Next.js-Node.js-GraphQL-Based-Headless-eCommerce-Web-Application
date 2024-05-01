@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-import Link from "next/link";
 import { Placeholder } from "react-bootstrap";
 import Table from 'react-bootstrap/Table';
 const LoadingCartTable = () => {
@@ -92,7 +91,8 @@ const cartItems = [1,2,3]
             </div>
             <div className="cart-action text-end">
                 {/* <a className="card-btons disable-btn  mr-10 mb-sm-15" onClick={() => updateCartProduct()}><i className="fas fa-random"></i> Update Cart</a> */}
-                <Link href="/shop"><a className="card-btons "><i className="fas fa-shopping-bag"></i> Continue Shopping</a></Link>
+                    <a className="card-btons "><i className="fas fa-shopping-bag"></i> Continue Shopping</a>
+
             </div>
 
         </div>

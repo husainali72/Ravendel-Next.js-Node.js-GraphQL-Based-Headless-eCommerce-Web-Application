@@ -5,7 +5,13 @@ import Price from "../priceWithCurrency";
 import ProductImage from "../imageComponent";
 import CheckBox from "../check";
 import PropTypes from "prop-types";
-import { CASH_ON_DELIVERY, CREDIT_CARD, PAYPAL, RAZORPAY, STRIPE } from "../../utills/constant";
+import {
+  CASH_ON_DELIVERY,
+  CREDIT_CARD,
+  PAYPAL,
+  RAZORPAY,
+  STRIPE,
+} from "../../utills/constant";
 const paymentOptions = [
   { label: "Cash on delivery", value: CASH_ON_DELIVERY },
   { label: "Stripe", value: STRIPE },
@@ -103,6 +109,7 @@ const Orderdetail = (props) => {
         <div className="payment-method">
           <h5>Payment Mode</h5>
           <CheckBox
+            type="radio"
             options={paymentOptions}
             name="paymentMethod"
             onChange={(e) => handleBillingInfo(e)}

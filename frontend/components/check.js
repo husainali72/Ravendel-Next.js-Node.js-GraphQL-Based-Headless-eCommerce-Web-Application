@@ -2,23 +2,24 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Form } from "react-bootstrap";
 
-const CheckBox = ({ options, value, name, onChange, className }) => {
+const CheckBox = ({ options, value, name, onChange, className,type }) => {
   return (
     <Form>
-      <Form.Group value={value} onChange={onChange}>
         {options?.map((option, index) => (
           <div key={`inline-${option.value}-${index}`} className="mb-3">
             <Form.Check
+            key={value?.id}
               label={option?.label}
               name={name}
-              type="radio"
+              type={type}
               value={option?.value}
               id={`inline-${option.value}-${index}`}
+              onChange={(e)=>onChange(e)}
               className={className}
+              checked={option?.select}
             />
-          </div>
+           </div>
         ))}
-      </Form.Group>
     </Form>
   );
 };
@@ -33,6 +34,7 @@ CheckBox.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   className: PropTypes.string,
+  type: PropTypes.string,
   name: PropTypes.string.isRequired,
 };
 
