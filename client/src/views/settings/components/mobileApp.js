@@ -152,10 +152,9 @@ const MobileAppSetting = () => {
     const cleanedSlider = get(settingMobile, "slider", [])?.map(
       ({ __typename, ...rest }) => rest
     );
-    const cleanedMobileSection = get(settingMobile, "mobile_section", [])?.map(
+    const cleanedMobileSection =sectionData?.map(
       ({ __typename, ...rest }) => rest
     );
-
     const data = {
       ...settingMobile,
       slider: cleanedSlider,
