@@ -4,12 +4,12 @@ const Schema = mongoose.Schema;
 const attributeSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
-    ref: "productattributes"
+    ref: "ProductAttribute"
   },
   values: [
     {
       type: Schema.Types.ObjectId,
-      ref: "productattributes"
+      ref: "ProductAttribute"
     }
   ],
 })
@@ -17,12 +17,12 @@ const attributeSchema = new Schema({
 const combinationSchema = new Schema({
   attributeId: {
     type: Schema.Types.ObjectId,
-    ref: "productattributes",
+    ref: "ProductAttribute",
     required: true
   },
   attributeValueId: {
     type: Schema.Types.ObjectId,
-    ref: "productattributes",
+    ref: "ProductAttribute",
     required: true
   },
 }, {_id: false})
@@ -31,7 +31,7 @@ const variationSchema = new Schema({
   combinations: [combinationSchema],
   productId: {
     type: Schema.Types.ObjectId,
-    ref: "products",
+    ref: "Product",
     required: true
   }
 })
@@ -47,7 +47,7 @@ const ProductGroupSchema = new Schema({
   productIds: [
     {
       type: Schema.Types.ObjectId,
-      ref: "products"
+      ref: "Product"
     }
   ]
 }, {timestamps: true});

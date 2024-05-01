@@ -198,7 +198,8 @@ const CREATE_FUNC = async (
   data,
   args,
   path,
-  validation
+  validation,
+  modal2
 ) => {
 
   /////////////////////////////////////////
@@ -296,6 +297,10 @@ const CREATE_FUNC = async (
     if (name !== "Page" && name !== "Product Attribute") response.updated = Date.now()
 
     await response.save();
+    // update average rating of product related to reviews
+    if (name === "Review") {
+      await prodAvgRating(data.productId, modal, modal2)
+    }
     return MESSAGE_RESPONSE("AddSuccess", name, true);
   } catch (error) {
     return MESSAGE_RESPONSE("CREATE_ERROR", name, false);

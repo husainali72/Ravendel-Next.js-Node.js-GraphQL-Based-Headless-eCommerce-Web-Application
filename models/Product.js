@@ -11,14 +11,14 @@ const specificationSchema = new Schema({
   },
   attributeId: {
     type: Schema.Types.ObjectId,
-    ref: "productattributes"
+    ref: "ProductAttribute"
   },
   value: {
     type: String,
   },
   attributeValueId: {
     type: Schema.Types.ObjectId,
-    ref: "productattributes"
+    ref: "ProductAttribute"
   },
   group: {
     type: String,
@@ -32,6 +32,7 @@ const ProductSchema = new Schema({
     required: true,
   },
   categoryId: [],
+  categoryTree: [],
   brand: {
     type: Schema.Types.ObjectId,
     ref: "Brand",
@@ -57,6 +58,10 @@ const ProductSchema = new Schema({
       default: 0,
     },
     sellprice: {
+      type: Number,
+      default: 0,
+    },
+    discountPercentage: {
       type: Number,
       default: 0,
     },

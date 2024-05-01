@@ -4,6 +4,7 @@ const Brand = require("../models/Brand");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const ProductAttribute = require("../models/ProductAttribute");
 const Review = require("../models/Review");
+const ProductGroup = require("../models/ProductGroup");
 const {
   isEmpty,
   putError,
@@ -14,7 +15,9 @@ const {
   MESSAGE_RESPONSE,
   _validate,
   _validatenested,
-  duplicateData
+  duplicateData,
+  toObjectID,
+  validateAndSetUrl
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -159,7 +162,6 @@ module.exports = {
         "Product Categories"
       );
     },
-
     productCategoriesByFilter: async (root, args) => {
       try {
         const cats = await ProductCat.find(args.filter);
@@ -189,6 +191,36 @@ module.exports = {
         Product,
         "Products"
       );
+    },
+    searchProducts: async (root, args, { id }) => {
+      let {searchTerm, page, limit} = args
+      searchTerm = searchTerm.split(" ")
+      const regexPattern = searchTerm.map(search => `(?=.*${search})`).join('|');
+      const searchRegex = new RegExp(regexPattern, "i")
+      
+      const pipeline = [
+        {
+          $match: {
+            name: {
+               $regex: searchRegex
+            }
+          }
+        },
+        {
+          $skip: (page - 1) * limit
+        },
+        {
+          $limit: limit
+        },
+        {
+          $sort: {
+            updated: -1
+          }
+        }
+      ]
+      const searchedProducts = await Product.aggregate(pipeline)
+
+      return searchedProducts || [];
     },
     productswithcat: async (root, args, { id }) => {
       return await GET_ALL_FUNC(Product, "Products with category");
@@ -348,7 +380,153 @@ module.exports = {
       }
     },
     product: async (root, args) => {
-      return await GET_SINGLE_FUNC(args.id, Product, "Product");
+      if (!args.id) {
+        return {
+          message: MESSAGE_RESPONSE("ID_ERROR", "Product", false),
+        };
+      }
+      const pipeline = [
+        // match on the basis of id
+        {
+          $match: {
+            _id: toObjectID(args.id),
+          },
+        },
+        // fetch rating count
+        {
+          $lookup: {
+            from: "reviews",
+            localField: "_id",
+            foreignField: "productId",
+            as: "reviewDetails"
+          }
+        },
+        // populate attributes and varaitions
+        {
+          $lookup: {
+            from: "productgroups",
+            let: { productId: "$_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ["$$productId", "$productIds"],
+                  },
+                },
+              },
+              {
+                $unwind: "$attributes",
+              },
+              {
+                $lookup: {
+                  from: "productattributes",
+                  localField: "attributes._id",
+                  foreignField: "_id",
+                  as: "attributeDetails",
+                },
+              },
+              {
+                $unwind: "$attributeDetails",
+              },
+              
+              {
+                $addFields: {
+                  "attributes.name":
+                    "$attributeDetails.name",
+                  "attributes.values": {
+                    $filter: {
+                      input: "$attributeDetails.values",
+                      as: "value",
+                      cond: {
+                        $in: [
+                          "$$value._id",
+                          "$attributes.values",
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                $group: {
+                  _id: "$_id",
+                  attributes: { $push: "$attributes" },
+                  variations: { $first: "$variations" },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  attributes: {
+                    _id: 1,
+                    name: 1,
+                    values: {
+                      _id: 1,
+                      name: 1,
+                    },
+                  },
+                  variations: 1,
+                },
+              },
+            ],
+            as: "group",
+          },
+        },
+        {
+          $addFields: {
+            group: {
+              $arrayElemAt: ["$group", 0]
+            }
+          }
+        },
+      ]
+      let existingProducts = await Product.aggregate(pipeline);
+      const response = existingProducts[0]
+      if (!response) {
+        return {
+          message: MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false),
+          data: response,
+        };
+      }
+      
+      if(response.group) {
+        const { attributes, variations } = response.group
+        variations.map(variant => {
+          variant.combinations.map(combo => {
+            let foundAttribute = attributes.find(attr => attr._id.toString() === combo.attributeId.toString())
+            if(foundAttribute) {
+              combo["attributeName"] = foundAttribute.name
+              let foundAttributeValue = foundAttribute.values.find(value => value._id.toString() === combo.attributeValueId.toString())
+              if(foundAttributeValue) {
+                combo["attributeValueName"] = foundAttributeValue.name
+              }
+            }
+          })
+        })
+        response["attributes"] = attributes
+        response["variations"] = variations
+      }
+
+      if(response.reviewDetails) {
+        let reviewDetails = response.reviewDetails.filter(review => review.status === "approved")
+        const fetchRatings = (min, max) => {
+          return reviewDetails.filter(review => review.rating >= min && review.rating < max).length
+        }
+
+        response["ratingCount"] = reviewDetails.length
+        response["levelWiseRating"] = {
+          fiveStar: fetchRatings(5, 6),
+          fourStar: fetchRatings(4, 5),
+          threeStar: fetchRatings(3, 4),
+          twoStar: fetchRatings(2, 3),
+          oneStar: fetchRatings(1, 2),
+        }
+      }
+
+      return {
+        message: MESSAGE_RESPONSE("SINGLE_RESULT_FOUND", "Product", true),
+        data: response,
+      };
     },
   },
   Product: {
@@ -470,21 +648,18 @@ module.exports = {
   },
   Mutation: {
     addProductCategory: async (root, args, { id }) => {
-
       await checkAwsFolder('productcategory');
       let path = "assets/images/product/category";
-      let url = "";
-      if (args.url || args.title) {
-        url = await updateUrl(args.url || args.name, "ProductCat");
-      }
       let data = {
         name: args.name,
         parentId: args.parentId || null,
-        url: url,
+        url: await validateAndSetUrl(args.url, ProductCat),
+        // url: args.url,
         description: args.description,
         image: args.image,
         meta: args.meta,
       };
+
       const duplicate = await duplicateData({ name: args.name }, ProductCat)
       if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       let validation = ["name"];
@@ -501,18 +676,15 @@ module.exports = {
     updateProductCategory: async (root, args, { id }) => {
       await checkAwsFolder('productcategory');
       let path = "assets/images/product/category";
-      let url = "";
-      if (args.url || args.title) {
-        url = await updateUrl(args.url || args.name, "ProductCat", args.id);
-      }
       let data = {
         name: args.name,
         parentId: args.parentId || null,
-        url: url,
+        url: await validateAndSetUrl(args.url, ProductCat, args.id),
         description: args.description,
         image: args.image,
         meta: args.meta,
       };
+
       let validation = ["name"];
       const duplicate = await duplicateData({ name: args.name }, ProductCat, args.id)
       if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
@@ -559,7 +731,17 @@ module.exports = {
         return MESSAGE_RESPONSE("DELETE_ERROR", "Product Category", false);
       }
     },
+    validateUrl: async (root, args, { id }) => {
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
+      }
+      const {url, productId} = args
+      const validUrl = await validateAndSetUrl(url, Product, productId)
 
+      return {
+        url: validUrl,
+      };
+    },
     addProduct: async (root, args, { id }) => {
       await checkAwsFolder('product');
       if (!id) {
@@ -626,13 +808,14 @@ module.exports = {
               }
             }
           }
-          let url = await updateUrl(args.url || args.name, "Product");
+          let url = await validateAndSetUrl(args.url, Product);
           const duplicate = await duplicateData({ name: args.name }, Product)
           if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
           const newProduct = new Product({
             name: args.name,
             url: url,
             categoryId: args.categoryId,
+            categoryTree: args.categoryTree,
             brand: args.brand,
             short_description: args.short_description,
             description: args.description,
@@ -641,6 +824,7 @@ module.exports = {
             pricing: {
               price: args.pricing.price || 0,
               sellprice: args.pricing.sellprice || 0,
+              discountPercentage: args.pricing.discountPercentage || 0,
             },
             feature_image: imgObject.data || imgObject,
             gallery_image: imgArray,
@@ -781,8 +965,9 @@ module.exports = {
 
           product.name = args.name;
           product.categoryId = args.categoryId;
+          product.categoryTree = args.categoryTree;
           product.brand = args.brand || null,
-            product.url = await updateUrl(args.url || args.name, "Product", args.id);
+          product.url = await validateAndSetUrl(args.url, "Product", args.id);
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;
@@ -817,9 +1002,15 @@ module.exports = {
         return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
       }
       try {
+        const existingGroup = await ProductGroup.findOne({productIds: toObjectID(args.id)}).select("title")
+        if(existingGroup) {
+          return {
+            message: `Couldn't remove product as being used in ${existingGroup.title}`,
+            success: false,
+          };
+        }
+
         const product =  await Product.deleteOne({ _id: args.id });
-
-
         if (product) {
           if (product.feature_image) {
             imageUnlink(product.feature_image);

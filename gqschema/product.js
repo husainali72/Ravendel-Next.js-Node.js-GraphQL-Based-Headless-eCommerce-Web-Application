@@ -90,14 +90,6 @@ module.exports = `
     updatedAt: Date
   }
 
-  type ProductAttribute {
-    id: ID
-    name: String
-    attribute_values: customArray
-    createdAt: Date
-    updatedAt: Date
-  }
-
   type productSpecification {
     key: String
     attributeId: ID
@@ -118,6 +110,7 @@ module.exports = `
     _id: ID
     name: String
     categoryId: [productCategory]
+    categoryTree: customArray
     brand: productBrand
     url: String
     sku: String
@@ -135,8 +128,12 @@ module.exports = `
     product_type: customObject
     custom_field: [customObject]
     specifications: [productSpecification]
+    attributes: customArray
+    variations: customArray
     date: Date
     rating: Float
+    ratingCount: Int
+    levelWiseRating: customObject
     updated: Date
   }
 
@@ -183,6 +180,11 @@ module.exports = `
     data:Product
     message: statusSchema
   }
+
+  type productUrl {
+    url: String
+  }
+
   extend type Query {
     productCategories: productCategoriesRES
     productCategories_pagination(
@@ -203,6 +205,11 @@ module.exports = `
       orderBy: String
       order: String
     ): CategoriesResponse
+    searchProducts(
+      searchTerm: String!
+      page: Int!,
+      limit: Int!
+    ): [Product]
     productswithcat: products_with_cat_RES
     featureproducts: [Product]
     recentproducts: [Product]
@@ -216,6 +223,10 @@ module.exports = `
   }
 
   extend type Mutation {
+    validateUrl(
+      url: String!
+      productId: ID
+    ): productUrl
     addProductCategory(
       name: String
       parentId: ID
