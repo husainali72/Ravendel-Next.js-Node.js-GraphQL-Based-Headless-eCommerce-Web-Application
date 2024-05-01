@@ -179,6 +179,11 @@ module.exports = `
     data:Product
     message: statusSchema
   }
+
+  type productUrl {
+    url: String
+  }
+
   extend type Query {
     productCategories: productCategoriesRES
     productCategories_pagination(
@@ -212,6 +217,10 @@ module.exports = `
   }
 
   extend type Mutation {
+    validateUrl(
+      url: String!
+      productId: ID
+    ): productUrl
     addProductCategory(
       name: String
       parentId: ID

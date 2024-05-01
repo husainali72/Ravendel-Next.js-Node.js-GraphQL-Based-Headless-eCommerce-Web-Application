@@ -130,8 +130,109 @@ const updateUrl = async (url, table, updateId) => {
     return url.slice(0, url.length - 1) + i;
   } else return Promise.resolve(url);
 };
-
 module.exports.updateUrl = updateUrl;
+
+const validateAndSetUrl = async (url, modal, entryId) => {
+  const urlRegex = new RegExp(url)
+  const pipeline = [
+    {
+      $facet: {
+        exactMatch: [
+          {
+            $group: {
+              _id: null,
+              urls: {
+                $push: {
+                  $cond: [
+                    { $eq: ["$url", url] },
+                    { url: "$url", _id: "$_id" },
+                    "$$REMOVE",
+                  ],
+                },
+              },
+            },
+          },
+        ],
+        similarMatch: [
+          {
+            $group: {
+              _id: null,
+              urls: {
+                $push: {
+                  $cond: [
+                    {
+                      $regexMatch: {
+                        input: "$url",
+                        regex: urlRegex,
+                      },
+                    },
+                    { url: "$url", _id: "$_id" },
+                    "$$REMOVE",
+                  ],
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+    {
+      $project: {
+        exactMatch: {
+          $arrayElemAt: ["$exactMatch.urls", 0]
+        },
+        similarMatch: {
+          $arrayElemAt: ["$similarMatch.urls", 0]
+        },
+      },
+    },
+    {
+      $unwind: "$similarMatch"
+    },
+    {
+      $sort: {
+        "similarMatch.url": -1
+      }
+    },
+    {
+      $group: {
+        _id: "$_id",
+        exactMatch: {
+          $first: "$exactMatch"
+        },
+        similarMatch: {
+          $push: "$similarMatch"
+        }
+      }
+    }
+  ]
+
+  const existingUrls = await modal.aggregate(pipeline)
+  if(existingUrls.length) {
+    const {exactMatch, similarMatch} = existingUrls[0]
+    
+    if(exactMatch.length) {
+      if(exactMatch[0]._id.toString() !== entryId) {
+        url = similarMatch[0].url.split("-")
+        let urlEnd = url.pop()
+    
+        if(isNaN(urlEnd)) {
+          url.push(urlEnd)
+          url.push("1")
+        } else {
+          urlEnd = (Number.parseInt(urlEnd)+1).toString()
+          url.push(urlEnd)
+        }
+    
+        url = url.join("-")
+      }  
+    }
+  } 
+
+  return url
+}
+module.exports.validateAndSetUrl = validateAndSetUrl;
+
 /*----------------------------------------------store image in local storage---------------------------------------------------------*/
 
 const UploadImageLocal = async (image, path, name) => {

@@ -16,7 +16,8 @@ const {
   _validate,
   _validatenested,
   duplicateData,
-  toObjectID
+  toObjectID,
+  validateAndSetUrl
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -618,21 +619,18 @@ module.exports = {
   },
   Mutation: {
     addProductCategory: async (root, args, { id }) => {
-
       await checkAwsFolder('productcategory');
       let path = "assets/images/product/category";
-      let url = "";
-      if (args.url || args.title) {
-        url = await updateUrl(args.url || args.name, "ProductCat");
-      }
       let data = {
         name: args.name,
         parentId: args.parentId || null,
-        url: url,
+        url: await validateAndSetUrl(args.url, ProductCat),
+        // url: args.url,
         description: args.description,
         image: args.image,
         meta: args.meta,
       };
+
       const duplicate = await duplicateData({ name: args.name }, ProductCat)
       if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       let validation = ["name"];
@@ -649,18 +647,15 @@ module.exports = {
     updateProductCategory: async (root, args, { id }) => {
       await checkAwsFolder('productcategory');
       let path = "assets/images/product/category";
-      let url = "";
-      if (args.url || args.title) {
-        url = await updateUrl(args.url || args.name, "ProductCat", args.id);
-      }
       let data = {
         name: args.name,
         parentId: args.parentId || null,
-        url: url,
+        url: await validateAndSetUrl(args.url, ProductCat, args.id),
         description: args.description,
         image: args.image,
         meta: args.meta,
       };
+
       let validation = ["name"];
       const duplicate = await duplicateData({ name: args.name }, ProductCat, args.id)
       if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
@@ -707,7 +702,17 @@ module.exports = {
         return MESSAGE_RESPONSE("DELETE_ERROR", "Product Category", false);
       }
     },
+    validateUrl: async (root, args, { id }) => {
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
+      }
+      const {url, productId} = args
+      const validUrl = await validateAndSetUrl(url, Product, productId)
 
+      return {
+        url: validUrl,
+      };
+    },
     addProduct: async (root, args, { id }) => {
       await checkAwsFolder('product');
       if (!id) {
@@ -774,7 +779,7 @@ module.exports = {
               }
             }
           }
-          let url = await updateUrl(args.url || args.name, "Product");
+          let url = await validateAndSetUrl(args.url, Product);
           const duplicate = await duplicateData({ name: args.name }, Product)
           if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
           const newProduct = new Product({
@@ -931,7 +936,7 @@ module.exports = {
           product.name = args.name;
           product.categoryId = args.categoryId;
           product.brand = args.brand || null,
-            product.url = await updateUrl(args.url || args.name, "Product", args.id);
+          product.url = await validateAndSetUrl(args.url, "Product", args.id);
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;
