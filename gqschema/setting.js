@@ -216,11 +216,19 @@ module.exports = `
     category_id: String
   }
   
+  enum DISPLAY_TYPE {
+    GRID
+    SLIDER
+  }
+
   type ADD_SECTION_WEB {
-    label: String
     name: String
+    label: String
+    section_img: String
     visible: Boolean
     category: String
+    url: String
+    display_type: DISPLAY_TYPE
   }
 
   type APPEARANCE_MOBILE {
@@ -234,6 +242,7 @@ module.exports = `
     visible: Boolean
     category: String
     url: String
+    display_type: DISPLAY_TYPE
   }
 
   type APPEARANCE_THEME {
@@ -282,15 +291,19 @@ module.exports = `
     label: String
     section_img: String
     visible: Boolean
-    url: String
     category: String
+    url: String
+    display_type: DISPLAY_TYPE
   }
 
   input add_section_web_input {
+    update_image: Upload
     label: String
-    name: String
-    category: String
+    section_img: String
     visible: Boolean
+    category: String
+    url: String
+    display_type: DISPLAY_TYPE
   }
 
   input social_media_input {

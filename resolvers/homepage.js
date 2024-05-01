@@ -1,25 +1,39 @@
 const Setting = require("../models/Setting");
-const brands = require("../models/Brand");
+const productCategory = require("../models/ProductCat");
 const products = require("../models/Product");
+const mongoose = require("mongoose");
 module.exports = {
   Query: {
-    getMobileHomePage: async (root, args) => {
+    getHomePage: async (root, args) => {
       try {
         const setting = await Setting.findOne({});
         if (!setting) {
-          throw putError("not found");
+          throw new Error("not found");
         }
         let output = {};
-        output.homepageBrands = await brands.find({});
+        output.parantCategories = await productCategory.find({ parentId: null });
         output.sections = [];
 
-        let sections = setting.appearance.mobile.mobile_section;
+        let sections;
 
+        switch (args.deviceType) {
+          case "1":
+            sections = setting.appearance.home.add_section_web;
+            break;
+          case "2":
+            sections = setting.appearance.mobile.mobile_section;
+            break;
+          default:
+            throw new Error("Invalid Device Type");
+            break;
+        }
         for (const section of sections) {
           if (section.visible) {
             let output_section = {};
             output_section.name = section.label;
-            output_section.imageurl = section.section_img;
+            output_section.section_img = section.section_img;
+            output_section.display_type = section.display_type;
+            output_section.url = section.url;
 
             switch (section.label) {
               case "Featured Product":
@@ -59,15 +73,32 @@ module.exports = {
                 break;
 
               case "Product from Specific Categories":
-                let category_id = section.category;
-                output_section.products = await products
-                  .find({
-                    status: "Publish",
-                    categoryId: { $in: category_id },
-                  })
-                  .sort({ $natural: -1 })
-                  .limit(10);
-                break;
+                let category_id = new mongoose.Types.ObjectId(section.category);
+                let pipeline = [
+                  {
+                    $match: { _id: category_id }
+                  },
+                  {
+                    $addFields: {
+                      categoryIdString: { $toString: "$_id" }
+                    }
+                  },
+                  {
+                    $lookup: {
+                      from: "products",
+                      localField: "categoryIdString",
+                      foreignField: "categoryId",
+                      as: "products"
+                    }
+                  },
+                  {
+                    $unset: "categoryIdString"
+                  }       
+                ];
+                
+                let data = await productCategory.aggregate(pipeline);                
+                output_section.name = data[0].name
+                output_section.products = data[0].products
 
               default:
                 break;
@@ -77,7 +108,7 @@ module.exports = {
         }
         return output;
       } catch (error) {
-        throw new Error(error.custom_message);
+        throw new Error(error.message);
       }
     },
   },

@@ -43,7 +43,7 @@ const ThankYou = () => {
   };
 
   // If payment status is not updated, dispatch action to update it
-  const updateOrderPaymentStatus = () => {
+  const updateOrderPaymentStatus = async () => {
     const { orderId } = get(router, "query");
     let payload = {
       id: orderId,
@@ -57,8 +57,7 @@ const ThankYou = () => {
       checkPaymentMethod(paymentMethod)
     ) {
       let customerId=get(session, "data.user.accessToken.customer._id")
-      dispatch(updatePaymentStatus(payload,customerId));
-      getOrderDetails();
+      await dispatch(updatePaymentStatus(payload,customerId, orderId, session));
     }
   };
 

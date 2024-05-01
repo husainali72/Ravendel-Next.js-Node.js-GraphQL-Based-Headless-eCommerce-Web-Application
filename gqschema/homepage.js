@@ -2,16 +2,18 @@ module.exports = `
 
 type homePageSection {
     name : String
-    imageurl : String
+    section_img : String
+    display_type : String
+    url: String
     products: [Product]
 }
 
 type homePageResponse {
-    homepageBrands: [Brand]
+    parantCategories: [productCategory]
     sections: [homePageSection]
 }
 
 extend type Query {
-    getMobileHomePage : homePageResponse
+    getHomePage (deviceType: ID!) : homePageResponse
 }
 `;
