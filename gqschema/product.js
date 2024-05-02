@@ -37,6 +37,7 @@ module.exports = `
     id: ID
     name: String
     parentId: ID
+    attributeIds: [ID]
     url: String
     description: String
     image: String
@@ -66,6 +67,7 @@ module.exports = `
     id: ID
     name: String
     parentId: ID
+    attributeIds: [ID]
     url: String
     description: String
     image: String
@@ -134,7 +136,6 @@ module.exports = `
     rating: Float
     ratingCount: Int
     levelWiseRating: customObject
-    taxStatement: String
     breadcrumb: customArray
     updated: Date
   }
