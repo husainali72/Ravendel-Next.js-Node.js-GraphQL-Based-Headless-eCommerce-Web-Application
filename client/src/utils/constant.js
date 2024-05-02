@@ -1,0 +1,5 @@
+export const STRIPE='stripe' 
+export const PAYPAL='paypal' 
+export const CASH_ON_DELIVERY='cashondelivery' 
+export const RAZORPAY='razorpay' 
+export const CREDIT_CARD='creditcard' 

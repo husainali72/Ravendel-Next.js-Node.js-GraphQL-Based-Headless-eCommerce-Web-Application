@@ -4,6 +4,7 @@ const Brand = require("../models/Brand");
 const ProductAttributeVariation = require("../models/ProductAttributeVariation");
 const ProductAttribute = require("../models/ProductAttribute");
 const Review = require("../models/Review");
+const ProductGroup = require("../models/ProductGroup");
 const {
   isEmpty,
   putError,
@@ -14,7 +15,10 @@ const {
   MESSAGE_RESPONSE,
   _validate,
   _validatenested,
-  duplicateData
+  duplicateData,
+  toObjectID,
+  validateAndSetUrl,
+  getBreadcrumb
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -139,6 +143,612 @@ const getTree = async (id) => {
 
 module.exports = {
   Query: {
+    getProducts: async (root, args) => {
+      try {
+        let { mainFilter, filters, sort, pageNo, limit } = args;
+        pageNo = (!pageNo || pageNo == 0 ? 1 : pageNo);
+        limit = (!limit || limit == 0 ? 10 : limit);
+        // let req = 
+        // {
+        //   mainFilter: {
+        //     "categoryId":"63b2b9d81681cb950fbf5b4b"
+        //   },
+        //   filters: [
+        //     {
+        //       "field":"brand",
+        //       "type":"array",
+        //       "category":"static",
+        //       "valueType":"ObjectId",
+        //       "data":[
+        //         "662238c0831677e62c405af2", 
+        //         "662238b7831677e62c405aed"
+        //       ],
+        //     },
+            
+        //     {
+        //       "field":"pricing.sellprice",
+        //       "type":"range",
+        //       "category":"static",
+        //       "data":{
+        //         "minValue":10000,
+        //         "maxValue":20000,
+        //       },
+        //     },
+        //     {
+        //       "field":"rating",
+        //       "type":"choice",
+        //       "category":"static",
+        //       "valueType":"Integer",
+        //       "data":{
+        //         "minValue":3,
+        //       },
+        //     }
+        //   ],
+        //   pageNo:1,
+        //   limit:3
+        // }
+
+        if(!mainFilter || !mainFilter.categoryId) {
+          return MESSAGE_RESPONSE("Required", "Category", false);
+        }
+
+        //
+        // preparing product category aggregation to load request category's parent category and all sub categories of
+        // fetched parent category - START
+        //
+        let categoryAggr = [
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(mainFilter.categoryId),
+            },
+          },
+          {
+            $lookup: {
+              from: "productcats", 
+              localField: "parentId", 
+              foreignField: "_id", 
+              as: "parentCategory", 
+            },
+          },
+          {
+            $lookup: {
+              from: "productcats", 
+              localField: "parentCategory._id", 
+              foreignField: "parentId", 
+              as: "subCategories", 
+            },
+          },
+          {
+            $unwind: "$parentCategory",
+          },
+          {
+            $project: {
+              "parentCategory._id":1,
+              "parentCategory.name":1,
+              "subCategories._id":1,
+              "subCategories.name":1,
+            }
+          }
+        ];
+        const categoryAggrActualResult = await ProductCat.aggregate(categoryAggr);
+        if(!categoryAggrActualResult || !categoryAggrActualResult.length) {
+          return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false);
+        }
+        const categoryAggrResult = categoryAggrActualResult[0];
+        let category = {};
+        category._id = categoryAggrResult.parentCategory._id;
+        category.name = categoryAggrResult.parentCategory.name;
+        category.subCategories = [];
+        let subCategory, isRequestedCategoryIdFound = false;
+        for(let loopCategory of categoryAggrResult.subCategories) {
+          subCategory = {
+            _id : loopCategory._id,
+            name : loopCategory.name,
+            select : false
+          };
+
+          if(!isRequestedCategoryIdFound) {
+            if(subCategory._id.toString() == mainFilter.categoryId.toString()) {
+              subCategory.select = true;
+              isRequestedCategoryIdFound = true;
+            }
+          }
+          category.subCategories.push(subCategory);
+        }
+        //
+        // preparing product category aggregation to load request category's parent category and all sub categories of
+        // fetched parent category - END
+        //
+
+        //
+        // preparing product aggregation to load category wise filter data and product - START
+        // 
+        let prodAggr = [];
+        // adding category filter in the aggregation
+        prodAggr.push({
+          $match: {
+            categoryId: mainFilter.categoryId,
+          },
+        });
+
+        //
+        // preparing product group facet to get no of products count and products as per page no and limit - START
+        //
+        let productFilters = [], productFilter, productDataFacet = [];
+        if(filters && filters.length) {
+          for(let filterElement of filters) {
+            productFilter = {};
+            productFilter[filterElement.field] = {};
+            if(filterElement.type == 'array') {
+              let values = [];
+              for(let value of filterElement.select) {
+                values.push(filterElement.valueType == "ObjectId" ? new mongoose.Types.ObjectId(value) : value);
+              }
+              productFilter[filterElement.field]["$in"] = values;
+            }
+            else if(filterElement.type == 'range' || filterElement.type == 'choice') {
+              productFilter[filterElement.field]["$gte"] = filterElement.select.minValue;
+              if(filterElement.select.maxValue) {
+                productFilter[filterElement.field]["$lte"] = filterElement.select.maxValue;
+              }
+            }
+            productFilters.push(productFilter);
+          }
+          productDataFacet.push({
+            $match: {
+              $and: productFilters
+            },
+          });
+        }
+        
+        const slicePosition = (pageNo == 1 ? 0 : (pageNo - 1) * limit);
+        let sortByExpression = {};
+        if(sort && sort.field) {
+          sortByExpression[sort.field] = (sort.type == "desc" ? -1 : 1);
+        }
+        else {
+          sortByExpression = { "date": -1 };
+        }
+        console.log('sortByExpression', sortByExpression);
+        productDataFacet.push(
+          {
+            $group: {
+              _id: null,
+              count: { $sum: 1 },
+              products: { $push: "$$ROOT" },
+            },
+          },
+          {
+            $project: {
+              count: 1,
+              products: {
+                $slice: [
+                  {
+                    $sortArray: {
+                      input: {
+                        $map: {
+                          input: "$products",
+                          as: "prod",
+                          in: {
+                            _id: "$$prod._id",
+                            name: "$$prod.name",
+                            quantity:"$$prod.quantity",
+                            pricing:"$$prod.pricing",
+                            url: "$$prod.url",
+                            feature_image:"$$prod.feature_image",
+                            rating: "$$prod.rating",
+                            categoryId:"$$prod.categoryId",
+                            date: "$$prod.date",
+                          },
+                        },
+                      },
+                      sortBy: sortByExpression,
+                    },
+                  },
+                  slicePosition,
+                  limit,
+                ],
+              },
+            },
+          },
+        );
+        //
+        // preparing product group facet to get no of products count and products as per page no and limit - END
+        //
+
+        // adding brand, price and rating facets in the aggregation which provide distinct values
+        // and adding product group facet which provice no of products count and products as per page no and limit 
+        prodAggr.push({
+          $facet: {
+            brands: [
+              {
+                $group: {
+                  _id: "$brand", // Group by the brand field to get distinct values
+                  count: { $sum: 1 }, // Optional: count the number of products for each brand
+                },
+              },
+              {
+                $lookup: {
+                  from: "brands", 
+                  localField: "_id", 
+                  foreignField: "_id", 
+                  as: "brand_details", 
+                },
+              },
+              {
+                $unwind: "$brand_details", // Unwind the brand details to deconstruct the array
+              },
+              {
+                $project: {
+                  _id: 1, // Exclude the _id field
+                  brandName: "$brand_details.name", // Include the brand name field
+                  count: 1,
+                },
+              },
+            ],
+            price: [
+              {
+                $group: {
+                  _id: null,
+                  minPrice: {
+                    $min: "$pricing.sellprice",
+                  },
+                  maxPrice: {
+                    $max: "$pricing.sellprice",
+                  },
+                  count: { $sum: 1 },
+                },
+              },
+            ],
+            ratings: [
+              {
+                $group: {
+                  _id: "$rating",
+                  count: { $sum: 1 }, 
+                },
+              },
+              {
+                $addFields: {
+                  value: "$_id",
+                },
+              },
+              {
+                $project: {
+                  _id:0
+                }
+              }
+            ],
+            productData:productDataFacet
+          },
+        });
+
+        // adding unwind in the aggregation to deconstruct the price array 
+        prodAggr.push({
+            $unwind: "$price",
+          },
+        );
+
+        // console.log('prodAggr stringify', JSON.stringify(prodAggr));
+        const aggrActualResult = await Product.aggregate(prodAggr);
+        
+        if(!aggrActualResult) {
+          return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false);
+        }
+        
+        const aggrResult = aggrActualResult[0];
+        // console.log('aggrResult', aggrResult);
+
+        let filterData = [];
+
+        // preparing brand response data - START
+        let brandFilterData;
+        brandFilterData = {
+          heading:"Brand",
+          type:"array",
+          field:"brand",
+          category:"static",
+          valueType: "ObjectId",
+          data:[]
+        };
+        let loopBrandFilterData, reqBrandFilter;
+        if(filters) {
+          reqBrandFilter = filters.find(filter => filter.field == "brand");
+        }
+        for(let brand of aggrResult.brands) {
+          loopBrandFilterData = {
+            label:brand.brandName,
+            value:brand._id,
+            select:false
+          };
+          if(reqBrandFilter && reqBrandFilter.select) {
+            loopBrandFilterData.select = reqBrandFilter.select.includes(brand._id.toString());
+          }
+          brandFilterData.data.push(loopBrandFilterData);
+        }
+        filterData.push(brandFilterData);
+        // preparing brand response data - END
+
+        // preparing price response data - START
+        let priceFilterData;
+        priceFilterData = {
+          heading:"Price",
+          type:"range",
+          field:"pricing.sellprice",
+          category:"static",
+          valueType: "Decimal",
+          data:{}
+        };
+        priceFilterData.data.minPrice = aggrResult.price.minPrice;
+        priceFilterData.data.maxPrice = aggrResult.price.maxPrice;
+        let reqPriceFilter;
+        if(filters) {
+          reqPriceFilter = filters.find(filter => filter.field == "pricing.sellprice");
+          if(reqPriceFilter) {
+            priceFilterData.select = reqPriceFilter.select;
+          }
+        }
+        filterData.push(priceFilterData);
+        // preparing price response data - END
+
+        // preparing rating response data - START
+        let ratingFilterData;
+        ratingFilterData = {
+          heading:"Rating",
+          type:"choice",
+          field:"rating",
+          category:"static",
+          valueType:"Integer",
+          data:[]
+        };
+        let loopRatingFilterData, reqRatingFilter;
+        if(filters) {
+          reqRatingFilter = filters.find(filter => filter.field == "rating");
+        }
+        for(let i=4;i>0;i--) {
+          //if(aggrResult.ratings.includes(rating => rating.value >= i && i != 4 && rating.value < i + 1)) {
+          let isEligibleToAdd = false;
+          if(i == 4) {
+            if(aggrResult.ratings.some(rating => rating.value >= i)) {
+              isEligibleToAdd = true;
+            }  
+          }
+          else {
+            if(aggrResult.ratings.some(rating => rating.value >= i && rating.value < i + 1)) {
+              isEligibleToAdd = true;
+            }  
+          }
+
+          //if(aggrResult.ratings.includes(
+            //rating =>(i != 4 ? rating.value >= i && rating.value < i + 1 : rating.value >= i))) {
+          if(isEligibleToAdd) {
+            loopRatingFilterData = {
+              label:`${i}★ & above`,
+              value:i,
+              select:false
+            };
+            if(reqRatingFilter && reqRatingFilter.select) {
+              loopRatingFilterData.select = reqRatingFilter.select.minValue == i;
+            }
+            ratingFilterData.data.push(loopRatingFilterData);
+          }
+        }
+        filterData.push(ratingFilterData);
+        // preparing rating response data - END
+        //
+        // preparing product aggregation to load category wise filter data and product - END
+        //
+
+        let returnResponse = {
+          success:true,
+          category,
+          filterData,
+          productData:aggrResult.productData[0]
+        }
+
+        // console.log('returnResponse', returnResponse);
+        return returnResponse;
+
+
+        // let searchValue = "";
+        // let filterKeyValues = [{ "brand": "Parada" }];
+        // let categories = ["63b2b87b1681cb950fbf5b32"];
+        // let pageNo = 1, limit = 1;
+
+        // prodAggr = [];
+
+        // if(searchValue) {
+        //   prodAggr.push({
+        //     $match: {
+        //       "product_name": searchValue
+        //     }
+        //   });
+        // }
+
+        // if(filterKeyValues) {
+        //   prodAggr.push({
+        //     $match: {
+        //       $and: filterKeyValues
+        //     }
+        //   });
+        // }
+        
+        // if(categories) {
+        //   prodAggr.push({
+        //     $match: {
+        //       "categoryId": { $in: categories }
+        //     }
+        //   });
+        // }
+
+        // prodAggr.push({
+        //   $group: {
+        //     _id: null,
+        //     minPrice: { $min: "$price" },
+        //     maxPrice: { $max: "$price" },
+        //     count: { $sum: 1 },
+        //     products: { $push: "$$ROOT" }
+        //   }
+        // },
+        // {
+        //   $project: {
+        //     minPrice: 1,
+        //     maxPrice: 1,
+        //     count: 1,
+        //     products: {
+        //       $slice: ["$products", (pageNo - 1) * limit, limit]
+        //     }
+        //   }
+        // });
+
+        // // prodAggr = [
+        // //   {
+        // //     $match: {
+        // //       "product_name": searchValue
+        // //     }
+        // //   },
+        // //   {
+        // //     $match: {
+        // //       $and: [
+        // //         { "brand": "Parada" },
+        // //         { "filter2": "value2" },
+        // //         // Add more filter conditions as needed
+        // //       ]
+        // //     }
+        // //   },
+        // //   {
+        // //     $group: {
+        // //       _id: null,
+        // //       minPrice: { $min: "$price" },
+        // //       maxPrice: { $max: "$price" },
+        // //       count: { $sum: 1 },
+        // //       products: { $push: "$$ROOT" }
+        // //     }
+        // //   },
+        // //   {
+        // //     $project: {
+        // //       minPrice: 1,
+        // //       maxPrice: 1,
+        // //       count: 1,
+        // //       products: {
+        // //         $slice: ["$products", (page_no - 1) * limit, limit]
+        // //       }
+        // //     }
+        // //   }
+        // // ]
+        
+        // console.log('prodAggr', JSON.stringify(prodAggr));
+
+        // let result = await Product.aggregate(prodAggr);
+
+        // console.log('result', result);
+
+        // result = {
+        //   "success":true,
+        //   "category":{
+        //     "_id":"",
+        //     "name":"Water Purifiers & Accessories",
+        //     "subCategories":[
+        //       {
+        //         "_id":"",
+        //         "name":"",
+        //         "select":true,
+        //         "noOfProducts":54
+        //       },
+        //       {
+        //         "_id":"",
+        //         "name":"",
+        //         "select":false,
+        //         "noOfProducts":45
+        //       },
+        //       {
+        //         "_id":"",
+        //         "name":"",
+        //         "select":false,
+        //         "noOfProducts":32
+        //       },
+        //       {
+        //         "_id":"",
+        //         "name":"",
+        //         "select":false,
+        //         "noOfProducts":12
+        //       },
+        //     ]
+        //   },
+        //   "filterData":[
+        //     {
+        //       "heading":"Brand",
+        //       "data":[
+        //         {
+        //           "label":"Voltas",
+        //           "value":"662264ee831677e62c40b5ec",
+        //           "select":false
+        //         },
+        //         {
+        //           "label":"Voltas",
+        //           "value":"662264ee831677e62c40b5ec",
+        //           "select":true
+        //         },
+        //         {
+        //           "label":"Voltas",
+        //           "value":"662264ee831677e62c40b5ec",
+        //           "select":true
+        //         },
+        //         {
+        //           "label":"Voltas",
+        //           "value":"662264ee831677e62c40b5ec",
+        //           "select":false
+        //         }
+        //       ],
+        //       "type":"array"
+        //     },
+        //     {
+        //       "heading":"Price",
+        //       "data":{
+        //         "minPrice":0,
+        //         "maxPrice":5000
+        //       },
+        //       "select":{
+        //         "minPrice":500,
+        //         "maxPrice":1000
+        //       },
+        //       "type":"price"
+        //     },
+        //     {
+        //       "heading":"Customer Rating",
+        //       "data":[ 
+        //         {
+        //           "label":"1* and above", 
+        //           "value":1, 
+        //           "select":false
+        //         },
+        //         {
+        //           "label":"2* and above", 
+        //           "value":2, 
+        //           "select":false
+        //         },
+        //         {
+        //           "label":"3* and above", 
+        //           "value":3, 
+        //           "select":true
+        //         },
+        //         {
+        //           "label":"4* and above", 
+        //           "value":4, 
+        //           "select":false
+        //         },
+        //       ],
+        //       "type":"rating"
+        //     },
+        //   ]
+        // }
+
+        // return result || [];
+      }
+      catch(error) {
+        console.log('error', error);
+        return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false);
+      }
+    },
     productCategories: async (root, args) => {
       // console.log(await GET_ALL_FUNC(ProductCat, "Product Cats"), 'get all')
       return await GET_ALL_FUNC(ProductCat, "Product Cats");
@@ -159,7 +769,6 @@ module.exports = {
         "Product Categories"
       );
     },
-
     productCategoriesByFilter: async (root, args) => {
       try {
         const cats = await ProductCat.find(args.filter);
@@ -189,6 +798,36 @@ module.exports = {
         Product,
         "Products"
       );
+    },
+    searchProducts: async (root, args, { id }) => {
+      let {searchTerm, page, limit} = args
+      searchTerm = searchTerm.split(" ")
+      const regexPattern = searchTerm.map(search => `(?=.*${search})`).join('|');
+      const searchRegex = new RegExp(regexPattern, "i")
+      
+      const pipeline = [
+        {
+          $match: {
+            name: {
+               $regex: searchRegex
+            }
+          }
+        },
+        {
+          $skip: (page - 1) * limit
+        },
+        {
+          $limit: limit
+        },
+        {
+          $sort: {
+            updated: -1
+          }
+        }
+      ]
+      const searchedProducts = await Product.aggregate(pipeline)
+
+      return searchedProducts || [];
     },
     productswithcat: async (root, args, { id }) => {
       return await GET_ALL_FUNC(Product, "Products with category");
@@ -348,7 +987,157 @@ module.exports = {
       }
     },
     product: async (root, args) => {
-      return await GET_SINGLE_FUNC(args.id, Product, "Product");
+      if (!args.id) {
+        return {
+          message: MESSAGE_RESPONSE("ID_ERROR", "Product", false),
+        };
+      }
+      const pipeline = [
+        // match on the basis of id
+        {
+          $match: {
+            _id: toObjectID(args.id),
+          },
+        },
+        // fetch rating count
+        {
+          $lookup: {
+            from: "reviews",
+            localField: "_id",
+            foreignField: "productId",
+            as: "reviewDetails"
+          }
+        },
+        // populate attributes and varaitions
+        {
+          $lookup: {
+            from: "productgroups",
+            let: { productId: "$_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ["$$productId", "$productIds"],
+                  },
+                },
+              },
+              {
+                $unwind: "$attributes",
+              },
+              {
+                $lookup: {
+                  from: "productattributes",
+                  localField: "attributes._id",
+                  foreignField: "_id",
+                  as: "attributeDetails",
+                },
+              },
+              {
+                $unwind: "$attributeDetails",
+              },
+              
+              {
+                $addFields: {
+                  "attributes.name":
+                    "$attributeDetails.name",
+                  "attributes.values": {
+                    $filter: {
+                      input: "$attributeDetails.values",
+                      as: "value",
+                      cond: {
+                        $in: [
+                          "$$value._id",
+                          "$attributes.values",
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                $group: {
+                  _id: "$_id",
+                  attributes: { $push: "$attributes" },
+                  variations: { $first: "$variations" },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  attributes: {
+                    _id: 1,
+                    name: 1,
+                    values: {
+                      _id: 1,
+                      name: 1,
+                    },
+                  },
+                  variations: 1,
+                },
+              },
+            ],
+            as: "group",
+          },
+        },
+        {
+          $addFields: {
+            group: {
+              $arrayElemAt: ["$group", 0]
+            }
+          }
+        },
+      ]
+      let existingProducts = await Product.aggregate(pipeline);
+      const response = existingProducts[0]
+      if (!response) {
+        return {
+          message: MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false),
+          data: response,
+        };
+      }
+      
+      if(response.group) {
+        const { attributes, variations } = response.group
+        variations.map(variant => {
+          variant.combinations.map(combo => {
+            let foundAttribute = attributes.find(attr => attr._id.toString() === combo.attributeId.toString())
+            if(foundAttribute) {
+              combo["attributeName"] = foundAttribute.name
+              let foundAttributeValue = foundAttribute.values.find(value => value._id.toString() === combo.attributeValueId.toString())
+              if(foundAttributeValue) {
+                combo["attributeValueName"] = foundAttributeValue.name
+              }
+            }
+          })
+        })
+        response["attributes"] = attributes
+        response["variations"] = variations
+      }
+
+      if(response.reviewDetails) {
+        let reviewDetails = response.reviewDetails.filter(review => review.status === "approved")
+        const fetchRatings = (min, max) => {
+          return reviewDetails.filter(review => review.rating >= min && review.rating < max).length
+        }
+
+        response["ratingCount"] = reviewDetails.length
+        response["levelWiseRating"] = {
+          fiveStar: fetchRatings(5, 6),
+          fourStar: fetchRatings(4, 5),
+          threeStar: fetchRatings(3, 4),
+          twoStar: fetchRatings(2, 3),
+          oneStar: fetchRatings(1, 2),
+        }
+      }
+
+      if(response.categoryTree && response.categoryTree.length) {
+        response["breadcrumb"] = getBreadcrumb(response.categoryTree)
+      }
+
+      return {
+        message: MESSAGE_RESPONSE("SINGLE_RESULT_FOUND", "Product", true),
+        data: response,
+      };
     },
   },
   Product: {
@@ -371,58 +1160,7 @@ module.exports = {
         error = checkError(error);
         throw new Error(error.custom_message);
       }
-    },
-    variation_master: async (root, args) => {
-      try {
-        const variations = await ProductAttributeVariation.find({
-          productId: root.id,
-        });
-        //console.log(variations);
-        return variations || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
-    attribute_master: async (root, args) => {
-      try {
-        if (!root.attribute && !root.attribute.length) {
-          return [];
-        }
-        let attributes = {};
-        for (let attr of root.attribute) {
-          if (!Array.isArray(attributes[attr.attribute_id.toString()])) {
-            attributes[attr.attribute_id.toString()] = [];
-          }
-
-          attributes[attr.attribute_id.toString()].push(
-            attr.attribute_value_id.toString()
-          );
-        }
-
-        const attrMaster = await ProductAttribute.find({
-          _id: { $in: Object.keys(attributes) },
-        });
-
-        for (const [i, attr] of attrMaster.entries()) {
-          for (const [j, val] of attr.values.entries()) {
-            if (~attributes[attr._id.toString()].indexOf(val._id.toString())) {
-              if (!Array.isArray(attrMaster[i].attribute_values)) {
-                attrMaster[i].attribute_values = [];
-              }
-              attrMaster[i].attribute_values.push(val);
-            }
-          }
-
-          attrMaster[i].values = [];
-        }
-
-        return attrMaster || [];
-      } catch (error) {
-        error = checkError(error);
-        throw new Error(error.custom_message);
-      }
-    },
+    }
   },
   //.............
   Category: {
@@ -521,21 +1259,18 @@ module.exports = {
   },
   Mutation: {
     addProductCategory: async (root, args, { id }) => {
-
       await checkAwsFolder('productcategory');
       let path = "assets/images/product/category";
-      let url = "";
-      if (args.url || args.title) {
-        url = await updateUrl(args.url || args.name, "ProductCat");
-      }
       let data = {
         name: args.name,
         parentId: args.parentId || null,
-        url: url,
+        url: await validateAndSetUrl(args.url || args.name, ProductCat),
+        // url: args.url,
         description: args.description,
         image: args.image,
         meta: args.meta,
       };
+
       const duplicate = await duplicateData({ name: args.name }, ProductCat)
       if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
       let validation = ["name"];
@@ -552,18 +1287,15 @@ module.exports = {
     updateProductCategory: async (root, args, { id }) => {
       await checkAwsFolder('productcategory');
       let path = "assets/images/product/category";
-      let url = "";
-      if (args.url || args.title) {
-        url = await updateUrl(args.url || args.name, "ProductCat", args.id);
-      }
       let data = {
         name: args.name,
         parentId: args.parentId || null,
-        url: url,
+        url: await validateAndSetUrl(args.url || args.name, ProductCat, args.id),
         description: args.description,
         image: args.image,
         meta: args.meta,
       };
+
       let validation = ["name"];
       const duplicate = await duplicateData({ name: args.name }, ProductCat, args.id)
       if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Category", false);
@@ -610,7 +1342,17 @@ module.exports = {
         return MESSAGE_RESPONSE("DELETE_ERROR", "Product Category", false);
       }
     },
+    validateUrl: async (root, args, { id }) => {
+      if (!id) {
+        return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
+      }
+      const {url, entryId} = args
+      const validUrl = await validateAndSetUrl(url, Product, entryId)
 
+      return {
+        url: validUrl,
+      };
+    },
     addProduct: async (root, args, { id }) => {
       await checkAwsFolder('product');
       if (!id) {
@@ -677,13 +1419,14 @@ module.exports = {
               }
             }
           }
-          let url = await updateUrl(args.url || args.name, "Product");
+          let url = await validateAndSetUrl(args.url || args.name, Product);
           const duplicate = await duplicateData({ name: args.name }, Product)
           if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
           const newProduct = new Product({
             name: args.name,
             url: url,
             categoryId: args.categoryId,
+            categoryTree: args.categoryTree,
             brand: args.brand,
             short_description: args.short_description,
             description: args.description,
@@ -692,6 +1435,7 @@ module.exports = {
             pricing: {
               price: args.pricing.price || 0,
               sellprice: args.pricing.sellprice || 0,
+              discountPercentage: args.pricing.discountPercentage || 0,
             },
             feature_image: imgObject.data || imgObject,
             gallery_image: imgArray,
@@ -708,46 +1452,10 @@ module.exports = {
             featured_product: args.featured_product,
             product_type: args.product_type,
             custom_field: args.custom_field,
-            attribute: args.attribute,
-            variant: args.variant,
+            specifications: args.specifications
           });
-          let lastProduct = await newProduct.save();
-          let combinations = [];
-          if (args.variant.length && args.combinations.length) {
-            combinations = args.combinations;
-            console.log('ttt', combinations);
+          await newProduct.save();
 
-            for (const combination of combinations) {
-              combination.productId = lastProduct.id;
-
-              let imgObject = "";
-
-              if (combination.upload_image && combination.upload_image.length) {
-                imgObject = await imageUpload(
-                  combination.upload_image[0].file,
-                  "assets/images/product/variant/", "productvariant"
-                );
-                combination.image = imgObject.data || imgObject;
-                delete combination.upload_image
-              }
-            }
-          } else {
-            combinations = [
-              {
-                combination: [],
-                productId: lastProduct.id,
-                sku: args.sku,
-                quantity: args.quantity,
-                pricing: {
-                  price: args.pricing.price,
-                  sellprice: args.pricing.sellprice
-                },
-                image: "",
-              },
-            ];
-          }
-
-          let result = await ProductAttributeVariation.insertMany(combinations);
           return MESSAGE_RESPONSE("AddSuccess", "Product", true);
         }
       } catch (error) {
@@ -757,7 +1465,7 @@ module.exports = {
       }
     },
     updateProduct: async (root, args, { id }) => {
-console.log("updateProduct")
+      // console.log("updateProduct")
       await checkAwsFolder('product');
       if (!id) {
         return MESSAGE_RESPONSE("TOKEN_REQ", "Product", false);
@@ -868,8 +1576,9 @@ console.log("updateProduct")
 
           product.name = args.name;
           product.categoryId = args.categoryId;
+          product.categoryTree = args.categoryTree;
           product.brand = args.brand || null,
-            product.url = await updateUrl(args.url || args.name, "Product", args.id);
+          product.url = await validateAndSetUrl(args.url || args.name, Product, args.id);
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;
@@ -883,55 +1592,9 @@ console.log("updateProduct")
           product.product_type = args.product_type;
           product.custom_field = args.custom_field;
           product.status = args.status;
-          product.attribute = args.attribute,
-            product.variant = args.variant,
-            product.updated = Date.now();
+          product.specifications = args.specifications;  
+          product.updated = Date.now();
           await product.save();
-
-          let combinations = [];
-          if (args.variant.length && args.combinations.length) {
-            combinations = args.combinations;
-            for (const combination of combinations) {
-              combination.productId = args.id;
-              let imgObject = "";
-              if (
-                combination.upload_image &&
-                combination.upload_image.length
-              ) {
-                imgObject = await imageUpload(
-                  combination.upload_image[0].file,
-                  "assets/images/product/variant/", "productvariant"
-                );
-
-                if (imgObject?.success && combination?.previous_img) {
-
-                  imageUnlink(combination?.previous_img)
-                }
-                combination.image = imgObject.data || imgObject;
-                delete combination.upload_image;
-              }
-            }
-          } else {
-            combinations = [
-              {
-                combination: [],
-                productId: args.id,
-                sku: args.sku,
-                quantity: args.quantity,
-                pricing: {
-                  price: args.pricing.price,
-                  sellprice: args.pricing.sellprice
-                },
-                image: "",
-              },
-            ];
-          }
-
-          await ProductAttributeVariation.deleteMany({
-            productId: args.id,
-          });
-
-          let result = await ProductAttributeVariation.insertMany(combinations);
 
           return MESSAGE_RESPONSE("UpdateSuccess", "Product", true);
         } else {
@@ -950,9 +1613,15 @@ console.log("updateProduct")
         return MESSAGE_RESPONSE("ID_ERROR", "Product", false);
       }
       try {
+        const existingGroup = await ProductGroup.findOne({productIds: toObjectID(args.id)}).select("title")
+        if(existingGroup) {
+          return {
+            message: `Couldn't remove product as being used in ${existingGroup.title}`,
+            success: false,
+          };
+        }
+
         const product =  await Product.deleteOne({ _id: args.id });
-
-
         if (product) {
           if (product.feature_image) {
             imageUnlink(product.feature_image);
@@ -968,24 +1637,6 @@ console.log("updateProduct")
             productId: args.id
           })
 
-          const productVariants = product.variant
-          await ProductAttribute.deleteMany({
-            _id: { $in: [productVariants] }
-          })
-
-          const variations = await ProductAttributeVariation.find({
-            productId: args.id,
-          });
-
-          await ProductAttributeVariation.deleteMany({
-            productId: args.id,
-          });
-
-          for (const variation of variations) {
-            if (variation.image) {
-              imageUnlink(variation.image);
-            }
-          }
           return MESSAGE_RESPONSE("DELETE", "Product", true);
         }
         return MESSAGE_RESPONSE("NOT_EXIST", "Product", false);

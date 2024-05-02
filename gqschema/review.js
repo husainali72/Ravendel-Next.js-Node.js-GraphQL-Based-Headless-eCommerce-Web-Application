@@ -41,7 +41,11 @@ module.exports = `
       order: String
     ): reviewsResponse
     review(id: ID!): ReviewIdRES
-    productwisereview(productId: ID!): productwise_Review
+    productWiseReviews(
+      productId: ID!
+      page: Int!
+      limit: Int!
+    ): customObject
   }
 
   extend type Mutation {

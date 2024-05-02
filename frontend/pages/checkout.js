@@ -421,7 +421,12 @@ export const CheckOut = () => {
   };
   const handlePlacedOrder = async (e) => {
     let paymentMethod = get(billingDetails, "billing.paymentMethod");
-    let razorpayKey=get(settings,'setting.payment.razorpay.sandbox_client_id','')
+  let paymentMode=get(settings,'setting.payment.razorpay.test_mode','')
+    let razorpayKey=''
+    if(paymentMode){
+      razorpayKey=  get(settings,'setting.payment.razorpay.sandbox_client_id','')}else{
+        razorpayKey=  get(settings,'setting.payment.razorpay.live_client_id','')
+    }
     e.preventDefault();
     if (paymentMethod === PAYPAL) {
       setPaymentMethod(paymentMethod);

@@ -24,6 +24,7 @@ import RadioButton from "../radioButton";
 import GalleryImageSlider from "../sliderImage";
 import RenderProductPrice from "./renderProductPrice";
 import CustomButton from "../button";
+import RemainingQuantity from "../remainingQuantity";
 const GalleryImagesComponents = (props) => {
   const {
     stockClass,
@@ -92,7 +93,6 @@ useEffect(() => {
   if (!comboData || !comboData.length) {
     return; 
   }
-  console.log(comboData)
   const priceData = comboData.map(c => c.pricing.price);
   const sellPriceData = comboData.map(c => c.pricing.sellprice);
   setPriceRange(priceData);
@@ -144,9 +144,7 @@ useEffect(() => {
         router.push("/shopcart");
       })
       .catch(async (error) => {
-        console.log("fghjklfgh",error,get(error, "extensions.code"))
         if (get(error, "extensions.code") === 401) {
-
           let product = [
             {
               userId: "",
@@ -286,7 +284,7 @@ useEffect(() => {
     return variantProduct;
   };
   const prepareData = (e, name) => {
-    const value = get(e, "target.value");
+    const value = e;
     setVariantSelect(value);
     setParentId(name);
     const updatedAttributes = selectedAttributes.map((attr) =>
@@ -413,13 +411,13 @@ useEffect(() => {
                 cart.
               </p>
             )}
-            <div className="varaint-select">
+            <div className="varaint-select">        
               {get(singleProducts, "attribute_master", [])?.map(
                 (singleAttribute) => {
                   return (
                     <>
                       <RadioButton
-                        lable={get(singleAttribute, "name", "")}
+                        label={get(singleAttribute, "name", "")}
                         value={variantSelect}
                         onChange={(e) => prepareData(e, singleAttribute.id)}
                         options={createAttributeOptions(singleAttribute)}
@@ -451,9 +449,13 @@ useEffect(() => {
                 SKU: {get(comboData, "[0].sku", get(singleProducts, "sku", ""))}
               </p>
               {renderProductTags()}
-              <p className="">
-                Availablity: <span className={stockClass}>{Lable}</span>
-              </p>
+              <div className="stock-availabilty">
+                <div className="singleproduct-stock">
+                Availablity: <span className={stockClass}>{Lable}</span> 
+                </div>
+                <div>
+                <RemainingQuantity quantity={get(singleProducts,'quantity',0)}/></div>
+              </div>
             </ul>
           </div>
         </div>

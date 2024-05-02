@@ -7,6 +7,7 @@ const ATTRIBUTE_TILE = gql`
     values
     date
     updated
+    allow_filter
   }
 `;
 

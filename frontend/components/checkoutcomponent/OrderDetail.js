@@ -1,3 +1,4 @@
+  /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { capitalize, get } from "lodash";
@@ -5,14 +6,14 @@ import Price from "../priceWithCurrency";
 import ProductImage from "../imageComponent";
 import CheckBox from "../check";
 import PropTypes from "prop-types";
-import { CASH_ON_DELIVERY, CREDIT_CARD, PAYPAL, RAZORPAY, STRIPE } from "../../utills/constant";
-const paymentOptions = [
-  { label: "Cash on delivery", value: CASH_ON_DELIVERY },
-  { label: "Stripe", value: STRIPE },
-  { label: "Credit Card", value: CREDIT_CARD },
-  { label: "Paypal", value: PAYPAL },
-  { label: "Razor Pay", value: RAZORPAY },
-];
+import {
+  CASH_ON_DELIVERY,
+  CREDIT_CARD,
+  PAYPAL,
+  RAZORPAY,
+  STRIPE,
+} from "../../utills/constant";
+import { getPaymentMethodLabel } from "../../utills/helpers";
 const Orderdetail = (props) => {
   const {
     getOrderDetails,
@@ -20,9 +21,40 @@ const Orderdetail = (props) => {
     billingInfo,
     handleBillingInfo,
     shippingInfo,
+    settings,
   } = props;
   const cart = cartItems;
   const [cartProduct, setCartProduct] = useState([]);
+  const [paymentOptions, setPaymentOptions] = useState([]);
+
+  useEffect(() => {
+    const payment = get(settings, "setting.payment");
+    const options = [];
+
+    const addPaymentOption = (method) => {
+      console.log(payment)
+      let paymentMethod=get(payment, `[${method}]`)
+      if (get(paymentMethod, 'enable')) {
+        const {
+          title,
+          description,
+        } = paymentMethod;
+        options.push({
+          value:method.replaceAll('_', ''),
+        label:  title,
+          description,
+        });
+      }
+    };
+
+    addPaymentOption("cash_on_delivery");
+    addPaymentOption("bank_transfer");
+    addPaymentOption("stripe");
+    addPaymentOption("paypal");
+    addPaymentOption("razorpay");
+
+    setPaymentOptions(options);
+  }, [settings]);
   const cartSubTotal = () => {
     var subtotalVar = 0;
     if (cartProduct && cartProduct?.length > 0) {
@@ -103,6 +135,7 @@ const Orderdetail = (props) => {
         <div className="payment-method">
           <h5>Payment Mode</h5>
           <CheckBox
+            type="radio"
             options={paymentOptions}
             name="paymentMethod"
             onChange={(e) => handleBillingInfo(e)}
@@ -118,5 +151,6 @@ Orderdetail.propTypes = {
   billingInfo: PropTypes.object.isRequired,
   handleBillingInfo: PropTypes.func.isRequired,
   shippingInfo: PropTypes.object.isRequired,
+  settings: PropTypes.object.isRequired,
 };
 export default Orderdetail;

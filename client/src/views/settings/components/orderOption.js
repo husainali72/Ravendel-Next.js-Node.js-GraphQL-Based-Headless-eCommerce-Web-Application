@@ -3,10 +3,6 @@ import {
   Grid,
   Box,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import viewStyles from "../../viewStyles";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,9 +21,7 @@ const OrderOptionComponent = () => {
   const [orderOption, setOrderOption] = useState({});
 
   useEffect(() => {
-    if (get(settingState, "settings.store.order_options")) {
-      setOrderOption({ ...get(settingState, "settings.store.order_options") });
-    }
+      setOrderOption({ ...get(settingState, "settings.store.order_options",{}) });
   }, [get(settingState, "settings")]);
   const updateOneSignal = () => {
     delete theme.__typename;
@@ -58,37 +52,6 @@ const OrderOptionComponent = () => {
               }
               type="text"
             />
-          </Box>
-          <Box component="div" className={classes.orderOptionContainer}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label" size="small">
-                Order Prefix List
-              </InputLabel>
-
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={get(orderOption, "order_prefix")}
-                label="Order Prefix List"
-                size="small"
-                onChange={(e) => {
-                  setOrderOption({
-                    ...orderOption,
-                    order_prefix: e.target.value,
-                  });
-                }}
-              >
-                {get(orderOption, "order_prefix_list")?.length > 0 ? (
-                  get(orderOption, "order_prefix_list")?.map((orderPrefix) => {
-                    return (
-                      <MenuItem value={orderPrefix}>{orderPrefix}</MenuItem>
-                    );
-                  })
-                ) : (
-                  <p className={classes.noOptions}>No options available</p>
-                )}
-              </Select>
-            </FormControl>
           </Box>
         </Grid>
         <Grid item xs={12}>

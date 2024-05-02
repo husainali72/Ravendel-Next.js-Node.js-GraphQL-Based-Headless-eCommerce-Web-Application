@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Container } from "react-bootstrap";
-const CategoryBreadCrumb = ({ breadCrumbTitle, categoryDetail }) => {
+import { generateCategoryUrl } from "../utills/helpers";
+import { get } from "lodash";
+const CategoryBreadCrumb = ({ breadCrumbs }) => {
   const router = useRouter();
   return (
     <nav className="breadcrumb-nav" aria-label="breadcrumb" style={{}}>
@@ -14,31 +16,26 @@ const CategoryBreadCrumb = ({ breadCrumbTitle, categoryDetail }) => {
               Home
             </Link>
           </li>
-          {breadCrumbTitle && (
-            <>
-              <p style={{ marginLeft: "10px", marginRight: "10px" }}>{">"}</p>
-              <Link
-                href={`/subcategory/[categorys]?url=${breadCrumbTitle?.url}`}
-                as={`/subcategory/${breadCrumbTitle?.url}`}
-                style={{ marginLeft: "10px" }}
-              >
-                <li className="breadcrumb-item page-active breadcrumb-link">
-                  {breadCrumbTitle?.name}
-                </li>
-              </Link>
-            </>
-          )}
-          {categoryDetail && (
-            <>
-              <p style={{ marginLeft: "10px" }}>{">"}</p>
-              <li
-                className="breadcrumb-item page-active breadcrumb-link"
-                style={{ marginLeft: "10px" }}
-              >
-                {categoryDetail?.name}
-              </li>
-            </>
-          )}
+          {breadCrumbs &&
+            breadCrumbs?.length > 0 &&
+            breadCrumbs?.map((breadCrumb) => {
+              return (
+                <>
+                  <p style={{ marginLeft: "10px", marginRight: "10px" }}>
+                    {">"}
+                  </p>
+                  <Link
+                    href={get(breadCrumb, "url.href")}
+                    as={get(breadCrumb, "url.as")}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    <li className="breadcrumb-item page-active breadcrumb-link">
+                      {breadCrumb?.name}
+                    </li>
+                  </Link>
+                </>
+              );
+            })}
         </ol>
       </Container>
     </nav>

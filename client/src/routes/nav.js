@@ -46,6 +46,11 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
             "icon": AddBusinessIcon
           },
           {
+            "name": "Group Product",
+            "url": "group-products",
+            "icon": AddBusinessIcon
+          },
+          {
             "name": "Categories",
             "url": "all-categories",
             "icon": CategoryIcon

@@ -1,48 +1,40 @@
 import React from "react";
-import {
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
-} from "@mui/material";
+import PropTypes from "prop-types";
 import { capitalize, get } from "lodash";
 import ErrorMessage from "./errorMessage";
-import PropTypes from "prop-types";
-const RadioButton = ({ lable, value, onChange, options, error }) => {
+
+const RadioButton = ({ label, values, onChange, options, error }) => {
   return (
-    <FormControl>
-      <FormLabel id="demo-row-radio-buttons-group-label">
-        {capitalize(lable)}
-      </FormLabel>
-      <RadioGroup
-        row
-        aria-labelledby="demo-row-radio-buttons-group-label"
-        name="row-radio-buttons-group"
-        value={value}
-        onChange={onChange}
-      >
-        {options?.map((option) => {
-          return (
-            <>
-              <p>{option?.lable}</p>
-              <FormControlLabel
-                key={get(option, "value", "")}
-                value={get(option, "value", "")}
-                control={<Radio />}
-                label={capitalize(get(option, "label", ""))}
-              />
-            </>
-          );
-        })}
-      </RadioGroup>
+    <div>
+      <label>{capitalize(label)}</label>
+      <div className="d-flex flex-row align-items-center">
+        {options?.map((option) => (
+          <div key={get(option, "value", "")} className="form-check me-3">
+            <input
+              className="form-check-input"
+              type="radio"
+              name={label}
+              id={get(option, "value", "")}
+              checked={values}
+              onChange={() => onChange(get(option, "value", ""))}
+            />
+            <label
+              className="form-check-label"
+              htmlFor={get(option, "value", "")}
+            >
+              {capitalize(get(option, "label", ""))}
+            </label>
+          </div>
+        ))}
+      </div>
       <ErrorMessage message={error} />
-    </FormControl>
+    </div>
   );
 };
+
 RadioButton.propTypes = {
-  lable: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  values: PropTypes.arrayOf(PropTypes.string).isRequired,
   onChange: PropTypes.func.isRequired,
   options: PropTypes.arrayOf(
     PropTypes.shape({
@@ -52,4 +44,5 @@ RadioButton.propTypes = {
   ).isRequired,
   error: PropTypes.string,
 };
+
 export default RadioButton;

@@ -50,11 +50,11 @@ const AttributesComponent = ({
     combinations: [],
     allValues: {},
   });
-
   const [currentAttribute, setcurrentAttribute] = useState({
     id: "",
     attribute_list: [],
   });
+
   const [loading, setLoading] = useState(false);
   const [variantImage, setVariantImage] = useState(null);
 
@@ -135,6 +135,7 @@ const AttributesComponent = ({
       });
     }
   }, [attributeState.attributes, product.variation_master]);
+
 
   const changeSelectedValue = (e, i) => {
     currentAttribute.attribute_list[i].selected_values = e;
@@ -246,7 +247,6 @@ const AttributesComponent = ({
     }
 
   };
-
   const createVariants = () => {
     let variants = {};
     for (const i of product.variant) {
@@ -317,7 +317,6 @@ const AttributesComponent = ({
     });
     setLoading(false);
   };
-
   const variantChange = (e, index) => {
     if (e.target.name === "image") {
       currentVariants.combinations[index]['upload_image'] = e.target.files;

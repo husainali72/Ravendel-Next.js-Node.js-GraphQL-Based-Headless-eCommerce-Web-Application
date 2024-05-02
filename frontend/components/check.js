@@ -1,24 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Form } from "react-bootstrap";
+import { get } from "lodash";
 
-const CheckBox = ({ options, value, name, onChange, className }) => {
+const CheckBox = ({ options, value, name, onChange, className,type }) => {
+  const [selectedOption, setSelectedOption] = useState("");
+  const handleOptionChange = (e) => {
+    if(name==='paymentMethod'){
+    const selectedValue = e.target.value;
+    setSelectedOption(selectedValue);
+    }
+    onChange(e); 
+  };
   return (
     <Form>
-      <Form.Group value={value} onChange={onChange}>
+      <Form.Group value={value} onChange={handleOptionChange}>
         {options?.map((option, index) => (
           <div key={`inline-${option.value}-${index}`} className="mb-3">
             <Form.Check
+            key={value?.id}
               label={option?.label}
               name={name}
-              type="radio"
+              type={type}
               value={option?.value}
               id={`inline-${option.value}-${index}`}
+              onChange={(e)=>onChange(e)}
               className={className}
+              checked={option?.select}
             />
-          </div>
+            {selectedOption === get(option,'value') && (
+              <p className="payment_method_description">
+             Description : {get(option,'description')}
+              </p>
+            )}
+           </div>
         ))}
-      </Form.Group>
     </Form>
   );
 };
@@ -33,6 +49,7 @@ CheckBox.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   className: PropTypes.string,
+  type: PropTypes.string,
   name: PropTypes.string.isRequired,
 };
 

@@ -23,7 +23,7 @@ export default function Footer() {
     email: "",
     playStoreUrl: "",
     appStoreUrl: "",
-    socailMedia: [],
+    socialMedia: [],
   });
   const dispatch = useDispatch();
   const LogOutUser = async () => {
@@ -37,11 +37,12 @@ export default function Footer() {
       const addressPath2 = "data.getSettings.store.store_address.addressLine2";
       const hour = "data.getSettings.store.store_address.hour";
       const cityPath = "data.getSettings.store.store_address.city";
-      const phonePath = "data.getSettings.appearance.theme.phone_number";
-      const emailPath = "data.getSettings.appearance.theme.email";
+      const phonePath = "data.getSettings.store.store_address.phone_number";
+      const emailPath = "data.getSettings.store.store_address.email";
       const playStorePath = "data.getSettings.appearance.theme.playstore";
       const appStorePath = "data.getSettings.appearance.theme.appstore";
-      const socialMediaPath = "data.getSettings.appearance.theme.social_media";
+      const socialMediaPath =
+        "data.getSettings.store.store_address.social_media";
       setAddress((previousAddress) => ({
         ...previousAddress,
         addressLine1: get(res, addressPath1, "Central Park"),
@@ -52,7 +53,7 @@ export default function Footer() {
         appStoreUrl: get(res, appStorePath, "#"),
         playStoreUrl: get(res, playStorePath, "#"),
         hour: get(res, hour, "#"),
-        socailMedia: get(res, socialMediaPath, "#"),
+        socialMedia: get(res, socialMediaPath, []),
       }));
     });
   }, []);
@@ -116,7 +117,7 @@ export default function Footer() {
                   <div className="mt-4 follow">
                     <h5>Follow us</h5>
                     {/* <ui> */}
-                    {get(Address, "socailMedia", [])?.map((media, i) => {
+                    {get(Address, "socialMedia", [])?.map((media, i) => {
                       return (
                         <Link href={media.handle} key={i}>
                           <a
