@@ -1989,3 +1989,25 @@ function getBreadcrumb(data) {
   return breadcrumbs;
 }
 module.exports.getBreadcrumb = getBreadcrumb
+
+const addCategoryAttributes = async (attributes, products, modal) => {
+  const productCategoriesSet = new Set(products.map(prod => prod.categoryId).flat())
+  const productCategories = Array.from(productCategoriesSet)
+
+  const bulkWriteQuery = [
+    {
+      updateMany: {
+        filter: { "_id": {$in: toObjectID(productCategories)} },
+        update: {
+          $addToSet: {
+            attributeIds: {
+              $each: attributes.map(attribute => attribute._id)
+            }
+          }
+        }
+      }
+    }
+  ]
+  await modal.bulkWrite(bulkWriteQuery)
+}
+module.exports.addCategoryAttributes = addCategoryAttributes

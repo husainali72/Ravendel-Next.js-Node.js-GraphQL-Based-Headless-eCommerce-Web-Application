@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
+
 import React from "react";
-import { capitalize, get } from "lodash";
+import {  get } from "lodash";
 
 import PropTypes from "prop-types";
 import MultiRangeSlider from "../../breadcrumb/multirangeSlider";
@@ -8,9 +8,6 @@ import Price from "../../priceWithCurrency";
 const FilterSlider = ({ data, handleFilterChange }) => {
   return (
     <>
-      <h5 className="category-section-title mb-30 wow fadeIn animated animated animated">
-        {capitalize(get(data, "heading", ""))}
-      </h5>
       <div style={{ marginTop: "30px" }}>
         <MultiRangeSlider
           min={get(data, "data.minPrice")}

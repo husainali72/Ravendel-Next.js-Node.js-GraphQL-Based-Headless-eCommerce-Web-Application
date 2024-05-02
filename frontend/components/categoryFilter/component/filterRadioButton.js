@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { capitalize, get } from "lodash";
+import {  get } from "lodash";
 import PropTypes from "prop-types";
 import CheckBox from "../../check";
 import Search from "./search";
@@ -46,9 +46,6 @@ const FilterRadioButtons = ({ data, handleFilterChange }) => {
 
   return (
     <>
-      <h5 className="category-section-title mb-30 wow fadeIn animated animated animated">
-        {capitalize(get(data, "heading", ""))}
-      </h5>
       <Search searchData={searchData} onSearch={onSearch} />
       <div className="radio-buttons">
         <CheckBox
