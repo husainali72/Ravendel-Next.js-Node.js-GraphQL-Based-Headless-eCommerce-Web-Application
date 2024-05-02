@@ -9,7 +9,7 @@ type homePageSection {
 }
 
 type homePageResponse {
-    parantCategories: [productCategory]
+    parentCategories: [productCategory]
     sections: [homePageSection]
 }
 

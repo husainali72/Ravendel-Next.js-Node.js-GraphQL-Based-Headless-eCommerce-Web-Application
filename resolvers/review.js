@@ -40,15 +40,18 @@ module.exports = {
       return await GET_SINGLE_FUNC(args.id, Review, "Review");
     },
     ///let check it...................
-    productWiseReviews: async (root, args) => {
-      if (!args.productId) {
+    productwisereview: async (root, args) => {
+      let {productId, page, limit} = args
+      page = page || 1
+      limit = limit || 10
+      if (!productId) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
       try {
         const pipeline = [
           {
             $match: {
-              productId: toObjectID(args.productId),
+              productId: toObjectID(productId),
               status: "approved",
             },
           },
@@ -58,10 +61,10 @@ module.exports = {
             },
           },
           {
-            $skip: (args.page - 1) * args.limit
+            $skip: (page - 1) * limit
           },
           {
-            $limit: args.limit
+            $limit: limit
           }
         ]
         const existingReviews = await Review.aggregate(pipeline);
