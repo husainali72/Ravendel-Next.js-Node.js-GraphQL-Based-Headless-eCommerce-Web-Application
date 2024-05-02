@@ -249,6 +249,7 @@ module.exports = `
       id: ID
       name: String
       categoryId: customArray
+      categoryTree: customArray
       brand: ID
       url: String
       short_description: String
