@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { OpenNav, CloseNav } from "../utills/app";
@@ -214,24 +215,6 @@ const Header = ({ setOpenMenu }) => {
                       </a>
                     </Link>
                   </li>
-                  <div className="header">
-                    <div className="container">
-                      <button
-                        className="icon-btn"
-                        onMouseMove={() => setOpenMenu(true)}
-                      >
-                        <div className="d-flex justify-content-between">
-                          <li className="nav-item">
-                            <Link href="/shop">
-                              <a className="nav-link" aria-selected="false">
-                                Shop
-                              </a>
-                            </Link>
-                          </li>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
                   <li className="nav-header">
                     <Link href="/contact">
                       <a className="nav-link" aria-selected="false">

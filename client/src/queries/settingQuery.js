@@ -48,6 +48,8 @@ const SETTING_TILE_DATA = gql`
         state
         zip
         hour
+        email
+        phone_number
         social_media {
           name
           handle
@@ -68,7 +70,7 @@ const SETTING_TILE_DATA = gql`
         out_of_stock_threshold
         out_of_stock_visibility
         stock_display_format
-        manage_zipcodes
+        left_quantity
       }
       order_options {
         order_prefix
@@ -158,8 +160,6 @@ const SETTING_TILE_DATA = gql`
         primary_color
         playstore
         appstore
-        phone_number
-        email
         logo
       }
       mobile {
@@ -295,6 +295,8 @@ const UPDATE_STORE_ADDRESS = gql`
     $country: String
     $state: String
     $hour: String
+    $email: String
+    $phone_number: String
     $social_media: [social_media_input]
   ) {
     updateStoreAddress(
@@ -304,6 +306,8 @@ const UPDATE_STORE_ADDRESS = gql`
       country: $country
       state: $state
       hour: $hour
+      email: $email
+      phone_number: $phone_number
       social_media: $social_media
     ) {
       ...SettingTile
@@ -333,8 +337,7 @@ const UPDATE_STORE_INVENTORY = gql`
     $out_of_stock_threshold: Int
     $out_of_stock_visibility: Boolean
     $stock_display_format: String
-    $manage_zipcodes: Boolean
-    $zipcode_file: Upload
+    $left_quantity: Int
   ) {
     updateStoreInventory(
       manage_stock: $manage_stock
@@ -344,8 +347,7 @@ const UPDATE_STORE_INVENTORY = gql`
       out_of_stock_threshold: $out_of_stock_threshold
       out_of_stock_visibility: $out_of_stock_visibility
       stock_display_format: $stock_display_format
-      manage_zipcodes: $manage_zipcodes
-      zipcode_file: $zipcode_file
+      left_quantity: $left_quantity
     ) {
       ...SettingTile
     }
@@ -598,8 +600,6 @@ const UPDATE_APPEARANCE_THEME = gql`
     $new_logo: Upload
     $playstore: String
     $appstore: String
-    $phone_number: String
-    $email: String
     $logo: String
   ) {
     updateAppeanranceTheme(
@@ -607,8 +607,6 @@ const UPDATE_APPEARANCE_THEME = gql`
       new_logo: $new_logo
       playstore: $playstore
       appstore: $appstore
-      phone_number: $phone_number
-      email: $email
       logo: $logo
     ) {
       ...SettingTile

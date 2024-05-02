@@ -134,6 +134,7 @@ module.exports = `
     rating: Float
     ratingCount: Int
     levelWiseRating: customObject
+    breadcrumb: customArray
     updated: Date
   }
 
@@ -181,11 +182,36 @@ module.exports = `
     message: statusSchema
   }
 
-  type productUrl {
+  type entryUrl {
     url: String
   }
 
+  type products_v1 {
+    message: String
+    success: Boolean
+    data: [customObject]
+  } 
+
+  input getProductsRequest {
+    mainFilter: customObject
+    filters: customArray
+  }
+  type getProductsResponse {
+    message: String
+    success: Boolean
+    category: customObject
+    filterData: customArray,
+    productData: customObject
+  }
+
   extend type Query {
+    getProducts(
+      mainFilter: customObject
+      filters: customArray
+      sort: customObject
+      pageNo: Int
+      limit: Int
+    ): getProductsResponse
     productCategories: productCategoriesRES
     productCategories_pagination(
       limit: Int
@@ -225,8 +251,8 @@ module.exports = `
   extend type Mutation {
     validateUrl(
       url: String!
-      productId: ID
-    ): productUrl
+      entryId: ID
+    ): entryUrl
     addProductCategory(
       name: String
       parentId: ID
@@ -249,6 +275,7 @@ module.exports = `
     addProduct(
       name: String
       categoryId: customArray
+      categoryTree: customArray
       brand: ID
       url: String
       short_description: String
@@ -271,6 +298,7 @@ module.exports = `
       id: ID
       name: String
       categoryId: customArray
+      categoryType: customArray
       brand: ID
       url: String
       short_description: String

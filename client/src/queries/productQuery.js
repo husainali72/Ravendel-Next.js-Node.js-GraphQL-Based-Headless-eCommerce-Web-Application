@@ -5,6 +5,7 @@ const PRODUCT_TILE_DATA = gql`
     _id
     name
     url
+    categoryTree
     categoryId {
       id
       name
@@ -309,6 +310,7 @@ const ADD_PRODUCT = gql`
     $name: String
     $url: String
     $categoryId: customArray
+    $categoryTree: customArray
     $brand: ID
     $short_description: String
     $description: String
@@ -344,6 +346,7 @@ const ADD_PRODUCT = gql`
       taxClass: $taxClass
       meta: $meta
       specifications: $specifications
+      categoryTree: $categoryTree
     ) {
       message
       success
@@ -357,6 +360,7 @@ const UPDATE_PRODUCT = gql`
     $name: String
     $url: String
     $categoryId: customArray
+    $categoryTree: customArray
     $brand: ID
     $short_description: String
     $description: String
@@ -397,6 +401,7 @@ const UPDATE_PRODUCT = gql`
       meta: $meta
       custom_field: $custom_field
       specifications: $specifications
+      categoryTree: $categoryTree
     ) {
       message
       success

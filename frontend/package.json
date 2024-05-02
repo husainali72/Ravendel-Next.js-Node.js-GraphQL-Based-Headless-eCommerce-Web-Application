@@ -47,6 +47,7 @@
     "react-html-parser": "^2.0.2",
     "react-icons": "^4.7.1",
     "react-image-magnifiers": "^1.4.0",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-phone-input-2": "^2.15.1",
     "react-phone-number-input": "^3.2.18",
     "react-redux": "^7.2.6",
@@ -58,7 +59,7 @@
     "redux-thunk": "^2.4.1",
     "server.js": "^1.0.0",
     "stripe": "^11.7.0",
-    "sweetalert2": "^11.10.7"
+    "sweetalert2": "^11.10.8"
   },
   "devDependencies": {
     "eslint": "^8.30.0",

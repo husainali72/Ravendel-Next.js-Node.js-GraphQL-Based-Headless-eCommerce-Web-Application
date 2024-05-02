@@ -18,6 +18,7 @@ const productAttribute = require("./product_attribute");
 const faqSchema = require("./faq");
 const miscSchema = require("./misc");
 const zipcodeSchema = require("./zipcode");
+const homepage = require("./homepage")
 
 const linkSchema = `
   scalar Date
@@ -79,4 +80,5 @@ module.exports = [
   faqSchema,
   productAttribute, 
   zipcodeSchema,
+  homepage
 ];

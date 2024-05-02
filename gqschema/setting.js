@@ -80,7 +80,7 @@ module.exports = `
     zip: String
     hour: String
     email: String
-    phoneNo: String
+    phone_number: String
     social_media: [SOCIAL_MEDIA]
   }
 
@@ -102,7 +102,7 @@ module.exports = `
     out_of_stock_threshold: Int
     out_of_stock_visibility: Boolean
     stock_display_format: String
-    manage_zipcodes: Boolean
+    left_quantity: Int
   }
 
   type INVENTORY_NOTIFICATIONS {
@@ -216,11 +216,19 @@ module.exports = `
     category_id: String
   }
   
+  enum DISPLAY_TYPE {
+    GRID
+    SLIDER
+  }
+
   type ADD_SECTION_WEB {
-    label: String
     name: String
+    label: String
+    section_img: String
     visible: Boolean
     category: String
+    url: String
+    display_type: DISPLAY_TYPE
   }
 
   type APPEARANCE_MOBILE {
@@ -234,14 +242,13 @@ module.exports = `
     visible: Boolean
     category: String
     url: String
+    display_type: DISPLAY_TYPE
   }
 
   type APPEARANCE_THEME {
     primary_color: String
     playstore: String
     appstore: String
-    phone_number: String
-    email: String
     logo: String
   }
 
@@ -284,15 +291,19 @@ module.exports = `
     label: String
     section_img: String
     visible: Boolean
-    url: String
     category: String
+    url: String
+    display_type: DISPLAY_TYPE
   }
 
   input add_section_web_input {
+    update_image: Upload
     label: String
-    name: String
-    category: String
+    section_img: String
     visible: Boolean
+    category: String
+    url: String
+    display_type: DISPLAY_TYPE
   }
 
   input social_media_input {
@@ -355,8 +366,7 @@ module.exports = `
       out_of_stock_threshold: Int
       out_of_stock_visibility: Boolean
       stock_display_format: String
-      manage_zipcodes: Boolean
-      zipcode_file: Upload
+      left_quantity: Int
     ): Setting
     updateStoreOrder(
       order_prefix: String
@@ -430,8 +440,6 @@ module.exports = `
       primary_color: String, 
       playstore: String
       appstore: String
-      phone_number: String
-      email: String
       new_logo: Upload
       logo: String
     ): Setting

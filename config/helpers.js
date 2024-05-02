@@ -133,6 +133,7 @@ const updateUrl = async (url, table, updateId) => {
 module.exports.updateUrl = updateUrl;
 
 const validateAndSetUrl = async (url, modal, entryId) => {
+  url = stringTourl(url)
   const urlRegex = new RegExp(url)
   const pipeline = [
     {
@@ -1510,13 +1511,16 @@ const addOrder = async(args) => {
     };
   }
 
-  let validPaymentModes = ["cashondelivery", "stripe", "paypal", "razorpay"];
+  const setting = await Setting.findOne({});
+
+  const validPaymentModes = Object.entries(setting.payment)
+  .filter(([key, value]) => value.enable)
+  .map(([key, value]) => value.title.toLowerCase().replaceAll(" ",""));
+
   if (!validPaymentModes.includes(args.billing.paymentMethod)) {
     return MESSAGE_RESPONSE("InvalidField", "Payment mode", false); 
   }
 
-  const setting = await Setting.findOne({});
-  
   let status = 'pending', redirectUrl, paypalOrderId, razorpayOrderId;
   if(args.billing.paymentMethod !== 'cashondelivery') {
     status = 'processing';
@@ -1558,7 +1562,11 @@ const addOrder = async(args) => {
   let environmentBool = process.env.NODE_ENV.trim() === 'production';
 
   if (args.billing.paymentMethod === 'cashondelivery') {
-    const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
+    const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(args.userId) });
+
+    for (let product of cart.products) {
+      await Product.findByIdAndUpdate(product.productId, { $inc: { quantity: -product.qty } });
+    }
     emptyCart(cart);
   } else if(args.billing.paymentMethod === 'stripe') {
     
@@ -1701,19 +1709,6 @@ const addOrder = async(args) => {
     
     let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : order } });
   }
-  // ====================
-  // else {
-  //   return MESSAGE_RESPONSE("InvalidField", "Payment mode", false);
-  // }
-
-  // // send order create email
-  // const customer = await Customer.findById(args.userId);
-  // mailData = {
-  //   subject: `Order Placed`,
-  //   mailTemplate: "template",
-  //   order: newOrder
-  // }
-  // sendEmail(mailData, APP_KEYS.smptUser, customer?.email)
 
   let addOrderResponse = MESSAGE_RESPONSE("AddSuccess", "Order", true);
   addOrderResponse.redirectUrl = redirectUrl;
@@ -1737,12 +1732,18 @@ module.exports.isUrlValid = isUrlValid;
 
 const updatePaymentStatus = async (userId, args) => {
   try {
-    
-    const {id, paymentStatus} = args;
-    let eligibleToUpdateSuccess = false; 
+    const { id, paymentStatus } = args;
+    let eligibleToUpdateSuccess = false;
     let testMode, clientIdKey, secretKey;
 
-    let orderData = await Order.findOne({_id:id }, { billing:1, transactionDetail:1 });
+    let orderData = await Order.findOne(
+      { _id: id },
+      { billing: 1, transactionDetail: 1, products: 1, paymentStatus: 1 }
+    );
+
+    if (orderData.paymentStatus === "success") {
+      return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
+    }
 
     if(!orderData){
       return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
@@ -1829,27 +1830,29 @@ const updatePaymentStatus = async (userId, args) => {
         break;
     }
 
-    if(!eligibleToUpdateSuccess){
+    if (!eligibleToUpdateSuccess) {
       return MESSAGE_RESPONSE("PaymentUnpaid", null, false);
-    }
-
-    let orderUpdateRes = await Order.updateOne(
-      { _id: id },
-      { $set: { paymentStatus: paymentStatus } }
-    );
-
-    if (orderUpdateRes.acknowledged && orderUpdateRes.matchedCount == 1) {
-      if (paymentStatus == "success") {
+    } else {
+      try {
+        let orderData = await Order.findById(id);
+        if (orderData.paymentStatus != "success") {
+          for (let product of orderData.products) {
+            await Product.findByIdAndUpdate(product.productId, {
+              $inc: { quantity: -product.qty },
+            });
+          }
+          orderData.paymentStatus = "success";
+          await orderData.save();
+        }
         const cart = await Cart.findOne({
           userId: new mongoose.Types.ObjectId(userId),
         });
         await emptyCart(cart);
+      } catch (error) {
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
       }
       return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
-    } else {
-      return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
     }
-
   } catch (error) {
     return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
   }
@@ -1872,7 +1875,90 @@ const updatePaymentStatus = async (userId, args) => {
   // else {
   //   return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
   // }
+};
+
+const sendMail = async (data) => {
+  try {
+    // let data = JSON.stringify({
+    //   from: `${addedByUsername['username']} from HB WEBSOL <client@hbwebsol.com>`,
+    //   to: clientId,
+    //   subject: subject,
+    //   html: textbody,
+    //   replyTo: req.user.email
+    // });
+    const { createTransport } = require('nodemailer');
+
+    const transporter = createTransport({ 
+      host: "mail.smtp2go.com",
+      port: 2525,
+      auth: {
+          user: APP_KEYS.SMTP_USER,
+          pass: APP_KEYS.SMTP_PASSWORD
+      }
+    })
+    const response = await transporter.sendMail(data);
+  } catch(error) {
+    console.log(error.message);
+  }
+};
+
+const fillPlaceholders = async (template, placeholder) => {
+  let emailTemplate = { subject: template.subject, body: template.body };
+
+  for( let i in placeholder){
+    const placeholderName = placeholder[i].name;
+    const placeholderValue = placeholder[i].value;
+    emailTemplate.subject = emailTemplate.subject.replaceAll(placeholderName, placeholderValue);
+    emailTemplate.body = emailTemplate.body.replaceAll(placeholderName, placeholderValue);
+  }
+
+  return emailTemplate;
+};
+
+
+const fillproductDetails = (looping_text, products) => {
+  let output = "";
+  for (let i in products)
+  {
+    let html = looping_text
+    html = html.replaceAll("{{product_url}}", `https://demo1-ravendel.hbwebsol.com/${products[i].productImage}`)
+    html = html.replaceAll("{{product_name}}", products[i].productTitle)
+    html = html.replaceAll("{{product_quantity}}", products[i].qty)
+    html = html.replaceAll("{{product_price}}", products[i].productPrice)
+    html = html.replaceAll("{{product_total_price}}", products[i].total)
+    output = output + html
+  }
+  return output;
 }
+
+const sendEmailTemplate = async (template_name, placeholder) => {
+
+  const emailTemplateModel = require("../models/EmailTemplate");
+  try {
+    let template = await emailTemplateModel.findOne({
+      template_name: template_name,
+    });
+
+    
+    let emailTemplate = await fillPlaceholders(template, placeholder.values);
+    
+    let loopingProducts = await fillproductDetails(template.looping_text, placeholder.products)
+
+    emailTemplate.body = emailTemplate.body.replace("{{looping}}",loopingProducts)
+
+      
+      let data = {
+        from: "ravendel@hbwebsol.com",
+        to: placeholder.email,
+        subject: emailTemplate.subject,
+        html: emailTemplate.body
+      }
+      
+      await sendMail(data)
+  } catch (error) {
+    console.log("Error in sendEmailTemplate", error.message);
+  }
+};
 module.exports.updatePaymentStatus = updatePaymentStatus;
 
 const toObjectID = (entryID) => {
@@ -1883,3 +1969,23 @@ const toObjectID = (entryID) => {
   return new ObjectId(entryID)
 }
 module.exports.toObjectID = toObjectID
+
+function getBreadcrumb(data) {
+  const breadcrumbs = [];
+
+  function getCategoryDetails(category) {
+    const categoryInfo = {
+      name: category.name,
+      url: category.url
+    };
+    breadcrumbs.push(categoryInfo);
+    
+    if (category.children && category.children.length) {
+      getCategoryDetails(category.children[0])
+    }    
+  }
+  getCategoryDetails(data[0])
+
+  return breadcrumbs;
+}
+module.exports.getBreadcrumb = getBreadcrumb

@@ -82,6 +82,7 @@ let defaultobj = {
   name: "",
   description: "",
   categoryId: [],
+  categoryTree: [],
   brand: null,
   pricing: {
     price: "",
@@ -213,7 +214,10 @@ const productsOptions = useMemo(() => {
             ...product,
             ...productState.product,
             specifications: groupedSpecifications,
-            categoryId: productState?.product?.categoryId?.map((cat) => cat.id),
+            categoryId: get(productState, "product.categoryId", [])?.map(
+              (cat) => cat.id
+            ),
+            categoryTree: get(productState, "product.categoryTree", []),
             brand: defaultBrand || "",
           });
 
@@ -606,20 +610,25 @@ const productsOptions = useMemo(() => {
             </CardBlocks>
             {/* ===================Categories=================== */}
             <CardBlocks title="Categories">
-              {(productId || clonedId) ? (
-                <EditCategoriesComponent
-                  selectedCategories={product.categoryId}
+            <EditCategoriesComponent
+                  selectedCategories={get(product, "categoryTree", [])}
                   onCategoryChange={(items) => {
-                    setProduct({ ...product, categoryId: items });
+                    if (items && items?.length > 0) {
+                      let categoryId = items?.map((item) => item.id);
+                      setProduct({
+                        ...product,
+                        categoryId: categoryId,
+                        categoryTree: items,
+                      });
+                    }else{
+                      setProduct({
+                        ...product,
+                        categoryId: [],
+                        categoryTree: [],
+                      });
+                    }
                   }}
                 />
-              ) : (
-                <CategoriesComponent
-                  onCategoryChange={(items) => {
-                    setProduct({ ...product, categoryId: items });
-                  }}
-                />
-              )}
             </CardBlocks>
             {/* ===================Pricing=================== */}
             <CardBlocks title="Pricing">

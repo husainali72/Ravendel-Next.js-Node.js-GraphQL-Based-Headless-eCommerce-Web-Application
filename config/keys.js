@@ -15,5 +15,8 @@ module.exports = {
   stripeBaseSuccessUrl: process.env.SUCCESS_URL,
   stripeBaseCancelUrl: process.env.CANCEL_URL,
   frontendBaseUrl: process.env.FRONTEND_BASEURL,
-  noImagePlaceHolder: process.env.NO_IMAGE_PLACE_HOLDER
+  noImagePlaceHolder: process.env.NO_IMAGE_PLACE_HOLDER,
+  
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD
 };

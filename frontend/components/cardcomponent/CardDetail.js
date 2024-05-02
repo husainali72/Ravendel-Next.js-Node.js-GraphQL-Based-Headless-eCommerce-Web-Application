@@ -7,6 +7,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CartTotalDetails from "./cartTotal";
 import Price from "../priceWithCurrency";
 import ProductImage from "../imageComponent";
+import RemaningQuantity from "../remainingQuantity";
 const CartTable = (props) => {
   const {
     cartItems,
@@ -107,11 +108,11 @@ const CartTable = (props) => {
                         <select
                           id="quantitySelect"
                           className="quantity-button"
-                          value={get(product,'quantity',1)}
+                          value={get(product, "quantity", 1)}
                           onChange={(e) =>
                             updateCartProductQuantity(
                               product,
-                              parseInt(get(e,'target.value',1))
+                              parseInt(get(e, "target.value", 1))
                             )
                           }
                         >
@@ -127,11 +128,7 @@ const CartTable = (props) => {
                       </div>
                     </div>
                     {product?.available ? (
-                      product?.productQuantity <= 5 ? (
-                        <div className="itemComponents-base-lowUnitCount">
-                          {`${product?.productQuantity} Left`}
-                        </div>
-                      ) : null
+                      <RemaningQuantity quantity={get(product,'productQuantity',0)} />
                     ) : (
                       <div className="itemComponents-base-lowUnitCount">
                         OUT OF STOCK
