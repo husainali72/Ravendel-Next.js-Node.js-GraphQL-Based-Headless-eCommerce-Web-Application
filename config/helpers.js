@@ -133,6 +133,7 @@ const updateUrl = async (url, table, updateId) => {
 module.exports.updateUrl = updateUrl;
 
 const validateAndSetUrl = async (url, modal, entryId) => {
+  url = stringTourl(url)
   const urlRegex = new RegExp(url)
   const pipeline = [
     {
@@ -1968,3 +1969,23 @@ const toObjectID = (entryID) => {
   return new ObjectId(entryID)
 }
 module.exports.toObjectID = toObjectID
+
+function getBreadcrumb(data) {
+  const breadcrumbs = [];
+
+  function getCategoryDetails(category) {
+    const categoryInfo = {
+      name: category.name,
+      url: category.url
+    };
+    breadcrumbs.push(categoryInfo);
+    
+    if (category.children && category.children.length) {
+      getCategoryDetails(category.children[0])
+    }    
+  }
+  getCategoryDetails(data[0])
+
+  return breadcrumbs;
+}
+module.exports.getBreadcrumb = getBreadcrumb

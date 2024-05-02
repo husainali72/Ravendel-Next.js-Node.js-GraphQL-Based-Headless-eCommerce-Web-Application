@@ -17,7 +17,8 @@ const {
   _validatenested,
   duplicateData,
   toObjectID,
-  validateAndSetUrl
+  validateAndSetUrl,
+  getBreadcrumb
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -1127,6 +1128,10 @@ module.exports = {
           twoStar: fetchRatings(2, 3),
           oneStar: fetchRatings(1, 2),
         }
+      }
+
+      if(response.categoryTree && response.categoryTree.length) {
+        response["breadcrumb"] = getBreadcrumb(response.categoryTree)
       }
 
       return {
