@@ -41,10 +41,10 @@ module.exports = `
       order: String
     ): reviewsResponse
     review(id: ID!): ReviewIdRES
-    productWiseReviews(
+    productwisereview(
       productId: ID!
-      page: Int!
-      limit: Int!
+      page: Int
+      limit: Int
     ): customObject
   }
 
