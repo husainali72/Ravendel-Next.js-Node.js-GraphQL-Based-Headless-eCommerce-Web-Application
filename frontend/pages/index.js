@@ -1,139 +1,57 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 /* eslint-disable no-empty */
 /* eslint-disable react/react-in-jsx-scope */
-import Head from 'next/head';
-import Image from 'next/image';
-import Homebanner from '../components/banner/homebanner';
-import Category from '../components/category/category';
-import FeatureBrand from '../components/category/featurebrand';
-import OnSaleProductCard from '../components/category/onSaleProductCard';
+import Head from "next/head";
+import Homebanner from "../components/banner/homebanner";
+import Category from "../components/category/category";
+import FeatureBrand from "../components/category/featurebrand";
+import OnSaleProductCard from "../components/category/onSaleProductCard";
 import {
   GET_HOMEPAGE_DATA_QUERY,
-  FEATURE_PRODUCT_QUERY,
-  GET_RECENT_PRODUCTS_QUERY,
   GET_CATEGORIES_QUERY,
-  ON_SALE_PRODUCTS_QUERY,
-  GET_REVIEWS,
-} from '../queries/home'
-import { useEffect, useRef, useMemo } from 'react';
-import { queryWithoutToken } from '../utills/helpers';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  settingActionCreator,
-  storeSetting,
-  stripePaymentKeyAction,
-} from '../redux/actions/settingAction';
-import { loadReviewAction } from '../redux/actions/productAction';
-import { GET_BRANDS_QUERY } from '../queries/shopquery';
-import SpecificProducts from '../components/SpecificProducts';
-import CustomBanner from '../components/banner/CustomBanner';
-import MegaMenu from '../components/megaMenu';
-import { get } from 'lodash';
-import PropTypes from 'prop-types';
-export default function Home( {
-  homePageData,
+  GET_HOMEPAGE_QUERY,
+} from "../queries/home";
+import { useEffect, useRef } from "react";
+import { queryWithoutToken } from "../utills/helpers";
+import { useSelector, useDispatch } from "react-redux";
+import { storeSetting } from "../redux/actions/settingAction";
+import CustomBanner from "../components/banner/CustomBanner";
+import MegaMenu from "../components/megaMenu";
+import { get } from "lodash";
+import PropTypes from "prop-types";
+export default function Home({
   settings,
   setOpenMenu,
   openMenu,
   seoInfo,
-  brands,
-  homePageInfo,
-  currencyStore,
-  stripe_Public_key,
-  category,
-  recentProducts,
-  featureProducts,
-  onSaleProducts,
-  allReviews,
-} ) {
-  const initialRender = useRef( true );
+  homePageSliderInfo,
+  parentCategories,
+  homePageSections,
+}) {
+  const initialRender = useRef(true);
   const dispatch = useDispatch();
-  const cart = useSelector( ( state ) => state.cart.cartItems );
-  useEffect( () => {
-    dispatch( stripePaymentKeyAction( stripe_Public_key ) );
-    dispatch( settingActionCreator( get( currencyStore, 'currency_options', {} ) ) );
-  }, [ get( currencyStore, 'currency_options' ) ] );
+  const cart = useSelector((state) => state.cart.cartItems);
+  useEffect(() => {
+    dispatch(storeSetting(settings));
+  }, [settings]);
 
-  useEffect( () => {
-    dispatch( storeSetting( settings ) );
-  }, [ settings ] );
-
-  useEffect( () => {
-    dispatch( loadReviewAction( get( allReviews, 'reviews.data', [] ) ) );
-  }, [ allReviews ] );
-
-  useEffect( () => {
-    if ( initialRender.current ) {
+  useEffect(() => {
+    if (initialRender.current) {
       initialRender.current = false;
     }
-  }, [ cart ] );
-
-  const HomePageSeq = useMemo(
-    () => get( homePageData, 'getSettings.appearance.home.add_section_web' ),
-    [ homePageData ]
-  );
-  const renderSwitch = ( section ) => {
-    switch ( section.name ) {
-      case 'products_on_sales':
-        if ( get( section, 'visible' ) ) {
-          return 0 < onSaleProducts?.length ? (
-            <>
-              <CustomBanner variant={'sale-banner'} />
-              <OnSaleProductCard
-                onSaleProduct={onSaleProducts}
-              />
-            </>
-          ) : null;
-        }
-        break;
-
-      case 'recently_added_products':
-        if ( get( section, 'visible' ) ) {
-          return 0 < recentProducts?.length ? (
-            <>
-              <CustomBanner variant={'new-arrival-banner'} />
-              <OnSaleProductCard
-                onSaleProduct={recentProducts}
-                titleShow={'Recent'}
-              />
-            </>
-          ) : null;
-        }
-        break;
-
-      case 'feature_product':
-        if ( get( section, 'visible' ) ) {
-          return 0 < featureProducts?.length ? (
-            <>
-              <CustomBanner variant={'fashion-banner'} />
-              <OnSaleProductCard
-                onSaleProduct={featureProducts}
-                titleShow={'featured'}
-              />
-            </>
-          ) : null;
-        }
-        break;
-      case 'product_from_specific_category':
-        if ( get( section, 'visible' ) && get( section, 'category' ) ) {
-          return (
-            <SpecificProducts
-             homepageData={homePageData}
-             section={section} />
-          );
-        }
-        break;
-      default:
-        break;
-    }
-  };
+  }, [cart]);
 
   return (
     <div>
       <Head>
-        <title>{get( seoInfo, 'meta_title',  'Ravendel' )}</title>
+        <title>{get(seoInfo, "meta_title", "Ravendel")}</title>
         <link rel="icon" href="/favicon.ico" />
-          <meta name="description" content={get( seoInfo, 'meta_description', 'Ravendel' )} />
-          <meta name="keywords" content={get( seoInfo, 'meta_tag', '' )} />
+        <meta
+          name="description"
+          content={get(seoInfo, "meta_description", "Ravendel")}
+        />
+        <meta name="keywords" content={get(seoInfo, "meta_tag", "")} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -162,147 +80,81 @@ export default function Home( {
           referrerPolicy="no-referrer"
         />
       </Head>
-      {openMenu && (
-        <MegaMenu
-          openMenu={openMenu}
-          categories={category}
-          newProducts={recentProducts}
-          setOpenMenu={setOpenMenu}
-        />
-      )}
-      {homePageInfo &&
-      homePageInfo.slider &&
-      0 < homePageInfo.slider?.length ? (
+      {openMenu && <MegaMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}
+      {get(homePageSliderInfo, "slider")?.length > 0 ? (
         <Homebanner
-          homepageData={homePageData}
-          slider={homePageInfo.slider}
-          Image={Image}
+          settings={settings}
+          slider={get(homePageSliderInfo, "slider")}
         />
       ) : null}
 
-      {0 < category?.length ? (
-        <Category homepageData={homePageData} category={category} />
+      {parentCategories && parentCategories?.length > 0 ? (
+        <Category category={parentCategories} />
       ) : null}
-
-      {0 < brands?.length ? (
-        <FeatureBrand homepageData={homePageData} brands={brands} />
-      ) : null}
-      {HomePageSeq?.map( ( section ) => renderSwitch( section ) )}
+      {homePageSections &&
+        homePageSections?.length > 0 &&
+        homePageSections?.map((section) => (
+          <>
+            {get(section, "section_img") && (
+              <CustomBanner variant={get(section, "section_img")} />
+            )}
+            {get(section, "products", [])?.length > 0 && (
+              <OnSaleProductCard
+                titleShow={get(section, "name")}
+                onSaleProduct={get(section, "products", [])}
+              />
+            )}
+          </>
+        ))}
     </div>
   );
 }
 Home.propTypes = {
-  homePageData: PropTypes.object.isRequired,
   slider: PropTypes.array.isRequired,
   settings: PropTypes.object.isRequired,
   setOpenMenu: PropTypes.func.isRequired,
   openMenu: PropTypes.bool.isRequired,
   seoInfo: PropTypes.object.isRequired,
-  brands: PropTypes.array.isRequired,
-  homePageInfo: PropTypes.object.isRequired,
-  currencyStore: PropTypes.object.isRequired,
-  stripe_Public_key: PropTypes.string.isRequired,
-  category: PropTypes.array.isRequired,
-  recentProducts: PropTypes.array.isRequired,
-  featureProducts: PropTypes.array.isRequired,
-  onSaleProducts: PropTypes.array.isRequired,
-  allReviews: PropTypes.array.isRequired,
+  homePageSliderInfo: PropTypes.object.isRequired,
+  parentCategories: PropTypes.array.isRequired,
 };
 export async function getStaticProps() {
-  var homePageData = [];
-  var featureProducts = [];
-  var category = [];
-  var recentProducts = [];
-  var onSaleProducts = [];
-  var currencyStore = [];
+  var parentCategories = [];
   var settings = {};
-  var allReviews = {};
-  let stripe_Public_key = '';
-  var brands = [];
-  /* ===============================================Get HomepageData Settings ===============================================*/
-
+  var homePageSections = [];
+  let seoInfo = {};
+  let homePageSliderInfo = {};
+  /* ===============================================Get  Settings ===============================================*/
   try {
-    const { data: fetchedHomePageData  } = await queryWithoutToken(
+    const { data: fetchedHomePageData } = await queryWithoutToken(
       GET_HOMEPAGE_DATA_QUERY
     );
-    homePageData = fetchedHomePageData;
-    settings = get( fetchedHomePageData, 'getSettings', {} );
-    currencyStore = get( fetchedHomePageData, 'getSetting.store', {} );
-    stripe_Public_key = get( fetchedHomePageData, 'getSettings.payment.stripe', '' );
-  } catch ( e ) {
-
-  }
-
-  /* ===============================================Get Settings ===============================================*/
+    settings = get(fetchedHomePageData, "getSettings", {});
+    let homepageSettings = get(fetchedHomePageData, "getSettings", {});
+    homePageSliderInfo = get(homepageSettings, "appearance.home", {});
+    seoInfo = get(homepageSettings, "seo", {});
+  } catch (e) {}
+  let variable = {
+    deviceType: 1,
+  };
+  /* ===============================================Get HomepageData  ===============================================*/
   try {
-    const { data: featureProductsData } = await queryWithoutToken(
-      FEATURE_PRODUCT_QUERY
+    const { data: homePagedata } = await queryWithoutToken(
+      GET_HOMEPAGE_QUERY,
+      variable
     );
-    featureProducts = get( featureProductsData, 'featureproducts', [] );
-  } catch ( e ) {}
-  // }
-  /* ===============================================Get Recent Prdouct ===============================================*/
-  try {
-    const { data: recentproductData } = await queryWithoutToken(
-      GET_RECENT_PRODUCTS_QUERY
-    );
-    recentProducts = get( recentproductData, 'recentproducts', [] );
-  // eslint-disable-next-line no-empty
-  } catch ( e ) {}
-  // }
-
-  /* ===============================================Get Category Prdouct ===============================================*/
-
-  try {
-    const { data: categoryData } = await queryWithoutToken(
-      GET_CATEGORIES_QUERY
-    );
-    category = get( categoryData, 'productCategories.data', [] );
-  } catch ( e ) {}
-  /* ===============================================Get Brands Prdouct ===============================================*/
-
-  try {
-    const { data: brandproductData } = await queryWithoutToken(
-      GET_BRANDS_QUERY
-    );
-    brands = get( brandproductData, 'brands.data', [] );
-  } catch ( e ) {}
-
-  /* ===============================================Get All product Reviews  ===============================================*/
-
-  try {
-    const { data: Reviews } = await queryWithoutToken( GET_REVIEWS );
-    allReviews = Reviews;
-  } catch ( e ) {}
-
-  /* ===============================================Get OnSale Product  ===============================================*/
-  try {
-    const { data: onSaleProductsData } = await queryWithoutToken( ON_SALE_PRODUCTS_QUERY );
-    onSaleProducts = get( onSaleProductsData, 'onSaleProducts' );
-  } catch ( e ) {}
-  let seoInfo = {};
-  let homePageInfo = {};
-  let themeInfo = {};
-  let homepageSettings = get( homePageData, 'getSettings', {} );
-  homePageInfo = get( homepageSettings, 'appearance.home', {} );
-  themeInfo = get( homepageSettings, 'appearance.theme', {} );
-  seoInfo = get( homepageSettings, 'seo', {} );
+    let sectionData = get(homePagedata, "getHomePage", []);
+    homePageSections = get(sectionData, "sections", []);
+    parentCategories = get(homePagedata, "getHomePage.parentCategories", []);
+  } catch (e) {}
 
   return {
     props: {
-      homePageData,
-      currencyStore,
-      stripe_Public_key,
-      seoInfo,
-      homePageInfo,
-      themeInfo,
-      featureProducts,
-      recentProducts,
-      category,
-      onSaleProducts,
-      allReviews,
-      brands,
       settings,
+      seoInfo,
+      homePageSliderInfo,
+      parentCategories,
+      homePageSections,
     },
     revalidate: 10,
   };

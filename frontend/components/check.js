@@ -14,17 +14,16 @@ const CheckBox = ({ options, value, name, onChange, className,type }) => {
   };
   return (
     <Form>
-      <Form.Group value={value} onChange={handleOptionChange}>
         {options?.map((option, index) => (
           <div key={`inline-${option.value}-${index}`} className="mb-3">
             <Form.Check
-            key={value?.id}
+              key={value?.id}
               label={option?.label}
               name={name}
               type={type}
               value={option?.value}
               id={`inline-${option.value}-${index}`}
-              onChange={(e)=>onChange(e)}
+              onChange={(e)=>handleOptionChange(e)}
               className={className}
               checked={option?.select}
             />

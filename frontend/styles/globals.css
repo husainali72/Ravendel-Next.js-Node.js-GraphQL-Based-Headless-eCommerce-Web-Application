@@ -1379,10 +1379,9 @@ footer .follow h5 {
   width: 100%;
 }
 .section-banner{
-  padding: 260px 0px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100% 100%;
+  position: relative;
+  width: 100%;
+  height: 500px
 }
 .fashion-banner {
   background: url(../components/images/Frame\ 23.png);
@@ -4769,6 +4768,14 @@ text-align: start;
   /* padding-bottom: 0; */
   margin-right: 6px;
   font-size: 12px;
+}
+.banner-image{
+  position:absolute;
+  top: 0;
+  left: 0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 .price-detail{
   border: 1px solid #eaeaec;
