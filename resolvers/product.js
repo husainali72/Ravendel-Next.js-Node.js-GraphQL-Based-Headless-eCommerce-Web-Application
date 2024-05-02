@@ -1264,7 +1264,7 @@ module.exports = {
       let data = {
         name: args.name,
         parentId: args.parentId || null,
-        url: await validateAndSetUrl(args.url, ProductCat),
+        url: await validateAndSetUrl(args.url || args.name, ProductCat),
         // url: args.url,
         description: args.description,
         image: args.image,
@@ -1290,7 +1290,7 @@ module.exports = {
       let data = {
         name: args.name,
         parentId: args.parentId || null,
-        url: await validateAndSetUrl(args.url, ProductCat, args.id),
+        url: await validateAndSetUrl(args.url || args.name, ProductCat, args.id),
         description: args.description,
         image: args.image,
         meta: args.meta,
@@ -1419,7 +1419,7 @@ module.exports = {
               }
             }
           }
-          let url = await validateAndSetUrl(args.url, Product);
+          let url = await validateAndSetUrl(args.url || args.name, Product);
           const duplicate = await duplicateData({ name: args.name }, Product)
           if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Product Name", false);
           const newProduct = new Product({
@@ -1578,7 +1578,7 @@ module.exports = {
           product.categoryId = args.categoryId;
           product.categoryTree = args.categoryTree;
           product.brand = args.brand || null,
-          product.url = await validateAndSetUrl(args.url, Product, args.id);
+          product.url = await validateAndSetUrl(args.url || args.name, Product, args.id);
           product.short_description = args.short_description;
           product.description = args.description;
           product.sku = args.sku;
