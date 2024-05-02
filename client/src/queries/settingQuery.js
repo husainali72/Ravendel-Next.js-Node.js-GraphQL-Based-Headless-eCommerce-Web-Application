@@ -151,7 +151,7 @@ const SETTING_TILE_DATA = gql`
         }
         add_section_web {
           label
-          name
+
           visible
           category
         }

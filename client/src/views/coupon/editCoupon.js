@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from "react";
 import viewStyles from "../viewStyles";
 import {
@@ -27,21 +24,17 @@ import {
 } from "../../store/action/";
 import { useSelector, useDispatch } from "react-redux";
 import { Alert, Loading, TopBar, TextInput, CardBlocks } from "../components";
-import {
-  TabPanel,
-  a11yProps,
-  couponObj,
-  getSelectedName,
-  MenuProps,
-} from "./coupon-components";
+import { TabPanel, a11yProps, couponObj } from "./coupon-components";
 import { validate } from "../components/validate";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import { isEmpty, client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { useParams, useNavigate } from "react-router-dom";
-import {  get } from "lodash";
-import { CategoriesComponent, EditCategoriesComponent } from "../product/components";
+import { get } from "lodash";
+import {
+  EditCategoriesComponent,
+} from "../product/components";
 const EditCouponComponent = ({ params }) => {
   const id = params?.id || "";
   const navigate = useNavigate();
@@ -66,14 +59,11 @@ const EditCouponComponent = ({ params }) => {
     if (!isEmpty(get(Coupons, "coupons"))) {
       Coupons?.coupons?.map((editcoupon) => {
         if (editcoupon.id === id) {
-          editcoupon?.code?.toUpperCase()
+          editcoupon?.code?.toUpperCase();
 
           let includeCategories = [];
           editcoupon?.includeCategories?.map((includeCategory) => {
-            if (getSelectedName(includeCategory, 'includeCategories', Products.products, Products.categories)) {
-
-              includeCategories.push(includeCategory)
-            }
+            includeCategories.push(includeCategory)
           })
           let val = {
             ...editcoupon,
@@ -88,7 +78,11 @@ const EditCouponComponent = ({ params }) => {
         setLabelWidth(get(inputLabel, "current.offsetWidth"));
       }
     }
-  }, [get(Coupons, "coupons"), get(Products, "category"), get(Products, "products")]);
+  }, [
+    get(Coupons, "coupons"),
+    get(Products, "category"),
+    get(Products, "products"),
+  ]);
 
   useEffect(() => {
     setloading(get(Coupons, "loading"));
@@ -99,7 +93,6 @@ const EditCouponComponent = ({ params }) => {
   }, [get(Products, "loading")]);
 
   useEffect(() => {
-
     if (isEmpty(Products.products)) {
       dispatch(productsAction());
     }
@@ -107,11 +100,8 @@ const EditCouponComponent = ({ params }) => {
       dispatch(categoriesAction());
     }
     if (isEmpty(get(Coupons, "coupons"))) {
-
       dispatch(couponsAction());
     }
-
-
   }, []);
 
   const tabChange = (event, newValue) => {
@@ -130,7 +120,8 @@ const EditCouponComponent = ({ params }) => {
     }
   };
 
-  const setDefaultValues = (value) =>  (value === '' || value === null||isNaN(value) ? 0 : value);
+  const setDefaultValues = (value) =>
+    value === "" || value === null || isNaN(value) ? 0 : value;
   const addUpdateCoupon = () => {
     const { minimumSpend, maximumSpend, includeCategories, code } = coupon;
     const updatedCoupon = {
@@ -140,18 +131,17 @@ const EditCouponComponent = ({ params }) => {
       category: includeCategories.length > 0,
       code: code?.toUpperCase(),
     };
-  
-    let error =validate([ "expire",'discountValue','code' ], coupon);
-    if(error){
-      handleErrors(error)
-    }else{
-    if (id) {
-        dispatch(couponUpdateAction(updatedCoupon, navigate));
-    } else {
-        dispatch(couponAddAction(updatedCoupon, navigate));
 
+    let error = validate(["expire", "discountValue", "code"], coupon);
+    if (error) {
+      handleErrors(error);
+    } else {
+      if (id) {
+        dispatch(couponUpdateAction(updatedCoupon, navigate));
+      } else {
+        dispatch(couponAddAction(updatedCoupon, navigate));
+      }
     }
-  }
   };
   const showAlert = (error, success, message) => {
     dispatch({
@@ -162,20 +152,26 @@ const EditCouponComponent = ({ params }) => {
         error: error,
       },
     });
-  }
+  };
 
   const handleChange = (e) => {
     let name = e.target.name;
-    let value = name === 'code' ? e.target.value?.toUpperCase() : e.target.value;
-    if (name === "discountValue" || name === "minimumSpend" || name === "maximumSpend") {
+    let value =
+      name === "code" ? e.target.value?.toUpperCase() : e.target.value;
+    if (
+      name === "discountValue" ||
+      name === "minimumSpend" ||
+      name === "maximumSpend"
+    ) {
       value = parseInt(value);
     }
-    let checkExpireDate = true
-    if (name === 'expire') {
-      checkExpireDate = name === 'expire' && value >= currentDate
+    let checkExpireDate = true;
+    if (name === "expire") {
+      checkExpireDate = name === "expire" && value >= currentDate;
     }
-    if (checkExpireDate) { setCoupon({ ...coupon, [name]: value }) }
-
+    if (checkExpireDate) {
+      setCoupon({ ...coupon, [name]: value });
+    }
   };
 
   return (
@@ -262,22 +258,25 @@ const EditCouponComponent = ({ params }) => {
                         <MenuItem value="percentage-discount">
                           Fixed Percentage Discount
                         </MenuItem>
-                        <MenuItem value="free-shipping">
-                          Free shipping
-                        </MenuItem>
+                        <MenuItem value="free-shipping">Free shipping</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>
-                  {coupon.discountType!=='free-shipping'&&<Grid item md={6} sm={12} xs={12}>
-                    <TextInput
-                      type="number"
-                      value={coupon.discountValue}
-                      label={coupon.discountType === 'amount-discount' ? "Coupon Amount" : 'Coupon Percent'}
-                      name="discountValue"
-                      onInputChange={handleChange}
-
-                    />
-                  </Grid>}
+                  {coupon.discountType !== "free-shipping" && (
+                    <Grid item md={6} sm={12} xs={12}>
+                      <TextInput
+                        type="number"
+                        value={coupon.discountValue}
+                        label={
+                          coupon.discountType === "amount-discount"
+                            ? "Coupon Amount"
+                            : "Coupon Percent"
+                        }
+                        name="discountValue"
+                        onInputChange={handleChange}
+                      />
+                    </Grid>
+                  )}
                   <Grid item md={6} sm={12} xs={12}>
                     <TextInput
                       id="coupon_expiry"
@@ -289,7 +288,6 @@ const EditCouponComponent = ({ params }) => {
                       className={clsx(classes.width100, "top-helper")}
                       type="date"
                       min={currentDate}
-
                     />
                   </Grid>
                 </Grid>
@@ -305,7 +303,6 @@ const EditCouponComponent = ({ params }) => {
                     name="minimumSpend"
                     onInputChange={handleChange}
                     min={0}
-
                   />
                 </Box>
                 <Box component="div" mb={2}>
@@ -316,25 +313,29 @@ const EditCouponComponent = ({ params }) => {
                     name="maximumSpend"
                     onInputChange={handleChange}
                     min={0}
-
                   />
                 </Box>
-            <CardBlocks title="Categories">
-              {id ? (
-                <EditCategoriesComponent
-                  selectedCategories={coupon.includeCategories}
-                  onCategoryChange={(items) => {
-                    setCoupon({ ...coupon, includeCategories: items });
-                  }}
-                />
-              ) : (
-                <CategoriesComponent
-                  onCategoryChange={(items) => {
-                    setCoupon({ ...coupon, includeCategories: items });
-                  }}
-                />
-              )}
-            </CardBlocks>
+                <CardBlocks title="Categories">
+                  <EditCategoriesComponent
+                    selectedCategories={get(coupon, "categoryTree", [])}
+                    onCategoryChange={(items) => {
+                      if (items && items?.length > 0) {
+                        let categoryId = items?.map((item) => item.id);
+                        setCoupon({
+                          ...coupon,
+                          includeCategories: categoryId,
+                          categoryTree: items,
+                        });
+                      } else {
+                        setCoupon({
+                          ...coupon,
+                          categoryId: [],
+                          categoryTree: [],
+                        });
+                      }
+                    }}
+                  />
+                </CardBlocks>
               </TabPanel>
             </Box>
           </CardBlocks>

@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
+
 import React, { useEffect, useState } from "react";
-import { capitalize, get } from "lodash";
+import {  get } from "lodash";
 import CheckBox from "../../check";
 import PropTypes from "prop-types";
 import Search from "./search";
@@ -43,9 +43,6 @@ const FilterCheckbox = ({ data, handleFilterChange }) => {
   };
   return (
     <div className="filter-by-price-checkbox">
-      <h5 className="category-section-title mb-30 wow fadeIn animated animated animated">
-        {capitalize(get(data, "heading", ""))}
-      </h5>
       <Search searchData={searchData} onSearch={onSearch} />
       <CheckBox
         type="checkbox"

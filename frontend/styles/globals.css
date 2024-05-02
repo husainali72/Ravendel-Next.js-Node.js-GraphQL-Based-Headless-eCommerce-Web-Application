@@ -5406,3 +5406,33 @@ justify-content: center;
   font-weight: 600;
 
 }
+
+.parent-category-container {
+  display: flex;
+  grid-gap: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 20px 10px;
+  width: 100%;
+}
+.accordian-body{
+  margin: 10px;
+}
+.category-filter-container{
+  padding: 0px, !important;
+}
+.filter-heading{
+  margin: 10px;
+  font-size: 16px;
+}
+.filter-heading-container{
+  border-bottom: 1px solid #e9e9ed;
+}
+/* AccordionComponent.css */
+.custom-accordion .accordion-item {
+  border: none;
+}
+
+.custom-accordion .accordion-button {
+  background-color: transparent; 
+}

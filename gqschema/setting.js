@@ -222,7 +222,7 @@ module.exports = `
   }
 
   type ADD_SECTION_WEB {
-    name: String
+
     label: String
     section_img: String
     visible: Boolean

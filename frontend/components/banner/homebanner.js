@@ -1,7 +1,3 @@
-/* eslint-disable react/jsx-no-target-blank */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-import Link from "next/link";
 import Carousel from "react-bootstrap/Carousel";
 import { getImage } from "../../utills/helpers";
 import { useState } from "react";
@@ -10,7 +6,7 @@ import Image from "next/image";
 import PropTypes from "prop-types";
 const Homebanner = ({ settings, slider }) => {
   const [imageSrc, setImageSrc] = useState("");
-  const imageType = get(settings,'setting.imageStorage.status');
+  const imageType = get(settings, "setting.imageStorage.status");
   const handleImageError = (e) => {
     // Handle the image loading error by setting a fallback image source
     if (e) {
@@ -25,15 +21,18 @@ const Homebanner = ({ settings, slider }) => {
         {slider.map((slide, i) => (
           <Carousel.Item key={i}>
             <a
-              href={`${slide.link}`}
+              href={slide.link}
               target={slide.open_in_tab ? "_blank" : null}
+              rel={slide.open_in_tab ? "noreferrer noopener" : null}
             >
               <Image
                 src={
-                  imageSrc ? imageSrc : getImage(get(slide,'image'), imageType, true)
+                  imageSrc
+                    ? imageSrc
+                    : getImage(get(slide, "image"), imageType, true)
                 }
-                width={2000}
-                height={500}
+                width={1920}
+                height={520}
                 sx={{ alignItems: "center", mt: 0 }}
                 className="d-block w-100"
                 alt={`slider`}
@@ -47,7 +46,7 @@ const Homebanner = ({ settings, slider }) => {
   );
 };
 Homebanner.propTypes = {
-    settings: PropTypes.object.isRequired,
-    slider: PropTypes.array.isRequired,
-  };
+  settings: PropTypes.object.isRequired,
+  slider: PropTypes.array.isRequired,
+};
 export default Homebanner;
