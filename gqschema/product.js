@@ -134,6 +134,7 @@ module.exports = `
     rating: Float
     ratingCount: Int
     levelWiseRating: customObject
+    taxStatement: String
     breadcrumb: customArray
     updated: Date
   }
@@ -298,7 +299,7 @@ module.exports = `
       id: ID
       name: String
       categoryId: customArray
-      categoryTree: customArray
+      categoryType: customArray
       brand: ID
       url: String
       short_description: String

@@ -1095,6 +1095,8 @@ module.exports = {
           data: response,
         };
       }
+
+      response["taxStatement"] = "Inclusive of all Taxes" 
       
       if(response.group) {
         const { attributes, variations } = response.group
