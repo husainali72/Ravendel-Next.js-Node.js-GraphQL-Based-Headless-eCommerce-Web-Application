@@ -143,7 +143,7 @@ const getTree = async (id) => {
 
 module.exports = {
   Query: {
-    getProducts: async (root, args) => {
+    getCategoryPageData: async (root, args) => {
       try {
         let { mainFilter, filters, sort, pageNo, limit } = args;
         pageNo = (!pageNo || pageNo == 0 ? 1 : pageNo);
@@ -169,6 +169,7 @@ module.exports = {
         //       "field":"pricing.sellprice",
         //       "type":"range",
         //       "category":"static",
+        //       "valueType":"Integer",
         //       "data":{
         //         "minValue":10000,
         //         "maxValue":20000,
@@ -188,7 +189,7 @@ module.exports = {
         //   limit:3
         // }
 
-        if(!mainFilter || !mainFilter.categoryId) {
+        if(!mainFilter || !mainFilter.categoryUrl) {
           return MESSAGE_RESPONSE("Required", "Category", false);
         }
 
@@ -199,62 +200,84 @@ module.exports = {
         let categoryAggr = [
           {
             $match: {
-              _id: new mongoose.Types.ObjectId(mainFilter.categoryId),
+              url: mainFilter.categoryUrl,
             },
           },
           {
             $lookup: {
-              from: "productcats", 
-              localField: "parentId", 
-              foreignField: "_id", 
-              as: "parentCategory", 
+              from: "productcats",
+              localField: "_id",
+              foreignField: "parentId",
+              as: "subCategories",
             },
           },
           {
             $lookup: {
-              from: "productcats", 
-              localField: "parentCategory._id", 
-              foreignField: "parentId", 
-              as: "subCategories", 
+              from: "productcats",
+              localField: "parentId",
+              foreignField: "_id",
+              as: "parentCategory",
             },
           },
           {
-            $unwind: "$parentCategory",
+            $lookup: {
+              from: "productcats",
+              localField: "parentCategory._id",
+              foreignField: "parentId",
+              as: "parentSubCategories",
+            },
           },
           {
             $project: {
-              "parentCategory._id":1,
-              "parentCategory.name":1,
-              "subCategories._id":1,
-              "subCategories.name":1,
-            }
-          }
+              _id: 1,
+              name: 1,
+              url: 1,
+              description: 1,
+              image: 1,
+              parentId: 1,
+        
+              "parentCategory._id": 1,
+              "parentCategory.name": 1,
+              "parentCategory.url": 1,
+              "parentCategory.image": 1,
+
+              "subCategories._id": 1,
+              "subCategories.name": 1,
+              "subCategories.url": 1,
+              "subCategories.image": 1,
+            },
+          },
         ];
         const categoryAggrActualResult = await ProductCat.aggregate(categoryAggr);
         if(!categoryAggrActualResult || !categoryAggrActualResult.length) {
           return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false);
         }
         const categoryAggrResult = categoryAggrActualResult[0];
-        let category = {};
-        category._id = categoryAggrResult.parentCategory._id;
-        category.name = categoryAggrResult.parentCategory.name;
-        category.subCategories = [];
-        let subCategory, isRequestedCategoryIdFound = false;
-        for(let loopCategory of categoryAggrResult.subCategories) {
-          subCategory = {
-            _id : loopCategory._id,
-            name : loopCategory.name,
-            select : false
-          };
+        console.log('categoryAggrResult', categoryAggrResult);
+        if(!categoryAggrResult.parentId) {
+          console.log('in the parentId null condition');
+          let mostParentCategoryData = categoryAggrResult;
+          delete mostParentCategoryData["parentCategory"];
+          delete mostParentCategoryData["parentSubCategories"];
 
-          if(!isRequestedCategoryIdFound) {
-            if(subCategory._id.toString() == mainFilter.categoryId.toString()) {
-              subCategory.select = true;
-              isRequestedCategoryIdFound = true;
-            }
+          let returnResponse = {
+            success:true,
+            isMostParentCategory:true,
+            mostParentCategoryData
           }
-          category.subCategories.push(subCategory);
+          return returnResponse;
         }
+
+        if(!categoryAggrResult.parentCategory || !categoryAggrResult.parentCategory.length) {
+          console.log(`parent category not found of selected category (url : ${mainFilter.categoryUrl})`);
+          return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false);
+        }
+        
+        let categoryTree = categoryAggrResult.parentCategory[0];
+        let currentCategory = categoryAggrResult;
+        delete currentCategory["parentCategory"];
+        currentCategory.select = true;
+        categoryTree.subCategories = currentCategory;
         //
         // preparing product category aggregation to load request category's parent category and all sub categories of
         // fetched parent category - END
@@ -267,7 +290,7 @@ module.exports = {
         // adding category filter in the aggregation
         prodAggr.push({
           $match: {
-            categoryId: mainFilter.categoryId,
+            categoryId: categoryAggrResult._id.toString(),
           },
         });
 
@@ -302,14 +325,19 @@ module.exports = {
         }
         
         const slicePosition = (pageNo == 1 ? 0 : (pageNo - 1) * limit);
-        let sortByExpression = {};
+        let sortByExpression = {}, responseSortObject;
         if(sort && sort.field) {
           sortByExpression[sort.field] = (sort.type == "desc" ? -1 : 1);
+          responseSortObject = sort;
         }
         else {
           sortByExpression = { "date": -1 };
+          responseSortObject = {
+            field:"date",
+            type:"desc"
+          }
         }
-        console.log('sortByExpression', sortByExpression);
+        
         productDataFacet.push(
           {
             $group: {
@@ -423,12 +451,12 @@ module.exports = {
         });
 
         // adding unwind in the aggregation to deconstruct the price array 
-        prodAggr.push({
+        prodAggr.push(
+          {
             $unwind: "$price",
           },
         );
 
-        // console.log('prodAggr stringify', JSON.stringify(prodAggr));
         const aggrActualResult = await Product.aggregate(prodAggr);
         
         if(!aggrActualResult) {
@@ -436,7 +464,6 @@ module.exports = {
         }
         
         const aggrResult = aggrActualResult[0];
-        // console.log('aggrResult', aggrResult);
 
         let filterData = [];
 
@@ -465,6 +492,15 @@ module.exports = {
           }
           brandFilterData.data.push(loopBrandFilterData);
         }
+        brandFilterData.data.sort(function(a, b) {
+          // First, sort by boolean column (true comes before false)
+          if (a.select === b.select) {
+            // If boolean values are equal, sort by string column
+            return a.label.localeCompare(b.label);
+          }
+          // If boolean values are different, sort true before false
+          return a.select ? -1 : 1;
+        });
         filterData.push(brandFilterData);
         // preparing brand response data - END
 
@@ -540,9 +576,11 @@ module.exports = {
 
         let returnResponse = {
           success:true,
-          category,
+          isMostParentCategory:false,
+          categoryTree,
           filterData,
-          productData:aggrResult.productData[0]
+          productData:aggrResult.productData[0],
+          sort:responseSortObject
         }
 
         // console.log('returnResponse', returnResponse);

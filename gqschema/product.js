@@ -201,13 +201,16 @@ module.exports = `
   type getProductsResponse {
     message: String
     success: Boolean
-    category: customObject
+    isMostParentCategory: Boolean
+    mostParentCategoryData: customObject
+    categoryTree: customObject
     filterData: customArray,
     productData: customObject
+    sort: customObject
   }
 
   extend type Query {
-    getProducts(
+    getCategoryPageData(
       mainFilter: customObject
       filters: customArray
       sort: customObject
