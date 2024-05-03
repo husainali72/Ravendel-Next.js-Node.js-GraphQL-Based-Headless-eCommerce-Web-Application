@@ -151,7 +151,9 @@ const EditCategoriesComponent = ({
       cat.id === updatedCategory1.id ? updatedCategory1 : cat
     );
     setCatList(updatedList);
-    let selectedCategory = updatedList?.filter((item) => hasCheckedChild(item));
+    let selectedCategory = updatedList
+      ?.filter((item) => hasCheckedChild(item))
+      ?.map(({ open, ...rest }) => rest);
 
     onCategoryChange(selectedCategory);
   };
