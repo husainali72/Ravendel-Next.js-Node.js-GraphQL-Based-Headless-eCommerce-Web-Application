@@ -23,7 +23,7 @@ const Homebanner = ({ settings, slider }) => {
             <a
               href={slide.link}
               target={slide.open_in_tab ? "_blank" : null}
-              rel={slide.open_in_tab ? "noreferrer noopener" : null}
+              rel={slide.open_in_tab ? "noreferrer noopener" : 'noreferrer'}
             >
               <Image
                 src={
