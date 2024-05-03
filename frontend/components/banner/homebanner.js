@@ -20,11 +20,6 @@ const Homebanner = ({ settings, slider }) => {
       <Carousel>
         {slider.map((slide, i) => (
           <Carousel.Item key={i}>
-            // <a
-            //   href={slide.link}
-            //   target={slide.open_in_tab ? "_blank" : null}
-            //   rel={slide.open_in_tab ? "noreferrer noopener" : 'noreferrer'}
-            // >
               <Image
                 src={
                   imageSrc
@@ -38,7 +33,6 @@ const Homebanner = ({ settings, slider }) => {
                 alt={`slider`}
                 onError={handleImageError}
               />
-            // </a>
           </Carousel.Item>
         ))}
       </Carousel>
