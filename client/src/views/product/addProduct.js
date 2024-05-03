@@ -88,6 +88,7 @@ const AddProductTheme = () => {
       downloadable: false,
     },
     custom_field: [],
+    specifications: [],
     attribute: [],
     variant: [],
     short_description: "",
@@ -461,7 +462,7 @@ const AddProductTheme = () => {
             </CardBlocks>
 
             {/* ===================Attributes=================== */}
-            <CardBlocks title="Attribute selection">
+            {/* <CardBlocks title="Attribute selection">
               <Attributes
                 product={product}
                 productStateChange={({ ...product }) =>
@@ -473,10 +474,62 @@ const AddProductTheme = () => {
                   setCombination(combination);
                 }}
               />
-            </CardBlocks>
+            </CardBlocks> */}
 
             {/* ===================Custom Fields=================== */}
             <CardBlocks title="Custom Fields">
+              <Grid container spacing={2}>
+                <Grid item md={12} sm={12} xs={12}>
+                  {product.custom_field.map((field, index) => (
+                    <Box
+                      key={index}
+                      display="flex"
+                      justifyContent="flex-start"
+                      alignItems="center"
+                      className={classes.customFieldRow}
+                    >
+                      <TextField
+                        label="Custom Field Name: *"
+                        variant="outlined"
+                        name="key"
+                        className={classes.customFieldInput}
+                        value={field.key}
+                        onChange={(e) => customChange(e, index)}
+                        size="small"
+                      />
+                      <TextField
+                        label="Custom Field Value: *"
+                        variant="outlined"
+                        name="value"
+                        className={classes.customFieldInput}
+                        value={field.value}
+                        onChange={(e) => customChange(e, index)}
+                        size="small"
+                      />
+                      <Tooltip title="Remove Field" aria-label="remove-field">
+                        <Stack direction="row" spacing={1}>
+                          <IconButton aria-label="delete" onClick={(e) => removeCustomField(index)}>
+                            <CloseIcon />
+                          </IconButton>
+                        </Stack>
+                      </Tooltip>
+                    </Box>
+                  ))}
+                </Grid>
+                <Grid item lg={4} md={12}>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={addCustomField}
+                  >
+                    + Add Custom Fields
+                  </Button>
+                </Grid>
+              </Grid>
+            </CardBlocks>
+
+            {/* ===================Specifications =================== */}
+            <CardBlocks title="Specifications">
               <Grid container spacing={2}>
                 <Grid item md={12} sm={12} xs={12}>
                   {product.custom_field.map((field, index) => (

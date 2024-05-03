@@ -18,16 +18,18 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { Link } from "react-router-dom";
 import { convertDateToStringFormat } from "../../../utils/convertDate";
 import DashboardStyles from "../../dashboard-styles";
-import { client_app_route_url, } from "../../../../utils/helper";
+import { client_app_route_url } from "../../../../utils/helper";
 import NoImagePlaceholder from "../../../../assets/images/NoImagePlaceHolder.png";
 import theme from "../../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
+import { useSelector } from "react-redux";
+import { get } from "lodash";
 const LatestProductsTheme = ({ products, loader, bucketBaseURL }) => {
+  const setting = useSelector((state) => state.settings);
   const classes = DashboardStyles();
   const imageOnError = (event) => {
-    event.target.src = NoImagePlaceholder
-
-  }
+    event.target.src = NoImagePlaceholder;
+  };
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -41,7 +43,7 @@ const LatestProductsTheme = ({ products, loader, bucketBaseURL }) => {
           <Box component="div" display="flex" justifyContent="center" p={2}>
             <CircularProgress size={20} />
           </Box>
-        ) : !products.length ? (
+        ) : !products?.length ? (
           <Box component="div" display="flex" justifyContent="center" p={2}>
             <Typography className={classes.noRecordFound} variant="caption">
               No Records Found
@@ -49,17 +51,16 @@ const LatestProductsTheme = ({ products, loader, bucketBaseURL }) => {
           </Box>
         ) : (
           <List>
-            {products.slice(0, 2).map((product, i) => (
+            {products?.slice(0, 2).map((product, i) => (
               <ListItem divider={i < 1} key={i}>
                 <ListItemAvatar>
                   <img
                     alt="Product"
                     className={classes.productImage}
                     src={
-                      product.feature_image
-                        ? bucketBaseURL + product.feature_image
+                      get(product, "feature_image")
+                        ? bucketBaseURL + get(product, "feature_image")
                         : NoImagePlaceholder
-
                     }
                     onError={imageOnError}
                   />
@@ -67,7 +68,8 @@ const LatestProductsTheme = ({ products, loader, bucketBaseURL }) => {
                 <ListItemText
                   primary={product.name}
                   secondary={`Updated ${convertDateToStringFormat(
-                    product.date
+                    get(product, "date", null),
+                    setting
                   )}`}
                 />
               </ListItem>
@@ -94,7 +96,11 @@ const LatestProductsTheme = ({ products, loader, bucketBaseURL }) => {
 const LatestProducts = ({ products, loader, bucketBaseURL }) => {
   return (
     <ThemeProvider theme={theme}>
-      <LatestProductsTheme products={products} loader={loader} bucketBaseURL={bucketBaseURL} />
+      <LatestProductsTheme
+        products={products}
+        loader={loader}
+        bucketBaseURL={bucketBaseURL}
+      />
     </ThemeProvider>
   );
 };

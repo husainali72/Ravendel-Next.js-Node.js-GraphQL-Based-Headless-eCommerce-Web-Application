@@ -5,9 +5,11 @@ import { capitalize, get } from "lodash";
 import ProductImage from "../imageComponent";
 import PropTypes from "prop-types";
 import { convertDateToStringFormat } from "../../utills/helpers";
+import { useSelector } from "react-redux";
 
 const Reviews = ({ singleProductReview }) => {
   const [reviews, setReviews] = useState([]);
+  const setting = useSelector((state) => state.setting);
   useEffect(() => {
     setReviews(singleProductReview);
   }, [singleProductReview]);
@@ -25,7 +27,7 @@ const Reviews = ({ singleProductReview }) => {
                 />
                 <span className="singleReviewUsername">
                   {" "}
-                  {capitalize(get(product,'customerId.firstName'))}{" "}
+                  {capitalize(get(product, "customerId.firstName"))}{" "}
                 </span>
               </div>
               <div className="starWidTitle">
@@ -40,7 +42,8 @@ const Reviews = ({ singleProductReview }) => {
               </div>
 
               <p className="reviewDate">{`Reviewed in India on ${convertDateToStringFormat(
-                product?.date
+                get(product, "date", null),
+                setting
               )}`}</p>
 
               <h2 className="reviewDesc"> {capitalize(product?.review)} </h2>

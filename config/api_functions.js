@@ -148,10 +148,18 @@ const GET_ALL_FUNC = async (modal, name, admin) => {
     let response;
     if (modal === Product && !admin) response = await modal.find({ status: "Publish" }).sort({ date: -1 });
     else response = await modal.find({}).sort({ date: -1 });
-    return {
-      message: MESSAGE_RESPONSE("RESULT_FOUND", name, true),
-      data: response,
-    };
+
+    if(response.length) {
+      return {
+        message: MESSAGE_RESPONSE("RESULT_FOUND", name, true),
+        data: response,
+      };
+    } else {
+      return {
+        message: MESSAGE_RESPONSE("RETRIEVE_ERROR", name, false),
+        data: response,
+      };
+    }
   } catch (error) {
     return {
       message: MESSAGE_RESPONSE("RETRIEVE_ERROR", name, false),
@@ -190,7 +198,8 @@ const CREATE_FUNC = async (
   data,
   args,
   path,
-  validation
+  validation,
+  modal2
 ) => {
 
   /////////////////////////////////////////
@@ -288,6 +297,10 @@ const CREATE_FUNC = async (
     if (name !== "Page" && name !== "Product Attribute") response.updated = Date.now()
 
     await response.save();
+    // update average rating of product related to reviews
+    if (name === "Review") {
+      await prodAvgRating(data.productId, modal, modal2)
+    }
     return MESSAGE_RESPONSE("AddSuccess", name, true);
   } catch (error) {
     return MESSAGE_RESPONSE("CREATE_ERROR", name, false);

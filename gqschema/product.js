@@ -37,6 +37,7 @@ module.exports = `
     id: ID
     name: String
     parentId: ID
+    attributeIds: [ID]
     url: String
     description: String
     image: String
@@ -66,6 +67,7 @@ module.exports = `
     id: ID
     name: String
     parentId: ID
+    attributeIds: [ID]
     url: String
     description: String
     image: String
@@ -90,18 +92,27 @@ module.exports = `
     updatedAt: Date
   }
 
-  type ProductAttribute {
-    id: ID
-    name: String
-    attribute_values: customArray
-    createdAt: Date
-    updatedAt: Date
+  type productSpecification {
+    key: String
+    attributeId: ID
+    value: String
+    attributeValueId: ID
+    group: String
+  }
+
+  input productSpecificationInput {
+    key: String
+    attributeId: ID
+    value: String
+    attributeValueId: ID
+    group: String
   }
 
   type Product {
     _id: ID
     name: String
     categoryId: [productCategory]
+    categoryTree: customArray
     brand: productBrand
     url: String
     sku: String
@@ -118,12 +129,14 @@ module.exports = `
     featured_product: Boolean
     product_type: customObject
     custom_field: [customObject]
-    attribute: [customObject]
-    attribute_master: [ProductAttribute]
-    variant: customArray
-    variation_master: [ProductVariations]
+    specifications: [productSpecification]
+    attributes: customArray
+    variations: customArray
     date: Date
     rating: Float
+    ratingCount: Int
+    levelWiseRating: customObject
+    breadcrumb: customArray
     updated: Date
   }
 
@@ -170,7 +183,40 @@ module.exports = `
     data:Product
     message: statusSchema
   }
+
+  type entryUrl {
+    url: String
+  }
+
+  type products_v1 {
+    message: String
+    success: Boolean
+    data: [customObject]
+  } 
+
+  input getProductsRequest {
+    mainFilter: customObject
+    filters: customArray
+  }
+  type getProductsResponse {
+    message: String
+    success: Boolean
+    isMostParentCategory: Boolean
+    mostParentCategoryData: customObject
+    categoryTree: customObject
+    filterData: customArray,
+    productData: customObject
+    sort: customObject
+  }
+
   extend type Query {
+    getCategoryPageData(
+      mainFilter: customObject
+      filters: customArray
+      sort: customObject
+      pageNo: Int
+      limit: Int
+    ): getProductsResponse
     productCategories: productCategoriesRES
     productCategories_pagination(
       limit: Int
@@ -190,6 +236,11 @@ module.exports = `
       orderBy: String
       order: String
     ): CategoriesResponse
+    searchProducts(
+      searchTerm: String!
+      page: Int!,
+      limit: Int!
+    ): [Product]
     productswithcat: products_with_cat_RES
     featureproducts: [Product]
     recentproducts: [Product]
@@ -203,6 +254,10 @@ module.exports = `
   }
 
   extend type Mutation {
+    validateUrl(
+      url: String!
+      entryId: ID
+    ): entryUrl
     addProductCategory(
       name: String
       parentId: ID
@@ -225,6 +280,7 @@ module.exports = `
     addProduct(
       name: String
       categoryId: customArray
+      categoryTree: customArray
       brand: ID
       url: String
       short_description: String
@@ -241,14 +297,13 @@ module.exports = `
       product_type: customObject
       meta: customObject
       custom_field: [customObject]
-      attribute: [customObject]
-      variant: customArray
-      combinations: [customObject]
+      specifications: [productSpecificationInput]
     ): statusSchema
     updateProduct(
       id: ID
       name: String
       categoryId: customArray
+      categoryTree: customArray
       brand: ID
       url: String
       short_description: String
@@ -266,9 +321,7 @@ module.exports = `
       product_type: customObject
       meta: customObject
       custom_field: [customObject]
-      attribute: [customObject]
-      variant: customArray
-      combinations: [customObject]
+      specifications: [productSpecificationInput]
     ): statusSchema
     deleteProduct(id: ID!): statusSchema
   }

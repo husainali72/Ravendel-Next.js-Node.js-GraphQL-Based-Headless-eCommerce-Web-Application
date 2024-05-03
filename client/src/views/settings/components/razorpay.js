@@ -12,6 +12,7 @@ import Loading from "../../components/Loading.js";
 import ToggleSwitch from "../../components/switch.js";
 import { getValue } from "../../../utils/helper.js";
 import { paymentRazorPayUpdateAction } from "../../../store/action/settingAction.js";
+import SettingTextArea from "./setting-components/setting-textArea.js";
 
 const RazorPayComponent = () => {
   const classes = viewStyles();
@@ -63,14 +64,18 @@ const RazorPayComponent = () => {
               </Box>
 
               <Box component="div">
-                <SettingTextInput
+                <SettingTextArea
                   label="Description"
+                  placeholder="Description"
                   value={get(razorPayInfo, "description")}
-                  onSettingInputChange={(val) =>
-                    setRazorPayInfo({ ...razorPayInfo, description: val })
-                  }
-                  multiline
-                  rows="5"
+                  onSettingInputChange={(e) => {
+                    setRazorPayInfo({
+                      ...razorPayInfo,
+                      description: get(e, "target.value"),
+                    });
+                  }}
+                  minRows={3}
+                  className={classes.settingTextArea}
                 />
               </Box>
             </Box>
@@ -139,19 +144,18 @@ const RazorPayComponent = () => {
                 />
               </Box>
             </Grid>
-
-            <Grid item xs={12}>
-              <Button
-                size="small"
-                color="primary"
-                variant="contained"
-                onClick={updateRazorPay}
-              >
-                Save Change
-              </Button>
-            </Grid>
           </>
         )}
+        <Grid item xs={12}>
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={updateRazorPay}
+          >
+            Save Change
+          </Button>
+        </Grid>
       </Grid>
     </>
   );

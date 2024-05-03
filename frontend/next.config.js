@@ -32,7 +32,7 @@ module.exports = {
   ) {
     return {
       "/": { page: "/" },
-      "/shop": { page: "/shop" },
+      // "/shop": { page: "/shop" },
       "/about": { page: "/about" },
       "/abouts/contactus": { page: "/abouts/contactus" },
       "/abouts/deliveryInformation": { page: "/abouts/deliveryInformation" },

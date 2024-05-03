@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Grid, TextField } from "@mui/material";
+import { Checkbox, FormControlLabel, Grid, TextField } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { attributeUpdateAction, attributeAction } from "../../../store/action/";
 import { isEmpty, client_app_route_url } from "../../../utils/helper";
@@ -21,6 +21,7 @@ const EditAttributeComponent = ({ params }) => {
   const [attribute, setattribute] = useState({
     name: "",
     values: [],
+    allow_filter:false,
   });
   const dispatch = useDispatch();
   const attributeState = useSelector((state) => state.productAttributes);
@@ -37,6 +38,7 @@ const EditAttributeComponent = ({ params }) => {
           id: attributeState.attribute.id,
           name: attributeState.attribute.name,
           values: attributeState.attribute.values,
+          allow_filter: attributeState.attribute.allow_filter
         });
       }
     }
@@ -130,6 +132,26 @@ const EditAttributeComponent = ({ params }) => {
                   <em className={classes.noteline}>
                     Press tab after adding each tag.
                   </em>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControlLabel
+                  sx={{mt:1}}
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={attribute.allow_filter}
+                        name="allow_filter"
+                        value="allow_filter"
+                        onChange={(e) =>
+                          setattribute({
+                            ...attribute,
+                            allow_filter: e.target.checked
+                          })
+                        }
+                      />
+                    }
+                    label="Allow Filter"
+                  />
                 </Grid>
               </Grid>
             </CardBlocks>

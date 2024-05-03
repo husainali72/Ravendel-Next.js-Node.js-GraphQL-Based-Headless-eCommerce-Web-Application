@@ -11,6 +11,7 @@ import {
 } from "../../utills/helpers";
 import { get } from "lodash";
 import Price from "../../components/priceWithCurrency";
+import OrderDetailAfter from "../../components/account/component/OrderDetailAfter";
 
 const Order = () => {
   const { status } = useSession();
@@ -64,22 +65,13 @@ const Order = () => {
                       <Col>
                         <strong>
                           Total :{" "}
-                          <Price price={get(order, "grandTotal", 0)}/>
+                          <Price price={get(order, "totalSummary.grandTotal", 0)}/>
                          {" "}
                         </strong>
                       </Col>
                     </Accordion.Header>
                     <Accordion.Body>
-                      <OrdersDetails
-                        orderDetail={get(order, "products", [])}
-                        order={order}
-                        billingInfo={get(order, "billing", {})}
-                        shippingInfo={get(order, "shipping", {})}
-                        tax={get(order, "taxAmount", 0)}
-                        subtotal={get(order, "subtotal", 0)}
-                        shippingAmount={get(order, "shippingAmount", 0)}
-                        total={get(order, "grandTotal", 0)}
-                      />
+                      <OrderDetailAfter orderInfo={order}/>
                       <div className="row order-btn-row">
                         <div>
                           <button

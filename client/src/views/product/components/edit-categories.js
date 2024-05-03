@@ -8,7 +8,11 @@ import { unflatten } from "../../../utils/helper";
 import { categoriesAction } from "../../../store/action";
 import _, { indexOf } from "lodash";
 
-const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
+const EditCategoriesComponent = ({
+  onCategoryChange,
+  selectedCategoriesTree,
+  selectedCategories,
+}) => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
   const [catList, setCatList] = useState([]);
@@ -19,50 +23,145 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
   }, []);
 
   useEffect(() => {
-    if (products.categories.length) {
+    if (products?.categories && products?.categories?.length) {
       var selectedCat = JSON.parse(JSON.stringify(products.categories));
-      if (selectedCategories && selectedCategories.length > 0) {
-        if (selectedCat && selectedCat.length) {
+      if (selectedCategories && selectedCategories?.length > 0) {
+        if (selectedCat && selectedCat?.length) {
           selectedCat.map((cat) => {
-            if (~selectedCategories.indexOf(cat.id)) {
+            if (~selectedCategories.indexOf(cat?.id)) {
               cat.checked = true;
             } else {
               cat.checked = false;
             }
           });
-
         }
       } else {
         // Handle the case where selectedCategories is empty
 
-        selectedCat.map((cat) => {
+        selectedCat?.map((cat) => {
           cat.checked = false;
         });
       }
-      setCatList(unflatten(selectedCat));
+      let updatedCategories = [];
+      updatedCategories = unflatten(selectedCat)?.map((item) => {
+        let selectedCategory = selectedCategoriesTree?.find(
+          (selected) => selected?.id === item?.id
+        );
+        return selectedCategory || item;
+      });
+      setCatList(updatedCategories);
     }
-  }, [products.categories, selectedCategories]);
+  }, [products.categories, selectedCategories, selectedCategoriesTree]);
 
   const collapseToggle = (category) => {
     category.open = !category.open;
     setcollapseCategory({ ...collapseCategory, [category.id]: category.open });
   };
+  const updateParentChecked = (category) => {
+    // Check if the category has children
+    if (category?.children && category?.children.length > 0) {
+      let allChildrenChecked = true;
+      let anyChildUnchecked = false;
 
-  const handleCategeryCheckbox = (category) => {
-    category.checked = !category.checked;
-    var items = selectedCategories
-    if (category.checked) {
-      items.push(category.id)
-    } else {
-      items = items.filter((value) => value !== category.id)
+      // Recursively check each child category
+      category?.children.forEach((child) => {
+        updateParentChecked(child);
+
+        // Update the flag based on child's checked status
+        if (!child.checked) {
+          anyChildUnchecked = true;
+        } else {
+          if (hasCheckedChild(child)) {
+            allChildrenChecked = true;
+          } else {
+            allChildrenChecked = false;
+          }
+        }
+      });
+      // Update the parent's checked status based on children's status
+      if (allChildrenChecked) {
+        category.checked = true;
+      }
+      if (anyChildUnchecked) {
+        category.checked = false;
+      }
     }
-    onCategoryChange(items);
+  };
+  const hasCheckedChild = (cat) => {
+    if (cat.checked) {
+      return true;
+    }
+    if (cat?.children && Array.isArray(cat.children)) {
+      for (const child of cat.children) {
+        if (hasCheckedChild(child)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  const updateChildCheckedStatus = (category, isChecked) => {
+    // Check if the category has children
+    if (category?.children && category?.children?.length > 0) {
+      if (isChecked) {
+        category.checked = true;
+      } else {
+        category.checked = false;
+      }
+
+      // Recursively update each child category
+      category?.children?.forEach((child) => {
+        updateChildCheckedStatus(child, category?.checked);
+      });
+    } else {
+      // If the category has no children, update its checked status based on selectParent
+      category.checked = isChecked;
+    }
+  };
+  const findAndUpdateCategory = (categories, categoryId, checkedStatus) => {
+    for (let category of categories) {
+      if (category.id === categoryId) {
+        updateChildCheckedStatus(category, checkedStatus);
+        updateParentChecked(category, checkedStatus);
+        return category; // Return the updated category
+      } else if (category.children && category.children.length > 0) {
+        const updatedChild = findAndUpdateCategory(
+          category.children,
+          categoryId,
+          checkedStatus
+        );
+        if (updatedChild) {
+          // Update the parent category with the updated child
+          updateParentChecked(category, checkedStatus);
+          return category;
+        }
+      }
+    }
+    return null;
+  };
+
+  const handleCategoryCheckbox = (category) => {
+    category.checked = !category.checked;
+    const updatedCategory1 = findAndUpdateCategory(
+      catList,
+      category.id,
+      category.checked
+    );
+    let updatedList = catList.map((cat) =>
+      cat.id === updatedCategory1.id ? updatedCategory1 : cat
+    );
+    setCatList(updatedList);
+    let selectedCategory = updatedList
+      ?.filter((item) => hasCheckedChild(item))
+      ?.map(({ open, ...rest }) => rest);
+
+    onCategoryChange(selectedCategory);
   };
 
   const checkedChildernChecked = (cat) => {
-    var checked = cat.children.filter((child) => child.checked === true);
+    var checked = hasCheckedChild(cat);
     if (!cat.checked) {
-      if (checked.length) {
+      if (checked) {
         return true;
       } else {
         return false;
@@ -74,7 +173,7 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
 
   const menuListing = (categories) => {
     return categories.map((cat) => {
-      if (!cat.children.length) {
+      if (!cat?.children?.length) {
         return (
           <Grid container alignItems="center" key={cat.name}>
             <Grid item>
@@ -89,7 +188,7 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
                     color="primary"
                     checked={cat.checked}
                     name="categoryIds"
-                    onChange={(e) => handleCategeryCheckbox(cat)}
+                    onChange={(e) => handleCategoryCheckbox(cat)}
                     value={cat.id}
                   />
                 }
@@ -129,7 +228,7 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
                     color="primary"
                     checked={cat.checked}
                     name="categoryIds"
-                    onChange={(e) => handleCategeryCheckbox(cat)}
+                    onChange={(e) => handleCategoryCheckbox(cat)}
                     value={cat.id}
                     indeterminate={checkedChildernChecked(cat)}
                   />
@@ -152,7 +251,6 @@ const EditCategoriesComponent = ({ onCategoryChange, selectedCategories }) => {
       );
     });
   };
-
   return <>{catList && catList.length ? menuListing(catList) : null}</>;
 };
 

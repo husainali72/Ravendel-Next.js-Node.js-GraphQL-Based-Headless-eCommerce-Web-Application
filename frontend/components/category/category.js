@@ -6,6 +6,7 @@ import useResizeObserver from "@react-hook/resize-observer";
 import { capitalize, get } from "lodash";
 import ProductImage from "../../components/imageComponent";
 import PropTypes from "prop-types";
+import { generateCategoryUrl } from "../../utills/helpers";
 const Category = ({ category }) => {
   const [showSlider, setShowSlider] = useState(false);
   const [inlineSize, setInlineSize] = useState(0);
@@ -51,10 +52,10 @@ const Category = ({ category }) => {
             {category?.length > 0 ? (
               category?.map((item, i) => {
                 return (
-                  item.parentId === null && (
+                  <>
                     <Link
-                      href={`/subcategory/[category]?url=${item?.url}`}
-                      as={`/subcategory/${item?.url}`}
+                      href={generateCategoryUrl(item?.url)?.href}
+                      as={generateCategoryUrl(item?.url)?.as}
                     >
                       <div className="category-cards" key={i}>
                         <div className="category-card-image">
@@ -68,7 +69,7 @@ const Category = ({ category }) => {
                         </div>
                       </div>
                     </Link>
-                  )
+                  </>
                 );
               })
             ) : (

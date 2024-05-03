@@ -1,5 +1,6 @@
 import { get } from "lodash";
 import NoImagePlaceHolder from "../assets/images/NoImagePlaceHolder.png";
+import { CASH_ON_DELIVERY, STRIPE, PAYPAL, RAZORPAY } from "./constant";
 export const isEmpty = (value) =>
   value === undefined ||
   value === null ||
@@ -22,10 +23,9 @@ if (process.env.NODE_ENV === "production") {
 /*-------------------------------------------------------------------------------------------------------------------------------------- */
 //simple category array to Tree array
 export const imageOnError = (event) => {
-  event.target.src = NoImagePlaceHolder
-}
+  event.target.src = NoImagePlaceHolder;
+};
 export const unflatten = (arr) => {
-
   var tree = [],
     mappedArr = {},
     arrElem,
@@ -44,7 +44,6 @@ export const unflatten = (arr) => {
       // If the element is not at the root level, add it to its parent array of children.
 
       if (mappedElem.parentId && mappedArr[mappedElem["parentId"]]) {
-
         mappedArr[mappedElem["parentId"]]["children"].push(mappedElem);
       }
       // If the element is at the root level, add it to first level elements array.
@@ -63,12 +62,15 @@ export const printTree = (tree) => {
   categoriesPrint += "<ul className='category-dropdown'>";
 
   for (let i in tree) {
-    categoriesPrint += `<li className="${tree[i].children && tree[i].children.length ? "has-submenu" : ""
-      }">                               
-                        <label for="${tree[i].name
-      }" className="checkmark-container">${tree[i].name}
-                          <input type='checkbox' name="abc" id="${tree[i].name
-      }">
+    categoriesPrint += `<li className="${
+      tree[i].children && tree[i].children.length ? "has-submenu" : ""
+    }">                               
+                        <label for="${
+                          tree[i].name
+                        }" className="checkmark-container">${tree[i].name}
+                          <input type='checkbox' name="abc" id="${
+                            tree[i].name
+                          }">
                           <span className="checkmark"></span>
                         </label>`;
     if (tree[i].children && tree[i].children.length) {
@@ -194,4 +196,47 @@ export const getBaseUrl = (setting) => {
 
 export const getValue = (value) => {
   return value === null ? "" : value;
+};
+
+export const getPaymentMethodLabel = (paymentMethod) => {
+  switch (paymentMethod) {
+    case CASH_ON_DELIVERY:
+      return "Cash On Delivery";
+    case STRIPE:
+      return "Stripe";
+    case PAYPAL:
+      return "Paypal";
+    case RAZORPAY:
+      return "Razor Pay";
+    default:
+      return "Cash On Deliverys";
+  }
+};
+export const getCheckedIds=(data)=> {
+  const checkedIds = [];
+
+  function checkNode(node) {
+    if (node?.checked||hasCheckedChild(node)) {
+      checkedIds.push(node.id);
+    }
+    if (node?.children && node?.children?.length > 0) {
+      node?.children?.forEach(child => checkNode(child));
+    }
+  }
+
+  data?.forEach(checkNode);
+  return checkedIds;
+}
+export const hasCheckedChild = (cat) => {
+  if (cat?.checked) {
+    return true;
+  }
+  if (cat?.children && Array.isArray(cat?.children)) {
+    for (const child of cat?.children) {
+      if (hasCheckedChild(child)) {
+        return true;
+      }
+    }
+  }
+  return false;
 };
