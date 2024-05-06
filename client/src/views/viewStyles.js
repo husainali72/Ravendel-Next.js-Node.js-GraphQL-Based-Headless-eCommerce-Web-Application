@@ -243,7 +243,7 @@ const viewStyles = makeStyles((theme) => ({
     width: 50,
     height: 50,
     borderRadius: "50%",
-    margin: "0px 10px",
+    // margin: "0px 10px",
     overflow: "hidden",
     border: "2px solid #ddd",
   },

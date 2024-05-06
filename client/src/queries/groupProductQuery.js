@@ -37,6 +37,7 @@ mutation Mutation($deleteGroupId: ID!) {
   }
 }
 `;
+
 const ADD_GROUP_PRODUCT = gql`
 mutation Mutation($title: String!, $attributes: [AttributeInput], $productIds: [ID], $variations: [VariationInput]) {
   addGroup(title: $title, attributes: $attributes, productIds: $productIds, variations: $variations) {
@@ -76,7 +77,8 @@ const GET_GROUP_PRODUCT = gql`query Query($groupId: ID!) {
 export {
   GET_GROUP_PRODUCTS,
   DELETE_GROUP_PRODUCT,
-  ADD_GROUP_PRODUCT
+  ADD_GROUP_PRODUCT,
+  GET_GROUP_PRODUCT
 };
 
 

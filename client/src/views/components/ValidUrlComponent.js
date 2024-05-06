@@ -11,13 +11,22 @@ const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl, onBlur, onSu
   const classes = viewStyles();
   const [editPremalink, setEditPermalink] = useState(false);
   const [loading, setLoading] = useState(false);
-  const changePermalink = () => {
+  const changePermalink = async () => {
     if (editPremalink) {
-      isUrlExist(url);
+      // isUrlExist(url);
+      await onSubmit(url, setEditPermalink)
     }
-
-    setEditPermalink(!editPremalink);
+    if(!editPremalink){
+      setEditPermalink(!editPremalink);
+    }
   };
+  // const changePermalink = () => {
+  //   if (editPremalink) {
+  //     isUrlExist(url);
+  //   }
+
+  //   setEditPermalink(!editPremalink);
+  // };
 
   const isUrlExist = async (url) => {
     setLoading(true);
@@ -62,7 +71,7 @@ const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl, onBlur, onSu
   );
 };
 
-const URLComponent = ({ url, onInputChange, pageUrl, tableUrl, onBlur }) => {
+const ValidUrlComponent = ({ url, onInputChange, pageUrl, tableUrl, onBlur, onSubmit }) => {
   return (
     <ThemeProvider theme={theme}>
       <URLComponentTheme
@@ -71,8 +80,9 @@ const URLComponent = ({ url, onInputChange, pageUrl, tableUrl, onBlur }) => {
         pageUrl={pageUrl}
         onBlur={onBlur}
         tableUrl={tableUrl}
+        onSubmit={onSubmit}
       />
     </ThemeProvider>
   );
 };
-export default URLComponent;
+export default ValidUrlComponent;
