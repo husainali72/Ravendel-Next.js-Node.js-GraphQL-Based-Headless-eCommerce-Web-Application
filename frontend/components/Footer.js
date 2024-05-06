@@ -50,9 +50,9 @@ export default function Footer() {
         city: get(res, cityPath, "Paris"),
         email: get(res, emailPath, "ravendel@gmail.com"),
         phoneNumber: get(res, phonePath, "+91 9124192994"),
-        appStoreUrl: get(res, appStorePath, "#"),
-        playStoreUrl: get(res, playStorePath, "#"),
-        hour: get(res, hour, "#"),
+        appStoreUrl: get(res, appStorePath, "#")||'#',
+        playStoreUrl: get(res, playStorePath, "#")||'#',
+        hour: get(res, hour, ""),
         socialMedia: get(res, socialMediaPath, []),
       }));
     });
