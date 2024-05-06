@@ -50,11 +50,11 @@ export const groupProductDeleteAction = (id) => (dispatch) => {
   dispatch({
     type: GROUP_PRODUCT_LOADING,
   });
-  mutation(DELETE_GROUP_PRODUCT, { id })
+  mutation(DELETE_GROUP_PRODUCT, { deleteGroupId:id })
     .then((response) => {
       const [error, success, message, data] = mutationResponseHandler(
         response,
-        "deleteProduct"
+        "deleteGroup"
       );
       dispatch({
         type: GROUP_PRODUCT_LOADING_FALSE,
@@ -95,7 +95,7 @@ export const groupProductAddAction = (object, navigate) => (dispatch) => {
     .then((response) => {
       const [error, success, message, data] = mutationResponseHandler(
         response,
-        "addProduct"
+        "addGroup"
       );
       dispatch({
         type: GROUP_PRODUCT_LOADING_FALSE,
@@ -110,7 +110,7 @@ export const groupProductAddAction = (object, navigate) => (dispatch) => {
 
       if (success) {
         dispatch(groupProductsAction());
-        navigate(`${client_app_route_url}all-products`);
+        navigate(`${client_app_route_url}group-products`);
         return dispatch({
           type: ALERT_SUCCESS,
           payload: { boolean: true, message: message, error: false },

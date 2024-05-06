@@ -57,7 +57,7 @@ function groupAttributes(attributes) {
   attributes.forEach(attribute => {
     if (!groupedAttributes[attribute.attribute_id]) {
       groupedAttributes[attribute.attribute_id] = {
-        id: attribute.attribute_id,
+        _id: attribute.attribute_id,
         values: []
       };
     }
@@ -69,7 +69,7 @@ function groupAttributes(attributes) {
 function getVariants(combinations, groupedAttributes) {
   // Here we want the combination array of ids to convert in array of objects {attributeID: '', attributeValue: ''}
   const variants = combinations.map((combination) => {
-    const obj = { productId: combination?.productID, combinations: !!combination?.combinations && combination?.combinations.map(combId => ({ attributeId: groupedAttributes.find(attri => attri?.values?.some(id => id === combId))?.id, attributeValueId: combId })) }
+    const obj = { productId: combination?.productID, combinations: !!combination?.combinations && combination?.combinations.map(combId => ({ attributeId: groupedAttributes.find(attri => attri?.values?.some(id => id === combId))?._id, attributeValueId: combId })) }
 
     return obj;
   })
@@ -168,8 +168,8 @@ const AddProductTheme = () => {
           // }
           setGroupProduct({
             ...groupProduct,
-            variations: variants,
-            attributes: groupedAttributes
+            // variations: variants,
+            // attributes: groupedAttributes
           })
         }
       }
@@ -230,23 +230,31 @@ const AddProductTheme = () => {
         });
       }
       if (get(groupProductState, 'groupProduct.variations')) {
+      //   const convertedArray = groupProductState.groupProduct.variations.map(item => {
+      //     return {
+      //         productId: item.productId,
+      //         combinations: item.combinations.map(combination => ({
+      //             attributeId: combination.attributeId,
+      //             attributeValueId: combination.attributeValueId
+      //         }))
+      //     };
+      // });
         const convertedArray = groupProductState.groupProduct.variations.map(item => {
           return {
-              productId: item.productId,
-              combinations: item.combinations.map(combination => ({
-                  attributeId: combination.attributeId,
-                  attributeValueId: combination.attributeValueId
-              }))
+              productID: item.productId,
+              combinations: item.combinations.map(combination => (combination.attributeValueId))
           };
       });
       convertedVariations = convertedArray;
       }
+      // const productVariants = ['65cb2b0ca9dfee40f95226ff', '65cb2b2ba9dfee40f9522716'];
       setGroupProduct({
         ...groupProduct,
         attributes: convertedAttributes,
         variations: convertedVariations,
         // attributes:  get(groupProductState, 'groupProduct.attributes', []),
-        title: get(groupProductState, 'groupProduct.title')
+        title: get(groupProductState, 'groupProduct.title'),
+        // variant: productVariants
       })
     }
 
