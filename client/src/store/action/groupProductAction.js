@@ -6,7 +6,7 @@ import {
 } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import { ADD_GROUP_PRODUCT, DELETE_GROUP_PRODUCT, GET_GROUP_PRODUCTS } from "../../queries/groupProductQuery";
+import { ADD_GROUP_PRODUCT, DELETE_GROUP_PRODUCT, GET_GROUP_PRODUCT, GET_GROUP_PRODUCTS } from "../../queries/groupProductQuery";
 
 export const groupProductsAction = () => (dispatch) => {
   dispatch({
@@ -133,6 +133,49 @@ export const groupProductAddAction = (object, navigate) => (dispatch) => {
       });
     });
 };
+
+export const groupProductAction = (id) => (dispatch) => {
+  if(id){
+    dispatch({
+      type: GROUP_PRODUCT_LOADING,
+    });
+    query(GET_GROUP_PRODUCT, { groupId: id })
+      .then((response) => {
+        const [error, success, message, data] = getResponseHandler(
+          response,
+          "group"
+        );
+        dispatch({
+          type: GROUP_PRODUCT_LOADING_FALSE,
+        });
+  
+        if (error) {
+          dispatch({
+            type: ALERT_SUCCESS,
+            payload: { boolean: false, message: message, error: true },
+          });
+        }
+  
+        if (success) {
+          return dispatch({
+            type: GROUP_PRODUCT_SUCCESS,
+            payload: data,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: GROUP_PRODUCT_FAIL,
+        });
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: false, message: error, error: true },
+        });
+      });
+  }
+};
+
+
 
 export const GROUP_PRODUCT_LOADING = "GROUP_PRODUCT_LOADING";
 export const GROUP_PRODUCTS_LOADING = "GROUP_PRODUCTS_LOADING";

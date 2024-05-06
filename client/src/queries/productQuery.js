@@ -67,6 +67,13 @@ const PRODUCT_TILE_DATA = gql`
 //   }
 // `;
 
+const CHECK_VALID_URL = gql`
+mutation ValidateUrl($url: String!, $entryId: ID) {
+  validateUrl(url: $url, entryId: $entryId) {
+    url
+  }
+}
+`;
 const GET_CATEGORIES = gql`
   {
     productCategories {
@@ -437,4 +444,5 @@ export {
   ADD_PRODUCT,
   UPDATE_PRODUCT,
   DELETE_PRODUCT,
+  CHECK_VALID_URL
 };

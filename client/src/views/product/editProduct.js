@@ -77,7 +77,8 @@ import theme from "../../theme";
 import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
 import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png";
-import { GET_PRODUCT } from "../../queries/productQuery";
+import { CHECK_VALID_URL, GET_PRODUCT } from "../../queries/productQuery";
+import ValidUrlComponent from "../components/ValidUrlComponent";
 let defaultobj = {
   _id: "",
   name: "",
@@ -139,6 +140,7 @@ const EditProductComponent = ({ params }) => {
   const [gallery, setGallery] = useState([]);
   const [taxClass, setTaxClass] = useState("");
   const [product, setProduct] = useState(defaultobj);
+  const [isUrlChanged, setIsUrlChanged] = useState(false);
   const setting = useSelector((state) => state.settings);
   const { attributes } = useSelector((state) => state.productAttributes);
   const attributeState = useSelector((state) => state.productAttributes);
@@ -151,19 +153,19 @@ const EditProductComponent = ({ params }) => {
     }
     dispatch(attributesAction());
   }, []);
-useEffect(() => {
-  if(get(productState, 'products') && isEmpty(get(productState, 'products'))){
-    dispatch(productsAction())
-  }
+  useEffect(() => {
+    if (get(productState, 'products') && isEmpty(get(productState, 'products'))) {
+      dispatch(productsAction())
+    }
 
-}, [])
-const productsOptions = useMemo(() => {
-  if(get(productState, 'products')){
-    return productState?.products?.map(product => ({label: product?.name, value: product?._id }))
-  }else{
-    return []
-  }
-}, [productState])
+  }, [])
+  const productsOptions = useMemo(() => {
+    if (get(productState, 'products')) {
+      return productState?.products?.map(product => ({ label: product?.name, value: product?._id }))
+    } else {
+      return []
+    }
+  }, [productState])
   useEffect(() => {
     setloading(get(productState, "loading"));
   }, [get(productState, "loading")]);
@@ -377,18 +379,62 @@ const productsOptions = useMemo(() => {
   };
 
   const isUrlExist = async (url) => {
-    if (productId) {
+    if (url && !productId) {
       let updatedUrl = await getUpdatedUrl("Product", url);
       setProduct({
         ...product,
         url: updatedUrl,
       });
+      if (!isUrlChanged) {
+        setIsUrlChanged(true)
+      }
+    } else if (url && productId) {
+      let updatedUrl = await getUpdatedUrl("Product", url, productId);
+      // setProduct({
+      //   ...product,
+      //   url: updatedUrl,
+      // });
+      // if(!isUrlChanged){
+      //   setIsUrlChanged(true)
+      // }
+    }
+    // if (productId) {
+    //   let updatedUrl = await getUpdatedUrl("Product", url);
+    //   setProduct({
+    //     ...product,
+    //     url: updatedUrl,
+    //   });
+    // } else {
+    //   setProduct({
+    //     ...product,
+    //   });
+    // }
+  };
+  const updateUrl = async (URL, setEditPermalink) => {
+    if (productId) {
+      await query(CHECK_VALID_URL, { url: URL, entryId: productId }).then(res => {
+        if (get(res, 'data.validateUrl.url')) {
+          const newUrl = get(res, 'data.validateUrl.url')
+          setProduct({
+            ...product,
+            url: newUrl,
+          });
+          setEditPermalink((previous) => !previous)
+        }
+      });
     } else {
-      setProduct({
-        ...product,
+      await query(CHECK_VALID_URL, { url: URL }).then(res => {
+        if (get(res, 'data.validateUrl.url')) {
+          const newUrl = get(res, 'data.validateUrl.url')
+          setProduct({
+            ...product,
+            url: newUrl,
+          });
+          setEditPermalink((previous) => !previous)
+        }
       });
     }
-  };
+  }
 
   const [selectedClonedProject, setSelectedClonedProject] = useState('')
 
@@ -479,57 +525,57 @@ const productsOptions = useMemo(() => {
   }
   const cloneProject = async (event, value) => {
     let groupedSpecifications = []
-    if(get(value, 'value') && productState?.products){
+    if (get(value, 'value') && productState?.products) {
       const productToClone = productState?.products.find(product => product?._id === value?.value);
-        if (!isEmpty(productToClone)) {
-          if (productToClone?.specifications) {
-            groupedSpecifications = productToClone?.specifications.reduce((acc, spec) => {
-              if (!acc.some(ac => ac?.group === spec.group)) {
-                acc.push({ group: spec?.group, customFields: [{ attributeId: spec?.attributeId, attributeValueId: spec?.attributeValueId, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) }] })
-              } else {
-                const Index = acc.findIndex(ac => ac?.group === spec.group);
-                acc[Index]?.customFields && acc[Index].customFields.push({ attributeId: spec.attributeId, attributeValueId: spec.attributeValueId, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) });
-              }
-              return acc;
-            }, []);
-          }
-          let defaultBrand = {};
-          setTaxClass(productToClone.taxClass);
-          if (productToClone.brand) {
-            if (!isEmpty(get(brandState, "brands"))) {
-              for (let i in brandState.brands) {
-                if (brandState.brands[i].id === productToClone.brand.id) {
-                  defaultBrand = {
-                    value: brandState.brands[i].id,
-                    label: brandState.brands[i].name,
-                  };
-                  break;
-                }
+      if (!isEmpty(productToClone)) {
+        if (productToClone?.specifications) {
+          groupedSpecifications = productToClone?.specifications.reduce((acc, spec) => {
+            if (!acc.some(ac => ac?.group === spec.group)) {
+              acc.push({ group: spec?.group, customFields: [{ attributeId: spec?.attributeId, attributeValueId: spec?.attributeValueId, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) }] })
+            } else {
+              const Index = acc.findIndex(ac => ac?.group === spec.group);
+              acc[Index]?.customFields && acc[Index].customFields.push({ attributeId: spec.attributeId, attributeValueId: spec.attributeValueId, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) });
+            }
+            return acc;
+          }, []);
+        }
+        let defaultBrand = {};
+        setTaxClass(productToClone.taxClass);
+        if (productToClone.brand) {
+          if (!isEmpty(get(brandState, "brands"))) {
+            for (let i in brandState.brands) {
+              if (brandState.brands[i].id === productToClone.brand.id) {
+                defaultBrand = {
+                  value: brandState.brands[i].id,
+                  label: brandState.brands[i].name,
+                };
+                break;
               }
             }
           }
-          const categoryIds = !!productToClone.categoryId && productToClone.categoryId?.map((cat) => cat.id)
-          if(get(productToClone, '_id')){
-            setClonedId(get(productToClone, '_id'))
-          }
-          const {url, ...rest} = productToClone;
-          setProduct({
-            ...product,
-            ...rest,
-            name: productToClone?.name && `${productToClone.name} copy` ,
-            specifications: groupedSpecifications,
-            categoryId: categoryIds,
-            brand: defaultBrand || "",
-          });
-
-          if (productToClone.feature_image) {
-            setfeatureImage(baseURl + productToClone.feature_image);
-          } else {
-            setfeatureImage(NoImagePlaceHolder);
-          }
         }
+        const categoryIds = !!productToClone.categoryId && productToClone.categoryId?.map((cat) => cat.id)
+        if (get(productToClone, '_id')) {
+          setClonedId(get(productToClone, '_id'))
+        }
+        const { url, ...rest } = productToClone;
+        setProduct({
+          ...product,
+          ...rest,
+          name: productToClone?.name && `${productToClone.name} copy`,
+          specifications: groupedSpecifications,
+          categoryId: categoryIds,
+          brand: defaultBrand || "",
+        });
+
+        if (productToClone.feature_image) {
+          setfeatureImage(baseURl + productToClone.feature_image);
+        } else {
+          setfeatureImage(NoImagePlaceHolder);
+        }
+      }
+    }
   }
-}
   const addSpecificationField = (index) => {
     const updatedProduct = { ...product };
     updatedProduct.specifications[index].customFields.push({ key: '', value: '' })
@@ -576,7 +622,7 @@ const productsOptions = useMemo(() => {
                   onChange={handleChange}
                   onBlur={(e) =>
                     !product.url || product.url !== e.target.value
-                      ? isUrlExist(product.name)
+                      ? (!isUrlChanged && isUrlExist(product.name))
                       : null
                   }
                   variant="outlined"
@@ -586,8 +632,9 @@ const productsOptions = useMemo(() => {
 
               {/* ===================Url=================== */}
               <Box component="div" mb={2}>
-                <URLComponent
+                <ValidUrlComponent
                   url={product.url}
+                  onSubmit={updateUrl}
                   onInputChange={(updatedUrl) => {
                     setProduct({
                       ...product,
@@ -647,21 +694,21 @@ const productsOptions = useMemo(() => {
                       if (e.target.value >= 0) {
                         e.target.value > product.pricing.sellprice
                           ? setProduct({
-                              ...product,
-                              pricing: {
-                                ...product.pricing,
-                                price: Number(e.target.value),
-                              },
-                            })
+                            ...product,
+                            pricing: {
+                              ...product.pricing,
+                              price: Number(e.target.value),
+                            },
+                          })
                           : dispatch({
-                              type: ALERT_SUCCESS,
-                              payload: {
-                                boolean: false,
-                                message:
-                                  "Sale price couldn't exceed original price",
-                                error: true,
-                              },
-                            });
+                            type: ALERT_SUCCESS,
+                            payload: {
+                              boolean: false,
+                              message:
+                                "Sale price couldn't exceed original price",
+                              error: true,
+                            },
+                          });
                       }
                     }}
                   />
@@ -678,21 +725,21 @@ const productsOptions = useMemo(() => {
                       if (e.target.value >= 0) {
                         e.target.value < product.pricing.price
                           ? setProduct({
-                              ...product,
-                              pricing: {
-                                ...product.pricing,
-                                sellprice: Number(e.target.value),
-                              },
-                            })
+                            ...product,
+                            pricing: {
+                              ...product.pricing,
+                              sellprice: Number(e.target.value),
+                            },
+                          })
                           : dispatch({
-                              type: ALERT_SUCCESS,
-                              payload: {
-                                boolean: false,
-                                message:
-                                  "Sale price couldn't exceed original price",
-                                error: true,
-                              },
-                            });
+                            type: ALERT_SUCCESS,
+                            payload: {
+                              boolean: false,
+                              message:
+                                "Sale price couldn't exceed original price",
+                              error: true,
+                            },
+                          });
                       }
                     }}
                   />
@@ -708,14 +755,14 @@ const productsOptions = useMemo(() => {
                       control={
                         <Checkbox
                           color="primary"
-                          checked={product.product_type.virtual}
+                          checked={get(product, 'product_type.virtual', false)}
                           name="virtual"
                           value="virtual"
                           onChange={(e) =>
                             setProduct({
                               ...product,
                               product_type: {
-                                ...product.product_type,
+                                ...product?.product_type,
                                 virtual: e.target.checked,
                               },
                             })
@@ -728,14 +775,14 @@ const productsOptions = useMemo(() => {
                       control={
                         <Checkbox
                           color="primary"
-                          checked={product.product_type.downloadable}
+                          checked={get(product, 'product_type.downloadable', false)}
                           name="downloadable"
                           value="downloadable"
                           onChange={(e) =>
                             setProduct({
                               ...product,
                               product_type: {
-                                ...product.product_type,
+                                ...product?.product_type,
                                 downloadable: e.target.checked,
                               },
                             })
@@ -749,7 +796,7 @@ const productsOptions = useMemo(() => {
               </Grid>
             </CardBlocks>
             {/* ===================Shipping=================== */}
-            {!product.product_type.virtual && (
+            {!product.product_type?.virtual && (
               <CardBlocks title="Shipping">
                 <ShippingComponent
                   product={product}

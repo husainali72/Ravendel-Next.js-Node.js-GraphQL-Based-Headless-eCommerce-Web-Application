@@ -158,6 +158,12 @@ const RoutesPath = [
     component: AddGroup,
   },
   {
+    path: `${client_app_route_url}edit-group/:id`,
+    exact: true,
+    name: "Add Group",
+    component: AddGroup,
+  },
+  {
     path: `${client_app_route_url}add-product`,
     exact: true,
     name: "Add Product",

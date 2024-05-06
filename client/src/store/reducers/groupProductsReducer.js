@@ -1,4 +1,4 @@
-import { GROUP_PRODUCTS_FAIL, GROUP_PRODUCTS_LOADING, GROUP_PRODUCTS_LOADING_FALSE, GROUP_PRODUCTS_SUCCESS } from "../action/groupProductAction";
+import { GROUP_PRODUCTS_FAIL, GROUP_PRODUCTS_LOADING, GROUP_PRODUCTS_LOADING_FALSE, GROUP_PRODUCTS_SUCCESS, GROUP_PRODUCT_FAIL, GROUP_PRODUCT_SUCCESS } from "../action/groupProductAction";
 
 const initialState = {
   groupProducts: [],
@@ -25,6 +25,19 @@ export default (state = initialState, action) => {
         success: true,
       };
     case GROUP_PRODUCTS_FAIL:
+      return {
+        ...state,
+        loading: false,
+        success: false,
+      };
+    case GROUP_PRODUCT_SUCCESS:
+      return {
+        ...state,
+        groupProduct: action.payload,
+        loading: false,
+        success: true,
+      };
+    case GROUP_PRODUCT_FAIL:
       return {
         ...state,
         loading: false,

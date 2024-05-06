@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Button,
@@ -41,13 +41,14 @@ import {
 import { client_app_route_url } from "../../utils/helper";
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { validate, validatenested } from "../components/validate";
 import Stack from '@mui/material/Stack';
 import CloseIcon from '@mui/icons-material/Close';
 import { getUpdatedUrl } from "../../utils/service";
 import GroupAttributes from "./components/groupAttributes";
-import { groupProductAddAction, groupProductsAction } from "../../store/action/groupProductAction";
+import { groupProductAction, groupProductAddAction, groupProductsAction } from "../../store/action/groupProductAction";
+import { get } from "lodash";
 
 
 function groupAttributes(attributes) {
@@ -80,14 +81,16 @@ const AddProductTheme = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
+  const { id } = useParams();
+  const isEditing = id !== undefined;
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
-  const loading = useSelector((state) => state.products.loading);
+  const loading = useSelector((state) => state.groupProducts.loading);
+  const groupProductState = useSelector((state) => state.groupProducts);
   const [shippingClass, setShippingClass] = useState('')
   const [taxClass, setTaxClass] = useState('')
-  const [product, setProduct] = useState({
-    name: "",
+  const [groupProduct, setGroupProduct] = useState({
+    title: "",
     description: "",
     categoryId: [],
     brand: null,
@@ -115,7 +118,7 @@ const AddProductTheme = () => {
       downloadable: false,
     },
     custom_field: [],
-    attribute: [],
+    attributes: [],
     variant: [],
     short_description: "",
     sku: "",
@@ -124,10 +127,10 @@ const AddProductTheme = () => {
   const addProduct = (e) => {
 
     e.preventDefault();
-    product.taxClass = taxClass
-    product.shipping.shippingClass = shippingClass
-    // let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "name"], product);
-    let errors = validate(["name"], product);
+    groupProduct.taxClass = taxClass
+    groupProduct.shipping.shippingClass = shippingClass
+    // let errors = validate(["short_description", "quantity", "sku", 'categoryId', "description", "title"], groupProduct);
+    let errors = validate(["title"], groupProduct);
     // let Errors = validatenested("pricing", ["price", "sellprice"], product);
     if (!isEmpty(errors)) {
       dispatch({
@@ -153,34 +156,34 @@ const AddProductTheme = () => {
       // product.combinations = combination;
       let variations = [];
       let attributes = []
-      if (product?.attribute && !!product?.attribute?.length) {
-        const groupedAttributes = groupAttributes(product.attribute);
-        // product.attributes = groupedAttributes;
+      if (groupProduct?.attribute && !!groupProduct?.attribute?.length) {
+        const groupedAttributes = groupAttributes(groupProduct.attribute);
+        // groupProduct.attributes = groupedAttributes;
         if (groupedAttributes && !!groupAttributes?.length) {
           const variants = getVariants(combination, groupedAttributes)
           attributes = groupedAttributes;
           variations = variants;
           // if(variants){
-          //   product.variations = variants;
+          //   groupProduct.variations = variants;
           // }
-          setProduct({
-            ...product,
+          setGroupProduct({
+            ...groupProduct,
             variations: variants,
             attributes: groupedAttributes
           })
         }
       }
       const obj = {
-        title: product?.name,
+        title: groupProduct?.title,
         attributes,
         variations,
         productIds: variations?.map(variation => variation?.productId)
       }
       dispatch(groupProductAddAction(obj, navigate))
-      // if (product.pricing.price !== 0) {
-      //   if (product.pricing.sellprice < product.pricing.price) {
+      // if (groupProduct.pricing.price !== 0) {
+      //   if (groupProduct.pricing.sellprice < groupProduct.pricing.price) {
 
-      //     dispatch(productAddAction(product, navigate));
+      //     dispatch(productAddAction(groupProduct, navigate));
       //   }
       //   else {
       //     dispatch({
@@ -206,63 +209,62 @@ const AddProductTheme = () => {
 
 
   };
-
-  const handleChange = (e) => {
-    setProduct({ ...product, [e.target.name]: e.target.value });
-  };
-
-  const onFeatureImageChange = (e) => {
-    setfeatureImage(null);
-    setfeatureImage(URL.createObjectURL(e.target.files[0]));
-
-    setProduct({ ...product, [e.target.name]: e.target.files });
-  };
-
-  const addCustomField = () => {
-    setProduct({
-      ...product,
-      custom_field: [...product.custom_field, { key: "", value: "" }],
-    });
-  };
-
-  const removeCustomField = (i) => {
-    product.custom_field.splice(i, 1);
-    setProduct({
-      ...product,
-      custom_field: [...product.custom_field],
-    });
-  };
-
-  const customChange = (e, i) => {
-    if (e.target.name === "key") {
-      product.custom_field[i].key = e.target.value;
-    } else {
-      product.custom_field[i].value = e.target.value;
+  useEffect(() => {
+    if (id) {
+      dispatch(groupProductAction(id))
     }
 
-    setProduct({
-      ...product,
-      custom_field: [...product.custom_field],
-    });
+  }, [dispatch, id])
+  useEffect(() => {
+    if (id && !isEmpty(get(groupProductState, "groupProduct"))) {
+      const convertedAttributes = []
+      let convertedVariations = []
+      if (get(groupProductState, 'groupProduct.attributes')) {
+        groupProductState.groupProduct.attributes?.forEach(item => {
+          item.values.forEach(value => {
+            convertedAttributes.push({
+              attribute_id: item._id,
+              attribute_value_id: value
+            });
+          });
+        });
+      }
+      if (get(groupProductState, 'groupProduct.variations')) {
+        const convertedArray = groupProductState.groupProduct.variations.map(item => {
+          return {
+              productId: item.productId,
+              combinations: item.combinations.map(combination => ({
+                  attributeId: combination.attributeId,
+                  attributeValueId: combination.attributeValueId
+              }))
+          };
+      });
+      convertedVariations = convertedArray;
+      }
+      setGroupProduct({
+        ...groupProduct,
+        attributes: convertedAttributes,
+        variations: convertedVariations,
+        // attributes:  get(groupProductState, 'groupProduct.attributes', []),
+        title: get(groupProductState, 'groupProduct.title')
+      })
+    }
+
+  }, [dispatch, get(groupProductState, 'groupProduct')])
+
+  const handleChange = (e) => {
+    setGroupProduct({ ...groupProduct, [e.target.name]: e.target.value });
   };
+
 
   const isUrlExist = async (url) => {
     let updatedUrl = await getUpdatedUrl("Product", url);
-    setProduct({
-      ...product,
+    setGroupProduct({
+      ...groupProduct,
       url: updatedUrl,
     });
   };
 
-  const onMetaChange = (e) => {
-    setProduct({
-      ...product,
-      meta: {
-        ...product.meta,
-        [e.target.name]: e.target.value,
-      },
-    });
-  };
 
   return (
     <>
@@ -284,11 +286,11 @@ const AddProductTheme = () => {
               <Box component="div" mb={2}>
                 <TextField
                   label="Name"
-                  name="name"
-                  value={product.name}
+                  name="title"
+                  value={groupProduct.title}
                   onChange={handleChange}
                   onBlur={(e) => (
-                    !product.url || product.url !== e.target.value ? isUrlExist(product.name) : null
+                    !groupProduct.url || groupProduct.url !== e.target.value ? isUrlExist(groupProduct.title) : null
                   )}
                   variant="outlined"
                   fullWidth
@@ -303,10 +305,10 @@ const AddProductTheme = () => {
             {/* ===================Attributes=================== */}
             <CardBlocks title="Attribute selection">
               <GroupAttributes
-                product={product}
-                productStateChange={({ ...product }) =>
-                  setProduct({
-                    ...product,
+                product={groupProduct}
+                productStateChange={({ ...groupProduct }) =>
+                  setGroupProduct({
+                    ...groupProduct,
                   })
                 }
                 onCombinationUpdate={(combination) => {

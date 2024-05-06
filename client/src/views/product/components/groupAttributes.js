@@ -83,14 +83,13 @@ const AttributesComponent = ({
     }
     if (product && attributeState.attributes.length) {
       let attrWithValue = {};
-      for (const attr of product.attribute) {
+      for (const attr of product.attributes) {
         if (!Array.isArray(attrWithValue[attr.attribute_id])) {
           attrWithValue[attr.attribute_id] = [];
         }
 
         attrWithValue[attr.attribute_id].push(attr.attribute_value_id);
       }
-
       currentAttribute.attribute_list = [];
       for (let i in attrWithValue) {
         let values = [];
@@ -139,9 +138,12 @@ const AttributesComponent = ({
       setcurrentVariants({
         ...currentVariants,
       });
+      if(product?.variations){
+        setcurrentVariants({...currentVariants, combinations: product?.variations})
+      }
     }
-  }, [attributeState.attributes, product.variation_master]);
-
+  }, [attributeState.attributes, product.variation_master, product?.attributes, product?.variations]);
+  
 
   const changeSelectedValue = (e, i) => {
     currentAttribute.attribute_list[i].selected_values = e;
