@@ -13,13 +13,14 @@ const SubCategoryProducts = ({
   handleScroll,
   handleSorting,
 }) => {
+
   return (
     <section className="product-cart-section">
       <Container>
         <div className="single-category-page">
           <div className="category-option">
             <SubCategoryList
-              categories={get(filteredProductData, "category", [])}
+              categoryTree={get(filteredProductData, "categoryTree", {})}
               name={"Category"}
             />
             {get(filteredProductData, "filterData", [])?.length > 0 && (
