@@ -21,8 +21,7 @@ const SingleCategoryProduct = () => {
     const { category } = get(router, "query");
     let variable = {
       mainFilter: {
-        // categoryId: "63b2b9d81681cb950fbf5b4b",
-        categoryId: "63b2b9d81681cb950fbf5b4b",
+        categoryUrl: category,
       },
       pageNo: 1,
       limit: LIMIT,
@@ -30,14 +29,13 @@ const SingleCategoryProduct = () => {
     setFilterPayload({ ...variable });
   }, [router]);
   useEffect(() => {
-    if (get(filterPayload, "mainFilter.categoryId")) {
+    if (get(filterPayload, "mainFilter.categoryUrl")) {
       dispatch(getFilteredProductsAction(filterPayload));
     }
   }, [filterPayload]);
   useEffect(() => {
     setFilteredProductData({
       ...get(productFilterData, "productFilter", {}),
-      isParentNull: false,
     });
   }, [productFilterData]);
   const handleFilter = (filters) => {
@@ -86,6 +84,9 @@ const SingleCategoryProduct = () => {
     });
     setFilterPayload({ ...filterPayload, filters: filteredData });
   };
+  const handleSorting = (sortingPayload) => {
+    setFilterPayload({ ...filterPayload, sort: sortingPayload });
+  };
   const handleScroll = () => {
     setFilterPayload((prevPayload) => ({
       ...prevPayload,
@@ -100,13 +101,16 @@ const SingleCategoryProduct = () => {
     <div>
       {/* <Meta title={singlecategory?.meta?.title} description={singlecategory?.meta?.description} keywords={singlecategory?.meta?.keywords}/> */}
       <PageTitle title={"category"} />
-      {filteredProductData?.isParentNull ? (
-        <ParentCategories categories={get(filteredProductData, "category")} />
+      {get(filteredProductData, "isMostParentCategory") ? (
+        <ParentCategories
+          categories={get(filteredProductData, "mostParentCategoryData", {})}
+        />
       ) : (
         <SubCategoryProducts
           filteredProductData={filteredProductData}
           handleFilter={handleFilter}
           handleScroll={handleScroll}
+          handleSorting={handleSorting}
         />
       )}
     </div>

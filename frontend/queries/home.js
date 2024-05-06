@@ -108,7 +108,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           }
           add_section_web {
             label
-            name
             visible
             category
           }
