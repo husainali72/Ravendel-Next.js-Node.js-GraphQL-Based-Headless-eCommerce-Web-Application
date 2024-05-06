@@ -6,7 +6,7 @@ import Image from "next/image";
 import PropTypes from "prop-types";
 const Homebanner = ({ settings, slider }) => {
   const [imageSrc, setImageSrc] = useState("");
-  const imageType = get(settings, "setting.imageStorage.status");
+  const imageType = get(settings, "imageStorage.status");
   const handleImageError = (e) => {
     // Handle the image loading error by setting a fallback image source
     if (e) {

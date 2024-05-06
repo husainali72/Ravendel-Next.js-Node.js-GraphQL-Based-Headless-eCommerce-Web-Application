@@ -22,7 +22,7 @@ import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
-  const settingState = useSelector((state) => state.settisngs);
+  const settingState = useSelector((state) => state.settings);
   const [themeSetting, setThemeSetting] = useState({});
   useEffect(() => {
     if (!isEmpty(get(settingState,'settings.appearance.theme'))) {

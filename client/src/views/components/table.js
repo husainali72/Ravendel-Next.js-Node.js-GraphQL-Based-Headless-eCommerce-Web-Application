@@ -272,7 +272,7 @@ const Tablecomponent = ({
                 <TableBody>
                   <TableRow>
                     <TableCell align="center" colSpan={6}>
-                      <img src={NodataImage} alt="No image" />
+                      <img src={NodataImage} alt="No image" className={classes.noImage}/>
                       <h3>No Data</h3>
                     </TableCell>
                   </TableRow>

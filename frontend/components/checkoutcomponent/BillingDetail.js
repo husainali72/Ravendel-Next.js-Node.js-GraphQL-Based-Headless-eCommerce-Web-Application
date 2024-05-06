@@ -10,6 +10,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { handleEnter } from "../../utills/helpers";
+import { get } from "lodash";
 const BillingDetails = (props) => {
   const {
     handleShippingPhone,
@@ -260,11 +261,11 @@ const BillingDetails = (props) => {
                 control={control}
                 rules={{
                   required: {
-                    value: billingInfo.phone ? false : true,
+                    value: get(billingInfo,'phone') ? false : true,
                     message: "Phone number is Required",
                   },
                   validate: () => {
-                    const cleanedPhoneNumber = billingInfo.phone.replace(
+                    const cleanedPhoneNumber = get(billingInfo,'phone','')?.replace(
                       /\D/g,
                       ""
                     );
@@ -615,14 +616,14 @@ const BillingDetails = (props) => {
                   rules={{
                     required: {
                       value: shippingAdd
-                        ? shippingInfo.phone
+                        ? shippingInfo?.phone
                           ? false
                           : true
                         : false,
                       message: "Phone number is Required",
                     },
                     validate: () => {
-                      const cleanedPhoneNumber = billingInfo.phone.replace(
+                      const cleanedPhoneNumber = get(billingInfo,'phone','')?.replace(
                         /\D/g,
                         ""
                       );

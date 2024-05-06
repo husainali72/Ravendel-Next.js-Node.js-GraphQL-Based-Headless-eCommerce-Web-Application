@@ -190,11 +190,13 @@ const Header = ({ setOpenMenu }) => {
           <div className="header-container header-wrap">
             <div className="app-logo">
               <Link href="/">
+                <a>
                 <ProductImage
                   src={get(settings, "setting.appearance.theme.logo")}
                   className="logo-image"
                   alt=""
                 />
+                </a>  
               </Link>
             </div>
             <div

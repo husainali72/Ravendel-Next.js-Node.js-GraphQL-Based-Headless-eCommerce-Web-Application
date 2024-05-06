@@ -28,6 +28,7 @@ const CheckBox = ({ options, value, name, onChange, className,type }) => {
               checked={option?.select}
             />
             {selectedOption === get(option,'value') && (
+              get(option,'description') && 
               <p className="payment_method_description">
              Description : {get(option,'description')}
               </p>

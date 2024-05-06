@@ -25,6 +25,7 @@ import {
 } from "recharts";
 import { get } from "lodash";
 import { baseUrl, bucketBaseURL, getBaseUrl } from "../../utils/helper";
+import { Alert } from "../components";
 const DashboardComponent = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -86,6 +87,7 @@ const DashboardComponent = () => {
   return (
     <Box component="div" p={isSmall ? 1 : 4}>
       <Grid container spacing={isSmall ? 1 : 4}>
+        <Alert/>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <DashboardCard
             count={dashBoardData.userCount}
