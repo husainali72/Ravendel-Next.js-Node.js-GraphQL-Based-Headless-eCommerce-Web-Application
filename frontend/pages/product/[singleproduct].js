@@ -20,7 +20,6 @@ import ReviewForm from "../../components/singleproductcomponent/ReviewForm";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import Reviews from "../../components/Reviews/Reviews";
-import { currencySetter } from "../../utills/helpers";
 import ReactHtmlParser, { convertNodeToElement } from "react-html-parser";
 import  { Toaster } from "react-hot-toast";
 import { get } from "lodash";
@@ -51,7 +50,6 @@ const options = {
 const SingleProduct = ({
   allProduct,
   singleproducts,
-  currencyStore,
   homepageData,
   lowStockThreshold,
   outOfStockVisibility,
@@ -59,19 +57,10 @@ const SingleProduct = ({
 }) => {
   const router = useRouter();
   const session = useSession();
-  const currencyOption = currencyStore?.currency_options;
-  const [currency, setCurrency] = useState("$");
   const [singleProduct, setSingleProduct] = useState(null);
   const [sliderImages, setSliderImages] = useState([]);
   const [singleProductReview, setSingleProductReview] = useState([]);
   const [stockClass, setStockClass] = useState("");
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
-  useEffect(() => {
-    currencySetter(get(currencyOption,'currency'), setCurrency);
-  }, []);
-
   useEffect(() => {
     const getReviews = async () => {
       try {
@@ -97,7 +86,10 @@ const SingleProduct = ({
 
     setSliderImages(allimages);
   }, [singleproducts]);
-
+  
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
   return (
     <div>
       <Head>
@@ -118,7 +110,6 @@ const SingleProduct = ({
                 <div>
                   <GalleryImagesComponents
                     homepageData={homepageData}
-                    currencyOption={currencyOption}
                     stockClass={stockClass}
                     setStockClass={setStockClass}
                     outOfStockThreshold={outOfStockThreshold}
@@ -126,7 +117,6 @@ const SingleProduct = ({
                     outOfStockVisibility={outOfStockVisibility}
                     galleryImages={sliderImages}
                     singleProducts={singleproducts}
-                    currency={currency}
                   />
                 </div>
               </div>
@@ -189,8 +179,6 @@ const SingleProduct = ({
                 <OnSaleProductCard
                   onSaleProduct={allProduct}
                   hidetitle
-                  currencyProp={currency}
-                  currencyOpt={currencyStore}
                   homepageData={homepageData}
                 />
               </div>
@@ -225,7 +213,6 @@ SingleProduct.propTypes = {
   recentProducts: PropTypes.array.isRequired,
   singleproducts: PropTypes.object.isRequired,
   productReviews: PropTypes.array.isRequired,
-  currencyStore: PropTypes.object.isRequired,
   homepageData: PropTypes.object.isRequired,
   lowStockThreshold: PropTypes.number.isRequired,
   outOfStockVisibility: PropTypes.bool.isRequired,
@@ -240,7 +227,6 @@ export async function getStaticProps({ params }) {
   let allProduct = [];
   let recentProducts = [];
   let productReviews = [];
-  var currencyStore = [];
   let lowStockThreshold = 4;
   let outOfStockVisibility = true;
   let outOfStockThreshold = 0;
@@ -264,7 +250,6 @@ export async function getStaticProps({ params }) {
       homepagedata,
       "getSettings.store.inventory.out_of_stock_visibility"
     );
-    currencyStore = get(homepagedata, "getSettings.store");
   } catch (e) {}
 
   /* ========================================= get SingleProduct Data========================================*/
@@ -308,7 +293,6 @@ export async function getStaticProps({ params }) {
       allProduct,
       productReviews,
       homepageData,
-      currencyStore,
       lowStockThreshold,
       outOfStockVisibility,
       outOfStockThreshold,

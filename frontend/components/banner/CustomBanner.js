@@ -1,19 +1,18 @@
-/* eslint-disable react/prop-types */
-import { Container } from 'react-bootstrap';
-const CustomBanner = ({variant}) => {
-    return (
-        <section className="product-cart-section">
-            <Container className="container">
-                <div className={`banner-container ${variant}`}>
-                    <div className="banner-content">
-                        
-                    </div>
-                </div>
-            </Container>
-
-
-
-        </section>
-    )
-}
+import PropTypes from "prop-types";
+import { Container } from "react-bootstrap";
+import ProductImage from "../imageComponent";
+const CustomBanner = ({ variant }) => {
+  return (
+    <section className="product-cart-section">
+      <Container className="container">
+        <div className={`banner-container section-banner`}>
+          <ProductImage className="banner-image" src={variant} />
+        </div>
+      </Container>
+    </section>
+  );
+};
+CustomBanner.propTypes = {
+  variant: PropTypes.string.isRequired,
+};
 export default CustomBanner;

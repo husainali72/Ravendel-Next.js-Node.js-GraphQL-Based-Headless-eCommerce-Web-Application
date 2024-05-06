@@ -11,6 +11,12 @@ const ProductCatSchema = new Schema({
     type: Schema.ObjectId,
     default: null
   },
+  attributeIds: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "productattributes"
+    }
+  ],
   url: {
     type: String
   },

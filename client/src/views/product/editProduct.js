@@ -46,6 +46,7 @@ import {
   baseUrl,
   getBaseUrl,
   getResponseHandler,
+  getCheckedIds,
 } from "../../utils/helper";
 import {
   Alert,
@@ -611,13 +612,14 @@ const productsOptions = useMemo(() => {
             {/* ===================Categories=================== */}
             <CardBlocks title="Categories">
             <EditCategoriesComponent
-                  selectedCategories={get(product, "categoryTree", [])}
+              selectedCategoriesTree={get(product, "categoryTree", [])}
+                  selectedCategories={get(product, "categoryId", [])}
                   onCategoryChange={(items) => {
                     if (items && items?.length > 0) {
-                      let categoryId = items?.map((item) => item.id);
+                      const checkedIds = getCheckedIds(items);
                       setProduct({
                         ...product,
-                        categoryId: categoryId,
+                        categoryId: checkedIds,
                         categoryTree: items,
                       });
                     }else{

@@ -192,7 +192,6 @@ OnSaleProductCard.propTypes = {
   onSaleProduct: PropTypes.array.isRequired,
   hideTitle: PropTypes.bool,
   titleShow: PropTypes.string,
-  currencyProp: PropTypes.string,
   currencyOpt: PropTypes.object,
   showRemoveButton: PropTypes.bool,
   removeButton: PropTypes.func,
