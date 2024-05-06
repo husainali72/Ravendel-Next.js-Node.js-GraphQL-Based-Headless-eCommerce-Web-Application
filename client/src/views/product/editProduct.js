@@ -597,7 +597,6 @@ const EditProductComponent = ({ params }) => {
     updatedProduct.specifications.push({ group: `Specification ${specificationsLength ? specificationsLength : ''}`, customFields: [{ key: '', value: '' }] })
     setProduct(updatedProduct)
   }
-  console.log('product--> ', product);
   return (
     <>
       <Alert />
