@@ -570,8 +570,10 @@ const ADD_ZIPCODE = gql`
 `;
 
 const UPDATE_ZIPCODE = gql`
-  mutation ($zip: String) {
-    updateZipcode(zip: $zip) {
+  mutation ($id: ID!
+    $zipcode: String!) {
+    updateZipcode(id: $id
+      zipcode: $zipcode) {
       message
       success
     }
