@@ -5493,3 +5493,11 @@ font-size: 12px;
 .custom-icon-color{
   color: black !important;
 }
+.product-no-data-container{
+  padding: 50px
+}
+.product-no-data-text{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

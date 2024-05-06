@@ -11,7 +11,7 @@ const SubCategoryProducts = ({
   filteredProductData,
   handleFilter,
   handleScroll,
-  handleSorting
+  handleSorting,
 }) => {
   return (
     <section className="product-cart-section">
@@ -49,11 +49,11 @@ const SubCategoryProducts = ({
                   </p>
                 </div>
                 <div className="totall-product ">
-                <CategorySorting
-                  activeSorting={get(filteredProductData,'sort',{})}
-                  filterProductData={filteredProductData}
-                  handleSorting={handleSorting}
-                />
+                  <CategorySorting
+                    activeSorting={get(filteredProductData, "sort", {})}
+                    filterProductData={filteredProductData}
+                    handleSorting={handleSorting}
+                  />
                 </div>
                 <InfiniteScroll
                   dataLength={
@@ -76,16 +76,8 @@ const SubCategoryProducts = ({
                 </InfiniteScroll>
               </div>
             ) : (
-              <div style={{ padding: "50px" }}>
-                <p
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  No Data Found
-                </p>
+              <div className="product-no-data-container">
+                <p className="product-no-data-text">No Data Found</p>
               </div>
             )}
           </div>
