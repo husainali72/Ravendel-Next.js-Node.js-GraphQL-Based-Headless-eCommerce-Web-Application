@@ -28,32 +28,38 @@ const AllproductComponent = () => {
   const columndata = [
     {
       name: "image",
+      type: "image",
       title: "image",
       sortingactive: false
     },
     {
       name: "date",
+      type: "date",
       title: "date",
       sortingactive: true
     },
     {
       name: "brand",
+      type: "brand",
       title: "Brand",
       sortingactive: true
     },
     {
       name: "name",
+      type: "name",
       title: "Name",
       sortingactive: true
     },
     {
       name: "status",
+      type: "badge",
       title: "Status",
       sortingactive: true
     },
     {
 
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

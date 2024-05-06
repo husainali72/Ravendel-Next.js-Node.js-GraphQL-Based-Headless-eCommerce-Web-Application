@@ -8,5 +8,7 @@ export const badgeColor = (color) => {
     if (color === "delivered") return "delivered"
     if (color === "outfordelivery") return "outfordelivery"
     if (color === "processing") return "warning"
+    if (color === "Publish") return "success"
+    if (color === "Draft") return "warning"
 
 }

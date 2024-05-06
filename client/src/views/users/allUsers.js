@@ -27,26 +27,31 @@ const AllUsersComponent = () => {
   const columndata = [
     {
       name: "image",
+      type: "image",
       title: "image",
       sortingactive: false
     },
     {
       name: "name",
+      type: "text",
       title: "name ",
       sortingactive: true
     },
     {
       name: "email",
+      type: "email",
       title: "email ",
       sortingactive: true
     },
     {
       name: "role",
+      type: "role",
       title: "role ",
       sortingactive: true
     },
     {
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

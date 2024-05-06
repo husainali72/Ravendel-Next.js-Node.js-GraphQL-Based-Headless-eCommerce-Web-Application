@@ -22,31 +22,37 @@ const AllReviewsComponent = () => {
   const columndata = [
     {
       name: "date",
+      type: "date",
       title: "date",
       sortingactive: true,
     },
     {
       name: "name",
+      type: "text",
       title: "Customer ",
       sortingactive: true,
     },
     {
       name: "last_modified",
+      type: "date",
       title: "Last Modified ",
       sortingactive: true,
     },
     {
       name: "reviewd_product",
+      type: "date",
       title: "Reviewed Product",
       sortingactive: true,
     },
     {
       name: "rating",
+      type: "rating",
       title: "Ratings",
       sortingactive: true,
     },
     {
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

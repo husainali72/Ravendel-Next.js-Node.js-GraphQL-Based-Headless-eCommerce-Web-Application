@@ -59,16 +59,19 @@ const AllCategoryComponent = () => {
   const columndata = [
     {
       name: "date",
+      type: "date",
       title: "date",
       sortingactive: true,
     },
     {
       name: "name",
+      type: "text",
       title: "name",
       sortingactive: true,
     },
     {
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

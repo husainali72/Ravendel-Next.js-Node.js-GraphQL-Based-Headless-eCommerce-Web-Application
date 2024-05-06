@@ -21,16 +21,19 @@ const AllAttributeComponent = () => {
   const columndata = [
     {
       name: 'name',
+      type: "text",
       title: "name",
       sortingactive: true
     },
     {
       name: 'values',
+      type: "text",
       title: "Values",
       sortingactive: true
     },
     {
       name: 'actions',
+      type: 'actions',
       title: "Actions",
       sortingactive: false,
       component: ActionButton,
