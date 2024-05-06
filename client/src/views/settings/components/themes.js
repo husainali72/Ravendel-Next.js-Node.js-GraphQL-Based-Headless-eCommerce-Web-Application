@@ -22,7 +22,7 @@ import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer";
 const ThemesComponent = () => {
   const classes = viewStyles();
   const dispatch = useDispatch();
-  const settingState = useSelector((state) => state.settings);
+  const settingState = useSelector((state) => state.settisngs);
   const [themeSetting, setThemeSetting] = useState({});
   useEffect(() => {
     if (!isEmpty(get(settingState,'settings.appearance.theme'))) {
@@ -62,7 +62,7 @@ const ThemesComponent = () => {
   return (
     <>
       <Alerts />
-      {settingState.loading ? <Loading /> : null}
+      {settingState?.loading ? <Loading /> : null}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box component="div">
@@ -84,7 +84,7 @@ const ThemesComponent = () => {
             {get(themeSetting,'logo') ? (
               <img
                 src={
-                  get(themeSetting, 'logo')?.startsWith("blob")
+                  get(themeSetting, 'logo','')?.startsWith("blob")
                     ? get(themeSetting, "logo", "")
                     : getBaseUrl(settingState) + get(themeSetting, "logo", "")
                 }

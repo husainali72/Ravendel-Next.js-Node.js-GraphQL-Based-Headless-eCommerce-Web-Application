@@ -360,7 +360,7 @@ const HomeSettingsTheme = () => {
             ) : (
               <div>
                 <FormGroup>
-                  {sectionData.map((select, index) => {
+                  {sectionData?.map((select, index) => {
                     return (
                       <div style={{ display: "flex" }} key={index}>
                         <FormControlLabel
@@ -381,8 +381,7 @@ const HomeSettingsTheme = () => {
                         />
 
                         {/* ===========DROPDOWN=========== */}
-
-                        {select.label === "Product from Specific Category" ? (
+                        {select?.label === "Product from Specific Category" ? (
                           <>
                             <Box sx={{ minWidth: 120 }}>
                               <FormControl fullWidth size="small">

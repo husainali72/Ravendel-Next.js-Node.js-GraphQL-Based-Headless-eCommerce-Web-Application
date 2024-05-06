@@ -33,13 +33,16 @@ products {
 }
 `;
 export const GET_FILTERED_PRODUCTS = gql`
-query GetProducts($mainFilter: customObject, $filters: customArray, $pageNo: Int, $limit: Int) {
-  getProducts(mainFilter: $mainFilter, filters: $filters, pageNo: $pageNo, limit: $limit) {
+query GetProducts($mainFilter: customObject, $filters: customArray,$sort: customObject $pageNo: Int, $limit: Int) {
+  getCategoryPageData(mainFilter: $mainFilter, filters: $filters, sort: $sort,pageNo: $pageNo, limit: $limit) {
     message
     success
-    category
+    isMostParentCategory
+    mostParentCategoryData
+    categoryTree
     filterData
     productData
+    sort
   }
 }
 `;
