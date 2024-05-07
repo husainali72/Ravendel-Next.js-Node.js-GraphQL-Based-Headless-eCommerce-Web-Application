@@ -4,7 +4,6 @@ const {
   isEmpty,
   MESSAGE_RESPONSE,
   toObjectID,
-  addCategoryAttributes,
 } = require("../config/helpers");
 const {
   GET_SINGLE_FUNC,
@@ -69,11 +68,6 @@ const addOrUpdateProductGroup = async (args, token, isAdd = false) => {
         message: `${productNames.join(", ")} are already assigned to a group.`,
         success: false,
       }
-    }
-
-    if(productIds.length) {
-      const products = await Product.find({_id: {$in: toObjectID(productIds)}}).select("categoryId")
-      await addCategoryAttributes(attributes, products, ProductCat)
     }
 
     if(isAdd) {
