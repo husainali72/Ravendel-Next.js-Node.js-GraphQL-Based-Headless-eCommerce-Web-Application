@@ -1010,7 +1010,7 @@ module.exports.emptyCart = emptyCart;
 
 const addZipcodes = async (zipcode_file, filepath, modal) => {
   try {
-    let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0].file;
+    let { filename, mimetype, encoding, createReadStream } = await zipcode_file.file;
     const stream = createReadStream();
 
     const path = `.${filepath}/${filename}`;
@@ -1034,7 +1034,7 @@ const addZipcodes = async (zipcode_file, filepath, modal) => {
         .on("error", reject);
     });
 
-    if (!fs.existsSync(path)) {
+    if (fs.existsSync(path)) {
       let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
       csvData = csvData.split(",");
 

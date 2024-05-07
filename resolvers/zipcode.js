@@ -6,6 +6,7 @@ const {
   _validate,
   checkToken,
   duplicateData,
+  addZipcodes
 } = require("../config/helpers");
 const { GET_SINGLE_FUNC } = require("../config/api_functions");
 
@@ -112,6 +113,12 @@ module.exports = {
       } catch(error) {
         return MESSAGE_RESPONSE("DELETE_ERROR", "Zipcode", false)
       }
+    },
+    addZipCodeUsingFile: async (root, args, { id }) => {
+      if (!args.zipcode_file) {
+        throw new Error(error.custom_message);
+      }
+      return await addZipcodes(args.zipcode_file, "/assets/images/setting", Zipcode);
     }
 
   }
