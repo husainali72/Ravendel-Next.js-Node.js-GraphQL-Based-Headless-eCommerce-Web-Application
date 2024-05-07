@@ -8,7 +8,7 @@ import {
   setItemToLocalStorage,
 } from "../../utills/helpers";
 
-import StarRating from "../../components/breadcrumb/rating";
+import StarRating from "../breadcrumb/rating";
 import {
   addToCart,
   calculateUnauthenticatedCart,

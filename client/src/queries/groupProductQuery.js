@@ -37,11 +37,20 @@ mutation Mutation($deleteGroupId: ID!) {
   }
 }
 `;
+
 const ADD_GROUP_PRODUCT = gql`
 mutation Mutation($title: String!, $attributes: [AttributeInput], $productIds: [ID], $variations: [VariationInput]) {
   addGroup(title: $title, attributes: $attributes, productIds: $productIds, variations: $variations) {
     success
     message
+  }
+}
+`;
+const UPDATE_GROUP_PRODUCT = gql`
+mutation UpdateGroup( $title: String!, $attributes: [AttributeInput], $variations: [VariationInput], $productIds: [ID], $updateGroupId: ID!) {
+  updateGroup( title: $title, attributes: $attributes, variations: $variations, productIds: $productIds, id: $updateGroupId) {
+    message
+    success
   }
 }
 `;
@@ -76,7 +85,9 @@ const GET_GROUP_PRODUCT = gql`query Query($groupId: ID!) {
 export {
   GET_GROUP_PRODUCTS,
   DELETE_GROUP_PRODUCT,
-  ADD_GROUP_PRODUCT
+  ADD_GROUP_PRODUCT,
+  GET_GROUP_PRODUCT,
+  UPDATE_GROUP_PRODUCT
 };
 
 

@@ -9,7 +9,7 @@ import {
   categoryAddAction,
 } from "../../../store/action/";
 import { baseUrl, bucketBaseURL, getBaseUrl } from "../../../utils/helper";
-import { getUpdatedUrl } from "../../../utils/service";
+import { getUpdatedUrl, query } from "../../../utils/service";
 import NoImagePlaceholder from "../../../assets/images/no-image-placeholder.png";
 import UserPlaceholder from "../../../assets/images/user-placeholder.png";
 import ImageIcon from "@mui/icons-material/Image";
@@ -31,6 +31,8 @@ import { validate } from "../../components/validate";
 import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 import TableComponent from "../../components/table.js";
 import ActionButton from "../../components/actionbutton.js";
+import ValidUrlComponent from "../../components/ValidUrlComponent.js";
+import { CHECK_VALID_URL } from "../../../queries/productQuery.js";
 var categoryObject = {
   name: "",
   parentId: null,
@@ -50,6 +52,7 @@ const AllCategoryComponent = () => {
   const setting = useSelector((state) => state.settings);
   const [singlecategory, setSingleCategory] = useState(categoryObject);
   const [editMode, setEditmode] = useState(false);
+  const [isUrlChanged, setIsUrlChanged] = useState(false);
   const [featuredImage, setfeaturedImage] = useState(null);
   const [filtered, setfilterdData] = useState([]);
   const [loading, setloading] = useState(false);
@@ -170,7 +173,7 @@ const AllCategoryComponent = () => {
 
   const updatefileChange = (e) => {
     const files = get(e, 'target.files', []);
-  
+
     if (files.length > 0) {
       setfeaturedImage(URL.createObjectURL(files[0]));
       setSingleCategory({
@@ -182,12 +185,47 @@ const AllCategoryComponent = () => {
     }
   };
 
+  // const isUrlExist = async (url) => {
+  //   if (url) {
+  //     setSingleCategory({
+  //       ...singlecategory,
+  //       url: url,
+  //     });
+  //     if (!isUrlChanged) {
+  //       setIsUrlChanged(true)
+  //     }
+  //   }
+  // };
   const isUrlExist = async (url) => {
-    setSingleCategory({
-      ...singlecategory,
-      url: url,
-    });
+    if (url && !editMode) {
+      updateUrl(url)
+    }
   };
+  const updateUrl = async (URL, setEditPermalink) => {
+    if (singlecategory?.id) {
+      await query(CHECK_VALID_URL, { url: URL, entryId: singlecategory?.id }).then(res => {
+        if (get(res, 'data.validateUrl.url')) {
+          const newUrl = get(res, 'data.validateUrl.url')
+          setSingleCategory({
+            ...singlecategory,
+            url: newUrl,
+          });
+          setEditPermalink((previous) => !previous)
+        }
+      });
+    } else {
+      await query(CHECK_VALID_URL, { url: URL }).then(res => {
+        if (get(res, 'data.validateUrl.url')) {
+          const newUrl = get(res, 'data.validateUrl.url')
+          setSingleCategory({
+            ...singlecategory,
+            url: newUrl,
+          });
+          setEditPermalink((previous) => !previous)
+        }
+      });
+    }
+  }
   const handleOnChangeSearch = (filtereData) => {
     setfilterdData(filtereData);
   };
@@ -227,13 +265,22 @@ const AllCategoryComponent = () => {
                 value={singlecategory.name}
                 onBlur={(e) =>
                   !singlecategory.url || singlecategory.url !== e.target.value
-                    ? isUrlExist(singlecategory.name)
+                    ? (!isUrlChanged && isUrlExist(singlecategory.name))
                     : null
                 }
               />
               <Box component="div" mb={singlecategory.url ? 2 : 0}>
-                <URLComponent
+                {/* <URLComponent
                   url={singlecategory.url}
+                  onInputChange={(updatedUrl) => {
+                    setSingleCategory({ ...singlecategory, url: updatedUrl });
+                  }}
+                  pageUrl="category"
+                  tableUrl="ProductCat"
+                /> */}
+                <ValidUrlComponent
+                  url={singlecategory.url}
+                  onSubmit={updateUrl}
                   onInputChange={(updatedUrl) => {
                     setSingleCategory({ ...singlecategory, url: updatedUrl });
                   }}
@@ -293,7 +340,7 @@ const AllCategoryComponent = () => {
                     <FeaturedImageComponent
                       image={featuredImage}
                       feautedImageChange={(e) => fileChange(e)}
-                      // style={{marginBottom: '200px'}}
+                    // style={{marginBottom: '200px'}}
                     />
                   </CardBlocks>
                 </Box>

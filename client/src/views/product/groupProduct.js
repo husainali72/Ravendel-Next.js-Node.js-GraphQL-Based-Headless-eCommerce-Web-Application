@@ -48,7 +48,7 @@ const GroupProductComponent = () => {
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          // navigate(`${client_app_route_url}edit-product/${id}`, { state: { editMode: true } })
+          navigate(`${client_app_route_url}edit-group/${id}`, { state: { editMode: true } })
         } else if (type === "delete") {
           dispatch(groupProductDeleteAction(id))
         }
@@ -66,7 +66,7 @@ const GroupProductComponent = () => {
 
       groupProducts.groupProducts.map((product) => {
         let object = {
-          id: product._id,
+          id: product.id,
           title: product?.title,
           // date: product.date,
           // status: product.status,
@@ -102,7 +102,7 @@ const GroupProductComponent = () => {
       <Grid container spacing={0} className={classes.mainrow}>
         <Grid item xl={12} md={12} >
           <TableComponent
-            loading={products.loading}
+            loading={groupProducts.loading}
             columns={columndata}
             rows={filtered}
             searchdata={Allproducts}

@@ -10,6 +10,12 @@ import {
   FormGroup,
   Tooltip,
   IconButton,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import viewStyles from "../../viewStyles";
 import { get } from "lodash";
@@ -246,7 +252,6 @@ const MobileAppSetting = () => {
   const imageOnError = (event) => {
     event.target.src = NoImagePlaceHolder;
   };
-
   return (
     <>
       <Alerts />
@@ -370,7 +375,7 @@ const MobileAppSetting = () => {
                       <table>
                         <tbody>
                           <tr style={{ lineHeight: "35px", fontSize: "14px" }}>
-                            {select?.label} - {!cat?.length ? "" : get(cat,'[0].name')}
+                            {select?.label} - {!cat?.length ? "" : get(cat, '[0].name')}
                           </tr>
                         </tbody>
                       </table>
@@ -390,7 +395,7 @@ const MobileAppSetting = () => {
             ) : (
               <div>
                 <FormGroup>
-                  {sectionData&&sectionData?.length>0? sectionData?.map((select, index) => {
+                  {/* {sectionData && sectionData?.length > 0 ? sectionData?.map((select, index) => {
                     return (
                       <>
                         <div style={{ display: "flex" }}>
@@ -414,7 +419,7 @@ const MobileAppSetting = () => {
                           />
 
                           {select.label ===
-                          "Product from Specific Categories" ? (
+                            "Product from Specific Categories" ? (
                             <>
                               {" "}
                               <Box sx={{ minWidth: 120 }}>
@@ -464,7 +469,7 @@ const MobileAppSetting = () => {
                                     select.section_img.startsWith("blob")
                                       ? select.section_img
                                       : getBaseUrl(settingState) +
-                                        select.section_img
+                                      select.section_img
                                   }
                                   onError={imageOnError}
                                 />
@@ -492,8 +497,154 @@ const MobileAppSetting = () => {
                         </div>
                       </>
                     );
-                  }):"No Data Found"}
+                  }) : "No Data Found"} */}
                 </FormGroup>
+                  <TableContainer className={classes.container}>
+                    <Table stickyHeader aria-label="faq-table" size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell padding="checkbox" />
+                          <TableCell>Image</TableCell>
+                          <TableCell colSpan={2}>Section</TableCell>
+                          <TableCell align="center">Type</TableCell>
+                          <TableCell align="center">Actions</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {
+                          sectionData && sectionData?.length > 0 ? sectionData?.map((select, index) => (
+                            <TableRow>
+                              <TableCell padding='checkbox'>
+                                {<FormControlLabel
+                                  control={
+                                    <>
+                                      <Checkbox
+                                        color="success"
+                                        checked={select?.visible || false}
+                                        onChange={(e) => {
+                                          onCheckBoxChange(
+                                            select.name,
+                                            e.target.checked,
+                                            index
+                                          );
+                                        }}
+                                      />
+                                    </>
+                                  }
+                                // label={select.label}
+                                />}
+                              </TableCell>
+                              <TableCell>
+                                <label htmlFor={`htmltag${index}`}>
+                                  {select.section_img ? (
+                                    <Box className={classes.logoImageBox}>
+                                      <img
+                                        className="mobileImage"
+                                        alt="section"
+                                        src={
+                                          select.section_img.startsWith("blob")
+                                            ? select.section_img
+                                            : getBaseUrl(settingState) +
+                                            select.section_img
+                                        }
+                                        onError={imageOnError}
+                                      />
+                                    </Box>
+                                  ) : (
+                                    <>
+                                      <h6>
+                                        <AddPhotoAlternateIcon
+                                          color="action"
+                                          style={{ marginTop: "8px" }}
+                                        />
+                                      </h6>
+                                    </>
+                                  )}
+                                </label>
+
+                                <input
+                                  key={index}
+                                  type="file"
+                                  accept="image/*"
+                                  id={`htmltag${index}`}
+                                  style={{ display: "none" }}
+                                  onChange={(e) => handleImageChange(e, index)}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                {select?.label && <Typography>{select?.label}</Typography>}
+                              </TableCell>
+                              <TableCell>
+                                {select.label ===
+                                  "Product from Specific Categories" ? (
+                                  <>
+                                    <Box sx={{ minWidth: 120 }}>
+                                      <FormControl fullWidth size="small">
+                                        <Select
+                                          value={select.category}
+                                          onChange={(e) =>
+                                            handleChangeCategory(e, index)
+                                          }
+                                          displayEmpty
+                                          inputProps={{
+                                            "aria-label": "Without label",
+                                          }}
+                                          disabled={!select.visible}
+                                        >
+                                          {category.categories.map((cat) => {
+                                            return (
+                                              <MenuItem
+                                                value={cat.id}
+                                                disabled={isCategoryUsed(cat.id)}
+                                              >
+                                                {cat.name}
+                                              </MenuItem>
+                                            );
+                                          })}
+                                        </Select>
+                                      </FormControl>
+                                    </Box>
+                                  </>
+                                ) : null}
+                              </TableCell>
+                              <TableCell>
+                                <Box sx={{ minWidth: 120 }}>
+                                  <FormControl fullWidth size="small">
+                                    <Select
+                                      displayEmpty
+                                      inputProps={{
+                                        "aria-label": "Without label",
+                                      }}
+                                    >
+                                      <MenuItem value='slider'>
+                                        Slider
+                                      </MenuItem>
+                                      <MenuItem value='grid'>
+                                        Grid
+                                      </MenuItem>
+                                    </Select>
+                                  </FormControl>
+                                </Box>
+                              </TableCell>
+                              <TableCell align="center">
+                                {select.label ===
+                                  "Product from Specific Categories" ? <Stack justifyContent='center' direction="row" spacing={1}>
+                                  <IconButton
+                                    color="error"
+                                    aria-label="delete"
+                                    onClick={(e) => removeCategory(index)}
+                                  >
+                                    <CloseIcon />
+                                  </IconButton>
+                                </Stack> : null}
+                              </TableCell>
+                            </TableRow>
+                          )) :
+                            'No data found'
+                        }
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
 
                 <Grid item xs={12}>
                   <Button

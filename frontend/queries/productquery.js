@@ -26,15 +26,6 @@ products {
       product_type
       custom_field
       date
-      attribute
-      attribute_master {
-        id
-        name
-        attribute_values
-        createdAt
-        updatedAt
-      }
-
       updated
       short_description
     }
@@ -104,7 +95,6 @@ export const GET_SINGLE_PRODUCT = gql`
       custom_field
       date
       updated
-    
       categoryId {
         id
         name

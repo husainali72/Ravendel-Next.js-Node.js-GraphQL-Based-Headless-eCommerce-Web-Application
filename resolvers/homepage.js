@@ -11,7 +11,7 @@ module.exports = {
           throw new Error("not found");
         }
         let output = {};
-        output.parantCategories = await productCategory.find({ parentId: null });
+        output.parentCategories = await productCategory.find({ parentId: null });
         output.sections = [];
 
         let sections;

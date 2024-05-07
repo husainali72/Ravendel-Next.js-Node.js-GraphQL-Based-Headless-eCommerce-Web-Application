@@ -248,7 +248,7 @@ const Tablecomponent = ({
                                   <TableCell>
                                     <column.component
                                       onClick={(type) =>
-                                        column?.buttonOnClick(type, data?.id)
+                                        column?.buttonOnClick(type, (data?.id || data?._id))
                                       }
                                       showDeleteButton={
                                         data.system ? false : showDeleteButton
