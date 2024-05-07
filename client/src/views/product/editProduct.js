@@ -35,6 +35,7 @@ import {
 import { getUpdatedUrl, query } from "../../utils/service";
 import { ALERT_SUCCESS } from "../../store/reducers/alertReducer";
 import {
+  validatSpecification,
   validate,
   validatenested,
   validatenestedArray,
@@ -114,7 +115,7 @@ let defaultobj = {
   specifications: [
     {
       group: "Specification 1",
-      customFields: [{ key: "", value: "" }],
+      customFields: [{ key: null, value: null }],
     },
   ],
   // attribute: [],
@@ -190,10 +191,10 @@ const EditProductComponent = ({ params }) => {
           if (productState.product?.specifications) {
             groupedSpecifications = productState.product?.specifications.reduce((acc, spec) => {
               if (!acc.some(ac => ac?.group === spec.group)) {
-                acc.push({ group: spec?.group, customFields: [{ attributeId: spec?.attributeId, attributeValueId: spec?.attributeValueId, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) }] })
+                acc.push({ group: spec?.group, customFields: [{ attributeId: spec?.attributeId, attributeValueId: spec?.attributeValueId, keyLabel:getAttributeKeyObject(spec?.attributeId)?.name, valueLabel:getAttributeValueObject(spec?.attributeId, spec?.attributeValueId)?.name,  key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) }] })
               } else {
                 const Index = acc.findIndex(ac => ac?.group === spec.group);
-                acc[Index]?.customFields && acc[Index].customFields.push({ attributeId: spec.attributeId, attributeValueId: spec.attributeValueId, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) });
+                acc[Index]?.customFields && acc[Index].customFields.push({ attributeId: spec.attributeId, attributeValueId: spec.attributeValueId, keyLabel:getAttributeKeyObject(spec?.attributeId)?.name, valueLabel:getAttributeValueObject(spec?.attributeId, spec?.attributeValueId)?.name, key: getAttributeKeyObject(spec?.attributeId), value: getAttributeValueObject(spec?.attributeId, spec?.attributeValueId) });
               }
               return acc;
             }, []);
@@ -261,11 +262,11 @@ const EditProductComponent = ({ params }) => {
       ],
       product
     );
-    let custom_field = "";
+    let specifications = "";
 
-    // if (product.custom_field && product.custom_field.length > 0) {
-    //   custom_field = validatenested("custom_field", ["key", "value"], product);
-    // }
+    if (product.specifications && product.specifications.length > 0) {
+      specifications = validatSpecification(product?.specifications);
+    }
     if (product.combinations && product.combinations.length > 0) {
       combination_error = validatenested(
         "combinations",
@@ -318,21 +319,12 @@ const EditProductComponent = ({ params }) => {
           error: true,
         },
       });
-    } else if (!isEmpty(custom_field)) {
+    } else if (!isEmpty(specifications)) {
       dispatch({
         type: ALERT_SUCCESS,
         payload: {
           boolean: false,
-          message: custom_field,
-          error: true,
-        },
-      });
-    } else if (!isEmpty(combination_price_error)) {
-      dispatch({
-        type: ALERT_SUCCESS,
-        payload: {
-          boolean: false,
-          message: custom_field,
+          message: specifications,
           error: true,
         },
       });
@@ -414,7 +406,7 @@ const EditProductComponent = ({ params }) => {
   const addCustomField = () => {
     setProduct({
       ...product,
-      custom_field: [...product.custom_field, { key: "", value: "" }],
+      custom_field: [...product.custom_field, { key: null, value: null }],
     });
   };
 
@@ -551,7 +543,7 @@ const EditProductComponent = ({ params }) => {
   }
   const addSpecificationField = (index) => {
     const updatedProduct = { ...product };
-    updatedProduct.specifications[index].customFields.push({ key: '', value: '' })
+    updatedProduct.specifications[index].customFields.push({ key: null, value: null })
     setProduct(updatedProduct)
   }
   const removeSpecificationField = (index) => {
@@ -567,7 +559,7 @@ const EditProductComponent = ({ params }) => {
   const addSpecificationGroup = () => {
     const updatedProduct = { ...product };
     const specificationsLength = get(product, 'specifications')?.length + 1;
-    updatedProduct.specifications.push({ group: `Specification ${specificationsLength ? specificationsLength : ''}`, customFields: [{ key: '', value: '' }] })
+    updatedProduct.specifications.push({ group: `Specification ${specificationsLength ? specificationsLength : ''}`, customFields: [{ key: null, value: null }] })
     setProduct(updatedProduct)
   }
   return (
