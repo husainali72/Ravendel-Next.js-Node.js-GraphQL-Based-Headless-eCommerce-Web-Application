@@ -1650,7 +1650,7 @@ const addOrder = async(args) => {
         quantity: (+item.qty)
       }
     });
-    request.requestBody({
+    const requestBody = {
       intent:'CAPTURE',
       purchase_units: [
         {
@@ -1661,6 +1661,10 @@ const addOrder = async(args) => {
               item_total: {
                 currency_code: currencycode,
                 value: calculatedCart.totalSummary.cartTotal
+              },
+              tax_total: {
+                currency_code: currencycode,
+                value: calculatedCart.totalSummary.totalTax
               },
               shipping: {
                 currency_code: currencycode,
@@ -1675,7 +1679,8 @@ const addOrder = async(args) => {
           items: paypalItems
         }
       ]
-    });
+    };
+    request.requestBody(requestBody);
     const order = await paypalClient.execute(request);
     paypalOrderId = order.result.id;
     
