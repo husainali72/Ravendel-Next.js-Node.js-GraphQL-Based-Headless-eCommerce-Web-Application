@@ -713,16 +713,16 @@ const populateYearMonth = (
   let monthObj = {
     month: moment(orderMonth + 1, "MM").format("MMM"),
     orders: [order],
-    GrossSales: order.cartTotal,
-    NetSales: order.grandTotal,
+    GrossSales: order.totalSummary.cartTotal,
+    NetSales: order.totalSummary.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal,
   };
   let yearObj = {
     year: orderYear,
     months: [monthObj],
-    GrossSales: order.cartTotal,
-    NetSales: order.grandTotal,
+    GrossSales: order.totalSummary.cartTotal,
+    NetSales: order.totalSummary.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal,
   };
@@ -740,8 +740,8 @@ const populateSales = (
   paymentSuccessSubTotal,
   paymentSuccessGrandTotal
 ) => {
-  data.GrossSales += order.cartTotal;
-  data.NetSales += order.grandTotal;
+  data.GrossSales += order.totalSummary.cartTotal;
+  data.NetSales += order.totalSummary.grandTotal;
   data.paymentSuccessGrossSales += paymentSuccessSubTotal;
   data.paymentSuccessNetSales += paymentSuccessGrandTotal;
 
