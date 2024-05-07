@@ -1278,9 +1278,8 @@ const calculateCart = async (userId, cartItems) => {
         // console.log('taxPercentage', taxPercentage);
       }
 
-      // console.log('before calculating tax amount');
       prod.taxAmount = 0;
-      if (taxPercentage != 0) {
+      if (taxPercentage && taxPercentage != 0) {
         // console.log('tax.is_inclusive : ', tax.is_inclusive);
         if (!tax.is_inclusive) {
           prod.taxAmount = prod.amount * taxPercentage / 100;
