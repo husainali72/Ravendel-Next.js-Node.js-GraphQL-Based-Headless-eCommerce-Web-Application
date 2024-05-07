@@ -265,7 +265,7 @@ const Tablecomponent = ({
           <TablePagination
             rowsPerPageOptions={[5, 10, 20]}
             component="div"
-            count={rows.length || 0}
+            count={rows?.length || 0}
             rowsPerPage={rowsPerPage || 10}
             page={page || 0}
             onPageChange={handleChangePage}

@@ -98,7 +98,7 @@ export function Searching({ searchData, handleOnChangeSearch, dropdown, statusTa
     }, [searchState, startDate, endDate, MuiTabsvalue, paymentstatus, shippingstatus])
     const searchfilter = () => {
 
-        const filterdata = searchData.filter(data => {
+        const filterdata = searchData?.filter(data => {
             const matchesSearch = searchState ? Object.values(data).some(val => String(val).toLowerCase().includes(searchState.toLowerCase())) : true;
             const matchesTabs = MuiTabsvalue === 'All' || data[statusTabData.name] === MuiTabsvalue;
             const matchesPaymentStatus = !paymentstatus || data['paymentStatus'].toLowerCase().includes(paymentstatus);
