@@ -199,9 +199,8 @@ const AttributesComponent = ({
       ...currentAttribute,
     });
   };
-
   const saveAttribute = () => {
-    setLoading(true);
+    // setLoading(true);
     product.attribute = [];
     product.variant = [];
     let isValidattribute = false
@@ -213,11 +212,15 @@ const AttributesComponent = ({
               attribute_id: attr.id,
               attribute_value_id: val.value,
             });
+            product.attributes.push({
+              attribute_id: attr.id,
+              attribute_value_id: val.value,
+            });
           });
 
-          if (attr.isVariant) {
+          // if (attr.isVariant) {
             product.variant.push(attr.id);
-          }
+          // }
           isValidattribute = true;
         } else {
           isValidattribute = false;
@@ -259,9 +262,11 @@ const AttributesComponent = ({
     for (const i of product.variant) {
       variants[i] = [];
     }
-    for (let attr of product.attribute) {
-      if (variants.hasOwnProperty(attr.attribute_id)) {
-        variants[attr.attribute_id].push(attr.attribute_value_id);
+    if(product && product?.attribute && product?.attribute.length >=0){
+      for (let attr of product.attribute) {
+        if (variants.hasOwnProperty(attr.attribute_id)) {
+          variants[attr.attribute_id].push(attr.attribute_value_id);
+        }
       }
     }
     if (!Object.keys(variants).length) {
@@ -292,17 +297,18 @@ const AttributesComponent = ({
           index = key;
         }
       });
+      
       if (max) {
         generatedVariants.push({
           combinations: comb,
           productID: currentVariants.combinations[index]?.productID,
-          sku: currentVariants.combinations[index].sku,
-          quantity: currentVariants.combinations[index].quantity,
-          pricing: {
-            price: currentVariants.combinations[index].pricing.price,
-            sellprice: currentVariants.combinations[index].pricing.sellprice,
-          },
-          image: currentVariants.combinations[index].image || ""
+          // sku: currentVariants.combinations[index].sku,
+          // quantity: currentVariants.combinations[index].quantity,
+          // pricing: {
+          //   price: currentVariants.combinations[index].pricing.price,
+          //   sellprice: currentVariants.combinations[index].pricing.sellprice,
+          // },
+          // image: currentVariants.combinations[index].image || ""
         });
 
         currentVariants.combinations.splice(index, 1);
@@ -525,6 +531,9 @@ const AttributesComponent = ({
                                 value={variant.productID}
                                 onChange={(e) => variantChange(e, index)}
                               >
+                                <MenuItem value =''>
+                                  <i>None</i>
+                                </MenuItem>
                                 {!!products?.length && products?.map(
                                   (product, index) => {
                                     return (

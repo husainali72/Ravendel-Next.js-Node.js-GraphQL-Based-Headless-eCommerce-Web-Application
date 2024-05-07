@@ -185,15 +185,20 @@ const AllCategoryComponent = () => {
     }
   };
 
+  // const isUrlExist = async (url) => {
+  //   if (url) {
+  //     setSingleCategory({
+  //       ...singlecategory,
+  //       url: url,
+  //     });
+  //     if (!isUrlChanged) {
+  //       setIsUrlChanged(true)
+  //     }
+  //   }
+  // };
   const isUrlExist = async (url) => {
-    if (url) {
-      setSingleCategory({
-        ...singlecategory,
-        url: url,
-      });
-      if (!isUrlChanged) {
-        setIsUrlChanged(true)
-      }
+    if (url && !editMode) {
+      updateUrl(url)
     }
   };
   const updateUrl = async (URL, setEditPermalink) => {

@@ -378,38 +378,7 @@ const EditProductComponent = ({ params }) => {
     }
   };
 
-  const isUrlExist = async (url) => {
-    if (url && !productId) {
-      let updatedUrl = await getUpdatedUrl("Product", url);
-      setProduct({
-        ...product,
-        url: updatedUrl,
-      });
-      if (!isUrlChanged) {
-        setIsUrlChanged(true)
-      }
-    } else if (url && productId) {
-      let updatedUrl = await getUpdatedUrl("Product", url, productId);
-      // setProduct({
-      //   ...product,
-      //   url: updatedUrl,
-      // });
-      // if(!isUrlChanged){
-      //   setIsUrlChanged(true)
-      // }
-    }
-    // if (productId) {
-    //   let updatedUrl = await getUpdatedUrl("Product", url);
-    //   setProduct({
-    //     ...product,
-    //     url: updatedUrl,
-    //   });
-    // } else {
-    //   setProduct({
-    //     ...product,
-    //   });
-    // }
-  };
+
   const updateUrl = async (URL, setEditPermalink) => {
     if (productId) {
       await query(CHECK_VALID_URL, { url: URL, entryId: productId }).then(res => {
@@ -435,7 +404,11 @@ const EditProductComponent = ({ params }) => {
       });
     }
   }
-
+  const isUrlExist = async (url) => {
+    if (url && !productId) {
+      updateUrl(url)
+    }
+    }
   const [selectedClonedProject, setSelectedClonedProject] = useState('')
 
   const addCustomField = () => {

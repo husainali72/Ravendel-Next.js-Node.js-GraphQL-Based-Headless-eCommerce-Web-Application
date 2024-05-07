@@ -6,7 +6,7 @@ import {
 } from "../../utils/helper";
 import { ALERT_SUCCESS } from "../reducers/alertReducer";
 import { mutation, query } from "../../utils/service";
-import { ADD_GROUP_PRODUCT, DELETE_GROUP_PRODUCT, GET_GROUP_PRODUCT, GET_GROUP_PRODUCTS } from "../../queries/groupProductQuery";
+import { ADD_GROUP_PRODUCT, DELETE_GROUP_PRODUCT, GET_GROUP_PRODUCT, GET_GROUP_PRODUCTS, UPDATE_GROUP_PRODUCT } from "../../queries/groupProductQuery";
 
 export const groupProductsAction = () => (dispatch) => {
   dispatch({
@@ -96,6 +96,53 @@ export const groupProductAddAction = (object, navigate) => (dispatch) => {
       const [error, success, message, data] = mutationResponseHandler(
         response,
         "addGroup"
+      );
+      dispatch({
+        type: GROUP_PRODUCT_LOADING_FALSE,
+      });
+
+      if (error) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: false, message: message, error: true },
+        });
+      }
+
+      if (success) {
+        dispatch(groupProductsAction());
+        navigate(`${client_app_route_url}group-products`);
+        return dispatch({
+          type: ALERT_SUCCESS,
+          payload: { boolean: true, message: message, error: false },
+        });
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: GROUP_PRODUCT_FAIL,
+      });
+
+      // dispatch({
+      //   type: TINYMCE_DESCRIPTION_NULL,
+      //   payload: {},
+      // });
+
+      return dispatch({
+        type: ALERT_SUCCESS,
+        payload: { boolean: false, message: error, error: true },
+      });
+    });
+};
+export const groupProductUpdateAction = (object, navigate) => (dispatch) => {
+  dispatch({
+    type: GROUP_PRODUCT_LOADING,
+  });
+
+  mutation(UPDATE_GROUP_PRODUCT, object)
+    .then((response) => {
+      const [error, success, message, data] = mutationResponseHandler(
+        response,
+        "updateGroup"
       );
       dispatch({
         type: GROUP_PRODUCT_LOADING_FALSE,
