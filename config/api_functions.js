@@ -6,7 +6,8 @@ const {
   MESSAGE_RESPONSE,
   _validate,
   prodAvgRating,
-  UploadImageLocal
+  UploadImageLocal,
+  sendEmailTemplate
 } = require("./helpers");
 const bcrypt = require("bcryptjs");
 const Setting = require("../models/Setting");
@@ -301,6 +302,11 @@ const CREATE_FUNC = async (
     if (name === "Review") {
       await prodAvgRating(data.productId, modal, modal2)
     }
+
+    if(name === "Customer"){
+      sendEmailTemplate("WELCOME", data)
+    }
+
     return MESSAGE_RESPONSE("AddSuccess", name, true);
   } catch (error) {
     return MESSAGE_RESPONSE("CREATE_ERROR", name, false);

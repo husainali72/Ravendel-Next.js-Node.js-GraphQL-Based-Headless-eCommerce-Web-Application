@@ -36,7 +36,7 @@ const PaymentFailed = () => {
     }
   };
   // If payment status is not updated, dispatch action to update it
-  const updateOrderPaymentStatus = () => {
+  const updateOrderPaymentStatus = async () => {
     const { orderId } = get(router, "query");
     let payload = {
       id: orderId,
@@ -45,8 +45,7 @@ const PaymentFailed = () => {
     let customerId=get(session, "data.user.accessToken.customer._id")
     let paymentStatus = get(orderDetail, "order.paymentStatus");
     if (paymentStatus && paymentStatus !== "failed") {
-      dispatch(updatePaymentStatus(payload,customerId));
-      getOrderDetails();
+     await dispatch(updatePaymentStatus(payload,customerId));
     }
   };
   return (
