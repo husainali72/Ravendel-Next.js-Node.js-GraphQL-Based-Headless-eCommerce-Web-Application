@@ -159,6 +159,10 @@ const OrderSchema = new Schema({
   },
 
   totalSummary: {
+    currency_code: {
+      type: String,
+      required: true
+    },
     mrpTotal: {
       type: Number,
       required: true

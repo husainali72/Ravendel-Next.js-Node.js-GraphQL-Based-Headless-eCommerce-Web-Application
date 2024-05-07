@@ -72,7 +72,7 @@ module.exports = {
                   .limit(10);
                 break;
 
-              case "Product from Specific Categories":
+              case "Product from Specific Category":
                 let category_id = new mongoose.Types.ObjectId(section.category);
                 let pipeline = [
                   {

@@ -1543,6 +1543,10 @@ const addOrder = async(args) => {
       couponApplied:false
     }
   }
+  let currencycode = setting.store.currency_options.currency.toUpperCase();
+
+  calculatedCart.totalSummary.currency_code = currencycode;
+
   const newOrder = new Order({
     orderNumber: orderNumber,
     userId: args.userId,
@@ -1556,8 +1560,6 @@ const addOrder = async(args) => {
   });
   
   const savedOrder = await newOrder.save();
-  
-  let currencycode = setting.store.currency_options.currency.toUpperCase();
 
   let environmentBool = process.env.NODE_ENV.trim() === 'production';
 
@@ -1737,9 +1739,10 @@ const updatePaymentStatus = async (userId, args) => {
     let testMode, clientIdKey, secretKey;
 
     let orderData = await Order.findOne(
-      { _id: id },
-      { billing: 1, transactionDetail: 1, products: 1, paymentStatus: 1 }
+      { _id: id }
     );
+
+    orderData.email = orderData.billing.email;
 
     if (orderData.paymentStatus === "success") {
       return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
@@ -1818,7 +1821,6 @@ const updatePaymentStatus = async (userId, args) => {
         });
 
         let razorpayOrderData = await razorpayInstance.orders.fetch(orderId)
-        razorpayOrderData.status = "paid"
 
         if(razorpayOrderData.status == "paid"){
           eligibleToUpdateSuccess = true;
@@ -1831,6 +1833,7 @@ const updatePaymentStatus = async (userId, args) => {
     }
 
     if (!eligibleToUpdateSuccess) {
+      await sendEmailTemplate("ORDER_FAILED", orderData)
       return MESSAGE_RESPONSE("PaymentUnpaid", null, false);
     } else {
       try {
@@ -1842,13 +1845,17 @@ const updatePaymentStatus = async (userId, args) => {
             });
           }
           orderData.paymentStatus = "success";
+          orderData.email = orderData.billing.email;
+
           await orderData.save();
+          await sendEmailTemplate("ORDER_PLACED", orderData)
         }
         const cart = await Cart.findOne({
           userId: new mongoose.Types.ObjectId(userId),
         });
         await emptyCart(cart);
       } catch (error) {
+        await sendEmailTemplate("ORDER_FAILED", orderData)
         return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
       }
       return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
@@ -1898,40 +1905,68 @@ const sendMail = async (data) => {
     })
     const response = await transporter.sendMail(data);
   } catch(error) {
-    console.log(error.message);
+    console.log("Error in sendMail : ", error.message);
   }
 };
 
-const fillPlaceholders = async (template, placeholder) => {
+const fillPlaceholders = async (template, data) => {
   let emailTemplate = { subject: template.subject, body: template.body };
+  
+  for (const unit of template.placeholders) {
+    let placeholderName = unit.name;
+    let placeholderValue = unit.value;
+    let dataValue = placeholderValue.split('.').reduce((obj, key) => obj[key], data);
 
-  for( let i in placeholder){
-    const placeholderName = placeholder[i].name;
-    const placeholderValue = placeholder[i].value;
-    emailTemplate.subject = emailTemplate.subject.replaceAll(placeholderName, placeholderValue);
-    emailTemplate.body = emailTemplate.body.replaceAll(placeholderName, placeholderValue);
+    switch (unit.type) {
+      case "DATE":
+        dataValue = formatDate(dataValue);
+        break;
+      case "FIRST_CAP":
+        dataValue = dataValue[0].toUpperCase() + dataValue.slice(1);
+        break;
+      case "MONEY":
+        dataValue = `${data.totalSummary.currency_code} ${dataValue}`
+        break;
+      case "CONDITIONAL":
+        if(dataValue == 0){
+          dataValue = ""
+        }
+        else{
+          let html = unit.html;
+          html = html.replaceAll("{{optional_value}}", `${data.totalSummary.currency_code} ${dataValue}`)
+          dataValue = html;
+        }
+        break;
+      default:
+        break;
+    }
+
+    emailTemplate.subject = emailTemplate.subject.replaceAll(placeholderName, dataValue);
+    emailTemplate.body = emailTemplate.body.replaceAll(placeholderName, dataValue);
   }
 
   return emailTemplate;
 };
 
 
+
 const fillproductDetails = (looping_text, products) => {
   let output = "";
-  for (let i in products)
+  for (unit of products)
   {
     let html = looping_text
-    html = html.replaceAll("{{product_url}}", `https://demo1-ravendel.hbwebsol.com/${products[i].productImage}`)
-    html = html.replaceAll("{{product_name}}", products[i].productTitle)
-    html = html.replaceAll("{{product_quantity}}", products[i].qty)
-    html = html.replaceAll("{{product_price}}", products[i].productPrice)
-    html = html.replaceAll("{{product_total_price}}", products[i].total)
+    html = html.replaceAll("{{product_url}}", `https://demo1-ravendel.hbwebsol.com/${unit.productImage}`)
+    // html = html.replaceAll("{{product_url}}", `https://picsum.photos/200`)
+    html = html.replaceAll("{{product_name}}", unit.productTitle)
+    html = html.replaceAll("{{product_quantity}}", unit.qty)
+    html = html.replaceAll("{{product_price}}", unit.productPrice)
+    html = html.replaceAll("{{product_total_price}}", unit.total)
     output = output + html
   }
   return output;
 }
 
-const sendEmailTemplate = async (template_name, placeholder) => {
+const sendEmailTemplate = async (template_name, data) => {
 
   const emailTemplateModel = require("../models/EmailTemplate");
   try {
@@ -1939,25 +1974,31 @@ const sendEmailTemplate = async (template_name, placeholder) => {
       template_name: template_name,
     });
 
+    let emailTemplate = await fillPlaceholders(template, data);
     
-    let emailTemplate = await fillPlaceholders(template, placeholder.values);
-    
-    let loopingProducts = await fillproductDetails(template.looping_text, placeholder.products)
-
-    emailTemplate.body = emailTemplate.body.replace("{{looping}}",loopingProducts)
-
-      
-      let data = {
+    if(template.looping_text)
+    {
+      let loopingProducts = await fillproductDetails(template.looping_text, data.products)
+      emailTemplate.body = emailTemplate.body.replace("{{looping}}",loopingProducts)
+    }
+      let email_data = {
         from: "ravendel@hbwebsol.com",
-        to: placeholder.email,
+        to: data.email,
         subject: emailTemplate.subject,
         html: emailTemplate.body
       }
       
-      await sendMail(data)
+      await sendMail(email_data)
   } catch (error) {
-    console.log("Error in sendEmailTemplate", error.message);
+    console.log("Error in sendEmailTemplate", error);
   }
+};
+module.exports.sendEmailTemplate = sendEmailTemplate;
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString('en-US', options);
 };
 module.exports.updatePaymentStatus = updatePaymentStatus;
 
