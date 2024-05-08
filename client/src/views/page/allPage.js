@@ -24,21 +24,25 @@ const AllPagesComponent = () => {
   const columndata = [
     {
       name: "date",
+      type: "date",
       title: "date",
       sortingactive: true
     },
     {
       name: "name",
+      type: "text",
       title: "Name ",
       sortingactive: true
     },
     {
       name: "status",
+      type: "text",
       title: "Status ",
       sortingactive: true
     },
     {
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

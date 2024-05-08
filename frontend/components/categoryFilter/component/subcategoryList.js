@@ -41,7 +41,7 @@ const SubCategoryList = ({ name,categoryTree }) => {
           <div className="widget-category">
             <h4 className="category-section-title">{name}</h4>
             <ul className="categories-shop">
-              {categoryTree ? (
+              {categoryTree && Object.keys(categoryTree)?.length > 0 ? (
                 <>
                   <li className="fw-semibold cursor-pointer mb-1">
                     <FiChevronLeft className="mb-1 back-category-disable custom-icon-color"/>
@@ -63,14 +63,13 @@ const SubCategoryList = ({ name,categoryTree }) => {
                       isSelected={get(selectedCategory, "select", false)}
                     />
                   </li>
-
                   {expanded &&
                     get(selectedCategory, "subCategories", [])?.map(
                       (category, index) => (
                         <SubCategoryItem
                           key={index}
-                          url={category.url}
-                          name={category.name}
+                          url={category?.url}
+                          name={category?.name}
                         />
                       )
                     )}

@@ -21,7 +21,6 @@ const GroupProductComponent = () => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
   const groupProducts = useSelector((state) => state.groupProducts);
-  const setting = useSelector((state) => state.settings)
   const navigate = useNavigate()
   const [Allproducts, setAllproduct] = useState([])
   const [filtered, setfilterdData] = useState([])
@@ -32,17 +31,20 @@ const GroupProductComponent = () => {
   const columndata = [
     {
       name: "title",
+      type: "text",
       title: "Title",
       sortingactive: true
     },
     {
       name: "productCounts",
+      type: "text",
       title: "Products",
       sortingactive: true
     },
     {
 
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

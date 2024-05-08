@@ -103,9 +103,9 @@ const StoreAddressComponent = () => {
             <PhoneNumber
               className="phoneValidation"
               handleOnChange={(val) => {
-                setAddress({ ...address, phone: val });
+                setAddress({ ...address, phone_number: val });
               }}
-              phoneValue={get(address, "phone")}
+              phoneValue={get(address, "phone_number")}
               width="300px"
             />
           </Box>

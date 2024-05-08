@@ -13,6 +13,7 @@ import { useTheme } from "@mui/material/styles";
 import viewStyles from "../../viewStyles.js";
 import theme from "../../../theme";
 import { ThemeProvider } from "@mui/material/styles";
+import { get } from "lodash";
 const GlobalTaxesComponent = ({
   taxGlobalState,
   taxState,
@@ -33,7 +34,7 @@ const GlobalTaxesComponent = ({
                 control={
                   <Checkbox
                     color="primary"
-                    checked={taxGlobalState.is_global}
+                    checked={get(taxGlobalState,'is_global',false)}
                     onChange={(e) =>
                       changeGlobalState("is_global", e.target.checked)
                     }
@@ -43,7 +44,7 @@ const GlobalTaxesComponent = ({
               />
             </Grid>
 
-            <Grid item md={6} sm={12} xs={12}>
+           { get(taxGlobalState,'is_global')&&<Grid item md={6} sm={12} xs={12}>
               <FormControl
                 variant="outlined"
                 size="small"
@@ -52,7 +53,7 @@ const GlobalTaxesComponent = ({
               >
                 <Select
                   name="Tax-name"
-                  value={taxGlobalState.taxClass}
+                  value={get(taxGlobalState,'taxClass','')}
                   onChange={(e) =>
                     changeGlobalState("taxClass", e.target.value)
                   }
@@ -66,9 +67,9 @@ const GlobalTaxesComponent = ({
                   })}
                 </Select>
               </FormControl>
-            </Grid>
+            </Grid>}
 
-            {taxGlobalState.is_global && (
+            {get(taxGlobalState,'is_global') && (
               <Grid item md={12} sm={12} xs={12}>
                 <FormControlLabel
                   control={

@@ -14,28 +14,31 @@ const AllbrandComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const Brands = useSelector((state) => state.brands);
-  const setting = useSelector((state) => state.settings);
   const classes = viewStyles()
   const [Allbrand, setAllbrand] = useState([])
   const [filtered, setfilterdData] = useState([])
   let columndata = [
     {
       name: "image",
+      type: "image",
       title: "image",
       sortingactive: false
     },
     {
       name: "date",
+      type: "date",
       title: "date",
       sortingactive: true
     },
     {
       name: "name",
+      type: "text",
       title: "Name",
       sortingactive: true
     },
     {
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

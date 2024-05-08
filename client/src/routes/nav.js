@@ -116,45 +116,45 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
         "url": "reviews",
         "icon": StarIcon
       },
-      {
-        "name": "Pages",
-        "url": "all-pages",
-        "icon": InsertDriveFileIcon ,
-        "children": [
-          {
-            "name": "All Pages",
-            "url": "all-pages",
-            "icon": InsertDriveFileIcon},
-          {
-            "name": "Add Page",
-            "url": "add-page",
-            "icon": AddIcon 
-          }
-        ]
-      },
+      // {
+      //   "name": "Pages",
+      //   "url": "all-pages",
+      //   "icon": InsertDriveFileIcon ,
+      //   "children": [
+      //     {
+      //       "name": "All Pages",
+      //       "url": "all-pages",
+      //       "icon": InsertDriveFileIcon},
+      //     {
+      //       "name": "Add Page",
+      //       "url": "add-page",
+      //       "icon": AddIcon 
+      //     }
+      //   ]
+      // },
   
-      {
-        "name": "Blogs",
-        "url": "all-blogs",
-        "icon": DescriptionIcon,
-        "children": [
-          {
-            "name": "All Blogs",
-            "url": "all-blogs",
-            "icon": DescriptionIcon
-          },
-          {
-            "name": "Add Blog",
-            "url": "add-blog",
-            "icon": AddIcon 
-          },
-          {
-            "name": "Tags",
-            "url": "tags",
-            "icon": LibraryAddIcon
-          }
-        ]
-      },
+      // {
+      //   "name": "Blogs",
+      //   "url": "all-blogs",
+      //   "icon": DescriptionIcon,
+      //   "children": [
+      //     {
+      //       "name": "All Blogs",
+      //       "url": "all-blogs",
+      //       "icon": DescriptionIcon
+      //     },
+      //     {
+      //       "name": "Add Blog",
+      //       "url": "add-blog",
+      //       "icon": AddIcon 
+      //     },
+      //     {
+      //       "name": "Tags",
+      //       "url": "tags",
+      //       "icon": LibraryAddIcon
+      //     }
+      //   ]
+      // },
       {
         "name": "Settings",
         "url": "settings",

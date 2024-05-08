@@ -38,16 +38,19 @@ const AllTagsComponent = () => {
   const columndata = [
     {
       name: 'date',
+      type: 'date',
       title: "Date",
       sortingactive: true
     },
     {
       name: 'name',
+      type: 'text',
       title: "Name",
       sortingactive: true
     },
     {
       name: 'actions',
+      type: 'actions',
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

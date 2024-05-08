@@ -30,7 +30,7 @@ const AlertModal = ({
         handleConfirm(); // Call handleConfirm when the user confirms
       }
     });
-  }, [confirmAction]);
+  }, []);
 
   return null;
 };

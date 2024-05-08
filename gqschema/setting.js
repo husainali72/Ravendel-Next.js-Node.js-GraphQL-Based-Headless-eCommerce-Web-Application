@@ -351,7 +351,7 @@ module.exports = `
       zip: String
       hour: String
       email: String
-      phoneNo: String
+      phone_number: String
       social_media: [social_media_input]
     ): Setting
     updateStoreMeasurements(
