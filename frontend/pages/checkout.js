@@ -85,7 +85,6 @@ export const CheckOut = () => {
   const [cartItems, setCartItems] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [billingInfo, setBillingInfo] = useState(billingInfoObject);
-  console.log(billingDetails,'billingDetails')
   const [shippingInfo, setShippingInfo] = useState(shippingObject);
   const [shippingAdd, setShippingAdd] = useState(false);
   const [formStep, setFormStep] = useState(1);
