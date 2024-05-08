@@ -37,9 +37,9 @@ const Category = ({ category }) => {
           />
         ) : null}
         <div>
-          <h4 className="theme-color my-3">
-            Products <span className="black-color">Category</span>
-          </h4>
+          <h5 className="black-color my-3">
+            Products Category
+          </h5>
           <div
             className={
               showSlider
