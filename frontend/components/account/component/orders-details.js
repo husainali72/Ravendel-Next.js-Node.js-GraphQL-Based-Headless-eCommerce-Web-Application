@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import Table from "../../dataTable";
 import { get } from "lodash";
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -133,5 +132,6 @@ OrdersDetails.propTypes = {
   shippingAmount: PropTypes.number.isRequired,
   couponValue: PropTypes.number,
   couponCode: PropTypes.string,
+  handleClose: PropTypes.func,
 };
 export default OrdersDetails;

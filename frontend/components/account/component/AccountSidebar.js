@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React from 'react'
+import PropTypes from "prop-types";
 
 const AccountSidebar = ({items}) => {
     const [sidebarItemsState, setSidebarItemsState] = items;
@@ -33,3 +32,7 @@ const AccountSidebar = ({items}) => {
 }
 
 export default AccountSidebar
+
+AccountSidebar.propTypes = {
+    items: PropTypes.any.isRequired,
+};

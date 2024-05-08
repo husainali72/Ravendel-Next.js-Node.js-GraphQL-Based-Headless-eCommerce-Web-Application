@@ -1,9 +1,6 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import PropTypes from "prop-types";
 import Modal from '@mui/material/Modal';
 
 const style = {
@@ -18,7 +15,7 @@ const style = {
 };
 
 export default function BasicModal({openState, children, handleClose, className}) {
-  const [open, setOpen] = openState;
+  const [open] = openState;
 
   return (
     <div>
@@ -35,3 +32,11 @@ export default function BasicModal({openState, children, handleClose, className}
     </div>
   );
 }
+
+BasicModal.propTypes = {
+  openState: PropTypes.any.isRequired,
+  children: PropTypes.object.isRequired,
+  onChange: PropTypes.func.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  className: PropTypes.string,
+};

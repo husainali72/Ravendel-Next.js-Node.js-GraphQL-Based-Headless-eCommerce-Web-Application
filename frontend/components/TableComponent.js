@@ -1,6 +1,6 @@
-/* eslint-disable react/prop-types */
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+import PropTypes from "prop-types";
 
 export default function DataTable({rows, columns, ...other}) {
   return (
@@ -19,3 +19,8 @@ export default function DataTable({rows, columns, ...other}) {
     </div>
   );
 }
+
+DataTable.propTypes = {
+  rows: PropTypes.object.isRequired,
+  columns: PropTypes.array.isRequired,
+};
