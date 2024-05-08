@@ -43,14 +43,13 @@ var billingInfoObject = {
   zip: "",
   state: "",
   city: "",
-  address_line2: "",
+  addressLine2: "",
   address: "",
   phone: "",
-  company: "",
   email: "",
   lastname: "",
   firstname: "",
-  country: "UK",
+  country: "",
   paymentMethod: "",
   transaction_id: "",
   addressType: ''
@@ -60,15 +59,13 @@ var shippingObject = {
   zip: "",
   state: "",
   city: "",
-  address_line2: "",
+  addressLine2: "",
   address: "",
   phone: "",
-  company: "",
   email: "",
   lastname: "",
   firstname: "",
-  country: "UK",
-  paymentMethod: "",
+  country: "",
   addressType: ''
 };
 
@@ -88,6 +85,7 @@ export const CheckOut = () => {
   const [cartItems, setCartItems] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [billingInfo, setBillingInfo] = useState(billingInfoObject);
+  console.log(billingDetails,'billingDetails')
   const [shippingInfo, setShippingInfo] = useState(shippingObject);
   const [shippingAdd, setShippingAdd] = useState(false);
   const [formStep, setFormStep] = useState(1);
@@ -390,10 +388,10 @@ export const CheckOut = () => {
         addressLine1,
         addressLine2,
         phone,
-        company,
         email,
         lastName,
         firstName,
+        addressType,
         country,
       } = defaultAddress;
       let defaultAddressInfo = {
@@ -404,7 +402,7 @@ export const CheckOut = () => {
         addressLine2: addressLine2 || "",
         addressLine1: addressLine1 || "",
         phone: phone || "",
-        company: company || "",
+        addressType:addressType||'',
         email: email || "",
         lastname: lastName || "",
         firstname: firstName || "",
@@ -465,6 +463,7 @@ export const CheckOut = () => {
         [name]: value,
       });
     }
+    
     setBillingInfo({ ...billingInfo, [name]: value });
 
     checkCode(value);
@@ -480,9 +479,21 @@ export const CheckOut = () => {
 
   const handleBillingInfo = (e, nm) => {
     if(nm === 'addressType'){
+      if (!shippingAdd ) {
+        setShippingInfo({
+          ...shippingInfo,
+          [nm]: e
+        });
+      }
       setBillingInfo({ ...billingInfo, [nm]: e });
     } else{
       let { name, value } = get(e, "target");
+      if (!shippingAdd && name !== "paymentMethod") {
+        setShippingInfo({
+          ...shippingInfo,
+          [name]: value,
+        });
+      }
       setBillingInfo({ ...billingInfo, [name]: value });
     }
   };
@@ -490,7 +501,7 @@ export const CheckOut = () => {
     if(nm === 'addressType'){
       setShippingInfo({
         ...shippingInfo,
-        [nm.slice(8)]: e,
+        [nm]: e,
       });
       setBillingInfo({ ...billingInfo, [nm]: e });
     } else{
@@ -543,7 +554,6 @@ export const CheckOut = () => {
       addressLine2: address?.addressLine2|| "",
       addressLine1: address?.addressLine1|| "",
       phone: address?.phone|| "",
-      company: address?.company|| "",
       email: address?.email|| "",
       lastname: address?.lastName|| "",
       firstname: address?.firstName|| "",
