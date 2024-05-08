@@ -212,21 +212,21 @@ export const getPaymentMethodLabel = (paymentMethod) => {
       return "Cash On Deliverys";
   }
 };
-export const getCheckedIds=(data)=> {
+export const getCheckedIds = (data) => {
   const checkedIds = [];
 
   function checkNode(node) {
-    if (node?.checked||hasCheckedChild(node)) {
+    if (node?.checked || hasCheckedChild(node)) {
       checkedIds.push(node.id);
     }
     if (node?.children && node?.children?.length > 0) {
-      node?.children?.forEach(child => checkNode(child));
+      node?.children?.forEach((child) => checkNode(child));
     }
   }
 
   data?.forEach(checkNode);
   return checkedIds;
-}
+};
 export const hasCheckedChild = (cat) => {
   if (cat?.checked) {
     return true;
@@ -239,4 +239,21 @@ export const hasCheckedChild = (cat) => {
     }
   }
   return false;
+};
+
+export const calculateDiscount = (price, sellPrice) => {
+  let discount = "";
+  if (sellPrice && sellPrice > 0) {
+    if (sellPrice >= price) {
+      discount = "";
+    } else {
+      let amount = ((100 / price) * (price - sellPrice)).toFixed(2);
+      console.log(amount);
+      let FloorAmount = Math.floor(amount);
+      if (FloorAmount) {
+        discount = discount + FloorAmount || 0;
+      }
+    }
+  }
+  return discount || 0;
 };
