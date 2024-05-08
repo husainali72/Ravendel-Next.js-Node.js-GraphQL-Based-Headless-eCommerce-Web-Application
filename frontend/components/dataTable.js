@@ -6,10 +6,10 @@ import { get } from "lodash";
 import Price from "./priceWithCurrency";
 import { useSelector } from "react-redux";
 
-const Table = ({ rows, columns, colSpan, additionalRows }) => {
+const Table = ({ rows, columns, colSpan, additionalRows, className }) => {
   const settings=useSelector((state)=>state.setting)
   return (
-    <table className="product-detail">
+    <table className={className ? className : "product-detail"}>
       <thead>
         {columns?.map((column) => {
           return <th>{get(column, "title", "")}</th>;

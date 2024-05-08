@@ -38,7 +38,7 @@ const CartTotalDetails=({totalSummary})=>{
             <p className="mrp-price">
               Shipping Fee
               <Tooltip title='Your total amount has already been updated with a special discount.' placement="top">
-              <i className="fa fa-question-circle priceDetail-base-knowMore" ></i>
+                <i className="fa fa-question-circle priceDetail-base-knowMore" ></i>
               </Tooltip>
             </p>
             <p className="mtb2" style={{ fontSize: "14px" }}>

@@ -1,22 +1,26 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-import { Accordion, Container, Col } from "react-bootstrap";
-import OrdersDetails from "../../components/account/component/orders-details";
-import BreadCrumb from "../../components/breadcrumb/breadcrumb";
-import PageTitle from "../../components/PageTitle";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { GET_CUSTOMER_ORDERS_QUERY } from "../../queries/orderquery";
 import { getSession, useSession } from "next-auth/react";
 import {
+  formatDate,
   query,
 } from "../../utills/helpers";
 import { get } from "lodash";
-import Price from "../../components/priceWithCurrency";
+import LoadingCartTable from "../../components/cardcomponent/LoadingCard";
+import DataTable from "../../components/TableComponent";
+import { CircularProgress, IconButton } from "@mui/material";
+import BasicModal from "../../components/ModalComponent";
+import OrdersDetails from "../../components/account/component/orders-details";
 
 const Order = () => {
   const { status } = useSession();
   const [customerOrder, setCustomerOrder] = useState([]);
-  const [loading, setloading] = useState(false);
+  const [loading, setloading] = useState(true);
+  const [open, setOpen] = useState(false);
   const [session, setSession] = useState({});
+  const [order, setOrder] = useState();
   useEffect(() => {
     const userSession = getSession();
     userSession.then((res) => setSession(res));
@@ -24,7 +28,7 @@ const Order = () => {
   useEffect(() => {
     getOrderCustomer();
   }, [session]);
-  const handleReOrder = (detail) => {};
+  
   const getOrderCustomer = () => {
     var id = "";
     var token = "";
@@ -39,7 +43,8 @@ const Order = () => {
     query(GET_CUSTOMER_ORDERS_QUERY, variable, token).then((response) => {
       if (response) {
         if (response.data.orderbyUser.data) {
-          const customeradd = get(response, "data.orderbyUser.data", []);
+          let customeradd = get(response, "data.orderbyUser.data", []);
+          customeradd = customeradd.map((item)=> ({...item, date: formatDate(item.date)}))
           setloading(false);
           setCustomerOrder([...customeradd]);
         }
@@ -47,64 +52,82 @@ const Order = () => {
     });
   };
 
+  const handleShowDetailsPopup = (id) => {
+    let orderDetail = customerOrder.filter((item) => item.id === id)
+    setOrder(orderDetail);
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+  }
+
+  useEffect(() => {
+    console.log(customerOrder)
+  }, [customerOrder])
+
+  const columns = [
+    { field: 'orderNumber', headerName: 'Order Number', minWidth: 140, flex: 1, filterable: false, sortable: true },
+    { field: 'date', headerName: 'Date', minWidth: 140, flex: 1, filterable: false, sortable: true },
+    { field: 'paymentStatus', headerName: 'Payment Status', minWidth: 140, flex: 1, filterable: false, sortable: true },
+    { field: 'shippingStatus', headerName: 'Shipping Status', minWidth: 140, flex: 1, filterable: false, sortable: true },
+    { headerName: 'Action', width: 60, filterable: false, sortable: false, renderCell: (params) => (
+      <>
+        <IconButton color="primary" aria-label="edit" onClick={() => handleShowDetailsPopup(params.row.id)}>
+          <VisibilityIcon />
+        </IconButton>
+      </>
+    ),},
+  ]
+
   return (
-    <div>
-      <PageTitle title="Order" />
-      <BreadCrumb title={"Order"} />
-      {status === "authenticated" ? (
-        <Container>
-          {customerOrder && customerOrder?.length > 0
-            ? customerOrder?.map((order, index) => (
-                <Accordion className="accordian-container" key={index}>
-                  <Accordion.Item eventKey="0">
-                    <Accordion.Header>
-                      <Col>
-                        <strong> Order id : {get(order, "id", "")}</strong>
-                      </Col>
-                      <Col>
-                        <strong>
-                          Total :{" "}
-                          <Price price={get(order, "grandTotal", 0)}/>
-                         {" "}
-                        </strong>
-                      </Col>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                      <OrdersDetails
-                        orderDetail={get(order, "products", [])}
-                        order={order}
-                        billingInfo={get(order, "billing", {})}
-                        shippingInfo={get(order, "shipping", {})}
-                        tax={get(order, "taxAmount", 0)}
-                        subtotal={get(order, "subtotal", 0)}
-                        shippingAmount={get(order, "shippingAmount", 0)}
-                        total={get(order, "grandTotal", 0)}
-                      />
-                      <div className="row order-btn-row">
-                        <div>
-                          <button
-                            className="order-details-btn"
-                            onClick={() => handleReOrder(order)}
-                          >
-                            Reorder
-                          </button>
-                          <button
-                            className="order-details-btn"
-                            onClick={() => window.print()}
-                          >
-                            Print Invoices
-                          </button>
-                        </div>
-                      </div>
-                    </Accordion.Body>
-                  </Accordion.Item>
-                </Accordion>
-              ))
-            : null}
-        </Container>
-      ) : (
-        <Container>Please Login Account</Container>
-      )}
+    <div className="order-wrapper">
+      {
+        loading ?
+          <div className="loading-wrapper">
+            <CircularProgress/>
+          </div>
+        :
+        <DataTable
+          rows={customerOrder}
+          columns={columns}
+          rowHeight={40}
+          columnHeaderHeight={40}
+        />
+      }
+      <BasicModal
+        openState={[open, setOpen]}
+        handleClose={handleClose}
+        className='order-details-wrapper'
+      >
+        <OrdersDetails
+          orderDetail={get(order, "products", [])}
+          order={order}
+          billingInfo={get(order, "billing", {})}
+          shippingInfo={get(order, "shipping", {})}
+          tax={get(order, "taxAmount", 0)}
+          subtotal={get(order, "subtotal", 0)}
+          shippingAmount={get(order, "shippingAmount", 0)}
+          total={get(order, "grandTotal", 0)}
+          handleClose={handleClose}
+        />
+      </BasicModal>
+      {/* <div className="row order-btn-row">
+        <div>
+          <button
+            className="order-details-btn"
+            onClick={() => handleReOrder(order)}
+          >
+            Reorder
+          </button>
+          <button
+            className="order-details-btn"
+            onClick={() => window.print()}
+          >
+            Print Invoices
+          </button>
+        </div>
+      </div> */}
     </div>
   );
 };
