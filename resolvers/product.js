@@ -18,7 +18,8 @@ const {
   duplicateData,
   toObjectID,
   validateAndSetUrl,
-  getBreadcrumb
+  getBreadcrumb,
+  addCategoryAttributes
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -1496,6 +1497,8 @@ module.exports = {
           });
           await newProduct.save();
 
+          await addCategoryAttributes(newProduct.categoryId, newProduct.specifications, ProductCat)
+
           return MESSAGE_RESPONSE("AddSuccess", "Product", true);
         }
       } catch (error) {
@@ -1635,6 +1638,8 @@ module.exports = {
           product.specifications = args.specifications;  
           product.updated = Date.now();
           await product.save();
+
+          await addCategoryAttributes(product.categoryId, product.specifications, ProductCat)
 
           return MESSAGE_RESPONSE("UpdateSuccess", "Product", true);
         } else {

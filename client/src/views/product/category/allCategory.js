@@ -188,15 +188,20 @@ const AllCategoryComponent = () => {
     }
   };
 
+  // const isUrlExist = async (url) => {
+  //   if (url) {
+  //     setSingleCategory({
+  //       ...singlecategory,
+  //       url: url,
+  //     });
+  //     if (!isUrlChanged) {
+  //       setIsUrlChanged(true)
+  //     }
+  //   }
+  // };
   const isUrlExist = async (url) => {
-    if (url) {
-      setSingleCategory({
-        ...singlecategory,
-        url: url,
-      });
-      if (!isUrlChanged) {
-        setIsUrlChanged(true)
-      }
+    if (url && !editMode) {
+      updateUrlOnBlur(url)
     }
   };
   const updateUrl = async (URL, setEditPermalink) => {
@@ -223,6 +228,20 @@ const AllCategoryComponent = () => {
         }
       });
     }
+  }
+  const updateUrlOnBlur = async (URL) => {
+    if (URL) {
+      await query(CHECK_VALID_URL, { url: URL }).then(res => {
+        if (get(res, 'data.validateUrl.url')) {
+          const newUrl = get(res, 'data.validateUrl.url')
+          setSingleCategory({
+            ...singlecategory,
+            url: newUrl,
+          });
+          setIsUrlChanged(true)
+        }
+      });
+    } 
   }
   const handleOnChangeSearch = (filtereData) => {
     setfilterdData(filtereData);

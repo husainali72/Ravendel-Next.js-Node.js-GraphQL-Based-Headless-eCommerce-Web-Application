@@ -581,8 +581,9 @@ const UPDATE_ZIPCODE = gql`
   }
 `;
 const UPLOAD_ZIPCODE_FILE = gql`
-  mutation ($zip: String) {
-    uploadZipcodeFile(zip: $zip) {
+  mutation ($zipcode_file: Upload) 
+  {
+    addZipCodeUsingFile(zipcode_file: $zipcode_file) {
       message
       success
     }

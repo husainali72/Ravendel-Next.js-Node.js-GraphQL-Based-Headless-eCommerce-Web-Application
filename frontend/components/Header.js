@@ -84,7 +84,7 @@ const Header = ({ setOpenMenu }) => {
   useEffect(() => {
     getCartLength();
     dispatch(getSettings());
-  }, [data, addedCart]);
+  }, [data]);
   const alertHandleConfirm = async () => {
     setShowModal(false);
     await logoutAndClearData(dispatch);

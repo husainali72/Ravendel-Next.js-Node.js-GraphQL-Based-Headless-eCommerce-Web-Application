@@ -120,7 +120,7 @@ const ZipCodesComponent = () => {
     setfilterdData(filtereData);
   };
   const uploadZipFile = (zipFile) => {
-    dispatch(zipCodeUploadFileAction(zipFile));
+    dispatch(zipCodeUploadFileAction({zipcode_file: zipFile}));
   };
 
   const handlechange = (e, type) => {

@@ -1,9 +1,10 @@
-import { GROUP_PRODUCTS_FAIL, GROUP_PRODUCTS_LOADING, GROUP_PRODUCTS_LOADING_FALSE, GROUP_PRODUCTS_SUCCESS, GROUP_PRODUCT_FAIL, GROUP_PRODUCT_SUCCESS } from "../action/groupProductAction";
+import { GROUP_PRODUCTS_FAIL, GROUP_PRODUCTS_LOADING, GROUP_PRODUCTS_LOADING_FALSE, GROUP_PRODUCTS_SUCCESS, GROUP_PRODUCT_FAIL, GROUP_PRODUCT_LOADING, GROUP_PRODUCT_LOADING_FALSE, GROUP_PRODUCT_SUCCESS } from "../action/groupProductAction";
 
 const initialState = {
   groupProducts: [],
   groupProduct: {},
   loading: false,
+  groupLoading: false,
   success: false,
 };
 
@@ -16,6 +17,12 @@ export default (state = initialState, action) => {
           ...state,
           loading: true
         }
+
+    case GROUP_PRODUCT_LOADING:
+      return {
+        ...state,
+        groupLoading: true
+      }
    
     case GROUP_PRODUCTS_SUCCESS:
       return {
@@ -34,13 +41,13 @@ export default (state = initialState, action) => {
       return {
         ...state,
         groupProduct: action.payload,
-        loading: false,
+        groupLoading: false,
         success: true,
       };
     case GROUP_PRODUCT_FAIL:
       return {
         ...state,
-        loading: false,
+        groupLoading: false,
         success: false,
       };
       return {
@@ -54,6 +61,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         loading: false,
+      };
+    case GROUP_PRODUCT_LOADING_FALSE:
+      return {
+        ...state,
+        groupLoading: false,
       };
     default:
       return state;

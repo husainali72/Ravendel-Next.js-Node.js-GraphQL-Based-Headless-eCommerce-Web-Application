@@ -144,7 +144,6 @@ const AttributesComponent = ({
     }
   }, [attributeState.attributes, product.variation_master, product?.attributes, product?.variations]);
   
-
   const changeSelectedValue = (e, i) => {
     currentAttribute.attribute_list[i].selected_values = e;
     setcurrentAttribute({
@@ -189,7 +188,7 @@ const AttributesComponent = ({
     let attribute_list = {
       id: currentAttribute.id,
       name: name,
-      isVariant: false,
+      isVariant: true,
       selected_values: [],
       values: values,
     };
@@ -200,9 +199,8 @@ const AttributesComponent = ({
       ...currentAttribute,
     });
   };
-
   const saveAttribute = () => {
-    setLoading(true);
+    // setLoading(true);
     product.attribute = [];
     product.variant = [];
     let isValidattribute = false
@@ -214,11 +212,15 @@ const AttributesComponent = ({
               attribute_id: attr.id,
               attribute_value_id: val.value,
             });
+            product.attributes.push({
+              attribute_id: attr.id,
+              attribute_value_id: val.value,
+            });
           });
 
-          if (attr.isVariant) {
+          // if (attr.isVariant) {
             product.variant.push(attr.id);
-          }
+          // }
           isValidattribute = true;
         } else {
           isValidattribute = false;
@@ -260,9 +262,11 @@ const AttributesComponent = ({
     for (const i of product.variant) {
       variants[i] = [];
     }
-    for (let attr of product.attribute) {
-      if (variants.hasOwnProperty(attr.attribute_id)) {
-        variants[attr.attribute_id].push(attr.attribute_value_id);
+    if(product && product?.attribute && product?.attribute.length >=0){
+      for (let attr of product.attribute) {
+        if (variants.hasOwnProperty(attr.attribute_id)) {
+          variants[attr.attribute_id].push(attr.attribute_value_id);
+        }
       }
     }
     if (!Object.keys(variants).length) {
@@ -293,17 +297,18 @@ const AttributesComponent = ({
           index = key;
         }
       });
+      
       if (max) {
         generatedVariants.push({
           combinations: comb,
-          productID: currentVariants.combinations[index]?.productID,
-          sku: currentVariants.combinations[index].sku,
-          quantity: currentVariants.combinations[index].quantity,
-          pricing: {
-            price: currentVariants.combinations[index].pricing.price,
-            sellprice: currentVariants.combinations[index].pricing.sellprice,
-          },
-          image: currentVariants.combinations[index].image || ""
+          productID: currentVariants?.combinations[index]?.productID,
+          // sku: currentVariants.combinations[index].sku,
+          // quantity: currentVariants.combinations[index].quantity,
+          // pricing: {
+          //   price: currentVariants.combinations[index].pricing.price,
+          //   sellprice: currentVariants.combinations[index].pricing.sellprice,
+          // },
+          // image: currentVariants.combinations[index].image || ""
         });
 
         currentVariants.combinations.splice(index, 1);
@@ -416,7 +421,7 @@ const AttributesComponent = ({
                       <TableRow>
                         <TableCell>Name</TableCell>
                         <TableCell>Values</TableCell>
-                        <TableCell>Variation</TableCell>
+                        {/* <TableCell>Variation</TableCell> */}
                         <TableCell>Remove</TableCell>
                       </TableRow>
                     </TableHead>
@@ -444,7 +449,7 @@ const AttributesComponent = ({
                                 )}
                               />
                             </TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                               <Checkbox
                                 color="primary"
                                 checked={attribute.isVariant}
@@ -455,7 +460,7 @@ const AttributesComponent = ({
                                   });
                                 }}
                               />
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell>
                               <Tooltip title="Delete" aria-label="delete">
                                 <IconButton
@@ -498,12 +503,7 @@ const AttributesComponent = ({
                       <TableRow>
                         <TableCell>Variant</TableCell>
                         <TableCell>Product</TableCell>
-                        {/* <TableCell>Price</TableCell>
-                        <TableCell>Sale Price</TableCell>
-                        <TableCell>Quantity</TableCell>
-                        <TableCell>SKU</TableCell>
-                        <TableCell>Image</TableCell> */}
-                        <TableCell>Remove</TableCell>
+                        {/* <TableCell>Remove</TableCell> */}
                       </TableRow>
                     </TableHead>
                     <TableBody className={classes.container}>
@@ -528,15 +528,19 @@ const AttributesComponent = ({
                                 // labelWidth={labelWidth}
                                 name="productID"
                                 labelId="product-name"
-                                value={variant.product}
+                                value={variant.productID}
                                 onChange={(e) => variantChange(e, index)}
                               >
+                                <MenuItem value =''>
+                                  <i>None</i>
+                                </MenuItem>
                                 {!!products?.length && products?.map(
                                   (product, index) => {
                                     return (
                                       <MenuItem
                                         value={product._id}
                                         key={index}
+                                        disabled={currentVariants.combinations.some(variant => variant?.productID === product?._id)}
                                       >
                                         {product.name}
                                       </MenuItem>
@@ -548,140 +552,6 @@ const AttributesComponent = ({
                           </TableCell>
 
                           {/* <TableCell>
-                            <TextField
-                              label="Price"
-                              variant="outlined"
-                              name="price"
-                              fullWidth
-                              type="number"
-                              value={variant.pricing.price}
-                              onChange={(e) => {
-                                if (e.target.value >= 0) {
-                                  if (
-                                    e.target.value > variant.pricing.sellprice
-                                  ) {
-                                    currentVariants.combinations[index].pricing[
-                                      e.target.name
-                                    ] = Number(e.target.value);
-                                    setcurrentVariants({
-                                      ...currentVariants,
-                                    });
-                                    onCombinationUpdate(
-                                      currentVariants.combinations
-                                    );
-                                  } else {
-                                    dispatch({
-                                      type: ALERT_SUCCESS,
-                                      payload: {
-                                        boolean: false,
-                                        message:
-                                          "Sale price couldn't exceed original price",
-                                        error: true,
-                                      },
-                                    });
-                                  }
-                                }
-                              }}
-                              size="small"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <TextField
-                              label="Sale Price"
-                              variant="outlined"
-                              name="sellprice"
-                              fullWidth
-                              type="number"
-                              value={variant.pricing.sellprice}
-                              onChange={(e) => {
-                                if (e.target.value >= 0) {
-                                  if (e.target.value < variant.pricing.price) {
-                                    currentVariants.combinations[index].pricing[
-                                      e.target.name
-                                    ] = Number(e.target.value);
-
-                                    setcurrentVariants({
-                                      ...currentVariants,
-                                    });
-                                    onCombinationUpdate(
-                                      currentVariants.combinations
-                                    );
-                                  } else {
-                                    dispatch({
-                                      type: ALERT_SUCCESS,
-                                      payload: {
-                                        boolean: false,
-                                        message:
-                                          "Sale price couldn't exceed original price",
-                                        error: true,
-                                      },
-                                    });
-                                  }
-                                }
-                              }}
-                              size="small"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <TextField
-                              label="Quantity"
-                              variant="outlined"
-                              fullWidth
-                              type="number"
-                              name="quantity"
-                              value={variant.quantity}
-                              onChange={(e) => variantChange(e, index)}
-                              size="small"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <TextField
-                              label="SKU"
-                              variant="outlined"
-                              fullWidth
-                              name="sku"
-                              value={variant.sku}
-                              onChange={(e) => variantChange(e, index)}
-                              size="small"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Box m={1}>
-                              {!isEmpty(variant.image) ? (
-                                <img
-                                  src={
-                                    variant.image.startsWith("blob")
-                                      ? variant.image
-                                      : getBaseUrl(setting) + variant.image
-                                  }
-                                  className={classes.variantImage}
-                                  alt="variant"
-                                  onError={imageOnError}
-                                />
-                              ) : (
-                                ""
-                              )}
-                            </Box>
-
-                            <input
-                              accept="image/*"
-                              className={classes.input}
-                              style={{ display: "none" }}
-                              id={`variant-image-${index}`}
-                              name="image"
-                              type="file"
-                              onChange={(e) => variantChange(e, index)}
-                            />
-                            <label
-                              htmlFor={`variant-image-${index}`}
-                              className={classes.feautedImage}
-                            >
-                              <ImageIcon />
-                              {"Set Image"}
-                            </label>
-                          </TableCell> */}
-
-                          <TableCell>
                             <Tooltip title="Delete" aria-label="delete">
                               <IconButton
                                 aria-label="Delete"
@@ -691,7 +561,7 @@ const AttributesComponent = ({
                                 <DeleteIcon />
                               </IconButton>
                             </Tooltip>
-                          </TableCell>
+                          </TableCell> */}
                         </TableRow>
                       ))}
                     </TableBody>

@@ -70,14 +70,14 @@ const AttributesComponent = ({
   }, []);
 
   useEffect(() => {
-    for (let i of attributeState.attributes) {
+    for (let i of attributeState?.attributes) {
       for (let j of i.values) {
         currentVariants.allValues[j._id] = j.name;
       }
     }
-    if (product && attributeState.attributes.length) {
+    if (product && attributeState?.attributes?.length) {
       let attrWithValue = {};
-      for (const attr of product.attribute) {
+      for (const attr of product?.attribute) {
         if (!Array.isArray(attrWithValue[attr.attribute_id])) {
           attrWithValue[attr.attribute_id] = [];
         }
@@ -252,11 +252,12 @@ const AttributesComponent = ({
     for (const i of product.variant) {
       variants[i] = [];
     }
-    for (let attr of product.attribute) {
+    if(product&&product?.attribute){
+    for (let attr of product?.attribute) {
       if (variants.hasOwnProperty(attr.attribute_id)) {
         variants[attr.attribute_id].push(attr.attribute_value_id);
       }
-    }
+    }}
     if (!Object.keys(variants).length) {
       setLoading(false);
       return;

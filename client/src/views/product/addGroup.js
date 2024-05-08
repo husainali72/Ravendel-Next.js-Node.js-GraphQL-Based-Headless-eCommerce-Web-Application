@@ -47,7 +47,7 @@ import Stack from '@mui/material/Stack';
 import CloseIcon from '@mui/icons-material/Close';
 import { getUpdatedUrl } from "../../utils/service";
 import GroupAttributes from "./components/groupAttributes";
-import { groupProductAction, groupProductAddAction, groupProductsAction } from "../../store/action/groupProductAction";
+import { groupProductAction, groupProductAddAction, groupProductUpdateAction, groupProductsAction } from "../../store/action/groupProductAction";
 import { get } from "lodash";
 
 
@@ -57,7 +57,7 @@ function groupAttributes(attributes) {
   attributes.forEach(attribute => {
     if (!groupedAttributes[attribute.attribute_id]) {
       groupedAttributes[attribute.attribute_id] = {
-        id: attribute.attribute_id,
+        _id: attribute.attribute_id,
         values: []
       };
     }
@@ -66,10 +66,10 @@ function groupAttributes(attributes) {
 
   return Object.values(groupedAttributes);
 }
-function getVariants(combinations, groupedAttributes) {
+function getVariants(combinations, groupedAttributes, editingId) {
   // Here we want the combination array of ids to convert in array of objects {attributeID: '', attributeValue: ''}
   const variants = combinations.map((combination) => {
-    const obj = { productId: combination?.productID, combinations: !!combination?.combinations && combination?.combinations.map(combId => ({ attributeId: groupedAttributes.find(attri => attri?.values?.some(id => id === combId))?.id, attributeValueId: combId })) }
+    const obj = { productId: combination?.productID, combinations: !!combination?.combinations && combination?.combinations.map(combId => ({ attributeId: groupedAttributes.find(attri => attri?.values?.some(id => id === combId))?._id, attributeValueId: combId })) }
 
     return obj;
   })
@@ -85,7 +85,7 @@ const AddProductTheme = () => {
   const isEditing = id !== undefined;
   const [featureImage, setfeatureImage] = useState(null);
   const [combination, setCombination] = useState([]);
-  const loading = useSelector((state) => state.groupProducts.loading);
+  const groupLoading = useSelector((state) => state.groupProducts.groupLoading);
   const groupProductState = useSelector((state) => state.groupProducts);
   const [shippingClass, setShippingClass] = useState('')
   const [taxClass, setTaxClass] = useState('')
@@ -156,30 +156,54 @@ const AddProductTheme = () => {
       // product.combinations = combination;
       let variations = [];
       let attributes = []
-      if (groupProduct?.attribute && !!groupProduct?.attribute?.length) {
-        const groupedAttributes = groupAttributes(groupProduct.attribute);
-        // groupProduct.attributes = groupedAttributes;
-        if (groupedAttributes && !!groupAttributes?.length) {
-          const variants = getVariants(combination, groupedAttributes)
-          attributes = groupedAttributes;
-          variations = variants;
-          // if(variants){
-          //   groupProduct.variations = variants;
-          // }
-          setGroupProduct({
-            ...groupProduct,
-            variations: variants,
-            attributes: groupedAttributes
-          })
+      if(id && attributes?.length <= 0  && variations?.length <= 0){
+        if (groupProduct?.attributes && !!groupProduct?.attributes?.length) {
+          const groupedAttributes = groupAttributes(groupProduct.attributes);
+          // groupProduct.attributes = groupedAttributes;
+          if (groupedAttributes && !!groupAttributes?.length) {
+            const variants = getVariants(combination, groupedAttributes, id)
+            attributes = groupedAttributes;
+            variations = variants;
+            // if(variants){
+            //   groupProduct.variations = variants;
+            // }
+            setGroupProduct({
+              ...groupProduct,
+              // variations: variants,
+              // attributes: groupedAttributes
+            })
+          }
+        }
+      }else{
+        if (groupProduct?.attribute && !!groupProduct?.attribute?.length) {
+          const groupedAttributes = groupAttributes(groupProduct.attribute);
+          // groupProduct.attributes = groupedAttributes;
+          if (groupedAttributes && !!groupAttributes?.length) {
+            const variants = getVariants(combination, groupedAttributes)
+            attributes = groupedAttributes;
+            variations = variants;
+            // if(variants){
+            //   groupProduct.variations = variants;
+            // }
+            setGroupProduct({
+              ...groupProduct,
+              // variations: variants,
+              // attributes: groupedAttributes
+            })
+          }
         }
       }
       const obj = {
         title: groupProduct?.title,
-        attributes,
-        variations,
+        attributes: (id && attributes?.length <= 0) ? groupProduct?.attributes : attributes,
+        variations:  (id && variations?.length <= 0) ? groupProduct?.variations : variations,
         productIds: variations?.map(variation => variation?.productId)
       }
-      dispatch(groupProductAddAction(obj, navigate))
+      if(id){
+        dispatch(groupProductUpdateAction({...obj, updateGroupId: id}, navigate))
+      }else{
+        dispatch(groupProductAddAction(obj, navigate))
+      }
       // if (groupProduct.pricing.price !== 0) {
       //   if (groupProduct.pricing.sellprice < groupProduct.pricing.price) {
 
@@ -230,27 +254,35 @@ const AddProductTheme = () => {
         });
       }
       if (get(groupProductState, 'groupProduct.variations')) {
+      //   const convertedArray = groupProductState.groupProduct.variations.map(item => {
+      //     return {
+      //         productId: item.productId,
+      //         combinations: item.combinations.map(combination => ({
+      //             attributeId: combination.attributeId,
+      //             attributeValueId: combination.attributeValueId
+      //         }))
+      //     };
+      // });
         const convertedArray = groupProductState.groupProduct.variations.map(item => {
           return {
-              productId: item.productId,
-              combinations: item.combinations.map(combination => ({
-                  attributeId: combination.attributeId,
-                  attributeValueId: combination.attributeValueId
-              }))
+              productID: item.productId,
+              combinations: item.combinations.map(combination => (combination.attributeValueId))
           };
       });
       convertedVariations = convertedArray;
       }
+      // const productVariants = ['65cb2b0ca9dfee40f95226ff', '65cb2b2ba9dfee40f9522716'];
       setGroupProduct({
         ...groupProduct,
         attributes: convertedAttributes,
         variations: convertedVariations,
         // attributes:  get(groupProductState, 'groupProduct.attributes', []),
-        title: get(groupProductState, 'groupProduct.title')
+        title: get(groupProductState, 'groupProduct.title'),
+        // variant: productVariants
       })
     }
 
-  }, [dispatch, get(groupProductState, 'groupProduct')])
+  }, [dispatch, get(groupProductState, 'groupProduct'), id])
 
   const handleChange = (e) => {
     setGroupProduct({ ...groupProduct, [e.target.name]: e.target.value });
@@ -269,12 +301,12 @@ const AddProductTheme = () => {
   return (
     <>
       <Alert />
-      {loading ? <Loading /> : null}
+      {groupLoading ? <Loading /> : null}
       <form>
         <TopBar
-          title="Add Group"
+          title={id ? "Edit Group" : "Add Group"}
           onSubmit={addProduct}
-          submitTitle="Add"
+          submitTitle={id ? "Update" : "Add"}
           backLink={`${client_app_route_url}group-products`}
         />
 

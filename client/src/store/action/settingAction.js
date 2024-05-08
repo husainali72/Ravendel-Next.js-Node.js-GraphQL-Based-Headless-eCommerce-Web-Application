@@ -686,7 +686,7 @@ export const zipCodeUploadFileAction = (object) => (dispatch) => {
       });
       const [error, success, message, data] = mutationResponseHandler(
         response,
-        "uploadedZipcodeFile"
+        "addZipCodeUsingFile"
       );
       if (error) {
         dispatch({
