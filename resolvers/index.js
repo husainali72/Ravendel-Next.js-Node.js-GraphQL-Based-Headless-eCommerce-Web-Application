@@ -4,6 +4,7 @@ const userResolvers = require("./user");
 const pageResolvers = require("./page");
 const blogResolvers = require("./blog");
 const productResolvers = require("./product");
+const groupResolvers = require("./productGroup");
 const cartResolvers = require("./cart");
 const checkoutResolvers = require("./checkout");
 const orderResolvers = require("./order");
@@ -17,6 +18,8 @@ const reviewResolvers = require("./review");
 const productAttribute = require("./product_attribute");
 const zipcodeResolvers = require("./zipcode");
 const faqResolvers = require("./faq");
+const homepageResolvers = require("./homepage")
+
 const createWriteStream = require("fs");
 // import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
 const fs = require('fs');
@@ -82,6 +85,7 @@ module.exports = [
   pageResolvers,
   blogResolvers,
   productResolvers,
+  groupResolvers,
   cartResolvers,
   checkoutResolvers,
   orderResolvers,
@@ -96,5 +100,5 @@ module.exports = [
   faqResolvers,
   zipcodeResolvers,
   productAttribute,
-
+  homepageResolvers
 ];

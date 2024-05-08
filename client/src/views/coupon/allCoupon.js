@@ -21,26 +21,31 @@ const AllCouponsTheme = () => {
   const columndata = [
     {
       name: "code",
+      type: "text",
       title: "Code",
       sortingactive: true
     },
     {
       name: "discountValue",
+      type: "text",
       title: "Discount Value",
       sortingactive: true
     },
     {
       name: "discountType",
+      type: "text",
       title: "Discount type",
       sortingactive: true
     },
     {
       name: "expire_date",
+      type: "date",
       title: "Expire date",
       sortingactive: true
     },
     {
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,

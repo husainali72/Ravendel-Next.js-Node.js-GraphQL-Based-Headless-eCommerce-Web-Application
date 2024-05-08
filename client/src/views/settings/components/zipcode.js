@@ -35,11 +35,13 @@ const ZipCodesComponent = () => {
   const columndata = [
     {
       name: "zipcodes",
+      type: "text",
       title: "Zipcodes",
       sortingactive: false,
     },
     {
       name: "actions",
+      type: "actions",
       title: "Actions",
       sortingactive: false,
       component: ActionButton,
@@ -118,7 +120,7 @@ const ZipCodesComponent = () => {
     setfilterdData(filtereData);
   };
   const uploadZipFile = (zipFile) => {
-    dispatch(zipCodeUploadFileAction(zipFile));
+    dispatch(zipCodeUploadFileAction({zipcode_file: zipFile}));
   };
 
   const handlechange = (e, type) => {

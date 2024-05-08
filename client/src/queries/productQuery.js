@@ -5,6 +5,7 @@ const PRODUCT_TILE_DATA = gql`
     _id
     name
     url
+    categoryTree
     categoryId {
       id
       name
@@ -38,27 +39,13 @@ const PRODUCT_TILE_DATA = gql`
     shipping
     taxClass
     meta
-    custom_field
-    attribute
-    attribute_master {
-      id
-      name
-      attribute_values
-      createdAt
-      updatedAt
-    }
-    variant
-    variation_master {
-      id
-      productId
-      combination
-      quantity
-      sku
-      image
-      pricing
-      createdAt
-      updatedAt
-    }
+    specifications{
+      key
+      group
+      attributeId
+      value
+      attributeValueId
+  }
     date
     updated
   }
@@ -80,6 +67,13 @@ const PRODUCT_TILE_DATA = gql`
 //   }
 // `;
 
+const CHECK_VALID_URL = gql`
+mutation ValidateUrl($url: String!, $entryId: ID) {
+  validateUrl(url: $url, entryId: $entryId) {
+    url
+  }
+}
+`;
 const GET_CATEGORIES = gql`
   {
     productCategories {
@@ -323,6 +317,7 @@ const ADD_PRODUCT = gql`
     $name: String
     $url: String
     $categoryId: customArray
+    $categoryTree: customArray
     $brand: ID
     $short_description: String
     $description: String
@@ -337,10 +332,7 @@ const ADD_PRODUCT = gql`
     $shipping: customObject
     $taxClass: String
     $meta: customObject
-    $custom_field: [customObject]
-    $attribute: [customObject]
-    $variant: customArray
-    $combinations: [customObject]
+    $specifications: [productSpecificationInput]
   ) {
     addProduct(
       name: $name
@@ -360,10 +352,8 @@ const ADD_PRODUCT = gql`
       shipping: $shipping
       taxClass: $taxClass
       meta: $meta
-      custom_field: $custom_field
-      attribute: $attribute
-      variant: $variant
-      combinations: $combinations
+      specifications: $specifications
+      categoryTree: $categoryTree
     ) {
       message
       success
@@ -377,6 +367,7 @@ const UPDATE_PRODUCT = gql`
     $name: String
     $url: String
     $categoryId: customArray
+    $categoryTree: customArray
     $brand: ID
     $short_description: String
     $description: String
@@ -392,10 +383,8 @@ const UPDATE_PRODUCT = gql`
     $shipping: customObject
     $taxClass: String
     $meta: customObject
+    $specifications: [productSpecificationInput]
     $custom_field: [customObject]
-    $attribute: [customObject]
-    $variant: customArray
-    $combinations: [customObject]
   ) {
     updateProduct(
       id: $_id
@@ -418,9 +407,8 @@ const UPDATE_PRODUCT = gql`
       taxClass: $taxClass
       meta: $meta
       custom_field: $custom_field
-      attribute: $attribute
-      variant: $variant
-      combinations: $combinations
+      specifications: $specifications
+      categoryTree: $categoryTree
     ) {
       message
       success
@@ -456,4 +444,5 @@ export {
   ADD_PRODUCT,
   UPDATE_PRODUCT,
   DELETE_PRODUCT,
+  CHECK_VALID_URL
 };

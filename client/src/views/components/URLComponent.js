@@ -7,7 +7,7 @@ import Loading from "./Loading";
 
 import theme from "../../theme";
 import { ThemeProvider } from "@mui/material/styles";
-const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl, onBlur }) => {
+const URLComponentTheme = ({ url, onInputChange, pageUrl, tableUrl, onBlur, onSubmit }) => {
   const classes = viewStyles();
   const [editPremalink, setEditPermalink] = useState(false);
   const [loading, setLoading] = useState(false);

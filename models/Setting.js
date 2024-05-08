@@ -605,11 +605,11 @@ module.exports.createSettings = async () => {
             name: "products_on_sales",
             visible: true,
           },
-          {
-            label: "Product Recommendation",
-            name: "product_recommendation",
-            visible: true,
-          },
+          // {
+          //   label: "Product Recommendation",
+          //   name: "product_recommendation",
+          //   visible: true,
+          // },
           {
             label: "Product from Specific Category",
             name: "product_from_specific_category",
@@ -652,12 +652,12 @@ module.exports.createSettings = async () => {
             visible: false,
             url: "products_on_sales",
           },
-          {
-            label: "Product Recommendation",
-            section_img: "",
-            visible: false,
-            url: "product_recommendation",
-          },
+          // {
+          //   label: "Product Recommendation",
+          //   section_img: "",
+          //   visible: false,
+          //   url: "product_recommendation",
+          // },
           {
             label: "Product from Specific Categories",
             section_img: "",

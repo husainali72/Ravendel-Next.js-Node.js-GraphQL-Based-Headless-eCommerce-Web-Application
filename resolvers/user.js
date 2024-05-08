@@ -106,12 +106,12 @@ module.exports = {
         const existingOrders = await Order.find({})
         if (existingOrders.length) {
           existingOrders.map(orderSale => {
-            totalSales += orderSale.grandTotal
+            totalSales += orderSale.totalSummary.grandTotal;
           })
           // orders and sales by year and month
           for (let order of existingOrders) {
-            let paymentSuccessSubTotal = order.paymentStatus !== "success" ? 0 : order.cartTotal
-            let paymentSuccessGrandTotal = order.paymentStatus !== "success" ? 0 : order.grandTotal
+            let paymentSuccessSubTotal = order.paymentStatus !== "success" ? 0 : order.totalSummary.cartTotal
+            let paymentSuccessGrandTotal = order.paymentStatus !== "success" ? 0 : order.totalSummary.grandTotal
             let orderMonth = order.date.getMonth()
             let orderYear = order.date.getFullYear()
             // if year array is empty add new year with month
@@ -176,7 +176,7 @@ module.exports = {
         dashboardData.customerCount = await Customer.countDocuments({});
         dashboardData.latestProducts = await Product.find({}).sort({ date: "desc" }).limit(2);
         dashboardData.latestOrders = existingOrders ? existingOrders.reverse().splice(0, 2) : []
-        dashboardData.totalSales = totalSales
+        dashboardData.totalSales = totalSales || 0;
         dashboardData.ordersByYearMonth = ordersByYearMonth
         return dashboardData
       } catch (error) {

@@ -364,7 +364,7 @@ export const CheckOut = () => {
     // Scroll to the top when the form step changes
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [formStep]);
-  
+
   const {
     register,
     handleSubmit,
@@ -397,18 +397,18 @@ export const CheckOut = () => {
         country,
       } = defaultAddress;
       let defaultAddressInfo = {
-        zip: pincode,
-        state: state,
-        city: city,
-        address: addressLine1 + ", " + addressLine2,
-        addressLine2: addressLine2,
-        addressLine1: addressLine1,
-        phone: phone,
-        company: company,
-        email: email,
-        lastname: lastName,
-        firstname: firstName,
-        country: country,
+        zip: pincode || "",
+        state: state || "",
+        city: city || "",
+        address: addressLine1 + (addressLine2 ? ", " + addressLine2 : "") || "",
+        addressLine2: addressLine2 || "",
+        addressLine1: addressLine1 || "",
+        phone: phone || "",
+        company: company || "",
+        email: email || "",
+        lastname: lastName || "",
+        firstname: firstName || "",
+        country: country || "",
       };
       checkCode(get(defaultAddressInfo, "zip"));
       return defaultAddressInfo;
@@ -534,21 +534,23 @@ export const CheckOut = () => {
     setShippingAdd(e?.target?.checked);
   };
   const SelectAddressBook = (address) => {
+    const { addressLine1, addressLine2 } = address;
     let commonFields = {
-      zip: address?.pincode,
-      state: address?.state,
+      zip: address?.pincode|| "",
+      state: address?.stat|| ""e,
       city: address?.city,
-      address: address?.addressLine1 + ", " + address?.addressLine2,
-      addressLine2: address?.addressLine2,
-      addressLine1: address?.addressLine1,
-      phone: address?.phone,
-      company: address?.company,
-      email: address?.email,
-      lastname: address?.lastName,
-      firstname: address?.firstName,
-      country: address?.country,
+      address:  addressLine1 + (addressLine2 ? ", " + addressLine2 : "") || "",
+      addressLine2: address?.addressLine2|| "",
+      addressLine1: address?.addressLine1|| "",
+      phone: address?.phone|| "",
+      company: address?.company|| "",
+      email: address?.email|| "",
+      lastname: address?.lastName|| "",
+      firstname: address?.firstName|| "",
+      country: address?.country|| "",
       addressType: address?.addressType || 'Home Address',
-      id: address?._id
+      id: address?._id|| ""
+
     };
     let shipping = commonFields;
     let billing = {
@@ -608,16 +610,25 @@ export const CheckOut = () => {
   };
   const handlePlacedOrder = async (e) => {
     let paymentMethod = get(billingDetails, "billing.paymentMethod");
-  let paymentMode=get(settings,'setting.payment.razorpay.test_mode','')
-    let razorpayKey=''
-    if(paymentMode){
-      razorpayKey=  get(settings,'setting.payment.razorpay.sandbox_client_id','')}else{
-        razorpayKey=  get(settings,'setting.payment.razorpay.live_client_id','')
+    let paymentMode = get(settings, "setting.payment.razorpay.test_mode", "");
+    let razorpayKey = "";
+    if (paymentMode) {
+      razorpayKey = get(
+        settings,
+        "setting.payment.razorpay.sandbox_client_id",
+        ""
+      );
+    } else {
+      razorpayKey = get(
+        settings,
+        "setting.payment.razorpay.live_client_id",
+        ""
+      );
     }
     e.preventDefault();
     if (paymentMethod === PAYPAL) {
       setPaymentMethod(paymentMethod);
-    }else {
+    } else {
       handleOrderPlaced(
         customerId,
         session,

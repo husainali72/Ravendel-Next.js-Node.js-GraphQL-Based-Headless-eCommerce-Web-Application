@@ -3,28 +3,32 @@ import theme from "../../../theme";
 import TableComponent from "../../components/table";
 import { ThemeProvider } from "@mui/material/styles";
 import ActionButton from "../../components/actionbutton";
+import { get } from "lodash";
 const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
   const [Alltaxes, setAlltaxes] = useState([])
   const [filtered, setfilterdData] = useState([])
   const columndata = [
     {
       name: 'name',
+      type: "text",
       title: "Name",
       sortingactive: true
     },
     {
       name: 'percentage',
+      type: "text",
       title: "Percentage",
       sortingactive: true
     },
     {
       name: 'actions',
+      type: 'actions',
       title: "Actions",
       sortingactive: false,
       component: ActionButton,
       buttonOnClick: (type, id) => {
         if (type === 'edit') {
-          let tax = Alltaxes.find(item => item.id === id);
+          let tax = Alltaxes?.find(item => item?.id === id);
           editTaxChange(tax)
         } else if (type === "delete") {
           deleteTaxChange(id)
@@ -33,18 +37,18 @@ const AllTaxesComponents = ({ taxState, editTaxChange, deleteTaxChange }) => {
     },]
   useEffect(() => {
     let data = []
-    taxState.tax.taxClass.map((tax) => {
+    get(taxState,'tax.taxClass',[])?.map((tax) => {
       let object = {
-        id: tax._id,
-        percentage: tax.percentage,
-        name: tax.name,
-        system: tax.system
+        id: tax?._id,
+        percentage: tax?.percentage,
+        name: tax?.name,
+        system: tax?.system
       }
       data.push(object)
     })
     setfilterdData(data)
     setAlltaxes(data)
-  }, [taxState.tax.taxClass])
+  }, [get(taxState,'tax.taxClass')])
   const handleOnChangeSearch = (filtereData) => {
     setfilterdData(filtereData)
   }

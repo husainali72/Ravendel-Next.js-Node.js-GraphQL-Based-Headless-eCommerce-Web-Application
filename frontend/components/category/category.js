@@ -1,11 +1,11 @@
 import Container from "react-bootstrap/Container";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import useResizeObserver from "@react-hook/resize-observer";
 import { capitalize, get } from "lodash";
 import ProductImage from "../../components/imageComponent";
 import PropTypes from "prop-types";
+import CategoryLink from "./categoryLink";
 const Category = ({ category }) => {
   const [showSlider, setShowSlider] = useState(false);
   const [inlineSize, setInlineSize] = useState(0);
@@ -51,11 +51,8 @@ const Category = ({ category }) => {
             {category?.length > 0 ? (
               category?.map((item, i) => {
                 return (
-                  item.parentId === null && (
-                    <Link
-                      href={`/subcategory/[category]?url=${item?.url}`}
-                      as={`/subcategory/${item?.url}`}
-                    >
+                  <>
+                    <CategoryLink url={item?.url}>
                       <div className="category-cards" key={i}>
                         <div className="category-card-image">
                           <ProductImage src={get(item, "image")} />
@@ -67,8 +64,8 @@ const Category = ({ category }) => {
                           </p>
                         </div>
                       </div>
-                    </Link>
-                  )
+                    </CategoryLink>
+                  </>
                 );
               })
             ) : (

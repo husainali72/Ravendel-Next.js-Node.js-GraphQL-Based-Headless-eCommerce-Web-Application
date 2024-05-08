@@ -3,6 +3,7 @@ const userSchema = require("./user");
 const pageSchema = require("./page");
 const blogSchema = require("./blog");
 const productSchema = require("./product");
+const groupSchema = require("./productGroup");
 const cartSchema = require("./cart");
 const checkoutSchema = require("./checkout");
 const orderSchema = require("./order");
@@ -17,6 +18,7 @@ const productAttribute = require("./product_attribute");
 const faqSchema = require("./faq");
 const miscSchema = require("./misc");
 const zipcodeSchema = require("./zipcode");
+const homepage = require("./homepage")
 
 const linkSchema = `
   scalar Date
@@ -63,6 +65,7 @@ module.exports = [
   pageSchema,
   blogSchema,
   productSchema,
+  groupSchema,
   cartSchema,
   checkoutSchema,
   orderSchema,
@@ -77,4 +80,5 @@ module.exports = [
   faqSchema,
   productAttribute, 
   zipcodeSchema,
+  homepage
 ];

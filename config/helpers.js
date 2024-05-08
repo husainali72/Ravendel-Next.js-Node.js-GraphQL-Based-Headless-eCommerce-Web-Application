@@ -17,6 +17,7 @@ const Coupon = require("../models/Coupon");
 const mongoose = require('mongoose');
 const Order = require("../models/Order");
 const _ = require('lodash');
+const {Types: {ObjectId}} = require("mongoose")
 
 
 const isEmpty = (value) =>
@@ -129,8 +130,110 @@ const updateUrl = async (url, table, updateId) => {
     return url.slice(0, url.length - 1) + i;
   } else return Promise.resolve(url);
 };
-
 module.exports.updateUrl = updateUrl;
+
+const validateAndSetUrl = async (url, modal, entryId) => {
+  url = stringTourl(url)
+  const urlRegex = new RegExp(url)
+  const pipeline = [
+    {
+      $facet: {
+        exactMatch: [
+          {
+            $group: {
+              _id: null,
+              urls: {
+                $push: {
+                  $cond: [
+                    { $eq: ["$url", url] },
+                    { url: "$url", _id: "$_id" },
+                    "$$REMOVE",
+                  ],
+                },
+              },
+            },
+          },
+        ],
+        similarMatch: [
+          {
+            $group: {
+              _id: null,
+              urls: {
+                $push: {
+                  $cond: [
+                    {
+                      $regexMatch: {
+                        input: "$url",
+                        regex: urlRegex,
+                      },
+                    },
+                    { url: "$url", _id: "$_id" },
+                    "$$REMOVE",
+                  ],
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+    {
+      $project: {
+        exactMatch: {
+          $arrayElemAt: ["$exactMatch.urls", 0]
+        },
+        similarMatch: {
+          $arrayElemAt: ["$similarMatch.urls", 0]
+        },
+      },
+    },
+    {
+      $unwind: "$similarMatch"
+    },
+    {
+      $sort: {
+        "similarMatch.url": -1
+      }
+    },
+    {
+      $group: {
+        _id: "$_id",
+        exactMatch: {
+          $first: "$exactMatch"
+        },
+        similarMatch: {
+          $push: "$similarMatch"
+        }
+      }
+    }
+  ]
+
+  const existingUrls = await modal.aggregate(pipeline)
+  if(existingUrls.length) {
+    const {exactMatch, similarMatch} = existingUrls[0]
+    
+    if(exactMatch.length) {
+      if(exactMatch[0]._id.toString() !== entryId) {
+        url = similarMatch[0].url.split("-")
+        let urlEnd = url.pop()
+    
+        if(isNaN(urlEnd)) {
+          url.push(urlEnd)
+          url.push("1")
+        } else {
+          urlEnd = (Number.parseInt(urlEnd)+1).toString()
+          url.push(urlEnd)
+        }
+    
+        url = url.join("-")
+      }  
+    }
+  } 
+
+  return url
+}
+module.exports.validateAndSetUrl = validateAndSetUrl;
+
 /*----------------------------------------------store image in local storage---------------------------------------------------------*/
 
 const UploadImageLocal = async (image, path, name) => {
@@ -610,16 +713,16 @@ const populateYearMonth = (
   let monthObj = {
     month: moment(orderMonth + 1, "MM").format("MMM"),
     orders: [order],
-    GrossSales: order.cartTotal,
-    NetSales: order.grandTotal,
+    GrossSales: order.totalSummary.cartTotal,
+    NetSales: order.totalSummary.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal,
   };
   let yearObj = {
     year: orderYear,
     months: [monthObj],
-    GrossSales: order.cartTotal,
-    NetSales: order.grandTotal,
+    GrossSales: order.totalSummary.cartTotal,
+    NetSales: order.totalSummary.grandTotal,
     paymentSuccessGrossSales: paymentSuccessSubTotal,
     paymentSuccessNetSales: paymentSuccessGrandTotal,
   };
@@ -637,8 +740,8 @@ const populateSales = (
   paymentSuccessSubTotal,
   paymentSuccessGrandTotal
 ) => {
-  data.GrossSales += order.cartTotal;
-  data.NetSales += order.grandTotal;
+  data.GrossSales += order.totalSummary.cartTotal;
+  data.NetSales += order.totalSummary.grandTotal;
   data.paymentSuccessGrossSales += paymentSuccessSubTotal;
   data.paymentSuccessNetSales += paymentSuccessGrandTotal;
 
@@ -738,14 +841,14 @@ const prodAvgRating = async (productID, reviewModel, productModel) => {
   let avgRating = 0;
   const reviews = await reviewModel.find({
     productId: productID,
-    status: { $ne: "pending" },
+    status: { $eq: "approved" },
   });
-  if (reviews.length >= 5) {
-    reviews.map((review) => {
-      avgRating += review.rating;
-    });
-    avgRating /= reviews.length;
-  }
+  
+  reviews.map((review) => {
+    avgRating += review.rating;
+  });
+  avgRating /= reviews.length;
+
   const product = await productModel.findById(productID);
   product.rating = avgRating.toFixed(1);
   await product.save();
@@ -907,7 +1010,7 @@ module.exports.emptyCart = emptyCart;
 
 const addZipcodes = async (zipcode_file, filepath, modal) => {
   try {
-    let { filename, mimetype, encoding, createReadStream } = await zipcode_file[0].file;
+    let { filename, mimetype, encoding, createReadStream } = await zipcode_file.file;
     const stream = createReadStream();
 
     const path = `.${filepath}/${filename}`;
@@ -931,7 +1034,7 @@ const addZipcodes = async (zipcode_file, filepath, modal) => {
         .on("error", reject);
     });
 
-    if (!fs.existsSync(path)) {
+    if (fs.existsSync(path)) {
       let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
       csvData = csvData.split(",");
 
@@ -1175,9 +1278,8 @@ const calculateCart = async (userId, cartItems) => {
         // console.log('taxPercentage', taxPercentage);
       }
 
-      // console.log('before calculating tax amount');
       prod.taxAmount = 0;
-      if (taxPercentage != 0) {
+      if (taxPercentage && taxPercentage != 0) {
         // console.log('tax.is_inclusive : ', tax.is_inclusive);
         if (!tax.is_inclusive) {
           prod.taxAmount = prod.amount * taxPercentage / 100;
@@ -1440,6 +1542,10 @@ const addOrder = async(args) => {
       couponApplied:false
     }
   }
+  let currencycode = setting.store.currency_options.currency.toUpperCase();
+
+  calculatedCart.totalSummary.currency_code = currencycode;
+
   const newOrder = new Order({
     orderNumber: orderNumber,
     userId: args.userId,
@@ -1453,13 +1559,15 @@ const addOrder = async(args) => {
   });
   
   const savedOrder = await newOrder.save();
-  
-  let currencycode = setting.store.currency_options.currency.toUpperCase();
 
   let environmentBool = process.env.NODE_ENV.trim() === 'production';
 
   if (args.billing.paymentMethod === 'cashondelivery') {
-    const cart = await Cart.findOne({ userId:new mongoose.Types.ObjectId(args.userId) });
+    const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(args.userId) });
+
+    for (let product of cart.products) {
+      await Product.findByIdAndUpdate(product.productId, { $inc: { quantity: -product.qty } });
+    }
     emptyCart(cart);
   } else if(args.billing.paymentMethod === 'stripe') {
     
@@ -1543,7 +1651,7 @@ const addOrder = async(args) => {
         quantity: (+item.qty)
       }
     });
-    request.requestBody({
+    const requestBody = {
       intent:'CAPTURE',
       purchase_units: [
         {
@@ -1554,6 +1662,10 @@ const addOrder = async(args) => {
               item_total: {
                 currency_code: currencycode,
                 value: calculatedCart.totalSummary.cartTotal
+              },
+              tax_total: {
+                currency_code: currencycode,
+                value: calculatedCart.totalSummary.totalTax
               },
               shipping: {
                 currency_code: currencycode,
@@ -1568,7 +1680,8 @@ const addOrder = async(args) => {
           items: paypalItems
         }
       ]
-    });
+    };
+    request.requestBody(requestBody);
     const order = await paypalClient.execute(request);
     paypalOrderId = order.result.id;
     
@@ -1602,19 +1715,6 @@ const addOrder = async(args) => {
     
     let updateOrderRes = await Order.updateOne({ _id: savedOrder._id}, { $set: { transactionDetail : order } });
   }
-  // ====================
-  // else {
-  //   return MESSAGE_RESPONSE("InvalidField", "Payment mode", false);
-  // }
-
-  // // send order create email
-  // const customer = await Customer.findById(args.userId);
-  // mailData = {
-  //   subject: `Order Placed`,
-  //   mailTemplate: "template",
-  //   order: newOrder
-  // }
-  // sendEmail(mailData, APP_KEYS.smptUser, customer?.email)
 
   let addOrderResponse = MESSAGE_RESPONSE("AddSuccess", "Order", true);
   addOrderResponse.redirectUrl = redirectUrl;
@@ -1638,12 +1738,19 @@ module.exports.isUrlValid = isUrlValid;
 
 const updatePaymentStatus = async (userId, args) => {
   try {
-    
-    const {id, paymentStatus} = args;
-    let eligibleToUpdateSuccess = false; 
+    const { id, paymentStatus } = args;
+    let eligibleToUpdateSuccess = false;
     let testMode, clientIdKey, secretKey;
 
-    let orderData = await Order.findOne({_id:id }, { billing:1, transactionDetail:1 });
+    let orderData = await Order.findOne(
+      { _id: id }
+    );
+
+    orderData.email = orderData.billing.email;
+
+    if (orderData.paymentStatus === "success") {
+      return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
+    }
 
     if(!orderData){
       return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
@@ -1718,7 +1825,6 @@ const updatePaymentStatus = async (userId, args) => {
         });
 
         let razorpayOrderData = await razorpayInstance.orders.fetch(orderId)
-        razorpayOrderData.status = "paid"
 
         if(razorpayOrderData.status == "paid"){
           eligibleToUpdateSuccess = true;
@@ -1730,27 +1836,34 @@ const updatePaymentStatus = async (userId, args) => {
         break;
     }
 
-    if(!eligibleToUpdateSuccess){
+    if (!eligibleToUpdateSuccess) {
+      await sendEmailTemplate("ORDER_FAILED", orderData)
       return MESSAGE_RESPONSE("PaymentUnpaid", null, false);
-    }
+    } else {
+      try {
+        let orderData = await Order.findById(id);
+        if (orderData.paymentStatus != "success") {
+          for (let product of orderData.products) {
+            await Product.findByIdAndUpdate(product.productId, {
+              $inc: { quantity: -product.qty },
+            });
+          }
+          orderData.paymentStatus = "success";
+          orderData.email = orderData.billing.email;
 
-    let orderUpdateRes = await Order.updateOne(
-      { _id: id },
-      { $set: { paymentStatus: paymentStatus } }
-    );
-
-    if (orderUpdateRes.acknowledged && orderUpdateRes.matchedCount == 1) {
-      if (paymentStatus == "success") {
+          await orderData.save();
+          await sendEmailTemplate("ORDER_PLACED", orderData)
+        }
         const cart = await Cart.findOne({
           userId: new mongoose.Types.ObjectId(userId),
         });
         await emptyCart(cart);
+      } catch (error) {
+        await sendEmailTemplate("ORDER_FAILED", orderData)
+        return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
       }
       return MESSAGE_RESPONSE("UpdateSuccess", "Order Payment Status", true);
-    } else {
-      return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
     }
-
   } catch (error) {
     return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
   }
@@ -1773,5 +1886,173 @@ const updatePaymentStatus = async (userId, args) => {
   // else {
   //   return MESSAGE_RESPONSE("UPDATE_ERROR", "Order Payment Status", false);
   // }
+};
+
+const sendMail = async (data) => {
+  try {
+    // let data = JSON.stringify({
+    //   from: `${addedByUsername['username']} from HB WEBSOL <client@hbwebsol.com>`,
+    //   to: clientId,
+    //   subject: subject,
+    //   html: textbody,
+    //   replyTo: req.user.email
+    // });
+    const { createTransport } = require('nodemailer');
+
+    const transporter = createTransport({ 
+      host: "mail.smtp2go.com",
+      port: 2525,
+      auth: {
+          user: APP_KEYS.SMTP_USER,
+          pass: APP_KEYS.SMTP_PASSWORD
+      }
+    })
+    const response = await transporter.sendMail(data);
+  } catch(error) {
+    console.log("Error in sendMail : ", error.message);
+  }
+};
+
+const fillPlaceholders = async (template, data) => {
+  let emailTemplate = { subject: template.subject, body: template.body };
+  
+  for (const unit of template.placeholders) {
+    let placeholderName = unit.name;
+    let placeholderValue = unit.value;
+    let dataValue = placeholderValue.split('.').reduce((obj, key) => obj[key], data);
+
+    switch (unit.type) {
+      case "DATE":
+        dataValue = formatDate(dataValue);
+        break;
+      case "FIRST_CAP":
+        dataValue = dataValue[0].toUpperCase() + dataValue.slice(1);
+        break;
+      case "MONEY":
+        dataValue = `${data.totalSummary.currency_code} ${dataValue}`
+        break;
+      case "CONDITIONAL":
+        if(dataValue == 0){
+          dataValue = ""
+        }
+        else{
+          let html = unit.html;
+          html = html.replaceAll("{{optional_value}}", `${data.totalSummary.currency_code} ${dataValue}`)
+          dataValue = html;
+        }
+        break;
+      default:
+        break;
+    }
+
+    emailTemplate.subject = emailTemplate.subject.replaceAll(placeholderName, dataValue);
+    emailTemplate.body = emailTemplate.body.replaceAll(placeholderName, dataValue);
+  }
+
+  return emailTemplate;
+};
+
+
+
+const fillproductDetails = (looping_text, products) => {
+  let output = "";
+  for (unit of products)
+  {
+    let html = looping_text
+    html = html.replaceAll("{{product_url}}", `https://demo1-ravendel.hbwebsol.com/${unit.productImage}`)
+    // html = html.replaceAll("{{product_url}}", `https://picsum.photos/200`)
+    html = html.replaceAll("{{product_name}}", unit.productTitle)
+    html = html.replaceAll("{{product_quantity}}", unit.qty)
+    html = html.replaceAll("{{product_price}}", unit.productPrice)
+    html = html.replaceAll("{{product_total_price}}", unit.total)
+    output = output + html
+  }
+  return output;
 }
+
+const sendEmailTemplate = async (template_name, data) => {
+
+  const emailTemplateModel = require("../models/EmailTemplate");
+  try {
+    let template = await emailTemplateModel.findOne({
+      template_name: template_name,
+    });
+
+    let emailTemplate = await fillPlaceholders(template, data);
+    
+    if(template.looping_text)
+    {
+      let loopingProducts = await fillproductDetails(template.looping_text, data.products)
+      emailTemplate.body = emailTemplate.body.replace("{{looping}}",loopingProducts)
+    }
+      let email_data = {
+        from: "ravendel@hbwebsol.com",
+        to: data.email,
+        subject: emailTemplate.subject,
+        html: emailTemplate.body
+      }
+      
+      await sendMail(email_data)
+  } catch (error) {
+    console.log("Error in sendEmailTemplate", error);
+  }
+};
+module.exports.sendEmailTemplate = sendEmailTemplate;
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString('en-US', options);
+};
 module.exports.updatePaymentStatus = updatePaymentStatus;
+
+const toObjectID = (entryID) => {
+  if(Array.isArray(entryID)) {
+    return entryID.map(id => new ObjectId(id))
+  }
+
+  return new ObjectId(entryID)
+}
+module.exports.toObjectID = toObjectID
+
+function getBreadcrumb(data) {
+  const breadcrumbs = [];
+
+  function getCategoryDetails(category) {
+    const categoryInfo = {
+      name: category.name,
+      url: category.url
+    };
+    breadcrumbs.push(categoryInfo);
+    
+    if (category.children && category.children.length) {
+      getCategoryDetails(category.children[0])
+    }    
+  }
+  getCategoryDetails(data[0])
+
+  return breadcrumbs;
+}
+module.exports.getBreadcrumb = getBreadcrumb
+
+const addCategoryAttributes = async (categories, specifications, modal) => {
+  const productAttributes = specifications.map(specification => specification.attributeId)
+  const productCategories = toObjectID(categories)
+
+  const bulkWriteQuery = [
+    {
+      updateMany: {
+        filter: { "_id": {$in: toObjectID(productCategories)} },
+        update: {
+          $addToSet: {
+            attributeIds: {
+              $each: productAttributes
+            }
+          }
+        }
+      }
+    }
+  ]
+  await modal.bulkWrite(bulkWriteQuery)
+}
+module.exports.addCategoryAttributes = addCategoryAttributes

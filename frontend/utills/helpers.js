@@ -119,7 +119,7 @@ export const queryWithoutToken = async (query, variables) => {
 export const logoutAndClearData = async (dispatch) => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
   await removeItemFromLocalStorage("cart");
-  dispatch(logoutDispatch());
+  await dispatch(logoutDispatch());
   window.location.pathname = "/account";
 };
 
@@ -319,20 +319,32 @@ export const iconSetter = (iconName) => {
 };
 
 export const checkPaymentMethod = (paymentMethod) => {
-  return paymentMethod === STRIPE || paymentMethod === PAYPAL||paymentMethod === RAZORPAY;
+  return (
+    paymentMethod === STRIPE ||
+    paymentMethod === PAYPAL ||
+    paymentMethod === RAZORPAY
+  );
 };
 
-export  const getPaymentMethodLabel=(paymentMethod)=>{
+export const generateCategoryUrl = (slug) => {
+  let url = slug || "#";
+  return {
+    href: `/collection/[categorys]?url=/${url}`,
+    as: `/collection/${url}`,
+  };
+};
+
+export const getPaymentMethodLabel = (paymentMethod) => {
   switch (paymentMethod) {
     case CASH_ON_DELIVERY:
-      return 'Cash On Delivery';
+      return "Cash On Delivery";
     case STRIPE:
-      return 'Stripe';
+      return "Stripe";
     case PAYPAL:
-      return 'Paypal';
+      return "Paypal";
     case RAZORPAY:
-      return 'Razor Pay';
-    default :
-      return 'Cash On Delivery';
+      return "Razor Pay";
+    default:
+      return "Cash On Delivery";
   }
-}
+};

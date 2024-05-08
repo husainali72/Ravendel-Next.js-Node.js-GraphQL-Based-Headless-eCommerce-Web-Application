@@ -4,9 +4,23 @@
   --secondary-color: white;
   /* ... other color variables */
 }
+
 .fa, .far, .fas, .fa-solid {
   font-family: "Font Awesome 5 Free" !important;
   font-style: normal !important;
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+
 }
 body {
   padding: 0;
@@ -1419,13 +1433,17 @@ footer .follow h5 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: url(http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/banner/banner-8.jpg);
+  /* background: url(http://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/banner/banner-8.jpg); */
   background-size: cover;
   background-position: center;
   padding: 100px 0px;
   width: 100%;
 }
-
+.section-banner{
+  position: relative;
+  width: 100%;
+  height: 500px
+}
 .fashion-banner {
   background: url(../components/images/Frame\ 23.png);
   padding: 260px 0px;
@@ -1740,7 +1758,13 @@ footer .btn:hover a {
   width: 100%;
   margin-top: 10px;
 }
+.totall-product{
+  width: 100%;
 
+}
+.totalcount-text{
+  text-align: center;
+}
 .shop-product-fillter {
   display: flex;
   align-items: center;
@@ -4146,7 +4170,10 @@ border-bottom: none !important;
   .shop-product-container {
     padding: 0;
   }
-
+  .shop-product-scroll {
+    height: 300px !important; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
   .shop-Container .col-lg-3 {
     width: 100%;
   }
@@ -4540,7 +4567,11 @@ border-bottom: none !important;
 }
 
 .back-category {
-  stroke:var(--primary-color);
+  stroke:black;
+  stroke-width: 3;
+}
+.back-category-disable {
+  stroke:#4f5d77;
   stroke-width: 3;
 }
 
@@ -4860,6 +4891,14 @@ text-align: start;
   /* padding-bottom: 0; */
   margin-right: 6px;
   font-size: 12px;
+}
+.banner-image{
+  position:absolute;
+  top: 0;
+  left: 0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 .price-detail{
   border: 1px solid #eaeaec;
@@ -5689,4 +5728,135 @@ button.btn-outline-primary:hover{
 .account-content{
   margin-top: 30px;
   width: calc(100% - 240px);
+
+.search-container {
+  display: flex;
+  align-items: center;
+}
+
+.input-container {
+  position: relative;
+}
+
+.search-field {
+  border: none !important;
+  border-bottom: 1px solid grey !important;
+  padding: 5px;
+  margin-right: 5px;
+  flex-grow: 1;
+}
+.search-field:focus {
+  outline: none;
+  border-bottom: 1px solid grey !important; 
+}
+.search-field::placeholder {
+  font-size: 12px;
+}
+.clear-icon {
+  position: absolute;
+  top: 30%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: grey;
+}
+.show-more-btn{
+  border: none !important;
+  background-color: transparent;
+  color: var(--primary-color);
+  font-size: 14px;
+  font-weight: 600;
+
+}
+
+.parent-category-container {
+  display: flex;
+  grid-gap: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 20px 10px;
+  width: 100%;
+}
+.accordian-body{
+  margin: 10px;
+}
+.category-filter-container{
+  padding: 0px, !important;
+}
+.filter-heading{
+  margin: 10px;
+  font-size: 16px;
+}
+.filter-heading-container{
+  border-bottom: 1px solid #e9e9ed;
+}
+/* AccordionComponent.css */
+.custom-accordion .accordion-item {
+  border: none;
+}
+
+.custom-accordion .accordion-button {
+  background-color: transparent; 
+}
+.sorting-container{
+  display: flex;
+  margin-left: 36px;
+}
+.sorting-title{
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nav-link.active {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  border-bottom-color: var(--primary-color) !important;
+}
+
+.custom-tabs .nav-link {
+  position: relative;
+  padding-bottom: 10px;
+  border: none!important;
+}
+
+.tab-title {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+.square-card-image{
+  width: 210px;
+  height: 280px;
+}
+.square-card-body{
+  width: 210px;
+  height: 78px;
+}
+.square-card-container{
+  width: 210px;
+  height: 367px;
+}
+.square-card-title{
+  font-size: 14px;
+  font-weight: 600;
+}
+.child-categories{
+padding-left: 20px;
+font-size: 12px;
+}
+.parent-category{
+  font-size: 14px;
+}
+.custom-icon-color{
+  color: black !important;
+}
+.product-no-data-container{
+  padding: 50px
+}
+.product-no-data-text{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
 }

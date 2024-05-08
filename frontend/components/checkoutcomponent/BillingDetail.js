@@ -12,6 +12,7 @@ import "react-phone-input-2/lib/bootstrap.css";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { handleEnter } from "../../utills/helpers";
 import InputField from "../inputField";
+import { get } from "lodash";
 
 const BillingDetails = (props) => {
   const {
@@ -78,14 +79,14 @@ const BillingDetails = (props) => {
                 label="firstname"
                 placeholder="First name *"
                 {...registerRef("firstname", {
-                    // required: {
-                    //     value: (billingInfo.firstname ? false : true),
-                    //     message: "First Name is Required",
-                    // },
-                    // minLength: {
-                    //     value: 4,
-                    //     message: "First Name Min length is 4",
-                    // },
+                    required: {
+                        value: (billingInfo.firstname ? false : true),
+                        message: "First Name is Required",
+                    },
+                    minLength: {
+                        value: 4,
+                        message: "First Name Min length is 4",
+                    },
                 })}
                 errors={errorRef}
                 value={billingInfo.firstname}
@@ -100,10 +101,10 @@ const BillingDetails = (props) => {
                 label="lastname"
                 placeholder="Last name *"
                 {...registerRef("lastname", {
-                  // required: {
-                  //     value: billingInfo.lastname ? false : true,
-                  //     message: "Last Name is Required",
-                  // },
+                  required: {
+                      value: billingInfo.lastname ? false : true,
+                      message: "Last Name is Required",
+                  },
                 })}
                 errors={errorRef}
                 value={billingInfo.lastname}
@@ -119,20 +120,20 @@ const BillingDetails = (props) => {
                 name="phone"
                 control={control}
                 rules={{
-                  // required: {
-                  //     value: billingInfo.phone ? false : true,
-                  //     message: "Phone number is Required",
-                  // },
-                  // validate: () => {
-                  //     const cleanedPhoneNumber = billingInfo.phone?.replace(
-                  //     /\D/g,
-                  //     ""
-                  //     );
+                  required: {
+                      value: get(billingInfo,'phone') ? false : true,
+                      message: "Phone number is Required",
+                  },
+                  validate: () => {
+                      const cleanedPhoneNumber = get(billingInfo,'phone','') ?.replace(
+                      /\D/g,
+                      ""
+                      );
 
-                  //     // Add '91' to the cleaned phone number
-                  //     const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
-                  //     return isValidPhoneNumber(formattedPhoneNumber);
-                  // },
+                      // Add '91' to the cleaned phone number
+                      const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
+                      return isValidPhoneNumber(formattedPhoneNumber);
+                  },
                 }}
                 render={({ field: { onChange, value } }) => (
                 <PhoneInput
@@ -140,17 +141,17 @@ const BillingDetails = (props) => {
                     country={"us"}
                     inputClass={"custom-input"}
                     placeholder="Enter phone number"
-                    value={billingInfo.phone}
+                    value={billingInfo?.phone||''}
                     onChange={(value) => handlePhoneInput("phone", value)}
                 />
                 )}
             />
             <p>
                 <small style={{ color: "red" }}>
-                {errorRef.phone?.type === "required"
+                {errorRef?.phone?.type === "required"
                     ? errorRef.phone?.message
                     : ""}
-                {errorRef.phone?.type === "validate"
+                {errorRef?.phone?.type === "validate"
                     ? "Phone number is invalid"
                     : ""}
                 </small>
@@ -165,14 +166,14 @@ const BillingDetails = (props) => {
                 label="Email"
                 placeholder="email *"
                 {...registerRef("email", {
-                  // required: {
-                  //     value: billingInfo.email ? false : true,
-                  //     message: "Email is Required",
-                  // },
-                  // pattern: {
-                  //     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  //     message: "Invalid Email",
-                  // },
+                  required: {
+                      value: billingInfo.email ? false : true,
+                      message: "Email is Required",
+                  },
+                  pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                      message: "Invalid Email",
+                  },
                 })}
                 errors={errorRef}
                 value={billingInfo.email}
@@ -187,10 +188,10 @@ const BillingDetails = (props) => {
             label="address"
             placeholder="Address Line 1*"
             {...registerRef("address", {
-              // required: {
-              //     value: billingInfo.address ? false : true,
-              //     message: "Address is Required",
-              // },
+              required: {
+                  value: billingInfo.address ? false : true,
+                  message: "Address is Required",
+              },
             })}
             value={billingInfo.address}
             onChange={handleBillingInfo}
@@ -204,10 +205,10 @@ const BillingDetails = (props) => {
             label="address"
             placeholder="Address Line 2"
             {...registerRef("address_line2", {
-            // required: {
-            //   value: billingInfo.address.line_2 ? false : true,
-            //   message: "Address is Required",
-            // },
+            required: {
+              value: billingInfo.address.line_2 ? false : true,
+              message: "Address is Required",
+            },
             })}
             value={billingInfo.address_line2}
             onChange={handleBillingInfo}
@@ -222,10 +223,10 @@ const BillingDetails = (props) => {
                   name="city"
                   placeholder="City / Town *"
                   {...registerRef("city", {
-                    // required: {
-                    //     value: billingInfo.city ? false : true,
-                    //     message: "City is Required",
-                    // },
+                    required: {
+                        value: billingInfo.city ? false : true,
+                        message: "City is Required",
+                    },
                   })}
                   value={billingInfo.city}
                   onChange={handleBillingInfo}
@@ -241,10 +242,10 @@ const BillingDetails = (props) => {
                   name="state"
                   placeholder="State *"
                   {...registerRef("state", {
-                    // required: {
-                    //     value: billingInfo.state ? false : true,
-                    //     message: "State is Required",
-                    // },
+                    required: {
+                        value: billingInfo.state ? false : true,
+                        message: "State is Required",
+                    },
                   })}
                   value={billingInfo.state}
                   onChange={handleBillingInfo}
@@ -261,10 +262,10 @@ const BillingDetails = (props) => {
                 name="country"
                 placeholder="Country *"
                 {...registerRef("country", {
-                  // required: {
-                  //     value: billingInfo.country ? false : true,
-                  //     message: "Country is Required",
-                  // },
+                  required: {
+                      value: billingInfo.country ? false : true,
+                      message: "Country is Required",
+                  },
                 })}
                 value={billingInfo.country}
                 onChange={handleBillingInfo}
@@ -284,10 +285,10 @@ const BillingDetails = (props) => {
                 name="zip"
                 placeholder="Zip *"
                 {...registerRef("zip", {
-                  // required: {
-                  //     value: billingInfo.zip ? false : true,
-                  //     message: "zip is Required",
-                  // },
+                  required: {
+                      value: billingInfo.zip ? false : true,
+                      message: "zip is Required",
+                  },
                 })}
                 value={billingInfo.zip}
                 onChange={handleZipCode}
@@ -389,14 +390,14 @@ const BillingDetails = (props) => {
                   label="firstname"
                   placeholder="First name *"
                   {...registerRef("shippingfirstname", {
-                  //   required: {
-                  //     value: (shippingAdd ? ((shippingInfo?.firstname ? false : true)) : false),
-                  //     message: "First Name is Required",
-                  // },
-                  // minLength: {
-                  //     value: 4,
-                  //     message: "First Name Min length is 4",
-                  // },
+                    required: {
+                      value: (shippingAdd ? ((shippingInfo?.firstname ? false : true)) : false),
+                      message: "First Name is Required",
+                  },
+                  minLength: {
+                      value: 4,
+                      message: "First Name Min length is 4",
+                  },
                   })}
                   errors={errorRef}
                   value={shippingInfo?.firstname}
@@ -411,10 +412,10 @@ const BillingDetails = (props) => {
                 label="lastname"
                 placeholder="Last name *"
                 {...registerRef("shippinglastname", {
-                // required: {
-                //     value: (shippingAdd ? (shippingInfo.lastname ? false : true) : false),
-                //     message: "Last Name is Required",
-                // },
+                required: {
+                    value: (shippingAdd ? (shippingInfo.lastname ? false : true) : false),
+                    message: "Last Name is Required",
+                },
                 })}
                 errors={errorRef}
                 value={shippingInfo.lastname}
@@ -430,17 +431,17 @@ const BillingDetails = (props) => {
                 name="shippingphone"
                 control={control}
                 rules={{
-                  // required: {
-                  //     value: (shippingAdd ? (shippingInfo.phone ? false : true) : false),
-                  //     message: "Phone number is Required",
-                  // },
-                  // validate: () => {
-                  //     const cleanedPhoneNumber = shippingInfo.phone?.replace(/\D/g, '');
+                  required: {
+                      value: (shippingAdd ? ( get(billingInfo,'phone')  ? false : true) : false),
+                      message: "Phone number is Required",
+                  },
+                  validate: () => {
+                      const cleanedPhoneNumber =  get(billingInfo,'phone','')?.replace(/\D/g, '');
 
-                  //     // Add '91' to the cleaned phone number
-                  //     const formattedPhoneNumber = `+${cleanedPhoneNumber}`
-                  //     return isValidPhoneNumber(formattedPhoneNumber)
-                  // }
+                      // Add '91' to the cleaned phone number
+                      const formattedPhoneNumber = `+${cleanedPhoneNumber}`
+                      return isValidPhoneNumber(formattedPhoneNumber)
+                  }
               }}
                 render={({ field: { onChange, value } }) => (
                 <PhoneInput
@@ -455,10 +456,10 @@ const BillingDetails = (props) => {
             />
             <p>
                 <small style={{ color: "red" }}>
-                {errorRef.phone?.type === "required"
-                    ? errorRef.phone?.message
+                {errorRef?.phone?.type === "required"
+                    ? errorRef?.phone?.message
                     : ""}
-                {errorRef.phone?.type === "validate"
+                {errorRef?.phone?.type === "validate"
                     ? "Phone number is invalid"
                     : ""}
                 </small>
@@ -473,14 +474,14 @@ const BillingDetails = (props) => {
                   label="Email"
                   placeholder="email *"
                   {...registerRef("shippingemail", {
-                    // required: {
-                    //     value: (shippingAdd ? (shippingInfo?.email ? false : true) : false),
-                    //     message: "Email is Required",
-                    // },
-                    // pattern: {
-                    //     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                    //     message: "Invalid Email",
-                    // },
+                    required: {
+                        value: (shippingAdd ? (shippingInfo?.email ? false : true) : false),
+                        message: "Email is Required",
+                    },
+                    pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                        message: "Invalid Email",
+                    },
                 })}
                   errors={errorRef}
                   value={shippingInfo.email}
@@ -496,8 +497,8 @@ const BillingDetails = (props) => {
               placeholder="Address Line 1*"
               {...registerRef("shippingaddress", {
               required: {
-                // value: (shippingAdd ? (shippingInfo.address ? false : true) : false),
-                // message: "Address is Required",
+                value: (shippingAdd ? (shippingInfo.address ? false : true) : false),
+                message: "Address is Required",
               },
               })}
               value={shippingInfo.address}
@@ -512,10 +513,10 @@ const BillingDetails = (props) => {
               label="address"
               placeholder="Address Line 2"
               {...registerRef("shippingaddressLine2", {
-              // required: {
-              //   value: shippingInfo.address.line_2 ? false : true,
-              //   message: "Address is Required",
-              // },
+              required: {
+                value: shippingInfo.address.line_2 ? false : true,
+                message: "Address is Required",
+              },
               })}
               value={shippingInfo.address_line2}
               onChange={handleShippingChange}
@@ -530,10 +531,10 @@ const BillingDetails = (props) => {
                     name="shippingcity"
                     placeholder="City / Town *"
                     {...registerRef("shippingcity", {
-                      // required: {
-                      //     value:  (shippingAdd ? ((shippingInfo?.city ? false : true)) : false),
-                      //     message: "City is Required",
-                      // },
+                      required: {
+                          value:  (shippingAdd ? ((shippingInfo?.city ? false : true)) : false),
+                          message: "City is Required",
+                      },
                     })}
                     value={shippingInfo.city}
                     onChange={handleShippingChange}
@@ -549,10 +550,10 @@ const BillingDetails = (props) => {
                     name="shippingstate"
                     placeholder="State *"
                     {...registerRef("shippingstate", {
-                      // required: {
-                      //   value: (shippingAdd ? ((shippingInfo?.state ? false : true)) : false),
-                      //     message: "State is Required",
-                      // },
+                      required: {
+                        value: (shippingAdd ? ((shippingInfo?.state ? false : true)) : false),
+                          message: "State is Required",
+                      },
                     })}
                     value={shippingInfo.state}
                     onChange={handleShippingChange}
@@ -569,10 +570,10 @@ const BillingDetails = (props) => {
                   name="shippingcountry"
                   placeholder="Country *"
                   {...registerRef("shippingcountry", {
-                    // required: {
-                    //     value: (shippingAdd ? ((shippingInfo?.country ? false : true)) : false),
-                    //     message: "Country is Required",
-                    // },
+                    required: {
+                        value: (shippingAdd ? ((shippingInfo?.country ? false : true)) : false),
+                        message: "Country is Required",
+                    },
                   })}
                   value={shippingInfo.country}
                   onChange={handleShippingChange}
@@ -592,10 +593,10 @@ const BillingDetails = (props) => {
                   name="shippingzip"
                   placeholder="Zip *"
                   {...registerRef("shippingzip", {
-                    // required: {
-                    //     value: (shippingAdd ? ((shippingInfo?.zip ? false : true)) : false),
-                    //     message: "zip is Required",
-                    // },
+                    required: {
+                        value: (shippingAdd ? ((shippingInfo?.zip ? false : true)) : false),
+                        message: "zip is Required",
+                    },
                   })}
                   value={shippingInfo.zip}
                   onChange={handleShippingChange}
@@ -603,9 +604,9 @@ const BillingDetails = (props) => {
               />
               <p>
                 <small style={{ color: 'red' }}>
-                    {errorRef.shippingzip?.type === "required" ? errorRef.shippingzip?.message : undefined}
-                    {errorRef.shippingzip?.type === "minLength" ? errorRef.shippingzip?.message : undefined}
-                    {errorRef.shippingzip?.type === "maxLength" ? errorRef.shippingzip?.message : undefined}
+                    {errorRef.shippingzip?.type === "required" ? errorRef.shippingzip?.message : ''}
+                    {errorRef.shippingzip?.type === "minLength" ? errorRef.shippingzip?.message : ''}
+                    {errorRef.shippingzip?.type === "maxLength" ? errorRef.shippingzip?.message : ''}
                 </small>
             </p>
               
@@ -615,7 +616,7 @@ const BillingDetails = (props) => {
                       name="shippingAddressType"
                       control={control}
                       rules={{
-                          // required: shippingAdd && "Address Type is Required"
+                          required: shippingAdd && "Address Type is Required"
                       }}
                       render={({ field: { onChange, value, ref } }) => (
                       <Select

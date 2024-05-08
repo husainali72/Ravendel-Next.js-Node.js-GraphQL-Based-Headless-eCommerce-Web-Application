@@ -3,10 +3,6 @@ import { gql } from "@apollo/client";
 export const GET_HOMEPAGE_DATA_QUERY = gql`
   query HomePageSettings {
     getSettings {
-      general {
-        date_format
-        time_zone
-      }
       seo {
         meta_title
         meta_tag
@@ -34,10 +30,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
             name
             handle
           }
-        }
-        measurements {
-          weight_unit
-          dimensions_unit
         }
         inventory {
           manage_stock
@@ -97,8 +89,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
       }
       imageStorage {
         status
-        s3_id
-        s3_key
       }
       appearance {
         home {
@@ -118,7 +108,6 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
           }
           add_section_web {
             label
-            name
             visible
             category
           }
@@ -142,6 +131,30 @@ export const GET_HOMEPAGE_DATA_QUERY = gql`
       }
       createdAt
       updatedAt
+    }
+  }
+`;
+export const GET_HOMEPAGE_QUERY = gql`
+  query HomePageData($deviceType: ID!) {
+    getHomePage(deviceType: $deviceType) {
+      parentCategories {
+        id
+        name
+        url
+        image
+      }
+      sections {
+        name
+        section_img
+        products {
+          name
+          quantity
+          rating
+          pricing
+          feature_image
+          url
+        }
+      }
     }
   }
 `;

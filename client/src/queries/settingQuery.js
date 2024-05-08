@@ -151,7 +151,9 @@ const SETTING_TILE_DATA = gql`
         }
         add_section_web {
           label
-          name
+          section_img
+          url
+          display_type
           visible
           category
         }
@@ -173,6 +175,7 @@ const SETTING_TILE_DATA = gql`
           section_img
           visible
           url
+          display_type
           category
         }
       }
@@ -570,16 +573,17 @@ const ADD_ZIPCODE = gql`
 `;
 
 const UPDATE_ZIPCODE = gql`
-  mutation ($zip: String) {
-    updateZipcode(zip: $zip) {
+  mutation ($id: ID!, $zipcode: String!) {
+    updateZipcode(id: $id, zipcode: $zipcode) {
       message
       success
     }
   }
 `;
 const UPLOAD_ZIPCODE_FILE = gql`
-  mutation ($zip: String) {
-    uploadZipcodeFile(zip: $zip) {
+  mutation ($zipcode_file: Upload) 
+  {
+    addZipCodeUsingFile(zipcode_file: $zipcode_file) {
       message
       success
     }

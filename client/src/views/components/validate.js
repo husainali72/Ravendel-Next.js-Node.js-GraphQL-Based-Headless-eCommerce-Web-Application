@@ -26,7 +26,7 @@ export const validate = (names, args) => {
 export const validatenestedArray = (main, names, args, key) => {
   let errors = "";
   if (names && names.length > 0) {
-    args?.map((obj) => {
+    args.map((obj) => {
       names.map((name) => {
         if (!obj[main][name]) {
           if (key) {
@@ -137,4 +137,30 @@ export const validateNestedPhone = (main, names, args) => {
     });
   }
   return errors;
+};
+
+export const validatSpecification = (specifications) => {
+  let errors = "";
+  if (specifications && specifications?.length > 0) {
+    specifications?.map((obj) => {
+      if (isNullOrWhitespace(obj?.group)) {
+        return (errors = `Group name is required`);
+      }
+      if (obj?.customFields && obj?.customFields?.length > 0) {
+        obj?.customFields?.map((custom_field) => {
+          if (!custom_field?.attributeValueId) {
+            errors = `Specification value is required`;
+          }
+          if (!custom_field?.attributeId) {
+            errors = `Specification key is required`;
+          }
+
+        });
+      } else {
+        return (errors = `Specification Fields are required`);
+      }
+    });
+
+    return errors;
+  }
 };

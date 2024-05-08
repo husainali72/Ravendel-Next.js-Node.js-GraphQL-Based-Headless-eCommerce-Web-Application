@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { Container } from "react-bootstrap";
-const CategoryBreadCrumb = ({ breadCrumbTitle, categoryDetail }) => {
-  const router = useRouter();
+import { get } from "lodash";
+import CategoryLink from "./category/categoryLink";
+import PropTypes from "prop-types";
+const CategoryBreadCrumb = ({ breadCrumbs }) => {
   return (
     <nav className="breadcrumb-nav" aria-label="breadcrumb" style={{}}>
       <Container>
@@ -14,34 +13,28 @@ const CategoryBreadCrumb = ({ breadCrumbTitle, categoryDetail }) => {
               Home
             </Link>
           </li>
-          {breadCrumbTitle && (
-            <>
-              <p style={{ marginLeft: "10px", marginRight: "10px" }}>{">"}</p>
-              <Link
-                href={`/subcategory/[categorys]?url=${breadCrumbTitle?.url}`}
-                as={`/subcategory/${breadCrumbTitle?.url}`}
-                style={{ marginLeft: "10px" }}
-              >
-                <li className="breadcrumb-item page-active breadcrumb-link">
-                  {breadCrumbTitle?.name}
-                </li>
-              </Link>
-            </>
-          )}
-          {categoryDetail && (
-            <>
-              <p style={{ marginLeft: "10px" }}>{">"}</p>
-              <li
-                className="breadcrumb-item page-active breadcrumb-link"
-                style={{ marginLeft: "10px" }}
-              >
-                {categoryDetail?.name}
-              </li>
-            </>
-          )}
+          {breadCrumbs &&
+            breadCrumbs?.length > 0 &&
+            breadCrumbs?.map((breadCrumb) => {
+              return (
+                <>
+                  <p style={{ marginLeft: "10px", marginRight: "10px" }}>
+                    {">"}
+                  </p>
+                  <CategoryLink url={get(breadCrumb, "url")}>
+                    <li className="breadcrumb-item page-active breadcrumb-link">
+                      {breadCrumb?.name}
+                    </li>
+                  </CategoryLink>
+                </>
+              );
+            })}
         </ol>
       </Container>
     </nav>
   );
+};
+CategoryBreadCrumb.propTypes = {
+  breadCrumbs: PropTypes.array,
 };
 export default CategoryBreadCrumb;

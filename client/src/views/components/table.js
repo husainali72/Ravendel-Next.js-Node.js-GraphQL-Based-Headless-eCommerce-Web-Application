@@ -118,7 +118,7 @@ const Tablecomponent = ({
             <Table stickyHeader aria-label="all-products" size="small">
               <TableHead>
                 <TableRow>
-                  {columns.map((head) => {
+                  {columns?.map((head) => {
                     return head.sortingactive ? (
                       <TableCell
                         sortDirection="desc"
@@ -145,15 +145,15 @@ const Tablecomponent = ({
                   })}
                 </TableRow>
               </TableHead>
-              {rows && rows.length > 0 ? (
+              {rows && rows?.length > 0 ? (
                 <TableBody className={classes.container}>
                   {stableSort(rows, getComparator(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((data) => {
                       return (
                         <TableRow key={data.id} hover>
-                          {columns.map((column) => {
-                            switch (column.name) {
+                          {columns?.map((column) => {
+                            switch (column?.type) {
                               case "image":
                                 return (
                                   <TableCell>
@@ -205,54 +205,36 @@ const Tablecomponent = ({
                                     {get(data,'role')}
                                   </TableCell>
                                 );
-                              case "shippingStatus":
-                                return (
-                                  <TableCell>
-                                    <Badge
-                                      badgeContent={get(data,'shippingStatus')}
-                                      color={badgeColor(get(data,'shippingStatus'))}
-                                      className={classes.badge}
-                                      sx={{
-                                        ml: "60px",
-                                        "& .MuiBadge-badge": {
-                                          width: "120px",
-                                          fontSize: 10,
-                                          padding: "10px",
-                                          minWidth: 15,
-                                        },
-                                      }}
-                                    />
-                                  </TableCell>
-                                );
-                              case "paymentStatus":
-                                return (
-                                  <TableCell>
-                                    <Badge
-                                      badgeContent={get(data,'paymentStatus')}
-                                      color={badgeColor(get(data,'paymentStatus'))}
-                                      className={classes.badge}
-                                      sx={{
-                                        ml: "60px",
-                                        "& .MuiBadge-badge": {
-                                          width: "120px",
-                                          fontSize: 10,
-                                          padding: "10px",
-                                          minWidth: 15,
-                                        },
-                                      }}
-                                    />
-                                  </TableCell>
-                                );
+                
                               case "actions":
                                 return (
                                   <TableCell>
                                     <column.component
                                       onClick={(type) =>
-                                        column?.buttonOnClick(type, data?.id)
+                                        column?.buttonOnClick(type, (data?.id || data?._id))
                                       }
                                       showDeleteButton={
                                         data.system ? false : showDeleteButton
                                       }
+                                    />
+                                  </TableCell>
+                                );
+                              case "badge":
+                                return (
+                                  <TableCell>
+                                    <Badge
+                                      badgeContent={get(data, `${[column?.name]}`, "")}
+                                      color={badgeColor(get(data, `${[column?.name]}`, ""))}
+                                      className={classes.badge}
+                                      sx={{
+                                        ml: "60px",
+                                        "& .MuiBadge-badge": {
+                                          width: "120px",
+                                          fontSize: 10,
+                                          padding: "10px",
+                                          minWidth: 15,
+                                        },
+                                      }}
                                     />
                                   </TableCell>
                                 );
@@ -272,7 +254,7 @@ const Tablecomponent = ({
                 <TableBody>
                   <TableRow>
                     <TableCell align="center" colSpan={6}>
-                      <img src={NodataImage} alt="No image" />
+                      <img src={NodataImage} alt="No image" className={classes.noImage}/>
                       <h3>No Data</h3>
                     </TableCell>
                   </TableRow>
@@ -283,7 +265,7 @@ const Tablecomponent = ({
           <TablePagination
             rowsPerPageOptions={[5, 10, 20]}
             component="div"
-            count={rows.length || 0}
+            count={rows?.length || 0}
             rowsPerPage={rowsPerPage || 10}
             page={page || 0}
             onPageChange={handleChangePage}

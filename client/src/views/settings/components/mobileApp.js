@@ -10,6 +10,12 @@ import {
   FormGroup,
   Tooltip,
   IconButton,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import viewStyles from "../../viewStyles";
 import { get } from "lodash";
@@ -146,16 +152,15 @@ const MobileAppSetting = () => {
     setSettingMobile({
       ...get(settingState, "settings.appearance.mobile", []),
     });
-  }, [])
+  }, []);
 
   const updateMobileApp = () => {
     const cleanedSlider = get(settingMobile, "slider", [])?.map(
       ({ __typename, ...rest }) => rest
     );
-    const cleanedMobileSection = get(settingMobile, "mobile_section", [])?.map(
+    const cleanedMobileSection = sectionData?.map(
       ({ __typename, ...rest }) => rest
     );
-
     const data = {
       ...settingMobile,
       slider: cleanedSlider,
@@ -183,29 +188,35 @@ const MobileAppSetting = () => {
   };
 
   const reArrange = () => {
-    reOrderMobileList ? setReOrderMobileList(false) : setReOrderMobileList(true)
-  }
+    reOrderMobileList
+      ? setReOrderMobileList(false)
+      : setReOrderMobileList(true);
+  };
 
   const onSavechange = () => {
-    dragComponents ? setReOrderMobileList(true) : setReOrderMobileList(false)
-  }
+    dragComponents ? setReOrderMobileList(true) : setReOrderMobileList(false);
+  };
 
   const onCheckBoxChange = (name, value, index) => {
     let data = sectionData;
-    data[index].visible = !data[index].visible
+    data[index].visible = !data[index].visible;
     setSectionData([...data]);
   };
 
-
   const handleChangeCategory = (event, index) => {
     let data = sectionData;
-    data[index].category = event.target.value
+    data[index].category = event.target.value;
+    setSectionData([...data]);
+  };
+  const handleTypeChange = (event, index) => {
+    let data = sectionData;
+    data[index].display_type = event.target.value;
     setSectionData([...data]);
   };
 
   const isCategoryUsed = (cat) => {
-    return sectionData.find((data) => data.category == cat ? true : false)
-  }
+    return sectionData?.find((data) => (data?.category == cat ? true : false));
+  };
 
   const addCategory = () => {
     setSectionData([
@@ -215,16 +226,15 @@ const MobileAppSetting = () => {
         label: "Product from Specific Categories",
         visible: false,
         section_img: "",
-        category: null
-      }
-    ]
-    )
-  }
+        category: null,
+      },
+    ]);
+  };
 
   const removeCategory = (i) => {
     sectionData.splice(i, 1);
     setSectionData([...sectionData]);
-  }
+  };
 
   const handleImageChange = (event, index) => {
     const files = get(event, "target.files", []);
@@ -247,7 +257,6 @@ const MobileAppSetting = () => {
   const imageOnError = (event) => {
     event.target.src = NoImagePlaceHolder;
   };
-
   return (
     <>
       <Alerts />
@@ -264,81 +273,75 @@ const MobileAppSetting = () => {
                   Slider
                 </Typography>
                 <Grid container spacing={2}>
-                  {settingMobile.slider &&
-                    settingMobile.slider.map((slide, index) => (
-                      <Grid item md={4} sm={6} xs={12} key={index}>
-                        <Box className={classes.sliderImageWrapper}>
-                          <Tooltip
-                            title="Remove Slide"
+                  {get(settingMobile, "slider", [])?.map((slide, index) => (
+                    <Grid item md={4} sm={6} xs={12} key={index}>
+                      <Box className={classes.sliderImageWrapper}>
+                        <Tooltip title="Remove Slide" aria-label="remove-slide">
+                          <IconButton
                             aria-label="remove-slide"
-                          >
-                            <IconButton
-                              aria-label="remove-slide"
-                              onClick={(e) => removeSlide(index)}
-                              size="small"
-                              className={clsx(
-                                classes.deleteicon,
-                                classes.slideRemove
-                              )}
-                            >
-                              <CloseIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Box className={classes.sliderImagePreviewWrapper}>
-                            {slide.image && (
-                              <img
-                                src={slider[index] && slider[index].image}
-                                className={classes.sliderImagePreview}
-                                alt="Featured"
-                                onError={imageOnError}
-                              />
+                            onClick={(e) => removeSlide(index)}
+                            size="small"
+                            className={clsx(
+                              classes.deleteicon,
+                              classes.slideRemove
                             )}
-
-                            <input
-                              accept="image/*"
-                              className={classes.input}
-                              style={{ display: "none" }}
-                              id={`slide-${index}`}
-                              name={`slide-${index}`}
-                              type="file"
-                              onChange={(e) => fileChange(e, index)}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Box className={classes.sliderImagePreviewWrapper}>
+                          {slide?.image && (
+                            <img
+                              src={slider[index] && slider[index].image}
+                              className={classes.sliderImagePreview}
+                              alt="Featured"
+                              onError={imageOnError}
                             />
+                          )}
 
-                            <label
-                              htmlFor={`slide-${index}`}
-                              className={classes.feautedImage}
-                            >
-                              {slide.image
-                                ? "Change Slider"
-                                : "Add Slide Image"}
-                            </label>
-                          </Box>
+                          <input
+                            accept="image/*"
+                            className={classes.input}
+                            style={{ display: "none" }}
+                            id={`slide-${index}`}
+                            name={`slide-${index}`}
+                            type="file"
+                            onChange={(e) => fileChange(e, index)}
+                          />
 
-                          <Box className={classes.slidesInfo}>
-                            <TextField
-                              label="Slide Link"
-                              variant="outlined"
-                              name="link"
-                              className={clsx(classes.width100)}
-                              value={slide.link}
-                              onChange={(e) => handleChange(e, index)}
-                              size="small"
-                            />
-
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  color="primary"
-                                  checked={slide.open_in_tab}
-                                  onChange={(e) => handleChange(e, index)}
-                                />
-                              }
-                              label="Open in New Tab"
-                            />
-                          </Box>
+                          <label
+                            htmlFor={`slide-${index}`}
+                            className={classes.feautedImage}
+                          >
+                            {slide.image ? "Change Slider" : "Add Slide Image"}
+                          </label>
                         </Box>
-                      </Grid>
-                    ))}
+
+                        <Box className={classes.slidesInfo}>
+                          <TextField
+                            label="Slide Link"
+                            variant="outlined"
+                            name="link"
+                            className={clsx(classes.width100)}
+                            value={slide.link}
+                            onChange={(e) => handleChange(e, index)}
+                            size="small"
+                          />
+
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                color="primary"
+                                checked={slide.open_in_tab}
+                                onChange={(e) => handleChange(e, index)}
+                              />
+                            }
+                            label="Open in New Tab"
+                          />
+                        </Box>
+                      </Box>
+                    </Grid>
+                  ))}
                 </Grid>
               </Grid>
             </Grid>
@@ -371,7 +374,8 @@ const MobileAppSetting = () => {
                       <table>
                         <tbody>
                           <tr style={{ lineHeight: "35px", fontSize: "14px" }}>
-                            {select?.label} - {!cat?.length ? "" : get(cat,'[0].name')}
+                            {select?.label} -{" "}
+                            {!cat?.length ? "" : get(cat, "[0].name")}
                           </tr>
                         </tbody>
                       </table>
@@ -390,111 +394,169 @@ const MobileAppSetting = () => {
               </div>
             ) : (
               <div>
-                <FormGroup>
-                  {sectionData&&sectionData?.length>0? sectionData?.map((select, index) => {
-                    return (
-                      <>
-                        <div style={{ display: "flex" }}>
-                          <FormControlLabel
-                            control={
-                              <>
-                                <Checkbox
-                                  color="success"
-                                  checked={select.visible}
-                                  onChange={(e) => {
-                                    onCheckBoxChange(
-                                      select.name,
-                                      e.target.checked,
-                                      index
-                                    );
-                                  }}
-                                />
-                              </>
-                            }
-                            label={select.label}
-                          />
-
-                          {select.label ===
-                          "Product from Specific Categories" ? (
-                            <>
-                              {" "}
-                              <Box sx={{ minWidth: 120 }}>
-                                <FormControl fullWidth size="small">
-                                  <Select
-                                    value={select.category}
-                                    onChange={(e) =>
-                                      handleChangeCategory(e, index)
+                <TableContainer className={classes.container}>
+                  <Table stickyHeader aria-label="faq-table" size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell padding="checkbox" />
+                        <TableCell>Image</TableCell>
+                        <TableCell colSpan={2}>Section</TableCell>
+                        <TableCell align="center">Type</TableCell>
+                        <TableCell align="center">Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {sectionData && sectionData?.length > 0
+                        ? sectionData?.map((select, index) => (
+                            <TableRow>
+                              <TableCell padding="checkbox">
+                                {
+                                  <FormControlLabel
+                                    control={
+                                      <>
+                                        <Checkbox
+                                          color="success"
+                                          checked={select?.visible || false}
+                                          onChange={(e) => {
+                                            onCheckBoxChange(
+                                              select.name,
+                                              e.target.checked,
+                                              index
+                                            );
+                                          }}
+                                        />
+                                      </>
                                     }
-                                    displayEmpty
-                                    inputProps={{
-                                      "aria-label": "Without label",
-                                    }}
-                                    disabled={!select.visible}
-                                  >
-                                    {category.categories.map((cat) => {
-                                      return (
-                                        <MenuItem
-                                          value={cat.id}
-                                          disabled={isCategoryUsed(cat.id)}
-                                        >
-                                          {cat.name}
-                                        </MenuItem>
-                                      );
-                                    })}
-                                  </Select>
-                                </FormControl>
-                              </Box>
-                              <Stack direction="row" spacing={1}>
-                                <IconButton
-                                  color="error"
-                                  aria-label="delete"
-                                  onClick={(e) => removeCategory(index)}
-                                >
-                                  <CloseIcon />
-                                </IconButton>
-                              </Stack>
-                            </>
-                          ) : null}
-
-                          <label htmlFor={`htmltag${index}`}>
-                            {select.section_img ? (
-                              <Box className={classes.logoImageBox}>
-                                <img
-                                  className="mobileImage"
-                                  src={
-                                    select.section_img.startsWith("blob")
-                                      ? select.section_img
-                                      : getBaseUrl(settingState) +
-                                        select.section_img
-                                  }
-                                  onError={imageOnError}
-                                />
-                              </Box>
-                            ) : (
-                              <>
-                                <h6>
-                                  <AddPhotoAlternateIcon
-                                    color="action"
-                                    style={{ marginTop: "8px" }}
+                                    // label={select.label}
                                   />
-                                </h6>
-                              </>
-                            )}
-                          </label>
+                                }
+                              </TableCell>
+                              <TableCell>
+                                <label htmlFor={`htmltag${index}`}>
+                                  {select?.section_img ? (
+                                    <Box className={classes.logoImageBox}>
+                                      <img
+                                        className="mobileImage"
+                                        alt="section"
+                                        src={
+                                          get(
+                                            select,
+                                            "section_img",
+                                            ""
+                                          )?.startsWith("blob")
+                                            ? get(select, "section_img", "")
+                                            : getBaseUrl(settingState) +
+                                              get(select, "section_img", "")
+                                        }
+                                        onError={imageOnError}
+                                      />
+                                    </Box>
+                                  ) : (
+                                    <>
+                                      <h6>
+                                        <AddPhotoAlternateIcon
+                                          color="action"
+                                          style={{ marginTop: "8px" }}
+                                        />
+                                      </h6>
+                                    </>
+                                  )}
+                                </label>
 
-                          <input
-                            key={index}
-                            type="file"
-                            accept="image/*"
-                            id={`htmltag${index}`}
-                            style={{ display: "none" }}
-                            onChange={(e) => handleImageChange(e, index)}
-                          />
-                        </div>
-                      </>
-                    );
-                  }):"No Data Found"}
-                </FormGroup>
+                                <input
+                                  key={index}
+                                  type="file"
+                                  accept="image/*"
+                                  id={`htmltag${index}`}
+                                  style={{ display: "none" }}
+                                  onChange={(e) => handleImageChange(e, index)}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                {select?.label && (
+                                  <Typography>{select?.label}</Typography>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {select.label ===
+                                "Product from Specific Categories" ? (
+                                  <>
+                                    <Box sx={{ minWidth: 120 }}>
+                                      <FormControl fullWidth size="small">
+                                        <Select
+                                          value={get(select, "category")}
+                                          onChange={(e) =>
+                                            handleChangeCategory(e, index)
+                                          }
+                                          displayEmpty
+                                          inputProps={{
+                                            "aria-label": "Without label",
+                                          }}
+                                          disabled={!select.visible}
+                                        >
+                                          {get(category, "categories", [])?.map(
+                                            (cat) => {
+                                              return (
+                                                <MenuItem
+                                                  value={cat?.id}
+                                                  disabled={isCategoryUsed(
+                                                    cat?.id
+                                                  )}
+                                                >
+                                                  {cat?.name}
+                                                </MenuItem>
+                                              );
+                                            }
+                                          )}
+                                        </Select>
+                                      </FormControl>
+                                    </Box>
+                                  </>
+                                ) : null}
+                              </TableCell>
+                              <TableCell>
+                                <Box sx={{ minWidth: 120 }}>
+                                  <FormControl fullWidth size="small">
+                                    <Select
+                                      displayEmpty
+                                      value={get(select, "display_type")}
+                                      onChange={(e) =>
+                                        handleTypeChange(e, index)
+                                      }
+                                      inputProps={{
+                                        "aria-label": "Without label",
+                                      }}
+                                    >
+                                      <MenuItem value="SLIDER">Slider</MenuItem>
+                                      <MenuItem value="GRID">Grid</MenuItem>
+                                    </Select>
+                                  </FormControl>
+                                </Box>
+                              </TableCell>
+                              <TableCell align="center">
+                                {select.label ===
+                                "Product from Specific Category" ? (
+                                  <Stack
+                                    justifyContent="center"
+                                    direction="row"
+                                    spacing={1}
+                                  >
+                                    <IconButton
+                                      color="error"
+                                      aria-label="delete"
+                                      onClick={(e) => removeCategory(index)}
+                                    >
+                                      <CloseIcon />
+                                    </IconButton>
+                                  </Stack>
+                                ) : null}
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        : "No data found"}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
 
                 <Grid item xs={12}>
                   <Button

@@ -212,3 +212,31 @@ export const getPaymentMethodLabel = (paymentMethod) => {
       return "Cash On Deliverys";
   }
 };
+export const getCheckedIds=(data)=> {
+  const checkedIds = [];
+
+  function checkNode(node) {
+    if (node?.checked||hasCheckedChild(node)) {
+      checkedIds.push(node.id);
+    }
+    if (node?.children && node?.children?.length > 0) {
+      node?.children?.forEach(child => checkNode(child));
+    }
+  }
+
+  data?.forEach(checkNode);
+  return checkedIds;
+}
+export const hasCheckedChild = (cat) => {
+  if (cat?.checked) {
+    return true;
+  }
+  if (cat?.children && Array.isArray(cat?.children)) {
+    for (const child of cat?.children) {
+      if (hasCheckedChild(child)) {
+        return true;
+      }
+    }
+  }
+  return false;
+};

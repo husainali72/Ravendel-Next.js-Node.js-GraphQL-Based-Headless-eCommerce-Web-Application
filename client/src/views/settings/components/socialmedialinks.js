@@ -90,6 +90,7 @@ const SocialMediaComponent = ({
                     aria-invalid="false"
                     id=":rj:"
                     name={icon}
+                    style={{border:'none'}}
                     placeholder={`${
                       get(icon,'name')?.charAt(0).toUpperCase() + get(icon,'name')?.slice(1)
                     } Link`}

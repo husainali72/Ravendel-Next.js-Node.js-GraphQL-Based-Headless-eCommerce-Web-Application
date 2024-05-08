@@ -67,11 +67,9 @@ const CartTotalDetails=({totalSummary})=>{
           </Link>
         </div>
         <div className="cart-action text-end">
-          <Link href="/shop">
             <a className="card-btons primary-btn-color">
               <i className="fas fa-shopping-bag"></i> Continue Shopping
             </a>
-          </Link>
         </div>
       </div>
     )

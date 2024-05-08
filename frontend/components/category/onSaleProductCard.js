@@ -24,7 +24,6 @@ const OnSaleProductCard = ({
   const [showWishListButton, setShowWishListButton] = useState(-1);
   const [isProductInWistList, setIsProductInWistList] = useState(-1);
 
-
   const handleWishlistButtonClick = (e, product) => {
     e.stopPropagation();
   };
@@ -45,7 +44,6 @@ const OnSaleProductCard = ({
           <div>
             <h4 className="theme-color my-2">
               {titleShow ? capitalize(titleShow) : "On Sale"}{" "}
-              <span className="text-black">Products</span>
             </h4>
           </div>
         ) : null}
@@ -94,19 +92,6 @@ const OnSaleProductCard = ({
                                 </span>
                               </div>
                             ) : null}
-                            <div className="product-categoryname category-name-container ">
-                              <div>
-                                {product?.categoryId?.map((item, i) => (
-                                  <span key={i}>
-                                    {product?.categoryId?.length - 1 === i ? (
-                                      <span>{capitalize(get(item,'name',''))} </span>
-                                    ) : (
-                                      <span>{capitalize(get(item,'name',''))}, </span>
-                                    )}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
                             <div className="card-price">
                               <div>
                               {product?.name?.length > 18 ? (
@@ -127,7 +112,7 @@ const OnSaleProductCard = ({
                               <div className="product-price">
                                 <StarRating
                                   className="rating"
-                                  stars={get(product,'rating',0)}
+                                  stars={get(product, "rating", 0)}
                                   singleProducts={product}
                                 />
                                 <span className="no-wrap">
@@ -141,8 +126,8 @@ const OnSaleProductCard = ({
                                   </strong>
                                 </span>
                                 {getSalePrice(product) &&
-                                getSalePrice(product)  <
-                                getProductPrice(product) ? (
+                                getSalePrice(product) <
+                                  getProductPrice(product) ? (
                                   <span
                                     className={
                                       product?.pricing.sellprice
@@ -207,7 +192,6 @@ OnSaleProductCard.propTypes = {
   onSaleProduct: PropTypes.array.isRequired,
   hideTitle: PropTypes.bool,
   titleShow: PropTypes.string,
-  currencyProp: PropTypes.string,
   currencyOpt: PropTypes.object,
   showRemoveButton: PropTypes.bool,
   removeButton: PropTypes.func,

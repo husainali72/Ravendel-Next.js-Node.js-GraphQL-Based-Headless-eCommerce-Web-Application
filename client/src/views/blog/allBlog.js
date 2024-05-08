@@ -14,7 +14,6 @@ const AllBlogComponent = () => {
   const classes = viewStyles()
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
-  const setting = useSelector((state) => state.settings);
   const [Allblogs, setAllblogs] = useState([])
   const [filtered, setfilterdData] = useState([])
   const navigate = useNavigate()
@@ -25,16 +24,19 @@ const AllBlogComponent = () => {
   const columndata = [
     {
       name: "image",
+      type: "image",
       title: "image",
       sortingactive: false
     },
     {
       name: "title",
+      type: "text",
       title: "title ",
       sortingactive: true
     },
     {
       name: "date",
+      type: "date",
       title: "date ",
       sortingactive: true
     },

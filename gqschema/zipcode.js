@@ -27,5 +27,8 @@ module.exports = `
       zipcode: String!
     ): statusSchema
     deleteZipcode( id: ID! ): statusSchema
+    addZipCodeUsingFile(
+      zipcode_file: Upload
+    ): statusSchema
   }
 `;

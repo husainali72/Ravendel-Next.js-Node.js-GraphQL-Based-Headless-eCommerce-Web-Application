@@ -25,10 +25,11 @@ export const AlternativeThemeProvider = ( { children } ) => {
   const settings = useSelector( ( state ) => state.setting );
   useEffect( () => {
     const settingTheme = get( settings, 'setting.appearance.theme' );
+    let primaryColor=get( settingTheme, 'primary_color', '#088178' )
     let themeColors = createTheme( {
       palette: {
         primary: {
-          main: get( settingTheme, 'primary_color', '#088178' ),
+          main: primaryColor|| '#088178' ,
         },
         secondary: {
           main: '#FFFFFF',

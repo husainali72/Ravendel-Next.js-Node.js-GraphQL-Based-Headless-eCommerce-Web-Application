@@ -50,11 +50,11 @@ const AttributesComponent = ({
     combinations: [],
     allValues: {},
   });
-
   const [currentAttribute, setcurrentAttribute] = useState({
     id: "",
     attribute_list: [],
   });
+
   const [loading, setLoading] = useState(false);
   const [variantImage, setVariantImage] = useState(null);
 
@@ -70,14 +70,14 @@ const AttributesComponent = ({
   }, []);
 
   useEffect(() => {
-    for (let i of attributeState.attributes) {
+    for (let i of attributeState?.attributes) {
       for (let j of i.values) {
         currentVariants.allValues[j._id] = j.name;
       }
     }
-    if (product && attributeState.attributes.length) {
+    if (product && attributeState?.attributes?.length) {
       let attrWithValue = {};
-      for (const attr of product.attribute) {
+      for (const attr of product?.attribute) {
         if (!Array.isArray(attrWithValue[attr.attribute_id])) {
           attrWithValue[attr.attribute_id] = [];
         }
@@ -135,6 +135,7 @@ const AttributesComponent = ({
       });
     }
   }, [attributeState.attributes, product.variation_master]);
+
 
   const changeSelectedValue = (e, i) => {
     currentAttribute.attribute_list[i].selected_values = e;
@@ -246,17 +247,17 @@ const AttributesComponent = ({
     }
 
   };
-
   const createVariants = () => {
     let variants = {};
     for (const i of product.variant) {
       variants[i] = [];
     }
-    for (let attr of product.attribute) {
+    if(product&&product?.attribute){
+    for (let attr of product?.attribute) {
       if (variants.hasOwnProperty(attr.attribute_id)) {
         variants[attr.attribute_id].push(attr.attribute_value_id);
       }
-    }
+    }}
     if (!Object.keys(variants).length) {
       setLoading(false);
       return;
@@ -317,7 +318,6 @@ const AttributesComponent = ({
     });
     setLoading(false);
   };
-
   const variantChange = (e, index) => {
     if (e.target.name === "image") {
       currentVariants.combinations[index]['upload_image'] = e.target.files;

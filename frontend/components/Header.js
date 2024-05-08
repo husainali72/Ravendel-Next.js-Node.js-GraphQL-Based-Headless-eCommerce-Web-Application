@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { OpenNav, CloseNav } from "../utills/app";
@@ -83,7 +84,7 @@ const Header = ({ setOpenMenu }) => {
   useEffect(() => {
     getCartLength();
     dispatch(getSettings());
-  }, [data, addedCart]);
+  }, [data]);
   const alertHandleConfirm = async () => {
     setShowModal(false);
     await logoutAndClearData(dispatch);
@@ -189,11 +190,13 @@ const Header = ({ setOpenMenu }) => {
           <div className="header-container header-wrap">
             <div className="app-logo">
               <Link href="/">
+                <a>
                 <ProductImage
                   src={get(settings, "setting.appearance.theme.logo")}
                   className="logo-image"
                   alt=""
                 />
+                </a>  
               </Link>
             </div>
             <div
@@ -214,24 +217,6 @@ const Header = ({ setOpenMenu }) => {
                       </a>
                     </Link>
                   </li>
-                  <div className="header">
-                    <div className="container">
-                      <button
-                        className="icon-btn"
-                        onMouseMove={() => setOpenMenu(true)}
-                      >
-                        <div className="d-flex justify-content-between">
-                          <li className="nav-item">
-                            <Link href="/shop">
-                              <a className="nav-link" aria-selected="false">
-                                Shop
-                              </a>
-                            </Link>
-                          </li>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
                   <li className="nav-header">
                     <Link href="/contact">
                       <a className="nav-link" aria-selected="false">

@@ -10,8 +10,15 @@ import {
   FormGroup,
   Tooltip,
   IconButton,
+  TableCell,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableBody,
 } from "@mui/material";
 import clsx from "clsx";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import viewStyles from "../../viewStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { bucketBaseURL, getBaseUrl } from "../../../utils/helper";
@@ -175,17 +182,26 @@ const HomeSettingsTheme = () => {
   const onSave = () => {
     dragItem ? setReOrderList(true) : setReOrderList(false);
   };
+  const isCategoryUsed = (cat) => {
+    return sectionData.find((data) => (data?.category == cat ? true : false));
+  };
 
-  const checkBoxOnChange = (name, value, index) => {
+  const handleImageChange = (event, index) => {
+    const files = get(event, "target.files", []);
     let data = sectionData;
-    data[index].visible = !data[index].visible;
+    if (files.length > 0) {
+      data[index].section_img = URL.createObjectURL(event.target.files[0]);
+      data[index].update_image = event.target.files;
+    }
+
     setSectionData([...data]);
   };
-
-  const isCategoryUsed = (cat) => {
-    return sectionData.find((data) => (data.category == cat ? true : false));
+  const handleTypeChange = (event, index) => {
+    let data = sectionData;
+    if (data && data?.length > 0 && data[index])
+      data[index].display_type = event.target.value;
+    setSectionData([...data]);
   };
-
   const handleChangeCategories = (event, index, val) => {
     let data = sectionData;
     data[index].category = event.target.value;
@@ -196,7 +212,6 @@ const HomeSettingsTheme = () => {
     setSectionData([
       ...sectionData,
       {
-        name: "product_from_specific_category",
         label: "Product from Specific Category",
         visible: false,
         category: null,
@@ -204,6 +219,11 @@ const HomeSettingsTheme = () => {
     ]);
   };
 
+  const onCheckBoxChange = (name, value, index) => {
+    let data = sectionData;
+    data[index].visible = !data[index].visible
+    setSectionData([...data]);
+  };
   const removeCategory = (i) => {
     sectionData.splice(i, 1);
     setSectionData([...sectionData]);
@@ -237,7 +257,7 @@ const HomeSettingsTheme = () => {
                   Slider
                 </Typography>
                 <Grid container spacing={2}>
-                  {settingHome.slider.map((slide, index) => (
+                  {get(settingHome,'slider',[])?.map((slide, index) => (
                     <Grid item md={4} sm={6} xs={12} key={index}>
                       <Box className={classes.sliderImageWrapper}>
                         <Tooltip title="Remove Slide" aria-label="remove-slide">
@@ -277,7 +297,7 @@ const HomeSettingsTheme = () => {
                             htmlFor={`slide-${index}`}
                             className={classes.feautedImage}
                           >
-                            {slide.image ? "Change Slider" : "Add Slide Image"}
+                            {slide?.image ? "Change Slider" : "Add Slide Image"}
                           </label>
                         </Box>
 
@@ -333,9 +353,9 @@ const HomeSettingsTheme = () => {
             {reOrderList ? (
               <div>
                 <Draggable onPosChange={getChangedPos}>
-                  {sectionData.map((select, index) => {
+                  {sectionData?.map((select, index) => {
                     let cat = category.categories.filter(
-                      (cat) => cat.id == select.category
+                      (cat) => cat?.id == select?.category
                     );
                     return (
                       <table>
@@ -359,71 +379,166 @@ const HomeSettingsTheme = () => {
               </div>
             ) : (
               <div>
-                <FormGroup>
-                  {sectionData.map((select, index) => {
-                    return (
-                      <div style={{ display: "flex" }} key={index}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              color="success"
-                              checked={select.visible}
-                              onChange={(e) => {
-                                checkBoxOnChange(
-                                  select.name,
-                                  e.target.checked,
-                                  index
-                                );
-                              }}
-                            />
-                          }
-                          label={select.label}
-                        />
+         <TableContainer className={classes.container}>
+                  <Table stickyHeader aria-label="faq-table" size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell padding="checkbox" />
+                        <TableCell>Image</TableCell>
+                        <TableCell colSpan={2}>Section</TableCell>
+                        <TableCell align="center">Type</TableCell>
+                        <TableCell align="center">Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {sectionData && sectionData?.length > 0
+                        ? sectionData?.map((select, index) => (
+                            <TableRow>
+                              <TableCell padding="checkbox">
+                                {
+                                  <FormControlLabel
+                                    control={
+                                      <>
+                                        <Checkbox
+                                          color="success"
+                                          checked={select?.visible || false}
+                                          onChange={(e) => {
+                                            onCheckBoxChange(
+                                              select?.name,
+                                              e?.target?.checked,
+                                              index
+                                            );
+                                          }}
+                                        />
+                                      </>
+                                    }
+                                  />
+                                }
+                              </TableCell>
+                              <TableCell>
+                                <label htmlFor={`htmltag${index}`}>
+                                  {select?.section_img ? (
+                                    <Box className={classes.logoImageBox}>
+                                      <img
+                                        className="mobileImage"
+                                        alt="section"
+                                        src={
+                                          get(
+                                            select,
+                                            "section_img",
+                                            ""
+                                          )?.startsWith("blob")
+                                            ? get(select, "section_img", "")
+                                            : getBaseUrl(settingState) +
+                                              get(select, "section_img", "")
+                                        }
+                                        onError={imageOnError}
+                                      />
+                                    </Box>
+                                  ) : (
+                                    <>
+                                      <h6>
+                                        <AddPhotoAlternateIcon
+                                          color="action"
+                                          style={{ marginTop: "8px" }}
+                                        />
+                                      </h6>
+                                    </>
+                                  )}
+                                </label>
 
-                        {/* ===========DROPDOWN=========== */}
-
-                        {select.label === "Product from Specific Category" ? (
-                          <>
-                            <Box sx={{ minWidth: 120 }}>
-                              <FormControl fullWidth size="small">
-                                <Select
-                                  value={select.category}
-                                  onChange={(e) => {
-                                    handleChangeCategories(e, index);
-                                  }}
-                                  disabled={!select.visible}
-                                  inputProps={{ "aria-label": "Without label" }}
-                                  displayEmpty
-                                >
-                                  {category.categories.map((cat) => {
-                                    return (
-                                      <MenuItem
-                                        value={cat.id}
-                                        disabled={isCategoryUsed(cat.id)}
-                                      >
-                                        {cat.name}
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </Select>
-                              </FormControl>
-                            </Box>
-
-                            <Stack direction="row" spacing={1}>
-                              <IconButton
-                                color="error"
-                                aria-label="delete"
-                                onClick={(e) => removeCategory(index)}
-                              >
-                                <CloseIcon />
-                              </IconButton>
-                            </Stack>
-                          </>
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </FormGroup>
+                                <input
+                                  key={index}
+                                  type="file"
+                                  accept="image/*"
+                                  id={`htmltag${index}`}
+                                  style={{ display: "none" }}
+                                  onChange={(e) => handleImageChange(e, index)}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                {select?.label && (
+                                  <Typography>{select?.label}</Typography>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {select.label ===
+                                "Product from Specific Category" ? (
+                                  <>
+                                    <Box sx={{ minWidth: 120 }}>
+                                      <FormControl fullWidth size="small">
+                                        <Select
+                                          value={get(select,'category')}
+                                          onChange={(e) =>
+                                            handleChangeCategories(e, index)
+                                          }
+                                          displayEmpty
+                                          inputProps={{
+                                            "aria-label": "Without label",
+                                          }}
+                                          disabled={!select.visible}
+                                        >
+                                          {get(category,'categories',[])?.map((cat) => {
+                                            return (
+                                              <MenuItem
+                                                value={cat?.id}
+                                                disabled={isCategoryUsed(
+                                                  cat?.id
+                                                )}
+                                              >
+                                                {cat?.name}
+                                              </MenuItem>
+                                            );
+                                          })}
+                                        </Select>
+                                      </FormControl>
+                                    </Box>
+                                  </>
+                                ) : null}
+                              </TableCell>
+                              <TableCell>
+                                <Box sx={{ minWidth: 120 }}>
+                                  <FormControl fullWidth size="small">
+                                    <Select
+                                      displayEmpty
+                                      value={get(select, "display_type")}
+                                      onChange={(e) =>
+                                        handleTypeChange(e, index)
+                                      }
+                                      inputProps={{
+                                        "aria-label": "Without label",
+                                      }}
+                                    >
+                                      <MenuItem value="SLIDER">Slider</MenuItem>
+                                      <MenuItem value="GRID">Grid</MenuItem>
+                                    </Select>
+                                  </FormControl>
+                                </Box>
+                              </TableCell>
+                              <TableCell align="center">
+                                {select.label ===
+                                "Product from Specific Category" ? (
+                                  <Stack
+                                    justifyContent="center"
+                                    direction="row"
+                                    spacing={1}
+                                  >
+                                    <IconButton
+                                      color="error"
+                                      aria-label="delete"
+                                      onClick={(e) => removeCategory(index)}
+                                    >
+                                      <CloseIcon />
+                                    </IconButton>
+                                  </Stack>
+                                ) : null}
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        : "No data found"}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
                 <Grid item xs={12}>
                   <Button
                     size="small"

@@ -35,7 +35,7 @@ const SettingsComponent = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const [value, setValue] = useState(10);
+  const [value, setValue] = useState(9);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -69,16 +69,15 @@ const SettingsComponent = () => {
                       indicatorColor="primary"
                     >
                       <Tab label="General" {...TabProps(0)} />
-                      <Tab label="Media" {...TabProps(1)} />
-                      <Tab label="SMTP" {...TabProps(2)} />
-                      <Tab label="SEO" {...TabProps(3)} />
-                      <Tab label="Store" {...TabProps(4)} />
-                      <Tab label="Payment" {...TabProps(5)} />
-                      <Tab label="Notification" {...TabProps(6)} />
-                      <Tab label="ZipCodes" {...TabProps(7)} />
-                      <Tab label="Google" {...TabProps(8)} />
-                      <Tab label="Image Storage" {...TabProps(9)} />
-                      <Tab label="Appearance" {...TabProps(10)} />
+                      <Tab label="SMTP" {...TabProps(1)} />
+                      <Tab label="SEO" {...TabProps(2)} />
+                      <Tab label="Store" {...TabProps(3)} />
+                      <Tab label="Payment" {...TabProps(4)} />
+                      <Tab label="Notification" {...TabProps(5)} />
+                      <Tab label="ZipCodes" {...TabProps(6)} />
+                      <Tab label="Google" {...TabProps(7)} />
+                      <Tab label="Image Setting" {...TabProps(8)} />
+                      <Tab label="Appearance" {...TabProps(9)} />
                     </Tabs>
                   </Box>
                   <Box
@@ -89,33 +88,30 @@ const SettingsComponent = () => {
                         <General />
                       </TabPanel>
                       <TabPanel value={value} index={1}>
-                        <Media />
-                      </TabPanel>
-                      <TabPanel value={value} index={2}>
                         <SMTP />
                       </TabPanel>
-                      <TabPanel value={value} index={3}>
+                      <TabPanel value={value} index={2}>
                         <SEO />
                       </TabPanel>
-                      <TabPanel value={value} index={4}>
+                      <TabPanel value={value} index={3}>
                         <Store />
                       </TabPanel>
-                      <TabPanel value={value} index={5}>
+                      <TabPanel value={value} index={4}>
                         <Payment />
                       </TabPanel>
-                      <TabPanel value={value} index={6}>
+                      <TabPanel value={value} index={5}>
                         <Notification />
                       </TabPanel>
-                      <TabPanel value={value} index={7}>
+                      <TabPanel value={value} index={6}>
                         <ZipCodes />
                       </TabPanel>
-                      <TabPanel value={value} index={8}>
+                      <TabPanel value={value} index={7}>
                         <Google />
                       </TabPanel>
-                      <TabPanel value={value} index={9}>
+                      <TabPanel value={value} index={8}>
                         <ImageSetting />
                       </TabPanel>
-                      <TabPanel value={value} index={10}>
+                      <TabPanel value={value} index={9}>
                         <Appearance />
                       </TabPanel>
 

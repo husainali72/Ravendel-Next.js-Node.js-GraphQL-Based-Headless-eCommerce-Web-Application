@@ -13,6 +13,9 @@ import viewStyles from "../../viewStyles.js";
 import PhoneNumber from "../../components/phoneNumberValidation.js";
 import SocialMedia from "./socialmedialinks.js";
 import { menuItem } from "./setting-components/constant.js";
+import {  validatenested } from "../../components/validate";
+import { isEmpty } from "../../../utils/helper.js";
+import { ALERT_SUCCESS } from "../../../store/reducers/alertReducer.js";
 
 const StoreAddressComponent = () => {
   const settingState = useSelector((state) => state.settings);
@@ -37,7 +40,19 @@ const StoreAddressComponent = () => {
       }
       delete payload.__typename;
 
+      let nested_validation = validatenested("social_media", ["handle"],payload);
+      if (!isEmpty(nested_validation)) {
+        dispatch({
+          type: ALERT_SUCCESS,
+          payload: {
+            boolean: false,
+            message: nested_validation,
+            error: true,
+          },
+        });
+      }else{
       dispatch(storeAddressUpdateAction(payload));
+      }
     }
   };
   const selectHandleChange = (e) => {
@@ -88,9 +103,9 @@ const StoreAddressComponent = () => {
             <PhoneNumber
               className="phoneValidation"
               handleOnChange={(val) => {
-                setAddress({ ...address, phone: val });
+                setAddress({ ...address, phone_number: val });
               }}
-              phoneValue={get(address, "phone")}
+              phoneValue={get(address, "phone_number")}
               width="300px"
             />
           </Box>

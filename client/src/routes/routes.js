@@ -11,6 +11,8 @@ import {
   AllAttribute,
   AddAttribute,
   EditAttribute,
+  GroupProducts,
+  AddGroup
 } from "../views/product";
 import { AllOrders, ViewOrder } from "../views/order";
 import { AllPages, AddPage, EditPage } from "../views/page";
@@ -77,24 +79,24 @@ const RoutesPath = [
     component: EditUser,
     name: "Edit User",
   },
-  {
-    path: `${client_app_route_url}all-blogs`,
-    exact: true,
-    name: "All Blogs",
-    component: AllBlog,
-  },
-  {
-    path: `${client_app_route_url}add-blog`,
-    exact: true,
-    name: "Add Blog",
-    component: EditBlog,
-  },
-  {
-    path: `${client_app_route_url}edit-blog/:id`,
-    exact: true,
-    name: "Edit Blog",
-    component: EditBlog,
-  },
+  // {
+  //   path: `${client_app_route_url}all-blogs`,
+  //   exact: true,
+  //   name: "All Blogs",
+  //   component: AllBlog,
+  // },
+  // {
+  //   path: `${client_app_route_url}add-blog`,
+  //   exact: true,
+  //   name: "Add Blog",
+  //   component: EditBlog,
+  // },
+  // {
+  //   path: `${client_app_route_url}edit-blog/:id`,
+  //   exact: true,
+  //   name: "Edit Blog",
+  //   component: EditBlog,
+  // },
   {
     path: `${client_app_route_url}tags`,
     exact: true,
@@ -144,6 +146,24 @@ const RoutesPath = [
     component: AllProduct,
   },
   {
+    path: `${client_app_route_url}group-products`,
+    exact: true,
+    name: "Products",
+    component: GroupProducts,
+  },
+  {
+    path: `${client_app_route_url}add-group`,
+    exact: true,
+    name: "Add Group",
+    component: AddGroup,
+  },
+  {
+    path: `${client_app_route_url}edit-group/:id`,
+    exact: true,
+    name: "Add Group",
+    component: AddGroup,
+  },
+  {
     path: `${client_app_route_url}add-product`,
     exact: true,
     name: "Add Product",
@@ -173,24 +193,24 @@ const RoutesPath = [
     name: "All Pages",
     component: ThemeHelper,
   },
-  {
-    path: `${client_app_route_url}all-pages`,
-    exact: true,
-    name: "All Pages",
-    component: AllPages,
-  },
-  {
-    path: `${client_app_route_url}add-page`,
-    exact: true,
-    name: "Add Page",
-    component: EditPage,
-  },
-  {
-    path: `${client_app_route_url}edit-page/:id`,
-    exact: true,
-    name: "Edit Page",
-    component: EditPage,
-  },
+  // {
+  //   path: `${client_app_route_url}all-pages`,
+  //   exact: true,
+  //   name: "All Pages",
+  //   component: AllPages,
+  // },
+  // {
+  //   path: `${client_app_route_url}add-page`,
+  //   exact: true,
+  //   name: "Add Page",
+  //   component: EditPage,
+  // },
+  // {
+  //   path: `${client_app_route_url}edit-page/:id`,
+  //   exact: true,
+  //   name: "Edit Page",
+  //   component: EditPage,
+  // },
   {
     path: `${client_app_route_url}all-faq`,
     exact: true,

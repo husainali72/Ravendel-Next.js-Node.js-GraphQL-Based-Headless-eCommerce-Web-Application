@@ -11,7 +11,8 @@ const {
 } = require("../config/api_functions");
 const {
   MESSAGE_RESPONSE,
-  duplicateData
+  duplicateData,
+  toObjectID
 } = require('../config/helpers');
 
 module.exports = {
@@ -40,26 +41,38 @@ module.exports = {
     },
     ///let check it...................
     productwisereview: async (root, args) => {
-      // console.log("Productwisereview===", args.productId)
-      if (!args.productId) {
+      let {productId, page, limit} = args
+      page = page || 1
+      limit = limit || 10
+      if (!productId) {
         return MESSAGE_RESPONSE("ID_ERROR", "Review", false);
       }
       try {
-        const reviews = await Review.find({
-          productId: { $in: args.productId },
-          status: "approved"
-        });
-        //console.log("review", reviews);
-
-        // return MESSAGE_RESPONSE("RESULT_FOUND", "Review", true);
-
-        return {
-          message: {
-            message: "All review are fetched",
-            success: true
+        const pipeline = [
+          {
+            $match: {
+              productId: toObjectID(productId),
+              status: "approved",
+            },
           },
-          data: reviews,
-        }
+          {
+            $sort: {
+              updated: -1,
+            },
+          },
+          {
+            $skip: (page - 1) * limit
+          },
+          {
+            $limit: limit
+          }
+        ]
+        const existingReviews = await Review.aggregate(pipeline);
+        
+        return {
+          message: MESSAGE_RESPONSE("RESULT_FOUND", "Review", true),
+          data: existingReviews,
+        };
       }
       catch (error) {
         return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Review", false);
@@ -114,7 +127,8 @@ module.exports = {
         data,
         args,
         "",
-        validation
+        validation,
+        Product
       );
     },
     updateReview: async (root, args, { id }) => {
