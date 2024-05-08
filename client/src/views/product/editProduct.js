@@ -260,17 +260,10 @@ const EditProductComponent = ({ params }) => {
               }
             }
           }
-          const { price, sellprice } = get(productState,'product.pricing');
-          const discountPercentage = calculateDiscount(price, sellprice);
           setProduct({
             ...product,
             ...productState.product,
             specifications: groupedSpecifications,
-            pricing: {
-              ...productState.product.pricing, 
-              discountPercentage: discountPercentage,
-            },
-          
             categoryId: get(productState, "product.categoryId", [])?.map(
               (cat) => cat.id
             ),
