@@ -242,18 +242,9 @@ export const hasCheckedChild = (cat) => {
 };
 
 export const calculateDiscount = (price, sellPrice) => {
-  let discount = "";
-  if (sellPrice && sellPrice > 0) {
-    if (sellPrice >= price) {
-      discount = "";
-    } else {
-      let amount = ((100 / price) * (price - sellPrice)).toFixed(2);
-      console.log(amount);
-      let FloorAmount = Math.floor(amount);
-      if (FloorAmount) {
-        discount = discount + FloorAmount || 0;
-      }
-    }
+  if (sellPrice && sellPrice > 0 && sellPrice < price) {
+    const discountPercentage = Math.floor(((price - sellPrice) / price) * 100);
+    return discountPercentage || 0;
   }
-  return discount || 0;
+return 0;
 };
