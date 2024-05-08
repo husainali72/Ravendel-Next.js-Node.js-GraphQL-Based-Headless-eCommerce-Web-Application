@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import CustomerDetail from "../components/checkoutcomponent/CustomerDetails";
 import { getSession, useSession } from "next-auth/react";
 import ShippingTaxCoupon from "../components/checkoutcomponent/ShippingTaxCoupon";
-import { currencySetter, query, queryWithoutToken } from "../utills/helpers";
+import { isAnyProductOutOfStock, currencySetter, query, queryWithoutToken } from "../utills/helpers";
 import { useRouter } from "next/router";
 import Stripes from "../components/checkoutcomponent/reactstripe/StripeContainer";
 import { APPLY_COUPON_CODE } from "../queries/couponquery";
@@ -162,9 +162,13 @@ export const CheckOut = () => {
       const userSession = await getSession();
       if ("authenticated" === session?.status || null !== userSession) {
         setIsLogin(true);
+        let cartItemsProduct=get(carts, "cartItems", [])
         // If the cart is empty, redirect the user to the home page
-        if (get(carts, "cartItems", [])?.length <= 0) {
+        if (cartItemsProduct?.length <= 0) {
           router.push("/");
+        }
+        if(isAnyProductOutOfStock(cartItemsProduct)){
+          router.push("/shopcart");
         }
       }
     };

@@ -12,6 +12,8 @@ import { get } from "lodash";
 import logoutDispatch from "../redux/actions/userlogoutAction";
 import moment from "moment";
 import { CASH_ON_DELIVERY, PAYPAL, RAZORPAY, STRIPE } from "./constant";
+import notify from "./notifyToast";
+import { outOfStockMessage } from "../components/validationMessages";
 /* -------------------------------image funtion ------------------------------- */
 export const imageOnError = (event) => {
   event.target.src = NoImagePlaceHolder.src;
@@ -337,3 +339,12 @@ export const getPaymentMethodLabel = (paymentMethod) => {
       return "Cash On Delivery";
   }
 };
+
+export const isAnyProductOutOfStock = (products) => {
+  const outOfStockProduct = products?.some(product => !product.available);
+  if (outOfStockProduct) {
+      notify(outOfStockMessage);
+  }
+  return outOfStockProduct; 
+};
+
