@@ -2031,9 +2031,9 @@ function getBreadcrumb(data) {
 }
 module.exports.getBreadcrumb = getBreadcrumb
 
-const addCategoryAttributes = async (attributes, products, modal) => {
-  const productCategoriesSet = new Set(products.map(prod => prod.categoryId).flat())
-  const productCategories = Array.from(productCategoriesSet)
+const addCategoryAttributes = async (categories, specifications, modal) => {
+  const productAttributes = specifications.map(specification => specification.attributeId)
+  const productCategories = toObjectID(categories)
 
   const bulkWriteQuery = [
     {
@@ -2042,7 +2042,7 @@ const addCategoryAttributes = async (attributes, products, modal) => {
         update: {
           $addToSet: {
             attributeIds: {
-              $each: attributes.map(attribute => attribute._id)
+              $each: productAttributes
             }
           }
         }
