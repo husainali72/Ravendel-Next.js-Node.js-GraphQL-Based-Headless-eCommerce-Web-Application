@@ -1,11 +1,8 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-
 import Link from "next/link"
 import CloseIcon from "@mui/icons-material/Close";
+import PropTypes from "prop-types";
 import ProductImage from "../imageComponent"
-import { get, upperCase } from "lodash"
-import RemainingQuantity from "../remainingQuantity"
+import { get } from "lodash"
 import Price from "../priceWithCurrency"
 import { CircularProgress } from "@mui/material";
 
@@ -149,3 +146,10 @@ const CartItemsDisplay = ({cartItems, removeToCart, updateCartProductQuantity, c
 }
 
 export default CartItemsDisplay
+
+CartItemsDisplay.propTypes = {
+    cartItems: PropTypes.array.isRequired,
+    removeToCart: PropTypes.func.isRequired,
+    updateCartProductQuantity: PropTypes.func.isRequired,
+    cartLoading: PropTypes.bool.isRequired,
+  };

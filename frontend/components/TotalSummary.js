@@ -1,7 +1,7 @@
-/* eslint-disable react/prop-types */
 import React from 'react'
-import Price from './priceWithCurrency'
+import PropTypes from "prop-types";
 import { get } from 'lodash'
+import Price from './priceWithCurrency'
 import { isCouponAppliedAndNotFreeShipping, isPriceZero } from '../utills/helpers'
 
 const TotalSummary = ({totalSummary, couponCartDetail}) => {
@@ -88,3 +88,9 @@ const TotalSummary = ({totalSummary, couponCartDetail}) => {
 }
 
 export default TotalSummary
+
+TotalSummary.propTypes = {
+  totalSummary: PropTypes.object.isRequired,
+  couponCartDetail: PropTypes.object.isRequired,
+  
+};
