@@ -8,7 +8,7 @@
 .fa, .far, .fas, .fa-solid {
   font-family: "Font Awesome 5 Free" !important;
   font-style: normal !important;
-
+}
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -5728,7 +5728,7 @@ button.btn-outline-primary:hover{
 .account-content{
   margin-top: 30px;
   width: calc(100% - 240px);
-
+}
 .search-container {
   display: flex;
   align-items: center;

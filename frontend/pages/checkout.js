@@ -537,7 +537,7 @@ export const CheckOut = () => {
     const { addressLine1, addressLine2 } = address;
     let commonFields = {
       zip: address?.pincode|| "",
-      state: address?.stat|| ""e,
+      state: address?.state|| "",
       city: address?.city,
       address:  addressLine1 + (addressLine2 ? ", " + addressLine2 : "") || "",
       addressLine2: address?.addressLine2|| "",
