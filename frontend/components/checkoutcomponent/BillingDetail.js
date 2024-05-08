@@ -14,6 +14,8 @@ import { handleEnter } from "../../utills/helpers";
 import InputField from "../inputField";
 import { get } from "lodash";
 import ErrorMessage from "../errorMessage";
+import { emailErrorMessage } from "../validationMessages";
+import { validateEmail } from "../../utills/Validation";
 
 const BillingDetails = (props) => {
   const {
@@ -68,14 +70,8 @@ const BillingDetails = (props) => {
     getBillingInfo(allData);
   }, [shippingInfo, billingInfo, shippingAdd]);
 
-  const getErrorMessage = (errorRef, key) => {
-    if (errorRef && key && errorRef[key]?.type === "required") {
-      return errorRef[key]?.message || "";
-    } else if (errorRef && key && errorRef[key]?.type === "validate") {
-      return `${key.charAt(0).toUpperCase() + key.slice(1)} is invalid`; // Capitalize key for generic error message
-    } else {
-      return "";
-    }
+  const getErrorMessage = (errorRef, name) => {
+    return errorRef[name]?.message || "";
   };
 
   return (
@@ -177,14 +173,13 @@ const BillingDetails = (props) => {
                 name="email"
                 label="Email"
                 placeholder="email *"
-                {...registerRef("email", {
+                registerRef={registerRef("email", {
                   required: {
-                    value: billingInfo.email ? false : true,
-                    message: "Email is Required",
+                    value: !get(billingInfo,'email'),
+                    message: emailErrorMessage,
                   },
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                    message: "Invalid Email",
+                  validate: () => {
+                    return validateEmail(get(billingInfo,'email'));
                   },
                 })}
                 errors={errorRef}
@@ -318,14 +313,12 @@ const BillingDetails = (props) => {
               <Controller
                 name="addressType"
                 control={control}
-                rules={
-                  {
-                    // required: "Address Type is Required"
-                  }
-                }
+                rules={{
+                  required:  "Address Type is Required",
+                }}
                 render={({ field: { onChange, value, ref } }) => (
                   <Select
-                    value={billingInfo.addressType}
+                    value={billingInfo?.addressType}
                     placeholder="Address Type"
                     name="blog_tag"
                     options={addressTypeOptions}
@@ -502,21 +495,16 @@ const BillingDetails = (props) => {
                       name="email"
                       label="Email"
                       placeholder="email *"
-                      {...registerRef("shippingemail", {
+                      registerRef={registerRef("shippingemail", {
                         required: {
-                          value: shippingAdd
-                            ? shippingInfo?.email
-                              ? false
-                              : true
-                            : false,
-                          message: "Email is Required",
+                          value: !get(shippingInfo,'email'),
+                          message: emailErrorMessage,
                         },
-                        pattern: {
-                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                          message: "Invalid Email",
+                        validate: () => {
+                          return validateEmail(get(shippingInfo,'email'));
                         },
                       })}
-                      value={shippingInfo.email}
+                      value={shippingInfo?.email}
                       onChange={handleShippingChange}
                       onKeyDown={(e) => handleEnter(e)}
                     />
