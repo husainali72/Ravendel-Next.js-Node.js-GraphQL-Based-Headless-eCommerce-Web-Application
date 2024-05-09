@@ -13,6 +13,9 @@ import { isValidPhoneNumber } from "react-phone-number-input";
 import { handleEnter } from "../../utills/helpers";
 import InputField from "../inputField";
 import { get } from "lodash";
+import ErrorMessage from "../errorMessage";
+import { emailErrorMessage } from "../validationMessages";
+import { validateEmail } from "../../utills/Validation";
 
 const BillingDetails = (props) => {
   const {
@@ -33,30 +36,30 @@ const BillingDetails = (props) => {
   } = props;
 
   const addressTypeOptions = [
-    {value: "Home Address", label: "Home Address"},
-    {value: "Work Address", label: "Work Address"},
-    {value: "Office Address", label: "Office Address"},
-    {value: "Shop Address", label: "Shop Address"}
-  ]
+    { value: "Home Address", label: "Home Address" },
+    { value: "Work Address", label: "Work Address" },
+    { value: "Office Address", label: "Office Address" },
+    { value: "Shop Address", label: "Shop Address" },
+  ];
 
-  const customStyles = {           
+  const customStyles = {
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isSelected ? '#caf3fe' : 'inherit',
-      '&:hover': { backgroundColor: state.isSelected ? '#caf3fe' : '#d9f7ff' }
+      backgroundColor: state.isSelected ? "#caf3fe" : "inherit",
+      "&:hover": { backgroundColor: state.isSelected ? "#caf3fe" : "#d9f7ff" },
     }),
-  }
+  };
   useEffect(() => {
     let billingData = billingInfo;
     let shippingData = shippingInfo;
 
     billingData = {
       ...billingData,
-      addressType: billingInfo?.addressType?.value
+      addressType: billingInfo?.addressType?.value,
     };
     shippingData = {
       ...shippingData,
-      addressType: shippingData?.addressType?.value
+      addressType: shippingData?.addressType?.value,
     };
 
     var allData = {
@@ -67,43 +70,47 @@ const BillingDetails = (props) => {
     getBillingInfo(allData);
   }, [shippingInfo, billingInfo, shippingAdd]);
 
+  const getErrorMessage = (errorRef, name) => {
+    return errorRef[name]?.message || "";
+  };
+
   return (
     <>
       <div className="billing-container">
         <div>
-        <div className="twoRows">
+          <div className="twoRows">
             <div className="col-lg-6 col-md-12 col-md-5half">
-            <InputField
+              <InputField
                 className="input-filled"
                 name="firstname"
                 label="firstname"
                 placeholder="First name *"
                 {...registerRef("firstname", {
-                    required: {
-                        value: (billingInfo.firstname ? false : true),
-                        message: "First Name is Required",
-                    },
-                    minLength: {
-                        value: 4,
-                        message: "First Name Min length is 4",
-                    },
+                  required: {
+                    value: billingInfo.firstname ? false : true,
+                    message: "First Name is Required",
+                  },
+                  minLength: {
+                    value: 4,
+                    message: "First Name Min length is 4",
+                  },
                 })}
                 errors={errorRef}
                 value={billingInfo.firstname}
                 onChange={handleBillingInfo}
                 onKeyDown={(e) => handleEnter(e)}
-            />
+              />
             </div>
             <div className="col-lg-6 col-md-12  ">
-            <InputField
+              <InputField
                 className="input-filled"
                 name="lastname"
                 label="lastname"
                 placeholder="Last name *"
                 {...registerRef("lastname", {
                   required: {
-                      value: billingInfo.lastname ? false : true,
-                      message: "Last Name is Required",
+                    value: billingInfo.lastname ? false : true,
+                    message: "Last Name is Required",
                   },
                 })}
                 errors={errorRef}
@@ -111,151 +118,151 @@ const BillingDetails = (props) => {
                 onChange={handleBillingInfo}
                 error={errorRef.billingInfo ? true : false}
                 onKeyDown={(e) => handleEnter(e)}
-            />
+              />
             </div>
-        </div>
-        <div className="twoRows">
+          </div>
+          <div className="twoRows">
             <div className="col-lg-6 col-md-12">
-            <Controller
+              <Controller
                 name="phone"
                 control={control}
                 rules={{
                   required: {
-                      value: get(billingInfo,'phone') ? false : true,
-                      message: "Phone number is Required",
+                    value: get(billingInfo, "phone") ? false : true,
+                    message: "Phone number is Required",
                   },
                   validate: () => {
-                      const cleanedPhoneNumber = get(billingInfo,'phone','') ?.replace(
-                      /\D/g,
+                    const cleanedPhoneNumber = get(
+                      billingInfo,
+                      "phone",
                       ""
-                      );
+                    )?.replace(/\D/g, "");
 
-                      // Add '91' to the cleaned phone number
-                      const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
-                      return isValidPhoneNumber(formattedPhoneNumber);
+                    // Add '91' to the cleaned phone number
+                    const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
+                    return isValidPhoneNumber(formattedPhoneNumber);
                   },
                 }}
                 render={({ field: { onChange, value } }) => (
-                <PhoneInput
+                  <PhoneInput
                     enableSearch="true"
                     country={"us"}
                     inputClass={"custom-input"}
                     placeholder="Enter phone number"
-                    value={billingInfo?.phone||''}
+                    value={billingInfo?.phone || ""}
                     onChange={(value) => handlePhoneInput("phone", value)}
-                />
+                  />
                 )}
-            />
-            <p>
+              />
+              <p>
                 <small style={{ color: "red" }}>
-                {errorRef?.phone?.type === "required"
+                  {errorRef?.phone?.type === "required"
                     ? errorRef.phone?.message
                     : ""}
-                {errorRef?.phone?.type === "validate"
+                  {errorRef?.phone?.type === "validate"
                     ? "Phone number is invalid"
                     : ""}
                 </small>
-            </p>
+              </p>
             </div>
             <div className="col-lg-6 col-md-12">
-            <InputField
+              <InputField
                 className="input-filled"
                 type="text"
                 required=""
                 name="email"
                 label="Email"
                 placeholder="email *"
-                {...registerRef("email", {
+                registerRef={registerRef("email", {
                   required: {
-                      value: billingInfo.email ? false : true,
-                      message: "Email is Required",
+                    value: !get(billingInfo,'email'),
+                    message: emailErrorMessage,
                   },
-                  pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                      message: "Invalid Email",
+                  validate: () => {
+                    return validateEmail(get(billingInfo,'email'));
                   },
                 })}
                 errors={errorRef}
                 value={billingInfo.email}
                 onChange={handleBillingInfo}
                 onKeyDown={(e) => handleEnter(e)}
-            />
+              />
             </div>
-        </div>
-        <InputField
+          </div>
+          <InputField
             className="input-filled"
             name="address"
             label="address"
             placeholder="Address Line 1*"
             {...registerRef("address", {
               required: {
-                  value: billingInfo.address ? false : true,
-                  message: "Address is Required",
+                value: billingInfo.address ? false : true,
+                message: "Address is Required",
               },
             })}
             value={billingInfo.address}
             onChange={handleBillingInfo}
             onKeyDown={(e) => handleEnter(e)}
             errors={errorRef}
-        />
-        <InputField
+          />
+          <InputField
             errors={errorRef}
             className="input-filled"
-            name="address_line2"
+            name="addressLine2"
             label="address"
             placeholder="Address Line 2"
-            {...registerRef("address_line2", {
-            required: {
-              value: billingInfo.address.line_2 ? false : true,
-              message: "Address is Required",
-            },
+            {...registerRef("addressLine2", {
+              required: {
+                value: billingInfo.addressLine2 ? false : true,
+                message: "Address is Required",
+              },
             })}
-            value={billingInfo.address_line2}
+            value={billingInfo?.addressLine2}
             onChange={handleBillingInfo}
             onKeyDown={(e) => handleEnter(e)}
-        />
-        <div className="twoRows">
+          />
+          <div className="twoRows">
             <div className="col-lg-4 col-md-12">
               <InputField
-                  className="input-filled"
-                  type="text"
-                  required=""
-                  name="city"
-                  placeholder="City / Town *"
-                  {...registerRef("city", {
-                    required: {
-                        value: billingInfo.city ? false : true,
-                        message: "City is Required",
-                    },
-                  })}
-                  value={billingInfo.city}
-                  onChange={handleBillingInfo}
-                  onKeyDown={(e) => handleEnter(e)}
-                  errors={errorRef}
+                className="input-filled"
+                type="text"
+                required=""
+                name="city"
+                placeholder="City / Town *"
+                {...registerRef("city", {
+                  required: {
+                    value: billingInfo.city ? false : true,
+                    message: "City is Required",
+                  },
+                })}
+                value={billingInfo.city}
+                onChange={handleBillingInfo}
+                onKeyDown={(e) => handleEnter(e)}
+                errors={errorRef}
               />
-              </div>
-              <div className="col-lg-4 col-md-12">
-                <InputField
-                  className="input-filled"
-                  type="text"
-                  required=""
-                  name="state"
-                  placeholder="State *"
-                  {...registerRef("state", {
-                    required: {
-                        value: billingInfo.state ? false : true,
-                        message: "State is Required",
-                    },
-                  })}
-                  value={billingInfo.state}
-                  onChange={handleBillingInfo}
-                  onKeyDown={(e) => handleEnter(e)}
-                  errors={errorRef}
+            </div>
+            <div className="col-lg-4 col-md-12">
+              <InputField
+                className="input-filled"
+                type="text"
+                required=""
+                name="state"
+                placeholder="State *"
+                {...registerRef("state", {
+                  required: {
+                    value: billingInfo.state ? false : true,
+                    message: "State is Required",
+                  },
+                })}
+                value={billingInfo.state}
+                onChange={handleBillingInfo}
+                onKeyDown={(e) => handleEnter(e)}
+                errors={errorRef}
               />
             </div>
 
             <div className="col-lg-4 col-md-12">
-            <InputField
+              <InputField
                 className="input-filled"
                 type="text"
                 required=""
@@ -263,21 +270,21 @@ const BillingDetails = (props) => {
                 placeholder="Country *"
                 {...registerRef("country", {
                   required: {
-                      value: billingInfo.country ? false : true,
-                      message: "Country is Required",
+                    value: billingInfo.country ? false : true,
+                    message: "Country is Required",
                   },
                 })}
                 value={billingInfo.country}
                 onChange={handleBillingInfo}
                 onKeyDown={(e) => handleEnter(e)}
                 errors={errorRef}
-            />
+              />
             </div>
-        </div>
+          </div>
 
-        <div className="twoRows">
+          <div className="twoRows">
             <div className="col-lg-6 col-md-12">
-            <InputField
+              <InputField
                 className="input-filled"
                 type="text"
                 required=""
@@ -286,55 +293,56 @@ const BillingDetails = (props) => {
                 placeholder="Zip *"
                 {...registerRef("zip", {
                   required: {
-                      value: billingInfo.zip ? false : true,
-                      message: "zip is Required",
+                    value: billingInfo.zip ? false : true,
+                    message: "zip is Required",
                   },
                 })}
                 value={billingInfo.zip}
                 onChange={handleZipCode}
                 onKeyDown={(e) => handleEnter(e)}
-            />
-            <p>
+              />
+              <p>
                 <small
-                style={{ color: ZipMessage.zipSuccess ? "#4BB543" : "red" }}
+                  style={{ color: ZipMessage.zipSuccess ? "#4BB543" : "red" }}
                 >
-                {ZipMessage.zipMessage}
+                  {ZipMessage.zipMessage}
                 </small>
-            </p>
-            
+              </p>
             </div>
             <div className="col-lg-6 col-md-12">
-                <Controller
-                    name="addressType"
-                    control={control}
-                    rules={{
-                        // required: "Address Type is Required"
+              <Controller
+                name="addressType"
+                control={control}
+                rules={{
+                  required:  "Address Type is Required",
+                }}
+                render={({ field: { onChange, value, ref } }) => (
+                  <Select
+                    value={billingInfo?.addressType}
+                    placeholder="Address Type"
+                    name="blog_tag"
+                    options={addressTypeOptions}
+                    onChange={(e) => {
+                      handleBillingInfo(e, "addressType");
+                      onChange(e);
                     }}
-                    render={({ field: { onChange, value, ref } }) => (
-                    <Select
-                        value={billingInfo.addressType}
-                        placeholder="Address Type"
-                        name="blog_tag"
-                        options={addressTypeOptions}
-                        onChange={(e)=> {handleBillingInfo(e, 'addressType'); onChange(e)}}
-                        className="custom-select"
-                        styles={customStyles}
-                    />
-                    )}
-                />
-                <p>
-                    <small style={{ color: "red" }}>
-                    {errorRef.addressType?.type === "required"
-                        ? errorRef.addressType?.message
-                        : ""}
-                    {errorRef.addressType?.type === "validate"
-                        ? "Address Type is invalid"
-                        : ""}
-                    </small>
-                </p>
-            
+                    className="custom-select"
+                    styles={customStyles}
+                  />
+                )}
+              />
+              <p>
+                <small style={{ color: "red" }}>
+                  {errorRef.addressType?.type === "required"
+                    ? errorRef.addressType?.message
+                    : ""}
+                  {errorRef.addressType?.type === "validate"
+                    ? "Address Type is invalid"
+                    : ""}
+                </small>
+              </p>
             </div>
-        </div>
+          </div>
 
           <div className="form-group">
             <div className="checkbox">
@@ -383,271 +391,316 @@ const BillingDetails = (props) => {
                 className="different_address collapse in"
               >
                 <div className="twoRows">
-            <div className="col-lg-6 col-md-12 col-md-5half">
-              <InputField
-                  className="input-filled"
-                  name="shippingfirstname"
-                  label="firstname"
-                  placeholder="First name *"
-                  {...registerRef("shippingfirstname", {
-                    required: {
-                      value: (shippingAdd ? ((shippingInfo?.firstname ? false : true)) : false),
-                      message: "First Name is Required",
-                  },
-                  minLength: {
-                      value: 4,
-                      message: "First Name Min length is 4",
-                  },
-                  })}
-                  errors={errorRef}
-                  value={shippingInfo?.firstname}
-                  onChange={handleShippingChange}
-                  onKeyDown={(e) => handleEnter(e)}
-              />
-            </div>
-            <div className="col-lg-6 col-md-12  ">
-            <InputField
-                className="input-filled"
-                name="shippinglastname"
-                label="lastname"
-                placeholder="Last name *"
-                {...registerRef("shippinglastname", {
-                required: {
-                    value: (shippingAdd ? (shippingInfo.lastname ? false : true) : false),
-                    message: "Last Name is Required",
-                },
-                })}
-                errors={errorRef}
-                value={shippingInfo.lastname}
-                onChange={handleShippingChange}
-                error={errorRef}
-                onKeyDown={(e) => handleEnter(e)}
-            />
-            </div>
-        </div>
-        <div className="twoRows">
-            <div className="col-lg-6 col-md-12">
-            <Controller
-                name="shippingphone"
-                control={control}
-                rules={{
-                  required: {
-                      value: (shippingAdd ? ( get(billingInfo,'phone')  ? false : true) : false),
-                      message: "Phone number is Required",
-                  },
-                  validate: () => {
-                      const cleanedPhoneNumber =  get(billingInfo,'phone','')?.replace(/\D/g, '');
-
-                      // Add '91' to the cleaned phone number
-                      const formattedPhoneNumber = `+${cleanedPhoneNumber}`
-                      return isValidPhoneNumber(formattedPhoneNumber)
-                  }
-              }}
-                render={({ field: { onChange, value } }) => (
-                <PhoneInput
-                    enableSearch="true"
-                    country={"us"}
-                    inputClass={"custom-input"}
-                    placeholder="Enter phone number"
-                    value={shippingInfo.phone}
-                    onChange={(value) => handleShippingPhone("phone", value)}
-                />
-                )}
-            />
-            <p>
-                <small style={{ color: "red" }}>
-                {errorRef?.phone?.type === "required"
-                    ? errorRef?.phone?.message
-                    : ""}
-                {errorRef?.phone?.type === "validate"
-                    ? "Phone number is invalid"
-                    : ""}
-                </small>
-            </p>
-            </div>
-            <div className="col-lg-6 col-md-12">
-              <InputField
-                  className="input-filled"
-                  type="text"
-                  required=""
-                  name="shippingemail"
-                  label="Email"
-                  placeholder="email *"
-                  {...registerRef("shippingemail", {
-                    required: {
-                        value: (shippingAdd ? (shippingInfo?.email ? false : true) : false),
-                        message: "Email is Required",
-                    },
-                    pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                        message: "Invalid Email",
-                    },
-                })}
-                  errors={errorRef}
-                  value={shippingInfo.email}
-                  onChange={handleShippingChange}
-                  onKeyDown={(e) => handleEnter(e)}
-              />
-              </div>
-          </div>
-          <InputField
-              className="input-filled"
-              name="shippingaddress"
-              label="address"
-              placeholder="Address Line 1*"
-              {...registerRef("shippingaddress", {
-              required: {
-                value: (shippingAdd ? (shippingInfo.address ? false : true) : false),
-                message: "Address is Required",
-              },
-              })}
-              value={shippingInfo.address}
-              onChange={handleShippingChange}
-              onKeyDown={(e) => handleEnter(e)}
-              errors={errorRef}
-          />
-          <InputField
-              errors={errorRef}
-              className="input-filled"
-              name="shippingaddressLine2"
-              label="address"
-              placeholder="Address Line 2"
-              {...registerRef("shippingaddressLine2", {
-              required: {
-                value: shippingInfo.address.line_2 ? false : true,
-                message: "Address is Required",
-              },
-              })}
-              value={shippingInfo.address_line2}
-              onChange={handleShippingChange}
-              onKeyDown={(e) => handleEnter(e)}
-          />
-          <div className="twoRows">
-              <div className="col-lg-4 col-md-12">
-                <InputField
-                    className="input-filled"
-                    type="text"
-                    required=""
-                    name="shippingcity"
-                    placeholder="City / Town *"
-                    {...registerRef("shippingcity", {
-                      required: {
-                          value:  (shippingAdd ? ((shippingInfo?.city ? false : true)) : false),
-                          message: "City is Required",
-                      },
-                    })}
-                    value={shippingInfo.city}
-                    onChange={handleShippingChange}
-                    onKeyDown={(e) => handleEnter(e)}
-                    errors={errorRef}
-                />
+                  <div className="col-lg-6 col-md-12 col-md-5half">
+                    <InputField
+                      className="input-filled"
+                      name="firstname"
+                      label="firstname"
+                      placeholder="First name *"
+                      {...registerRef("shippingfirstname", {
+                        required: {
+                          value: shippingAdd
+                            ? shippingInfo?.firstname
+                              ? false
+                              : true
+                            : false,
+                          message: "First Name is Required",
+                        },
+                        minLength: {
+                          value: 4,
+                          message: "First Name Min length is 4",
+                        },
+                      })}
+                      value={shippingInfo?.firstname}
+                      onChange={handleShippingChange}
+                      onKeyDown={(e) => handleEnter(e)}
+                    />
+                    <ErrorMessage
+                      message={getErrorMessage(errorRef, "shippingfirstname")}
+                    />
+                  </div>
+                  <div className="col-lg-6 col-md-12  ">
+                    <InputField
+                      className="input-filled"
+                      name="lastname"
+                      label="lastname"
+                      placeholder="Last name *"
+                      {...registerRef("shippinglastname", {
+                        required: {
+                          value: shippingAdd
+                            ? shippingInfo.lastname
+                              ? false
+                              : true
+                            : false,
+                          message: "Last Name is Required",
+                        },
+                      })}
+                      value={shippingInfo.lastname}
+                      onChange={handleShippingChange}
+                      onKeyDown={(e) => handleEnter(e)}
+                    />
+                    <ErrorMessage
+                      message={getErrorMessage(errorRef, "shippinglastname")}
+                    />
+                  </div>
                 </div>
-                <div className="col-lg-4 col-md-12">
+                <div className="twoRows">
+                  <div className="col-lg-6 col-md-12">
+                    <Controller
+                      name="shippingPhone"
+                      control={control}
+                      rules={{
+                        required: {
+                          value: shippingAdd
+                            ? (get(billingInfo, "phone")
+                              ? false
+                              : true)
+                            : false,
+                          message: "Phone number is Required",
+                        },
+                        validate: () => {
+                          const cleanedPhoneNumber = get(
+                            billingInfo,
+                            "phone",
+                            ""
+                          )?.replace(/\D/g, "");
+
+                          // Add '91' to the cleaned phone number
+                          const formattedPhoneNumber = `+${cleanedPhoneNumber}`;
+                          return shippingAdd?(isValidPhoneNumber(formattedPhoneNumber)):true;
+                        },
+                      }}
+                      render={({ field: { onChange, value } }) => (
+                        <PhoneInput
+                          enableSearch="true"
+                          country={"us"}
+                          inputClass={"custom-input"}
+                          placeholder="Enter phone number"
+                          value={shippingInfo.phone}
+                          onChange={(value) =>
+                            handleShippingPhone("phone", value)
+                          }
+                        />
+                      )}
+                    />
+                    <ErrorMessage
+                      message={getErrorMessage(errorRef, "shippingPhone")}
+                    />
+                  </div>
+                  <div className="col-lg-6 col-md-12">
+                    <InputField
+                      className="input-filled"
+                      type="text"
+                      required=""
+                      name="email"
+                      label="Email"
+                      placeholder="email *"
+                      registerRef={registerRef("shippingemail", {
+                        required: {
+                          value: !get(shippingInfo,'email'),
+                          message: emailErrorMessage,
+                        },
+                        validate: () => {
+                          return validateEmail(get(shippingInfo,'email'));
+                        },
+                      })}
+                      value={shippingInfo?.email}
+                      onChange={handleShippingChange}
+                      onKeyDown={(e) => handleEnter(e)}
+                    />
+                    <ErrorMessage
+                      message={getErrorMessage(errorRef, "shippingemail")}
+                    />
+                  </div>
+                </div>
                 <InputField
-                    className="input-filled"
-                    type="text"
-                    required=""
-                    name="shippingstate"
-                    placeholder="State *"
-                    {...registerRef("shippingstate", {
-                      required: {
-                        value: (shippingAdd ? ((shippingInfo?.state ? false : true)) : false),
-                          message: "State is Required",
-                      },
-                    })}
-                    value={shippingInfo.state}
-                    onChange={handleShippingChange}
-                    onKeyDown={(e) => handleEnter(e)}
-                    errors={errorRef}
+                  className="input-filled"
+                  name="address"
+                  label="address"
+                  placeholder="Address Line 1*"
+                  {...registerRef("shippingaddress", {
+                    required: {
+                      value: shippingAdd
+                        ? shippingInfo.address
+                          ? false
+                          : true
+                        : false,
+                      message: "Address is Required",
+                    },
+                  })}
+                  value={shippingInfo.address}
+                  onChange={handleShippingChange}
+                  onKeyDown={(e) => handleEnter(e)}
                 />
-              </div>
-
-              <div className="col-lg-4 col-md-12">
-              <InputField
+                <ErrorMessage
+                  message={getErrorMessage(errorRef, "shippingaddress")}
+                />
+                <InputField
                   className="input-filled"
-                  type="text"
-                  required=""
-                  name="shippingcountry"
-                  placeholder="Country *"
-                  {...registerRef("shippingcountry", {
+                  name="addressLine2"
+                  label="addressLine2"
+                  placeholder="Address Line 2"
+                  {...registerRef("shippingaddressLine2", {
                     required: {
-                        value: (shippingAdd ? ((shippingInfo?.country ? false : true)) : false),
-                        message: "Country is Required",
+                      value: shippingAdd? (get(shippingInfo,'addressLine2') ? false : true):false,
+                      message: "Address is Required",
                     },
                   })}
-                  value={shippingInfo.country}
+                  value={get(shippingInfo,'addressLine2')}
                   onChange={handleShippingChange}
                   onKeyDown={(e) => handleEnter(e)}
-                  errors={errorRef}
-              />
-              </div>
-          </div>
+                />
+                  <ErrorMessage
+                  message={getErrorMessage(errorRef, "shippingaddressLine2")}
+                />
+                <div className="twoRows">
+                  <div className="col-lg-4 col-md-12">
+                    <InputField
+                      className="input-filled"
+                      type="text"
+                      required=""
+                      name="city"
+                      placeholder="City / Town *"
+                      {...registerRef("shippingcity", {
+                        required: {
+                          value: shippingAdd
+                            ? shippingInfo?.city
+                              ? false
+                              : true
+                            : false,
+                          message: "City is Required",
+                        },
+                      })}
+                      value={shippingInfo.city}
+                      onChange={handleShippingChange}
+                      onKeyDown={(e) => handleEnter(e)}
+                    />
+                      <ErrorMessage
+                  message={getErrorMessage(errorRef, "shippingcity")}
+                />
+                  </div>
+                  <div className="col-lg-4 col-md-12">
+                    <InputField
+                      className="input-filled"
+                      type="text"
+                      required=""
+                      name="state"
+                      placeholder="State *"
+                      {...registerRef("shippingstate", {
+                        required: {
+                          value: shippingAdd
+                            ? shippingInfo?.state
+                              ? false
+                              : true
+                            : false,
+                          message: "State is Required",
+                        },
+                      })}
+                      value={shippingInfo.state}
+                      onChange={handleShippingChange}
+                      onKeyDown={(e) => handleEnter(e)}
+                    />
+                      <ErrorMessage
+                  message={getErrorMessage(errorRef, "shippingstate")}
+                />
+                  </div>
 
-          <div className="twoRows">
-              <div className="col-lg-6 col-md-12">
-              <InputField
-                  className="input-filled"
-                  type="text"
-                  required=""
-                  label="zip"
-                  name="shippingzip"
-                  placeholder="Zip *"
-                  {...registerRef("shippingzip", {
-                    required: {
-                        value: (shippingAdd ? ((shippingInfo?.zip ? false : true)) : false),
-                        message: "zip is Required",
-                    },
-                  })}
-                  value={shippingInfo.zip}
-                  onChange={handleShippingChange}
-                  onKeyDown={(e) => handleEnter(e)}
-              />
-              <p>
-                <small style={{ color: 'red' }}>
-                    {errorRef.shippingzip?.type === "required" ? errorRef.shippingzip?.message : ''}
-                    {errorRef.shippingzip?.type === "minLength" ? errorRef.shippingzip?.message : ''}
-                    {errorRef.shippingzip?.type === "maxLength" ? errorRef.shippingzip?.message : ''}
-                </small>
-            </p>
-              
-              </div>
-              <div className="col-lg-6 col-md-12">
-                  <Controller
+                  <div className="col-lg-4 col-md-12">
+                    <InputField
+                      className="input-filled"
+                      type="text"
+                      required=""
+                      name="country"
+                      placeholder="Country *"
+                      {...registerRef("shippingcountry", {
+                        required: {
+                          value: shippingAdd
+                            ? shippingInfo?.country
+                              ? false
+                              : true
+                            : false,
+                          message: "Country is Required",
+                        },
+                      })}
+                      value={shippingInfo.country}
+                      onChange={handleShippingChange}
+                      onKeyDown={(e) => handleEnter(e)}
+                    />
+                      <ErrorMessage
+                  message={getErrorMessage(errorRef, "shippingcountry")}
+                />
+                  </div>
+                </div>
+
+                <div className="twoRows">
+                  <div className="col-lg-6 col-md-12">
+                    <InputField
+                      className="input-filled"
+                      type="text"
+                      required=""
+                      label="zip"
+                      name="zip"
+                      placeholder="Zip *"
+                      {...registerRef("shippingzip", {
+                        required: {
+                          value: shippingAdd
+                            ? shippingInfo?.zip
+                              ? false
+                              : true
+                            : false,
+                          message: "zip is Required",
+                        },
+                      })}
+                      value={shippingInfo.zip}
+                      onChange={handleShippingChange}
+                      onKeyDown={(e) => handleEnter(e)}
+                    />
+                    <p>
+                      <small style={{ color: "red" }}>
+                        {errorRef.shippingzip?.type === "required"
+                          ? errorRef.shippingzip?.message
+                          : ""}
+                        {errorRef.shippingzip?.type === "minLength"
+                          ? errorRef.shippingzip?.message
+                          : ""}
+                        {errorRef.shippingzip?.type === "maxLength"
+                          ? errorRef.shippingzip?.message
+                          : ""}
+                      </small>
+                    </p>
+                  </div>
+                  <div className="col-lg-6 col-md-12">
+                    <Controller
                       name="shippingAddressType"
                       control={control}
                       rules={{
-                          required: shippingAdd && "Address Type is Required"
+                        required: shippingAdd && "Address Type is Required",
                       }}
                       render={({ field: { onChange, value, ref } }) => (
-                      <Select
+                        <Select
                           value={shippingInfo.addressType}
                           placeholder="Address Type"
-                          name="blog_tag"
+                          name="addressType"
                           options={addressTypeOptions}
-                          onChange={(e)=> {handleShippingChange(e, 'addressType'); onChange(e)}}
+                          onChange={(e) => {
+                            handleShippingChange(e, "addressType");
+                            onChange(e);
+                          }}
                           className="custom-select"
                           styles={customStyles}
-                      />
+                        />
                       )}
-                  />
-                  <p>
-                      <small style={{ color: "red" }}>
-                      {errorRef.shippingAddressType?.type === "required"
-                          ? errorRef.shippingAddressType?.message
-                          : ""}
-                      {errorRef.shippingAddressType?.type === "validate"
-                          ? "Address Type is invalid"
-                          : ""}
-                      </small>
-                  </p>
-              
-              </div>
-          </div>
+                    />
+                  <ErrorMessage
+                  message={getErrorMessage(errorRef, "shippingAddressType")}
+                />
+                  </div>
+                </div>
               </div>
             </Collapse>
           </div>
 
-          <div style={{marginBottom: '12px', marginTop: '26px'}}>
+          <div style={{ marginBottom: "12px", marginTop: "26px" }}>
             <h5>Additional information</h5>
           </div>
           <div className="form-group mb-30">

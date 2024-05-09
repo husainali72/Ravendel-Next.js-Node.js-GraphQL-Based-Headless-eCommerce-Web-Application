@@ -37,7 +37,6 @@ const CustomerDetail = (props) => {
     getBillingInfo(allData);
   }, [shippingInfo, billingInfo, shippingAdd]);
 
-  console.log(addressBook)
 
   return (
     <>
