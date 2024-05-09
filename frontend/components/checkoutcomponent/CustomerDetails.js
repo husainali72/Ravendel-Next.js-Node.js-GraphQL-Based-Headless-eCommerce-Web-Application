@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect } from "react";
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
@@ -65,17 +64,17 @@ const CustomerDetail = (props) => {
                           <div className="content">
                             <b>
                               {
-                                (!address?.addressType || address?.addressType === "Home Address") ?
+                                (!get(address, 'addressType') || get(address, 'addressType') === "Home Address") ?
                                 <HomeOutlinedIcon/>
-                                : address?.addressType === "Office Address" ?
+                                : get(address, 'addressType') === "Office Address" ?
                                 <CorporateFareOutlinedIcon />
-                                : address?.addressType === "Work Address" ?
+                                : get(address, 'addressType') === "Work Address" ?
                                 <BusinessCenterOutlinedIcon />
-                                : address?.addressType === "Shop Address" ?
+                                : get(address, 'addressType') === "Shop Address" ?
                                 <StorefrontOutlinedIcon />
                                 : ''
                               }
-                              {address?.addressType || 'Home Address'}
+                              {get(address, 'firstName') || 'Home Address'}
                             </b>
                             <div className="d-flex">
                               <p>{get(address, 'firstName')} {" "} {get(address, 'lastName')}</p>
@@ -84,15 +83,6 @@ const CustomerDetail = (props) => {
                             <p>{get(address, 'addressLine1')}</p>
                             <p>{get(address, 'addressLine2')}</p>
                           </div>
-                          {/* <div className=" select-button">
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={(e) => SelectAddressBook(address, e)}
-                            >
-                              Select
-                            </Button>
-                          </div> */}
                         </div>
                       </>
                     ) : null
