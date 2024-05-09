@@ -12,7 +12,7 @@ const CouponCard = ({
       <div className="applied-coupon-section">
         <span>
           <p>
-            You Save :
+            You Saved :
             <Price price={get(couponCartDetail, "appliedCouponDiscount", 0)}/>
           </p>
           <p className="textSuccess">

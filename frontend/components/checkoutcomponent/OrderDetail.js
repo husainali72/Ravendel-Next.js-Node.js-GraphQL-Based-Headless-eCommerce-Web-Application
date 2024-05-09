@@ -32,7 +32,6 @@ const Orderdetail = (props) => {
     const options = [];
 
     const addPaymentOption = (method) => {
-      console.log(payment)
       let paymentMethod=get(payment, `[${method}]`)
       if (get(paymentMethod, 'enable')) {
         const {
@@ -90,56 +89,18 @@ const Orderdetail = (props) => {
   }, [billingInfo, shippingInfo, cart]);
   return (
     <>
-      <div className="table-responsive order_table text-center">
-        <table className="table checkout-table">
-          <thead>
-            <tr>
-              <th colSpan="1">Image</th>
-              <th>Title</th>
-              <th>Attributes</th>
-              <th> Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cartItems?.map((item, i) => (
-              <tr key={i}>
-                <td className="image product-thumbnail">
-                  <ProductImage src={get(item, "feature_image", "")} />
-                </td>
-                <td>
-                  <i className="ti-check-box font-small text-muted mr-10"></i>
-                  <h5>
-                    <Link href={"/product/" + get(cart, "[i].url", "")}>
-                      <a>{item?.name}</a>
-                    </Link>
-                  </h5>{" "}
-                  <span className="product-qty">x {item?.quantity}</span>
-                </td>
-                <td>
-                  {get(item, "attributes", [])?.map((attribute, i) => (
-                    <div key={i}>
-                      {capitalize(attribute?.name)} :{" "}
-                      {capitalize(attribute?.value)}
-                    </div>
-                  ))}
-                </td>
-                <td>
-                  <Price price={get(item, "pricing", 0)} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
       <div className="payment-method-container">
         <div className="payment-method">
-          <h5>Payment Mode</h5>
-          <CheckBox
-            type="radio"
-            options={paymentOptions}
-            name="paymentMethod"
-            onChange={(e) => handleBillingInfo(e)}
-          />
+
+          <h5 className="mb-2">Payment Mode</h5>
+          <div className="checkout-shipping-address">
+            <CheckBox
+             type="radio"
+              options={paymentOptions}
+              name="paymentMethod"
+              onChange={(e) => handleBillingInfo(e)}
+            />
+          </div>
         </div>
       </div>
     </>

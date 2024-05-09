@@ -173,7 +173,7 @@ const Header = ({ setOpenMenu }) => {
                     ) : (
                       <p>
                         <i className="far fa-user"></i>
-                        <Link href="/account">
+                        <Link href="/login">
                           <a className="login-link"> Log In / Sign Up</a>
                         </Link>
                       </p>

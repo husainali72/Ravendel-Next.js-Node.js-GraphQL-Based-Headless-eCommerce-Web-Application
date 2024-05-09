@@ -11,7 +11,8 @@ const InputField = ( {
   name,
   registerRef,
   onChange,
-  disabled
+  disabled,
+  ...rest
 } ) => {
   return (
     <>
@@ -25,10 +26,14 @@ const InputField = ( {
         {...registerRef}
         onChange={( e ) => onChange( e, type )}
         disabled={disabled||false}
+        {...rest}
       />
-      <div className="error-message">
-        <ErrorMessage message={get( errors, `${name}.message`, '' )} />
-      </div>
+      {
+        errors &&
+        <div className="error-message">
+          <ErrorMessage message={get( errors, `${name}.message`, '' )} />
+        </div>
+      }
     </>
   );
 };
