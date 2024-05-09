@@ -162,7 +162,7 @@ const CartTable = (props) => {
               </div>
             ))}
           </div>
-          <CartTotalDetails totalSummary={totalSummary} />
+          <CartTotalDetails totalSummary={totalSummary} cartItems={cartItems}/>
         </div>
       </div>
     </div>

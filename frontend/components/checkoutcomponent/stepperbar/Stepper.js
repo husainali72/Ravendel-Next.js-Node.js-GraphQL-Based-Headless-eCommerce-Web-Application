@@ -6,14 +6,17 @@ const Stepper = ({ activeStep, steps }) => {
         <>
             <div className="stepper">
                 <ul className="stepper-head" >
-                    <li >
-                        <span className={activeStep === 1 ? 'active' : 'normal'}>{steps[0]}</span>
+                    <li  className={activeStep === 1 ? 'active' : 'normal'}>
+                        <span>{steps[0]}</span>
+                        <span className="circle"></span>
                     </li>
-                    <li>
-                        <span className={activeStep === 2 ? 'active' : 'normal'}>{steps[1]}</span>
+                    <li className={activeStep === 2 ? 'active' : 'normal'}>
+                        <span>{steps[1]}</span>
+                        <span className="circle"></span>
                     </li>
-                    <li >
-                        <span className={activeStep === 3 ? 'active' : 'normal'}>{steps[2]}</span>
+                    <li  className={activeStep === 3 ? 'active' : 'normal'}>
+                        <span>{steps[2]}</span>
+                        <span className="circle"></span>
                     </li>
                 </ul>
             </div>

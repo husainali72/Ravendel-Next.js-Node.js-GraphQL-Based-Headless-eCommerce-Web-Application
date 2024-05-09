@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Form } from "react-bootstrap";
@@ -15,7 +16,7 @@ const CheckBox = ({ options, value, name, onChange, className,type }) => {
   return (
     <Form>
         {options?.map((option, index) => (
-          <div key={`inline-${option.value}-${index}`} className="mb-3">
+          <div key={`inline-${option.value}-${index}`} className="mb-2">
             <Form.Check
               key={value?.id}
               label={option?.label}
@@ -27,6 +28,7 @@ const CheckBox = ({ options, value, name, onChange, className,type }) => {
               className={className}
               checked={option?.select}
             />
+
             {selectedOption === get(option,'value') && (
               get(option,'description') && 
               <p className="payment_method_description">
@@ -34,6 +36,7 @@ const CheckBox = ({ options, value, name, onChange, className,type }) => {
               </p>
             )}
            </div>
+
         ))}
     </Form>
   );
