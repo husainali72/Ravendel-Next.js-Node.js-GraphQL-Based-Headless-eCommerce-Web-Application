@@ -663,10 +663,11 @@ const viewStyles = makeStyles((theme) => ({
   SocialCloseIcon:{
     margin:"20px"
   },
-  noImage:{
-    width:'100px',
-    objectFit:'contain'
-  }
+  discountAmount: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 }));
 
 export default viewStyles;

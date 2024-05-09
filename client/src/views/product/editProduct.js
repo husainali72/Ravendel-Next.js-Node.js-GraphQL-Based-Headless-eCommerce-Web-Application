@@ -46,8 +46,8 @@ import {
   bucketBaseURL,
   baseUrl,
   getBaseUrl,
-  getResponseHandler,
   getCheckedIds,
+  calculateDiscount,
 } from "../../utils/helper";
 import {
   Alert,
@@ -90,6 +90,7 @@ let defaultobj = {
   pricing: {
     price: "",
     sellprice: "",
+    discountPercentage:''
   },
   status: "Draft",
   meta: {
@@ -696,6 +697,9 @@ const EditProductComponent = ({ params }) => {
     });
     setProduct(updatedProduct);
   };
+  const getDiscountPrice = (discountPrice) => {
+    return discountPrice ? `${discountPrice}% OFF` : 'No Discount';
+  };
   return (
     <>
       <Alert />
@@ -717,7 +721,7 @@ const EditProductComponent = ({ params }) => {
                 <TextField
                   label="Name"
                   name="name"
-                  value={get(product,'name','')}
+                  value={get(product, "name", "")}
                   onChange={handleChange}
                   onBlur={(e) =>
                     !product?.url || product?.url !== e?.target?.value
@@ -732,7 +736,7 @@ const EditProductComponent = ({ params }) => {
               {/* ===================Url=================== */}
               <Box component="div" mb={2}>
                 <ValidUrlComponent
-                  url={get(product,'url')}
+                  url={get(product, "url")}
                   onSubmit={updateUrl}
                   onInputChange={(updatedUrl) => {
                     setProduct({
@@ -748,7 +752,7 @@ const EditProductComponent = ({ params }) => {
               {/* ===================Description=================== */}
               <Box component="div">
                 <TinymceEditor
-                  value={get(product,'description')}
+                  value={get(product, "description")}
                   onEditorChange={(value) =>
                     setProduct({ ...product, description: value })
                   }
@@ -805,13 +809,18 @@ const EditProductComponent = ({ params }) => {
                       }
                     }}
                     onChange={(e) => {
-                      let value = get(e, "target.value");
-                      if (value >= 0) {
+                      let price = get(e, "target.value");
+                      let sellprice = get(product, "pricing.sellprice");
+                      if (price >= 0) {
                         setProduct({
                           ...product,
                           pricing: {
                             ...product.pricing,
-                            price: Number(value),
+                            price: Number(price),
+                            discountPercentage: calculateDiscount(
+                              price,
+                              sellprice
+                            ),
                           },
                         });
                       }
@@ -842,18 +851,31 @@ const EditProductComponent = ({ params }) => {
                       }
                     }}
                     onChange={(e) => {
-                      let value = get(e, "target.value");
-                      if (value >= 0) {
+                      let sellprice = get(e, "target.value");
+                      let price = get(product, "pricing.price");
+                      if (sellprice >= 0) {
                         setProduct({
                           ...product,
                           pricing: {
                             ...product.pricing,
-                            sellprice: Number(value),
+                            sellprice: Number(sellprice),
+                            discountPercentage: calculateDiscount(
+                              price,
+                              sellprice
+                            ),
                           },
                         });
                       }
                     }}
                   />
+                </Grid>
+                <Grid className={classes.discountAmount}>
+                  <Typography fontWeight="700" variant="body1" ml={2}>
+                    Discount Percentage :
+                  </Typography>
+                  <Typography fontWeight="400" variant="body1" ml={2}>
+                   { getDiscountPrice(get(product,'pricing.discountPercentage',0))}
+                  </Typography>
                 </Grid>
               </Grid>
             </CardBlocks>

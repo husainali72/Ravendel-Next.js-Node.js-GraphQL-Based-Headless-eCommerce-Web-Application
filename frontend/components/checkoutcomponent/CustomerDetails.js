@@ -1,7 +1,14 @@
+/* eslint-disable no-unused-vars */
 import { useEffect } from "react";
-import { Button, Card } from "react-bootstrap";
-import { capitalize, get } from "lodash";
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
+import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
+import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import PropTypes from "prop-types";
+import { get } from "lodash";
+import { Button } from "react-bootstrap";
 const CustomerDetail = (props) => {
   const {
     addressBook,
@@ -12,75 +19,71 @@ const CustomerDetail = (props) => {
     shippingAdd,
   } = props;
   useEffect(() => {
+    let billingData = billingInfo;
+    let shippingData = shippingInfo;
+
+    billingData = {
+      ...billingData,
+      addressType: billingInfo?.addressType?.value
+    };
+    shippingData = {
+      ...shippingData,
+      addressType: shippingData?.addressType?.value
+    };
     var allData = {
-      billing: billingInfo,
-      shipping: shippingInfo,
+      billing: billingData,
+      shipping: shippingData,
       // shippingAddress: shippingAdd,
     };
     getBillingInfo(allData);
   }, [shippingInfo, billingInfo, shippingAdd]);
+
+
   return (
     <>
-      <div>
-        <h5>Customer Details</h5>
+      <div className="d-flex justify-content-between align-items-center">
+        <h5 style={{marginBottom: 0}}>Customer Details</h5>
+        <button className="add-btn"><span><AddRoundedIcon/></span> Add a New Address</button>
       </div>
       <div>
         <div className="customer-detail">
           {addressBook && addressBook?.length > 0 ? (
             <>
-              <Card.Body className="cust-detail-container">
-                <Card className="disable-hover">
+              <div className="cust-detail-container">
+                
                   {addressBook?.map((address, i) =>
                     i < 5 ? (
                       <>
                         <div
-                          className="col-md-12 d-flex flex-md-row flex-column align-items-center justify-content-between"
+                          className={`address-card ${billingInfo?.id && address._id === billingInfo?.id ? 'active' : ''}`}
                           key={i}
+                          onClick={(e) => SelectAddressBook(address, e)}
                         >
-                          <div className="defination-table">
-                            <dl>
-                              <dt>First Name</dt>
-                              <dd>
-                                {capitalize(get(address, "firstName", ""))}
-                              </dd>
-
-                              <dt>Lastname</dt>
-                              <dd>
-                                {" "}
-                                {capitalize(get(address, "lastName", ""))}
-                              </dd>
-
-                              <dt>Phone</dt>
-                              <dd>{get(address, "phone", "")}</dd>
-
-                              <dt>City</dt>
-                              <dd>{capitalize(get(address, "city", ""))} </dd>
-
-                              <dt> Address 1</dt>
-                              <dd>
-                                {" "}
-                                {capitalize(get(address, "addressLine1", ""))}
-                              </dd>
-
-                              <dt> Address 2</dt>
-                              <dd>
-                                {capitalize(get(address, "addressLine2", ""))}
-                              </dd>
-
-                              <dt>Pincode</dt>
-                              <dd>{get(address, "pincode", "")}</dd>
-
-                              <dt>State</dt>
-                              <dd> {capitalize(get(address, "state", ""))}</dd>
-
-                              <dt>Company</dt>
-                              <dd>{capitalize(get(address, "company", ""))}</dd>
-
-                              <dt>City</dt>
-                              <dd>{capitalize(get(address, "city", ""))}</dd>
-                            </dl>
+                          <span className="radio-check"></span>
+                          <Button className="edit-btn" variant="link"><CreateOutlinedIcon/></Button>
+                          <div className="content">
+                            <b>
+                              {
+                                (!address?.addressType || address?.addressType === "Home Address") ?
+                                <HomeOutlinedIcon/>
+                                : address?.addressType === "Office Address" ?
+                                <CorporateFareOutlinedIcon />
+                                : address?.addressType === "Work Address" ?
+                                <BusinessCenterOutlinedIcon />
+                                : address?.addressType === "Shop Address" ?
+                                <StorefrontOutlinedIcon />
+                                : ''
+                              }
+                              {address?.addressType || 'Home Address'}
+                            </b>
+                            <div className="d-flex">
+                              <p>{get(address, 'firstName')} {" "} {get(address, 'lastName')}</p>
+                              <p>{get(address, 'phone')}</p>
+                            </div>
+                            <p>{get(address, 'addressLine1')}</p>
+                            <p>{get(address, 'addressLine2')}</p>
                           </div>
-                          <div className=" select-button">
+                          {/* <div className=" select-button">
                             <Button
                               size="sm"
                               variant="secondary"
@@ -88,18 +91,12 @@ const CustomerDetail = (props) => {
                             >
                               Select
                             </Button>
-                          </div>
+                          </div> */}
                         </div>
-                        <hr
-                          className={`customer-hr ${
-                            i === addressBook?.length - 1 && "d-none"
-                          }`}
-                        />
                       </>
                     ) : null
                   )}
-                </Card>
-              </Card.Body>
+              </div>
             </>
           ) : (
             "No data"
