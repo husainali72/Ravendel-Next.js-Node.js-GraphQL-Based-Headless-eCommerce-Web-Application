@@ -1,15 +1,22 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-
 import {get}from 'lodash'
-import HelpIcon from '@mui/icons-material/Help';
+import PropTypes from 'prop-types';
 import {
     Divider,
     Tooltip
   } from "@mui/material";
-  import Link from "next/link";
 import Price from '../priceWithCurrency';
-const CartTotalDetails=({totalSummary})=>{
+import { useRouter } from 'next/router';
+import { isAnyProductOutOfStock } from '../../utills/helpers';
+const CartTotalDetails=({totalSummary,cartItems})=>{
+  const router=useRouter()
+  
+  const handlePlaceOrder = () => {
+    const isOutOfStock = isAnyProductOutOfStock(cartItems);
+    if (!isOutOfStock) {
+      router.push("/checkout");
+    }
+  };
+
     return (
         <div className="price-detail-base-container">
         <div className="price-detail">
@@ -59,12 +66,11 @@ const CartTotalDetails=({totalSummary})=>{
             </p>
           </div>
 
-          <Link href="/checkout">
-            <a className="card-btons text-align-center primary-btn-color">
+            <button className="card-btons text-align-center primary-btn-color" onClick={handlePlaceOrder}>
               <i className="fas fa-archive"></i>
               <span className="text-align-center">PLACE ORDER</span>
-            </a>
-          </Link>
+            </button>
+ 
         </div>
         <div className="cart-action text-end">
             <a className="card-btons primary-btn-color">
@@ -74,4 +80,9 @@ const CartTotalDetails=({totalSummary})=>{
       </div>
     )
 }
+CartTotalDetails.propTypes = {
+  totalSummary: PropTypes.object.isRequired,
+  cartItems: PropTypes.array.isRequired,
+};
+
 export default CartTotalDetails
