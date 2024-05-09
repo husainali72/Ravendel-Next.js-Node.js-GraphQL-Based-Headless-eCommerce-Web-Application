@@ -848,25 +848,39 @@ module.exports = {
         {
           $match: {
             name: {
-               $regex: searchRegex
+              $regex: searchRegex
+            }
+          },
+        },
+        {
+          $sort: {
+            updated: -1,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            count: {
+              $sum: 1
+            },
+            products: {
+              $push: "$$ROOT"
             }
           }
         },
         {
-          $skip: (page - 1) * limit
-        },
-        {
-          $limit: limit
-        },
-        {
-          $sort: {
-            updated: -1
+          $project: {
+            _id: 0,
+            count: 1,
+            products: {
+              $slice: ["$products", (page - 1) * limit, limit]
+            }
           }
         }
       ]
       const searchedProducts = await Product.aggregate(pipeline)
 
-      return searchedProducts || [];
+      return searchedProducts[0] || [];
     },
     productswithcat: async (root, args, { id }) => {
       return await GET_ALL_FUNC(Product, "Products with category");
