@@ -33,11 +33,6 @@ module.exports = `
     message: statusSchema
   }
 
-  extend type Query {
-    groups: GroupsResponse
-    group(id: ID!): GroupResponse 
-  }
-
   input AttributeInput {
     _id: ID,
     value: String
@@ -53,6 +48,11 @@ module.exports = `
     attributeValueId: ID,
   }
   
+  
+  extend type Query {
+    groups: GroupsResponse
+    group(id: ID!): GroupResponse
+  }
   extend type Mutation {
     addGroup(
       title: String!

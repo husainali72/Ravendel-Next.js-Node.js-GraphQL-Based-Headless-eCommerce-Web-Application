@@ -35,6 +35,7 @@ var mongoose = require("mongoose");
 
 /* =============================WILL FIX LATER============================= */
 const fs = require("fs");
+const productGroup = require("./productGroup");
 
 var pdir = "./assets/images/product";
 var pcdir = "./assets/images/product/category";
@@ -1180,6 +1181,45 @@ module.exports = {
         data: response,
       };
     },
+    availableProducts: async(root, args) => {
+      const { groupId } = args
+
+      const lookupStage = {
+        $lookup: {
+          from: "productgroups",
+          localField: "_id",
+          foreignField: "productIds",
+          as: "productGroups",
+        },
+      }
+      const matchStage = {
+        $match: {
+          $or: [
+            {
+              productGroups: { $size: 0 },
+            },
+          ],
+        },
+      }
+      if(!isEmpty(groupId)) {
+        matchStage["$match"]["$or"].push({
+          "productGroups._id": toObjectID(groupId),
+        })
+      }
+      const projectStage = {
+        $project: {
+          name: 1
+        }
+      }
+     
+      const availableProducts = await Product.aggregate([
+        lookupStage,
+        matchStage,
+        projectStage
+      ])
+
+      return availableProducts
+    }
   },
   Product: {
     categoryId: async (root, args) => {
