@@ -273,7 +273,7 @@ justify-content: center;
   justify-content: flex-start;
 }
 .logo-image{
-  max-height: 30px;
+  max-height: 45px;
   object-fit: contain;
 }
 .page-active {
@@ -301,7 +301,7 @@ nav .nav-link:hover {
 
 .header-bottom {
   height: auto;
-  padding: 7px;
+  padding: 14px 7px;
   position: relative;
   display: flex;
   justify-content: space-between;
@@ -313,6 +313,12 @@ nav .nav-link:hover {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+.header-container .main-menu{
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 180px);
 }
 
 .header-smartphone {
@@ -1444,7 +1450,10 @@ footer .follow h5 {
 .nav-link {
   font-weight: 500;
   margin-left: 25px;
-  color: black !important;
+  color: #1a1a1a !important;
+  font-size: 15px !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .nav-link.active {

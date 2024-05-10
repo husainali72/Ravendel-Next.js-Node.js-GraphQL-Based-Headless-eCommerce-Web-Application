@@ -92,7 +92,7 @@ const Header = ({ setOpenMenu }) => {
   };
   return (
     <header className="header-area header-style-5 mt-0">
-      <div className="header-top">
+      {/* <div className="header-top">
         <Container className="align-items-center">
           <Toaster />
           {showModal && (
@@ -185,7 +185,7 @@ const Header = ({ setOpenMenu }) => {
             </div>
           </div>
         </Container>
-      </div>
+      </div> */}
       <div className="header-bottom sticky-white-bg">
         <Container>
           <div className="header-container header-wrap">
@@ -201,7 +201,7 @@ const Header = ({ setOpenMenu }) => {
               </Link>
             </div>
             <div
-              className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding d-lg-block hover-boder"
+              className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding hover-boder"
               id="navigation"
             >
               {/* <nav>
@@ -228,35 +228,35 @@ const Header = ({ setOpenMenu }) => {
                 </ul>
               </nav> */}
               <NavBar setOpenMenu={setOpenMenu}/>
-            </div>
-            <div>
-              <div className="dropdown cart-btn">
-                <Link href="/shopcart">
-                  <div className="add-to-cart-header">
-                    <a className="cart-icon action-btn">
-                      <i
-                        className="fas fa-shopping-bag font-awesome-icon"
-                        aria-hidden="true"
-                      ></i>
-                    </a>
-                    <span className="pro-count blue">{cartItem?.length}</span>
+              <div>
+                <div className="dropdown cart-btn">
+                  <Link href="/shopcart">
+                    <div className="add-to-cart-header">
+                      <a className="cart-icon action-btn">
+                        <i
+                          className="fas fa-shopping-bag font-awesome-icon"
+                          aria-hidden="true"
+                        ></i>
+                      </a>
+                      <span className="pro-count blue">{cartItem?.length}</span>
+                    </div>
+                  </Link>
+                  <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
+                    <ShopCartProducts />
                   </div>
-                </Link>
-                <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
-                  <ShopCartProducts />
                 </div>
-              </div>
-              <div className="navigation-icon">
-                <i
-                  className="fas fa-bars open-nav"
-                  id="openNav"
-                  onClick={() => OpenNav()}
-                ></i>
-                <i
-                  className="fas fa-times close-nav"
-                  id="closeNav"
-                  onClick={() => CloseNav()}
-                ></i>
+                <div className="navigation-icon">
+                  <i
+                    className="fas fa-bars open-nav"
+                    id="openNav"
+                    onClick={() => OpenNav()}
+                  ></i>
+                  <i
+                    className="fas fa-times close-nav"
+                    id="closeNav"
+                    onClick={() => CloseNav()}
+                  ></i>
+                </div>
               </div>
             </div>
           </div>
