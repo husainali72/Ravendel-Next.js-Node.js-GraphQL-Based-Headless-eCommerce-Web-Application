@@ -17,6 +17,7 @@ import ProductImage from "./imageComponent";
 import AlertModal from "./alert/alertModal";
 import { expiredTimeErrorMessage } from "./validationMessages";
 import NavBar from "./navBar/navBar";
+import Search from "./globalSearch/globalSearch";
 const SessionCheckInterval = 60000;
 const Header = ({ setOpenMenu }) => {
   const data = useSession();
@@ -226,9 +227,10 @@ const Header = ({ setOpenMenu }) => {
                     </Link>
                   </li>
                 </ul>
-              </nav> */}
+              </nav>      */}
               <NavBar setOpenMenu={setOpenMenu}/>
-              <div>
+              <Search/>
+            <div>
                 <div className="dropdown cart-btn">
                   <Link href="/shopcart">
                     <div className="add-to-cart-header">
