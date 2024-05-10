@@ -1,22 +1,38 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { FiChevronDown, FiChevronLeft } from "react-icons/fi";
-import { generateCategoryUrl } from "../../../utills/helpers";
+import {
+  generateCategoryUrl,
+  isCurrentCategory,
+} from "../../../utills/helpers";
 import Link from "next/link";
 import { useEffect } from "react";
 import { get } from "lodash";
-
-const CategoryLink = ({ url, name, isSelected }) => (
-  <Link href={generateCategoryUrl(url).href} as={generateCategoryUrl(url).as}>
-    <span
-      className={`fw-semibold cursor-pointer mb-1 parent-category ${
-        isSelected ? "text-black" : ""
-      }`}
-    >
-      {name}
-    </span>
-  </Link>
+import { useRouter } from "next/router";
+const CategoryName = ({ name, className }) => (
+  <span className={className}>{name}</span>
 );
+const CategoryLink = ({ url, name, isSelected, className }) => {
+  const router = useRouter();
+  const customClassName = `fw-semibold cursor-pointer mb-1 parent-category ${className} ${
+    isSelected ? "text-black" : ""
+  }`;
+
+  if (!isCurrentCategory(url, router)) {
+    return (
+      <Link
+        href={generateCategoryUrl(url)?.href}
+        as={generateCategoryUrl(url)?.as}
+      >
+        <a className={customClassName}>
+          <CategoryName name={name} className={customClassName} />
+        </a>
+      </Link>
+    );
+  } else {
+    return <CategoryName name={name} className={customClassName} />;
+  }
+};
 
 const SubCategoryItem = ({ url, name }) => (
   <Link href={generateCategoryUrl(url)?.href} as={generateCategoryUrl(url)?.as}>
@@ -24,7 +40,7 @@ const SubCategoryItem = ({ url, name }) => (
   </Link>
 );
 
-const SubCategoryList = ({ name,categoryTree }) => {
+const SubCategoryList = ({ name, categoryTree }) => {
   const [expanded, setExpanded] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState({});
   useEffect(() => {
@@ -36,15 +52,15 @@ const SubCategoryList = ({ name,categoryTree }) => {
 
   return (
     <div>
-      <div className="primary-sidebar sticky-sidebar category-shop-cart">
-        <div className="theiaStickySidebar category-box-filler">
-          <div className="widget-category">
-            <h4 className="category-section-title">{name}</h4>
-            <ul className="categories-shop">
-              {categoryTree && Object.keys(categoryTree)?.length > 0 ? (
+      {categoryTree && Object.keys(categoryTree)?.length > 0 && (
+        <div className="primary-sidebar sticky-sidebar category-shop-cart">
+          <div className="theiaStickySidebar category-box-filler">
+            <div className="widget-category">
+              <h4 className="category-section-title">{name}</h4>
+              <ul className="categories-shop">
                 <>
                   <li className="fw-semibold cursor-pointer mb-1">
-                    <FiChevronLeft className="mb-1 back-category-disable custom-icon-color"/>
+                    <FiChevronLeft className="mb-1 back-category-disable custom-icon-color" />
                     <CategoryLink
                       url={get(categoryTree, "url")}
                       name={get(categoryTree, "name")}
@@ -52,12 +68,20 @@ const SubCategoryList = ({ name,categoryTree }) => {
                     />
                   </li>
                   <li onClick={handleToggle}>
-                    {expanded ? (
-                      <FiChevronDown className="mb-1 back-category" />
-                    ) : (
-                      <FiChevronLeft className="mb-1 back-category" />
+                    {get(selectedCategory, "subCategories", [])?.length > 0 && (
+                      <>
+                        {expanded ? (
+                          <FiChevronDown className="mb-1 back-category" />
+                        ) : (
+                          <FiChevronLeft className="mb-1 back-category" />
+                        )}
+                      </>
                     )}
                     <CategoryLink
+                      className={
+                        get(selectedCategory, "subCategories", [])?.length <=
+                          0 && "child-categories"
+                      }
                       url={get(selectedCategory, "url")}
                       name={get(selectedCategory, "name", "")}
                       isSelected={get(selectedCategory, "select", false)}
@@ -74,17 +98,23 @@ const SubCategoryList = ({ name,categoryTree }) => {
                       )
                     )}
                 </>
-              ):<p>No categories</p>}
-            </ul>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
 CategoryLink.propTypes = {
   url: PropTypes.string.isRequired,
+  className: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  isSelected: PropTypes.bool,
+};
+CategoryName.propTypes = {
+  className: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   isSelected: PropTypes.bool,
 };

@@ -5871,6 +5871,7 @@ font-size: 12px;
 }
 .parent-category{
   font-size: 14px;
+    color:#4f5d77
 }
 .custom-icon-color{
   color: black !important;
@@ -5882,7 +5883,6 @@ font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-
 }
 .card-rating{
   position: absolute;
@@ -5901,3 +5901,7 @@ font-size: 12px;
 .card-rating i {
   color: #088178;
 }
+.active-nav-link{
+  color: var(--primary-color) !important;
+}
+
