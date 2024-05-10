@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SEARCH_PRODUCTS_QUERY } from "../queries/productquery";
-import { mutation } from "../utills/helpers";
+import { queryWithoutToken } from "../utills/helpers";
 import { get } from "lodash";
 import OnSaleProductCard from "../components/category/onSaleProductCard";
 import ReactPaginate from "react-paginate";
@@ -29,12 +29,13 @@ const SearchResult = () => {
   }, [router.query, currentPage]);
 
   const getSearchResult = (variables) => {
-    mutation(SEARCH_PRODUCTS_QUERY, variables)
+    queryWithoutToken(SEARCH_PRODUCTS_QUERY, variables)
       .then((response) => {
-        const searchedProducts = get(response, "data.searchProducts", []);
-        const totalCount = get(response, "data.totalCount", 0);
+        const searchedProducts = get(response, "data.searchProducts.products", []);
+        const totalCount = get(response, "data.searchProducts.count", 0);
         setProducts({ searchedProducts, totalCount });
-        setTotalPages(Math.ceil(totalCount / limit));
+        const calculatedTotalPages = Math.ceil(totalCount / limit);
+        setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1); // Ensure totalPages is at least 1
       })
       .catch(async (error) => {
         console.log(error, "error");
@@ -43,33 +44,31 @@ const SearchResult = () => {
 
   return (
     <div>
-      <OnSaleProductCard
-        onSaleProduct={products.searchedProducts}
-        hideTitle={true}
-      />
-
-      <div className="results-showMoreContainer">
-        <div className="pagination-container">
-          <p className="pagination-paginationMeta">
-            Page {currentPage + 1} of {totalPages}
-          </p>
-          <ReactPaginate
-            pageCount={totalPages}
-            pageRangeDisplayed={5}
-            marginPagesDisplayed={2}
-            onPageChange={handlePageChange}
-            activeClassName={"active"}
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            pageLinkClassName={"page-link"}
-            previousLinkClassName={"pagination-prev-link"}
-            nextLinkClassName={"pagination-prev-link"}
-            previousClassName={"pagination-prev"}
-            nextClassName={"pagination-next"}
-          />
+      <OnSaleProductCard onSaleProduct={products.searchedProducts} hideTitle={true} />
+      {totalPages > 0 && (
+        <div className="results-showMoreContainer">
+          <div className="pagination-container">
+            <p className="pagination-paginationMeta">
+              Page {currentPage + 1} of {totalPages}
+            </p>
+            <ReactPaginate
+              pageCount={totalPages}
+              pageRangeDisplayed={5}
+              marginPagesDisplayed={2}
+              onPageChange={handlePageChange}
+              activeClassName={"active"}
+              previousLabel={"Previous"}
+              nextLabel={"Next"}
+              breakLabel={"..."}
+              pageLinkClassName={"page-link"}
+              previousLinkClassName={"pagination-prev-link"}
+              nextLinkClassName={"pagination-prev-link"}
+              previousClassName={"pagination-prev"}
+              nextClassName={"pagination-next"}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
