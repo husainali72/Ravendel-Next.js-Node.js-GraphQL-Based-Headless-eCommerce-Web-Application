@@ -1,9 +1,11 @@
 import Table from "../../dataTable";
 import { get } from "lodash";
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import AddressDetails from "./addressDetail";
 import PropTypes from "prop-types";
 import { CASH_ON_DELIVERY } from "../../../utills/constant";
 import { getPaymentMethodLabel } from "../../../utills/helpers";
+import { Button } from "react-bootstrap";
 const columns = [
   { title: "Products", name: "productTitle" },
   { title: "Qty", name: "qty", type: "text" },
@@ -12,9 +14,9 @@ const columns = [
 ];
 const prepareOrderDetailRowData = (order) => {
   const orderInfoDetail = [
-    { label: "Order Number", value: get(order, "id", ""), type: "text" },
-    { label: "Date", value: get(order, "date", ""), type: "date" },
-    { label: "Total", value: get(order, "grandTotal", 0), type: "price" },
+    { label: "Order Number", value: get(order, "orderNumber"), type: "text" },
+    { label: "Date", value: get(order, "date"), type: "date" },
+    { label: "Total", value: order?.totalSummary?.grandTotal, type: "price" },
     {
       label: "Payment Method",
       value: getPaymentMethodLabel(get(order,"billing.paymentMethod", CASH_ON_DELIVERY)),
@@ -57,6 +59,7 @@ const OrdersDetails = ({
   shippingAmount,
   couponValue,
   couponCode,
+  handleClose
 }) => {
   const orderInfoDetail = prepareOrderDetailRowData(order);
   const OrderSummaryDetail = prepareOrderSummaryRowData(
@@ -72,40 +75,43 @@ const OrdersDetails = ({
       {orderDetail ? (
         <>
           <div className="order-details">
-            <div className="row order-row">
-              <div className="col-md-6">
+            <div className="scroll-wrapper">
+              <Button className="close-btn" variant="link" onClick={handleClose}><CloseRoundedIcon/></Button>
+              <div className="row order-row">
+                <div className="col-md-6">
+                  <div className="details">
+                    <h4>Order Info</h4>
+                    <Table
+                      colSpan={1}
+                      additionalRows={orderInfoDetail}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="details">
+                    <AddressDetails
+                      title="Billing Address"
+                      address={billingInfo}
+                    />
+                    <hr />
+                    <AddressDetails
+                      title="Shipping Address"
+                      address={shippingInfo}
+                    />
+                  </div>
+                </div>
+                <hr />
+              </div>
+              <div className="row">
                 <div className="details">
-                  <h4>Order Info</h4>
+                  <h4>Order Details</h4>
                   <Table
-                    colSpan={1}
-                    additionalRows={orderInfoDetail}
+                    rows={orderDetail}
+                    columns={columns}
+                    colSpan={3}
+                    additionalRows={OrderSummaryDetail}
                   />
                 </div>
-              </div>
-              <div className="col-md-6">
-                <div className="details">
-                  <AddressDetails
-                    title="Billing Address"
-                    address={billingInfo}
-                  />
-                  <hr />
-                  <AddressDetails
-                    title="Shipping Address"
-                    address={shippingInfo}
-                  />
-                </div>
-              </div>
-              <hr />
-            </div>
-            <div className="row">
-              <div className="details">
-                <h4>Order Details</h4>
-                <Table
-                  rows={orderDetail}
-                  columns={columns}
-                  colSpan={3}
-                  additionalRows={OrderSummaryDetail}
-                />
               </div>
             </div>
           </div>
@@ -126,5 +132,6 @@ OrdersDetails.propTypes = {
   shippingAmount: PropTypes.number.isRequired,
   couponValue: PropTypes.number,
   couponCode: PropTypes.string,
+  handleClose: PropTypes.func,
 };
 export default OrdersDetails;
