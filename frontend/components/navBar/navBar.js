@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { get } from "lodash";
 import CategoryLink from "../category/categoryLink";
 import { useEffect, useState } from "react";
