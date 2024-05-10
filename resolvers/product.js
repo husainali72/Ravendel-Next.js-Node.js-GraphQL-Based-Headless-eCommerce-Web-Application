@@ -35,7 +35,6 @@ var mongoose = require("mongoose");
 
 /* =============================WILL FIX LATER============================= */
 const fs = require("fs");
-const productGroup = require("./productGroup");
 
 var pdir = "./assets/images/product";
 var pcdir = "./assets/images/product/category";
