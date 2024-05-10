@@ -78,7 +78,7 @@ const Header = ({ setOpenMenu }) => {
     if (data?.status === "authenticated") {
       let id = get(data, "data.user.accessToken.customer._id");
       if (id) {
-        // dispatch(calculateUserCart(id));
+        dispatch(calculateUserCart(id));
       }
     }
   };

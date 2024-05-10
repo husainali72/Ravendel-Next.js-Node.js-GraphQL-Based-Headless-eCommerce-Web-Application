@@ -1,24 +1,92 @@
 /* eslint-disable react/prop-types */
 import { get } from "lodash";
-import { useSelector } from "react-redux";
 import CategoryLink from "../category/categoryLink";
+import { useEffect, useState } from "react";
+import { PARENT_CATEGORIES } from "../../queries/productquery";
+import {
+  getItemFromLocalStorage,
+  isCurrentCategory,
+  queryWithoutToken,
+  removeItemFromLocalStorage,
+  setItemToLocalStorage,
+} from "../../utills/helpers";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
-const NavBar = ({setOpenMenu}) => {
-  const productState = useSelector((state) => state.categories);
+const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
+// const SIX_HOURS_MS =1* 60 * 1000;
+const SessionCheckInterval = 60000;
+const NavBar = () => {
+  const [parentCategories, setParentCategories] = useState([]);
+  const router = useRouter();
+  const data = useSession();
+  const fetchCategories = async () => {
+    try {
+      const response = await queryWithoutToken(PARENT_CATEGORIES);
+      const data = get(response, "data.parentCategories.data", []);
+      setParentCategories(data);
+      setItemToLocalStorage("parentCategories", data);
+      const expirationTime = new Date().getTime() + SIX_HOURS_MS;
+      setItemToLocalStorage("parentCategoriesTimestamp", expirationTime);
+    } catch (error) {
+      console.log(error, "error");
+    }
+  };
+  useEffect(() => {
+    const storedCategories = getItemFromLocalStorage("parentCategories");
+    const expirationTime = parseInt(
+      getItemFromLocalStorage("parentCategoriesTimestamp")
+    );
+    const checkLocalStorage = () => {
+      if (
+        storedCategories &&
+        storedCategories?.length > 0 &&
+        expirationTime &&
+        Date.now() < expirationTime
+      ) {
+        setParentCategories(storedCategories);
+      } else {
+        fetchCategories();
+      }
+    };
+    checkLocalStorage();
+    // Check expiration time periodically
+    const intervalId = setInterval(() => {
+      const currentTime = Date.now();
+      if (currentTime >= expirationTime) {
+        clearInterval(intervalId); // Clear the interval if expiration time is reached
+        removeItemFromLocalStorage("parentCategories");
+        removeItemFromLocalStorage("parentCategoriesTimestamp");
+        checkLocalStorage();
+      }
+    }, SessionCheckInterval);
+
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
+  }, [data?.status]);
+
   return (
     <>
       <nav>
         <ul className="nav list" id="list">
-          {get(productState, "categories", []).map((parentCategory, index) => (
-            <li className="nav-item" key={index} onMouseMove={()=>setOpenMenu(true)}>
-              <CategoryLink url={get(parentCategory, "url")}>
-                <a className="nav-link">{get(parentCategory, "name")}</a>
-              </CategoryLink>
-            </li>
-          ))}
+          {parentCategories &&
+            parentCategories?.length > 0 &&
+            parentCategories?.map((parentCategory, index) => (
+              <li className="nav-item" key={index}>
+                {isCurrentCategory(get(parentCategory, "url"), router) ? (
+                  <span className="nav-link">
+                    {get(parentCategory, "name")}
+                  </span>
+                ) : (
+                  <CategoryLink url={get(parentCategory, "url")}>
+                    <a className="nav-link">{get(parentCategory, "name")}</a>
+                  </CategoryLink>
+                )}
+              </li>
+            ))}
         </ul>
       </nav>
     </>
   );
 };
+
 export default NavBar;

@@ -337,3 +337,8 @@ export const getPaymentMethodLabel = (paymentMethod) => {
       return "Cash On Delivery";
   }
 };
+
+export const isCurrentCategory = (url,router) => {
+  const { category } = router.query;
+  return category === url;
+};

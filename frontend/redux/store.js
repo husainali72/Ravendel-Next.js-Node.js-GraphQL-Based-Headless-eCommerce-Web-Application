@@ -10,7 +10,6 @@ function saveToLocalStorage(state) {
     checkout: state.checkout,
     userCart: state.userCart,
     cart: state.cart,
-    categories: state.categories
   }
   try {
     const serialisedState = JSON.stringify(detail);

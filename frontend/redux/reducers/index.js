@@ -12,7 +12,6 @@ import { USER_LOGGED_OUT } from "../actions/userlogoutAction";
 import productReducer from './productReducer';
 import { addedCart } from './addedCart';
 import orderReducer from './orderReducer';
-import categoryReducer from './categoryReducer';
 
 const appReducer = combineReducers({
     setting: settingReducer,
@@ -27,7 +26,6 @@ const appReducer = combineReducers({
     products: productReducer,
     addedCart: addedCart,
     order: orderReducer,
-    categories:categoryReducer
 });
 
 const rootReducer = (state, action) => {

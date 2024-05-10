@@ -20,7 +20,6 @@ import CustomBanner from "../components/banner/CustomBanner";
 import MegaMenu from "../components/megaMenu";
 import { get } from "lodash";
 import PropTypes from "prop-types";
-import { storeCategories } from "../redux/actions/categoryAction";
 export default function Home({
   settings,
   setOpenMenu,
@@ -36,10 +35,6 @@ export default function Home({
   useEffect(() => {
     dispatch(storeSetting(settings));
   }, [settings]);
-  useEffect(() => {
-    dispatch(storeCategories(parentCategories));
-  }, [parentCategories]);
-
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
