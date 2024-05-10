@@ -72,7 +72,7 @@ const NavBar = () => {
             parentCategories?.map((parentCategory, index) => (
               <li className="nav-item" key={index}>
                 {isCurrentCategory(get(parentCategory, "url"), router) ? (
-                  <span className="nav-link">
+                  <span className="nav-link active-nav-link">
                     {get(parentCategory, "name")}
                   </span>
                 ) : (

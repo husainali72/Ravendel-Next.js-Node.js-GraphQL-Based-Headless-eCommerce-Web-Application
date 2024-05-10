@@ -5860,5 +5860,7 @@ font-size: 12px;
   align-items: center;
   justify-content: center;
 }
-
+.active-nav-link{
+  color: var(--primary-color) !important;
+}
 
