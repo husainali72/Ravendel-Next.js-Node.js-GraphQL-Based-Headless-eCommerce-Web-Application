@@ -2032,7 +2032,34 @@ function getBreadcrumb(data) {
 module.exports.getBreadcrumb = getBreadcrumb
 
 const addCategoryAttributes = async (categories, specifications, modal) => {
-  const productAttributes = specifications.map(specification => specification.attributeId)
+  const productAttributes = []
+  for(let spec of specifications) {
+    let attribute = productAttributes.find(prodAttr => prodAttr.attributeId.toString() === spec.attributeId.toString())
+    if(!attribute) {
+      attribute = {
+        attributeId: spec.attributeId,
+        name: spec.key,
+        values: [
+          {
+            attributeValueId: spec.attributeValueId,
+            value: spec.value
+          }
+        ]
+      }
+      productAttributes.push(attribute)
+    } else {
+      let attributeValue = attribute.values.find(attrValue => attrValue.attributeValueId.toString() === spec.attributeValueId.toString())
+      if(!attributeValue) {
+        attributeValue = {
+          attributeValueId: spec.attributeValueId,
+          value: spec.value
+        }
+        attribute.values.push(attributeValue)
+      }
+    }
+
+  }
+  
   const productCategories = toObjectID(categories)
 
   const bulkWriteQuery = [
@@ -2040,10 +2067,8 @@ const addCategoryAttributes = async (categories, specifications, modal) => {
       updateMany: {
         filter: { "_id": {$in: toObjectID(productCategories)} },
         update: {
-          $addToSet: {
-            attributeIds: {
-              $each: productAttributes
-            }
+          $set: {
+            attributes: productAttributes
           }
         }
       }
