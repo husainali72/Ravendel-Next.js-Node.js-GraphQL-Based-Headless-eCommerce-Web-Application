@@ -229,11 +229,17 @@ module.exports = {
             },
           },
           {
+            $addFields: {
+              "thumbnail_image": "$image"
+            }
+          },
+          {
             $project: {
               _id: 1,
               name: 1,
               url: 1,
               description: 1,
+              thumbnail_image: 1,
               image: 1,
               parentId: 1,
         
@@ -360,11 +366,9 @@ module.exports = {
                             _id: "$$prod._id",
                             name: "$$prod.name",
                             quantity:"$$prod.quantity",
-                            description:"$$prod.description",
                             pricing:"$$prod.pricing",
                             url: "$$prod.url",
                             feature_image:"$$prod.feature_image",
-                            thumbnail_image:"$$prod.feature_image",
                             rating: "$$prod.rating",
                             categoryId:"$$prod.categoryId",
                             date: "$$prod.date",
