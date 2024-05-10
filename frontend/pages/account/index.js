@@ -1,51 +1,88 @@
 /* eslint-disable no-unused-vars */
 
+import Link from "next/link";
+import { useState } from "react";
+import { useSession, getSession, signIn, signOut, getCsrfToken } from 'next-auth/react';
+import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
+import FmdGoodOutlinedIcon from '@mui/icons-material/FmdGoodOutlined';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import Container from 'react-bootstrap/Container';
 import LogIn from "../../components/account/login";
 import Register from "../../components/account/register";
 import { useSelector, useDispatch } from "react-redux";
 import { customerAction } from "../../redux/actions/loginAction";
-import Link from "next/link";
-import { useSession, getSession, signIn, signOut, getCsrfToken } from 'next-auth/react';
+import AccountSidebar from "../../components/account/component/AccountSidebar";
+import Order from "./order";
+
+const sidebarItems = [
+    {
+        name: 'My Orders',
+        active: true,
+        icon: <NotificationsActiveOutlinedIcon/>,
+        component: <Order/>
+    },
+    {
+        name: 'Edit Profile',
+        active: false,
+        icon: <EditNoteIcon />,
+        component: <Order/>
+    },
+    {
+        name: 'My Addresses',
+        active: false,
+        icon: <FmdGoodOutlinedIcon />,
+        component: <Order/>
+    },
+    {
+        name: 'My Wishlist',
+        active: false,
+        icon: <BookmarkBorderOutlinedIcon/>,
+        component: <Order/>
+    },
+    {
+        name: 'Notification',
+        active: false,
+        icon: <NotificationsActiveOutlinedIcon/>,
+        component: <Order/>
+    },
+]
 
 const Account = () => {
-
-
+    const [sidebarItemsState, setSidebarItemsState] = useState(sidebarItems);
     const session = useSession()
-    // console.log("session", session)
     let customer = session.status === "authenticated"
-
     const dispatch = useDispatch();
-    // const customer = useSelector(state => state.customer)
-    // console.log("customer", customer);
+
     return (
         <>
-            <BreadCrumb title={"register"} />
             <Container>
-                {/* {customet ? (
-                    <div>
-                        <h4> your are already login</h4>
-                        <button>logout</button>
-                        <Link href="/">
-                            <a style={{ color: "white" }} onClick={() => {
-                                dispatch(customerAction(false))
-                                localStorage.removeItem("customer")
-                            }}>Log Out</a>
-                        </Link>
+                {
+                    customer &&
+                    <div className="account-page">
+                        <div className="account-page-head">
+                            <h2>My Account</h2>
+                        </div>
+                        <div className="account-main">
+                            <AccountSidebar
+                                items={[sidebarItemsState, setSidebarItemsState]}
+                            />
+                            {
+                                sidebarItemsState.map((item) => (
+                                    <>
+                                        {
+                                            item.active === true &&
+                                            <div className="account-content">
+                                                {item.component}
+                                            </div>
+                                        }
+                                    </>
+                                ))
+                            }
+                        </div>
                     </div>
-
-                ) : ( */}
-                <div className="row account-row justify-content-between">
-                    <div className="col-lg-5 account-page" >
-                        <LogIn />
-                    </div>
-                    <div className="col-lg-6 ">
-                        <Register />
-                    </div>
-                </div>
-                {/* )} */}
-
+                }
             </Container>
         </>
 
