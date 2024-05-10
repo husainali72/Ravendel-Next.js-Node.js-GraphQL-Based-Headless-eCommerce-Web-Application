@@ -52,6 +52,7 @@ module.exports = `
   extend type Query {
     groups: GroupsResponse
     group(id: ID!): GroupResponse
+    availableProducts(groupId: ID): customArray
   }
   extend type Mutation {
     addGroup(

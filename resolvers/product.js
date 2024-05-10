@@ -1179,45 +1179,6 @@ module.exports = {
         message: MESSAGE_RESPONSE("SINGLE_RESULT_FOUND", "Product", true),
         data: response,
       };
-    },
-    availableProducts: async(root, args) => {
-      const { groupId } = args
-
-      const lookupStage = {
-        $lookup: {
-          from: "productgroups",
-          localField: "_id",
-          foreignField: "productIds",
-          as: "productGroups",
-        },
-      }
-      const matchStage = {
-        $match: {
-          $or: [
-            {
-              productGroups: { $size: 0 },
-            },
-          ],
-        },
-      }
-      if(!isEmpty(groupId)) {
-        matchStage["$match"]["$or"].push({
-          "productGroups._id": toObjectID(groupId),
-        })
-      }
-      const projectStage = {
-        $project: {
-          name: 1
-        }
-      }
-     
-      const availableProducts = await Product.aggregate([
-        lookupStage,
-        matchStage,
-        projectStage
-      ])
-
-      return availableProducts
     }
   },
   Product: {
