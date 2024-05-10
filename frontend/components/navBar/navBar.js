@@ -10,15 +10,12 @@ import {
   setItemToLocalStorage,
 } from "../../utills/helpers";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 
 const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
 // const SIX_HOURS_MS =1* 60 * 1000;
-const SessionCheckInterval = 60000;
 const NavBar = () => {
   const [parentCategories, setParentCategories] = useState([]);
   const router = useRouter();
-  const data = useSession();
   const fetchCategories = async () => {
     try {
       const response = await queryWithoutToken(PARENT_CATEGORIES);
@@ -31,11 +28,13 @@ const NavBar = () => {
       console.log(error, "error");
     }
   };
+
   useEffect(() => {
     const storedCategories = getItemFromLocalStorage("parentCategories");
     const expirationTime = parseInt(
       getItemFromLocalStorage("parentCategoriesTimestamp")
     );
+
     const checkLocalStorage = () => {
       if (
         storedCategories &&
@@ -48,20 +47,17 @@ const NavBar = () => {
         fetchCategories();
       }
     };
-    checkLocalStorage();
-    // Check expiration time periodically
-    const intervalId = setInterval(() => {
-      const currentTime = Date.now();
-      if (currentTime >= expirationTime) {
-        clearInterval(intervalId); // Clear the interval if expiration time is reached
-        removeItemFromLocalStorage("parentCategories");
-        removeItemFromLocalStorage("parentCategoriesTimestamp");
-        checkLocalStorage();
-      }
-    }, SessionCheckInterval);
 
-    return () => clearInterval(intervalId); // Cleanup interval on unmount
-  }, [data?.status]);
+    checkLocalStorage();
+
+    // Check expiration time only once on page load
+    const currentTime = Date.now();
+    if (currentTime >= expirationTime) {
+      removeItemFromLocalStorage("parentCategories");
+      removeItemFromLocalStorage("parentCategoriesTimestamp");
+      checkLocalStorage();
+    }
+  }, []);
 
   return (
     <>
