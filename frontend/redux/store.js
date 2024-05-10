@@ -9,7 +9,7 @@ function saveToLocalStorage(state) {
   const detail = {
     checkout: state.checkout,
     userCart: state.userCart,
-    cart: state.cart,
+    cart: state.cart
   }
   try {
     const serialisedState = JSON.stringify(detail);
