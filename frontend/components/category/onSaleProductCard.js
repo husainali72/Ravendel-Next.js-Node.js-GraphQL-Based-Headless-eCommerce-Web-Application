@@ -42,9 +42,9 @@ const OnSaleProductCard = ({
       <Container>
         {!hideTitle ? (
           <div>
-            <h4 className="theme-color my-2">
+            <h5 className="black-color my-4">
               {titleShow ? capitalize(titleShow) : "On Sale"}{" "}
-            </h4>
+            </h5>
           </div>
         ) : null}
         <div>
@@ -80,41 +80,54 @@ const OnSaleProductCard = ({
                               alt={product?.name}
                               className="img-on-sale"
                             />
+                            {
+                              get(product, "rating", 0) > 0 &&
+                              <div className="card-rating">
+                                <span>{get(product, "rating", 0)}</span>
+                                <i className="fa-solid fa-star" />
+                              </div>
+                            }
+                              {/* <OverlayTrigger
+                                className="on-sale-product-tooltip"
+                                placement="top"
+                                overlay={
+                                  <Tooltip id={"tooltip-top"}>
+                                    add to cart
+                                  </Tooltip>
+                                }
+                              >
+                                <Link
+                                  href={`/product/[singleproduct]?url=${product.url}`}
+                                  as={`/product/${product.url}`}
+                                >
+                                  <div className="add-to-cart">
+                                    <button>Add to cart</button>
+                                    {" "}
+                                    <a className="cart-icon">
+                                      <i
+                                        className="fas fa-shopping-bag font-awesome-icon"
+                                        aria-hidden="true"
+                                      ></i>
+                                    </a>
+                                  </div>
+                                </Link>
+                              </OverlayTrigger> */}
                           </div>
                           <div className="on-sale-product-card-body">
-                            {isDiscount(product) ? (
-                              <div className="save-price">
-                                <span className="percantage-save">
-                                  {calculateDiscount(
-                                    getProductPrice(product),
-                                    getSalePrice(product)
-                                  )}
-                                </span>
-                              </div>
-                            ) : null}
                             <div className="card-price">
                               <div>
-                              {product?.name?.length > 18 ? (
-                                <strong
-                                  dangerouslySetInnerHTML={{
-                                    __html:
-                                      product?.name?.substring(0, 17) + "...",
-                                  }}
-                                ></strong>
-                              ) : (
-                                product.name
-                              )}
+                                {product.name}
                               </div>
                               <RemainingQuantity quantity={get(product,'quantity',0)}/>
                             </div>
 
                             <div className="on-sale-product-detail">
                               <div className="product-price">
-                                <StarRating
+                                {/* <StarRating
                                   className="rating"
                                   stars={get(product, "rating", 0)}
                                   singleProducts={product}
-                                />
+                                /> */}
                                 <span className="no-wrap">
                                   <strong className="sale-price">
                                     <Price
@@ -127,44 +140,27 @@ const OnSaleProductCard = ({
                                 </span>
                                 {getSalePrice(product) &&
                                 getSalePrice(product) <
-                                  getProductPrice(product) ? (
+                                getProductPrice(product) ? (
                                   <span
-                                    className={
+                                  className={
                                       product?.pricing.sellprice
-                                        ? "has-sale-price"
-                                        : ""
+                                      ? "has-sale-price"
+                                      : ""
                                     }
-                                  >
+                                    >
                                     <Price price={getProductPrice(product)} />
                                   </span>
                                 ) : null}
+                                {isDiscount(product) ? (
+                                  <span className="percantage-save">
+                                    {calculateDiscount(
+                                      getProductPrice(product),
+                                      getSalePrice(product)
+                                    )}
+                                  </span>
+                                ) : null}
                               </div>
-                              {product?.quantity > 0 ? (
-                                <OverlayTrigger
-                                  className="on-sale-product-tooltip"
-                                  placement="top"
-                                  overlay={
-                                    <Tooltip id={"tooltip-top"}>
-                                      add to cart
-                                    </Tooltip>
-                                  }
-                                >
-                                  <Link
-                                    href={`/product/[singleproduct]?url=${product.url}`}
-                                    as={`/product/${product.url}`}
-                                  >
-                                    <div className="add-to-cart">
-                                      {" "}
-                                      <a className="cart-icon">
-                                        <i
-                                          className="fas fa-shopping-bag font-awesome-icon"
-                                          aria-hidden="true"
-                                        ></i>
-                                      </a>
-                                    </div>
-                                  </Link>
-                                </OverlayTrigger>
-                              ) : (
+                              {!product?.quantity > 0 && (
                                 <p className="out-of-stock-card">
                                   Out Of Stock
                                 </p>

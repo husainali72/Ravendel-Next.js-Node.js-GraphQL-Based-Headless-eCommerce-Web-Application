@@ -122,7 +122,7 @@ export const logoutAndClearData = async (dispatch) => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
   await removeItemFromLocalStorage("cart");
   await dispatch(logoutDispatch());
-  window.location.pathname = "/account";
+  window.location.pathname = "/login";
 };
 
 // autoFocus next input

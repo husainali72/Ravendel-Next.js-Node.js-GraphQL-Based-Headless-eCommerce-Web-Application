@@ -37,7 +37,7 @@ const Category = ({ category }) => {
           />
         ) : null}
         <div>
-          <h5 className="black-color my-3">
+          <h5 className="black-color mt-3">
             Products Category
           </h5>
           <div
