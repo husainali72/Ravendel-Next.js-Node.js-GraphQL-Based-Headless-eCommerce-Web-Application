@@ -254,9 +254,7 @@ module.exports = {
           return MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false);
         }
         const categoryAggrResult = categoryAggrActualResult[0];
-        console.log('categoryAggrResult', categoryAggrResult);
         if(!categoryAggrResult.parentId) {
-          console.log('in the parentId null condition');
           let mostParentCategoryData = categoryAggrResult;
           delete mostParentCategoryData["parentCategory"];
           delete mostParentCategoryData["parentSubCategories"];
@@ -362,9 +360,11 @@ module.exports = {
                             _id: "$$prod._id",
                             name: "$$prod.name",
                             quantity:"$$prod.quantity",
+                            description:"$$prod.description",
                             pricing:"$$prod.pricing",
                             url: "$$prod.url",
                             feature_image:"$$prod.feature_image",
+                            thumbnail_image:"$$prod.feature_image",
                             rating: "$$prod.rating",
                             categoryId:"$$prod.categoryId",
                             date: "$$prod.date",
