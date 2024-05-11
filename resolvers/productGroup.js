@@ -121,7 +121,8 @@ module.exports = {
       }
       const projectStage = {
         $project: {
-          name: 1
+          name: 1,
+          url: 1
         }
       }
      
