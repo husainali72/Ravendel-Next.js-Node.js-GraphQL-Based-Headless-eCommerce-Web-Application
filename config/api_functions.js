@@ -241,9 +241,11 @@ const CREATE_FUNC = async (
     //   data.feature_image = imgObject.data || imgObject;
     // }
 
-    if (args.feature_image || args.image) {
+    if (args.feature_image || args.image || args.thumbnail_image) {
       let imgObject = "";
+      let imgObject2 = "";
       let image = null;
+      let image2 = null;
 
       if (data.feature_image) {
         image = data.feature_image.file;
@@ -251,6 +253,7 @@ const CREATE_FUNC = async (
 
       if (name && name === "Product Category") {
         image = data.image[0].file;
+        image2 = data.thumbnail_image[0].file;
       }
 
       if (name && name === "User") {
@@ -267,6 +270,10 @@ const CREATE_FUNC = async (
         imgObject = await imageUpload(image, path, name);
       } else {
         imgObject = await UploadImageLocal(image, path, name);
+        if (name && name === "Product Category") {
+          imgObject2 = await UploadImageLocal(image2, path, name);
+          data.thumbnail_image = imgObject2.data;
+        }
       }
 
       if ((name && name === "Product Category") || name && name === "User") {

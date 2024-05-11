@@ -8,7 +8,7 @@ import UserPlaceholder from "../../assets/images/user-placeholder.png";
 import theme from "../../theme/index.js";
 import { ThemeProvider } from "@mui/material/styles";
 import NoImagePlaceHolder from "../../assets/images/NoImagePlaceHolder.png"
-const FeaturedImageComponentTheme = ({ image, feautedImageChange, user }) => {
+const FeaturedImageComponentTheme = ({ image, feautedImageChange, user, text,name }) => {
   const classes = viewStyles();
 
   const imageOnError = (event) => {
@@ -37,26 +37,30 @@ const FeaturedImageComponentTheme = ({ image, feautedImageChange, user }) => {
         accept="image/*"
         className={classes.input}
         style={{ display: "none" }}
+        name={name}
         id="featured-image"
-        name="feature_image"
+        // name="feature_image"
         type="file"
         onChange={(e) => feautedImageChange(e)}
       />
       <label htmlFor="featured-image" className={classes.feautedImage}>
         <ImageIcon />{" "}
-        {!isEmpty(image) ? "Change Featured Image" : "Set Featured Image"}
+        {!isEmpty(image) ? `Change ${text} Image` : `Set ${text} Image`}
       </label>
     </>
   );
 };
 
-const FeaturedImageComponent = ({ image, feautedImageChange, user }) => {
+const FeaturedImageComponent = ({ image, feautedImageChange, user, text ,name}) => {
+  console.log(name)
   return (
     <ThemeProvider theme={theme}>
       <FeaturedImageComponentTheme
+      name={name}
         image={image}
         feautedImageChange={feautedImageChange}
         user={user}
+        text={text}
       />
     </ThemeProvider>
   );

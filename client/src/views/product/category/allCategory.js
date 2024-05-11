@@ -160,28 +160,34 @@ const AllCategoryComponent = () => {
     setfeaturedImage(null);
     setSingleCategory(categoryObject);
   };
-  const fileChange = (e) => {
+  const fileChange = (e,apiName) => {
     const files = get(e, "target.files", []);
-
+    const {name}=get(e,'target')
     if (files.length > 0) {
-      setfeaturedImage(URL.createObjectURL(files[0]));
+      // setfeaturedImage(URL.createObjectURL(files[0]));
       setSingleCategory({
         ...singlecategory,
-        image: files,
+        [name]:URL.createObjectURL(files[0]),
+        [apiName]: files,
       });
     } else {
-      setfeaturedImage(featuredImage);
+      setSingleCategory({
+        ...singlecategory,
+       
+      });
+      // setfeaturedImage(featuredImage);
     }
   };
 
-  const updatefileChange = (e) => {
+  const updatefileChange = (e,apiNAme) => {
     const files = get(e, 'target.files', []);
-
+    const {name}=get(e,'target.name')
     if (files.length > 0) {
       setfeaturedImage(URL.createObjectURL(files[0]));
       setSingleCategory({
         ...singlecategory,
-        update_image: files,
+        [name]:URL.createObjectURL(files[0]),
+        [apiNAme]: files,
       });
     } else {
       setfeaturedImage(featuredImage);
@@ -338,13 +344,16 @@ const AllCategoryComponent = () => {
                   </Select>
                 </FormControl>
               </Box>
+             { console.log(singlecategory,'singlecategory')}
 
               {editMode ? (
                 <Box component="span">
                   <CardBlocks title="Change Category Image">
                     <FeaturedImageComponent
-                      image={featuredImage}
-                      feautedImageChange={(e) => updatefileChange(e)}
+                      name='feature_image'
+                      image={ singlecategory?.feature_image}
+                      feautedImageChange={(e) => updatefileChange(e,'upload_image')}
+                      text = "Feature"
                     />
                   </CardBlocks>
                 </Box>
@@ -355,9 +364,37 @@ const AllCategoryComponent = () => {
                     className={classes.flex1}
                   >
                     <FeaturedImageComponent
-                      image={featuredImage}
-                      feautedImageChange={(e) => fileChange(e)}
+                     name='feature_image'
+                      image={getBaseUrl(setting) + singlecategory.feature_image}
+                      feautedImageChange={(e) => fileChange(e,'image')}
+                      text = "Feature"
                     // style={{marginBottom: '200px'}}
+                    />
+                  </CardBlocks>
+                </Box>
+              )}
+              {editMode ? (
+                <Box component="span">
+                  <CardBlocks title="Change Category Image">
+                    <FeaturedImageComponent
+                     name='thumbnail'
+                      image={getBaseUrl(setting) + singlecategory?.thumbnail_image}
+                      feautedImageChange={(e) => updatefileChange(e,'thumbnail_image')}
+                      text = "Thumbnail"
+                    />
+                  </CardBlocks>
+                </Box>
+              ) : (
+                <Box component="span">
+                  <CardBlocks
+                    title="Choose Thumbnail Image"
+                    className={classes.flex1}
+                  >
+                    <FeaturedImageComponent
+                      name='thumbnail'
+                      image={getBaseUrl(setting) + singlecategory?.thumbnail_image}
+                      feautedImageChange={(e) => fileChange(e,'thumbnail_image')}
+                      text = "Thumbnail"
                     />
                   </CardBlocks>
                 </Box>

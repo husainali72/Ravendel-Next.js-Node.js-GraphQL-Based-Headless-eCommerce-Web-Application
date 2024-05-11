@@ -1313,6 +1313,7 @@ module.exports = {
         // url: args.url,
         description: args.description,
         image: args.image,
+        thumbnail_image: args.thumbnail_image,
         meta: args.meta,
       };
 

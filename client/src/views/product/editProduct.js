@@ -1421,6 +1421,7 @@ const EditProductComponent = ({ params }) => {
             <Box component="span" m={1}>
               <CardBlocks title="Featured Image">
                 <FeaturedImageComponent
+                name='feature_image'
                   image={featureImage}
                   feautedImageChange={(e) => onFeatureImageChange(e)}
                 />

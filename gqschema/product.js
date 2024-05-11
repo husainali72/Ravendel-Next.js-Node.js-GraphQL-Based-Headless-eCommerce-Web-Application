@@ -264,6 +264,7 @@ module.exports = `
       url: String
       description: String
       image: Upload
+      thumbnail_image: Upload
       meta: customObject
     ): statusSchema
     updateProductCategory(
