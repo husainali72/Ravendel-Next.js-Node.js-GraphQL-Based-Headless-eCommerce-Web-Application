@@ -50,13 +50,14 @@ export default function Footer() {
         city: get(res, cityPath, "Paris"),
         email: get(res, emailPath, "ravendel@gmail.com"),
         phoneNumber: get(res, phonePath, "+91 9124192994"),
-        appStoreUrl: get(res, appStorePath, "#")||'#',
-        playStoreUrl: get(res, playStorePath, "#")||'#',
+        appStoreUrl: get(res, appStorePath, "#") || "#",
+        playStoreUrl: get(res, playStorePath, "#") || "#",
         hour: get(res, hour, ""),
         socialMedia: get(res, socialMediaPath, []),
       }));
     });
   }, []);
+
   const {
     addressLine1,
     addressLine2,
@@ -64,6 +65,7 @@ export default function Footer() {
     email,
     phoneNumber,
     appStoreUrl,
+    hour,
     playStoreUrl,
   } = Address;
   const session = useSession();
@@ -83,54 +85,80 @@ export default function Footer() {
                     </Link>
                   </div>
                   <div className="address">
-                    <h5 className="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated animated animated">
-                      Contact
-                    </h5>
-                    <strong>Address : </strong>
-                    <span>
-                      {addressLine1 || ""}
-                      {addressLine1 && ", "}
-                      {addressLine2 || ""}
-                      {addressLine2 && ", "}
-                      {city || ""}
-                    </span>
+                  
+                    {addressLine1 ||
+                      addressLine2 ||
+                      city ||
+                      email ||
+                      phoneNumber ||
+                       hour
+                       && (
+                        <h5 className="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated animated animated">
+                          Contact
+                        </h5>
+                      )}
+                    {addressLine1 && (
+                      <>
+                        <strong>Address : </strong>
+                        <span>
+                          {addressLine1 || ""}
+                          {addressLine1 && ", "}
+                          {addressLine2 || ""}
+                          {addressLine2 && ", "}
+                          {city || ""}
+                        </span>
+                      </>
+                    )}
                     <br />
-                    <strong>Phone : </strong>
-                    <Link href={"tel:" + phoneNumber || ""}>
-                      <span className="contact-details">
-                        <a>{phoneNumber || ""}</a>
-                      </span>
-                    </Link>
-                    <br />
-                    <strong>Email : </strong>
-                    <Link href={"mailto:" + email || ""}>
-                      <span className="contact-details">
-                        <a>{email || ""}</a>
-                      </span>
-                    </Link>
-                    <br />
-                    <strong>Hour: </strong>
-
-                    {<span>{get(Address, "hour", "")}</span>}
-                  </div>
-
-                  <div className="mt-4 follow">
-                    <h5>Follow us</h5>
-                    {/* <ui> */}
-                    {get(Address, "socialMedia", [])?.map((media, i) => {
-                      return (
-                        <Link href={media.handle} key={i}>
-                          <a
-                            href={media.handle}
-                            className={iconSetter(media.name)}
-                            aria-hidden="true"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          ></a>
+                    {phoneNumber && (
+                      <>
+                        <strong>Phone : </strong>
+                        <Link href={"tel:" + phoneNumber || ""}>
+                          <span className="contact-details">
+                            <a>{phoneNumber || ""}</a>
+                          </span>
                         </Link>
-                      );
-                    })}
+                      </>
+                    )}
+                    <br />
+                    {email && (
+                      <>
+                        <strong>Email : </strong>
+                        <Link href={"mailto:" + email || ""}>
+                          <span className="contact-details">
+                            <a>{email || ""}</a>
+                          </span>
+                        </Link>
+                      </>
+                    )}
+                    <br />
+                    {get(Address, "hour", "") && (
+                      <>
+                        <strong>Hour: </strong>
+
+                        {<span>{get(Address, "hour", "")}</span>}
+                      </>
+                    )}
                   </div>
+
+                  {get(Address, "socialMedia", [])?.length > 0 && (
+                    <div className="mt-4 follow">
+                      <h5>Follow us</h5>
+                      {get(Address, "socialMedia", [])?.map((media, i) => {
+                        return (
+                          <Link href={media.handle} key={i}>
+                            <a
+                              href={media.handle}
+                              className={iconSetter(media.name)}
+                              aria-hidden="true"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            ></a>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
                 <div className="col-lg-2 col-md-3 col-xl-2 mx-auto mb-4 mt-2 ">
                   <h5 className="foot-tittle mb-4">About</h5>

@@ -2272,6 +2272,7 @@ footer .btn:hover a {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
+  
 }
 
 .detail-info h2 {
@@ -5859,4 +5860,39 @@ font-size: 12px;
   align-items: center;
   justify-content: center;
 
+}
+.customer-review{
+  display: flex;
+  padding: 10px;
+}
+.singleproduct-bottom-section{
+  display: flex;
+  justify-content: space-between;
+}
+
+.specification-value {
+  display: flex;
+  flex-direction: column;
+}
+
+.specification-group {
+  margin-bottom: 20px;
+}
+
+.group-name {
+  font-weight: bold;
+}
+
+.key-value-container {
+  display: flex;
+  /* justify-content: space-between; */
+}
+
+.specification-key {
+  margin-right: 10px;
+  font-weight: 500;
+}
+.custom-progress-bar {
+  margin-bottom: 10px; 
+  height: 10px !important;
 }

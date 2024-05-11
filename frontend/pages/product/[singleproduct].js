@@ -1,51 +1,25 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-empty */
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import BreadCrumb from "../../components/breadcrumb/breadcrumb";
 import client from "../../apollo-client";
 import { Container } from "react-bootstrap";
 import {
   GET_HOMEPAGE_DATA_QUERY,
   GET_RELATED_PRODUCTS_QUERY,
 } from "../../queries/home";
-import {
-  GET_SINGLE_PRODUCT,
-  GET_PRODUCT_REVIEWS,
-} from "../../queries/productquery";
+import { GET_SINGLE_PRODUCT } from "../../queries/productquery";
 import { GET_PRODUCTS_QUERY } from "../../queries/shopquery";
-import { Tab, Col, Nav } from "react-bootstrap";
-import GalleryImagesComponents from "../../components/category/GalleryImage";
+import GalleryImagesComponents from "../../components/singleproductcomponent/GalleryImage";
 import OnSaleProductCard from "../../components/category/onSaleProductCard";
-import ReviewForm from "../../components/singleproductcomponent/ReviewForm";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
-import Reviews from "../../components/Reviews/Reviews";
-import ReactHtmlParser, { convertNodeToElement } from "react-html-parser";
-import  { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { get } from "lodash";
-import PropTypes from 'prop-types';
-function transform(node, index) {
-  if (
-    (node.type === "tag" && node.name === "h1") ||
-    node.name === "h2" ||
-    node.name === "h3"
-  ) {
-    node.name = "p";
-    return convertNodeToElement(node, index, transform);
-  }
-  if (node.type === "tag" && node.name === "a") {
-    node.name = "p";
-    return convertNodeToElement(node, index, transform);
-  }
-  if (node.type === "tag" && node.name === "strong") {
-    node.name = "span";
-    return convertNodeToElement(node, index, transform);
-  }
-}
-const options = {
-  decodeEntities: true,
-  transform,
-};
+import PropTypes from "prop-types";
+import Reviews from "../../components/singleproductcomponent/Reviews";
+import ProductDetails from "../../components/singleproductcomponent/productDetails";
+import CategoryBreadCrumb from "../../components/breadcrumb";
+import AddionalDetail from "../../components/singleproductcomponent/RelatedProducts";
 
 const SingleProduct = ({
   allProduct,
@@ -56,28 +30,10 @@ const SingleProduct = ({
   outOfStockThreshold,
 }) => {
   const router = useRouter();
-  const session = useSession();
-  const [singleProduct, setSingleProduct] = useState(null);
   const [sliderImages, setSliderImages] = useState([]);
-  const [singleProductReview, setSingleProductReview] = useState([]);
   const [stockClass, setStockClass] = useState("");
   useEffect(() => {
-    const getReviews = async () => {
-      try {
-        const id = singleproducts?._id;
-        const { data: productReviewData } = await client.query({
-          query: GET_PRODUCT_REVIEWS,
-          variables: { id },
-        });
-        const productreviews = get(productReviewData, "productwisereview.data");
-        setSingleProductReview(productreviews);
-      } catch (e) {}
-    };
-    getReviews();
-  }, [singleproducts]);
-  useEffect(() => {
     var product = singleproducts;
-    setSingleProduct({...product});
     var allimages = [];
     allimages.push(get(product, "feature_image", ""));
     get(product, "gallery_image", [])?.map((img) => {
@@ -86,7 +42,7 @@ const SingleProduct = ({
 
     setSliderImages(allimages);
   }, [singleproducts]);
-  
+
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
@@ -100,7 +56,7 @@ const SingleProduct = ({
         />
         <meta name="keywords" content={get(singleproducts, "meta.keywords")} />
       </Head>
-      <BreadCrumb title={`product`} />
+      <CategoryBreadCrumb breadCrumbs={get(singleproducts, "breadcrumb", [])} />
       <section className="product-cart-section">
         <Toaster />
         <Container>
@@ -121,66 +77,12 @@ const SingleProduct = ({
                 </div>
               </div>
               <div>
+                <div className="singleproduct-bottom-section">
+                  <Reviews product={singleproducts} />
+                  <ProductDetails product={singleproducts} />
+                </div>
                 <hr></hr>
-                <Tab.Container
-                  id="left-tabs-example"
-                  defaultActiveKey="description"
-                >
-
-                  <Col>
-                    <Nav variant="pills" className="flex-column">
-                      <Nav.Item style={{ display: "flex" }}>
-                        <Nav.Link type="button" eventKey="description">
-                          Description
-                        </Nav.Link>
-                        <Nav.Link eventKey="review">Review</Nav.Link>
-                      </Nav.Item>
-                      <Tab.Content>
-                        <Tab.Pane eventKey="description">
-                          <div style={{ padding: "20px", marginTop: "15px" }}>
-                            {singleproducts?.description !== null &&
-                            singleproducts?.description !== "" ? (
-                              ReactHtmlParser(
-                                get(singleproducts, "description"),
-                                options
-                              )
-                            ) : (
-                              <p>Product Discription not available</p>
-                            )}
-                          </div>
-                        </Tab.Pane>
-                      </Tab.Content>
-                      <Tab.Content>
-                        <Tab.Pane eventKey="review">
-                          {singleProduct !== null ? (
-                            <Reviews
-                              singleProductReview={singleProductReview}
-                            />
-                          ) : null}
-
-                          {session.status === "authenticated" ? (
-                            <ReviewForm
-                              productId={get(singleproducts, "_id")}
-                            />
-                          ) : (
-                            <div style={{ padding: "20px", marginTop: "15px" }}>
-                              <p>No Data Found</p>
-                            </div>
-                          )}
-                        </Tab.Pane>
-                      </Tab.Content>
-                    </Nav>
-                  </Col>
-                </Tab.Container>
-                <hr></hr>
-                <h4 className="theme-color my-4 ">
-                  Related <span className="black-color">Products</span>
-                </h4>
-                <OnSaleProductCard
-                  onSaleProduct={allProduct}
-                  hidetitle
-                  homepageData={homepageData}
-                />
+                <AddionalDetail singleProduct={singleproducts} />
               </div>
             </div>
           </div>
@@ -212,7 +114,6 @@ SingleProduct.propTypes = {
   allProduct: PropTypes.array.isRequired,
   recentProducts: PropTypes.array.isRequired,
   singleproducts: PropTypes.object.isRequired,
-  productReviews: PropTypes.array.isRequired,
   homepageData: PropTypes.object.isRequired,
   lowStockThreshold: PropTypes.number.isRequired,
   outOfStockVisibility: PropTypes.bool.isRequired,
@@ -226,7 +127,6 @@ export async function getStaticProps({ params }) {
   let singleproducts = [];
   let allProduct = [];
   let recentProducts = [];
-  let productReviews = [];
   let lowStockThreshold = 4;
   let outOfStockVisibility = true;
   let outOfStockThreshold = 0;
@@ -278,20 +178,11 @@ export async function getStaticProps({ params }) {
   } catch (e) {}
 
   /* ========================================= get Product Reviews ========================================*/
-  try {
-    const { data: productReviewData } = await client.query({
-      query: GET_PRODUCT_REVIEWS,
-      variables: { id },
-    });
-
-    productReviews = get(productReviewData, "productwisereview.data");
-  } catch (e) {}
 
   return {
     props: {
       singleproducts,
       allProduct,
-      productReviews,
       homepageData,
       lowStockThreshold,
       outOfStockVisibility,
