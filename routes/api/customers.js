@@ -110,6 +110,7 @@ router.post("/login", (req, res) => {
           const tokenExpiresIn = 36000;
           let expiry = new Date();
           expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);
+          delete customer.addressBook;
           // Sign Token
           jwt.sign(payload, APP_KEYS.jwtSecret, { expiresIn: tokenExpiresIn }, (err, token) => {
             res.status(200).json({
