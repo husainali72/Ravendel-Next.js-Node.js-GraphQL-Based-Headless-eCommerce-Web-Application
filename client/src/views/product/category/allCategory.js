@@ -159,6 +159,7 @@ const AllCategoryComponent = () => {
     setEditmode(false);
     setfeaturedImage(null);
     setSingleCategory(categoryObject);
+    setIsUrlChanged(false)
   };
   const fileChange = (e) => {
     const files = get(e, "target.files", []);
@@ -301,7 +302,7 @@ const AllCategoryComponent = () => {
                   onInputChange={(updatedUrl) => {
                     setSingleCategory({ ...singlecategory, url: updatedUrl });
                   }}
-                  pageUrl="category"
+                  pageUrl="collection"
                   tableUrl="ProductCat"
                 />
               </Box>

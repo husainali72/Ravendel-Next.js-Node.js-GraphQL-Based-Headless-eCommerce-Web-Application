@@ -35,7 +35,6 @@ export default function Home({
   useEffect(() => {
     dispatch(storeSetting(settings));
   }, [settings]);
-
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;

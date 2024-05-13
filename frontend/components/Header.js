@@ -16,6 +16,7 @@ import PropTypes from "prop-types";
 import ProductImage from "./imageComponent";
 import AlertModal from "./alert/alertModal";
 import { expiredTimeErrorMessage } from "./validationMessages";
+import NavBar from "./navBar/navBar";
 const SessionCheckInterval = 60000;
 const Header = ({ setOpenMenu }) => {
   const data = useSession();
@@ -203,7 +204,7 @@ const Header = ({ setOpenMenu }) => {
               className="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding d-lg-block hover-boder"
               id="navigation"
             >
-              <nav>
+              {/* <nav>
                 <ul className="nav list" id="list">
                   <li className="nav-item">
                     <Link href="/">
@@ -225,7 +226,8 @@ const Header = ({ setOpenMenu }) => {
                     </Link>
                   </li>
                 </ul>
-              </nav>
+              </nav> */}
+              <NavBar setOpenMenu={setOpenMenu}/>
             </div>
             <div>
               <div className="dropdown cart-btn">

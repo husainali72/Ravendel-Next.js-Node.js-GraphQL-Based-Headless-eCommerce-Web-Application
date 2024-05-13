@@ -351,6 +351,12 @@ export const getPaymentMethodLabel = (paymentMethod) => {
   }
 };
 
+
+export const isCurrentCategory = (url,router) => {
+  const { category } = router.query;
+  return category === url;
+};
+
 export const isAnyProductOutOfStock = (products) => {
   const outOfStockProduct = products?.some(product => !product.available);
   if (outOfStockProduct) {
@@ -358,4 +364,5 @@ export const isAnyProductOutOfStock = (products) => {
   }
   return outOfStockProduct; 
 };
+
 

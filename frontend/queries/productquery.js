@@ -197,7 +197,20 @@ export const ADD_REVIEW = gql`
     }
   }
 `;
-
+export const PARENT_CATEGORIES = gql`
+query categories {
+  parentCategories {
+    message {
+      message
+      success
+    }
+    data {
+      name
+      url
+    }
+  }
+}
+`;
 export const CHECK_ZIPCODE = gql`
   query($zipcode: String!) {
     checkZipcode(zipcode: $zipcode) {
