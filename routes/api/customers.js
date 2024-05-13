@@ -73,56 +73,61 @@ router.post("/register", (req, res) => {
 // @desc    Login customer / Returning JWT Token
 // @access  Public
 router.post("/login", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const errors = {};
-  // Find customer by email
-  const pipeline = [
-    {$lookup: {
-      from: "carts",
-      localField: "_id",
-      foreignField: "userId",
-      as: "cartId"
-    }},
-    {$set: {cartId: {$arrayElemAt: ["$cartId._id", 0]}}},
-    {$match: {email: email}}
-  ]
-  Customer.aggregate(pipeline).then((cust) => {
-    let customer = cust[0]
-    // Check for customer
-    if (!customer) {
-      return res.status(404).json({success: false,message: 'Invalid credentials.'});
-    }
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+    // Find customer by email
+    const pipeline = [
+      {
+        $lookup: {
+          from: "carts",
+          localField: "_id",
+          foreignField: "userId",
+          as: "cartId",
+        },
+      },
+      { $set: { cartId: { $arrayElemAt: ["$cartId._id", 0] } } },
+      { $match: { email: email } },
+    ];
+    Customer.aggregate(pipeline).then((cust) => {
+      let customer = cust[0];
+      // Check for customer
+      if (!customer) {
+        return res.status(404).json({ success: false, message: "Invalid credentials." });
+      }
 
-    // Check Password
-    bcrypt.compare(password, customer.password).then((isMatch) => {
-
-      if (isMatch) {
-        // customer Matched
-        const payload = { id: customer._id, firstName: customer.firstName,lastName: customer.lastName, email: customer.email,role:'customer' }; // Create JWT Payload
-        const tokenExpiresIn = 36000;
-        let expiry = new Date();
-        expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);
-        // Sign Token
-        jwt.sign(
-          payload,
-          APP_KEYS.jwtSecret,
-          { expiresIn: tokenExpiresIn },
-          (err, token) => {
+      // Check Password
+      bcrypt.compare(password, customer.password).then((isMatch) => {
+        if (isMatch) {
+          // customer Matched
+          const payload = {
+            id: customer._id,
+            firstName: customer.firstName,
+            lastName: customer.lastName,
+            email: customer.email,
+            role: "customer",
+          }; // Create JWT Payload
+          const tokenExpiresIn = 36000;
+          let expiry = new Date();
+          expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);
+          // Sign Token
+          jwt.sign(payload, APP_KEYS.jwtSecret, { expiresIn: tokenExpiresIn }, (err, token) => {
             res.status(200).json({
               success: true,
               token: token,
               customer,
-              expiry
+              expiry,
             });
-          }
-        );
-        
-      } else {
-        return res.status(404).json({success: false,message: 'Invalid credentials.'});
-      }
+          });
+        } else {
+          return res.status(404).json({ success: false, message: "Invalid credentials." });
+        }
+      });
     });
-  });
+  } catch (error) {
+    console.log("Error in Login API : ",error.message)
+    return res.status(404).json({ success: false, message: error.message });
+  }
 });
 
 
