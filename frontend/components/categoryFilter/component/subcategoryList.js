@@ -24,16 +24,27 @@ const SubCategoryItem = ({ url, name }) => (
   </Link>
 );
 
-const SubCategoryList = ({ name,categoryTree }) => {
+const SubCategoryList = ({ name, categoryTree }) => {
   const [expanded, setExpanded] = useState(true);
+  const [showMore, setShowMore] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({});
   useEffect(() => {
-    setSelectedCategory({ ...get(categoryTree, "subCategories", {}) });
+    const initialSubcategories = get(categoryTree, "subCategories.subCategories", []).slice(
+      0,
+      5
+    );
+    setSelectedCategory({
+      ...get(categoryTree, "subCategories", []),
+      subCategories: initialSubcategories,
+    });
   }, [categoryTree]);
   const handleToggle = () => {
     setExpanded(!expanded);
   };
-
+  const handleShowMore = () => {
+    setShowMore(true);
+    setSelectedCategory({ ...get(categoryTree, "subCategories", {}) });
+  };
   return (
     <div>
       <div className="primary-sidebar sticky-sidebar category-shop-cart">
@@ -44,7 +55,7 @@ const SubCategoryList = ({ name,categoryTree }) => {
               {categoryTree && Object.keys(categoryTree)?.length > 0 ? (
                 <>
                   <li className="fw-semibold cursor-pointer mb-1">
-                    <FiChevronLeft className="mb-1 back-category-disable custom-icon-color"/>
+                    <FiChevronLeft className="mb-1 back-category-disable custom-icon-color" />
                     <CategoryLink
                       url={get(categoryTree, "url")}
                       name={get(categoryTree, "name")}
@@ -73,8 +84,19 @@ const SubCategoryList = ({ name,categoryTree }) => {
                         />
                       )
                     )}
+                  {!showMore &&
+                    get(categoryTree, "subCategories.subCategories", [])?.length > 5 && (
+                      <button
+                        onClick={handleShowMore}
+                        className="show-more-btn"
+                      >
+                        Show more
+                      </button>
+                    )}
                 </>
-              ):<p>No categories</p>}
+              ) : (
+                <p>No categories</p>
+              )}
             </ul>
           </div>
         </div>
