@@ -17,7 +17,9 @@ const {
   UPDATE_PASSWORD_FUNC,
 } = require("../config/api_functions");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const APP_KEYS = require("../config/keys");
+const { CustomerProfiles } = require("aws-sdk");
 module.exports = {
   Query: {
     customers: async (root, args) => {
@@ -66,7 +68,6 @@ module.exports = {
         data.password = await bcrypt.hash(data.password, 10);
         let customerData = await Customer.create(data);
 
-        const jwt = require("jsonwebtoken");
         sendEmailTemplate("WELCOME", customerData);
 
         const payload = {
@@ -319,5 +320,32 @@ module.exports = {
 
       return MESSAGE_RESPONSE("UpdateSuccess", "Password", true);
     },
+    sendForgetPasswordEmail: async (root, args, {id}) => {
+      let email = args.email;
+      if(!email || ""){
+        return MESSAGE_RESPONSE("Required", "Email ", false);
+      }
+
+      let customerData = await Customer.findOne({email})
+
+      if(!customerData){
+        return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
+      }
+
+      const token = jwt.sign({ email: customerData.email, userId: customerData._id }, APP_KEYS.jwtSecret, { expiresIn: '15m' });
+      customerData.refreshToken = token;
+      await customerData.save();
+      console.log(token);
+      let data = {
+        email : customerData.email,
+        firstName: customerData.firstName,
+        link: token
+      };
+      sendEmailTemplate("RESET_PASSWORD", data)
+
+      
+      return MESSAGE_RESPONSE("SentEmail", null, true);
+
+    }
   },
 };

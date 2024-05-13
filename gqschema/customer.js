@@ -121,5 +121,8 @@ module.exports = `
       oldPassword: String
       newPassword: String
     ): statusSchema
+    sendForgetPasswordEmail(
+      email: String
+    ): statusSchema
   }
 `;
