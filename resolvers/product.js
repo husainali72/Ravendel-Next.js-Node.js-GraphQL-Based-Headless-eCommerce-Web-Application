@@ -1366,9 +1366,13 @@ module.exports = {
           updated: -1
         }
       }
+      const limitStage = {
+        $limit: 10
+      }
       const relatedProducts = await Product.aggregate([
         matchStage,
-        sortStage
+        sortStage,
+        limitStage
       ])
 
       additionalDetails.push({
@@ -1381,7 +1385,7 @@ module.exports = {
       })
 
       return additionalDetails
-    }
+    },
     parentCategories: async (root, args) => {
       try{
         const cats = await ProductCat.find({parentId: null});
