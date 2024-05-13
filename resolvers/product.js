@@ -848,25 +848,39 @@ module.exports = {
         {
           $match: {
             name: {
-               $regex: searchRegex
+              $regex: searchRegex
+            }
+          },
+        },
+        {
+          $sort: {
+            updated: -1,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            count: {
+              $sum: 1
+            },
+            products: {
+              $push: "$$ROOT"
             }
           }
         },
         {
-          $skip: (page - 1) * limit
-        },
-        {
-          $limit: limit
-        },
-        {
-          $sort: {
-            updated: -1
+          $project: {
+            _id: 0,
+            count: 1,
+            products: {
+              $slice: ["$products", (page - 1) * limit, limit]
+            }
           }
         }
       ]
       const searchedProducts = await Product.aggregate(pipeline)
 
-      return searchedProducts || [];
+      return searchedProducts[0] || [];
     },
     productswithcat: async (root, args, { id }) => {
       return await GET_ALL_FUNC(Product, "Products with category");
@@ -942,8 +956,160 @@ module.exports = {
     productsbycaturl: async (root, args, { id }) => {
       return await GET_BY_URL(ProductCat, args.cat_url, "Product Category");
     },
-    productbyurl: async (root, args, { id }) => {
-      return await GET_BY_URL(Product, args.url, "Products");
+    productbyurl: async (root, args) => {
+      if (!args.url) {
+        return {
+          message: MESSAGE_RESPONSE("URL_ERROR", "Product", false),
+        };
+      }
+      const pipeline = [
+        // match on the basis of id
+        {
+          $match: {
+            url: args.url,
+          },
+        },
+        // fetch rating count
+        {
+          $lookup: {
+            from: "reviews",
+            localField: "_id",
+            foreignField: "productId",
+            as: "reviewDetails"
+          }
+        },
+        // populate attributes and varaitions
+        {
+          $lookup: {
+            from: "productgroups",
+            let: { productId: "$_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ["$$productId", "$productIds"],
+                  },
+                },
+              },
+              {
+                $unwind: "$attributes",
+              },
+              {
+                $lookup: {
+                  from: "productattributes",
+                  localField: "attributes._id",
+                  foreignField: "_id",
+                  as: "attributeDetails",
+                },
+              },
+              {
+                $unwind: "$attributeDetails",
+              },
+              
+              {
+                $addFields: {
+                  "attributes.name":
+                    "$attributeDetails.name",
+                  "attributes.values": {
+                    $filter: {
+                      input: "$attributeDetails.values",
+                      as: "value",
+                      cond: {
+                        $in: [
+                          "$$value._id",
+                          "$attributes.values",
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                $group: {
+                  _id: "$_id",
+                  attributes: { $push: "$attributes" },
+                  variations: { $first: "$variations" },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  attributes: {
+                    _id: 1,
+                    name: 1,
+                    values: {
+                      _id: 1,
+                      name: 1,
+                    },
+                  },
+                  variations: 1,
+                },
+              },
+            ],
+            as: "group",
+          },
+        },
+        {
+          $addFields: {
+            group: {
+              $arrayElemAt: ["$group", 0]
+            }
+          }
+        },
+      ]
+      let existingProducts = await Product.aggregate(pipeline);
+      const response = existingProducts[0]
+      if (!response) {
+        return {
+          message: MESSAGE_RESPONSE("RETRIEVE_ERROR", "Product", false),
+          data: response,
+        };
+      }
+
+      response["taxStatement"] = "Inclusive of all Taxes" 
+      
+      if(response.group) {
+        const { attributes, variations } = response.group
+        variations.map(variant => {
+          variant.combinations.map(combo => {
+            let foundAttribute = attributes.find(attr => attr._id.toString() === combo.attributeId.toString())
+            if(foundAttribute) {
+              combo["attributeName"] = foundAttribute.name
+              let foundAttributeValue = foundAttribute.values.find(value => value._id.toString() === combo.attributeValueId.toString())
+              if(foundAttributeValue) {
+                combo["attributeValueName"] = foundAttributeValue.name
+              }
+            }
+          })
+        })
+        response["attributes"] = attributes
+        response["variations"] = variations
+      }
+
+      if(response.reviewDetails) {
+        let reviewDetails = response.reviewDetails.filter(review => review.status === "approved")
+        const fetchRatings = (min, max) => {
+          return reviewDetails.filter(review => review.rating >= min && review.rating < max).length
+        }
+
+        response["ratingCount"] = reviewDetails.length
+        response["levelWiseRating"] = {
+          fiveStar: fetchRatings(5, 6),
+          fourStar: fetchRatings(4, 5),
+          threeStar: fetchRatings(3, 4),
+          twoStar: fetchRatings(2, 3),
+          oneStar: fetchRatings(1, 2),
+        }
+      }
+
+      if(response.categoryTree && response.categoryTree.length) {
+        response["breadcrumb"] = getBreadcrumb(response.categoryTree)
+      }
+
+      return {
+        message: MESSAGE_RESPONSE("SINGLE_RESULT_FOUND", "Product", true),
+        data: response,
+      };
     },
     filteredProducts: async (root, args) => {
       try {
@@ -1179,7 +1345,19 @@ module.exports = {
         message: MESSAGE_RESPONSE("SINGLE_RESULT_FOUND", "Product", true),
         data: response,
       };
-    }
+    },
+    parentCategories: async (root, args) => {
+      try{
+        const cats = await ProductCat.find({parentId: null});
+        return {
+          message: MESSAGE_RESPONSE("RESULT_FOUND", "Parent Categories", true),
+          data: cats,
+        };
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
   },
   Product: {
     categoryId: async (root, args) => {

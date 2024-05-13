@@ -110,5 +110,10 @@ module.exports = `
       defaultAddress: Boolean
     ): statusSchema
     deleteAddressBook(id: ID!, _id: ID!): statusSchema
+    resetPassword(
+      email: String
+      oldPassword: String
+      newPassword: String
+    ): statusSchema
   }
 `;
