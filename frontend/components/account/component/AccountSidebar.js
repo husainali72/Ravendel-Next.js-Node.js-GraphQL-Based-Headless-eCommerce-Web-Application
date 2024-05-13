@@ -5,14 +5,7 @@ const AccountSidebar = ({items}) => {
     const [sidebarItemsState, setSidebarItemsState] = items;
 
     const handleLinkClick = (index) => {
-        let data = sidebarItemsState.map((item,i)=> {
-            if(i === index){
-                return ({...item, active: true})
-            } else{
-                return ({...item, active: false})
-            }
-            
-        });
+        let data = sidebarItemsState.map((item,i)=> ({...item, active: i === index}));
         data[index] = {...data[index], active: true}
         setSidebarItemsState(data)
     }

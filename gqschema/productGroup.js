@@ -18,6 +18,7 @@ module.exports = `
     _id: ID,
     combinations: [Combination]
     productId: ID
+    productUrl: String
   }
   type Combination {
     attributeId: ID,
@@ -47,6 +48,7 @@ module.exports = `
     _id: ID,
     combinations: [CombinationInput]
     productId: ID
+    productUrl: String
   }
   input CombinationInput {
     attributeId: ID,
