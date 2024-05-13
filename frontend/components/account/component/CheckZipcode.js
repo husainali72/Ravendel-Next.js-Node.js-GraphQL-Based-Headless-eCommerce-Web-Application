@@ -62,7 +62,7 @@ const CheckZipcode = ({ checkzipcode }) => {
               placeholder="Enter Your Zipcode"
               maxLength={10}
               minLength={6}
-              value={Zipcode}
+              value={ZipCode}
               onChange={handleInputChange}
             />
             <Button type="submit" size="sm" variant="light" disabled={isLoading}>

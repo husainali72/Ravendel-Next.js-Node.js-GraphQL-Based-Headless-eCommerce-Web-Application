@@ -86,12 +86,12 @@ export default function Footer() {
                   </div>
                   <div className="address">
                   
-                    {addressLine1 ||
+                    { (addressLine1 ||
                       addressLine2 ||
                       city ||
                       email ||
                       phoneNumber ||
-                       hour
+                       hour)
                        && (
                         <h5 className="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated animated animated">
                           Contact
