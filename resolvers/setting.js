@@ -507,15 +507,26 @@ module.exports = {
       try {
         await checkAwsFolder('setting');
         const setting = await Setting.findOne({});
-        let imgObject = {};
+        let logoObject = {};
         if (args.new_logo) {
-          imgObject = await imageUpload(
+          logoObject = await imageUpload(
             args.new_logo[0].file,
             "assets/images/setting/", "Setting"
           );
 
-          if (imgObject.success === false) {
-            throw putError(imgObject.message);
+          if (logoObject.success === false) {
+            throw putError(logoObject.message);
+          }
+        }
+        let placeholderObject = {};
+        if (args.new_placeholder_image) {
+          placeholderObject = await imageUpload(
+            args.new_placeholder_image[0].file,
+            "assets/images/setting/", "Setting"
+          );
+
+          if (placeholderObject.success === false) {
+            throw putError(placeholderObject.message);
           }
         }
 
@@ -523,7 +534,8 @@ module.exports = {
           primary_color: args.primary_color,
           playstore: args.playstore,
           appstore: args.appstore,
-          logo: imgObject.data || args.logo
+          logo: logoObject.data || args.logo,
+          placeholder_image: placeholderObject.data || args.placeholder_image
         };
 
         setting.appearance.theme = theme

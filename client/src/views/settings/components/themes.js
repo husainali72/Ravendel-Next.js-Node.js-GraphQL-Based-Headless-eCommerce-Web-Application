@@ -51,7 +51,12 @@ const ThemesComponent = () => {
   };
   const fileChange = (e) => {
     const files = get(e, "target.files", []);
-    if (files?.length > 0) {
+    const { name } = get(e, "target");
+    console.log(name, "=========");
+    if (files?.length > 0 && name === "placeholder_image") {
+      themeSetting.placeholder_image = URL.createObjectURL(files[0]);
+      themeSetting.new_placeholder_image = files;
+    } else {
       themeSetting.logo = URL.createObjectURL(files[0]);
       themeSetting.new_logo = files;
     }
@@ -109,6 +114,37 @@ const ThemesComponent = () => {
             />
             <label htmlFor="logo" className={classes.feautedImage}>
               {themeSetting.logo ? "Change Logo" : "Add Logo"}
+            </label>
+          </Box>
+          <Box className={classes.themeLogoWrapper}>
+            {get(themeSetting,'placeholder_image') ? (
+              <img
+                src={
+                  get(themeSetting, 'placeholder_image','')?.startsWith("blob")
+                    ? get(themeSetting, "placeholder_image", "")
+                    : getBaseUrl(settingState) + get(themeSetting, "placeholder_image", "")
+                }
+                className={classes.themeLogoBoxPreview}
+                alt="img"
+              />
+            ) : (
+              <img
+                src={NoImagePlaceholder}
+                className={classes.themeLogoBoxPreview}
+                alt="Logo"
+              />
+            )}
+            <input
+              accept="image/*"
+              className={classes.input}
+              style={{ display: "none" }}
+              id="placeholder_image"
+              name="placeholder_image"
+              type="file"
+              onChange={(e) => fileChange(e)}
+            />
+            <label htmlFor="placeholder_image" className={classes.feautedImage}>
+              {themeSetting.placeholder_image ? "Change Image" : "Add Image"}
             </label>
           </Box>
           <Box component="div">
