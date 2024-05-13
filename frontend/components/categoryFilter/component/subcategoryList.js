@@ -40,70 +40,78 @@ const SubCategoryItem = ({ url, name }) => (
   </Link>
 );
 
-const SubCategoryList = ({ name, categoryTree }) => {
+const SubCategoryList = ({  categoryTree }) => {
   const [expanded, setExpanded] = useState(true);
+  const [showMore, setShowMore] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({});
   useEffect(() => {
-    setSelectedCategory({ ...get(categoryTree, "subCategories", {}) });
+    const initialSubcategories = get(categoryTree, "subCategories.subCategories", []).slice(
+      0,
+      5
+    );
+    setSelectedCategory({
+      ...get(categoryTree, "subCategories", []),
+      subCategories: initialSubcategories,
+    });
   }, [categoryTree]);
   const handleToggle = () => {
     setExpanded(!expanded);
   };
-
+  const handleShowMore = () => {
+    setShowMore(true);
+    setSelectedCategory({ ...get(categoryTree, "subCategories", {}) });
+  };
   return (
-    <div>
-      {categoryTree && Object.keys(categoryTree)?.length > 0 && (
-        <div className="primary-sidebar sticky-sidebar category-shop-cart">
-          <div className="theiaStickySidebar category-box-filler">
-            <div className="widget-category">
-              <h4 className="category-section-title">{name}</h4>
-              <ul className="categories-shop">
-                <>
-                  <li className="fw-semibold cursor-pointer mb-1">
-                    <FiChevronLeft className="mb-1 back-category-disable custom-icon-color" />
-                    <CategoryLink
-                      url={get(categoryTree, "url")}
-                      name={get(categoryTree, "name")}
-                      isSelected={get(categoryTree, "select", false)}
-                    />
-                  </li>
-                  <li onClick={handleToggle}>
-                    {get(selectedCategory, "subCategories", [])?.length > 0 && (
-                      <>
-                        {expanded ? (
-                          <FiChevronDown className="mb-1 back-category" />
-                        ) : (
-                          <FiChevronLeft className="mb-1 back-category" />
-                        )}
-                      </>
+    <div className="primary-sidebar sticky-sidebar category-shop-cart">
+    <div className="theiaStickySidebar category-box-filler">
+      <div className="widget-category">
+        {categoryTree && Object.keys(categoryTree).length > 0 ? (
+          <>
+            <h4 className="category-section-title">{categoryTree.name}</h4>
+            <ul className="categories-shop">
+              <li className="fw-semibold cursor-pointer mb-1">
+                <FiChevronLeft className="mb-1 back-category-disable custom-icon-color" />
+                <CategoryLink
+                  url={categoryTree.url}
+                  name={categoryTree.name}
+                  isSelected={categoryTree.select}
+                />
+              </li>
+              <li onClick={handleToggle}>
+                {selectedCategory?.subCategories?.length > 0 && (
+                  <>
+                    {expanded ? (
+                      <FiChevronDown className="mb-1 back-category" />
+                    ) : (
+                      <FiChevronLeft className="mb-1 back-category" />
                     )}
-                    <CategoryLink
-                      className={
-                        get(selectedCategory, "subCategories", [])?.length <=
-                          0 && "child-categories"
-                      }
-                      url={get(selectedCategory, "url")}
-                      name={get(selectedCategory, "name", "")}
-                      isSelected={get(selectedCategory, "select", false)}
-                    />
-                  </li>
-                  {expanded &&
-                    get(selectedCategory, "subCategories", [])?.map(
-                      (category, index) => (
-                        <SubCategoryItem
-                          key={index}
-                          url={category?.url}
-                          name={category?.name}
-                        />
-                      )
-                    )}
-                </>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
+                  </>
+                )}
+                <CategoryLink
+                  className={selectedCategory?.subCategories?.length <= 0 && "child-categories"}
+                  url={selectedCategory?.url}
+                  name={selectedCategory?.name || ''}
+                  isSelected={selectedCategory?.select}
+                />
+              </li>
+              {expanded &&
+                selectedCategory?.subCategories?.map((category, index) => (
+                  <SubCategoryItem key={index} url={category.url} name={category.name} />
+                ))}
+              {!showMore &&
+                categoryTree?.subCategories?.length > 5 && (
+                  <button onClick={handleShowMore} className="show-more-btn">
+                    Show more
+                  </button>
+                )}
+            </ul>
+          </>
+        ) : (
+          <p>No categories</p>
+        )}
+      </div>
     </div>
+  </div>
   );
 };
 

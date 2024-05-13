@@ -219,3 +219,18 @@ export const CHECK_ZIPCODE = gql`
     }
   }
 `;
+
+export const SEARCH_PRODUCTS_QUERY = gql`
+  query SearchProducts($searchTerm: String!, $page: Int!, $limit: Int!) {
+    searchProducts(searchTerm: $searchTerm, page: $page, limit: $limit) {
+      count
+      products {
+        name
+        url
+        pricing
+        feature_image
+        rating
+      }
+    }
+  }
+`;
