@@ -67,7 +67,7 @@ const RenderProductPrice = ({
       return null;
     } else {
       return (
-        <span className=" mx-2">
+        <span className=" mx-1 discount">
           {!comboData?.length && !variantSelect
             ? isDiscount(singleProducts) &&
               calculateDiscount(price, salePrice) !== 0

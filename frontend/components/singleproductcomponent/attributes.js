@@ -1,14 +1,12 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { capitalize, get } from "lodash";
-import RadioButton from "../radioButton";
+import { get } from "lodash";
 import { useRouter } from "next/router";
+import TabBtn from "../TabBtn";
 
 const AttributeSelector = ({
   attributes,
   variations,
-  error,
   getSelectedAttributes
 }) => {
   const router = useRouter();
@@ -24,7 +22,6 @@ const AttributeSelector = ({
     if (productVariant) {
       let updatedAttributes = selectedAttributes;
       let updatedData = attributes;
-      console.log(productVariant,'productVariant')
       productVariant.combinations.forEach((combination) => {
         const { attributeValueId, attributeId } = combination;
         updatedAttributes = updatedAttributes?.map((attr) =>
@@ -115,7 +112,7 @@ const AttributeSelector = ({
       label: item.name,
     }));
   };
-  const checkVariantIsSelected = (singleAttribute) => {
+  // const checkVariantIsSelected = (singleAttribute) => {
     // const attributeName = get(singleAttribute, "name", "");
     // const isAttributeSelected = selectedAttributes?.some(
     //   ({ name }) => name === singleAttribute?.id
@@ -124,18 +121,25 @@ const AttributeSelector = ({
     //   return `Please select the ${capitalize(attributeName)}`;
     // }
     // return null;
-  };
+  // };
   return (
     <>
       {attributesData?.map((singleAttribute) => {
         return (
           <>
-            <RadioButton
+            {/* <RadioButton
               label={get(singleAttribute, "name", "")}
               values={get(singleAttribute, "selectValue")}
               onChange={(e) => prepareData(e, get(singleAttribute, "_id", ""))}
               options={createAttributeOptions(singleAttribute)}
               error={checkVariantIsSelected(singleAttribute)}
+            /> */}
+            <TabBtn
+              label={get(singleAttribute, "name", "")}
+              values={get(singleAttribute, "selectValue")}
+              onChange={(e) => prepareData(e, get(singleAttribute, "_id", ""))}
+              options={createAttributeOptions(singleAttribute)}
+              // error={checkVariantIsSelected(singleAttribute)}
             />
           </>
         );

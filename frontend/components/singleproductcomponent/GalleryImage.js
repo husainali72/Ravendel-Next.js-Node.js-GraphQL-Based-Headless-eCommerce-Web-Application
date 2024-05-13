@@ -202,6 +202,7 @@ const GalleryImagesComponents = (props) => {
             {get(singleproduct, "rating") > 0 && (
               <div className="product-detail-rating">
                 <p>{get(singleproduct, "rating", 0)}</p>
+                <i className="fa-solid fa-star" />
               </div>
             )}
             <RenderProductPrice singleProducts={singleproduct} />
@@ -212,14 +213,18 @@ const GalleryImagesComponents = (props) => {
                 cart.
               </p>
             )}
-            <div className="varaint-select">
-              <AttributeSelector
-                variations={get(singleproduct, "variations", [])}
-                attributes={get(singleproduct, "attributes", [])}
-                error={error}
-                getSelectedAttributes={getSelectedAttributes}
-              />
-            </div>
+            {
+              (get(singleproduct, "variations") && get(singleproduct, "variations")?.length > 0) || (get(singleproduct, "attributes") && get(singleproduct, "attributes")?.length > 0) ?
+              <div className="varaint-select">
+                <AttributeSelector
+                  variations={get(singleproduct, "variations", [])}
+                  attributes={get(singleproduct, "attributes", [])}
+                  error={error}
+                  getSelectedAttributes={getSelectedAttributes}
+                />
+              </div>
+              : ''
+            }
             <div>
               <QuantitySelector
                 changeQuantity={changeQuantity}
