@@ -379,6 +379,7 @@ const EditProductComponent = ({ params }) => {
         product?.specifications &&
         !!product?.specifications?.length &&
         product?.specifications.flatMap((spec) => {
+          if(spec?.customFields && !!spec?.customFields?.length){
           return spec.customFields.map((field) => ({
             attributeId: field?.attributeId,
             key: field?.keyLabel, // Assuming you have a mapping for attributeId to key
@@ -386,6 +387,7 @@ const EditProductComponent = ({ params }) => {
             value: field?.valueLabel, // Assuming you have a mapping for attributeValueId to value
             group: spec.group,
           }));
+        }return []
         });
       // product.specifications = transformedSpecifications ? transformedSpecifications : product?.specifications
       let price = get(product, "pricing.price");
@@ -452,9 +454,9 @@ const EditProductComponent = ({ params }) => {
     }
   };
 
-  const updateUrl = async (URL, setEditPermalink) => {
+  const updateUrl = async (url, setEditPermalink) => {
     if (productId) {
-      await query(CHECK_VALID_URL, { url: URL, entryId: productId }).then(
+      await query(CHECK_VALID_URL, { url: url, entryId: productId }).then(
         (res) => {
           if (get(res, "data.validateUrl.url")) {
             const newUrl = get(res, "data.validateUrl.url");
@@ -467,7 +469,7 @@ const EditProductComponent = ({ params }) => {
         }
       );
     } else {
-      await query(CHECK_VALID_URL, { url: URL }).then((res) => {
+      await query(CHECK_VALID_URL, { url: url }).then((res) => {
         if (get(res, "data.validateUrl.url")) {
           const newUrl = get(res, "data.validateUrl.url");
           setProduct({
@@ -588,6 +590,7 @@ const EditProductComponent = ({ params }) => {
   };
   const cloneProject = async (event, value) => {
     let groupedSpecifications = [];
+    let shipping;
     if (get(value, "value") && productState?.products) {
       const productToClone = productState?.products.find(
         (product) => product?._id === value?.value
@@ -608,6 +611,11 @@ const EditProductComponent = ({ params }) => {
                         spec?.attributeId,
                         spec?.attributeValueId
                       ),
+                      keyLabel: getAttributeKeyObject(spec?.attributeId)?.name,
+                      valueLabel: getAttributeValueObject(
+                        spec?.attributeId,
+                        spec?.attributeValueId
+                      )?.name,
                     },
                   ],
                 });
@@ -622,6 +630,11 @@ const EditProductComponent = ({ params }) => {
                       spec?.attributeId,
                       spec?.attributeValueId
                     ),
+                    keyLabel: getAttributeKeyObject(spec?.attributeId)?.name,
+                    valueLabel: getAttributeValueObject(
+                      spec?.attributeId,
+                      spec?.attributeValueId
+                    )?.name,
                   });
               }
               return acc;
@@ -644,6 +657,9 @@ const EditProductComponent = ({ params }) => {
             }
           }
         }
+        if (productToClone?.shipping) {
+          shipping = productToClone?.shipping;
+        }
         const categoryIds =
           !!productToClone.categoryId &&
           productToClone.categoryId?.map((cat) => cat.id);
@@ -658,6 +674,7 @@ const EditProductComponent = ({ params }) => {
           specifications: groupedSpecifications,
           categoryId: categoryIds,
           brand: defaultBrand || "",
+          shipping,
         });
 
         if (productToClone.feature_image) {
@@ -697,9 +714,10 @@ const EditProductComponent = ({ params }) => {
     });
     setProduct(updatedProduct);
   };
-  const updateUrlOnBlur = async (URL) => {
-    if (URL) {
-      await query(CHECK_VALID_URL, { url: URL }).then(res => {
+
+  const updateUrlOnBlur = async (url) => {
+    if (url) {
+      await query(CHECK_VALID_URL, { url: url }).then(res => {
         if (get(res, 'data.validateUrl.url')) {
           const newUrl = get(res, 'data.validateUrl.url')
           setProduct({

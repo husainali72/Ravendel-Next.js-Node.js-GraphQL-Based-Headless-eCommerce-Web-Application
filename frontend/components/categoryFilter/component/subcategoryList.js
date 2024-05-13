@@ -42,14 +42,25 @@ const SubCategoryItem = ({ url, name }) => (
 
 const SubCategoryList = ({ name, categoryTree }) => {
   const [expanded, setExpanded] = useState(true);
+  const [showMore, setShowMore] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({});
   useEffect(() => {
-    setSelectedCategory({ ...get(categoryTree, "subCategories", {}) });
+    const initialSubcategories = get(categoryTree, "subCategories.subCategories", []).slice(
+      0,
+      5
+    );
+    setSelectedCategory({
+      ...get(categoryTree, "subCategories", []),
+      subCategories: initialSubcategories,
+    });
   }, [categoryTree]);
   const handleToggle = () => {
     setExpanded(!expanded);
   };
-
+  const handleShowMore = () => {
+    setShowMore(true);
+    setSelectedCategory({ ...get(categoryTree, "subCategories", {}) });
+  };
   return (
     <div>
       {categoryTree && Object.keys(categoryTree)?.length > 0 && (
@@ -104,6 +115,7 @@ const SubCategoryList = ({ name, categoryTree }) => {
         </div>
       )}
     </div>
+  </div>
   );
 };
 

@@ -7,16 +7,16 @@ import { get } from "lodash";
 
 const CheckZipcode = ({ checkzipcode }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [Zipcode, setZipCode] = useState("");
+  const [ZipCode, setZipCode] = useState("");
   const [ZipMessage, setZipMessage] = useState("");
   const [ZipMessageSuccess, setZipMessageSuccess] = useState(false);
   useEffect(() => {
-    if (Zipcode) {
+    if (ZipCode) {
       setIsLoading(false);
     } else {
       setIsLoading(true);
     }
-  }, [Zipcode]);
+  }, [ZipCode]);
   const handleInputChange = (e) => {
     let value = get(e, "target.value");
     if (!value) {
@@ -34,7 +34,7 @@ const CheckZipcode = ({ checkzipcode }) => {
       try {
         const { data: result } = await client.query({
           query: CHECK_ZIPCODE,
-          variables: { zipcode: Zipcode.toString() },
+          variables: { zipcode: ZipCode.toString() },
         });
         setZipMessage(result.checkZipcode.message);
         setZipMessageSuccess(result.checkZipcode.success);

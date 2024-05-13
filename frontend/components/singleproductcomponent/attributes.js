@@ -7,6 +7,7 @@ import TabBtn from "../TabBtn";
 const AttributeSelector = ({
   attributes,
   variations,
+  error,
   getSelectedAttributes
 }) => {
   const router = useRouter();
@@ -112,7 +113,9 @@ const AttributeSelector = ({
       label: item.name,
     }));
   };
+
   // const checkVariantIsSelected = (singleAttribute) => {
+
     // const attributeName = get(singleAttribute, "name", "");
     // const isAttributeSelected = selectedAttributes?.some(
     //   ({ name }) => name === singleAttribute?.id
@@ -121,25 +124,21 @@ const AttributeSelector = ({
     //   return `Please select the ${capitalize(attributeName)}`;
     // }
     // return null;
+
   // };
   return (
     <>
       {attributesData?.map((singleAttribute) => {
         return (
           <>
-            {/* <RadioButton
-              label={get(singleAttribute, "name", "")}
-              values={get(singleAttribute, "selectValue")}
-              onChange={(e) => prepareData(e, get(singleAttribute, "_id", ""))}
-              options={createAttributeOptions(singleAttribute)}
-              error={checkVariantIsSelected(singleAttribute)}
-            /> */}
+
             <TabBtn
               label={get(singleAttribute, "name", "")}
               values={get(singleAttribute, "selectValue")}
               onChange={(e) => prepareData(e, get(singleAttribute, "_id", ""))}
               options={createAttributeOptions(singleAttribute)}
               // error={checkVariantIsSelected(singleAttribute)}
+
             />
           </>
         );

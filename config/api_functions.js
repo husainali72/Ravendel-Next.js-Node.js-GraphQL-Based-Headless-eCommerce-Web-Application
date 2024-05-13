@@ -413,7 +413,7 @@ const UPDATE_FUNC = async (
     }
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);
   } catch (error) {
-    // console.log("UPDATE_FUNC", error);
+    console.log("UPDATE_FUNC", error);
     return MESSAGE_RESPONSE("UPDATE_ERROR", name, false);
   }
 };

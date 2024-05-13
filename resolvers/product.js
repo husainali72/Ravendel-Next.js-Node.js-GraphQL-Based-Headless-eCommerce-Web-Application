@@ -1723,7 +1723,7 @@ module.exports = {
           });
           await newProduct.save();
 
-          await addCategoryAttributes(newProduct.categoryId, newProduct.specifications, ProductCat)
+          await addCategoryAttributes(newProduct.categoryTree, newProduct.specifications, ProductCat)
 
           return MESSAGE_RESPONSE("AddSuccess", "Product", true);
         }
@@ -1865,7 +1865,7 @@ module.exports = {
           product.updated = Date.now();
           await product.save();
 
-          await addCategoryAttributes(product.categoryId, product.specifications, ProductCat)
+          await addCategoryAttributes(product.categoryTree, product.specifications, ProductCat)
 
           return MESSAGE_RESPONSE("UpdateSuccess", "Product", true);
         } else {

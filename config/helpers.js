@@ -2035,19 +2035,53 @@ function getBreadcrumb(data) {
 }
 module.exports.getBreadcrumb = getBreadcrumb
 
-const addCategoryAttributes = async (categories, specifications, modal) => {
-  const productAttributes = specifications.map(specification => specification.attributeId)
-  const productCategories = toObjectID(categories)
+const addCategoryAttributes = async (categoryTree, specifications, modal) => {
+  const productAttributes = []
+  for(let spec of specifications) {
+    let attribute = productAttributes.find(prodAttr => prodAttr.attributeId.toString() === spec.attributeId.toString())
+    if(!attribute) {
+      attribute = {
+        attributeId: spec.attributeId,
+        name: spec.key,
+        values: [
+          {
+            attributeValueId: spec.attributeValueId,
+            value: spec.value
+          }
+        ]
+      }
+      productAttributes.push(attribute)
+    } else {
+      let attributeValue = attribute.values.find(attrValue => attrValue.attributeValueId.toString() === spec.attributeValueId.toString())
+      if(!attributeValue) {
+        attributeValue = {
+          attributeValueId: spec.attributeValueId,
+          value: spec.value
+        }
+        attribute.values.push(attributeValue)
+      }
+    }
+
+  }
+  
+  const productCategories = []
+  function getCategoryIds(category) {
+    
+    productCategories.unshift(category.id);
+    
+    if (category.children && category.children.length) {
+      getCategoryIds(category.children[category.children.length - 1])
+    }
+  }
+  getCategoryIds(categoryTree[0])
 
   const bulkWriteQuery = [
     {
       updateMany: {
-        filter: { "_id": {$in: toObjectID(productCategories)} },
+        filter: { "_id": {$in: toObjectID(productCategories[0])} },
         update: {
-          $addToSet: {
-            attributeIds: {
-              $each: productAttributes
-            }
+          $set: {
+            attributes: productAttributes
           }
         }
       }

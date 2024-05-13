@@ -4,7 +4,8 @@ const {
   checkError,
   MESSAGE_RESPONSE,
   _validate,
-  duplicateData
+  duplicateData,
+  sendEmailTemplate
 } = require("../config/helpers");
 const {
   DELETE_FUNC,
@@ -15,7 +16,8 @@ const {
   UPDATE_FUNC,
   UPDATE_PASSWORD_FUNC,
 } = require("../config/api_functions");
-
+const bcrypt = require("bcryptjs");
+const APP_KEYS = require("../config/keys");
 module.exports = {
   Query: {
     customers: async (root, args) => {
@@ -43,29 +45,58 @@ module.exports = {
   },
   Mutation: {
     addCustomer: async (root, args, { id }) => {
-      let data = {
-        ///////////////////////////////
-        queryName: "addCustomer",
-        ///////////////////////////////
-        firstName: args.firstName,
-        lastName: args.lastName,
-        email: args.email,
-        company: args.company || "",
-        phone: args.phone || "",
-        password: args.password,
-      };
-      let validation = ["firstName", "lastName", "email", "password"];
-      const duplicate = await duplicateData({email: args.email}, Customer)
-      if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
-      return await CREATE_FUNC(
-        id,
-        "Customer",
-        Customer,
-        data,
-        args,
-        "",
-        validation
-      );
+      try {
+        let data = {
+          ...args,
+          queryName: "addCustomer"
+        }
+
+        let validation = ["firstName", "lastName", "email", "password"];
+        const duplicate = await duplicateData({ email: args.email }, Customer);
+
+        if (duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Customer", false);
+        const errors = _validate(validation, data);
+
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+        data.password = await bcrypt.hash(data.password, 10);
+        let customerData = await Customer.create(data);
+
+        const jwt = require("jsonwebtoken");
+        sendEmailTemplate("WELCOME", customerData);
+
+        const payload = {
+          id: customerData._id,
+          firstName: customerData.firstName,
+          lastName: customerData.lastName,
+          email: customerData.email,
+          role: "customer",
+        };
+
+        const tokenExpiresIn = 36000;
+
+        let expiry = new Date();
+        expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);
+
+        const token = jwt.sign(payload, APP_KEYS.jwtSecret, {
+          expiresIn: tokenExpiresIn,
+        });
+
+        return {
+          success: true,
+          message: "Customer added successfully",
+          token: token,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message: "Error in adding Customer",
+        };
+      }
     },
     updateCustomer: async (root, args, { id }) => {
       let data = {

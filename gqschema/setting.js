@@ -250,6 +250,7 @@ module.exports = `
     playstore: String
     appstore: String
     logo: String
+    placeholder_image: String
   }
 
 
@@ -441,7 +442,9 @@ module.exports = `
       playstore: String
       appstore: String
       new_logo: Upload
+      new_placeholder_image: Upload
       logo: String
+      placeholder_image: String
     ): Setting
   }
 `;
