@@ -16,6 +16,7 @@ const {
   UPDATE_FUNC,
   UPDATE_PASSWORD_FUNC,
 } = require("../config/api_functions");
+const bcrypt = require("bcryptjs");
 const APP_KEYS = require("../config/keys");
 module.exports = {
   Query: {
@@ -46,14 +47,9 @@ module.exports = {
     addCustomer: async (root, args, { id }) => {
       try {
         let data = {
-          queryName: "addCustomer",
-          firstName: args.firstName,
-          lastName: args.lastName,
-          email: args.email,
-          company: args.company || "",
-          phone: args.phone || "",
-          password: args.password,
-        };
+          ...args,
+          queryName: "addCustomer"
+        }
 
         let validation = ["firstName", "lastName", "email", "password"];
         const duplicate = await duplicateData({ email: args.email }, Customer);
@@ -67,14 +63,11 @@ module.exports = {
             success: false,
           };
         }
-        const bcrypt = require("bcryptjs");
         data.password = await bcrypt.hash(data.password, 10);
         let customerData = await Customer.create(data);
 
         const jwt = require("jsonwebtoken");
         sendEmailTemplate("WELCOME", customerData);
-
-        console.log("Customer Data : ", customerData);
 
         const payload = {
           id: customerData._id,
@@ -92,7 +85,7 @@ module.exports = {
         const token = jwt.sign(payload, APP_KEYS.jwtSecret, {
           expiresIn: tokenExpiresIn,
         });
-        console.log(token);
+
         return {
           success: true,
           message: "Customer added successfully",
