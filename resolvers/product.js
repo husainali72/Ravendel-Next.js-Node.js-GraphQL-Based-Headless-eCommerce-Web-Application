@@ -848,25 +848,39 @@ module.exports = {
         {
           $match: {
             name: {
-               $regex: searchRegex
+              $regex: searchRegex
+            }
+          },
+        },
+        {
+          $sort: {
+            updated: -1,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            count: {
+              $sum: 1
+            },
+            products: {
+              $push: "$$ROOT"
             }
           }
         },
         {
-          $skip: (page - 1) * limit
-        },
-        {
-          $limit: limit
-        },
-        {
-          $sort: {
-            updated: -1
+          $project: {
+            _id: 0,
+            count: 1,
+            products: {
+              $slice: ["$products", (page - 1) * limit, limit]
+            }
           }
         }
       ]
       const searchedProducts = await Product.aggregate(pipeline)
 
-      return searchedProducts || [];
+      return searchedProducts[0] || [];
     },
     productswithcat: async (root, args, { id }) => {
       return await GET_ALL_FUNC(Product, "Products with category");
@@ -1380,6 +1394,18 @@ module.exports = {
 
       return additionalDetails
     }
+    parentCategories: async (root, args) => {
+      try{
+        const cats = await ProductCat.find({parentId: null});
+        return {
+          message: MESSAGE_RESPONSE("RESULT_FOUND", "Parent Categories", true),
+          data: cats,
+        };
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
   },
   Product: {
     categoryId: async (root, args) => {
