@@ -233,7 +233,7 @@ const GalleryImagesComponents = (props) => {
             </div>
             <CheckZipcode checkzipcode={checkzipcode} />
             <ul className="product-meta font-xs color-grey mt-50">
-              <div className="stock-availabilty">
+              {/* <div className="stock-availabilty">
                 <div className="singleproduct-stock">
                   Availablity: <span className={stockClass}>{Lable}</span>
                 </div>
@@ -242,7 +242,7 @@ const GalleryImagesComponents = (props) => {
                     quantity={get(singleproduct, "quantity", 0)}
                   />
                 </div>
-              </div>
+              </div> */}
 
               {Lable !== "Out Of Stock" && (
                 <>

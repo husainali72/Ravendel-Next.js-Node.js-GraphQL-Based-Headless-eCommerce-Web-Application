@@ -1,14 +1,13 @@
 import { get } from "lodash";
 import PropTypes from "prop-types";
-import RoundCard from "../card/roundCard";
+import CategoryCard from "../card/roundCard";
 import ProductImage from "../imageComponent";
 import CategoryLink from "./categoryLink";
 const ParentCategories = ({ categories, categoryName }) => {
-  {console.log(categories)}
   return (
     <>
       <div className={`banner-container section-banner`}>
-        <ProductImage className="banner-image" src={get(categories, "image")} />
+        <ProductImage className="banner-image" src={get(categories, "image", '')} />
         <h2>{categoryName}</h2>
       </div>
       <div className="container">
@@ -16,7 +15,6 @@ const ParentCategories = ({ categories, categoryName }) => {
           {
             get(categories, "description") &&
               <>
-              {/* <h5>Category Discription</h5> */}
               <p>
                 {get(categories, "description")}
               </p>
@@ -33,7 +31,7 @@ const ParentCategories = ({ categories, categoryName }) => {
                   <>
                     <CategoryLink url={subCategory?.url}>
                       <a>
-                        <RoundCard
+                        <CategoryCard
                           key={i}
                           name={get(subCategory, "name")}
                           image={get(subCategory, "image")}

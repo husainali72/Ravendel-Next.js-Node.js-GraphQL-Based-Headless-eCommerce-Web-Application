@@ -1393,7 +1393,7 @@ module.exports = {
       })
 
       return additionalDetails
-    }
+    },
     parentCategories: async (root, args) => {
       try{
         const cats = await ProductCat.find({parentId: null});
