@@ -101,6 +101,7 @@ export default function Home({
               <OnSaleProductCard
                 titleShow={get(section, "name")}
                 onSaleProduct={get(section, "products", [])}
+                display_type={get(section, "display_type", [])}
               />
             )}
           </>

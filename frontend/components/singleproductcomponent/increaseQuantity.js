@@ -24,10 +24,13 @@ const QuantitySelector = ({ changeQuantity, quantity }) => {
   };
 
   return (
-    <div>
-      <button onClick={handleDecrement}>-</button>
-      <input type="number" value={newQuantity} onChange={handleChange} />
-      <button onClick={handleIncrement}>+</button>
+    <div className="qty-input">
+      <label>Quantity</label>
+      <div>
+        <button onClick={handleDecrement}>-</button>
+        <input type="number" value={newQuantity} onChange={handleChange} />
+        <button onClick={handleIncrement}>+</button>
+      </div>
     </div>
   );
 };

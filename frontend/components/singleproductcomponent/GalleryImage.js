@@ -40,16 +40,16 @@ const GalleryImagesComponents = (props) => {
   const session = useSession();
   const router = useRouter();
   const [available, setavailable] = useState(true);
-  const [lable, setLable] = useState("In Stock");
-  const [error, setError] = useState(false);
+  const [Lable, setLable] = useState("In Stock");
+  const [error, seterror] = useState(false);
   const cart = useSelector((state) => state.cart);
-  const [singleProduct, setSingleProduct] = useState(singleProducts);
+  const [singleproduct, setSingleproduct] = useState(singleProducts);
   const [selectedAttributes, setSelectedAttributes] = useState([]);
   const [itemInCart, setItemInCart] = useState(false);
   const [id, setId] = useState("");
   const [token, setToken] = useState("");
   useEffect(() => {
-    setSingleProduct({ ...singleProduct });
+    setSingleproduct({ ...singleproduct });
   }, [singleProducts]);
   useEffect(() => {
     const productQuantity = get(singleProducts, "quantity");
@@ -137,10 +137,10 @@ const GalleryImagesComponents = (props) => {
       get(singleProducts, "attributes")?.length > 0 &&
       selectedAttributes?.length !== get(singleProducts, "attributes")?.length;
     if (hasAttributesMismatch) {
-      setError(true);
+      seterror(true);
       return;
     }
-    setError(false);
+    seterror(false);
     if (isUserAuthenticated) {
       const cartProducts = get(cart, "cartItems", []);
       const productInCart = isProductInCart(product, cartProducts);
@@ -178,8 +178,8 @@ const GalleryImagesComponents = (props) => {
     }
   };
   const changeQuantity = (qty) => {
-    let product = { ...singleProduct, qty: qty };
-    setSingleProduct({ ...product });
+    let product = { ...singleproduct, qty: qty };
+    setSingleproduct({ ...product });
   };
   const navigateToShopCart = () => {
     router.push("/shopcart");
@@ -195,16 +195,17 @@ const GalleryImagesComponents = (props) => {
         </div>
         <div className="single-product-detail col-md-6 col-sm-12 col-xs-12">
           <div className="detail-info">
-            <h2>{capitalize(get(singleProduct, "name"))}</h2>
+            <h2>{capitalize(get(singleproduct, "name"))}</h2>
             <div className="short-desc mb-30">
-              <p> {singleProduct?.short_description}</p>
+              <p> {singleproduct?.short_description}</p>
             </div>
-            {get(singleProduct, "rating") > 0 && (
+            {get(singleproduct, "rating") > 0 && (
               <div className="product-detail-rating">
-                <p>{get(singleProduct, "rating", 0)}</p>
+                <p>{get(singleproduct, "rating", 0)}</p>
+                <i className="fa-solid fa-star" />
               </div>
             )}
-            <RenderProductPrice singleProducts={singleProduct} />
+            <RenderProductPrice singleProducts={singleproduct} />
 
             {itemInCart && (
               <p className="already-in-cart-message">
@@ -212,41 +213,45 @@ const GalleryImagesComponents = (props) => {
                 cart.
               </p>
             )}
-            <div className="varaint-select">
-              <AttributeSelector
-                variations={get(singleProduct, "variations", [])}
-                attributes={get(singleProduct, "attributes", [])}
-                error={error}
-                getSelectedAttributes={getSelectedAttributes}
-              />
-            </div>
+            {
+              (get(singleproduct, "variations") && get(singleproduct, "variations")?.length > 0) || (get(singleproduct, "attributes") && get(singleproduct, "attributes")?.length > 0) ?
+              <div className="varaint-select">
+                <AttributeSelector
+                  variations={get(singleproduct, "variations", [])}
+                  attributes={get(singleproduct, "attributes", [])}
+                  error={error}
+                  getSelectedAttributes={getSelectedAttributes}
+                />
+              </div>
+              : ''
+            }
             <div>
               <QuantitySelector
                 changeQuantity={changeQuantity}
-                quantity={singleProduct?.qty}
+                quantity={singleproduct?.qty}
               />
             </div>
             <CheckZipcode checkzipcode={checkzipcode} />
             <ul className="product-meta font-xs color-grey mt-50">
-              <div className="stock-availabilty">
+              {/* <div className="stock-availabilty">
                 <div className="singleproduct-stock">
-                  Availablity: <span className={stockClass}>{lable}</span>
+                  Availablity: <span className={stockClass}>{Lable}</span>
                 </div>
                 <div>
                   <RemainingQuantity
-                    quantity={get(singleProduct, "quantity", 0)}
+                    quantity={get(singleproduct, "quantity", 0)}
                   />
                 </div>
-              </div>
+              </div> */}
 
-              {lable !== "Out Of Stock" && (
+              {Lable !== "Out Of Stock" && (
                 <>
                   <CustomButton
                     type="button"
                     className="btn btn-success button button-add-to-cart primary-btn-color"
                     onClick={() =>
                       !itemInCart
-                        ? addToCartProduct(singleProduct)
+                        ? addToCartProduct(singleproduct)
                         : navigateToShopCart()
                     }
                     buttonText={!itemInCart ? "Add to Cart" : "Go To Cart"}
@@ -257,7 +262,7 @@ const GalleryImagesComponents = (props) => {
               {itemInCart && (
                 <p className="already-in-cart-message">
                   You have this item in your bag and we have increased the
-                  quantity by {get(singleProduct, "qty", 1)}
+                  quantity by {get(singleproduct, "qty", 1)}
                 </p>
               )}
             </ul>

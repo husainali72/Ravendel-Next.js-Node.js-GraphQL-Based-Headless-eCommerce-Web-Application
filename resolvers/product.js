@@ -1346,6 +1346,18 @@ module.exports = {
         data: response,
       };
     },
+    parentCategories: async (root, args) => {
+      try{
+        const cats = await ProductCat.find({parentId: null});
+        return {
+          message: MESSAGE_RESPONSE("RESULT_FOUND", "Parent Categories", true),
+          data: cats,
+        };
+      } catch (error) {
+        error = checkError(error);
+        throw new Error(error.custom_message);
+      }
+    },
     additionalDetails: async (root, args) => {
       const { productId } = args
       const additionalDetails = []

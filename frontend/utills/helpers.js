@@ -122,7 +122,7 @@ export const logoutAndClearData = async (dispatch) => {
   const data = await signOut({ redirect: false, callbackUrl: "/" });
   await removeItemFromLocalStorage("cart");
   await dispatch(logoutDispatch());
-  window.location.pathname = "/account";
+  window.location.pathname = "/login";
 };
 
 // autoFocus next input
@@ -157,10 +157,10 @@ export const currencySetter = (settings, setCurrency) => {
   const currency = get(settings, "currency", "usd") || settings;
   const currencySymbols = {
     usd: "$",
-    eur: <i className="fas fa-euro-sign"></i>,
-    gbp: <i className="fas fa-pound-sign"></i>,
+    eur: '€',
+    gbp: '£',
     cad: "CA$",
-    inr: <i className="fas fa-rupee-sign"></i>,
+    inr: '₹',
   };
   const selectedSymbol = currencySymbols[currency];
   if (selectedSymbol) setCurrency(selectedSymbol);

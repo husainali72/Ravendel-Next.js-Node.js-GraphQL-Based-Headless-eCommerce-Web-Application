@@ -3,9 +3,9 @@ import { Container } from "react-bootstrap";
 import { get } from "lodash";
 import CategoryLink from "./category/categoryLink";
 import PropTypes from "prop-types";
-const CategoryBreadCrumb = ({ breadCrumbs }) => {
+const CategoryBreadCrumb = ({ breadCrumbs, className }) => {
   return (
-    <nav className="breadcrumb-nav" aria-label="breadcrumb" style={{}}>
+    <nav className={`breadcrumb-nav ${className}`} aria-label="breadcrumb" style={{}}>
       <Container>
         <ol className="breadcrumb" style={{ cursor: "pointer" }}>
           <li className="breadcrumb-item page-active">
@@ -36,5 +36,6 @@ const CategoryBreadCrumb = ({ breadCrumbs }) => {
 };
 CategoryBreadCrumb.propTypes = {
   breadCrumbs: PropTypes.array,
+  className: PropTypes.string
 };
 export default CategoryBreadCrumb;

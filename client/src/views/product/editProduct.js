@@ -714,6 +714,7 @@ const EditProductComponent = ({ params }) => {
     });
     setProduct(updatedProduct);
   };
+
   const updateUrlOnBlur = async (url) => {
     if (url) {
       await query(CHECK_VALID_URL, { url: url }).then(res => {

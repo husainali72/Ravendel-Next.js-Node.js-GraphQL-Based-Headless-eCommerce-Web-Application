@@ -56,7 +56,7 @@ const SingleProduct = ({
         />
         <meta name="keywords" content={get(singleproducts, "meta.keywords")} />
       </Head>
-      <CategoryBreadCrumb breadCrumbs={get(singleproducts, "breadcrumb", [])} />
+      <CategoryBreadCrumb className="single-product" breadCrumbs={get(singleproducts, "breadcrumb", [])} />
       <section className="product-cart-section">
         <Toaster />
         <Container>

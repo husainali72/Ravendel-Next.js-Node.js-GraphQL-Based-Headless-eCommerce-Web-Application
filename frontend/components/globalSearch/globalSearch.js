@@ -1,5 +1,7 @@
 import { useRouter } from "next/router";
-import { useState } from "react"; // Assuming you're using React Router
+
+import { useState } from "react";
+import { IoSearchOutline } from "react-icons/io5";
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,9 +16,10 @@ const Search = () => {
   return (
     <>
       <div className="global-search-container">
+        <IoSearchOutline />
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search for products"
           className="global-search-bar"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}

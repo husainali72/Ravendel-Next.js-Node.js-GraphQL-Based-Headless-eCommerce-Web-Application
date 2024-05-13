@@ -41,6 +41,7 @@ module.exports = `
     url: String
     description: String
     image: String
+    thumbnail_image: String
     meta: customObject
     date: Date
     updated: Date

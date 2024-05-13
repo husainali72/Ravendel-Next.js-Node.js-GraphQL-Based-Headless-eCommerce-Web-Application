@@ -54,25 +54,26 @@ const CheckZipcode = ({ checkzipcode }) => {
   return (
     <div>
       <form onSubmit={handleSubmit} className="zip-form">
-        <div className="d-flex mt-3 align-items-baseline gap-2">
-          <p className="zip-lable">Delivery</p>
-          <input
-            type="text"
-            placeholder="Enter Your Zipcode"
-            maxLength={10}
-            minLength={6}
-            value={ZipCode}
-            onChange={handleInputChange}
-          />
-          <Button type="submit" size="sm" variant="light" disabled={isLoading}>
-            Check
-          </Button>
+        <div className="zip-code-field">
+          <label className="zip-lable">Delivery</label>
+          <div className="field">
+            <input
+              type="text"
+              placeholder="Enter Your Zipcode"
+              maxLength={10}
+              minLength={6}
+              value={ZipCode}
+              onChange={handleInputChange}
+            />
+            <Button type="submit" size="sm" variant="light" disabled={isLoading}>
+              Check
+            </Button>
+          </div>
         </div>
-        {ZipMessage && (
-          <p className={`zip-message ${ZipMessageSuccess && "text-success"}`}>
-            {ZipMessage}
-          </p>
-        )}
+        {/* <button>Check</button> */}
+        <p className={`zip-message ${ZipMessageSuccess && "text-success"}`}>
+          {ZipMessage && ZipMessage}
+        </p>
       </form>
     </div>
   );
