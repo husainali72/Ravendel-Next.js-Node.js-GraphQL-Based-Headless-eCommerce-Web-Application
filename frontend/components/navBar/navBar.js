@@ -11,7 +11,7 @@ import {
 } from "../../utills/helpers";
 import { useRouter } from "next/router";
 
-const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
+const LOCAL_STORAGE_EXPIRATION_TIME = 6 * 60 * 60 * 1000;
 // const SIX_HOURS_MS =1* 60 * 1000;
 const NavBar = () => {
   const [parentCategories, setParentCategories] = useState([]);
@@ -22,7 +22,7 @@ const NavBar = () => {
       const data = get(response, "data.parentCategories.data", []);
       setParentCategories(data);
       setItemToLocalStorage("parentCategories", data);
-      const expirationTime = new Date().getTime() + SIX_HOURS_MS;
+      const expirationTime = new Date().getTime() + LOCAL_STORAGE_EXPIRATION_TIME;
       setItemToLocalStorage("parentCategoriesTimestamp", expirationTime);
     } catch (error) {
       console.log(error, "error");
@@ -44,19 +44,13 @@ const NavBar = () => {
       ) {
         setParentCategories(storedCategories);
       } else {
+        removeItemFromLocalStorage("parentCategories");
+        removeItemFromLocalStorage("parentCategoriesTimestamp");
         fetchCategories();
       }
     };
 
     checkLocalStorage();
-
-    // Check expiration time only once on page load
-    const currentTime = Date.now();
-    if (currentTime >= expirationTime) {
-      removeItemFromLocalStorage("parentCategories");
-      removeItemFromLocalStorage("parentCategoriesTimestamp");
-      checkLocalStorage();
-    }
   }, []);
 
   return (
