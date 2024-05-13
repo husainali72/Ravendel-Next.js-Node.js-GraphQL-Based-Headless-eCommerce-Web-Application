@@ -42,9 +42,9 @@ const addOrUpdateProductGroup = async (args, token, isAdd = false) => {
       }; 
     }
 
-    if (variations.some(variation => isEmpty(variation.productId))) {
+    if (variations.every(variation => isEmpty(variation.productId))) {
       return {
-        message: "ProductId is required",
+        message: "At least one product is required.",
         success: false,
       };
     }
