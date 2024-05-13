@@ -1346,6 +1346,42 @@ module.exports = {
         data: response,
       };
     },
+    additionalDetails: async (root, args) => {
+      const { productId } = args
+      const additionalDetails = []
+      const existingProduct = await Product.findById(productId).select("categoryId")
+
+      const matchStage = {
+        $match: {
+          _id: {
+            $ne: toObjectID(existingProduct._id),
+          },
+          categoryId: {
+            $in: existingProduct.categoryId,
+          },
+        },
+      }
+      const sortStage = {
+        $sort: {
+          updated: -1
+        }
+      }
+      const relatedProducts = await Product.aggregate([
+        matchStage,
+        sortStage
+      ])
+
+      additionalDetails.push({
+        title: "Related Products",
+        products: relatedProducts
+      })
+      additionalDetails.push({
+        title: "Similar Products",
+        products: relatedProducts
+      })
+
+      return additionalDetails
+    }
     parentCategories: async (root, args) => {
       try{
         const cats = await ProductCat.find({parentId: null});
