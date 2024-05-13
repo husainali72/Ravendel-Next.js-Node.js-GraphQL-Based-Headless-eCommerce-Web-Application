@@ -262,7 +262,31 @@ module.exports = {
         }
         await customer.save();
         return MESSAGE_RESPONSE("DeleteSuccess", "Address", true);
+      },
+    resetPassword: async (root, args, { id }) => {
+      const bcrypt = require("bcryptjs");
+      const pattern = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
 
+      const customer = await Customer.findOne({ email: args.email });
+      if (!customer) {
+        return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
+      }
+
+      let match = await bcrypt.compare(args.oldPassword, customer.password);
+
+      if (match) {
+        let isValid = pattern.test(args.newPassword);
+        if (isValid) {
+          customer.password = await bcrypt.hash(args.newPassword, 10);
+          await customer.save();
+        } else {
+          return MESSAGE_RESPONSE("InvalidPassword", null, false);
+        }
+      } else {
+        return MESSAGE_RESPONSE("InvalidOldPassword", null, false);
+      }
+
+      return MESSAGE_RESPONSE("UpdateSuccess", "Password", true);
     },
   },
 };
