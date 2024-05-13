@@ -45,7 +45,7 @@ const FeaturedImageComponentTheme = ({ image, feautedImageChange, user, text,nam
       />
       <label htmlFor="featured-image" className={classes.feautedImage}>
         <ImageIcon />{" "}
-        {!isEmpty(image) ? `Change ${text} Image` : `Set ${text} Image`}
+        {!isEmpty(image) ? `Change ${text||'Feature'} Image` : `Set ${text||'Feature'} Image`}
       </label>
     </>
   );

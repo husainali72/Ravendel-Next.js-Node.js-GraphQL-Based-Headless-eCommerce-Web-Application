@@ -148,6 +148,7 @@ const ADD_CATEGORY = gql`
     $url: String
     $description: String
     $image: Upload
+    $thumbnail_image: Upload
     $meta: customObject
   ) {
     addProductCategory(
@@ -156,6 +157,7 @@ const ADD_CATEGORY = gql`
       url: $url
       description: $description
       image: $image
+      thumbnail_image: $thumbnail_image
       meta: $meta
     ) {
       message
@@ -203,6 +205,7 @@ const UPDATE_CATEGORY = gql`
     $url: String
     $description: String
     $update_image: Upload
+    $thumbnail_image: Upload
     $meta: customObject
   ) {
     updateProductCategory(
@@ -212,6 +215,7 @@ const UPDATE_CATEGORY = gql`
       url: $url
       description: $description
       update_image: $update_image
+      thumbnail_image: $thumbnail_image
       meta: $meta
     ) {
       message

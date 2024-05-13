@@ -54,6 +54,7 @@ const AllCategoryComponent = () => {
   const [editMode, setEditmode] = useState(false);
   const [isUrlChanged, setIsUrlChanged] = useState(false);
   const [featuredImage, setfeaturedImage] = useState(null);
+  const [thumbnailImage, setThumbnail] = useState(null);
   const [filtered, setfilterdData] = useState([]);
   const [loading, setloading] = useState(false);
   const columndata = [
@@ -109,8 +110,12 @@ const AllCategoryComponent = () => {
   const editCategory = (cat) => {
     setEditmode(true);
     setfeaturedImage(null);
+    setThumbnail(null);
     if (cat.image) {
       setfeaturedImage(getBaseUrl(setting) + cat.image);
+    }
+    if (cat.thumbnail) {
+      setThumbnail(getBaseUrl(setting) + cat.thumbnail);
     }
     setSingleCategory({ ...singlecategory, ...cat });
   };
@@ -158,39 +163,62 @@ const AllCategoryComponent = () => {
     document.forms[0].reset();
     setEditmode(false);
     setfeaturedImage(null);
+    setThumbnail(null);
     setSingleCategory(categoryObject);
+    setIsUrlChanged(false);
   };
-  const fileChange = (e,apiName) => {
+  const fileChange = (e) => {
     const files = get(e, "target.files", []);
-    const {name}=get(e,'target')
-    if (files.length > 0) {
-      // setfeaturedImage(URL.createObjectURL(files[0]));
-      setSingleCategory({
-        ...singlecategory,
-        [name]:URL.createObjectURL(files[0]),
-        [apiName]: files,
-      });
-    } else {
-      setSingleCategory({
-        ...singlecategory,
-       
-      });
-      // setfeaturedImage(featuredImage);
-    }
-  };
 
-  const updatefileChange = (e,apiNAme) => {
-    const files = get(e, 'target.files', []);
-    const {name}=get(e,'target.name')
     if (files.length > 0) {
       setfeaturedImage(URL.createObjectURL(files[0]));
       setSingleCategory({
         ...singlecategory,
-        [name]:URL.createObjectURL(files[0]),
-        [apiNAme]: files,
+        image: files,
       });
     } else {
       setfeaturedImage(featuredImage);
+    }
+  };
+
+  const updatefileChange = (e) => {
+    const files = get(e, "target.files", []);
+
+    if (files.length > 0) {
+      setfeaturedImage(URL.createObjectURL(files[0]));
+      setSingleCategory({
+        ...singlecategory,
+        update_image: files,
+      });
+    } else {
+      setfeaturedImage(featuredImage);
+    }
+  };
+  const fileThumbnailChange = (e) => {
+    const files = get(e, "target.files", []);
+
+    if (files.length > 0) {
+      setThumbnail(URL.createObjectURL(files[0]));
+      setSingleCategory({
+        ...singlecategory,
+        thumbnail_image: files,
+      });
+    } else {
+      setThumbnail(thumbnailImage);
+    }
+  };
+
+  const updateThumbnailfileChange = (e) => {
+    const files = get(e, "target.files", []);
+
+    if (files.length > 0) {
+      setThumbnail(URL.createObjectURL(files[0]));
+      setSingleCategory({
+        ...singlecategory,
+        thumbnail_image: files,
+      });
+    } else {
+      setThumbnail(thumbnailImage);
     }
   };
 
@@ -207,48 +235,51 @@ const AllCategoryComponent = () => {
   // };
   const isUrlExist = async (url) => {
     if (url && !editMode) {
-      updateUrlOnBlur(url)
+      updateUrlOnBlur(url);
     }
   };
   const updateUrl = async (URL, setEditPermalink) => {
     if (singlecategory?.id) {
-      await query(CHECK_VALID_URL, { url: URL, entryId: singlecategory?.id }).then(res => {
-        if (get(res, 'data.validateUrl.url')) {
-          const newUrl = get(res, 'data.validateUrl.url')
+      await query(CHECK_VALID_URL, {
+        url: URL,
+        entryId: singlecategory?.id,
+      }).then((res) => {
+        if (get(res, "data.validateUrl.url")) {
+          const newUrl = get(res, "data.validateUrl.url");
           setSingleCategory({
             ...singlecategory,
             url: newUrl,
           });
-          setEditPermalink((previous) => !previous)
+          setEditPermalink((previous) => !previous);
         }
       });
     } else {
-      await query(CHECK_VALID_URL, { url: URL }).then(res => {
-        if (get(res, 'data.validateUrl.url')) {
-          const newUrl = get(res, 'data.validateUrl.url')
+      await query(CHECK_VALID_URL, { url: URL }).then((res) => {
+        if (get(res, "data.validateUrl.url")) {
+          const newUrl = get(res, "data.validateUrl.url");
           setSingleCategory({
             ...singlecategory,
             url: newUrl,
           });
-          setEditPermalink((previous) => !previous)
+          setEditPermalink((previous) => !previous);
         }
       });
     }
-  }
+  };
   const updateUrlOnBlur = async (URL) => {
     if (URL) {
-      await query(CHECK_VALID_URL, { url: URL }).then(res => {
-        if (get(res, 'data.validateUrl.url')) {
-          const newUrl = get(res, 'data.validateUrl.url')
+      await query(CHECK_VALID_URL, { url: URL }).then((res) => {
+        if (get(res, "data.validateUrl.url")) {
+          const newUrl = get(res, "data.validateUrl.url");
           setSingleCategory({
             ...singlecategory,
             url: newUrl,
           });
-          setIsUrlChanged(true)
+          setIsUrlChanged(true);
         }
       });
-    } 
-  }
+    }
+  };
   const handleOnChangeSearch = (filtereData) => {
     setfilterdData(filtereData);
   };
@@ -288,7 +319,7 @@ const AllCategoryComponent = () => {
                 value={singlecategory.name}
                 onBlur={(e) =>
                   !singlecategory.url || singlecategory.url !== e.target.value
-                    ? (!isUrlChanged && isUrlExist(singlecategory.name))
+                    ? !isUrlChanged && isUrlExist(singlecategory.name)
                     : null
                 }
               />
@@ -307,7 +338,7 @@ const AllCategoryComponent = () => {
                   onInputChange={(updatedUrl) => {
                     setSingleCategory({ ...singlecategory, url: updatedUrl });
                   }}
-                  pageUrl="category"
+                  pageUrl="collection"
                   tableUrl="ProductCat"
                 />
               </Box>
@@ -344,16 +375,13 @@ const AllCategoryComponent = () => {
                   </Select>
                 </FormControl>
               </Box>
-             { console.log(singlecategory,'singlecategory')}
 
               {editMode ? (
                 <Box component="span">
                   <CardBlocks title="Change Category Image">
                     <FeaturedImageComponent
-                      name='feature_image'
-                      image={ singlecategory?.feature_image}
-                      feautedImageChange={(e) => updatefileChange(e,'upload_image')}
-                      text = "Feature"
+                      image={featuredImage}
+                      feautedImageChange={(e) => updatefileChange(e)}
                     />
                   </CardBlocks>
                 </Box>
@@ -364,23 +392,20 @@ const AllCategoryComponent = () => {
                     className={classes.flex1}
                   >
                     <FeaturedImageComponent
-                     name='feature_image'
-                      image={getBaseUrl(setting) + singlecategory.feature_image}
-                      feautedImageChange={(e) => fileChange(e,'image')}
-                      text = "Feature"
-                    // style={{marginBottom: '200px'}}
+                      image={featuredImage}
+                      feautedImageChange={(e) => fileChange(e)}
+                      // style={{marginBottom: '200px'}}
                     />
                   </CardBlocks>
                 </Box>
               )}
               {editMode ? (
                 <Box component="span">
-                  <CardBlocks title="Change Category Image">
+                  <CardBlocks title="Change Thumbnail Image">
                     <FeaturedImageComponent
-                     name='thumbnail'
-                      image={getBaseUrl(setting) + singlecategory?.thumbnail_image}
-                      feautedImageChange={(e) => updatefileChange(e,'thumbnail_image')}
-                      text = "Thumbnail"
+                      image={thumbnailImage}
+                      feautedImageChange={(e) => updateThumbnailfileChange(e)}
+                      text="Thumbnail"
                     />
                   </CardBlocks>
                 </Box>
@@ -391,10 +416,10 @@ const AllCategoryComponent = () => {
                     className={classes.flex1}
                   >
                     <FeaturedImageComponent
-                      name='thumbnail'
-                      image={getBaseUrl(setting) + singlecategory?.thumbnail_image}
-                      feautedImageChange={(e) => fileChange(e,'thumbnail_image')}
-                      text = "Thumbnail"
+                      image={thumbnailImage}
+                      feautedImageChange={(e) => fileThumbnailChange(e)}
+                      // style={{marginBottom: '200px'}}
+                      text="Thumbnail"
                     />
                   </CardBlocks>
                 </Box>
