@@ -452,9 +452,9 @@ const EditProductComponent = ({ params }) => {
     }
   };
 
-  const updateUrl = async (URL, setEditPermalink) => {
+  const updateUrl = async (url, setEditPermalink) => {
     if (productId) {
-      await query(CHECK_VALID_URL, { url: URL, entryId: productId }).then(
+      await query(CHECK_VALID_URL, { url: url, entryId: productId }).then(
         (res) => {
           if (get(res, "data.validateUrl.url")) {
             const newUrl = get(res, "data.validateUrl.url");
@@ -467,7 +467,7 @@ const EditProductComponent = ({ params }) => {
         }
       );
     } else {
-      await query(CHECK_VALID_URL, { url: URL }).then((res) => {
+      await query(CHECK_VALID_URL, { url: url }).then((res) => {
         if (get(res, "data.validateUrl.url")) {
           const newUrl = get(res, "data.validateUrl.url");
           setProduct({
@@ -697,9 +697,9 @@ const EditProductComponent = ({ params }) => {
     });
     setProduct(updatedProduct);
   };
-  const updateUrlOnBlur = async (URL) => {
-    if (URL) {
-      await query(CHECK_VALID_URL, { url: URL }).then(res => {
+  const updateUrlOnBlur = async (url) => {
+    if (url) {
+      await query(CHECK_VALID_URL, { url: url }).then(res => {
         if (get(res, 'data.validateUrl.url')) {
           const newUrl = get(res, 'data.validateUrl.url')
           setProduct({
