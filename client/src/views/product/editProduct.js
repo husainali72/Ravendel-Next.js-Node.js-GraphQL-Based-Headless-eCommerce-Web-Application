@@ -481,7 +481,7 @@ const EditProductComponent = ({ params }) => {
   };
   const isUrlExist = async (url) => {
     if (url && !productId) {
-      updateUrl(url);
+      updateUrlOnBlur(url);
     }
   };
   const [selectedClonedProject, setSelectedClonedProject] = useState("");
@@ -697,6 +697,20 @@ const EditProductComponent = ({ params }) => {
     });
     setProduct(updatedProduct);
   };
+  const updateUrlOnBlur = async (URL) => {
+    if (URL) {
+      await query(CHECK_VALID_URL, { url: URL }).then(res => {
+        if (get(res, 'data.validateUrl.url')) {
+          const newUrl = get(res, 'data.validateUrl.url')
+          setProduct({
+            ...product,
+            url: newUrl,
+          });
+          setIsUrlChanged(true)
+        }
+      });
+    } 
+  }
   const getDiscountPrice = (discountPrice) => {
     return discountPrice ? `${discountPrice}% OFF` : 'No Discount';
   };

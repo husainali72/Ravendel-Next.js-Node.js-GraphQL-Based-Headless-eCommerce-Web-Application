@@ -45,11 +45,13 @@ const CartTable = (props) => {
                 <div>
                   {product?.available ? (
                     <Link href={"/product/" + product.url}>
+                      <a>
                       <ProductImage
                         src={get(product, "feature_image", "")}
                         alt={product?.name}
                         className="cart-product-image cursor-pointer"
                       />
+                      </a>
                     </Link>
                   ) : (
                     <ProductImage

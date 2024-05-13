@@ -9,9 +9,7 @@ import {
   getItemFromLocalStorage,
   handleError,
 } from "../../utills/helpers";
-import {
-  ADD_CART,
-} from "../../queries/cartquery";
+import { ADD_CART } from "../../queries/cartquery";
 import {
   ADD_TO_CART,
   INCRESE_QUANTITY,
@@ -36,9 +34,9 @@ const isLocalStorageAvailable =
 
 // Retrieve state from localStorage on app start
 if (isLocalStorageAvailable) {
-    const parsedState =getItemFromLocalStorage("persistantState");
-    initialState.cartItems = parsedState.cartItems || [];
-    initialState.totalSummary = parsedState.totalSummary || {}
+  const parsedState = getItemFromLocalStorage("persistantState");
+  initialState.cartItems = parsedState.cartItems || [];
+  initialState.totalSummary = parsedState.totalSummary || {};
 }
 
 function cartReducer(state = initialState, action) {
@@ -75,12 +73,25 @@ function cartReducer(state = initialState, action) {
         productCart = getItemFromLocalStorage("cart");
         state.cartItems = productCart;
       }
-      let productInCart = [];
-      productInCart = [...get(state, "cartItems", [])];
-      const { product: productToAdd,quantity=1} = get(action,'payload',[]);
-      productToAdd.quantity = quantity;
-      productInCart.push(productToAdd);
+      let productInCart = [...get(state, "cartItems", [])];
+      const { product: productToAdd } = get(action, "payload", []);
+
+      // Check if the product already exists in the cart
+      const existingProductIndex = productInCart.findIndex(
+        (item) =>
+          item._id === productToAdd._id &&
+          item.variantId === productToAdd.variantId
+      );
+      if (existingProductIndex !== -1) {
+        // If product exists, increase its quantity
+        productInCart[existingProductIndex].quantity += productToAdd?.qty;
+      } else {
+        // If product doesn't exist, add it to the cart
+        productToAdd.quantity = productToAdd?.qty;
+        productInCart.push(productToAdd);
+      }
       setItemToLocalStorage("cart", productInCart);
+
       return {
         ...state,
         cartItems: productInCart,
@@ -97,11 +108,11 @@ function cartReducer(state = initialState, action) {
           window.location.pathname = "/";
         })
         .catch((error) => {
-          handleError(error,dispatch)
+          handleError(error, dispatch);
         });
       return {
         ...state,
-        cartItems: get(action,'payload.cart',[]),
+        cartItems: get(action, "payload.cart", []),
         loading: false,
         totalSummary: {},
       };
@@ -109,11 +120,11 @@ function cartReducer(state = initialState, action) {
 
     case REMOVE_VALUE:
       const cartsProducts = getItemFromLocalStorage("cart");
-      const productIdToRemove=get(action,'payload.id')
-      const variantIdToRemove=get(action,'payload.variantId')
+      const productIdToRemove = get(action, "payload.id");
+      const variantIdToRemove = get(action, "payload.variantId");
       const product = cartsProducts?.filter((item) => {
-        const cartItemId = get(item, '_id',''); // Retrieve item ID from cart item
-        const cartItemVariantId = get(item, 'variantId', '');
+        const cartItemId = get(item, "_id", ""); // Retrieve item ID from cart item
+        const cartItemVariantId = get(item, "variantId", "");
         if (cartItemVariantId && variantIdToRemove) {
           return (
             cartItemId !== productIdToRemove &&
@@ -131,13 +142,13 @@ function cartReducer(state = initialState, action) {
       return { ...state, cartItems: [], loading: false, totalSummary: {} };
 
     case INCRESE_QUANTITY:
-      const cart =getItemFromLocalStorage("cart");
-      const productIdToUpdate = get(action.payload, '_id'); 
-      const variantIdToUpdate = get(action.payload, 'variantId'); 
-      let existingItemIndex  = cart?.findIndex((item) => {
-        const cartItemId = get(item, '_id',''); // Retrieve item ID from cart item
-        const cartItemVariantId = get(item, 'variantId', '');
-        if (cartItemId&&cartItemVariantId) {
+      const cart = getItemFromLocalStorage("cart");
+      const productIdToUpdate = get(action.payload, "_id");
+      const variantIdToUpdate = get(action.payload, "variantId");
+      let existingItemIndex = cart?.findIndex((item) => {
+        const cartItemId = get(item, "_id", ""); // Retrieve item ID from cart item
+        const cartItemVariantId = get(item, "variantId", "");
+        if (cartItemId && cartItemVariantId) {
           // Check both product ID and variant ID when variant ID is not an empty string
           return (
             cartItemId === productIdToUpdate &&
@@ -145,11 +156,15 @@ function cartReducer(state = initialState, action) {
           );
         } else {
           // Check only product ID when variant ID is an empty string
-          return cartItemId ===productIdToUpdate;
+          return cartItemId === productIdToUpdate;
         }
       });
-      if (existingItemIndex !==-1) {
-        cart[existingItemIndex].quantity = get(action, "payload.updatedQuantity", 1);
+      if (existingItemIndex !== -1) {
+        cart[existingItemIndex].quantity = get(
+          action,
+          "payload.updatedQuantity",
+          1
+        );
       }
       setItemToLocalStorage("cart", cart);
       return { ...state, cartItems: cart, loading: false, totalSummary: {} };

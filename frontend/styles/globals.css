@@ -2367,6 +2367,7 @@ footer .btn:hover a {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
+  
 }
 
 .detail-info h2 {
@@ -6006,184 +6007,40 @@ font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+
+}
+.customer-review{
+  display: flex;
+  padding: 10px;
+}
+.singleproduct-bottom-section{
+  display: flex;
+  justify-content: space-between;
 }
 
-.global-search-bar {
-  width: 100%;
-  height: 38px;
-  border: unset;
-  padding: 8px;
-  font-size: 14px;
-  background-color: unset;
-  padding-left: 36px;
-  outline: none !important;
-  color: #636363;
+.specification-value {
+  display: flex;
+  flex-direction: column;
 }
-.results-showMoreContainer {
-  box-sizing: border-box;
+
+.specification-group {
+  margin-bottom: 20px;
 }
-.pagination-container {
-  list-style: none;
-  text-align: center;
-  border-top: 1px solid #edebef;
-  padding-top: 24px;
-  padding-bottom: 60px;
-  color: var(--primary-color)
+
+.group-name {
+  font-weight: bold;
 }
-.pagination-container .pagination-paginationMeta {
-  color: var(--primary-color);
-  font-size: 14px;
-  float: left;
-  margin-top: 6px;
+
+.key-value-container {
+  display: flex;
+  /* justify-content: space-between; */
+}
+
+.specification-key {
   margin-right: 10px;
-  cursor: default;
-  font-weight: 400;
-}
-.pagination-container li {
-  display: inline-block;
-  margin-right: 9px;
-  font-weight: 700;
-  cursor: pointer;
-  padding: 6px 8px;
-  border-radius: 2px;
-}
-.pagination-container .pagination-prev {
-  height: 42px;
-  border-radius: 4px;
-  border: 1px solid #d4d5d9;
-  text-align: center;
-  margin-right: 64px;
-  padding: 10px 22px;
-}
-.pagination-container .pagination-number {
-  background-color: #fff;
-  border: 1px solid transparent;
-}
-.pagination-container .pagination-dots {
-  margin-left: 5px;
-  margin-right: 5px;
-}
-.pagination-container .pagination-next {
-  height: 42px;
-  border-radius: 4px;
-  border: 1px solid #d4d5d9;
-  text-align: center;
-  margin-left: 64px;
-  padding: 10px 22px;
-}
-.active {
-  /* background-color: var(--primary-color); */
-  color: #fff;
-  border-color: var(--primary-color);
-}
-.pagination-prev-link{
-  color: var(--primary-color)
-}
-.pagination-prev  a{
-  color: var(--primary-color)
-}
-.pagination-next a{
-  color: var(--primary-color)
-}
-.card-rating{
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 3px 8px;
-  backdrop-filter: blur(10px);
-  color: #636363;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-}
-.card-rating i {
-  color: #088178;
-}
-.active-nav-link{
-  color: var(--primary-color) !important;
-  border-bottom: 2px solid var(--primary-color) !important;
-}
-.global-search-container{
-  background-color: #F2F2F2;
-  border-radius: 8px;
-  position: relative;
-}
-.global-search-container svg{
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 18px;
-  color: #636363;
-  left: 10px;
-}
-.nav-actions{
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  justify-content: flex-end;
-  width: 30%;
-}
-.nav-actions .action-btn-wrapper{
-  display: flex;
-  gap: 20px;
-}
-.nav-actions .action-btn-wrapper .action-btn.profile svg{
-  color: #636363;
-  height: fit-content;
-  font-size: 30px;
-}
-.profile-btn{
-  position: relative;
-}
-.profile-btn:hover .dropdown-content{
-  display: block;
-}
-.profile-btn .dropdown-content{
-  right: 0;
-}
-.category-disc{
-  margin-bottom: 36px;
-}
-.category-disc p{
-  font-size: 15px;
-  color: #636363;
-  margin-top: 16px;
-}
-.filter-section{
-  margin-bottom: 12px;
-  border-bottom: 1px solid #D4D4D4;
-}
-.filter-section .accordion-item .accordion-button{
-  box-shadow: unset !important;
-  padding: 2px 8px ;
-  padding-top: 5px;
   font-weight: 500;
-  font-size: 15px;
 }
-.filter-section .accordion-item .accordion-button::after{
-  width: 16px;
-  height: 16px;
-  background-size: cover;
-}
-.filter-section .search-container{
-  margin-bottom: 12px !important;
-}
-.filter-section .form-check .form-check-input{
-  width: 14px;
-  height: 14px;
-  margin-top: 6px;
-}
-.filter-section .form-check label{
-  font-size: 13px;
-  font-weight: 500;
-  color: #777777;
-}
-.filter-section .range-value{
-  margin-top: 10px;
-  color: #8F8F8F;
-  font-size: 13px;
-  font-weight: 500;
+.custom-progress-bar {
+  margin-bottom: 10px; 
+  height: 10px !important;
 }

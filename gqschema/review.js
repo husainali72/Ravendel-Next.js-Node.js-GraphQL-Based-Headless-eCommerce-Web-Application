@@ -31,6 +31,10 @@ module.exports = `
     data: [Review]
     message: statusSchema
   }
+  type productwisereviewResponse {
+    count: Int
+    reviews: customArray
+  }
   extend type Query {
     reviews: ReviewRES
     reviews_pagination(
@@ -45,7 +49,7 @@ module.exports = `
       productId: ID!
       page: Int
       limit: Int
-    ): customObject
+    ): productwisereviewResponse
   }
 
   extend type Mutation {
