@@ -1,32 +1,25 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import { Spinner } from "react-bootstrap";
-import {
-  isCouponAppliedAndNotFreeShipping,
-  isPriceZero,
-} from "../../utills/helpers";
-import CouponCard from "./couponCard";
 import { get } from "lodash";
-import Price from "../priceWithCurrency";
+import PropTypes from "prop-types";
+import CouponCard from "./couponCard";
 import InputField from "../inputField";
 import CartItemsDisplay from "./CartItemsDisplay";
 import TotalSummary from "../TotalSummary";
-const OrderSummary = (props) => {
-  const {
-    cartLoading,
-    cartItems,
-    removeToCart,
-    updateCartProductQuantity,
-    currencyOption,
-    totalSummary,
-    couponCartDetail,
-    currency,
-    couponCode,
-    setCouponCode,
-    doApplyCouponCode,
-    CouponLoading,
-    removeCoupon,
-  } = props;
+const OrderSummary = ({
+  cartLoading,
+  cartItems,
+  removeToCart,
+  updateCartProductQuantity,
+  currencyOption,
+  totalSummary,
+  couponCartDetail,
+  currency,
+  couponCode,
+  setCouponCode,
+  doApplyCouponCode,
+  CouponLoading,
+  removeCoupon,
+}) => {
   return (
     <>
       <div className="col-md-12 col-sm-12 col-md-2-5">
@@ -82,3 +75,19 @@ const OrderSummary = (props) => {
   );
 };
 export default OrderSummary;
+
+OrderSummary.propTypes = {
+  cartLoading: PropTypes.bool.isRequired,
+  cartItems: PropTypes.array.isRequired,
+  removeToCart: PropTypes.func.isRequired,
+  updateCartProductQuantity: PropTypes.func.isRequired,
+  currencyOption: PropTypes.any,
+  totalSummary: PropTypes.object.isRequired,
+  couponCartDetail: PropTypes.object.isRequired,
+  currency: PropTypes.any,
+  couponCode: PropTypes.any,
+  setCouponCode: PropTypes.func.isRequired,
+  doApplyCouponCode: PropTypes.func.isRequired,
+  CouponLoading: PropTypes.bool.isRequired,
+  removeCoupon: PropTypes.func.isRequired,
+};

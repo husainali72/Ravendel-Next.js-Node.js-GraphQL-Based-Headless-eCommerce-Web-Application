@@ -1,6 +1,6 @@
-/* eslint-disable react/prop-types */
 import { capitalize } from 'lodash'
 import React from 'react'
+import PropTypes from "prop-types";
 import { Button } from 'react-bootstrap'
 
 const DetailsCard = ({info, btnAction, btnText, title}) => {
@@ -27,7 +27,7 @@ const DetailsCard = ({info, btnAction, btnText, title}) => {
             <div className="checkout-shipping-edit-btn">
             <Button variant="outline-primary" onClick={btnAction}>
                 {btnText}
-            </Button>{" "}
+            </Button>
             </div>
         </div>
     </>
@@ -35,3 +35,10 @@ const DetailsCard = ({info, btnAction, btnText, title}) => {
 }
 
 export default DetailsCard
+
+DetailsCard.propTypes = {
+    info: PropTypes.object.isRequired,
+    btnAction: PropTypes.func.isRequired,
+    btnText: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+};
