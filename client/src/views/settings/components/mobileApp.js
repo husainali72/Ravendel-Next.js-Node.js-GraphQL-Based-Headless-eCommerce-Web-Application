@@ -249,10 +249,16 @@ const MobileAppSetting = () => {
 
   const getChangedPosition = (currentPos, newPos) => {
     const reorderedItem = sectionData[currentPos];
-    sectionData[currentPos] = sectionData[newPos];
-    sectionData[newPos] = reorderedItem;
-    setSectionData(...reorderedItem);
+    const updatedSectionData = [...sectionData]; // Create a copy of sectionData
+  
+    // Swap the items at currentPos and newPos
+    const temp = updatedSectionData[currentPos];
+    updatedSectionData[currentPos] = updatedSectionData[newPos];
+    updatedSectionData[newPos] = temp;
+  
+    setSectionData(updatedSectionData); // Update state with the new array
   };
+  
 
   const imageOnError = (event) => {
     event.target.src = NoImagePlaceHolder;

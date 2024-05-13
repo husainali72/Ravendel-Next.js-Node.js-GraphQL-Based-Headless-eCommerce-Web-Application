@@ -4,24 +4,21 @@ import { SEARCH_PRODUCTS_QUERY } from "../queries/productquery";
 import { queryWithoutToken } from "../utills/helpers";
 import { get } from "lodash";
 import OnSaleProductCard from "../components/category/onSaleProductCard";
-import ReactPaginate from "react-paginate";
+import Pagination from "../components/pagination";
 
 const SearchResult = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const limit = 10;
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1); // Start from page 1
   const [totalPages, setTotalPages] = useState(0);
-  const handlePageChange = ({ selected }) => {
-    setCurrentPage(selected);
-  };
 
   useEffect(() => {
     const { query } = router.query;
     if (query) {
-      let variables = {
+      const variables = {
         searchTerm: query,
-        page: currentPage + 1, // Increment currentPage by 1 to match 1-based indexing
+        page: currentPage,
         limit,
       };
       getSearchResult(variables);
@@ -31,43 +28,34 @@ const SearchResult = () => {
   const getSearchResult = (variables) => {
     queryWithoutToken(SEARCH_PRODUCTS_QUERY, variables)
       .then((response) => {
-        const searchedProducts = get(response, "data.searchProducts.products", []);
+        const searchedProducts = get(
+          response,
+          "data.searchProducts.products",
+          []
+        );
         const totalCount = get(response, "data.searchProducts.count", 0);
-        setProducts({ searchedProducts, totalCount });
+        setProducts(searchedProducts);
         const calculatedTotalPages = Math.ceil(totalCount / limit);
-        setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1); // Ensure totalPages is at least 1
+        setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
       })
-      .catch(async (error) => {
+      .catch((error) => {
         console.log(error, "error");
       });
   };
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div>
-      <OnSaleProductCard onSaleProduct={products.searchedProducts} hideTitle={true} />
-      {totalPages > 0 && (
-        <div className="results-showMoreContainer">
-          <div className="pagination-container">
-            <p className="pagination-paginationMeta">
-              Page {currentPage + 1} of {totalPages}
-            </p>
-            <ReactPaginate
-              pageCount={totalPages}
-              pageRangeDisplayed={5}
-              marginPagesDisplayed={2}
-              onPageChange={handlePageChange}
-              activeClassName={"active"}
-              previousLabel={"Previous"}
-              nextLabel={"Next"}
-              breakLabel={"..."}
-              pageLinkClassName={"page-link"}
-              previousLinkClassName={"pagination-prev-link"}
-              nextLinkClassName={"pagination-prev-link"}
-              previousClassName={"pagination-prev"}
-              nextClassName={"pagination-next"}
-            />
-          </div>
-        </div>
+      <OnSaleProductCard onSaleProduct={products} hideTitle={true} />
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       )}
     </div>
   );

@@ -209,6 +209,11 @@ module.exports = `
     sort: customObject
   }
 
+  type searchProductsResponse {
+    count: Int
+    products: [Product]
+  }
+
   extend type Query {
     getCategoryPageData(
       mainFilter: customObject
@@ -240,7 +245,7 @@ module.exports = `
       searchTerm: String!
       page: Int!,
       limit: Int!
-    ): [Product]
+    ): searchProductsResponse
     productswithcat: products_with_cat_RES
     featureproducts: [Product]
     recentproducts: [Product]
@@ -251,6 +256,8 @@ module.exports = `
     filteredProducts(filter: customObject): [Product]
     relatedProducts(category: customArray, productID: ID): [Product]
     onSaleProducts: [Product]
+    additionalDetails(productId: ID!): customArray
+    parentCategories: productCategoriesRES
   }
 
   extend type Mutation {

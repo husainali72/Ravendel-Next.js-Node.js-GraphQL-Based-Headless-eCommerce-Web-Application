@@ -18,6 +18,7 @@ module.exports = `
     _id: ID,
     combinations: [Combination]
     productId: ID
+    productUrl: String
   }
   type Combination {
     attributeId: ID,
@@ -33,11 +34,6 @@ module.exports = `
     message: statusSchema
   }
 
-  extend type Query {
-    groups: GroupsResponse
-    group(id: ID!): GroupResponse 
-  }
-
   input AttributeInput {
     _id: ID,
     value: String
@@ -47,12 +43,19 @@ module.exports = `
     _id: ID,
     combinations: [CombinationInput]
     productId: ID
+    productUrl: String
   }
   input CombinationInput {
     attributeId: ID,
     attributeValueId: ID,
   }
   
+  
+  extend type Query {
+    groups: GroupsResponse
+    group(id: ID!): GroupResponse
+    availableProducts(groupId: ID): customArray
+  }
   extend type Mutation {
     addGroup(
       title: String!

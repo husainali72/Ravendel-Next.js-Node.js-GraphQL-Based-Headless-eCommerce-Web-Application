@@ -100,7 +100,7 @@ const SingleCategoryProduct = () => {
   return (
     <div>
       {/* <Meta title={singlecategory?.meta?.title} description={singlecategory?.meta?.description} keywords={singlecategory?.meta?.keywords}/> */}
-      <PageTitle title={"category"} />
+      <PageTitle title={"Collection"} />
       {get(filteredProductData, "isMostParentCategory") ? (
         <ParentCategories
           categories={get(filteredProductData, "mostParentCategoryData", {})}

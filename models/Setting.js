@@ -397,6 +397,9 @@ const SeetingSchema = new Schema(
         },
         logo: {
           type: String
+        },
+        placeholder_image: {
+          type: String
         }
       },
     },
@@ -623,7 +626,8 @@ module.exports.createSettings = async () => {
         primary_color: "#154050",
         playstore: "https://play.google.com/store/apps/details?id=com.ravendel",
         appstore: "https://apps.apple.com/us/app/ravendel/id1351162341",
-        logo: ""
+        logo: "",
+        placeholder_image: ""
       },
       mobile: {
         slider: [
