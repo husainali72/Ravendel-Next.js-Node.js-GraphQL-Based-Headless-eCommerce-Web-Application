@@ -6283,3 +6283,21 @@ font-size: 12px;
   align-items: center;
   gap: 12px;
 }
+.option-wrapper button{
+  background-color: unset;
+  color: #636363;
+  border: 1px solid #888;
+  border-radius: 4px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  min-width: 32px;
+}
+.option-wrapper button.active{
+  border-color: #088178;
+  font-weight: 500;
+  color: #088178;
+  background-color: #DCF0EF;
+}

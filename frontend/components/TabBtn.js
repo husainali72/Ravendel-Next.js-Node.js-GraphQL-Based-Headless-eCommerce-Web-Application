@@ -30,7 +30,7 @@ const TabBtn = ({ label, values, onChange, options, error }) => {
       <div className="option-wrapper">
         {options?.map((option) => (
             <div key={get(option, "value", "")} className="option">
-                <button name={label} className={`${option.value === values ? 'active' : ''}`} onChange={() => onChange(get(option, "value", ""))}>
+                <button name={label} className={`${option.value === values ? 'active' : ''}`} onClick={() => onChange(get(option, "value", ""))}>
                     {capitalize(get(option, "label", ""))}
                 </button>
             </div>
