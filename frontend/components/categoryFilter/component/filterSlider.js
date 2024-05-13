@@ -8,7 +8,7 @@ import Price from "../../priceWithCurrency";
 const FilterSlider = ({ data, handleFilterChange }) => {
   return (
     <>
-      <div style={{ marginTop: "30px" }}>
+      <div style={{ marginTop: "24px" }}>
         <MultiRangeSlider
           min={get(data, "data.minPrice")}
           max={get(data, "data.maxPrice")}
@@ -27,7 +27,7 @@ const FilterSlider = ({ data, handleFilterChange }) => {
             }
           }}
         />
-        <p style={{ paddingTop: "10px", color: "grey" }}>
+        <p className="range-value">
           Range :{" "}
           <Price
             price={get(data, "select.minPrice", get(data, "data.minPrice"))}

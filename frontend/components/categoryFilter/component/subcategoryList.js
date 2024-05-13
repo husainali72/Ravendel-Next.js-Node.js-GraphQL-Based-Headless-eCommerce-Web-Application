@@ -15,7 +15,7 @@ const CategoryName = ({ name, className }) => (
 const CategoryLink = ({ url, name, isSelected, className }) => {
   const router = useRouter();
   const customClassName = `fw-semibold cursor-pointer mb-1 parent-category ${className} ${
-    isSelected ? "text-black" : ""
+    isSelected ? "active" : ""
   }`;
 
   if (!isCurrentCategory(url, router)) {

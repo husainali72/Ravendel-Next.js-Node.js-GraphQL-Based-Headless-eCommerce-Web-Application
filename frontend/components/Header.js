@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { SlHandbag } from "react-icons/sl";
 import { OpenNav, CloseNav } from "../utills/app";
 import ShopCartProducts from "./cardcomponent/ShopCartProduct";
+import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useSession } from "next-auth/react";
@@ -10,12 +12,9 @@ import { logoutDispatch } from "../redux/actions/userlogoutAction";
 import { logoutAndClearData } from "../utills/helpers";
 import { getSettings } from "../redux/actions/settingAction";
 import { calculateUserCart } from "../redux/actions/cartAction";
-import { Toaster } from "react-hot-toast";
 import { get } from "lodash";
 import PropTypes from "prop-types";
 import ProductImage from "./imageComponent";
-import AlertModal from "./alert/alertModal";
-import { expiredTimeErrorMessage } from "./validationMessages";
 import NavBar from "./navBar/navBar";
 import Search from "./globalSearch/globalSearch";
 const SessionCheckInterval = 60000;
@@ -229,38 +228,52 @@ const Header = ({ setOpenMenu }) => {
                 </ul>
               </nav>      */}
               <NavBar setOpenMenu={setOpenMenu}/>
-              <Search/>
-            <div>
-                <div className="dropdown cart-btn">
-                  <Link href="/shopcart">
-                    <div className="add-to-cart-header">
-                      <a className="cart-icon action-btn">
-                        <i
-                          className="fas fa-shopping-bag font-awesome-icon"
-                          aria-hidden="true"
-                        ></i>
-                      </a>
-                      <span className="pro-count blue">{cartItem?.length}</span>
+              <div className="nav-actions">
+                <Search/>
+                <div className="action-btn-wrapper">
+                    <div className="dropdown cart-btn">
+                      <Link href="/shopcart">
+                        <div className="add-to-cart-header">
+                          <a className="cart-icon action-btn">
+                            <SlHandbag />
+                          </a>
+                          <span className="pro-count blue">{cartItem?.length}</span>
+                        </div>
+                      </Link>
+                      <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
+                        <ShopCartProducts />
+                      </div>
+                      
                     </div>
-                  </Link>
-                  <div className="dropdown-content cart-dropdown-wrap cart-dropdown-hm2">
-                    <ShopCartProducts />
+                    <div className="profile-btn">
+                      <a className="action-btn profile">
+                        <HiOutlineUserCircle/>
+                      </a>
+                      <div className="dropdown-content">
+                        <Link href='/account'>My Account</Link>
+                        {data?.status === "authenticated" ? (
+                          <a onClick={logOutUser}>Logout</a>
+                          ):(
+                            <Link href='/login'>Login/Signup</Link>
+                          )
+                        }
+                      </div>
+                    </div>
+                    <div className="navigation-icon">
+                      <i
+                        className="fas fa-bars open-nav"
+                        id="openNav"
+                        onClick={() => OpenNav()}
+                      ></i>
+                      <i
+                        className="fas fa-times close-nav"
+                        id="closeNav"
+                        onClick={() => CloseNav()}
+                      ></i>
+                    </div>
                   </div>
                 </div>
-                <div className="navigation-icon">
-                  <i
-                    className="fas fa-bars open-nav"
-                    id="openNav"
-                    onClick={() => OpenNav()}
-                  ></i>
-                  <i
-                    className="fas fa-times close-nav"
-                    id="closeNav"
-                    onClick={() => CloseNav()}
-                  ></i>
-                </div>
               </div>
-            </div>
           </div>
         </Container>
       </div>

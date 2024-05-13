@@ -18,7 +18,7 @@ const Price = ({ price }) => {
   }, [settings]);
   return (
     <>
-      {currency} {getPrice(formatNumber(price), currencyOption)}
+      {currency}{getPrice(formatNumber(price), currencyOption)}
     </>
   );
 };
