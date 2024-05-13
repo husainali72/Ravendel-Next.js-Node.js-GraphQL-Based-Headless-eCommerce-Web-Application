@@ -16,6 +16,7 @@ import PropTypes from "prop-types";
 import ProductImage from "./imageComponent";
 import AlertModal from "./alert/alertModal";
 import { expiredTimeErrorMessage } from "./validationMessages";
+import Search from "./globalSearch/globalSearch";
 const SessionCheckInterval = 60000;
 const Header = ({ setOpenMenu }) => {
   const data = useSession();
@@ -225,8 +226,9 @@ const Header = ({ setOpenMenu }) => {
                     </Link>
                   </li>
                 </ul>
-              </nav>
+              </nav>     
             </div>
+            <Search/>
             <div>
               <div className="dropdown cart-btn">
                 <Link href="/shopcart">
