@@ -153,12 +153,6 @@ const SeetingSchema = new Schema(
         low_stock_threshold: {
           type: Number,
         },
-        out_of_stock_threshold: {
-          type: Number,
-        },
-        out_of_stock_visibility: {
-          type: Boolean,
-        },
         stock_display_format: {
           type: String,
         },
@@ -507,8 +501,6 @@ module.exports.createSettings = async () => {
         },
         notification_recipients: "abc@gmail.com, xyz@gmail.com",
         low_stock_threshold: 5,
-        out_of_stock_threshold: 1,
-        out_of_stock_visibility: true,
         stock_display_format: "1",
         left_quantity: "0"
       },
