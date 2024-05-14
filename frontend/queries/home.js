@@ -142,6 +142,7 @@ export const GET_HOMEPAGE_QUERY = gql`
         name
         url
         image
+        thumbnail
       }
       sections {
         name

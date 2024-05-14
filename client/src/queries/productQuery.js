@@ -83,6 +83,7 @@ const GET_CATEGORIES = gql`
         parentId
         url
         description
+        thumbnail
         image
         meta
         date
