@@ -840,7 +840,7 @@ module.exports = {
     },
     searchProducts: async (root, args, { id }) => {
       let {searchTerm, page, limit} = args
-      searchTerm = searchTerm.split(" ")
+      searchTerm = searchTerm.trim().split(" ")
       const regexPattern = searchTerm.map(search => `(?=.*${search})`).join('|');
       const searchRegex = new RegExp(regexPattern, "i")
       
@@ -1378,9 +1378,13 @@ module.exports = {
           updated: -1
         }
       }
+      const limitStage = {
+        $limit: 10
+      }
       const relatedProducts = await Product.aggregate([
         matchStage,
-        sortStage
+        sortStage,
+        limitStage
       ])
 
       additionalDetails.push({

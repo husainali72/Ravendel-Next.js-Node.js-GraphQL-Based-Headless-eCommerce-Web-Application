@@ -11,12 +11,7 @@ import {
 } from "../../utills/helpers";
 import { useRouter } from "next/router";
 
-
-const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
-
 const LOCAL_STORAGE_EXPIRATION_TIME = 6 * 60 * 60 * 1000;
-
-// const SIX_HOURS_MS =1* 60 * 1000;
 const NavBar = () => {
   const [parentCategories, setParentCategories] = useState([]);
   const router = useRouter();

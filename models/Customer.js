@@ -85,6 +85,7 @@ const CustomerSchema = new Schema({
       },
     ],
   },
+  refreshToken: String,
   date: {
     type: Date,
     default: Date.now,

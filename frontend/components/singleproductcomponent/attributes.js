@@ -7,7 +7,6 @@ import TabBtn from "../TabBtn";
 const AttributeSelector = ({
   attributes,
   variations,
-  error,
   getSelectedAttributes
 }) => {
   const router = useRouter();
