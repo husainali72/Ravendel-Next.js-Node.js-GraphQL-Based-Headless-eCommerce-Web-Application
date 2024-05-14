@@ -34,6 +34,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
           data: updatedData,
         };
         setFilteredData(updatedFilterData);
+        handleFilter(updatedFilterData);
         break;
       case RANGE:
         currentValue = filterData[index];
@@ -69,11 +70,11 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
           data: updatedData,
         };
         setFilteredData(updatedFilterData);
+        handleFilter(updatedFilterData);
         break;
       default:
         break;
     }
-    handleFilter(updatedFilterData);
   };
 
 
@@ -111,6 +112,9 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
                       body={
                         <FilterSlider
                           data={filter}
+                          onBlur={() =>
+                            handleFilter(filterData)
+                          }
                           handleFilterChange={(e) =>
                             handleFilterChange(e, index, get(filter, "type"))
                           }

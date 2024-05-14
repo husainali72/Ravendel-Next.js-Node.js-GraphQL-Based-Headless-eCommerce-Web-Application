@@ -1,9 +1,9 @@
-/* eslint-disable react/prop-types */
+
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import classnames from "classnames";
+import PropTypes from "prop-types";
 
-
-const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue }) => {
+const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue,onBlur }) => {
     const [minVal, setMinVal] = useState(min);
     const [maxVal, setMaxVal] = useState(max);
     const minValRef = useRef(null);
@@ -44,6 +44,7 @@ const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue }) => {
         <div>
             <input
                 type="range"
+                onBlur={onBlur}
                 min={min}
                 max={max}
                 value={minValue}
@@ -62,6 +63,7 @@ const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue }) => {
                 type="range"
                 min={min}
                 max={max}
+                onBlur={onBlur}
                 value={maxValue}
                 ref={maxValRef}
                 onChange={(event) => {
@@ -82,6 +84,13 @@ const MultiRangeSlider = ({ min, max, onChange,minValue,maxValue }) => {
         </div>
     );
 };
-
+MultiRangeSlider.propTypes = {
+    min: PropTypes.number.isRequired,
+    max: PropTypes.number.isRequired,
+    onChange: PropTypes.func.isRequired,
+    minValue: PropTypes.number.isRequired,
+    maxValue: PropTypes.number.isRequired,
+    onBlur: PropTypes.func.isRequired,
+};
 
 export default MultiRangeSlider;
