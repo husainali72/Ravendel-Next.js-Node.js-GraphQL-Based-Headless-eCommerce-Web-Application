@@ -121,5 +121,12 @@ module.exports = `
       oldPassword: String
       newPassword: String
     ): statusSchema
+    sendForgetPasswordEmail(
+      email: String
+    ): statusSchema
+    verifyForgetPasswordToken(
+      token: String
+      newPassword: String
+    ): statusSchema
   }
 `;
