@@ -52,15 +52,20 @@ export default function DialogBox({ open, handleSubmit, errors, register, onSubm
                                     value: 10,
                                     message: "zip Max length is 10",
                                 },
+                                pattern: {
+                                    value: /^\d{5,10}$/,
+                                    message: "Zip code must be a numeric value between 5 and 10 digits",
+                                },
                             })}
                             error={errors.value ? true : false}
                             onChange={onInputChange}
                         />
                         <p>
                             <small style={{ color: 'red' }}>
-                                {errors.zip?.type === "required" ? errors.zip?.message : undefined}
-                                {errors.zip?.type === "minLength" ? errors.zip?.message : undefined}
-                                {errors.zip?.type === "maxLength" ? errors.zip?.message : undefined}
+                                {errors.zip?.type === "required" ? errors.zip?.message : ''}
+                                {errors.zip?.type === "minLength" ? errors.zip?.message : ''}
+                                {errors.zip?.type === "maxLength" ? errors.zip?.message : ''}
+                                {errors.zip?.type === "pattern" ? errors.zip?.message : ''}
                             </small>
                         </p>
 
