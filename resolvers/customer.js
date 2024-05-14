@@ -318,6 +318,7 @@ module.exports = {
           return MESSAGE_RESPONSE("InvalidOldPassword", null, false);
         }
 
+        sendEmailTemplate("RESET_PASSWORD", customer)
         return MESSAGE_RESPONSE("UpdateSuccess", "Password", true);
       } catch (error) {
         return MESSAGE_RESPONSE("Custom", error.message, false);
@@ -345,7 +346,7 @@ module.exports = {
           firstName: customerData.firstName,
           link: token
         };
-        sendEmailTemplate("RESET_PASSWORD", data)
+        sendEmailTemplate("FORGET_PASSWORD", data)
         return MESSAGE_RESPONSE("SentEmail", null, true);
 
       } catch (error) {
