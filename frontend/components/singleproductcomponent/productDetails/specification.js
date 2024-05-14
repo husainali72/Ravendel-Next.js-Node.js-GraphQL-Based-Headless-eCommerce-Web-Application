@@ -35,12 +35,14 @@ const Specification = ({ specifications }) => {
         {formattedSpecifications?.map((specification, index) => (
           <div key={index} className="specification-group">
             <p className="group-name">{specification?.group}</p>
-            {specification?.values?.map((specificationValues, i) => (
-              <div key={i} className="key-value-container">
-                <p className="specification-key">{specificationValues?.key}</p>
-                <p className="value">{specificationValues?.value}</p>
-              </div>
-            ))}
+            <div className="specs-group">
+              {specification?.values?.map((specificationValues, i) => (
+                <div key={i} className="key-value-container">
+                  <p className="specification-key">{specificationValues?.key}</p>
+                  <p className="value">{specificationValues?.value}</p>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>

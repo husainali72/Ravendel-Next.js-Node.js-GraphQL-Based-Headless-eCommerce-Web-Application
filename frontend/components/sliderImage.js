@@ -83,7 +83,7 @@ const getImageSrc = (gallery, imageType, variantSelect, comboData) => {
 };
   return (
     <>
-      {galleryImages?.length ? (
+      {galleryImages?.length > 1 ? (
         <Slider {...settings}>
           {galleryImages?.map((gallery, index) => (
             <div key={index}>
@@ -101,7 +101,7 @@ const getImageSrc = (gallery, imageType, variantSelect, comboData) => {
           ))}
         </Slider>
       ) : (
-        <ProductImage src="" className="gallery-image" alt="" />
+        <ProductImage src="" className="gallery-image single" alt="" />
       )}
     </>
   );

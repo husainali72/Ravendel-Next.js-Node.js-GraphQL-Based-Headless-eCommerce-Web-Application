@@ -6,9 +6,10 @@ import { get } from "lodash";
 import PropTypes from "prop-types";
 import { FaStar } from "react-icons/fa";
 import Pagination from "../../pagination";
+import moment from "moment";
 const CustomerReviews = ({ productId }) => {
   //   setReviews("productReviews");
-  let limit = 10;
+  let limit = 5;
   const [reviews, setReviews] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -25,27 +26,47 @@ const CustomerReviews = ({ productId }) => {
     } catch (e) {}
   };
   const handlePageChange = ({ selected }) => {
+    console.log(selected)
     setCurrentPage(selected);
   };
   useEffect(() => {
     getCustomerReviews();
   }, [productId, currentPage]);
+  console.log(reviews)
   return (
     <>
-      <div>
-        {reviews?.map((review, i) => (
-          <div className="customer-review" key={i}>
-            <p>{get(review, "rating")}</p>
-            <FaStar />
-            <p>{get(review, "review")}</p>
-          </div>
-        ))}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          handlePageChange={handlePageChange}
-        />
-      </div>
+    {
+      reviews && reviews?.length > 0 &&
+      <>
+        <h5>Customer Reviews</h5>
+        <div>
+          {reviews?.map((review, i) => (
+            <div className="customer-review" key={i}>
+              <div className="rating">
+                <p>{get(review, "rating")}</p>
+                <FaStar />
+              </div>
+              <div className="review">
+                <p>{get(review, "review")}</p>
+                <div>
+                  { (review.customerId.firstName || review.customerId.lastName) &&
+                    <span className="name">{review.customerId.firstName} {" "} {review.customerId.lastName}</span> }
+                    { (review.date) && <span>{moment(review.date).format('DD MMM YYYY')}</span>}
+                </div>
+              </div>
+            </div>
+          ))}
+          {
+            reviews.length > 5 &&
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              handlePageChange={handlePageChange}
+            />
+          }
+        </div>
+      </>
+    }
     </>
   );
 };

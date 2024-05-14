@@ -260,6 +260,7 @@ const EditProductComponent = ({ params }) => {
               }
             }
           }
+          console.log(get(productState, "product.categoryTree", []))
           setProduct({
             ...product,
             ...productState.product,
@@ -293,6 +294,7 @@ const EditProductComponent = ({ params }) => {
 
   const addUpdateProduct = (e) => {
     // product.combinations = combination;
+       console.log(get(productState, "product.categoryTree", []))
     product.taxClass = taxClass;
     let combination_error = "";
     let combination_price_error = "";
@@ -393,6 +395,7 @@ const EditProductComponent = ({ params }) => {
       let price = get(product, "pricing.price");
       let sellprice = get(product, "pricing.sellprice");
       if (price >= sellprice && sellprice <= price) {
+        console.log(product,'=========  ')
         if (productId) {
           product.update_gallery_image = gallery;
           dispatch(

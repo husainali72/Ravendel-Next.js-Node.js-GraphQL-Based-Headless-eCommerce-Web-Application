@@ -17,7 +17,8 @@ const OnSaleProductCard = ({
   titleShow,
   showRemoveButton,
   removeButton,
-  display_type
+  display_type,
+  showcaseType
 }) => {
   const [showWishListButton, setShowWishListButton] = useState(-1);
   const [isProductInWistList, setIsProductInWistList] = useState(-1);
@@ -52,7 +53,7 @@ const OnSaleProductCard = ({
         ) : null}
         <div>
           {
-            display_type && display_type === "SLIDER" ?
+            (display_type && display_type === "SLIDER" || showcaseType === 'slider') ?
             <section className="product-cart-section home-page">
               <Container className="container">
                 <MdChevronLeft
@@ -325,7 +326,7 @@ const OnSaleProductCard = ({
                 </>
               ) : (
                 <div className="onsale-no-data">
-                  <p>No Data Found</p>
+                  <p>No Products Found</p>
                 </div>
               )}
             </div>
@@ -342,6 +343,7 @@ OnSaleProductCard.propTypes = {
   currencyOpt: PropTypes.object,
   showRemoveButton: PropTypes.bool,
   removeButton: PropTypes.func,
-  display_type: PropTypes.string
+  display_type: PropTypes.string,
+  showcaseType: PropTypes.string,
 };
 export default OnSaleProductCard;

@@ -1,13 +1,15 @@
 import PropTypes from "prop-types";
 import LevelWiseRating from "./levelWiseRating";
 import { FaStar } from "react-icons/fa";
-const CustomerRating=({rating,ratingCount,levelWiseRating})=>{
+const CustomerRating=({rating, levelWiseRating})=>{
     return (
-        <>
-        <h1>{rating} <FaStar /></h1>
-        <p>{ratingCount} Verified by buyers</p>
-        <LevelWiseRating levelWiseRating={levelWiseRating}/>
-        </>
+        <div className="ratings">
+            <div>
+                <h2>{rating} <FaStar /></h2>
+                {/* <p>{ratingCount} Verified by buyers</p> */}
+            </div>
+            <LevelWiseRating levelWiseRating={levelWiseRating}/>
+        </div>
     )
 }
 CustomerRating.propTypes = {

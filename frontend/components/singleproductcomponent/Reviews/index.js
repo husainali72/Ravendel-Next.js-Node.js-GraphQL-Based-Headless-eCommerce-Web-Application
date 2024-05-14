@@ -12,14 +12,12 @@ const Reviews = ({ product }) => {
   const { rating, ratingCount, levelWiseRating } = product;
 
   return (
-    <div>
-      <h5>Customer Reviews</h5>
+    <div className="product-review">
       <CustomerRating
         rating={rating}
         ratingCount={ratingCount}
         levelWiseRating={levelWiseRating}
-      />
-      <hr />
+        />
       <CustomerReviews productId={get(product, "_id")} />
     </div>
   );
