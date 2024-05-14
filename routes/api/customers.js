@@ -110,7 +110,7 @@ router.post("/login", (req, res) => {
           const tokenExpiresIn = 36000;
           let expiry = new Date();
           expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);
-          let newCustomer = {
+          let customerObject = {
             ...customer
           }
           // Sign Token
@@ -118,7 +118,7 @@ router.post("/login", (req, res) => {
             let data = {
               success: true,
               token: token,
-              newCustomer,
+              customer: customerObject,
               expiry,
             }
             res.status(200).json(data);
