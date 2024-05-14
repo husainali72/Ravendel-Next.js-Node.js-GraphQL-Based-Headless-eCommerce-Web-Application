@@ -296,56 +296,105 @@ module.exports = {
         return MESSAGE_RESPONSE("DeleteSuccess", "Address", true);
       },
     resetPassword: async (root, args, { id }) => {
-      const bcrypt = require("bcryptjs");
-      const pattern = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
+      try {
+        const pattern = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
 
-      const customer = await Customer.findOne({ email: args.email });
-      if (!customer) {
-        return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
+        const customer = await Customer.findOne({ email: args.email });
+        if (!customer) {
+          return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
+        }
+
+        let match = await bcrypt.compare(args.oldPassword, customer.password);
+
+        if (match) {
+          let isValid = pattern.test(args.newPassword);
+          if (isValid) {
+            customer.password = await bcrypt.hash(args.newPassword, 10);
+            await customer.save();
+          } else {
+            return MESSAGE_RESPONSE("InvalidPassword", null, false);
+          }
+        } else {
+          return MESSAGE_RESPONSE("InvalidOldPassword", null, false);
+        }
+
+        return MESSAGE_RESPONSE("UpdateSuccess", "Password", true);
+      } catch (error) {
+        return MESSAGE_RESPONSE("Custom", error.message, false);
+      }
+    },
+    sendForgetPasswordEmail: async (root, args, { id }) => {
+      try {
+        let email = args.email;
+        if (!email || "") {
+          return MESSAGE_RESPONSE("Required", "Email ", false);
+        }
+
+        let customerData = await Customer.findOne({ email })
+
+        if (!customerData) {
+          return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
+        }
+
+        const token = jwt.sign({ email: customerData.email, userId: customerData._id }, APP_KEYS.jwtSecret, { expiresIn: '15m' });
+        customerData.refreshToken = token;
+        await customerData.save();
+
+        let data = {
+          email: customerData.email,
+          firstName: customerData.firstName,
+          link: token
+        };
+        sendEmailTemplate("RESET_PASSWORD", data)
+        return MESSAGE_RESPONSE("SentEmail", null, true);
+
+      } catch (error) {
+        return MESSAGE_RESPONSE("Custom", error.message, false);
       }
 
-      let match = await bcrypt.compare(args.oldPassword, customer.password);
+    },
+    verifyForgetPasswordToken: async (root, args, { id }) => {
+      try {
+        let { token, newPassword } = args;
+        let validation = ["token", "newPassword"];
+        const errors = _validate(validation, args);
 
-      if (match) {
+        if (!isEmpty(errors)) {
+          return {
+            message: errors,
+            success: false,
+          };
+        }
+
+        const pattern = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
         let isValid = pattern.test(args.newPassword);
-        if (isValid) {
-          customer.password = await bcrypt.hash(args.newPassword, 10);
-          await customer.save();
-        } else {
+        if (!isValid) {
           return MESSAGE_RESPONSE("InvalidPassword", null, false);
         }
-      } else {
-        return MESSAGE_RESPONSE("InvalidOldPassword", null, false);
+
+        let verifiedToken = jwt.verify(args.token, APP_KEYS.jwtSecret);
+
+        let customerData = await Customer.findOne({ email: verifiedToken.email });
+        if (!customerData) {
+          return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
+        }
+
+        if (customerData.refreshToken === token) {
+          customerData.password = await bcrypt.hash(newPassword, 10);
+          customerData.refreshToken = null
+          await customerData.save()
+          return MESSAGE_RESPONSE("UpdateSuccess", "Password", true);
+        } else {
+          return MESSAGE_RESPONSE("Custom", "Something went wrong", false);
+        }
+
+
+      } catch (error) {
+        if (error.message === "jwt expired") {
+          return MESSAGE_RESPONSE("Custom", "Link is expired, please try again", false);
+        }
+        return MESSAGE_RESPONSE("Custom", "Something went wrong", false);
       }
-
-      return MESSAGE_RESPONSE("UpdateSuccess", "Password", true);
-    },
-    sendForgetPasswordEmail: async (root, args, {id}) => {
-      let email = args.email;
-      if(!email || ""){
-        return MESSAGE_RESPONSE("Required", "Email ", false);
-      }
-
-      let customerData = await Customer.findOne({email})
-
-      if(!customerData){
-        return MESSAGE_RESPONSE("NOT_FOUND", "User", false);
-      }
-
-      const token = jwt.sign({ email: customerData.email, userId: customerData._id }, APP_KEYS.jwtSecret, { expiresIn: '15m' });
-      customerData.refreshToken = token;
-      await customerData.save();
-      console.log(token);
-      let data = {
-        email : customerData.email,
-        firstName: customerData.firstName,
-        link: token
-      };
-      sendEmailTemplate("RESET_PASSWORD", data)
-
-      
-      return MESSAGE_RESPONSE("SentEmail", null, true);
-
     }
   },
 };

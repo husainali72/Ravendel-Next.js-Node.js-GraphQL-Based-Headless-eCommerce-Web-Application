@@ -63,5 +63,6 @@ module.exports = {
   OutOfStock: "Only :item available in stock",
   PaymentNotConfigured: "Currently we are not accepting payment from :item, please choose any other payment mode",
   PaymentUnpaid: "Payment is not completed",
-  SentEmail: "Email sent successfully"
+  SentEmail: "Email sent successfully",
+  Custom: ":item"
 };

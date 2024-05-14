@@ -124,5 +124,9 @@ module.exports = `
     sendForgetPasswordEmail(
       email: String
     ): statusSchema
+    verifyForgetPasswordToken(
+      token: String
+      newPassword: String
+    ): statusSchema
   }
 `;
