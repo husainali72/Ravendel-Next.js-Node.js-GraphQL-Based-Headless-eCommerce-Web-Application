@@ -7,7 +7,7 @@ import FilterCheckbox from "./component/filterCheckbox";
 import { ARRAY, CHOICE, RANGE } from "./constant";
 import AccordionComponent from "../accordian";
 
-const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
+const CategoryFilter = ({ filterCategoryData, handleFilter, clearFilter }) => {
   const [filterData, setFilteredData] = useState([]);
   useEffect(() => {
     setFilteredData(filterCategoryData);
@@ -76,12 +76,13 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
         break;
     }
   };
-
-
   return (
     <div className=" category-filter-container">
       <div className="filter-heading-container">
-      <h4 className="category-section-title">Filters</h4>
+        <h4 className="category-section-title">Filters</h4>
+        <button className="clear-filters-btn" onClick={clearFilter}>
+          Clear Filters
+        </button>
       </div>
       {filterData?.map((filter, index) => (
         <div key={index} className="filter-section">
@@ -112,9 +113,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
                       body={
                         <FilterSlider
                           data={filter}
-                          onBlur={() =>
-                            handleFilter(filterData)
-                          }
+                          onBlur={() => handleFilter(filterData)}
                           handleFilterChange={(e) =>
                             handleFilterChange(e, index, get(filter, "type"))
                           }
@@ -150,6 +149,7 @@ const CategoryFilter = ({ filterCategoryData, handleFilter }) => {
 };
 CategoryFilter.propTypes = {
   handleFilter: PropTypes.func.isRequired,
+  clearFilter: PropTypes.func.isRequired,
   filterCategoryData: PropTypes.array.isRequired,
 };
 
