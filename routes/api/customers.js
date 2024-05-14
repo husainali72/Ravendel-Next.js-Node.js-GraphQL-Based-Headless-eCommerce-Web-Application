@@ -110,15 +110,18 @@ router.post("/login", (req, res) => {
           const tokenExpiresIn = 36000;
           let expiry = new Date();
           expiry.setSeconds(expiry.getSeconds() + tokenExpiresIn);
-          delete customer.addressBook;
+          let newCustomer = {
+            ...customer
+          }
           // Sign Token
           jwt.sign(payload, APP_KEYS.jwtSecret, { expiresIn: tokenExpiresIn }, (err, token) => {
-            res.status(200).json({
+            let data = {
               success: true,
               token: token,
-              customer,
+              newCustomer,
               expiry,
-            });
+            }
+            res.status(200).json(data);
           });
         } else {
           return res.status(404).json({ success: false, message: "Invalid credentials." });
