@@ -1010,6 +1010,7 @@ module.exports.emptyCart = emptyCart;
 
 const addZipcodes = async (zipcode_file, filepath, modal) => {
   try {
+    const zipcodeRegex = /^\S{4,}$/;
     let { filename, mimetype, encoding, createReadStream } = await zipcode_file.file;
     const stream = createReadStream();
 
@@ -1037,11 +1038,10 @@ const addZipcodes = async (zipcode_file, filepath, modal) => {
     if (fs.existsSync(path)) {
       let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
       csvData = csvData.split(",");
-
+      const allZipCode = await modal.find({});
       for (let zipcode of csvData) {
-        if (zipcode.length >= 5 && zipcode.length <= 10) {
-          const existingZipcode = await modal.findOne({ zipcode });
-          if (!existingZipcode) {
+        if (zipcodeRegex.test(zipcode)) {
+          if (!allZipCode.some(item => item.zipcode === zipcode)) {
             const newZipcode = new modal({ zipcode });
             await newZipcode.save();
           }
