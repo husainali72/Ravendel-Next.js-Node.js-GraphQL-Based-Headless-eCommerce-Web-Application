@@ -32,7 +32,7 @@ const CustomerReviews = ({ productId }) => {
   useEffect(() => {
     getCustomerReviews();
   }, [productId, currentPage]);
-  console.log(reviews)
+  
   return (
     <>
     {

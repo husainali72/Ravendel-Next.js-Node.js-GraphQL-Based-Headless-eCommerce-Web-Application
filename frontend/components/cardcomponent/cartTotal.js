@@ -20,8 +20,7 @@ const CartTotalDetails=({totalSummary,cartItems})=>{
     return (
         <div className="price-detail-base-container">
         <div className="price-detail">
-          <h4 className="price-detail-heading">PRICE DETAILS</h4>
-          <Divider className="cart-price-divider" />
+          {/* <Divider className="cart-price-divider" /> */}
           <div className="carttotal-detail">
             <p className="mrp-price">Total MRP</p>
             <p className="mtb2" style={{ fontSize: "14px" }}>
@@ -58,7 +57,7 @@ const CartTotalDetails=({totalSummary,cartItems})=>{
           </div>
 
           <Divider />
-          <div className="priceDetail-base-row marginTop">
+          <div className="priceDetail-base-row marginTop total">
             <p className="mrp-price">Total Amount</p>
             <p className="mtb2 textRight">
               {" "}
@@ -68,7 +67,7 @@ const CartTotalDetails=({totalSummary,cartItems})=>{
 
             <button className="card-btons text-align-center primary-btn-color" onClick={handlePlaceOrder}>
               <i className="fas fa-archive"></i>
-              <span className="text-align-center">PLACE ORDER</span>
+              <span className="text-align-center">Checkout</span>
             </button>
  
         </div>

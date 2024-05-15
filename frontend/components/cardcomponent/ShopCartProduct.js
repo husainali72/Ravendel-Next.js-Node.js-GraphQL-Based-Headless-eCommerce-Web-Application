@@ -105,7 +105,7 @@ export const ShopCart = () => {
                                                 }}
                                             ></h5>) : <h5>{item.name}</h5>}</h5>
                                 </Link>
-                                <h3><span>{item.quantity} × </span>{currency} {item.pricing?.sellprice ? item.pricing?.sellprice.toFixed(2) : item.pricing?.price.toFixed(2)}</h3>
+                                <h3><span>{item.quantity} × </span>{currency} {item.pricing?.sellprice ? item.pricing?.sellprice.toFixed(2) : item.pricing?.price?.toFixed(2)}</h3>
                             </div>
                             <div className="shopping-cart-delete">
                                 <a onClick={() => removeToCart(item)}><i className="fas fa-times"></i></a>

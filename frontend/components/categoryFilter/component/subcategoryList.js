@@ -14,7 +14,7 @@ const CategoryName = ({ name, className }) => (
 );
 const CategoryLink = ({ url, name, isSelected, className }) => {
   const router = useRouter();
-  const customClassName = `fw-semibold cursor-pointer parent-category ${className} ${
+  const customClassName = `cursor-pointer parent-category ${className} ${
     isSelected ? "active" : ""
   }`;
 
@@ -36,7 +36,7 @@ const CategoryLink = ({ url, name, isSelected, className }) => {
 
 const SubCategoryItem = ({ url, name }) => (
   <Link href={generateCategoryUrl(url)?.href} as={generateCategoryUrl(url)?.as}>
-    <li className="fw-semibold cursor-pointer child-categories">{name}</li>
+    <li className="cursor-pointer child-categories">{name}</li>
   </Link>
 );
 

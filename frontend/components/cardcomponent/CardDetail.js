@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
-import { get, upperCase } from "lodash";
+import { get} from "lodash";
 import Link from "next/link";
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
@@ -20,23 +20,14 @@ const CartTable = (props) => {
   return (
     <div>
       <div className="cart-main-container">
-        <div className="bulkActionStrip-desktopContainer">
-          <div className="inlinebuttonV2-base-actions bulkActionStrip-desktopButton">
-            <div className="inlinebuttonV2-base-action bulkActionStrip-desktopActionButton">
-              <button
-                className="inlinebuttonV2-base-actionButton bulkActionStrip-desktopBulkRemove"
-                onClick={clearAllCartItems}
-              >
-                {" "}
-                REMOVE
-              </button>
-            </div>
-            <div className="inlinebuttonV2-base-action bulkActionStrip-desktopActionButton">
-              <button className="inlinebuttonV2-base-actionButton bulkActionStrip-desktopBulkWishlist">
-                MOVE TO WISHLIST
-              </button>
-            </div>
-          </div>
+        <div className="d-flex align-items-center justify-content-between page-head">
+          <h4>My Cart</h4>
+          <button
+            className="inlinebuttonV2-base-actionButton"
+            onClick={clearAllCartItems}
+          >
+            Clear Cart
+          </button>
         </div>
         <div className="itemContainer-base-itemLeft">
           <div className="cart-product-base-container">
@@ -66,47 +57,47 @@ const CartTable = (props) => {
                     {product?.available ? (
                       <Link href={"/product/" + product.url}>
                         <h3 className="cart-product-name  cursor-pointer">
-                          {upperCase(product.name)}
+                          {product.name}
                         </h3>
                       </Link>
                     ) : (
                       <h3 className="cart-product-name">
-                        {upperCase(product.name)}
+                        {product.name}
                       </h3>
                     )}
-                    <p className="cart-product-short-description">
-                      {upperCase(product?.short_description)}
-                    </p>
+                    {/* {
+                      product?.short_description &&
+                      <p className="cart-product-short-description">
+                        {product?.short_description}
+                      </p>
+                    } */}
                   </div>
-                  <div className="itemComponents-base-sellerContainer">
-                    <div className="itemComponents-base-sellerData"></div>
+
+                  <div className="itemContainer-base-price">
+                    <div className="itemComponents-base-price itemComponents-base-bold ">
+                      <div>
+                        <Price price={get(product, "amount", 0)} />
+                      </div>
+                    </div>
+
+                    {get(product, "discountPercentage", 0) !== 0 && (
+                      <div className="itemContainer-base-discountBlock">
+                        <span className="itemComponents-base-strikedAmount">
+                          <span className="itemComponents-base-price itemComponents-base-strike itemContainer-base-strikedAmount">
+                            <Price price={get(product, "mrpAmount", 0)} />
+                          </span>
+                        </span>
+                        <span className="itemComponents-base-itemDiscount">
+                          {get(product, "discountPercentage")}% OFF
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="itemContainer-base-sizeAndQtyContainer">
                     <div className="itemContainer-base-sizeAndQty">
                       <div className="itemComponents-base-quantity">
-                        <label className="quantity-label">QTY : </label>
-                        {/* <FormControl>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="quantitySelect"
-                            className="quantity-button"
-                            value={product.quantity}
-                            onChange={(e) =>
-                              updateCartProductQuantity(
-                                product,
-                                parseInt(e.target.value)
-                              )
-                            }
-                          >
-                            {Array.from(
-                              { length: 20 },
-                              (_, index) => index + 1
-                            ).map((quantity) => (
-                              <MenuItem value={quantity} sx={{fontSize:'12px'}}>{quantity}</MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl> */}
+                        <label className="quantity-label">Qty : </label>
                         <select
                           id="quantitySelect"
                           className="quantity-button"
@@ -134,26 +125,6 @@ const CartTable = (props) => {
                     ) : (
                       <div className="itemComponents-base-lowUnitCount">
                         OUT OF STOCK
-                      </div>
-                    )}
-                  </div>
-                  <div className="itemContainer-base-price">
-                    <div className="itemComponents-base-price itemComponents-base-bold ">
-                      <div>
-                        <Price price={get(product, "amount", 0)} />
-                      </div>
-                    </div>
-
-                    {get(product, "discountPercentage", 0) !== 0 && (
-                      <div className="itemContainer-base-discountBlock">
-                        <span className="itemComponents-base-strikedAmount">
-                          <span className="itemComponents-base-price itemComponents-base-strike itemContainer-base-strikedAmount">
-                            <Price price={get(product, "mrpAmount", 0)} />
-                          </span>
-                        </span>
-                        <span className="itemComponents-base-itemDiscount">
-                          {get(product, "discountPercentage")}% OFF
-                        </span>
                       </div>
                     )}
                   </div>

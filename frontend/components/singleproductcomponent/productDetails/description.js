@@ -26,7 +26,7 @@ const Description = ({ description }) => {
   };
   return (
     <>
-      <div>
+      <div className="product-details">
         <h5>Product Details</h5>
         {description && ReactHtmlParser(description, options)}
       </div>

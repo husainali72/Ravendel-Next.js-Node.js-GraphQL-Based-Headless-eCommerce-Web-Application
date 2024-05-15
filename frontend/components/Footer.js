@@ -71,11 +71,11 @@ export default function Footer() {
   const session = useSession();
   const customerId = session?.data?.user?.accessToken?.customer?._id;
   return (
-    <section className="product-cart-section">
+    <section className="product-cart-section footer">
       <Container>
         <footer className="text-center text-lg-start text-muted">
           <section className="">
-            <div className="container text-center text-md-start">
+            <div className="text-center text-md-start">
               <hr className="hr_divider"></hr>
               <div className="row mt-5">
                 <div className="col-lg-4 col-md-6 mb-4 mt-2">

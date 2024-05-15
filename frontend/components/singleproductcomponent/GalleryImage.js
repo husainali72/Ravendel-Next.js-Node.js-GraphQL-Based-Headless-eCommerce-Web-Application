@@ -213,6 +213,7 @@ const GalleryImagesComponents = (props) => {
                 cart.
               </p>
             )}
+            {console.log(get(singleproduct, "variations"), get(singleproduct, "attributes"))}
             {
               (get(singleproduct, "variations") && get(singleproduct, "variations")?.length > 0) || (get(singleproduct, "attributes") && get(singleproduct, "attributes")?.length > 0) ?
               <div className="varaint-select">

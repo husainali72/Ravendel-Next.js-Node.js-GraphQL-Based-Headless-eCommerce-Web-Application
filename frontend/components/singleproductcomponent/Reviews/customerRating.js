@@ -4,7 +4,7 @@ import { FaStar } from "react-icons/fa";
 const CustomerRating=({rating, levelWiseRating})=>{
     return (
         <div className="ratings">
-            <div>
+            <div className="rating-count">
                 <h2>{rating} <FaStar /></h2>
                 {/* <p>{ratingCount} Verified by buyers</p> */}
             </div>

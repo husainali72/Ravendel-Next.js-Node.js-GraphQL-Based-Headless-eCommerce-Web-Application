@@ -18,8 +18,8 @@ const CategoryBreadCrumb = ({ breadCrumbs, className }) => {
             breadCrumbs?.map((breadCrumb) => {
               return (
                 <>
-                  <p style={{ marginLeft: "10px", marginRight: "10px" }}>
-                    {">"}
+                  <p style={{ marginLeft: "4px", marginRight: "6px", fontWeight: 500, color: '#888' }}>
+                    {"/"}
                   </p>
                   <CategoryLink url={get(breadCrumb, "url")}>
                     <li className="breadcrumb-item page-active breadcrumb-link">
