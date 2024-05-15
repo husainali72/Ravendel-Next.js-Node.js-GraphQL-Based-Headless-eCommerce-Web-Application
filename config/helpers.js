@@ -1008,6 +1008,7 @@ module.exports.emptyCart = emptyCart;
 
 const addZipcodes = async (zipcode_file, filepath, modal) => {
   try {
+    const zipcodeRegex = /^\S{4,}$/;
     let { filename, mimetype, encoding, createReadStream } = await zipcode_file.file;
     const stream = createReadStream();
 
@@ -1035,11 +1036,10 @@ const addZipcodes = async (zipcode_file, filepath, modal) => {
     if (fs.existsSync(path)) {
       let csvData = await readFile(path, { encoding: "utf8", flag: "r" });
       csvData = csvData.split(",");
-
+      const allZipCode = await modal.find({});
       for (let zipcode of csvData) {
-        if (zipcode.length >= 5 && zipcode.length <= 10) {
-          const existingZipcode = await modal.findOne({ zipcode });
-          if (!existingZipcode) {
+        if (zipcodeRegex.test(zipcode)) {
+          if (!allZipCode.some(item => item.zipcode === zipcode)) {
             const newZipcode = new modal({ zipcode });
             await newZipcode.save();
           }
@@ -2033,19 +2033,53 @@ function getBreadcrumb(data) {
 }
 module.exports.getBreadcrumb = getBreadcrumb
 
-const addCategoryAttributes = async (categories, specifications, modal) => {
-  const productAttributes = specifications.map(specification => specification.attributeId)
-  const productCategories = toObjectID(categories)
+const addCategoryAttributes = async (categoryTree, specifications, modal) => {
+  const productAttributes = []
+  for(let spec of specifications) {
+    let attribute = productAttributes.find(prodAttr => prodAttr.attributeId.toString() === spec.attributeId.toString())
+    if(!attribute) {
+      attribute = {
+        attributeId: spec.attributeId,
+        name: spec.key,
+        values: [
+          {
+            attributeValueId: spec.attributeValueId,
+            value: spec.value
+          }
+        ]
+      }
+      productAttributes.push(attribute)
+    } else {
+      let attributeValue = attribute.values.find(attrValue => attrValue.attributeValueId.toString() === spec.attributeValueId.toString())
+      if(!attributeValue) {
+        attributeValue = {
+          attributeValueId: spec.attributeValueId,
+          value: spec.value
+        }
+        attribute.values.push(attributeValue)
+      }
+    }
+
+  }
+  
+  const productCategories = []
+  function getCategoryIds(category) {
+    
+    productCategories.unshift(category.id);
+    
+    if (category.children && category.children.length) {
+      getCategoryIds(category.children[category.children.length - 1])
+    }
+  }
+  getCategoryIds(categoryTree[0])
 
   const bulkWriteQuery = [
     {
       updateMany: {
-        filter: { "_id": {$in: toObjectID(productCategories)} },
+        filter: { "_id": {$in: toObjectID(productCategories[0])} },
         update: {
-          $addToSet: {
-            attributeIds: {
-              $each: productAttributes
-            }
+          $set: {
+            attributes: productAttributes
           }
         }
       }

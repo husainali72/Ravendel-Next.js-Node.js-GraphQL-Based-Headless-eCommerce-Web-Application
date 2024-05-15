@@ -14,6 +14,7 @@ module.exports = {
   ID_ERROR: ":item Id is required",
   URL_ERROR:"Url is required",
   RESULT_FOUND: "All :item are fetched",
+  NOT_FOUND: ":item not found",
   NOT_EXIST: ":item not exist",
   SINGLE_RESULT_FOUND: ":item are fetched",
   Required: ":item is required",
@@ -45,7 +46,7 @@ module.exports = {
   SupportStatusMessage: "Do you want to change status to [STATUS]?",
   oldNewPasswordNotMatch: "New password cannot be the same as old password",
   InvalidPassword:
-    "Password must contain at least one character and one number",
+    "Passwords must have at least 8 characters and contain at least one letter and one number",
   ReservedDomainError: "Please use domain other than reserve one",
 
   Number: "That does not look like a :item",
@@ -61,5 +62,7 @@ module.exports = {
     "Only lv, mp4, 3gp, QuickTime, x-msvideo, x-ms-wmv files are allowed to upload",
   OutOfStock: "Only :item available in stock",
   PaymentNotConfigured: "Currently we are not accepting payment from :item, please choose any other payment mode",
-  PaymentUnpaid: "Payment is not completed"
+  PaymentUnpaid: "Payment is not completed",
+  SentEmail: "Email sent successfully",
+  Custom: ":item"
 };

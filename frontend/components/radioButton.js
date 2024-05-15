@@ -15,7 +15,7 @@ const RadioButton = ({ label, values, onChange, options, error }) => {
               type="radio"
               name={label}
               id={get(option, "value", "")}
-              checked={values}
+              checked={option.value === values}
               onChange={() => onChange(get(option, "value", ""))}
             />
             <label

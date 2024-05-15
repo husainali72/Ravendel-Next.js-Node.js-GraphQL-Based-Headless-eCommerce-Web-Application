@@ -9,7 +9,7 @@ const {
   addZipcodes
 } = require("../config/helpers");
 const { GET_SINGLE_FUNC } = require("../config/api_functions");
-
+const zipcodeRegex = /^\S{4,}$/;
 module.exports = {
   Query: {
     checkZipcode: async (root, args) => {
@@ -57,13 +57,21 @@ module.exports = {
             success: false,
           };
         }
+
+        let isValid = zipcodeRegex.test(args.zipcode)
+
+        if(isValid){
+          const duplicate = await duplicateData({zipcode: args.zipcode}, Zipcode)
+          if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Zipcode", false);
+          
+          const newZipcode = new Zipcode({zipcode: args.zipcode})
+          await newZipcode.save()
+          return MESSAGE_RESPONSE("AddSuccess", "Zipcode", true);
+        }
+        else{
+          return MESSAGE_RESPONSE("InvalidField", "Zipcode", false)
+        }
         
-        const duplicate = await duplicateData({zipcode: args.zipcode}, Zipcode)
-        if(duplicate) return MESSAGE_RESPONSE("DUPLICATE", "Zipcode", false);
-        
-        const newZipcode = new Zipcode({zipcode: args.zipcode})
-        await newZipcode.save()
-        return MESSAGE_RESPONSE("AddSuccess", "Zipcode", true);
       } catch(error) {
         return MESSAGE_RESPONSE("ADD_ERROR", "Zipcode", false)
       }

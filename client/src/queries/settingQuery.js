@@ -163,6 +163,7 @@ const SETTING_TILE_DATA = gql`
         playstore
         appstore
         logo
+        placeholder_image
       }
       mobile {
         slider {
@@ -602,16 +603,20 @@ const UPDATE_APPEARANCE_THEME = gql`
   mutation (
     $primary_color: String
     $new_logo: Upload
+    $new_placeholder_image: Upload
     $playstore: String
     $appstore: String
     $logo: String
+    $placeholder_image: String
   ) {
     updateAppeanranceTheme(
       primary_color: $primary_color
       new_logo: $new_logo
+      new_placeholder_image: $new_placeholder_image
       playstore: $playstore
       appstore: $appstore
       logo: $logo
+      placeholder_image: $placeholder_image
     ) {
       ...SettingTile
     }

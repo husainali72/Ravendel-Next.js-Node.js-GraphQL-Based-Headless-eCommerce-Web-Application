@@ -668,6 +668,9 @@ const viewStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
   },
+  noImage:{
+    width:'50px'
+  }
 }));
 
 export default viewStyles;

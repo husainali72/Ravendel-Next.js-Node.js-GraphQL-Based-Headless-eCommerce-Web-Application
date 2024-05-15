@@ -1,7 +1,7 @@
 import React from "react";
 import ProductImage from "../imageComponent";
 import PropTypes from 'prop-types';
-const RoundCard = ({ name,image }) => {
+const CategoryCard = ({ name,image }) => {
   return (
     <div className="brand-card-container">
       <div className="category-card-image brand-card-image">
@@ -13,8 +13,8 @@ const RoundCard = ({ name,image }) => {
     </div>
   );
 };
-RoundCard.propTypes = {
+CategoryCard.propTypes = {
   name: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
   };
-export default RoundCard;
+export default CategoryCard;

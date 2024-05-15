@@ -145,6 +145,7 @@ export const GET_HOMEPAGE_QUERY = gql`
         thumbnail_image
       }
       sections {
+        display_type
         name
         section_img
         products {
