@@ -90,7 +90,7 @@ let defaultobj = {
   pricing: {
     price: "",
     sellprice: "",
-    discountPercentage:''
+    discountPercentage: "",
   },
   status: "Draft",
   meta: {
@@ -290,7 +290,31 @@ const EditProductComponent = ({ params }) => {
       setfeatureImage(null);
     }
   }, [get(productState, "product"), productId, baseURl, attributes]);
+  const filterTreeData = (data) => {
+    return data.reduce((acc, category) => {
+      const filteredCategory = {
+        id: category?.id,
+        name: category.name,
+        checked: category.checked,
+      };
+      if (category?.children && category?.children?.length > 0) {
+        filteredCategory.children = category?.children;
+      }
 
+      if (category?.checked) {
+        acc.push(filteredCategory);
+      }
+
+      if (category?.children && category?.children?.length > 0) {
+        filteredCategory.children = filterTreeData(category?.children);
+        if (filteredCategory.children.length > 0) {
+          acc.push(filteredCategory);
+        }
+      }
+
+      return acc;
+    }, []);
+  };
   const addUpdateProduct = (e) => {
     // product.combinations = combination;
     product.taxClass = taxClass;
@@ -379,42 +403,45 @@ const EditProductComponent = ({ params }) => {
         product?.specifications &&
         !!product?.specifications?.length &&
         product?.specifications.flatMap((spec) => {
-          if(spec?.customFields && !!spec?.customFields?.length){
-          return spec.customFields.map((field) => ({
-            attributeId: field?.attributeId,
-            key: field?.keyLabel, // Assuming you have a mapping for attributeId to key
-            attributeValueId: field?.attributeValueId,
-            value: field?.valueLabel, // Assuming you have a mapping for attributeValueId to value
-            group: spec.group,
-          }));
-        }return []
+          if (spec?.customFields && !!spec?.customFields?.length) {
+            return spec.customFields.map((field) => ({
+              attributeId: field?.attributeId,
+              key: field?.keyLabel, // Assuming you have a mapping for attributeId to key
+              attributeValueId: field?.attributeValueId,
+              value: field?.valueLabel, // Assuming you have a mapping for attributeValueId to value
+              group: spec.group,
+            }));
+          }
+          return [];
         });
       // product.specifications = transformedSpecifications ? transformedSpecifications : product?.specifications
       let price = get(product, "pricing.price");
       let sellprice = get(product, "pricing.sellprice");
       if (price >= sellprice && sellprice <= price) {
+        const filteredData = filterTreeData(get(product, "categoryTree", []));
+        let singleProductPayload = { ...product, categoryTree: filteredData };
         if (productId) {
-          product.update_gallery_image = gallery;
+          singleProductPayload.update_gallery_image = gallery;
           dispatch(
             productUpdateAction(
               {
-                ...product,
+                ...singleProductPayload,
                 specifications: transformedSpecifications
                   ? transformedSpecifications
-                  : product?.specifications,
+                  : singleProductPayload?.specifications,
               },
               navigate
             )
           );
         } else {
-          product.gallery_image = gallery;
+          singleProductPayload.gallery_image = gallery;
           dispatch(
             productAddAction(
               {
-                ...product,
+                ...singleProductPayload,
                 specifications: transformedSpecifications
                   ? transformedSpecifications
-                  : product?.specifications,
+                  : singleProductPayload?.specifications,
               },
               navigate
             )
@@ -717,20 +744,20 @@ const EditProductComponent = ({ params }) => {
 
   const updateUrlOnBlur = async (url) => {
     if (url) {
-      await query(CHECK_VALID_URL, { url: url }).then(res => {
-        if (get(res, 'data.validateUrl.url')) {
-          const newUrl = get(res, 'data.validateUrl.url')
+      await query(CHECK_VALID_URL, { url: url }).then((res) => {
+        if (get(res, "data.validateUrl.url")) {
+          const newUrl = get(res, "data.validateUrl.url");
           setProduct({
             ...product,
             url: newUrl,
           });
-          setIsUrlChanged(true)
+          setIsUrlChanged(true);
         }
       });
-    } 
-  }
+    }
+  };
   const getDiscountPrice = (discountPrice) => {
-    return discountPrice ? `${discountPrice}% OFF` : 'No Discount';
+    return discountPrice ? `${discountPrice}% OFF` : "No Discount";
   };
   return (
     <>
@@ -906,7 +933,9 @@ const EditProductComponent = ({ params }) => {
                     Discount Percentage :
                   </Typography>
                   <Typography fontWeight="400" variant="body1" ml={2}>
-                   { getDiscountPrice(get(product,'pricing.discountPercentage',0))}
+                    {getDiscountPrice(
+                      get(product, "pricing.discountPercentage", 0)
+                    )}
                   </Typography>
                 </Grid>
               </Grid>
