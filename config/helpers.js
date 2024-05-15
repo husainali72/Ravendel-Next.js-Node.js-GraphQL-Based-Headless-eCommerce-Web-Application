@@ -1010,7 +1010,7 @@ module.exports.emptyCart = emptyCart;
 
 const addZipcodes = async (zipcode_file, filepath, modal) => {
   try {
-    const zipcodeRegex = /^\d{5,10}$/;
+    const zipcodeRegex = /^\S{4,}$/;
     let { filename, mimetype, encoding, createReadStream } = await zipcode_file.file;
     const stream = createReadStream();
 

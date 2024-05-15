@@ -9,7 +9,7 @@ const {
   addZipcodes
 } = require("../config/helpers");
 const { GET_SINGLE_FUNC } = require("../config/api_functions");
-const zipcodeRegex = /^\d{5,10}$/;
+const zipcodeRegex = /^\S{4,}$/;
 module.exports = {
   Query: {
     checkZipcode: async (root, args) => {
