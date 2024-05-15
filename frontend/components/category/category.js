@@ -55,7 +55,7 @@ const Category = ({ category }) => {
                     <CategoryLink url={item?.url}>
                       <div className="category-cards" key={i}>
                         <div className="category-card-image">
-                          <ProductImage src={get(item, "image")} />
+                          <ProductImage src={get(item, "thumbnail_image")} />
                         </div>
 
                         <div className="card-body">

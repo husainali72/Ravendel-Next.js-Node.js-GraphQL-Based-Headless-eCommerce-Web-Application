@@ -241,38 +241,47 @@ const CREATE_FUNC = async (
     //   data.feature_image = imgObject.data || imgObject;
     // }
 
-    if (args.feature_image || args.image) {
+    if (args.feature_image || args.image || args.thumbnail_image) {
       let imgObject = "";
+      let imgObject2 = "";
       let image = null;
+      let image2 = null;
 
       if (data.feature_image) {
         image = data.feature_image.file;
       }
-
-      if (name && name === "Product Category") {
+      if (data.image) {
         image = data.image[0].file;
       }
 
+      if (data.upload_image) {
+        image = data.upload_image[0].file;
+      }
+      if (data.upload_thumbnail_image) {
+        image2 = data.upload_thumbnail_image[0].file;
+      }
+      
       if (name && name === "User") {
         image = data.image.file;
       }
       const setting = await Setting.findOne({});
 
-
-      // if (data.image) {
-      //      image = data.image[0].file;   /// this image are in array let check it
-      // }
-      // imgObject = await imageUpload(image, path, name);
       if (setting.imageStorage.status === 's3') {
         imgObject = await imageUpload(image, path, name);
       } else {
-        imgObject = await UploadImageLocal(image, path, name);
+        if(args.feature_image || args.image ){
+          imgObject = await UploadImageLocal(image, path, name);
+        }
+        if (args.thumbnail_image) {
+          imgObject2 = await UploadImageLocal(image2, path, name);
+          data.thumbnail_image = imgObject2?.data || imgObject2;
+        }
       }
 
       if ((name && name === "Product Category") || name && name === "User") {
         data.image = imgObject?.data || imgObject;
       } else {
-        data.feature_image = imgObject.data || imgObject;
+        data.feature_image = imgObject?.data || imgObject;
       }
     }
     if (data.name) {
@@ -341,10 +350,18 @@ const UPDATE_FUNC = async (
     }
     let response = await modal.findById(updateId);
     if (response) {
-      //  console.log("args", args);
-      if (args.updatedImage || args.update_image) {
+      if (args.updatedImage || args.update_image || args.upload_thumbnail_image || args.upload_image) {
         let imgObject = "";
+        let imgObject2 = "";
         let image = null;
+        let image2 = null;
+        if (args.upload_image) {
+          image = args.upload_image[0].file;
+        }
+
+        if (args.upload_thumbnail_image) {
+          image2 = args.upload_thumbnail_image[0].file;
+        }
 
         if (args.updatedImage) {
           image = args.updatedImage.file;
@@ -352,68 +369,70 @@ const UPDATE_FUNC = async (
         if (args.update_image) {
           image = args.update_image[0].file; /// this image are in array let check it
         }
-
-
         const setting = await Setting.findOne({});
-
 
         // if (data.image) {
         //      image = data.image[0].file;   /// this image are in array let check it
         // }
         // imgObject = await imageUpload(image, path, name);
-        if (setting?.imageStorage?.status === 's3') {
+        if (setting?.imageStorage?.status === "s3") {
           imgObject = await imageUpload(image, path, name);
         } else {
-          imgObject = await UploadImageLocal(image, path, name);
+          if (args.updatedImage || args.update_image || args.upload_image || args.feature_image) {
+            imgObject = await UploadImageLocal(image, path, name);
+          }
+          if (args.upload_thumbnail_image) {
+            imgObject2 = await UploadImageLocal(image2, path, name);
+            data.upload_thumbnail_image = imgObject2.data;
+          }
         }
 
-        if (imgObject?.success === false) {
+        if (imgObject?.success === false || imgObject2?.success === false) {
           return {
-            message:
-              imgObject.message ||
-              "Something went wrong with upload featured image",
+            message: imgObject.message || "Something went wrong with upload featured image",
             success: false,
           };
         } else {
-          if (imgObject?.success === true) {
-            if (name && name === "Product Category") {
-              imageUnlink(response.image);
-              data.image = imgObject.data || imgObject;
-            } else {
-              imageUnlink(response.feature_image);
-              data.feature_image = imgObject.data || imgObject;
-            }
+          if (args.updatedImage || args.update_image || args.upload_image) {
+            imageUnlink(response.image);
+            data.image = imgObject.data || imgObject;
+          } 
+          if (args.upload_thumbnail_image){
+            imageUnlink(response.thumbnail_image);
+            data.thumbnail_image = imgObject2.data || imgObject
           }
-          // console.log("response 2", response);
+          if (args.feature_image){
+            imageUnlink(response.feature_image);
+            data.feature_image = imgObject.data || imgObject; 
+          }
         }
-      }
-      for (const [key, value] of Object.entries(data)) {
-        response[key] = value;
-      }
-
-      if (data.password) {
-        response.password = await bcrypt.hash(data.password, 10);
-      }
-
-      if (data.gender === "" && data.gender === null) {
-        return {
-          message: "Invalid gender",
-          success: false,
+        for (const [key, value] of Object.entries(data)) {
+          response[key] = value;
         }
-      }
-      if (name !== "Page" && name !== "Product Attribute") response.updated = Date.now()
 
-      response = await modal.findByIdAndUpdate({ _id: response._id }, { ...response })
-      await response.save();
-      // update average rating of product related to reviews
-      if (name === "Review") {
-        await prodAvgRating(data.productId, modal, modal2)
+        if (data.password) {
+          response.password = await bcrypt.hash(data.password, 10);
+        }
+
+        if (data.gender === "" && data.gender === null) {
+          return {
+            message: "Invalid gender",
+            success: false,
+          };
+        }
+        if (name !== "Page" && name !== "Product Attribute") response.updated = Date.now();
+
+        response = await modal.findByIdAndUpdate({ _id: response._id }, { ...response });
+        await response.save();
+        // update average rating of product related to reviews
+        if (name === "Review") {
+          await prodAvgRating(data.productId, modal, modal2);
+        }
+        return MESSAGE_RESPONSE("UpdateSuccess", name, true);
       }
-      return MESSAGE_RESPONSE("UpdateSuccess", name, true);
     }
     return MESSAGE_RESPONSE("NOT_EXIST", name, false);
   } catch (error) {
-    console.log("UPDATE_FUNC", error);
     return MESSAGE_RESPONSE("UPDATE_ERROR", name, false);
   }
 };
