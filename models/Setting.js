@@ -655,7 +655,7 @@ module.exports.createSettings = async () => {
           //   url: "product_recommendation",
           // },
           {
-            label: "Product from Specific Categories",
+            label: "Product from Specific Category",
             section_img: "",
             visible: false,
             url: "product_from_specific_categories",

@@ -95,11 +95,17 @@ module.exports = {
                     }
                   },
                   {
+                    $addFields: {
+                      products: { $slice: ["$products", 10] }
+                    }
+                  },
+                  {
                     $unset: "categoryIdString"
                   }       
                 ];
                 
-                let data = await productCategory.aggregate(pipeline);                
+                let data = await productCategory.aggregate(pipeline);    
+
                 output_section.name = data[0].name
                 output_section.products = data[0].products
 

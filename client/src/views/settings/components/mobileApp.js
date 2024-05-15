@@ -170,7 +170,7 @@ const MobileAppSetting = () => {
     const hasCategoryError = sectionData?.some(
       (select) =>
         !select?.category &&
-        select?.label === "Product from Specific Categories"
+        select?.label === "Product from Specific Category"
     );
 
     if (hasCategoryError) {
@@ -223,7 +223,7 @@ const MobileAppSetting = () => {
       ...sectionData,
       {
         url: "product_from_specific_categories",
-        label: "Product from Specific Categories",
+        label: "Product from Specific Category",
         visible: false,
         section_img: "",
         category: null,
@@ -485,7 +485,7 @@ const MobileAppSetting = () => {
                               </TableCell>
                               <TableCell>
                                 {select.label ===
-                                "Product from Specific Categories" ? (
+                                "Product from Specific Category" ? (
                                   <>
                                     <Box sx={{ minWidth: 120 }}>
                                       <FormControl fullWidth size="small">
